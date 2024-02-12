@@ -35,15 +35,12 @@ const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_vote
 const commonTitle = 'U.S. presidential election';
 const electionYears = ['2020', '2016', '2012', '2008'];
 const selectedYear = electionYears[0];
-const repColor = '#C40401';
-const demColor = '#0200D0';
-
 
 // Launches the Dashboards application
 async function setupDashboard() {
     // Load the dataset and convert to JSON data that are suitable for this application.
 
-    const electionData = await fetch(elVoteUrl)
+    const elections = await fetch(elVoteUrl)
         .then(response => response.text()).then(function (csv) {
             // TBD: Add mandates
             const header = ['state', 'repCand', 'demCand', 'totalVotes', 'repPercent', 'demPercent', 'pc'];
@@ -106,14 +103,12 @@ async function setupDashboard() {
                         row[0] = state;
                         row[6] = pc;
                         if (party === 'REPUBLICAN') {
-                            header[1] = candidate;
                             row[1] = vote;
                             row[4] = percent;
                             national.candRep = candidate;
                             national.totalVotes += total;
                             national.repVotes += vote;
                         } else { // 'DEMOCRAT'
-                            header[2] = candidate;
                             row[2] = vote;
                             row[3] = total;
                             row[5] = percent;
@@ -147,16 +142,14 @@ async function setupDashboard() {
         const ret = [
             {
                 name: 'Republican',
-                color: repColor,
                 data: []
             }, {
                 name: 'Democrat',
-                color: demColor,
                 data: []
             }
         ];
 
-        Object.values(electionData).reverse().forEach(function (item) {
+        Object.values(elections).reverse().forEach(function (item) {
             const row = item[1];
 
             ret[0].data.push(Number(row[4])); // Percentage, Republican party
@@ -175,28 +168,28 @@ async function setupDashboard() {
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: electionData.y2020
+                        data: elections.y2020
                     }
                 }, {
                     id: 'votes2016',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: electionData.y2016
+                        data: elections.y2016
                     }
                 }, {
                     id: 'votes2012',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: electionData.y2012
+                        data: elections.y2012
                     }
                 }, {
                     id: 'votes2008',
                     type: 'JSON',
                     options: {
                         firstRowAsNames: true,
-                        data: electionData.y2008
+                        data: elections.y2008
                     }
                 }
             ]
@@ -235,22 +228,32 @@ async function setupDashboard() {
                 valueFormat: '{value} per cent',
                 chartOptions: {
                     chart: {
+                        type: 'pie',
                         styledMode: false,
-                        height: 166
+                        height: 200
+                    },
+                    plotOptions: {
+                        pie: {
+                            borderRadius: 5,
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b><br>{point.percentage:.1f} %',
+                                filter: {
+                                    property: 'percentage',
+                                    operator: '>',
+                                    value: 4
+                                }
+                            }
+                        }
                     },
                     series: [{
-                        type: 'pie',
-                        keys: ['repPercent', 'y'],
-                        innerSize: '50%',
-                        size: '110%',
-                        showInLegend: true,
-                        dataLabels: {
-                            enabled: true,
-                            format: '{point.name}: {point.percentage:,.1f}%'
-                        }
+                        name: 'kpiResult',
+                        // Data populated dynamically
+                        data: []
                     }]
                 }
-            }, {
+            },
+            {
                 renderTo: 'html-control',
                 type: 'CustomHTML',
                 id: 'html-control-div'
@@ -399,6 +402,12 @@ async function setupDashboard() {
                         state: {
                             headerFormat: 'State'
                         },
+                        repCand: {
+                            headerFormat: 'Rep. votes'
+                        },
+                        demCand: {
+                            headerFormat: 'Dem. votes'
+                        },
                         totalVotes: {
                             headerFormat: 'Total votes'
                         },
@@ -443,9 +452,9 @@ async function updateBoard(board, state, year) {
 
     // Common title
     const title = commonTitle + ' ' + year;
+
     // Geographical information (TBD)
     const votesTable = await dataPool.getConnectorTable(connId);
-    const stateRows = votesTable.getRowObjects();
 
     const [
         // The order here must be the same as
@@ -461,18 +470,22 @@ async function updateBoard(board, state, year) {
     const row = votesTable.getRowIndexBy('state', 'Federal');
     const repVal = votesTable.getCellAsNumber('repPercent', row);
     const demVal = votesTable.getCellAsNumber('demPercent', row);
+    const otherVal = 100.0 - repVal - demVal;
 
     await resultKpi.update({
         title: {
             text: title
         }
     });
+
     await resultKpi.chart.series[0].update({
         data: [
-            ['repPercent', repVal],
-            ['demPercent', demVal]
+            { name: 'Rep.', y: repVal },
+            { name: 'Dem.', y: demVal },
+            { name: 'Others', y: otherVal }
         ]
     });
+
     // 2. Update control (if state changes)
 
     // 3. Update map (if year changes)

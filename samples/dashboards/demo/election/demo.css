@@ -317,6 +317,13 @@
 }
 
 #kpi-result,
+#election-chart {
+    --highcharts-color-0: #c40401; /* Republicans */
+    --highcharts-color-1: #0200d0; /* Democrats */
+    --highcharts-color-2: #ccc; /* Others */
+}
+
+#kpi-result,
 #us-map {
     flex: 1 1 65%;
     max-width: 1000px;
