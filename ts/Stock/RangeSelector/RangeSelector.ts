@@ -364,9 +364,16 @@ class RangeSelector {
 
         // Update the chart
         if (!baseAxis) {
+            // X-axis options not defined, avoids undefined error and
+            // sets deferred range to undefined (#20529).
+            if (!chart.userOptions.xAxis) {
+                chart.userOptions.xAxis = {};
+            }
+
             // Axis not yet instanciated. Temporarily set min and range
             // options and remove them on chart load (#4317).
-            baseXAxisOptions = splat(chart.options.xAxis)[0];
+            // User options have superceeded options (#20529).
+            baseXAxisOptions = splat(chart.userOptions.xAxis)[0];
             rangeSetting = baseXAxisOptions.range;
             baseXAxisOptions.range = range;
             minSetting = baseXAxisOptions.min;
