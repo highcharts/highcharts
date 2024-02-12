@@ -144,7 +144,7 @@ async function setupDashboard() {
         jsonData.candDem = totals.candDem;
     }
 
-    function getelectionDataummary() {
+    function getElectionSummary() {
         const ret = [
             {
                 name: 'Republican',
@@ -240,17 +240,22 @@ async function setupDashboard() {
                     },
                     plotOptions: {
                         pie: {
-                            borderRadius: 5,
+                            borderRadius: 1,
                             dataLabels: {
                                 enabled: true,
-                                format: '<b>{point.name}</b><br>{point.percentage:.1f} %',
+                                format: '<b>{point.name}</b><br>{point.percentage:.1f} per cent',
                                 filter: {
                                     property: 'percentage',
                                     operator: '>',
-                                    value: 4
+                                    value: 10
                                 }
                             }
                         }
+                    },
+                    tooltip: {
+                        valueDecimals: 1,
+                        headerFormat: null,
+                        pointFormat: '{point.name}: {point.percentage:.1f} per cent'
                     },
                     series: [{
                         name: 'kpiResult',
@@ -350,7 +355,7 @@ async function setupDashboard() {
                 type: 'Highcharts',
                 chartOptions: {
                     chart: {
-                        styledMode: false,
+                        styledMode: true,
                         type: 'column'
                     },
                     credits: {
@@ -363,6 +368,9 @@ async function setupDashboard() {
                     },
                     title: {
                         text: 'Historical ' + commonTitle + ' results'
+                    },
+                    tooltip: {
+                        enabled: true
                     },
                     xAxis: {
                         type: 'category',
@@ -381,7 +389,7 @@ async function setupDashboard() {
                             description: 'Percentage of votes'
                         }
                     },
-                    series: getelectionDataummary(),
+                    series: getElectionSummary(),
                     lang: {
                         accessibility: {
                             chartContainerLabel: commonTitle + ' results.'
