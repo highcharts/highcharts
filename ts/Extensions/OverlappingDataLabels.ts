@@ -141,35 +141,21 @@ function chartHideOverlappingLabels(
                     x: label.attr('x'),
                     y: label.attr('y')
                 },
-                bBox = label.getBBox(),
-                xOffset: number = (
-                    label.parentGroup?.translateX || 0
-                ) + padding,
-                yOffset: number = (
-                    label.parentGroup?.translateY || 0
-                ) + padding;
+                bBox = label.getBBox();
 
             label.width = bBox.width;
             label.height = bBox.height;
 
-            const computedWidth = (label.width || 0) - 2 * padding,
-                computedHeight = (label.height || 0) - 2 * padding,
-                left = pos.x + xOffset,
-                right = left + computedWidth,
-                top = pos.y + yOffset,
-                bottom = top + computedHeight;
-
             return {
-                x: pos.x + xOffset,
-                y: pos.y + yOffset,
-                width: computedWidth,
-                height: computedHeight,
-                poly: bBox.poly || [
-                    [left, top],
-                    [right, top],
-                    [right, bottom],
-                    [left, bottom]
-                ]
+                x: pos.x + (
+                    label.parentGroup?.translateX || 0
+                ) + padding,
+                y: pos.y + (
+                    label.parentGroup?.translateY || 0
+                ) + padding,
+                width: (label.width || 0) - 2 * padding,
+                height: (label.height || 0) - 2 * padding,
+                poly: bBox.poly
             };
         }
     }

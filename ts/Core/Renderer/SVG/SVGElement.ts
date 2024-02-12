@@ -1585,17 +1585,6 @@ class SVGElement implements SVGElementLike {
                 }
 
                 bBox.poly = polygon as [number, number][];
-            } else {
-                const { x, y, width, height } = bBox,
-                    right = x + width,
-                    bottom = y + height;
-
-                bBox.poly = [
-                    [x, y],
-                    [right, y],
-                    [right, bottom],
-                    [x, bottom]
-                ];
             }
         }
 

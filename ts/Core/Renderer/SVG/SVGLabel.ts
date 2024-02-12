@@ -317,16 +317,6 @@ class SVGLabel extends SVGElement {
                 }
 
                 bBox.poly = polygon as [number, number][];
-            } else {
-                const { x, y, width, height } = bBox;
-                const right = x + width;
-                const bottom = y + height;
-                bBox.poly = [
-                    [x, y],
-                    [right, y],
-                    [x, bottom],
-                    [right, bottom]
-                ];
             }
         }
         return bBox;
