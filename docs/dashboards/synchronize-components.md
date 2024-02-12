@@ -119,3 +119,20 @@ Demo:
 |[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes|no|
 |[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no|no|
 |[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|yes|no|yes|
+
+
+## Custom synchronization
+
+For each component, you can add or overwrite a custom [definition of the existing synchronization](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry) `handler` and/or `emitter` to expand its functionality. You can also define your own synchronization from scratch.
+
+```js
+sync: {
+    customSync: {
+        handler: function() { ... }
+        emitter: function() { ... }
+    }
+}
+```
+
+The demo below shows a custom sync connecting the Highcharts Component with a custom component called "Averages Mirror":
+<iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/custom-component-sync allow="fullscreen"></iframe>
