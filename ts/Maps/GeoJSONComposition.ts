@@ -726,6 +726,13 @@ export default GeoJSONComposition;
  */
 
 /**
+ * An array of GeoJSON or TopoJSON objects or strings used as map data for
+ * series.
+ *
+ * @typedef {Array<*>|GeoJSON|TopoJSON|string} Highcharts.MapDataType
+ */
+
+/**
  * A TopoJSON object, see description on the
  * [project's GitHub page](https://github.com/topojson/topojson).
  *
