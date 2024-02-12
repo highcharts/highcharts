@@ -29,9 +29,11 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
 import U from '../Core/Utilities.js';
+
 const {
     addEvent,
     fireEvent,
+    isNumber,
     objectEach,
     pick,
     pushUnique
@@ -115,9 +117,10 @@ function chartHideOverlappingLabels(
             }
             return inside;
         },
-        boxCheck = (box1: BBoxObject, box2: BBoxObject): boolean => {
-            const box1Poly = box1.poly,
-                box2Poly = box2.poly;
+        boxCheck = (
+            box1Poly: BBoxObject['poly'],
+            box2Poly: BBoxObject['poly']
+        ): boolean => {
             if (box1Poly && box2Poly) {
                 for (const p of box1Poly) {
                     if (pointIsInPolygon(p, box2Poly)) {
@@ -150,17 +153,18 @@ function chartHideOverlappingLabels(
             label.width = bBox.width;
             label.height = bBox.height;
 
-            const computedWidth = (label.width || 0) - 2 * padding;
-            const computedHeight = (label.height || 0) - 2 * padding;
-            const left = pos.x + xOffset;
-            const right = left + computedWidth;
-            const top = pos.y + yOffset;
-            const bottom = top + computedHeight;
+            const computedWidth = (label.width || 0) - 2 * padding,
+                computedHeight = (label.height || 0) - 2 * padding,
+                left = pos.x + xOffset,
+                right = left + computedWidth,
+                top = pos.y + yOffset,
+                bottom = top + computedHeight;
+
             return {
                 x: pos.x + xOffset,
                 y: pos.y + yOffset,
-                width: xOffset,
-                height: yOffset,
+                width: computedWidth,
+                height: computedHeight,
                 poly: bBox.poly || [
                     [left, top],
                     [right, top],
@@ -215,8 +219,8 @@ function chartHideOverlappingLabels(
                 label2.visibility !== 'hidden'
             ) {
                 if (
-                    !isIntersectRect(box1, box2) ||
-                    boxCheck(box1, box2)
+                    isIntersectRect(box1, box2) ||
+                    boxCheck(box1.poly, box2.poly)
                 ) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
@@ -224,6 +228,7 @@ function chartHideOverlappingLabels(
             }
         }
     }
+
 
     // Hide or show
     for (const label of labels) {
