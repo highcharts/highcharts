@@ -1,0 +1,39 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+/* CUSTOM COMPONENT */
+
+.am-slider {
+    width: 100%;
+}
+
+.am-handle-label-container {
+    position: relative;
+    height: 20px;
+}
+
+.am-handle-label {
+    position: absolute;
+    pointer-events: none;
+}
+
+.am-results-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 15px 0;
+    font-size: 24px;
+    text-align: center;
+}
+
+.am-rc-left {
+    width: 100%;
+}
+
+.am-rc-right {
+    align-content: right;
+    width: 100%;
+}

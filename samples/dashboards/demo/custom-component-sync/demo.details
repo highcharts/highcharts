@@ -1,0 +1,11 @@
+---
+name: Custom component with custom synchronization
+authors:
+  - Dawid Dragula
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General
+use_png_thumbnail: true
+...
