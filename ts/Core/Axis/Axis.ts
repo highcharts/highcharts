@@ -3268,8 +3268,11 @@ class Axis {
         const axisTitleOptions = axis.options.title;
 
         if (axisTitleOptions) {
+
             return axisTitleOptions.text ?? (
-                axis.coll === 'yAxis' && !('text' in axisTitleOptions) ?
+                !axis.chart.inverted &&
+                    axis.coll === 'yAxis' &&
+                    !('text' in axisTitleOptions) ?
                     axis.chart.options.lang.yAxisTitle :
                     ''
             );

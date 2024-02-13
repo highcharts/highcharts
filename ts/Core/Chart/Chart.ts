@@ -1189,7 +1189,11 @@ class Chart {
             // If title text is unset, and not explicitly unset,
             // default to lang option
             const text = options.text ?? (
-                name === 'title' && !('text' in options) ?
+                name === 'title' &&
+                    // If the title option is set to null,
+                    // it will be an empty object at this point
+                    Object.keys(options).length &&
+                    !('text' in options) ?
                     chart.options.lang.chartTitle :
                     void 0
             );
