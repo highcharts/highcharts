@@ -123,13 +123,45 @@ Demo:
 
 ## Custom synchronization
 
+Each type of synchronization works thanks to defined functions such as `handler` and `emitter`. These functions are called when the component is loaded. Their main task is to register sending (`emitter`) and receiving (`handler`) events for a given component. The `this` keyword refers to the reference of the component for which sync is registered. The `emitter` and `handler` functions should return a function containing event unregistering to enable disabling sync or re-registering it with changed options after `component.update` method.
+
 For each component, you can add or overwrite a custom [definition of the existing synchronization](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry) `handler` and/or `emitter` to expand its functionality. You can also define your own synchronization from scratch.
 
 ```js
 sync: {
     customSync: {
-        handler: function() { ... }
-        emitter: function() { ... }
+        handler: function() {
+            registerHandlerEvents();
+            return () => {
+                unregisterHandlerEvents();
+            }
+        }
+        emitter: function() {
+            registerEmitterEvents();
+            return () => {
+                unregisterEmitterEvents();
+            }
+        }
+    }
+}
+```
+
+Synchronization most often uses the `dataCursor` object, which is common to the entire board. It points to a data table and allows you to create a relationship between the states of the user interface and the table cells, columns, or rows. The cursor can emit and receive events.
+
+To add synchronization to a [custom component](https://www.highcharts.com/docs/dashboards/custom-component), define the `sync` field by creating a new object of the `Component.Sync` class, where the component object (`this`) should be provided as the first argument of the constructor, and the second object with default handlers and emitters for predefined synchronizations for this component. Additionally, after the component has finished loading, you should run the `this.sync.start()` method to register handlers and emitters.
+
+```js
+class CustomComponent extends Component {
+    constructor(cell, options) {
+        super(cell, options);
+        this.sync = new Component.Sync(this, this.syncHandlers);
+        return this;
+    }
+
+    async load() {
+        await super.load();
+        this.sync.start();
+        return this;
     }
 }
 ```

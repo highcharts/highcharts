@@ -21,25 +21,27 @@ class AveragesMirror extends Component {
         this.rightSide = document.createElement('div');
 
         const handleLabelContainer = document.createElement('div');
+        const resultsContainer = document.createElement('div');
+        const divider = document.createElement('div');
+
         handleLabelContainer.className = 'am-handle-label-container';
         this.handleLabel.className = 'am-handle-label';
-        handleLabelContainer.appendChild(this.handleLabel);
         this.slider.className = 'am-slider';
-        this.slider.setAttribute('type', 'range');
-        const resultsContainer = document.createElement('div');
         resultsContainer.className = 'am-results-container';
-        const divider = document.createElement('div');
         this.leftSide.className = 'am-rc-left';
         this.rightSide.className = 'am-rc-right';
         divider.className = 'am-rc-divider';
-        divider.innerHTML = ':';
+
+        handleLabelContainer.appendChild(this.handleLabel);
         resultsContainer.appendChild(this.leftSide);
         resultsContainer.appendChild(divider);
         resultsContainer.appendChild(this.rightSide);
-
         this.contentElement.appendChild(handleLabelContainer);
         this.contentElement.appendChild(this.slider);
         this.contentElement.appendChild(resultsContainer);
+
+        this.slider.setAttribute('type', 'range');
+        divider.innerHTML = ':';
         this.contentElement.style.padding = '8px';
     }
 
@@ -76,6 +78,7 @@ class AveragesMirror extends Component {
         this.leftSide.innerHTML = this.leftAverage = leftAverage;
         this.rightSide.innerHTML = this.rightAverage = rightAverage;
 
+        // Emit event when slider value changes
         this.emit({
             target: this,
             type: 'sliderValueChanged',
@@ -156,6 +159,7 @@ Dashboards.board('container', {
                     return this.on('sliderValueChanged', e => {
                         const table = this.connector && this.connector.table;
                         if (table) {
+                            // Emit cursor event when slider value changes
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: e.rowIndex,
@@ -243,15 +247,15 @@ Dashboards.board('container', {
                             xAxis.rigthBand.attr({ d: rightBandD });
                         } else {
                             xAxis.mirrorBand = chart.renderer.path().attr({
-                                stroke: '#f25', d: mirrorBandD
+                                stroke: '#f25', d: mirrorBandD, zIndex: 1
                             }).add();
 
                             xAxis.leftBand = chart.renderer.path().attr({
-                                stroke: '#f25', d: leftBandD
+                                stroke: '#f25', d: leftBandD, zIndex: 1
                             }).add();
 
                             xAxis.rigthBand = chart.renderer.path().attr({
-                                stroke: '#f25', d: rightBandD
+                                stroke: '#f25', d: rightBandD, zIndex: 1
                             }).add();
                         }
                     };
@@ -271,6 +275,8 @@ Dashboards.board('container', {
                     );
                     const removeRedrawListener =
                         Highcharts.addEvent(chart, 'redraw', drawLines);
+
+                    // Remove listeners when component is destroyed
                     return () => {
                         removeRedrawListener();
                         cursor.removeListenerr(
