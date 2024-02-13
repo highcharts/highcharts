@@ -207,8 +207,18 @@ function chartHideOverlappingLabels(
                     isIntersectRect(box1, box2) ||
                     boxCheck(box1.poly, box2.poly)
                 ) {
-                    (label1.labelrank < label2.labelrank ? label1 : label2)
-                        .newOpacity = 0;
+                    const overlappingLabel = (
+                            label1.labelrank < label2.labelrank ?
+                                label1 :
+                                label2
+                        ),
+                        labelText = overlappingLabel.text;
+
+                    overlappingLabel.newOpacity = 0;
+
+                    if (labelText?.element.querySelector('textPath')) {
+                        labelText.attr({ opacity: 0 });
+                    }
                 }
             }
         }

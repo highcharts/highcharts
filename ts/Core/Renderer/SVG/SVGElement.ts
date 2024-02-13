@@ -1567,27 +1567,6 @@ class SVGElement implements SVGElementLike {
             cache[cacheKey] = bBox;
         }
 
-        if (!bBox.poly) {
-            const tp = this.element.querySelector('textPath');
-            if (tp) {
-                const polygon = [],
-                    len = tp.getNumberOfChars();
-
-                for (let n = 0; n < len; n++) {
-                    const { x: x1, y: y1 } = tp.getStartPositionOfChar(n),
-                        { x: x2, y: y2 } = tp.getEndPositionOfChar(n),
-                        { width, height } = tp.getExtentOfChar(n),
-                        halfW = width / 2,
-                        halfH = height / 2;
-
-                    polygon.push([x1 - halfW, y1 - halfH]);
-                    polygon.push([x2 + halfW, y2 + halfH]);
-                }
-
-                bBox.poly = polygon as [number, number][];
-            }
-        }
-
         return bBox;
     }
 
