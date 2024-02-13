@@ -197,7 +197,7 @@ function chartHideOverlappingLabels(
                     overlappingLabel.newOpacity = 0;
 
                     if (labelText?.element.querySelector('textPath')) {
-                        labelText.attr({ opacity: 0 });
+                        labelText.hide();
                     }
                 }
             }
