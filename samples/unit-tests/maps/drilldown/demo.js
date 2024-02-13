@@ -51,7 +51,22 @@ QUnit.test('Map drilldown with disabled animation', async assert => {
         }
     });
     chart.series[0].options.custom.startPos = chart.series[0].group.getBBox();
+
+    assert.strictEqual(
+        chart.mapView.projection.options.name,
+        'EqualEarth',
+        `Recommended map projection should be based on first big, world map,
+        should be EqualEarth.`
+    );
+
     chart.series[0].points[0].doDrilldown();
+
+    assert.strictEqual(
+        chart.mapView.projection.options.name,
+        'LambertConformalConic',
+        `Recommended map projection should be based on drilled into series,
+        africa map, should be LambertConformalConic.`
+    );
 
     assert.ok(
         true,

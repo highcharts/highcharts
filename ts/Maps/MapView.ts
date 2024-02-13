@@ -397,7 +397,7 @@ class MapView {
     public padding: [number, number, number, number] = [0, 0, 0, 0];
     public playingField: BBoxObject;
     public projection: Projection;
-    public recommendedMapView?: DeepPartial<MapViewOptions>;
+    public recommendedMapView: DeepPartial<MapViewOptions> = {};
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
 
@@ -794,6 +794,9 @@ class MapView {
         mapDataArray: Array<MapDataType | undefined>,
         update: boolean = false
     ): void {
+        // Reset recommended map view
+        this.recommendedMapView = {};
+
         // Handle the global map and series-level mapData
         const geoMaps = mapDataArray.map((mapData): GeoJSON|undefined =>
             this.getGeoMap(mapData));
@@ -802,7 +805,7 @@ class MapView {
         geoMaps.forEach((geoMap): void => {
             if (geoMap) {
                 // Use the first geo map as main
-                if (!this.recommendedMapView) {
+                if (!Object.keys(this.recommendedMapView).length) {
                     this.recommendedMapView =
                         geoMap['hc-recommended-mapview'] || {};
                 }
