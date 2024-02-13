@@ -16,15 +16,7 @@
  * */
 
 import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions';
-import type {
-    MapLonLatObject,
-    GeoJSON,
-    MapDataType
-} from '../../Maps/GeoJSON';
-import type {
-    MapBounds,
-    MapViewOptions
-} from '../../Maps/MapViewOptions';
+import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
@@ -39,6 +31,7 @@ import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     defined,
     error,
     merge,
@@ -75,39 +68,15 @@ interface TilesItem {
  * */
 
 /** @private */
-function recommendMapViewForTWM(
+function onRecommendMapView(
     this: MapView,
-    chart: MapChart,
-    mapDatas: Array<MapDataType | undefined>,
-    update: boolean = false
-): DeepPartial<MapViewOptions>|undefined {
-    let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
-
-    // Handle the global map and series-level mapData
-    const geoMaps = mapDatas.map((mapData): GeoJSON|undefined =>
-        this.getGeoMap(mapData));
-
-    const allGeoBounds: MapBounds[] = [];
-    geoMaps.forEach((geoMap): void => {
-        if (geoMap) {
-            // Use the first geo map as main
-            recommendedMapView = geoMap['hc-recommended-mapview'];
-
-            // Combine the bounding boxes of all loaded maps
-            if (geoMap.bbox) {
-                const [x1, y1, x2, y2] = geoMap.bbox;
-                allGeoBounds.push({ x1, y1, x2, y2 });
-            }
-        }
-    });
-
-    // Get the composite bounds
-    const geoBounds = (
-        allGeoBounds.length &&
-        MapView.compositeBounds(allGeoBounds)
-    );
-
-    const twm: TiledWebMapSeriesOptions =
+    e: {
+        geoBounds: Record<string, number>,
+        chart: MapChart
+    }
+): boolean {
+    const { geoBounds, chart } = e,
+        twm: TiledWebMapSeriesOptions =
         (chart.options.series || []).filter(
             (s: any): boolean => s.type === 'tiledwebmap')[0];
 
@@ -127,7 +96,7 @@ function recommendMapViewForTWM(
 
             if (geoBounds) {
                 const { x1, y1, x2, y2 } = geoBounds;
-                recommendedMapView = {
+                this.recommendedMapView = {
                     projection: {
                         name: providerProjectionName,
                         parallels: [y1, y2],
@@ -135,47 +104,17 @@ function recommendMapViewForTWM(
                     }
                 };
             } else {
-                recommendedMapView = {
+                this.recommendedMapView = {
                     projection: {
                         name: providerProjectionName
                     },
                     minZoom: 0
                 };
             }
+            return false;
         }
-    } else if (geoBounds && !recommendedMapView) {
-        const { x1, y1, x2, y2 } = geoBounds;
-
-        recommendedMapView = {};
-        recommendedMapView.projection =
-        (x2 - x1 > 180 && y2 - y1 > 90) ?
-            // Wide angle, go for the world view
-            {
-                name: 'EqualEarth',
-                parallels: [0, 0],
-                rotation: [0]
-            } :
-            // Narrower angle, use a projection better
-            // suited for local view
-            {
-                name: 'LambertConformalConic',
-                parallels: [y1, y2],
-                rotation: [-(x1 + x2) / 2]
-            };
     }
-    // Register the main geo map (from options.chart.map) if set
-    this.geoMap = geoMaps[0];
-
-    if (
-        update &&
-        chart.hasRendered &&
-        !chart.userOptions.mapView?.projection &&
-        recommendedMapView
-    ) {
-        this.update(recommendedMapView);
-    }
-
-    return recommendedMapView;
+    return true;
 }
 
 /* *
@@ -216,7 +155,7 @@ class TiledWebMapSeries extends MapSeries {
         MapViewClass: typeof MapView
     ): void {
         if (pushUnique(composed, this.compose)) {
-            MapViewClass.prototype.recommendMapView = recommendMapViewForTWM;
+            addEvent(MapViewClass, 'onRecommendMapView', onRecommendMapView);
         }
     }
 

@@ -28,7 +28,6 @@ import type MapChart from '../Core/Chart/MapChart';
 import type MapSeries from '../Series/Map/MapSeries';
 import type PointerEvent from '../Core/PointerEvent';
 import type PositionObject from '../Core/Renderer/PositionObject';
-import type ProjectionOptions from './ProjectionOptions';
 import type {
     LonLatArray,
     MapBounds,
@@ -294,10 +293,8 @@ class MapView {
         chart: MapChart,
         options?: DeepPartial<MapViewOptions>
     ) {
-        let recommendedMapView;
-
         if (!(this instanceof MapViewInset)) {
-            recommendedMapView = this.recommendMapView(
+            this.recommendMapView(
                 chart,
                 [
                     chart.options.chart.map,
@@ -312,12 +309,12 @@ class MapView {
 
         const o = merge(
             MapViewDefaults,
-            recommendedMapView,
+            this.recommendedMapView,
             options
         );
 
         // Merge the inset collections by id, or index if id missing
-        const recInsets = recommendedMapView && recommendedMapView.insets,
+        const recInsets = this.recommendedMapView?.insets,
             optInsets = options && options.insets;
         if (recInsets && optInsets) {
             (o as any).insets = MapView.mergeInsets(recInsets, optInsets);
@@ -400,7 +397,7 @@ class MapView {
     public padding: [number, number, number, number] = [0, 0, 0, 0];
     public playingField: BBoxObject;
     public projection: Projection;
-    public recommendedProjection?: DeepPartial<ProjectionOptions>;
+    public recommendedMapView?: DeepPartial<MapViewOptions>|undefined;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
 
@@ -796,9 +793,7 @@ class MapView {
         chart: MapChart,
         mapDataArray: Array<MapDataType | undefined>,
         update: boolean = false
-    ): DeepPartial<MapViewOptions>|undefined {
-        let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
-
+    ): void {
         // Handle the global map and series-level mapData
         const geoMaps = mapDataArray.map((mapData): GeoJSON|undefined =>
             this.getGeoMap(mapData));
@@ -807,7 +802,7 @@ class MapView {
         geoMaps.forEach((geoMap): void => {
             if (geoMap) {
                 // Use the first geo map as main
-                recommendedMapView = geoMap['hc-recommended-mapview'];
+                this.recommendedMapView = geoMap['hc-recommended-mapview'];
 
                 // Combine the bounding boxes of all loaded maps
                 if (geoMap.bbox) {
@@ -825,26 +820,37 @@ class MapView {
 
         // Provide a best-guess recommended projection if not set in
         // the map or in user options
-        if (geoBounds && !recommendedMapView) {
-            const { x1, y1, x2, y2 } = geoBounds;
+        fireEvent(
+            this,
+            'onRecommendMapView',
+            {
+                geoBounds,
+                chart
+            },
+            function (): void {
+                if (geoBounds && !this.recommendedMapView?.projection) {
+                    const { x1, y1, x2, y2 } = geoBounds;
 
-            recommendedMapView = {};
-            recommendedMapView.projection =
-            (x2 - x1 > 180 && y2 - y1 > 90) ?
-                // Wide angle, go for the world view
-                {
-                    name: 'EqualEarth',
-                    parallels: [0, 0],
-                    rotation: [0]
-                } :
-                // Narrower angle, use a projection better
-                // suited for local view
-                {
-                    name: 'LambertConformalConic',
-                    parallels: [y1, y2],
-                    rotation: [-(x1 + x2) / 2]
-                };
-        }
+                    this.recommendedMapView = {};
+                    this.recommendedMapView.projection =
+                    (x2 - x1 > 180 && y2 - y1 > 90) ?
+                        // Wide angle, go for the world view
+                        {
+                            name: 'EqualEarth',
+                            parallels: [0, 0],
+                            rotation: [0]
+                        } :
+                        // Narrower angle, use a projection better
+                        // suited for local view
+                        {
+                            name: 'LambertConformalConic',
+                            parallels: [y1, y2],
+                            rotation: [-(x1 + x2) / 2]
+                        };
+                }
+            }
+        );
+
         // Register the main geo map (from options.chart.map) if set
         this.geoMap = geoMaps[0];
 
@@ -852,12 +858,10 @@ class MapView {
             update &&
             chart.hasRendered &&
             !chart.userOptions.mapView?.projection &&
-            recommendedMapView
+            this.recommendedMapView
         ) {
-            this.update(recommendedMapView);
+            this.update(this.recommendedMapView);
         }
-
-        return recommendedMapView;
     }
 
     public redraw(animation?: boolean|Partial<AnimationOptions>): void {
