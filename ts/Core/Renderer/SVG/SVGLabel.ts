@@ -298,23 +298,18 @@ class SVGLabel extends SVGElement {
                 ?.querySelector('tspan');
 
             if (tp) {
-                const polygon = [],
-                    len = tp.getNumberOfChars();
-
-                for (let n = 0; n < len; n++) {
-                    const {
-                            x: x1,
-                            y: y1,
-                            width,
-                            height
-                        } = tp.getExtentOfChar(n),
-                        [x2, y2] = [x1 + width, y1 + height];
-
-                    polygon.push([x1, y1]);
-                    polygon.push([x2, y1]);
-                    polygon.push([x2, y2]);
-                    polygon.push([x1, y2]);
-                }
+                const { x, y, width, height } = tp.getExtentOfChar(
+                        tp.getNumberOfChars() - 1
+                    ),
+                    { x: startX, y: startY } = tp.getExtentOfChar(0),
+                    endX = x + width,
+                    endY = y + height,
+                    polygon = [
+                        [startX, startY],
+                        [endX, startY],
+                        [endX, endY],
+                        [startX, endY]
+                    ];
 
                 bBox.poly = polygon as [number, number][];
             }
