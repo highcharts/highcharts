@@ -65,7 +65,6 @@
     "colors": "^1.4.0",
     "cypress": "^13.2.0",
     "cypress-visual-regression": "^3.0.0",
-    "dtslint": "^4.2.1",
     "eslint": "^8.33.0",
     "eslint-config-eslint": "^7.0.0",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.0.9",
