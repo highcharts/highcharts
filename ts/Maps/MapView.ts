@@ -397,7 +397,7 @@ class MapView {
     public padding: [number, number, number, number] = [0, 0, 0, 0];
     public playingField: BBoxObject;
     public projection: Projection;
-    public recommendedMapView?: DeepPartial<MapViewOptions>|undefined;
+    public recommendedMapView?: DeepPartial<MapViewOptions>;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
 
@@ -802,7 +802,10 @@ class MapView {
         geoMaps.forEach((geoMap): void => {
             if (geoMap) {
                 // Use the first geo map as main
-                this.recommendedMapView = geoMap['hc-recommended-mapview'];
+                if (!this.recommendedMapView) {
+                    this.recommendedMapView =
+                        geoMap['hc-recommended-mapview'] || {};
+                }
 
                 // Combine the bounding boxes of all loaded maps
                 if (geoMap.bbox) {
@@ -828,25 +831,33 @@ class MapView {
                 chart
             },
             function (): void {
-                if (geoBounds && !this.recommendedMapView?.projection) {
-                    const { x1, y1, x2, y2 } = geoBounds;
+                if (
+                    geoBounds &&
+                    this.recommendedMapView
+                ) {
+                    if (!this.recommendedMapView.projection) {
+                        const { x1, y1, x2, y2 } = geoBounds;
 
-                    this.recommendedMapView = {};
-                    this.recommendedMapView.projection =
-                    (x2 - x1 > 180 && y2 - y1 > 90) ?
-                        // Wide angle, go for the world view
-                        {
-                            name: 'EqualEarth',
-                            parallels: [0, 0],
-                            rotation: [0]
-                        } :
-                        // Narrower angle, use a projection better
-                        // suited for local view
-                        {
-                            name: 'LambertConformalConic',
-                            parallels: [y1, y2],
-                            rotation: [-(x1 + x2) / 2]
-                        };
+                        this.recommendedMapView.projection =
+                            (x2 - x1 > 180 && y2 - y1 > 90) ?
+                                // Wide angle, go for the world view
+                                {
+                                    name: 'EqualEarth',
+                                    parallels: [0, 0],
+                                    rotation: [0]
+                                } :
+                                // Narrower angle, use a projection better
+                                // suited for local view
+                                {
+                                    name: 'LambertConformalConic',
+                                    parallels: [y1, y2],
+                                    rotation: [-(x1 + x2) / 2]
+                                };
+                    }
+
+                    if (!this.recommendedMapView.insets) {
+                        this.recommendedMapView.insets = void 0; // Reset insets
+                    }
                 }
             }
         );
