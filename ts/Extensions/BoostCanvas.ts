@@ -479,8 +479,8 @@ namespace BoostCanvas {
                     activeBoostSettings.timeSeriesProcessing || false,
                 timeSetup: activeBoostSettings.timeSetup || false
             },
-            xData = series.processedXData,
-            yData = series.processedYData,
+            xData = series.getColumn('x', true),
+            yData = series.getColumn('y', true),
             rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
             xExtremes = xAxis.getExtremes(),
             xMin = xExtremes.min,
@@ -695,8 +695,11 @@ namespace BoostCanvas {
             xDataFull: Array<number> = (
                 (this.getColumn('x').length ? this.getColumn('x') : void 0) ||
                 (this.options as any).xData ||
-                this.processedXData ||
-                false
+                (
+                    this.getColumn('x', true).length ?
+                        this.getColumn('x', true) :
+                        false
+                )
             ),
             //
             addKDPoint = function (
@@ -760,7 +763,7 @@ namespace BoostCanvas {
                     }
                 } else {
                     x = d;
-                    y = yData[i] as any;
+                    y = yData[i];
 
                     if (sdata[i + 1]) {
                         nx = sdata[i + 1];

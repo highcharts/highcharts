@@ -331,10 +331,6 @@ class SankeySeries extends ColumnSeries {
      */
     public translate(): void {
 
-        if (!this.processedXData) {
-            this.processData();
-        }
-
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();

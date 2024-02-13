@@ -1155,7 +1155,6 @@ class PackedBubbleSeries extends BubbleSeries {
             radius: number|undefined,
             positions;
 
-        this.processedXData = this.xData;
         this.generatePoints();
 
         // merged data is an array with all of the data from all series

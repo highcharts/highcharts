@@ -357,9 +357,6 @@ class Series {
     public pointValKey?: string;
 
     /** @deprecated */
-    public processedXData!: Array<number>|TypedArray;
-
-    /** @deprecated */
     public processedYData!: (
         Array<(number|null)>|
         Array<Array<(number|null)>>|
@@ -2186,10 +2183,9 @@ class Series {
      * @emits Highcharts.Series#events:translate
      */
     public translate(): void {
-        if (!this.processedXData) { // hidden series
-            this.processData();
-        }
+
         this.generatePoints();
+
         const series = this,
             options = series.options,
             stacking = options.stacking,

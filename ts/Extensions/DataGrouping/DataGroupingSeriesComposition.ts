@@ -480,12 +480,10 @@ function applyGrouping(
             }
             series.cropStart = croppedData.start; // #15005
         }
-        // Set series props
-        series.processedXData = groupedXData || [];
-        series.processedYData = groupedYData as any;
+        // Set the modified table
         series.table.modified = modified;
     } else {
-        series.groupMap = null as any;
+        series.groupMap = void 0;
     }
     series.hasGroupedData = hasGroupedData;
 

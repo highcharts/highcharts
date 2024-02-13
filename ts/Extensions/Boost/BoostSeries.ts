@@ -917,8 +917,10 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
-        series.processedXData ??= xData;
-        series.processedYData ??= yData;
+        series.table.modified.setColumns({
+            x: xData,
+            y: yData
+        });
         return true;
     }
 
@@ -935,8 +937,10 @@ function scatterProcessData(
             dataLength < cropThreshold
         )
     ) {
-        series.processedXData = xData;
-        series.processedYData = yData;
+        series.table.modified.setColumns({
+            x: xData,
+            y: yData
+        });
         return true;
     }
 
@@ -991,8 +995,11 @@ function scatterProcessData(
     // Set properties as base processData
     series.cropped = cropped;
     series.cropStart = 0;
-    series.processedXData = processedXData; // For boosted points rendering
-    series.processedYData = processedYData;
+    // For boosted points rendering
+    series.table.modified.setColumns({
+        x: processedXData,
+        y: processedYData
+    });
 
     if (!getSeriesBoosting(series, processedXData)) {
         series.processedData = processedData; // For un-boosted points rendering
