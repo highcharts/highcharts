@@ -91,38 +91,28 @@ function chartHideOverlappingLabels(
             box2.y >= box1.y + box1.height ||
             box2.y + box2.height <= box1.y
         ),
-        pointIsInPolygon = (
-            p: [number, number],
-            polygon: [number, number][]
+        isPolygonOverlap = (
+            box1Poly: [number, number][],
+            box2Poly: [number, number][]
         ): boolean => {
-            const len = polygon.length,
-                [checkpointX, checkpointY] = p;
+            for (const p of box1Poly) {
+                const len = box2Poly.length,
+                    [checkpointX, checkpointY] = p;
 
-            for (let i = 0, j = len - 1; i < len; j = i++) {
-                const x1 = ~~polygon[i][0];
-                const y1 = ~~polygon[i][1];
-                const x2 = ~~polygon[j][0];
-                const y2 = ~~polygon[j][1];
+                for (let i = 0, j = len - 1; i < len; j = i++) {
+                    const x1 = ~~box2Poly[i][0],
+                        y1 = ~~box2Poly[i][1],
+                        x2 = ~~box2Poly[j][0],
+                        y2 = ~~box2Poly[j][1];
 
-                if (
-                    (y1 > checkpointY) !== (y2 > checkpointY) && (
-                        checkpointX < (x2 - x1) *
-                        (checkpointY - y1) / (y2 - y1) +
-                        x1
-                    )
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        },
-        boxCheck = (
-            box1Poly: BBoxObject['poly'],
-            box2Poly: BBoxObject['poly']
-        ): boolean => {
-            if (box1Poly && box2Poly) {
-                for (const p of box1Poly) {
-                    if (pointIsInPolygon(p, box2Poly)) {
+                    if (
+                        (y1 > checkpointY) !== (y2 > checkpointY) && (
+                            checkpointX < (x2 - x1) *
+                            (checkpointY - y1) /
+                            (y2 - y1) +
+                            x1
+                        )
+                    ) {
                         return true;
                     }
                 }
@@ -160,7 +150,6 @@ function chartHideOverlappingLabels(
         }
     }
 
-
     let label: SVGElement,
         label1: SVGElement,
         label2: SVGElement,
@@ -189,6 +178,7 @@ function chartHideOverlappingLabels(
         label1 = labels[i];
         box1 = label1 && label1.absoluteBox;
 
+
         for (let j = i + 1; j < len; ++j) {
             label2 = labels[j];
             box2 = label2 && label2.absoluteBox;
@@ -203,9 +193,14 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
+                const [box1Poly, box2Poly] = [box1.poly, box2.poly];
+
                 if (
-                    isIntersectRect(box1, box2) ||
-                    boxCheck(box1.poly, box2.poly)
+                    isIntersectRect(box1, box2) || (
+                        box1Poly &&
+                        box2Poly &&
+                        isPolygonOverlap(box1Poly, box2Poly)
+                    )
                 ) {
                     const overlappingLabel = (
                             label1.labelrank < label2.labelrank ?
