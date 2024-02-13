@@ -26,6 +26,8 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
+import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
+const { pointInPolygon } = GeometryUtilities;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import U from '../Core/Utilities.js';
@@ -96,25 +98,8 @@ function chartHideOverlappingLabels(
             box2Poly: [number, number][]
         ): boolean => {
             for (const p of box1Poly) {
-                const len = box2Poly.length,
-                    [checkpointX, checkpointY] = p;
-
-                for (let i = 0, j = len - 1; i < len; j = i++) {
-                    const x1 = ~~box2Poly[i][0],
-                        y1 = ~~box2Poly[i][1],
-                        x2 = ~~box2Poly[j][0],
-                        y2 = ~~box2Poly[j][1];
-
-                    if (
-                        (y1 > checkpointY) !== (y2 > checkpointY) && (
-                            checkpointX < (x2 - x1) *
-                            (checkpointY - y1) /
-                            (y2 - y1) +
-                            x1
-                        )
-                    ) {
-                        return true;
-                    }
+                if (pointInPolygon({ x: p[0], y: p[1] }, box2Poly)) {
+                    return true;
                 }
             }
             return false;
