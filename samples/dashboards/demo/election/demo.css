@@ -53,8 +53,8 @@
     --color-navigation-text: #20202b;
     --color-text: #000;
     --color-text-border: #fff;
-    --color-tooltip-background: #5352be;
-    --color-tooltip-text: #fff;
+    --color-tooltip-background: #fff;
+    --color-tooltip-text: #336;
 }
 
 #container.highcharts-dark #us-map {
@@ -93,7 +93,7 @@
 
 /* *
  *
- *  City Chart
+ *  Election chart (history)
  *
  * */
 
@@ -199,7 +199,6 @@
  *
  * */
 
-/*
 #us-map .highcharts-dashboards-component {
     border-radius: 10px;
 }
@@ -244,44 +243,6 @@
     opacity: 0.6;
 }
 
-#us-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
-    font-size: 12px;
-}
-
-#us-map .highcharts-series-1 .highcharts-data-label text {
-    fill: var(--color-text);
-    paint-order: stroke;
-    stroke: var(--color-text-border);
-    stroke-width: 2px;
-}
-
-#us-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
-    pointer-events: none;
-}
-
-#us-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
-    fill: var(--color-marker-text);
-    stroke: var(--color-marker-text-border);
-    stroke-width: 1.5px;
-}
-
-#us-map .highcharts-series-1 .highcharts-point {
-    paint-order: stroke;
-    stroke: var(--color-marker-border);
-    stroke-width: 2;
-    cursor: pointer;
-}
-
-#us-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 8;
-    stroke: var(--color-marker-border-active);
-}
-
-#us-map .highcharts-series-1 .highcharts-point:hover {
-    stroke-width: 4;
-    stroke: var(--color-marker-border-hover);
-}
-
 #us-map .highcharts-tooltip {
     fill: none;
     filter: none;
@@ -309,7 +270,6 @@
 #us-map .highcharts-zoom-out text {
     transform: translate(2px, -1px);
 }
-*/
 
 /* Safari fix for manual dark mode */
 /* stylelint-disable-next-line max-line-length */
@@ -319,6 +279,7 @@
 }
 
 #kpi-result,
+#us-map,
 #election-chart {
     --highcharts-color-0: #c40401; /* Republicans */
     --highcharts-color-1: #0200d0; /* Democrats */
