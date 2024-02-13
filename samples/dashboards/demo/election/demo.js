@@ -276,9 +276,11 @@ async function setupDashboard() {
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
+                    borderWidth: 1,
                     chart: {
+                        type: 'map',
                         map: mapData,
-                        styledMode: true
+                        styledMode: false
                     },
                     title: {
                         text: '' // Populated later
@@ -294,6 +296,8 @@ async function setupDashboard() {
                         enableMouseWheelZoom: true
                     },
                     colorAxis: {
+                        min: -100,
+                        max: 100,
                         dataClasses: [{
                             from: -100,
                             to: 0,
@@ -307,25 +311,28 @@ async function setupDashboard() {
                         }]
                     },
                     series: [{
+                        name: 'US Map',
+                        type: 'map'
+                    },
+                    {
+                        name: 'Result difference', // TBD: electoral mandates
                         data: getStateElectionData(),
                         joinBy: 'postal-code',
                         dataLabels: {
                             enabled: true,
-                            color: '#FFFFFF',
+                            color: 'white',
                             format: '{point.postal-code}',
                             style: {
                                 textTransform: 'uppercase'
                             }
-                        },
-                        name: 'Result percentages', // TBD: electoral mandates
+                        }
+                        /*
                         point: {
-                            /*
                             events: {
                                 click: pointClick
                             }
-                            */
-                        },
-                        cursor: 'pointer'
+                        }
+                        */
                     }, {
                         name: 'Separators',
                         type: 'mapline',
@@ -528,29 +535,17 @@ async function updateBoard(board, state, year) {
         }
     });
 
-    // Update all map points (states with results)
-    const mapSeries = usMap.chart.series[1].data;
-    const mapPoints = mapData.objects.default.geometries;
-    /*
-    mapSeries.length = 0;
+    // U.S. states with election results
+    const voteSeries = usMap.chart.series[1].data;
+    voteSeries.forEach(function (state) {
+        const row = votesTable.getRowIndexBy('postal-code', state['postal-code']);
+        const percentRep = votesTable.getCellAsNumber('repPercent', row);
+        const percentDem = votesTable.getCellAsNumber('demPercent', row);
 
-    for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        // Add state election data
-        const geometry = mapPoints[i].properties;
-        if ('postal-code' in geometry) {
-            const postCode = geometry['postal-code'];
-            const row = votesTable.getRowIndexBy('postal-code', postCode);
-            const state = votesTable.getCellAsString('state', row);
-            const percentRep = votesTable.getCellAsNumber('repPercent', row);
-            const percentDem = votesTable.getCellAsNumber('demPercent', row);
-
-            mapSeries.push({
-                value: percentRep,
-                'postal-code': postCode
-            });
-        }
-    }
-    */
+        state.update({
+            value: Number(percentRep - percentDem)
+        });
+    });
 
     // 4. Update chart (if state clicked)
 

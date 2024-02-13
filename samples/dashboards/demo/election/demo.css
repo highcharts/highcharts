@@ -199,6 +199,7 @@
  *
  * */
 
+/*
 #us-map .highcharts-dashboards-component {
     border-radius: 10px;
 }
@@ -308,6 +309,7 @@
 #us-map .highcharts-zoom-out text {
     transform: translate(2px, -1px);
 }
+*/
 
 /* Safari fix for manual dark mode */
 /* stylelint-disable-next-line max-line-length */
