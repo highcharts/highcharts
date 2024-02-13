@@ -142,7 +142,7 @@ function recommendedMapViewAfterDrill(
                 this.options.chart.map,
                 e.seriesOptions.mapData
             ],
-            true
+            this.options.drilldown?.mapZooming
         );
     }
 }

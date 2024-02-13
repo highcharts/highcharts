@@ -78,7 +78,8 @@ interface TilesItem {
 function recommendMapViewForTWM(
     this: MapView,
     chart: MapChart,
-    mapDatas: Array<MapDataType | undefined>
+    mapDatas: Array<MapDataType | undefined>,
+    update: boolean = false
 ): DeepPartial<MapViewOptions>|undefined {
     let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
 
@@ -142,9 +143,37 @@ function recommendMapViewForTWM(
                 };
             }
         }
+    } else if (geoBounds && !recommendedMapView) {
+        const { x1, y1, x2, y2 } = geoBounds;
+
+        recommendedMapView = {};
+        recommendedMapView.projection =
+        (x2 - x1 > 180 && y2 - y1 > 90) ?
+            // Wide angle, go for the world view
+            {
+                name: 'EqualEarth',
+                parallels: [0, 0],
+                rotation: [0]
+            } :
+            // Narrower angle, use a projection better
+            // suited for local view
+            {
+                name: 'LambertConformalConic',
+                parallels: [y1, y2],
+                rotation: [-(x1 + x2) / 2]
+            };
     }
     // Register the main geo map (from options.chart.map) if set
     this.geoMap = geoMaps[0];
+
+    if (
+        update &&
+        chart.hasRendered &&
+        !chart.userOptions.mapView?.projection &&
+        recommendedMapView
+    ) {
+        this.update(recommendedMapView);
+    }
 
     return recommendedMapView;
 }
