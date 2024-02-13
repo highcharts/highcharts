@@ -1,6 +1,3 @@
-function testChartsRangeIsSame(assert, chartInfo, stockChart) {
-}
-
 QUnit.test('#20529: Chart-stockChart-constructor rangeselector first-load comparison.', function (assert) {
 
     var done = assert.async();
