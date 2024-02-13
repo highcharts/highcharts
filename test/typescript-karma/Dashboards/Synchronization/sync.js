@@ -100,3 +100,51 @@ test('Sync events leak in updated components', async function (assert) {
         'DataGrid Component should not leak events when update.'
     );
 });
+
+
+test('Custom sync handler & emitter', function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    assert.timeout(1000);
+    const done = assert.async(2);
+    Dashboards.board('container', {
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-1'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'HTML',
+            renderTo: 'dashboard-1',
+            elements: [{
+                tagName: 'h1',
+                textContent: 'test'
+            }],
+            sync: {
+                customSync: {
+                    handler: function() {
+                        assert.ok(
+                            this.sync.registeredSyncHandlers.customSync,
+                            'Custom sync handler should be registered.'
+                        );
+                        done();
+                    },
+                    emitter: function() {
+                        assert.ok(
+                            this.sync.registeredSyncEmitters.customSync,
+                            'Custom sync emitter should be registered.'
+                        );
+                        done();
+                    }
+                }
+            }
+        }]
+    });
+});

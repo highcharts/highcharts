@@ -160,42 +160,6 @@ const kpiGaugeOptions = {
     }
 };
 
-// Configuration shared by the four top level cells
-// ! ------------ !
-// ! Map  ! KPI   !
-// ! ---- ! ----- !
-// ! Grid ! Chart !
-// ! ------------ !
-const topLevelCellLayout = {
-    responsive: {
-        large: {
-            width: '1/2'
-        },
-        medium: {
-            width: '100%'
-        },
-        small: {
-            width: '100%'
-        }
-    }
-};
-
-// Configuration shared by all KPI cells
-const kpiCellLayout = {
-    responsive: {
-        large: {
-            width: '1/3'
-        },
-        medium: {
-            width: '1/3'
-        },
-        small: {
-            width: '100%'
-        }
-    },
-    height: '204px'
-};
-
 // Launches the Dashboards application
 async function setupDashboard() {
     let activeCity = weatherStationConfig.location.default;
@@ -220,39 +184,22 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'world-map',
-                        ...topLevelCellLayout
+                        id: 'world-map'
                     }, {
                         // Top right
                         id: 'kpi-layout',
-                        ...topLevelCellLayout,
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'html-geo-info',
-                                    responsive: {
-                                        large: {
-                                            width: '100%'
-                                        },
-                                        medium: {
-                                            width: '100%'
-                                        },
-                                        small: {
-                                            width: '100%'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'html-geo-info'
                                 }]
                             }, {
                                 cells: [{
-                                    id: 'kpi-temperature',
-                                    ...kpiCellLayout
+                                    id: 'kpi-temperature'
                                 }, {
-                                    id: 'kpi-wind',
-                                    ...kpiCellLayout
+                                    id: 'kpi-wind'
                                 }, {
-                                    id: 'kpi-precipitation',
-                                    ...kpiCellLayout
+                                    id: 'kpi-precipitation'
                                 }]
                             }]
                         }
@@ -260,12 +207,10 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         // Bottom left
-                        id: 'selection-grid',
-                        ...topLevelCellLayout
+                        id: 'selection-grid'
                     }, {
                         // Bottom right
-                        id: 'city-chart',
-                        ...topLevelCellLayout
+                        id: 'city-chart'
                     }]
                 }]
             }]
