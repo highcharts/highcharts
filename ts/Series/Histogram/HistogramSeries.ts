@@ -228,9 +228,9 @@ class HistogramSeries extends ColumnSeries {
     }
 
     public setDerivedData(): void {
-        const yData = (this.baseSeries as any).yData;
+        const yData = this.baseSeries?.getColumn('y');
 
-        if (!yData.length) {
+        if (!yData?.length) {
             this.setData([]);
             return;
         }

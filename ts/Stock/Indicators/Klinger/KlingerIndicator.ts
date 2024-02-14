@@ -191,8 +191,8 @@ class KlingerIndicator extends SMAIndicator {
 
         const isLengthValid = [series, volumeSeries].every(
             function (series): boolean|undefined {
-                return series && series.xData && series.xData.length >=
-                (options.params as any).slowAvgPeriod;
+                return series && series.table.rowCount >=
+                    (options.params as any).slowAvgPeriod;
             });
 
         return !!(isLengthValid && isSeriesOHLC);
@@ -238,7 +238,7 @@ class KlingerIndicator extends SMAIndicator {
             // (in this iteration, previousCM can be raplaced with the DM).
             CM = this.getCM(previousCM, DM, trend, previousTrend, previousDM);
 
-            force = (this.volumeSeries.yData as any)[i] *
+            force = this.volumeSeries.getColumn('y')[i] *
                 trend * Math.abs(2 * ((DM / CM) - 1)) * 100;
             volumeForce.push([force]);
 

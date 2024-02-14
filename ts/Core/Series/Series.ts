@@ -1503,10 +1503,6 @@ class Series {
                 table.setColumns(columns);
             }
 
-            // For convenience during the transition to DataTable. @todo: remove
-            series.xData = this.getColumn('x');
-            series.yData = this.getColumn('y');
-
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             const yData = this.getColumn('y');
@@ -2067,8 +2063,6 @@ class Series {
             i,
             xMin = 0,
             xMax = 0;
-
-        yData = yData || this.stackedYData || this.processedYData || [];
 
         if (xAxis) {
             xExtremes = xAxis.getExtremes();

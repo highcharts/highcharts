@@ -180,7 +180,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
         series.mean = correctFloat(
             BellcurveSeries.mean(
-                (series.baseSeries as any).yData
+                series.baseSeries?.getColumn('y') || []
             ) as any
         );
     }
@@ -190,7 +190,7 @@ class BellcurveSeries extends AreaSplineSeries {
 
         series.standardDeviation = correctFloat(
             BellcurveSeries.standardDeviation(
-                (series.baseSeries as any).yData,
+                series.baseSeries?.getColumn('y') || [],
                 series.mean as any
             ) as any
         );

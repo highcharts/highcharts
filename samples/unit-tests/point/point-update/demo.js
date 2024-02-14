@@ -339,12 +339,12 @@ QUnit.test(
         chart.series[0].setData([[1], [2], [3]], true, false, false);
 
         assert.deepEqual(
-            chart.series[0].xData,
+            chart.series[0].getColumn('x'),
             [5, 7, 9],
             '#15117: pointStart/pointInterval should work with turboed 2d array data'
         );
         assert.deepEqual(
-            chart.series[0].yData,
+            chart.series[0].getColumn('y'),
             [1, 2, 3],
             '#15117: pointStart/pointInterval should work with turboed 2d array data'
         );
@@ -355,13 +355,13 @@ QUnit.test(
         chart.series[0].setData([[2], [4], [6]], true, false, false);
 
         assert.deepEqual(
-            chart.series[0].xData,
+            chart.series[0].getColumn('x'),
             [5, 7, 9],
             '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
         );
 
         assert.deepEqual(
-            chart.series[0].table.columns.y,
+            chart.series[0].getColumn('y'),
             [2, 4, 6],
             '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
         );

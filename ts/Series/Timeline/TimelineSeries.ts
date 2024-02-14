@@ -101,8 +101,6 @@ class TimelineSeries extends LineSeries {
 
     public visiblePointsCount?: number;
 
-    public yData?: Array<number>;
-
     /* *
      *
      *  Functions
@@ -440,8 +438,7 @@ class TimelineSeries extends LineSeries {
         const series = this,
             xData = series.getColumn('x');
 
-        let visiblePoints = 0,
-            i: (number|undefined);
+        let visiblePoints = 0;
 
         series.visibilityMap = series.getVisibilityMap();
 
@@ -454,9 +451,7 @@ class TimelineSeries extends LineSeries {
 
         series.visiblePointsCount = visiblePoints;
 
-        for (i = 0; i < xData.length; i++) {
-            (series.yData as any)[i] = 1;
-        }
+        this.table.setColumn('y', new Array(xData.length).fill(1));
 
         super.processData.call(this, arguments as any);
 

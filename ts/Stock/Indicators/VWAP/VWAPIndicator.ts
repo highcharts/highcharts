@@ -181,8 +181,8 @@ class VWAPIndicator extends SMAIndicator {
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        const volumeValues: Array<number> = (volumeSeries.yData as any),
-            volumeLength: number = (volumeSeries.xData as any).length,
+        const volumeValues: Array<number> = volumeSeries.getColumn('y'),
+            volumeLength: number = volumeValues.length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],
             cumulativeVolume: Array<number> = [],

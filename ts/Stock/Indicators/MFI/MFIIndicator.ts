@@ -149,9 +149,7 @@ class MFIIndicator extends SMAIndicator {
             volumeSeries: (LineSeries | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
-            yValVolume: Array<number> = (
-                volumeSeries && (volumeSeries.yData as any)
-            ),
+            yValVolume = volumeSeries?.getColumn('y') || [],
             MFI: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],

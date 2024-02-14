@@ -430,7 +430,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
     chart.series[0].setData([4, 5, 5]);
 
     assert.deepEqual(
-        chart.series[0].yData,
+        chart.series[0].getColumn('y'),
         [4, 5, 5],
         'Data is set correctly when oldData has null values and the same length (#10187)'
     );

@@ -141,8 +141,8 @@ class CMFIndicator extends SMAIndicator {
         function isLengthValid(
             serie: LineSeries
         ): (boolean|undefined) {
-            return serie.xData &&
-                serie.xData.length >= (options.params as any).period;
+            return serie.table.rowCount >=
+                (options.params as any).period;
         }
 
         return !!(
@@ -174,7 +174,7 @@ class CMFIndicator extends SMAIndicator {
         return this.getMoneyFlow<TLinkedSeries>(
             series.xData as number[],
             series.yData,
-            (this.volumeSeries.yData as any),
+            this.volumeSeries.getColumn('y'),
             (params.period as any)
         );
     }

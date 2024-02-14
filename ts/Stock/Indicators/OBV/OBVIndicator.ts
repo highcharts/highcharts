@@ -137,7 +137,7 @@ class OBVIndicator extends SMAIndicator {
 
         // Checks if volume series exists.
         if (volumeSeries) {
-            volume = ((volumeSeries as Series).yData as any);
+            volume = (volumeSeries as Series).getColumn('y');
 
             // Add first point and get close value.
             OBVPoint = [xVal[0], previousOBV];
