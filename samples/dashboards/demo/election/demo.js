@@ -236,8 +236,16 @@ async function setupDashboard() {
         Object.values(electionData).reverse().forEach(function (item) {
             const row = item.data[1];
 
-            ret[0].data.push(Number(row[4])); // Percentage, Republicans
-            ret[1].data.push(Number(row[5])); // Percentage, Democrats
+            // Percentage, Republicans
+            ret[0].data.push({
+                name: item.candRep,
+                y: Number(row[4])
+            });
+
+            ret[1].data.push({
+                name: item.candDem,
+                y: Number(row[5])
+            });
         });
         return ret;
     }
@@ -308,7 +316,7 @@ async function setupDashboard() {
             {
                 renderTo: 'kpi-result',
                 type: 'KPI',
-                title: commonTitle,
+                title: '(to be replaced by progress bar)', // commonTitle,
                 valueFormat: '{value} per cent',
                 chartOptions: {
                     chart: {
@@ -392,7 +400,7 @@ async function setupDashboard() {
                     },
                     {
                         name: 'State election result', // TBD: electoral mandates
-                        data: [], //createMapElectionData(),
+                        data: [],
                         joinBy: 'postal-code',
                         dataLabels: {
                             enabled: true,
@@ -456,6 +464,16 @@ async function setupDashboard() {
                     },
                     tooltip: {
                         enabled: true
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                rotation: -90,
+                                format: '{point.name}  {point.y:.1f} %',
+                                y: 120 // Pixels down from the top
+                            }
+                        }
                     },
                     xAxis: {
                         type: 'category',
@@ -541,7 +559,7 @@ async function setupDashboard() {
 
     // Handle change year events
     Highcharts.addEvent(
-        document.getElementById('election_year'),
+        document.getElementById('election-year'),
         'change',
         async function () {
             const selectedOption = this.options[this.selectedIndex];
@@ -577,12 +595,13 @@ async function updateBoard(board, state, year) {
     const demVal = votesTable.getCellAsNumber('demPercent', row);
     const otherVal = 100.0 - repVal - demVal;
 
+    /*
     await resultKpi.update({
         title: {
             text: title
         }
     });
-
+    */
     const candDem = electionData[year].candRep;
     const candRep = electionData[year].candDem;
 

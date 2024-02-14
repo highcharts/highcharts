@@ -126,6 +126,10 @@
     stroke: none;
 }
 
+#election-chart .highcharts-data-label text {
+    fill: white;
+}
+
 #election-chart .highcharts-tooltip text {
     fill: var(--color-tooltip-text);
 }
@@ -146,25 +150,24 @@
  *
  * */
 
-#html-control .highcharts-dashboards-component {
-    cursor: default;
-}
-
-#html-control .highcharts-dashboards-component div#geo-info {
-    border: 1px dotted #ccc;
-    max-width: 200px;
-    border-radius: 10px;
-    text-align: center;
-    margin: auto;
-}
-
-#html-control .highcharts-dashboards-component h2 {
+div#html-control-div h1 {
     font-size: 1.5em;
     text-align: center;
 }
 
-#html-control .highcharts-dashboards-component div#geo-info p {
-    font-size: 0.7em;
+div#html-control-div #election-year {
+    text-align: center;
+    margin: 20px;
+}
+
+div#html-control-div div#election-description {
+    border: 1px dotted #ccc;
+    max-width: 800px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    color: orangered;
+    margin: auto;
 }
 
 /* *
