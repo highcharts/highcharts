@@ -35,7 +35,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     objectEach,
     pick,
     pushUnique

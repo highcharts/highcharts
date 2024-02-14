@@ -1615,10 +1615,10 @@ class SVGElement implements SVGElementLike {
             y = Math.min(aY, bY, cY, dY),
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y,
-            xAttr = this.attr('x'),
-            xCoord = isNumber(xAttr) ? xAttr : 0,
-            yAttr = this.attr('y'),
-            yCoord = isNumber(yAttr) ? yAttr : 0;
+            [xCoord, yCoord] = ['x', 'y'].map((str): number => {
+                const attr = this.attr(str);
+                return isNumber(attr) ? attr : 0;
+            });
 
         return {
             x,
