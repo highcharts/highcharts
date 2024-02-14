@@ -1625,7 +1625,7 @@ class SVGElement implements SVGElementLike {
             y,
             width: boxWidth,
             height: boxHeight,
-            poly: [
+            polygon: [
                 [aX + xCoord, aY + yCoord],
                 [bX + xCoord, bY + yCoord],
                 [cX + xCoord, cY + yCoord],

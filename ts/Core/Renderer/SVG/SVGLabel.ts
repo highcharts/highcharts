@@ -305,7 +305,7 @@ class SVGLabel extends SVGElement {
                     endX = x + width,
                     endY = y + height;
 
-                bBox.poly = [
+                bBox.polygon = [
                     [startX, startY],
                     [endX, startY],
                     [endX, endY],

@@ -126,7 +126,7 @@ function chartHideOverlappingLabels(
                 ) + padding,
                 width: (label.width || 0) - 2 * padding,
                 height: (label.height || 0) - 2 * padding,
-                poly: bBox.poly
+                polygon: bBox.polygon
             };
         }
     }
@@ -174,7 +174,7 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
-                const [box1Poly, box2Poly] = [box1.poly, box2.poly];
+                const [box1Poly, box2Poly] = [box1.polygon, box2.polygon];
 
                 if (
                     isIntersectRect(box1, box2) || (
