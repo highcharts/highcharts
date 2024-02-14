@@ -13,6 +13,7 @@ Dashboards.board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
+        title: 'Component title',
         caption: 'Caption line',
         type: 'Highcharts',
         chartOptions: {

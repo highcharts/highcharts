@@ -154,30 +154,30 @@ function addToolbar(
     }
 
     // create label
-    createElement('span', void 0, void 0, popupDiv).appendChild(
-        doc.createTextNode(pick(
-            // Advanced annotations:
-            lang[options.langKey as any] || options.langKey,
-            // Basic shapes:
-            options.shapes && options.shapes[0].type,
-            ''
-        ))
+    let label = createElement(
+        'p',
+        {
+            className: 'highcharts-annotation-label'
+        },
+        void 0,
+        popupDiv
+    );
+    label.setAttribute('aria-label', 'Annotation type');
+    label.appendChild(
+        doc.createTextNode(
+            pick(
+                // Advanced annotations:
+                lang[options.langKey as any] || options.langKey,
+                // Basic shapes:
+                options.shapes && options.shapes[0].type,
+                ''
+            )
+        )
     );
 
     // add buttons
+
     let button = this.addButton(
-        popupDiv,
-        lang.removeButton || 'Remove',
-        'remove',
-        popupDiv,
-        callback
-    );
-
-    button.className += ' highcharts-annotation-remove-button';
-    button.style['background-image' as any] = 'url(' +
-        this.iconsURL + 'destroy.svg)';
-
-    button = this.addButton(
         popupDiv,
         lang.editButton || 'Edit',
         'edit',
@@ -197,6 +197,17 @@ function addToolbar(
     button.style['background-image' as any] = 'url(' +
         this.iconsURL + 'edit.svg)';
 
+    button = this.addButton(
+        popupDiv,
+        lang.removeButton || 'Remove',
+        'remove',
+        popupDiv,
+        callback
+    );
+
+    button.className += ' highcharts-annotation-remove-button';
+    button.style['background-image' as any] = 'url(' +
+        this.iconsURL + 'destroy.svg)';
 }
 
 /**

@@ -18,10 +18,14 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
+import type { AxisSetExtremesEventObject } from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type Color from '../../Core/Color/Color';
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
@@ -34,6 +38,7 @@ const {
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     error,
     pushUnique
 } = U;
@@ -62,6 +67,7 @@ const contexts = [
  */
 function compose(
     ChartClass: typeof Chart,
+    AxisClass: typeof Axis,
     SeriesClass: typeof Series,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     ColorClass?: typeof Color
@@ -88,6 +94,52 @@ function compose(
 
     BoostChart.compose(ChartClass, wglMode);
     BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
+
+    // Handle zooming by touch/pinch or mouse wheel. Assume that boosted charts
+    // are too slow for a live preview while dragging. Instead, just scale the
+    // div while `isPanning`.
+    addEvent(AxisClass, 'setExtremes', function (
+        e: AxisSetExtremesEventObject
+    ): void {
+        // Render targets can be either chart-wide or series-specific
+        const renderTargets = [this.chart, ...this.series]
+            .map((item): SVGElement|HTMLElement|undefined => item.renderTarget)
+            .filter(Boolean);
+
+        for (const renderTarget of renderTargets) {
+            const { horiz, pos } = this,
+                scaleKey = horiz ? 'scaleX' : 'scaleY',
+                translateKey = horiz ? 'translateX' : 'translateY',
+                lastScale = renderTarget?.[scaleKey] ?? 1;
+
+            let scale = 1,
+                translate = 0,
+                opacity = 1,
+                filter = 'none';
+
+            if (this.isPanning) {
+                scale = (e.scale ?? 1) * lastScale;
+                translate = (renderTarget?.[translateKey] || 0) -
+                    scale * (e.move || 0) +
+                    lastScale * pos -
+                    scale * pos;
+
+                opacity = 0.7;
+                filter = 'blur(3px)';
+            }
+
+            renderTarget
+                ?.attr({
+                    [scaleKey]: scale,
+                    [translateKey]: translate
+                })
+                .css({
+                    transition: '250ms filter, 250ms opacity',
+                    filter,
+                    opacity
+                });
+        }
+    });
 }
 
 /**

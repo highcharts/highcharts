@@ -17,7 +17,6 @@
  * */
 
 import type {
-    MapViewInsetsOptions,
     MapViewOptions
 } from './MapViewOptions';
 

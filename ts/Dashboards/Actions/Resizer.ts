@@ -16,6 +16,7 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Cell from '../Layout/Cell.js';
 import type Serializable from '../Serializable';
@@ -377,9 +378,7 @@ class Resizer {
             resizer.startX = e.clientX;
         };
 
-        resizer.mouseDownSnapY = mouseDownSnapY = function (
-            e: PointerEvent
-        ): void {
+        resizer.mouseDownSnapY = mouseDownSnapY = function (): void {
             resizer.isActive = true;
             resizer.currentDimension = 'y';
             resizer.editMode.hideToolbars(['row', 'cell']);
@@ -395,9 +394,7 @@ class Resizer {
             }
         };
 
-        resizer.mouseUpSnap = mouseUpSnap = function (
-            e: PointerEvent
-        ): void {
+        resizer.mouseUpSnap = mouseUpSnap = function (): void {
             if (resizer.isActive) {
                 resizer.isActive = false;
                 resizer.currentDimension = void 0;
@@ -420,14 +417,12 @@ class Resizer {
         addEvent(document, 'mouseup', mouseUpSnap);
 
         // Touch events
-        // if (hasTouch) {
-        //     addEvent(snapX, 'touchstart', mouseDownSnapX);
-        //     addEvent(snapY, 'touchstart', mouseDownSnapY);
+        // addEvent(snapX, 'touchstart', mouseDownSnapX);
+        // addEvent(snapY, 'touchstart', mouseDownSnapY);
 
-        //     if (!rowContainer.hcEvents.mousemove) {
-        //         addEvent(rowContainer, 'touchmove', mouseMoveSnap);
-        //         addEvent(rowContainer, 'touchend', mouseUpSnap);
-        //     }
+        // if (!rowContainer.hcEvents.mousemove) {
+        //     addEvent(rowContainer, 'touchmove', mouseMoveSnap);
+        //     addEvent(rowContainer, 'touchend', mouseUpSnap);
         // }
 
         const runReflow = (): void => {

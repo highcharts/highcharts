@@ -16,7 +16,10 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type {
+    AxisOptions,
+    AxisSetExtremesEventObject
+} from '../../Core/Axis/AxisOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
@@ -453,7 +456,7 @@ class RangeSelector {
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
 
-        // zoomed range based on a pre-selected button index
+        // Zoomed range based on a pre-selected button index
         if (
             typeof selectedOption !== 'undefined' &&
             buttonOptions[selectedOption]
@@ -468,10 +471,11 @@ class RangeSelector {
                 addEvent(
                     chart.xAxis[0],
                     'setExtremes',
-                    function (e: any): void {
+                    function (e: AxisSetExtremesEventObject): void {
                         if (
-                            (this.max as any) - (this.min as any) !==
-                                chart.fixedRange &&
+                            isNumber(this.max) &&
+                            isNumber(this.min) &&
+                            this.max - this.min !== chart.fixedRange &&
                             e.trigger !== 'rangeSelectorButton' &&
                             e.trigger !== 'updatedData' &&
                             rangeSelector.forcedDataGrouping &&
@@ -553,8 +557,20 @@ class RangeSelector {
                 isSelectedTooGreat = true;
             }
 
-            // Months and years have a variable range so we check the extremes
             if (
+                baseAxis.isOrdinal &&
+                baseAxis.ordinal?.positions &&
+                range &&
+                actualRange < range
+            ) {
+                // Handle ordinal ranges
+                const positions = baseAxis.ordinal.positions;
+
+                if (positions[positions.length - 1] - positions[0] > range) {
+                    isSameRange = true;
+                }
+            } else if (
+                // Months and years have variable range so we check the extremes
                 (type === 'month' || type === 'year') &&
                 (
                     actualRange + 36e5 >=
@@ -1624,7 +1640,7 @@ class RangeSelector {
         xOffsetForExportButton: number,
         width?: number
     ): void {
-        const { chart, options, buttonGroup, buttons } = this;
+        const { chart, options, buttonGroup } = this;
         const { buttonPosition } = options;
         const plotLeft = chart.plotLeft - chart.spacing[3];
         let translateX = buttonPosition.x - chart.spacing[3];

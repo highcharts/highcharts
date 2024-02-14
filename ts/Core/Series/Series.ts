@@ -62,7 +62,6 @@ import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const {
-    hasTouch,
     svg,
     win
 } = H;
@@ -679,8 +678,7 @@ class Series {
         options: DeepPartial<SeriesOptions>,
         oldOptions: DeepPartial<SeriesOptions>
     ): boolean | undefined {
-        const series = this,
-            marker = options.marker,
+        const marker = options.marker,
             oldMarker = oldOptions.marker || {};
 
         return marker && (
@@ -869,7 +867,8 @@ class Series {
 
         // Handle color zones
         this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = (options.zones || []).slice();
+        const zones = this.zones = // #20440, create deep copy of zones options
+            (options.zones || []).map((z): SeriesZonesOptions => ({ ...z }));
         if (
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
@@ -2514,9 +2513,7 @@ class Series {
             }
 
             group.clip(animationClipRect);
-            if (markerGroup) {
-                markerGroup.clip(markerAnimationClipRect);
-            }
+            markerGroup?.clip(markerAnimationClipRect);
 
 
         // Run the animation
@@ -2528,8 +2525,12 @@ class Series {
             const finalBox = this.getClipBox(),
                 step = animation.step;
 
-            // Only do this when there are actually markers
-            if (markerGroup && markerGroup.element.childNodes.length) {
+            // Only do this when there are actually markers, or we have multiple
+            // series (#20473)
+            if (
+                markerGroup?.element.childNodes.length ||
+                chart.series.length > 1
+            ) {
 
                 // To provide as smooth animation as possible, update the marker
                 // group clipping in steps of the main group animation
@@ -2539,8 +2540,7 @@ class Series {
                     }
                     if (
                         fx.prop === 'width' &&
-                        markerAnimationClipRect &&
-                        markerAnimationClipRect.element
+                        markerAnimationClipRect?.element
                     ) {
                         markerAnimationClipRect.attr(
                             inverted ? 'height' : 'width',
@@ -3077,7 +3077,7 @@ class Series {
                 };
 
             // Reset
-            zones.forEach((zone, i): void => {
+            zones.forEach((zone): void => {
                 zone.lineClip = [];
                 zone.translated = clamp(
                     axis.toPixels(
@@ -3831,9 +3831,7 @@ class Series {
                         tracker.css({ cursor: options.cursor });
                     }
 
-                    if (hasTouch) {
-                        tracker.on('touchstart', onMouseOver);
-                    }
+                    tracker.on('touchstart', onMouseOver);
                 }
             });
         }
@@ -4234,7 +4232,8 @@ class Series {
                 'minY',
                 'maxY',
                 'minX',
-                'maxX'
+                'maxX',
+                'transformGroups' // #18857
             );
             if (options.visible !== false) {
                 preserve.push('area', 'graph');

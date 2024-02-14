@@ -175,8 +175,6 @@ class GoogleSheetsConnector extends DataConnector {
             url
         });
 
-        // If already loaded, clear the current table
-        table.deleteColumns();
 
         return fetch(url)
             .then((
@@ -195,6 +193,8 @@ class GoogleSheetsConnector extends DataConnector {
                     json
                 });
 
+                // If already loaded, clear the current table
+                table.deleteColumns();
                 table.setColumns(
                     converter.getTable().getColumns()
                 );

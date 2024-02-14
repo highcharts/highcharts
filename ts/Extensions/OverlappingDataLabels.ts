@@ -19,10 +19,8 @@
  *
  * */
 
-import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
@@ -82,7 +80,6 @@ function chartHideOverlappingLabels(
 ): void {
     const chart = this,
         len = labels.length,
-        ren = chart.renderer,
         isIntersectRect = (
             box1: BBoxObject,
             box2: BBoxObject

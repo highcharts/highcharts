@@ -27,6 +27,7 @@ import type {
 import type MapChart from '../Core/Chart/MapChart';
 import type MapSeries from '../Series/Map/MapSeries';
 import type MapPointOptions from '../Series/Map/MapPointOptions';
+import type PointerEvent from '../Core/PointerEvent';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type ProjectionOptions from './ProjectionOptions';
 import type {
@@ -1001,32 +1002,60 @@ class MapView {
 
         const { chart } = this;
 
-        // Set up panning for maps. In orthographic projections the globe will
-        // rotate, otherwise adjust the map center.
-        let mouseDownCenterProjected: [number, number];
-        let mouseDownKey: string;
-        let mouseDownRotation: number[]|undefined;
+        // Set up panning and touch zoom for maps. In orthographic projections
+        // the globe will rotate, otherwise adjust the map center and zoom.
+        let mouseDownCenterProjected: [number, number],
+            mouseDownKey: string,
+            mouseDownRotation: number[]|undefined;
+
         const onPan = (e: PointerEvent): void => {
 
-            const pinchDown = chart.pointer.pinchDown,
-                projection = this.projection;
+            const { lastTouches, pinchDown } = chart.pointer,
+                projection = this.projection,
+                touches = e.touches as unknown as Array<PointerEvent>;
 
             let {
-                mouseDownX,
-                mouseDownY
-            } = chart;
+                    mouseDownX,
+                    mouseDownY
+                } = chart,
+                howMuch = 0;
 
-            if (pinchDown.length === 1) {
+            if (pinchDown?.length === 1) {
                 mouseDownX = pinchDown[0].chartX;
                 mouseDownY = pinchDown[0].chartY;
+            } else if (pinchDown?.length === 2) {
+                mouseDownX = (pinchDown[0].chartX + pinchDown[1].chartX) / 2;
+                mouseDownY = (pinchDown[0].chartY + pinchDown[1].chartY) / 2;
             }
 
-            if (
-                typeof mouseDownX === 'number' &&
-                typeof mouseDownY === 'number'
-            ) {
-                const key = `${mouseDownX},${mouseDownY}`,
-                    { chartX, chartY } = (e as any).originalEvent;
+            // How much has the distance between the fingers changed?
+            if (touches?.length === 2 && lastTouches) {
+                const startDistance = Math.sqrt(
+                        Math.pow(
+                            lastTouches[0].chartX - lastTouches[1].chartX,
+                            2
+                        ) +
+                        Math.pow(
+                            lastTouches[0].chartY - lastTouches[1].chartY,
+                            2
+                        )
+                    ),
+                    endDistance = Math.sqrt(
+                        Math.pow(touches[0].chartX - touches[1].chartX, 2) +
+                        Math.pow(touches[0].chartY - touches[1].chartY, 2)
+                    );
+                howMuch = Math.log(startDistance / endDistance) / Math.log(0.5);
+            }
+
+            if (isNumber(mouseDownX) && isNumber(mouseDownY)) {
+                const key = `${mouseDownX},${mouseDownY}`;
+
+                let { chartX, chartY } = (e as any).originalEvent;
+
+                if (touches?.length === 2) {
+                    chartX = (touches[0].chartX + touches[1].chartX) / 2;
+                    chartY = (touches[0].chartY + touches[1].chartY) / 2;
+                }
 
                 // Reset starting position
                 if (key !== mouseDownKey) {
@@ -1051,6 +1080,7 @@ class MapView {
                 // Panning rotates the globe
                 if (
                     projection.options.name === 'Orthographic' &&
+                    (touches?.length || 0) < 2 &&
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
@@ -1101,7 +1131,7 @@ class MapView {
 
                     // #19190 Skip NaN coords
                     if (!isNaN(newCenter[0] + newCenter[1])) {
-                        this.setView(newCenter, void 0, true, false);
+                        this.zoomBy(howMuch, newCenter, void 0, false);
                     }
                 }
 
@@ -1277,17 +1307,15 @@ class MapView {
         chartCoords?: [number, number],
         animation?: boolean|Partial<AnimationOptions>
     ): void {
-        const chart = this.chart;
-        const projectedCenter = this.projection.forward(this.center);
-
-        // let { x, y } = coords || {};
-        let [x, y] = coords ? this.projection.forward(coords) : [];
-
+        const chart = this.chart,
+            projectedCenter = this.projection.forward(this.center);
 
         if (typeof howMuch === 'number') {
             const zoom = this.zoom + howMuch;
 
-            let center: LonLatArray|undefined;
+            let center: LonLatArray|undefined,
+                x: number|undefined,
+                y: number|undefined;
 
             // Keep chartX and chartY stationary - convert to lat and lng
             if (chartCoords) {
@@ -1304,8 +1332,6 @@ class MapView {
             if (typeof x === 'number' && typeof y === 'number') {
                 const scale = 1 - Math.pow(2, this.zoom) / Math.pow(2, zoom);
 
-                // const projectedCenter = this.projection.forward(this.center);
-
                 const offsetX = projectedCenter[0] - x;
                 const offsetY = projectedCenter[1] - y;
 
@@ -1314,8 +1340,7 @@ class MapView {
 
                 center = this.projection.inverse(projectedCenter);
             }
-
-            this.setView(center, zoom, void 0, animation);
+            this.setView(coords || center, zoom, void 0, animation);
 
         // Undefined howMuch => reset zoom
         } else {

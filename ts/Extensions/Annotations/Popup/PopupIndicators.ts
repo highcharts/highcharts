@@ -32,8 +32,6 @@ import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import NU from '../NavigationBindingsUtilities.js';
-const { annotationsFieldsTypes } = NU;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -339,6 +337,42 @@ function addIndicatorList(
     listType: string,
     filter?: string
 ): void {
+    function selectIndicator(
+        series: SMAIndicator,
+        indicatorType: string
+    ): void {
+        const button = rhsColWrapper.parentNode
+            .children[1] as HTMLDOMElement;
+
+        addFormFields.call(
+            popup,
+            chart,
+            series,
+            indicatorType,
+            rhsColWrapper
+        );
+        if (button) {
+            button.style.display = 'block';
+        }
+
+
+        // add hidden input with series.id
+        if (isEdit && series.options) {
+            createElement(
+                'input',
+                {
+                    type: 'hidden',
+                    name: 'highcharts-id-' + indicatorType,
+                    value: series.options.id
+                },
+                void 0,
+                rhsColWrapper
+            ).setAttribute(
+                'highcharts-data-series-id',
+                (series as any).options.id
+            );
+        }
+    }
     const popup = this,
         lang = popup.lang,
         lhsCol = parentDiv.querySelectorAll(
@@ -416,52 +450,30 @@ function addIndicatorList(
             void 0,
             indicatorList
         );
-        item.appendChild(doc.createTextNode(
-            indicatorFullName
-        ));
+
+        let btn = createElement(
+            'button',
+            {
+                className: 'highcharts-indicator-list-item',
+                textContent: indicatorFullName
+            },
+            void 0,
+            item
+        );
 
         ['click', 'touchstart'].forEach((
             eventName: string
         ): void => {
-            addEvent(item, eventName, function (): void {
-                const button = rhsColWrapper.parentNode
-                    .children[1] as HTMLDOMElement;
-
-                addFormFields.call(
-                    popup,
-                    chart,
-                    series,
-                    indicatorType,
-                    rhsColWrapper
-                );
-                if (button) {
-                    button.style.display = 'block';
-                }
-
-
-                // add hidden input with series.id
-                if (isEdit && series.options) {
-                    createElement(
-                        'input',
-                        {
-                            type: 'hidden',
-                            name: 'highcharts-id-' + indicatorType,
-                            value: series.options.id
-                        },
-                        void 0,
-                        rhsColWrapper
-                    ).setAttribute(
-                        'highcharts-data-series-id',
-                        (series as any).options.id
-                    );
-                }
+            addEvent(btn, eventName, function (): void {
+                selectIndicator(series, indicatorType);
             });
         });
     });
 
     // select first item from the list
-    if (indicatorList.childNodes.length > 0) {
-        (indicatorList.childNodes[0] as HTMLDOMElement).click();
+    if (filteredSeriesArray.length > 0) {
+        let { series, indicatorType } = filteredSeriesArray[0];
+        selectIndicator(series, indicatorType);
     } else if (!isEdit) {
         AST.setElementHTML(
             rhsColWrapper.parentNode.children[0],
@@ -470,6 +482,7 @@ function addIndicatorList(
         (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
             .style.display = 'none';
     }
+
 }
 
 /**
@@ -503,13 +516,6 @@ function addParamInputs(
     const addInput = this.addInput;
 
     objectEach(fields, (value, fieldName): void => {
-        const predefinedType = annotationsFieldsTypes[fieldName];
-        let fieldType = type;
-
-        if (predefinedType) {
-            fieldType = predefinedType;
-        }
-
         // create name like params.styles.fontSize
         const parentFullName = parentNode + '.' + fieldName;
 
@@ -646,7 +652,7 @@ function addSearchBox(
     button.classList.add('clear-filter-button');
 
     // Add input change events.
-    addEvent(input, 'input', function (e): void {
+    addEvent(input, 'input', function (): void {
         handleInputChange(this.value);
 
         // Show clear filter button.
@@ -839,7 +845,6 @@ function filterSeries(
     filter?: string
 ): Array<FilteredSeries> {
     const popup = this,
-        indicators = popup.indicators,
         lang = popup.chart && popup.chart.options.lang,
         indicatorAliases = lang &&
             lang.navigation &&
@@ -1019,8 +1024,7 @@ function listAllSeries(
     currentSeries: SMAIndicator,
     selectedOption?: string
 ): void {
-    const popup = this,
-        indicators = popup.indicators;
+    const popup = this;
 
     // Won't work without the chart.
     if (!chart) {

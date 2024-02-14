@@ -105,7 +105,7 @@ function getListOfParents(
             if ((node !== root) && (ids.indexOf(node) === -1)) {
                 const adoptedByRoot = listOfParents[node].map(
                     function (orphan): TreePointOptionsObject {
-                        const { parent, ...parentExcluded } = orphan; // #15196
+                        const { ...parentExcluded } = orphan; // #15196
                         return parentExcluded;
                     }
                 );

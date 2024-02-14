@@ -83,14 +83,13 @@ function createChartAndAssertLongDesc(
 }
 
 QUnit.module('linked-description', function (hooks) {
-    // Dynamically set HTML content because of Karma HTML template
-    const container = document.getElementById('container');
-    hooks.before(() => (container.innerHTML = html));
-    hooks.after(() => (container.innerHTML = ''));
-
     QUnit.test(
         'Charts should have descriptions from next sibling with class name.',
         function (assert) {
+            // Dynamically set HTML content because of Karma HTML template
+            const container = document.getElementById('container');
+            container.innerHTML = html;
+
             const expectedDescs = [
                 ['containerSibling', 'Sibling'],
                 ['containerParent', ''],
@@ -105,12 +104,18 @@ QUnit.module('linked-description', function (hooks) {
             expectedDescs.forEach(([container, expectedDesc]) => {
                 createChartAndAssertLongDesc(assert, container, expectedDesc);
             });
+
+            container.innerHTML = '';
         }
     );
 
     QUnit.test(
         'Charts should have descriptions from element defined by option',
         function (assert) {
+            // Dynamically set HTML content because of Karma HTML template
+            const container = document.getElementById('container');
+            container.innerHTML = html;
+
             const descNode = document.getElementById('explicitDescriptionId'),
                 chartsWithExpectedDescriptions = [
                     [
@@ -132,6 +137,8 @@ QUnit.module('linked-description', function (hooks) {
                     );
                 }
             );
+
+            container.innerHTML = '';
         }
     );
 });

@@ -344,7 +344,7 @@ namespace ColumnDataLabel {
                 );
                 points.forEach((point): void => {
                     // Check if specific points' label is outside the pie
-                    (point.dataLabels || []).forEach((dataLabel, i): void => {
+                    (point.dataLabels || []).forEach((dataLabel): void => {
                         const labelPosition = dataLabel.dataLabelPosition;
                         if (
                             labelPosition &&

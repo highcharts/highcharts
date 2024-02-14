@@ -34,6 +34,7 @@ const {
     css,
     defined,
     error,
+    isNumber,
     pick,
     pushUnique,
     timeUnits
@@ -456,7 +457,7 @@ namespace OrdinalAxis {
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
-        if (positions.length) {
+        if (positions && positions.length) {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
@@ -512,28 +513,34 @@ namespace OrdinalAxis {
      * @private
      */
     function onAxisFoundExtremes(this: Composition): void {
-        const axis = this as Composition;
+        const axis = this as Composition,
+            { eventArgs, options } = axis;
 
         if (
             axis.isXAxis &&
-            defined(axis.options.overscroll) &&
+            defined(options.overscroll) &&
+            isNumber(axis.max) &&
+            isNumber(axis.min) &&
             axis.max === axis.dataMax &&
             (
-                // Panning is an execption. We don't want to apply
-                // overscroll when panning over the dataMax
-                !axis.chart.mouseIsDown ||
+                // Panning is an exception. We don't want to apply overscroll
+                // when panning over the dataMax
+                eventArgs?.trigger !== 'pan' ||
                 axis.isInternal
-            ) && (
-                // Scrollbar buttons are the other execption:
-                !axis.eventArgs ||
-                axis.eventArgs && axis.eventArgs.trigger !== 'navigator'
-            )
+            ) &&
+            // Scrollbar buttons are the other execption
+            eventArgs?.trigger !== 'navigator'
         ) {
-            (axis.max as any) += (axis.options.overscroll as any);
+
+            axis.max += options.overscroll;
 
             // Live data and buttons require translation for the min:
-            if (!axis.isInternal && defined(axis.userMin)) {
-                (axis.min as any) += (axis.options.overscroll as any);
+            if (
+                !axis.isInternal &&
+                defined(axis.userMin) &&
+                eventArgs?.trigger !== 'mousewheel'
+            ) {
+                axis.min += options.overscroll;
             }
         }
     }
@@ -1303,7 +1310,6 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                axis = ordinal.axis,
                 processedXData = series.processedXData,
                 len = (processedXData as any).length,
                 distances = [];

@@ -42,13 +42,11 @@ const {
     animObject,
     stop
 } = A;
-import AST from '../HTML/AST.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
     deg2rad,
     doc,
-    noop,
     svg,
     SVG_NS,
     win
@@ -122,6 +120,10 @@ interface TextPathObject {
  * {@link Highcharts.SVGRenderer#label|label},
  * {@link Highcharts.SVGRenderer#g|g}
  * and more.
+ *
+ * See [How to use the SVG Renderer](
+ * https://www.highcharts.com/docs/advanced-chart-features/renderer) for a
+ * comprehensive tutorial on how to draw SVG elements on a chart.
  *
  * @class
  * @name Highcharts.SVGElement
@@ -1420,7 +1422,6 @@ class SVGElement implements SVGElementLike {
             );
 
         let bBox: BBoxObject|undefined,
-            width,
             height,
             toggleTextShadowShim,
             cacheKey;
@@ -1520,7 +1521,6 @@ class SVGElement implements SVGElementLike {
 
             // True SVG elements as well as HTML elements in modern browsers
             // using the .useHTML option need to compensated for rotation
-            width = bBox.width;
             height = bBox.height;
 
             // Workaround for wrong bounding box in IE, Edge and Chrome on
