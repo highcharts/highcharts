@@ -19,16 +19,32 @@
     <h2>Dashboards components</h2>
     <ul>
         <li><b>Dashboards KPI</b> for the national results or state results (with pictures and dual-colored bar)</li>
-        <li><b>Dashboards custom HTML</b> provides a dropdown for the election year and a checkbox to select all states.</li>
+        <li><b>Dashboards custom HTML</b> provides a dropdown for the election year and a checkbox to select all states.
+        </li>
         <li><b>Highcharts Maps</b> shows the winning party per state (blue = Democrat, red = Republican).</li>
         <li><b>Highcharts Chart</b> shows historical national or state results.</li>
-        <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be changed.</li>
+        <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be
+            changed.</li>
     </ul>
     <h2>Data set</h2>
     <p>The data used in this demo are provided by ....</p>
 </div>
 
-<!-- This element is moved into the Dashboard custom HTML components on load -->
+<!-- These elements are moved into the Dashboard custom HTML components on load -->
+<div id="html-result-div">
+    <div>
+        <img id="rep-cand"
+            src="https://wp-assets.highcharts.com/svg/icon_support.svg">
+    </div>
+    <div id="progress-bar">
+        <p>Progress bar goes here ...</p>
+    </div>
+    <div>
+        <img id="dem-cand"
+            src="https://wp-assets.highcharts.com/svg/dashboard-dark.svg">
+    </div>
+</div>
+
 <div id="html-control-div">
     <h1>United States presidential election</h1>
     <label for="elections">Election year:</label>
@@ -42,4 +58,3 @@
         <p>Text describing the election will be added here... (includes relevant links)</p>
     </div>
 </div>
-

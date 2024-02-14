@@ -21,18 +21,25 @@
 // ........ | ......... | .........  | ...         | ..... | ....  |
 // Wyoming  | rep. vote | dem. vote  | int         | float | float | WY
 
-// PoC, possible ideas
+// Useful links
 // -----------------------------------------------------------------------------
 // * Bar race https://www.highcharts.com/demo/highcharts/bar-race
-// * KPI? https://www.highcharts.com/demo/highcharts/pie-semi-circle (picture on both sides)
 // * Map: https://www.highcharts.com/demo/maps/data-class-two-ranges
+// * Ref: https://www.presidency.ucsb.edu/statistics/elections
 
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
 const commonTitle = 'U.S. presidential election';
-const electionYears = ['2020', '2016', '2012', '2008'];
+const elections = {
+    // TBD: remove year
+    2020: { year: '2020', repCand: 'Trump', demCand: 'Biden' },
+    2016: { year: '2016', repCand: 'Trump', demCand: 'Clinton' },
+    2012: { year: '2012', repCand: 'Romney', demCand: 'Obama' },
+    2008: { year: '2008', repCand: 'McCain', demCand: 'Obama' }
+};
+const electionYears = Object.keys(elections).reverse();
 const selectedYear = electionYears[0];
 
 let electionData = null;
@@ -291,7 +298,7 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'kpi-result'
+                        id: 'html-result'
                     }, {
                         // Top right
                         id: 'html-control'
@@ -314,41 +321,9 @@ async function setupDashboard() {
         },
         components: [
             {
-                renderTo: 'kpi-result',
-                type: 'KPI',
-                title: '(to be replaced by progress bar)', // commonTitle,
-                valueFormat: '{value} per cent',
-                chartOptions: {
-                    chart: {
-                        type: 'pie',
-                        styledMode: false,
-                        height: 180
-                    },
-                    plotOptions: {
-                        pie: {
-                            borderRadius: 1,
-                            dataLabels: {
-                                enabled: true,
-                                format: '<b>{point.name}</b><br>{point.percentage:.1f} per cent',
-                                filter: {
-                                    property: 'percentage',
-                                    operator: '>',
-                                    value: 10
-                                }
-                            }
-                        }
-                    },
-                    tooltip: {
-                        valueDecimals: 1,
-                        headerFormat: null,
-                        pointFormat: '{point.name}: {point.percentage:.1f} per cent'
-                    },
-                    series: [{
-                        name: 'kpiResult',
-                        // Data populated dynamically
-                        data: []
-                    }]
-                }
+                renderTo: 'html-result',
+                type: 'CustomHTML',
+                id: 'html-result-div'
             },
             {
                 renderTo: 'html-control',
@@ -467,12 +442,16 @@ async function setupDashboard() {
                     },
                     plotOptions: {
                         series: {
-                            dataLabels: {
+                            dataLabels: [{
+                                enabled: true,
+                                format: '{point.y:.1f} %',
+                                y: 30 // Pixels down from the top
+                            }, {
                                 enabled: true,
                                 rotation: -90,
-                                format: '{point.name}  {point.y:.1f} %',
-                                y: 120 // Pixels down from the top
-                            }
+                                format: '{point.name}',
+                                y: 140 // Pixels down from the top
+                            }]
                         }
                     },
                     xAxis: {
@@ -582,38 +561,30 @@ async function updateBoard(board, state, year) {
 
     const [
         // The order here must be the same as in the component definition in the Dashboard.
-        resultKpi,
+        resultHtml,
         controlHtml,
         usMap,
         historyChart,
         selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
-    // 1. Update KPI (if state or year changes)
+    // 1. Update result HTML (if state or year changes)
     const row = votesTable.getRowIndexBy('state', 'Federal');
     const repVal = votesTable.getCellAsNumber('repPercent', row);
     const demVal = votesTable.getCellAsNumber('demPercent', row);
     const otherVal = 100.0 - repVal - demVal;
+    const candDem = electionData[year].candDem;
+    const candRep = electionData[year].candRep;
 
-    /*
-    await resultKpi.update({
+    await resultHtml.update({
         title: {
             text: title
         }
     });
-    */
-    const candDem = electionData[year].candRep;
-    const candRep = electionData[year].candDem;
+    const elem = document.getElementById('progress-bar');
+    elem.innerHTML = `${candRep} v ${candDem}`;
 
-    await resultKpi.chart.series[0].update({
-        data: [
-            { name: candRep, y: repVal },
-            { name: candDem, y: demVal },
-            { name: 'Others', y: otherVal }
-        ]
-    });
-
-    // 2. Update control (TBD: if state changes)
+    // 2. Update control: TBD when description is introduced.
 
     // 3. Update map (if year changes)
     await usMap.chart.update({
@@ -643,7 +614,7 @@ async function updateBoard(board, state, year) {
         });
     });
 
-    // 4. Update chart (TBD: if state clicked)
+    // 4. Update history chart (TBD: when state clicked)
 
     // 5. Update grid (if year changes)
     await selectionGrid.update({
@@ -689,7 +660,7 @@ class CustomHTML extends HTMLComponent {
             // Copy custom HTML into Dashboards component
             this.options.elements = new AST(customHTML).nodes;
 
-            // Remove original
+            // Remove the original
             domEl.remove();
         }
     }

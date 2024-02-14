@@ -146,32 +146,6 @@
 
 /* *
  *
- *  HTML application control
- *
- * */
-
-div#html-control-div h1 {
-    font-size: 1.5em;
-    text-align: center;
-}
-
-div#html-control-div #election-year {
-    text-align: center;
-    margin: 20px;
-}
-
-div#html-control-div div#election-description {
-    border: 1px dotted #ccc;
-    max-width: 800px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 0.9em;
-    color: orangered;
-    margin: auto;
-}
-
-/* *
- *
  *  Selection Grid
  *
  * */
@@ -281,7 +255,7 @@ div#html-control-div div#election-description {
     stroke-width: 2px;
 }
 
-#kpi-result,
+#html-result,
 #us-map,
 #election-chart {
     --highcharts-color-0: #c40401; /* Republicans */
@@ -289,7 +263,7 @@ div#html-control-div div#election-description {
     --highcharts-color-2: #ccc; /* Others */
 }
 
-#kpi-result,
+#html-result,
 #us-map {
     flex: 1 1 65%;
     max-width: 1000px;
@@ -306,7 +280,7 @@ div#html-control-div div#election-description {
 
 /* LARGE */
 @media (max-width: 1200px) {
-    #kpi-result,
+    #html-result,
     #us-map {
         background-color: yellow;
     }
@@ -323,7 +297,7 @@ div#html-control-div div#election-description {
 
 /* MEDIUM */
 @media (max-width: 992px) {
-    #kpi-result,
+    #html-result,
     #html-control {
         background-color: red;
         flex: 1 1 50%;
@@ -339,9 +313,9 @@ div#html-control-div div#election-description {
 
 /* SMALL */
 @media (max-width: 576px) {
-    #kpi-result,
-    #us-map,
+    #html-result,
     #html-control,
+    #us-map,
     #election-chart,
     #selection-grid {
         background-color: blue;
@@ -355,13 +329,59 @@ div#html-control-div div#election-description {
  *
  * */
 
-#html-control-div {
+#html-result-div {
+    display: flex;
     text-align: center;
 }
 
-#html-control-div h1 {
-    font-size: 20px;
-    color: #336;
+#html-result .highcharts-dashboards-component-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+    text-align: center;
+}
+
+#html-result-div div {
+    margin: auto;
+    padding: 5px;
+}
+
+#html-result-div div img {
+    width: 100px;
+    height: 100px;
+}
+
+#html-result-div #progress-bar {
+    width: 50%;
+    border: 1px solid grey;
+}
+
+/* *
+ *
+ *  HTML application control
+ *
+ * */
+
+div#html-control-div {
+    text-align: center;
+}
+
+div#html-control-div h1 {
+    font-size: 1.2em;
+    text-align: center;
+}
+
+div#html-control-div #election-year {
+    margin: 10px;
+}
+
+div#html-control-div div#election-description {
+    border: 1px dotted #ccc;
+    max-width: 600px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    color: orangered;
+    margin: auto;
 }
 
 /* *
