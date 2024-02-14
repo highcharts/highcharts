@@ -1,6 +1,6 @@
 (async () => {
     // Load the dataset
-    const formatString = '{#ge point.open point.close}#ff4242{else}#51af7b{/ge}';
+    const formatString = 'style="color:{#ge point.open point.close}#ff6e6e{else}#51af7b{/ge}';
     const data = await fetch(
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
@@ -27,6 +27,11 @@
     }
 
     Highcharts.stockChart('container', {
+        lang: {
+            accessibility: {
+                chartContainerLabel: 'AAPL Stock Price, Highcharts interactive chart'
+            }
+        },
         xAxis: {
             crosshair: {
                 className: 'highcharts-crosshair-custom',
@@ -76,15 +81,15 @@
             headerShape: 'callout',
             shadow: false,
             format: `<span style="font-size: 1.4em">{point.series.name}</span>
-O<span style="color:{#ge point.open point.close}#ff4242{else}#51af7b{/ge}";>{point.open}</span>
-H<span style="color:{#ge point.open point.close}#ff4242{else}#51af7b{/ge}";>{point.high}</span>
-L<span style="color:{#ge point.open point.close}#ff4242{else}#51af7b{/ge}";>{point.low}</span>
-C<span style="color:{#ge point.open point.close}#ff4242{else}#51af7b{/ge}";>{point.close}
+O<span ${formatString}>{point.open}</span>
+H<span ${formatString}>{point.high}</span>
+L<span ${formatString}>{point.low}</span>
+C<span ${formatString}>{point.close}
 {(subtract point.open point.close):.2f}
 {(multiply (divide (subtract point.open point.close) point.close) 100):.2f}%
 </span>
 <br>
-Volume<span style="color:{#ge point.open point.close}#ff4242{else}#51af7b{/ge}";>{points.1.y}</span>`,
+Volume<span ${formatString}>{points.1.y}</span>`,
             positioner: () => ({ x: 60, y: 0 })
         },
         series: [{
