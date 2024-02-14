@@ -176,6 +176,19 @@ const setupDashboard = instanceId => {
                 }, {
                     cells: [{
                         height: 400,
+                        id: 'instances-table',
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            },
+                            medium: {
+                                width: '100%'
+                            },
+                            large: {
+                                width: '50%'
+                            }
+                        }
+                    }, {
                         layout: {
                             rows: [{
                                 cells: [{
@@ -195,19 +208,6 @@ const setupDashboard = instanceId => {
                                 }]
                             }]
                         },
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
-                    }, {
-                        id: 'disk-usage',
                         height: 400,
                         responsive: {
                             small: {
@@ -223,7 +223,8 @@ const setupDashboard = instanceId => {
                     }]
                 }, {
                     cells: [{
-                        id: 'instances-table',
+                        id: 'disk-usage',
+                        height: 400,
                         responsive: {
                             small: {
                                 width: '100%'
@@ -237,6 +238,7 @@ const setupDashboard = instanceId => {
                         }
                     }, {
                         id: 'cpu-utilization',
+                        height: 400,
                         responsive: {
                             small: {
                                 width: '100%'
@@ -357,12 +359,25 @@ const setupDashboard = instanceId => {
                         description: 'Gigabytes'
                     }
                 },
+                legend: {
+                    enabled: false
+                },
                 chart: {
                     type: 'bar'
                 },
                 tooltip: {
                     headerFormat: '',
                     valueSuffix: ' Gb'
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function () {
+                                return this.series.name;
+                            }
+                        }
+                    }
                 },
                 lang: {
                     accessibility: {
@@ -410,6 +425,9 @@ const setupDashboard = instanceId => {
                     accessibility: {
                         description: 'Percents'
                     }
+                },
+                legend: {
+                    enabled: false
                 },
                 tooltip: {
                     valueSuffix: '%'
