@@ -109,11 +109,10 @@ namespace GeometryUtilities {
 
         for (i = 0, j = len - 1; i < len; j = i++) {
             const [x1, y1] = polygon[i],
-                [x2, y2] = polygon[j],
-                yRel = y1 > y !== y2 > y;
+                [x2, y2] = polygon[j];
 
             if (
-                yRel &&
+                y1 > y !== y2 > y &&
                 (
                     x < (x2 - x1) *
                     (y - y1) /
