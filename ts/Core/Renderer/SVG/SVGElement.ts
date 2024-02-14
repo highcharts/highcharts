@@ -65,6 +65,7 @@ const {
     fireEvent,
     isArray,
     isFunction,
+    isNumber,
     isObject,
     isString,
     merge,
@@ -1613,7 +1614,11 @@ class SVGElement implements SVGElementLike {
         const x = Math.min(aX, bX, cX, dX),
             y = Math.min(aY, bY, cY, dY),
             boxWidth = Math.max(aX, bX, cX, dX) - x,
-            boxHeight = Math.max(aY, bY, cY, dY) - y;
+            boxHeight = Math.max(aY, bY, cY, dY) - y,
+            xAttr = this.attr('x'),
+            xCoord = isNumber(xAttr) ? xAttr : 0,
+            yAttr = this.attr('y'),
+            yCoord = isNumber(yAttr) ? yAttr : 0;
 
         return {
             x,
@@ -1621,10 +1626,10 @@ class SVGElement implements SVGElementLike {
             width: boxWidth,
             height: boxHeight,
             poly: [
-                [aX, aY],
-                [bX, bY],
-                [cX, cY],
-                [dX, dY]
+                [aX + xCoord, aY + yCoord],
+                [bX + xCoord, bY + yCoord],
+                [cX + xCoord, cY + yCoord],
+                [dX + xCoord, dY + yCoord]
             ]
         };
     }
