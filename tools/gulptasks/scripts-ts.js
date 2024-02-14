@@ -49,13 +49,15 @@ async function scriptsTS(argv) {
 
         fsLib.copyAllFiles(
             'ts',
-            'js',
+            argv.webpack ? 'code/es-modules/' : 'js',
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
 
         if (argv.dashboards) {
             await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
+        } else if (argv.webpack) {
+            await processLib.exec('npx tsc -p ts --outDir code/es-modules/');
         } else {
             await processLib.exec('npx tsc --build ts');
         }

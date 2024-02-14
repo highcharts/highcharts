@@ -156,6 +156,7 @@ function task() {
 
         if (
             argv.force ||
+            argv.webpack ||
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
