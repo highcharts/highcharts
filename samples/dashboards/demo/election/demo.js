@@ -33,11 +33,55 @@ const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_vote
 
 const commonTitle = 'U.S. presidential election';
 const elections = {
-    // TBD: remove year
-    2020: { year: '2020', repCand: 'Trump', demCand: 'Biden' },
-    2016: { year: '2016', repCand: 'Trump', demCand: 'Clinton' },
-    2012: { year: '2012', repCand: 'Romney', demCand: 'Obama' },
-    2008: { year: '2008', repCand: 'McCain', demCand: 'Obama' }
+    // TBD: moved into external JSON file.
+    2020: {
+        rep: {
+            cand: 'Trump',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Donald_Trump_official_portrait_%28cropped%29.jpg/290px-Donald_Trump_official_portrait_%28cropped%29.jpg'
+        },
+        dem: {
+            cand: 'Biden',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Joe_Biden_presidential_portrait_%28cropped%29.jpg/300px-Joe_Biden_presidential_portrait_%28cropped%29.jpg'
+        },
+        wiki: 'https://en.wikipedia.org/wiki/2020_United_States_presidential_election',
+        descr: 'The 2020 United States presidential election was the 59th quadrennial presidential election, held on Tuesday, November 3, 2020. The Democratic ticket of former vice president Joe Biden and the junior U.S. senator from California Kamala Harris defeated the incumbent Republican president, Donald Trump, and vice president, Mike Pence.'
+    },
+    2016: {
+        rep: {
+            cand: 'Trump',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Donald_Trump_official_portrait_%28cropped%29.jpg/290px-Donald_Trump_official_portrait_%28cropped%29.jpg'
+        },
+        dem: {
+            cand: 'Clinton',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Hillary_Clinton_by_Gage_Skidmore_2.jpg/270px-Hillary_Clinton_by_Gage_Skidmore_2.jpg'
+        },
+        wiki: 'https://en.wikipedia.org/wiki/2016_United_States_presidential_election',
+        descr: 'The 2016 United States presidential election was the 58th quadrennial presidential election, held on Tuesday, November 8, 2016. '
+    },
+    2012: {
+        rep: {
+            cand: 'Romney',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Mitt_Romney_by_Gage_Skidmore_6_cropped.jpg/299px-Mitt_Romney_by_Gage_Skidmore_6_cropped.jpg'
+        },
+        dem: {
+            cand: 'Obama',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/President_Barack_Obama%2C_2012_portrait_crop.jpg/308px-President_Barack_Obama%2C_2012_portrait_crop.jpg'
+        },
+        wiki: 'https://en.wikipedia.org/wiki/2012_United_States_presidential_election',
+        descr: 'The 2012 United States presidential election was the 57th quadrennial presidential election, held on Tuesday, November 6, 2012.'
+    },
+    2008: {
+        rep: {
+            cand: 'McCain',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/John_McCain_2009_Official.jpg/300px-John_McCain_2009_Official.jpg'
+        },
+        dem: {
+            cand: 'Obama',
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Obama_portrait_crop.jpg/298px-Obama_portrait_crop.jpg'
+        },
+        wiki: 'https://en.wikipedia.org/wiki/2008_United_States_presidential_election',
+        descr: 'The 2008 United States presidential election was the 56th quadrennial presidential election, held on November 4, 2008.'
+    }
 };
 const electionYears = Object.keys(elections).reverse();
 const selectedYear = electionYears[0];
@@ -581,10 +625,12 @@ async function updateBoard(board, state, year) {
             text: title
         }
     });
-    const elem = document.getElementById('progress-bar');
-    elem.innerHTML = `${candRep} v ${candDem}`;
+    let domEl = document.getElementById('progress-bar');
+    domEl.innerHTML = `${candRep} v ${candDem}`;
 
-    // 2. Update control: TBD when description is introduced.
+    // 2. Update control (election description)
+    domEl = document.getElementById('election-description');
+    domEl.innerHTML = elections[year].descr;
 
     // 3. Update map (if year changes)
     await usMap.chart.update({

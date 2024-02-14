@@ -376,12 +376,11 @@ div#html-control-div #election-year {
 
 div#html-control-div div#election-description {
     border: 1px dotted #ccc;
-    max-width: 600px;
-    border-radius: 10px;
+    border-radius: 5px;
     text-align: center;
     font-size: 0.9em;
-    color: orangered;
-    margin: auto;
+    padding: 5px;
+    margin: 20px;
 }
 
 /* *
