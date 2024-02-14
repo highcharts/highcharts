@@ -1,6 +1,6 @@
 (async () => {
     // Load the dataset
-    const formatString = 'style="color:{#ge point.open point.close}#ff6e6e{else}#51af7b{/ge}';
+    const colorTemplate = '{#ge point.open point.close}#ff6e6e{else}#51af7b{/ge}';
     const data = await fetch(
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
@@ -81,15 +81,15 @@
             headerShape: 'callout',
             shadow: false,
             format: `<span style="font-size: 1.4em">{point.series.name}</span>
-O<span ${formatString}>{point.open}</span>
-H<span ${formatString}>{point.high}</span>
-L<span ${formatString}>{point.low}</span>
-C<span ${formatString}>{point.close}
+O<span style="color:${colorTemplate}";>{point.open}</span>
+H<span style="color:${colorTemplate}";>{point.high}</span>
+L<span style="color:${colorTemplate}";>{point.low}</span>
+C<span style="color:${colorTemplate}";>{point.close}
 {(subtract point.open point.close):.2f}
 {(multiply (divide (subtract point.open point.close) point.close) 100):.2f}%
 </span>
 <br>
-Volume<span ${formatString}>{points.1.y}</span>`,
+Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`,
             positioner: () => ({ x: 60, y: 0 })
         },
         series: [{
