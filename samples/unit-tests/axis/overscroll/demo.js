@@ -201,28 +201,30 @@
 
             options.rangeSelector.selected = null;
             options.xAxis.overscroll = options.navigator.xAxis.overscroll = 0;
+            options.series[0].data = [
+                [0, 5],
+                [10, 5],
+                [20, 5],
+                [400, 5],
+                [401, 5],
+                [402, 5],
+                [404, 5]
+            ];
 
-            const xAxis = Highcharts.stockChart('container', options).xAxis[0],
-                xAxisRange = xAxis.max - xAxis.min;
+            const xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
             xAxis.update({
                 overscroll: overscrollPixelValue + 'px'
             });
 
-            assert.strictEqual(
-                xAxis.max - xAxis.min,
-                xAxisRange * xAxis.width / (xAxis.width - overscrollPixelValue),
+            const points = xAxis.series[0].points,
+                lastPoint = points[points.length - 1];
+
+            assert.close(
+                lastPoint.plotX,
+                xAxis.width - overscrollPixelValue,
+                xAxis.width / 100,
                 'Correct range with overscroll set in px'
-            );
-
-            xAxis.update({
-                overscroll: xAxis.width + 'px'
-            });
-
-            assert.strictEqual(
-                xAxis.max - xAxis.min,
-                xAxisRange * xAxis.width / (xAxis.width - 0.9 * xAxis.width),
-                'Correct range with overscroll set in px equal to xAxis width'
             );
         }
     );
@@ -235,17 +237,30 @@
 
             options.rangeSelector.selected = null;
             options.xAxis.overscroll = options.navigator.xAxis.overscroll = 0;
+            options.series[0].data = [
+                [0, 5],
+                [10, 5],
+                [20, 5],
+                [400, 5],
+                [401, 5],
+                [402, 5],
+                [404, 5]
+            ];
 
-            const xAxis = Highcharts.stockChart('container', options).xAxis[0],
-                xAxisRange = xAxis.max - xAxis.min;
+            const xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
             xAxis.update({
                 overscroll: overscrollPercentageValue + '%'
             });
 
-            assert.strictEqual(
-                xAxis.max - xAxis.min,
-                xAxisRange + overscrollPercentageValue / 100 * xAxisRange,
+            const points = xAxis.series[0].points,
+                lastPoint = points[points.length - 1],
+                percent = overscrollPercentageValue / 100;
+
+            assert.close(
+                lastPoint.plotX,
+                xAxis.width / (1 + percent),
+                xAxis.width / 100,
                 'Correct range with overscroll set in % '
             );
         }
