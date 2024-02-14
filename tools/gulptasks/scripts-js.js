@@ -65,10 +65,10 @@ async function scriptsJS() {
         fsLib.copyAllFiles(
             'js/',
             'code/es-modules/',
-            true,
-            sourcePath => sourcePath.endsWith('.d.ts')
+            true
         );
 
+        logLib.success('Created code');
     } finally {
         processLib.isRunning('scripts-js', false);
     }

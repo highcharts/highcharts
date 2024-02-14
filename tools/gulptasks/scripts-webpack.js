@@ -18,9 +18,10 @@ const path = require('node:path');
  * @return {Promise<void>}
  * Promise to keep
  */
-async function scriptsWebpacks() {
+async function scriptsWebpack() {
 
     const argv = require('yargs').argv;
+    const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
@@ -36,13 +37,22 @@ async function scriptsWebpacks() {
 
         let log = '';
 
+        fsLib.copyAllFiles(
+            'js/',
+            'code/es-modules/',
+            true
+        );
+
         for (const config of configs) {
             if (argv.verbose) {
                 logLib.warn(config);
             }
             log += await processLib.exec(
                 `npx webpack -c ${config}`,
-                { silent: 2, timeout: 60000 }
+                {
+                    silent: argv.verbose ? 1 : 2,
+                    timeout: 60000
+                }
             );
         }
 
@@ -58,4 +68,4 @@ async function scriptsWebpacks() {
 
 }
 
-gulp.task('scripts-webpack', scriptsWebpacks);
+gulp.task('scripts-webpack', scriptsWebpack);
