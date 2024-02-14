@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Organization chart with hanging nodes.
  authors:
    - Kent Wincent Holt
  js_wrap: b
