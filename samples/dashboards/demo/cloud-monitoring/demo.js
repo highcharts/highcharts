@@ -340,17 +340,33 @@ const setupDashboard = instanceId => {
             },
             chartOptions: {
                 xAxis: {
-                    title: {
-                        text: 'Disk categories'
-                    },
-                    labels: {
-                        enabled: false
-                    },
-                    tickLength: 0,
+                    min: -0.5,
+                    max: 3.5,
+                    showFirstLabel: false,
+                    showLastLabel: false,
+                    type: 'category',
+                    categories: ['MediaGB', 'RootGB', 'Documents', 'Downloads'],
                     accessibility: {
                         description: 'Disk categories'
                     }
                 },
+                series: [{
+                    name: 'MediaGB',
+                    pointStart: 0,
+                    pointPlacement: -0.3
+                }, {
+                    name: 'RootGB',
+                    pointStart: 1,
+                    pointPlacement: -0.1
+                }, {
+                    name: 'Documents',
+                    pointStart: 2,
+                    pointPlacement: 0.1
+                }, {
+                    name: 'Downloads',
+                    pointStart: 3,
+                    pointPlacement: 0.4
+                }],
                 yAxis: {
                     title: {
                         text: 'GB'
@@ -371,11 +387,14 @@ const setupDashboard = instanceId => {
                 },
                 plotOptions: {
                     series: {
+                        relativeXValue: true,
+                        pointRange: 1,
+                        pointPadding: 0,
+                        groupPadding: 0,
+                        pointWidth: 40,
                         dataLabels: {
                             enabled: true,
-                            formatter: function () {
-                                return this.series.name;
-                            }
+                            format: '{y} GB'
                         }
                     }
                 },
@@ -619,6 +638,13 @@ const setupDashboard = instanceId => {
                         description: 'Bytes'
                     }
                 },
+                legend: {
+                    labelFormatter: function () {
+                        const result =
+                            this.name.replace(/([A-Z])/g, ' $1').toLowerCase();
+                        return result.charAt(0).toUpperCase() + result.slice(1);
+                    }
+                },
                 tooltip: {
                     valueDecimals: 0,
                     valueSuffix: ' bytes'
@@ -669,6 +695,13 @@ const setupDashboard = instanceId => {
                         description: 'Operations'
                     }
                 },
+                legend: {
+                    labelFormatter: function () {
+                        const result =
+                            this.name.replace(/([A-Z])/g, ' $1').toLowerCase();
+                        return result.charAt(0).toUpperCase() + result.slice(1);
+                    }
+                },
                 accessibility: {
                     description: `The chart is displaying amount of in and out
                                 operations on disk`,
@@ -703,7 +736,8 @@ const setupDashboard = instanceId => {
                 events: {
                     row: {
                         click: async function (e) {
-                            if (pollingCheckbox.checked) {
+                            const enabledPolling = pollingCheckbox.checked;
+                            if (enabledPolling) {
                                 // stop polling when is enabled
                                 await pollingCheckbox.click();
                             }
@@ -711,6 +745,11 @@ const setupDashboard = instanceId => {
                             setupDashboard(
                                 e.target.parentNode.childNodes[0].innerText
                             );
+
+                            // run polling when was enabled
+                            if (enabledPolling) {
+                                await pollingCheckbox.click();
+                            }
                         }
                     }
                 }
@@ -739,4 +778,6 @@ const setupDashboard = instanceId => {
     ).then(response => response.json());
 
     setupDashboard();
+    // run polling
+    await pollingCheckbox.click();
 })();
