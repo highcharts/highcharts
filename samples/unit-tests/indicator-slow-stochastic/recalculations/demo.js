@@ -107,11 +107,12 @@ QUnit.test('Test Slow Stochastic calculations on data updates.', assert => {
         series[0].addPoint([200, 200, 200, 200]);
     }
 
-    const lastIndex = series[1].yData.length - 1;
+    const yData = series[1].getColumn('y'),
+        lastIndex = yData.length - 1;
 
     assert.deepEqual(
-        [series[1].yData[lastIndex][0], series[1].yData[lastIndex][1]],
-        [series[1].yData[lastIndex - 1][0], series[1].yData[lastIndex - 1][1]],
+        [yData[lastIndex][0], yData[lastIndex][1]],
+        [yData[lastIndex - 1][0], yData[lastIndex - 1][1]],
         `If N-period previous points of the main series have the same values,
         the last point of the indicator should have the same values as the
         previous one, #16841`

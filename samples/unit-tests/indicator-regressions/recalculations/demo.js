@@ -71,7 +71,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [16.799999999999997, 18.6, 17.6],
         'Correct values of regression indicator'
     );
@@ -103,7 +103,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[6].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [16.799999999999997, 18.6],
         'Correct values after point.remove()'
     );
@@ -114,7 +114,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [66.5014343240479, 69.67686317033707],
         'Correct values of regression angle indicator'
     );

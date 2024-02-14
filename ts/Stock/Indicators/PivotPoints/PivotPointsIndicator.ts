@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -272,7 +273,7 @@ class PivotPointsIndicator extends SMAIndicator {
 
     public getValues<TLinkedSeries extends LineSeries>(
         this: PivotPointsIndicator,
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: PivotPointsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),

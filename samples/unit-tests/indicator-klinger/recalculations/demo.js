@@ -200,13 +200,14 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         should equal the length of the main series.`
     );
 
+    const xData = series[2].getColumn('x');
     assert.strictEqual(
-        series[2].xData[0],
+        xData[0],
         1559136600000,
         'First x point should start on that day.'
     );
     assert.strictEqual(
-        series[2].xData[series[2].xData.length - 1],
+        xData[xData.length - 1],
         1560864600000,
         'The last x point should be on the last day of array.'
     );

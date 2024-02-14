@@ -22,6 +22,7 @@ import type {
     DisparityIndexParamsOptions
 } from './DisparityIndexOptions';
 import type DisparityIndexPoint from './DisparityIndexPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -137,7 +138,7 @@ class DisparityIndexIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: DisparityIndexParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const index = params.index,

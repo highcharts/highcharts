@@ -109,7 +109,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastPPOWithRound(chart.series[1].yData),
+            toFastPPOWithRound(chart.series[1].getColumn('y')),
             [
                 1.1028,
                 0.6585,
@@ -135,7 +135,7 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         assert.deepEqual(
-            toFastPPOWithRound(chart.series[1].yData),
+            toFastPPOWithRound(chart.series[1].getColumn('y')),
             [
                 1.1028,
                 0.6585,

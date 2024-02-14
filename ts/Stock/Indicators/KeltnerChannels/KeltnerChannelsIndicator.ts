@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     KeltnerChannelsOptions,
@@ -183,7 +183,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period = (params.period as any),

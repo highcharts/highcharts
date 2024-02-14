@@ -93,7 +93,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            round(chart.series[1].yData),
+            round(chart.series[1].getColumn('y')),
             round([
                 -33.53621424223974,
                 -16.38591117917312,
@@ -139,7 +139,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            round(chart.series[1].yData),
+            round(chart.series[1].getColumn('y')),
             round([
                 -33.53621424223974,
                 -16.38591117917312,
@@ -205,7 +205,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            round(chart.series[1].yData),
+            round(chart.series[1].getColumn('y')),
             round([
                 -16.666666666666664,
                 28.57142857142857,
@@ -231,7 +231,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            round(chart.series[1].yData),
+            round(chart.series[1].getColumn('y')),
             round([-9.090909090909092, 9.090909090909092, 23.809523809523807]),
             'After period update: Chande values should be correct.'
         );
@@ -245,7 +245,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            round(chart.series[1].yData),
+            round(chart.series[1].getColumn('y')),
             round([-9.090909090909092, 9.090909090909092]),
             'After point remove: Chande values should be correct.'
         );

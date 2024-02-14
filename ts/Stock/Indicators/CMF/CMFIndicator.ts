@@ -25,6 +25,7 @@ import type {
     CMFParamsOptions
 } from './CMFOptions';
 import type CMFPoint from './CMFPoint';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -128,9 +129,7 @@ class CMFIndicator extends SMAIndicator {
                     )
             ),
             isSeriesOHLC: (boolean|undefined) = (
-                series &&
-                series.yData &&
-                (series.yData as any)[0].length === 4
+                series?.pointArrayMap?.length === 4
             );
 
         /**
@@ -164,7 +163,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public getValues<TLinkedSeries extends LineSeries>(
         this: CMFIndicator,
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: CMFParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         if (!this.isValid()) {
@@ -199,7 +198,7 @@ class CMFIndicator extends SMAIndicator {
      */
     public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
-        seriesYData: TLinkedSeries['yData'],
+        seriesYData: IndicatorLinkedSeriesLike['yData'],
         volumeSeriesYData: Array<number>,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {

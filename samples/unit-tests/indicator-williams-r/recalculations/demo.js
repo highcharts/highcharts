@@ -111,7 +111,7 @@ QUnit.test('Test Williams %R calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        toFastWilliamsWithRound(chart.series[1].yData),
+        toFastWilliamsWithRound(chart.series[1].getColumn('y')),
         [
             [-6.171],
             [-2.1577],
@@ -139,7 +139,7 @@ QUnit.test('Test Williams %R calculations on data updates.', function (assert) {
     chart.series[0].points[chart.series[0].points.length - 1].remove();
 
     assert.deepEqual(
-        toFastWilliamsWithRound(chart.series[1].yData),
+        toFastWilliamsWithRound(chart.series[1].getColumn('y')),
         [
             [-6.171],
             [-2.1577],

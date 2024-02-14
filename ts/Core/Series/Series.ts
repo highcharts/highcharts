@@ -356,13 +356,6 @@ class Series {
 
     public pointValKey?: string;
 
-    /** @deprecated */
-    public processedYData!: (
-        Array<(number|null)>|
-        Array<Array<(number|null)>>|
-        TypedArray
-    );
-
     public selected?: boolean;
 
     public sharedClipKey?: string;
@@ -387,17 +380,9 @@ class Series {
 
     public xAxis!: AxisType;
 
-    public xData?: Array<number>|TypedArray;
-
     public xIncrement?: (number|null);
 
     public yAxis!: AxisType;
-
-    public yData?: (
-        Array<(number|null)>|
-        Array<Array<(number|null)>>|
-        TypedArray
-    );
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
 

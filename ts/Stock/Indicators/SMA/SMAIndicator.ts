@@ -13,7 +13,10 @@
  *  Imports
  *
  * */
-import type IndicatorLike from '../IndicatorLike';
+import type {
+    IndicatorLike,
+    IndicatorLinkedSeriesLike
+} from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
@@ -206,7 +209,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind!: Array<Function>;
 
-    public linkedParent!: LineSeriesType;
+    public linkedParent!: LineSeriesType&IndicatorLinkedSeriesLike;
 
     public nameBase?: string;
 
@@ -262,7 +265,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getValues<TLinkedSeries extends LineSeriesType>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
@@ -422,7 +425,7 @@ class SMAIndicator extends LineSeries {
             indicator = this,
             table = this.table,
             oldData = indicator.points || [],
-            oldDataLength = (indicator.xData || []).length,
+            oldDataLength = indicator.table.rowCount,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
@@ -524,13 +527,12 @@ class SMAIndicator extends LineSeries {
                     croppedDataValues.push(values);
                 }
 
+                const indicatorXData = indicator.getColumn('x');
                 oldFirstPointIndex = processedData.xData.indexOf(
-                    (indicator.xData as any)[0]
+                    indicatorXData[0]
                 );
                 oldLastPointIndex = processedData.xData.indexOf(
-                    (indicator.xData as any)[
-                        (indicator.xData as any).length - 1
-                    ]
+                    indicatorXData[indicatorXData.length - 1]
                 );
 
                 // Check if indicator points should be shifted (#8572)
@@ -563,10 +565,6 @@ class SMAIndicator extends LineSeries {
             });
             indicator.options.data = (processedData.values as any);
         }
-
-        // Primarily for test compliance - @todo remove
-        indicator.xData = table.getColumn('x', true) as Array<number>;
-        indicator.yData = table.getColumn('y', true) as Array<number>;
 
         if (
             indicator.calculateOn.xAxis &&

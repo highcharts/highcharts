@@ -15,6 +15,7 @@
  * */
 
 import type ColorType from '../../../Core/Color/ColorType';
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -553,7 +554,7 @@ class SupertrendIndicator extends SMAIndicator {
     //     ) THAN Current FINAL LOWERBAND
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: SupertrendParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),

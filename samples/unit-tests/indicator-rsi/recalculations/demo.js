@@ -95,7 +95,7 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [
             70.532789,
             66.318562,
@@ -128,7 +128,7 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
     chart.series[0].points[chart.series[0].points.length - 1].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [
             70.532789,
             66.318562,
@@ -200,7 +200,7 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [
             70.532789,
             66.318562,

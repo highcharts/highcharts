@@ -11,6 +11,7 @@
  *  Imports
  *
  * */
+import type { IndicatorLinkedSeriesLike } from './IndicatorLike';
 import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *
@@ -19,13 +20,16 @@ import type LineSeries from '../../Series/Line/LineSeries';
  *
  * */
 
-export interface IndicatorValuesObject<TLinkedSeries extends LineSeries> {
+export interface IndicatorValuesObject<
+    /* eslint-disable-next-line */
+    TLinkedSeries extends LineSeries
+> {
     values: Array<Array<(
-        ExtractArrayType<TLinkedSeries['xData']>|
-        ExtractArrayType<TLinkedSeries['yData']>
+        ExtractArrayType<IndicatorLinkedSeriesLike['xData']>|
+        ExtractArrayType<IndicatorLinkedSeriesLike['yData']>
     )>>;
-    xData: NonNullable<TLinkedSeries['xData']>;
-    yData: NonNullable<TLinkedSeries['yData']>;
+    xData: NonNullable<IndicatorLinkedSeriesLike['xData']>;
+    yData: NonNullable<IndicatorLinkedSeriesLike['yData']>;
 }
 
 export default IndicatorValuesObject;

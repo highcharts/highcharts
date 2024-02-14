@@ -14,6 +14,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -104,7 +105,7 @@ class WilliamsRIndicator extends SMAIndicator {
 
     public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: WilliamsRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
