@@ -19,7 +19,7 @@ There are a few ways to create a DataTable:
                 type: 'CSV',
                 id: 'my-connector',
                 options: {
-                    csvURL: 'https://example.com/data.csv'
+                    csvURL: 'https://example.com/data.csv'c
                 }
             }]
             ...
@@ -90,3 +90,37 @@ There are a few ways to create a DataTable:
 
     const tableModified = sortModifier.modifyTable(table.clone());
     ```
+
+
+## Get operations
+A DataTable offers several methods to access data, among some of the most common are:
+
+- `getRow`- Returns a row with the specified index from the DataTable.
+- `getRows`- Returns all or a number of rows.
+- `getRowIndexBy`- Returns the index of the first row that matches the specified condition.
+- `getColumn`- Returns a column with the specified name or alias from the DataTable.
+- `getColumns`- Returns all or a number of columns.
+- `getModifier`- Returns the modifier for the table.
+
+And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
+
+
+## Set operations
+A DataTable offers several methods to modify data, among some of the most common are:
+
+- `setRow`- Sets cell values of a row.
+- `setRows`- Sets cell values of multiple rows.
+- `setColumn`- Sets cell values for a column.
+- `setColumns`- Sets cell values for multiple columns.
+- `setModifier`- Sets or unsets the modifier for the table.
+
+See other available methods in the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
+
+## Other operations
+Other useful operations include:
+
+- `clone`- Returns a clone of the table.
+- `deleteColumns`- Deletes columns from the table.
+- `deleteRows`- Deletes rows from the table.
+- `on`- Adds an event listener to the table for a specific event.
+
