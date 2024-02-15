@@ -263,8 +263,9 @@
         );
 
         chart.series[0].update({ color: 'red' });
+        console.log(chart.series[0].points[0].color);
         assert.strictEqual(
-            chart.series[0].color,
+            chart.series[0].points[0].color,
             'red',
             'The series color should have changed to red'
         );
