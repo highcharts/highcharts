@@ -199,7 +199,7 @@ class Cell extends GUIElement {
     /**
      * The type of GUI element.
      */
-    public readonly type = Globals.guiElementType.cell;
+    public readonly type? = Globals.guiElementType.cell;
 
     /**
      * Reference to the row instance.
@@ -660,6 +660,12 @@ namespace Cell {
         mountedComponentJSON?: Component.JSON;
         style?: CSSJSONObject;
         layoutJSON?: LayoutType.JSON;
+    }
+
+    export interface DOMCell {
+        id: string;
+        container: HTMLElement;
+        mountedComponent: Component
     }
 
 }

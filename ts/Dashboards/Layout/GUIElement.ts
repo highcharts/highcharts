@@ -32,7 +32,8 @@ const {
     error
 } = U;
 
-abstract class GUIElement {
+abstract class 
+GUIElement {
 
     /* *
     *

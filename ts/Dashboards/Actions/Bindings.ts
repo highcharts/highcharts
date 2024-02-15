@@ -57,7 +57,7 @@ namespace Bindings {
      * */
 
     export interface MountedComponent {
-        cell: Cell;
+        cell: Cell|Cell.DOMCell;
         component: ComponentType;
         options: Partial<Component.Options>;
     }
@@ -129,7 +129,8 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: cell.row.layout.board?.editMode?.lang.errorMessage,
+                    text: cell.row?.layout.board?.editMode?.lang.errorMessage ||
+                        board?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -158,11 +159,17 @@ namespace Bindings {
         if (cell) {
             component.setCell(cell);
             cell.mountedComponent = component;
+        }
 
-            cell.row.layout.board.mountedComponents.push({
+        if (board) {
+            board.mountedComponents.push({
                 options: options,
                 component: component,
-                cell: cell
+                cell: cell || {
+                    id: renderTo,
+                    container: componentContainer as HTMLElement,
+                    mountedComponent: component
+                }
             });
         }
 

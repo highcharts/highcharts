@@ -1,5 +1,4 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 :root,
 .highcharts-light {
@@ -9,6 +8,14 @@
     --highcharts-color-2: #727e8d;
     --highcharts-color-3: #fc6556;
     --highcharts-color-5: #404040;
+
+    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-5: #f2f2f2;
+    --highcharts-neutral-color-3: #f7f7f7;
+    --highcharts-neutral-color-0: #ffffff;
+
+    /* General */
+    --highcharts-background-color: #ffffff;
 
     /* Extra colors */
     --gray: #ccc;
@@ -25,10 +32,39 @@
     }
 }
 
+#container {
+    background-color: var(--highcharts-neutral-color-5);
+    padding: 20px 10px;
+    position: relative;
+}
+
+.highcharts-dashboards-row {
+    display: flex;
+    position: relative;
+}
+
+.highcharts-dashboards-cell {
+    border: 1px solid transparent;
+    border-radius: 10px;
+    position: relative;
+    min-width: 20px;
+    /* flex: 1 1 50%; */
+    height: 300px;
+}
+
 .highcharts-dashboards-component-title {
     font-size: 1.2em;
     text-align: left;
     margin: 1em;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    position: relative;
+    background-color: var(--highcharts-background-color);
+    box-shadow: 0 0.4688rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.4063rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.5313rem rgba(4, 9, 20, 0.03), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    margin: 5px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .dashboard-header .dashboard-title,
@@ -39,9 +75,18 @@
     padding-left: 20px;
 }
 
+.highcharts-dashboards-component-kpi-content {
+    display: flex;
+    flex-direction: column;
+}
+
 .highcharts-dashboards-component.highcharts-dashboards-component-kpi-value {
     font-size: 4em;
     margin-top: 40px;
+}
+
+.highcharts-dashboards-component-kpi {
+    text-align: center;
 }
 
 .highcharts-dashboards-component-kpi-content .highcharts-dashboards-component-subtitle {
@@ -109,6 +154,10 @@
     flex: 1 1 60%;
 }
 
+#dashboard-chart-cumulative {
+    flex: 1 1 100%;
+}
+
 /* LARGE */
 @media (max-width: 1200px) {
     #dashboard-kpi-1,
@@ -129,6 +178,18 @@
 
 /* MEDIUM */
 @media (max-width: 992px) {
+    .highcharts-dashboards-row {
+        flex-direction: column;
+    }
+
+    #current-sprint-kpi {
+        height: auto;
+    }
+
+    #current-sprint.highcharts-dashboards-row {
+        flex-direction: row;
+    }
+
     #dashboard-kpi-1,
     #dashboard-kpi-2 {
         flex: 1 1 50%;
@@ -136,17 +197,17 @@
 
     #dashboard-kpi-4,
     #dashboard-chart-1,
-    #dashboard-chart-2 {
+    #dashboard-chart-2,
+    #current-sprint-kpi {
         flex: 1 1 100%;
     }
 }
 
-/* SMALL */
+/* MEDIUM */
 @media (max-width: 576px) {
-    #dashboard-kpi-1,
-    #dashboard-kpi-4,
-    #dashboard-chart-1,
-    #dashboard-chart-2 {
-        flex: 1 1 100%;
+    #current-sprint,
+    #current-sprint.highcharts-dashboards-row {
+        flex-direction: column;
+        flex-wrap: wrap;
     }
 }
