@@ -31,20 +31,19 @@
 
 <!-- XML data island: data for Custom HTML components-->
 <xml id="xml-data-island">
-    <div id="html-result-div">
-        <div>
-            <img id="rep-cand" /><span>Republican</span>
+    <div id="html-rep-info">
+        <div id="rep-cand">
+            <img alt="Photo of Republican candidate"/>
         </div>
-        <div id="progress-bar">
-            <p>Progress will appear here ...</p>
-        </div>
-        <div>
-            <img id="dem-cand" /><span>Democrat</span>
+    </div>
+
+    <div id="html-dem-info">
+        <div id="dem-cand">
+            <img alt="Photo of Democrate candidate"/>
         </div>
     </div>
 
     <div id="html-control-div">
-        <h1>United States presidential election</h1>
         <label for="elections">Election year:</label>
         <select name="elections" id="election-year">
             <option value="2020">2020 - Trump v. Biden</option>
@@ -129,7 +128,8 @@
             <wiki>https://en.wikipedia.org/wiki/2008_United_States_presidential_election</wiki>
             <rep>
                 <candidate>McCain</candidate>
-                <imgUrl>https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/John_McCain_2009_Official.jpg/300px-John_McCain_2009_Official.jpg
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/John_McCain_2009_Official.jpg/300px-John_McCain_2009_Official.jpg
                 </imgUrl>
             </rep>
             <dem>

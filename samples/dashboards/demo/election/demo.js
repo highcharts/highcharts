@@ -305,7 +305,18 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'html-result'
+                        id: 'html-result',
+                        layout: {
+                            rows: [{
+                                cells: [{
+                                    id: 'rep-info'
+                                }, {
+                                    id: 'progress-bar'
+                                }, {
+                                    id: 'dem-info'
+                                }]
+                            }]
+                        }
                     }, {
                         // Top right
                         id: 'html-control'
@@ -328,14 +339,64 @@ async function setupDashboard() {
         },
         components: [
             {
-                renderTo: 'html-result',
+                renderTo: 'rep-info',
                 type: 'CustomHTML',
-                id: 'html-result-div'
+                id: 'html-rep-info'
+            },
+            {
+                // One point bar chart
+                renderTo: 'progress-bar',
+                type: 'Highcharts',
+                chartOptions: {
+                    chart: {
+                        type: 'bar',
+                        styledMode: false,
+                        margin: 50
+                    },
+                    title: {
+                        text: ''
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        visible: false
+                    },
+                    yAxis: {
+                        visible: false
+                    },
+                    plotOptions: {
+                        bar: {
+                            pointWidth: 50,
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true,
+                                format: '{point.y:.1f} %'
+                            }
+                        }
+                    },
+                    series: [{
+                        // Republicans
+                        colorIndex: 1
+                    }, {
+                        // Democrats
+                        colorIndex: 0
+                    }]
+                }
+            },
+            {
+                renderTo: 'dem-info',
+                type: 'CustomHTML',
+                id: 'html-dem-info'
             },
             {
                 renderTo: 'html-control',
                 type: 'CustomHTML',
-                id: 'html-control-div'
+                id: 'html-control-div',
+                title: 'United States presidential election'
             },
             {
                 renderTo: 'us-map',
@@ -367,12 +428,12 @@ async function setupDashboard() {
                         dataClasses: [{
                             from: -100,
                             to: 0,
-                            color: '#0200D0',
+                            colorIndex: 1,
                             name: 'Democrat'
                         }, {
                             from: 0,
                             to: 100,
-                            color: '#C40401',
+                            colorIndex: 0,
                             name: 'Republican'
                         }]
                     },
@@ -451,13 +512,14 @@ async function setupDashboard() {
                         series: {
                             dataLabels: [{
                                 enabled: true,
+                                rotation: -90,
                                 format: '{point.y:.1f} %',
-                                y: 30 // Pixels down from the top
+                                y: 60 // Pixels down from the top
                             }, {
                                 enabled: true,
                                 rotation: -90,
                                 format: '{point.name}',
-                                y: 140 // Pixels down from the top
+                                y: 140
                             }]
                         }
                     },
@@ -568,7 +630,9 @@ async function updateBoard(board, state, year) {
 
     const [
         // The order here must be the same as in the component definition in the Dashboard.
-        resultHtml,
+        repInfo,
+        progressBar,
+        demInfo,
         controlHtml,
         usMap,
         historyChart,
@@ -577,34 +641,53 @@ async function updateBoard(board, state, year) {
 
     // 1. Update result HTML (if state or year changes)
     const row = votesTable.getRowIndexBy('state', 'Federal');
-    // const repVal = votesTable.getCellAsNumber('repPercent', row);
-    // const demVal = votesTable.getCellAsNumber('demPercent', row);
-    // const otherVal = 100.0 - repVal - demVal;
+    const repVal = votesTable.getCellAsNumber('repPercent', row);
+    const demVal = votesTable.getCellAsNumber('demPercent', row);
     const candDem = electionData[year].candDem;
     const candRep = electionData[year].candRep;
 
-    await resultHtml.update({
+    await repInfo.update({
+        title: {
+            text: candRep
+        }
+    });
+
+    await demInfo.update({
+        title: {
+            text: candDem
+        }
+    });
+
+    // Progress bar (stacked)
+    await progressBar.update({
         title: {
             text: title
         }
     });
 
-    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
+    progressBar.chart.series[0].update({
+        data: [
+            demVal
+        ]
+    });
+    progressBar.chart.series[1].update({
+        data: [
+            repVal
+        ]
+    });
 
-    // Progress bar
-    let domEl = document.getElementById('progress-bar');
-    domEl.innerHTML = `${candRep} v ${candDem} (progress bar)`;
+    // Grab auxiliary data about the election (photos, description, etc.)
+    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
 
     // Photos
     const imgDemUrl = yearEl.querySelector('dem imgUrl').textContent;
     const imgRepUrl = yearEl.querySelector('rep imgUrl').textContent;
-    document.getElementById('dem-cand').src = imgDemUrl;
-    document.getElementById('rep-cand').src = imgRepUrl;
 
-    console.log(imgDemUrl);
+    document.querySelector('div#dem-cand img').src = imgDemUrl;
+    document.querySelector('div#rep-cand img').src = imgRepUrl;
 
     // 2. Update control HTML description if the year changes
-    domEl = document.getElementById('election-description');
+    const domEl = document.getElementById('election-description');
     const el = yearEl.querySelector('descr');
     domEl.innerHTML = el.textContent;
 
@@ -659,6 +742,10 @@ async function updateBoard(board, state, year) {
     });
 }
 
+
+// This tag is not allowed bu default
+Highcharts.AST.allowedTags.push('figure');
+
 // Create custom HTML component
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
@@ -689,7 +776,6 @@ class CustomHTML extends HTMLComponent {
 }
 
 ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
-
 
 // Launch the application
 setupDashboard();

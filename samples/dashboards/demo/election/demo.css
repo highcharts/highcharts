@@ -182,7 +182,6 @@
 
 #us-map .highcharts-dashboards-component-content {
     background: var(--color-background);
-    border-radius: 5px;
 }
 
 #us-map .highcharts-background {
@@ -255,6 +254,8 @@
     stroke-width: 2px;
 }
 
+/* Dashboard layout */
+
 #html-result,
 #us-map,
 #election-chart {
@@ -276,6 +277,12 @@
 
 #selection-grid {
     flex: 1 1 100%;
+}
+
+/* Layout of html-result cells */
+#progress-bar {
+    flex: 1 1 40%;
+    max-height: 200px;
 }
 
 /* LARGE */
@@ -329,31 +336,24 @@
  *
  * */
 
-#html-result-div {
-    display: flex;
+#html-result {
     text-align: center;
 }
 
 #html-result .highcharts-dashboards-component-title {
     fill: var(--color-title);
-    font-size: 1.2em;
+    font-size: 1em;
     text-align: center;
 }
 
-#html-result div {
-    margin: auto;
-    padding: 5px;
-}
-
-#html-result div img {
+#html-result img {
     width: auto;
-    height: 140px;
+    height: 130px;
+    margin: 5px;
 }
 
 #html-result #progress-bar {
     width: 70%;
-    background-color: #ccf;
-    border: 1px solid grey;
 }
 
 /* *
@@ -363,11 +363,6 @@
  * */
 
 #html-control {
-    text-align: center;
-}
-
-#html-control h1 {
-    font-size: 1.2em;
     text-align: center;
 }
 
@@ -381,7 +376,7 @@
     text-align: left;
     font-size: 0.9em;
     padding: 5px;
-    margin: 20px;
+    margin: 10px 20px 0;
 }
 
 /* Container for application meta data */
