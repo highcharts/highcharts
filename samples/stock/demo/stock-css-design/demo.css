@@ -4,7 +4,7 @@
 
 :root {
     --highcharts-background-color: #19191b;
-    --highcharts-color-1: #7e79e7;
+    --highcharts-color-1: #9689e6;
 }
 
 #container {
@@ -80,6 +80,10 @@
 
 .highcharts-bindings-wrapper li.highcharts-active > span.highcharts-menu-item-btn {
     background-color: var(--highcharts-neutral-color-40);
+}
+
+.highcharts-axis-title {
+    visibility: hidden;
 }
 
 .highcharts-popup > .highcharts-popup-close:hover,

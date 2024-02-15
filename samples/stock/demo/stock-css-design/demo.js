@@ -39,6 +39,9 @@
             }
         },
         yAxis: [{
+            title: {
+                text: 'price (USD)'
+            },
             crosshair: {
                 snap: false,
                 className: 'highcharts-crosshair-custom',
@@ -54,6 +57,9 @@
             },
             height: '70%'
         }, {
+            title: {
+                text: 'volume'
+            },
             crosshair: {
                 className: 'highcharts-crosshair-custom',
                 snap: false,
