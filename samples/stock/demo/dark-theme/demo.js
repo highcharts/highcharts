@@ -21,6 +21,18 @@
         chart: {
             backgroundColor: '#202d3b'
         },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    theme: {
+                        'stroke-width': 0
+                    }
+                }
+            }
+        },
+        lang: {
+            rangeSelectorZoom: 'Timeframe'
+        },
         navigation: {
             buttonOptions: {
                 theme: {
@@ -40,6 +52,7 @@
             maskInside: false,
             maskFill: '#eeeeee44',
             xAxis: {
+                gridLineWidth: 0,
                 labels: {
                     style: {
                         color: '#c5c7c9',
@@ -81,12 +94,11 @@
             }
         },
         rangeSelector: {
+            dropdown: 'always',
             buttonTheme: {
                 fill: '#333333',
                 padding: 1,
                 r: 2,
-                stroke: '#c5c7c9',
-                'stroke-width': 1,
                 states: {
                     hover: {
                         style: {
@@ -154,7 +166,7 @@
         rangeSelector: {
             buttons: [{
                 text: '1m',
-                title: 'Set timeframe to 1 minute',
+                title: '1 Minute',
                 type: 'hour',
                 count: 1,
                 dataGrouping: {
@@ -164,7 +176,7 @@
                 }
             }, {
                 text: '5m',
-                title: 'Set timeframe to 5 minutes',
+                title: '5 Minutes',
                 type: 'hour',
                 count: 6,
                 dataGrouping: {
@@ -174,7 +186,7 @@
                 }
             }, {
                 text: '15m',
-                title: 'Set timeframe to 15 minutes',
+                title: '15 Minutes',
                 type: 'day',
                 count: 1,
                 dataGrouping: {
@@ -184,7 +196,7 @@
                 }
             }, {
                 text: '30m',
-                title: 'Set timeframe to 30 minutes',
+                title: '30 Minutes',
                 type: 'day',
                 count: 3,
                 dataGrouping: {
@@ -194,7 +206,7 @@
                 }
             }, {
                 text: '1h',
-                title: 'Set timeframe to 1 hour',
+                title: '1 Hour',
                 dataGrouping: {
                     units: [
                         ['hour', [1]]
@@ -202,7 +214,7 @@
                 }
             }, {
                 text: '4h',
-                title: 'Set timeframe to 4 hours',
+                title: '4 Hours',
                 dataGrouping: {
                     units: [
                         ['hour', [4]]
@@ -210,7 +222,7 @@
                 }
             }, {
                 text: 'D',
-                title: 'Set timeframe to 1 day',
+                title: '1 Day',
                 dataGrouping: {
                     units: [
                         ['day', [1]]
