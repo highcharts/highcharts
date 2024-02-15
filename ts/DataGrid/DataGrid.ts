@@ -35,12 +35,9 @@ const {
     makeDiv
 } = DataGridUtils;
 import Globals from './Globals.js';
+const { isSafari, win } = Globals;
 import Templating from '../Core/Templating.js';
 import DataGridDefaults from './DataGridDefaults.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -246,7 +243,7 @@ class DataGrid {
     ) {
         // Initialize containers
         if (typeof container === 'string') {
-            const existingContainer = doc.getElementById(container);
+            const existingContainer = win.document.getElementById(container);
             if (existingContainer) {
                 this.container = existingContainer;
             } else {
@@ -559,7 +556,7 @@ class DataGrid {
      */
     private updateVisibleCells(force: boolean = false): void {
         let scrollTop = this.outerContainer.scrollTop;
-        if (H.isSafari) {
+        if (isSafari) {
             scrollTop = clamp(
                 scrollTop,
                 0,
@@ -810,7 +807,7 @@ class DataGrid {
             Math.ceil(
                 (
                     this.outerContainer.offsetHeight ||
-                    this.options.defaultHeight // when datagrid is hidden,
+                    this.options.defaultHeight // When datagrid is hidden,
                     // offsetHeight is 0, so we need to get defaultValue to
                     // avoid empty rows
                 ) / this.options.cellHeight

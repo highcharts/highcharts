@@ -105,7 +105,7 @@ import DataGrid from 'https://code.highcharts.com/dashboards/es-modules/masters/
 import DataGridPlugin from 'https://code.highcharts.com/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin.js';
 
 const { PluginHandler } = Dashboards;
-DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+DataGridPlugin.custom.connectDataGrid(DataGrid);
 
 PluginHandler.addPlugin(DataGridPlugin);
 ```

@@ -46,3 +46,10 @@ function test_board() {
         }]
     });
 }
+
+/**
+ * Tests HighchartsPlugin.
+ */
+function test_HighchartsPlugin() {
+    Dashboards.HighchartsPlugin.custom.connectHighcharts((Dashboards.win as any).Highcharts);
+}

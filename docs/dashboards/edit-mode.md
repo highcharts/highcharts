@@ -2,6 +2,14 @@ Edit mode
 ===
 
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
+To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.
+The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
+
+```html
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+```
+
 
 In addition, this option has to be enabled in the dashboard config:
 ```js
