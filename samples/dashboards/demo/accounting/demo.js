@@ -9,14 +9,10 @@ const currentYear = new Date(currentMonth).getFullYear();
 
 const commonGaugeOptions = {
     chart: {
-        height: 150,
+        height: 125,
         type: 'gauge',
-        className: 'highcharts-gauge-chart'
-    },
-    subtitle: {
-        floating: true,
-        verticalAlign: 'bottom',
-        y: 20
+        className: 'highcharts-gauge-chart',
+        marginBottom: 0
     },
     pane: {
         startAngle: -90,
@@ -154,18 +150,24 @@ const board = Dashboards.board('container', {
                                 id: 'rev-chart-kpi'
                             }, {
                                 id: 'rev-forecast-kpi'
+                            }, {
+                                id: 'rev-goal-forecast-kpi'
                             }]
                         }, {
                             cells: [{
                                 id: 'cost-chart-kpi'
                             }, {
                                 id: 'cost-forecast-kpi'
+                            }, {
+                                id: 'cost-goal-forecast-kpi'
                             }]
                         }, {
                             cells: [{
                                 id: 'res-chart-kpi'
                             }, {
                                 id: 'res-forecast-kpi'
+                            }, {
+                                id: 'res-goal-forecast-kpi'
                             }]
                         }]
                     }
@@ -182,7 +184,7 @@ const board = Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'rev-chart-kpi',
+        renderTo: 'rev-chart-kpi',
         type: 'KPI',
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
@@ -216,11 +218,17 @@ const board = Dashboards.board('container', {
             }
         })
     }, {
-        cell: 'rev-forecast-kpi',
+        renderTo: 'rev-forecast-kpi',
         type: 'KPI',
+        title: `Revenue forecast for ${currentYear}:`,
+        valueFormat: '${value}M'
+    }, {
+        renderTo: 'rev-goal-forecast-kpi',
+        type: 'KPI',
+        title: 'Revenue goal will be achieved at:',
         valueFormat: '{value}%'
     }, {
-        cell: 'cost-chart-kpi',
+        renderTo: 'cost-chart-kpi',
         type: 'KPI',
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
@@ -254,11 +262,17 @@ const board = Dashboards.board('container', {
             }
         })
     }, {
-        cell: 'cost-forecast-kpi',
+        renderTo: 'cost-forecast-kpi',
         type: 'KPI',
+        title: `Cost forecast for ${currentYear}:`,
+        valueFormat: '${value}M'
+    }, {
+        renderTo: 'cost-goal-forecast-kpi',
+        type: 'KPI',
+        title: 'Cost goal will be achieved at:',
         valueFormat: '{value}%'
     }, {
-        cell: 'res-chart-kpi',
+        renderTo: 'res-chart-kpi',
         type: 'KPI',
         chartOptions: Highcharts.merge(commonGaugeOptions, {
             title: {
@@ -292,11 +306,17 @@ const board = Dashboards.board('container', {
             }
         })
     }, {
-        cell: 'res-forecast-kpi',
+        renderTo: 'res-forecast-kpi',
         type: 'KPI',
+        title: `Result forecast for ${currentYear}:`,
+        valueFormat: '${value}M'
+    }, {
+        renderTo: 'res-goal-forecast-kpi',
+        type: 'KPI',
+        title: 'Result goal will be achieved at:',
         valueFormat: '{value}%'
     }, {
-        cell: 'rev-chart',
+        renderTo: 'rev-chart',
         type: 'Highcharts',
         connector: {
             id: 'data'
@@ -316,7 +336,7 @@ const board = Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'cost-chart',
+        renderTo: 'cost-chart',
         type: 'Highcharts',
         connector: {
             id: 'data'
@@ -336,7 +356,7 @@ const board = Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'stock-cell',
+        renderTo: 'stock-cell',
         type: 'Highcharts',
         chartConstructor: 'stockChart',
         connector: {
@@ -464,10 +484,13 @@ board.then(res => {
 
     const revKPI = res.mountedComponents[0].component;
     const revForecast = res.mountedComponents[1].component;
-    const costKPI = res.mountedComponents[2].component;
-    const costForecast = res.mountedComponents[3].component;
-    const resKPI = res.mountedComponents[4].component;
-    const resForecast = res.mountedComponents[5].component;
+    const revGoalForecast = res.mountedComponents[2].component;
+    const costKPI = res.mountedComponents[3].component;
+    const costForecast = res.mountedComponents[4].component;
+    const costGoalForecast = res.mountedComponents[5].component;
+    const resKPI = res.mountedComponents[6].component;
+    const resForecast = res.mountedComponents[7].component;
+    const resGoalForecast = res.mountedComponents[8].component;
 
     const firstRowID = table.Date.findIndex(d => d === Date.UTC(currentYear));
     const lastRowID = table.Date.findIndex(d => d === currentMonth);
@@ -488,42 +511,46 @@ board.then(res => {
         costYearlyForecast += table.CostPredA[i] / 1e6;
     }
 
-    revKPI.chart.subtitle.update({
-        text: `${Math.round(revYTD / revTarget * 100)}% of annual target`
-    }, false);
+    revKPI.update({
+        caption: `${Math.round(revYTD / revTarget * 100)}% of annual target`
+    });
     revKPI.chart.addSeries({ data: [revYTD] });
 
-    costKPI.chart.subtitle.update({
-        text: `${Math.round(costYTD / costTarget * 100)}% of annual target`
-    }, false);
+    costKPI.update({
+        caption: `${Math.round(costYTD / costTarget * 100)}% of annual target`
+    });
     costKPI.chart.addSeries({ data: [costYTD] });
 
-
-    resKPI.chart.subtitle.update({
-        text: `${Math.round(
+    resKPI.update({
+        caption: `${Math.round(
             (revYTD - costYTD) / (revTarget - costTarget) * 100
         )}% of annual target`
-    }, false);
+    });
     resKPI.chart.addSeries({
         data: [Math.round((revYTD - costYTD) * 10) / 10]
     });
 
     revForecast.update({
-        title: `Revenue forecast for ${currentYear} is $${revYearlyForecast
-            .toFixed(2)}M, the goal will be achieved at:`,
+        value: revYearlyForecast.toFixed(2)
+    });
+
+    revGoalForecast.update({
         value: Math.round(revYearlyForecast / revTarget * 100)
     });
 
     costForecast.update({
-        title: `Cost forecast for ${currentYear} is $${costYearlyForecast
-            .toFixed(2)}M, the goal will be achieved at:`,
+        value: costYearlyForecast.toFixed(2)
+    });
+
+    costGoalForecast.update({
         value: Math.round(costYearlyForecast / costTarget * 100)
     });
 
     resForecast.update({
-        title: `Result forecast for ${currentYear} is $${(
-            revYearlyForecast - costYearlyForecast
-        ).toFixed(2)}M, the goal will be achieved at:`,
+        value: (revYearlyForecast - costYearlyForecast).toFixed(2)
+    });
+
+    resGoalForecast.update({
         value: Math.round((
             revYearlyForecast - costYearlyForecast
         ) / (revTarget - costTarget) * 100)

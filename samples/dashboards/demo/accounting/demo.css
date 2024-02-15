@@ -18,7 +18,13 @@
 }
 
 .highcharts-dashboards-component-kpi-value {
-    font-size: 2.5rem;
+    font-size: 2rem;
+}
+
+#rev-chart-kpi,
+#cost-chart-kpi,
+#res-chart-kpi {
+    max-width: 200px;
 }
 
 #rev-chart-kpi .highcharts-dashboards-component-kpi-value,
@@ -27,16 +33,27 @@
     display: none;
 }
 
+#rev-chart-kpi .highcharts-dashboards-component-caption,
+#cost-chart-kpi .highcharts-dashboards-component-caption,
+#res-chart-kpi .highcharts-dashboards-component-caption {
+    padding-bottom: 10px;
+    font-size: 12px;
+    color: #aaa;
+}
+
 @media (max-width: 965px) {
     #rev-chart,
-    #cost-chart {
+    #cost-chart,
+    #stock-cell {
         flex-basis: 100%;
     }
 }
 
-@media (max-width: 750px) {
-    #kpi-layout-cell,
-    #stock-cell {
+@media (max-width: 560px) {
+    #rev-chart-kpi,
+    #cost-chart-kpi,
+    #res-chart-kpi {
+        max-width: none;
         flex-basis: 100%;
     }
 }
