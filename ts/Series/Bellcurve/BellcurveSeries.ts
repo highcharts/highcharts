@@ -165,7 +165,7 @@ class BellcurveSeries extends AreaSplineSeries {
             series.setMean();
             series.setStandardDeviation();
 
-            if (series.points.length && series.points[0]?.destroyed) {
+            if (series.points?.length && series.points[0]?.destroyed) {
                 series.points = series.data;
             }
 
