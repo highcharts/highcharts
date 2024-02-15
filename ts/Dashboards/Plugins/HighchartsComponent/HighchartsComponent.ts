@@ -22,6 +22,8 @@
  *
  * */
 
+
+import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type {
     AxisOptions,
@@ -201,12 +203,18 @@ class HighchartsComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(cell: Cell, options: Partial<Options>) {
+
+    constructor(
+        cell: Cell,
+        options: Partial<Options>,
+        board?: Board
+    ) {
         options = merge(
             HighchartsComponent.defaultOptions,
             options
         );
-        super(cell, options);
+
+        super(cell, options, board);
         this.options = options as Options;
 
         this.chartConstructor = this.options.chartConstructor || 'chart';
@@ -220,7 +228,6 @@ class HighchartsComponent extends Component {
             true
         );
 
-        this.standardizeSyncOptions();
         this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,
@@ -272,6 +279,13 @@ class HighchartsComponent extends Component {
         super.render();
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
+
+        if (!hcComponent.cell.container?.style.height) {
+            // If the cell height is specified, clear dimensions to make
+            // the container to adjust to the chart height.
+            hcComponent.contentElement.style.height = '100%';
+            super.resize(null, null);
+        }
 
         this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
@@ -545,8 +559,10 @@ class HighchartsComponent extends Component {
                     return arr;
                 }, []);
 
-                series.setData(seriesData);
+                series.setData(seriesData, false);
             });
+
+            this.chart.redraw();
         }
     }
 

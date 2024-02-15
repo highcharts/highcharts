@@ -1,9 +1,9 @@
 function grabComponent(name) {
-    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({ force: true});
     cy.get('.highcharts-dashboards-edit-grid-items')
         .children()
         .contains(name)
-        .trigger('mousedown');
+        .trigger('mousedown', { force: true });
 }
 
 function dropComponent(elementName) {
@@ -25,7 +25,7 @@ describe('Add components through UI', () => {
     });
 
     it('should close the add component sidebar, clicking outside', function() {
-        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({force: true});
         cy.board().then((board) => {
             cy.get('.highcharts-dashboards-edit-sidebar').should('exist');
             cy.get('.highcharts-dashboards-edit-overlay-active').should('exist');
@@ -184,11 +184,11 @@ describe('Add components through UI', () => {
 
         cy.get('#dashboard-col-0').click({ force: true });
         cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true });
 
         cy.get('#dashboard-col-2').click({ force: true });
-        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click({ force: true });
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true });
 
         grabComponent('chart');
         dropComponent('.highcharts-dashboards-wrapper');

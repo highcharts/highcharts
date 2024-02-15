@@ -13,6 +13,7 @@ To use it through the CDN, you need to load the following files
 
 ```html
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
 Alternatively, you can download the NPM package like:
@@ -47,7 +48,7 @@ Apart from the `type` property, the component requires the `cell` property to be
 ```js
 components: [{
     type: 'HTML',
-    cell: 'dashboard-col-0',
+    renderTo: 'dashboard-col-0',
     elements: [{
         tagName: 'h1',
         textContent: 'Your text',

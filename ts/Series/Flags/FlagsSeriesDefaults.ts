@@ -16,10 +16,7 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 

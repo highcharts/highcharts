@@ -16,6 +16,7 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Cell from '../Layout/Cell.js';
 import type Serializable from '../Serializable';
@@ -29,8 +30,7 @@ const {
     addEvent,
     createElement,
     fireEvent,
-    removeEvent,
-    pick
+    removeEvent
 } = U;
 
 import EditMode from '../EditMode/EditMode';
@@ -368,9 +368,7 @@ class Resizer {
             resizer.startX = e.clientX;
         };
 
-        resizer.mouseDownSnapY = mouseDownSnapY = function (
-            e: PointerEvent
-        ): void {
+        resizer.mouseDownSnapY = mouseDownSnapY = function (): void {
             resizer.isActive = true;
             resizer.currentDimension = 'y';
             resizer.editMode.hideToolbars(['row', 'cell']);
@@ -386,9 +384,7 @@ class Resizer {
             }
         };
 
-        resizer.mouseUpSnap = mouseUpSnap = function (
-            e: PointerEvent
-        ): void {
+        resizer.mouseUpSnap = mouseUpSnap = function (): void {
             if (resizer.isActive) {
                 resizer.isActive = false;
                 resizer.currentDimension = void 0;

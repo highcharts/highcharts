@@ -25,7 +25,11 @@
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 import type { ComponentConnectorOptions } from './ComponentOptions';
-import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
+import type {
+    ComponentType,
+    ComponentTypeRegistry
+} from './ComponentType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -329,10 +333,13 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.Options>
+        options: Partial<Component.Options>,
+        board?: Board
     ) {
-        this.board = cell.row.layout.board;
-        this.parentElement = cell.container;
+        const renderTo = options.renderTo || options.cell;
+        this.board = board || cell?.row?.layout?.board || {};
+        this.parentElement =
+            cell?.container || document.querySelector('#' + renderTo);
         this.cell = cell;
 
         this.options = merge(
@@ -366,30 +373,30 @@ abstract class Component {
         this.contentElement = createElement(
             'div', {
                 className: `${this.options.className}-content`
-            }, {
-                height: '100%'
             },
+            {},
             this.element,
             true
         );
 
-        this.standardizeSyncOptions();
         this.filterAndAssignSyncOptions();
-
         this.setupEventListeners();
-        this.attachCellListeneres();
 
-        this.on('tableChanged', (): void => {
-            this.onTableChanged();
-        });
+        if (cell) {
+            this.attachCellListeners();
 
-        this.on('update', (): void => {
-            this.cell.setLoadingState();
-        });
+            this.on('tableChanged', (): void => {
+                this.onTableChanged();
+            });
 
-        this.on('afterRender', (): void => {
-            this.cell.setLoadingState(false);
-        });
+            this.on('update', (): void => {
+                this.cell.setLoadingState();
+            });
+
+            this.on('afterRender', (): void => {
+                this.cell.setLoadingState(false);
+            });
+        }
     }
 
     /**
@@ -406,6 +413,7 @@ abstract class Component {
      * The sidebar popup.
      */
     public getOptionsOnDrop(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         sidebar: SidebarPopup
     ): Partial<ComponentType['options']> {
         return {};
@@ -434,15 +442,15 @@ abstract class Component {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            this.cell.setLoadingState();
+            this.cell?.setLoadingState();
 
             const connector = await dataPool.getConnector(connectorId);
-
             this.setConnector(connector);
         }
 
         return this;
     }
+
     /**
     * Filter the sync options that are declared in the component options.
     * Assigns the sync options to the component and to the sync instance.
@@ -464,23 +472,29 @@ abstract class Component {
         ): Sync.OptionsRecord => {
             if (handlerName) {
                 const defaultHandler = defaultHandlers[handlerName];
+                const defaultOptions = Sync.defaultSyncOptions[handlerName];
                 const handler = sync[handlerName];
 
-                if (defaultHandler) {
-                    if (isObject(handler) && handler.enabled) {
-                        const keys: (keyof Sync.OptionsEntry)[] = [
-                            'emitter', 'handler'
-                        ];
+                // Make it always an object
+                carry[handlerName] = merge(
+                    defaultOptions || {},
+                    { enabled: isObject(handler) ? handler.enabled : handler },
+                    isObject(handler) ? handler : {}
+                );
 
-                        carry[handlerName] = {};
-                        for (const key of keys) {
-                            if (
-                                handler[key] === true ||
-                                handler[key] === void 0
-                            ) {
-                                carry[handlerName][key] =
-                                    defaultHandler[key] as any;
-                            }
+                // Set emitter and handler default functions
+                if (defaultHandler && carry[handlerName].enabled) {
+                    const keys: (keyof Sync.OptionsEntry)[] = [
+                        'emitter', 'handler'
+                    ];
+
+                    for (const key of keys) {
+                        if (
+                            carry[handlerName][key] === true ||
+                            carry[handlerName][key] === void 0
+                        ) {
+                            carry[handlerName][key] =
+                                defaultHandler[key] as any;
                         }
                     }
                 }
@@ -498,7 +512,7 @@ abstract class Component {
      *
      * @internal
      */
-    private attachCellListeneres(): void {
+    private attachCellListeners(): void {
         // remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
@@ -550,7 +564,7 @@ abstract class Component {
         if (cell.container) {
             this.parentElement = cell.container;
         }
-        this.attachCellListeneres();
+        this.attachCellListeners();
         if (resize) {
             this.resizeTo(this.parentElement);
         }
@@ -577,7 +591,7 @@ abstract class Component {
                 ].forEach((event: any): void => {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
-                            clearInterval(this.tableEventTimeout);
+                            clearTimeout(this.tableEventTimeout);
                             this.tableEventTimeout = Globals.win.setTimeout(
                                 (): void => {
                                     this.emit({
@@ -585,18 +599,22 @@ abstract class Component {
                                         type: 'tableChanged'
                                     });
                                     this.tableEventTimeout = void 0;
-                                },
-                                0
-                            );
+                                });
                         }));
                 });
             }
 
             this.tableEvents.push(connector.on('afterLoad', (): void => {
-                this.emit({
-                    target: this,
-                    type: 'tableChanged'
-                });
+                clearTimeout(this.tableEventTimeout);
+                this.tableEventTimeout = Globals.win.setTimeout(
+                    (): void => {
+                        this.emit({
+                            target: this,
+                            type: 'tableChanged'
+                        });
+
+                        this.tableEventTimeout = void 0;
+                    });
             }));
         }
     }
@@ -620,10 +638,16 @@ abstract class Component {
                 'afterSetModifier',
                 (e): void => {
                     if (e.type === 'afterSetModifier') {
-                        this.emit({
-                            ...e,
-                            type: 'tableChanged'
-                        });
+                        clearTimeout(this.tableEventTimeout);
+                        this.tableEventTimeout = Globals.win.setTimeout(
+                            (): void => {
+                                this.emit({
+                                    ...e,
+                                    type: 'tableChanged'
+                                });
+                                this.tableEventTimeout = void 0;
+                            });
+
                     }
                 }
             ));
@@ -828,32 +852,10 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        this.standardizeSyncOptions();
-
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
         }
-
-    }
-
-    /**
-     * Standardizes the sync options to be always an object.
-     *
-     * @internal
-     */
-    protected standardizeSyncOptions(): void {
-        const sync = this.options.sync || {};
-        Object.keys(sync).forEach((handlerName): void => {
-            const handler = sync[handlerName];
-            const defaultOptions = Sync.defaultSyncOptions[handlerName];
-
-            sync[handlerName] = merge(
-                defaultOptions || {},
-                { enabled: isObject(handler) ? handler.enabled : handler },
-                isObject(handler) ? handler : {}
-            );
-        });
     }
 
     /**
@@ -959,7 +961,7 @@ abstract class Component {
                 } else {
                     captionElement.replaceWith(newCaption);
                 }
-                this.titleElement = newCaption;
+                this.captionElement = newCaption;
             }
         } else {
             if (captionElement) {
@@ -1067,7 +1069,7 @@ abstract class Component {
         const json: Component.JSON = {
             $class: this.options.type,
             options: {
-                cell: this.options.cell,
+                renderTo: this.options.renderTo,
                 parentElement: this.parentElement.id,
                 dimensions,
                 id: this.id,
@@ -1207,8 +1209,17 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
+         *
+         * @deprecated
          */
         cell?: string;
+
+        /**
+         * Cell id, where component is attached.
+         *
+         * @deprecated
+         */
+        renderTo?: string;
 
         /**
          * The name of class that is applied to the component's container.
@@ -1277,7 +1288,7 @@ namespace Component {
     export interface ComponentOptionsJSON extends JSON.Object {
         caption?: string;
         className?: string;
-        cell?: string;
+        renderTo?: string;
         editableOptions?: JSON.Array<string>;
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;

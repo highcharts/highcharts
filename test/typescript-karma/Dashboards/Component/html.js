@@ -1,5 +1,6 @@
 //@ts-check
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 const { test } = QUnit;
 
@@ -22,7 +23,7 @@ test('component resizing', function (assert) {
         },
         components: [{
             type: 'HTML',
-            cell: 'dashboard-cell'
+            renderTo: 'dashboard-cell'
         }]
     });
 

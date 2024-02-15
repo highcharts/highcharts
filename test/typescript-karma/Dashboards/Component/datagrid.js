@@ -1,19 +1,18 @@
 //@ts-check
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
-import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
+import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
-DashboardsPlugin.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
-DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.DataGridPlugin);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 const { test } = QUnit;
-
 
 test('DataGrid component with dataTable', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
 
-    const { DataTable } = Dashboards;
+    const { DataTable } = DataGrid;
 
     const columns = {
         product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -41,7 +40,7 @@ test('DataGrid component with dataTable', async function (assert) {
         },
         components: [
             {
-                cell: 'dashboard-col-1',
+                renderTo: 'dashboard-col-1',
                 type: 'DataGrid',
                 dataGridOptions: {
                     dataTable: new DataTable({

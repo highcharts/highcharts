@@ -2,7 +2,6 @@ Types of components
 ===
 
 Components are the building blocks of the dashboard layout. There are several types of components, which you can use out of the box. Some of them come with a default configuration (KPI, Highcharts, DataGrid), and some components are completely flexible, so that you can configure them all by yourself (HTMLComponent). You define which type of component you want to use by defining its `type` property in the configuration object.
-Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboards-plugin.js` module.
 
 Here is the overview of the most important parameters, that can be defined for a component:
 * `id` - The unique id of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
@@ -20,7 +19,7 @@ Code snippet:
 ```js
 {
     type: 'HTML',
-    cell: 'dashboard-1',
+    renderTo: 'dashboard-1',
     elements: [{
         tagName: 'img',
         attributes: {
@@ -34,14 +33,14 @@ Also please check the [Custom Component](https://www.highcharts.com/docs/dashboa
 You can find more information about HTML Component [here.](https://www.highcharts.com/docs/dashboards/html-component)
 
 ### Highcharts Component
-The option to include a Highcharts chart in one of the components is available out of the box. 
-Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.
+The option to include a Highcharts chart in one of the components is available out of the box.
+Highcharts components uses [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) by default.  
+With classic scripts import order matters, so make sure that the Dashboards module is imported after the Highcharts module.
 
 Here is the set of files that need to be included to make the Highcharts component work.
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the Highcharts displays correctly.
@@ -56,11 +55,11 @@ The last thing that you have to do is to specify the `type: 'Highcharts'` in the
 You can find more information about HighchartsComponent [here](https://www.highcharts.com/docs/dashboards/highcharts-component);
 
 ### DataGrid Component
-To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
+To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.  
+With classic scripts import order matters, so make sure that the Dashboards module is imported after the DataGrid module.
 ```html
+<script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the DataGrid displays correctly.
@@ -83,7 +82,7 @@ This component type is bundled with the Highcharts plugin and you need to connec
 Code snippet:
 ```js
 {
-    cell: 'kpi-00',
+    renderTo: 'kpi-00',
     type: 'KPI',
     title: 'Average revenue',
     value: 888,

@@ -23,15 +23,15 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'highcharts-dashboards-cell-a0',
+            renderTo: 'highcharts-dashboards-cell-a0',
             type: 'Highcharts',
             chartOptions: buildChartOptions('bar', vegeTable, cursor)
         }, {
-            cell: 'highcharts-dashboards-cell-b0',
+            renderTo: 'highcharts-dashboards-cell-b0',
             type: 'Highcharts',
             chartOptions: buildChartOptions('pie', vegeTable, cursor)
         }, {
-            cell: 'highcharts-dashboards-cell-a1',
+            renderTo: 'highcharts-dashboards-cell-a1',
             type: 'Highcharts',
             chartOptions: buildChartOptions('line', vegeTable, cursor)
         }

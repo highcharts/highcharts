@@ -1,14 +1,14 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
-import DashboardsPlugin from '../../../../code/dashboards/es-modules/masters/modules/dashboards-plugin.src.js';
+import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
-DashboardsPlugin.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DashboardsPlugin.DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
-DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.HighchartsPlugin);
-DashboardsPlugin.PluginHandler.addPlugin(DashboardsPlugin.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 const { test } = QUnit;
 
@@ -48,7 +48,7 @@ test('Sync events leak in updated components', async function (assert) {
             }]
         },
         components: [{
-            cell: 'chart',
+            renderTo: 'chart',
             type: 'Highcharts',
             connector: {
                 id: 'micro-element'
@@ -59,7 +59,7 @@ test('Sync events leak in updated components', async function (assert) {
                 extremes: true
             }
         }, {
-            cell: 'datagrid',
+            renderTo: 'datagrid',
             type: 'DataGrid',
             connector: {
                 id: 'micro-element'
@@ -99,4 +99,52 @@ test('Sync events leak in updated components', async function (assert) {
         await testLeaks(cDataGrid),
         'DataGrid Component should not leak events when update.'
     );
+});
+
+
+test('Custom sync handler & emitter', function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    assert.timeout(1000);
+    const done = assert.async(2);
+    Dashboards.board('container', {
+        gui: {
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-1'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'HTML',
+            renderTo: 'dashboard-1',
+            elements: [{
+                tagName: 'h1',
+                textContent: 'test'
+            }],
+            sync: {
+                customSync: {
+                    handler: function() {
+                        assert.ok(
+                            this.sync.registeredSyncHandlers.customSync,
+                            'Custom sync handler should be registered.'
+                        );
+                        done();
+                    },
+                    emitter: function() {
+                        assert.ok(
+                            this.sync.registeredSyncEmitters.customSync,
+                            'Custom sync emitter should be registered.'
+                        );
+                        done();
+                    }
+                }
+            }
+        }]
+    });
 });

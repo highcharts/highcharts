@@ -75,7 +75,7 @@ QUnit.test('Stocktools GUI', function (assert) {
             while (!found && ++i < button.length) { // Find the button with text
                 if (button[i].innerHTML.indexOf(text) !== -1) {
                     found = true;
-                    button = button[i];
+                    button = button[i].childNodes[0];
                     button.click();
                 }
             }

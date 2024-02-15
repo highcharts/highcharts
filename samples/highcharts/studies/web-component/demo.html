@@ -1,0 +1,32 @@
+<div id="container">
+    <highcharts-chart>
+        <chart background-color="#efefff" border-radius="5"></chart>
+        <title align="left" style="font-size: 2em">
+            Web component chart
+        </title>
+        <x-axis categories="Apples, Oranges, Pears, Bananas"></x-axis>
+        <y-axis>
+            <title>Fruit consumption</title>
+            <labels format="{value} items"></labels>
+            <plot-bands>
+                <plot-bands-item from="2" to="3" color="#0000ff22">
+                    <label>Target intake</label>
+                </plot-bands-item>
+            </plot-bands>
+        </y-axis>
+        <area-series name="Area series">
+            <data>
+                <data-item y="1"></data-item>
+                <data-item y="4"></data-item>
+                <data-item y="3"></data-item>
+                <data-item y="5">
+                    <data-labels enabled style="font-size: 3em"
+                        vertical-align="middle" align="left"></data-labels>
+                </data-item>
+            </data>
+        </area-series>
+        <column-series data="5, 3, 2, 3" name="Column series">
+            <data-labels enabled inside style="font-size: 2em"></data-labels>
+        </column-series>
+    </highcharts-chart>
+</div>

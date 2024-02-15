@@ -8,21 +8,20 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 ## How to start
 
-1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) of course, but also [Dashboards Plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js) and [Datagrid](https://code.highcharts.com/dashboards/datagrid.js).
+1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. the [Datagrid](https://code.highcharts.com/datagrid/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
+The order of the imports is important, so make sure that the Dashboards module is imported after the DataGrid module.
     ```html
+    <script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
     ```
 
     Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
-    ```ts
+    ```typescript
     import * as Dashboards from '@highcharts/dashboards';
     import DataGrid from '@highcharts/dashboards/es-modules/DataGrid/DataGrid';
-    import DataGridPlugin from '@highcharts/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin';
 
-    DataGridPlugin.custom.connectDataGrid(DataGrid);
-    Dashboards.PluginHandler.addPlugin(DataGridPlugin);
+    Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+    Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
     ```
 
 2. You also need to import the styles in your main CSS file.
@@ -64,10 +63,10 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
     ```
     Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
-5. Once you have the data and where to place your component, you can define it as below. In the `cell` option, we're passing the ID of the cell, which we defined in point 3, and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
+5. Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we defined in point 3 or created in our own layout), and the ID of the connector with the data in the `connector.id` option (point 4). In order for the component to be created as a DataGrid, it was set with the `type` option to `'DataGrid'`.
     ```js
     components: [{
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'data'
         },
@@ -104,7 +103,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         connector: {
             id: 'data'
         },
@@ -124,7 +123,7 @@ Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Dat
 Example:
 ```js
 components: [{
-    cell: 'dashboard-col-1',
+    renderTo: 'dashboard-col-1',
     type: 'DataGrid'
     connector: {
         id: 'data'

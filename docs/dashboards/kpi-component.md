@@ -6,10 +6,9 @@ The KPIComponent allows you to visualize key performance indicators.
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-kpi allow="fullscreen"></iframe>
 
 ## How to start
-1. To be able to use KPIComponent you first have to load the additional [Dashboards plugin](https://code.highcharts.com/dashboards/modules/dashboards-plugin.js).
+1. To be able to use KPIComponent you first have to load the main [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) package.
 
-2. Define a cell using a unique identifier for example `cell: 'dashboard-col-0'`.
-
+2. Define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.  
 You can find more information how to create a layout in dashboard [here](https://www.highcharts.com/docs/dashboards/your-first-dashboard).
 
 3. The last thing that you have to do is to specify the `type: 'KPI'` and `value: <value>` in the component’s config. See the full example below.
@@ -27,7 +26,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'KPI',
         title: 'My KPI',
         value: 10
@@ -41,9 +40,9 @@ KPIComponent allows end-user including the extra chart.
 1. To be able to use Highcharts in KPI you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
 Alternatively, you can also use the NPM package.
@@ -77,7 +76,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         title: 'My KPI',
         type: 'KPI',
         value: 10,
@@ -118,7 +117,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'kpi',
+        renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
         columnName: 'Value',

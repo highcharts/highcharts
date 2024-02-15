@@ -1,5 +1,6 @@
 //@ts-check
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 const { test } = QUnit;
 
@@ -19,7 +20,7 @@ test('KPI Component updating', async function (assert) {
             }]
         },
         components: [{
-            cell: 'dashboard-cell-1',
+            renderTo: 'dashboard-cell-1',
             type: 'KPI',
             title: 'Value',
             value: 1

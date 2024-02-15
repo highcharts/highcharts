@@ -349,6 +349,10 @@ module.exports = function (config) {
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
+        browserConsoleLogOptions: {
+            path: `${process.cwd()}/test/console.log`,
+            terminal: false
+        },
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits

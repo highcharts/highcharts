@@ -536,7 +536,7 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
         flex: 1 1 50%;
     }
 }
-  
+
 /* MEDIUM */
 @media (max-width: 992px) {
     #world-map,
@@ -553,7 +553,7 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
         flex: 1 1 50%;
     }
 }
-  
+
 /* SMALL */
 @media (max-width: 576px) {
     #world-map,

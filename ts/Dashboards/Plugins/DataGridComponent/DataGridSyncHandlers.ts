@@ -29,7 +29,6 @@ import U from '../../../Core/Utilities.js';
 import DataCursor from '../../../Data/DataCursor';
 const {
     addEvent,
-    isObject,
     removeEvent
 } = U;
 
@@ -44,21 +43,17 @@ const configs: {
     emitters: Record<string, Sync.EmitterConfig>;
 } = {
     emitters: {
-        highlightEmitter: [
-            'highlightEmitter',
+        highlightEmitter:
             function (this: ComponentType): (() => void) | void {
                 if (this.type !== 'DataGrid') {
                     return;
                 }
 
                 const { dataGrid, board } = this as DataGridComponent;
-                const highlightOptions = this.options.sync?.highlight;
+                const highlightOptions =
+                    this.sync.syncConfig.highlight as Sync.HighlightSyncOptions;
 
-                if (
-                    !board || !dataGrid ||
-                    !isObject(highlightOptions) ||
-                    !highlightOptions.enabled
-                ) {
+                if (!board || !dataGrid || !highlightOptions.enabled) {
                     return;
                 }
 
@@ -106,16 +101,15 @@ const configs: {
                     );
                 };
             }
-        ]
     },
     handlers: {
-        highlightHandler: [
-            'highlightHandler',
+        highlightHandler:
             function (this: DataGridComponent): (() => void) | void {
                 const { board } = this;
-                const highlightOptions = this.options.sync?.highlight;
+                const highlightOptions =
+                    this.sync.syncConfig.highlight as Sync.HighlightSyncOptions;
 
-                if (!isObject(highlightOptions) || !highlightOptions.enabled) {
+                if (!highlightOptions.enabled) {
                     return;
                 }
 
@@ -174,8 +168,7 @@ const configs: {
                     registerCursorListeners();
                     return unregisterCursorListeners;
                 }
-            }
-        ],
+            },
         extremesHandler: function (
             this: DataGridComponent
         ): (() => void) | void {

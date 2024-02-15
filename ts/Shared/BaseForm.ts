@@ -106,7 +106,7 @@ abstract class BaseForm {
 
         // Create close popup button.
         const closeButton = createElement(
-            'div',
+            'button',
             { className },
             void 0,
             this.container

@@ -39,7 +39,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         connector: {
             id: 'EUR-USD'
@@ -81,15 +81,15 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: `Euro foreign exchange reference rate 
+                    chartContainerLabel: `Euro foreign exchange reference rate
                     to US dollar`
                 }
             },
             accessibility: {
-                description: `The chart is displaying the 3 linear series, the 
-                first of which corresponds to a certain value on a given day in 
-                Euro, the second to the Euro to US Dollar exchange rate, and 
-                the third to the same amount converted to US Dollars according 
+                description: `The chart is displaying the 3 linear series, the
+                first of which corresponds to a certain value on a given day in
+                Euro, the second to the Euro to US Dollar exchange rate, and
+                the third to the same amount converted to US Dollars according
                 to the given exchange rate.`
             },
             xAxis: {
@@ -111,7 +111,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'DataGrid',
         connector: {
             id: 'EUR-USD'

@@ -59,7 +59,7 @@ Dashboards.board('container', {
     components: [
         {
             type: 'KPI',
-            cell: 'dashboard-row-1-cell-1',
+            renderTo: 'dashboard-row-1-cell-1',
             title: 'Total balance',
             value: 1430,
             valueFormat: '$ {value}',
@@ -85,7 +85,7 @@ Dashboards.board('container', {
         },
         {
             type: 'KPI',
-            cell: 'dashboard-row-1-cell-2',
+            renderTo: 'dashboard-row-1-cell-2',
             title: 'Savings',
             value: 6500,
             valueFormat: '$ {value}',
@@ -111,7 +111,7 @@ Dashboards.board('container', {
         },
         {
             type: 'HTML',
-            cell: 'dashboard-row-1-cell-3',
+            renderTo: 'dashboard-row-1-cell-3',
             elements: [
                 {
                     tagName: 'div',
@@ -136,7 +136,7 @@ Dashboards.board('container', {
         },
         {
             type: 'Highcharts',
-            cell: 'dashboard-row-2-cell-1',
+            renderTo: 'dashboard-row-2-cell-1',
             title: 'Earnings',
             chartOptions: {
                 chart: {
@@ -200,7 +200,7 @@ Dashboards.board('container', {
         },
         {
             type: 'KPI',
-            cell: 'dashboard-row-3-cell-1',
+            renderTo: 'dashboard-row-3-cell-1',
             title: 'Spendings',
             value: 350,
             valueFormat: '$ {value}',
@@ -223,7 +223,7 @@ Dashboards.board('container', {
         },
         {
             type: 'KPI',
-            cell: 'dashboard-row-3-cell-2',
+            renderTo: 'dashboard-row-3-cell-2',
             title: 'Your wallet condition',
             value: '',
             subtitle: 'You saved 1450$ this month',
@@ -250,7 +250,7 @@ Dashboards.board('container', {
                 ]
             }
         }, {
-            cell: 'dashboard-row-3-cell-3',
+            renderTo: 'dashboard-row-3-cell-3',
             connector: {
                 id: 'transactions'
             },

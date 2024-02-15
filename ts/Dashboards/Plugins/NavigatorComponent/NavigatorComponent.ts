@@ -30,6 +30,7 @@ import type Cell from '../../Layout/Cell';
 import type { Options } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
+import type Sync from '../../Components/Sync/Sync';
 
 import Component from '../../Components/Component.js';
 import Globals from '../../Globals.js';
@@ -40,7 +41,6 @@ import U from '../../../Core/Utilities.js';
 const {
     diffObjects,
     isNumber,
-    isObject,
     isString,
     merge,
     pick
@@ -125,13 +125,11 @@ class NavigatorComponent extends Component {
         super(cell, options);
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
-        this.standardizeSyncOptions();
 
         const charter = (
             NavigatorComponent.charter.Chart ||
             Globals.win.Highcharts
         );
-        const crossfilterOptions = this.options.sync?.crossfilter;
 
         this.chartContainer = Globals.win.document.createElement('div');
         this.chart = charter
@@ -142,9 +140,12 @@ class NavigatorComponent extends Component {
         this.filterAndAssignSyncOptions(NavigatorSyncHandler);
         this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
-        if (isObject(crossfilterOptions) && crossfilterOptions.enabled) {
+        if (this.sync.syncConfig.crossfilter?.enabled) {
             this.chart.update(
-                { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                merge(
+                    { navigator: { xAxis: { labels: { format: '{value}' } } } },
+                    this.options.chartOptions || {}
+                ),
                 false
             );
         }
@@ -381,17 +382,15 @@ class NavigatorComponent extends Component {
 
         if (this.connector) {
             const table = this.connector.table,
-                options = this.options,
                 column = this.getColumnAssignment(),
-                columnValues = table.getColumn(column[0], true) || [],
-                crossfilterOptions = options.sync?.crossfilter;
+                columnValues = table.getColumn(column[0], true) || [];
 
             let data: (
                 Array<(number|string|null)>|
                 Array<[number|string, number|null]>
             );
 
-            if (isObject(crossfilterOptions) && crossfilterOptions.enabled) {
+            if (this.sync.syncConfig.crossfilter?.enabled) {
                 data = this.generateCrossfilterData();
             } else {
                 data = columnValues.slice() as Array<string|number|null>;
@@ -412,17 +411,14 @@ class NavigatorComponent extends Component {
      * Generates the data for the crossfilter navigator.
      */
     private generateCrossfilterData(): [number, number | null][] {
-        const crossfilterOptions = this.options.sync?.crossfilter;
+        const crossfilterOptions =
+            this.sync.syncConfig.crossfilter as Sync.CrossfilterSyncOptions;
         const table = this.connector?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];
 
-        if (
-            !table ||
-            columnValues.length < 1 ||
-            !isObject(crossfilterOptions)
-        ) {
+        if (!table || columnValues.length < 1 || !crossfilterOptions) {
             return [];
         }
 
@@ -543,8 +539,7 @@ class NavigatorComponent extends Component {
         options: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
-        const chart = this.chart,
-            crossfilterOptions = this.options.sync?.crossfilter;
+        const chart = this.chart;
 
         await super.update(options, false);
 
@@ -554,17 +549,9 @@ class NavigatorComponent extends Component {
 
         if (options.chartOptions) {
             chart.update(
-                merge(isObject(crossfilterOptions) &&
-                    crossfilterOptions.enabled ? {
-                        navigator: {
-                            xAxis: {
-                                labels: {
-                                    format: '{value}'
-                                }
-                            }
-                        }
-                    } : {},
-                options.chartOptions),
+                merge(this.sync.syncConfig.crossfilter?.enabled ? (
+                    { navigator: { xAxis: { labels: { format: '{value}' } } } }
+                ) : {}, options.chartOptions),
                 false
             );
         }
@@ -577,6 +564,7 @@ class NavigatorComponent extends Component {
     }
 
     public getOptionsOnDrop(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         sidebar: SidebarPopup
     ): Partial<Options> {
         return {};
