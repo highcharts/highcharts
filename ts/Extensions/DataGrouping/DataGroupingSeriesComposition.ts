@@ -628,8 +628,8 @@ function groupData(
     approximation: (ApproximationKeyValue|Function),
     table: DataTableLight
 ): DataGroupingResultObject {
-    xData = this.getColumn('x');
-    yData = this.getColumn('y');
+    xData = table.getColumn('x', true) as Array<number> || [];
+    yData = table.getColumn('y', true) as Array<number> || [];
 
     const series = this,
         data = series.data,
