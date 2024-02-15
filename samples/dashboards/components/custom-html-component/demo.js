@@ -1,6 +1,6 @@
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
-    AST = Highcharts.AST;
+    AST = Dashboards.AST;
 class CustomHTML extends HTMLComponent {
     constructor(cell, options) {
         super(cell, options);

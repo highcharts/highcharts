@@ -40,6 +40,7 @@ function jsDocESMDTS() {
             file.endsWith('.src.d.ts') &&
             !file.endsWith('globals.src.d.ts') &&
             !file.includes('dashboards') &&
+            !file.includes('datagrid') &&
             !file.includes('es-modules')
         ));
     const path = require('path');
