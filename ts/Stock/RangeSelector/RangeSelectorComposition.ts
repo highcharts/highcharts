@@ -196,23 +196,13 @@ function onChartBeforeRender(
     this: Chart
 ): void {
     const chart = this,
-        axes = chart.axes,
         rangeSelector = chart.rangeSelector;
 
     if (rangeSelector) {
-
         if (isNumber(rangeSelector.deferredYTDClick)) {
             rangeSelector.clickButton(rangeSelector.deferredYTDClick);
             delete rangeSelector.deferredYTDClick;
         }
-
-        axes.forEach((axis): void => {
-            axis.updateNames();
-            // axis.setScale();
-        });
-
-        // chart.getAxisMargins();
-        // rangeSelector.render();
 
         const verticalAlign = rangeSelector.options.verticalAlign;
 
