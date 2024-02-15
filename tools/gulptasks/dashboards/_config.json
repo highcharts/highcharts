@@ -1,6 +1,6 @@
 {
     "buildFolder": "build/dist/dashboards/",
-    "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards/",
+    "bundleSourceFolder": "code/dashboards/es-modules/masters/",
     "bundleTargetFolder": "code/dashboards/",
     "cdnFolder": "dashboards/",
     "cssFolder": "code/dashboards/css/",
@@ -14,7 +14,7 @@
     "typeScriptFolder": "ts/masters-dashboards/",
 
     "buildFolderDataGrid": "build/dist/datagrid/",
-    "bundleSourceFolderDataGrid": "code/datagrid/es-modules/masters-datagrid/",
+    "bundleSourceFolderDataGrid": "code/datagrid/es-modules/masters/",
     "bundleTargetFolderDataGrid": "code/datagrid/",
     "cdnFolderDataGrid": "datagrid/",
     "esModulesFolderDataGrid": "code/datagrid/es-modules/",
