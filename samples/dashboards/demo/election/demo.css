@@ -340,18 +340,19 @@
     text-align: center;
 }
 
-#html-result-div div {
+#html-result div {
     margin: auto;
     padding: 5px;
 }
 
-#html-result-div div img {
-    width: 100px;
-    height: 100px;
+#html-result div img {
+    width: auto;
+    height: 140px;
 }
 
-#html-result-div #progress-bar {
-    width: 50%;
+#html-result #progress-bar {
+    width: 70%;
+    background-color: #ccf;
     border: 1px solid grey;
 }
 
@@ -361,26 +362,31 @@
  *
  * */
 
-div#html-control-div {
+#html-control {
     text-align: center;
 }
 
-div#html-control-div h1 {
+#html-control h1 {
     font-size: 1.2em;
     text-align: center;
 }
 
-div#html-control-div #election-year {
+#html-control #election-year {
     margin: 10px;
 }
 
-div#html-control-div div#election-description {
+#html-control #election-description {
     border: 1px dotted #ccc;
     border-radius: 5px;
-    text-align: center;
+    text-align: left;
     font-size: 0.9em;
     padding: 5px;
     margin: 20px;
+}
+
+/* Container for application meta data */
+#xml-data-island {
+    visibility: hidden;
 }
 
 /* *
@@ -389,6 +395,6 @@ div#html-control-div div#election-description {
  *
  * */
 
-div#description {
+#demo-description {
     padding: 15px;
 }

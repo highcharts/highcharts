@@ -6,50 +6,138 @@
 <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 
 <!-- Dashboards container -->
-<div id="container">Loading...</div>
+<div id="container">Loading Dashboard ...</div>
 
 <!-- Demo description -->
-<div id="description">
+<div id="demo-description">
     <h1>Election demo</h1>
     <p>The demo shows the results from US presidential elections.</p>
     <h2>How to use</h2>
     <p>States are selected by clicking on the map. The election year is selected by the dropdown.</p>
     <h2>Dashboards components</h2>
     <ul>
-        <li><b>Dashboards custom HTML</b> for the national results or state results (with pictures and dual-colored bar)</li>
-        <li><b>Dashboards custom HTML</b> provides a dropdown for the election year and a checkbox to select all states.</li>
+        <li><b>Dashboards custom HTML</b> for the national results or state results (with pictures and dual-colored bar)
+        </li>
+        <li><b>Dashboards custom HTML</b> provides a dropdown for the election year and a checkbox to select all states.
+        </li>
         <li><b>Highcharts Maps</b> shows the winning party per state (blue = Democrat, red = Republican).</li>
         <li><b>Highcharts Chart</b> shows historical national or state results.</li>
-        <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be changed.</li>
+        <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be
+            changed.</li>
     </ul>
     <h2>Data set</h2>
     <p>The data used in this demo are provided by ....</p>
 </div>
 
-<!-- These elements are moved into Dashboard custom HTML components on load -->
-<div id="html-result-div">
-    <div>
-        <img id="rep-cand" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Obama_portrait_crop.jpg/298px-Obama_portrait_crop.jpg">
+<!-- XML data island: data for Custom HTML components-->
+<xml id="xml-data-island">
+    <div id="html-result-div">
+        <div>
+            <img id="rep-cand" /><span>Republican</span>
+        </div>
+        <div id="progress-bar">
+            <p>Progress will appear here ...</p>
+        </div>
+        <div>
+            <img id="dem-cand" /><span>Democrat</span>
+        </div>
     </div>
-    <div id="progress-bar">
-        <p>Progress will appear here ...</p>
-    </div>
-    <div>
-        <img id="dem-cand"
-            src="https://wp-assets.highcharts.com/svg/dashboard-dark.svg">
-    </div>
-</div>
 
-<div id="html-control-div">
-    <h1>United States presidential election</h1>
-    <label for="elections">Election year:</label>
-    <select name="elections" id="election-year">
-        <option value="2020">2020 - Trump v. Biden</option>
-        <option value="2016">2016 - Clinton v. Trump</option>
-        <option value="2012">2012 - Obama v. Romney</option>
-        <option value="2008">2008 - McCain v. Obama</option>
-    </select>
-    <div id="election-description">
-        <p>Text describing the election will be added here... (includes relevant links)</p>
+    <div id="html-control-div">
+        <h1>United States presidential election</h1>
+        <label for="elections">Election year:</label>
+        <select name="elections" id="election-year">
+            <option value="2020">2020 - Trump v. Biden</option>
+            <option value="2016">2016 - Trump v. Clinton</option>
+            <option value="2012">2012 - Romney v. Obama</option>
+            <option value="2008">2008 - McCain v. Obama</option>
+        </select>
+        <div id="election-description">
+            <p>Text describing the election will be added here... (includes relevant links)</p>
+        </div>
     </div>
-</div>
+
+    <!-- Data extracted from Wikipedia -->
+    <elections>
+        <year id="ei_2020">
+            <descr>The 2020 United States presidential election was the 59th quadrennial presidential election,
+                held on Tuesday, November 3, 2020. The Democratic ticket of former vice president Joe Biden and the
+                junior U.S. senator from California Kamala Harris defeated the incumbent Republican president, Donald
+                Trump, and vice president, Mike Pence.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2020_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>Trump</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Donald_Trump_official_portrait_%28cropped%29.jpg/290px-Donald_Trump_official_portrait_%28cropped%29.jpg
+                </imgUrl>
+            </rep>
+            <dem>
+                <candidate>Biden</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Joe_Biden_presidential_portrait_%28cropped%29.jpg/300px-Joe_Biden_presidential_portrait_%28cropped%29.jpg
+                </imgUrl>
+            </dem>
+        </year>
+        <year id="ei_2016">
+            <descr>The 2016 United States presidential election was the 58th quadrennial presidential election,
+                held on Tuesday, November 8, 2016. The Republican ticket, businessman Donald Trump and Indiana governor
+                Mike Pence defeated the Democratic ticket of former secretary of state and First Lady of the United
+                States Hillary Clinton and the junior senator from Virginia, Tim Kaine, in what was considered one of
+                the biggest political upsets in American history.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2016_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>Trump</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Donald_Trump_official_portrait_%28cropped%29.jpg/290px-Donald_Trump_official_portrait_%28cropped%29.jpg
+                </imgUrl>
+            </rep>
+            <dem>
+                <candidate>Clinton</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Hillary_Clinton_by_Gage_Skidmore_2.jpg/270px-Hillary_Clinton_by_Gage_Skidmore_2.jpg
+                </imgUrl>
+            </dem>
+        </year>
+        <year id="ei_2012">
+            <descr>The 2012 United States presidential election was the 57th quadrennial presidential election,
+                held on Tuesday, November 6, 2012. Incumbent Democratic President Barack Obama and his running mate,
+                incumbent Vice President Joe Biden, were re-elected to a second term. They defeated the Republican
+                ticket of former Governor Mitt Romney of Massachusetts and Representative Paul Ryan of Wisconsin.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2012_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>Romney</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Mitt_Romney_by_Gage_Skidmore_6_cropped.jpg/299px-Mitt_Romney_by_Gage_Skidmore_6_cropped.jpg
+                </imgUrl>
+            </rep>
+            <dem>
+                <candidate>Obama</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/President_Barack_Obama%2C_2012_portrait_crop.jpg/308px-President_Barack_Obama%2C_2012_portrait_crop.jpg
+                </imgUrl>
+            </dem>
+        </year>
+        <year id="ei_2008">
+            <descr>The 2008 United States presidential election was the 56th quadrennial presidential election,
+                held on November 4, 2008. The Democratic ticket of Barack Obama, the junior senator from Illinois, and
+                Joe Biden, the senior senator from Delaware, defeated the Republican ticket of John McCain, the senior
+                senator from Arizona, and Sarah Palin, the governor of Alaska.
+            </descr>
+            <wiki>https://en.wikipedia.org/wiki/2008_United_States_presidential_election</wiki>
+            <rep>
+                <candidate>McCain</candidate>
+                <imgUrl>https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/John_McCain_2009_Official.jpg/300px-John_McCain_2009_Official.jpg
+                </imgUrl>
+            </rep>
+            <dem>
+                <candidate>Obama</candidate>
+                <imgUrl>
+                    https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/President_Barack_Obama%2C_2012_portrait_crop.jpg/308px-President_Barack_Obama%2C_2012_portrait_crop.jpg
+                </imgUrl>
+            </dem>
+        </year>
+    </elections>
+</xml>
