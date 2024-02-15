@@ -102,6 +102,16 @@ class AveragesMirror extends Component {
 
 ComponentRegistry.registerComponent('AveragesMirror', AveragesMirror);
 
+const formatBigNumber = value => {
+    if (value >= 1e6) {
+        return Math.round(value / 1e5) / 10 + 'M';
+    }
+    if (value >= 1e3) {
+        return Math.round(value / 1e3) + 'k';
+    }
+    return value;
+};
+
 Dashboards.board('container', {
     gui: {
         layouts: [{
@@ -136,12 +146,10 @@ Dashboards.board('container', {
             id: 'data'
         },
         columnAssignment: {
-            x: 'Date',
-            y: 'Users'
+            x: 'Population',
+            y: 'Happiness'
         },
-        valueFormatter: function (value) {
-            return Highcharts.dateFormat('%Y-%m-%d', value);
-        },
+        valueFormatter: value => formatBigNumber(value),
         sync: {
             customMirrorSync: {
                 enabled: true,
@@ -178,24 +186,43 @@ Dashboards.board('container', {
             id: 'data'
         },
         columnAssignment: {
-            Date: 'x',
-            Users: 'y'
+            Population: 'x',
+            'Population vs Happiness': {
+                y: 'Happiness',
+                name: 'Country'
+            }
         },
         chartOptions: {
-            plotOptions: {
-                series: {
-                    marker: {
-                        enabled: false
-                    }
+            xAxis: {
+                type: 'logarithmic',
+                title: {
+                    text: 'Population'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Happiness'
                 }
             },
             title: {
-                text: 'Example Chart'
+                text: 'Population vs Happiness'
             },
-            xAxis: {
-                type: 'datetime',
-                crosshair: {
-                    enabled: true
+            credits: {
+                text: 'worldhappiness.report',
+                href: 'https://worldhappiness.report/'
+            },
+            series: [{
+                type: 'scatter',
+                name: 'Population vs Happiness'
+            }],
+            tooltip: {
+                formatter: function () {
+                    const point = this.point;
+                    return `
+                        <b>${point.name}</b><br>
+                        Population: <b>${formatBigNumber(point.x)}</b><br>
+                        Happiness: <b>${point.y}</b>
+                    `;
                 }
             }
         },
@@ -276,7 +303,7 @@ Dashboards.board('container', {
                     const removeRedrawListener =
                         Highcharts.addEvent(chart, 'redraw', drawLines);
 
-                    // Remove listeners when component is destroyed
+                    // Remove listeners when the component is destroyed
                     return () => {
                         removeRedrawListener();
                         cursor.removeListenerr(
