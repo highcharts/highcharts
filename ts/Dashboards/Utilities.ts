@@ -173,7 +173,10 @@ function uniqueKey(): string {
 function error(code: number|string, stop?: boolean): void {
     // TODO- replace with proper error handling
     if (code === 16) {
-        console.warn('Dashboard error: Dashboards library loaded more than once. This may cause undefined behavior.');
+        console.warn( // eslint-disable-line no-console
+            'Dashboard error: Dashboards library loaded more than once.' +
+            'This may cause undefined behavior.'
+        );
         return;
     }
     coreError(code, stop);
