@@ -12,7 +12,9 @@
 // ! Data grid            !
 // ! -------------------- !
 
-// Data grid contents (proposed for PoC) - mandates to be added
+// Data grid contents
+
+// TBD: update to match new layout
 
 // State    | Rep. cand | Dem. cand. | Total votes | Rep % | Dem % | P.C. (hidden)
 // ---------|-----------|------------|-------------|-------|-------|----
@@ -87,12 +89,12 @@ async function setupDashboard() {
                 state: '',
                 repColVotes: 0,
                 demColVotes: 0,
-                totalVotes: 0,
                 repPercent: 0.0,
                 demPercent: 0.0,
                 'postal-code': '',
                 repVotes: 0,
-                demVotes: 0
+                demVotes: 0,
+                totalVotes: 0
             };
 
             const header = Object.keys(rowObj);
@@ -253,12 +255,12 @@ async function setupDashboard() {
             // Percentage, Republicans
             ret[0].data.push({
                 name: item.candRep,
-                y: Number(row[4])
+                y: Number(row[3])
             });
 
             ret[1].data.push({
                 name: item.candDem,
-                y: Number(row[5])
+                y: Number(row[4])
             });
         });
         return ret;
@@ -379,10 +381,10 @@ async function setupDashboard() {
                         }
                     },
                     series: [{
-                        // Republicans
+                        // Democrats
                         colorIndex: 1
                     }, {
-                        // Democrats
+                        // Republicans
                         colorIndex: 0
                     }]
                 }
@@ -633,16 +635,16 @@ async function updateBoard(board, state, year) {
         repInfo,
         progressBar,
         demInfo,
-        controlHtml,
+        controlHtml, // Updates bypass Dashboards
         usMap,
-        historyChart,
+        historyChart, // TBD: use when a state is clicked
         selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
     // 1. Update result HTML (if state or year changes)
     const row = votesTable.getRowIndexBy('state', 'Federal');
-    const repVal = votesTable.getCellAsNumber('repPercent', row);
-    const demVal = votesTable.getCellAsNumber('demPercent', row);
+
+    // Candidate names
     const candDem = electionData[year].candDem;
     const candRep = electionData[year].candRep;
 
@@ -665,14 +667,19 @@ async function updateBoard(board, state, year) {
         }
     });
 
-    progressBar.chart.series[0].update({
+    // Candidate percentages
+    const repPercent = votesTable.getCellAsNumber('repPercent', row);
+    const demPercent = votesTable.getCellAsNumber('demPercent', row);
+
+    const [demEl, repEl] = progressBar.chart.series;
+    demEl.update({
         data: [
-            demVal
+            demPercent
         ]
     });
-    progressBar.chart.series[1].update({
+    repEl.update({
         data: [
-            repVal
+            repPercent
         ]
     });
 
