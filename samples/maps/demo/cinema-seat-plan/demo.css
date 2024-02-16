@@ -1,0 +1,41 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.controls {
+    text-align: left;
+    margin-bottom: 1rem;
+    padding: 0 10px;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+#deselect {
+    border-radius: 0.3em;
+    background: #f8f8f8;
+    transition: background 150ms;
+    border: 1px solid #999;
+    display: inline-block;
+    font-size: 12pt;
+    line-height: 16pt;
+    margin-left: -1px;
+    color: #555;
+}
+
+#deselect:hover {
+    background: rgb(124 181 236);
+    color: white;
+}
+
+#deselect[disabled] {
+    background: #ccc;
+    outline: none;
+    color: #555;
+}
