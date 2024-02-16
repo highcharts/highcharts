@@ -204,7 +204,7 @@ class Popup extends BaseForm {
      * @private
      *
      * @param {string} option
-     *        Chain of fields i.e params.styles.fontSize separeted by the dot.
+     *        Chain of fields i.e params.styles.fontSize separated by the dot.
      *
      * @param {string} indicatorType
      *        Type of the indicator i.e. sma, ema...

@@ -144,7 +144,7 @@ class SMAIndicator extends LineSeries {
         compareToMain: false,
 
         /**
-         * Paramters used in calculation of regression series' points.
+         * Parameters used in calculation of regression series' points.
          */
         params: {
 

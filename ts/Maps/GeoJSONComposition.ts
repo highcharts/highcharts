@@ -474,7 +474,7 @@ namespace GeoJSONComposition {
             }
         }
 
-        // Recurse down any depth of multi-dimentional arrays of arcs and insert
+        // Recurse down any depth of multi-dimensional arrays of arcs and insert
         // the coordinates
         const arcsToCoordinates = (
             arcs: any
@@ -644,7 +644,7 @@ export default GeoJSONComposition;
  * @name Highcharts.GeoJSONTranslation#crs
  * @type {string}
  *//**
- * Define the portion of the map that this defintion applies to. Defined as a
+ * Define the portion of the map that this definition applies to. Defined as a
  * GeoJSON polygon feature object, with `type` and `coordinates` properties.
  * @name Highcharts.GeoJSONTranslation#hitZone
  * @type {Highcharts.Dictionary<*>|undefined}

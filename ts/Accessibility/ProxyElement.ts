@@ -261,7 +261,7 @@ class ProxyElement {
 
                     e.stopPropagation();
 
-                    // #9682, #15318: Touch scrolling didnt work when touching
+                    // #9682, #15318: Touch scrolling didn't work when touching
                     // proxy
                     if (!isTouchEvent) {
                         e.preventDefault();

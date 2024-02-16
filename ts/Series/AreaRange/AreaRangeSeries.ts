@@ -951,4 +951,4 @@ export default AreaRangeSeries;
  * @apioption series.arearange.data.low
  */
 
-''; // adds doclets above to tranpiled file
+''; // adds doclets above to transpiled file

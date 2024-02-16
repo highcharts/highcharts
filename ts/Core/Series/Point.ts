@@ -1234,7 +1234,7 @@ class Point {
                                 loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
 
-                            // Programatically selecting a point should restore
+                            // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
@@ -1677,7 +1677,7 @@ export default Point;
  * @callback Highcharts.PointClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
@@ -1746,10 +1746,10 @@ export default Point;
  * @callback Highcharts.PointMouseOutCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.PointerEvent} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1758,10 +1758,10 @@ export default Point;
  * @callback Highcharts.PointMouseOverCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1791,10 +1791,10 @@ export default Point;
  * @callback Highcharts.PointRemoveCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1810,10 +1810,10 @@ export default Point;
  * @callback Highcharts.PointUpdateCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointUpdateEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1860,10 +1860,10 @@ export default Point;
  * @callback Highcharts.PointSelectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1873,10 +1873,10 @@ export default Point;
  * @callback Highcharts.PointUnselectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 ''; // keeps doclets above in JS file.

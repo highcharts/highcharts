@@ -432,7 +432,7 @@ class SVGRenderer implements SVGRendererLike {
                 return win.location.href
                     .split('#')[0] // remove the hash
                     .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parantheses and quotes
+                    // escape parentheses and quotes
                     .replace(/([\('\)])/g, '\\$1')
                     // replace spaces (needed for Safari only)
                     .replace(/ /g, '%20');
@@ -478,8 +478,8 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Detect whether the renderer is hidden. This happens when one of the
      * parent elements has `display: none`. Used internally to detect when we
-     * needto render preliminarily in another div to get the text bounding boxes
-     * right.
+     * need to render preliminarily in another div to get the text bounding
+     * boxes right.
      *
      * @function Highcharts.SVGRenderer#isHidden
      *
@@ -898,7 +898,7 @@ class SVGRenderer implements SVGRendererLike {
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            // Substract due to #1129. Now bottom and left axis gridlines behave
+            // Subtract due to #1129. Now bottom and left axis gridlines behave
             // the same.
             start[1] = end[1] =
                 Math[roundingFunction](start[1]) - (width % 2 / 2);
@@ -2210,7 +2210,7 @@ export default SVGRenderer;
 
 /**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
- * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
+ * instances. It is instantiated with the {@link SVGRenderer#clipRect} function
  * and applied with the {@link SVGElement#clip} function.
  *
  * @example
