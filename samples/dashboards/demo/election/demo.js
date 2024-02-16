@@ -1,27 +1,26 @@
 /* eslint-disable max-len */
-/* eslint-disable no-unused-vars */
 /* eslint-disable jsdoc/require-description */
 
 
 // Layout
-// ! -------------------- !
-// ! KPI          | HTML  !
-// ! -------------|------ !
-// ! Map          | Chart !
-// ! -------------------- !
-// ! Data grid            !
-// ! -------------------- !
+// ! -------------------------- !
+// ! HTML |Chart | HTML | HTML  !
+// ! -------------------|------ !
+// ! Map                | Chart !
+// ! -------------------------- !
+// ! Data grid                  !
+// ! -------------------------- !
 
 // Data grid contents
 
 // TBD: update to match new layout
 
-// State    | Rep. cand | Dem. cand. | Total votes | Rep % | Dem % | P.C. (hidden)
-// ---------|-----------|------------|-------------|-------|-------|----
-// U.S.     | rep. vote | dem. vote  | int         | float | float | -
-// Alabama  | rep. vote | dem. vote  | int         | float | float | AL
-// ........ | ......... | .........  | ...         | ..... | ....  |
-// Wyoming  | rep. vote | dem. vote  | int         | float | float | WY
+// State    | Dem. cand    | Repo. cand.  | Dem % | Rep % |
+// ---------|--------------|--------------|-------|-------|
+// Federal  | dem el. vote | rep el. vote | float | float |
+// Alabama  | dem el. vote | rep el. vote | float | float |
+// ........ | ............ | .........    | ...   | ..... |
+// Wyoming  | dem el. vote | rep el. vote | float | float |
 
 // Useful links
 // -----------------------------------------------------------------------------
@@ -52,8 +51,8 @@ const electionYears = Object.keys(elections).reverse();
 const selectedYear = electionYears[0];
 
 let electionData = null;
-let mapData = null;
 let elCollegeData = null;
+let mapData = null;
 
 // Launches the Dashboards application
 async function setupDashboard() {
@@ -87,13 +86,13 @@ async function setupDashboard() {
         .then(response => response.text()).then(function (csv) {
             const rowObj = {
                 state: '',
-                repColVotes: 0,
                 demColVotes: 0,
-                repPercent: 0.0,
+                repColVotes: 0,
                 demPercent: 0.0,
+                repPercent: 0.0,
                 'postal-code': '',
-                repVotes: 0,
                 demVotes: 0,
+                repVotes: 0,
                 totalVotes: 0
             };
 
@@ -222,9 +221,9 @@ async function setupDashboard() {
 
     function addNationalSummary(jsonData, national) {
         function getSurname(name) {
-            const surname = name.split(',')[0];
-            return surname; // .charAt(0).toUpperCase() + surname.slice(1).toLowerCase();
+            return name.split(',')[0];
         }
+
         const summary = national.data;
 
         // Insert a row with national results (row 1, below header)
@@ -241,10 +240,10 @@ async function setupDashboard() {
     function getElectionSummary() {
         const ret = [
             {
-                name: 'Republican',
+                name: 'Democrat',
                 data: []
             }, {
-                name: 'Democrat',
+                name: 'Republican',
                 data: []
             }
         ];
@@ -252,14 +251,15 @@ async function setupDashboard() {
         Object.values(electionData).reverse().forEach(function (item) {
             const row = item.data[1];
 
-            // Percentage, Republicans
+            // Percentage, Democrat
             ret[0].data.push({
-                name: item.candRep,
+                name: item.candDem,
                 y: Number(row[3])
             });
 
+            // Percentage, Republicans
             ret[1].data.push({
-                name: item.candDem,
+                name: item.candRep,
                 y: Number(row[4])
             });
         });
@@ -311,11 +311,11 @@ async function setupDashboard() {
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'rep-info'
+                                    id: 'dem-info'
                                 }, {
                                     id: 'progress-bar'
                                 }, {
-                                    id: 'dem-info'
+                                    id: 'rep-info'
                                 }]
                             }]
                         }
@@ -341,9 +341,9 @@ async function setupDashboard() {
         },
         components: [
             {
-                renderTo: 'rep-info',
+                renderTo: 'dem-info',
                 type: 'CustomHTML',
-                id: 'html-rep-info'
+                id: 'html-dem-info'
             },
             {
                 // One point bar chart
@@ -352,8 +352,7 @@ async function setupDashboard() {
                 chartOptions: {
                     chart: {
                         type: 'bar',
-                        styledMode: false,
-                        margin: 50
+                        height: '35%'
                     },
                     title: {
                         text: ''
@@ -373,7 +372,7 @@ async function setupDashboard() {
                     plotOptions: {
                         bar: {
                             pointWidth: 50,
-                            stacking: 'normal',
+                            stacking: 'percent',
                             dataLabels: {
                                 enabled: true,
                                 format: '{point.y:.1f} %'
@@ -381,24 +380,24 @@ async function setupDashboard() {
                         }
                     },
                     series: [{
-                        // Democrats
+                        // Republicans
                         colorIndex: 1
                     }, {
-                        // Republicans
+                        // Democrats
                         colorIndex: 0
                     }]
                 }
             },
             {
-                renderTo: 'dem-info',
+                renderTo: 'rep-info',
                 type: 'CustomHTML',
-                id: 'html-dem-info'
+                id: 'html-rep-info'
             },
             {
                 renderTo: 'html-control',
                 type: 'CustomHTML',
                 id: 'html-control-div',
-                title: 'United States presidential election'
+                title: 'U.S. presidential election'
             },
             {
                 renderTo: 'us-map',
@@ -430,12 +429,12 @@ async function setupDashboard() {
                         dataClasses: [{
                             from: -100,
                             to: 0,
-                            colorIndex: 1,
+                            colorIndex: 0,
                             name: 'Democrat'
                         }, {
                             from: 0,
                             to: 100,
-                            colorIndex: 0,
+                            colorIndex: 1,
                             name: 'Republican'
                         }]
                     },
@@ -632,9 +631,9 @@ async function updateBoard(board, state, year) {
 
     const [
         // The order here must be the same as in the component definition in the Dashboard.
-        repInfo,
-        progressBar,
         demInfo,
+        progressBar,
+        repInfo,
         controlHtml, // Updates bypass Dashboards
         usMap,
         historyChart, // TBD: use when a state is clicked
@@ -668,10 +667,10 @@ async function updateBoard(board, state, year) {
     });
 
     // Candidate percentages
-    const repPercent = votesTable.getCellAsNumber('repPercent', row);
     const demPercent = votesTable.getCellAsNumber('demPercent', row);
+    const repPercent = votesTable.getCellAsNumber('repPercent', row);
 
-    const [demEl, repEl] = progressBar.chart.series;
+    const [repEl, demEl] = progressBar.chart.series;
     demEl.update({
         data: [
             demPercent
@@ -718,10 +717,10 @@ async function updateBoard(board, state, year) {
             value: Number(percentRep - percentDem),
             custom: {
                 winner: percentRep > percentDem ? 'Republican' : 'Democrat',
-                votesRep: elVotesRep,
                 votesDem: elVotesDem,
-                percentRep: percentRep,
-                percentDem: percentDem
+                votesRep: elVotesRep,
+                percentDem: percentDem,
+                percentRep: percentRep
             }
         });
     });

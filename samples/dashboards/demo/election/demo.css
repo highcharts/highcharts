@@ -176,10 +176,6 @@
  *
  * */
 
-#us-map .highcharts-dashboards-component {
-    border-radius: 10px;
-}
-
 #us-map .highcharts-dashboards-component-content {
     background: var(--color-background);
 }
@@ -254,13 +250,19 @@
     stroke-width: 2px;
 }
 
+/* Common */
+
+.highcharts-dashboards-component {
+    border-radius: 10px;
+}
+
 /* Dashboard layout */
 
 #html-result,
 #us-map,
 #election-chart {
-    --highcharts-color-0: #c40401; /* Republicans */
-    --highcharts-color-1: #0200d0; /* Democrats */
+    --highcharts-color-0: #0200d0; /* Democrats */
+    --highcharts-color-1: #c40401; /* Republicans */
     --highcharts-color-2: #ccc; /* Others */
 }
 
@@ -277,12 +279,6 @@
 
 #selection-grid {
     flex: 1 1 100%;
-}
-
-/* Layout of html-result cells */
-#progress-bar {
-    flex: 1 1 40%;
-    max-height: 200px;
 }
 
 /* LARGE */
@@ -307,7 +303,7 @@
     #html-result,
     #html-control {
         background-color: red;
-        flex: 1 1 50%;
+        flex: 1 1 100%;
     }
 
     #us-map,
@@ -332,12 +328,13 @@
 
 /* *
  *
- *  Custom HTML for choosing election year
+ *  HTML and chart for displaying election summary
  *
  * */
 
 #html-result {
     text-align: center;
+    max-height: 250px;
 }
 
 #html-result .highcharts-dashboards-component-title {
@@ -346,14 +343,20 @@
     text-align: center;
 }
 
+#html-result .highcharts-data-label text {
+    fill: white;
+}
+
 #html-result img {
+    /* Candidate portraits: original dimension 290 x 400 */
+    max-width: 90%;
+    max-height: 150px;
     width: auto;
-    height: 130px;
-    margin: 5px;
+    height: auto;
 }
 
 #html-result #progress-bar {
-    width: 70%;
+    flex: 1 1 40%;
 }
 
 /* *
@@ -364,6 +367,7 @@
 
 #html-control {
     text-align: center;
+    max-height: 250px;
 }
 
 #html-control #election-year {
