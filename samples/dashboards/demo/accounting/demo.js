@@ -9,7 +9,6 @@ const currentYear = new Date(currentMonth).getFullYear();
 
 const commonGaugeOptions = {
     chart: {
-        height: 125,
         type: 'gauge',
         className: 'highcharts-gauge-chart',
         marginBottom: 0

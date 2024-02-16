@@ -18,13 +18,18 @@
 }
 
 .highcharts-dashboards-component-kpi-value {
-    font-size: 2rem;
+    font-size: 1.6rem;
+}
+
+.highcharts-dashboards-component-title {
+    margin-top: 48px;
 }
 
 #rev-chart-kpi,
 #cost-chart-kpi,
 #res-chart-kpi {
-    max-width: 200px;
+    flex-basis: 25%;
+    height: 185px;
 }
 
 #rev-chart-kpi .highcharts-dashboards-component-kpi-value,
@@ -53,7 +58,6 @@
     #rev-chart-kpi,
     #cost-chart-kpi,
     #res-chart-kpi {
-        max-width: none;
         flex-basis: 100%;
     }
 }
