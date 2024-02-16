@@ -23,7 +23,8 @@
         volume.push({
             x: data[i][0], // the date
             y: data[i][5], // the volume
-            color: data[i][4] > previousCandleClose ? '#273a25' : '#4e1c1f'
+            color: data[i][4] > previousCandleClose ? '#273a25' : '#4e1c1f',
+            labelColor: data[i][4] > previousCandleClose ? '#47964e' : '#ea3d3d'
         });
         previousCandleClose = data[i][4];
     }
@@ -38,15 +39,46 @@
             }
         },
         xAxis: {
-            gridLineColor: '#181816'
+            gridLineColor: '#181816',
+            labels: {
+                style: {
+                    color: '#666666'
+                }
+            }
         },
         yAxis: {
-            gridLineColor: '#181816'
+            gridLineColor: '#181816',
+            labels: {
+                style: {
+                    color: '#666666'
+                }
+            }
         },
         tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
             style: {
                 color: '#cdcdc9'
+            }
+        },
+        scrollbar: {
+            barBackgroundColor: '#464646',
+            barBorderRadius: 0,
+            barBorderWidth: 0,
+            buttonBorderWidth: 0,
+            buttonArrowColor: '#cccccc',
+            rifleColor: '#cccccc',
+            trackBackgroundColor: '#121211',
+            trackBorderRadius: 0,
+            trackBorderWidth: 1,
+            trackBorderColor: '#464646'
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    theme: {
+                        fill: '#121211'
+                    }
+                }
             }
         }
     });
@@ -65,16 +97,22 @@
         },
 
         plotOptions: {
+            series: {
+                marker: {
+                    enabled: false,
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
+                }
+            },
             candlestick: {
                 color: '#ea3d3d',
                 upColor: '#47964e',
                 upLineColor: '#47964e',
                 lineColor: '#ea3d3d'
             }
-        },
-
-        legend: {
-            enabled: false
         },
 
         xAxis: {
@@ -100,7 +138,7 @@
             useHTML: true,
             shadow: false,
             positioner: function () {
-                return { x: 10, y: 10 };
+                return { x: 50, y: 10 };
             }
         },
 
@@ -125,7 +163,49 @@
             groupPadding: 0,
             pointPadding: 0,
             tooltip: {
-                pointFormat: '<b>Volume</b> {point.y}<br/>'
+                pointFormat: '<b>Volume</b> <span style="color: {point.labelColor}">{point.y}</span><br/>'
+            }
+        }, {
+            type: 'ikh',
+            linkedTo: 'aapl',
+            tooltip: {
+                pointFormat: '<br/><span style="color: #666666;">IKH</span><br/>' +
+                    'tenkan sen: <span style="color:{series.options.tenkanLine.styles.lineColor}">{point.tenkanSen:.3f}</span><br/>' +
+                    'kijun sen: <span style="color:{series.options.kijunLine.styles.lineColor}">{point.kijunSen:.3f}</span><br/>' +
+                    'chikou span: <span style="color:{series.options.chikouLine.styles.lineColor}">{point.chikouSpan:.3f}</span><br/>' +
+                    'senkou span A: <span style="color:{series.options.senkouSpanA.styles.lineColor}">{point.senkouSpanA:.3f}</span><br/>' +
+                    'senkou span B: <span style="color:{series.options.senkouSpanB.styles.lineColor}">{point.senkouSpanB:.3f}</span><br/>'
+            },
+            tenkanLine: {
+                styles: {
+                    lineColor: '#12dbd1'
+                }
+            },
+            kijunLine: {
+                styles: {
+                    lineColor: '#de70fa'
+                }
+            },
+            chikouLine: {
+                styles: {
+                    lineColor: '#4267fc'
+                }
+            },
+            senkouSpanA: {
+                styles: {
+                    lineColor: '#2ad156'
+                }
+            },
+            senkouSpanB: {
+                styles: {
+                    lineColor: '#fca18d'
+                }
+            },
+            senkouSpan: {
+                color: 'rgba(255, 255, 255, 0.3)',
+                styles: {
+                    fill: 'rgba(0, 0, 255, 0.1)'
+                }
             }
         }]
     });
