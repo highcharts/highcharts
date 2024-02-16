@@ -364,26 +364,41 @@ async function setupDashboard() {
                         enabled: false
                     },
                     xAxis: {
-                        visible: false
+                        categories: ['Votes', 'Electors'],
+                        lineWidth: 0,
+                        labels: {
+                            rotation: 45,
+                            y: 15
+                        }
                     },
                     yAxis: {
                         visible: false
                     },
                     plotOptions: {
                         bar: {
-                            pointWidth: 50,
                             stacking: 'percent',
                             dataLabels: {
                                 enabled: true,
-                                format: '{point.y:.1f} %'
+                                formatter: function () {
+                                    if (this.x === 'Votes') {
+                                        return `${this.y} %`;
+                                    }
+                                    return this.y;
+                                }
                             }
                         }
                     },
                     series: [{
-                        // Republicans
+                        name: 'Rep. vote',
                         colorIndex: 1
                     }, {
-                        // Democrats
+                        name: 'Dem. vote',
+                        colorIndex: 0
+                    }, {
+                        name: 'Rep. mand.',
+                        colorIndex: 1
+                    }, {
+                        name: 'Dem. mand.',
                         colorIndex: 0
                     }]
                 }
@@ -669,16 +684,18 @@ async function updateBoard(board, state, year) {
     // Candidate percentages
     const demPercent = votesTable.getCellAsNumber('demPercent', row);
     const repPercent = votesTable.getCellAsNumber('repPercent', row);
+    const demColVotes = votesTable.getCellAsNumber('demColVotes', row);
+    const repColVotes = votesTable.getCellAsNumber('repColVotes', row);
 
     const [repEl, demEl] = progressBar.chart.series;
     demEl.update({
         data: [
-            demPercent
+            demPercent, demColVotes
         ]
     });
     repEl.update({
         data: [
-            repPercent
+            repPercent, repColVotes
         ]
     });
 

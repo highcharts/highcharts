@@ -359,6 +359,10 @@
     flex: 1 1 40%;
 }
 
+#html-result #progress-bar .highcharts-axis-line {
+    stroke-width: 0;
+}
+
 /* *
  *
  *  HTML application control
