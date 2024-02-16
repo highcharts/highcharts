@@ -203,9 +203,7 @@
             },
             senkouSpan: {
                 color: 'rgba(255, 255, 255, 0.3)',
-                styles: {
-                    fill: 'rgba(0, 0, 255, 0.1)'
-                }
+                negativeColor: 'rgba(237, 88, 71, 0.2)'
             }
         }]
     });
