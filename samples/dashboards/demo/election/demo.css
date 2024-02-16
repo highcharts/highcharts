@@ -389,12 +389,18 @@
     margin: 10px 20px 0;
 }
 
-span.democrat {
+/* *
+ *
+ *  Page-wide styles
+ *
+ * */
+
+.democrat {
     color: var(--highcharts-color-0);
     font-weight: bold;
 }
 
-span.republican {
+.republican {
     color: var(--highcharts-color-1);
     font-weight: bold;
 }

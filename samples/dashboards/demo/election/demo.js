@@ -17,7 +17,7 @@
 
 // State    | Dem. cand    | Repo. cand.  | Dem % | Rep % |
 // ---------|--------------|--------------|-------|-------|
-// Federal  | dem el. vote | rep el. vote | float | float |
+// National | dem el. vote | rep el. vote | float | float |
 // Alabama  | dem el. vote | rep el. vote | float | float |
 // ........ | ............ | .........    | ...   | ..... |
 // Wyoming  | dem el. vote | rep el. vote | float | float |
@@ -48,19 +48,21 @@ const elections = {
     }
 };
 const electionYears = Object.keys(elections).reverse();
-const selectedYear = electionYears[0];
 
 let electionData = null;
-let elCollegeData = null;
-let mapData = null;
 
 // Launches the Dashboards application
 async function setupDashboard() {
+
+    // Start with national results and latest election
+    let selectedState = 'US';
+    let selectedYear = electionYears[0];
+
     // Load the basic map
-    mapData = await fetch(mapUrl).then(response => response.json());
+    const mapData = await fetch(mapUrl).then(response => response.json());
 
     // Load the electoral mandate data and convert from CSV jo JSON
-    elCollegeData = await fetch(elCollegeUrl)
+    const elCollegeData = await fetch(elCollegeUrl)
         .then(response => response.text()).then(function (csv) {
             const jsonData = {};
             const lines = csv.split(/\r?\n/);
@@ -104,7 +106,7 @@ async function setupDashboard() {
                 data: { ...rowObj }
             };
             const rowObjNational = national.data;
-            rowObjNational.state = 'Federal';
+            rowObjNational.state = 'National';
             rowObjNational['postal-code'] = 'US';
 
             // eslint-disable-next-line max-len
@@ -383,7 +385,7 @@ async function setupDashboard() {
                                     if (this.x === 'Votes') {
                                         return `${this.y} %`;
                                     }
-                                    return this.y;
+                                    return this.y > 0 ? this.y : '';
                                 }
                             }
                         }
@@ -468,14 +470,15 @@ async function setupDashboard() {
                             style: {
                                 textTransform: 'uppercase'
                             }
-                        }
-                        /*
+                        },
                         point: {
                             events: {
-                                click: pointClick
+                                click: function (e) {
+                                    selectedState = e.point['postal-code'];
+                                    updateBoard(board, selectedState, selectedYear);
+                                }
                             }
                         }
-                        */
                     }, {
                         name: 'Separators',
                         type: 'mapline',
@@ -498,7 +501,7 @@ async function setupDashboard() {
                         }
                     },
                     accessibility: {
-                        description: 'The map is displaying ' + commonTitle + ' for year TBD' // TBD: Update dynamically
+                        description: 'The map is displaying ' + commonTitle + ', ' + selectedYear
                     }
                 }
             },
@@ -619,7 +622,7 @@ async function setupDashboard() {
     }, true);
 
     // Initialize data
-    await updateBoard(board, 'Alaska', selectedYear);
+    await updateBoard(board, 'US', selectedYear);
 
     // Handle change year events
     Highcharts.addEvent(
@@ -627,7 +630,8 @@ async function setupDashboard() {
         'change',
         async function () {
             const selectedOption = this.options[this.selectedIndex];
-            await updateBoard(board, null, selectedOption.value);
+            selectedYear = selectedOption.value;
+            await updateBoard(board, selectedState, selectedYear);
         }
     );
 }
@@ -655,8 +659,11 @@ async function updateBoard(board, state, year) {
         selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
+    // Get data for selected state (or US)
+    const row = votesTable.getRowIndexBy('postal-code', state);
+
     // 1. Update result HTML (if state or year changes)
-    const row = votesTable.getRowIndexBy('state', 'Federal');
+    const stateName = votesTable.getCell('state', row);
 
     // Candidate names
     const candDem = electionData[year].candDem;
@@ -677,7 +684,7 @@ async function updateBoard(board, state, year) {
     // Progress bar (stacked)
     await progressBar.update({
         title: {
-            text: title
+            text: state === 'US' ? title : (title + ', ' + stateName)
         }
     });
 
