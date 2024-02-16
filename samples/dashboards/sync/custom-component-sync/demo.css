@@ -5,6 +5,12 @@
     display: none;
 }
 
+/* HIGHCHARTS */
+:root,
+.highcharts-light {
+    --highcharts-color-0: #9a9a9a;
+}
+
 /* CUSTOM COMPONENT */
 
 .am-slider {

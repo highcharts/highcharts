@@ -187,7 +187,7 @@ Dashboards.board('container', {
         },
         columnAssignment: {
             Population: 'x',
-            'Population vs Happiness': {
+            'Happiness vs Population': {
                 y: 'Happiness',
                 name: 'Country'
             }
@@ -205,15 +205,18 @@ Dashboards.board('container', {
                 }
             },
             title: {
-                text: 'Population vs Happiness'
+                text: 'Happiness vs Population'
             },
             credits: {
                 text: 'worldhappiness.report',
                 href: 'https://worldhappiness.report/'
             },
+            legend: {
+                enabled: false
+            },
             series: [{
                 type: 'scatter',
-                name: 'Population vs Happiness'
+                name: 'Happiness vs Population'
             }],
             tooltip: {
                 formatter: function () {
@@ -268,23 +271,52 @@ Dashboards.board('container', {
                             'L', xAxis.width + xAxis.left, rightYPos
                         ];
 
-                        if (xAxis.mirrorBand) {
-                            xAxis.mirrorBand.attr({ d: mirrorBandD });
-                            xAxis.leftBand.attr({ d: leftBandD });
-                            xAxis.rigthBand.attr({ d: rightBandD });
-                        } else {
+                        if (!xAxis.mirrorBand) {
                             xAxis.mirrorBand = chart.renderer.path().attr({
-                                stroke: '#f25', d: mirrorBandD, zIndex: 1
+                                stroke: '#f25',
+                                zIndex: 3,
+                                'stroke-dasharray': 5
                             }).add();
 
                             xAxis.leftBand = chart.renderer.path().attr({
-                                stroke: '#f25', d: leftBandD, zIndex: 1
+                                stroke: '#f25',
+                                zIndex: 3,
+                                'stroke-width': 2
                             }).add();
 
                             xAxis.rigthBand = chart.renderer.path().attr({
-                                stroke: '#f25', d: rightBandD, zIndex: 1
+                                stroke: '#f25',
+                                zIndex: 3,
+                                'stroke-width': 2
+                            }).add();
+
+                            xAxis.leftLabel = chart.renderer.text().attr({
+                                text: leftAverage,
+                                zIndex: 3,
+                                fill: '#f25'
+                            }).add();
+
+                            xAxis.rightLabel = chart.renderer.text().attr({
+                                text: rightAverage,
+                                zIndex: 3,
+                                align: 'right',
+                                fill: '#f25'
                             }).add();
                         }
+
+                        xAxis.mirrorBand.attr({ d: mirrorBandD });
+                        xAxis.leftBand.attr({ d: leftBandD });
+                        xAxis.rigthBand.attr({ d: rightBandD });
+                        xAxis.leftLabel.attr({
+                            text: leftAverage,
+                            x: xAxis.left,
+                            y: leftYPos - 10
+                        });
+                        xAxis.rightLabel.attr({
+                            text: rightAverage,
+                            x: xAxis.width + xAxis.left,
+                            y: rightYPos - 10
+                        });
                     };
 
                     const handleCursor = e => {
