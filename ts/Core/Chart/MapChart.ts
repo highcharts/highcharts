@@ -22,6 +22,7 @@ import type MapPointer from '../../Maps/MapPointer';
 import type MapView from '../../Maps/MapView';
 import type Options from '../Options';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type { MapDataType } from '../../Maps/GeoJSON';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
@@ -180,6 +181,26 @@ class MapChart extends Chart {
                     void 0
             );
         }
+    }
+
+    public update(
+        options: Partial<Options>
+    ): void {
+        // Calculate and set the recommended map view if map option is set
+        if (options.chart && 'map' in options.chart) {
+            this.mapView?.recommendMapView(
+                this,
+                [
+                    options.chart.map,
+                    ...(this.options.series || []).map(
+                        (s): (MapDataType|undefined) => s.mapData
+                    )
+                ],
+                true
+            );
+        }
+
+        super.update.apply(this, arguments);
     }
 
 }

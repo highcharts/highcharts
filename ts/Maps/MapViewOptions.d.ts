@@ -83,7 +83,6 @@ export interface MapViewOptions {
     maxZoom?: number;
     padding: MapViewPaddingType;
     projection?: ProjectionOptions;
-    recommendedMapView?: DeepPartial<MapViewOptions>;
     zoom?: number;
     minZoom?: number;
 }
