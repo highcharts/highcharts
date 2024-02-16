@@ -29,6 +29,14 @@
 
         /* Extra colors */
         --gray: #333;
+
+        /* UI colors */
+        --highcharts-background-color: #333333;
+
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-0: rgb(0, 0, 0);
     }
 }
 
@@ -38,18 +46,21 @@
     position: relative;
 }
 
-.highcharts-dashboards-row {
+.row {
     display: flex;
     position: relative;
 }
 
-.highcharts-dashboards-cell {
+.cell {
     border: 1px solid transparent;
     border-radius: 10px;
     position: relative;
     min-width: 20px;
-    /* flex: 1 1 50%; */
     height: 300px;
+}
+
+.highcharts-dashboards-component {
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-component-title {
@@ -58,13 +69,17 @@
     margin: 1em;
 }
 
-.highcharts-dashboards-cell > .highcharts-dashboards-component {
+.cell > .highcharts-dashboards-component {
     position: relative;
     background-color: var(--highcharts-background-color);
     box-shadow: 0 0.4688rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.4063rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.5313rem rgba(4, 9, 20, 0.03), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
     margin: 5px;
     border-radius: 10px;
     overflow: hidden;
+}
+
+.dashboard-header .dashboard-title {
+    padding-top: 20px;
 }
 
 .dashboard-header .dashboard-title,
@@ -178,7 +193,7 @@
 
 /* MEDIUM */
 @media (max-width: 992px) {
-    .highcharts-dashboards-row {
+    .row {
         flex-direction: column;
     }
 
@@ -186,7 +201,7 @@
         height: auto;
     }
 
-    #current-sprint.highcharts-dashboards-row {
+    #current-sprint.row {
         flex-direction: row;
     }
 
@@ -206,7 +221,7 @@
 /* MEDIUM */
 @media (max-width: 576px) {
     #current-sprint,
-    #current-sprint.highcharts-dashboards-row {
+    #current-sprint.row {
         flex-direction: column;
         flex-wrap: wrap;
     }
