@@ -926,9 +926,7 @@ class RangeSelector {
         function updateExtremes(name: 'min'| 'max'): void {
             const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
-                unionExtremes = (
-                    chart.scroller && chart.scroller.getUnionExtremes()
-                ) || chartAxis,
+                unionExtremes = chart.scroller?.getUnionExtremes() || chartAxis,
                 dataMin = unionExtremes.dataMin,
                 dataMax = unionExtremes.dataMax,
                 currentExtreme = chart.xAxis[0].getExtremes()[name];
@@ -956,8 +954,8 @@ class RangeSelector {
                 // Set the extremes
                 if (typeof value !== 'undefined') { // @todo typof undefined
                     chartAxis.setExtremes(
-                        isMin ? value : (chartAxis.min as any),
-                        isMin ? (chartAxis.max as any) : value,
+                        isMin ? value : chartAxis.min,
+                        isMin ? chartAxis.max : value,
                         void 0,
                         void 0,
                         { trigger: 'rangeSelectorInput' }
@@ -1155,11 +1153,7 @@ class RangeSelector {
             options =
                 chartOptions.rangeSelector as RangeSelectorOptions,
             inputEnabled = options.inputEnabled,
-            inputsZIndex = pick(
-                (chartOptions.chart as any).style &&
-                (chartOptions.chart as any).style.zIndex,
-                0
-            ) + 1;
+            inputsZIndex = pick(chartOptions.chart.style?.zIndex, 0) + 1;
 
         if (options.enabled === false) {
             return;
@@ -2103,7 +2097,6 @@ class RangeSelector {
         this.init(chart);
 
         if (redraw) {
-
             this.render();
         }
     }
