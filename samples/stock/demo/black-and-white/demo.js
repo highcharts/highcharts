@@ -5,6 +5,9 @@
 
     Highcharts.setOptions({
         lang: {
+            accessibility: {
+                defaultChartTitle: 'Black and white themed Highcharts Stock demo'
+            },
             rangeSelectorZoom: ''
         },
         chart: {
@@ -212,7 +215,10 @@
                     format: '{value:.2f}'
                 }
             },
-            left: 35
+            left: 35,
+            title: {
+                text: 'Price'
+            }
         }
     });
 })();
