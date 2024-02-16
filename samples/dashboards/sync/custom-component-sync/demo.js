@@ -17,32 +17,37 @@ class AveragesMirror extends Component {
     createDOMStructure() {
         this.slider = document.createElement('input');
         this.handleLabel = document.createElement('span');
-        this.leftSide = document.createElement('div');
-        this.rightSide = document.createElement('div');
+        this.maxSliderLabel = document.createElement('span');
+        this.minSliderLabel = document.createElement('span');
 
-        const handleLabelContainer = document.createElement('div');
-        const resultsContainer = document.createElement('div');
-        const divider = document.createElement('div');
+        const leftSliderSide = document.createElement('div');
+        const rightSliderSide = document.createElement('div');
 
-        handleLabelContainer.className = 'am-handle-label-container';
         this.handleLabel.className = 'am-handle-label';
         this.slider.className = 'am-slider';
-        resultsContainer.className = 'am-results-container';
-        this.leftSide.className = 'am-rc-left';
-        this.rightSide.className = 'am-rc-right';
-        divider.className = 'am-rc-divider';
+        leftSliderSide.className = 'am-slider-side';
+        rightSliderSide.className = 'am-slider-side';
 
-        handleLabelContainer.appendChild(this.handleLabel);
-        resultsContainer.appendChild(this.leftSide);
-        resultsContainer.appendChild(divider);
-        resultsContainer.appendChild(this.rightSide);
-        this.contentElement.appendChild(handleLabelContainer);
+        this.contentElement.classList.add('am-container');
+        this.minSliderLabel.classList.add(
+            'am-extremes-slider-label',
+            'am-min-slider-label'
+        );
+        this.maxSliderLabel.classList.add(
+            'am-extremes-slider-label',
+            'am-max-slider-label'
+        );
+
+        this.contentElement.appendChild(leftSliderSide);
         this.contentElement.appendChild(this.slider);
-        this.contentElement.appendChild(resultsContainer);
+        this.contentElement.appendChild(rightSliderSide);
+
+        leftSliderSide.appendChild(this.minSliderLabel);
+        leftSliderSide.appendChild(this.maxSliderLabel);
+        rightSliderSide.appendChild(this.handleLabel);
 
         this.slider.setAttribute('type', 'range');
-        divider.innerHTML = ':';
-        this.contentElement.style.padding = '8px';
+        this.slider.setAttribute('orient', 'vertical');
     }
 
     async load() {
@@ -54,6 +59,11 @@ class AveragesMirror extends Component {
         });
 
         this.onSliderValueChange(this.slider.value);
+
+        const valueFormatter = this.options.valueFormatter || (value => value);
+        this.minSliderLabel.innerHTML = valueFormatter(this.xColumn[0]);
+        this.maxSliderLabel.innerHTML =
+            valueFormatter(this.xColumn[this.yColumn.length - 1]);
 
         return this;
     }
@@ -72,11 +82,11 @@ class AveragesMirror extends Component {
         ) / 100);
 
         this.handleLabel.innerHTML = formattedXValue;
-        const lOffset = this.handleLabel.offsetWidth * value * 0.01;
-        this.handleLabel.style.left = `calc(${value}% - ${lOffset}px`;
+        const lOffset = this.handleLabel.offsetHeight * (100 - value) * 0.01;
+        this.handleLabel.style.top = `calc(${100 - value}% - ${lOffset}px`;
 
-        this.leftSide.innerHTML = this.leftAverage = leftAverage;
-        this.rightSide.innerHTML = this.rightAverage = rightAverage;
+        this.leftAverage = leftAverage;
+        this.rightAverage = rightAverage;
 
         // Emit event when slider value changes
         this.emit({
@@ -118,11 +128,9 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-0'
-                }]
-            }, {
-                cells: [{
-                    id: 'dashboard-col-1'
+                    id: 'chart-cell'
+                }, {
+                    id: 'slider-cell'
                 }]
             }]
         }]
@@ -137,10 +145,10 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        renderTo: 'dashboard-col-0',
+        renderTo: 'slider-cell',
         type: 'AveragesMirror',
         title: {
-            text: 'Averages Mirror'
+            text: 'Population'
         },
         connector: {
             id: 'data'
@@ -180,7 +188,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        renderTo: 'dashboard-col-1',
+        renderTo: 'chart-cell',
         type: 'Highcharts',
         connector: {
             id: 'data'
