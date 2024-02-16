@@ -712,7 +712,7 @@ async function updateBoard(board, state, year) {
     // 2. Update control HTML description if the year changes
     const domEl = document.getElementById('election-description');
     const el = yearEl.querySelector('descr');
-    domEl.innerHTML = el.textContent;
+    domEl.innerHTML = el.innerHTML;
 
     // 3. Update map (if year changes)
     await usMap.chart.update({

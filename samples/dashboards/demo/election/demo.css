@@ -259,8 +259,10 @@
 /* Dashboard layout */
 
 #html-result,
+#html-control,
 #us-map,
-#election-chart {
+#election-chart,
+#demo-description {
     --highcharts-color-0: #0200d0; /* Democrats */
     --highcharts-color-1: #c40401; /* Republicans */
     --highcharts-color-2: #ccc; /* Others */
@@ -385,6 +387,16 @@
     font-size: 0.9em;
     padding: 5px;
     margin: 10px 20px 0;
+}
+
+span.democrat {
+    color: var(--highcharts-color-0);
+    font-weight: bold;
+}
+
+span.republican {
+    color: var(--highcharts-color-1);
+    font-weight: bold;
 }
 
 /* Container for application meta data */
