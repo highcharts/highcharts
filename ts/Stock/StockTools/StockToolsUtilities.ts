@@ -287,12 +287,11 @@ function attractToPoint(
     // Search by 'x' but only in yAxis' series.
     coordsY.axis.series.forEach((series): void => {
         if (series.points) {
-            series.points.forEach((point): void => {
-                if (point && distX > Math.abs((point.x as any) - x)) {
-                    distX = Math.abs((point.x as any) - x);
-                    closestPoint = point;
-                }
-            });
+            const point = series.searchPoint(e, true);
+            if (point && distX > Math.abs(point.x - x)) {
+                distX = Math.abs(point.x - x);
+                closestPoint = point;
+            }
         }
     });
 
