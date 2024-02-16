@@ -166,5 +166,5 @@ class CustomComponent extends Component {
 }
 ```
 
-The demo below shows a custom sync connecting the Highcharts Component with a custom component called "Averages Mirror":
+The demo below shows a custom sync connecting the Highcharts Component with a custom component:
 <iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/custom-component-sync allow="fullscreen"></iframe>

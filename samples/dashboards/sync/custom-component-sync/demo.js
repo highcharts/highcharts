@@ -1,12 +1,11 @@
 const { Component, ComponentRegistry } = Dashboards;
 
-class AveragesMirror extends Component {
+class Slider extends Component {
     constructor(cell, options) {
         super(cell, options);
-        this.type = 'AveragesMirror';
+        this.type = 'Slider';
         this.createDOMStructure();
         this.xColumn = [];
-        this.yColumn = [];
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
@@ -19,23 +18,28 @@ class AveragesMirror extends Component {
         this.handleLabel = document.createElement('span');
         this.maxSliderLabel = document.createElement('span');
         this.minSliderLabel = document.createElement('span');
+        this.middleSliderLabel = document.createElement('span');
 
         const leftSliderSide = document.createElement('div');
         const rightSliderSide = document.createElement('div');
 
-        this.handleLabel.className = 'am-handle-label';
-        this.slider.className = 'am-slider';
-        leftSliderSide.className = 'am-slider-side';
-        rightSliderSide.className = 'am-slider-side';
+        this.handleLabel.className = 'sc-handle-label';
+        this.slider.className = 'sc-slider';
+        leftSliderSide.className = 'sc-slider-side';
+        rightSliderSide.className = 'sc-slider-side';
 
-        this.contentElement.classList.add('am-container');
+        this.contentElement.classList.add('sc-container');
         this.minSliderLabel.classList.add(
-            'am-extremes-slider-label',
-            'am-min-slider-label'
+            'sc-tick-slider-label',
+            'sc-min-slider-label'
+        );
+        this.middleSliderLabel.classList.add(
+            'sc-tick-slider-label',
+            'sc-middle-slider-label'
         );
         this.maxSliderLabel.classList.add(
-            'am-extremes-slider-label',
-            'am-max-slider-label'
+            'sc-tick-slider-label',
+            'sc-max-slider-label'
         );
 
         this.contentElement.appendChild(leftSliderSide);
@@ -43,6 +47,7 @@ class AveragesMirror extends Component {
         this.contentElement.appendChild(rightSliderSide);
 
         leftSliderSide.appendChild(this.minSliderLabel);
+        leftSliderSide.appendChild(this.middleSliderLabel);
         leftSliderSide.appendChild(this.maxSliderLabel);
         rightSliderSide.appendChild(this.handleLabel);
 
@@ -62,8 +67,10 @@ class AveragesMirror extends Component {
 
         const valueFormatter = this.options.valueFormatter || (value => value);
         this.minSliderLabel.innerHTML = valueFormatter(this.xColumn[0]);
+        this.middleSliderLabel.innerHTML =
+            valueFormatter(this.xColumn[Math.round(this.xColumn.length / 2)]);
         this.maxSliderLabel.innerHTML =
-            valueFormatter(this.xColumn[this.yColumn.length - 1]);
+            valueFormatter(this.xColumn[this.xColumn.length - 1]);
 
         return this;
     }
@@ -74,19 +81,10 @@ class AveragesMirror extends Component {
         const valueFormatter = this.options.valueFormatter;
         const formattedXValue =
             valueFormatter ? valueFormatter(xValue) : xValue;
-        const [leftAverage, rightAverage] = [
-            this.yColumn.slice(0, rowIndex + 1),
-            this.yColumn.slice(rowIndex, this.yColumn.length)
-        ].map(side => Math.round(
-            side.reduce((acc, current) => acc + current, 0) / side.length * 100
-        ) / 100);
 
         this.handleLabel.innerHTML = formattedXValue;
         const lOffset = this.handleLabel.offsetHeight * (100 - value) * 0.01;
         this.handleLabel.style.top = `calc(${100 - value}% - ${lOffset}px`;
-
-        this.leftAverage = leftAverage;
-        this.rightAverage = rightAverage;
 
         // Emit event when slider value changes
         this.emit({
@@ -98,19 +96,18 @@ class AveragesMirror extends Component {
 
     setConnector(connector) {
         super.setConnector(connector);
-        const { columnAssignment } = this.options;
+        const valuesColumnName = this.options.connector?.valuesColumn;
         const table = connector && connector.table && connector.table.modified;
 
-        if (table && columnAssignment) {
-            this.xColumn = table.columns[columnAssignment.x] || [];
-            this.yColumn = table.columns[columnAssignment.y] || [];
+        if (table && valuesColumnName) {
+            this.xColumn = table.columns[valuesColumnName] || [];
         }
 
         this.cell.setLoadingState(false);
     }
 }
 
-ComponentRegistry.registerComponent('AveragesMirror', AveragesMirror);
+ComponentRegistry.registerComponent('Slider', Slider);
 
 const formatBigNumber = value => {
     if (value >= 1e6) {
@@ -146,20 +143,17 @@ Dashboards.board('container', {
     },
     components: [{
         renderTo: 'slider-cell',
-        type: 'AveragesMirror',
+        type: 'Slider',
         title: {
             text: 'Population'
         },
         connector: {
-            id: 'data'
-        },
-        columnAssignment: {
-            x: 'Population',
-            y: 'Happiness'
+            id: 'data',
+            valuesColumn: 'Population'
         },
         valueFormatter: value => formatBigNumber(value),
         sync: {
-            customMirrorSync: {
+            customSync: {
                 enabled: true,
                 emitter: function () {
                     const { board } = this;
@@ -167,7 +161,7 @@ Dashboards.board('container', {
 
                     if (
                         !board ||
-                        !this.sync.syncConfig.customMirrorSync.enabled
+                        !this.sync.syncConfig.customSync.enabled
                     ) {
                         return;
                     }
@@ -180,7 +174,7 @@ Dashboards.board('container', {
                                 type: 'position',
                                 row: e.rowIndex,
                                 target: this,
-                                state: 'averagesMirror.move'
+                                state: 'sliderComponent.move'
                             });
                         }
                     });
@@ -238,17 +232,20 @@ Dashboards.board('container', {
             }
         },
         sync: {
-            customMirrorSync: {
+            customSync: {
                 enabled: true,
+                syncedColumn: 'Happiness',
                 handler: function () {
                     const { board } = this;
                     const { dataCursor: cursor } = board;
                     const table = this.connector && this.connector.table;
                     const chart = this.chart;
+                    const syncedColumnName =
+                        this.sync.syncConfig.customSync.syncedColumn;
 
                     if (
                         !table || !board || !chart ||
-                        !this.sync.syncConfig.customMirrorSync.enabled
+                        !this.sync.syncConfig.customSync.enabled
                     ) {
                         return;
                     }
@@ -329,15 +326,28 @@ Dashboards.board('container', {
 
                     const handleCursor = e => {
                         const target = e.cursor.target;
+                        const rowIndex = e.cursor.row;
+                        const yColumn = e.table.columns[syncedColumnName];
+
+                        const averages = [
+                            yColumn.slice(0, rowIndex + 1),
+                            yColumn.slice(rowIndex, yColumn.length)
+                        ].map(side => Math.round(
+                            side.reduce(
+                                (acc, current) => acc + current, 0) /
+                                side.length * 100
+                        ) / 100);
+
                         xValue = target.xValue;
-                        leftAverage = target.leftAverage;
-                        rightAverage = target.rightAverage;
+                        leftAverage = averages[0];
+                        rightAverage = averages[1];
+
                         drawLines();
                     };
 
                     cursor.addListener(
                         table.id,
-                        'averagesMirror.move',
+                        'sliderComponent.move',
                         handleCursor
                     );
                     const removeRedrawListener =
@@ -348,7 +358,7 @@ Dashboards.board('container', {
                         removeRedrawListener();
                         cursor.removeListenerr(
                             table.id,
-                            'averagesMirror.move',
+                            'sliderComponent.move',
                             handleCursor
                         );
                     };

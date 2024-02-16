@@ -23,44 +23,53 @@
 
 /* CUSTOM COMPONENT */
 
-.am-container {
+.sc-container {
     display: flex;
     justify-content: center;
 }
 
-.am-slider-side {
+.sc-slider-side {
     position: relative;
     height: 330px;
 }
 
-.am-slider {
+.sc-slider {
     appearance: slider-vertical;
     height: 330px;
     width: 30px;
 }
 
-.am-handle-label-container {
+.sc-handle-label-container {
     position: relative;
     height: 20px;
 }
 
-.am-handle-label {
+.sc-handle-label {
     position: absolute;
     pointer-events: none;
     left: 0;
 }
 
-.am-extremes-slider-label {
+.sc-tick-slider-label {
     position: absolute;
-    right: 0;
+    right: -6px;
     font-size: 12px;
     color: var(--highcharts-neutral-color-60);
 }
 
-.am-min-slider-label {
+.sc-tick-slider-label::after {
+    content: "\00a0-";
+}
+
+.sc-min-slider-label {
     bottom: 1px;
 }
 
-.am-max-slider-label {
+.sc-middle-slider-label {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.sc-max-slider-label {
     top: 4px;
 }
