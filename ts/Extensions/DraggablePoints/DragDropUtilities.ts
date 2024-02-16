@@ -127,7 +127,7 @@ function getNormalizedEvent<T extends PointerEvent>(
     return (
         typeof e.chartX === 'undefined' ||
         typeof e.chartY === 'undefined' ?
-            chart.pointer.normalize(e) :
+            chart.pointer?.normalize(e) || e :
             e
     );
 }

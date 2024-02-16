@@ -554,7 +554,7 @@ namespace Exporting {
             };
 
         chart.isPrinting = true;
-        chart.pointer.reset(null as any, 0);
+        chart.pointer?.reset(void 0, 0);
 
         fireEvent(chart, 'beforePrint');
 
@@ -815,7 +815,7 @@ namespace Exporting {
                 // Hide it on clicking or touching outside the menu (#2258,
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e: PointerEvent): void {
-                    if (!chart.pointer.inClass(e.target as any, className)) {
+                    if (!chart.pointer?.inClass(e.target as any, className)) {
                         menu.hideMenu();
                     }
                 }),
