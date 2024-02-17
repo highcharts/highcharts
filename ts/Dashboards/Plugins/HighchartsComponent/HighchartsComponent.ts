@@ -46,6 +46,7 @@ import Globals from '../../Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
+import DataModifierOptions from '../../../Data/Modifiers/DataModifierOptions';
 const {
     addEvent,
     createElement,
@@ -399,182 +400,255 @@ class HighchartsComponent extends Component {
      * @private
      */
     public updateSeries(): void {
+        const { chart, connector } = this;
+        if (!chart || !connector) {
+            return;
+        }
 
-        // Heuristically create series from the connector dataTable
-        if (this.chart && this.connector) {
-            this.presentationTable = this.presentationModifier ?
-                this.connector.table.modified.clone() :
-                this.connector.table;
+        const { id: storeTableID } = connector.table;
 
-            const { id: storeTableID } = this.connector.table;
-            const { chart } = this;
+        if (this.presentationModifier) {
+            this.presentationTable = this.presentationModifier
+                .modifyTable(connector.table.modified.clone()).modified;
+        } else {
+            this.presentationTable = connector.table;
+        }
 
-            if (this.presentationModifier) {
-                this.presentationTable = this.presentationModifier
-                    .modifyTable(this.presentationTable).modified;
-            }
+        const table = this.presentationTable.modified,
+            modifierOptions = table.getModifier()?.options;
 
-            const table = this.presentationTable,
-                modifierOptions = table.getModifier()?.options;
+        this.emit({ type: 'afterPresentationModifier', table: table });
 
-            // Names/aliases that should be mapped to xAxis values
-            const columnNames = table.modified.getColumnNames();
-            const columnAssignment = this.options.columnAssignment ||
-                this.getDefaultColumnAssignment(columnNames);
-            const xKeyMap: Record<string, string> = {};
+        if (
+            !this.options.connector?.columnAssignment &&
+            // Use legacy method if deprecated columnAssignment option is used.
+            this.legacyAssignColumnToSeries(storeTableID, modifierOptions)
+        ) {
+            return;
+        }
 
-            this.emit({ type: 'afterPresentationModifier', table: table });
+        const columnNames = table.getColumnNames();
+        const columnAssignment = this.options.connector?.columnAssignment ??
+            this.getDefaultColumnAssignment(columnNames);
+        const columnAssignmentKeys = Object.keys(columnAssignment);
 
-            // Remove series names that match the xKeys
-            const seriesNames = table.modified.getColumnNames()
-                .filter((name): boolean => {
-                    const isVisible = this.activeGroup ?
-                        this.activeGroup
-                            .getSharedState()
-                            .getColumnVisibility(name) !== false :
-                        true;
+        for (let i = 0, iEnd = columnAssignmentKeys.length; i < iEnd; ++i) {
+            const seriesId = columnAssignmentKeys[i];
+            const series = chart.get(seriesId) as Series | undefined;
+            const assignment = columnAssignment[seriesId];
+            const seriesOptions: SeriesOptions = {
+                id: seriesId
+            };
 
-                    if (!isVisible || !columnAssignment[name]) {
-                        return false;
-                    }
+            // TODO: check if there is a need to handle other series options
 
-                    if (columnAssignment[name] === 'x') {
-                        xKeyMap[name] = name;
-                        return false;
-                    }
-
-                    return true;
+            if (isString(assignment)) {
+                const column = table.getColumn(assignment);
+                if (column) {
+                    seriesOptions.data = column.slice() as [];
+                }
+            } else if (Array.isArray(assignment)) {
+                const seriesTable = new DataTable({
+                    columns: table.getColumns(assignment)
                 });
-
-            // create empty series for mapping custom props of data
-            Object.keys(columnAssignment).forEach(
-                function (key):void {
-                    if (isObject(columnAssignment[key])) {
-                        seriesNames.push(key);
-                    }
+                seriesOptions.data = seriesTable.getRows() as [][];
+            } else {
+                const keys = Object.keys(assignment);
+                const columnNames = [];
+                for (let j = 0, jEnd = keys.length; j < jEnd; ++j) {
+                    columnNames.push(assignment[keys[j]]);
                 }
-            );
-
-            // Create the series or get the already added series
-            const seriesList = seriesNames.map((seriesName, index): Series => {
-                let i = 0;
-
-                while (i < chart.series.length) {
-                    const series = chart.series[i];
-                    const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
-                    const existingSeries =
-                        seriesNames.indexOf(series.name) !== -1;
-                    i++;
-
-                    if (existingSeries && seriesFromConnector) {
-                        return series;
-                    }
-
-                    if (
-                        !existingSeries &&
-                        seriesFromConnector
-                    ) {
-                        series.destroy();
-                    }
-                }
-
-                // Disable dragging on series, which were created out of a
-                // columns which are created by MathModifier.
-                const shouldBeDraggable = !(
-                    modifierOptions?.type === 'Math' &&
-                    (modifierOptions as MathModifierOptions)
-                        .columnFormulas?.some(
-                            (formula): boolean => formula.column === seriesName
-                        )
-                );
-
-                const seriesOptions = {
-                    name: seriesName,
-                    id: `${storeTableID}-series-${index}`,
-                    dragDrop: {
-                        draggableY: shouldBeDraggable
-                    }
-                };
-
-                const relatedSeries =
-                    chart.series.find(
-                        (series):boolean => series.name === seriesName
-                    );
-
-                if (relatedSeries) {
-                    relatedSeries.update(seriesOptions, false);
-                    return relatedSeries;
-                }
-
-                return chart.addSeries(seriesOptions, false);
-            });
-
-            // Insert the data
-            seriesList.forEach((series): void => {
-                const xKey = Object.keys(xKeyMap)[0],
-                    isSeriesColumnMap =
-                        isObject(columnAssignment[series.name]),
-                    pointColumnMapValues:Array<string> = [];
-
-                if (isSeriesColumnMap) {
-                    const pointColumns =
-                        columnAssignment[series.name] as Record<string, string>;
-
-                    Object.keys(pointColumns).forEach((key):void => {
-                        pointColumnMapValues.push(pointColumns[key]);
-                    });
-                }
-
-                const columnKeys = isSeriesColumnMap ?
-                    [xKey].concat(pointColumnMapValues) : [xKey, series.name];
 
                 const seriesTable = new DataTable({
-                    columns: table.modified.getColumns(columnKeys)
+                    columns: table.getColumns(columnNames)
                 });
 
-                if (!isSeriesColumnMap) {
-                    seriesTable.renameColumn(series.name, 'y');
+                seriesOptions.keys = keys;
+                seriesOptions.data = seriesTable.getRows() as [][];
+            }
+
+            if (!series) {
+                chart.addSeries({
+                    name: seriesId,
+                    ...seriesOptions
+                }, false);
+            } else {
+                series.update(seriesOptions, false);
+            }
+        }
+
+        chart.redraw();
+    }
+
+    /**
+     * Old method for assigning columns to series.
+     * @deprecated
+     * @private
+     */
+    private legacyAssignColumnToSeries(
+        storeTableID: string,
+        modifierOptions?: DataModifierOptions
+    ): boolean {
+        const table = this.presentationTable;
+        const columnAssignment = this.options.columnAssignment;
+        const chart = this.chart;
+        const xKeyMap: Record<string, string> = {};
+
+        if (!table || !columnAssignment || !chart) {
+            return false;
+        }
+
+        // Remove series names that match the xKeys
+        const seriesNames = table.modified.getColumnNames()
+            .filter((name): boolean => {
+                const isVisible = this.activeGroup ?
+                    this.activeGroup
+                        .getSharedState()
+                        .getColumnVisibility(name) !== false :
+                    true;
+
+                if (!isVisible || !columnAssignment[name]) {
+                    return false;
                 }
 
-                if (xKey) {
-                    seriesTable.renameColumn(xKey, 'x');
+                if (columnAssignment[name] === 'x') {
+                    xKeyMap[name] = name;
+                    return false;
                 }
 
-                const seriesData = seriesTable.getRowObjects().reduce((
-                    arr: (number | {})[],
-                    row: Record<string, any>
-                ): (number | {})[] => {
-                    if (isSeriesColumnMap) {
-                        arr.push(
-                            [row.x].concat(
-                                pointColumnMapValues.map(
-                                    function (value: string):number|undefined {
-                                        return row[value];
-                                    }
-                                )
-                            )
-                        );
-                    } else {
-                        arr.push([row.x, row.y]);
-                    }
-                    return arr;
-                }, []);
-
-                if (isSeriesColumnMap) {
-                    const pointColumns =
-                        columnAssignment[series.name] as Record<string, string>;
-
-                    series.update({
-                        keys: ['x'].concat(Object.keys(pointColumns)),
-                        data: seriesData
-                    }, false);
-                } else {
-                    series.setData(seriesData, false);
-                }
+                return true;
             });
 
-            this.chart.redraw();
-        }
+        // create empty series for mapping custom props of data
+        Object.keys(columnAssignment).forEach(
+            function (key):void {
+                if (isObject(columnAssignment[key])) {
+                    seriesNames.push(key);
+                }
+            }
+        );
+
+        // Create the series or get the already added series
+        const seriesList = seriesNames.map((seriesName, index): Series => {
+            let i = 0;
+
+            while (i < chart.series.length) {
+                const series = chart.series[i];
+                const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
+                const existingSeries =
+                    seriesNames.indexOf(series.name) !== -1;
+                i++;
+
+                if (existingSeries && seriesFromConnector) {
+                    return series;
+                }
+
+                if (
+                    !existingSeries &&
+                    seriesFromConnector
+                ) {
+                    series.destroy();
+                }
+            }
+
+            // Disable dragging on series, which were created out of a
+            // columns which are created by MathModifier.
+            const shouldBeDraggable = !(
+                modifierOptions?.type === 'Math' &&
+                (modifierOptions as MathModifierOptions)
+                    .columnFormulas?.some(
+                        (formula): boolean => formula.column === seriesName
+                    )
+            );
+
+            const seriesOptions = {
+                name: seriesName,
+                id: `${storeTableID}-series-${index}`,
+                dragDrop: {
+                    draggableY: shouldBeDraggable
+                }
+            };
+
+            const relatedSeries =
+                chart.series.find(
+                    (series):boolean => series.name === seriesName
+                );
+
+            if (relatedSeries) {
+                relatedSeries.update(seriesOptions, false);
+                return relatedSeries;
+            }
+
+            return chart.addSeries(seriesOptions, false);
+        });
+
+        // Insert the data
+        seriesList.forEach((series): void => {
+            const xKey = Object.keys(xKeyMap)[0],
+                isSeriesColumnMap =
+                    isObject(columnAssignment[series.name]),
+                pointColumnMapValues:Array<string> = [];
+
+            if (isSeriesColumnMap) {
+                const pointColumns =
+                    columnAssignment[series.name] as Record<string, string>;
+
+                Object.keys(pointColumns).forEach((key):void => {
+                    pointColumnMapValues.push(pointColumns[key]);
+                });
+            }
+
+            const columnKeys = isSeriesColumnMap ?
+                [xKey].concat(pointColumnMapValues) : [xKey, series.name];
+
+            const seriesTable = new DataTable({
+                columns: table.modified.getColumns(columnKeys)
+            });
+
+            if (!isSeriesColumnMap) {
+                seriesTable.renameColumn(series.name, 'y');
+            }
+
+            if (xKey) {
+                seriesTable.renameColumn(xKey, 'x');
+            }
+
+            const seriesData = seriesTable.getRowObjects().reduce((
+                arr: (number | {})[],
+                row: Record<string, any>
+            ): (number | {})[] => {
+                if (isSeriesColumnMap) {
+                    arr.push(
+                        [row.x].concat(
+                            pointColumnMapValues.map(
+                                function (value: string):number|undefined {
+                                    return row[value];
+                                }
+                            )
+                        )
+                    );
+                } else {
+                    arr.push([row.x, row.y]);
+                }
+                return arr;
+            }, []);
+
+            if (isSeriesColumnMap) {
+                const pointColumns =
+                    columnAssignment[series.name] as Record<string, string>;
+
+                series.update({
+                    keys: ['x'].concat(Object.keys(pointColumns)),
+                    data: seriesData
+                }, false);
+            } else {
+                series.setData(seriesData, false);
+            }
+        });
+
+        chart.redraw();
+
+        return true;
     }
 
     /**
@@ -602,22 +676,14 @@ class HighchartsComponent extends Component {
      */
     private getDefaultColumnAssignment(
         columnNames: Array<string> = []
-    ): Record<string, string | null> {
-        const defaultColumnAssignment:Record<string, string> = {};
+    ): Record<string, string> {
+        const result: Record<string, string> = {};
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            defaultColumnAssignment[columnNames[i]] = 'y';
-            if (i === 0) {
-                const firstColumnValues =
-                    this.presentationTable?.getColumn(columnNames[i], true);
-
-                if (firstColumnValues && isString(firstColumnValues[0])) {
-                    defaultColumnAssignment[columnNames[i]] = 'x';
-                }
-            }
+            result[columnNames[i]] = columnNames[i];
         }
 
-        return defaultColumnAssignment;
+        return result;
     }
 
     /**
