@@ -22,6 +22,9 @@
 
 
 import type Component from '../../Components/Component';
+import type {
+    ComponentConnectorOptions
+} from '../../Components/ComponentOptions';
 import type Sync from '../../Components/Sync/Sync';
 import type { Options as HighchartsOptions } from '../HighchartsTypes';
 
@@ -64,6 +67,11 @@ export interface Options extends Component.Options {
     chartConstructor?: ConstructorType;
 
     /**
+     * Connector options for the component.
+     */
+    connector?: ConnectorOptions;
+
+    /**
      * Type of the component.
      */
     type: 'Highcharts';
@@ -85,6 +93,9 @@ export interface Options extends Component.Options {
     chartID?: string;
 
     /**
+     * @deprecated
+     * This option is deprecated, use [`connector.columnAssignment`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
+     *
      * Names that should be mapped to point values or props. You can
      * declare which columns will be parameter of the point. It is useful for
      * series like OHLC, candlestick, columnrange or arearange.
@@ -130,6 +141,65 @@ export interface Options extends Component.Options {
     * Sync options for the component.
     */
     syncHandlers?: Sync.OptionsRecord;
+}
+
+/**
+ * Highcharts component connector options.
+ */
+export interface ConnectorOptions extends ComponentConnectorOptions {
+    /**
+     * Sets column data for series in the chart. The key of the object is
+     * the series id, and the value can be:
+     * - `string` - the name of the column that contains the one-dimensional data
+     * for the series
+     * - `string[]` - the names of the columns that data will be used in the
+     * two-dimensional series data,
+     * - `Record<string, string>` - the object with the keys as [series data key names](https://api.highcharts.com/highcharts/plotOptions.series.keys)
+     * and column names that will be used for the key-defined two-dimensional
+     * series data.
+     *
+     * When series with given `id` is not found, the series will be created
+     * automatically. The series name will be the same as the series `id` then.
+     *
+     * If undefined, the series will be created with the default data.
+     *
+     * Try it:
+     * {@link TODO | One-dimensional data column assignment}
+     * {@link TODO | Two-dimensional data column assignment}
+     * {@link TODO | Key-defined two-dimensional data column assignment}
+     *
+     * @example
+     * ```
+     * // One-dimensional data column assignment
+     * columnAssignment: {
+     *     mySeriesId: 'myData'
+     * }
+     *
+     * // Two-dimensional data column assignment
+     * columnAssignment: {
+     *     mySeriesId: ['myX', 'myY']
+     * }
+     *
+     * // Key-defined two-dimensional data column assignment
+     * columnAssignment: {
+     *     myStockSeriesId: {
+     *         x: 'myX',
+     *         open: 'myOpen',
+     *         high: 'myHigh',
+     *         low: 'myLow',
+     *         close: 'myClose'
+     *     },
+     *     myColumnSeriesId: {
+     *         name: 'myNamesColumn',
+     *         y: 'myYColumn',
+     *         'dataLabels.style.visibility': 'myDataLabelVisibilityColumn'
+     *     }
+     * }
+     * ```
+     */
+    columnAssignment?: Record<string, (
+        string | string[] | Record<string, string>
+    )>;
 }
 
 /**
