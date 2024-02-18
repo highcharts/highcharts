@@ -105,7 +105,9 @@ namespace GeometryUtilities {
         polygon: Array<Array<number>>
     ): boolean {
         const len = polygon.length;
-        let i, j;
+        let i,
+            j,
+            inside = false;
 
         for (i = 0, j = len - 1; i < len; j = i++) {
             const [x1, y1] = polygon[i],
@@ -120,14 +122,11 @@ namespace GeometryUtilities {
                     x1
                 )
             ) {
-                // If we ever need to check polygons with holes,
-                // we can instead switch a boolean's state here
-                // then return the boolean after this loop.
-                return true;
+                inside = !inside;
             }
         }
 
-        return false;
+        return inside;
     }
 }
 
