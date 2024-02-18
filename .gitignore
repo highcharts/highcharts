@@ -9,6 +9,7 @@
 /js
 /build
 /code
+/vendor
 /cypress
 /errors/errors.json
 /errors/errors.xml
