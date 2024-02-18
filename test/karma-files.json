@@ -1,9 +1,8 @@
 [
-	"vendor/jquery-3.1.1.js",
-	"vendor/moment-2.18.1.js",
-	"vendor/moment-timezone-0.5.13-with-data-2012-2022.js",
-	"vendor/proj4-2.3.6.js",
-	"vendor/rgbcolor.js",
+	"vendor/jquery.js",
+	"vendor/moment.js",
+	"vendor/moment-timezone-with-data-2012-2022.js",
+	"vendor/proj4.js",
 	"vendor/topojson-client.min.js",
 	"node_modules/lolex/lolex.js",
 
