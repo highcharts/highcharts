@@ -296,21 +296,22 @@ class SVGLabel extends SVGElement {
             const tp = this.element
                 .querySelector('textPath')
                 ?.querySelector('tspan');
-
             if (tp) {
-                const { x: startX, y: startY } = tp.getExtentOfChar(0),
-                    { x, y, width, height } = tp.getExtentOfChar(
-                        tp.getNumberOfChars() - 1
-                    ),
-                    endX = x + width,
-                    endY = y + height;
+                const polygon: BBoxObject['polygon'] = [];
 
-                bBox.polygon = [
-                    [startX, startY],
-                    [endX, startY],
-                    [endX, endY],
-                    [startX, endY]
-                ];
+                for (let i = tp.getNumberOfChars(); i;) {
+                    const {
+                            x: x1,
+                            y: y1,
+                            width,
+                            height
+                        } = tp.getExtentOfChar(--i),
+                        x2 = x1 + width,
+                        y2 = y1 + height;
+                    polygon.push([x1, y1], [x2, y1], [x2, y2], [x1, y2]);
+                }
+
+                bBox.polygon = polygon;
             }
         }
         return bBox;
