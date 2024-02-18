@@ -676,8 +676,16 @@ class HighchartsComponent extends Component {
      */
     private getDefaultColumnAssignment(
         columnNames: Array<string> = []
-    ): Record<string, string> {
-        const result: Record<string, string> = {};
+    ): Record<string, string | string[]> {
+        const result: Record<string, string | string[]> = {};
+
+        const firstColumn = this.presentationTable?.getColumn(columnNames[0]);
+        if (firstColumn && isString(firstColumn[0])) {
+            for (let i = 1, iEnd = columnNames.length; i < iEnd; ++i) {
+                result[columnNames[i]] = [columnNames[0], columnNames[i]];
+            }
+            return result;
+        }
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
             result[columnNames[i]] = columnNames[i];
