@@ -441,8 +441,11 @@ namespace GeoJSONComposition {
         }
         const obj = topology.objects[objectName];
 
-        // Already decoded => return cache
-        if (obj['hc-decoded-geojson']) {
+        // Already decoded with the same title => return cache
+        if (
+            obj['hc-decoded-geojson'] &&
+            obj['hc-decoded-geojson'].title === topology.title
+        ) {
             return obj['hc-decoded-geojson'];
         }
 
@@ -720,6 +723,13 @@ export default GeoJSONComposition;
  * An array of longitude, latitude.
  *
  * @typedef {Array<number>} Highcharts.LonLatArray
+ */
+
+/**
+ * An array of GeoJSON or TopoJSON objects or strings used as map data for
+ * series.
+ *
+ * @typedef {Array<*>|GeoJSON|TopoJSON|string} Highcharts.MapDataType
  */
 
 /**

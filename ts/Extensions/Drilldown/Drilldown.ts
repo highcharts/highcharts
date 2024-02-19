@@ -308,6 +308,8 @@ class ChartAdditions {
             (this as Drilldown.ChartComposition)
         );
 
+        fireEvent(this, 'addSeriesAsDrilldown', { seriesOptions: options });
+
         if (chart.mapView) {
             // stop hovering while drilling down
             point.series.isDrilling = true;
@@ -576,7 +578,7 @@ class ChartAdditions {
                                         delete chart.resetZoomButton;
                                     }
 
-                                    chart.pointer.reset();
+                                    chart.pointer?.reset();
 
                                     fireEvent(chart, 'afterDrilldown');
 
@@ -605,7 +607,7 @@ class ChartAdditions {
                 delete chart.resetZoomButton;
             }
 
-            chart.pointer.reset();
+            chart.pointer?.reset();
 
             fireEvent(chart, 'afterDrilldown');
 
