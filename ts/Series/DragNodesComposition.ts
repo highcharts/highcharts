@@ -172,7 +172,7 @@ function onMouseDown(
     point: DragNodesPoint,
     event: PointerEvent
 ): void {
-    const normalizedEvent = this.chart.pointer.normalize(event);
+    const normalizedEvent = this.chart.pointer?.normalize(event) || event;
 
     point.fixedPosition = {
         chartX: normalizedEvent.chartX,
@@ -203,7 +203,7 @@ function onMouseMove(
     if (point.fixedPosition && point.inDragMode) {
         const series = this,
             chart = series.chart,
-            normalizedEvent = chart.pointer.normalize(event),
+            normalizedEvent = chart.pointer?.normalize(event) || event,
             diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
             diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
             graphLayoutsLookup = chart.graphLayoutsLookup;
