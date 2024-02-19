@@ -194,7 +194,15 @@ function getTypeDescription(
  * @private
  */
 function stripEmptyHTMLTags(str: string): string {
-    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+    let prevLength: number;
+
+    // Scan alert #[71]: Loop for nested patterns
+    do {
+        prevLength = str.length;
+        str = str.replace(/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '');
+    } while (str.length !== prevLength);
+
+    return str;
 }
 
 
