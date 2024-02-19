@@ -19,7 +19,7 @@ function updateVendor() {
 
     console.log((
         'Note: This task only copies the files into the vendor folder.\n' +
-        'To upgrade, run npm update jspdf && npm update svg2pdf.js`'
+        'To upgrade, run npm update'
     ).yellow);
 
     const promises = [
@@ -44,7 +44,6 @@ function updateVendor() {
             './vendor/moment.js'
         ],
         [
-
             './node_modules/moment-timezone/builds/moment-timezone-with-data-2012-2022.js',
             './vendor/moment-timezone-with-data-2012-2022.js'
         ],
