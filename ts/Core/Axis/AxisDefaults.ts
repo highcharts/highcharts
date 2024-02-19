@@ -1555,8 +1555,10 @@ namespace AxisDefaults {
          *
          * @sample {highstock} stock/xaxis/overscroll/
          *         One minute overscroll with live data
-         * @sample {highstock} stock/xaxis/overscroll-px-percent/
-         *         Overscroll set in pixels and percentage
+         * @sample {highstock} stock/xaxis/overscroll-percent/
+         *         Overscroll set in percentage
+         * @sample {highstock} stock/xaxis/overscroll-pixel/
+         *         Overscroll set in pixels
          *
          * @type      {number | string}
          * @default   0
