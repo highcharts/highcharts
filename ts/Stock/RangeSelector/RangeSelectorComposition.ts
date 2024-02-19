@@ -204,6 +204,13 @@ function onChartBeforeRender(
             delete rangeSelector.deferredYTDClick;
         }
 
+        chart.xAxis[0].setScale();
+        chart.xAxis[0].setScale();
+        chart.xAxis[0].setScale();
+        chart.xAxis[0].setScale();
+        chart.xAxis[0].setScale();
+        chart.xAxis[0].setScale();
+        chart.xAxis[0].setScale();
         const verticalAlign = rangeSelector.options.verticalAlign;
 
         if (!rangeSelector.options.floating) {
