@@ -333,7 +333,7 @@ async function setupDashboard() {
                                 cells: [{
                                     id: 'dem-info'
                                 }, {
-                                    id: 'progress-bar'
+                                    id: 'result-info'
                                 }, {
                                     id: 'rep-info'
                                 }]
@@ -366,62 +366,9 @@ async function setupDashboard() {
                 id: 'html-dem-info'
             },
             {
-                // One point bar chart
-                renderTo: 'progress-bar',
-                type: 'Highcharts',
-                chartOptions: {
-                    chart: {
-                        type: 'bar',
-                        height: '35%'
-                    },
-                    title: {
-                        text: ''
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        categories: ['Votes', 'Electors'],
-                        lineWidth: 0,
-                        labels: {
-                            rotation: 45,
-                            y: 15
-                        }
-                    },
-                    yAxis: {
-                        visible: false
-                    },
-                    plotOptions: {
-                        bar: {
-                            stacking: 'percent',
-                            dataLabels: {
-                                enabled: true,
-                                formatter: function () {
-                                    if (this.x === 'Votes') {
-                                        return `${this.y}%`;
-                                    }
-                                    return this.y > 0 ? this.y : '';
-                                }
-                            }
-                        }
-                    },
-                    series: [{
-                        name: 'Rep. vote',
-                        colorIndex: 1
-                    }, {
-                        name: 'Dem. vote',
-                        colorIndex: 0
-                    }, {
-                        name: 'Rep. mand.',
-                        colorIndex: 1
-                    }, {
-                        name: 'Dem. mand.',
-                        colorIndex: 0
-                    }]
-                }
+                renderTo: 'result-info',
+                type: 'CustomHTML',
+                id: 'html-result-info'
             },
             {
                 renderTo: 'rep-info',
@@ -550,7 +497,7 @@ async function setupDashboard() {
                         series: {
                             dataLabels: [{
                                 enabled: true,
-                                // rotation: -90,
+                                rotation: 90,
                                 format: '{point.y:.1f}%',
                                 y: 60 // Pixels down from the top
                             }, {
@@ -709,18 +656,6 @@ async function updateBoard(board, state, year) {
     const repPercent = votesTable.getCellAsNumber('repPercent', row);
     const demColVotes = votesTable.getCellAsNumber('demColVotes', row);
     const repColVotes = votesTable.getCellAsNumber('repColVotes', row);
-
-    const [repEl, demEl] = progressBar.chart.series;
-    demEl.update({
-        data: [
-            demPercent, demColVotes
-        ]
-    });
-    repEl.update({
-        data: [
-            repPercent, repColVotes
-        ]
-    });
 
     // Grab auxiliary data about the election (photos, description, etc.)
     const yearEl = document.querySelector('elections year#' + elections[year].descrId);

@@ -362,12 +362,22 @@
     height: auto;
 }
 
-#html-result #progress-bar {
+#html-result #result-info {
     flex: 1 1 40%;
 }
 
-#html-result #progress-bar .highcharts-axis-line {
-    stroke-width: 0;
+#html-result #indicator-bar-container {
+    /* Inspiration: https://edition.cnn.com/election/2020/results/president */
+    width: 100%;
+    background-color: red;
+    margin: 0 auto;
+    height: 50px;
+}
+
+#html-result #indicator-bar {
+    width: 50%;
+    background-color: blue;
+    height: 50px;
 }
 
 /* *
