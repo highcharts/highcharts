@@ -500,7 +500,7 @@ class Toolbar {
             );
         });
         addEvent(wrapper, 'mouseover', (e: MouseEvent): void =>
-            chart.pointer.onContainerMouseLeave(e)
+            chart.pointer?.onContainerMouseLeave(e)
         );
 
         // toolbar

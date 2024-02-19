@@ -1544,11 +1544,7 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-                const baseline = Number(
-                    element.getAttribute('y') || 0
-                ) - bBox.y;
-
-                bBox = this.getRotatedBox(bBox, rotation, baseline);
+                bBox = this.getRotatedBox(bBox, rotation);
             }
         }
 
@@ -1575,8 +1571,7 @@ class SVGElement implements SVGElementLike {
      */
     public getRotatedBox(
         box: BBoxObject,
-        rotation: number,
-        baseline: number
+        rotation: number
     ): BBoxObject {
         const width = box.width,
             height = box.height,
@@ -1585,6 +1580,8 @@ class SVGElement implements SVGElementLike {
                 'right': 1,
                 'center': 0.5
             } as Record<string, number>)[alignValue || 0] || 0,
+            baseline = Number(this.element.getAttribute('y') || 0) -
+                (this.translateY ? 0 : box.y),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
             wCosRad = width * Math.cos(rad),

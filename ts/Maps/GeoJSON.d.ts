@@ -18,6 +18,7 @@ import type {
     LonLatArray,
     MapViewOptions
 } from './MapViewOptions';
+import type MapPointOptions from '../Series/Map/MapPointOptions';
 
 /* *
  *
@@ -144,6 +145,8 @@ export interface TopoJSONTransform {
     scale: [number, number];
     translate: [number, number];
 }
+
+export type MapDataType = Array<MapPointOptions>|GeoJSON|TopoJSON|string;
 
 /* *
  *

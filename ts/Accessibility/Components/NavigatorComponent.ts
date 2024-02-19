@@ -252,9 +252,14 @@ class NavigatorComponent extends AccessibilityComponent {
     private updateNavigator(beforeAnnounce?: () => void): void {
         const performUpdate = (beforeAnnounce?: () => void): void => {
             const chart = this.chart,
-                navigator = chart.navigator;
-            if (navigator && this.minHandleProxy && this.maxHandleProxy) {
-                const chartPos = chart.pointer.getChartPosition(),
+                { navigator, pointer } = chart;
+            if (
+                navigator &&
+                pointer &&
+                this.minHandleProxy &&
+                this.maxHandleProxy
+            ) {
+                const chartPos = pointer.getChartPosition(),
                     minNewX = parseFloat(this.minHandleProxy.value) /
                         100 * navigator.size,
                     maxNewX = parseFloat(this.maxHandleProxy.value) /

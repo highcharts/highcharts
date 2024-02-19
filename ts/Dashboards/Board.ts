@@ -487,7 +487,7 @@ class Board implements Serializable<Board, Board.JSON> {
         const board = this;
 
         // Destroy layouts.
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
             board.layouts[i].destroy();
         }
 
@@ -495,7 +495,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
-        board.container.remove();
+        board.container?.remove();
 
         // @ToDo Destroy bindings.
 

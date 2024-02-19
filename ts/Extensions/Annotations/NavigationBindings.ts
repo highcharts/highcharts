@@ -23,6 +23,7 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsLike from './NavigationBindingsLike';
 import type NavigationBindingsOptions from './NavigationBindingsOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     default as Popup,
@@ -43,7 +44,7 @@ const {
 } = H;
 import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
-const { getFieldType } = NBU;
+const { getAssignedAxis, getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -508,6 +509,17 @@ class NavigationBindings {
      *  Functions
      *
      * */
+
+    getCoords(e: PointerEvent): [
+        Pointer.AxisCoordinateObject|undefined,
+        Pointer.AxisCoordinateObject|undefined
+    ] {
+        const coords = this.chart.pointer?.getCoordinates(e);
+        return [
+            coords && getAssignedAxis(coords.xAxis),
+            coords && getAssignedAxis(coords.yAxis)
+        ];
+    }
 
     /**
      * Initi all events conencted to NavigationBindings.

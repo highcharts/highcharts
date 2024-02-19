@@ -830,11 +830,12 @@ class ColumnSeries extends Series {
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                const point = pointer.getPointFromEvent(e);
+                const point = pointer?.getPointFromEvent(e);
 
-                // undefined on graph in scatterchart
+                // Undefined on graph in scatterchart
                 if (
-                    typeof point !== 'undefined' &&
+                    pointer &&
+                    point &&
                     series.options.enableMouseTracking
                 ) {
                     pointer.isDirectTouch = true;
@@ -870,7 +871,7 @@ class ColumnSeries extends Series {
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
                         .on('mouseout', function (e: PointerEvent): void {
-                            pointer.onTrackerMouseOut(e);
+                            pointer?.onTrackerMouseOut(e);
                         })
                         .on('touchstart', onMouseOver);
 
