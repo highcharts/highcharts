@@ -63,7 +63,6 @@ const {
     fireEvent,
     isArray,
     isFunction,
-    isNumber,
     isObject,
     isString,
     merge,
@@ -1545,11 +1544,7 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-                const baseline = Number(
-                    element.getAttribute('y') || 0
-                ) - bBox.y;
-
-                bBox = this.getRotatedBox(bBox, rotation, baseline);
+                bBox = this.getRotatedBox(bBox, rotation);
             }
         }
 
@@ -1577,8 +1572,7 @@ class SVGElement implements SVGElementLike {
      */
     public getRotatedBox(
         box: BBoxObject,
-        rotation: number,
-        baseline: number
+        rotation: number
     ): BBoxObject {
         const width = box.width,
             height = box.height,
@@ -1587,6 +1581,8 @@ class SVGElement implements SVGElementLike {
                 'right': 1,
                 'center': 0.5
             } as Record<string, number>)[alignValue || 0] || 0,
+            baseline = Number(this.element.getAttribute('y') || 0) -
+                (this.translateY ? 0 : box.y),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
             wCosRad = width * Math.cos(rad),
@@ -1614,11 +1610,7 @@ class SVGElement implements SVGElementLike {
         const x = Math.min(aX, bX, cX, dX),
             y = Math.min(aY, bY, cY, dY),
             boxWidth = Math.max(aX, bX, cX, dX) - x,
-            boxHeight = Math.max(aY, bY, cY, dY) - y,
-            [xCoord, yCoord] = ['x', 'y'].map((str): number => {
-                const attr = this.attr(str);
-                return isNumber(attr) ? attr : 0;
-            });
+            boxHeight = Math.max(aY, bY, cY, dY) - y;
 
         return {
             x,
@@ -1626,10 +1618,10 @@ class SVGElement implements SVGElementLike {
             width: boxWidth,
             height: boxHeight,
             polygon: [
-                [aX + xCoord, aY + yCoord],
-                [bX + xCoord, bY + yCoord],
-                [cX + xCoord, cY + yCoord],
-                [dX + xCoord, dY + yCoord]
+                [aX, aY],
+                [bX, bY],
+                [cX, cY],
+                [dX, dY]
             ]
         };
     }

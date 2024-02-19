@@ -16,11 +16,11 @@
  * */
 
 import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions';
-import type Chart from '../../Core/Chart/Chart';
 import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
+import type MapChart from '../../Core/Chart/MapChart';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -28,6 +28,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
+import MapView from '../../Maps/MapView.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -67,14 +68,17 @@ interface TilesItem {
  * */
 
 /** @private */
-function onChartBeforeMapViewInit(
-    this: Chart,
-    e: { geoBounds: Record<string, number> }
+function onRecommendMapView(
+    this: MapView,
+    e: {
+        geoBounds: Record<string, number>,
+        chart: MapChart
+    }
 ): boolean {
-    const twm: TiledWebMapSeriesOptions =
-        (this.options.series || []).filter(
-            (s: any): boolean => s.type === 'tiledwebmap')[0],
-        { geoBounds } = e;
+    const { geoBounds, chart } = e,
+        twm: TiledWebMapSeriesOptions =
+        (chart.options.series || []).filter(
+            (s: any): boolean => s.type === 'tiledwebmap')[0];
 
     if (twm && twm.provider && twm.provider.type && !twm.provider.url) {
         const ProviderDefinition =
@@ -90,30 +94,26 @@ function onChartBeforeMapViewInit(
             const def = new ProviderDefinition(),
                 { initialProjectionName: providerProjectionName } = def;
 
-            if (this.options.mapView) {
-                if (geoBounds) {
-                    const { x1, y1, x2, y2 } = geoBounds;
-                    this.options.mapView.recommendedMapView = {
-                        projection: {
-                            name: providerProjectionName,
-                            parallels: [y1, y2],
-                            rotation: [-(x1 + x2) / 2]
-                        }
-                    };
-                } else {
-                    this.options.mapView.recommendedMapView = {
-                        projection: {
-                            name: providerProjectionName
-                        },
-                        minZoom: 0
-                    };
-                }
+            if (geoBounds) {
+                const { x1, y1, x2, y2 } = geoBounds;
+                this.recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName,
+                        parallels: [y1, y2],
+                        rotation: [-(x1 + x2) / 2]
+                    }
+                };
+            } else {
+                this.recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName
+                    },
+                    minZoom: 0
+                };
             }
-
             return false;
         }
     }
-
     return true;
 }
 
@@ -152,11 +152,10 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public static compose(
-        ChartClass: typeof Chart
+        MapViewClass: typeof MapView
     ): void {
-
         if (pushUnique(composed, this.compose)) {
-            addEvent(ChartClass, 'beforeMapViewInit', onChartBeforeMapViewInit);
+            addEvent(MapViewClass, 'onRecommendMapView', onRecommendMapView);
         }
     }
 
@@ -792,7 +791,7 @@ class TiledWebMapSeries extends MapSeries {
 
         if (
             mapView &&
-            !defined(mapView.options.projection) &&
+            !defined(chart.userOptions.mapView?.projection) &&
             provider &&
             provider.type
         ) {

@@ -23,7 +23,7 @@ import type {
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
+import type { MapDataType } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
@@ -35,6 +35,9 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type {
+    SeriesTypeOptions
+} from '../../Core/Series/SeriesType';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject, stop } = A;
@@ -88,7 +91,7 @@ declare module '../../Core/Series/SeriesLike' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
-        mapData?: (Array<MapPointOptions>|GeoJSON|TopoJSON);
+        mapData?: MapDataType;
     }
     interface SeriesStateHoverOptions
     {
@@ -997,6 +1000,32 @@ class MapSeries extends ScatterSeries {
         }
 
         fireEvent(series, 'afterTranslate');
+    }
+
+    public update(
+        options: SeriesTypeOptions
+    ): void {
+        // Calculate and set the recommended map view after every series update
+        // if new mapData is set
+        if (options.mapData) {
+            this.chart.mapView?.recommendMapView(
+                this.chart,
+                [
+                    this.chart.options.chart.map,
+                    ...(this.chart.options.series || []).map(
+                        (s, i): (MapDataType|undefined) => {
+                            if (i === this._i) {
+                                return options.mapData;
+                            }
+                            return s.mapData;
+                        }
+                    )
+                ],
+                true
+            );
+        }
+
+        super.update.apply(this, arguments);
     }
 
 }

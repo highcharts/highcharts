@@ -1264,14 +1264,16 @@ class Point {
     public onMouseOver(e?: PointerEvent): void {
         const point = this,
             series = point.series,
-            chart = series.chart,
-            pointer = chart.pointer;
+            { inverted, pointer } = series.chart;
 
-        e = e ?
-            pointer.normalize(e) :
-            // In cases where onMouseOver is called directly without an event
-            pointer.getChartCoordinatesFromPoint(point, chart.inverted) as any;
-        pointer.runPointActions(e as any, point);
+        if (pointer) {
+            e = e ?
+                pointer.normalize(e) :
+                // In cases where onMouseOver is called directly without an
+                // event
+                pointer.getChartCoordinatesFromPoint(point, inverted) as any;
+            pointer.runPointActions(e as any, point);
+        }
     }
 
     /**

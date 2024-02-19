@@ -264,14 +264,14 @@ function attractToPoint(
     e: PointerEvent,
     chart: Chart
 ): NavigationBindingsAttractionObject | void {
-    const coords = chart.pointer.getCoordinates(e);
+    const coords = chart.pointer?.getCoordinates(e);
 
     let coordsX: (Pointer.AxisCoordinateObject|undefined),
         coordsY: (Pointer.AxisCoordinateObject|undefined),
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined);
 
-    if (chart.navigationBindings) {
+    if (chart.navigationBindings && coords) {
         coordsX = getAssignedAxis(coords.xAxis);
         coordsY = getAssignedAxis(coords.yAxis);
     }
@@ -287,12 +287,11 @@ function attractToPoint(
     // Search by 'x' but only in yAxis' series.
     coordsY.axis.series.forEach((series): void => {
         if (series.points) {
-            series.points.forEach((point): void => {
-                if (point && distX > Math.abs((point.x as any) - x)) {
-                    distX = Math.abs((point.x as any) - x);
-                    closestPoint = point;
-                }
-            });
+            const point = series.searchPoint(e, true);
+            if (point && distX > Math.abs(point.x - x)) {
+                distX = Math.abs(point.x - x);
+                closestPoint = point;
+            }
         }
     });
 
