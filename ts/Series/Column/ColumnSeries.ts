@@ -165,8 +165,8 @@ class ColumnSeries extends Series {
                 attr.translateY = translatedThreshold;
             }
 
-            // apply finnal clipping (used in Highcharts Stock) (#7083)
-            // animation is done by scaleY, so cliping is for panes
+            // apply final clipping (used in Highcharts Stock) (#7083)
+            // animation is done by scaleY, so clipping is for panes
             if (series.clipBox) {
                 series.setClip();
             }
@@ -930,7 +930,7 @@ extend(ColumnSeries.prototype, {
     getSymbol: noop,
 
     // Use separate negative stacks, unlike area stacks where a negative
-    // point is substracted from previous (#1910)
+    // point is subtracted from previous (#1910)
     negStacks: true,
 
     trackerGroups: ['group', 'dataLabelsGroup']

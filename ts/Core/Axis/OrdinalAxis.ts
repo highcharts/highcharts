@@ -178,7 +178,7 @@ namespace OrdinalAxis {
         return AxisClass as (typeof Composition&T);
     }
     /**
-     * In an ordinal axis, there might be areas with dense consentrations of
+     * In an ordinal axis, there might be areas with dense concentrations of
      * points, then large gaps between some. Creating equally distributed
      * ticks over this entire range may lead to a huge number of ticks that
      * will later be removed. So instead, break the positions up in
@@ -811,9 +811,9 @@ namespace OrdinalAxis {
                     return val;
                 }
                 // Since ordinal.slope is the average distance between 2
-                // points on visible plotArea, this can be used to calculete
+                // points on visible plotArea, this can be used to calculate
                 // the approximate position of the point, which is outside
-                // the extededOrdinalPositions.
+                // the extendedOrdinalPositions.
                 if (val < extendedOrdinalPositions[0]) {
                     const diff = extendedOrdinalPositions[0] - val,
                         approximateIndexOffset = diff / slope;
@@ -1356,7 +1356,7 @@ namespace OrdinalAxis {
          * @param {number} val
          * The pixel value of a point.
          *
-         * @param {Array<number>} [ordinallArray]
+         * @param {Array<number>} [ordinalArray]
          * An array of all points available on the axis for the given data set.
          * Either ordinalPositions if the value is inside the plotArea or
          * extendedOrdinalPositions if not.

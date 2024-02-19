@@ -266,7 +266,7 @@ class TextBuilder {
                         // Target width
                         Math.max(
                             0,
-                            // Substract the font face to make room for the
+                            // Subtract the font face to make room for the
                             // ellipsis itself
                             width - 0.8 * dy
                         ),

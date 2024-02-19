@@ -146,7 +146,7 @@ class ZigzagIndicator extends SMAIndicator {
             exitLoop = false,
             yIndex: (boolean|number) = false;
 
-        // Exit if not enught points or no low or high values
+        // Exit if not enough points or no low or high values
         if (
             !xVal || xVal.length <= 1 ||
             (
@@ -167,7 +167,7 @@ class ZigzagIndicator extends SMAIndicator {
         // Search for a second zigzag point candidate,
         // this will also set first zigzag point
         for (i = 1; i < yValLen; i++) {
-            // requried change to go down
+            // required change to go down
             if (yVal[i][lowIndex] <= firstZigzagHigh * deviations.high) {
                 zigzag.push([xVal[0], firstZigzagHigh]);
                 // second zigzag point candidate
@@ -176,7 +176,7 @@ class ZigzagIndicator extends SMAIndicator {
                 directionUp = true;
                 exitLoop = true;
 
-                // requried change to go up
+                // required change to go up
             } else if (
                 yVal[i][highIndex] >= firstZigzagLow * deviations.low
             ) {
@@ -205,7 +205,7 @@ class ZigzagIndicator extends SMAIndicator {
                     zigzagPoint = [xVal[i], yVal[i][lowIndex]];
                 }
 
-                // requried change to go down -> new zigzagpoint and
+                // required change to go down -> new zigzagpoint and
                 // direction change
                 if (
                     yVal[i][highIndex] >=
@@ -221,7 +221,7 @@ class ZigzagIndicator extends SMAIndicator {
                     zigzagPoint = [xVal[i], yVal[i][highIndex]];
                 }
 
-                // requried change to go down -> new zigzagpoint and
+                // required change to go down -> new zigzagpoint and
                 // direction change
                 if (
                     yVal[i][lowIndex] <=
