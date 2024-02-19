@@ -9,13 +9,13 @@
     --highcharts-color-3: #fc6556;
     --highcharts-color-5: #404040;
 
-    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-100: #000;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-neutral-color-0: #ffffff;
+    --highcharts-neutral-color-0: #fff;
 
     /* General */
-    --highcharts-background-color: #ffffff;
+    --highcharts-background-color: #fff;
 
     /* Extra colors */
     --gray: #ccc;
@@ -31,7 +31,7 @@
         --gray: #333;
 
         /* UI colors */
-        --highcharts-background-color: #333333;
+        --highcharts-background-color: #333;
 
         --highcharts-neutral-color-100: rgb(255, 255, 255);
         --highcharts-neutral-color-5: rgb(61, 61, 61);
