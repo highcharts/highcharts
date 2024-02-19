@@ -984,26 +984,27 @@ function relativeLength(
  * @param {string} text
  * Text to search and modify.
  *
- * @param {string|RegExp} searchPattern
- * A search pattern to replace.
- *
- * @param {string} replacement
- * Replacement for matching text.
+ * @param {...Array<(RegExp|string)>} replacements
+ * One or multiple tuples with search pattern (`[0]: (string|RegExp)`) and
+ * replacement (`[1]: string`) for matching text.
  *
  * @return {string}
  * Text with replacements.
  */
 function replaceNested(
     text: string,
-    searchPattern: (string|RegExp),
-    replacement: string
+    ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
 ): string {
-    let previousLength: number;
+    let previous: string,
+        replacement: [(string|RegExp), string];
 
     do {
-        previousLength = text.length;
-        text = text.replace(searchPattern, replacement);
-    } while (text.length !== previousLength);
+        previous = text;
+
+        for (replacement of replacements) {
+            text = text.replace(replacement[0], replacement[1]);
+        }
+    } while (text !== previous);
 
     return text;
 }

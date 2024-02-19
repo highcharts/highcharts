@@ -196,7 +196,7 @@ function getTypeDescription(
  */
 function stripEmptyHTMLTags(str: string): string {
     // Scan alert #[71]: Loop for nested patterns
-    return replaceNested(str, /<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '');
+    return replaceNested(str, [/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '']);
 }
 
 
