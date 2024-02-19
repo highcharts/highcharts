@@ -8,7 +8,6 @@
     --highcharts-color-2: #727e8d;
     --highcharts-color-3: #fc6556;
     --highcharts-color-5: #404040;
-
     --highcharts-neutral-color-100: #000;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
@@ -32,7 +31,6 @@
 
         /* UI colors */
         --highcharts-background-color: #333;
-
         --highcharts-neutral-color-100: rgb(255, 255, 255);
         --highcharts-neutral-color-5: rgb(61, 61, 61);
         --highcharts-neutral-color-3: rgb(57, 57, 57);
@@ -72,7 +70,7 @@
 .cell > .highcharts-dashboards-component {
     position: relative;
     background-color: var(--highcharts-background-color);
-    box-shadow: 0 0.4688rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.4063rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.5313rem rgba(4, 9, 20, 0.03), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     margin: 5px;
     border-radius: 10px;
     overflow: hidden;
