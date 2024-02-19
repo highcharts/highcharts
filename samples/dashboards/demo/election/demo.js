@@ -15,7 +15,7 @@
 
 // TBD: update to match new layout
 
-// State    | Dem. cand    | Repo. cand.  | Dem % | Rep % |
+// State    | Dem. cand    | Repo. cand.  | Dem%  | Rep%  |
 // ---------|--------------|--------------|-------|-------|
 // National | dem el. vote | rep el. vote | float | float |
 // Alabama  | dem el. vote | rep el. vote | float | float |
@@ -209,7 +209,12 @@ async function setupDashboard() {
                             rowObjNational.repColVotes += Number(repVotes);
                             rowObjNational.demColVotes += Number(demVotes);
 
+                            // Pre-format votes column
+                            formatVotesColumns(rowObj);
+
                             jsonData[key].data.push(Object.values(rowObj));
+
+                            // Prepare for next row (state)
                             rowObj.repVotes = 0;
                             rowObj.demVotes = 0;
                         }
@@ -221,6 +226,11 @@ async function setupDashboard() {
             return jsonData;
         });
 
+    function formatVotesColumns(rowObj) {
+        rowObj.demVotes = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
+        rowObj.repVotes = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
+    }
+
     function addNationalSummary(jsonData, national) {
         function getSurname(name) {
             return name.split(',')[0];
@@ -231,6 +241,8 @@ async function setupDashboard() {
         // Insert a row with national results (row 1, below header)
         summary.repPercent = ((summary.repVotes / summary.totalVotes) * 100).toFixed(1);
         summary.demPercent = ((summary.demVotes / summary.totalVotes) * 100).toFixed(1);
+
+        formatVotesColumns(summary);
 
         jsonData.data.splice(1, 0, Object.values(summary));
 
@@ -389,7 +401,7 @@ async function setupDashboard() {
                                 enabled: true,
                                 formatter: function () {
                                     if (this.x === 'Votes') {
-                                        return `${this.y} %`;
+                                        return `${this.y}%`;
                                     }
                                     return this.y > 0 ? this.y : '';
                                 }
@@ -498,8 +510,8 @@ async function setupDashboard() {
                     tooltip: {
                         headerFormat: '<span style="font-size: 14px;font-weight:bold">{point.key}</span><br/>',
                         pointFormat: 'Winner: {point.custom.winner}<br/><br/>' +
-                            'Rep.: {point.custom.votesRep} elector(s), {point.custom.percentRep} per cent of votes<br/>' +
-                            'Dem.: {point.custom.votesDem} elector(s), {point.custom.percentDem} per cent of votes'
+                            'Rep.: {point.custom.votesRep} elector(s), {point.custom.percentRep}% of votes<br/>' +
+                            'Dem.: {point.custom.votesDem} elector(s), {point.custom.percentDem}% of votes'
                     },
                     lang: {
                         accessibility: {
@@ -538,8 +550,8 @@ async function setupDashboard() {
                         series: {
                             dataLabels: [{
                                 enabled: true,
-                                rotation: -90,
-                                format: '{point.y:.1f} %',
+                                // rotation: -90,
+                                format: '{point.y:.1f}%',
                                 y: 60 // Pixels down from the top
                             }, {
                                 enabled: true,
@@ -560,10 +572,10 @@ async function setupDashboard() {
                     },
                     yAxis: {
                         title: {
-                            text: 'Percentage of votes'
+                            text: 'Percent of votes'
                         },
                         accessibility: {
-                            description: 'Percentage of votes'
+                            description: 'Percent of votes'
                         }
                     },
                     series: getElectionSummary(),
@@ -583,7 +595,7 @@ async function setupDashboard() {
                     id: 'votes' + selectedYear
                 },
                 title: {
-                    text: '' // Populated later
+                    text: 'Updating...' // Populated later
                 },
                 dataGridOptions: {
                     cellHeight: 38,
@@ -596,24 +608,20 @@ async function setupDashboard() {
                             show: false
                         },
                         repPercent: {
+                            show: false,
                             headerFormat: 'Rep. percent',
                             cellFormat: '{value:.1f}'
                         },
                         demPercent: {
+                            show: false,
                             headerFormat: 'Dem. percent',
                             cellFormat: '{value:.1f}'
                         },
                         repVotes: {
-                            headerFormat: 'Rep. votes',
-                            cellFormatter: function () {
-                                return Number(this.value).toLocaleString('en-US');
-                            }
+                            headerFormat: 'Rep. votes'
                         },
                         demVotes: {
-                            headerFormat: 'Dem. votes',
-                            cellFormatter: function () {
-                                return Number(this.value).toLocaleString('en-US');
-                            }
+                            headerFormat: 'Dem. votes'
                         },
                         totalVotes: {
                             headerFormat: 'Total votes',
@@ -639,6 +647,10 @@ async function setupDashboard() {
             selectedYear = selectedOption.value;
 
             await updateBoard(board, selectedState, selectedYear);
+
+            // Reset zoom
+            const map = board.mountedComponents[4].component.chart;
+            map.mapZoom();
         }
     );
 }
@@ -662,7 +674,7 @@ async function updateBoard(board, state, year) {
         repInfo,
         controlHtml, // Updates bypass Dashboards
         usMap,
-        historyChart, // TBD: use when a state is clicked
+        historyChart,
         selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
@@ -774,6 +786,16 @@ async function updateBoard(board, state, year) {
         },
         connector: {
             id: 'votes' + year
+        },
+        dataGridOptions: {
+            columns: {
+                repColVotes: {
+                    headerFormat: candRep + ' (Republican)'
+                },
+                demColVotes: {
+                    headerFormat: candDem + ' (Democrat)'
+                }
+            }
         }
     });
 }
