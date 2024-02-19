@@ -222,7 +222,7 @@ namespace ScrollbarAxis {
                     );
                 } else {
                     // When live redraw is disabled, don't change extremes
-                    // Only change the position of the scollbar thumb
+                    // Only change the position of the scrollbar thumb
                     this.setRange(this.from as any, this.to as any);
                 }
             });

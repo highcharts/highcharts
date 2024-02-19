@@ -737,7 +737,7 @@ function seriesAnimateClusterPoint(
             parentId = (newState || {})[clusterObj.stateId].parentsId[0];
             oldPointObj = oldState[parentId];
 
-            // If old and new poistions are the same do not animate.
+            // If old and new positions are the same do not animate.
             if (
                 newPointObj.point &&
                 newPointObj.point.graphic &&

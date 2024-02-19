@@ -349,7 +349,7 @@ class BasicAnnotation extends Annotation {
             delete options.labelOptions;
             const type = options.shapes[0].type;
             // The rectangle is rendered as a path, whereas other basic shapes
-            // are rendered as their respecitve SVG shapes.
+            // are rendered as their respective SVG shapes.
             if (type && type !== 'path') {
                 this.basicType = type;
             } else {
