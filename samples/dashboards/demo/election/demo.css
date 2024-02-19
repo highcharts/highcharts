@@ -96,6 +96,11 @@
  *  Election chart (history)
  *
  * */
+#election-chart .highcharts-dashboards-component-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+    text-align: center;
+}
 
 #election-chart .highcharts-dashboards-component-content {
     background: var(--color-background);
@@ -103,7 +108,7 @@
 
 #election-chart .highcharts-title {
     fill: var(--color-title);
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 #election-chart .highcharts-axis {
@@ -374,6 +379,12 @@
 #html-control {
     text-align: center;
     max-height: 250px;
+}
+
+#html-control .highcharts-dashboards-component-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+    text-align: center;
 }
 
 #html-control #election-year {

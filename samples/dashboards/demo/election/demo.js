@@ -256,13 +256,19 @@ async function setupDashboard() {
             // Percentage, Democrat
             ret[0].data.push({
                 name: item.candDem,
-                y: Number(row[3])
+                y: Number(row[3]),
+                custom: {
+                    electors: row[1]
+                }
             });
 
             // Percentage, Republicans
             ret[1].data.push({
                 name: item.candRep,
-                y: Number(row[4])
+                y: Number(row[4]),
+                custom: {
+                    electors: row[2]
+                }
             });
         });
         return ret;
@@ -492,8 +498,8 @@ async function setupDashboard() {
                     tooltip: {
                         headerFormat: '<span style="font-size: 14px;font-weight:bold">{point.key}</span><br/>',
                         pointFormat: 'Winner: {point.custom.winner}<br/><br/>' +
-                            'Rep.: {point.custom.votesRep} ({point.custom.percentRep} per cent)<br/>' +
-                            'Dem.: {point.custom.votesDem} ({point.custom.percentDem} per cent)'
+                            'Rep.: {point.custom.votesRep} elector(s), {point.custom.percentRep} per cent of votes<br/>' +
+                            'Dem.: {point.custom.votesDem} elector(s), {point.custom.percentDem} per cent of votes'
                     },
                     lang: {
                         accessibility: {
@@ -508,6 +514,9 @@ async function setupDashboard() {
             {
                 renderTo: 'election-chart',
                 type: 'Highcharts',
+                title: {
+                    text: 'Historical ' + commonTitle + ' results'
+                },
                 chartOptions: {
                     chart: {
                         styledMode: true,
@@ -521,11 +530,9 @@ async function setupDashboard() {
                     legend: {
                         enabled: true
                     },
-                    title: {
-                        text: 'Historical ' + commonTitle + ' results'
-                    },
                     tooltip: {
-                        enabled: true
+                        enabled: true,
+                        format: '{point.custom.electors} electors'
                     },
                     plotOptions: {
                         series: {
@@ -576,7 +583,6 @@ async function setupDashboard() {
                     id: 'votes' + selectedYear
                 },
                 title: {
-                    enabled: true,
                     text: '' // Populated later
                 },
                 dataGridOptions: {
@@ -631,6 +637,7 @@ async function setupDashboard() {
         async function () {
             const selectedOption = this.options[this.selectedIndex];
             selectedYear = selectedOption.value;
+
             await updateBoard(board, selectedState, selectedYear);
         }
     );
@@ -659,11 +666,8 @@ async function updateBoard(board, state, year) {
         selectionGrid
     ] = board.mountedComponents.map(c => c.component);
 
-    // Get data for selected state (or US)
-    const row = votesTable.getRowIndexBy('postal-code', state);
-
     // 1. Update result HTML (if state or year changes)
-    const stateName = votesTable.getCell('state', row);
+    let row = votesTable.getRowIndexBy('postal-code', 'US');
 
     // Candidate names
     const candDem = electionData[year].candDem;
@@ -684,7 +688,7 @@ async function updateBoard(board, state, year) {
     // Progress bar (stacked)
     await progressBar.update({
         title: {
-            text: state === 'US' ? title : (title + ', ' + stateName)
+            text: title
         }
     });
 
@@ -715,6 +719,10 @@ async function updateBoard(board, state, year) {
 
     document.querySelector('div#dem-cand img').src = imgDemUrl;
     document.querySelector('div#rep-cand img').src = imgRepUrl;
+
+    // Get data for selected state (or US)
+    row = votesTable.getRowIndexBy('postal-code', state);
+    const stateName = votesTable.getCell('state', row);
 
     // 2. Update control HTML description if the year changes
     const domEl = document.getElementById('election-description');
@@ -750,6 +758,14 @@ async function updateBoard(board, state, year) {
     });
 
     // 4. Update history chart (TBD: when state clicked)
+    await historyChart.update({
+        chartOptions: {
+            title: {
+                text: state === 'US' ? 'National' : stateName
+            }
+        }
+        // TBD: update columns
+    });
 
     // 5. Update grid (if year changes)
     await selectionGrid.update({
@@ -758,16 +774,6 @@ async function updateBoard(board, state, year) {
         },
         connector: {
             id: 'votes' + year
-        },
-        dataGridOptions: {
-            columns: {
-                repColVotes: {
-                    headerFormat: candRep + ' (Republican)'
-                },
-                demColVotes: {
-                    headerFormat: candDem + ' (Democrat)'
-                }
-            }
         }
     });
 }
