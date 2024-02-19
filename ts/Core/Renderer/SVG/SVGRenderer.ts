@@ -429,13 +429,21 @@ class SVGRenderer implements SVGRendererLike {
             }
 
             if (hasInternalReferenceBug) {
-                return win.location.href
-                    .split('#')[0] // remove the hash
-                    .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parantheses and quotes
-                    .replace(/([\('\)])/g, '\\$1')
-                    // replace spaces (needed for Safari only)
-                    .replace(/ /g, '%20');
+                let previousLength: number,
+                    reference = win.location.href.split('#')[0]; // remove hash
+
+                // Scan alert #[72]: Loop for nested patterns
+                do {
+                    previousLength = reference.length;
+                    reference = reference
+                        .replace(/<[^>]*>/g, '') // wing cut HTML
+                        // escape parantheses and quotes
+                        .replace(/([\('\)])/g, '\\$1')
+                        // replace spaces (needed for Safari only)
+                        .replace(/ /g, '%20');
+                } while (reference.length !== previousLength);
+
+                return reference;
             }
         }
         return '';
