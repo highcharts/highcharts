@@ -180,6 +180,7 @@ function chartHideOverlappingLabels(
                     isIntersectRect(box1, box2) || (
                         box1Poly &&
                         box2Poly &&
+                        box1Poly !== box2Poly &&
                         isPolygonOverlap(box1Poly, box2Poly)
                     )
                 ) {
