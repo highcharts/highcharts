@@ -29,7 +29,7 @@
     Highcharts.stockChart('container', {
         lang: {
             accessibility: {
-                chartContainerLabel: 'AAPL Stock Price, Highcharts interactive chart'
+                defaultChartTitle: 'AAPL Stock Price'
             }
         },
         xAxis: {
