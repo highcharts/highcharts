@@ -5,11 +5,11 @@
 /* Dashboards */
 
 .highcharts-dashboards-component-title {
-    font-size: 1rem;
-    font-weight: 100;
-    margin-top: 25px;
-    margin-bottom: 4px;
-    color: var(--highcharts-neutral-color-60);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 48px;
+    margin-bottom: 8px;
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-component-subtitle {
@@ -18,11 +18,8 @@
 }
 
 .highcharts-dashboards-component-kpi-value {
-    font-size: 1.6rem;
-}
-
-.highcharts-dashboards-component-title {
-    margin-top: 48px;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 #rev-chart-kpi,
