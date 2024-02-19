@@ -311,7 +311,7 @@ namespace MapChart {
             const split = path.split(/[ ,;]+/);
 
             arr = split.map((item): (number|string) => {
-                if (!/[A-za-z]/.test(item)) {
+                if (!/[A-Za-z]/.test(item)) {
                     return parseFloat(item);
                 }
                 return item;
