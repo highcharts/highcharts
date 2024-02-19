@@ -488,7 +488,7 @@ class Scrollbar {
 
     private mouseDownHandler(e: PointerEvent): void {
         const scroller = this,
-            normalizedEvent = scroller.chart.pointer.normalize(e),
+            normalizedEvent = scroller.chart.pointer?.normalize(e) || e,
             mousePosition = scroller.cursorToScrollbarPosition(
                 normalizedEvent
             );
@@ -506,7 +506,7 @@ class Scrollbar {
      */
     private mouseMoveHandler(e: PointerEvent): void {
         const scroller = this,
-            normalizedEvent = scroller.chart.pointer.normalize(e),
+            normalizedEvent = scroller.chart.pointer?.normalize(e) || e,
             options = scroller.options,
             direction: ('chartY'|'chartX') = options.vertical ?
                 'chartY' : 'chartX',
@@ -862,7 +862,7 @@ class Scrollbar {
 
     public trackClick(e: PointerEvent): void {
         const scroller = this;
-        const normalizedEvent = scroller.chart.pointer.normalize(e),
+        const normalizedEvent = scroller.chart.pointer?.normalize(e) || e,
             range = scroller.to - scroller.from,
             top = scroller.y + scroller.scrollbarTop,
             left = scroller.x + scroller.scrollbarLeft;

@@ -854,7 +854,7 @@ class Navigator {
         e: PointerEvent,
         index: number
     ): void {
-        e = this.chart.pointer.normalize(e);
+        e = this.chart.pointer?.normalize(e) || e;
 
         const navigator = this,
             chart = navigator.chart,
@@ -936,7 +936,7 @@ class Navigator {
         e: PointerEvent,
         index: number
     ): void {
-        e = this.chart.pointer.normalize(e);
+        e = this.chart.pointer?.normalize(e) || e;
 
         const navigator = this,
             chart = navigator.chart,
@@ -985,7 +985,7 @@ class Navigator {
         // ignored.
         if (!(e as any).touches || (e as any).touches[0].pageX !== 0) { // #4696
 
-            e = chart.pointer.normalize(e);
+            e = chart.pointer?.normalize(e) || e;
             chartX = e.chartX;
 
             // Swap some options for inverted chart

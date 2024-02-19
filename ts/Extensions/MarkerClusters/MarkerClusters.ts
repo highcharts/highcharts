@@ -323,7 +323,7 @@ function onChartRender(
             if (
                 (options || {}).animation &&
                 series.markerClusterInfo &&
-                (series.chart.pointer.pinchDown || []).length === 0 &&
+                (series.chart.pointer?.pinchDown || []).length === 0 &&
                 ((series.xAxis || {}).eventArgs || {}).trigger !== 'pan' &&
                 oldState &&
                 Object.keys(oldState).length
