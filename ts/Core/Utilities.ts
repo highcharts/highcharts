@@ -976,6 +976,39 @@ function relativeLength(
 }
 
 /**
+ * Replaces text in a string with a given replacement in a loop to catch nested
+ * matches after previous replacements.
+ *
+ * @function Highcharts.replaceNested
+ *
+ * @param {string} text
+ * Text to search and modify.
+ *
+ * @param {string|RegExp} searchPattern
+ * A search pattern to replace.
+ *
+ * @param {string} replacement
+ * Replacement for matching text.
+ *
+ * @return {string}
+ * Text with replacements.
+ */
+function replaceNested(
+    text: string,
+    searchPattern: (string|RegExp),
+    replacement: string
+): string {
+    let previousLength: number;
+
+    do {
+        previousLength = text.length;
+        text = text.replace(searchPattern, replacement);
+    } while (text.length !== previousLength);
+
+    return text;
+}
+
+/**
  * Wrap a method with extended functionality, preserving the original function.
  *
  * @function Highcharts.wrap
@@ -2284,6 +2317,7 @@ const Utilities = {
     pushUnique,
     relativeLength,
     removeEvent,
+    replaceNested,
     splat,
     stableSort,
     syncTimeout,

@@ -59,7 +59,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     attr,
-    pick
+    pick,
+    replaceNested
 } = U;
 
 
@@ -194,15 +195,8 @@ function getTypeDescription(
  * @private
  */
 function stripEmptyHTMLTags(str: string): string {
-    let prevLength: number;
-
     // Scan alert #[71]: Loop for nested patterns
-    do {
-        prevLength = str.length;
-        str = str.replace(/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '');
-    } while (str.length !== prevLength);
-
-    return str;
+    return replaceNested(str, /<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '');
 }
 
 
