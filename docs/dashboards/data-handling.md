@@ -10,7 +10,7 @@ Whole data management can be illustrated by the following diagram:
 ## DataPool
 
 **The `DataPool` is the main entry point for data handling in Highcharts Dashboards.**
-It can be likened to a warehouse where various products are stored. It handles incoming data from various sources and provides a way to access and
+It can be linked to a warehouse where various products are stored. It handles incoming data from various sources and provides a way to access and
 modify the data. But it also provides a way to use that data in the components
 of the dashboard and to synchronize the data between the components.
 
