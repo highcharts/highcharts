@@ -205,7 +205,7 @@ class MapNavigation {
             if (!mapNav.navButtonsGroup) {
                 mapNav.navButtonsGroup = chart.renderer.g()
                     .attr({
-                        zIndex: 7 // #4955, // #8392 // #20476
+                        zIndex: 7 // #4955, #8392, #20476
                     })
                     .add();
             }
