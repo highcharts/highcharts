@@ -301,7 +301,7 @@ class SVGLabel extends SVGElement {
                     len = tp.getNumberOfChars(),
                     { x, y, width, height } = tp.getExtentOfChar(len - 1),
                     rightEdge = x + width;
-                    // End of the polygon (vertex order does not matter)
+                // End of the polygon (vertex order does not matter)
                 polygon.push([rightEdge, y], [rightEdge, y + height]);
 
                 // Assemble left-side vertecies of every 5th character
