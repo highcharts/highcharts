@@ -15,9 +15,14 @@ import ApproximationDefaults from '../../Extensions/DataGrouping/ApproximationDe
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import DataGrouping from '../../Extensions/DataGrouping/DataGrouping.js';
 const G: AnyRecord = Highcharts;
-G.dataGrouping = {
-    approximationDefaults: ApproximationDefaults,
-    approximations: ApproximationRegistry
-};
+G.dataGrouping = G.dataGrouping || {};
+G.dataGrouping.approximationDefaults = (
+    G.dataGrouping.approximationDefaults ||
+    ApproximationDefaults
+);
+G.dataGrouping.approximations = (
+    G.dataGrouping.approximations ||
+    ApproximationRegistry
+);
 DataGrouping.compose(G.Axis, G.Series, G.Tooltip);
 export default Highcharts;
