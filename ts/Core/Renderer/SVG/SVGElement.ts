@@ -399,7 +399,7 @@ class SVGElement implements SVGElementLike {
      *        holds `width`, `height`, `x` and `y` properties.
      *
      * @param {boolean} [redraw]
-     *        Decide if SVGElement should be redrawed with new alignment or
+     *        Decide if SVGElement should be redrawn with new alignment or
      *        just change its attributes.
      *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
@@ -967,7 +967,7 @@ class SVGElement implements SVGElementLike {
                 stops = (colorOptions as GradientColor).stops;
                 radialReference = (elem as any).radialReference;
 
-                // Keep < 2.2 kompatibility
+                // Keep < 2.2 compatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
                         x1: gradAttr[0] as number,
@@ -1388,7 +1388,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#getBBox
      *
      * @param {boolean} [reload]
-     *        Skip the cache and get the updated DOM bouding box.
+     *        Skip the cache and get the updated DOM bounding box.
      *
      * @param {number} [rot]
      *        Override the element's rotation. This is internally used on axis
@@ -2077,7 +2077,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#strokeWidth
      *
      * @return {number}
-     * The stroke width in pixels. Even if the given stroke widtch (in CSS or by
+     * The stroke width in pixels. Even if the given stroke width (in CSS or by
      * attributes) is based on `em` or other units, the pixel size is returned.
      */
     public strokeWidth(): number {
@@ -2299,7 +2299,7 @@ class SVGElement implements SVGElementLike {
         key: 'visibility',
         element: SVGDOMElement
     ): void {
-        // IE9-11 doesn't handle visibilty:inherit well, so we remove the
+        // IE9-11 doesn't handle visibility:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);

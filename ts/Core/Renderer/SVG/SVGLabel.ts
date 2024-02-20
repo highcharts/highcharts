@@ -414,7 +414,7 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
-            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #12163 when fontweight: bold, recalculate bBox without cache
             // #3295 && 3514 box failure when string equals 0
             bBox = this.bBox = (
                 ((

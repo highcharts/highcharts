@@ -106,7 +106,7 @@ const seriesSpecific = {
     },
     hlc: {
         groupPixelWidth: 5
-    // Move to HeikinAshiSeries.ts aftre refactoring data grouping.
+    // Move to HeikinAshiSeries.ts after refactoring data grouping.
     },
     heikinashi: {
         groupPixelWidth: 10

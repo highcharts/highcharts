@@ -1,0 +1,11 @@
+---
+name: Black and white Stock chart
+authors:
+  - Kamil Musialowski
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Designs:
+      priority: 0
+...
