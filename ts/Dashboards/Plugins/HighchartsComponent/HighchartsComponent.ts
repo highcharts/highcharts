@@ -418,8 +418,8 @@ class HighchartsComponent extends Component {
             this.presentationTable = connector.table;
         }
 
-        const table = this.presentationTable.modified,
-            modifierOptions = table.getModifier()?.options;
+        const table = this.presentationTable.modified;
+        const modifierOptions = this.presentationTable.getModifier()?.options;
 
         this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -441,21 +441,47 @@ class HighchartsComponent extends Component {
             const series = chart.get(assignment.seriesId) as Series | undefined;
             const seriesOptions: SeriesOptions = {};
 
-            // TODO: check if there is a need to handle other series options
+            // Prevent dragging on series, which were created out of a
+            // columns which are created by MathModifier.
+            const adjustDraggableOptions = (
+                compare: (column: string) => boolean
+            ): void => {
+                if (
+                    modifierOptions?.type === 'Math' &&
+                    (modifierOptions as MathModifierOptions)
+                        .columnFormulas?.some(
+                            (formula): boolean => compare(formula.column)
+                        )
+                ) {
+                    seriesOptions.dragDrop = {
+                        draggableY: false
+                    };
+                }
+            };
 
+            // Set the series data based on the column assignment data structure
+            // type.
             if (isString(dataStructure)) {
                 const column = table.getColumn(dataStructure);
                 if (column) {
                     seriesOptions.data = column.slice() as [];
                 }
+
+                adjustDraggableOptions((columnName): boolean => (
+                    columnName === dataStructure
+                ));
             } else if (Array.isArray(dataStructure)) {
                 const seriesTable = new DataTable({
                     columns: table.getColumns(dataStructure)
                 });
                 seriesOptions.data = seriesTable.getRows() as [][];
+
+                adjustDraggableOptions((columnName): boolean => (
+                    dataStructure.some((name): boolean => name === columnName)
+                ));
             } else {
                 const keys = Object.keys(dataStructure);
-                const columnNames = [];
+                const columnNames: string[] = [];
                 for (let j = 0, jEnd = keys.length; j < jEnd; ++j) {
                     columnNames.push(dataStructure[keys[j]]);
                 }
@@ -466,6 +492,10 @@ class HighchartsComponent extends Component {
 
                 seriesOptions.keys = keys;
                 seriesOptions.data = seriesTable.getRows() as [][];
+
+                adjustDraggableOptions((columnName): boolean => (
+                    columnNames.some((name): boolean => name === columnName)
+                ));
             }
 
             if (!series) {
