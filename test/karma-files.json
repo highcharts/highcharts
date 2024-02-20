@@ -4,6 +4,7 @@
 	"vendor/moment-timezone-with-data-2012-2022.js",
 	"vendor/proj4.js",
 	"vendor/topojson-client.min.js",
+	"vendor/rgbcolor.js",
 	"node_modules/lolex/lolex.js",
 
 	"code/highcharts.src.js",
