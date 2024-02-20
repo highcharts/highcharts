@@ -121,165 +121,46 @@ const setupDashboard = instanceId => {
                 rows: [{
                     id: 'instance-details',
                     cells: [{
-                        id: 'instance',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'instance'
                     }, {
-                        id: 'zone',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'zone'
                     }, {
-                        id: 'ami',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'ami'
                     }, {
-                        id: 'os',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '25%'
-                            }
-                        }
+                        id: 'os'
                     }]
                 }, {
                     cells: [{
-                        height: 400,
-                        id: 'instances-table',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'instances-table'
                     }, {
+                        id: 'kpi-wrapper',
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'cpu',
-                                    height: 200
+                                    id: 'cpu'
                                 }, {
-                                    id: 'memory',
-                                    height: 200
+                                    id: 'memory'
                                 }]
                             }, {
                                 cells: [{
-                                    id: 'health',
-                                    height: 195
+                                    id: 'health'
                                 }, {
-                                    id: 'disk',
-                                    height: 195
+                                    id: 'disk'
                                 }]
                             }]
-                        },
-                        height: 400,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
                         }
                     }]
                 }, {
                     cells: [{
-                        id: 'disk-usage',
-                        height: 400,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'disk-usage'
                     }, {
-                        id: 'cpu-utilization',
-                        height: 400,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'cpu-utilization'
                     }]
                 }, {
                     cells: [{
-                        id: 'network-opt',
-                        height: 300,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'network-opt'
                     }, {
-                        id: 'disk-opt',
-                        height: 300,
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            },
-                            medium: {
-                                width: '50%'
-                            },
-                            large: {
-                                width: '50%'
-                            }
-                        }
+                        id: 'disk-opt'
                     }]
                 }]
             }]
