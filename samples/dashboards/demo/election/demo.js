@@ -22,11 +22,13 @@
 // ........ | ............ | .........    | ...   | ..... |
 // Wyoming  | dem el. vote | rep el. vote | float | float |
 
-// Useful links
+// Useful links (TBD: remove before release)
 // -----------------------------------------------------------------------------
-// * Bar race https://www.highcharts.com/demo/highcharts/bar-race
-// * Map: https://www.highcharts.com/demo/maps/data-class-two-ranges
-// * Ref: https://www.presidency.ucsb.edu/statistics/elections
+// * https://www.highcharts.com/demo/maps/data-class-two-ranges
+// * https://www.presidency.ucsb.edu/statistics/elections
+// * https://edition.cnn.com/election/2020/results/president
+// * https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/
+
 
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
@@ -690,6 +692,11 @@ async function updateBoard(board, state, year) {
     el.style.width = ((demColVotes / totalColVotes) * 100) + '%';
     el = document.getElementById('bar-rep');
     el.style.width = ((repColVotes / totalColVotes) * 100) + '%';
+
+    // Votes needed to win
+    const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBD: is this safe?
+    el = document.getElementById('info-to-win');
+    el.innerHTML = neededVotes + ' to win';
 
     // 2. Update control HTML description if the year changes
     const domEl = document.getElementById('election-description');

@@ -375,10 +375,6 @@
 }
 
 #bar-container {
-    /* Inspiration:
-    https://edition.cnn.com/election/2020/results/president
-    https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/
-    */
     height: 40px;
     margin: 5px;
 }
