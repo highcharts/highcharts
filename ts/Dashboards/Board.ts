@@ -475,7 +475,7 @@ class Board implements Serializable<Board, Board.JSON> {
         const promises = [];
         const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            promises.push(Bindings.addComponent(components[i], void 0, board));
+            promises.push(Bindings.addComponent(components[i], board));
         }
         return promises;
     }

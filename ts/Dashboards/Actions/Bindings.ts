@@ -89,13 +89,12 @@ namespace Bindings {
 
     export async function addComponent(
         options: Partial<ComponentType['options']>,
-        cell?: Cell,
-        board?: Board
+        board: Board,
+        cell?: Cell
     ): Promise<(Component|void)> {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
         const renderTo = options.renderTo || options.cell;
-        const currentBoard = board || cell?.row?.layout.board;
 
         if (!renderTo) {
             error(
@@ -130,7 +129,7 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: currentBoard?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -138,7 +137,7 @@ namespace Bindings {
             }
         }
 
-        const component = new ComponentClass(cell, options, currentBoard);
+        const component = new ComponentClass(cell, options, board);
 
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
@@ -148,7 +147,7 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text: currentBoard?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -161,17 +160,16 @@ namespace Bindings {
             cell.mountedComponent = component;
         }
 
-        if (currentBoard) {
-            currentBoard.mountedComponents.push({
-                options: options,
-                component: component,
-                cell: cell || {
-                    id: renderTo,
-                    container: componentContainer as HTMLElement,
-                    mountedComponent: component
-                }
-            });
-        }
+
+        board.mountedComponents.push({
+            options: options,
+            component: component,
+            cell: cell || {
+                id: renderTo,
+                container: componentContainer as HTMLElement,
+                mountedComponent: component
+            }
+        });
 
         fireEvent(component, 'mount');
 
