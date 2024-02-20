@@ -1,0 +1,7 @@
+---
+ name: Series table option study
+ authors:
+   - Torstein Hønsi
+ skipTest: true
+ js_wrap: b
+...

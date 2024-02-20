@@ -1852,13 +1852,15 @@ class Series {
                     cropStart :
                     0
             ),
+            pointArrayMap = series.pointArrayMap || ['y'],
             // Create a configuration object out of a data row
-            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+            dataColumnKeys = ['x', ...pointArrayMap];
         let dataLength,
             cursor,
             point,
             i: number,
-            data = series.data;
+            data = series.data,
+            pOptions: PointShortOptions|PointOptions;
 
 
         if (!data && !hasGroupedData) {
@@ -1877,14 +1879,18 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
+                pOptions = dataOptions ?
+                    dataOptions[cursor] :
+                    table.getRow(i, pointArrayMap) as Array<number>;
+
                 // #970:
                 if (
                     !point &&
-                    typeof dataOptions?.[cursor] !== 'undefined'
+                    pOptions !== void 0
                 ) {
                     data[cursor] = point = new PointClass(
                         series,
-                        (dataOptions as any)[cursor],
+                        pOptions,
                         xData[i]
                     );
                 }

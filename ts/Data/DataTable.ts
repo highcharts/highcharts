@@ -30,6 +30,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
+    isArray,
     uniqueKey
 } = U;
 
@@ -214,7 +215,9 @@ class DataTable implements DataEvent.Emitter {
         }
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            thisColumns[columnNames[i]].length = rowCount;
+            if (isArray(thisColumns[columnNames[i]])) { // Not on typed array
+                thisColumns[columnNames[i]].length = rowCount;
+            }
         }
 
         this.rowCount = rowCount;

@@ -705,12 +705,12 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        data: Array<(PointOptions|PointShortOptions)> = options.data as any,
+        dataLength = series.table.modified.rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+    return dataLength > (options.boostThreshold || Number.MAX_VALUE) &&
             // Defined yAxis extremes
             isNumber(yAxis.min) &&
             isNumber(yAxis.max) &&
