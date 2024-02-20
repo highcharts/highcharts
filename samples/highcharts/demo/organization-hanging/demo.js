@@ -1,3 +1,5 @@
+const colors = Highcharts.getOptions().colors;
+
 const leafs = [
     'Icelandic', 'Norwegian', 'Faroese', 'Swedish', 'Danish',
     'English', 'Hollandic', 'Flemish', 'Dutch', 'Limburgish', 'Brabantian',
@@ -5,10 +7,7 @@ const leafs = [
 ].map(function (leaf) {
     return {
         id: leaf,
-        color: Highcharts.getOptions().colors[0],
-        dataLabels: {
-            color: '#000000'
-        }
+        color: colors[0]
     };
 });
 
@@ -50,7 +49,12 @@ Highcharts.chart('container', {
         }
     },
 
+    tooltip: {
+        outside: true
+    },
+
     series: [{
+        name: 'Germanic language tree',
         type: 'organization',
         keys: ['from', 'to'],
         nodeWidth: 40,
@@ -66,13 +70,13 @@ Highcharts.chart('container', {
             color: '#dedede'
         }, {
             level: 2,
-            color: Highcharts.getOptions().colors[3]
+            color: colors[3]
         }, {
             level: 3,
-            color: Highcharts.getOptions().colors[2]
+            color: colors[2]
         }, {
             level: 4,
-            color: Highcharts.getOptions().colors[8]
+            color: colors[8]
         }],
         nodes,
         data: [
