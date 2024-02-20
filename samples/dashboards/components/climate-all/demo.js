@@ -713,7 +713,6 @@ async function setupBoard() {
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {},
             sync: {
                 highlight: true
             },
@@ -982,16 +981,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data grid and city chart
     if (newData) {
         const showCelsius = scale === 'C';
-        const sharedColumnAssignment = {
-            time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
-            RR1: column === 'RR1' ? 'y' : null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null
-        };
 
         // Update city grid selection
         await selectionGrid.update({
@@ -1010,13 +999,17 @@ async function updateBoard(board, city, column, scale, newData) {
                         show: !showCelsius
                     }
                 }
-            },
-            columnAssignment: sharedColumnAssignment
+            }
         });
 
         // Update city chart selection
         await cityChart.update({
-            columnAssignment: sharedColumnAssignment,
+            connector: {
+                columnAssignment: [{
+                    seriesId: column,
+                    data: ['x', column]
+                }]
+            },
             chartOptions: {
                 chart: {
                     type: column[0] === 'T' ? 'spline' : 'column'

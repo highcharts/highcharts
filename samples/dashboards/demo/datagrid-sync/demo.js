@@ -89,10 +89,6 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: chartOptions
     }, {
         renderTo: 'dashboard-col-1',
@@ -102,10 +98,6 @@ Dashboards.board('container', {
         type: 'Highcharts',
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         allowConnectorUpdate: false,
         chartOptions: Highcharts.merge(chartOptions, {

@@ -30,11 +30,11 @@ Dashboards.board('container', {
         renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         connector: {
-            id: 'data'
-        },
-        columnAssignment: {
-            x: 'x',
-            mySeries: 'value'
+            id: 'data',
+            columnAssignment: [{
+                seriesId: 'mySeries',
+                data: ['x', 'mySeries']
+            }]
         },
         chartOptions: {
             title: {
@@ -45,15 +45,18 @@ Dashboards.board('container', {
         renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         connector: {
-            id: 'data'
-        },
-        columnAssignment: {
-            x: 'x',
-            mySeries: 'value',
-            mySeriesName: {
-                high: 'myHigh',
-                low: 'myLow'
-            }
+            id: 'data',
+            columnAssignment: [{
+                seriesId: 'myColumnRangeSeries',
+                data: {
+                    x: 'x',
+                    low: 'myLow',
+                    high: 'myHigh'
+                }
+            }, {
+                seriesId: 'myLineSeries',
+                data: ['x', 'mySeries']
+            }]
         },
         chartOptions: {
             title: {
@@ -61,10 +64,11 @@ Dashboards.board('container', {
             },
             series: [{
                 name: 'mySeriesName',
+                id: 'myColumnRangeSeries',
                 type: 'columnrange'
             }, {
                 name: 'mySeries',
-                type: 'line'
+                id: 'myLineSeries'
             }]
         }
     }]

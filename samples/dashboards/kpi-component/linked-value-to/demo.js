@@ -57,12 +57,12 @@ Dashboards.board('container', {
                 type: 'datetime'
             }
         },
-        columnAssignment: {
-            Date: 'x',
-            Value: 'y'
-        },
         connector: {
-            id: 'value'
+            id: 'value',
+            columnAssignment: [{
+                seriesId: 'Values',
+                data: ['Date', 'Value']
+            }]
         }
     }],
     gui: {

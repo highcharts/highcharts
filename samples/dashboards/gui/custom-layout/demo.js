@@ -18,9 +18,6 @@ Dashboards.board('container', {
     components: [{
         renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Quantity: 'y'
-        },
         connector: {
             id: 'data'
         }

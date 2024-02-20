@@ -75,10 +75,6 @@ Dashboards.board(
                 sync: {
                     highlight: true
                 },
-                columnAssignment: {
-                    Food: 'x',
-                    'Vitamin A': 'y'
-                },
                 title: {
                     text: 'Column chart'
                 },

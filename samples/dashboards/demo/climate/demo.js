@@ -507,15 +507,17 @@ async function setupBoard() {
             renderTo: 'city-chart',
             type: 'Highcharts',
             connector: {
-                id: 'Range Selection'
-            },
-            columnAssignment: {
-                time: 'x',
-                RR1: 'y',
-                TNC: activeScale === 'C' ? 'value' : null,
-                TNF: !activeScale === 'C' ? 'value' : null,
-                TXC: activeScale === 'C' ? 'value' : null,
-                TXF: !activeScale === 'C' ? 'value' : null
+                id: 'Range Selection',
+                columnAssignment: [{
+                    seriesId: 'RR1',
+                    data: ['time', 'RR1']
+                }, {
+                    seriesId: 'TN' + activeScale,
+                    data: ['time', 'TN' + activeScale]
+                }, {
+                    seriesId: 'TX' + activeScale,
+                    data: ['time', 'TX' + activeScale]
+                }]
             },
             sync: {
                 highlight: true
@@ -803,14 +805,6 @@ async function updateBoard(board, city, column, scale, newData) {
 
         // Update data grid and city chart
         const showCelsius = scale === 'C';
-        const sharedColumnAssignment = {
-            time: 'x',
-            RR1: column === 'RR1' ? 'y' : null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null
-        };
 
         // Update city grid selection
         await selectionGrid.update({
@@ -829,8 +823,7 @@ async function updateBoard(board, city, column, scale, newData) {
                         show: !showCelsius
                     }
                 }
-            },
-            columnAssignment: sharedColumnAssignment
+            }
         });
 
         // Update city chart
@@ -841,13 +834,17 @@ async function updateBoard(board, city, column, scale, newData) {
         options.colorAxis.colorStops = colorStops;
 
         await cityChart.update({
-            columnAssignment: {
-                time: 'x',
-                RR1: 'y',
-                TNC: showCelsius ? 'y' : null,
-                TNF: !showCelsius ? 'y' : null,
-                TXC: showCelsius ? 'y' : null,
-                TXF: !showCelsius ? 'y' : null
+            connector: {
+                columnAssignment: [{
+                    seriesId: 'RR1',
+                    data: ['time', 'RR1']
+                }, {
+                    seriesId: 'TN' + scale,
+                    data: ['time', 'TN' + scale]
+                }, {
+                    seriesId: 'TX' + scale,
+                    data: ['time', 'TX' + scale]
+                }]
             },
             chartOptions: options
         });

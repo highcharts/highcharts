@@ -56,7 +56,6 @@ const {
     createElement,
     diffObjects,
     isString,
-    isNumber,
     merge,
     splat,
     isObject
@@ -200,7 +199,7 @@ class HighchartsComponent extends Component {
     /**
      * List of series IDs created from the connector using `columnAssignment`.
      */
-    private seriesFromConnector: string[] = [];
+    public seriesFromConnector: string[] = [];
 
     /* *
      *
