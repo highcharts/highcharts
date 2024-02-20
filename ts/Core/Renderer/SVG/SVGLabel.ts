@@ -299,10 +299,16 @@ class SVGLabel extends SVGElement {
             if (tp) {
                 const polygon: BBoxObject['polygon'] = [],
                     len = tp.getNumberOfChars(),
-                    { x, y, width, height } = tp.getExtentOfChar(len - 1),
-                    rightEdge = x + width;
-                // End of the polygon (vertex order does not matter)
-                polygon.push([rightEdge, y], [rightEdge, y + height]);
+                    padding = this.box ? 0 : (this.padding || 0),
+                    {
+                        translateX: parentTranslateX = 0,
+                        translateY: parentTranslateY = 0
+                    } = this.parentGroup || {
+                        translateX: 0,
+                        translateY: 0
+                    },
+                    offsetX = parentTranslateX + padding,
+                    offsetY = parentTranslateY + padding;
 
                 // Assemble left-side vertecies of every 5th character
                 for (let i = 0; i < len - 1; i += 5) {
@@ -311,9 +317,20 @@ class SVGLabel extends SVGElement {
                             y: y1,
                             height
                         } = tp.getExtentOfChar(i),
-                        y2 = y1 + height;
-                    polygon.push([x1, y1], [x1, y2]);
+                        top = y1 + offsetY,
+                        bottom = top + height,
+                        left = x1 + offsetX;
+                    polygon.push([left, top], [left, bottom]);
                 }
+
+                const { x, y, width, height } = tp.getExtentOfChar(len - 1),
+                    rightEdge = x + width + offsetX,
+                    rightTop = y + offsetY;
+                // End of the polygon (vertex order does not matter)
+                polygon.push(
+                    [rightEdge, rightTop],
+                    [rightEdge, rightTop + height]
+                );
 
                 bBox.polygon = polygon;
             }
