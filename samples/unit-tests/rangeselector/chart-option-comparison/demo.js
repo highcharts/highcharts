@@ -1,6 +1,6 @@
 QUnit.test('#20529: Chart-stockChart-constructor rangeselector first-load comparison.', function (assert) {
 
-    var done = assert.async();
+    const done = assert.async();
     fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json')
         .then(response => response.json())
         .then(aaplCJson => {
@@ -16,7 +16,7 @@ QUnit.test('#20529: Chart-stockChart-constructor rangeselector first-load compar
                 ]
             };
 
-            var chart = Highcharts.chart('container', options),
+            let chart = Highcharts.chart('container', options),
                 chartInfo = {
                     min: chart.xAxis[0].min,
                     max: chart.xAxis[0].max,
