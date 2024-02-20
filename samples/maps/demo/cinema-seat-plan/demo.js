@@ -1,13 +1,11 @@
 /* global seatPlan */
 
-const colors = Highcharts.getOptions().colors;
-const nullColor = '#ccc';
+const colors = Highcharts.getOptions().colors,
+    selectedListHTML = document.getElementById('selected-list'),
+    deselect = document.getElementById('deselect'),
+    selectedList = [],
+    rowLabelX = -5;
 
-const selectedListHTML = document.getElementById('selected-list');
-const deselect = document.getElementById('deselect');
-const selectedList = [];
-
-const rowLabelX = -5;
 const chart = Highcharts.mapChart('container', {
     chart: {
         margin: 20
@@ -21,6 +19,9 @@ const chart = Highcharts.mapChart('container', {
         x: 10
     },
     legend: {
+        enabled: false
+    },
+    mapNavigation: {
         enabled: false
     },
     mapView: {
@@ -38,7 +39,11 @@ const chart = Highcharts.mapChart('container', {
     plotOptions: {
         series: {
             dataLabels: {
-                allowOverlap: true
+                enabled: true,
+                allowOverlap: true,
+                style: {
+                    fontSize: '14px'
+                }
             },
             states: {
                 inactive: {
@@ -47,21 +52,32 @@ const chart = Highcharts.mapChart('container', {
             }
         }
     },
-
     tooltip: {
         outside: true,
         formatter: function () {
-            let str = `Seat <b>${this.point.name}</b>`;
-            if (this.point.selected) {
-                str = str + ' Selected';
-            } else {
-                str = str + ' Available';
-            }
-            return str;
+            return `Seat <b>${this.point.name}</b> ` +
+                (this.point.selected ? 'Selected' : 'Available');
         }
     },
-
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 450
+            },
+            chartOptions: {
+                series: [{
+                    id: 'seats',
+                    dataLabels: {
+                        style: {
+                            fontSize: '9px'
+                        }
+                    }
+                }, {}]
+            }
+        }]
+    },
     series: [{
+        id: 'seats',
         point: {
             events: {
                 click: function () {
@@ -72,44 +88,32 @@ const chart = Highcharts.mapChart('container', {
             }
         },
         mapData: seatPlan,
-        nullColor,
+        nullColor: '#ccc',
         borderWidth: 0,
         states: {
             select: {
                 color: colors[3]
             }
         },
-        // Available seats
-        data: [
-            ['A1'], ['A2'], ['A4'], ['A5'], ['A7'], ['A8'],
-            ['B1'], ['B3'], ['B4'], ['B5'], ['B6'], ['B7'], ['B8'], ['B9'],
-            ['C1'], ['C2'], ['C3'], ['C4'], ['C5'], ['C6'],
-            ['D1'], ['D2'], ['D4'], ['D5'], ['D6'], ['D7'], ['D8'],
-            ['E1'], ['E2'], ['E3'], ['E7'], ['E8'], ['E10'], ['E11'],
-            ['F1'], ['F2'], ['F3'], ['F5'], ['F6'], ['F7'], ['F8'], ['F10']
-        ],
-        dataLabels: {
-            enabled: true,
-            useHTML: true,
-            style: {
-                fontSize: '14px'
-            },
-            formatter: function () {
-                const rotations = [18, 14, 8, 5, 0, 0, 0, -5, -8, -14, -18];
-                const pointIndex = this.key.substring(1) - 1;
-                let posLeft = -10;
-                if (pointIndex === 10) {
-                    posLeft = -14;
-                } else if (pointIndex === 11) {
-                    posLeft = -12;
-                }
+        // Seats
+        data: (function () {
+            const rot = [18, 14, 8, 5, 0, 0, 0, -5, -8, -14, -18],
+                taken = [
+                    '11000000001', // A1-A11
+                    '10110000000',
+                    '00001100000',
+                    '00000011000',
+                    '00000000110',
+                    '00111000011'
+                ].join('');
 
-                return '<span style="transform:rotate(' +
-                    rotations[pointIndex] + 'deg);position:absolute;left:' +
-                    posLeft + 'px">' + this.key + '</span>';
-            }
-        },
-        keys: ['name', 'selected'],
+            return new Array(66).fill(1).map((seat, i) => [
+                String.fromCharCode(65 + Math.floor(i / 11)) + (i % 11 + 1),
+                +taken[i] ? null : void 0,
+                rot[i % 11]
+            ]);
+        }()),
+        keys: ['name', 'value', 'dataLabels.rotation'],
         joinBy: 'name'
     }, {
         // Row & screen labels
@@ -119,19 +123,11 @@ const chart = Highcharts.mapChart('container', {
         },
         enableMouseTracking: false,
         dataLabels: {
-            allowOverlap: true,
             crop: false,
-            shape: 'rectangle',
-            borderColor: 'transparent',
-            borderWidth: 1,
-            borderRadius: 5,
-            padding: 6,
             style: {
                 fontSize: '18px',
-                fontWeight: '200',
-                textOutline: false
+                fontWeight: '200'
             },
-            align: 'center',
             verticalAlign: 'middle'
         },
         keys: ['x', 'y', 'name'],
