@@ -49,7 +49,7 @@ class VariwidePoint extends ColumnPoint {
 
     /* *
      *
-     *  Properites
+     *  Properties
      *
      * */
 

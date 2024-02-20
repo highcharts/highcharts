@@ -50,39 +50,6 @@ Dashboards.board('container', {
             }
         }]
     },
-    gui: {
-        layouts: [{
-            rows: [{
-                id: 'current-sprint',
-                cells: [{
-                    id: 'current-sprint-kpi',
-                    layout: {
-                        rows: [{
-                            cells: [{
-                                id: 'dashboard-kpi-1'
-                            }, {
-                                id: 'dashboard-kpi-2'
-                            }]
-                        }]
-                    }
-                }, {
-                    id: 'dashboard-kpi-4'
-                }]
-            }, {
-                id: 'charts-1',
-                cells: [{
-                    id: 'dashboard-chart-1'
-                }, {
-                    id: 'dashboard-chart-2'
-                }]
-            }, {
-                id: 'cumulative',
-                cells: [{
-                    id: 'dashboard-chart-cumulative'
-                }]
-            }]
-        }]
-    },
     components: [{
         renderTo: 'dashboard-kpi-1',
         type: 'KPI',

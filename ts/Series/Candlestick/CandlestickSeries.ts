@@ -186,8 +186,8 @@ class CandlestickSeries extends OHLCSeries {
                 bottomBox = Math.round(bottomBox) + crispCorr;
 
                 // Create the path. Due to a bug in Chrome 49, the path is
-                // first instanciated with no values, then the values
-                // pushed. For unknown reasons, instanciating the path array
+                // first instantiated with no values, then the values
+                // pushed. For unknown reasons, instantiating the path array
                 // with all the values would lead to a crash when updating
                 // frequently (#5193).
                 path = [];

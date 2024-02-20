@@ -533,7 +533,7 @@ const configs: {
                         const hoverPoint = chart.hoverPoint;
                         const hoverSeries = hoverPoint?.series ||
                             chart.hoverSeries;
-                        const points = chart.pointer.getHoverData(
+                        const points = chart.pointer?.getHoverData(
                             point,
                             hoverSeries,
                             chart.series,
@@ -541,9 +541,11 @@ const configs: {
                             true
                         );
 
-                        tooltip.refresh(
-                            useSharedTooltip ? points.hoverPoints : point
-                        );
+                        if (chart.tooltip && points) {
+                            tooltip.refresh(
+                                useSharedTooltip ? points.hoverPoints : point
+                            );
+                        }
                     }
 
                     if (highlightOptions.highlightPoint && (

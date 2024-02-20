@@ -220,7 +220,7 @@ class StockChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -985,7 +985,7 @@ namespace StockChart {
                 end = points[i + 1];
 
             if (start[1] === end[1]) {
-                // Substract due to #1129. Now bottom and left axis gridlines
+                // Subtract due to #1129. Now bottom and left axis gridlines
                 // behave the same.
                 start[1] = end[1] =
                     Math.round(start[1]) - (width % 2 / 2);

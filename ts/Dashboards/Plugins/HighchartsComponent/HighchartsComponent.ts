@@ -290,7 +290,7 @@ class HighchartsComponent extends Component {
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
 
-        if (!hcComponent.cell.container?.style.height) {
+        if (!hcComponent.cell?.container?.style.height) {
             // If the cell height is specified, clear dimensions to make
             // the container to adjust to the chart height.
             hcComponent.contentElement.style.height = '100%';
@@ -318,7 +318,7 @@ class HighchartsComponent extends Component {
         }
 
         this.innerResizeTimeouts.push(setTimeout((): void => {
-            if (this.chart) {
+            if (this.chart && this.chart.container) {
                 this.chart.setSize(
                     null,
                     this.contentElement.clientHeight,
@@ -719,6 +719,15 @@ class HighchartsComponent extends Component {
      */
     private getChart(): Chart|undefined {
         return this.chart || this.createChart();
+    }
+
+    /**
+     * Destroys the highcharts component.
+     */
+    public destroy(): void {
+        // Cleanup references in the global Highcharts scope
+        this.chart?.destroy();
+        super.destroy();
     }
 
     /**

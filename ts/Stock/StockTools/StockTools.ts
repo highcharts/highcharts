@@ -330,7 +330,7 @@ function navigationRecalculateYAxisPositions(
  * axes it is placed there. If not, current plot area is scaled
  * to make room for new axis.
  *
- * If axis is removed, the current plot area streaches to fit into 100%
+ * If axis is removed, the current plot area stretches to fit into 100%
  * of the plot area.
  *
  * @private

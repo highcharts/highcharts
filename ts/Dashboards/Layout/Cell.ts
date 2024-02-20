@@ -199,7 +199,7 @@ class Cell extends GUIElement {
     /**
      * The type of GUI element.
      */
-    public readonly type = Globals.guiElementType.cell;
+    public readonly type? = Globals.guiElementType.cell;
 
     /**
      * Reference to the row instance.
@@ -297,12 +297,13 @@ class Cell extends GUIElement {
         const { row } = cell;
 
         // Destroy mounted component.
-        if (cell.mountedComponent) {
-            cell.mountedComponent.destroy();
-        }
+        cell.mountedComponent?.destroy();
+
+        // if layout exists in the cell - destroy it
+        cell.nestedLayout?.destroy();
 
         row.unmountCell(cell);
-        const destroyRow = row.cells.length === 0;
+        const destroyRow = row.cells?.length === 0;
 
         super.destroy();
 
@@ -660,6 +661,12 @@ namespace Cell {
         mountedComponentJSON?: Component.JSON;
         style?: CSSJSONObject;
         layoutJSON?: LayoutType.JSON;
+    }
+
+    export interface DOMCell {
+        id: string;
+        container: HTMLElement;
+        mountedComponent: Component
     }
 
 }

@@ -76,7 +76,7 @@ class KlingerIndicator extends SMAIndicator {
      */
     public static defaultOptions: KlingerOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Klinger Oscillator.
+         * Parameters used in calculation of Klinger Oscillator.
          *
          * @excluding index, period
          */
