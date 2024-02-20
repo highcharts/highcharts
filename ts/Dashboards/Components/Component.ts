@@ -782,9 +782,7 @@ abstract class Component {
                 this.element.style.height = this.dimensions.height + 'px';
                 this.contentElement.style.height = this.getContentHeight() +
                     'px';
-            }
-
-            if (height === null) {
+            } else if (height === null) {
                 this.dimensions.height = null;
                 this.element.style.removeProperty('height');
             }

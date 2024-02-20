@@ -40,7 +40,7 @@ h1#title {
     margin: 0;
     background-color: #3d3d3d;
     text-align: center;
-    color: white;
+    color: #fff;
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-title::before,
@@ -69,7 +69,6 @@ h1#title {
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value,
 #kpi-iron .highcharts-dashboards-component-kpi-value {
     font-size: 4em;
-    font-weight: normal;
     line-height: 2.4rem;
     margin-top: 10px;
     color: var(--highcharts-color-0);
