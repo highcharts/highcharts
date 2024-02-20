@@ -56,6 +56,7 @@ const {
     createElement,
     diffObjects,
     isString,
+    isNumber,
     merge,
     splat,
     isObject
@@ -195,6 +196,11 @@ class HighchartsComponent extends Component {
      * @private
      */
     public sync: Component['sync'];
+
+    /**
+     * List of series IDs created from the connector using `columnAssignment`.
+     */
+    private seriesFromConnector: string[] = [];
 
     /* *
      *
@@ -435,6 +441,24 @@ class HighchartsComponent extends Component {
         const columnAssignment = this.options.connector?.columnAssignment ??
             this.getDefaultColumnAssignment(columnNames);
 
+        // Remove series that were added in the previous update and are not
+        // present in the new columnAssignment.
+        for (let i = 0, iEnd = this.seriesFromConnector.length; i < iEnd; ++i) {
+            const oldSeriesId = this.seriesFromConnector[i];
+            if (columnAssignment.some(
+                (seriesId): boolean => seriesId.seriesId === oldSeriesId
+            )) {
+                continue;
+            }
+
+            const series = chart.get(oldSeriesId);
+            if (series) {
+                series.destroy();
+            }
+        }
+        this.seriesFromConnector.length = 0;
+
+        // Create the series or update the existing ones.
         for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
             const assignment = columnAssignment[i];
             const dataStructure = assignment.data;
@@ -507,6 +531,8 @@ class HighchartsComponent extends Component {
             } else {
                 series.update(seriesOptions, false);
             }
+
+            this.seriesFromConnector.push(assignment.seriesId);
         }
 
         chart.redraw();
