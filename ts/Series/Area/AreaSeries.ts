@@ -554,7 +554,7 @@ class AreaSeries extends LineSeries {
 
                                     // If there are missing points in the next
                                     // stack in any of the series below this
-                                    // one, we need to substract the missing
+                                    // one, we need to subtract the missing
                                     // values and add a hiatus to the left or
                                     // right.
                                     } else if (visibleSeries[i]) {
@@ -753,4 +753,4 @@ export default AreaSeries;
  * @apioption series.area.fillOpacity
  */
 
-''; // adds doclets above to transpilat
+''; // adds doclets above to transpiled
