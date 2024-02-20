@@ -30,7 +30,13 @@
                 }
             }
         },
+        accessibility: {
+            typeDescription: 'Combination chart with 2 data series.'
+        },
         lang: {
+            accessibility: {
+                defaultChartTitle: 'Dark themed Highcharts Stock demo'
+            },
             rangeSelectorZoom: 'Timeframe'
         },
         navigation: {
@@ -233,6 +239,15 @@
         },
         tooltip: {
             pointFormat: ''
+        },
+        yAxis: {
+            title: {
+                text: 'Price',
+                reserveSpace: false,
+                style: {
+                    visibility: 'hidden'
+                }
+            }
         },
         series: [{
             name: 'AAPL',
