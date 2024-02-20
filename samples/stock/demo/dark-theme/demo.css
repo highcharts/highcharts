@@ -3,11 +3,11 @@
     min-width: 310px;
 }
 
-.highcharts-navigator-series .highcharts-point-up {
+.highcharts-point-up {
     stroke: #8cc076;
 }
 
-.highcharts-navigator-series .highcharts-point-down {
+.highcharts-point-down {
     stroke: #b82d0d;
 }
 
