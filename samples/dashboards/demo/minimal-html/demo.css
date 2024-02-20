@@ -3,24 +3,36 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 #container {
-    display: flex;
-    flex-direction: column;
+    padding: 10px;
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 .row {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+}
+
+.cell {
+    margin: 10px;
+}
+
+#kpi-wrapper {
+    display: flex;
+    flex-direction: column;
 }
 
 #kpi-wrapper,
 #dashboard-col-0,
-#dashboard-col-1 {
-    width: 33%;
+#dashboard-col-1,
+#dashboard-col-2 {
+    flex: 1;
+    min-width: 0;
 }
 
-#dashboard-col-2 {
-    width: 100%;
+#kpi-vitamin-a,
+#kpi-iron {
+    flex-grow: 1;
+    background-color: var(--highcharts-background-color);
 }
 
 h1#title {
@@ -92,32 +104,22 @@ h1#title {
     padding: 0 20px;
 }
 
-#kpi-vitamin-a,
-#kpi-iron {
-    height: 205px;
-}
-
 @media (max-width: 992px) {
+    .row {
+        flex-wrap: wrap;
+    }
+
     #kpi-wrapper {
-        width: 100%;
-        display: flex;
         flex-direction: row;
-    }
-
-    #kpi-vitamin-a,
-    #kpi-iron {
-        width: 50%;
-    }
-
-    #dashboard-col-0,
-    #dashboard-col-1 {
-        width: 50%;
+        flex: unset;
+        width: 100%;
     }
 }
 
 @media (max-width: 576px) {
     #dashboard-col-0,
     #dashboard-col-1 {
+        flex: unset;
         width: 100%;
     }
 }
