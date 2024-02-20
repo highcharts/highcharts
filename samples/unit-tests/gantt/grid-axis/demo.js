@@ -610,7 +610,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  *   ^                 ^
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
-    const types = ['line', 'column', /*'bar',*/ 'bubble'];
+    const types = ['line', 'column', /* 'bar',*/ 'bubble'];
 
     const options = {
         chart: {
@@ -1758,7 +1758,7 @@ QUnit.test('Chart.update', assert => {
     } = chart;
     const getYAxisLabels = () =>
         Array.from(
-            document.querySelectorAll('.highcharts-yaxis-labels > text')
+            chart.container.querySelectorAll('.highcharts-yaxis-labels > text')
         )
             .map(text => text.textContent)
             .reverse();

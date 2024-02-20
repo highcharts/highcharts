@@ -169,6 +169,8 @@ class BellcurveSeries extends AreaSplineSeries {
                     series.mean || 0,
                     series.standardDeviation || 0
                 ),
+                false,
+                void 0,
                 false
             );
         }

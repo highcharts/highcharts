@@ -617,7 +617,7 @@ function onPointDrillToCluster(
             xAxis = point.series.xAxis,
             yAxis = point.series.yAxis,
             chart = point.series.chart,
-            mapView = chart.mapView,
+            { inverted, mapView, pointer } = chart,
             clusterOptions = series.options.cluster,
             drillToCluster = (clusterOptions || {}).drillToCluster;
 
@@ -648,20 +648,34 @@ function onPointDrillToCluster(
 
             } else if (xAxis && yAxis) {
 
-                chart.pointer.zoomX = true;
-                chart.pointer.zoomY = true;
-                chart.zoom({
-                    originalEvent: e,
-                    xAxis: [{
-                        axis: xAxis,
-                        min: x1,
-                        max: x2
-                    }],
-                    yAxis: [{
-                        axis: yAxis,
-                        min: y1,
-                        max: y2
-                    }]
+                let x1Px = xAxis.toPixels(x1),
+                    x2Px = xAxis.toPixels(x2),
+                    y1Px = yAxis.toPixels(y1),
+                    y2Px = yAxis.toPixels(y2);
+
+                if (inverted) {
+                    [x1Px, x2Px, y1Px, y2Px] = [y1Px, y2Px, x1Px, x2Px];
+                }
+
+                if (x1Px > x2Px) {
+                    [x1Px, x2Px] = [x2Px, x1Px];
+                }
+                if (y1Px > y2Px) {
+                    [y1Px, y2Px] = [y2Px, y1Px];
+                }
+
+                if (pointer) {
+                    pointer.zoomX = true;
+                    pointer.zoomY = true;
+                }
+
+                chart.transform({
+                    from: {
+                        x: x1Px,
+                        y: y1Px,
+                        width: x2Px - x1Px,
+                        height: y2Px - y1Px
+                    }
                 });
             }
         }
@@ -723,7 +737,7 @@ function seriesAnimateClusterPoint(
             parentId = (newState || {})[clusterObj.stateId].parentsId[0];
             oldPointObj = oldState[parentId];
 
-            // If old and new poistions are the same do not animate.
+            // If old and new positions are the same do not animate.
             if (
                 newPointObj.point &&
                 newPointObj.point.graphic &&

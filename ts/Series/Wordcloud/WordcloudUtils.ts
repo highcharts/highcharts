@@ -317,7 +317,7 @@ function archimedeanSpiral(
 }
 
 /**
- * Gives a set of cordinates for an rectangular spiral.
+ * Gives a set of coordinates for an rectangular spiral.
  *
  * @private
  * @function squareSpiral
@@ -334,6 +334,7 @@ function archimedeanSpiral(
  */
 function squareSpiral(
     attempt: number,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     params?: WordcloudSeries.WordcloudSpiralParamsObject
 ): (boolean|PositionObject) {
     const a = attempt * 4,
@@ -381,7 +382,7 @@ function squareSpiral(
 }
 
 /**
- * Gives a set of cordinates for an rectangular spiral.
+ * Gives a set of coordinates for an rectangular spiral.
  *
  * @private
  * @function rectangularSpiral
@@ -600,7 +601,7 @@ function getSpiral(
         arr: Array<ReturnType<WordcloudSeries.WordcloudSpiralFunction>> = [];
 
     for (let i = 1; i < length; i++) {
-        // @todo unnecessary amount of precaclulation
+        // @todo unnecessary amount of precalculation
         arr.push(fn(i, params));
     }
 

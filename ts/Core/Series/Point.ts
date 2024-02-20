@@ -28,7 +28,6 @@ import type {
 } from './PointOptions';
 import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
-import type { SeriesZonesOptions } from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -46,7 +45,6 @@ const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
-    defined,
     erase,
     extend,
     fireEvent,
@@ -122,6 +120,7 @@ class Point {
     public formatPrefix: string = 'point';
     public graphic?: SVGElement;
     public graphics?: Array<SVGElement|undefined>;
+    public hiddenInDataClass?: boolean;
     public id!: string;
     public isNew?: boolean;
     public isNull?: boolean;
@@ -1235,7 +1234,7 @@ class Point {
                                 loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
 
-                            // Programatically selecting a point should restore
+                            // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
@@ -1265,14 +1264,16 @@ class Point {
     public onMouseOver(e?: PointerEvent): void {
         const point = this,
             series = point.series,
-            chart = series.chart,
-            pointer = chart.pointer;
+            { inverted, pointer } = series.chart;
 
-        e = e ?
-            pointer.normalize(e) :
-            // In cases where onMouseOver is called directly without an event
-            pointer.getChartCoordinatesFromPoint(point, chart.inverted) as any;
-        pointer.runPointActions(e as any, point);
+        if (pointer) {
+            e = e ?
+                pointer.normalize(e) :
+                // In cases where onMouseOver is called directly without an
+                // event
+                pointer.getChartCoordinatesFromPoint(point, inverted) as any;
+            pointer.runPointActions(e as any, point);
+        }
     }
 
     /**
@@ -1678,7 +1679,7 @@ export default Point;
  * @callback Highcharts.PointClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
@@ -1747,10 +1748,10 @@ export default Point;
  * @callback Highcharts.PointMouseOutCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.PointerEvent} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1759,10 +1760,10 @@ export default Point;
  * @callback Highcharts.PointMouseOverCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1792,10 +1793,10 @@ export default Point;
  * @callback Highcharts.PointRemoveCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1811,10 +1812,10 @@ export default Point;
  * @callback Highcharts.PointUpdateCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointUpdateEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1861,10 +1862,10 @@ export default Point;
  * @callback Highcharts.PointSelectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1874,10 +1875,10 @@ export default Point;
  * @callback Highcharts.PointUnselectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 ''; // keeps doclets above in JS file.

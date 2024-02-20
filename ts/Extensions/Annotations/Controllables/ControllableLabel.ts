@@ -471,6 +471,7 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _point: AnnotationPointType
     ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),
@@ -517,7 +518,8 @@ class ControllableLabel extends Controllable {
                     {
                         chart,
                         distance: pick(itemOptions.distance, 16),
-                        getPlayingField: tooltip.getPlayingField
+                        getPlayingField: tooltip.getPlayingField,
+                        pointer: tooltip.pointer
                     },
                     width,
                     height,

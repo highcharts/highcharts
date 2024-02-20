@@ -1,10 +1,10 @@
 [
-	"vendor/jquery-3.1.1.js",
-	"vendor/moment-2.18.1.js",
-	"vendor/moment-timezone-0.5.13-with-data-2012-2022.js",
-	"vendor/proj4-2.3.6.js",
-	"vendor/rgbcolor.js",
+	"vendor/jquery.js",
+	"vendor/moment.js",
+	"vendor/moment-timezone-with-data-2012-2022.js",
+	"vendor/proj4.js",
 	"vendor/topojson-client.min.js",
+	"vendor/rgbcolor.js",
 	"node_modules/lolex/lolex.js",
 
 	"code/highcharts.src.js",
@@ -75,6 +75,7 @@
 	"code/modules/hollowcandlestick.src.js",
 	"code/modules/heikinashi.src.js",
 	"code/modules/flowmap.src.js",
+	"code/modules/navigator.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

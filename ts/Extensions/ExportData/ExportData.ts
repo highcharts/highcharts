@@ -521,8 +521,6 @@ function chartGetDataRows(
                 index: series.index
             };
 
-            const seriesIndex = mockSeries.index;
-
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
@@ -582,7 +580,7 @@ function chartGetDataRows(
                         arr[i] = 0;
                     }
 
-                    // Create poiners array, holding information how many
+                    // Create pointers array, holding information how many
                     // duplicates of specific x occurs in each series.
                     // Used for creating rows with duplicates.
                     rows[key].pointers = arr;
@@ -1378,7 +1376,7 @@ export default ExportData;
  * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
  *
  * @param {Highcharts.Chart} this
- * Chart context where the event occured.
+ * Chart context where the event occurred.
  *
  * @param {Highcharts.ExportDataEventObject} event
  * Event object with data rows that can be modified.

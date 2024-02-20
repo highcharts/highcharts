@@ -10,8 +10,6 @@
  *
  * */
 
-/* global MSBlobBuilder */
-
 'use strict';
 
 /* *
@@ -983,7 +981,7 @@ namespace OfflineExporting {
 
         try {
             // Safari requires data URI since it doesn't allow navigation to
-            // blob URLs. ForeignObjects also dont work well in Blobs in Chrome
+            // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
             // (#14780).
             if (!webKit && svg.indexOf('<foreignObject') === -1) {
                 return domurl.createObjectURL(new win.Blob([svg], {

@@ -16,7 +16,6 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';

@@ -17,6 +17,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Layout from './Layout.js';
 import type Serializable from '../Serializable';
@@ -251,8 +252,7 @@ class Row extends GUIElement {
         // Mount components.
         for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
             componentsToMount[i].cell.mountComponentFromJSON(
-                componentsToMount[i].mountedComponentJSON,
-                (cell || {}).container
+                componentsToMount[i].mountedComponentJSON
             );
         }
     }
@@ -298,11 +298,14 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
+        // copy to avoid problem with index when shifting array of cells during
+        // the destroy.
+        const rowCells = [...row.cells];
 
         // Destroy cells.
-        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            if (row.cells[i]) {
-                row.cells[i].destroy();
+        for (let i = 0, iEnd = rowCells?.length; i < iEnd; ++i) {
+            if (rowCells[i]) {
+                rowCells[i].destroy();
             }
         }
 
@@ -311,7 +314,7 @@ class Row extends GUIElement {
 
             super.destroy();
 
-            if (layout.rows.length === 0) {
+            if (layout.rows?.length === 0) {
                 layout.destroy();
             }
         }
@@ -371,8 +374,6 @@ class Row extends GUIElement {
     public setSize(
         height?: number | string
     ): void {
-        const cells = this.cells;
-
         Row.setContainerHeight(
             this.container as HTMLDOMElement,
             height
@@ -383,7 +384,7 @@ class Row extends GUIElement {
     public getCellIndex(
         cell: Cell
     ): number | undefined {
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = this.cells?.length; i < iEnd; ++i) {
             if (this.cells[i].id === cell.id) {
                 return i;
             }

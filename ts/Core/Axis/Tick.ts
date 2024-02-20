@@ -300,10 +300,10 @@ class Tick {
                 return labelOptions.formatter.call(ctx, ctx);
             }
             if (labelOptions.format) {
-                ctx.text = axis.defaultLabelFormatter.call(ctx, ctx);
+                ctx.text = axis.defaultLabelFormatter.call(ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
-            return axis.defaultLabelFormatter.call(ctx, ctx);
+            return axis.defaultLabelFormatter.call(ctx);
         };
         const str = labelFormatter.call(ctx, ctx);
 
@@ -1200,7 +1200,7 @@ export default Tick;
  */
 
 /**
- * Additonal time tick information.
+ * Additional time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
