@@ -577,7 +577,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
 /**
  * For map and mapline series types, the SVG path for the shape. For
- * compatibily with old IE, not all SVG path definitions are supported,
+ * compatibility with old IE, not all SVG path definitions are supported,
  * but M, L and C operators are safe.
  *
  * To achieve a better separation between the structure and the data,

@@ -143,8 +143,7 @@ Dashboards.board('container', {
                 }
             }
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-1',
         sync: {
             visibility: true,

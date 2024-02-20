@@ -82,6 +82,11 @@ export interface DataGridOptions {
      * @default true
      */
     resizableColumns?: boolean;
+
+    /**
+     * Events attached to the row : `click`.
+     */
+    events?: DataGridEvents
 }
 
 /**
@@ -172,6 +177,27 @@ export interface CellFormatterCallback {
  */
 export interface CellValue {
     value: DataTable.CellType
+}
+
+/**
+ * Contains events for row
+ */
+export interface DataGridEvents {
+    row?: DataGridRowEvents
+}
+
+/**
+ * Declare events for row
+ */
+export interface DataGridRowEvents {
+    click?: DataGridClickCallbackFunction
+}
+
+/**
+ * Click callback function
+ */
+export interface DataGridClickCallbackFunction {
+    (this: HTMLElement, event: MouseEvent): void;
 }
 
 /* *
