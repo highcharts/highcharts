@@ -175,19 +175,6 @@ function resetDrilldown(chart) {
                     this.point.name;
             };
 
-            // Apply the recommended map view if any
-            chart.mapView.update(
-                Highcharts.merge({
-                    insets: undefined,
-                    padding: 0
-                },
-                topology.objects.default['hc-recommended-mapview'])
-            );
-            console.log(Highcharts.merge({
-                insets: undefined,
-                padding: 0
-            },
-            topology.objects.default['hc-recommended-mapview']));
             // Hide loading and add series
             chart.hideLoading();
             clearTimeout(fail);
@@ -200,7 +187,6 @@ function resetDrilldown(chart) {
                     formatter
                 },
                 custom: {
-                    mapView: topology.objects.default['hc-recommended-mapview'],
                     mapName,
                     mapKey
                 }
@@ -211,38 +197,20 @@ function resetDrilldown(chart) {
     // On drill up, reset to the top-level map view
     const afterDrillUp = function (e) {
         const {
-            mapView,
             mapName,
             mapKey
         } = e.seriesOptions.custom;
-        if (mapView && mapName && mapKey) {
+        if (mapName && mapKey) {
             fillInfo(mapName, mapKey);
             input.value = mapName;
-
-            e.target.mapView.update(
-                Highcharts.merge({
-                    insets: undefined
-                },
-                e.seriesOptions.custom.mapView
-                ),
-                false
-            );
         }
     };
 
     const data = mapData.objects.default.geometries.map((g, value) => ({
-            key: g.properties['hc-key'],
-            drilldown: g.properties['hc-key'],
-            value
-        })),
-        mapView = Highcharts.merge(
-            mapData.objects.default['hc-recommended-mapview'], {
-                projection: {
-                    name: 'Miller',
-                    rotation: [0]
-                }
-            }
-        );
+        key: g.properties['hc-key'],
+        drilldown: g.properties['hc-key'],
+        value
+    }));
 
     console.time('map');
     const chart = Highcharts.mapChart('container', {
@@ -254,7 +222,6 @@ function resetDrilldown(chart) {
         },
 
         chart: {
-            map: mapData,
             events: {
                 drilldown,
                 afterDrillUp
@@ -293,8 +260,6 @@ function resetDrilldown(chart) {
             }
         },
 
-        mapView,
-
         legend: {
             layout: 'vertical',
             align: 'left',
@@ -311,6 +276,7 @@ function resetDrilldown(chart) {
 
         series: [{
             data,
+            mapData,
             joinBy: ['hc-key', 'key'],
             name: initialMapName,
             dataLabels: {
@@ -319,7 +285,6 @@ function resetDrilldown(chart) {
                 }
             },
             custom: {
-                mapView,
                 mapName: initialMapName,
                 mapKey: initialMapKey
             }
@@ -377,23 +342,11 @@ function resetDrilldown(chart) {
         };
 
         const data = mapData.objects.default.geometries.map((g, value) => ({
-                key: g.properties['hc-key'],
-                drilldown: g.properties['hc-key'],
-                value
-            })),
-            mapView = Highcharts.merge({
-                insets: undefined,
-                padding: 0
-            },
-            mapData.objects.default['hc-recommended-mapview'], {
-                projection: {
-                    name: 'Miller',
-                    rotation: [0]
-                }
-            });
-        chart.update({
-            mapView
-        }, false);
+            key: g.properties['hc-key'],
+            drilldown: g.properties['hc-key'],
+            value
+        }));
+
         chart.series[0].update({
             mapData,
             data,
@@ -402,7 +355,6 @@ function resetDrilldown(chart) {
                 formatter
             },
             custom: {
-                mapView,
                 mapName,
                 mapKey
             }
