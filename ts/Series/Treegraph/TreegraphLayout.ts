@@ -46,7 +46,7 @@ class TreegraphLayout {
      * @param {TreegraphNode} child
      *        Child node, which should be connected to dummyNode.
      * @param {number} gapSize
-     *        Remainig gap size.
+     *        Remaining gap size.
      *
      * @return {TreegraphNode}
      *         DummyNode as a parent of nodes, which column changes.
@@ -136,7 +136,7 @@ class TreegraphLayout {
         }
     }
     /**
-     * Reset the caluclated values from the previous run.
+     * Reset the calculated values from the previous run.
      * @param {TreegraphNode[]} nodes all of the nodes.
      */
     public resetValues(nodes: TreegraphNode[]): void {
@@ -196,7 +196,7 @@ class TreegraphLayout {
         } else {
             // If the node has children, perform the recursive first walk for
             // its children, and then calculate its shift in the apportion
-            // function (most crucial part part of the algorythm).
+            // function (most crucial part of the algorithm).
             let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
 
             for (const child of node.children) {
@@ -270,9 +270,9 @@ class TreegraphLayout {
      * are left(right)Int(Out)node where Int means internal and Out means
      * outernal. For summing up the modifiers along the contour we use the
      * `left(right)Int(Out)mod` variable. Whenever two nodes of the inside
-     * contours are in conflict we comute the left one of the greatest uncommon
+     * contours are in conflict we commute the left one of the greatest uncommon
      * ancestors using the getAncestor function and we call the moveSubtree
-     * method to shift the subtree and prepare the shifts of smaller subrtees.
+     * method to shift the subtree and prepare the shifts of smaller subtrees.
      * Finally we add a new thread (if necessary) and we adjust ancestor of
      * right outernal node or defaultAncestor.
      *

@@ -122,7 +122,7 @@ class QuadTree {
     }
 
     /**
-     * Depfth first treversal (DFS). Using `before` and `after` callbacks,
+     * Depth first treversal (DFS). Using `before` and `after` callbacks,
      * we can get two results: preorder and postorder traversals, reminder:
      *
      * ```

@@ -32,8 +32,6 @@ import type Toolbar from './StockToolbar';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
-const { getAssignedAxis } = NBU;
 import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
@@ -81,6 +79,7 @@ declare module '../../Extensions/Annotations/NavigationBindingsLike' {
  * @optionparent navigation.bindings
  */
 const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
+
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
@@ -99,9 +98,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -153,9 +150,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -210,9 +205,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -265,9 +258,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -322,9 +313,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -377,9 +366,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -432,9 +419,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -478,9 +463,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -528,9 +511,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -583,9 +564,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -642,9 +621,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -704,9 +681,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -770,9 +745,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -841,9 +814,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -912,9 +883,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -984,9 +953,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1043,9 +1010,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1098,9 +1063,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1404,9 +1367,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            const coords = this.chart.pointer.getCoordinates(e),
-                coordsX = getAssignedAxis(coords.xAxis),
-                coordsY = getAssignedAxis(coords.yAxis);
+            const [coordsX, coordsY] = this.getCoords(e);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
@@ -1443,21 +1404,21 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             ): void {
                 const mockPointOpts = annotation.options.typeOptions.points,
                     x = mockPointOpts && mockPointOpts[0].x,
-                    coords = this.chart.pointer.getCoordinates(e),
-                    coordsX = getAssignedAxis(coords.xAxis),
-                    coordsY = getAssignedAxis(coords.yAxis);
+                    [coordsX, coordsY] = this.getCoords(e);
 
-                annotation.update({
-                    typeOptions: {
-                        xAxis: coordsX.axis.index,
-                        yAxis: coordsY.axis.index,
-                        points: [{
-                            x: x
-                        }, {
-                            x: coordsX.value
-                        }]
-                    }
-                });
+                if (coordsX && coordsY) {
+                    annotation.update({
+                        typeOptions: {
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
+                            points: [{
+                                x: x
+                            }, {
+                                x: coordsX.value
+                            }]
+                        }
+                    });
+                }
             }
         ]
     },
