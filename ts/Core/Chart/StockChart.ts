@@ -49,6 +49,8 @@ import Point from '../Series/Point.js';
 import RangeSelectorDefaults from
     '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
+import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
+const { setFixedRange } = StockUtilities;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -218,7 +220,7 @@ class StockChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -920,28 +922,6 @@ namespace StockChart {
         return groupingEnabled;
     }
 
-    /**
-     * Sets the chart.fixedRange to the specified value. If the value is larger
-     * than actual range, sets it to the maximum possible range. (#20327)
-     *
-     * @private
-     * @function Highcharts.StockChart#setFixedRange
-     * @param {number|undefined} range
-     *        Range to set in axis units.
-     */
-    function setFixedRange(this: Chart, range: number | undefined): void {
-        const xAxis = this.xAxis[0];
-        if (
-            defined(xAxis.dataMax) &&
-            defined(xAxis.dataMin) &&
-            range
-        ) {
-            this.fixedRange = Math.min(range, xAxis.dataMax - xAxis.dataMin);
-        } else {
-            this.fixedRange = range;
-        }
-    }
-
     /* eslint-disable jsdoc/check-param-names */
 
     /**
@@ -1005,7 +985,7 @@ namespace StockChart {
                 end = points[i + 1];
 
             if (start[1] === end[1]) {
-                // Substract due to #1129. Now bottom and left axis gridlines
+                // Subtract due to #1129. Now bottom and left axis gridlines
                 // behave the same.
                 start[1] = end[1] =
                     Math.round(start[1]) - (width % 2 / 2);

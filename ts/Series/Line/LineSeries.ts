@@ -640,4 +640,4 @@ export default LineSeries;
  * @apioption series.line.data.marker
  */
 
-''; // include precedent doclets in transpilat
+''; // include precedent doclets in transpiled

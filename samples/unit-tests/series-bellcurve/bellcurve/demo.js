@@ -70,6 +70,15 @@ QUnit.test('Curve bell', function (assert) {
         'After updating bellcurve\'s pointsInInterval number of points is correct'
     );
 
+    bellcurve.update({ visible: false });
+    bellcurve.update({ visible: true });
+
+    assert.equal(
+        bellcurve.visible,
+        true,
+        'Curve bell should be visible after toggling visibility off and on'
+    );
+
     baseSeries.remove();
     assert.ok(
         chart.series.indexOf(bellcurve) !== -1,

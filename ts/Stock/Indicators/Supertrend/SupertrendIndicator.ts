@@ -113,7 +113,7 @@ class SupertrendIndicator extends SMAIndicator {
      */
     public static defaultOptions: SupertrendOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Supertrend indicator series points.
+         * Parameters used in calculation of Supertrend indicator series points.
          *
          * @excluding index
          */
@@ -260,7 +260,7 @@ class SupertrendIndicator extends SMAIndicator {
             },
 
             // Sorted supertrend points array
-            groupedPoitns: SupertrendGroupedPointsObject = {
+            groupedPoints: SupertrendGroupedPointsObject = {
                 top: [], // Rising trend line points
                 bottom: [], // Falling trend line points
                 intersect: [] // Change trend line points
@@ -309,7 +309,7 @@ class SupertrendIndicator extends SMAIndicator {
             // Used when particular point color is set
             pointColor: ColorType,
 
-            // Temporary points that fill groupedPoitns array
+            // Temporary points that fill groupedPoints array
             newPoint: SupertrendPoint,
             newNextPoint: SupertrendPoint,
 
@@ -418,7 +418,7 @@ class SupertrendIndicator extends SMAIndicator {
                         pointColor || indicOptions.fallingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.top.push(newPoint);
+                    groupedPoints.top.push(newPoint);
 
                 } else if (
                     point.y < mainPoint.close &&
@@ -428,14 +428,14 @@ class SupertrendIndicator extends SMAIndicator {
                         pointColor || indicOptions.risingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.bottom.push(newPoint);
+                    groupedPoints.bottom.push(newPoint);
 
                 } else {
-                    groupedPoitns.intersect.push(newPoint);
-                    groupedPoitns.intersect.push(newNextPoint);
+                    groupedPoints.intersect.push(newPoint);
+                    groupedPoints.intersect.push(newNextPoint);
 
                     // Additional null point to make a gap in line
-                    groupedPoitns.intersect.push(merge(newNextPoint, {
+                    groupedPoints.intersect.push(merge(newNextPoint, {
                         isNull: true
                     }));
 
@@ -451,8 +451,8 @@ class SupertrendIndicator extends SMAIndicator {
                             pointColor || indicOptions.risingTrendColor ||
                             indicOptions.color
                         );
-                        groupedPoitns.top.push(newPoint);
-                        groupedPoitns.top.push(merge(newNextPoint, {
+                        groupedPoints.top.push(newPoint);
+                        groupedPoints.top.push(merge(newNextPoint, {
                             isNull: true
                         }));
                     } else if (
@@ -467,8 +467,8 @@ class SupertrendIndicator extends SMAIndicator {
                             pointColor || indicOptions.fallingTrendColor ||
                             indicOptions.color
                         );
-                        groupedPoitns.bottom.push(newPoint);
-                        groupedPoitns.bottom.push(merge(newNextPoint, {
+                        groupedPoints.bottom.push(newPoint);
+                        groupedPoints.bottom.push(merge(newNextPoint, {
                             isNull: true
                         }));
                     }
@@ -479,19 +479,19 @@ class SupertrendIndicator extends SMAIndicator {
                         pointColor || indicOptions.fallingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.top.push(newPoint);
+                    groupedPoints.top.push(newPoint);
                 } else {
                     point.color = (
                         pointColor || indicOptions.risingTrendColor ||
                         indicOptions.color
                     );
-                    groupedPoitns.bottom.push(newPoint);
+                    groupedPoints.bottom.push(newPoint);
                 }
             }
         }
 
         // Generate lines:
-        objectEach(groupedPoitns,
+        objectEach(groupedPoints,
             function (values, lineName): void {
                 indicator.points = values;
                 indicator.options = merge(

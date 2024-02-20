@@ -671,7 +671,7 @@ class SunburstSeries extends TreemapSeries {
         }
 
         // Draw data labels after points
-        // TODO draw labels one by one to avoid addtional looping
+        // TODO draw labels one by one to avoid additional looping
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             (series.options.dataLabels as any).defer = true;

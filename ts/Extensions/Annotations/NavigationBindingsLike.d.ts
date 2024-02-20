@@ -19,7 +19,7 @@ export interface NavigationBindingsLike {
 
     // Private properties added by bindings:
 
-    // Active (selected) annotation that is editted through popup/forms
+    // Active (selected) annotation that is edited through popup/forms
     // activeAnnotation: Annotation
 
     // Holder for current step, used on mouse move to update bound object

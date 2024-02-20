@@ -173,7 +173,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             }
         }
     }
-    // Ensure we always have at least one value, even in very spaceous charts
+    // Ensure we always have at least one value, even in very spacious charts
     distances.push(80);
 
     return max(
@@ -437,7 +437,7 @@ class Pathfinder {
      * @function Highcharts.Pathfinder#getChartObstacles
      *
      * @param {Object} options
-     *        Options for the calculation. Currenlty only
+     *        Options for the calculation. Currently only
      *        options.algorithmMargin.
      *
      * @return {Array<object>}

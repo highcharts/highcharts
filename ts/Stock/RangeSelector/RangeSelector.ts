@@ -16,7 +16,10 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type {
+    AxisOptions,
+    AxisSetExtremesEventObject
+} from '../../Core/Axis/AxisOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
@@ -361,7 +364,7 @@ class RangeSelector {
 
         // Update the chart
         if (!baseAxis) {
-            // Axis not yet instanciated. Temporarily set min and range
+            // Axis not yet instantiated. Temporarily set min and range
             // options and remove them on chart load (#4317).
             baseXAxisOptions = splat(chart.options.xAxis)[0];
             rangeSetting = baseXAxisOptions.range;
@@ -453,7 +456,7 @@ class RangeSelector {
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
 
-        // zoomed range based on a pre-selected button index
+        // Zoomed range based on a pre-selected button index
         if (
             typeof selectedOption !== 'undefined' &&
             buttonOptions[selectedOption]
@@ -468,10 +471,11 @@ class RangeSelector {
                 addEvent(
                     chart.xAxis[0],
                     'setExtremes',
-                    function (e: any): void {
+                    function (e: AxisSetExtremesEventObject): void {
                         if (
-                            (this.max as any) - (this.min as any) !==
-                                chart.fixedRange &&
+                            isNumber(this.max) &&
+                            isNumber(this.min) &&
+                            this.max - this.min !== chart.fixedRange &&
                             e.trigger !== 'rangeSelectorButton' &&
                             e.trigger !== 'updatedData' &&
                             rangeSelector.forcedDataGrouping &&
@@ -553,8 +557,20 @@ class RangeSelector {
                 isSelectedTooGreat = true;
             }
 
-            // Months and years have a variable range so we check the extremes
             if (
+                baseAxis.isOrdinal &&
+                baseAxis.ordinal?.positions &&
+                range &&
+                actualRange < range
+            ) {
+                // Handle ordinal ranges
+                const positions = baseAxis.ordinal.positions;
+
+                if (positions[positions.length - 1] - positions[0] > range) {
+                    isSameRange = true;
+                }
+            } else if (
+                // Months and years have variable range so we check the extremes
                 (type === 'month' || type === 'year') &&
                 (
                     actualRange + 36e5 >=
@@ -924,7 +940,7 @@ class RangeSelector {
             ) {
                 input.setAttribute('data-hc-time-previous', value);
 
-                // Validate the extremes. If it goes beyound the data min or
+                // Validate the extremes. If it goes beyond the data min or
                 // max, use the actual data extreme (#2438).
                 if (isMin && maxInput && isNumber(dataMin)) {
                     if (value > Number(maxInput.getAttribute('data-hc-time'))) {
@@ -941,7 +957,7 @@ class RangeSelector {
                 }
 
                 // Set the extremes
-                if (typeof value !== 'undefined') { // @todo typof undefined
+                if (typeof value !== 'undefined') { // @todo typeof undefined
                     chartAxis.setExtremes(
                         isMin ? value : (chartAxis.min as any),
                         isMin ? (chartAxis.max as any) : value,
@@ -966,8 +982,8 @@ class RangeSelector {
             })
             .add(inputGroup);
 
-        // Create an SVG label that shows updated date ranges and and records
-        // click events that bring in the HTML input.
+        // Create an SVG label that shows updated date ranges and records click
+        // events that bring in the HTML input.
         const dateBox = renderer
             .label('', 0)
             .addClass('highcharts-range-input')
@@ -1037,7 +1053,7 @@ class RangeSelector {
 
         // Hide away the input box
         input.onblur = (): void => {
-            // update extermes only when inputs are active
+            // update extremes only when inputs are active
             if (input === H.doc.activeElement) { // Only when focused
                 // Update also when no `change` event is triggered, like when
                 // clicking inside the SVG (#4710)
@@ -1097,7 +1113,7 @@ class RangeSelector {
                 chart.options.rangeSelector as RangeSelectorOptions,
             top = options.verticalAlign === 'top' ?
                 chart.plotTop - chart.axisOffset[0] :
-                0; // set offset only for varticalAlign top
+                0; // set offset only for verticalAlign top
 
         return {
             buttonTop: top + options.buttonPosition.y,
@@ -1427,7 +1443,7 @@ class RangeSelector {
         } = options;
 
         // Get the X offset required to avoid overlapping with the exporting
-        // button. This is is used both by the buttonGroup and the inputGroup.
+        // button. This is used both by the buttonGroup and the inputGroup.
         const getXOffsetForExportButton = (
             group: SVGElement,
             position: RangeSelectorPositionOptions

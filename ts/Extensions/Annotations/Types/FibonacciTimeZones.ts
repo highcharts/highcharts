@@ -139,7 +139,7 @@ class FibonacciTimeZones extends CrookedLine {
                     edgePoint(0, 1, correctedFibb)
                 ];
 
-            // Calculate fibbonacci
+            // Calculate fibonacci
             nextFibb = fibb + nextFibb;
             fibb = nextFibb - fibb;
 

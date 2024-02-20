@@ -305,8 +305,8 @@ QUnit.test('General marker-clusters', function (assert) {
             series.xAxis.max,
             series.yAxis.min,
             series.yAxis.max
-        ],
-        [777, 789, 615, 621],
+        ].map(Math.round),
+        [777, 789, 616, 620],
         'After click on cluster chart should be zoomed to the cluster data range.'
     );
 

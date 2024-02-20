@@ -232,7 +232,7 @@ class VariwideSeries extends ColumnSeries {
     }
 }
 
-// Extend translation by distoring X position based on Z.
+// Extend translation by distorting X position based on Z.
 addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
 
     // Temporarily disable crisping when computing original shapeArgs

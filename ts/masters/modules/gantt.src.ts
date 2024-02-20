@@ -38,7 +38,7 @@ G.Scrollbar = Scrollbar;
 ArrowSymbols.compose(G.SVGRenderer);
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
 GanttSeries.compose(G.Axis, G.Chart, G.Series, G.Tick);
-NavigatorComposition.compose(G.Axis, G.Series);
+NavigatorComposition.compose(G.Chart, G.Axis, G.Series);
 ChartNavigatorComposition.compose(G.Chart, G.Navigator);
 Pathfinder.compose(G.Chart, G.Point);
 RangeSelector.compose(G.Axis, G.Chart);

@@ -116,7 +116,7 @@ function rendererFunnel3d(
             stroke: 'none'
         };
 
-    // create groups for sides for oppacity setter
+    // create groups for sides for opacity setter
     funnel3d.upperGroup = renderer.g('funnel3d-upper-group').attr({
         zIndex: funnel3d.frontUpper.zIndex
     }).add(funnel3d);
@@ -177,7 +177,7 @@ function rendererFunnel3dPath(
             90
         ),
 
-        // set zIndexes of parts based on cubiod logic, for
+        // set zIndexes of parts based on cuboid logic, for
         // consistency
         cuboidData = this.cuboidPath.call(renderer, merge(
             shapeArgs, {

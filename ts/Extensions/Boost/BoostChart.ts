@@ -105,7 +105,7 @@ function getBoostClipRect(
             chart.plotHeight
     };
 
-    // Clipping of individal series (#11906, #19039).
+    // Clipping of individual series (#11906, #19039).
     if ((target as Series).getClipBox) {
         const { xAxis, yAxis } = target as Series;
         clipBox = (target as Series).getClipBox();
@@ -273,8 +273,8 @@ function onChartCallback(
         chart.boosted = false;
 
         // Clear the canvas
-        if (chart.boost.clear) {
-            chart.boost.clear();
+        if (!chart.axes.some((axis): boolean|undefined => axis.isPanning)) {
+            chart.boost.clear?.();
         }
 
         if (

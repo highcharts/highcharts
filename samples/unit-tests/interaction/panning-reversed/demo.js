@@ -35,7 +35,7 @@ QUnit.test('Panning reversed axis', function (assert) {
     assert.strictEqual(chart.xAxis[0].max, 12, 'Has not panned max');
 
     // Zoom
-    controller.pan([200, 150], [200, 200]);
+    controller.pan([200, 100], [250, 100]);
 
     assert.strictEqual(chart.xAxis[0].min > 0, true, 'Zoomed min');
     assert.strictEqual(chart.xAxis[0].max < 12, true, 'Zoomed max');
