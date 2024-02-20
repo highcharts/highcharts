@@ -314,7 +314,7 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * @internal
      * @param async Whether to initialize the dashboard asynchronously. When
-     * false or undefined the function returns the dashboard isntance.
+     * false or undefined the function returns the dashboard instance.
      *  instance.
      *
      * @returns
@@ -487,7 +487,7 @@ class Board implements Serializable<Board, Board.JSON> {
         const board = this;
 
         // Destroy layouts.
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
             board.layouts[i].destroy();
         }
 
@@ -495,7 +495,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
-        board.container.remove();
+        board.container?.remove();
 
         // @ToDo Destroy bindings.
 
@@ -723,7 +723,7 @@ namespace Board {
          **/
         componentOptions?: Partial<Component.ComponentOptionsJSON>;
         /**
-         * List of components to add to the board in JSON fromat.
+         * List of components to add to the board in JSON format.
          **/
         components?: Array<Component.ComponentOptionsJSON>;
         /**

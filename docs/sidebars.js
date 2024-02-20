@@ -97,6 +97,7 @@ module.exports = {
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
             'dashboards/data-pool-and-connectors',
+            'dashboards/data-table',
             'dashboards/data-modifiers',
             'dashboards/mathmodifier-module',
             'dashboards/custom-component',

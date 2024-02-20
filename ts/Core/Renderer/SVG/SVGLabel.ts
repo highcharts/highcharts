@@ -273,25 +273,25 @@ class SVGLabel extends SVGElement {
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
-        const padding = this.padding,
+        const {
+                padding,
+                height = 0,
+                translateX = 0,
+                translateY = 0,
+                width = 0
+            } = this,
             paddingLeft = pick(this.paddingLeft, padding),
-            rotation = Math.abs(pick(rot, this.rotation, 0)),
-            width = this.width || 0,
-            height = this.height || 0;
+            rotation = rot ?? (this.rotation || 0);
 
         let bBox = {
             width,
             height,
-            x: this.bBox.x - paddingLeft,
-            y: this.bBox.y - padding
+            x: translateX + this.bBox.x - paddingLeft,
+            y: translateY + this.bBox.y - padding + this.baselineOffset
         };
 
         if (rotation) {
-            const baseline = Number(
-                this.element.getAttribute('y') || 0
-            ) - bBox.y;
-
-            bBox = this.getRotatedBox(bBox, rotation, baseline);
+            bBox = this.getRotatedBox(bBox, rotation);
         }
 
         return bBox;
@@ -392,7 +392,7 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
-            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #12163 when fontweight: bold, recalculate bBox without cache
             // #3295 && 3514 box failure when string equals 0
             bBox = this.bBox = (
                 ((
