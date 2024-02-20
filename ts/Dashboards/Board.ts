@@ -244,13 +244,13 @@ class Board implements Serializable<Board, Board.JSON> {
      * Flag to determine if the GUI is enabled.
      * @internal
      * */
-    public guiEnabled: (boolean|undefined);
+    public guiEnabled?: boolean;
 
     /**
-     * Flag to determine if the GUI is enabled.
+     * Flag to determine if the EditMode is enabled.
      * @internal
      * */
-    public editModeEnabled: (boolean|undefined);
+    private editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
@@ -850,9 +850,6 @@ namespace Board {
                 cellClassName: void 0
             },
             layouts: []
-        },
-        editMode: {
-            enabled: true
         },
         components: []
     };
