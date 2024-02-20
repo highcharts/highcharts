@@ -47,16 +47,17 @@ function createUMDConfig(...pathMembers) {
 async function resolveExternals(info) {
     // eslint-disable-next-line no-invalid-this
     const masterName = this.masterName;
-    const path = Path.posix
+    const path = Path
         .relative(sourceFolder, Path.join(info.context, info.request))
-        .replace(/(?:\.src)?\.js$/u, '');
-    const name = Path.posix.basename(path);
+        .replace(/(?:\.src)?\.js$/u, '')
+        .replaceAll(Path.sep, Path.posix.sep);
+    const name = Path.basename(path);
 
     // Quick exit on entry point
     if (masterName === name) {
         return void 0;
     }
-
+    console.log(masterName, path);
     // Check for product-specific additions
     switch (path) {
         case 'Core/Axis/Color/ColorAxis':
