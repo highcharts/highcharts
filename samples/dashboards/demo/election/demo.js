@@ -95,6 +95,8 @@ async function setupDashboard() {
                 'postal-code': '',
                 demVotes: 0,
                 repVotes: 0,
+                demVoteSummary: 0,
+                repVoteSummary: 0,
                 totalVotes: 0
             };
 
@@ -227,8 +229,8 @@ async function setupDashboard() {
         });
 
     function formatVotesColumns(rowObj) {
-        rowObj.demVotes = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
-        rowObj.repVotes = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
+        rowObj.demVoteSummary = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
+        rowObj.repVoteSummary = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
     }
 
     function addNationalSummary(jsonData, national) {
@@ -554,21 +556,23 @@ async function setupDashboard() {
                         'postal-code': {
                             show: false
                         },
-                        repPercent: {
-                            show: false,
-                            headerFormat: 'Rep. percent',
-                            cellFormat: '{value:.1f}'
-                        },
                         demPercent: {
-                            show: false,
-                            headerFormat: 'Dem. percent',
-                            cellFormat: '{value:.1f}'
+                            show: false
                         },
-                        repVotes: {
-                            headerFormat: 'Rep. votes'
+                        repPercent: {
+                            show: false
                         },
                         demVotes: {
+                            show: false
+                        },
+                        repVotes: {
+                            show: false
+                        },
+                        demVoteSummary: {
                             headerFormat: 'Dem. votes'
+                        },
+                        repVoteSummary: {
+                            headerFormat: 'Rep. votes'
                         },
                         totalVotes: {
                             headerFormat: 'Total votes',
@@ -617,7 +621,7 @@ async function updateBoard(board, state, year) {
     const [
         // The order here must be the same as in the component definition in the Dashboard.
         demInfo,
-        progressBar,
+        resultInfo,
         repInfo,
         controlHtml, // Updates bypass Dashboards
         usMap,
@@ -644,18 +648,21 @@ async function updateBoard(board, state, year) {
         }
     });
 
-    // Progress bar (stacked)
-    await progressBar.update({
+    // Result info title
+    await resultInfo.update({
         title: {
             text: title
         }
     });
 
-    // Candidate percentages
+    // Candidate percentages/electors
     const demPercent = votesTable.getCellAsNumber('demPercent', row);
     const repPercent = votesTable.getCellAsNumber('repPercent', row);
     const demColVotes = votesTable.getCellAsNumber('demColVotes', row);
     const repColVotes = votesTable.getCellAsNumber('repColVotes', row);
+    const totalColVotes = demColVotes + repColVotes;
+    const demVotes = votesTable.getCellAsNumber('demVotes', row);
+    const repVotes = votesTable.getCellAsNumber('repVotes', row);
 
     // Grab auxiliary data about the election (photos, description, etc.)
     const yearEl = document.querySelector('elections year#' + elections[year].descrId);
@@ -667,13 +674,26 @@ async function updateBoard(board, state, year) {
     document.querySelector('div#dem-cand img').src = imgDemUrl;
     document.querySelector('div#rep-cand img').src = imgRepUrl;
 
-    // Get data for selected state (or US)
-    row = votesTable.getRowIndexBy('postal-code', state);
-    const stateName = votesTable.getCell('state', row);
+    // Election information
+    let el = document.getElementById('info-dem1');
+    el.innerHTML = demColVotes + ' ' + candDem;
+    el = document.getElementById('info-dem2');
+    el.innerHTML = `<em>${demPercent}%</em> ${demVotes.toLocaleString('en-US')}`;
+
+    el = document.getElementById('info-rep1');
+    el.innerHTML = candRep + ' ' + repColVotes;
+    el = document.getElementById('info-rep2');
+    el.innerHTML = `${repVotes.toLocaleString('en-US')} <em>${repPercent}%</em>`;
+
+    // Result bar
+    el = document.getElementById('bar-dem');
+    el.style.width = ((demColVotes / totalColVotes) * 100) + '%';
+    el = document.getElementById('bar-rep');
+    el.style.width = ((repColVotes / totalColVotes) * 100) + '%';
 
     // 2. Update control HTML description if the year changes
     const domEl = document.getElementById('election-description');
-    const el = yearEl.querySelector('descr');
+    el = yearEl.querySelector('descr');
     domEl.innerHTML = el.innerHTML;
 
     // 3. Update map (if year changes)
@@ -705,6 +725,10 @@ async function updateBoard(board, state, year) {
     });
 
     // 4. Update history chart (TBD: when state clicked)
+    // Get data for selected state (or US)
+    row = votesTable.getRowIndexBy('postal-code', state);
+    const stateName = votesTable.getCell('state', row);
+
     await historyChart.update({
         chartOptions: {
             title: {

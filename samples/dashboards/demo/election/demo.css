@@ -63,6 +63,10 @@
     --color-navigation-text: #838393;
 }
 
+#html-result {
+    --color-background: inherit;
+}
+
 @media (prefers-color-scheme: dark) {
     /* dark mode */
     #election-chart {
@@ -342,16 +346,17 @@
 #html-result {
     text-align: center;
     max-height: 250px;
+    background: var(--color-background);
+}
+
+#html-result .highcharts-dashboards-component-content {
+    background: var(--color-background);
 }
 
 #html-result .highcharts-dashboards-component-title {
     fill: var(--color-title);
     font-size: 1em;
     text-align: center;
-}
-
-#html-result .highcharts-data-label text {
-    fill: white;
 }
 
 #html-result img {
@@ -363,21 +368,95 @@
 }
 
 #html-result #result-info {
-    flex: 1 1 40%;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    height: 250px;
 }
 
-#html-result #indicator-bar-container {
-    /* Inspiration: https://edition.cnn.com/election/2020/results/president */
-    width: 100%;
-    background-color: red;
-    margin: 0 auto;
-    height: 50px;
+#bar-container {
+    /* Inspiration:
+    https://edition.cnn.com/election/2020/results/president
+    https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/
+    */
+    height: 40px;
+    margin: 5px;
 }
 
-#html-result #indicator-bar {
+#bar-dem {
     width: 50%;
-    background-color: blue;
-    height: 50px;
+    background-color: var(--highcharts-color-0);
+    border-radius: 5px 0 0 5px;
+}
+
+#bar-line {
+    position: absolute;
+    left: 49.5%;
+    width: 2px;
+    background-color: #999;
+    height: 40px;
+    z-index: 10;
+}
+
+#bar-line span#arrow {
+    position: absolute;
+    top: -15px;
+    left: -5px;
+}
+
+#bar-rep {
+    width: 50%;
+    background-color: var(--highcharts-color-1);
+    border-radius: 0 5px 5px 0;
+}
+
+#html-result .info {
+    display: flex;
+    flex-direction: row;
+}
+
+#html-result .info div {
+    flex-grow: 1;
+}
+
+#html-result .info:nth-of-type(1) {
+    padding-top: 15px;
+}
+
+#html-result .info em {
+    padding: 0 10px;
+    font-weight: bold;
+}
+
+#info-to-win {
+    padding: 10px 0 0 10px;
+    margin: 0;
+    text-align: center;
+    font-size: 10px;
+}
+
+#info-dem1,
+#info-rep1 {
+    padding-bottom: 5px;
+    font-size: 20px;
+}
+
+#info-dem2,
+#info-rep2 {
+    padding-top: 5px;
+    font-size: 12px;
+}
+
+#info-dem1,
+#info-dem2 {
+    text-align: left;
+    margin-left: 10px;
+}
+
+#info-rep1,
+#info-rep2 {
+    text-align: right;
+    margin-right: 10px;
 }
 
 /* *
