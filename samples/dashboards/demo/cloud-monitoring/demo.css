@@ -160,13 +160,6 @@ body {
     display: none;
 }
 
-/* #instance,
-#zone,
-#ami,
-#os {
-    flex: 1 1 25%;
-} */
-
 #instances-table {
     height: 400px;
 }
