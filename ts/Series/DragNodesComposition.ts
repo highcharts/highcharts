@@ -163,7 +163,7 @@ function onChartLoad(
  *
  * @private
  * @param {Highcharts.Point} point
- *        The point that event occured.
+ *        The point that event occurred.
  * @param {Highcharts.PointerEventObject} event
  *        Browser event, before normalization.
  */
@@ -192,7 +192,7 @@ function onMouseDown(
  * @param {global.Event} event
  *        Browser event, before normalization.
  * @param {Highcharts.Point} point
- *        The point that event occured.
+ *        The point that event occurred.
  *
  */
 function onMouseMove(
@@ -236,7 +236,7 @@ function onMouseMove(
  *
  * @private
  * @param {Highcharts.Point} point
- *        The point that event occured.
+ *        The point that event occurred.
  */
 function onMouseUp(
     this: DragNodesSeries,

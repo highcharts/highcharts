@@ -100,7 +100,7 @@ class ControlPoint extends EventEmitter {
     public index: number;
 
     /**
-     * List of events for `anntation.options.events` that should not be
+     * List of events for `annotation.options.events` that should not be
      * added to `annotation.graphic` but to the `annotation`.
      * @private
      * @name Highcharts.AnnotationControlPoint#nonDOMEvents
@@ -222,7 +222,7 @@ export default ControlPoint;
  * */
 
 /**
- * Callback to modify annotation's possitioner controls.
+ * Callback to modify annotation's positioner controls.
  *
  * @callback Highcharts.AnnotationControlPointPositionerFunction
  * @param {Highcharts.AnnotationControlPoint} this
