@@ -523,7 +523,7 @@ class MapSeries extends ScatterSeries {
 
                 if (point.path || point.geometry) {
 
-                    // @todo Try to puth these two conversions in
+                    // @todo Try to put these two conversions in
                     // MapPoint.applyOptions
                     if (typeof point.path === 'string') {
                         point.path = splitPath(point.path);
