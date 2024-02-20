@@ -130,8 +130,7 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: currentBoard?.editMode?.lang.errorMessage ||
-                        currentBoard?.editMode?.lang.errorMessage,
+                    text: currentBoard?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
