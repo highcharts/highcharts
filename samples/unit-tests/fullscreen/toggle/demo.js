@@ -35,14 +35,14 @@ function sleep(milliseconds) {
 }
 
 QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
-    var done = assert.async();
-    var chart = Highcharts.chart('container', {
-        series: [
-            {
-                data: [5, 3, 4, 2, 4, 3]
-            }
-        ]
-    });
+    const done = assert.async(),
+        chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [5, 3, 4, 2, 4, 3]
+                }
+            ]
+        });
     const oldChartWidth = chart.chartWidth;
     const oldXAxisLength = chart.axes[0].len;
 
