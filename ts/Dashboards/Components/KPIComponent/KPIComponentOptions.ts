@@ -21,13 +21,13 @@
  * */
 
 
-import type Component from '../../Components/Component';
+import type Component from '../Component';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type TextOptions from '../../Components/TextOptions';
+import type TextOptions from '../TextOptions';
 import type KPIComponent from './KPIComponent';
 
-import type { Options as HighchartsOptions } from '../HighchartsTypes';
-import Sync from '../../Components/Sync/Sync';
+import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
+import Sync from '../Sync/Sync';
 
 
 /* *

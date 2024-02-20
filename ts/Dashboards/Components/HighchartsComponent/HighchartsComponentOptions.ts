@@ -21,9 +21,9 @@
  * */
 
 
-import type Component from '../../Components/Component';
-import type Sync from '../../Components/Sync/Sync';
-import type { Options as HighchartsOptions } from '../HighchartsTypes';
+import type Component from '../Component';
+import type Sync from '../Sync/Sync';
+import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
 
 
 /* *

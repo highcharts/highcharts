@@ -26,9 +26,9 @@ import type {
     Axis,
     Point,
     Series
-} from '../HighchartsTypes';
+} from '../../Plugins/HighchartsTypes';
 import type DataCursor from '../../../Data/DataCursor';
-import type Sync from '../../Components/Sync/Sync';
+import type Sync from '../Sync/Sync';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
 import type DataTable from '../../../Data/DataTable';
 

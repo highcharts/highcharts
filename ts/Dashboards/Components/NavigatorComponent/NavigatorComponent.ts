@@ -25,14 +25,14 @@ import type {
     Chart,
     Highcharts as H,
     Options as HighchartsOptions
-} from '../HighchartsTypes';
+} from '../../Plugins/HighchartsTypes';
 import type Cell from '../../Layout/Cell';
 import type { Options } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
-import type Sync from '../../Components/Sync/Sync';
+import type Sync from '../Sync/Sync';
 
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import DataTable from '../../../Data/DataTable.js';

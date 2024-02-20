@@ -20,7 +20,7 @@
  *
  * */
 
-import type Component from '../../Components/Component';
+import type Component from '../Component';
 import type Globals from '../../Globals';
 import type Options from './DataGridComponentOptions';
 

@@ -21,7 +21,7 @@
 
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
-import type { DataGrid, DataGridNamespace } from '../DataGridTypes';
+import type { DataGrid, DataGridNamespace } from '../../Plugins/DataGridTypes';
 import type DataTable from '../../../Data/DataTable';
 import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../../DataGrid/DataGridOptions';
@@ -30,7 +30,7 @@ import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOption
 import type Options from './DataGridComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';

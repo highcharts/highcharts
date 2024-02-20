@@ -28,13 +28,13 @@ import type {
     Chart,
     Options as ChartOptions,
     Highcharts as H
-} from '../HighchartsTypes';
+} from '../../Plugins/HighchartsTypes';
 import type Options from './KPIComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 import type Types from '../../../Shared/Types';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 import KPISyncHandlers from './KPISyncHandlers.js';
 import KPIComponentDefaults from './KPIComponentDefaults.js';
 import Templating from '../../../Core/Templating.js';
