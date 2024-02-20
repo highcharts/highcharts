@@ -48,13 +48,11 @@ QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
 
     chart.fullscreen.open();
     chart.fullscreen.close();
-    // Wait a bit for firefox to close the fullscreen mode.
-    await sleep(500);
 
     // Simulates a container resize, e.g. like a window resize.
     chart.container.parentElement.style.width = '300px';
     // Let the browser update styles.
-    await sleep(500);
+    await sleep(250);
 
     assert.ok(chart.chartWidth < oldChartWidth, 'Chart width should be smaller after resizing.');
     assert.ok(chart.axes[0].len < oldXAxisLength, 'X-axis length should should be smaller after resizing.');
