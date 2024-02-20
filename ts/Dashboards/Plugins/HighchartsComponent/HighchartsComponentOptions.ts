@@ -148,20 +148,8 @@ export interface Options extends Component.Options {
  */
 export interface ConnectorOptions extends ComponentConnectorOptions {
     /**
-     * Sets column data for series in the chart. The key of the object is
-     * the series id, and the value can be:
-     * - `string` - the name of the column that contains the one-dimensional data
-     * for the series
-     * - `string[]` - the names of the columns that data will be used in the
-     * two-dimensional series data,
-     * - `Record<string, string>` - the object with the keys as [series data key names](https://api.highcharts.com/highcharts/plotOptions.series.keys)
-     * and column names that will be used for the key-defined two-dimensional
-     * series data.
-     *
-     * When series with given `id` is not found, the series will be created
-     * automatically. The series name will be the same as the series `id` then.
-     *
-     * If undefined, the series will be created with the default data.
+     * It allows to assign the data from the connector to specific series in the
+     * chart in different ways using series IDs and column names.
      *
      * Try it:
      * {@link TODO | One-dimensional data column assignment}
@@ -171,35 +159,65 @@ export interface ConnectorOptions extends ComponentConnectorOptions {
      * @example
      * ```
      * // One-dimensional data column assignment
-     * columnAssignment: {
-     *     mySeriesId: 'myData'
-     * }
+     * columnAssignment: [{
+     *     seriesId: 'mySeriesId',
+     *     data: 'myData'
+     * }]
      *
      * // Two-dimensional data column assignment
-     * columnAssignment: {
-     *     mySeriesId: ['myX', 'myY']
-     * }
+     * columnAssignment: [{
+     *     seriesID: 'mySeriesId',
+     *     data: ['myX', 'myY']
+     * }]
      *
      * // Key-defined two-dimensional data column assignment
-     * columnAssignment: {
-     *     myStockSeriesId: {
+     * columnAssignment: [{
+     *     seriesId: 'myStockSeriesId',
+     *     data: {
      *         x: 'myX',
      *         open: 'myOpen',
      *         high: 'myHigh',
      *         low: 'myLow',
      *         close: 'myClose'
      *     },
-     *     myColumnSeriesId: {
+     * }, {
+     *     seriesId: 'myColumnSeriesId',
+     *     data: {
      *         name: 'myNamesColumn',
      *         y: 'myYColumn',
      *         'dataLabels.style.visibility': 'myDataLabelVisibilityColumn'
      *     }
-     * }
+     * }]
      * ```
      */
-    columnAssignment?: Record<string, (
-        string | string[] | Record<string, string>
-    )>;
+    columnAssignment?: ColumnAssignmentOptions[];
+}
+
+/**
+ * Column to series data assignment options.
+ */
+export interface ColumnAssignmentOptions {
+    /**
+     * The series id that the data should be assigned to. If the series with
+     * given `id` is not found, the series will be created automatically. The
+     * series name will be the same as the series `id` then.
+     */
+    seriesId: string;
+    /**
+     * The column data for the series in the chart. Value can be:
+     * - `string` - name of the column that contains the one-dimensional data.
+     * - `string[]` - names of the columns that data will be used in the
+     * two-dimensional format.
+     * - `Record<string, string>` - the object with the keys as [series data key names](https://api.highcharts.com/highcharts/plotOptions.series.keys)
+     * and column names that will be used for the key-defined two-dimensional
+     * series data.
+     *
+     * Try it:
+     * {@link TODO | One-dimensional data column assignment}
+     * {@link TODO | Two-dimensional data column assignment}
+     * {@link TODO | Key-defined two-dimensional data column assignment}
+     */
+    data: string | string[] | Record<string, string>;
 }
 
 /**

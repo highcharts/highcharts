@@ -34,7 +34,11 @@ import type {
     Series,
     SeriesOptions
 } from '../HighchartsTypes';
-import type { ConstructorType, Options } from './HighchartsComponentOptions';
+import type {
+    ColumnAssignmentOptions,
+    ConstructorType,
+    Options
+} from './HighchartsComponentOptions';
 import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
@@ -430,33 +434,30 @@ class HighchartsComponent extends Component {
         const columnNames = table.getColumnNames();
         const columnAssignment = this.options.connector?.columnAssignment ??
             this.getDefaultColumnAssignment(columnNames);
-        const columnAssignmentKeys = Object.keys(columnAssignment);
 
-        for (let i = 0, iEnd = columnAssignmentKeys.length; i < iEnd; ++i) {
-            const seriesId = columnAssignmentKeys[i];
-            const series = chart.get(seriesId) as Series | undefined;
-            const assignment = columnAssignment[seriesId];
-            const seriesOptions: SeriesOptions = {
-                id: seriesId
-            };
+        for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
+            const assignment = columnAssignment[i];
+            const dataStructure = assignment.data;
+            const series = chart.get(assignment.seriesId) as Series | undefined;
+            const seriesOptions: SeriesOptions = {};
 
             // TODO: check if there is a need to handle other series options
 
-            if (isString(assignment)) {
-                const column = table.getColumn(assignment);
+            if (isString(dataStructure)) {
+                const column = table.getColumn(dataStructure);
                 if (column) {
                     seriesOptions.data = column.slice() as [];
                 }
-            } else if (Array.isArray(assignment)) {
+            } else if (Array.isArray(dataStructure)) {
                 const seriesTable = new DataTable({
-                    columns: table.getColumns(assignment)
+                    columns: table.getColumns(dataStructure)
                 });
                 seriesOptions.data = seriesTable.getRows() as [][];
             } else {
-                const keys = Object.keys(assignment);
+                const keys = Object.keys(dataStructure);
                 const columnNames = [];
                 for (let j = 0, jEnd = keys.length; j < jEnd; ++j) {
-                    columnNames.push(assignment[keys[j]]);
+                    columnNames.push(dataStructure[keys[j]]);
                 }
 
                 const seriesTable = new DataTable({
@@ -469,7 +470,8 @@ class HighchartsComponent extends Component {
 
             if (!series) {
                 chart.addSeries({
-                    name: seriesId,
+                    name: assignment.seriesId,
+                    id: assignment.seriesId,
                     ...seriesOptions
                 }, false);
             } else {
@@ -676,21 +678,26 @@ class HighchartsComponent extends Component {
      */
     private getDefaultColumnAssignment(
         columnNames: Array<string> = []
-    ): Record<string, string | string[]> {
-        const result: Record<string, string | string[]> = {};
+    ): ColumnAssignmentOptions[] {
+        const result: ColumnAssignmentOptions[] = [];
 
         const firstColumn = this.presentationTable?.getColumn(columnNames[0]);
         if (firstColumn && isString(firstColumn[0])) {
             for (let i = 1, iEnd = columnNames.length; i < iEnd; ++i) {
-                result[columnNames[i]] = [columnNames[0], columnNames[i]];
+                result.push({
+                    seriesId: columnNames[i],
+                    data: [columnNames[0], columnNames[i]]
+                });
             }
             return result;
         }
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            result[columnNames[i]] = columnNames[i];
+            result.push({
+                seriesId: columnNames[i],
+                data: columnNames[i]
+            });
         }
-
         return result;
     }
 
