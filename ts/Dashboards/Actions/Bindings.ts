@@ -95,6 +95,7 @@ namespace Bindings {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
         const renderTo = options.renderTo || options.cell;
+        const currentBoard = board || cell?.row?.layout.board;
 
         if (!renderTo) {
             error(
@@ -129,8 +130,8 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: cell.row?.layout.board?.editMode?.lang.errorMessage ||
-                        board?.editMode?.lang.errorMessage,
+                    text: currentBoard?.editMode?.lang.errorMessage ||
+                        currentBoard?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -138,7 +139,7 @@ namespace Bindings {
             }
         }
 
-        const component = new ComponentClass(cell, options, board);
+        const component = new ComponentClass(cell, options, currentBoard);
 
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
@@ -148,7 +149,7 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text: cell?.row?.layout.board?.editMode?.lang.errorMessage,
+                    text: currentBoard?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -161,8 +162,8 @@ namespace Bindings {
             cell.mountedComponent = component;
         }
 
-        if (board) {
-            board.mountedComponents.push({
+        if (currentBoard) {
+            currentBoard.mountedComponents.push({
                 options: options,
                 component: component,
                 cell: cell || {
