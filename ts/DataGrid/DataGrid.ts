@@ -544,6 +544,10 @@ class DataGrid {
         this.container.addEventListener('mouseover', (e): void => {
             this.handleMouseOver(e);
         });
+
+        this.container.addEventListener('click', (e):void => {
+            this.handleRowClick(e);
+        });
     }
 
 
@@ -683,6 +687,7 @@ class DataGrid {
      * Related mouse event.
      */
     private onDocumentClick(e: MouseEvent): void {
+
         if (this.cellInputEl && e.target) {
             const cellEl = this.cellInputEl.parentNode;
             const isClickInInput = cellEl && cellEl.contains(e.target as Node);
@@ -715,7 +720,28 @@ class DataGrid {
         }
     }
 
+    /**
+     * Handle click over rows.
+     *
+     * @internal
+     *
+     * @param e
+     * Related mouse event.
+     */
+    private handleRowClick(e: MouseEvent): void {
+        const target = e.target as HTMLElement;
+        const clickEvent = this.options.events?.row?.click;
 
+        if (
+            clickEvent &&
+            target?.classList.contains(Globals.classNames.cell)
+        ) {
+            clickEvent.call(
+                target.parentElement as HTMLElement,
+                e
+            );
+        }
+    }
     /**
      * Remove the <input> overlay and update the cell value
      * @internal

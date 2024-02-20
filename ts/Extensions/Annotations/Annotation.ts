@@ -82,7 +82,7 @@ declare module '../../Core/Options'{
  * */
 
 /**
- * Hide or show annotaiton attached to points.
+ * Hide or show annotation attached to points.
  * @private
  */
 function adjustVisibility(
@@ -539,7 +539,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * Initialisation of a single shape
      * @private
      * @param {Object} shapeOptions
-     * a confg object for a single shape
+     * a config object for a single shape
      * @param {number} index
      * annotation may have many shapes, this is the shape's index saved in
      * shapes.index.
@@ -639,7 +639,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @private
      */
     public remove(): void {
-        // Let chart.update() remove annoations on demand
+        // Let chart.update() remove annotations on demand
         return this.chart.removeAnnotation(this);
     }
 

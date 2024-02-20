@@ -163,7 +163,7 @@ interface SeriesDragDropPropsResizeSideFunction {
 Add drag/drop support to specific data props for different series types.
 
 The dragDrop.draggableX/Y user options on series enable/disable all of these per
-irection unless they are specifically set in options using
+direction unless they are specifically set in options using
 dragDrop.{optionName}. If the prop does not specify an optionName here, it can
 only be enabled/disabled by the user with draggableX/Y.
 
@@ -910,7 +910,7 @@ export default DraggablePoints;
  * @callback Highcharts.PointDragCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointDragEventObject} event
  *        Event arguments.
@@ -970,7 +970,7 @@ export default DraggablePoints;
  * @callback Highcharts.PointDragStartCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointDragStartEventObject} event
  *        Event arguments.
@@ -993,7 +993,7 @@ export default DraggablePoints;
  * @callback Highcharts.PointDropCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointDropEventObject} event
  *        Event arguments.

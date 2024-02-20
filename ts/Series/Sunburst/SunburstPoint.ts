@@ -166,7 +166,7 @@ extend(SunburstPoint.prototype, {
 
 /* *
  *
- *  Defaul Export
+ *  Default Export
  *
  * */
 

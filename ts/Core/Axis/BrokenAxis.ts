@@ -699,7 +699,7 @@ namespace BrokenAxis {
 
         /**
          * Dynamically set or unset breaks in an axis. This function in lighter
-         * than usin Axis.update, and it also preserves animation.
+         * than using Axis.update, and it also preserves animation.
          *
          * @private
          * @function Highcharts.Axis#setBreaks
@@ -897,7 +897,7 @@ namespace BrokenAxis {
                         brokenAxis.breakArray = breakArray;
 
                         // Used with staticScale, and below the actual axis
-                        // length, when breaks are substracted.
+                        // length, when breaks are subtracted.
                         if (
                             isNumber(min) &&
                             isNumber(max) &&

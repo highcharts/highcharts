@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2024 Torstein Honsi
  *
- *  Extenstion for 3d axes
+ *  Extension for 3d axes
  *
  *  License: www.highcharts.com/license
  *
@@ -620,7 +620,7 @@ class Axis3DAdditions {
                 vecY = { x: vecX.z * sin, y: cos, z: -vecX.x * sin };
             }
         } else if (positionMode === 'ortho') {
-            // Labels will be rotated to be ortogonal to the axis
+            // Labels will be rotated to be orthogonal to the axis
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis

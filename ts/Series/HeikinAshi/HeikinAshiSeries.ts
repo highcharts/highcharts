@@ -73,7 +73,7 @@ function onHeikinAshiSeriesAfterTranslate(
         heikiashiData = series.heikiashiData,
         cropStart = series.cropStart || 0;
 
-    // Reset the proccesed data.
+    // Reset the processed data.
     series.processedYData.length = 0;
 
     // Modify points.

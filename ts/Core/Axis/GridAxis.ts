@@ -505,7 +505,7 @@ function onAfterRender(this: Axis): void {
             axisTitle.css({ width: `${firstTick.slotWidth}px` });
         }
 
-        // @todo acutual label padding (top, bottom, left, right)
+        // @todo actual label padding (top, bottom, left, right)
         axis.maxLabelDimensions = axis.getMaxLabelDimensions(
             axis.ticks,
             axis.tickPositions
@@ -770,7 +770,7 @@ function onAfterSetOptions(
     if (gridOptions.enabled === true) {
 
         // Merge the user options into default grid axis options so
-        // that when a user option is set, it takes presedence.
+        // that when a user option is set, it takes precedence.
         gridAxisOptions = merge<DeepPartial<AxisTypeOptions>>(true, {
 
             className: (
@@ -815,7 +815,7 @@ function onAfterSetOptions(
             },
 
             // In a grid axis, only allow one unit of certain types,
-            // for example we shouln't have one grid cell spanning
+            // for example we shouldn't have one grid cell spanning
             // two days.
             units: [[
                 'millisecond', // unit name

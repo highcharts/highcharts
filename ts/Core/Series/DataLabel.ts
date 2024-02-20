@@ -409,7 +409,7 @@ namespace DataLabel {
             }
 
             // When we're using a shape, make it possible with a connector or an
-            // arrow pointing to thie point
+            // arrow pointing to this point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
                     anchorX: pos[0],

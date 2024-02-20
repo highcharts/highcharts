@@ -308,7 +308,7 @@ function compose<T extends typeof Series>(
                 ScatterSeries.prototype.fill = true;
             }
 
-            // We need to handle heatmaps separatly, since we can't perform the
+            // We need to handle heatmaps separately, since we can't perform the
             // size/color calculations in the shader easily.
             // @todo This likely needs future optimization.
             [HeatmapSeries, TreemapSeries].forEach((SC): void => {
@@ -1097,7 +1097,7 @@ function seriesRenderCanvas(this: Series): void {
             chart.seriesGroup
         );
     } else {
-        // If series has a private markeGroup, remove that
+        // If series has a private markerGroup, remove that
         // and use common markerGroup
         if (
             this.markerGroup &&

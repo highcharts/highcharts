@@ -563,7 +563,7 @@ class Series {
                 (chart as any)[coll].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
-                    // apply if the series xAxis or yAxis option mathches
+                    // apply if the series xAxis or yAxis option matches
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
@@ -1868,7 +1868,7 @@ class Series {
         series.options.keys = keys;
 
         // Hide cropped-away points - this only runs when the number of
-        // points is above cropThreshold, or when swithching view from
+        // points is above cropThreshold, or when switching view from
         // non-grouped data to grouped data (#637)
         if (
             data &&
@@ -2223,7 +2223,7 @@ class Series {
 
                     // in case of variwide series (where widths of points are
                     // different in most cases), stack labels are positioned
-                    // wrongly, so the call of the setOffset is omited here and
+                    // wrongly, so the call of the setOffset is omitted here and
                     // labels are correctly positioned later, at the end of the
                     // variwide's translate function (#10962)
                     if (!(series as any).irregularWidths) {
@@ -2252,7 +2252,7 @@ class Series {
                 yValue = series.dataModify.modifyValue(yValue, i);
             }
 
-            // Set the the plotY value, reset it for redraws #3201, #18422
+            // Set the plotY value, reset it for redraws #3201, #18422
             let plotY: number|undefined;
             if (isNumber(yValue) && point.plotX !== void 0) {
                 plotY = yAxis.translate(yValue, false, true, false, true);
@@ -3824,7 +3824,7 @@ class Series {
                     tracker.addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
                         .on('mouseout', (e: PointerEvent): void => {
-                            pointer.onTrackerMouseOut(e);
+                            pointer?.onTrackerMouseOut(e);
                         });
 
                     if (options.cursor && !chart.styledMode) {
@@ -3978,7 +3978,7 @@ class Series {
     /**
      * Remove a point from the series. Unlike the
      * {@link Highcharts.Point#remove} method, this can also be done on a point
-     * that is not instanciated because it is outside the view or subject to
+     * that is not instantiated because it is outside the view or subject to
      * Highcharts Stock data grouping.
      *
      * @sample highcharts/members/series-removepoint/
@@ -4360,7 +4360,7 @@ class Series {
                 kinds.dataLabel = 1;
             } else {
 
-                // If the  marker got disabled or changed its symbol, width or
+                // If the marker got disabled or changed its symbol, width or
                 // height - destroy
                 if (this.hasMarkerChanged(seriesOptions, oldOptions)) {
                     kinds.graphic = 1;
@@ -4455,7 +4455,7 @@ class Series {
             hoverSeries = chart.hoverSeries,
             pointer = chart.pointer;
 
-        pointer.setHoverChartIndex();
+        pointer?.setHoverChartIndex();
 
         // set normal state to previous series
         if (hoverSeries && hoverSeries !== series) {
@@ -5001,7 +5001,7 @@ export default Series;
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
@@ -5028,7 +5028,7 @@ export default Series;
  * @callback Highcharts.SeriesCheckboxClickCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesCheckboxClickEventObject} event
  *        Event arguments.
@@ -5063,7 +5063,7 @@ export default Series;
  * @callback Highcharts.SeriesClickCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesClickEventObject} event
  *        Event arguments.
@@ -5087,10 +5087,10 @@ export default Series;
  * @callback Highcharts.SeriesHideCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -5108,10 +5108,10 @@ export default Series;
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -5142,10 +5142,10 @@ export default Series;
  * @callback Highcharts.SeriesMouseOutCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        Series where the event occured.
+ *        Series where the event occurred.
  *
  * @param {global.PointerEvent} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -5154,10 +5154,10 @@ export default Series;
  * @callback Highcharts.SeriesMouseOverCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        Series where the event occured.
+ *        Series where the event occurred.
  *
  * @param {global.PointerEvent} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -5185,10 +5185,10 @@ export default Series;
  * @callback Highcharts.SeriesShowCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        Series where the event occured.
+ *        Series where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -5344,4 +5344,4 @@ export default Series;
  * @apioption series.zIndex
  */
 
-''; // include precedent doclets in transpilat
+''; // include precedent doclets in transpiled

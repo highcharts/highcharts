@@ -71,7 +71,7 @@ declare module './Chart/ChartLike'{
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
-        pointer: Pointer;
+        pointer?: Pointer;
     }
 }
 
@@ -1237,7 +1237,7 @@ class Pointer {
     public onDocumentMouseUp(e: PointerEvent): void {
         charts[pick(Pointer.hoverChartIndex, -1)]
             ?.pointer
-            .drop(e);
+            ?.drop(e);
     }
 
     /**
@@ -1736,13 +1736,9 @@ class Pointer {
             pointer.unDocMouseMove = addEvent(
                 chart.container.ownerDocument,
                 'mousemove',
-                function (e: any): void {
-                    const chart = charts[Pointer.hoverChartIndex as any];
-
-                    if (chart) {
-                        chart.pointer.onDocumentMouseMove(e);
-                    }
-                }
+                (e: any): void => charts[Pointer.hoverChartIndex ?? -1]
+                    ?.pointer
+                    ?.onDocumentMouseMove(e)
             );
             pointer.eventsToUnbind.push(pointer.unDocMouseMove);
         }
@@ -1856,7 +1852,7 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
-            hoverChart.pointer.onContainerMouseLeave(
+            hoverChart.pointer?.onContainerMouseLeave(
                 e || { relatedTarget: chart.container } as any
             );
         }

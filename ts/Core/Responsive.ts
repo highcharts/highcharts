@@ -331,7 +331,7 @@ export default Responsive;
  * [xAxis](#xAxis), [yAxis](#yAxis) or [series](#series). For these
  * collections, an `id` option is used to map the new option set to
  * an existing object. If an existing object of the same id is not found,
- * the item of the same indexupdated. So for example, setting `chartOptions`
+ * the item of the same index updated. So for example, setting `chartOptions`
  * with two series items without an `id`, will cause the existing chart's
  * two series to be updated with respective options.
  *

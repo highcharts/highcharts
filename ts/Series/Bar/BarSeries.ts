@@ -201,4 +201,4 @@ export default BarSeries;
  * @apioption series.bar.states.select
  */
 
-''; // gets doclets above into transpilat
+''; // gets doclets above into transpiled

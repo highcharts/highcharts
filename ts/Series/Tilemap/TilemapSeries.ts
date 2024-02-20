@@ -304,7 +304,7 @@ extend(TilemapSeries.prototype, { // Prototype functions
     getSymbol: noop,
     // Use drawPoints, markerAttribs, pointAttribs methods from the old
     // heatmap implementation.
-    // TODO: Consider standarizing heatmap and tilemap into more
+    // TODO: Consider standardizing heatmap and tilemap into more
     // consistent form.
     markerAttribs: ScatterSeries.prototype.markerAttribs,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,

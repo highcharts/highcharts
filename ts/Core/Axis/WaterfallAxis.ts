@@ -154,8 +154,8 @@ namespace WaterfallAxis {
         const axes = this.axes as Array<WaterfallAxis>,
             series = this.series;
 
-        for (const seri of series) {
-            if (seri.options.stacking) {
+        for (const serie of series) {
+            if (serie.options.stacking) {
                 for (const axis of axes) {
                     if (!axis.isXAxis) {
                         axis.waterfall.stacks.changed = true;

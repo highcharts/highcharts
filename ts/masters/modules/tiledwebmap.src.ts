@@ -13,5 +13,5 @@ import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegist
 import TiledWebMapSeries from '../../Series/TiledWebMap/TiledWebMapSeries.js';
 const G: AnyRecord = Highcharts;
 G.TilesProviderRegistry = G.TilesProviderRegistry || TilesProviderRegistry;
-TiledWebMapSeries.compose(G.Chart);
+TiledWebMapSeries.compose(G.MapView);
 export default Highcharts;

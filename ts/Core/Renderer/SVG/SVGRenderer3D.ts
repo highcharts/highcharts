@@ -478,7 +478,7 @@ namespace SVGRenderer3D {
     }
 
     /**
-     * generelized, so now use simply
+     * generalized, so now use simply
      * @private
      */
     function cuboid(
@@ -612,7 +612,7 @@ namespace SVGRenderer3D {
 
             /**
              * First value - path with specific face
-             * Second  value - added info about side for later calculations.
+             * Second value - added info about side for later calculations.
              *                 Possible second values are 0 for path1, 1 for
              *                 path2 and -1 for no path chosen.
              * Third value - string containing information about current side of
@@ -1113,7 +1113,7 @@ namespace SVGRenderer3D {
             out.push([
                 'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
             ]);
-            // Go back to the artifical end2
+            // Go back to the artificial end2
             out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
         }
 

@@ -744,7 +744,7 @@ function pointRunDrilldown(
     }
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
-    // for  seriesOptions, and call addSeriesAsDrilldown async if necessary.
+    // for seriesOptions, and call addSeriesAsDrilldown async if necessary.
     fireEvent(chart, 'drilldown', {
         point,
         seriesOptions: seriesOptions,

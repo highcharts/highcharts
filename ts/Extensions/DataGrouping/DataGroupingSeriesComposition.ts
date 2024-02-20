@@ -241,7 +241,7 @@ function anchorPoints(
 
     // Change the last point position but only when it is
     // the last point in the data set not in the current zoom,
-    // or if it is not the 1st point simutainously.
+    // or if it is not the 1st point simultaneously.
     if (
         groupedDataLastIndex > 0 &&
             lastAnchor &&

@@ -512,7 +512,8 @@ class ControllableLabel extends Controllable {
                     {
                         chart,
                         distance: pick(itemOptions.distance, 16),
-                        getPlayingField: tooltip.getPlayingField
+                        getPlayingField: tooltip.getPlayingField,
+                        pointer: tooltip.pointer
                     },
                     width,
                     height,

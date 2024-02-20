@@ -452,10 +452,10 @@ export default Fullscreen;
  * @callback Highcharts.FullScreenfullscreenCloseCallbackFunction
  *
  * @param {Highcharts.Chart} chart
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -464,10 +464,10 @@ export default Fullscreen;
  * @callback Highcharts.FullScreenfullscreenOpenCallbackFunction
  *
  * @param {Highcharts.Chart} chart
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 (''); // keeps doclets above separated from following code
