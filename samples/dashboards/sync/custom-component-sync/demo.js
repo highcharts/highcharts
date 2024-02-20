@@ -110,14 +110,23 @@ class Slider extends Component {
 ComponentRegistry.registerComponent('Slider', Slider);
 
 const formatBigNumber = value => {
+    if (value >= 1e9) {
+        return Math.round(value / 1e6) / 1e3 + 'B';
+    }
     if (value >= 1e6) {
         return Math.round(value / 1e5) / 10 + 'M';
     }
     if (value >= 1e3) {
-        return Math.round(value / 1e3) + 'k';
+        return Math.round(value / 1e3) + 'K';
     }
     return value;
 };
+
+Highcharts.setOptions({
+    lang: {
+        numericSymbols: ['K', 'M', 'B', 'T', 'P', 'E']
+    }
+});
 
 Dashboards.board('container', {
     gui: {
@@ -189,12 +198,15 @@ Dashboards.board('container', {
         },
         columnAssignment: {
             Population: 'x',
-            'Happiness vs Population': {
-                y: 'Happiness',
+            'Happiness Score vs Population': {
+                y: 'Happiness Score',
                 name: 'Country'
             }
         },
         chartOptions: {
+            chart: {
+                marginRight: 50
+            },
             xAxis: {
                 type: 'logarithmic',
                 title: {
@@ -203,11 +215,14 @@ Dashboards.board('container', {
             },
             yAxis: {
                 title: {
-                    text: 'Happiness'
+                    text: 'Happiness Score'
                 }
             },
             title: {
-                text: 'Happiness vs Population'
+                text: 'Happiness Score vs Population 2022'
+            },
+            subtitle: {
+                text: 'Showing average happiness score below and above the chosen population.'
             },
             credits: {
                 text: 'worldhappiness.report',
@@ -218,7 +233,7 @@ Dashboards.board('container', {
             },
             series: [{
                 type: 'scatter',
-                name: 'Happiness vs Population'
+                name: 'Happiness Score vs Population'
             }],
             tooltip: {
                 formatter: function () {
@@ -226,7 +241,7 @@ Dashboards.board('container', {
                     return `
                         <b>${point.name}</b><br>
                         Population: <b>${formatBigNumber(point.x)}</b><br>
-                        Happiness: <b>${point.y}</b>
+                        Happiness Score: <b>${point.y}</b>
                     `;
                 }
             }
@@ -234,7 +249,7 @@ Dashboards.board('container', {
         sync: {
             customSync: {
                 enabled: true,
-                syncedColumn: 'Happiness',
+                syncedColumn: 'Happiness Score',
                 handler: function () {
                     const { board } = this;
                     const { dataCursor: cursor } = board;
@@ -278,7 +293,7 @@ Dashboards.board('container', {
 
                         if (!xAxis.mirrorBand) {
                             xAxis.mirrorBand = chart.renderer.path().attr({
-                                stroke: '#f25',
+                                stroke: '#9a9a9a',
                                 zIndex: 3,
                                 'stroke-dasharray': 5
                             }).add();
@@ -297,16 +312,14 @@ Dashboards.board('container', {
 
                             xAxis.leftLabel = chart.renderer.text().attr({
                                 text: leftAverage,
-                                zIndex: 3,
+                                align: 'right',
                                 fill: '#f25'
-                            }).add();
+                            }).addClass('chart-custom-label').add().toFront();
 
                             xAxis.rightLabel = chart.renderer.text().attr({
                                 text: rightAverage,
-                                zIndex: 3,
-                                align: 'right',
                                 fill: '#f25'
-                            }).add();
+                            }).addClass('chart-custom-label').add().toFront();
                         }
 
                         xAxis.mirrorBand.attr({ d: mirrorBandD });
@@ -314,13 +327,13 @@ Dashboards.board('container', {
                         xAxis.rigthBand.attr({ d: rightBandD });
                         xAxis.leftLabel.attr({
                             text: leftAverage,
-                            x: xAxis.left,
-                            y: leftYPos - 10
+                            x: bandXPos - 10,
+                            y: leftYPos - 8
                         });
                         xAxis.rightLabel.attr({
                             text: rightAverage,
-                            x: xAxis.width + xAxis.left,
-                            y: rightYPos - 10
+                            x: bandXPos + 10,
+                            y: rightYPos - 8
                         });
                     };
 
