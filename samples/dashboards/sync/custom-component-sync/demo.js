@@ -14,45 +14,39 @@ class Slider extends Component {
     }
 
     createDOMStructure() {
-        this.slider = document.createElement('input');
-        this.handleLabel = document.createElement('span');
-        this.maxSliderLabel = document.createElement('span');
-        this.minSliderLabel = document.createElement('span');
-        this.middleSliderLabel = document.createElement('span');
+        const H = Highcharts;
 
-        const leftSliderSide = document.createElement('div');
-        const rightSliderSide = document.createElement('div');
+        const leftSliderSide = H.createElement('div', {
+            className: 'sc-slider-side'
+        }, {}, this.contentElement);
 
-        this.handleLabel.className = 'sc-handle-label';
-        this.slider.className = 'sc-slider';
-        leftSliderSide.className = 'sc-slider-side';
-        rightSliderSide.className = 'sc-slider-side';
+        this.slider = H.createElement('input', {
+            className: 'sc-slider',
+            type: 'range',
+            orient: 'vertical'
+        }, {}, this.contentElement);
+
+        const rightSliderSide = H.createElement('div', {
+            className: 'sc-slider-side'
+        }, {}, this.contentElement);
+
+        this.maxSliderLabel = H.createElement('span', {
+            className: 'sc-tick-slider-label sc-max-slider-label'
+        }, {}, leftSliderSide);
+
+        this.minSliderLabel = H.createElement('span', {
+            className: 'sc-tick-slider-label sc-min-slider-label'
+        }, {}, leftSliderSide);
+
+        this.middleSliderLabel = H.createElement('span', {
+            className: 'sc-tick-slider-label sc-middle-slider-label'
+        }, {}, leftSliderSide);
+
+        this.handleLabel = H.createElement('span', {
+            className: 'sc-handle-label'
+        }, {}, rightSliderSide);
 
         this.contentElement.classList.add('sc-container');
-        this.minSliderLabel.classList.add(
-            'sc-tick-slider-label',
-            'sc-min-slider-label'
-        );
-        this.middleSliderLabel.classList.add(
-            'sc-tick-slider-label',
-            'sc-middle-slider-label'
-        );
-        this.maxSliderLabel.classList.add(
-            'sc-tick-slider-label',
-            'sc-max-slider-label'
-        );
-
-        this.contentElement.appendChild(leftSliderSide);
-        this.contentElement.appendChild(this.slider);
-        this.contentElement.appendChild(rightSliderSide);
-
-        leftSliderSide.appendChild(this.minSliderLabel);
-        leftSliderSide.appendChild(this.middleSliderLabel);
-        leftSliderSide.appendChild(this.maxSliderLabel);
-        rightSliderSide.appendChild(this.handleLabel);
-
-        this.slider.setAttribute('type', 'range');
-        this.slider.setAttribute('orient', 'vertical');
     }
 
     async load() {
