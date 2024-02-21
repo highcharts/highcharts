@@ -1111,7 +1111,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks after toggling the collapse/expand
      * state of a node. If it is collapsed it will be expanded, and if it is
-     * exapended it will be collapsed.
+     * expanded it will be collapsed.
      *
      * @private
      *

@@ -41,7 +41,7 @@ const {
  * */
 
 /**
- * Get columns offset including all sibiling and cousins etc.
+ * Get columns offset including all sibling and cousins etc.
  * @private
  */
 function getOffset(node: SankeyPoint): number {
