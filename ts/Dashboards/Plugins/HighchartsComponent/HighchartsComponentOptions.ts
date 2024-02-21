@@ -94,27 +94,8 @@ export interface Options extends Component.Options {
 
     /**
      * @deprecated
-     * This option is deprecated, use [`connector.columnAssignment`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
-     *
-     * Names that should be mapped to point values or props. You can
-     * declare which columns will be parameter of the point. It is useful for
-     * series like OHLC, candlestick, columnrange or arearange.
-     *
-     * The seriesName field is mandatory for displaying series (for instance in
-     * the legend) properly.
-     *
-     * @example
-     * ```
-     * columnAssignment: {
-     *      'Dates': 'x',
-     *      'mySeriesName': {
-     *             'open': 'myOpen',
-     *             'high': 'myHigh',
-     *             'low': 'myLow',
-     *             'close': 'myClose'
-     *      }
-     * }
-     * ```
+     * This option is deprecated and does not work anymore.
+     * Use [`connector.columnAssignment`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
     */
     columnAssignment?: Record<string, string | Record<string, string>>;
 
@@ -152,9 +133,12 @@ export interface ConnectorOptions extends ComponentConnectorOptions {
      * chart in different ways using series IDs and column names.
      *
      * Try it:
-     * {@link TODO | One-dimensional data column assignment}
-     * {@link TODO | Two-dimensional data column assignment}
-     * {@link TODO | Key-defined two-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
      *
      * @example
      * ```
