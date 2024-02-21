@@ -21,15 +21,6 @@
         chart: {
             backgroundColor: '#202d3b'
         },
-        exporting: {
-            buttons: {
-                contextButton: {
-                    theme: {
-                        'stroke-width': 0
-                    }
-                }
-            }
-        },
         accessibility: {
             typeDescription: 'Combination chart with 2 data series.'
         },
@@ -43,7 +34,7 @@
             buttonOptions: {
                 theme: {
                     fill: '#333333',
-                    stroke: '#c5c7c9'
+                    'stroke-width': 0
                 }
             }
         },
@@ -122,9 +113,6 @@
             labelStyle: {
                 color: '#c5c7c9'
             }
-        },
-        scrollbar: {
-            enabled: false
         },
         tooltip: {
             backgroundColor: '#fbfbfb',
@@ -236,6 +224,9 @@
                 }
             }],
             selected: 4
+        },
+        scrollbar: {
+            enabled: false
         },
         tooltip: {
             pointFormat: ''
