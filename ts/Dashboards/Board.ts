@@ -25,6 +25,7 @@
  * */
 
 import type Component from './Components/Component';
+import type ComponentType from './Components/ComponentType';
 import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from './JSON';
 import type EditMode from './EditMode/EditMode';
@@ -39,9 +40,8 @@ import DataPool from '../Data/DataPool.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
+import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
 import U from '../Core/Utilities.js';
-import HTMLComponent from './Components/HTMLComponent.js';
-import ComponentType from './Components/ComponentType';
 const {
     merge,
     addEvent,
