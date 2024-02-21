@@ -61,7 +61,7 @@ declare module '../../Core/GlobalsLike.d.ts' {
 class StandaloneNavigator {
 
     public navigator: Navigator;
-    public boundAxes: Map<Axis, Array<Function>> = new Map();
+    public boundAxes: Array<{ axis: Axis, callbacks: Array<Function> }> = [];
     public chartOptions: Partial<Options>;
     public userOptions: StandaloneNavigatorOptions;
 
@@ -199,7 +199,15 @@ class StandaloneNavigator {
         );
         removeEventCallbacks.push(removeSetRangeEvent);
 
-        this.boundAxes.set(axis, removeEventCallbacks);
+        let boundAxis = this.boundAxes.find(
+            (entry): boolean => entry.axis === axis
+        );
+
+        if (!boundAxis) {
+            boundAxis = { axis, callbacks: [] };
+            this.boundAxes.push(boundAxis);
+        }
+        boundAxis.callbacks = removeEventCallbacks;
 
         // Show axis' series in navigator based on showInNavigator property
         axis.series.forEach((series): void => {
@@ -235,13 +243,13 @@ class StandaloneNavigator {
     public unbind(axisOrChart?: Chart | Axis): void {
         // If no axis or chart is provided, unbind all bound axes
         if (!axisOrChart) {
-            this.boundAxes.forEach((removeEventCallbacks): void => {
-                removeEventCallbacks.forEach(
+            this.boundAxes.forEach(({ callbacks }): void => {
+                callbacks.forEach(
                     (removeCallback): void => removeCallback()
                 );
             });
 
-            this.boundAxes.clear();
+            this.boundAxes = [];
 
             return;
         }
@@ -250,16 +258,17 @@ class StandaloneNavigator {
             axisOrChart :
             axisOrChart.xAxis[0];
 
-        // Call the event removal callbacks for this specific axis
-        const removeEventCallbacks = this.boundAxes.get(axis);
-        if (removeEventCallbacks) {
-            removeEventCallbacks.forEach(
-                (removeCallback): void => removeCallback()
-            );
-        }
+        const boundAxisIndex = this.boundAxes.findIndex(
+            (entry): boolean => entry.axis === axis
+        );
 
-        // Remove this axis from the Map
-        this.boundAxes.delete(axis);
+        if (boundAxisIndex !== -1) {
+            this.boundAxes[boundAxisIndex].callbacks.forEach(
+                (callback): void => callback()
+            );
+
+            this.boundAxes.splice(boundAxisIndex, 1);
+        }
     }
 
     /**
@@ -269,12 +278,12 @@ class StandaloneNavigator {
      */
     public destroy(): void {
         // Disconnect events
-        this.boundAxes.forEach((removeEventCallbacks): void => {
-            removeEventCallbacks.forEach(
+        this.boundAxes.forEach(({ callbacks }): void => {
+            callbacks.forEach(
                 (removeCallback): void => removeCallback()
             );
         });
-        this.boundAxes.clear();
+        this.boundAxes = [];
         this.navigator.destroy();
         this.navigator.chart.destroy();
     }
