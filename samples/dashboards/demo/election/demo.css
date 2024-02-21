@@ -63,10 +63,6 @@
     --color-navigation-text: #838393;
 }
 
-#html-result {
-    --color-background: inherit;
-}
-
 @media (prefers-color-scheme: dark) {
     /* dark mode */
     #election-chart {
@@ -356,7 +352,6 @@
 /* Container custom HTML - 3 columns */
 #html-result-container {
     text-align: center;
-    max-height: 250px;
     display: flex;
     flex-direction: row;
 }
@@ -380,9 +375,9 @@
 
 #html-result img {
     /* Candidate portraits: original dimension 290 x 400 */
-    max-width: 90%;
-    height: 150px;
+    max-height: 150px;
     width: auto;
+    padding: 5px;
 }
 
 #bar-container {
@@ -486,13 +481,16 @@
 
 #html-control {
     text-align: center;
-    max-height: 250px;
 }
 
 #html-control .highcharts-dashboards-component-title {
     fill: var(--color-title);
     font-size: 1.2em;
     text-align: center;
+}
+
+#html-control .highcharts-dashboards-component-content {
+    background: var(--color-background);
 }
 
 #html-control #election-year {
