@@ -44,18 +44,12 @@ Dashboards.board('container', {
         connector: {
             id: 'Vitamin'
         },
-        connectorName: 'Vitamin',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
         chartOptions: {
             chart: {
                 type: 'pie'
             }
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-1',
         sync: {
             visibility: false
@@ -67,10 +61,6 @@ Dashboards.board('container', {
         connector: {
             id: 'Vitamin'
         },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -79,8 +69,7 @@ Dashboards.board('container', {
                 type: 'column'
             }
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-2',
         sync: {
             visibility: true
@@ -91,10 +80,6 @@ Dashboards.board('container', {
         type: 'Highcharts',
         connector: {
             id: 'Vitamin'
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         chartOptions: {
             xAxis: {

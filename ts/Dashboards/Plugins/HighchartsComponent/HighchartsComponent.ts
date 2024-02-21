@@ -50,15 +50,13 @@ import Globals from '../../Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
-import DataModifierOptions from '../../../Data/Modifiers/DataModifierOptions';
 const {
     addEvent,
     createElement,
     diffObjects,
     isString,
     merge,
-    splat,
-    isObject
+    splat
 } = U;
 
 /* *
@@ -414,8 +412,6 @@ class HighchartsComponent extends Component {
             return;
         }
 
-        const { id: storeTableID } = connector.table;
-
         if (this.presentationModifier) {
             this.presentationTable = this.presentationModifier
                 .modifyTable(connector.table.modified.clone()).modified;
@@ -427,14 +423,6 @@ class HighchartsComponent extends Component {
         const modifierOptions = this.presentationTable.getModifier()?.options;
 
         this.emit({ type: 'afterPresentationModifier', table: table });
-
-        if (
-            !this.options.connector?.columnAssignment &&
-            // Use legacy method if deprecated columnAssignment option is used.
-            this.legacyAssignColumnToSeries(storeTableID, modifierOptions)
-        ) {
-            return;
-        }
 
         const columnNames = table.getColumnNames();
         const columnAssignment = this.options.connector?.columnAssignment ??
@@ -535,177 +523,6 @@ class HighchartsComponent extends Component {
         }
 
         chart.redraw();
-    }
-
-    /**
-     * Old method for assigning columns to series.
-     * @deprecated
-     * @private
-     */
-    private legacyAssignColumnToSeries(
-        storeTableID: string,
-        modifierOptions?: DataModifierOptions
-    ): boolean {
-        const table = this.presentationTable;
-        const columnAssignment = this.options.columnAssignment;
-        const chart = this.chart;
-        const xKeyMap: Record<string, string> = {};
-
-        if (!table || !columnAssignment || !chart) {
-            return false;
-        }
-
-        // Remove series names that match the xKeys
-        const seriesNames = table.modified.getColumnNames()
-            .filter((name): boolean => {
-                const isVisible = this.activeGroup ?
-                    this.activeGroup
-                        .getSharedState()
-                        .getColumnVisibility(name) !== false :
-                    true;
-
-                if (!isVisible || !columnAssignment[name]) {
-                    return false;
-                }
-
-                if (columnAssignment[name] === 'x') {
-                    xKeyMap[name] = name;
-                    return false;
-                }
-
-                return true;
-            });
-
-        // create empty series for mapping custom props of data
-        Object.keys(columnAssignment).forEach(
-            function (key):void {
-                if (isObject(columnAssignment[key])) {
-                    seriesNames.push(key);
-                }
-            }
-        );
-
-        // Create the series or get the already added series
-        const seriesList = seriesNames.map((seriesName, index): Series => {
-            let i = 0;
-
-            while (i < chart.series.length) {
-                const series = chart.series[i];
-                const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
-                const existingSeries =
-                    seriesNames.indexOf(series.name) !== -1;
-                i++;
-
-                if (existingSeries && seriesFromConnector) {
-                    return series;
-                }
-
-                if (
-                    !existingSeries &&
-                    seriesFromConnector
-                ) {
-                    series.destroy();
-                }
-            }
-
-            // Disable dragging on series, which were created out of a
-            // columns which are created by MathModifier.
-            const shouldBeDraggable = !(
-                modifierOptions?.type === 'Math' &&
-                (modifierOptions as MathModifierOptions)
-                    .columnFormulas?.some(
-                        (formula): boolean => formula.column === seriesName
-                    )
-            );
-
-            const seriesOptions = {
-                name: seriesName,
-                id: `${storeTableID}-series-${index}`,
-                dragDrop: {
-                    draggableY: shouldBeDraggable
-                }
-            };
-
-            const relatedSeries =
-                chart.series.find(
-                    (series):boolean => series.name === seriesName
-                );
-
-            if (relatedSeries) {
-                relatedSeries.update(seriesOptions, false);
-                return relatedSeries;
-            }
-
-            return chart.addSeries(seriesOptions, false);
-        });
-
-        // Insert the data
-        seriesList.forEach((series): void => {
-            const xKey = Object.keys(xKeyMap)[0],
-                isSeriesColumnMap =
-                    isObject(columnAssignment[series.name]),
-                pointColumnMapValues:Array<string> = [];
-
-            if (isSeriesColumnMap) {
-                const pointColumns =
-                    columnAssignment[series.name] as Record<string, string>;
-
-                Object.keys(pointColumns).forEach((key):void => {
-                    pointColumnMapValues.push(pointColumns[key]);
-                });
-            }
-
-            const columnKeys = isSeriesColumnMap ?
-                [xKey].concat(pointColumnMapValues) : [xKey, series.name];
-
-            const seriesTable = new DataTable({
-                columns: table.modified.getColumns(columnKeys)
-            });
-
-            if (!isSeriesColumnMap) {
-                seriesTable.renameColumn(series.name, 'y');
-            }
-
-            if (xKey) {
-                seriesTable.renameColumn(xKey, 'x');
-            }
-
-            const seriesData = seriesTable.getRowObjects().reduce((
-                arr: (number | {})[],
-                row: Record<string, any>
-            ): (number | {})[] => {
-                if (isSeriesColumnMap) {
-                    arr.push(
-                        [row.x].concat(
-                            pointColumnMapValues.map(
-                                function (value: string):number|undefined {
-                                    return row[value];
-                                }
-                            )
-                        )
-                    );
-                } else {
-                    arr.push([row.x, row.y]);
-                }
-                return arr;
-            }, []);
-
-            if (isSeriesColumnMap) {
-                const pointColumns =
-                    columnAssignment[series.name] as Record<string, string>;
-
-                series.update({
-                    keys: ['x'].concat(Object.keys(pointColumns)),
-                    data: seriesData
-                }, false);
-            } else {
-                series.setData(seriesData, false);
-            }
-        });
-
-        chart.redraw();
-
-        return true;
     }
 
     /**
