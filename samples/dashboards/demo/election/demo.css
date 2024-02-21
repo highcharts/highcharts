@@ -341,12 +341,17 @@
 
 #html-result .highcharts-dashboards-component-title {
     fill: var(--color-title);
-    font-size: 1em;
+    font-size: 1.2em;
     text-align: center;
 }
 
 #html-result .highcharts-dashboards-component-content {
     background: var(--color-background);
+}
+
+#html-result-div {
+    text-align: center;
+    height: 160px;
 }
 
 /* Container custom HTML - 3 columns */
@@ -479,10 +484,6 @@
  *
  * */
 
-#html-control {
-    text-align: center;
-}
-
 #html-control .highcharts-dashboards-component-title {
     fill: var(--color-title);
     font-size: 1.2em;
@@ -493,11 +494,16 @@
     background: var(--color-background);
 }
 
-#html-control #election-year {
+#html-control-div {
+    text-align: center;
+    height: 160px;
+}
+
+#html-control-div #election-year {
     margin: 10px;
 }
 
-#html-control #election-description {
+#html-control-div #election-description {
     border: 1px dotted #ccc;
     border-radius: 5px;
     text-align: left;

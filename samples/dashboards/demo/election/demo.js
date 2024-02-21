@@ -53,6 +53,8 @@ const electionYears = Object.keys(elections).reverse();
 
 let electionData = null;
 
+const voteTables = [];
+
 // Launches the Dashboards application
 async function setupDashboard() {
 
@@ -255,41 +257,6 @@ async function setupDashboard() {
         jsonData.candDem = getSurname(national.demCand);
     }
 
-    function getElectionSummary() {
-        const ret = [
-            {
-                name: 'Democrat',
-                data: []
-            }, {
-                name: 'Republican',
-                data: []
-            }
-        ];
-
-        Object.values(electionData).reverse().forEach(function (item) {
-            const row = item.data[1];
-
-            // Percentage, Democrat
-            ret[0].data.push({
-                name: item.candDem,
-                y: Number(row[3]),
-                custom: {
-                    electors: row[1]
-                }
-            });
-
-            // Percentage, Republicans
-            ret[1].data.push({
-                name: item.candRep,
-                y: Number(row[4]),
-                custom: {
-                    electors: row[2]
-                }
-            });
-        });
-        return ret;
-    }
-
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
@@ -327,6 +294,7 @@ async function setupDashboard() {
             ]
         },
         gui: {
+            // TBD: move to HTML
             layouts: [{
                 rows: [{
                     cells: [{
@@ -403,6 +371,11 @@ async function setupDashboard() {
                             name: 'Republican'
                         }]
                     },
+                    plotOptions: {
+                        series: {
+                            allowPointSelect: true
+                        }
+                    },
                     series: [{
                         name: 'US Map',
                         type: 'map'
@@ -421,9 +394,16 @@ async function setupDashboard() {
                         },
                         point: {
                             events: {
-                                click: function (e) {
-                                    selectedState = e.point['postal-code'];
-                                    updateBoard(board, selectedState, selectedYear);
+                                click: async function (e) {
+                                    const sel = e.point['postal-code'];
+                                    if (sel !== selectedState) {
+                                        selectedState = sel;
+                                    } else {
+                                        // Back to national view if clicking on already
+                                        // selected state.
+                                        selectedState = 'US';
+                                    }
+                                    await onStateClicked(board, selectedState);
                                 }
                             }
                         }
@@ -460,9 +440,13 @@ async function setupDashboard() {
                     text: 'Historical ' + commonTitle + ' results'
                 },
                 chartOptions: {
+                    title: {
+                        text: 'National'
+                    },
                     chart: {
                         styledMode: true,
-                        type: 'column'
+                        type: 'column',
+                        height: 360 // TBD: use min-height in CSS
                     },
                     credits: {
                         enabled: true,
@@ -508,7 +492,7 @@ async function setupDashboard() {
                             description: 'Percent of votes'
                         }
                     },
-                    series: getElectionSummary(),
+                    series: getNationalElectionSummaries(),
                     lang: {
                         accessibility: {
                             chartContainerLabel: commonTitle + ' results.'
@@ -570,6 +554,11 @@ async function setupDashboard() {
     // Initialize data
     await updateBoard(board, 'US', selectedYear);
 
+    // Load all votes tables
+    electionYears.forEach(async function (year) {
+        voteTables.push(await getVotesTable(board, year));
+    });
+
     // Handle change year events
     Highcharts.addEvent(
         document.getElementById('election-year'),
@@ -581,15 +570,98 @@ async function setupDashboard() {
             await updateBoard(board, selectedState, selectedYear);
 
             // Reset zoom
-            const map = board.mountedComponents[4].component.chart;
+            const map = board.mountedComponents[2].component.chart;
             map.mapZoom();
         }
     );
 }
 
 async function getVotesTable(board, year) {
-    return board.dataPool.getConnectorTable('votes' + year);
+    return await board.dataPool.getConnectorTable('votes' + year);
 }
+
+function getNationalElectionSummaries() {
+    const ret = [
+        {
+            name: 'Democrat',
+            data: []
+        }, {
+            name: 'Republican',
+            data: []
+        }
+    ];
+
+    Object.values(electionData).reverse().forEach(function (item) {
+        const row = item.data[1]; // National
+
+        // Percentage, Democrat
+        ret[0].data.push({
+            name: item.candDem,
+            y: Number(row[3]),
+            custom: {
+                electors: row[1]
+            }
+        });
+
+        // Percentage, Republicans
+        ret[1].data.push({
+            name: item.candRep,
+            y: Number(row[4]),
+            custom: {
+                electors: row[2]
+            }
+        });
+    });
+    return ret;
+}
+
+
+function getComponent(board, id) {
+    return board.mountedComponents.find(c => c.cell.id === id).component;
+}
+
+
+async function onStateClicked(board, state) {
+    // Get election data
+    const votesTable = voteTables[0];
+    const row = votesTable.getRowIndexBy('postal-code', state);
+    const stateName = votesTable.getCell('state', row);
+
+    // Get historical election data by year
+    const demSeries = [];
+    const repSeries = [];
+    voteTables.forEach(function (voteTable) {
+        const row = voteTable.getRowIndexBy('postal-code', state);
+        const demPercent = voteTable.getCellAsNumber('demPercent', row);
+        const repPercent = voteTable.getCellAsNumber('repPercent', row);
+        demSeries.push([demPercent]);
+        repSeries.push([repPercent]);
+    });
+
+    // Update chart title
+    const comp = getComponent(board, 'election-chart');
+
+    await comp.update({
+        chartOptions: {
+            title: {
+                text: state === 'US' ? 'National' : stateName
+            }
+        }
+    });
+
+    // Update chart columns
+    const chart = comp.chart;
+    await chart.series[0].update({
+        data: demSeries
+    });
+
+    await chart.series[1].update({
+        data: repSeries
+    });
+
+    // TBD: update custom data for use in tooltip
+}
+
 
 // Update board after changing data set (state or election year)
 async function updateBoard(board, state, year) {
@@ -599,17 +671,13 @@ async function updateBoard(board, state, year) {
     // Common title
     const title = commonTitle + ' ' + year;
 
-    const [
-        // The order here must be the same as in the component definition in the Dashboard.
-        resultHtml,
-        controlHtml, // Updates bypass Dashboards
-        usMap,
-        historyChart,
-        selectionGrid
-    ] = board.mountedComponents.map(c => c.component);
+    // Dashboards components for update
+    const resultHtml = getComponent(board, 'html-result');
+    const usMap = getComponent(board, 'us-map');
+    const selectionGrid = getComponent(board, 'selection-grid');
 
     // 1. Update result HTML (if state or year changes)
-    let row = votesTable.getRowIndexBy('postal-code', 'US');
+    const row = votesTable.getRowIndexBy('postal-code', 'US');
 
     // Candidate names
     const candDem = electionData[year].candDem;
@@ -696,20 +764,6 @@ async function updateBoard(board, state, year) {
         });
     });
 
-    // 4. Update history chart (TBD: when state clicked)
-    // Get data for selected state (or US)
-    row = votesTable.getRowIndexBy('postal-code', state);
-    const stateName = votesTable.getCell('state', row);
-
-    await historyChart.update({
-        chartOptions: {
-            title: {
-                text: state === 'US' ? 'National' : stateName
-            }
-        }
-        // TBD: update columns
-    });
-
     // 5. Update grid (if year changes)
     await selectionGrid.update({
         title: {
@@ -757,9 +811,6 @@ class CustomHTML extends HTMLComponent {
 
             // Copy custom HTML into Dashboards component
             this.options.elements = new AST(customHTML).nodes;
-
-            // Remove the original
-            domEl.remove();
         }
     }
 }
