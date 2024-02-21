@@ -779,7 +779,7 @@ function wrapSeriesGetColor(
 ): void {
     const oldColor = this.options.color;
 
-    // Temporarely remove color options to get defaults
+    // Temporarily remove color options to get defaults
     if (oldColor &&
         (oldColor as PatternObject).pattern &&
         !(oldColor as PatternObject).pattern.color
@@ -798,7 +798,7 @@ function wrapSeriesGetColor(
 }
 
 /**
- * Scale patterns inversly to the series it's used in.
+ * Scale patterns inversely to the series it's used in.
  * Maintains a visual (1,1) scale regardless of size.
  * @private
  */

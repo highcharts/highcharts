@@ -147,6 +147,10 @@ QUnit.test('Map navigation button alignment', assert => {
             }
         },
 
+        tooltip: {
+            animation: false
+        },
+
         series: [
             {
                 data: [
@@ -196,6 +200,14 @@ QUnit.test('Map navigation button alignment', assert => {
         chart.plotTop + chart.plotHeight,
         1.5,
         'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
+    );
+
+    chart.tooltip.refresh(chart.series[0].data[0]);
+
+    assert.ok(
+        chart.mapNavigation.navButtonsGroup.zIndex <
+        chart.tooltip.label.element.getAttribute('data-z-index'),
+        'Map navigation group zIndex should be lower than tooltip zIndex (#20476)'
     );
 });
 

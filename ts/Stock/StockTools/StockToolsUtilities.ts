@@ -505,7 +505,7 @@ function updateHeight(
  * @function bindingsUtils.updateNthPoint
  *
  * @param {number} startIndex
- *        Index from each point should udpated
+ *        Index from which point should update
  *
  * @return {Function}
  *         Callback to be used in steps array
