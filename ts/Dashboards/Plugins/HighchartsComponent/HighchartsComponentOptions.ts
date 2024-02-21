@@ -197,9 +197,13 @@ export interface ColumnAssignmentOptions {
      * series data.
      *
      * Try it:
-     * {@link TODO | One-dimensional data column assignment}
-     * {@link TODO | Two-dimensional data column assignment}
-     * {@link TODO | Key-defined two-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
+     *
      */
     data: string | string[] | Record<string, string>;
 }
