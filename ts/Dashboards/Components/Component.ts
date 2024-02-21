@@ -1210,6 +1210,7 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
+         * Deprecated, use `renderTo` instead.
          *
          * @deprecated
          */
@@ -1217,8 +1218,6 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
-         *
-         * @deprecated
          */
         renderTo?: string;
 
