@@ -23,15 +23,15 @@
         volume.push({
             x: data[i][0], // the date
             y: data[i][5], // the volume
-            color: data[i][4] > previousCandleClose ? '#273a25' : '#4e1c1f',
-            labelColor: data[i][4] > previousCandleClose ? '#47964e' : '#ea3d3d'
+            color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43',
+            labelColor: data[i][4] > previousCandleClose ? '#51a958' : '#ea3d3d'
         });
         previousCandleClose = data[i][4];
     }
 
     Highcharts.setOptions({
         chart: {
-            backgroundColor: '#121211'
+            backgroundColor: '#0a0a0a'
         },
         title: {
             style: {
@@ -42,7 +42,7 @@
             gridLineColor: '#181816',
             labels: {
                 style: {
-                    color: '#666666'
+                    color: '#9d9da2'
                 }
             }
         },
@@ -50,7 +50,7 @@
             gridLineColor: '#181816',
             labels: {
                 style: {
-                    color: '#666666'
+                    color: '#9d9da2'
                 }
             }
         },
@@ -109,8 +109,8 @@
             },
             candlestick: {
                 color: '#ea3d3d',
-                upColor: '#47964e',
-                upLineColor: '#47964e',
+                upColor: '#51a958',
+                upLineColor: '#51a958',
                 lineColor: '#ea3d3d'
             }
         },
@@ -126,10 +126,24 @@
             height: '70%',
             crosshair: {
                 snap: false
+            },
+            title: {
+                text: 'Price',
+                reserveSpace: false,
+                style: {
+                    visibility: 'hidden'
+                }
             }
         }, {
             top: '70%',
-            height: '30%'
+            height: '30%',
+            title: {
+                text: 'Volume',
+                reserveSpace: false,
+                style: {
+                    visibility: 'hidden'
+                }
+            }
         }],
 
         tooltip: {
@@ -188,7 +202,7 @@
             },
             chikouLine: {
                 styles: {
-                    lineColor: '#4267fc'
+                    lineColor: '#728efd'
                 }
             },
             senkouSpanA: {

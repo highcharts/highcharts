@@ -9,3 +9,7 @@
     height: 600px;
     min-width: 310px;
 }
+
+.highcharts-menu-item-btn {
+    filter: brightness(2.1);
+}
