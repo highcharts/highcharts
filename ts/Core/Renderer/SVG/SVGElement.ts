@@ -400,7 +400,7 @@ class SVGElement implements SVGElementLike {
      *        holds `width`, `height`, `x` and `y` properties.
      *
      * @param {boolean} [redraw]
-     *        Decide if SVGElement should be redrawed with new alignment or
+     *        Decide if SVGElement should be redrawn with new alignment or
      *        just change its attributes.
      *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
@@ -968,7 +968,7 @@ class SVGElement implements SVGElementLike {
                 stops = (colorOptions as GradientColor).stops;
                 radialReference = (elem as any).radialReference;
 
-                // Keep < 2.2 kompatibility
+                // Keep < 2.2 compatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
                         x1: gradAttr[0] as number,
@@ -1389,7 +1389,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#getBBox
      *
      * @param {boolean} [reload]
-     *        Skip the cache and get the updated DOM bouding box.
+     *        Skip the cache and get the updated DOM bounding box.
      *
      * @param {number} [rot]
      *        Override the element's rotation. This is internally used on axis
@@ -1545,11 +1545,7 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-                const baseline = Number(
-                    element.getAttribute('y') || 0
-                ) - bBox.y;
-
-                bBox = this.getRotatedBox(bBox, rotation, baseline);
+                bBox = this.getRotatedBox(bBox, rotation);
             }
         }
 
@@ -1576,8 +1572,7 @@ class SVGElement implements SVGElementLike {
      */
     public getRotatedBox(
         box: BBoxObject,
-        rotation: number,
-        baseline: number
+        rotation: number
     ): BBoxObject {
         const width = box.width,
             height = box.height,
@@ -1586,6 +1581,8 @@ class SVGElement implements SVGElementLike {
                 'right': 1,
                 'center': 0.5
             } as Record<string, number>)[alignValue || 0] || 0,
+            baseline = Number(this.element.getAttribute('y') || 0) -
+                (this.translateY ? 0 : box.y),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
             wCosRad = width * Math.cos(rad),
@@ -2074,7 +2071,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#strokeWidth
      *
      * @return {number}
-     * The stroke width in pixels. Even if the given stroke widtch (in CSS or by
+     * The stroke width in pixels. Even if the given stroke width (in CSS or by
      * attributes) is based on `em` or other units, the pixel size is returned.
      */
     public strokeWidth(): number {
@@ -2294,7 +2291,7 @@ class SVGElement implements SVGElementLike {
         key: 'visibility',
         element: SVGDOMElement
     ): void {
-        // IE9-11 doesn't handle visibilty:inherit well, so we remove the
+        // IE9-11 doesn't handle visibility:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);

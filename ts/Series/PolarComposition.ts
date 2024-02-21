@@ -231,7 +231,7 @@ function findAlignments(
  * @private
  * @param {boolean} calculateNeighbours
  *        Check if connectors should be calculated for neighbour points as
- *        well allows short recurence
+ *        well allows short recurrence
  */
 function getConnectors(
     segment: Array<PolarPoint>,
@@ -251,7 +251,7 @@ function getConnectors(
         jointAngle: number;
 
     // Calculate final index of points depending on the initial index value.
-    // Because of calculating neighbours, index may be outisde segment
+    // Because of calculating neighbours, index may be outside segment
     // array.
     if (index >= 0 && index <= segment.length - 1) {
         i = index;

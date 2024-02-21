@@ -18,7 +18,7 @@ When creating a new official series type, there are some requirements that shoul
 
 * If it makes sense for the given chart type, check that it works with `chart.inverted` and `xAxis/yAxis.reversed`.
 * Data labels.
-* Dynamic features, test the full lifesycle. Make sure animation runs if possible.
+* Dynamic features, test the full lifecycle. Make sure animation runs if possible.
 	* `chart.addSeries`
 	* `series.addPoint`
 	* `point.update`

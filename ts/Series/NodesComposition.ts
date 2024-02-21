@@ -260,7 +260,7 @@ namespace NodesComposition {
     }
 
     /**
-     * Destroy alll nodes and links.
+     * Destroy all nodes and links.
      * @private
      */
     export function destroy(

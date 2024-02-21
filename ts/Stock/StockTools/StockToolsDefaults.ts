@@ -1057,7 +1057,7 @@ const stockTools: StockToolsOptions = {
                 },
                 timeCycles: {
                     /**
-                     * A predefined backgroud symbol for the button.
+                     * A predefined background symbol for the button.
                      *
                      * @type {string}
                      */

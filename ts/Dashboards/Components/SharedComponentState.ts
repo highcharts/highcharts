@@ -393,7 +393,7 @@ namespace SharedComponentState {
     }
 
     /**
-     * All information objects of DataPrsentationState events.
+     * All information objects of DataPresentationState events.
      */
     export type Event = (
         ColumnOrderEvent | ColumnVisibilityEvent |

@@ -171,7 +171,6 @@ const VENDOR_DIRECTORY = 'vendor';
 const VENDOR_FILTER = [
     'canvg',
     'jspdf',
-    'rgbcolor',
     'svg2pdf'
 ].map(
     filePath => Path.join(VENDOR_DIRECTORY, filePath + '.')

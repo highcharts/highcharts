@@ -128,7 +128,7 @@ namespace DateTimeAxis{
      * @private
      * @function Highcharts.Axis#getTimeTicks
      * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-     * The interval in axis values (ms) and thecount.
+     * The interval in axis values (ms) and the count.
      * @param {number} min
      * The minimum in axis values.
      * @param {number} max
