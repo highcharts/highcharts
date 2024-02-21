@@ -565,7 +565,9 @@ class EditMode {
 
         // Disable responsive width and restore elements to their original
         // positions and sizes.
-        this.board.layoutsWrapper.style.width = '100%';
+        if (this.board.layoutsWrapper) {
+            this.board.layoutsWrapper.style.width = '100%';
+        }
         this.board.reflow();
 
         editMode.active = false;
@@ -689,7 +691,7 @@ class EditMode {
         this.tools.container = document.createElement('div');
         this.tools.container.classList.add(EditGlobals.classNames.editTools);
 
-        this.board.layoutsWrapper.parentNode.insertBefore(
+        this.board.layoutsWrapper?.parentNode.insertBefore(
             this.tools.container,
             this.board.layoutsWrapper
         );

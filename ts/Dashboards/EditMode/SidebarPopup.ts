@@ -193,6 +193,10 @@ class SidebarPopup extends BaseForm {
         const editMode = this.editMode;
         const layoutWrapper = editMode.board.layoutsWrapper;
 
+        if (!layoutWrapper) {
+            return false;
+        }
+
         return GUIElement.getOffsets(
             context as Cell,
             layoutWrapper

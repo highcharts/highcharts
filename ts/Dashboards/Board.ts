@@ -162,37 +162,18 @@ class Board implements Serializable<Board, Board.JSON> {
         this.options = merge(Board.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
-        this.guiEnabled = !options.gui ? false : this.options?.gui?.enabled;
+        this.guiEnabled = !options.gui ?
+            false : this.options?.gui?.enabled;
+        this.editModeEnabled = !options.editMode ?
+            false : this.options?.editMode?.enabled;
         this.layouts = [];
         this.mountedComponents = [];
 
         this.initContainer(renderTo);
 
-        // Create layouts wrapper.
-        this.layoutsWrapper = createElement(
-            'div', {
-                className: Globals.classNames.layoutsWrapper
-            }, {},
-            this.container
-        );
-
         // Init edit mode.
         if (this.guiEnabled) {
-            if (!Dashboards.EditMode) {
-                throw new Error('Missing layout.js module');
-            } else {
-                if (!(this.options.editMode &&
-                    !this.options.editMode.enabled)
-                ) {
-                    this.editMode = new Dashboards.EditMode(
-                        this,
-                        this.options.editMode
-                    );
-
-                    // Add fullscreen support.
-                    this.fullscreen = new Dashboards.FullScreen(this);
-                }
-            }
+            this.initLayout();
         }
 
         // Add table cursors support.
@@ -263,7 +244,13 @@ class Board implements Serializable<Board, Board.JSON> {
      * Flag to determine if the GUI is enabled.
      * @internal
      * */
-    public guiEnabled: (boolean|undefined);
+    public guiEnabled?: boolean;
+
+    /**
+     * Flag to determine if the EditMode is enabled.
+     * @internal
+     * */
+    private editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
@@ -285,7 +272,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * The wrapper for the layouts.
      * @internal
      * */
-    public layoutsWrapper: globalThis.HTMLElement;
+    public layoutsWrapper?: globalThis.HTMLElement;
 
     /**
      * An array of mounted components on the dashboard.
@@ -340,14 +327,6 @@ class Board implements Serializable<Board, Board.JSON> {
     protected init(async?: boolean): (Board|Promise<Board>) {
         const options = this.options;
 
-        if (options.gui && this.options.gui) {
-            this.setLayouts(this.options.gui);
-        }
-
-        // Init layouts from JSON.
-        if (options.layoutsJSON && !this.layouts.length) {
-            this.setLayoutsFromJSON(options.layoutsJSON);
-        }
         let componentPromises = (options.components) ?
             this.setComponents(options.components) : [];
 
@@ -414,6 +393,47 @@ class Board implements Serializable<Board, Board.JSON> {
             );
         } else {
             board.container = renderTo;
+        }
+    }
+
+    /**
+     * Inits creating a layouts and setup the EditMode tools.
+     * @internal
+     *
+     */
+    private initLayout():void {
+        const options = this.options;
+
+        if (!Dashboards.EditMode) {
+            throw new Error('Missing layout.js module');
+        } else {
+
+            // Create layouts wrapper.
+            this.layoutsWrapper = createElement(
+                'div', {
+                    className: Globals.classNames.layoutsWrapper
+                }, {},
+                this.container
+            );
+
+            if (options.gui) {
+                this.setLayouts(options.gui);
+            }
+
+            // Init layouts from JSON.
+            if (options.layoutsJSON && !this.layouts.length) {
+                this.setLayoutsFromJSON(options.layoutsJSON);
+            }
+
+            if (this.editModeEnabled) {
+                this.editMode = new Dashboards.EditMode(
+                    this,
+                    this.options.editMode
+                );
+
+                // Add fullscreen support.
+                this.fullscreen = new Dashboards.FullScreen(this);
+            }
         }
     }
 
