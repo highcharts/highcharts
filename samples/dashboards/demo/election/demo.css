@@ -279,13 +279,13 @@
 
 #html-result,
 #us-map {
-    flex: 1 1 65%;
+    flex: 1 1 50%;
     max-width: 1000px;
 }
 
 #html-control,
 #election-chart {
-    flex: 1 1 35%;
+    flex: 1 1 50%;
 }
 
 #selection-grid {
@@ -343,35 +343,46 @@
  *
  * */
 
-#html-result {
-    text-align: center;
-    max-height: 250px;
-    background: var(--color-background);
-}
-
-#html-result .highcharts-dashboards-component-content {
-    background: var(--color-background);
-}
-
 #html-result .highcharts-dashboards-component-title {
     fill: var(--color-title);
     font-size: 1em;
     text-align: center;
 }
 
+#html-result .highcharts-dashboards-component-content {
+    background: var(--color-background);
+}
+
+/* Container custom HTML - 3 columns */
+#html-result-container {
+    text-align: center;
+    max-height: 250px;
+    display: flex;
+    flex-direction: row;
+}
+
+/* Left: Democrat candidate */
+#html-result-container #dem-cand {
+    flex: 0 1 15%;
+}
+
+/* Middle: Election result */
+#html-result-container #election-result {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Right: Republican candidate */
+#html-result #rep-cand {
+    flex: 0 1 15%;
+}
+
 #html-result img {
     /* Candidate portraits: original dimension 290 x 400 */
     max-width: 90%;
-    max-height: 150px;
+    height: 150px;
     width: auto;
-    height: auto;
-}
-
-#html-result #result-info {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    height: 250px;
 }
 
 #bar-container {
@@ -419,9 +430,8 @@
     padding-top: 15px;
 }
 
-#html-result .info em {
+#html-result .info b {
     padding: 0 10px;
-    font-weight: bold;
 }
 
 #info-to-win {
@@ -434,7 +444,12 @@
 #info-dem1,
 #info-rep1 {
     padding-bottom: 5px;
-    font-size: 20px;
+    font-size: 18px;
+}
+
+#info-dem1 b,
+#info-rep1 b {
+    font-size: 28px;
 }
 
 #info-dem2,
@@ -449,10 +464,18 @@
     margin-left: 10px;
 }
 
+#info-dem1 {
+    color: var(--highcharts-color-0);
+}
+
 #info-rep1,
 #info-rep2 {
     text-align: right;
     margin-right: 10px;
+}
+
+#info-rep1 {
+    color: var(--highcharts-color-1);
 }
 
 /* *

@@ -331,18 +331,7 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'html-result',
-                        layout: {
-                            rows: [{
-                                cells: [{
-                                    id: 'dem-info'
-                                }, {
-                                    id: 'result-info'
-                                }, {
-                                    id: 'rep-info'
-                                }]
-                            }]
-                        }
+                        id: 'html-result'
                     }, {
                         // Top right
                         id: 'html-control'
@@ -365,19 +354,9 @@ async function setupDashboard() {
         },
         components: [
             {
-                renderTo: 'dem-info',
+                renderTo: 'html-result',
                 type: 'CustomHTML',
-                id: 'html-dem-info'
-            },
-            {
-                renderTo: 'result-info',
-                type: 'CustomHTML',
-                id: 'html-result-info'
-            },
-            {
-                renderTo: 'rep-info',
-                type: 'CustomHTML',
-                id: 'html-rep-info'
+                id: 'html-result-div'
             },
             {
                 renderTo: 'html-control',
@@ -622,9 +601,7 @@ async function updateBoard(board, state, year) {
 
     const [
         // The order here must be the same as in the component definition in the Dashboard.
-        demInfo,
-        resultInfo,
-        repInfo,
+        resultHtml,
         controlHtml, // Updates bypass Dashboards
         usMap,
         historyChart,
@@ -638,20 +615,8 @@ async function updateBoard(board, state, year) {
     const candDem = electionData[year].candDem;
     const candRep = electionData[year].candRep;
 
-    await repInfo.update({
-        title: {
-            text: candRep
-        }
-    });
-
-    await demInfo.update({
-        title: {
-            text: candDem
-        }
-    });
-
     // Result info title
-    await resultInfo.update({
+    await resultHtml.update({
         title: {
             text: title
         }
@@ -678,14 +643,14 @@ async function updateBoard(board, state, year) {
 
     // Election information
     let el = document.getElementById('info-dem1');
-    el.innerHTML = demColVotes + ' ' + candDem;
+    el.innerHTML = `<b>${demColVotes}</b> ${candDem}`;
     el = document.getElementById('info-dem2');
-    el.innerHTML = `<em>${demPercent}%</em> ${demVotes.toLocaleString('en-US')}`;
+    el.innerHTML = `<b>${demPercent}%</b> ${demVotes.toLocaleString('en-US')}`;
 
     el = document.getElementById('info-rep1');
-    el.innerHTML = candRep + ' ' + repColVotes;
+    el.innerHTML = `${candRep} <b>${repColVotes}</b>`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = `${repVotes.toLocaleString('en-US')} <em>${repPercent}%</em>`;
+    el.innerHTML = `${repVotes.toLocaleString('en-US')} <b>${repPercent}%</b>`;
 
     // Result bar
     el = document.getElementById('bar-dem');
