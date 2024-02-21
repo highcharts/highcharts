@@ -94,7 +94,7 @@ class SidebarPopup extends BaseForm {
                         textContent: 'Placeholder text'
                     }
                 ]
-            });
+            }, board);
 
         }
     };
@@ -401,7 +401,7 @@ class SidebarPopup extends BaseForm {
             const options = merge(componentOptions, {
                 cell: newCell.id
             });
-            Bindings.addComponent(options, newCell);
+            Bindings.addComponent(options, sidebar.editMode.board, newCell);
             sidebar.editMode.setEditOverlay();
 
             return newCell;
