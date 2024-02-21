@@ -770,7 +770,7 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
-        if (this.board.editMode) {
+        if (this.board.guiEnabled) {
             if (height) {
                 // Get offset for border, padding
                 const pad =
