@@ -1,6 +1,3 @@
-// eslint-disable-next-line no-underscore-dangle
-const U = Highcharts._modules['Core/Utilities.js'];
-
 const currentMonth = Date.UTC(2023, 9);
 const revTarget = 105;
 const costTarget = 89;
@@ -76,15 +73,10 @@ const commonColumnOptions = {
         colorIndex: 1
     }],
     tooltip: {
-        formatter: function () {
-            const { x, y, colorIndex: color, series } = this;
-            const date = Highcharts.dateFormat('%B %Y', x);
-
-            return `<span style="font-size: 10px">${date}</span><br>
-                <span class="highcharts-color-${color}">&#9679;</span>&nbsp;
-                ${series.name}: $${(y / 1e6).toFixed(2)}M
-            `;
-        }
+        format: `<span style="font-size: 10px">{x:%B %Y}</span><br>
+            <span class="highcharts-color-{colorIndex}">&#9679;</span>&nbsp;
+            {series.name}: {(divide y 1000000):.2f}M
+        `
     },
     plotOptions: {
         column: {
@@ -584,7 +576,7 @@ async function togglePopup(open) {
     popup.children[0].children['datagrid-container'].innerHTML = '';
 
     const formatNumbers = function () {
-        return U.isNumber(this.value) ? `$${(
+        return Highcharts.isNumber(this.value) ? `$${(
             this.value / 1e6
         ).toFixed(2)}M` : '-';
     };
