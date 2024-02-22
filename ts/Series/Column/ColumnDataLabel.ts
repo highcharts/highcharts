@@ -73,7 +73,7 @@ namespace ColumnDataLabel {
             // Data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                (point as AreaRangePoint).below, // Fange series
+                (point as AreaRangePoint).below, // Range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, yLen)
             ),

@@ -62,7 +62,7 @@ export interface TreePointOptionsObject {
  * */
 
 /**
- * Creates an object map from parent id to childrens index.
+ * Creates an object map from parent id to children's index.
  *
  * @private
  * @function Highcharts.Tree#getListOfParents
@@ -148,7 +148,7 @@ function getNode(
         before(node, options);
     }
 
-    // Call getNode recursively on the children. Calulate the height of the
+    // Call getNode recursively on the children. Calculate the height of the
     // node, and the number of descendants.
     const children = ((mapOfIdToChildren[id] || [])).map((child): TreeNode => {
         const node = getNode(

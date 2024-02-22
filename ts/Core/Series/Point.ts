@@ -53,8 +53,6 @@ const {
     isFunction,
     isNumber,
     isObject,
-    merge,
-    objectEach,
     pick,
     syncTimeout,
     removeEvent,
@@ -491,18 +489,10 @@ class Point {
             series = this.series,
             seriesOptions = series.options;
 
-        // load event handlers on demand to save time on mouseover/out
-        if ((seriesOptions.point as any).events[eventType] ||
-            (
-                point.options &&
-                point.options.events &&
-                (point.options.events as any)[eventType]
-            )
-        ) {
-            point.importEvents();
-        }
+        // Load event handlers on demand to save time on mouseover/out
+        point.manageEvent(eventType);
 
-        // add default handler if in selection mode
+        // Add default handler if in selection mode
         if (eventType === 'click' && seriesOptions.allowPointSelect) {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
@@ -1234,7 +1224,7 @@ class Point {
                                 loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
 
-                            // Programatically selecting a point should restore
+                            // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
@@ -1264,14 +1254,16 @@ class Point {
     public onMouseOver(e?: PointerEvent): void {
         const point = this,
             series = point.series,
-            chart = series.chart,
-            pointer = chart.pointer;
+            { inverted, pointer } = series.chart;
 
-        e = e ?
-            pointer.normalize(e) :
-            // In cases where onMouseOver is called directly without an event
-            pointer.getChartCoordinatesFromPoint(point, chart.inverted) as any;
-        pointer.runPointActions(e as any, point);
+        if (pointer) {
+            e = e ?
+                pointer.normalize(e) :
+                // In cases where onMouseOver is called directly without an
+                // event
+                pointer.getChartCoordinatesFromPoint(point, inverted) as any;
+            pointer.runPointActions(e as any, point);
+        }
     }
 
     /**
@@ -1299,33 +1291,42 @@ class Point {
     }
 
     /**
-     * Import events from the series' and point's options. Only do it on
+     * Manage specific event from the series' and point's options. Only do it on
      * demand, to save processing time on hovering.
      *
      * @private
      * @function Highcharts.Point#importEvents
      */
-    public importEvents(): void {
-        if (!this.hasImportedEvents) {
-            const point = this,
-                options = merge(
-                    point.series.options.point as PointOptions,
-                    point.options
-                ),
-                events = options.events;
+    public manageEvent(eventType: string): void {
+        const point = this,
+            options = point.series.options.point || {},
+            userEvent =
+                options.events?.[eventType as keyof typeof options.events];
 
-            point.events = events;
+        if (
+            isFunction(userEvent) &&
+            (
+                !point.hcEvents?.[eventType] ||
+                // Some HC modules, like marker-clusters, draggable-poins etc.
+                // use events in their logic, so we need to be sure, that
+                // callback function is different
+                point.hcEvents?.[eventType]?.map((el): Function => el.fn)
+                    .indexOf(userEvent) === -1
+            )
+        ) {
+            addEvent(point, eventType, userEvent);
+            point.hasImportedEvents = true;
+        } else if (
+            point.hasImportedEvents &&
+            !userEvent &&
+            point.hcEvents?.[eventType]
+        ) {
+            removeEvent(point, eventType);
+            delete point.hcEvents[eventType];
 
-            objectEach(events, function (
-                event: Function,
-                eventType: string
-            ): void {
-                if (isFunction(event)) {
-                    addEvent(point, eventType, event);
-                }
-            });
-            this.hasImportedEvents = true;
-
+            if (!Object.keys(point.hcEvents)) {
+                point.hasImportedEvents = false;
+            }
         }
     }
 
@@ -1621,6 +1622,7 @@ class Point {
 
 interface Point extends PointLike {
     // merge extensions with point class
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
 }
 
 /* *
@@ -1677,7 +1679,7 @@ export default Point;
  * @callback Highcharts.PointClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
@@ -1746,10 +1748,10 @@ export default Point;
  * @callback Highcharts.PointMouseOutCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.PointerEvent} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1758,10 +1760,10 @@ export default Point;
  * @callback Highcharts.PointMouseOverCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1791,10 +1793,10 @@ export default Point;
  * @callback Highcharts.PointRemoveCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1810,10 +1812,10 @@ export default Point;
  * @callback Highcharts.PointUpdateCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointUpdateEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1860,10 +1862,10 @@ export default Point;
  * @callback Highcharts.PointSelectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1873,10 +1875,10 @@ export default Point;
  * @callback Highcharts.PointUnselectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 ''; // keeps doclets above in JS file.

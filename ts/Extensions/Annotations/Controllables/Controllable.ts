@@ -346,7 +346,7 @@ export default Controllable;
  * */
 
 /**
- * An object which denots a controllable's anchor positions - relative and
+ * An object which denotes a controllable's anchor positions - relative and
  * absolute.
  *
  * @private

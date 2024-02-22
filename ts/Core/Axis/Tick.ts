@@ -1200,7 +1200,7 @@ export default Tick;
  */
 
 /**
- * Additonal time tick information.
+ * Additional time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject

@@ -274,7 +274,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * The function responsible for calculating the parent node radius
-     * based on the total surface of iniside-bubbles and the group BBox
+     * based on the total surface of inside-bubbles and the group BBox
      * @private
      */
     public calculateParentRadius(): void {
@@ -484,7 +484,7 @@ class PackedBubbleSeries extends BubbleSeries {
     }
 
     /**
-     * Packedbubble has two separate collecions of nodes if split, render
+     * Packedbubble has two separate collections of nodes if split, render
      * dataLabels for both sets:
      * @private
      */
@@ -694,7 +694,7 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Mouse up action, finalizing drag&drop.
      * @private
-     * @param {Highcharts.Point} point The point that event occured.
+     * @param {Highcharts.Point} point The point that event occurred.
      */
     public onMouseUp(
         dnPoint: DragNodesPoint
@@ -917,7 +917,7 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Function that is adding one bubble based on positions and sizes of
      * two other bubbles, lastBubble is the last added bubble, newOrigin is
-     * the bubble for positioning new bubbles. nextBubble is the curently
+     * the bubble for positioning new bubbles. nextBubble is the currently
      * added bubble for which we are calculating positions
      * @private
      * @param {Array<number>} lastBubble The closest last bubble
