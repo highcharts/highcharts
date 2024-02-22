@@ -237,6 +237,7 @@ class HTMLComponent extends Component {
         super.render();
         this.constructTree();
         this.sync.start();
+
         this.emit({ type: 'afterRender' });
         return this;
     }
@@ -245,7 +246,11 @@ class HTMLComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        super.resize(width, height);
+        // update height only when resizer is enabled, otherwise,
+        // run default styles from CSS
+        if (this.board.editMode?.resizer?.isActive) {
+            super.resize(width, height);
+        }
         return this;
     }
 
