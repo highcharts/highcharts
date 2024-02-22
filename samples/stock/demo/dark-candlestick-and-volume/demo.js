@@ -127,22 +127,14 @@
             crosshair: {
                 snap: false
             },
-            title: {
-                text: 'Price',
-                reserveSpace: false,
-                style: {
-                    visibility: 'hidden'
-                }
+            accessibility: {
+                description: 'candlestick chart showing price for OHLC'
             }
         }, {
             top: '70%',
             height: '30%',
-            title: {
-                text: 'Volume',
-                reserveSpace: false,
-                style: {
-                    visibility: 'hidden'
-                }
+            accessibility: {
+                description: 'column chart showing volume'
             }
         }],
 
