@@ -50,8 +50,7 @@ Highcharts.chart('container', {
             },
             label: {
                 style: {
-                    fontSize: '16px',
-                    opacity: 0.6
+                    fontSize: '16px'
                 }
             }
         }
