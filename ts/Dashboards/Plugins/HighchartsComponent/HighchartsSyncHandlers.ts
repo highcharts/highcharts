@@ -107,7 +107,7 @@ const configs: {
                 }
 
                 const { dataCursor: cursor } = board;
-                const table = this.connector && this.connector.table;
+                const table = this.connectorHandler?.connector?.table;
                 if (chart?.series && table) {
                     chart.series.forEach((series): void => {
                         series.update({
@@ -176,7 +176,8 @@ const configs: {
                     return;
                 }
                 const component = this as HighchartsComponent;
-                const { chart, connector, board } = component;
+                const { chart, board } = component;
+                const connector = component.connectorHandler?.connector;
                 if (!board || !chart) {
                     return;
                 }
@@ -231,7 +232,8 @@ const configs: {
                     const component = this as HighchartsComponent;
                     const cleanupCallbacks: Function[] = [];
 
-                    const { chart, connector, board } = component;
+                    const { chart, board } = component;
+                    const connector = component.connectorHandler?.connector;
                     const table = connector && connector.table;
 
                     const { dataCursor: cursor } = board;
@@ -432,7 +434,7 @@ const configs: {
                     if (!dataCursor) {
                         return;
                     }
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
 
                     if (!table) {
                         return;
@@ -442,7 +444,7 @@ const configs: {
                 };
 
                 const unregisterCursorListeners = (): void => {
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
                     if (table) {
                         board.dataCursor.removeListener(table.id, 'series.show', handleShow);
                         board.dataCursor.removeListener(table.id, 'series.hide', handleHide);
@@ -461,7 +463,7 @@ const configs: {
                 const getHoveredPoint = (
                     e: DataCursor.Event
                 ): Point | undefined => {
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
 
                     if (!table) {
                         return;
@@ -649,7 +651,7 @@ const configs: {
                     const { dataCursor: cursor } = board;
 
                     if (cursor) {
-                        const table = this.connector && this.connector.table;
+                        const table = this.connectorHandler?.connector?.table;
                         if (table) {
                             cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                             cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -660,7 +662,7 @@ const configs: {
                 };
 
                 const unregisterCursorListeners = (): void => {
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
                     if (table) {
                         board.dataCursor.removeListener(table.id, 'point.mouseOver', handleCursor);
                         board.dataCursor.removeListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -729,7 +731,7 @@ const configs: {
 
                         const addCursorListeners = (): void => {
                             const { dataCursor: cursor } = board;
-                            const { connector } = this;
+                            const connector = this.connectorHandler?.connector;
 
                             if (connector) {
                                 const { table } = connector;

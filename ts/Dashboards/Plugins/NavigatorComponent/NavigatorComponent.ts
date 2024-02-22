@@ -270,8 +270,9 @@ class NavigatorComponent extends Component {
             }
         }
 
-        if (this.connector) {
-            const columns = this.connector.table.getColumnNames();
+        if (this.connectorHandler?.connector) {
+            const columns =
+                this.connectorHandler.connector.table.getColumnNames();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -379,9 +380,10 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart;
+        const connector = this.connectorHandler?.connector;
 
-        if (this.connector) {
-            const table = this.connector.table,
+        if (connector) {
+            const table = connector.table,
                 column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [];
 
@@ -413,7 +415,7 @@ class NavigatorComponent extends Component {
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
             this.sync.syncConfig.crossfilter as Sync.CrossfilterSyncOptions;
-        const table = this.connector?.table;
+        const table = this.connectorHandler?.connector?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];

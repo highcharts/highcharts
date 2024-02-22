@@ -249,11 +249,12 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        if (this.connector) {
+        if (this.connectorHandler?.connector) {
+            const connector = this.connectorHandler.connector;
             // reload the store when polling
-            this.connector.on('afterLoad', (e: DataConnector.Event): void => {
-                if (e.table && this.connector) {
-                    this.connector.table.setColumns(e.table.getColumns());
+            connector.on('afterLoad', (e: DataConnector.Event): void => {
+                if (e.table) {
+                    connector.table.setColumns(e.table.getColumns());
                 }
             });
         }
@@ -334,13 +335,18 @@ class HighchartsComponent extends Component {
      * @private
      * */
     private setupConnectorUpdate(): void {
-        const { connector: store, chart } = this;
+        const { connectorHandler, chart } = this;
 
-        if (store && chart && this.options.allowConnectorUpdate) {
+        if (connectorHandler && chart && this.options.allowConnectorUpdate) {
             chart.series.forEach((series): void => {
                 series.points.forEach((point): void => {
                     addEvent(point, 'drag', (): void => {
-                        this.onChartUpdate(point, store);
+                        if (connectorHandler.connector) {
+                            this.onChartUpdate(
+                                point,
+                                connectorHandler.connector
+                            );
+                        }
                     });
                 });
             });
@@ -407,20 +413,24 @@ class HighchartsComponent extends Component {
      * @private
      */
     public updateSeries(): void {
-        const { chart, connector } = this;
-        if (!chart || !connector) {
+        const { chart, connectorHandler } = this;
+        if (!chart || !connectorHandler?.connector) {
             return;
         }
 
-        if (this.presentationModifier) {
-            this.presentationTable = this.presentationModifier
-                .modifyTable(connector.table.modified.clone()).modified;
+        if (connectorHandler.presentationModifier) {
+            connectorHandler.presentationTable =
+                connectorHandler.presentationModifier.modifyTable(
+                    connectorHandler.connector.table.modified.clone()
+                ).modified;
         } else {
-            this.presentationTable = connector.table;
+            connectorHandler.presentationTable =
+                connectorHandler.connector.table;
         }
 
-        const table = this.presentationTable.modified;
-        const modifierOptions = this.presentationTable.getModifier()?.options;
+        const table = connectorHandler.presentationTable.modified;
+        const modifierOptions =
+            connectorHandler.presentationTable.getModifier()?.options;
 
         this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -562,7 +572,9 @@ class HighchartsComponent extends Component {
     ): ColumnAssignmentOptions[] {
         const result: ColumnAssignmentOptions[] = [];
 
-        const firstColumn = this.presentationTable?.getColumn(columnNames[0]);
+        const firstColumn =
+            this.connectorHandler?.presentationTable?.getColumn(columnNames[0]);
+
         if (firstColumn && isString(firstColumn[0])) {
             for (let i = 1, iEnd = columnNames.length; i < iEnd; ++i) {
                 result.push({
@@ -684,28 +696,32 @@ class HighchartsComponent extends Component {
             });
         }
     }
-    public setConnector(connector: DataConnector | undefined): this {
-        const chart = this.chart;
-        if (
-            this.connector &&
-            chart &&
-            chart.series &&
-            this.connector.table.id !== connector?.table.id
-        ) {
-            const storeTableID = this.connector.table.id;
-            for (let i = chart.series.length - 1; i >= 0; i--) {
-                const series = chart.series[i];
 
-                if (series.options.id?.indexOf(storeTableID) !== -1) {
-                    series.remove(false);
-                }
-            }
-        }
-        super.setConnector(connector);
+    // (DD) - need to handle this differently
+    // public setConnector(): this {
+    //     const chart = this.chart;
+    //     const connector = this.connectorHandler?.connector;
+
+    //     if (
+    //         connector &&
+    //         chart &&
+    //         chart.series &&
+    //         this.connector.table.id !== connector?.table.id
+    //     ) {
+    //         const storeTableID = this.connector.table.id;
+    //         for (let i = chart.series.length - 1; i >= 0; i--) {
+    //             const series = chart.series[i];
+
+    //             if (series.options.id?.indexOf(storeTableID) !== -1) {
+    //                 series.remove(false);
+    //             }
+    //         }
+    //     }
+    //     super.setConnector(connector);
 
 
-        return this;
-    }
+    //     return this;
+    // }
 
     public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds =

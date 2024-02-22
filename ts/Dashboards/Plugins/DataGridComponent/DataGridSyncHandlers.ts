@@ -60,7 +60,7 @@ const configs: {
                 const { dataCursor: cursor } = board;
 
                 const onDataGridHover = (e: any): void => {
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
                     if (table) {
                         const row = e.row;
                         const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
@@ -75,7 +75,7 @@ const configs: {
                 };
 
                 const onDataGridMouseOut = (): void => {
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
                     if (table) {
                         cursor.emitCursor(table, {
                             type: 'position',
@@ -145,7 +145,7 @@ const configs: {
                     if (!cursor) {
                         return;
                     }
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
                     if (!table) {
                         return;
                     }
@@ -156,7 +156,7 @@ const configs: {
 
                 const unregisterCursorListeners = (): void => {
                     const cursor = board.dataCursor;
-                    const table = this.connector && this.connector.table;
+                    const table = this.connectorHandler?.connector?.table;
                     if (!table) {
                         return;
                     }
@@ -194,7 +194,7 @@ const configs: {
                 if (!cursor) {
                     return;
                 }
-                const table = this.connector && this.connector.table;
+                const table = this.connectorHandler?.connector?.table;
 
                 if (!table) {
                     return;
@@ -204,7 +204,7 @@ const configs: {
             };
 
             const unregisterCursorListeners = (): void => {
-                const table = this.connector && this.connector.table;
+                const table = this.connectorHandler?.connector?.table;
                 const { dataCursor: cursor } = board;
 
                 if (!table) {
@@ -249,7 +249,7 @@ const configs: {
                 if (!cursor) {
                     return;
                 }
-                const table = this.connector && this.connector.table;
+                const table = this.connectorHandler?.connector?.table;
 
                 if (!table) {
                     return;
@@ -260,7 +260,7 @@ const configs: {
             };
 
             const unregisterCursorListeners = (): void => {
-                const table = this.connector && this.connector.table;
+                const table = this.connectorHandler?.connector?.table;
                 const { dataCursor: cursor } = board;
 
                 if (!table) {

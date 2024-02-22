@@ -24,7 +24,6 @@
 
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
-import type { ComponentConnectorOptions } from './ComponentOptions';
 import type {
     ComponentType,
     ComponentTypeRegistry
@@ -32,12 +31,12 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Serializable from '../Serializable';
-import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
+import ComponentConnectorHandler from './ComponentConnectorHandler.js';
 import ComponentGroup from './ComponentGroup.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
@@ -190,13 +189,9 @@ abstract class Component {
      */
     public static syncHandlers: Sync.OptionsRecord = {};
     /**
-     * Connector that allows you to load data via URL or from a local source.
+     * The connector handlers for the component.
      */
-    public connector?: Component.ConnectorTypes;
-    /**
-     * The id of the connector in the data pool to use.
-     */
-    protected connectorId?: string;
+    public connectorHandler?: ComponentConnectorHandler;
     /**
      * @internal
      * The board the component belongs to
@@ -247,18 +242,6 @@ abstract class Component {
      */
     public callbackRegistry = new CallbackRegistry();
     /**
-     * The interval for rendering the component on data changes.
-     * @internal
-     */
-    private tableEventTimeout?: number;
-    /**
-     * Event listeners tied to the current DataTable. Used for rerendering the
-     * component on data changes.
-     *
-     * @internal
-     */
-    private tableEvents: Function[] = [];
-    /**
      * Event listeners tied to the parent cell. Used for rendering/resizing the
      * component on interactions.
      *
@@ -276,20 +259,6 @@ abstract class Component {
      * @internal
      */
     protected syncHandlers?: Sync.OptionsRecord;
-
-    /**
-     * DataModifier that is applied on top of modifiers set on the DataStore.
-     *
-     * @internal
-     */
-    public presentationModifier?: DataModifier;
-    /**
-     * The table being presented, either a result of the above or a way to
-     * modify the table via events.
-     *
-     * @internal
-     */
-    public presentationTable?: DataTable;
 
     /**
      * The active group of the component. Used for sync.
@@ -351,10 +320,13 @@ abstract class Component {
             this.options.id :
             uniqueKey();
 
+        if (this.options.connector) {
+            this.connectorHandler =
+                new ComponentConnectorHandler(this, this.options.connector);
+        }
+
         this.editableOptions =
             new EditableOptions(this, options.editableOptionsBindings);
-
-        this.presentationModifier = this.options.presentationModifier;
 
         this.dimensions = {
             width: null,
@@ -424,32 +396,6 @@ abstract class Component {
      *  Functions
      *
      * */
-
-    /**
-     * Inits connectors for the component and rerenders it.
-     *
-     * @returns
-     * Promise resolving to the component.
-     */
-    public async initConnector(): Promise<this> {
-        const connectorId = this.options.connector?.id,
-            dataPool = this.board.dataPool;
-
-        if (
-            connectorId &&
-            (
-                this.connectorId !== connectorId ||
-                dataPool.isNewConnector(connectorId)
-            )
-        ) {
-            this.cell?.setLoadingState();
-
-            const connector = await dataPool.getConnector(connectorId);
-            this.setConnector(connector);
-        }
-
-        return this;
-    }
 
     /**
     * Filter the sync options that are declared in the component options.
@@ -571,169 +517,53 @@ abstract class Component {
     }
 
     /**
-     * Adds event listeners to data table.
-     * @param table
-     * Data table that is source of data.
-     * @internal
+     * TODO(DD)
      */
-    private setupTableListeners(table: DataTable): void {
-        const connector = this.connector;
-
-        if (connector) {
-            if (table) {
-                [
-                    'afterDeleteColumns',
-                    'afterDeleteRows',
-                    'afterSetCell',
-                    'afterSetConnector',
-                    'afterSetColumns',
-                    'afterSetRows'
-                ].forEach((event: any): void => {
-                    this.tableEvents.push((table)
-                        .on(event, (e: any): void => {
-                            clearTimeout(this.tableEventTimeout);
-                            this.tableEventTimeout = Globals.win.setTimeout(
-                                (): void => {
-                                    this.emit({
-                                        ...e,
-                                        type: 'tableChanged'
-                                    });
-                                    this.tableEventTimeout = void 0;
-                                });
-                        }));
-                });
-            }
-
-            this.tableEvents.push(connector.on('afterLoad', (): void => {
-                clearTimeout(this.tableEventTimeout);
-                this.tableEventTimeout = Globals.win.setTimeout(
-                    (): void => {
-                        this.emit({
-                            target: this,
-                            type: 'tableChanged'
-                        });
-
-                        this.tableEventTimeout = void 0;
-                    });
-            }));
+    public async initConnector(): Promise<this> {
+        if (this.connectorHandler) {
+            await this.connectorHandler.initConnector();
         }
+        return this;
     }
 
-    /**
-     * Remove event listeners in data table.
-     * @internal
-     */
-    private clearTableListeners(): void {
-        const connector = this.connector,
-            tableEvents = this.tableEvents;
-
-        if (tableEvents.length) {
-            tableEvents.forEach(
-                (removeEventCallback): void => removeEventCallback()
-            );
-        }
-
-        if (connector) {
-            tableEvents.push(connector.table.on(
-                'afterSetModifier',
-                (e): void => {
-                    if (e.type === 'afterSetModifier') {
-                        clearTimeout(this.tableEventTimeout);
-                        this.tableEventTimeout = Globals.win.setTimeout(
-                            (): void => {
-                                this.emit({
-                                    ...e,
-                                    type: 'tableChanged'
-                                });
-                                this.tableEventTimeout = void 0;
-                            });
-
-                    }
-                }
-            ));
-        }
-    }
 
     /**
-     * Attaches data store to the component.
-     * @param connector
-     * Connector of data.
-     *
-     * @returns
-     * Component which can be used in chaining.
-     *
-     * @internal
+     * TODO(DD) - reconsider existence of this method
      */
-    public setConnector(connector: Component.ConnectorTypes | undefined): this {
+    public setConnector(): this {
+        const { connector } = this.connectorHandler ?? {};
 
         fireEvent(this, 'setConnector', { connector });
 
-        // Clean up old event listeners
-        while (this.tableEvents.length) {
-            const eventCallback = this.tableEvents.pop();
-            if (typeof eventCallback === 'function') {
-                eventCallback();
-            }
-        }
-
-        this.connector = connector;
-
-        if (connector) {
-            // Set up event listeners
-            this.clearTableListeners();
-            this.setupTableListeners(connector.table);
-
-            // re-setup if modifier changes
-            connector.table.on(
-                'setModifier',
-                (): void => this.clearTableListeners()
-            );
-            connector.table.on(
-                'afterSetModifier',
-                (e: DataTable.SetModifierEvent): void => {
-                    if (e.type === 'afterSetModifier' && e.modified) {
-                        this.setupTableListeners(e.modified);
-                    }
-                }
-            );
-
-
-            // Add the component to a group based on the
-            // connector table id by default
-            // TODO: make this configurable
-            const tableID = connector.table.id;
-
-            if (!ComponentGroup.getComponentGroup(tableID)) {
-                ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
-            }
-
-            const group = ComponentGroup.getComponentGroup(tableID);
-            if (group) {
-                group.addComponents([this.id]);
-                this.activeGroup = group;
-            }
-        }
+        // What the component group exactly does?
+        // const group = ComponentGroup.getComponentGroup(tableID);
+        // if (group) {
+        //     group.addComponents([this.id]);
+        //     this.activeGroup = group;
+        // }
 
         fireEvent(this, 'afterSetConnector', { connector });
 
         return this;
     }
 
-    /** @internal */
-    setActiveGroup(group: ComponentGroup | string | null): void {
-        if (typeof group === 'string') {
-            group = ComponentGroup.getComponentGroup(group) || null;
-        }
-        if (group instanceof ComponentGroup) {
-            this.activeGroup = group;
-        }
-        if (group === null) {
-            this.activeGroup = void 0;
-        }
-        if (this.activeGroup) {
-            this.activeGroup.addComponents([this.id]);
-        }
-    }
+
+    // /** @internal */ - not used (DD)
+    // setActiveGroup(group: ComponentGroup | string | null): void {
+    //     if (typeof group === 'string') {
+    //         group = ComponentGroup.getComponentGroup(group) || null;
+    //     }
+    //     if (group instanceof ComponentGroup) {
+    //         this.activeGroup = group;
+    //     }
+    //     if (group === null) {
+    //         this.activeGroup = void 0;
+    //     }
+    //     if (this.activeGroup) {
+    //         this.activeGroup.addComponents([this.id]);
+    //     }
+    // }
+
     /**
      * Gets height of the component's content.
      *
@@ -842,17 +672,18 @@ abstract class Component {
 
         this.options = merge(this.options, newOptions);
 
-        if (
-            this.options.connector?.id &&
-            this.connectorId !== this.options.connector.id
-        ) {
-            const connector = await this.board.dataPool
-                .getConnector(this.options.connector.id);
+        // (DD) - make sure that it works correctly and if we can simplify it.
+        if (this.options.connector) {
+            if (!this.connectorHandler) {
+                this.connectorHandler = new ComponentConnectorHandler(
+                    this, this.options.connector
+                );
+            }
 
-            this.setConnector(connector);
+            await this.connectorHandler.update(this.options.connector);
+            this.setConnector();
         }
-
-        this.options = merge(this.options, newOptions);
+        // ---
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
@@ -1022,10 +853,8 @@ abstract class Component {
         // call unmount
         fireEvent(this, 'unmount');
 
-        // Unregister events
-        this.tableEvents.forEach((eventCallback): void => eventCallback());
+        this.connectorHandler?.destroy();
         this.element.remove();
-
     }
 
     /** @internal */
@@ -1253,13 +1082,11 @@ namespace Component {
         /** @internal */
         editableOptionsBindings?: EditableOptions.OptionsBindings;
         /** @internal */
-        presentationModifier?: DataModifier;
-        /** @internal */
         sync?: Sync.RawOptionsRecord;
         /**
          * Connector options
          */
-        connector?: ComponentConnectorOptions;
+        connector?: ComponentConnectorHandler.ConnectorOptions;
         /**
          * Sets an ID for the component's container.
          */

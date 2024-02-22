@@ -22,9 +22,7 @@
 
 
 import type Component from '../../Components/Component';
-import type {
-    ComponentConnectorOptions
-} from '../../Components/ComponentOptions';
+import type ComponentConnectorHandler from '../../Components/ComponentConnectorHandler.js';
 import type Sync from '../../Components/Sync/Sync';
 import type { Options as HighchartsOptions } from '../HighchartsTypes';
 
@@ -127,7 +125,7 @@ export interface Options extends Component.Options {
 /**
  * Highcharts component connector options.
  */
-export interface ConnectorOptions extends ComponentConnectorOptions {
+export interface ConnectorOptions extends ComponentConnectorHandler.ConnectorOptions {
     /**
      * It allows to assign the data from the connector to specific series in the
      * chart in different ways using series IDs and column names.

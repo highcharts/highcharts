@@ -91,11 +91,11 @@ const configs: {
             const extremesListener = (e: DataCursor.Event): void => {
                 const cursor = e.cursor;
 
-                if (!component.connector) {
+                if (!component.connectorHandler?.connector) {
                     return;
                 }
 
-                const table = component.connector.table;
+                const table = component.connectorHandler.connector.table;
 
                 // assume first column with unique keys as fallback
                 let extremesColumn = table.getColumnNames()[0],
@@ -143,7 +143,7 @@ const configs: {
             };
 
             const registerCursorListeners = (): void => {
-                const table = component.connector && component.connector.table;
+                const table = this.connectorHandler?.connector?.table;
 
                 if (table) {
                     dataCursor.addListener(
@@ -165,7 +165,7 @@ const configs: {
             };
 
             const unregisterCursorListeners = (): void => {
-                const table = component.connector && component.connector.table;
+                const table = this.connectorHandler?.connector?.table;
 
                 if (table) {
                     dataCursor.removeListener(
@@ -202,8 +202,8 @@ const configs: {
             const afterSetExtremes = async (
                 extremes: Axis.ExtremesObject
             ): Promise<void> => {
-                if (component.connector) {
-                    const table = component.connector.table,
+                if (component.connectorHandler?.connector) {
+                    const table = component.connectorHandler.connector.table,
                         dataCursor = component.board.dataCursor,
                         filterColumn = component.getColumnAssignment()[0],
                         [min, max] = component.getAxisExtremes();
@@ -262,8 +262,8 @@ const configs: {
             const afterSetExtremes = (
                 extremes: Axis.ExtremesObject
             ): void => {
-                if (component.connector) {
-                    const table = component.connector.table,
+                if (component.connectorHandler?.connector) {
+                    const table = component.connectorHandler.connector.table,
                         dataCursor = component.board.dataCursor,
                         filterColumn = component.getColumnAssignment()[0],
                         [min, max] = component.getAxisExtremes();
