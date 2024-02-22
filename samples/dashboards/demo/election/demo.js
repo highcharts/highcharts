@@ -23,6 +23,7 @@
 // Useful links (TBD: remove before release )
 // -----------------------------------------------------------------------------
 // * https://www.highcharts.com/demo/maps/data-class-two-ranges
+// * https://www.highcharts.com/demo/maps/map-pies
 // * https://www.highcharts.com/demo/highcharts/column-comparison
 // * https://www.presidency.ucsb.edu/statistics/elections
 // * https://edition.cnn.com/election/2020/results/president
@@ -54,9 +55,6 @@ const electionYears = Object.keys(elections).reverse();
 
 // Election data loaded from CSV file and converted to JSON
 let electionData = null;
-
-// From the data pool: one data table for each election year
-const dataTables = [];
 
 
 // Launches the Dashboards application
@@ -343,11 +341,22 @@ async function setupDashboard() {
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
-                    borderWidth: 1,
                     chart: {
                         type: 'map',
                         map: mapData,
-                        styledMode: false
+                        styledMode: false,
+                        events: {
+                            click: function () {
+                                // Clicked outside map ?
+                                if (selectedState !== 'US') {
+                                    // Reset map
+                                    onStateClicked(board, 'US');
+                                }
+                                // Reset zoom
+                                const map = getComponent(board, 'election-map').chart;
+                                map.mapZoom();
+                            }
+                        }
                     },
                     title: {
                         text: '' // Populated later
@@ -409,7 +418,7 @@ async function setupDashboard() {
                                         // selected state.
                                         selectedState = 'US';
                                     }
-                                    await onStateClicked(board, selectedState);
+                                    onStateClicked(board, selectedState);
                                 }
                             }
                         }
@@ -424,10 +433,12 @@ async function setupDashboard() {
                         }
                     }],
                     tooltip: {
-                        headerFormat: '<span style="font-size: 14px;font-weight:bold">{point.key}</span><br/>',
-                        pointFormat: 'Winner: {point.custom.winner}<br/><br/>' +
-                            'Rep.: {point.custom.votesRep} elector(s), {point.custom.percentRep}% of votes<br/>' +
-                            'Dem.: {point.custom.votesDem} elector(s), {point.custom.percentDem}% of votes'
+                        useHTML: true,
+                        headerFormat: '<table class="map-tooltip"><caption>{point.key}</caption><tr><th>Party</th><th>Electors</th><th>Votes</th></tr>',
+                        pointFormat: '<tr><td>Dem.</td><td>{point.custom.elVotesDem}</td><td>{point.custom.votesDem}</td></tr>' +
+                            '<tr><td>Rep.</td><td>{point.custom.elVotesRep}</td><td>{point.custom.votesRep}</td></tr>' +
+                            '<tr><th colspan="3">{point.custom.winner}</th></tr>',
+                        footerFormat: '</table>'
                     },
                     lang: {
                         accessibility: {
@@ -464,20 +475,23 @@ async function setupDashboard() {
                     },
                     tooltip: {
                         enabled: true,
-                        format: '{point.electors} electors'
+                        format: '{point.candidate}: {point.electors} electors'
                     },
                     plotOptions: {
-                        series: {
+                        column: {
                             dataLabels: [{
+                                align: 'center',
+                                verticalAlign: 'bottom',
+                                inside: true,
                                 enabled: true,
                                 rotation: -90,
-                                format: '{point.y:.1f}%',
-                                y: 50 // Pixels down from the top
+                                y: -5, // Pixels up from bottom
+                                format: '{point.candidate}'
                             }, {
                                 enabled: true,
                                 rotation: -90,
-                                format: '{point.candidate}',
-                                y: 110
+                                format: '{point.y:.1f}%',
+                                y: 40 // Pixels down from the top
                             }]
                         }
                     },
@@ -560,11 +574,6 @@ async function setupDashboard() {
     // Initialize data
     await onYearClicked(board, selectedYear);
 
-    // Pre-load all votes tables
-    electionYears.forEach(async function (year) {
-        dataTables.push(await getVotesTable(board, year));
-    });
-
     // Handle change year events
     Highcharts.addEvent(
         document.getElementById('election-year'),
@@ -576,7 +585,7 @@ async function setupDashboard() {
             await onYearClicked(board, selectedYear);
 
             // Reset zoom
-            const map = board.mountedComponents[2].component.chart;
+            const map = getComponent(board, 'election-map').chart;
             map.mapZoom();
         }
     );
@@ -702,17 +711,18 @@ async function updateMapComponent(component, voteTable, year) {
         const row = voteTable.getRowIndexBy('postal-code', state['postal-code']);
         const percentRep = voteTable.getCellAsNumber('repPercent', row);
         const percentDem = voteTable.getCellAsNumber('demPercent', row);
-        const elVotesRep = voteTable.getCellAsNumber('repColVotes', row);
-        const elVotesDem = voteTable.getCellAsNumber('demColVotes', row);
 
         state.update({
+            // Determine color
             value: Number(percentRep - percentDem),
+            // For use in tooltip
             custom: {
-                winner: percentRep > percentDem ? 'Republican' : 'Democrat',
-                votesDem: elVotesDem,
-                votesRep: elVotesRep,
-                percentDem: percentDem,
-                percentRep: percentRep
+                winner: percentRep > percentDem ? electionData[year].candRep : electionData[year].candDem,
+                elVotesDem: voteTable.getCellAsNumber('demColVotes', row),
+                elVotesRep: voteTable.getCellAsNumber('repColVotes', row),
+                votesDem: voteTable.getCell('demVoteSummary', row),
+                votesRep: voteTable.getCell('repVoteSummary', row),
+                totalVotes: voteTable.getCellAsNumber('totalVotes', row)
             }
         });
     });
@@ -745,7 +755,7 @@ async function updateGridComponent(component, year) {
 
 async function onStateClicked(board, state) {
     // Get election data
-    const voteTable = dataTables[0];
+    const voteTable = await getVotesTable(board, electionYears[0]);
     const row = voteTable.getRowIndexBy('postal-code', state);
     const stateName = voteTable.getCell('state', row);
 
@@ -795,7 +805,9 @@ async function onYearClicked(board, year) {
 }
 
 
+//
 // Create custom HTML component (TBD: remove when integrated with Dashboards)
+//
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
     AST = Highcharts.AST;
@@ -823,5 +835,7 @@ class CustomHTML extends HTMLComponent {
 
 ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 
+//
 // Launch the application
+//
 setupDashboard();

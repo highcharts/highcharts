@@ -315,24 +315,8 @@
     opacity: 0.6;
 }
 
-#election-map .highcharts-tooltip {
-    fill: none;
-    filter: none;
-    stroke: none;
-}
-
-#election-map div.highcharts-tooltip {
-    color: var(--color-tooltip-text);
-}
-
 #election-map text.highcharts-title {
     fill: var(--color-title-text);
-}
-
-#election-map .highcharts-tooltip-box {
-    fill: var(--color-tooltip-background);
-    fill-opacity: 1;
-    stroke: none;
 }
 
 #election-map .highcharts-zoom-in text {
@@ -343,11 +327,50 @@
     transform: translate(2px, -1px);
 }
 
+#election-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#election-map .highcharts-tooltip-box {
+    fill: #9eb8f9;
+    fill-opacity: 1;
+    stroke: none;
+}
+
+/* Custom map tooltip */
+
+#election-map .map-tooltip caption {
+    font-size: 13px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+#election-map .map-tooltip td,
+#election-map .map-tooltip th {
+    background-color: var(--color-tooltip-background);
+    text-align: left;
+    padding: 3px;
+}
+
+/* Electoral votes */
+#election-map .map-tooltip td:nth-of-type(2) {
+    text-align: center;
+}
+
+/* Winning candidate */
+#election-map tr:nth-of-type(4) th {
+    font-size: 12px;
+    text-align: center;
+}
+
 /* *
  *
  *  Election chart (history)
  *
  * */
+
 #election-chart .highcharts-dashboards-component-title {
     fill: var(--color-title);
     font-size: 1.2em;
