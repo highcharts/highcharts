@@ -128,13 +128,13 @@
                 snap: false
             },
             accessibility: {
-                description: 'candlestick chart showing price for OHLC'
+                description: 'price'
             }
         }, {
             top: '70%',
             height: '30%',
             accessibility: {
-                description: 'column chart showing volume'
+                description: 'volume'
             }
         }],
 
