@@ -129,7 +129,8 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: board.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -138,7 +139,6 @@ namespace Bindings {
         }
 
         const component = new ComponentClass(cell, options, board);
-
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
             console.error(e);
@@ -147,7 +147,8 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text: board.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
