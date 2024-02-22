@@ -199,9 +199,9 @@ class StandaloneNavigator {
         );
         removeEventCallbacks.push(removeSetRangeEvent);
 
-        let boundAxis = this.boundAxes.find(
-            (entry): boolean => entry.axis === axis
-        );
+        let boundAxis = this.boundAxes.filter(function (boundAxis): boolean {
+            return boundAxis.axis === axis;
+        })[0];
 
         if (!boundAxis) {
             boundAxis = { axis, callbacks: [] };
@@ -249,7 +249,7 @@ class StandaloneNavigator {
                 );
             });
 
-            this.boundAxes = [];
+            this.boundAxes.length = 0;
 
             return;
         }
@@ -258,16 +258,13 @@ class StandaloneNavigator {
             axisOrChart :
             axisOrChart.xAxis[0];
 
-        const boundAxisIndex = this.boundAxes.findIndex(
-            (entry): boolean => entry.axis === axis
-        );
-
-        if (boundAxisIndex !== -1) {
-            this.boundAxes[boundAxisIndex].callbacks.forEach(
-                (callback): void => callback()
-            );
-
-            this.boundAxes.splice(boundAxisIndex, 1);
+        for (let i = this.boundAxes.length - 1; i >= 0; i--) {
+            if (this.boundAxes[i].axis === axis) {
+                this.boundAxes[i].callbacks.forEach(
+                    (callback): void => callback()
+                );
+                this.boundAxes.splice(i, 1);
+            }
         }
     }
 
@@ -283,7 +280,7 @@ class StandaloneNavigator {
                 (removeCallback): void => removeCallback()
             );
         });
-        this.boundAxes = [];
+        this.boundAxes.length = 0;
         this.navigator.destroy();
         this.navigator.chart.destroy();
     }
