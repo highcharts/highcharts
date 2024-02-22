@@ -150,7 +150,7 @@ export interface ConnectorOptions extends ComponentConnectorOptions {
      *
      * // Two-dimensional data column assignment
      * columnAssignment: [{
-     *     seriesID: 'mySeriesId',
+     *     seriesId: 'mySeriesId',
      *     data: ['myX', 'myY']
      * }]
      *

@@ -146,7 +146,7 @@ columnAssignment: [{
 2. `string[]` - names of the columns that data will be used in the two-dimensional format.
 ```js
 columnAssignment: [{
-    seriesID: 'mySeriesId',
+    seriesId: 'mySeriesId',
     data: ['myX', 'myY']
 }]
 ```

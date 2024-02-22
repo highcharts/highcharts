@@ -68,11 +68,11 @@ Dashboards.board('container', {
             },
             series: [{
                 id: 'series-0',
-                name: 'First Series'
+                name: 'First Series',
+                xAxis: 1
             }, {
                 id: 'series-1',
                 name: 'Second Series',
-                xAxis: 1,
                 yAxis: 1
             }]
         }
