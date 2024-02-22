@@ -180,7 +180,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Retrieves the columns of the the dataTable,
+     * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
      * @param {boolean} [usePresentationOrder]

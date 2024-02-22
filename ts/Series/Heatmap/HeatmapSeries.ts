@@ -627,7 +627,7 @@ export default HeatmapSeries;
 
 /**
  * Heatmap series only. The value of the point, resulting in a color
- * controled by options as set in the colorAxis configuration.
+ * controlled by options as set in the colorAxis configuration.
  * @name Highcharts.Point#value
  * @type {number|null|undefined}
  */
@@ -639,7 +639,7 @@ export default HeatmapSeries;
  * @name Highcharts.PointOptionsObject#pointPadding
  * @type {number|undefined}
  *//**
- * Heatmap series only. The value of the point, resulting in a color controled
+ * Heatmap series only. The value of the point, resulting in a color controlled
  * by options as set in the colorAxis configuration.
  * @name Highcharts.PointOptionsObject#value
  * @type {number|null|undefined}

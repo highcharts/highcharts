@@ -130,7 +130,7 @@ function buildTypeDescriptionFromSeries(
     context: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
     const firstType = types[0],
-        typeExplaination = chart.langFormat(
+        typeExplanation = chart.langFormat(
             'accessibility.seriesTypeDescriptions.' + firstType,
             context
         ),
@@ -145,13 +145,13 @@ function buildTypeDescriptionFromSeries(
             'accessibility.chartTypes.default' + multi,
             context
         )
-    ) + (typeExplaination ? ' ' + typeExplaination : '');
+    ) + (typeExplanation ? ' ' + typeExplanation : '');
 }
 
 
 /**
- * Return simplified explaination of chart type. Some types will not be
- * familiar to most users, but in those cases we try to add an explaination
+ * Return simplified explanation of chart type. Some types will not be
+ * familiar to most users, but in those cases we try to add an explanation
  * of the type.
  *
  * @private

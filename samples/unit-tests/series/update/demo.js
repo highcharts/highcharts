@@ -304,7 +304,7 @@ QUnit.test('Series.update', function (assert) {
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -312,6 +312,13 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
             series: {
                 point: {
                     events: {
+                        click: function () {
+                            this.update({
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            });
+                        },
                         mouseOver: function () {
                             this.update({
                                 dataLabels: {
@@ -357,7 +364,7 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         chart.series[0].points[0].options.dataLabels &&
             chart.series[0].points[0].options.dataLabels.enabled,
         true,
-        'Data labels should be enabled'
+        'Data labels should be enabled.'
     );
 
     chart.series[0].onMouseOut();
@@ -365,7 +372,35 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         chart.series[0].points[0].options.dataLabels &&
             chart.series[0].points[0].options.dataLabels.enabled,
         true,
-        'Data labels should not be enabled'
+        'Data labels should not be enabled.'
+    );
+
+    chart.series[0].update({
+        point: {
+            events: {
+                mouseOver: void 0,
+                mouseOut: void 0
+            }
+        }
+    });
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.notEqual(
+        chart.series[0].points[0].options.dataLabels &&
+            chart.series[0].points[0].options.dataLabels.enabled,
+        true,
+        `Data labels should not be enabled, the function was not fired, becase
+        existing events are removed (#20435).`
+    );
+
+    chart.series[0].points[0].firePointEvent('click');
+    assert.strictEqual(
+        chart.series[0].points[0].options.dataLabels &&
+            chart.series[0].points[0].options.dataLabels.enabled,
+        true,
+        `Data labels should be enabled, click callback function should be saved
+        after removing mouseOver and mouseOut events (#20435).`
     );
 });
 

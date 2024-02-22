@@ -368,4 +368,4 @@ export default SplineSeries;
  * @apioption series.spline.data
  */
 
-''; // adds doclets above intro transpilat
+''; // adds doclets above intro transpiled

@@ -1751,7 +1751,7 @@ class Navigator {
                 }
             }));
 
-            // Respond to updated data in the base series, unless explicitily
+            // Respond to updated data in the base series, unless explicitly
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {

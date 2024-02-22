@@ -74,7 +74,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
         }
     }
 
-    // Ensure we always have at least one value, even in very spaceous charts
+    // Ensure we always have at least one value, even in very spacious charts
     distances.push(80);
 
     return max(
