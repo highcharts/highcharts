@@ -23,6 +23,7 @@
 // Useful links (TBD: remove before release )
 // -----------------------------------------------------------------------------
 // * https://www.highcharts.com/demo/maps/data-class-two-ranges
+// * https://www.highcharts.com/demo/highcharts/column-comparison
 // * https://www.presidency.ucsb.edu/statistics/elections
 // * https://edition.cnn.com/election/2020/results/president
 // * https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/
@@ -33,6 +34,8 @@ const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-presiden
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
 const commonTitle = 'U.S. presidential election';
+
+// TBD: calculate ID on the fly
 const elections = {
     2020: {
         descrId: 'ei_2020'
@@ -49,13 +52,15 @@ const elections = {
 };
 const electionYears = Object.keys(elections).reverse();
 
+// Election data loaded from CSV file and converted to JSON
 let electionData = null;
 
-const voteTables = [];
+// From the data pool: one data table for each election year
+const dataTables = [];
+
 
 // Launches the Dashboards application
 async function setupDashboard() {
-
     // Start with national results and latest election
     let selectedState = 'US';
     let selectedYear = electionYears[0];
@@ -230,10 +235,12 @@ async function setupDashboard() {
             return jsonData;
         });
 
+
     function formatVotesColumns(rowObj) {
         rowObj.demVoteSummary = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
         rowObj.repVoteSummary = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
     }
+
 
     function addNationalSummary(jsonData, national) {
         function getSurname(name) {
@@ -254,6 +261,7 @@ async function setupDashboard() {
         jsonData.candRep = getSurname(national.repCand);
         jsonData.candDem = getSurname(national.demCand);
     }
+
 
     const board = await Dashboards.board('container', {
         dataPool: {
@@ -456,20 +464,20 @@ async function setupDashboard() {
                     },
                     tooltip: {
                         enabled: true,
-                        format: '{point.custom.electors} electors'
+                        format: '{point.electors} electors'
                     },
                     plotOptions: {
                         series: {
                             dataLabels: [{
                                 enabled: true,
-                                rotation: 90,
+                                rotation: -90,
                                 format: '{point.y:.1f}%',
-                                y: 60 // Pixels down from the top
+                                y: 50 // Pixels down from the top
                             }, {
                                 enabled: true,
                                 rotation: -90,
-                                format: '{point.name}',
-                                y: 140
+                                format: '{point.candidate}',
+                                y: 110
                             }]
                         }
                     },
@@ -490,7 +498,7 @@ async function setupDashboard() {
                             description: 'Percent of votes'
                         }
                     },
-                    series: getNationalElectionSummaries(),
+                    series: getHistoricalElectionSeries(),
                     lang: {
                         accessibility: {
                             chartContainerLabel: commonTitle + ' results.'
@@ -554,7 +562,7 @@ async function setupDashboard() {
 
     // Pre-load all votes tables
     electionYears.forEach(async function (year) {
-        voteTables.push(await getVotesTable(board, year));
+        dataTables.push(await getVotesTable(board, year));
     });
 
     // Handle change year events
@@ -574,12 +582,9 @@ async function setupDashboard() {
     );
 }
 
-async function getVotesTable(board, year) {
-    return await board.dataPool.getConnectorTable('votes' + year);
-}
 
-function getNationalElectionSummaries() {
-    const ret = [
+function getHistoricalElectionSeries(state = 'US') {
+    const series = [
         {
             name: 'Democrat',
             data: []
@@ -590,27 +595,28 @@ function getNationalElectionSummaries() {
     ];
 
     Object.values(electionData).reverse().forEach(function (item) {
-        const row = item.data[1]; // National
+        const row = item.data.find(c => c[5] === state);
 
         // Percentage, Democrat
-        ret[0].data.push({
-            name: item.candDem,
+        series[0].data.push({
+            candidate: item.candDem,
             y: Number(row[3]),
-            custom: {
-                electors: row[1]
-            }
+            electors: row[1]
         });
 
         // Percentage, Republicans
-        ret[1].data.push({
-            name: item.candRep,
+        series[1].data.push({
+            candidate: item.candRep,
             y: Number(row[4]),
-            custom: {
-                electors: row[2]
-            }
+            electors: row[2]
         });
     });
-    return ret;
+    return series;
+}
+
+
+async function getVotesTable(board, year) {
+    return await board.dataPool.getConnectorTable('votes' + year);
 }
 
 
@@ -739,20 +745,9 @@ async function updateGridComponent(component, year) {
 
 async function onStateClicked(board, state) {
     // Get election data
-    const voteTable = voteTables[0];
+    const voteTable = dataTables[0];
     const row = voteTable.getRowIndexBy('postal-code', state);
     const stateName = voteTable.getCell('state', row);
-
-    // Get historical election data by year
-    const demSeries = [];
-    const repSeries = [];
-    voteTables.forEach(function (voteTable) {
-        const row = voteTable.getRowIndexBy('postal-code', state);
-        const demPercent = voteTable.getCellAsNumber('demPercent', row);
-        const repPercent = voteTable.getCellAsNumber('repPercent', row);
-        demSeries.push([demPercent]);
-        repSeries.push([repPercent]);
-    });
 
     // Update chart title
     const comp = getComponent(board, 'election-chart');
@@ -765,17 +760,14 @@ async function onStateClicked(board, state) {
         }
     });
 
+    // Election data for current state
+    const electionData = getHistoricalElectionSeries(state);
+
     // Update chart columns
     const chart = comp.chart;
-    await chart.series[0].update({
-        data: demSeries
-    });
 
-    await chart.series[1].update({
-        data: repSeries
-    });
-
-    // TBD: update custom data for use in tooltip
+    await chart.series[0].setData(electionData[0].data);
+    await chart.series[1].setData(electionData[1].data);
 }
 
 
@@ -803,10 +795,7 @@ async function onYearClicked(board, year) {
 }
 
 
-// This tag is not allowed bu default
-// Highcharts.AST.allowedTags.push('figure');
-
-// Create custom HTML component
+// Create custom HTML component (TBD: remove when integrated with Dashboards)
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
     AST = Highcharts.AST;
