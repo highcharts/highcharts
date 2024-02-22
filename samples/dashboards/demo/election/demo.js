@@ -3,26 +3,24 @@
 
 
 // Layout
-// ! -------------------------- !
-// ! HTML |Chart | HTML | HTML  !
-// ! -------------------|------ !
-// ! Map                | Chart !
-// ! -------------------------- !
-// ! Data grid                  !
-// ! -------------------------- !
+// ! -----------------------!
+// ! HTML        | HTML     !
+// ! ------------|--------- !
+// ! Map         | Chart    !
+// ! -----------------------!
+// ! Data grid              !
+// ! -----------------------!
 
 // Data grid contents
 
-// TBD: update to match new layout
+// State    | Dem. electors | Rep. electors | Dem. votes  | Rep. votes  | Total votes
+// ---------|---------------|---------------|------- -----|-------------|------------
+// National | int           | int           | int (%)     | int (%)     | int
+// Alabama  | int           | int           | int (%)     | int (%)     | int
+// ........ | ............. | .........     | ........    | ........... | int
+// Wyoming  | int           | int           | int (%)     | int (%)     | int
 
-// State    | Dem. cand    | Repo. cand.  | Dem%  | Rep%  |
-// ---------|--------------|--------------|-------|-------|
-// National | dem el. vote | rep el. vote | float | float |
-// Alabama  | dem el. vote | rep el. vote | float | float |
-// ........ | ............ | .........    | ...   | ..... |
-// Wyoming  | dem el. vote | rep el. vote | float | float |
-
-// Useful links (TBD: remove before release)
+// Useful links (TBD: remove before release )
 // -----------------------------------------------------------------------------
 // * https://www.highcharts.com/demo/maps/data-class-two-ranges
 // * https://www.presidency.ucsb.edu/statistics/elections
@@ -437,7 +435,7 @@ async function setupDashboard() {
                 renderTo: 'election-chart',
                 type: 'Highcharts',
                 title: {
-                    text: 'Historical ' + commonTitle + ' results'
+                    text: 'Historical ' + commonTitle + 's'
                 },
                 chartOptions: {
                     title: {
@@ -621,11 +619,129 @@ function getComponent(board, id) {
 }
 
 
+async function updateResultComponent(component, voteTable, year) {
+    // Result info title
+    await component.update({
+        title: {
+            text: commonTitle + ' ' + year
+        }
+    });
+
+    // Candidate names
+    const candDem = electionData[year].candDem;
+    const candRep = electionData[year].candRep;
+
+    // Candidate percentages/electors
+    const row = voteTable.getRowIndexBy('postal-code', 'US');
+    const demPercent = voteTable.getCellAsNumber('demPercent', row);
+    const repPercent = voteTable.getCellAsNumber('repPercent', row);
+    const demColVotes = voteTable.getCellAsNumber('demColVotes', row);
+    const repColVotes = voteTable.getCellAsNumber('repColVotes', row);
+    const totalColVotes = demColVotes + repColVotes;
+    const demVotes = voteTable.getCellAsNumber('demVotes', row);
+    const repVotes = voteTable.getCellAsNumber('repVotes', row);
+
+    // Grab auxiliary data about the election (photos, description, etc.)
+    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
+
+    // Photos
+    const imgDemUrl = yearEl.querySelector('dem imgUrl').textContent;
+    const imgRepUrl = yearEl.querySelector('rep imgUrl').textContent;
+
+    document.querySelector('div#dem-cand img').src = imgDemUrl;
+    document.querySelector('div#rep-cand img').src = imgRepUrl;
+
+    // Election information
+    let el = document.getElementById('info-dem1');
+    el.innerHTML = `<b>${demColVotes}</b> ${candDem}`;
+    el = document.getElementById('info-dem2');
+    el.innerHTML = `<b>${demPercent}%</b> ${demVotes.toLocaleString('en-US')}`;
+
+    el = document.getElementById('info-rep1');
+    el.innerHTML = `${candRep} <b>${repColVotes}</b>`;
+    el = document.getElementById('info-rep2');
+    el.innerHTML = `${repVotes.toLocaleString('en-US')} <b>${repPercent}%</b>`;
+
+    // Result bar
+    el = document.getElementById('bar-dem');
+    el.style.width = ((demColVotes / totalColVotes) * 100) + '%';
+    el = document.getElementById('bar-rep');
+    el.style.width = ((repColVotes / totalColVotes) * 100) + '%';
+
+    // Votes needed to win
+    const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBC: is this safe?
+    el = document.getElementById('info-to-win');
+    el.innerHTML = neededVotes + ' to win';
+}
+
+
+function updateControlComponent(year) {
+    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
+    const domEl = document.getElementById('election-description');
+    const el = yearEl.querySelector('descr');
+    domEl.innerHTML = el.innerHTML;
+}
+
+
+async function updateMapComponent(component, voteTable, year) {
+    await component.chart.update({
+        title: {
+            text: commonTitle + ' ' + year
+        }
+    });
+
+    // U.S. states with election results
+    const voteSeries = component.chart.series[1].data;
+    voteSeries.forEach(function (state) {
+        const row = voteTable.getRowIndexBy('postal-code', state['postal-code']);
+        const percentRep = voteTable.getCellAsNumber('repPercent', row);
+        const percentDem = voteTable.getCellAsNumber('demPercent', row);
+        const elVotesRep = voteTable.getCellAsNumber('repColVotes', row);
+        const elVotesDem = voteTable.getCellAsNumber('demColVotes', row);
+
+        state.update({
+            value: Number(percentRep - percentDem),
+            custom: {
+                winner: percentRep > percentDem ? 'Republican' : 'Democrat',
+                votesDem: elVotesDem,
+                votesRep: elVotesRep,
+                percentDem: percentDem,
+                percentRep: percentRep
+            }
+        });
+    });
+}
+
+
+async function updateGridComponent(component, year) {
+    const candDem = electionData[year].candDem;
+    const candRep = electionData[year].candRep;
+
+    await component.update({
+        title: {
+            text: commonTitle + ' ' + year
+        },
+        connector: {
+            id: 'votes' + year
+        },
+        dataGridOptions: {
+            columns: {
+                repColVotes: {
+                    headerFormat: candRep + ' (Republican)'
+                },
+                demColVotes: {
+                    headerFormat: candDem + ' (Democrat)'
+                }
+            }
+        }
+    });
+}
+
 async function onStateClicked(board, state) {
     // Get election data
-    const votesTable = voteTables[0];
-    const row = votesTable.getRowIndexBy('postal-code', state);
-    const stateName = votesTable.getCell('state', row);
+    const voteTable = voteTables[0];
+    const row = voteTable.getRowIndexBy('postal-code', state);
+    const stateName = voteTable.getCell('state', row);
 
     // Get historical election data by year
     const demSeries = [];
@@ -666,128 +782,29 @@ async function onStateClicked(board, state) {
 // Update board after changing data set (state or election year)
 async function onYearClicked(board, year) {
     // Get election data
-    const votesTable = await getVotesTable(board, year);
+    const voteTable = await getVotesTable(board, year);
 
-    // Dashboards components for update
-    const resultHtml = getComponent(board, 'html-result');
-    const electionMap = getComponent(board, 'election-map');
-    const electionGrid = getComponent(board, 'election-grid');
+    // Dashboards components
+    const resultComponent = getComponent(board, 'html-result');
+    const mapComponent = getComponent(board, 'election-map');
+    const gridComponent = getComponent(board, 'election-grid');
 
-    // Common title
-    const title = commonTitle + ' ' + year;
+    // Update result component (HTML)
+    updateResultComponent(resultComponent, voteTable, year);
 
-    // 1. Update result component (HTML)
-    const row = votesTable.getRowIndexBy('postal-code', 'US');
+    // Update control component (HTML), updated directly in DOM
+    updateControlComponent(year);
 
-    // Candidate names
-    const candDem = electionData[year].candDem;
-    const candRep = electionData[year].candRep;
+    // Update map component (Highcharts Map)
+    updateMapComponent(mapComponent, voteTable, year);
 
-    // Result info title
-    await resultHtml.update({
-        title: {
-            text: title
-        }
-    });
-
-    // Candidate percentages/electors
-    const demPercent = votesTable.getCellAsNumber('demPercent', row);
-    const repPercent = votesTable.getCellAsNumber('repPercent', row);
-    const demColVotes = votesTable.getCellAsNumber('demColVotes', row);
-    const repColVotes = votesTable.getCellAsNumber('repColVotes', row);
-    const totalColVotes = demColVotes + repColVotes;
-    const demVotes = votesTable.getCellAsNumber('demVotes', row);
-    const repVotes = votesTable.getCellAsNumber('repVotes', row);
-
-    // Grab auxiliary data about the election (photos, description, etc.)
-    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
-
-    // Photos
-    const imgDemUrl = yearEl.querySelector('dem imgUrl').textContent;
-    const imgRepUrl = yearEl.querySelector('rep imgUrl').textContent;
-
-    document.querySelector('div#dem-cand img').src = imgDemUrl;
-    document.querySelector('div#rep-cand img').src = imgRepUrl;
-
-    // Election information
-    let el = document.getElementById('info-dem1');
-    el.innerHTML = `<b>${demColVotes}</b> ${candDem}`;
-    el = document.getElementById('info-dem2');
-    el.innerHTML = `<b>${demPercent}%</b> ${demVotes.toLocaleString('en-US')}`;
-
-    el = document.getElementById('info-rep1');
-    el.innerHTML = `${candRep} <b>${repColVotes}</b>`;
-    el = document.getElementById('info-rep2');
-    el.innerHTML = `${repVotes.toLocaleString('en-US')} <b>${repPercent}%</b>`;
-
-    // Result bar
-    el = document.getElementById('bar-dem');
-    el.style.width = ((demColVotes / totalColVotes) * 100) + '%';
-    el = document.getElementById('bar-rep');
-    el.style.width = ((repColVotes / totalColVotes) * 100) + '%';
-
-    // Votes needed to win
-    const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBD: is this safe?
-    el = document.getElementById('info-to-win');
-    el.innerHTML = neededVotes + ' to win';
-
-    // 2. Update control HTML description if the year changes
-    const domEl = document.getElementById('election-description');
-    el = yearEl.querySelector('descr');
-    domEl.innerHTML = el.innerHTML;
-
-    // 3. Update map (if year changes)
-    await electionMap.chart.update({
-        title: {
-            text: title
-        }
-    });
-
-    // U.S. states with election results
-    const voteSeries = electionMap.chart.series[1].data;
-    voteSeries.forEach(function (state) {
-        const row = votesTable.getRowIndexBy('postal-code', state['postal-code']);
-        const percentRep = votesTable.getCellAsNumber('repPercent', row);
-        const percentDem = votesTable.getCellAsNumber('demPercent', row);
-        const elVotesRep = votesTable.getCellAsNumber('repColVotes', row);
-        const elVotesDem = votesTable.getCellAsNumber('demColVotes', row);
-
-        state.update({
-            value: Number(percentRep - percentDem),
-            custom: {
-                winner: percentRep > percentDem ? 'Republican' : 'Democrat',
-                votesDem: elVotesDem,
-                votesRep: elVotesRep,
-                percentDem: percentDem,
-                percentRep: percentRep
-            }
-        });
-    });
-
-    // 5. Update grid (if year changes)
-    await electionGrid.update({
-        title: {
-            text: title
-        },
-        connector: {
-            id: 'votes' + year
-        },
-        dataGridOptions: {
-            columns: {
-                repColVotes: {
-                    headerFormat: candRep + ' (Republican)'
-                },
-                demColVotes: {
-                    headerFormat: candDem + ' (Democrat)'
-                }
-            }
-        }
-    });
+    // Update data grid component (Dashboards datagrid)
+    updateGridComponent(gridComponent, year);
 }
 
 
 // This tag is not allowed bu default
-Highcharts.AST.allowedTags.push('figure');
+// Highcharts.AST.allowedTags.push('figure');
 
 // Create custom HTML component
 const { ComponentRegistry } = Dashboards,
