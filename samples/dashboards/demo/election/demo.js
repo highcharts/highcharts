@@ -307,7 +307,7 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         // Mid left
-                        id: 'us-map'
+                        id: 'election-map'
                     }, {
                         // Mid right
                         id: 'election-chart'
@@ -315,7 +315,7 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         // Spanning all columns
-                        id: 'selection-grid'
+                        id: 'election-grid'
                     }]
                 }]
             }]
@@ -333,7 +333,7 @@ async function setupDashboard() {
                 title: 'U.S. presidential election'
             },
             {
-                renderTo: 'us-map',
+                renderTo: 'election-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
@@ -503,7 +503,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                renderTo: 'selection-grid',
+                renderTo: 'election-grid',
                 type: 'DataGrid',
                 connector: {
                     id: 'votes' + selectedYear
@@ -552,9 +552,9 @@ async function setupDashboard() {
     }, true);
 
     // Initialize data
-    await updateBoard(board, 'US', selectedYear);
+    await onYearClicked(board, selectedYear);
 
-    // Load all votes tables
+    // Pre-load all votes tables
     electionYears.forEach(async function (year) {
         voteTables.push(await getVotesTable(board, year));
     });
@@ -567,7 +567,7 @@ async function setupDashboard() {
             const selectedOption = this.options[this.selectedIndex];
             selectedYear = selectedOption.value;
 
-            await updateBoard(board, selectedState, selectedYear);
+            await onYearClicked(board, selectedYear);
 
             // Reset zoom
             const map = board.mountedComponents[2].component.chart;
@@ -664,19 +664,19 @@ async function onStateClicked(board, state) {
 
 
 // Update board after changing data set (state or election year)
-async function updateBoard(board, state, year) {
+async function onYearClicked(board, year) {
     // Get election data
     const votesTable = await getVotesTable(board, year);
+
+    // Dashboards components for update
+    const resultHtml = getComponent(board, 'html-result');
+    const electionMap = getComponent(board, 'election-map');
+    const electionGrid = getComponent(board, 'election-grid');
 
     // Common title
     const title = commonTitle + ' ' + year;
 
-    // Dashboards components for update
-    const resultHtml = getComponent(board, 'html-result');
-    const usMap = getComponent(board, 'us-map');
-    const selectionGrid = getComponent(board, 'selection-grid');
-
-    // 1. Update result HTML (if state or year changes)
+    // 1. Update result component (HTML)
     const row = votesTable.getRowIndexBy('postal-code', 'US');
 
     // Candidate names
@@ -737,14 +737,14 @@ async function updateBoard(board, state, year) {
     domEl.innerHTML = el.innerHTML;
 
     // 3. Update map (if year changes)
-    await usMap.chart.update({
+    await electionMap.chart.update({
         title: {
             text: title
         }
     });
 
     // U.S. states with election results
-    const voteSeries = usMap.chart.series[1].data;
+    const voteSeries = electionMap.chart.series[1].data;
     voteSeries.forEach(function (state) {
         const row = votesTable.getRowIndexBy('postal-code', state['postal-code']);
         const percentRep = votesTable.getCellAsNumber('repPercent', row);
@@ -765,7 +765,7 @@ async function updateBoard(board, state, year) {
     });
 
     // 5. Update grid (if year changes)
-    await selectionGrid.update({
+    await electionGrid.update({
         title: {
             text: title
         },
