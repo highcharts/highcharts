@@ -223,7 +223,7 @@
                     ]
                 }
             }],
-            selected: 4
+            selected: 1
         },
         scrollbar: {
             enabled: false
