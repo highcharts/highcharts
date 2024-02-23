@@ -66,201 +66,15 @@ async function setupDashboard() {
     // Load the basic map
     const mapData = await fetch(mapUrl).then(response => response.json());
 
-    // Load the electoral mandate data and convert from CSV jo JSON
+    // Load electoral college data and convert from CSV jo JSON
     const elCollegeData = await fetch(elCollegeUrl)
-        .then(response => response.text()).then(function (csv) {
-            const jsonData = {};
-            const lines = csv.split(/\r?\n/);
-            const header = lines[0].split(';');
+        .then(response => response.text()).then(csv => parseElectoralCollegeData(csv));
 
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i];
-                const items = line.split(';');
-                const state = items[0].toUpperCase();
-
-                const obj = {};
-                for (let j = 1; j < header.length; j++) {
-                    const year = header[j];
-                    obj[year] = items[j];
-                }
-                jsonData[state] = obj;
-            }
-            return jsonData;
-        });
-
-    // Load the election results and convert to JSON data that are suitable for this application.
+    // Load election results and convert to the JSON format used by this application.
     electionData = await fetch(elVoteUrl)
-        .then(response => response.text()).then(function (csv) {
-            const rowObj = {
-                state: '',
-                demColVotes: 0,
-                repColVotes: 0,
-                demPercent: 0.0,
-                repPercent: 0.0,
-                'postal-code': '',
-                demVotes: 0,
-                repVotes: 0,
-                demVoteSummary: 0,
-                repVoteSummary: 0,
-                totalVotes: 0
-            };
+        .then(response => response.text()).then(csv => parseElectionData(csv));
 
-            const header = Object.keys(rowObj);
-
-            const national = {
-                repCand: '',
-                demCand: '',
-                data: { ...rowObj }
-            };
-            const rowObjNational = national.data;
-            rowObjNational.state = 'National';
-            rowObjNational['postal-code'] = 'US';
-
-            // eslint-disable-next-line max-len
-            const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
-            const tidyCol = /[,"]/g;
-
-            // Create JSON data, one array for each year
-            const jsonData = {};
-            const lines = csv.split('\n');
-
-            let key = null;
-
-            lines.forEach(function (line) {
-                const match = line.match(csvSplit);
-                const year = match[0]; // Year
-
-                if (electionYears.includes(year)) {
-                    // The first record is the header
-                    key = year;
-                    if (!(key in jsonData)) {
-                        // First record for a new election year
-                        jsonData[key] = {
-                            data: [header]
-                        };
-
-                        // Need to wrap up the election that is
-                        // currently being processed?
-                        if (rowObjNational.totalVotes > 0) {
-                            const prevKey = year - 4;
-                            addNationalSummary(jsonData[prevKey], national);
-
-                            // Reset counting
-                            rowObjNational.totalVotes = 0;
-                            rowObjNational.repVotes = 0;
-                            rowObjNational.demVotes = 0;
-                            rowObjNational.repColVotes = 0;
-                            rowObjNational.demColVotes = 0;
-                        }
-                    }
-
-                    // Create processed data record
-                    const party = match[8].replace(tidyCol, '');
-                    const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
-
-                    // Ignore "other" candidates and empty candidate names
-                    if ((party === 'REPUBLICAN' || party === 'DEMOCRAT') && candidate.length > 0) {
-                        const state = match[1].replace(tidyCol, '');
-                        const postCode = match[2].replace(tidyCol, '');
-                        const popVote = Number(match[10].replace(tidyCol, ''));
-                        const totalVote = Number(match[11].replace(tidyCol, ''));
-                        const percent = ((popVote / totalVote) * 100).toFixed(1);
-
-                        // Accumulate nationwide data
-                        rowObj.state = state;
-                        rowObj['postal-code'] = postCode;
-
-                        if (party === 'REPUBLICAN') {
-                            rowObj.repVotes = popVote;
-                            rowObj.repPercent = percent;
-                            rowObjNational.totalVotes += totalVote;
-                            rowObjNational.repVotes += popVote;
-                            national.repCand = candidate;
-                        } else { // DEMOCRAT
-                            rowObj.demVotes = popVote;
-                            rowObj.demPercent = percent;
-                            rowObj.totalVotes = totalVote;
-                            rowObjNational.demVotes += Number(popVote);
-                            national.demCand = candidate;
-                        }
-
-                        // Merge rows
-                        if (rowObj.repVotes > 0 && rowObj.demVotes > 0) {
-                            // Add electoral votes
-                            const elVotes = elCollegeData[state][year];
-                            const elVotesSplit = elVotes.split('|');
-                            const isSplitVote = elVotesSplit.length === 4;
-                            let repVotes, demVotes;
-
-                            if (rowObj.repVotes > rowObj.demVotes) {
-                                // Rep. won
-                                if (isSplitVote) {
-                                    repVotes = elVotesSplit[1];
-                                    demVotes = elVotesSplit[2];
-                                } else {
-                                    demVotes = 0;
-                                    repVotes = elVotes;
-                                }
-                            } else {
-                                // Dem. won
-                                if (isSplitVote) {
-                                    repVotes = elVotesSplit[2];
-                                    demVotes = elVotesSplit[1];
-                                } else {
-                                    demVotes = elVotes;
-                                    repVotes = 0;
-                                }
-                            }
-                            rowObj.repColVotes = repVotes;
-                            rowObj.demColVotes = demVotes;
-                            rowObjNational.repColVotes += Number(repVotes);
-                            rowObjNational.demColVotes += Number(demVotes);
-
-                            // Pre-format votes column
-                            formatVotesColumns(rowObj);
-
-                            jsonData[key].data.push(Object.values(rowObj));
-
-                            // Prepare for next row (state)
-                            rowObj.repVotes = 0;
-                            rowObj.demVotes = 0;
-                        }
-                    }
-                }
-            });
-            addNationalSummary(jsonData[key], national);
-
-            return jsonData;
-        });
-
-
-    function formatVotesColumns(rowObj) {
-        rowObj.demVoteSummary = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
-        rowObj.repVoteSummary = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
-    }
-
-
-    function addNationalSummary(jsonData, national) {
-        function getSurname(name) {
-            return name.split(',')[0];
-        }
-
-        const summary = national.data;
-
-        // Insert a row with national results (row 1, below header)
-        summary.repPercent = ((summary.repVotes / summary.totalVotes) * 100).toFixed(1);
-        summary.demPercent = ((summary.demVotes / summary.totalVotes) * 100).toFixed(1);
-
-        formatVotesColumns(summary);
-
-        jsonData.data.splice(1, 0, Object.values(summary));
-
-        // Save candidate names (to be displayed in header)
-        jsonData.candRep = getSurname(national.repCand);
-        jsonData.candDem = getSurname(national.demCand);
-    }
-
-
+    // Create the Dashboard
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [
@@ -386,46 +200,48 @@ async function setupDashboard() {
                             allowPointSelect: true
                         }
                     },
-                    series: [{
-                        name: 'US Map',
-                        type: 'map'
-                    },
-                    {
-                        name: 'State election result',
-                        data: [],
-                        joinBy: 'postal-code',
-                        dataLabels: {
-                            enabled: true,
-                            color: 'white',
-                            format: '{point.postal-code}',
-                            style: {
-                                textTransform: 'uppercase'
-                            }
+                    series: [
+                        {
+                            name: 'US Map',
+                            type: 'map'
                         },
-                        point: {
-                            events: {
-                                click: function (e) {
-                                    const sel = e.point['postal-code'];
-                                    if (sel !== selectedState) {
-                                        selectedState = sel;
-                                    } else {
-                                        // Back to national view if clicking on already selected state.
-                                        selectedState = 'US';
+                        {
+                            name: 'State election result',
+                            data: [],
+                            joinBy: 'postal-code',
+                            dataLabels: {
+                                enabled: true,
+                                color: 'white',
+                                format: '{point.postal-code}',
+                                style: {
+                                    textTransform: 'uppercase'
+                                }
+                            },
+                            point: {
+                                events: {
+                                    click: function (e) {
+                                        const sel = e.point['postal-code'];
+                                        if (sel !== selectedState) {
+                                            selectedState = sel;
+                                        } else {
+                                            // Back to national view if clicking on already selected state.
+                                            selectedState = 'US';
+                                        }
+                                        onStateClicked(board, selectedState);
                                     }
-                                    onStateClicked(board, selectedState);
                                 }
                             }
+                        }, {
+                            name: 'Separators',
+                            type: 'mapline',
+                            nullColor: 'silver',
+                            showInLegend: false,
+                            enableMouseTracking: false,
+                            accessibility: {
+                                enabled: false
+                            }
                         }
-                    }, {
-                        name: 'Separators',
-                        type: 'mapline',
-                        nullColor: 'silver',
-                        showInLegend: false,
-                        enableMouseTracking: false,
-                        accessibility: {
-                            enabled: false
-                        }
-                    }],
+                    ],
                     tooltip: {
                         useHTML: true,
                         headerFormat: '<table class="map-tooltip"><caption>{point.key}</caption><tr><th>Party</th><th>Electors</th><th>Votes</th></tr>',
@@ -473,19 +289,21 @@ async function setupDashboard() {
                     },
                     plotOptions: {
                         column: {
-                            dataLabels: [{
-                                align: 'center',
-                                verticalAlign: 'bottom',
-                                inside: true,
-                                enabled: true,
-                                rotation: -90,
-                                y: -5, // Pixels up from bottom
-                                format: '{point.candidate}'
-                            }, {
-                                enabled: true,
-                                inside: false,
-                                format: '{point.y:.1f}'
-                            }]
+                            dataLabels: [
+                                {
+                                    align: 'center',
+                                    verticalAlign: 'bottom',
+                                    inside: true,
+                                    enabled: true,
+                                    rotation: -90,
+                                    y: -5, // Pixels up from bottom
+                                    format: '{point.candidate}'
+                                }, {
+                                    enabled: true,
+                                    inside: false,
+                                    format: '{point.y:.1f}'
+                                }
+                            ]
                         }
                     },
                     xAxis: {
@@ -564,7 +382,7 @@ async function setupDashboard() {
         ]
     }, true);
 
-    // Initialize data
+    // Apply initial election data
     await onYearClicked(board, selectedYear);
 
     // Handle change year events
@@ -577,13 +395,217 @@ async function setupDashboard() {
 
             await onYearClicked(board, selectedYear);
 
-            // Reset to national view
+            // Revert to national view
             await onStateClicked(board, 'US');
             resetMap(getComponent(board, 'election-map').chart);
         }
     );
+
+
+    function parseElectionData(csv) {
+        const rowObj = {
+            state: '',
+            demColVotes: 0,
+            repColVotes: 0,
+            demPercent: 0.0,
+            repPercent: 0.0,
+            'postal-code': '',
+            demVotes: 0,
+            repVotes: 0,
+            demVoteSummary: 0,
+            repVoteSummary: 0,
+            totalVotes: 0
+        };
+
+        const header = Object.keys(rowObj);
+
+        const national = {
+            repCand: '',
+            demCand: '',
+            data: { ...rowObj }
+        };
+        const rowObjNational = national.data;
+        rowObjNational.state = 'National';
+        rowObjNational['postal-code'] = 'US';
+
+        // RegEx for splitting a single line
+        const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
+        const tidyCol = /[,"]/g;
+
+        // Create JSON data, one array per year
+        const jsonData = {};
+        const lines = csv.split('\n');
+
+        let key = null;
+
+        lines.forEach(function (line) {
+            const match = line.match(csvSplit);
+            const year = match[0]; // Year
+
+            if (electionYears.includes(year)) {
+                // The first record is the header
+                key = year;
+                if (!(key in jsonData)) {
+                    // First record of a new election year
+                    jsonData[key] = {
+                        data: [header]
+                    };
+
+                    // Wrap up the election that is currently being processed?
+                    if (rowObjNational.totalVotes > 0) {
+                        const prevKey = year - 4;
+                        addNationalSummary(jsonData[prevKey], national);
+
+                        // Reset counting
+                        rowObjNational.totalVotes = 0;
+                        rowObjNational.repVotes = 0;
+                        rowObjNational.demVotes = 0;
+                        rowObjNational.repColVotes = 0;
+                        rowObjNational.demColVotes = 0;
+                    }
+                }
+
+                // Create processed data record
+                const party = match[8].replace(tidyCol, '');
+                const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
+
+                // Ignore "other" candidates and empty candidate names
+                if ((party === 'REPUBLICAN' || party === 'DEMOCRAT') && candidate.length > 0) {
+                    const state = match[1].replace(tidyCol, '');
+                    const postCode = match[2].replace(tidyCol, '');
+                    const popVote = Number(match[10].replace(tidyCol, ''));
+                    const totalVote = Number(match[11].replace(tidyCol, ''));
+                    const percent = ((popVote / totalVote) * 100).toFixed(1);
+
+                    // Accumulate nationwide data
+                    rowObj.state = state;
+                    rowObj['postal-code'] = postCode;
+
+                    if (party === 'REPUBLICAN') {
+                        rowObj.repVotes = popVote;
+                        rowObj.repPercent = percent;
+                        rowObjNational.totalVotes += totalVote;
+                        rowObjNational.repVotes += popVote;
+                        national.repCand = candidate;
+                    } else { // DEMOCRAT
+                        rowObj.demVotes = popVote;
+                        rowObj.demPercent = percent;
+                        rowObj.totalVotes = totalVote;
+                        rowObjNational.demVotes += Number(popVote);
+                        national.demCand = candidate;
+                    }
+
+                    // Merge rows
+                    if (rowObj.repVotes > 0 && rowObj.demVotes > 0) {
+                        // Add electoral votes
+                        const elVotes = elCollegeData[state][year];
+                        const elVotesSplit = elVotes.split('|');
+                        const isSplitVote = elVotesSplit.length === 4;
+                        let repVotes, demVotes;
+
+                        if (rowObj.repVotes > rowObj.demVotes) {
+                            // Rep. won
+                            if (isSplitVote) {
+                                repVotes = elVotesSplit[1];
+                                demVotes = elVotesSplit[2];
+                            } else {
+                                demVotes = 0;
+                                repVotes = elVotes;
+                            }
+                        } else {
+                            // Dem. won
+                            if (isSplitVote) {
+                                repVotes = elVotesSplit[2];
+                                demVotes = elVotesSplit[1];
+                            } else {
+                                demVotes = elVotes;
+                                repVotes = 0;
+                            }
+                        }
+                        rowObj.repColVotes = repVotes;
+                        rowObj.demColVotes = demVotes;
+                        rowObjNational.repColVotes += Number(repVotes);
+                        rowObjNational.demColVotes += Number(demVotes);
+
+                        // Pre-format votes column
+                        formatVotesColumns(rowObj);
+
+                        jsonData[key].data.push(Object.values(rowObj));
+
+                        // Prepare for next row (state)
+                        rowObj.repVotes = 0;
+                        rowObj.demVotes = 0;
+                    }
+                }
+            }
+        });
+        addNationalSummary(jsonData[key], national);
+
+        return jsonData;
+    }
+
+
+    function parseElectoralCollegeData(csv) {
+        const jsonData = {};
+        const lines = csv.split(/\r?\n/);
+        const header = lines[0].split(';');
+
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i];
+            const items = line.split(';');
+            const state = items[0].toUpperCase();
+
+            const obj = {};
+            for (let j = 1; j < header.length; j++) {
+                const year = header[j];
+                obj[year] = items[j];
+            }
+            jsonData[state] = obj;
+        }
+        return jsonData;
+    }
+
+
+    function formatVotesColumns(rowObj) {
+        rowObj.demVoteSummary = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
+        rowObj.repVoteSummary = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
+    }
+
+
+    function addNationalSummary(jsonData, national) {
+        function getSurname(name) {
+            return name.split(',')[0];
+        }
+
+        const summary = national.data;
+
+        // Insert a row with national results (row 1, below header)
+        summary.repPercent = ((summary.repVotes / summary.totalVotes) * 100).toFixed(1);
+        summary.demPercent = ((summary.demVotes / summary.totalVotes) * 100).toFixed(1);
+
+        formatVotesColumns(summary);
+
+        jsonData.data.splice(1, 0, Object.values(summary));
+
+        // Save candidate names (to be displayed in header)
+        jsonData.candRep = getSurname(national.repCand);
+        jsonData.candDem = getSurname(national.demCand);
+    }
 }
 
+//
+// Support functions
+//
+function resetMap(mapChart) {
+    // Reset zoom
+    mapChart.mapZoom();
+
+    // Unselect all selected points
+    const points = mapChart.getSelectedPoints();
+    if (points.length > 0) {
+        points.forEach(point => point.select(false));
+    }
+}
 
 function getHistoricalElectionSeries(state = 'US') {
     const series = [
@@ -617,18 +639,7 @@ function getHistoricalElectionSeries(state = 'US') {
 }
 
 
-function resetMap(mapChart) {
-    // Reset zoom
-    mapChart.mapZoom();
-
-    // Unselect all selected points
-    const points = mapChart.getSelectedPoints();
-    if (points.length > 0) {
-        points.forEach(point => point.select(false));
-    }
-}
-
-async function getVotesTable(board, year) {
+async function getElectionTable(board, year) {
     return await board.dataPool.getConnectorTable('votes' + year);
 }
 
@@ -638,8 +649,7 @@ function getComponent(board, id) {
 }
 
 
-async function updateResultComponent(component, voteTable, year) {
-    // Result info title
+async function updateResultComponent(component, electionTable, year) {
     await component.update({
         title: {
             text: commonTitle + ' ' + year
@@ -651,14 +661,14 @@ async function updateResultComponent(component, voteTable, year) {
     const candRep = electionData[year].candRep;
 
     // Candidate percentages/electors
-    const row = voteTable.getRowIndexBy('postal-code', 'US');
-    const demPercent = voteTable.getCellAsNumber('demPercent', row);
-    const repPercent = voteTable.getCellAsNumber('repPercent', row);
-    const demColVotes = voteTable.getCellAsNumber('demColVotes', row);
-    const repColVotes = voteTable.getCellAsNumber('repColVotes', row);
+    const row = electionTable.getRowIndexBy('postal-code', 'US');
+    const demPercent = electionTable.getCellAsNumber('demPercent', row);
+    const repPercent = electionTable.getCellAsNumber('repPercent', row);
+    const demColVotes = electionTable.getCellAsNumber('demColVotes', row);
+    const repColVotes = electionTable.getCellAsNumber('repColVotes', row);
     const totalColVotes = demColVotes + repColVotes;
-    const demVotes = voteTable.getCellAsNumber('demVotes', row);
-    const repVotes = voteTable.getCellAsNumber('repVotes', row);
+    const demVotes = electionTable.getCellAsNumber('demVotes', row);
+    const repVotes = electionTable.getCellAsNumber('repVotes', row);
 
     // Grab auxiliary data about the election (photos, description, etc.)
     const yearEl = document.querySelector('elections year#' + elections[year].descrId);
@@ -702,7 +712,7 @@ function updateControlComponent(year) {
 }
 
 
-async function updateMapComponent(component, voteTable, year) {
+async function updateMapComponent(component, electionTable, year) {
     await component.chart.update({
         title: {
             text: commonTitle + ' ' + year
@@ -712,9 +722,9 @@ async function updateMapComponent(component, voteTable, year) {
     // U.S. states with election results
     const voteSeries = component.chart.series[1].data;
     voteSeries.forEach(function (state) {
-        const row = voteTable.getRowIndexBy('postal-code', state['postal-code']);
-        const percentRep = voteTable.getCellAsNumber('repPercent', row);
-        const percentDem = voteTable.getCellAsNumber('demPercent', row);
+        const row = electionTable.getRowIndexBy('postal-code', state['postal-code']);
+        const percentRep = electionTable.getCellAsNumber('repPercent', row);
+        const percentDem = electionTable.getCellAsNumber('demPercent', row);
 
         state.update({
             // Determine color
@@ -722,11 +732,11 @@ async function updateMapComponent(component, voteTable, year) {
             // For use in tooltip
             custom: {
                 winner: percentRep > percentDem ? electionData[year].candRep : electionData[year].candDem,
-                elVotesDem: voteTable.getCellAsNumber('demColVotes', row),
-                elVotesRep: voteTable.getCellAsNumber('repColVotes', row),
-                votesDem: voteTable.getCell('demVoteSummary', row),
-                votesRep: voteTable.getCell('repVoteSummary', row),
-                totalVotes: voteTable.getCellAsNumber('totalVotes', row)
+                elVotesDem: electionTable.getCellAsNumber('demColVotes', row),
+                elVotesRep: electionTable.getCellAsNumber('repColVotes', row),
+                votesDem: electionTable.getCell('demVoteSummary', row),
+                votesRep: electionTable.getCell('repVoteSummary', row),
+                totalVotes: electionTable.getCellAsNumber('totalVotes', row)
             }
         });
     });
@@ -757,24 +767,27 @@ async function updateGridComponent(component, year) {
     });
 }
 
+//
+// Callbacks (event handlers)
+//
 async function onStateClicked(board, state) {
-    // Get election data
-    const voteTable = await getVotesTable(board, electionYears[0]);
-    const row = voteTable.getRowIndexBy('postal-code', state);
-    const stateName = voteTable.getCell('state', row);
+    // State name picked from the latest election data
+    const electionTable = await getElectionTable(board, electionYears[0]);
+    const row = electionTable.getRowIndexBy('postal-code', state);
+    const stateName = electionTable.getCell('state', row);
 
     // Update chart title
     const comp = getComponent(board, 'election-chart');
 
     // Election data for current state
-    const electionData = getHistoricalElectionSeries(state);
+    const stateSeries = getHistoricalElectionSeries(state);
 
     await comp.update({
         chartOptions: {
             title: {
                 text: state === 'US' ? 'National' : stateName
             },
-            series: electionData
+            series: stateSeries
         }
     });
 }
@@ -782,23 +795,23 @@ async function onStateClicked(board, state) {
 
 // Update board after changing data set (state or election year)
 async function onYearClicked(board, year) {
-    // Get election data
-    const voteTable = await getVotesTable(board, year);
-
     // Dashboards components
     const resultComponent = getComponent(board, 'html-result');
     const mapComponent = getComponent(board, 'election-map');
     const gridComponent = getComponent(board, 'election-grid');
 
-    // Update result component (HTML)
-    updateResultComponent(resultComponent, voteTable, year);
+    // Get election data
+    const electionTable = await getElectionTable(board, year);
 
-    // Update control component (HTML), updated directly in DOM
+    // Update result component (HTML)
+    updateResultComponent(resultComponent, electionTable, year);
+
+    // Update control component (HTML), works directly on DOM
     updateControlComponent(year);
 
     // Update map component (Highcharts Map)
     resetMap(mapComponent.chart);
-    updateMapComponent(mapComponent, voteTable, year);
+    updateMapComponent(mapComponent, electionTable, year);
 
     // Update data grid component (Dashboards datagrid)
     updateGridComponent(gridComponent, year);
@@ -806,7 +819,7 @@ async function onYearClicked(board, year) {
 
 
 //
-// Create custom HTML component (TBD: remove when integrated with Dashboards)
+// Custom HTML component (TBD: remove when integrated with Dashboards)
 //
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,

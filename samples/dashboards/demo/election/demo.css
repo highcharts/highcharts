@@ -7,6 +7,11 @@
  *  Colors
  *
  * */
+:root {
+    --highcharts-color-0: #0200d0; /* Democrat */
+    --highcharts-color-1: #c40401; /* Republican */
+    --highcharts-color-2: #c0c0c0; /* Others */
+}
 
 #election-map {
     --color-background: #fff;
@@ -26,8 +31,30 @@
     --color-tooltip-text: #336;
 }
 
+#election-chart {
+    --color-axis: #333;
+    --color-axis-labels: #333;
+    --color-background: #fff;
+    --color-title: #2f2b38;
+    --color-text: #2f2b38;
+    --color-tooltip-background: #5352be;
+    --color-tooltip-text: #d9d8e8;
+}
+
+#election-grid {
+    --color-background: #fff;
+    --color-hover-background: #5352be;
+    --color-hover-border: #e7e7ec;
+    --color-hover-text: #e7e7ec;
+}
+
 @media (prefers-color-scheme: dark) {
     /* dark mode */
+    :root {
+        --highcharts-color-0: rgb(74, 131, 240); /* Democrat */
+        --highcharts-color-1: rgb(220, 71, 71); /* Republican */
+    }
+
     #election-chart {
         --color-axis: #ccc;
         --color-axis-labels: #ccc;
@@ -371,7 +398,7 @@
 }
 
 .highcharts-legend-item > text {
-    fill: #333;
+    fill: var(--color-text);
 }
 
 /* *
@@ -415,21 +442,7 @@
 
 /* Dashboard layout */
 
-#html-result,
-#html-control,
-#election-map,
-#election-chart,
-#demo-description {
-    /* Democrats */
-    --highcharts-color-0: #0200d0;
-
-    /* Republicans */
-    --highcharts-color-1: #c40401;
-
-    /* Others */
-    --highcharts-color-2: #ccc;
-}
-
+/* DEFAULT */
 #html-result,
 #html-control,
 #election-map,
