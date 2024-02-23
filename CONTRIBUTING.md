@@ -38,7 +38,7 @@ Your issue should:
 * include any `console.error` output related to the issue.
 * describe the expected behaviour/output.
 * link to a JSFiddle demo of the issue.
-* if it's not reproducable in a minimal demo, explain what actions where done to trigger the bug.
+* if it's not reproducible in a minimal demo, explain what actions where done to trigger the bug.
 * include the tested Highcharts and browser version(s).
 
 ## Suggesting Features and Enhancements

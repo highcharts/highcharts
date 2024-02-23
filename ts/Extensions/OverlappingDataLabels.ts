@@ -62,7 +62,7 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
 
 /**
  * Hide overlapping labels. Labels are moved and faded in and out on zoom to
- * provide a smooth visual imression.
+ * provide a smooth visual impression.
  *
  * @requires modules/overlapping-datalabels
  *
@@ -253,7 +253,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 }
 
 /**
- * Collect potensial overlapping data labels. Stack labels probably don't need
+ * Collect potential overlapping data labels. Stack labels probably don't need
  * to be considered because they are usually accompanied by data labels that lie
  * inside the columns.
  * @private

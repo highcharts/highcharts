@@ -60,7 +60,7 @@ export interface Options extends Component.Options {
      * assignment is used and usually matches against the `y` values.
      *
      * If crossfilter sync is enabled, the column assignment will show the
-     * distribution of values instead of the values themself.
+     * distribution of values instead of the values themselves.
      *
      * @example
      * ``` JavaScript

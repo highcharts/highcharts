@@ -583,7 +583,7 @@ class Scrollbar {
      * @param {number} width
      *        width of the scrollbar
      * @param {number} height
-     *        height of the scorllbar
+     *        height of the scrollbar
      */
     public position(x: number, y: number, width: number, height: number): void {
         const scroller = this,

@@ -219,11 +219,11 @@ class GeoHeatmapSeries extends MapSeries {
                 /**
                  * Represents how much blur should be added to the interpolated
                  * image. Works best in the range of 0-1, all higher values
-                 * would need a lot more perfomance of the machine to calculate
+                 * would need a lot more performance of the machine to calculate
                  * more detailed interpolation.
                  *
                  *  * **Note:** Useful, if the data is spread into wide range of
-                 *  longitue and latitude values.
+                 *  longitude and latitude values.
                  *
                  * @sample maps/series-geoheatmap/turkey-fire-areas
                  *         Simple demo of GeoHeatmap interpolation
@@ -789,7 +789,7 @@ export default GeoHeatmapSeries;
  */
 
 /**
- * The value of the point, resulting in a color controled by options
+ * The value of the point, resulting in a color controlled by options
  * as set in the [colorAxis](#colorAxis) configuration.
  *
  * @type      {number|null}
@@ -809,7 +809,7 @@ export default GeoHeatmapSeries;
  *//**
  * Represents how much blur should be added to the interpolated
  * image. Works best in the range of 0-1, all higher values
- * would need a lot more perfomance of the machine to calculate
+ * would need a lot more performance of the machine to calculate
  * more detailed interpolation.
  *
  * @name Highcharts.InterpolationOptionsObject#blur
