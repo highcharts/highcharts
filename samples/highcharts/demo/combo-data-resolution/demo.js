@@ -293,7 +293,6 @@ Highcharts.chart('container', {
     }],
 
     xAxis: {
-        type: 'datetime',
-        showLastLabel: true
+        type: 'datetime'
     }
 });
