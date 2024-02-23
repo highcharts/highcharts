@@ -48,36 +48,34 @@
          Flex: 1 row, 3 cells
     -->
     <div id="html-result-div">
-        <div id="html-result-container">
-            <!-- 1 row, cell 1: photo of Democrat candidate -->
-            <div id="dem-cand">
-                <img alt="Photo of Democrat candidate" />
+        <!-- 1 row, cell 1: photo of Democrat candidate -->
+        <div id="dem-cand">
+            <img alt="Photo of Democrat candidate" />
+        </div>
+        <!-- 1 row, cell 2: detailed nationwide election result -->
+        <!-- Flex: 1 column, 3 cells -->
+        <div id="election-result">
+            <div class="info">
+                <!-- row 1: candidate name, votes needed to win, elector votes -->
+                <div id="info-dem1">Left</div>
+                <div id="info-to-win">xxx to win</div>
+                <div id="info-rep1">Right</div>
             </div>
-            <!-- 1 row, cell 2: detailed nationwide election result -->
-            <!-- Flex: 1 column, 3 cells -->
-            <div id="election-result">
-                <div class="info">
-                    <!-- row 1: candidate name, votes needed to win, elector votes -->
-                    <div id="info-dem1">Left</div>
-                    <div id="info-to-win">xxx to win</div>
-                    <div id="info-rep1">Right</div>
-                </div>
-                <div class="info" id="bar-container">
-                    <!-- row 2: graphic bar with indicator on needed votes -->
-                    <div id="bar-dem"></div>
-                    <div id="bar-line"><span id="arrow">&#9662;</span></div>
-                    <div id="bar-rep"></div>
-                </div>
-                <div class="info">
-                    <!-- row 2: total votes, percentages -->
-                    <div id="info-dem2">Left</div>
-                    <div id="info-rep2">Right</div>
-                </div>
+            <div id="bar-container">
+                <!-- row 2: graphic bar with indicator on needed votes -->
+                <div id="bar-dem"></div>
+                <div id="bar-line"><span id="arrow">&#9662;</span></div>
+                <div id="bar-rep"></div>
             </div>
-            <!-- 1 row, cell 3: photo of Republican candidate -->
-            <div id="rep-cand">
-                <img alt="Photo of Republican candidate" />
+            <div class="info">
+                <!-- row 2: total votes, percentages -->
+                <div id="info-dem2">Left</div>
+                <div id="info-rep2">Right</div>
             </div>
+        </div>
+        <!-- 1 row, cell 3: photo of Republican candidate -->
+        <div id="rep-cand">
+            <img alt="Photo of Republican candidate" />
         </div>
     </div>
 
