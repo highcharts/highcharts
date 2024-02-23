@@ -101,7 +101,7 @@ const configs: {
             function (this: DataGridComponent): void {
                 const { board } = this;
 
-                const handlCursor = (e: DataCursor.Event): void => {
+                const handleCursor = (e: DataCursor.Event): void => {
                     const cursor = e.cursor;
                     if (cursor.type === 'position') {
                         const { row } = cursor;
@@ -138,7 +138,7 @@ const configs: {
                         return;
                     }
 
-                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
+                    cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                     cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
                 };
 
@@ -148,7 +148,7 @@ const configs: {
                     if (!table) {
                         return;
                     }
-                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
+                    cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                     cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
 
                 };

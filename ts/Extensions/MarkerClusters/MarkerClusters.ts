@@ -323,7 +323,7 @@ function onChartRender(
             if (
                 (options || {}).animation &&
                 series.markerClusterInfo &&
-                (series.chart.pointer.pinchDown || []).length === 0 &&
+                (series.chart.pointer?.pinchDown || []).length === 0 &&
                 ((series.xAxis || {}).eventArgs || {}).trigger !== 'pan' &&
                 oldState &&
                 Object.keys(oldState).length
@@ -443,7 +443,7 @@ export default MarkerClusters;
  * @callback Highcharts.MarkerClusterDrillCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.

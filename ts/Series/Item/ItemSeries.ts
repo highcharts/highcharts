@@ -266,7 +266,7 @@ class ItemSeries extends PieSeries {
                 if (!graphic.isActive) {
                     graphic.destroy();
                     graphics.splice(j, 1);
-                    j--; // Need to substract 1 after splice, #19053
+                    j--; // Need to subtract 1 after splice, #19053
                 } else {
                     graphic.isActive = false;
                 }

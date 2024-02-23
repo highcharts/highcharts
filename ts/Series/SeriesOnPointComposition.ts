@@ -379,7 +379,7 @@ namespace SeriesOnPointComposition {
                 });
 
                 // And also toggle series that are on toggled points. Redraw is
-                // not needed because it's fired later after showOrhide event
+                // not needed because it's fired later after showOrHide event
                 series && series.setVisible(!series.visible, false);
             });
         }
