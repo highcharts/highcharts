@@ -770,21 +770,22 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
-        if (height) {
-            // Get offset for border, padding
-            const pad =
-                getPaddings(this.element).y + getMargins(this.element).y;
+        if (this.board.guiEnabled) {
+            if (height) {
+                // Get offset for border, padding
+                const pad =
+                    getPaddings(this.element).y + getMargins(this.element).y;
 
-            this.dimensions.height = relativeLength(
-                height, Number(getStyle(this.parentElement, 'height'))
-            ) - pad;
-            this.element.style.height = this.dimensions.height + 'px';
-            this.contentElement.style.height = this.getContentHeight() + 'px';
-        }
-
-        if (height === null) {
-            this.dimensions.height = null;
-            this.element.style.removeProperty('height');
+                this.dimensions.height = relativeLength(
+                    height, Number(getStyle(this.parentElement, 'height'))
+                ) - pad;
+                this.element.style.height = this.dimensions.height + 'px';
+                this.contentElement.style.height = this.getContentHeight() +
+                    'px';
+            } else if (height === null) {
+                this.dimensions.height = null;
+                this.element.style.removeProperty('height');
+            }
         }
 
         fireEvent(this, 'resize', {
@@ -1209,6 +1210,7 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
+         * Deprecated, use `renderTo` instead.
          *
          * @deprecated
          */
@@ -1216,8 +1218,6 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
-         *
-         * @deprecated
          */
         renderTo?: string;
 

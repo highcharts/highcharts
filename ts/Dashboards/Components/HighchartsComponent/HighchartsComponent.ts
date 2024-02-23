@@ -539,6 +539,7 @@ class HighchartsComponent extends Component {
                 if (xKey) {
                     seriesTable.renameColumn(xKey, 'x');
                 }
+
                 const seriesData = seriesTable.getRowObjects().reduce((
                     arr: (number | {})[],
                     row: Record<string, any>
@@ -559,7 +560,17 @@ class HighchartsComponent extends Component {
                     return arr;
                 }, []);
 
-                series.setData(seriesData, false);
+                if (isSeriesColumnMap) {
+                    const pointColumns =
+                        columnAssignment[series.name] as Record<string, string>;
+
+                    series.update({
+                        keys: ['x'].concat(Object.keys(pointColumns)),
+                        data: seriesData
+                    }, false);
+                } else {
+                    series.setData(seriesData, false);
+                }
             });
 
             this.chart.redraw();

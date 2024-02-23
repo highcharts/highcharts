@@ -16,39 +16,6 @@ Dashboards.board('container', {
             }
         }]
     },
-    editMode: {
-        enabled: true,
-        contextMenu: {
-            enabled: true,
-            items: ['editMode']
-        }
-    },
-    gui: {
-        layouts: [{
-            rows: [{
-                cells: [{
-                    id: 'kpi-wrapper',
-                    layout: {
-                        rows: [{
-                            cells: [{
-                                id: 'kpi-vitamin-a'
-                            }, {
-                                id: 'kpi-iron'
-                            }]
-                        }]
-                    }
-                }, {
-                    id: 'dashboard-col-0'
-                }, {
-                    id: 'dashboard-col-1'
-                }]
-            }, {
-                cells: [{
-                    id: 'dashboard-col-2'
-                }]
-            }]
-        }]
-    },
     components: [{
         type: 'KPI',
         renderTo: 'kpi-vitamin-a',
