@@ -525,6 +525,17 @@ const Options: DeepPartial<A11yOptions> = {
          */
 
         /**
+         * Controls how [highContrastTheme](#accessibility.highContrastTheme)
+         * is applied.
+         *
+         * The default option is `auto`, which applies the high contrast theme
+         * the user's system has a high contrast theme active.
+         *
+         * @since next
+         */
+        highContrastMode: 'auto',
+
+        /**
          * A text description of the chart.
          *
          * **Note: Prefer using [linkedDescription](#accessibility.linkedDescription)
