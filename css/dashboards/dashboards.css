@@ -263,6 +263,7 @@
         0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
     border-radius: 3px;
+    height: calc(100% - 10px);
     overflow: hidden;
 }
 

@@ -36,6 +36,7 @@ body {
     border-radius: 15px;
     padding: 10px;
     text-align: left;
+    height: calc(100% - 30px); /* default margin and paddings */
 }
 
 .highcharts-dashboards-component-title {
