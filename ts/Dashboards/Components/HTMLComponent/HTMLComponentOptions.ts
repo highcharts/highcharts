@@ -52,6 +52,23 @@ export interface Options extends Component.Options {
      *
      */
     elements?: (AST.Node | string)[];
+
+    /**
+     * The HTML content of the component. If the `elements` option is set, the
+     * `html` option will be ignored.
+     *
+     * @example
+     * ```JavaScript
+     * html: `
+     *      <div>
+     *          <h1>Custom HTML</h1>
+     *          <span id="custom-html-div">Custom HTML added as string </span>
+     *      </div>
+     * `
+     * ```
+     */
+    html?: string;
+
     type: 'HTML';
 }
 

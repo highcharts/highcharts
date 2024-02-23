@@ -149,10 +149,12 @@ class HTMLComponent extends Component {
      * Array of HTML elements, declared as string or node.
      */
     private elements: AST.Node[];
+
     /**
      * HTML component's options.
      */
     public options: Options;
+
     /**
      * Reference to sync component that allows to sync.
      *
@@ -208,7 +210,7 @@ class HTMLComponent extends Component {
         const options = this.options;
         let isError = false;
 
-        if (options.elements) {
+        if (options.elements?.length) {
             this.elements = options.elements.map(
                 function (element): AST.Node {
                     if (typeof element === 'string') {
@@ -225,6 +227,8 @@ class HTMLComponent extends Component {
 
                     return element;
                 });
+        } else if (options.html) {
+            this.elements = this.getElementsFromString(options.html);
         }
 
         this.constructTree();
@@ -291,6 +295,15 @@ class HTMLComponent extends Component {
 
         const parser = new AST(this.elements);
         parser.addToDOM(this.contentElement);
+    }
+
+    /**
+     * When HTML definition is a string, it needs to be parsed to AST.
+     *
+     * @internal
+     */
+    private getElementsFromString(htmlString: string): AST.Node[] {
+       return new AST(htmlString).nodes;
     }
 
     /**

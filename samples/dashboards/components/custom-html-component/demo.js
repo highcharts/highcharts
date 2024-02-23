@@ -15,8 +15,6 @@ class CustomHTML extends HTMLComponent {
             const customHTML = document.getElementById(options.id).outerHTML;
 
             this.options.elements = new AST(customHTML).nodes;
-        } else if (options.html) {
-            this.options.elements = new AST(options.html).nodes;
         }
     }
 }
@@ -43,7 +41,7 @@ Dashboards.board('container', {
         renderTo: 'dashboard-col-0',
         id: 'custom-html-div' // id of the element which already exists in the DOM
     }, {
-        type: 'CustomHTML',
+        type: 'HTML',
         renderTo: 'dashboard-col-1',
         html: `
             <div>
