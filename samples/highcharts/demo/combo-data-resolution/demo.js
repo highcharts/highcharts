@@ -297,7 +297,8 @@ Highcharts.chart('container', {
         pointInterval: 36e5
     }],
     yAxis: {
-        min: -1,
+        tickInterval: 0.5,
+        endOnTick: true,
         max: 1
     },
     xAxis: {
