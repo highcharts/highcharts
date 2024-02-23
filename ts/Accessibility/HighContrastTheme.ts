@@ -39,7 +39,9 @@ declare module '../Core/Series/DataLabelOptions' {
  *
  * */
 
-const theme: DeepPartial<Options> = {
+export type HighContrastThemeOptions = DeepPartial<Options>;
+
+const theme: HighContrastThemeOptions = {
     chart: {
         backgroundColor: 'window'
     },
@@ -117,7 +119,7 @@ const theme: DeepPartial<Options> = {
                 lineColor: 'windowText',
                 fillColor: 'windowText'
             }
-        } as any,
+        },
         pie: {
             color: 'window',
             colors: ['window'],
