@@ -8,21 +8,8 @@
  *
  * */
 
-#election-chart {
-    --color-axis-labels: #333;
-    --color-tooltip-background: #ccd;
-    --color-tooltip-text: #333;
-}
-
-#election-grid {
-    --color-background: #fff;
-    --color-hover-background: #5352be;
-    --color-hover-border: #e7e7ec;
-    --color-hover-text: #e7e7ec;
-}
-
 #election-map {
-    --color-background: #7fc0e6;
+    --color-background: #fff;
     --color-map: #333;
     --color-marker-border: #fff;
     --color-title-text: #000;
@@ -39,55 +26,14 @@
     --color-tooltip-text: #336;
 }
 
-#container.highcharts-dark #election-grid {
-    --color-background: #20202c;
-}
-
-#container.highcharts-dark {
-    --color-axis-labels: #e7e7ec;
-    --color-background: #0d0d0d;
-    --color-grid: #838394;
-    --color-handle: #838394;
-    --color-mask: #dddbef66;
-    --color-mask-line: #838394;
-    --color-scroll: #20202c;
-    --color-scroll-line: #646479;
-    --color-series: #5352be;
-    --color-thumb: #5352be;
-    --color-thumb-line: #838394;
-}
-
-#container.highcharts-dark #election-map {
-    --color-navigation: #20202b;
-    --color-navigation-line: #646478;
-    --color-navigation-text: #838393;
-}
-
 @media (prefers-color-scheme: dark) {
     /* dark mode */
     #election-chart {
-        --color-axis-labels: #ccf;
-        --color-tooltip-background: #336;
-        --color-tooltip-text: #ccc;
-    }
-
-    #election-grid {
+        --color-axis: #ccc;
+        --color-axis-labels: #ccc;
         --color-background: #20202c;
-    }
-
-    #election-map {
-        --color-navigation: #20202b;
-        --color-navigation-line: #646478;
-        --color-navigation-text: #838393;
-    }
-
-    div#description {
-        background: #20202c;
-        color: #dadae2;
-    }
-
-    div#description a {
-        color: #fff;
+        --color-title: #dadae2;
+        --color-text: #dadae2;
     }
 }
 
@@ -383,7 +329,7 @@
 
 #election-chart .highcharts-title {
     fill: var(--color-title);
-    font-size: 1em;
+    font-size: 1.5em;
 }
 
 #election-chart .highcharts-axis {
@@ -406,8 +352,12 @@
     stroke: none;
 }
 
+/* Readable inside and outside column */
 #election-chart .highcharts-data-label text {
-    fill: white;
+    fill: #fff;
+    stroke: #000;
+    paint-order: stroke;
+    stroke-width: 2px;
 }
 
 #election-chart .highcharts-tooltip text {
@@ -470,18 +420,19 @@
 #election-map,
 #election-chart,
 #demo-description {
-    --highcharts-color-0: #0200d0; /* Democrats */
-    --highcharts-color-1: #c40401; /* Republicans */
-    --highcharts-color-2: #ccc; /* Others */
+    /* Democrats */
+    --highcharts-color-0: #0200d0;
+
+    /* Republicans */
+    --highcharts-color-1: #c40401;
+
+    /* Others */
+    --highcharts-color-2: #ccc;
 }
 
 #html-result,
-#election-map {
-    flex: 1 1 50%;
-    max-width: 1000px;
-}
-
 #html-control,
+#election-map,
 #election-chart {
     flex: 1 1 50%;
 }
@@ -490,47 +441,13 @@
     flex: 1 1 100%;
 }
 
-/* LARGE */
-@media (max-width: 1200px) {
-    #html-result,
-    #election-map {
-        background-color: yellow;
-    }
-
-    #html-control,
-    #election-chart {
-        background-color: yellow;
-    }
-
-    #election-grid {
-        background-color: yellow;
-    }
-}
-
-/* MEDIUM */
+/* MEDIUM and SMALL */
 @media (max-width: 992px) {
     #html-result,
-    #html-control {
-        background-color: red;
-        flex: 1 1 100%;
-    }
-
-    #election-map,
-    #election-chart,
-    #election-grid {
-        background-color: red;
-        flex: 1 1 100%;
-    }
-}
-
-/* SMALL */
-@media (max-width: 576px) {
-    #html-result,
     #html-control,
     #election-map,
     #election-chart,
     #election-grid {
-        background-color: blue;
         flex: 1 1 100%;
     }
 }

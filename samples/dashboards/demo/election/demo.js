@@ -347,14 +347,9 @@ async function setupDashboard() {
                         styledMode: false,
                         events: {
                             click: function () {
-                                // Clicked outside map ?
-                                if (selectedState !== 'US') {
-                                    // Reset map
-                                    onStateClicked(board, 'US');
-                                }
-                                // Reset zoom
-                                const map = getComponent(board, 'election-map').chart;
-                                map.mapZoom();
+                                // Clicked outside map
+                                onStateClicked(board, 'US');
+                                resetMap(this);
                             }
                         }
                     },
@@ -396,7 +391,7 @@ async function setupDashboard() {
                         type: 'map'
                     },
                     {
-                        name: 'State election result', // TBD: electoral mandates
+                        name: 'State election result',
                         data: [],
                         joinBy: 'postal-code',
                         dataLabels: {
@@ -409,13 +404,12 @@ async function setupDashboard() {
                         },
                         point: {
                             events: {
-                                click: async function (e) {
+                                click: function (e) {
                                     const sel = e.point['postal-code'];
                                     if (sel !== selectedState) {
                                         selectedState = sel;
                                     } else {
-                                        // Back to national view if clicking on already
-                                        // selected state.
+                                        // Back to national view if clicking on already selected state.
                                         selectedState = 'US';
                                     }
                                     onStateClicked(board, selectedState);
@@ -489,9 +483,8 @@ async function setupDashboard() {
                                 format: '{point.candidate}'
                             }, {
                                 enabled: true,
-                                rotation: -90,
-                                format: '{point.y:.1f}%',
-                                y: 40 // Pixels down from the top
+                                inside: false,
+                                format: '{point.y:.1f}'
                             }]
                         }
                     },
@@ -584,9 +577,9 @@ async function setupDashboard() {
 
             await onYearClicked(board, selectedYear);
 
-            // Reset zoom
-            const map = getComponent(board, 'election-map').chart;
-            map.mapZoom();
+            // Reset to national view
+            await onStateClicked(board, 'US');
+            resetMap(getComponent(board, 'election-map').chart);
         }
     );
 }
@@ -623,6 +616,17 @@ function getHistoricalElectionSeries(state = 'US') {
     return series;
 }
 
+
+function resetMap(mapChart) {
+    // Reset zoom
+    mapChart.mapZoom();
+
+    // Unselect all selected points
+    const points = mapChart.getSelectedPoints();
+    if (points.length > 0) {
+        points.forEach(point => point.select(false));
+    }
+}
 
 async function getVotesTable(board, year) {
     return await board.dataPool.getConnectorTable('votes' + year);
@@ -762,22 +766,17 @@ async function onStateClicked(board, state) {
     // Update chart title
     const comp = getComponent(board, 'election-chart');
 
+    // Election data for current state
+    const electionData = getHistoricalElectionSeries(state);
+
     await comp.update({
         chartOptions: {
             title: {
                 text: state === 'US' ? 'National' : stateName
-            }
+            },
+            series: electionData
         }
     });
-
-    // Election data for current state
-    const electionData = getHistoricalElectionSeries(state);
-
-    // Update chart columns
-    const chart = comp.chart;
-
-    await chart.series[0].setData(electionData[0].data);
-    await chart.series[1].setData(electionData[1].data);
 }
 
 
@@ -798,6 +797,7 @@ async function onYearClicked(board, year) {
     updateControlComponent(year);
 
     // Update map component (Highcharts Map)
+    resetMap(mapComponent.chart);
     updateMapComponent(mapComponent, voteTable, year);
 
     // Update data grid component (Dashboards datagrid)
