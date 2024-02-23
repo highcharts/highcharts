@@ -562,19 +562,11 @@ class SVGLabel extends SVGElement {
         }
         this.xSetting = Math.round(value);
         this.attr('translateX', this.xSetting);
-
-        // if (this.text.element.tagName === 'SPAN') {
-        //     this.text.attr({ x: value });
-        // }
     }
 
     public ySetter(value: number): void {
         this.ySetting = this.y = Math.round(value);
         this.attr('translateY', this.ySetting);
-
-        // if (this.text.element.tagName === 'SPAN') {
-        //     this.text.attr({ y: value });
-        // }
     }
 }
 
