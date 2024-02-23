@@ -132,6 +132,7 @@ Cypress.Commands.add('selectAnnotation', (annotationClassName, parentClassName) 
 
     if (parentClassName) {
         cy.get(`.${parentClassName}`).children().eq(1).click();
+        cy.wait(100); // wait a bit for the DOM to settle 
     }
     cy.get(`.${annotationClassName}`).click();
 })
