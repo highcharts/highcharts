@@ -10,6 +10,13 @@ const chart = Highcharts.mapChart('container', {
     chart: {
         margin: 20
     },
+    accessibility: {
+        typeDescription: 'Map of cinema seat plan.',
+        point: {
+            descriptionFormat: 'Seat {name}, {#if isNull}Unavailable{else}' +
+                '{#if selected}Selected{else}Available{/if}{/if}'
+        }
+    },
     title: {
         text: 'Cinema seat plan',
         x: 10
@@ -82,7 +89,10 @@ const chart = Highcharts.mapChart('container', {
             events: {
                 click: function () {
                     toggleSelection(this.name);
-                    this.select(!this.selected, true);
+                    // Update to trigger the accessibility module
+                    this.update({ selected: !this.selected });
+                    this.select(this.selected, true);
+                    // Refresh to update the selection state
                     this.series.chart.tooltip.refresh(this);
                 }
             }
@@ -122,6 +132,9 @@ const chart = Highcharts.mapChart('container', {
             enabled: false
         },
         enableMouseTracking: false,
+        accessibility: {
+            enabled: false
+        },
         dataLabels: {
             crop: false,
             style: {
@@ -148,7 +161,12 @@ function toggleSelection(seat) {
     if (typeof seat !== 'string') {
         // Clear selection
         selectedList.length = 0;
+        // Update to trigger the accessibility module
+        chart.getSelectedPoints().forEach(point => {
+            point.update({ selected: false }, false);
+        });
         chart.series[0].points[0].select(false);
+        chart.redraw();
     } else {
         const seatIndex = selectedList.indexOf(seat);
         if (seatIndex < 0) {
