@@ -428,7 +428,6 @@ class HighchartsComponent extends Component {
             );
         const newSeriesIds = [];
         for (const { columnAssignment } of connectorOptions) {
-            console.log(columnAssignment);
             if (columnAssignment) {
                 for (const { seriesId } of columnAssignment) {
                     if (seriesId) {
