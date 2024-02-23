@@ -34,5 +34,5 @@ Dashboards.board('container', {
                 textContent: 'Loreum ipsum et omnia dolores'
             }]
         }]
-    },]
+    }]
 });
