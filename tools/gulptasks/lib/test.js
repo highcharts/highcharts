@@ -25,6 +25,7 @@
  */
 function getProducts(logPaths) {
     const ChildProcess = require('child_process');
+    const log = require('./log');
 
     const paths = ChildProcess
             .execSync('git diff --cached --name-only --diff-filter=ACM')
@@ -42,7 +43,6 @@ function getProducts(logPaths) {
 
     // Logging for testing and debugging
     if (logPaths) {
-        const log = require('./log');
         log.message('paths: ', paths);
     }
 
@@ -50,6 +50,18 @@ function getProducts(logPaths) {
         if (!affectedProducts.includes(product)) {
             affectedProducts.push(product);
         }
+    }
+
+    const affectsAll = [
+        'package.json',
+        'package-lock.json',
+        'tools/gulptasks/lib/test.js'
+    ];
+
+    if (paths.some(path => affectsAll.includes(path))) {
+        log.message('All products affected');
+
+        return products;
     }
 
     paths.forEach(path => {
