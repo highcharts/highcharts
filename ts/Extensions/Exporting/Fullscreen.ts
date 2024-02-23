@@ -236,9 +236,6 @@ class Fullscreen {
                     .unbindFullscreenEvent();
             }
 
-            // Set old size as undefined to trigger re-rendering (#20548).
-            chart.oldChartWidth = void 0;
-            chart.oldChartHeight = void 0;
             chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
             fullscreen.origWidth = void 0;
             fullscreen.origHeight = void 0;
