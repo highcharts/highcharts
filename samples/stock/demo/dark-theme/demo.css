@@ -1,0 +1,16 @@
+#container {
+    height: 400px;
+    min-width: 310px;
+}
+
+.highcharts-point-up {
+    stroke: #8cc076;
+}
+
+.highcharts-point-down {
+    stroke: #b82d0d;
+}
+
+.highcharts-button-symbol {
+    stroke: #c5c7c9;
+}
