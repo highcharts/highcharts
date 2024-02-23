@@ -433,8 +433,8 @@ class HTMLElement extends SVGElement {
                 ) {
                     this.setSpanRotation(
                         rotation,
-                        alignCorrection,
-                        baseline
+                        (this.parentGroup?.padding * -1) || 0,
+                        (this.parentGroup?.padding * -1) || 0
                     );
                 }
 
@@ -469,15 +469,15 @@ class HTMLElement extends SVGElement {
      */
     private setSpanRotation(
         rotation: number,
-        alignCorrection: number,
-        baseline: number
+        originX: number,
+        originY: number
     ): void {
         // CSS transform and transform-origin both supported without prefix
         // since Firefox 16 (2012), IE 10 (2012), Chrome 36 (2014), Safari 9
         // (2015).;
         css(this.element, {
             transform: `rotate(${rotation}deg)`,
-            transformOrigin: `${alignCorrection * 100}% ${baseline}px`
+            transformOrigin: `${originX}% ${originY}px`
         });
     }
 
@@ -563,6 +563,24 @@ class HTMLElement extends SVGElement {
     public xSetter(value: number, key: string): void {
         this[key] = value;
         this.doTransform = true;
+    }
+
+    public rotationOriginXSetter(value: number|null): void {
+        if (value) {
+            this.rotationOriginX = value;
+            css(this.element, {
+                transformOrigin: `${value}px ${this.rotationOriginY || 0}px`
+            });
+        }
+    }
+
+    public rotationOriginYSetter(value: number|null): void {
+        if (value) {
+            this.rotationOriginY = value;
+            css(this.element, {
+                transformOrigin: `${this.rotationOriginX || 0}px ${value}px`
+            });
+        }
     }
 }
 

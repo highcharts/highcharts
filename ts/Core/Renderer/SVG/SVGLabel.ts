@@ -350,11 +350,38 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
+    public rotationSetter(value: number|null): void {
+        this.rotation = value === null ? void 0 : value;
+        this.doTransform = true;
+
+        if (this.text.element.tagName === 'SPAN') {
+            this.text.attr({ rotation: value === null ? void 0 : value });
+        }
+    }
+
+    public rotationOriginXSetter(value: number|null): void {
+        this.rotationOriginX = value || void 0;
+        this.doTransform = true;
+
+        if (value && this.text.element.tagName === 'SPAN') {
+            this.text.attr({ rotationOriginX: value - this.padding });
+        }
+    }
+
+    public rotationOriginYSetter(value: number|null): void {
+        this.rotationOriginY = value || void 0;
+        this.doTransform = true;
+
+        if (value && this.text.element.tagName === 'SPAN') {
+            this.text.attr({ rotationOriginY: value - this.padding });
+        }
+    }
+
     public strokeSetter(
         value: ColorType,
         key: string
     ): void {
-        // for animation getter (#6776)
+        // For animation getter (#6776)
         this.stroke = value;
         this.boxAttr(key, value);
     }
@@ -400,7 +427,7 @@ class SVGLabel extends SVGElement {
                     !isNumber(this.heightSetting) ||
                     this.textAlign
                 ) && defined(text.textStr)) ?
-                    text.getBBox() :
+                    text.getBBox(void 0, 0) :
                     SVGLabel.emptyBBox
             );
 
@@ -535,11 +562,19 @@ class SVGLabel extends SVGElement {
         }
         this.xSetting = Math.round(value);
         this.attr('translateX', this.xSetting);
+
+        // if (this.text.element.tagName === 'SPAN') {
+        //     this.text.attr({ x: value });
+        // }
     }
 
     public ySetter(value: number): void {
         this.ySetting = this.y = Math.round(value);
         this.attr('translateY', this.ySetting);
+
+        // if (this.text.element.tagName === 'SPAN') {
+        //     this.text.attr({ y: value });
+        // }
     }
 }
 
