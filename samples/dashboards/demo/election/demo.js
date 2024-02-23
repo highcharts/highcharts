@@ -29,29 +29,15 @@
 // * https://edition.cnn.com/election/2020/results/president
 // * https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/
 
-
+// Data sources
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
 const commonTitle = 'U.S. presidential election';
 
-// TBD: calculate ID on the fly
-const elections = {
-    2020: {
-        descrId: 'ei_2020'
-    },
-    2016: {
-        descrId: 'ei_2016'
-    },
-    2012: {
-        descrId: 'ei_2012'
-    },
-    2008: {
-        descrId: 'ei_2008'
-    }
-};
-const electionYears = Object.keys(elections).reverse();
+// TBD: expand as more elections are added
+const electionYears = ['2020', '2016', '2012', '2008'];
 
 // Election data loaded from CSV file and converted to JSON
 let electionData = null;
@@ -77,39 +63,8 @@ async function setupDashboard() {
     // Create the Dashboard
     const board = await Dashboards.board('container', {
         dataPool: {
-            connectors: [
-                // TBD: to be populated dynamically if
-                // the number of elections increases.
-                {
-                    id: 'votes2020',
-                    type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: electionData[2020].data
-                    }
-                }, {
-                    id: 'votes2016',
-                    type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: electionData[2016].data
-                    }
-                }, {
-                    id: 'votes2012',
-                    type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: electionData[2012].data
-                    }
-                }, {
-                    id: 'votes2008',
-                    type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: electionData[2008].data
-                    }
-                }
-            ]
+            // Data connectors, one per election
+            connectors: getDataConnectors()
         },
         gui: {
             // TBD: move to HTML
@@ -402,6 +357,25 @@ async function setupDashboard() {
     );
 
 
+    function getDataConnectors() {
+        const connectors = [];
+
+        electionYears.forEach(function (year) {
+            connectors.push(
+                {
+                    id: 'votes' + year,
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        data: electionData[year].data
+                    }
+                }
+            );
+        });
+        return connectors;
+    }
+
+
     function parseElectionData(csv) {
         const rowObj = {
             state: '',
@@ -671,7 +645,7 @@ async function updateResultComponent(component, electionTable, year) {
     const repVotes = electionTable.getCellAsNumber('repVotes', row);
 
     // Grab auxiliary data about the election (photos, description, etc.)
-    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
+    const yearEl = document.querySelector('elections year#ei_' + year);
 
     // Photos
     const imgDemUrl = yearEl.querySelector('dem imgUrl').textContent;
@@ -705,7 +679,7 @@ async function updateResultComponent(component, electionTable, year) {
 
 
 function updateControlComponent(year) {
-    const yearEl = document.querySelector('elections year#' + elections[year].descrId);
+    const yearEl = document.querySelector('elections year#ei_' + year);
     const domEl = document.getElementById('election-description');
     const el = yearEl.querySelector('descr');
     domEl.innerHTML = el.innerHTML;
