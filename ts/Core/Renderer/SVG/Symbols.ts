@@ -53,7 +53,7 @@ function arc(
                 Math.abs((options.end || 0) - start - 2 * Math.PI) <
                 proximity
             ),
-            // Substract a small number to prevent cos and sin of start
+            // Subtract a small number to prevent cos and sin of start
             // and end from becoming equal on 360 arcs (related: #1561)
             end = (options.end || 0) - proximity,
             innerRadius = options.innerR,

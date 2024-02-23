@@ -5,7 +5,7 @@ The data pool provides the central access to data and data management in a
 dashboard. It manages connectors and their tables in a on-demand-manner, so
 that data is only loaded when actually requested by a dashboard component.
 
-Data connectors manage the transaction and preperation of data. Loading data
+Data connectors manage the transaction and preparation of data. Loading data
 from a source is an asynchronous process as the source is usually a web server.
 
 

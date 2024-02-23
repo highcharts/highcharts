@@ -201,7 +201,7 @@ declare module '../Series/SeriesLike' {
  *        The chart options structure.
  *
  * @param {Highcharts.ChartCallbackFunction} [callback]
- *        Function to run when the chart has loaded and and all external images
+ *        Function to run when the chart has loaded and all external images
  *        are loaded. Defining a
  *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
@@ -246,7 +246,7 @@ class Chart {
      * The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     * Function to run when the chart has loaded and and all external images are
+     * Function to run when the chart has loaded and all external images are
      * loaded. Defining a
      * [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      * handler is equivalent.
@@ -351,7 +351,7 @@ class Chart {
     public plotTop!: number;
     public plotWidth!: number;
     public pointCount!: number;
-    public pointer!: Pointer;
+    public pointer?: Pointer;
     public reflowTimeout?: number;
     public renderer!: Chart.Renderer;
     public renderTo!: globalThis.HTMLElement;
@@ -416,7 +416,7 @@ class Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -1550,8 +1550,8 @@ class Chart {
 
         // get the width and height
         chart.getChartSize();
-        const chartWidth = chart.chartWidth;
         const chartHeight = chart.chartHeight;
+        let chartWidth = chart.chartWidth;
 
         // Allow table cells and flex-boxes to shrink without the chart blocking
         // them out (#6427)
@@ -1594,6 +1594,18 @@ class Chart {
         );
         chart.container = container;
 
+        // Adjust width if setting height affected it (#20334)
+        chart.getChartSize();
+        if (chartWidth !== chart.chartWidth) {
+            chartWidth = chart.chartWidth;
+            if (!chart.styledMode) {
+                css(container, {
+                    width: pick(optionsChart.style?.width, chartWidth + 'px')
+                });
+            }
+        }
+        chart.containerBox = chart.getContainerBox();
+
         // cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
 
@@ -1618,8 +1630,6 @@ class Chart {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
-
-        chart.containerBox = chart.getContainerBox();
 
         // Set the initial animation from the options
         setAnimation(void 0, chart);
@@ -1756,7 +1766,7 @@ class Chart {
             oldBox = chart.containerBox,
             containerBox = chart.getContainerBox();
 
-        delete chart.pointer.chartPosition;
+        delete chart.pointer?.chartPosition;
 
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
@@ -2431,7 +2441,7 @@ class Chart {
                 expectedSpace = options.tickLength;
                 axis.createGroups();
 
-                // Calculate extecped space based on dummy tick
+                // Calculate expected space based on dummy tick
                 const mockTick = new Tick(axis, 0, '', true),
                     label = mockTick.createLabel('x', labels);
                 mockTick.destroy();
@@ -2607,7 +2617,7 @@ class Chart {
 
         let i: number;
 
-        // fire the chart.destoy event
+        // fire the chart.destroy event
         fireEvent(chart, 'destroy');
 
         // Delete the chart from charts lookup array
@@ -2715,7 +2725,7 @@ class Chart {
         fireEvent(chart, 'beforeRender');
 
         chart.render();
-        chart.pointer.getChartPosition(); // #14973
+        chart.pointer?.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
@@ -3252,7 +3262,7 @@ class Chart {
         }
 
         if (options.time) {
-            // Maintaining legacy global time. If the chart is instanciated
+            // Maintaining legacy global time. If the chart is instantiated
             // first with global time, then updated with time options, we need
             // to create a new Time instance to avoid mutating the global time
             // (#10536).
@@ -3268,7 +3278,7 @@ class Chart {
             merge(true, chart.options.time, options.time);
         }
 
-        // Some option stuctures correspond one-to-one to chart objects that
+        // Some option structures correspond one-to-one to chart objects that
         // have update methods, for example
         // options.credits => chart.credits
         // options.legend => chart.legend
@@ -3331,7 +3341,7 @@ class Chart {
                     if (!item && (chart as any)[coll]) {
                         item = (chart as any)[coll][pick(newOptions.index, i)];
 
-                        // Check if we grabbed an item with an exising but
+                        // Check if we grabbed an item with an existing but
                         // different id (#13541). Check that the item in this
                         // position is not internal (navigator).
                         if (
@@ -3608,7 +3618,7 @@ class Chart {
      *   rectangle is the full plot area.
      * - In a touch zoom, the `from` rectangle is made up of the last two-finger
      *   touch, while the `to`` rectangle is the current touch.
-     * - In a mousewheel zoom, the the `to` rectangle is a 10x10 px square,
+     * - In a mousewheel zoom, the `to` rectangle is a 10x10 px square,
      *   while the `to` rectangle reflects the scale around that.
      *
      * @private
@@ -3882,9 +3892,9 @@ extend(Chart.prototype, {
     callbacks: [],
 
     /**
-     * These collections (arrays) implement `Chart.addSomethig` method used in
+     * These collections (arrays) implement `Chart.addSomething` method used in
      * chart.update() to create new object in the collection. Equivalent for
-     * deleting is resolved by simple `Somethig.remove()`.
+     * deleting is resolved by simple `Something.remove()`.
      *
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.

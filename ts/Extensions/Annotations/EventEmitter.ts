@@ -108,7 +108,7 @@ abstract class EventEmitter {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
-                        emitter.chart.pointer.normalize(e),
+                        emitter.chart.pointer?.normalize(e),
                         emitter.target
                     );
                 }
@@ -325,7 +325,7 @@ abstract class EventEmitter {
                 (e as any)?.sourceCapabilities?.firesTouchEvents
             ) || false;
 
-        e = pointer.normalize(e);
+        e = pointer?.normalize(e) || e;
 
         let prevChartX = e.chartX,
             prevChartY = e.chartY;
@@ -338,7 +338,7 @@ abstract class EventEmitter {
             function (e: AnnotationEventObject): void {
                 emitter.hasDragged = true;
 
-                e = pointer.normalize(e);
+                e = pointer?.normalize(e) || e;
                 e.prevChartX = prevChartX;
                 e.prevChartY = prevChartY;
 

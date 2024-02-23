@@ -954,8 +954,8 @@ class WGLRenderer {
                 // }
 
                 if (x > plotWidth) {
-                    // If this is  rendered as a point, just skip drawing it
-                    // entirely, as we're not dependandt on lineTo'ing to it.
+                    // If this is rendered as a point, just skip drawing it
+                    // entirely, as we're not dependant on lineTo'ing to it.
                     // See #8197
                     if (inst.drawMode === 'POINTS') {
                         continue;
@@ -1124,7 +1124,7 @@ class WGLRenderer {
 
     /**
      * Push a series to the renderer
-     * If we render the series immediatly, we don't have to loop later
+     * If we render the series immediately, we don't have to loop later
      * @private
      * @param {Highchart.Series} s
      * The series to push.

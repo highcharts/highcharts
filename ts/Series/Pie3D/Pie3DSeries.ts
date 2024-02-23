@@ -334,4 +334,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpilation
+''; // keeps doclets above after transpiledion

@@ -477,7 +477,7 @@ class HighchartsComponent extends Component {
         }
 
         this.innerResizeTimeouts.push(setTimeout((): void => {
-            if (this.chart) {
+            if (this.chart && this.chart.container) {
                 this.chart.setSize(
                     null,
                     this.contentElement.clientHeight,
@@ -746,6 +746,15 @@ class HighchartsComponent extends Component {
      */
     private getChart(): Chart|undefined {
         return this.chart || this.createChart();
+    }
+
+    /**
+     * Destroys the highcharts component.
+     */
+    public destroy(): void {
+        // Cleanup references in the global Highcharts scope
+        this.chart?.destroy();
+        super.destroy();
     }
 
     /**
