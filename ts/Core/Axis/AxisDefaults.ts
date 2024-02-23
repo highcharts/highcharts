@@ -1540,7 +1540,7 @@ namespace AxisDefaults {
          * Additional range on the right side of the xAxis. Works similar to
          * `xAxis.maxPadding`, but value is set in milliseconds, percentage or pixels.
          *
-         * If it's a number, it is interpreted as miliseconds.
+         * If it's a number, it is interpreted as milliseconds.
          *
          * If it's a percentage string,
          * it is interpreted as percentages of axis length.

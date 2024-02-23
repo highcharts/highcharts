@@ -1,9 +1,3 @@
-Highcharts.setOptions({
-    global: {
-        useUTC: false
-    }
-});
-
 // Create the chart
 Highcharts.stockChart('container', {
     title: {
@@ -11,19 +5,19 @@ Highcharts.stockChart('container', {
     },
 
     xAxis: {
-        overscroll: '600px'
+        overscroll: '50px'
     },
 
     navigator: {
         xAxis: {
-            overscroll: '600px'
+            overscroll: '50px'
         }
     },
 
     series: [{
         name: 'Random data',
         pointStart: Date.UTC(2017, 0, 1),
-        pointInterval: 1000, // 1s
+        pointInterval: 1000 * 60 * 60 * 24, // 1 day
         data: (function () {
             // generate an array of random data
             const data = [];
