@@ -55,7 +55,8 @@ function getProducts(logPaths) {
     const affectsAll = [
         'package.json',
         'package-lock.json',
-        'tools/gulptasks/lib/test.js'
+        'tools/gulptasks/lib/test.js',
+        '.husky/pre-commit'
     ];
 
     if (paths.some(path => affectsAll.includes(path))) {
