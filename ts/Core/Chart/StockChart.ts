@@ -49,6 +49,8 @@ import Point from '../Series/Point.js';
 import RangeSelectorDefaults from
     '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
+import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
+const { setFixedRange } = StockUtilities;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -81,6 +83,8 @@ declare module '../Axis/AxisLike' {
 declare module './ChartLike' {
     interface ChartLike {
         _labelPanes?: Record<string, Axis>;
+        fixedRange?: number;
+        setFixedRange(range: number|undefined): void;
     }
 }
 
@@ -216,7 +220,7 @@ class StockChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -300,8 +304,7 @@ class StockChart extends Chart {
 
         // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
-            xAxisOptions: AxisOptions,
-            i: number
+            xAxisOptions: AxisOptions
         ): AxisOptions => merge(
             getDefaultAxisOptions(
                 'xAxis',
@@ -315,8 +318,7 @@ class StockChart extends Chart {
 
         // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
-            yAxisOptions: YAxisOptions,
-            i: number
+            yAxisOptions: YAxisOptions
         ): YAxisOptions => merge(
             getDefaultAxisOptions(
                 'yAxis',
@@ -392,6 +394,7 @@ namespace StockChart {
 
     /** @private */
     export function compose(
+        ChartClass: typeof Chart,
         AxisClass: typeof Axis,
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
@@ -403,6 +406,8 @@ namespace StockChart {
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
+
+            ChartClass.prototype.setFixedRange = setFixedRange;
 
             SeriesClass.prototype.forceCropping = seriesForceCropping;
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
@@ -980,7 +985,7 @@ namespace StockChart {
                 end = points[i + 1];
 
             if (start[1] === end[1]) {
-                // Substract due to #1129. Now bottom and left axis gridlines
+                // Subtract due to #1129. Now bottom and left axis gridlines
                 // behave the same.
                 start[1] = end[1] =
                     Math.round(start[1]) - (width % 2 / 2);

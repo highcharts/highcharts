@@ -165,6 +165,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Order of columns.
      */
     public getColumnOrder(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         usePresentationState?: boolean
     ): (Array<string>|undefined) {
         const connector = this,
@@ -179,7 +180,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Retrieves the columns of the the dataTable,
+     * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
      * @param {boolean} [usePresentationOrder]

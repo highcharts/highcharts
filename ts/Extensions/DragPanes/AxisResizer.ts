@@ -28,8 +28,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AxisResizerDefaults from './AxisResizerDefaults.js';
-import H from '../../Core/Globals.js';
-const { hasTouch } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -206,27 +204,21 @@ class AxisResizer {
             resizer.onMouseUp(e)
         );
         resizer.mouseDownHandler = mouseDownHandler = (
-            e: PointerEvent
         ): void => (
-            resizer.onMouseDown(e)
+            resizer.onMouseDown()
         );
 
-        // Add mouse move and mouseup events. These are bind to doc/container,
-        // because resizer.grabbed flag is stored in mousedown events.
         eventsToUnbind.push(
+            // Add mouse move and mouseup events. These are bind to doc/div,
+            // because resizer.grabbed flag is stored in mousedown events.
             addEvent(container, 'mousemove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'mouseup', mouseUpHandler),
-            addEvent(ctrlLineElem, 'mousedown', mouseDownHandler)
+            addEvent(ctrlLineElem, 'mousedown', mouseDownHandler),
+            // Touch events.
+            addEvent(container, 'touchmove', mouseMoveHandler),
+            addEvent(container.ownerDocument, 'touchend', mouseUpHandler),
+            addEvent(ctrlLineElem, 'touchstart', mouseDownHandler)
         );
-
-        // Touch events.
-        if (hasTouch) {
-            eventsToUnbind.push(
-                addEvent(container, 'touchmove', mouseMoveHandler),
-                addEvent(container.ownerDocument, 'touchend', mouseUpHandler),
-                addEvent(ctrlLineElem, 'touchstart', mouseDownHandler)
-            );
-        }
 
         resizer.eventsToUnbind = eventsToUnbind;
     }
@@ -246,12 +238,12 @@ class AxisResizer {
          * be ignored. Borrowed from Navigator.
          */
         if (!e.touches || e.touches[0].pageX !== 0) {
+            const pointer = this.axis.chart.pointer;
             // Drag the control line
-            if (this.grabbed) {
+            if (this.grabbed && pointer) {
                 this.hasDragged = true;
                 this.updateAxes(
-                    this.axis.chart.pointer.normalize(e).chartY -
-                    (this.options.y as any)
+                    pointer.normalize(e).chartY - (this.options.y || 0)
                 );
             }
         }
@@ -267,10 +259,10 @@ class AxisResizer {
      */
     public onMouseUp(e: PointerEvent): void {
 
-        if (this.hasDragged) {
+        const pointer = this.axis.chart.pointer;
+        if (this.hasDragged && pointer) {
             this.updateAxes(
-                this.axis.chart.pointer.normalize(e).chartY -
-                (this.options.y as any)
+                pointer.normalize(e).chartY - (this.options.y || 0)
             );
         }
 
@@ -284,9 +276,9 @@ class AxisResizer {
      *
      * @function Highcharts.AxisResizer#onMouseDown
      */
-    public onMouseDown(e: PointerEvent): void {
+    public onMouseDown(): void {
         // Clear all hover effects.
-        this.axis.chart.pointer.reset(false, 0);
+        this.axis.chart.pointer?.reset(false, 0);
 
         // Disable runPointActions.
         this.grabbed = this.axis.chart.activeResizer = true;

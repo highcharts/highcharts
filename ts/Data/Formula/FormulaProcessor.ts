@@ -539,7 +539,7 @@ function processFormula(
 
 
 /**
- * Process a function  on the give table. If the arguments do not contain
+ * Process a function on the given table. If the arguments do not contain
  * references or ranges, then no table has to be provided.
  *
  * @private
@@ -559,6 +559,7 @@ function processFormula(
 function processFunction(
     formulaFunction: Function,
     table?: DataTable,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reference?: Reference // @todo
 ): (Value|Array<Value>) {
     const processor = processorFunctions[formulaFunction.name];

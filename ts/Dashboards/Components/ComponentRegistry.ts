@@ -17,10 +17,7 @@
  * */
 
 
-import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
-
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import type { ComponentTypeRegistry } from './ComponentType';
 
 /* *
  *

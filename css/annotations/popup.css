@@ -20,11 +20,14 @@
     min-width: 0;
 }
 
-.highcharts-popup.highcharts-annotation-toolbar button {
+.highcharts-annotation-toolbar button {
     margin-top: 0;
+    cursor: pointer;
+    background-color: var(--highcharts-neutral-color-3);
 }
 
-.highcharts-popup.highcharts-annotation-toolbar > span {
+.highcharts-popup.highcharts-annotation-toolbar > p {
+    margin: 0;
     display: block;
     float: left;
     padding: 12px;
@@ -134,22 +137,26 @@
     padding: 15px 0;
 }
 
-.highcharts-indicator-list li {
+button.highcharts-indicator-list-item {
     cursor: pointer;
     padding: 5px 20px;
-    margin: 0;
     width: 100%;
     height: auto;
     overflow: hidden;
     word-break: break-all;
     box-sizing: border-box;
+    background-color: var(--highcharts-background-color);
+    text-align: left;
 }
 
-.highcharts-indicator-list li:hover {
-    background-color: var(--highcharts-neutral-color-10);
+.highcharts-indicator-list li {
+    width: 100%;
+    padding: 0;
+    height: auto;
 }
 
-.highcharts-tab-item {
+.highcharts-popup > button.highcharts-tab-item {
+    margin: 0;
     background-color: var(--highcharts-neutral-color-3);
     cursor: pointer;
     display: block;
@@ -159,7 +166,7 @@
     line-height: 40px;
 }
 
-.highcharts-tab-item.highcharts-tab-item-active {
+button.highcharts-tab-item.highcharts-tab-item-active {
     background-color: var(--highcharts-neutral-color-10);
 }
 
@@ -176,9 +183,11 @@
     display: block;
 }
 
-.highcharts-popup-close {
+.highcharts-popup > .highcharts-popup-close {
+    margin: 0;
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    background-color: var(--highcharts-background-color);
     width: 40px;
     height: 40px;
     cursor: pointer;
@@ -194,24 +203,23 @@
 .highcharts-popup button.highcharts-annotation-edit-button:hover,
 .highcharts-popup button.highcharts-annotation-remove-button:hover {
     background-color: var(--highcharts-neutral-color-10);
-    cursor: pointer;
+}
+
+div.highcharts-popup-rhs-col > button {
+    float: right;
 }
 
 .highcharts-popup button {
-    float: right;
     border: none;
-    background: var(--highcharts-neutral-color-3);
-    color: var(--highcharts-neutral-color-60);
-    margin-left: 5px;
-    margin-top: 12px;
+    margin: 0 5px 0 0;
 }
 
-.highcharts-popup button:first-child {
-    margin-left: 0;
-}
-
-.highcharts-tab-disabled {
+button.highcharts-tab-item.highcharts-tab-disabled {
     color: var(--highcharts-neutral-color-20);
+}
+
+button.highcharts-tab-item.highcharts-tab-disabled:hover {
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 /* annotation edit small popup */

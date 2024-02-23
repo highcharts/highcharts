@@ -42,7 +42,7 @@ const {
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
-const { getLevelOptions } = TU;
+const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -338,21 +338,18 @@ class SankeySeries extends ColumnSeries {
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
-        this.nodeWidth = relativeLength(
-            this.options.nodeWidth as any,
-            this.chart.plotSizeX as any
-        );
 
         const series = this,
             chart = this.chart,
             options = this.options,
-            nodeWidth = this.nodeWidth,
-            nodeColumns = this.nodeColumns;
+            nodeColumns = this.nodeColumns,
+            columnCount = nodeColumns.length;
 
+        this.nodeWidth = getNodeWidth(this, columnCount);
         this.nodePadding = this.getNodePadding();
 
         // Find out how much space is needed. Base it on the translation
-        // factor of the most spaceous column.
+        // factor of the most spacious column.
 
         this.translationFactor = nodeColumns.reduce(
             (
@@ -368,7 +365,7 @@ class SankeySeries extends ColumnSeries {
 
         this.colDistance =
             (
-                (chart.plotSizeX as any) - nodeWidth -
+                (chart.plotSizeX as any) - this.nodeWidth -
                 (options.borderWidth as any)
             ) / Math.max(1, nodeColumns.length - 1);
 
@@ -832,7 +829,7 @@ export default SankeySeries;
  * The vertical offset of a node in terms of weight. Positive values shift the
  * node downwards, negative shift it upwards.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -847,7 +844,7 @@ export default SankeySeries;
  * The horizontal offset of a node. Positive values shift the node right,
  * negative shift it left.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -860,7 +857,7 @@ export default SankeySeries;
  * The vertical offset of a node. Positive values shift the node down,
  * negative shift it up.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}

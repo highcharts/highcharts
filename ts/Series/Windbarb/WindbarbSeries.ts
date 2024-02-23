@@ -314,10 +314,7 @@ class WindbarbSeries extends ColumnSeries {
         }
     }
 
-    public markerAttribs(
-        point: WindbarbPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public markerAttribs(): SVGAttributes {
         return {};
     }
 

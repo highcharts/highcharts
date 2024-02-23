@@ -266,7 +266,7 @@ class TextBuilder {
                         // Target width
                         Math.max(
                             0,
-                            // Substract the font face to make room for the
+                            // Subtract the font face to make room for the
                             // ellipsis itself
                             width - 0.8 * dy
                         ),
@@ -485,7 +485,7 @@ class TextBuilder {
         getString: Function
     ): void {
         const svgElement = this.svgElement;
-        const { renderer, rotation } = svgElement;
+        const { rotation } = svgElement;
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 

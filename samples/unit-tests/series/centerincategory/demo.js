@@ -312,4 +312,17 @@ QUnit.test('series.centerInCategory', function (assert) {
         2,
         '#17764: Points should be evenly spaced, null point between'
     );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    assert.ok(
+        chart.series[0].points[0].barX <
+        chart.series[1].points[0].barX <
+        chart.series[2].points[0].barX,
+        'Points should have correct order in inverted chart, #19730'
+    );
 });

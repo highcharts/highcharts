@@ -176,8 +176,7 @@ class BubbleLegendItem {
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
-        const chart = this.chart,
-            itemDistance = pick(legend.options.itemDistance, 20),
+        const itemDistance = pick(legend.options.itemDistance, 20),
             legendItem = this.legendItem || {},
             options = this.options,
             ranges =
@@ -186,7 +185,7 @@ class BubbleLegendItem {
 
         let connectorSpace;
 
-        // Do not create bubbleLegend now if ranges or ranges valeus are not
+        // Do not create bubbleLegend now if ranges or ranges values are not
         // specified or if are empty array.
         if (!ranges || !ranges.length || !isNumber(ranges[0].value)) {
             (legend.options.bubbleLegend as any).autoRanges = true;
@@ -660,7 +659,7 @@ class BubbleLegendItem {
         let calculatedSize,
             maxSize = bubbleSeries.options.maxSize;
 
-        // Calculate prediceted max size of bubble
+        // Calculate predicted max size of bubble
         if (floating || !(/%$/.test(maxSize as any))) {
             calculatedSize = maxPxSize;
 

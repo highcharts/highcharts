@@ -577,7 +577,7 @@ class Data {
             it's stable and passes all the test.
 
             It's also not written with speed in mind, instead everything is
-            very seggregated, and there a several redundant loops.
+            very segregated, and there a several redundant loops.
             This is to make it easier to stabilize the code initially.
 
             We do a pre-pass on the first 4 rows to make some intelligent
@@ -599,7 +599,7 @@ class Data {
             General rules:
                 - Quoting is allowed, e.g: "Col 1",123,321
                 - Quoting is optional, e.g.: Col1,123,321
-                - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
+                - Double quoting is escaping, e.g. "Col ""Hello world""",123
                 - Spaces are considered part of the data: Col1 ,123
                 - New line is always the row delimiter
                 - Potential column delimiters are , ; \t
@@ -679,7 +679,7 @@ class Data {
                 }
 
                 if (!noAdd) {
-                    // Don't push - if there's a varrying amount of columns
+                    // Don't push - if there's a varying amount of columns
                     // for each row, pushing will skew everything down n slots
                     columns[column][rowNumber] = token;
                 }
@@ -968,7 +968,7 @@ class Data {
 
                 calculatedFormat = guessedFormat.join('/');
 
-                // If the caculated format is not valid, we need to present an
+                // If the calculated format is not valid, we need to present an
                 // error.
 
                 if (
@@ -1376,7 +1376,7 @@ class Data {
             fetchSheet(function (
                 json: JSON.Object
             ): (boolean|undefined) {
-                // Prepare the data from the spreadsheat
+                // Prepare the data from the spreadsheet
                 const columns =
                     json.values as Array<Array<DataValueType>>;
 
@@ -1440,7 +1440,7 @@ class Data {
         if (typeof str === 'string') {
             str = str.replace(/^\s+|\s+$/g, '');
 
-            // Clear white space insdie the string, like thousands separators
+            // Clear white space inside the string, like thousands separators
             if (inside && /^-?[0-9\s]+$/.test(str)) {
                 str = str.replace(/\s/g, '');
             }
@@ -2292,7 +2292,7 @@ class SeriesBuilder {
     /**
      * Returns true if the builder has a reader for the given configName.
      *
-     * @function SeriesBuider#hasReader
+     * @function SeriesBuilder#hasReader
      */
     public hasReader(configName: string): (boolean|undefined) {
         let i, columnReader;
@@ -2343,7 +2343,7 @@ export default Data;
  */
 
 /**
- * Callback function that returns the correspondig Date object to a match.
+ * Callback function that returns the corresponding Date object to a match.
  *
  * @callback Highcharts.DataDateFormatCallbackFunction
  *
@@ -2386,7 +2386,7 @@ export default Data;
  */
 
 /**
- * Callback function to access the parsed columns, the two-dimentional
+ * Callback function to access the parsed columns, the two-dimensional
  * input data array directly, before they are interpreted into series
  * data and categories.
  *
@@ -2676,7 +2676,7 @@ export default Data;
  */
 
 /**
- * A callback function to access the parsed columns, the two-dimentional
+ * A callback function to access the parsed columns, the two-dimensional
  * input data array directly, before they are interpreted into series
  * data and categories. Return `false` to stop completion, or call
  * `this.complete()` to continue async.
@@ -2703,7 +2703,7 @@ export default Data;
  */
 
 /**
- * The same as the columns input option, but defining rows intead of
+ * The same as the columns input option, but defining rows instead of
  * columns.
  *
  * @see [data.columns](#data.columns)

@@ -6,7 +6,7 @@
 
 import Globals from "./es-modules/DataGrid/Globals";
 
-export * as DataGrid from "./es-modules/DataGrid/DataGrid";
+export { default as DataGrid } from "./es-modules/DataGrid/DataGrid";
 
 export const win: typeof Globals.win;
 

@@ -19,7 +19,7 @@ import type SizeObject from './SizeObject';
 
 /* *
  *
- *  Declatations
+ *  Declarations
  *
  * */
 

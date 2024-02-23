@@ -18,7 +18,7 @@ import type ColorString from '../Color/ColorString';
 
 /* *
  *
- *  Declatations
+ *  Declarations
  *
  * */
 

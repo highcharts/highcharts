@@ -407,8 +407,7 @@ class ArcDiagramSeries extends SankeySeries {
             toX = centeredLinks ? toNode.nodeX +
                 ((toNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(toNode, 'linksTo'),
-            bottom = nodeTop,
-            linkWidth = linkWeight;
+            bottom = nodeTop;
 
         if (fromX > toX) {
             [fromX, toX] = [toX, fromX];
@@ -417,7 +416,6 @@ class ArcDiagramSeries extends SankeySeries {
         if (seriesOptions.reversed) {
             [fromX, toX] = [toX, fromX];
             bottom = (chart.plotSizeY || 0) - bottom;
-            linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
@@ -636,10 +634,11 @@ class ArcDiagramSeries extends SankeySeries {
 
     public pointAttribs(
         point?: ArcDiagramPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs
+            const { ...attrs } = Series.prototype.pointAttribs
                 .apply(this, arguments);
             return attrs;
         }

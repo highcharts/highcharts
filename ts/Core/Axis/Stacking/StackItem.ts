@@ -197,7 +197,7 @@ class StackItem {
                 (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden
-        // in case the serie is hidden
+        // in case the series is hidden
         if (this.label) {
             this.label.attr({ text: str, visibility: 'hidden' });
         } else {
@@ -267,7 +267,7 @@ class StackItem {
             { verticalAlign } = alignOptions;
 
         if (label && stackBox) {
-            const labelBox = label.getBBox(),
+            const labelBox = label.getBBox(void 0, 0),
                 padding = label.padding;
             let isJustify = pick(options.overflow, 'justify') === 'justify',
                 visible;
@@ -312,7 +312,7 @@ class StackItem {
                 );
             }
 
-            // Add attr to aviod the default animation of justifyDataLabel.
+            // Add attr to avoid the default animation of justifyDataLabel.
             // Also add correct rotation with its rotation origin. #15129
             label.attr({
                 x: label.alignAttr.x,
