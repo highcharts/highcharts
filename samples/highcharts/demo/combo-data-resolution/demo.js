@@ -274,24 +274,32 @@ const data = [
     [-2840227200000, -0.1148],
     [-2840227200000, -0.2]
 ];
-const columnData = [];
-
-data.forEach((d, i) => {
-    if (i % 23 === 0) {
-        columnData.push(d);
-    }
-});
 
 Highcharts.chart('container', {
+    title: {
+        text: 'Annual global temperature mean from 1880 to 2016'
+    },
+    accessibility: {
+        description: `
+            A chart displaying annual global temperature mean from 1880 to 2016.
+            It employs two series, one column and one line,
+            to convey the same data at different resolutions.
+            There is only one column per thirty years,
+            but the line series have a datapoint per year.
+        `
+    },
     series: [{
         type: 'column',
-        data: columnData,
+        data: data.map((d, i) => (i % 30 === 0) && d),
         pointWidth: 30
     }, {
         data: data,
         pointInterval: 36e5
     }],
-
+    yAxis: {
+        min: -1,
+        max: 1
+    },
     xAxis: {
         type: 'datetime'
     }
