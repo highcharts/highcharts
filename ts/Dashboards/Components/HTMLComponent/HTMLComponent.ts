@@ -303,7 +303,7 @@ class HTMLComponent extends Component {
      * @internal
      */
     private getElementsFromString(htmlString: string): AST.Node[] {
-       return new AST(htmlString).nodes;
+        return new AST(htmlString).nodes;
     }
 
     /**
