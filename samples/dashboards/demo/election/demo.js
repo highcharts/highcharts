@@ -66,33 +66,6 @@ async function setupDashboard() {
             // Data connectors, one per election
             connectors: getDataConnectors()
         },
-        gui: {
-            // TBD: move to HTML
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        // Top left
-                        id: 'html-result'
-                    }, {
-                        // Top right
-                        id: 'html-control'
-                    }]
-                }, {
-                    cells: [{
-                        // Mid left
-                        id: 'election-map'
-                    }, {
-                        // Mid right
-                        id: 'election-chart'
-                    }]
-                }, {
-                    cells: [{
-                        // Spanning all columns
-                        id: 'election-grid'
-                    }]
-                }]
-            }]
-        },
         components: [
             {
                 renderTo: 'html-result',
@@ -109,6 +82,7 @@ async function setupDashboard() {
                 renderTo: 'election-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
+                title: '', // Populated by year
                 chartOptions: {
                     chart: {
                         type: 'map',
@@ -123,7 +97,7 @@ async function setupDashboard() {
                         }
                     },
                     title: {
-                        text: '' // Populated later
+                        text: ''
                     },
                     legend: {
                         enabled: false
@@ -227,8 +201,7 @@ async function setupDashboard() {
                     },
                     chart: {
                         styledMode: true,
-                        type: 'column',
-                        height: 360 // TBD: use min-height in CSS
+                        type: 'column'
                     },
                     credits: {
                         enabled: true,
@@ -687,7 +660,7 @@ function updateControlComponent(year) {
 
 
 async function updateMapComponent(component, electionTable, year) {
-    await component.chart.update({
+    await component.update({
         title: {
             text: commonTitle + ' ' + year
         }

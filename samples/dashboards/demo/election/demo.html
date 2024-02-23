@@ -6,7 +6,19 @@
 <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 
 <!-- Dashboards container -->
-<div id="container">Loading Dashboard ...</div>
+<div id="container">
+    <div class="row">
+        <div class="cell" id="html-result"></div>
+        <div class="cell" id="html-control"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="election-map"></div>
+        <div class="cell" id="election-chart"></div>
+    </div>
+    <div class="row">
+        <div class="cell" id="election-grid"></div>
+    </div>
+</div>
 
 <!-- Demo description -->
 <div id="demo-description">
@@ -23,7 +35,8 @@
         <li><b>Highcharts Maps</b> shows the winning party per state, color-coded <span class="democrat">Democrat</span>
             and <span class="republican">Republican</span>.</li>
         <li><b>Highcharts Chart</b> shows historical national or state results.</li>
-        <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be changed.</li>
+        <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be
+            changed.</li>
     </ul>
     <h2>Data set</h2>
     <p>The data used in this demo are provided by ....</p>

@@ -11,10 +11,10 @@
     --highcharts-color-0: #0200d0; /* Democrat */
     --highcharts-color-1: #c40401; /* Republican */
     --highcharts-color-2: #c0c0c0; /* Others */
+    --color-background: var(--highcharts-neutral-color-3);
 }
 
 #election-map {
-    --color-background: #fff;
     --color-map: #333;
     --color-marker-border: #fff;
     --color-title-text: #000;
@@ -34,7 +34,6 @@
 #election-chart {
     --color-axis: #333;
     --color-axis-labels: #333;
-    --color-background: #fff;
     --color-title: #2f2b38;
     --color-text: #2f2b38;
     --color-tooltip-background: #5352be;
@@ -42,7 +41,6 @@
 }
 
 #election-grid {
-    --color-background: #fff;
     --color-hover-background: #5352be;
     --color-hover-border: #e7e7ec;
     --color-hover-text: #e7e7ec;
@@ -58,7 +56,6 @@
     #election-chart {
         --color-axis: #ccc;
         --color-axis-labels: #ccc;
-        --color-background: #20202c;
         --color-title: #dadae2;
         --color-text: #dadae2;
     }
@@ -66,19 +63,46 @@
 
 /* *
  *
- *  HTML for displaying national election result
+ *  HTML layout
  *
  * */
+#container {
+    padding: 10px;
+    background-color: var(--highcharts-neutral-color-10);
+}
 
-#html-result .highcharts-dashboards-component-title {
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.cell {
+    margin: 10px;
+}
+
+/* *
+ *
+ *  Common styles
+ *
+ * */
+.highcharts-dashboards-component-title {
+    margin: 0;
+    padding: 10px 0;
     fill: var(--color-title);
-    font-size: 1.2em;
+    font-size: 1em;
     text-align: center;
 }
 
-#html-result .highcharts-dashboards-component-content {
+.highcharts-dashboards-component-content {
     background: var(--color-background);
+    border-radius: 3px;
 }
+
+/* *
+ *
+ *  HTML for displaying national election result
+ *
+ * */
 
 #html-result-div {
     text-align: center;
@@ -215,16 +239,6 @@
  *
  * */
 
-#html-control .highcharts-dashboards-component-title {
-    fill: var(--color-title);
-    font-size: 1.2em;
-    text-align: center;
-}
-
-#html-control .highcharts-dashboards-component-content {
-    background: var(--color-background);
-}
-
 #html-control-div {
     text-align: center;
     height: 160px;
@@ -248,10 +262,6 @@
  *  US Map
  *
  * */
-
-#election-map .highcharts-dashboards-component-content {
-    background: var(--color-background);
-}
 
 #election-map .highcharts-background {
     fill: var(--color-background);
@@ -344,19 +354,10 @@
  *
  * */
 
-#election-chart .highcharts-dashboards-component-title {
-    fill: var(--color-title);
-    font-size: 1.2em;
-    text-align: center;
-}
-
-#election-chart .highcharts-dashboards-component-content {
-    background: var(--color-background);
-}
-
 #election-chart .highcharts-title {
     fill: var(--color-title);
-    font-size: 1.5em;
+    letter-spacing: 1.5px;
+    font-size: 1.2em;
 }
 
 #election-chart .highcharts-axis {
@@ -411,12 +412,6 @@
     background-color: var(--color-background);
 }
 
-#election-grid .highcharts-dashboards-component-title {
-    fill: var(--color-title);
-    font-size: 1.2em;
-    text-align: center;
-}
-
 #election-grid .highcharts-datagrid-column-header {
     font-size: 12px;
 }
@@ -432,12 +427,6 @@
 .highcharts-dark #election-map .highcharts-series-1 .highcharts-data-label text {
     paint-order: stroke;
     stroke-width: 2px;
-}
-
-/* Common */
-
-.highcharts-dashboards-component {
-    border-radius: 10px;
 }
 
 /* Dashboard layout */
