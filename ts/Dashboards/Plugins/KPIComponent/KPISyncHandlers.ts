@@ -50,10 +50,10 @@ const configs: {
                         cursor.type === 'position' &&
                         typeof cursor?.row === 'number' &&
                         defined(cursor.column) &&
-                        this.connectorHandler?.connector &&
+                        this.connectorHandlers?.[0]?.connector &&
                         !defined(this.options.value)
                     ) {
-                        const value = this.connectorHandler.connector
+                        const value = this.connectorHandlers[0].connector
                             .table.modified.getCellAsString(
                                 cursor.column,
                                 cursor.row
@@ -69,7 +69,7 @@ const configs: {
                     if (!cursor) {
                         return;
                     }
-                    const table = this.connectorHandler?.connector?.table;
+                    const table = this.connectorHandlers?.[0]?.connector?.table;
 
                     if (!table) {
                         return;
@@ -83,7 +83,7 @@ const configs: {
                 };
 
                 const unregisterCursorListeners = (): void => {
-                    const table = this.connectorHandler?.connector?.table;
+                    const table = this.connectorHandlers?.[0]?.connector?.table;
                     const { dataCursor: cursor } = board;
 
                     if (!table) {

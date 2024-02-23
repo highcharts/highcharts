@@ -36,6 +36,7 @@ import type {
 } from '../HighchartsTypes';
 import type {
     ColumnAssignmentOptions,
+    ConnectorOptions,
     ConstructorType,
     Options
 } from './HighchartsComponentOptions';
@@ -50,6 +51,7 @@ import Globals from '../../Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
+import ComponentConnectorHandler from '../../Components/ComponentConnectorHandler';
 const {
     addEvent,
     createElement,
@@ -249,14 +251,15 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        if (this.connectorHandler?.connector) {
-            const connector = this.connectorHandler.connector;
-            // reload the store when polling
-            connector.on('afterLoad', (e: DataConnector.Event): void => {
-                if (e.table) {
-                    connector.table.setColumns(e.table.getColumns());
-                }
-            });
+        for (const connectorHandler of this.connectorHandlers) {
+            const connector = connectorHandler.connector;
+            if (connector) {
+                connector.on('afterLoad', (e: DataConnector.Event): void => {
+                    if (e.table) {
+                        connector.table.setColumns(e.table.getColumns());
+                    }
+                });
+            }
         }
 
         this.innerResizeTimeouts = [];
@@ -335,22 +338,23 @@ class HighchartsComponent extends Component {
      * @private
      * */
     private setupConnectorUpdate(): void {
-        const { connectorHandler, chart } = this;
+        // TODO: Implement this, skipping for now as it's connected with sync.
+        // const { connectorHandler, chart } = this;
 
-        if (connectorHandler && chart && this.options.allowConnectorUpdate) {
-            chart.series.forEach((series): void => {
-                series.points.forEach((point): void => {
-                    addEvent(point, 'drag', (): void => {
-                        if (connectorHandler.connector) {
-                            this.onChartUpdate(
-                                point,
-                                connectorHandler.connector
-                            );
-                        }
-                    });
-                });
-            });
-        }
+        // if (connectorHandler && chart && this.options.allowConnectorUpdate) {
+        //     chart.series.forEach((series): void => {
+        //         series.points.forEach((point): void => {
+        //             addEvent(point, 'drag', (): void => {
+        //                 if (connectorHandler.connector) {
+        //                     this.onChartUpdate(
+        //                         point,
+        //                         connectorHandler.connector
+        //                     );
+        //                 }
+        //             });
+        //         });
+        //     });
+        // }
     }
 
     /**
@@ -413,8 +417,59 @@ class HighchartsComponent extends Component {
      * @private
      */
     public updateSeries(): void {
-        const { chart, connectorHandler } = this;
-        if (!chart || !connectorHandler?.connector) {
+        const { chart, connectorHandlers } = this;
+        if (!chart) {
+            return;
+        }
+
+        const connectorOptions =
+            Array.isArray(this.options.connector) ? this.options.connector : (
+                this.options.connector ? [this.options.connector] : []
+            );
+        const newSeriesIds = [];
+        for (const { columnAssignment } of connectorOptions) {
+            console.log(columnAssignment);
+            if (columnAssignment) {
+                for (const { seriesId } of columnAssignment) {
+                    if (seriesId) {
+                        newSeriesIds.push(seriesId);
+                    }
+                }
+            }
+        }
+
+        // Remove series that were added in the previous update and are not
+        // present in the new columnAssignment.
+        for (let i = 0, iEnd = this.seriesFromConnector.length; i < iEnd; ++i) {
+            const oldSeriesId = this.seriesFromConnector[i];
+            if (newSeriesIds.some(
+                (newSeriesId): boolean => newSeriesId === oldSeriesId
+            )) {
+                continue;
+            }
+
+            const series = chart.get(oldSeriesId);
+            if (series) {
+                series.destroy();
+            }
+        }
+        this.seriesFromConnector.length = 0;
+
+        for (const connectorHandler of connectorHandlers) {
+            this.updateSeriesFromConnector(connectorHandler);
+        }
+
+        chart.redraw();
+    }
+
+    /**
+     * PoC (DD)
+     */
+    private updateSeriesFromConnector(
+        connectorHandler: ComponentConnectorHandler
+    ): void {
+        const chart = this.chart;
+        if (!connectorHandler.connector || !chart) {
             return;
         }
 
@@ -435,25 +490,12 @@ class HighchartsComponent extends Component {
         this.emit({ type: 'afterPresentationModifier', table: table });
 
         const columnNames = table.getColumnNames();
-        const columnAssignment = this.options.connector?.columnAssignment ??
-            this.getDefaultColumnAssignment(columnNames);
-
-        // Remove series that were added in the previous update and are not
-        // present in the new columnAssignment.
-        for (let i = 0, iEnd = this.seriesFromConnector.length; i < iEnd; ++i) {
-            const oldSeriesId = this.seriesFromConnector[i];
-            if (columnAssignment.some(
-                (seriesId): boolean => seriesId.seriesId === oldSeriesId
-            )) {
-                continue;
-            }
-
-            const series = chart.get(oldSeriesId);
-            if (series) {
-                series.destroy();
-            }
-        }
-        this.seriesFromConnector.length = 0;
+        const connectorOptions = connectorHandler.options as ConnectorOptions;
+        const columnAssignment = connectorOptions.columnAssignment ??
+            this.getDefaultColumnAssignment(
+                columnNames,
+                connectorHandler.presentationTable
+            );
 
         // Create the series or update the existing ones.
         for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
@@ -531,8 +573,6 @@ class HighchartsComponent extends Component {
 
             this.seriesFromConnector.push(assignment.seriesId);
         }
-
-        chart.redraw();
     }
 
     /**
@@ -568,12 +608,12 @@ class HighchartsComponent extends Component {
      *
      */
     private getDefaultColumnAssignment(
-        columnNames: Array<string> = []
+        columnNames: Array<string> = [],
+        presentationTable: DataTable
     ): ColumnAssignmentOptions[] {
         const result: ColumnAssignmentOptions[] = [];
 
-        const firstColumn =
-            this.connectorHandler?.presentationTable?.getColumn(columnNames[0]);
+        const firstColumn = presentationTable.getColumn(columnNames[0]);
 
         if (firstColumn && isString(firstColumn[0])) {
             for (let i = 1, iEnd = columnNames.length; i < iEnd; ++i) {

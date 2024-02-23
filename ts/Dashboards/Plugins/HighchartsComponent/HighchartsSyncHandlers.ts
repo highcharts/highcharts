@@ -35,7 +35,7 @@ import type DataTable from '../../../Data/DataTable';
 import ComponentType from '../../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../../Core/Utilities.js';
-const { addEvent, isString } = U;
+const { addEvent } = U;
 
 
 /**
@@ -107,7 +107,7 @@ const configs: {
                 }
 
                 const { dataCursor: cursor } = board;
-                const table = this.connectorHandler?.connector?.table;
+                const table = this.connectorHandlers?.[0]?.connector?.table;
                 if (chart?.series && table) {
                     chart.series.forEach((series): void => {
                         series.update({
@@ -177,7 +177,7 @@ const configs: {
                 }
                 const component = this as HighchartsComponent;
                 const { chart, board } = component;
-                const connector = component.connectorHandler?.connector;
+                const connector = component.connectorHandlers?.[0]?.connector;
                 if (!board || !chart) {
                     return;
                 }
@@ -233,7 +233,7 @@ const configs: {
                     const cleanupCallbacks: Function[] = [];
 
                     const { chart, board } = component;
-                    const connector = component.connectorHandler?.connector;
+                    const connector = component.connectorHandlers?.[0]?.connector;
                     const table = connector && connector.table;
 
                     const { dataCursor: cursor } = board;
@@ -271,29 +271,30 @@ const configs: {
                                         axis.coll === 'xAxis' &&
                                         visiblePoints.length
                                     ) {
-                                        let columnName: string | undefined;
-                                        const columnAssignment = component.options.connector?.columnAssignment;
-                                        if (columnAssignment) {
-                                            const assignment = columnAssignment.find((assignment): boolean =>
-                                                assignment.seriesId === series.options.id
-                                            );
-                                            if (assignment) {
-                                                const data = assignment.data;
-                                                if (isString(data)) {
-                                                    columnName = data;
-                                                } else if (Array.isArray(data)) {
-                                                    columnName = data[data.length - 1];
-                                                } else {
-                                                    columnName = data.y;
-                                                }
-                                            }
-                                        }
+                                        // (DD) - sync is out of scope for now
+                                        // let columnName: string | undefined;
+                                        // const columnAssignment = component.options.connector?.columnAssignment;
+                                        // if (columnAssignment) {
+                                        //     const assignment = columnAssignment.find((assignment): boolean =>
+                                        //         assignment.seriesId === series.options.id
+                                        //     );
+                                        //     if (assignment) {
+                                        //         const data = assignment.data;
+                                        //         if (isString(data)) {
+                                        //             columnName = data;
+                                        //         } else if (Array.isArray(data)) {
+                                        //             columnName = data[data.length - 1];
+                                        //         } else {
+                                        //             columnName = data.y;
+                                        //         }
+                                        //     }
+                                        // }
 
-                                        if (!columnName) {
-                                            columnName = axis.dateTime && table.hasColumns(['x']) ?
-                                                'x' :
-                                                series.options.id ?? series.name;
-                                        }
+                                        // if (!columnName) {
+                                        const columnName = axis.dateTime && table.hasColumns(['x']) ?
+                                            'x' :
+                                            series.options.id ?? series.name;
+                                        // }
 
                                         minCursorData.row = visiblePoints[0].index;
                                         minCursorData.column = columnName;
@@ -434,7 +435,7 @@ const configs: {
                     if (!dataCursor) {
                         return;
                     }
-                    const table = this.connectorHandler?.connector?.table;
+                    const table = this.connectorHandlers?.[0]?.connector?.table;
 
                     if (!table) {
                         return;
@@ -444,7 +445,7 @@ const configs: {
                 };
 
                 const unregisterCursorListeners = (): void => {
-                    const table = this.connectorHandler?.connector?.table;
+                    const table = this.connectorHandlers?.[0]?.connector?.table;
                     if (table) {
                         board.dataCursor.removeListener(table.id, 'series.show', handleShow);
                         board.dataCursor.removeListener(table.id, 'series.hide', handleHide);
@@ -463,7 +464,7 @@ const configs: {
                 const getHoveredPoint = (
                     e: DataCursor.Event
                 ): Point | undefined => {
-                    const table = this.connectorHandler?.connector?.table;
+                    const table = this.connectorHandlers?.[0]?.connector?.table;
 
                     if (!table) {
                         return;
@@ -651,7 +652,7 @@ const configs: {
                     const { dataCursor: cursor } = board;
 
                     if (cursor) {
-                        const table = this.connectorHandler?.connector?.table;
+                        const table = this.connectorHandlers?.[0]?.connector?.table;
                         if (table) {
                             cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                             cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -662,7 +663,7 @@ const configs: {
                 };
 
                 const unregisterCursorListeners = (): void => {
-                    const table = this.connectorHandler?.connector?.table;
+                    const table = this.connectorHandlers?.[0]?.connector?.table;
                     if (table) {
                         board.dataCursor.removeListener(table.id, 'point.mouseOver', handleCursor);
                         board.dataCursor.removeListener(table.id, 'dataGrid.hoverRow', handleCursor);
@@ -731,7 +732,7 @@ const configs: {
 
                         const addCursorListeners = (): void => {
                             const { dataCursor: cursor } = board;
-                            const connector = this.connectorHandler?.connector;
+                            const connector = this.connectorHandlers?.[0]?.connector;
 
                             if (connector) {
                                 const { table } = connector;

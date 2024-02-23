@@ -191,7 +191,7 @@ abstract class Component {
     /**
      * The connector handlers for the component.
      */
-    public connectorHandler?: ComponentConnectorHandler;
+    public connectorHandlers: ComponentConnectorHandler[] = [];
     /**
      * @internal
      * The board the component belongs to
@@ -321,8 +321,15 @@ abstract class Component {
             uniqueKey();
 
         if (this.options.connector) {
-            this.connectorHandler =
-                new ComponentConnectorHandler(this, this.options.connector);
+            const connectorOptionsArray = isArray(this.options.connector) ?
+                this.options.connector :
+                [this.options.connector];
+
+            for (const connectorOptions of connectorOptionsArray) {
+                this.connectorHandlers.push(
+                    new ComponentConnectorHandler(this, connectorOptions)
+                );
+            }
         }
 
         this.editableOptions =
@@ -520,9 +527,10 @@ abstract class Component {
      * TODO(DD)
      */
     public async initConnector(): Promise<this> {
-        if (this.connectorHandler) {
-            await this.connectorHandler.initConnector();
+        for (const connectorHandler of this.connectorHandlers) {
+            await connectorHandler.initConnector();
         }
+        this.setConnector();
         return this;
     }
 
@@ -531,7 +539,7 @@ abstract class Component {
      * TODO(DD) - reconsider existence of this method
      */
     public setConnector(): this {
-        const { connector } = this.connectorHandler ?? {};
+        const { connector } = this.connectorHandlers[0] ?? {};
 
         fireEvent(this, 'setConnector', { connector });
 
@@ -658,6 +666,8 @@ abstract class Component {
      * @param shouldRerender
      * Set to true if the update should rerender the component.
      */
+    // (DD)
+    // eslint-disable-next-line @typescript-eslint/require-await
     public async update(
         newOptions: Partial<Component.Options>,
         shouldRerender: boolean = true
@@ -672,17 +682,17 @@ abstract class Component {
 
         this.options = merge(this.options, newOptions);
 
-        // (DD) - make sure that it works correctly and if we can simplify it.
-        if (this.options.connector) {
-            if (!this.connectorHandler) {
-                this.connectorHandler = new ComponentConnectorHandler(
-                    this, this.options.connector
-                );
-            }
+        // (DD) - make possible to update multiple connectors
+        // if (this.options.connector) {
+        //     if (!this.connectorHandler) {
+        //         this.connectorHandler = new ComponentConnectorHandler(
+        //             this, this.options.connector
+        //         );
+        //     }
 
-            await this.connectorHandler.update(this.options.connector);
-            this.setConnector();
-        }
+        //     await this.connectorHandler.update(this.options.connector);
+        //     this.setConnector();
+        // }
         // ---
 
         if (shouldRerender || eventObject.shouldForceRerender) {
@@ -853,7 +863,9 @@ abstract class Component {
         // call unmount
         fireEvent(this, 'unmount');
 
-        this.connectorHandler?.destroy();
+        for (const connectorHandler of this.connectorHandlers) {
+            connectorHandler.destroy();
+        }
         this.element.remove();
     }
 
@@ -972,6 +984,8 @@ interface Component {
 
 namespace Component {
 
+    type ConnectorOptions = ComponentConnectorHandler.ConnectorOptions;
+
     /* *
     *
     *  Declarations
@@ -1086,7 +1100,7 @@ namespace Component {
         /**
          * Connector options
          */
-        connector?: ComponentConnectorHandler.ConnectorOptions;
+        connector?: ConnectorOptions | ConnectorOptions[];
         /**
          * Sets an ID for the component's container.
          */

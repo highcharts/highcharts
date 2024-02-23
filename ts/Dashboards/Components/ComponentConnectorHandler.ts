@@ -177,6 +177,7 @@ class ComponentConnectorHandler {
             // Add the component to a group based on the
             // connector table id by default
             // TODO: make this configurable
+            // DO WE NEED THIS? (DD)
             const tableID = connector.table.id;
 
             if (!ComponentGroup.getComponentGroup(tableID)) {

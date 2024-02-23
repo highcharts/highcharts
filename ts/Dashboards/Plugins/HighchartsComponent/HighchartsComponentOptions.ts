@@ -67,7 +67,7 @@ export interface Options extends Component.Options {
     /**
      * Connector options for the component.
      */
-    connector?: ConnectorOptions;
+    connector?: ConnectorOptions | ConnectorOptions[];
 
     /**
      * Type of the component.
