@@ -364,6 +364,7 @@
     fill: var(--color-title);
     letter-spacing: 1.5px;
     font-size: 1.2em;
+    text-transform: capitalize;
 }
 
 #election-chart .highcharts-axis {
@@ -426,6 +427,11 @@
     background-color: var(--color-hover-background);
     border-color: var(--color-hover-border);
     color: var(--color-hover-text);
+}
+
+/* Capitalize state name */
+.highcharts-datagrid-cell:nth-child(1) {
+    text-transform: capitalize;
 }
 
 /* Safari fix for manual dark mode */

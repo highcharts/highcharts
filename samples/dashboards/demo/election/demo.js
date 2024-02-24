@@ -330,25 +330,9 @@ async function setupDashboard() {
     );
 
 
-    function getDataConnectors() {
-        const connectors = [];
-
-        electionYears.forEach(function (year) {
-            connectors.push(
-                {
-                    id: 'votes' + year,
-                    type: 'JSON',
-                    options: {
-                        firstRowAsNames: true,
-                        data: electionData[year].data
-                    }
-                }
-            );
-        });
-        return connectors;
-    }
-
-
+    //
+    // Data set pre-processing (TBD: use external script instead ?)
+    //
     function parseElectionData(csv) {
         const rowObj = {
             state: '',
@@ -425,7 +409,7 @@ async function setupDashboard() {
                     const percent = ((popVote / totalVote) * 100).toFixed(1);
 
                     // Accumulate nationwide data
-                    rowObj.state = state;
+                    rowObj.state = state.toLowerCase(); // All state names are upper case
                     rowObj['postal-code'] = postCode;
 
                     if (party === 'REPUBLICAN') {
@@ -512,7 +496,9 @@ async function setupDashboard() {
         return jsonData;
     }
 
-
+    //
+    // Utilities
+    //
     function formatVotesColumns(rowObj) {
         rowObj.demVoteSummary = rowObj.demVotes.toLocaleString('en-US') + ' (' + rowObj.demPercent + '%)';
         rowObj.repVoteSummary = rowObj.repVotes.toLocaleString('en-US') + ' (' + rowObj.repPercent + '%)';
@@ -537,6 +523,24 @@ async function setupDashboard() {
         // Save candidate names (to be displayed in header)
         jsonData.candRep = getSurname(national.repCand);
         jsonData.candDem = getSurname(national.demCand);
+    }
+
+    function getDataConnectors() {
+        const connectors = [];
+
+        electionYears.forEach(function (year) {
+            connectors.push(
+                {
+                    id: 'votes' + year,
+                    type: 'JSON',
+                    options: {
+                        firstRowAsNames: true,
+                        data: electionData[year].data
+                    }
+                }
+            );
+        });
+        return connectors;
     }
 }
 
