@@ -1350,7 +1350,7 @@ class RangeSelector {
             states && states.select,
             states && states.disabled
         )
-            .add()
+            .add(this.buttonGroup)
             .hide();
 
         // Prevent page zoom on iPhone
