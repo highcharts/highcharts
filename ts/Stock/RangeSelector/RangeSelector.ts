@@ -1368,7 +1368,7 @@ class RangeSelector {
             fireEvent(this.dropdownLabel.element, mouseOut);
         });
         addEvent(dropdown, 'change', (): void => {
-            const button = this.buttons[this.getCurrentButtonIndex()];
+            const button = this.buttons[dropdown.selectedIndex - 1];
             fireEvent(button.element, 'click');
         });
 
@@ -1894,21 +1894,6 @@ class RangeSelector {
         buttons.forEach((button): void => void button.show());
         this.hideDropdown();
         this.positionButtons();
-    }
-
-    /**
-     * Get the index of the visible button when the buttons are collapsed.
-     *
-     * @private
-     * @function Highcharts.RangeSelector#currentButtonIndex
-     */
-    public getCurrentButtonIndex(): number {
-        const { dropdown } = this;
-
-        if (dropdown && dropdown.selectedIndex > 0) {
-            return dropdown.selectedIndex - 1;
-        }
-        return 0;
     }
 
     /**
