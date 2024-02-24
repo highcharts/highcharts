@@ -14,6 +14,7 @@ Highcharts.chart('container', {
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
             dataLabels: {
+                allowOverlap: true,
                 enabled: true,
                 backgroundColor: '#cfcfef',
                 borderColor: '#fff',
@@ -93,7 +94,7 @@ Highcharts.chart('container', {
         {
             name: 'Agder',
             parent: 'E',
-            value: 14981
+            value: 1//4981
         }]
     }],
     title: {

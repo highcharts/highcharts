@@ -214,6 +214,8 @@ class TreemapSeries extends ScatterSeries {
 
     public rootNode!: string;
 
+    private simulation = 0;
+
     public tree!: TreemapNode;
 
     public level?: number;
@@ -521,6 +523,70 @@ class TreemapSeries extends ScatterSeries {
             // If node has children, then call method recursively
             if (child.children.length) {
                 series.calculateChildrenAreas(child, child.values);
+            }
+        }
+
+        if (parent.level === 0 && this.hasOutsideDataLabels) {
+            const leafs = this.points.filter(
+                    (p): boolean|undefined => p.node.isLeaf
+                ),
+                values = leafs.map((point): number => point.options.value || 0),
+                areas = leafs.map(({ node: { pointValues } }): number => (
+                    pointValues ?
+                        pointValues.width * pointValues.height :
+                        0
+                )),
+                valueSum = values.reduce(
+                    (sum, value): number => sum + value,
+                    0
+                ),
+                areaSum = areas.reduce(
+                    (sum, value): number => sum + value,
+                    0
+                ),
+                expectedAreaPerValue = areaSum / valueSum;
+
+            let worstMiss = 0;
+            leafs.forEach((point, i): void => {
+                // Less than 1 => rendered too small, greater than 1 =>
+                // rendered too big
+                const fit = values[i] ?
+                        (areas[i] / values[i]) / expectedAreaPerValue :
+                        1,
+                    miss = 1 - fit;
+
+                worstMiss = Math.max(worstMiss, Math.abs(miss));
+
+                if (typeof point.value === 'number') {
+                    point.simulatedValue = (
+                        point.simulatedValue || point.value
+                    // @todo: Test the constant 0.75 with other charts
+                    ) / (1 - miss * 0.75);
+                }
+            });
+
+            // /console.log('--- simulation', this.simulation, worstMiss)
+
+            if (
+                // An area error less than 5% is acceptable, the human ability
+                // to asses area size is not that accurate
+                worstMiss > 0.05 &&
+                // In case an eternal loop is brewing, pull the emergency brake
+                this.simulation < 10
+            ) {
+                this.simulation++;
+                this.setTreeValues(parent);
+                (area as any).val = parent.val;
+                this.calculateChildrenAreas(parent, area);
+
+            // Reset the simulated values and set the tree values with real
+            // data
+            } else {
+                leafs.forEach((point): void => {
+                    delete point.simulatedValue;
+                });
+                this.setTreeValues(parent);
+                this.simulation = 0;
             }
         }
     }
@@ -1378,7 +1444,11 @@ class TreemapSeries extends ScatterSeries {
             (a.sortIndex || 0) - (b.sortIndex || 0)
         ));
         // Set the values
-        const val = pick(point && point.options.value, childrenTotal);
+        const val = pick(
+            point?.simulatedValue,
+            point?.options.value,
+            childrenTotal
+        );
         if (point) {
             point.value = val;
         }
