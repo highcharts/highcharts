@@ -277,11 +277,11 @@ const data = [
 
 Highcharts.chart('container', {
     title: {
-        text: 'Annual global temperature mean from 1880 to 2016'
+        text: 'Global temperature mean anomalies from 1880 to 2016'
     },
     accessibility: {
         description: `
-            A chart displaying annual global temperature mean from 1880 to 2016.
+            A chart displaying monthly mean temperature anomalies from 1880 to 2016.
             It employs two series, one column and one line,
             to convey the same data at different resolutions.
             There is only one column per thirty years,
