@@ -1,5 +1,5 @@
 ---
-name: 'Dual axes, line and column'
+name: 'Same data, different intervals'
 authors:
   - Markus Barstad
 js_wrap: b
