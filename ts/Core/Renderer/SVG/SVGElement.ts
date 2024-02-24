@@ -1584,18 +1584,28 @@ class SVGElement implements SVGElementLike {
                 (this.translateY ? 0 : box.y),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
-            wCosRad = width * Math.cos(rad),
-            wSinRad = width * Math.sin(rad),
+            cosRad = Math.cos(rad),
+            sinRad = Math.sin(rad),
+            wCosRad = width * cosRad,
+            wSinRad = width * sinRad,
             cosRad90 = Math.cos(rad90),
             sinRad90 = Math.sin(rad90),
-            { rotationOriginX = 0 } = this,
-            rotOrgXCosRad = rotationOriginX - (rotationOriginX * Math.cos(rad)),
-            rotOrgXSinRad = (rotationOriginX * Math.sin(rad)),
+            { rotationOriginX = 0, rotationOriginY = 0 } = this,
+            rotOrgYCosRad = rotationOriginY - (rotationOriginY * cosRad),
+            rotOrgYSinRad = (rotationOriginY * sinRad),
+            rotOrgXCosRad = rotationOriginX - (rotationOriginX * cosRad),
+            rotOrgXSinRad = (rotationOriginX * sinRad),
 
             // Find the starting point on the left side baseline of
             // the text
-            pX = (box.x + alignFactor * (width - wCosRad)) + rotOrgXCosRad,
-            pY = (box.y + baseline - alignFactor * wSinRad) - rotOrgXSinRad,
+            pX = (
+                (box.x + alignFactor * (width - wCosRad)) +
+                rotOrgXCosRad + rotOrgYSinRad
+            ),
+            pY = (
+                (box.y + baseline - alignFactor * wSinRad) -
+                rotOrgXSinRad + rotOrgYCosRad
+            ),
 
             // Find all corners
             aX = pX + baseline * cosRad90,
