@@ -1588,11 +1588,14 @@ class SVGElement implements SVGElementLike {
             wSinRad = width * Math.sin(rad),
             cosRad90 = Math.cos(rad90),
             sinRad90 = Math.sin(rad90),
+            { rotationOriginX = 0 } = this,
+            rotOrgXCosRad = rotationOriginX - (rotationOriginX * Math.cos(rad)),
+            rotOrgXSinRad = (rotationOriginX * Math.sin(rad)),
 
             // Find the starting point on the left side baseline of
             // the text
-            pX = box.x + alignFactor * (width - wCosRad),
-            pY = box.y + baseline - alignFactor * wSinRad,
+            pX = (box.x + alignFactor * (width - wCosRad)) + rotOrgXCosRad,
+            pY = (box.y + baseline - alignFactor * wSinRad) - rotOrgXSinRad,
 
             // Find all corners
             aX = pX + baseline * cosRad90,
