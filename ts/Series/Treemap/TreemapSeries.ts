@@ -63,6 +63,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    arrayMax,
     correctFloat,
     defined,
     error,
@@ -74,6 +75,7 @@ const {
     merge,
     pick,
     pushUnique,
+    splat,
     stableSort
 } = U;
 
@@ -207,6 +209,8 @@ class TreemapSeries extends ScatterSeries {
     public options!: TreemapSeriesOptions;
 
     public points!: Array<TreemapPoint>;
+
+    private hasOutsideDataLabels?: boolean;
 
     public rootNode!: string;
 
@@ -466,6 +470,17 @@ class TreemapSeries extends ScatterSeries {
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
+
+        // We need to pre-render the data labels in order to measure the height
+        // of data label group
+        if (
+            parent.level === 0 &&
+            !this.dataLabelsGroup &&
+            this.hasOutsideDataLabels
+        ) {
+            this.drawDataLabels();
+        }
+
         if (level && level.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
                 0 :
@@ -475,12 +490,27 @@ class TreemapSeries extends ScatterSeries {
 
         let i = -1;
         for (const child of children) {
-            const values: TreemapNode.NodeValuesObject = childrenValues[++i];
+            const values = childrenValues[++i];
 
             child.values = merge(values, {
                 val: child.childrenTotal,
                 direction: (alternate ? 1 - area.direction : area.direction)
             });
+
+            // Make room for outside data labels
+            if (child.children && child.point.dataLabels?.length) {
+                const dlHeight = arrayMax(
+                    child.point.dataLabels.map((dl): number => (
+                        dl.options?.inside === false ?
+                            dl.height || 0 :
+                            0
+                    ))
+                ) / series.yAxis.len * 100;
+
+                child.values.y += dlHeight;
+                child.values.height -= dlHeight;
+            }
+
             child.pointValues = merge(values, {
                 x: (values.x / series.axisRatio),
                 // Flip y-values to avoid visual regression with csvCoord in
@@ -579,13 +609,28 @@ class TreemapSeries extends ScatterSeries {
                 series.hasDataLabels = (): boolean => true;
             }
 
+            // Headers are always top-aligned
+            if (options.inside === false) {
+                options.verticalAlign = 'top';
+            }
+
             // Set dataLabel width to the width of the point shape.
             if (point.shapeArgs) {
-                (options.style as any).width = point.shapeArgs.width;
-                if (point.dataLabel) {
-                    point.dataLabel.css({
-                        width: point.shapeArgs.width + 'px'
-                    });
+                const width = point.shapeArgs.width;
+                if (width) {
+                    (options.style as any).width = width;
+                    if (point.dataLabel) {
+
+                        // Make the label box itself fill the width
+                        if (options.inside === false) {
+                            point.dataLabel.attr({
+                                width: width - 2 * point.dataLabel.padding,
+                                'text-align': options.align
+                            });
+                        }
+
+                        point.dataLabel.css({ width: `${width}px` });
+                    }
                 }
             }
 
@@ -915,6 +960,7 @@ class TreemapSeries extends ScatterSeries {
             ): void => {
                 const options = event.userOptions;
 
+                // Deprepacated options
                 if (
                     defined(options.allowDrillToNode) &&
                     !defined(options.allowTraversingTree)
@@ -930,6 +976,22 @@ class TreemapSeries extends ScatterSeries {
                     options.traverseUpButton = options.drillUpButton;
                     delete options.drillUpButton;
                 }
+
+                // Check if we need to reserve space for headers
+                const dataLabels: Array<DataLabelOptions> = splat(
+                    options.dataLabels || {}
+                );
+
+                options.levels?.forEach((level): void => {
+                    dataLabels.push.apply(
+                        dataLabels,
+                        splat(level.dataLabels || {})
+                    );
+                });
+
+                this.hasOutsideDataLabels = dataLabels.some(
+                    (dl): boolean => dl.inside === false
+                );
             });
 
         super.init(chart, options);
