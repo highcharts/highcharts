@@ -1573,15 +1573,19 @@ class SVGElement implements SVGElementLike {
         box: BBoxObject,
         rotation: number
     ): BBoxObject {
-        const width = box.width,
-            height = box.height,
-            alignValue = this.alignValue,
+        const { x: boxX, y: boxY, width, height } = box,
+            {
+                alignValue,
+                translateY,
+                rotationOriginX = 0,
+                rotationOriginY = 0
+            } = this,
             alignFactor = ({
                 'right': 1,
                 'center': 0.5
             } as Record<string, number>)[alignValue || 0] || 0,
             baseline = Number(this.element.getAttribute('y') || 0) -
-                (this.translateY ? 0 : box.y),
+                (translateY ? 0 : boxY),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
             cosRad = Math.cos(rad),
@@ -1590,21 +1594,32 @@ class SVGElement implements SVGElementLike {
             wSinRad = width * sinRad,
             cosRad90 = Math.cos(rad90),
             sinRad90 = Math.sin(rad90),
-            { rotationOriginX = 0, rotationOriginY = 0 } = this,
-            rotOrgYCosRad = rotationOriginY - (rotationOriginY * cosRad),
-            rotOrgYSinRad = (rotationOriginY * sinRad),
-            rotOrgXCosRad = rotationOriginX - (rotationOriginX * cosRad),
-            rotOrgXSinRad = (rotationOriginX * sinRad),
+            [
+                [
+                    xOriginCosRad,
+                    xOriginSinRad
+                ],
+                [
+                    yOriginCosRad,
+                    yOriginSinRad
+                ]
+            ] = [
+                rotationOriginX,
+                rotationOriginY
+            ].map((rotOrigin): number[] => [
+                rotOrigin - (rotOrigin * cosRad),
+                rotOrigin * sinRad
+            ]),
 
             // Find the starting point on the left side baseline of
             // the text
             pX = (
-                (box.x + alignFactor * (width - wCosRad)) +
-                rotOrgXCosRad + rotOrgYSinRad
+                (boxX + alignFactor * (width - wCosRad)) +
+                xOriginCosRad + yOriginSinRad
             ),
             pY = (
-                (box.y + baseline - alignFactor * wSinRad) -
-                rotOrgXSinRad + rotOrgYCosRad
+                (boxY + baseline - alignFactor * wSinRad) -
+                xOriginSinRad + yOriginCosRad
             ),
 
             // Find all corners
