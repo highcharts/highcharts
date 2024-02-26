@@ -40,7 +40,6 @@ const { unhideChartElementFromAT } = CU;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
 import HU from './Utils/HTMLUtilities.js';
 const {
-    removeElement,
     removeChildNodes
 } = HU;
 import ProxyElement from './ProxyElement.js';
