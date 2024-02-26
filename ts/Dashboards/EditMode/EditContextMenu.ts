@@ -83,7 +83,7 @@ class EditContextMenu extends Menu {
         this.options = merge(EditContextMenu.defaultOptions, options || {});
 
         // Move it in the DOM after the edit tools so it is better accessible.
-        this.editMode.board.layoutsWrapper.parentNode.insertBefore(
+        this.editMode.board.layoutsWrapper?.parentNode.insertBefore(
             this.container,
             this.editMode.board.layoutsWrapper
         );

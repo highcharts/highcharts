@@ -94,7 +94,7 @@ class SidebarPopup extends BaseForm {
                         textContent: 'Placeholder text'
                     }
                 ]
-            });
+            }, board);
 
         }
     };
@@ -192,6 +192,10 @@ class SidebarPopup extends BaseForm {
     private detectRightSidebar(context: Cell | Row): boolean {
         const editMode = this.editMode;
         const layoutWrapper = editMode.board.layoutsWrapper;
+
+        if (!layoutWrapper) {
+            return false;
+        }
 
         return GUIElement.getOffsets(
             context as Cell,
@@ -397,7 +401,7 @@ class SidebarPopup extends BaseForm {
             const options = merge(componentOptions, {
                 cell: newCell.id
             });
-            Bindings.addComponent(options, newCell);
+            Bindings.addComponent(options, sidebar.editMode.board, newCell);
             sidebar.editMode.setEditOverlay();
 
             return newCell;

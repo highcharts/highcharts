@@ -770,7 +770,7 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
-        if (this.board.editMode) {
+        if (this.board.guiEnabled) {
             if (height) {
                 // Get offset for border, padding
                 const pad =
@@ -1210,6 +1210,7 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
+         * Deprecated, use `renderTo` instead.
          *
          * @deprecated
          */
@@ -1217,8 +1218,6 @@ namespace Component {
 
         /**
          * Cell id, where component is attached.
-         *
-         * @deprecated
          */
         renderTo?: string;
 

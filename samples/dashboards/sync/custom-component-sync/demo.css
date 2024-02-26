@@ -13,10 +13,10 @@
 
 .chart-custom-label {
     text-shadow:
-        -1px -1px 0 var(--highcharts-neutral-color-100),
-        1px -1px 0 var(--highcharts-neutral-color-100),
-        -1px 1px 0 var(--highcharts-neutral-color-100),
-        1px 0.5px 0 var(--highcharts-neutral-color-100);
+        -1px -1px 0 var(--highcharts-background-color),
+        1px -1px 0 var(--highcharts-background-color),
+        -1px 1px 0 var(--highcharts-background-color),
+        1px 0.5px 0 var(--highcharts-background-color);
     font-weight: 600;
     font-size: 24px;
 }
