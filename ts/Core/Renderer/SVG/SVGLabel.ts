@@ -266,21 +266,35 @@ class SVGLabel extends SVGElement {
     /*
      * Return the bounding box of the box, not the group.
      */
-    public getBBox(): BBoxObject {
+    public getBBox(reload?: boolean, rot?: number): BBoxObject {
         // If we have a text string and the DOM bBox was 0, it typically means
         // that the label was first rendered hidden, so we need to update the
         // bBox (#15246)
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
-        const padding = this.padding;
-        const paddingLeft = pick(this.paddingLeft, padding);
-        return {
-            width: this.width || 0,
-            height: this.height || 0,
-            x: this.bBox.x - paddingLeft,
-            y: this.bBox.y - padding
+        const {
+                padding,
+                height = 0,
+                translateX = 0,
+                translateY = 0,
+                width = 0
+            } = this,
+            paddingLeft = pick(this.paddingLeft, padding),
+            rotation = rot ?? (this.rotation || 0);
+
+        let bBox = {
+            width,
+            height,
+            x: translateX + this.bBox.x - paddingLeft,
+            y: translateY + this.bBox.y - padding + this.baselineOffset
         };
+
+        if (rotation) {
+            bBox = this.getRotatedBox(bBox, rotation);
+        }
+
+        return bBox;
     }
 
     private getCrispAdjust(): number {
@@ -378,7 +392,7 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
-            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #12163 when fontweight: bold, recalculate bBox without cache
             // #3295 && 3514 box failure when string equals 0
             bBox = this.bBox = (
                 ((

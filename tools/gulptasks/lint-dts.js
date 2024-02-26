@@ -11,8 +11,6 @@ const path = require('path');
  *
  * */
 
-const LINT_FOLDER = path.join('test', 'typescript-lint');
-
 const TEST_FOLDER = path.join('test', 'typescript-dts');
 
 /* *
@@ -39,17 +37,6 @@ function lintDTS(argv) {
 
         logLib.message(`Linting TypeScript declarations (.d.ts) for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
 
-        let promiseChain = Promise.resolve();
-
-        promiseChain = promiseChain.then(
-            processLib.exec(
-                'npx dtslint --localTs ../../node_modules/typescript/lib',
-                {
-                    cwd: path.join(process.cwd(), LINT_FOLDER)
-                }
-            )
-        );
-
         let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
 
         directories = directories.filter(folder => {
@@ -58,6 +45,8 @@ function lintDTS(argv) {
             }
             return !folder.includes('dashboards');
         });
+
+        let promiseChain = Promise.resolve();
 
         directories.forEach(folder => {
             promiseChain = promiseChain.then(
@@ -68,7 +57,13 @@ function lintDTS(argv) {
         promiseChain
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
-            .catch(reject);
+            .catch(error => {
+                if (argv.dashboards) {
+                    logLib.failure('Linting failed, make sure you have built the Highcharts declarations first using "npx gulp dist"');
+                }
+
+                reject(error);
+            });
     });
 }
 

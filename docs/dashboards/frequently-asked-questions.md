@@ -128,6 +128,11 @@ Highcharts Dashboards supports the following browsers:
 | Edge     | 16.0+ (2017+) |
 
 * * *
+What versions of Highcharts are supported?
+---------------
+The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
+
+* * *
 
 ## I modified series names in a chart, and now sync is not working? What can I do?
 

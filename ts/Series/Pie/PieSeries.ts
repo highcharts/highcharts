@@ -37,9 +37,7 @@ const {
     extend,
     fireEvent,
     merge,
-    pick,
-    relativeLength,
-    splat
+    pick
 } = U;
 
 /* *
@@ -100,8 +98,6 @@ class PieSeries extends Series {
     public data!: Array<PiePoint>;
 
     public endAngleRad?: number;
-
-    public invertible = false;
 
     public options!: PieSeriesOptions;
 
@@ -415,6 +411,14 @@ class PieSeries extends Series {
         // given. If positions are passed as a parameter, we're in a
         // recursive loop for adjusting space for data labels.
         if (!positions) {
+            /**
+             * The series center position, read only. This applies only to
+             * circular chart types like pie and sunburst. It is an array of
+             * `[centerX, centerY, diameter, innerDiameter]`.
+             *
+             * @name Highcharts.Series#center
+             * @type {Array<number>}
+             */
             series.center = positions = series.getCenter();
         }
 
@@ -530,31 +534,19 @@ interface PieSeries {
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
-
     axisTypes: [],
-
     directTouch: true,
-
     drawGraph: void 0,
-
     drawTracker: ColumnSeries.prototype.drawTracker,
-
     getCenter: CU.getCenter,
-
     getSymbol: noop,
-
+    invertible: false,
     isCartesian: false,
-
     noSharedTooltip: true,
-
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-
     pointClass: PiePoint,
-
     requireSorting: false,
-
     searchPoint: noop as any,
-
     trackerGroups: ['group', 'dataLabelsGroup']
 });
 

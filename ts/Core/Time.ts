@@ -410,6 +410,7 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const [date, gmt, hours, colon, minutes = 0] =
                         // eslint-disable-next-line new-cap
                         Intl.DateTimeFormat('en', {
@@ -569,7 +570,7 @@ class Time {
                     p: hours < 12 ? 'AM' : 'PM',
                     // Lower case AM or PM
                     P: hours < 12 ? 'am' : 'pm',
-                    // Two digits seconds, 00 through  59
+                    // Two digits seconds, 00 through 59
                     S: pad(this.get('Seconds', date)),
                     // Milliseconds (naming from Ruby)
                     L: pad(Math.floor((timestamp as any) % 1000), 3)

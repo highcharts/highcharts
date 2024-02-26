@@ -223,7 +223,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = config.tests && Array.isArray(config.tests) ? config.tests : (
+    let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
@@ -232,6 +232,10 @@ module.exports = function (config) {
         )
         .filter(path => !!path)
         .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
+
+    if (argv.reverse) {
+        tests = require('glob').sync(tests[0]).reverse();
+    }
 
     // Get the files
     let files = require('./karma-files.json');
@@ -243,7 +247,6 @@ module.exports = function (config) {
             // Essentials
             'test/call-analyzer.js',
             'test/test-controller.js',
-            'test/test-touch.js',
             'test/test-utilities.js',
             'test/json-sources.js',
 
@@ -346,6 +349,10 @@ module.exports = function (config) {
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
+        browserConsoleLogOptions: {
+            path: `${process.cwd()}/test/console.log`,
+            terminal: false
+        },
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits

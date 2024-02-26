@@ -107,7 +107,7 @@ class AroonIndicator extends SMAIndicator {
      */
     public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of aroon series points.
+         * Parameters used in calculation of aroon series points.
          *
          * @excluding index
          */

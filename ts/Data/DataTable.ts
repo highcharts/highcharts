@@ -46,7 +46,6 @@ const {
  * to add, remove, and manipulate columns and rows, as well as to retrieve data
  * from specific cells.
  *
- * @private
  * @class
  * @name Highcharts.DataTable
  *
@@ -1348,7 +1347,6 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            tableRowCount = table.rowCount,
             reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
 

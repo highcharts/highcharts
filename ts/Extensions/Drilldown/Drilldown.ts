@@ -222,7 +222,7 @@ function createBreadcrumbsList(
             });
         }
 
-        drilldownLevels.forEach(function (level, i): void {
+        drilldownLevels.forEach(function (level): void {
             const lastBreadcrumb = list[list.length - 1];
 
             // If level is already added to breadcrumbs list,
@@ -307,6 +307,8 @@ class ChartAdditions {
             (this as this).chart ||
             (this as Drilldown.ChartComposition)
         );
+
+        fireEvent(this, 'addSeriesAsDrilldown', { seriesOptions: options });
 
         if (chart.mapView) {
             // stop hovering while drilling down
@@ -569,14 +571,14 @@ class ChartAdditions {
                                     )).length
                                 ) {
                                     // We have a reset zoom button. Hide it and
-                                    // detatch it from the chart. It is
+                                    // detach it from the chart. It is
                                     // preserved to the layer config above.
                                     if (chart.resetZoomButton) {
                                         chart.resetZoomButton.hide();
                                         delete chart.resetZoomButton;
                                     }
 
-                                    chart.pointer.reset();
+                                    chart.pointer?.reset();
 
                                     fireEvent(chart, 'afterDrilldown');
 
@@ -598,14 +600,14 @@ class ChartAdditions {
         }
 
         if (!chart.mapView) {
-            // We have a reset zoom button. Hide it and detatch it from the
+            // We have a reset zoom button. Hide it and detach it from the
             // chart. It is preserved to the layer config above.
             if (chart.resetZoomButton) {
                 chart.resetZoomButton.hide();
                 delete chart.resetZoomButton;
             }
 
-            chart.pointer.reset();
+            chart.pointer?.reset();
 
             fireEvent(chart, 'afterDrilldown');
 

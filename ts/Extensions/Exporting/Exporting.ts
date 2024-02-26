@@ -38,7 +38,7 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/Defaults.js';
-const { defaultOptions, setOptions } = D;
+const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
@@ -478,7 +478,7 @@ namespace Exporting {
     }
 
     /**
-     * Clena up after printing a chart.
+     * Clean up after printing a chart.
      *
      * @function Highcharts#afterPrint
      *
@@ -554,7 +554,7 @@ namespace Exporting {
             };
 
         chart.isPrinting = true;
-        chart.pointer.reset(null as any, 0);
+        chart.pointer?.reset(void 0, 0);
 
         fireEvent(chart, 'beforePrint');
 
@@ -766,7 +766,7 @@ namespace Exporting {
                         pointerEvents: 'auto',
                         ...chart.renderer.style
                     },
-                    chart.fixedDiv || chart.container
+                    chart.scrollablePlotArea?.fixedDiv || chart.container
                 ) as Exporting.DivElement;
 
             innerMenu = createElement(
@@ -815,7 +815,7 @@ namespace Exporting {
                 // Hide it on clicking or touching outside the menu (#2258,
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e: PointerEvent): void {
-                    if (!chart.pointer.inClass(e.target as any, className)) {
+                    if (!chart.pointer?.inClass(e.target as any, className)) {
                         menu.hideMenu();
                     }
                 }),
@@ -1394,7 +1394,7 @@ namespace Exporting {
 
             /**
              * Check computed styles and whether they are in the allow/denylist
-             * for styles or atttributes.
+             * for styles or attributes.
              * @private
              * @param {string} val
              *        Style value
@@ -1564,11 +1564,15 @@ namespace Exporting {
      *        Move target
      */
     function moveContainers(this: Chart, moveTo: HTMLDOMElement): void {
-        const chart = this;
+        const { scrollablePlotArea } = this;
         (
-            chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
-                [chart.fixedDiv, chart.scrollingContainer as any] :
-                [chart.container]
+            // When scrollablePlotArea is active (#9533)
+            scrollablePlotArea ?
+                [
+                    scrollablePlotArea.fixedDiv,
+                    scrollablePlotArea.scrollingContainer
+                ] :
+                [this.container]
 
         ).forEach(function (div: HTMLDOMElement): void {
             moveTo.appendChild(div);
@@ -1716,7 +1720,7 @@ namespace Exporting {
 
     /**
      * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expando properties, browser bugs.
+     * account for expand properties, browser bugs.
      * Returns a cleaned SVG.
      *
      * @private
@@ -1805,10 +1809,10 @@ export default Exporting;
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -1818,10 +1822,10 @@ export default Exporting;
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**

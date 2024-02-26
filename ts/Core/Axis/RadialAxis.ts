@@ -1048,7 +1048,6 @@ namespace RadialAxis {
         e: { userOptions: Options }
     ): void {
         const chart = this.chart,
-            inverted = chart.inverted,
             angular = chart.angular,
             polar = chart.polar,
             isX = this.isXAxis,
@@ -1244,7 +1243,7 @@ namespace RadialAxis {
                     align = (labelDir === 'start') ? 'left' : 'right';
                 }
 
-                // For angles beetwen (90 + n * 180) +- 20
+                // For angles between (90 + n * 180) +- 20
                 if (reducedAngle2 > 70 && reducedAngle2 < 110) {
                     align = 'center';
                 }
@@ -1367,7 +1366,7 @@ namespace RadialAxis {
             } else {
                 // When the pane's startAngle or the axis' angle is set then
                 // new x and y values for vertical axis' center must be
-                // calulated
+                // calculated
                 start = this.postTranslate(this.angleRad, center[3] / 2);
                 center[0] = start.x - this.chart.plotLeft;
                 center[1] = start.y - this.chart.plotTop;
@@ -1462,7 +1461,7 @@ namespace RadialAxis {
             userOptions
         );
 
-        // Make sure the plotBands array is instanciated for each Axis
+        // Make sure the plotBands array is instantiated for each Axis
         // (#2649)
         if (!options.plotBands) {
             options.plotBands = [];

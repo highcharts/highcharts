@@ -134,7 +134,7 @@ namespace Bindings {
                 },
                 title: {
                     text:
-                        cell?.row.layout.board?.editMode?.lang.errorMessage,
+                        cell?.row?.layout?.board?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -182,8 +182,7 @@ namespace Bindings {
 
     /** @internal */
     export function componentFromJSON(
-        json: Component.JSON,
-        cellContainer: (HTMLElement|undefined) // @todo
+        json: Component.JSON
     ): (Component|undefined) {
         let componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry

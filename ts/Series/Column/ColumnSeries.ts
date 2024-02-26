@@ -35,10 +35,7 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
 import H from '../../Core/Globals.js';
-const {
-    hasTouch,
-    noop
-} = H;
+const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -51,8 +48,7 @@ const {
     isNumber,
     merge,
     pick,
-    objectEach,
-    relativeLength
+    objectEach
 } = U;
 
 /* *
@@ -169,8 +165,8 @@ class ColumnSeries extends Series {
                 attr.translateY = translatedThreshold;
             }
 
-            // apply finnal clipping (used in Highcharts Stock) (#7083)
-            // animation is done by scaleY, so cliping is for panes
+            // apply final clipping (used in Highcharts Stock) (#7083)
+            // animation is done by scaleY, so clipping is for panes
             if (series.clipBox) {
                 series.setClip();
             }
@@ -203,7 +199,11 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#init
      */
-    public init(chart: Chart, options: ColumnSeriesOptions): void {
+    public init(
+        chart: Chart,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        options: ColumnSeriesOptions
+    ): void {
         super.init.apply(this, arguments as any);
 
         const series = this;
@@ -335,8 +335,7 @@ class ColumnSeries extends Series {
         w: number,
         h: number
     ): BBoxObject {
-        const chart = this.chart,
-            borderWidth = this.borderWidth,
+        const borderWidth = this.borderWidth,
             xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0);
         let right,
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
@@ -450,6 +449,9 @@ class ColumnSeries extends Series {
                 }
             );
 
+            indexInCategory = this.xAxis.reversed ?
+                totalInCategory - 1 - indexInCategory : indexInCategory;
+
             // Compute the adjusted x position
             const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
                 pointWidth;
@@ -517,8 +519,7 @@ class ColumnSeries extends Series {
                     point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
-                ),
-                stackBox = point.stackBox;
+                );
             let up,
                 barY = Math.min(plotY, yBottom),
                 barH = Math.max(plotY, yBottom) - barY,
@@ -829,11 +830,12 @@ class ColumnSeries extends Series {
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                const point = pointer.getPointFromEvent(e);
+                const point = pointer?.getPointFromEvent(e);
 
-                // undefined on graph in scatterchart
+                // Undefined on graph in scatterchart
                 if (
-                    typeof point !== 'undefined' &&
+                    pointer &&
+                    point &&
                     series.options.enableMouseTracking
                 ) {
                     pointer.isDirectTouch = true;
@@ -856,11 +858,7 @@ class ColumnSeries extends Series {
             (dataLabels as any).forEach(function (
                 dataLabel: SVGElement
             ): void {
-                if (dataLabel.div) {
-                    dataLabel.div.point = point;
-                } else {
-                    (dataLabel.element as any).point = point;
-                }
+                (dataLabel.div || dataLabel.element as any).point = point;
             });
         });
 
@@ -873,11 +871,9 @@ class ColumnSeries extends Series {
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
                         .on('mouseout', function (e: PointerEvent): void {
-                            pointer.onTrackerMouseOut(e);
-                        });
-                    if (hasTouch) {
-                        (series as any)[key].on('touchstart', onMouseOver);
-                    }
+                            pointer?.onTrackerMouseOut(e);
+                        })
+                        .on('touchstart', onMouseOver);
 
                     if (!chart.styledMode && series.options.cursor) {
                         (series as any)[key]
@@ -934,7 +930,7 @@ extend(ColumnSeries.prototype, {
     getSymbol: noop,
 
     // Use separate negative stacks, unlike area stacks where a negative
-    // point is substracted from previous (#1910)
+    // point is subtracted from previous (#1910)
     negStacks: true,
 
     trackerGroups: ['group', 'dataLabelsGroup']

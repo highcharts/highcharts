@@ -24,7 +24,7 @@
     width: auto;
 }
 
-.highcharts-popup.highcharts-annotation-toolbar > span {
+.highcharts-popup.highcharts-annotation-toolbar > button {
     display: block;
     float: left;
     padding: 12px;
@@ -191,7 +191,7 @@
     background-color: #f7f7f7;
 }
 
-.highcharts-stocktools-wrapper li > span.highcharts-menu-item-btn {
+.highcharts-stocktools-wrapper li > button.highcharts-menu-item-btn {
     display: block;
     float: left;
     width: 100%;
@@ -200,11 +200,11 @@
     background-position: 50% 50%;
 }
 
-.highcharts-submenu-wrapper li > span.highcharts-menu-item-btn {
+.highcharts-submenu-wrapper li > button.highcharts-menu-item-btn {
     width: 40px;
 }
 
-.highcharts-stocktools-wrapper li > span.highcharts-submenu-item-arrow {
+.highcharts-stocktools-wrapper li > button.highcharts-submenu-item-arrow {
     float: left;
     width: 10px;
     height: 100%;
@@ -221,12 +221,12 @@
     pointer-events: none;
 }
 
-.highcharts-stocktools-wrapper li.highcharts-separator > span.highcharts-menu-item-btn {
+.highcharts-stocktools-wrapper li.highcharts-separator > button.highcharts-menu-item-btn {
     width: 100%;
 }
 
-.highcharts-stocktools-wrapper li.highcharts-active > span.highcharts-menu-item-btn,
-.highcharts-stocktools-wrapper li > span.highcharts-menu-item-btn:hover,
+.highcharts-stocktools-wrapper li.highcharts-active > button.highcharts-menu-item-btn,
+.highcharts-stocktools-wrapper li > button.highcharts-menu-item-btn:hover,
 .highcharts-stocktools-wrapper .highcharts-arrow-wrapper > div:hover,
 .highcharts-stocktools-wrapper li.highcharts-active,
 .highcharts-toggle-toolbar:hover {

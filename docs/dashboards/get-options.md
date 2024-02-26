@@ -21,8 +21,8 @@ board.getOptions();
 ```
 
 ### How to save options into localStorage
-The state that you extracted from Dashboards can be useful in your project. 
-For instance, you can can save it in your localStorage and import when you need.
+The state that you extracted from Dashboards can be useful in your project.
+For instance, you can save it in your localStorage and import when you need.
 
 ```js
 localStorage.setItem(

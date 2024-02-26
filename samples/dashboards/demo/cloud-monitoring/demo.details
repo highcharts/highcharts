@@ -1,0 +1,12 @@
+---
+name: Cloud monitoring dashboard
+authors:
+  - Sebastian Bochan
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General:
+        priority: 11
+use_png_thumbnail: true
+...
