@@ -217,9 +217,7 @@
         );
 
         assert.strictEqual(
-            chart.container.querySelectorAll(
-                'g.highcharts-range-selector-buttons .highcharts-button'
-            ).length,
+            chart.rangeSelector.buttons.length,
             6,
             '6 range selector buttons'
         );
@@ -276,9 +274,7 @@
         });
 
         assert.strictEqual(
-            chart.container.querySelectorAll(
-                'g.highcharts-range-selector-buttons .highcharts-button'
-            ).length,
+            chart.rangeSelector.buttons.length,
             6,
             '6 range selector buttons'
         );

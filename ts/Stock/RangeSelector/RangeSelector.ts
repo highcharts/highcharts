@@ -27,7 +27,6 @@ import type {
     RangeSelectorOptions,
     RangeSelectorPositionOptions
 } from './RangeSelectorOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type Time from '../../Core/Time';
 
 import Axis from '../../Core/Axis/Axis.js';
@@ -181,6 +180,7 @@ class RangeSelector {
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
     public dropdown?: HTMLSelectElement;
+    public dropdownLabel!: SVGElement;
     public eventsToUnbind?: Array<Function>;
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
@@ -198,7 +198,7 @@ class RangeSelector {
     public options!: RangeSelectorOptions;
     public rendered?: boolean;
     public selected?: number;
-    public zoomText?: SVGElement;
+    public zoomText!: SVGElement;
 
     /* *
      *
@@ -500,6 +500,7 @@ class RangeSelector {
         const rangeSelector = this,
             chart = this.chart,
             dropdown = this.dropdown,
+            dropdownLabel = this.dropdownLabel,
             baseAxis = chart.xAxis[0],
             actualRange = Math.round(
                 (baseAxis.max as any) - (baseAxis.min as any)
@@ -634,6 +635,9 @@ class RangeSelector {
 
                     if (state === 2) {
                         dropdown.selectedIndex = i + 1;
+                        dropdownLabel
+                            .attr({ text: rangeOptions.text + ' ▾' })
+                            .setState(2);
                     }
                 }
 
@@ -648,6 +652,11 @@ class RangeSelector {
                 }
             }
         });
+        if (!selectedExists && dropdownLabel) {
+            dropdownLabel.attr({
+                text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
+            }).setState(0);
+        }
     }
 
     /**
@@ -1310,14 +1319,39 @@ class RangeSelector {
 
         const dropdown = this.dropdown = createElement('select', void 0, {
             position: 'absolute',
-            width: '1px',
-            height: '1px',
             padding: 0,
             border: 0,
-            top: '-9999em',
             cursor: 'pointer',
             opacity: 0.0001
         }, this.div) as HTMLSelectElement;
+
+        // Create a label for dropdown select element
+        const userButtonTheme = chart.userOptions.rangeSelector?.buttonTheme;
+        this.dropdownLabel = renderer.button(
+            '',
+            0,
+            10,
+            (): void => {},
+            merge(buttonTheme, {
+                'stroke-width': pick(buttonTheme['stroke-width'], 0),
+                width: 'auto',
+                paddingLeft: pick(
+                    options.buttonTheme.paddingLeft,
+                    userButtonTheme?.padding,
+                    8
+                ),
+                paddingRight: pick(
+                    options.buttonTheme.paddingRight,
+                    userButtonTheme?.padding,
+                    8
+                )
+            }),
+            states && states.hover,
+            states && states.select,
+            states && states.disabled
+        )
+            .hide()
+            .add(this.group);
 
         // Prevent page zoom on iPhone
         addEvent(dropdown, 'touchstart', (): void => {
@@ -1325,21 +1359,21 @@ class RangeSelector {
         });
 
         // Forward events from select to button
-        [
-            [H.isMS ? 'mouseover' : 'mouseenter'],
-            [H.isMS ? 'mouseout' : 'mouseleave'],
-            ['change', 'click']
-        ].forEach(([from, to]): void => {
-            addEvent(dropdown, from, (): void => {
-                const button = buttons[this.currentButtonIndex()];
-                if (button) {
-                    fireEvent(button.element, to || from);
-                }
-            });
+        const mouseOver = H.isMS ? 'mouseover' : 'mouseenter',
+            mouseOut = H.isMS ? 'mouseout' : 'mouseleave';
+        addEvent(dropdown, mouseOver, (): void => {
+            fireEvent(this.dropdownLabel.element, mouseOver);
+        });
+        addEvent(dropdown, mouseOut, (): void => {
+            fireEvent(this.dropdownLabel.element, mouseOut);
+        });
+        addEvent(dropdown, 'change', (): void => {
+            const button = this.buttons[dropdown.selectedIndex - 1];
+            fireEvent(button.element, 'click');
         });
 
         this.zoomText = renderer
-            .label((lang && lang.rangeSelectorZoom) || '', 0)
+            .label(lang.rangeSelectorZoom || '', 0)
             .attr({
                 padding: options.buttonTheme.padding,
                 height: options.buttonTheme.height,
@@ -1780,7 +1814,7 @@ class RangeSelector {
 
         if (buttonGroup) {
             if (dropdown === 'always') {
-                this.collapseButtons(xOffsetForExportButton);
+                this.collapseButtons();
 
                 if (groupsOverlap(maxButtonWidth())) {
                     // Move the inputs down if there is still a collision
@@ -1802,7 +1836,7 @@ class RangeSelector {
                 groupsOverlap(this.initialButtonGroupWidth + 20)
             ) {
                 if (dropdown === 'responsive') {
-                    this.collapseButtons(xOffsetForExportButton);
+                    this.collapseButtons();
 
                     if (groupsOverlap(maxButtonWidth())) {
                         moveInputsDown();
@@ -1815,7 +1849,7 @@ class RangeSelector {
             }
         } else if (buttonGroup && dropdown === 'responsive') {
             if (this.initialButtonGroupWidth > chart.plotWidth) {
-                this.collapseButtons(xOffsetForExportButton);
+                this.collapseButtons();
             } else {
                 this.expandButtons();
             }
@@ -1823,90 +1857,22 @@ class RangeSelector {
     }
 
     /**
-     * Collapse the buttons and put the select element on top.
+     * Collapse the buttons and show the select element.
      *
      * @private
      * @function Highcharts.RangeSelector#collapseButtons
      * @param {number} xOffsetForExportButton
      */
-    public collapseButtons(xOffsetForExportButton: number): void {
+    public collapseButtons(): void {
         const {
             buttons,
-            buttonOptions,
-            chart,
-            dropdown,
-            options,
             zoomText
         } = this;
 
-        // If the buttons are already collapsed do nothing.
-        if (this.isCollapsed === true) {
-            return;
-
-        }
         this.isCollapsed = true;
 
-        const userButtonTheme = (
-            chart.userOptions.rangeSelector &&
-            chart.userOptions.rangeSelector.buttonTheme
-        ) || {};
-
-        const getAttribs = (text?: string): SVGAttributes => ({
-            text: text ? `${text} ▾` : '▾',
-            width: 'auto',
-            paddingLeft: pick(
-                options.buttonTheme.paddingLeft,
-                userButtonTheme.padding,
-                8
-            ),
-            paddingRight: pick(
-                options.buttonTheme.paddingRight,
-                userButtonTheme.padding,
-                8
-            )
-        } as unknown as SVGAttributes);
-
-        if (zoomText) {
-            zoomText.hide();
-        }
-
-        let hasActiveButton = false;
-
-        buttonOptions.forEach((
-            rangeOptions: RangeSelectorButtonOptions,
-            i: number
-        ): void => {
-            const button = buttons[i];
-            if (button.state !== 2) {
-                button.hide();
-            } else {
-                button.show();
-                button.attr(getAttribs(rangeOptions.text));
-
-                hasActiveButton = true;
-            }
-        });
-
-        if (!hasActiveButton) {
-            if (dropdown) {
-                dropdown.selectedIndex = 0;
-            }
-
-            buttons[0].show();
-            buttons[0].attr(getAttribs(this.zoomText && this.zoomText.textStr));
-        }
-
-        const { align } = options.buttonPosition;
-
-        this.positionButtons();
-
-        if (align === 'right' || align === 'center') {
-            this.alignButtonGroup(
-                xOffsetForExportButton,
-                buttons[this.currentButtonIndex()].getBBox().width
-            );
-        }
-
+        zoomText.hide();
+        buttons.forEach((button): void => void button.hide());
         this.showDropdown();
     }
 
@@ -1919,58 +1885,15 @@ class RangeSelector {
     public expandButtons(): void {
         const {
             buttons,
-            buttonOptions,
-            options,
             zoomText
         } = this;
 
-        this.hideDropdown();
-
-        // If buttons are already not collapsed, do nothing.
-        if (this.isCollapsed === false) {
-            return;
-
-        }
         this.isCollapsed = false;
-        if (zoomText) {
-            zoomText.show();
-        }
 
-        buttonOptions.forEach((
-            rangeOptions: RangeSelectorButtonOptions,
-            i: number
-        ): void => {
-            const button = buttons[i];
-
-            button.show();
-            button.attr({
-                text: rangeOptions.text,
-                width: options.buttonTheme.width || 28,
-                paddingLeft: pick(options.buttonTheme.paddingLeft, 'unset'),
-                paddingRight: pick(options.buttonTheme.paddingRight, 'unset')
-            } as SVGAttributes);
-
-            if (button.state < 2) {
-                button.setState(0);
-            }
-        });
-
+        zoomText.show();
+        buttons.forEach((button): void => void button.show());
+        this.hideDropdown();
         this.positionButtons();
-    }
-
-    /**
-     * Get the index of the visible button when the buttons are collapsed.
-     *
-     * @private
-     * @function Highcharts.RangeSelector#currentButtonIndex
-     */
-    public currentButtonIndex(): number {
-        const { dropdown } = this;
-
-        if (dropdown && dropdown.selectedIndex > 0) {
-            return dropdown.selectedIndex - 1;
-        }
-        return 0;
     }
 
     /**
@@ -1982,17 +1905,24 @@ class RangeSelector {
     public showDropdown(): void {
         const {
             buttonGroup,
-            buttons,
             chart,
+            dropdownLabel,
             dropdown
         } = this;
 
         if (buttonGroup && dropdown) {
             const { translateX = 0, translateY = 0 } = buttonGroup,
-                bBox = buttons[this.currentButtonIndex()].getBBox();
+                left = chart.plotLeft + translateX,
+                top = translateY + 0.5,
+                bBox = dropdownLabel
+                    .attr({ x: left, y: top })
+                    .show()
+                    .getBBox();
+
             css(dropdown, {
-                left: (chart.plotLeft + translateX) + 'px',
-                top: (translateY + 0.5) + 'px',
+                left: left + 'px',
+                top: top + 'px',
+                visibility: 'inherit',
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
             });
@@ -2008,8 +1938,9 @@ class RangeSelector {
         const { dropdown } = this;
 
         if (dropdown) {
+            this.dropdownLabel.hide();
             css(dropdown, {
-                top: '-9999em',
+                visibility: 'hidden',
                 width: '1px',
                 height: '1px'
             });
