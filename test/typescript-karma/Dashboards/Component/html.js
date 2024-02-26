@@ -70,3 +70,53 @@ test('component resizing', function (assert) {
 
     component.destroy();
 });
+
+
+test('HTML Component created with elements and html string.', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    Dashboards.board(parentElement, {
+        gui: {
+            enabled: true,
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-cell-1'
+                    },{
+                        id: 'dashboard-cell-2'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'HTML',
+            renderTo: 'dashboard-cell-1',
+            elements: [{
+                tagName: 'h1',
+                textContent: 'HTML from elements'
+            }]
+        }, {
+            type: 'HTML',
+            renderTo: 'dashboard-cell-2',
+            html: '<h1>HTML from string</h1>'
+        }]
+    }, true).then(board => {
+        const compFromElements = board.mountedComponents[0].component;
+        const compFromString = board.mountedComponents[1].component;
+
+        assert.strictEqual(
+            compFromElements.element.innerText,
+            'HTML from elements',
+            'HTML from elements should be rendered and text should be correct.'
+        );
+
+        assert.strictEqual(
+            compFromString.element.innerText,
+            'HTML from string',
+            'HTML from string should be rendered and text should be correct.'
+        );
+    });
+});

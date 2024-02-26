@@ -24,7 +24,7 @@
 import type Globals from '../../Globals';
 import type Options from './KPIComponentOptions';
 
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 import KPISyncHandlers from './KPISyncHandlers.js';
 
 

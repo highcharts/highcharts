@@ -47,11 +47,6 @@ Dashboards.board('container', {
     }, {
         type: 'HTML',
         renderTo: 'dashboard-2',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://www.highcharts.com/samples/graphics/maps-dark.svg'
-            }
-        }]
+        html: '<img src="https://www.highcharts.com/samples/graphics/maps-dark.svg">'
     }]
 });

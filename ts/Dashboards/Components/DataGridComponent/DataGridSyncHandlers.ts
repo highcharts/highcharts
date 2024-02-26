@@ -21,7 +21,7 @@
  *
  * */
 
-import type Sync from '../../Components/Sync/Sync';
+import type Sync from '../Sync/Sync';
 
 import ComponentType from '../../Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
