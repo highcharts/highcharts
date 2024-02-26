@@ -82,6 +82,7 @@ QUnit.test('Rotation mode', function (assert) {
             rotationMode: 'perpendicular'
         }
     });
+
     assert.deepEqual(
         chart.series[0].points.map(function (point) {
             return Number(point.dataLabel.rotation.toFixed(1));
