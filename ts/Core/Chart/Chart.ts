@@ -268,7 +268,7 @@ class Chart {
      *
      * */
 
-    /** definitions */
+    // Definitions
     public constructor(
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
@@ -279,7 +279,7 @@ class Chart {
         callback?: Chart.CallbackFunction
     );
 
-    /** Implementation */
+    // Implementation
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Options>),
         /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -2777,8 +2777,9 @@ class Chart {
 
     /**
      * Emit console warning if the a11y module is not loaded.
+     * @private
      */
-    public warnIfA11yModuleNotLoaded():void {
+    public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
         if (options && !this.accessibility) {
             // Make chart behave as an image with the title as alt text

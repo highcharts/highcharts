@@ -106,6 +106,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
+ * @private
  */
 class ZAxis extends Axis implements AxisLike {
 

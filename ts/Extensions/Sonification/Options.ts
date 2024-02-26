@@ -224,7 +224,7 @@ const Options: DeepPartial<OptionsType> = {
      * @sample  highcharts/demo/sonification-music
      *          Musical chart
      *
-     * @since 11.0.0
+     * @since        11.0.0
      * @requires     modules/sonification
      * @optionparent sonification
      */
@@ -235,9 +235,10 @@ const Options: DeepPartial<OptionsType> = {
          * Defined as an array of either instrument or speech tracks,
          * or a combination.
          *
-         * @type {Array<*>}
-         * @extends sonification.defaultSpeechOptions
-         * @extends sonification.defaultInstrumentOptions
+         * @declare   Highcharts.SonificationGlobalTracksOptions
+         * @type      {Array<*>}
+         * @extends   sonification.defaultSpeechOptions
+         * @extends   sonification.defaultInstrumentOptions
          * @apioption sonification.globalTracks
          */
 
@@ -262,8 +263,10 @@ const Options: DeepPartial<OptionsType> = {
          *
          * @sample  highcharts/demo/plotline-context
          *          Using contexts
-         * @type {Array<*>}
-         * @extends sonification.globalTracks
+         *
+         * @declare   Highcharts.SonificationGlobalContextTracksOptions
+         * @type      {Array<*>}
+         * @extends   sonification.globalTracks
          * @apioption sonification.globalContextTracks
          */
 
@@ -273,7 +276,8 @@ const Options: DeepPartial<OptionsType> = {
          *
          * @sample  highcharts/demo/plotline-context
          *          Using contexts
-         * @type {number}
+         *
+         * @type      {number}
          * @apioption sonification.globalContextTracks.timeInterval
          */
 
@@ -290,22 +294,25 @@ const Options: DeepPartial<OptionsType> = {
          *
          * @sample  highcharts/demo/plotline-context
          *          Using contexts
-         * @type {number}
+         *
+         * @type      {number}
          * @apioption sonification.globalContextTracks.valueInterval
          */
 
         /**
          * The point property to play context for when using `valueInterval`.
-         * @type {string}
-         * @default "x"
+         *
+         * @type      {string}
+         * @default   "x"
          * @apioption sonification.globalContextTracks.valueProp
          */
 
         /**
          * How to map context events to time when using the `valueInterval`
          * option.
-         * @type {"linear"|"logarithmic"}
-         * @default "linear"
+         *
+         * @type      {"linear"|"logarithmic"}
+         * @default   "linear"
          * @apioption sonification.globalContextTracks.valueMapFunction
          */
 
@@ -537,6 +544,8 @@ const Options: DeepPartial<OptionsType> = {
          *
          * @sample  highcharts/sonification/point-sonify
          *          Sonify points on click
+         *
+         * @declare Highcharts.SonificationDefaultInstrumentOptions
          */
         defaultInstrumentOptions: {
             /**
@@ -957,7 +966,9 @@ const Options: DeepPartial<OptionsType> = {
          *
          * @sample  highcharts/sonification/speak-values
          *          Speak values
-         * @extends sonification.defaultInstrumentOptions
+         *
+         * @declare   Highcharts.SonificationDefaultInstrumentOptions
+         * @extends   sonification.defaultInstrumentOptions
          * @excluding roundToMusicalNotes, midiName, instrument
          */
         defaultSpeechOptions: {
@@ -1011,9 +1022,10 @@ const Options: DeepPartial<OptionsType> = {
              * data point, and `value` is available if the track is used for a
              * context track using `valueInterval`.
              *
-             * @extends sonification.defaultInstrumentOptions.mapping
-             * @excluding frequency, gapBetweenNotes, highpass, lowpass, tremolo,
-             *  noteDuration, pan
+             * @declare   Highcharts.SonificationDefaultInstrumentMappingOptions
+             * @extends   sonification.defaultInstrumentOptions.mapping
+             * @excluding frequency, gapBetweenNotes, highpass, lowpass,
+             *            tremolo, noteDuration, pan
              * @apioption sonification.defaultSpeechOptions.mapping
              */
             mapping: {
@@ -1023,7 +1035,7 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * Can also be negative to play before the mapped time.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultSpeechOptions.mapping.playDelay
                  */
 
@@ -1031,9 +1043,10 @@ const Options: DeepPartial<OptionsType> = {
                  * Speech pitch (how high/low the voice is) multiplier.
                  * @sample  highcharts/sonification/speak-values
                  *          Speak values
-                 * @default 1
-                 * @type {string|number|Function|object}
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 *
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
+                 * @type     {string|number|Function|object}
+                 * @default   1
                  * @excluding scale
                  * @apioption sonification.defaultSpeechOptions.mapping.pitch
                  */
@@ -1167,16 +1180,17 @@ export default Options;
 /**
  * Sonification/audio chart options for a series.
  *
- * @declare    Highcharts.SeriesSonificationOptions
- * @since 11.0.0
+ * @declare    Highcharts.PlotSeriesSonificationOptions
+ * @since      11.0.0
  * @requires   modules/sonification
  * @apioption  plotOptions.series.sonification
  */
 
 /**
  * Whether or not sonification is enabled for this series.
- * @type {boolean}
- * @default true
+ *
+ * @type       {boolean}
+ * @default    true
  * @apioption  plotOptions.series.sonification.enabled
  */
 
@@ -1186,8 +1200,9 @@ export default Options;
  *
  * Given as an array of instrument tracks, speech tracks, or a mix of both.
  *
- * @type {Array<*>}
- * @extends sonification.globalContextTracks
+ * @declare    Highcharts.PlotSeriesSonificationContextTracksOptions
+ * @type       {Array<*>}
+ * @extends    sonification.globalContextTracks
  * @apioption  plotOptions.series.sonification.contextTracks
  */
 
@@ -1196,29 +1211,33 @@ export default Options;
  *
  * Given as an array of instrument tracks, speech tracks, or a mix of both.
  *
- * @type {Array<*>}
- * @extends sonification.globalTracks
+ * @declare    Highcharts.PlotSeriesSonificationTracksOptions
+ * @type       {Array<*>}
+ * @extends    sonification.globalTracks
  * @apioption  plotOptions.series.sonification.tracks
  */
 
 /**
  * Default options for all this series' instrument tracks.
  *
- * @extends sonification.defaultInstrumentOptions
+ * @declare    Highcharts.PlotSeriesSonificationDefaultInstrumentOptions
+ * @extends    sonification.defaultInstrumentOptions
  * @apioption  plotOptions.series.sonification.defaultInstrumentOptions
  */
 
 /**
  * Default options for all this series' speech tracks.
  *
- * @extends sonification.defaultSpeechOptions
+ * @declare    Highcharts.PlotSeriesSonificationDefaultSpeechOptions
+ * @extends    sonification.defaultSpeechOptions
  * @apioption  plotOptions.series.sonification.defaultSpeechOptions
  */
 
 /**
  * Sonification point grouping options for this series.
  *
- * @extends sonification.pointGrouping
+ * @declare    Highcharts.PlotSeriesSonificationPointGroupingOptions
+  * @extends    sonification.pointGrouping
  * @apioption  plotOptions.series.sonification.pointGrouping
  */
 
