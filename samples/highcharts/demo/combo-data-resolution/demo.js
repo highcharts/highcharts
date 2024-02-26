@@ -22,14 +22,14 @@ Highcharts.chart('container', {
         pointInterval: 36e5
     }],
     yAxis: {
-        tickInterval: 0.5,
-        endOnTick: true,
         max: 1,
+        min: -0.5,
         title: {
             enabled: false
         }
     },
     xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        endOnTick: true
     }
 });
