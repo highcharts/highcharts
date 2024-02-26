@@ -148,18 +148,6 @@ namespace Exporting {
         update(options: ExportingOptions, redraw?: boolean): void;
     }
 
-    export declare interface ChartComposition extends Chart {
-        new(
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
-        new(
-            renderTo: (string|globalThis.HTMLElement),
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
-    }
-
     export declare class ChartComposition extends Chart {
         btnCount?: number;
         buttonOffset?: number;

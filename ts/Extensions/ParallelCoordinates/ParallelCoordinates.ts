@@ -193,7 +193,7 @@ namespace ParallelCoordinates {
      */
     function onChartInit(
         this: ChartComposition,
-        e: { args: { 0: Partial<Options> } }
+        e: { args: [Partial<Options>] }
     ): void {
         const chart = this,
             options = e.args[0],
