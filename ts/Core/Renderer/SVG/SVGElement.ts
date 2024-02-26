@@ -2264,6 +2264,8 @@ class SVGElement implements SVGElementLike {
             element,
             matrix,
             rotation = 0,
+            rotationOriginX,
+            rotationOriginY,
             scaleX,
             scaleY,
             translateX = 0,
@@ -2275,7 +2277,7 @@ class SVGElement implements SVGElementLike {
         // #1846).
         const transform = ['translate(' + translateX + ',' + translateY + ')'];
 
-        // apply matrix
+        // Apply matrix
         if (defined(matrix)) {
             transform.push(
                 'matrix(' + matrix.join(',') + ')'
@@ -2283,16 +2285,25 @@ class SVGElement implements SVGElementLike {
         }
 
         // Apply rotation
-        if (rotation) { // text rotation or inverted chart
+        if (rotation) {
             transform.push(
                 'rotate(' + rotation + ' ' +
-                pick(this.rotationOriginX, element.getAttribute('x'), 0) +
+                pick(rotationOriginX, element.getAttribute('x'), 0) +
                 ' ' +
-                pick(this.rotationOriginY, element.getAttribute('y') || 0) + ')'
+                pick(rotationOriginY, element.getAttribute('y') || 0) + ')'
             );
+
+            // HTML labels rotation (#20685)
+            if (this.text?.element.tagName === 'SPAN') {
+                this.text.attr({
+                    rotation,
+                    rotationOriginX: (rotationOriginX || 0) - this.padding,
+                    rotationOriginY: (rotationOriginY || 0) - this.padding
+                });
+            }
         }
 
-        // apply scale
+        // Apply scale
         if (defined(scaleX) || defined(scaleY)) {
             transform.push(
                 'scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')'
@@ -2453,8 +2464,8 @@ class SVGElement implements SVGElementLike {
 interface SVGElement extends SVGElementLike {
     // takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    rotationOriginXSetter(value: number|null, key?: string): void;
+    rotationOriginYSetter(value: number|null, key?: string): void;
     rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
