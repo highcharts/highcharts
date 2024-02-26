@@ -21,8 +21,8 @@
  * */
 
 import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
-import type Component from '../../Components/Component';
-import type Sync from '../../Components/Sync/Sync';
+import type Component from '../Component';
+import type Sync from '../Sync/Sync';
 
 /* *
  *

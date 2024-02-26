@@ -21,12 +21,14 @@
  * */
 
 
-import type Component from '../../Components/Component';
+import type Component from '../Component';
 import type {
     ComponentConnectorOptions
 } from '../../Components/ComponentOptions';
-import type Sync from '../../Components/Sync/Sync';
-import type { Options as HighchartsOptions } from '../HighchartsTypes';
+import type Sync from '../Sync/Sync';
+import type {
+    Options as HighchartsOptions
+} from '../../Plugins/HighchartsTypes';
 
 
 /* *

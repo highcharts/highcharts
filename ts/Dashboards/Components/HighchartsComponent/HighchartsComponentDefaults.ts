@@ -23,7 +23,7 @@
 import type Globals from '../../Globals';
 import type Options from './HighchartsComponentOptions';
 
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../../Core/Utilities.js';
 const {

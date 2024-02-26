@@ -22,11 +22,13 @@
  *
  * */
 
-import type Cell from '../Layout/Cell.js';
+import type Cell from '../../Layout/Cell.js';
+import type Options from './HTMLComponentOptions';
 
-import AST from '../../Core/Renderer/HTML/AST.js';
-import Component from './Component.js';
-import U from '../../Core/Utilities.js';
+import AST from '../../../Core/Renderer/HTML/AST.js';
+import Component from '../Component.js';
+import HTMLComponentDefaults from './HTMLComponentDefaults.js';
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     diffObjects
@@ -45,8 +47,15 @@ AST.allowedTags = [
 ];
 AST.allowedAttributes = [
     ...AST.allowedAttributes,
-    'for', 'value', 'checked', 'src', 'name', 'selected'];
-AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
+    'for',
+    'value',
+    'checked',
+    'src',
+    'name',
+    'selected'];
+AST.allowedReferences = [
+    ...AST.allowedReferences,
+    'data:image/'];
 
 /* *
  *
@@ -59,7 +68,6 @@ AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
  * Class that represents a HTML component.
  *
  */
-
 class HTMLComponent extends Component {
 
     /* *
@@ -73,10 +81,7 @@ class HTMLComponent extends Component {
      */
     public static defaultOptions = merge(
         Component.defaultOptions,
-        {
-            type: 'HTML',
-            elements: []
-        }
+        HTMLComponentDefaults
     );
 
     /* *
@@ -144,10 +149,12 @@ class HTMLComponent extends Component {
      * Array of HTML elements, declared as string or node.
      */
     private elements: AST.Node[];
+
     /**
      * HTML component's options.
      */
-    public options: HTMLComponent.Options;
+    public options: Options;
+
     /**
      * Reference to sync component that allows to sync.
      *
@@ -164,17 +171,20 @@ class HTMLComponent extends Component {
     /**
      * Creates a HTML component in the cell.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @param options
      * The options for the component.
      */
-    constructor(cell: Cell, options: Partial<HTMLComponent.Options>) {
+    constructor(cell: Cell, options: Partial<Options>) {
         options = merge(
             HTMLComponent.defaultOptions,
             options
         );
         super(cell, options);
 
-        this.options = options as HTMLComponent.Options;
+        this.options = options as Options;
 
         this.type = 'HTML';
         this.elements = [];
@@ -200,7 +210,7 @@ class HTMLComponent extends Component {
         const options = this.options;
         let isError = false;
 
-        if (options.elements) {
+        if (options.elements?.length) {
             this.elements = options.elements.map(
                 function (element): AST.Node {
                     if (typeof element === 'string') {
@@ -217,6 +227,8 @@ class HTMLComponent extends Component {
 
                     return element;
                 });
+        } else if (options.html) {
+            this.elements = this.getElementsFromString(options.html);
         }
 
         this.constructTree();
@@ -254,12 +266,12 @@ class HTMLComponent extends Component {
      * @param options
      * The options to apply.
      */
-    public async update(options: Partial<HTMLComponent.Options>): Promise<void> {
+    public async update(options: Partial<Options>): Promise<void> {
         await super.update(options);
         this.emit({ type: 'afterUpdate' });
     }
 
-    public getOptionsOnDrop(): Partial<HTMLComponent.Options> {
+    public getOptionsOnDrop(): Partial<Options> {
         return {
             cell: '',
             type: 'HTML',
@@ -273,9 +285,6 @@ class HTMLComponent extends Component {
     }
 
     /**
-     * TODO: Could probably use the serialize function moved on
-     * the exportdata branch
-     *
      * @internal
      */
     private constructTree(): void {
@@ -286,6 +295,15 @@ class HTMLComponent extends Component {
 
         const parser = new AST(this.elements);
         parser.addToDOM(this.contentElement);
+    }
+
+    /**
+     * When HTML definition is a string, it needs to be parsed to AST.
+     *
+     * @internal
+     */
+    private getElementsFromString(htmlString: string): AST.Node[] {
+        return new AST(htmlString).nodes;
     }
 
     /**
@@ -324,7 +342,7 @@ class HTMLComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<HTMLComponent.Options> {
+    public getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, HTMLComponent.defaultOptions),
             type: 'HTML'
@@ -359,30 +377,7 @@ namespace HTMLComponent {
     /** @internal */
     export type ComponentType = HTMLComponent;
 
-    export interface Options extends Component.Options {
-        /**
-         * Array of HTML elements, declared as string or node.
-         * ```
-         * Example:
-         *
-         * elements: [{
-         *   tagName: 'img',
-         *   attributes: {
-         *       src: 'http://path.to.image'
-         *   }
-         * }]
-         * ```
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/single-element/ | HTML component with one image.}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/html-component/nested-elements/ | HTML component with nested images.}
-         *
-         */
-        elements?: (AST.Node | string)[];
-        type: 'HTML';
-    }
+
     /** @internal */
     export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
         type: 'HTML'
@@ -404,7 +399,7 @@ namespace HTMLComponent {
     }
 }
 
-declare module './ComponentType' {
+declare module '../ComponentType' {
     interface ComponentTypeRegistry {
         HTML: typeof HTMLComponent;
     }

@@ -13,10 +13,10 @@
 
 /* eslint-disable require-jsdoc, max-len */
 
-import type { Axis } from '../HighchartsTypes';
+import type { Axis } from '../../Plugins/HighchartsTypes';
 import type DataCursor from '../../../Data/DataCursor';
-import type Sync from '../../Components/Sync/Sync';
-import type Component from '../../Components/Component';
+import type Sync from '../Sync/Sync';
+import type Component from '../Component';
 import type NavigatorComponent from './NavigatorComponent';
 import type { RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
 

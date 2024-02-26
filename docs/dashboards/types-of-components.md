@@ -13,21 +13,35 @@ Here is the overview of the most important parameters, that can be defined for a
 * `sync` - list of events, which should be synchronized between components.
 
 ### HTML Component
-The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://www.highcharts.com/samples/embed/dashboards/components/component-html)
+The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events.
 
-Code snippet:
-```js
-{
-    type: 'HTML',
-    renderTo: 'dashboard-1',
-    elements: [{
-        tagName: 'img',
-        attributes: {
-            src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-        }
-    }]
-}
-```
+The component can be defined in two ways:  
+1. **AST-like**  
+    Where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://www.highcharts.com/samples/embed/dashboards/components/component-html)
+    Code snippet:
+    ```js
+    {
+        type: 'HTML',
+        renderTo: 'dashboard-1',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+            }
+        }]
+    }
+    ```
+2. **String**  
+    Where you can define the HTML code as a string. [Check out the basic HTML component demo here.](https://www.highcharts.com/samples/embed/dashboards/components/component-html)
+    Code snippet:
+    ```js
+    {
+        type: 'HTML',
+        renderTo: 'dashboard-1',
+        html: '<img src="https://www.highcharts.com/samples/graphics/stock-dark.svg">'
+    }
+    ```
+
 Also please check the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
 
 You can find more information about HTML Component [here.](https://www.highcharts.com/docs/dashboards/html-component)

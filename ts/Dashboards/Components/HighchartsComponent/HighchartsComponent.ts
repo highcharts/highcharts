@@ -33,7 +33,7 @@ import type {
     Point,
     Series,
     SeriesOptions
-} from '../HighchartsTypes';
+} from '../../Plugins/HighchartsTypes';
 import type {
     ColumnAssignmentOptions,
     ConstructorType,
@@ -42,7 +42,7 @@ import type {
 import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';

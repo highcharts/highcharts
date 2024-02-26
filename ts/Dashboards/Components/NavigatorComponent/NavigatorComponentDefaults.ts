@@ -24,7 +24,7 @@
 import type Globals from '../../Globals';
 import type Options from './NavigatorComponentOptions';
 
-import Component from '../../Components/Component.js';
+import Component from '../Component.js';
 
 
 /* *

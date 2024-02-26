@@ -111,7 +111,7 @@ Use the exact name which was used to register the component in the `ComponentReg
 ```
 ---
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) doesn't allow to reuse the HTML code, which is already present in the DOM. To overcome this limitation, you can create a custom HTML component, which will allow you to reference the HTML element by its `id` attribute or pass the HTML as a string to the `html` property.
 
 <iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component" allow="fullscreen"></iframe>
 
@@ -138,18 +138,12 @@ class CustomHTML extends HTMLComponent {
             const customHTML = document.getElementById(options.id).outerHTML;
 
             this.options.elements = new AST(customHTML).nodes;
-        } else if (options.html) {
-            this.options.elements = new AST(options.html).nodes;
         }
     }
 }
 
 ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 ```
-
-This custom component can generate HTML elements in the dashboards by:
-- referencing the HTML element by its `id` attribute
-- passing the HTML as a string to the `html` property
 
 Use of this component is shown below:
 
