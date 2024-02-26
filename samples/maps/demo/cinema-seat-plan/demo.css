@@ -26,16 +26,16 @@
     font-size: 12pt;
     line-height: 16pt;
     margin-left: -1px;
-    color: #555;
+    color: #333;
 }
 
 #deselect:hover {
-    background: rgb(124 181 236);
+    background: #2caffe;
     color: white;
 }
 
 #deselect[disabled] {
-    background: #ccc;
+    background: #efefef;
     outline: none;
-    color: #555;
+    color: #999;
 }
