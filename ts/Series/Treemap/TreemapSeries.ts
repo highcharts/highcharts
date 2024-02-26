@@ -526,6 +526,7 @@ class TreemapSeries extends ScatterSeries {
             }
         }
 
+        // Experimental block to make space for the outside data labels
         if (parent.level === 0 && this.hasOutsideDataLabels) {
             const leafs = this.points.filter(
                     (p): boolean|undefined => p.node.isLeaf
@@ -569,7 +570,7 @@ class TreemapSeries extends ScatterSeries {
 
             if (
                 // An area error less than 5% is acceptable, the human ability
-                // to asses area size is not that accurate
+                // to assess area size is not that accurate
                 worstMiss > 0.05 &&
                 // In case an eternal loop is brewing, pull the emergency brake
                 this.simulation < 10
