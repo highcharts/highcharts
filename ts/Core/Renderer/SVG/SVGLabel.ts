@@ -350,33 +350,6 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
-    public rotationSetter(value: number|null): void {
-        this.rotation = value === null ? void 0 : value;
-        this.doTransform = true;
-
-        if (this.text.element.tagName === 'SPAN') {
-            this.text.attr({ rotation: value === null ? void 0 : value });
-        }
-    }
-
-    public rotationOriginXSetter(value: number|null): void {
-        this.rotationOriginX = value || void 0;
-        this.doTransform = true;
-
-        if (value && this.text.element.tagName === 'SPAN') {
-            this.text.attr({ rotationOriginX: value - this.padding });
-        }
-    }
-
-    public rotationOriginYSetter(value: number|null): void {
-        this.rotationOriginY = value || void 0;
-        this.doTransform = true;
-
-        if (value && this.text.element.tagName === 'SPAN') {
-            this.text.attr({ rotationOriginY: value - this.padding });
-        }
-    }
-
     public strokeSetter(
         value: ColorType,
         key: string

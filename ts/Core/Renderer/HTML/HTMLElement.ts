@@ -339,6 +339,8 @@ class HTMLElement extends SVGElement {
                 element,
                 renderer,
                 rotation,
+                rotationOriginX = 0,
+                rotationOriginY = 0,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -374,12 +376,13 @@ class HTMLElement extends SVGElement {
 
         if (element.tagName === 'SPAN') {
             const currentTextTransform = [
-                rotation,
-                textAlign,
-                element.innerHTML,
-                textWidth,
-                this.textAlign
-            ].join(',');
+                    rotation,
+                    textAlign,
+                    element.innerHTML,
+                    textWidth,
+                    this.textAlign
+                ].join(','),
+                parentPadding = (this.parentGroup?.padding * -1) || 0;
 
             let baseline,
                 hasBoxWidthChanged = false;
@@ -433,8 +436,8 @@ class HTMLElement extends SVGElement {
                 ) {
                     this.setSpanRotation(
                         rotation,
-                        (this.parentGroup?.padding * -1) || 0,
-                        (this.parentGroup?.padding * -1) || 0
+                        parentPadding,
+                        parentPadding
                     );
                 }
 
@@ -451,10 +454,16 @@ class HTMLElement extends SVGElement {
             }
 
             // Apply position with correction
-            css(element, {
+            const styles: CSSObject = {
                 left: (x + (this.xCorr || 0)) + 'px',
                 top: (y + (this.yCorr || 0)) + 'px'
-            });
+            };
+            if (rotationOriginX || rotationOriginY) {
+                styles.transformOrigin =
+                    `${rotationOriginX}px ${rotationOriginY}px`;
+            }
+            css(element, styles);
+
 
             // Record current text transform
             this.cTT = currentTextTransform;
@@ -564,31 +573,15 @@ class HTMLElement extends SVGElement {
         this[key] = value;
         this.doTransform = true;
     }
-
-    public rotationOriginXSetter(value: number|null): void {
-        if (value) {
-            this.rotationOriginX = value;
-            css(this.element, {
-                transformOrigin: `${value}px ${this.rotationOriginY || 0}px`
-            });
-        }
-    }
-
-    public rotationOriginYSetter(value: number|null): void {
-        if (value) {
-            this.rotationOriginY = value;
-            css(this.element, {
-                transformOrigin: `${this.rotationOriginX || 0}px ${value}px`
-            });
-        }
-    }
 }
 
 // Some shared setters
 const proto = HTMLElement.prototype;
 (proto as any).visibilitySetter = proto.opacitySetter = commonSetter;
-proto.ySetter = proto.xSetter;
-proto.rotationSetter = proto.xSetter;
+proto.ySetter =
+proto.rotationSetter =
+proto.rotationOriginXSetter =
+proto.rotationOriginYSetter = proto.xSetter;
 
 
 /* *
