@@ -3,6 +3,12 @@ name: 'Same data, different intervals'
 authors:
   - Markus Barstad
 js_wrap: b
+alt_text: >-
+  A chart of monthly mean temperature anomalies from 1880 to 2016.
+  It employs two series, one column and one line,
+  to convey the same data at different resolutions.
+  There is only one column per thirty years,
+  but the line series have a datapoint per year.
 tags:
   - Highcharts demo
 categories:
