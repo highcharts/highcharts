@@ -1350,8 +1350,8 @@ class RangeSelector {
             states && states.select,
             states && states.disabled
         )
-            .add(this.buttonGroup)
-            .hide();
+            .hide()
+            .add(this.buttonGroup);
 
         // Prevent page zoom on iPhone
         addEvent(dropdown, 'touchstart', (): void => {
@@ -1912,7 +1912,10 @@ class RangeSelector {
 
         if (buttonGroup && dropdown) {
             const { translateX = 0, translateY = 0 } = buttonGroup,
-                bBox = dropdownLabel.attr({ x: chart.plotLeft }).getBBox();
+                bBox = dropdownLabel
+                    .attr({ x: chart.plotLeft })
+                    .show()
+                    .getBBox();
 
             css(dropdown, {
                 left: (chart.plotLeft + translateX) + 'px',
@@ -1921,7 +1924,6 @@ class RangeSelector {
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
             });
-            dropdownLabel.show();
             this.hasVisibleDropdown = true;
         }
     }
