@@ -58,7 +58,8 @@ const theme: HighContrastThemeOptions = {
     colorAxis: {
         minColor: 'windowText',
         maxColor: 'windowText',
-        stops: []
+        stops: [],
+        dataClasses: []
     },
     colors: ['windowText'],
     xAxis: {
