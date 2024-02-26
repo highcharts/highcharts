@@ -134,15 +134,17 @@ function setHighContrastTheme(
 
         s.update(seriesOptions, false);
 
-        // Force point colors if existing
-        s.points.forEach(function (p): void {
-            if (p.options && p.options.color) {
-                p.update({
-                    color: plotOpts.color || 'windowText',
-                    borderColor: plotOpts.borderColor || 'window'
-                }, false);
-            }
-        });
+        if (s.points) {
+            // Force point colors if existing
+            s.points.forEach(function (p): void {
+                if (p.options && p.options.color) {
+                    p.update({
+                        color: plotOpts.color || 'windowText',
+                        borderColor: plotOpts.borderColor || 'window'
+                    }, false);
+                }
+            });
+        }
     });
 
     // The redraw for each series and after is required for 3D pie
