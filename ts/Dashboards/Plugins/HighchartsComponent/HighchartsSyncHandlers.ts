@@ -578,7 +578,7 @@ const configs: {
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
                     if (point && (
-                        !point.isInside ||
+                        !point.isInside && point.series.isCartesian ||
                         point === chart.hoverPoint
                     )) {
                         return;
