@@ -39,3 +39,7 @@
     outline: none;
     color: #999;
 }
+
+pre#data {
+    display: none;
+}
