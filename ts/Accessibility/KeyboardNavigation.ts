@@ -450,12 +450,8 @@ class KeyboardNavigation {
         // memory leak (#20329).
         if (this.exitAnchor) {
             if (defined((this.exitAnchor as any).focusEventRemover)) {
-                const i =
-                this.eventProvider.eventRemovers.indexOf(
+                this.eventProvider.removeEvent(
                     (this.exitAnchor as any).focusEventRemover);
-
-                this.eventProvider.eventRemovers[i]();
-                this.eventProvider.eventRemovers.splice(i, 1);
                 delete (this.exitAnchor as any).focusEventRemover;
             }
 

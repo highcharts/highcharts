@@ -79,7 +79,7 @@ class DOMElementProvider {
     }
 
     /**
-     * Destroy all created elements, removing them from the DOM.
+     * Destroy created element, removing it from the DOM.
      * @private
      */
     public removeElement(element: HTMLDOMElement): void {
