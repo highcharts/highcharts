@@ -1330,7 +1330,7 @@ class RangeSelector {
         this.dropdownLabel = renderer.button(
             '',
             0,
-            0,
+            10,
             (): void => {},
             merge(buttonTheme, {
                 'stroke-width': pick(buttonTheme['stroke-width'], 0),
@@ -1351,7 +1351,7 @@ class RangeSelector {
             states && states.disabled
         )
             .hide()
-            .add(this.buttonGroup);
+            .add(this.group);
 
         // Prevent page zoom on iPhone
         addEvent(dropdown, 'touchstart', (): void => {
@@ -1912,14 +1912,16 @@ class RangeSelector {
 
         if (buttonGroup && dropdown) {
             const { translateX = 0, translateY = 0 } = buttonGroup,
+                left = chart.plotLeft + translateX,
+                top = translateY + 0.5,
                 bBox = dropdownLabel
-                    .attr({ x: chart.plotLeft })
+                    .attr({ x: left, y: top })
                     .show()
                     .getBBox();
 
             css(dropdown, {
-                left: (chart.plotLeft + translateX) + 'px',
-                top: (translateY + 0.5) + 'px',
+                left: left + 'px',
+                top: top + 'px',
                 visibility: 'inherit',
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
