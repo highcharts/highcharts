@@ -33,10 +33,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
         '800px + responsive: All the buttons should be visible'
     );
-    assert.ok(
-        chart.rangeSelector.dropdown.style.visibility === 'hidden' &&
-        chart.rangeSelector.dropdownLabel.visibility === 'hidden',
-        'Dropdown and its label should be hidden'
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
     );
 
     chart.update({
@@ -49,10 +54,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
         '800px + never: All the buttons should be visible'
     );
-    assert.ok(
-        chart.rangeSelector.dropdown.style.visibility === 'hidden' &&
-        chart.rangeSelector.dropdownLabel.visibility === 'hidden',
-        'Dropdown and its label should be hidden'
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
     );
 
     chart.update({
@@ -65,10 +75,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
         '800px + always: Every button should be hidden'
     );
-    assert.ok(
-        chart.rangeSelector.dropdown.style.visibility !== 'hidden' &&
-        chart.rangeSelector.dropdownLabel.visibility !== 'hidden',
-        'Dropdown and its label should be visible'
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
     );
 
     chart.update({
@@ -81,10 +96,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
         '400px + always: Every button should be hidden'
     );
-    assert.ok(
-        chart.rangeSelector.dropdown.style.visibility !== 'hidden' &&
-        chart.rangeSelector.dropdownLabel.visibility !== 'hidden',
-        'Dropdown and its label should be visible'
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
     );
 
     chart.update({
@@ -97,10 +117,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
         '400px + resonsive: Every button should be hidden'
     );
-    assert.ok(
-        chart.rangeSelector.dropdown.style.visibility !== 'hidden' &&
-        chart.rangeSelector.dropdownLabel.visibility !== 'hidden',
-        'Dropdown and its label should be visible'
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
     );
 
     chart.update({
@@ -113,10 +138,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
         '400px + never: All the buttons be visible'
     );
-    assert.ok(
-        chart.rangeSelector.dropdown.style.visibility === 'hidden' &&
-        chart.rangeSelector.dropdownLabel.visibility === 'hidden',
-        'Dropdown and its label should be hidden'
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
     );
 
     chart.update({
