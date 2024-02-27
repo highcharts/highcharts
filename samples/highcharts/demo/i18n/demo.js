@@ -20,12 +20,6 @@ let chart = Highcharts.chart('container', config);
 const defaultLangOptions =
     JSON.parse(JSON.stringify(Highcharts.defaultOptions.lang));
 
-function reRenderChart() {
-    chart.destroy();
-    chart = Highcharts.chart('container', config);
-}
-
-
 document.querySelector('select#lang-select').addEventListener('change', async function (e) {
     const lang = e.target.value;
     const langScript = document.querySelector('script[src*="i18n"]');
@@ -38,21 +32,18 @@ document.querySelector('select#lang-select').addEventListener('change', async fu
         Highcharts.setOptions({
             lang: defaultLangOptions
         });
-        reRenderChart();
     } else {
-        const newScript = document.createElement('script');
-        newScript.src = `https://code.highcharts.com/i18n/${lang}.js`;
+        const src = `https://code.highcharts.com/i18n/${lang}.json`;
 
-        document.head.appendChild(newScript);
+        const langOptions = await fetch(src)
+            .then(response => response.json());
 
-        newScript.onload = function () {
-            // Have to do this currently
-            reRenderChart();
-
-            // chart.update({
-            //     lang: Highcharts.getOptions().lang
-            // });
-        };
+        Highcharts.setOptions({
+            lang: langOptions
+        });
     }
+
+    chart.destroy();
+    chart = Highcharts.chart('container', config);
 
 });
