@@ -49,7 +49,7 @@
     "@babel/preset-env": "^7.20.2",
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.4",
-    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.27",
+    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.2.0",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.7",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
