@@ -546,7 +546,7 @@ namespace DataLabel {
                 Palette.neutralColor100
             ),
             seriesDlOptions = mergedDataLabelOptions(series),
-            doCulling = points.length > series.xAxis?.len || 500;
+            doCulling = points.length > (series.xAxis?.len || 500);
 
         let pointOptions: Array<DataLabelOptions>,
             dataLabelsGroup: SVGElement;
