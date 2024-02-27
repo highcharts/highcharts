@@ -151,7 +151,7 @@ function compose(
 
     RangeSelectorConstructor = RangeSelectorClass;
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'RangeSelector')) {
         const chartProto = ChartClass.prototype;
 
         AxisClass.prototype.minFromRange = axisMinFromRange;

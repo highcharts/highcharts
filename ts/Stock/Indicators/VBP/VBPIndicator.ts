@@ -48,7 +48,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     arrayMax,
@@ -268,7 +267,7 @@ class VBPIndicator extends SMAIndicator {
 
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
-            StockChart,
+            this.chart.constructor,
             'afterLinkSeries',
             function (): void {
                 // Protection for a case where the indicator is being updated,

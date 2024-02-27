@@ -77,9 +77,10 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'PriceIndication')) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
     }
+
 }
 
 /** @private */

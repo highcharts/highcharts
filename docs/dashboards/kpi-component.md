@@ -158,8 +158,5 @@ You can find more information about it in the [sync chapter](https://www.highcha
 ## API options
 For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent.KPIComponent.ComponentOptions).
 
-## Highcharts Compatibility
-The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
-
 
 

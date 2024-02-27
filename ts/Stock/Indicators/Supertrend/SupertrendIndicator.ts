@@ -37,7 +37,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     correctFloat,
@@ -213,7 +212,7 @@ class SupertrendIndicator extends SMAIndicator {
 
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
-            StockChart,
+            this.chart.constructor,
             'afterLinkSeries',
             (): void => {
                 // Protection for a case where the indicator is being updated,

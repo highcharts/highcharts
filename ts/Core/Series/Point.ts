@@ -54,8 +54,6 @@ const {
     isFunction,
     isNumber,
     isObject,
-    merge,
-    objectEach,
     pick,
     syncTimeout,
     removeEvent,
@@ -492,18 +490,10 @@ class Point {
             series = this.series,
             seriesOptions = series.options;
 
-        // load event handlers on demand to save time on mouseover/out
-        if ((seriesOptions.point as any).events[eventType] ||
-            (
-                point.options &&
-                point.options.events &&
-                (point.options.events as any)[eventType]
-            )
-        ) {
-            point.importEvents();
-        }
+        // Load event handlers on demand to save time on mouseover/out
+        point.manageEvent(eventType);
 
-        // add default handler if in selection mode
+        // Add default handler if in selection mode
         if (eventType === 'click' && seriesOptions.allowPointSelect) {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
@@ -1307,33 +1297,42 @@ class Point {
     }
 
     /**
-     * Import events from the series' and point's options. Only do it on
+     * Manage specific event from the series' and point's options. Only do it on
      * demand, to save processing time on hovering.
      *
      * @private
      * @function Highcharts.Point#importEvents
      */
-    public importEvents(): void {
-        if (!this.hasImportedEvents) {
-            const point = this,
-                options = merge(
-                    point.series.options.point as PointOptions,
-                    point.options
-                ),
-                events = options.events;
+    public manageEvent(eventType: string): void {
+        const point = this,
+            options = point.series.options.point || {},
+            userEvent =
+                options.events?.[eventType as keyof typeof options.events];
 
-            point.events = events;
+        if (
+            isFunction(userEvent) &&
+            (
+                !point.hcEvents?.[eventType] ||
+                // Some HC modules, like marker-clusters, draggable-poins etc.
+                // use events in their logic, so we need to be sure, that
+                // callback function is different
+                point.hcEvents?.[eventType]?.map((el): Function => el.fn)
+                    .indexOf(userEvent) === -1
+            )
+        ) {
+            addEvent(point, eventType, userEvent);
+            point.hasImportedEvents = true;
+        } else if (
+            point.hasImportedEvents &&
+            !userEvent &&
+            point.hcEvents?.[eventType]
+        ) {
+            removeEvent(point, eventType);
+            delete point.hcEvents[eventType];
 
-            objectEach(events, function (
-                event: Function,
-                eventType: string
-            ): void {
-                if (isFunction(event)) {
-                    addEvent(point, eventType, event);
-                }
-            });
-            this.hasImportedEvents = true;
-
+            if (!Object.keys(point.hcEvents)) {
+                point.hasImportedEvents = false;
+            }
         }
     }
 
@@ -1629,6 +1628,7 @@ class Point {
 
 interface Point extends PointLike {
     // merge extensions with point class
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
 }
 
 /* *

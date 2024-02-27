@@ -19,8 +19,6 @@
 import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 
 import Axis from '../Core/Axis/Axis.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
 import Point from '../Core/Series/Point.js';
 const {
     tooltipFormatter: pointTooltipFormatter
@@ -36,8 +34,7 @@ const {
     isArray,
     isNumber,
     isString,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -159,19 +156,20 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
+        const axisProto = AxisClass.prototype as AxisComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (pushUnique(composed, compose)) {
-            const axisProto = AxisClass.prototype as AxisComposition,
-                pointProto = PointClass.prototype as PointComposition,
-                seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!seriesProto.setCompare) {
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
+        }
 
+        if (!axisProto.setCompare) {
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;

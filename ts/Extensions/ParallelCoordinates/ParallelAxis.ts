@@ -22,8 +22,6 @@ import type Axis from '../../Core/Axis/Axis';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type ParallelCoordinates from './ParallelCoordinates';
 
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -32,8 +30,7 @@ const {
     arrayMin,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -169,7 +166,7 @@ namespace ParallelAxis {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (!AxisClass.keepProps.includes('parallel')) {
             const axisCompo = AxisClass as typeof Composition;
 
             // On update, keep parallel additions.

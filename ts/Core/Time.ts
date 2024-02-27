@@ -124,6 +124,8 @@ const hasOldSafariBug =
  */
 class Time {
 
+    public static formatCache: Record<string, Intl.DateTimeFormat> = {};
+
     /* *
      *
      *  Constructors
@@ -410,13 +412,21 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
+                    // Cache the DateTimeFormat instances for performance
+                    // (#20720)
+                    const cacheKey = `shortOffset,${options.timezone || ''}`,
+                        dateTimeFormat = Time.formatCache[cacheKey] = (
+                            Time.formatCache[cacheKey] ||
+                            // eslint-disable-next-line new-cap
+                            Intl.DateTimeFormat('en', {
+                                timeZone: options.timezone,
+                                timeZoneName: 'shortOffset'
+                            })
+                        );
+
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const [date, gmt, hours, colon, minutes = 0] =
-                        // eslint-disable-next-line new-cap
-                        Intl.DateTimeFormat('en', {
-                            timeZone: options.timezone,
-                            timeZoneName: 'shortOffset'
-                        })
+                        dateTimeFormat
                             .format(timestamp)
                             .split(/(GMT|:)/)
                             .map(Number),

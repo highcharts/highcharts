@@ -29,15 +29,11 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
-const {
-    composed,
-    doc
-} = H;
+const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent,
-    pushUnique
+    fireEvent
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -897,12 +893,11 @@ namespace SeriesKeyboardNavigation {
         PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition,
-                pointProto = PointClass.prototype as PointComposition,
-                seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!chartProto.highlightAdjacentPoint) {
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
             chartProto.highlightAdjacentPointVertical = (
                 chartHighlightAdjacentPointVertical

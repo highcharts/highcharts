@@ -42,8 +42,6 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataTable from '../../Data/DataTable.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -59,7 +57,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -499,9 +496,12 @@ function applyGrouping(
 function compose(
     SeriesClass: typeof Series
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
+    const seriesProto = SeriesClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+
+    if (!seriesProto.applyGrouping) {
+        const PointClass = SeriesClass.prototype.pointClass;
+
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -514,7 +514,7 @@ function compose(
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 
-        extend(SeriesClass.prototype, {
+        extend(seriesProto, {
             applyGrouping,
             destroyGroupedData,
             generatePoints,

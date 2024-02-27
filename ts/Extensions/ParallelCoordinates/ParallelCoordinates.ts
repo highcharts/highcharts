@@ -24,8 +24,6 @@ import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
@@ -35,7 +33,6 @@ const {
     defined,
     isArray,
     merge,
-    pushUnique,
     splat
 } = U;
 
@@ -172,11 +169,11 @@ namespace ParallelCoordinates {
         ParallelAxis.compose(AxisClass);
         ParallelSeries.compose(SeriesClass);
 
-        if (pushUnique(composed, compose)) {
-            const ChartCompo = ChartClass as typeof ChartComposition,
-                addsProto = ChartAdditions.prototype,
-                chartProto = ChartCompo.prototype;
+        const ChartCompo = ChartClass as typeof ChartComposition,
+            addsProto = ChartAdditions.prototype,
+            chartProto = ChartCompo.prototype;
 
+        if (!chartProto.setParallelInfo) {
             chartProto.setParallelInfo = addsProto.setParallelInfo;
 
             addEvent(ChartCompo, 'init', onChartInit);
@@ -197,7 +194,7 @@ namespace ParallelCoordinates {
      */
     function onChartInit(
         this: ChartComposition,
-        e: { args: { 0: DeepPartial<Options> } }
+        e: { args: [Partial<Options>] }
     ): void {
         const chart = this,
             options = e.args[0],
@@ -231,9 +228,12 @@ namespace ParallelCoordinates {
             }
 
             if (!options.legend) {
-                options.legend = {};
+                options.legend = {} as typeof options['legend'];
             }
-            if (typeof options.legend.enabled === 'undefined') {
+            if (
+                options.legend &&
+                typeof options.legend.enabled === 'undefined'
+            ) {
                 options.legend.enabled = false;
             }
             merge(

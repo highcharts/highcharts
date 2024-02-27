@@ -52,7 +52,6 @@ import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../Core/Globals.js';
 const {
-    composed,
     doc,
     noop
 } = H;
@@ -64,7 +63,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -223,16 +221,16 @@ namespace BoostCanvas {
         SeriesClass: typeof Series,
         seriesTypes: typeof SeriesRegistry.seriesTypes
     ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            const seriesProto = SeriesClass.prototype,
-                {
-                    area: AreaSeries,
-                    bubble: BubbleSeries,
-                    column: ColumnSeries,
-                    heatmap: HeatmapSeries,
-                    scatter: ScatterSeries
-                } = seriesTypes;
+        if (!seriesProto.renderCanvas) {
+            const {
+                area: AreaSeries,
+                bubble: BubbleSeries,
+                column: ColumnSeries,
+                heatmap: HeatmapSeries,
+                scatter: ScatterSeries
+            } = seriesTypes;
 
             ChartConstructor = ChartClass;
             ChartClass.prototype.callbacks.push((chart): void => {

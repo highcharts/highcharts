@@ -21,10 +21,7 @@ import type Series from '../../Core/Series/Series';
 
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
-const {
-    defaultOptions,
-    setOptions
-} = D;
+const { setOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     composed
@@ -85,20 +82,14 @@ function compose(
 ): void {
     NavigatorAxisAdditions.compose(AxisClass);
 
-    if (pushUnique(composed, ChartClass)) {
+    if (pushUnique(composed, 'Navigator')) {
         ChartClass.prototype.setFixedRange = setFixedRange;
-    }
 
-    if (pushUnique(composed, SeriesClass)) {
-        addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
-    }
-
-    if (pushUnique(composed, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
-    }
 
-    if (pushUnique(composed, setOptions)) {
-        extend(defaultOptions, { navigator: NavigatorDefaults });
+        addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
+
+        setOptions({ navigator: NavigatorDefaults });
     }
 
 }
