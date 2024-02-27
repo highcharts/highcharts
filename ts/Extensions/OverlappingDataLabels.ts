@@ -145,7 +145,6 @@ function chartHideOverlappingLabels(
             // Mark with initial opacity
             label.oldOpacity = label.opacity;
             label.newOpacity = 1;
-
             label.absoluteBox = getAbsoluteBox(label);
         }
     }
@@ -159,6 +158,7 @@ function chartHideOverlappingLabels(
         label1 = labels[i];
         box1 = label1 && label1.absoluteBox;
 
+        const box1Poly = box1?.polygon;
 
         for (let j = i + 1; j < len; ++j) {
             label2 = labels[j];
@@ -174,7 +174,7 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
-                const [box1Poly, box2Poly] = [box1.polygon, box2.polygon];
+                const box2Poly = box2.polygon;
 
                 if (
                     isIntersectRect(box1, box2) || (
