@@ -1,5 +1,13 @@
 Highcharts.setOptions({
-    colors: ['#331E36', '#41337A', '#6EA4BF', '#98CAD5', '#C2EFEB', '#ECFEE8', '#ECFEE8']
+    colors: [
+        '#331E36',
+        '#41337A',
+        '#6EA4BF',
+        '#98CAD5',
+        '#C2EFEB',
+        '#ECFEE8',
+        '#ECFEE8'
+    ]
 });
 
 Highcharts.chart('container', {
@@ -12,8 +20,9 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text:
-          'Source: <a href="https://en.wikipedia.org/wiki/Atmosphere_of_Earth" target="_blank">Wikipedia.org</a>',
+        text: `Source:
+            <a href="https://en.wikipedia.org/wiki/Atmosphere_of_Earth"
+                target="_blank">Wikipedia.org</a>`,
         align: 'left'
     },
     xAxis: {
@@ -22,7 +31,8 @@ Highcharts.chart('container', {
             text: 'Height (km)'
         },
         opposite: 'true',
-        reversed: false
+        reversed: false,
+        crosshair: true
     },
     yAxis: {
         title: {
@@ -35,9 +45,14 @@ Highcharts.chart('container', {
     },
     tooltip: {
         shared: true,
-        headerFormat: null,
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.y}<br/>',
-        valueSuffix: ' %'
+        headerFormat: '<table>',
+        pointFormat: `<tr>
+            <td><span style="color:{series.color};">\u2b24</span></td>
+            <td>{series.name}</td>
+            <td style="text-align: right"><b>{point.y} %</b></td>
+        </tr>`,
+        footerFormat: '</table>',
+        useHTML: true
     },
     plotOptions: {
         areaspline: {
@@ -46,11 +61,22 @@ Highcharts.chart('container', {
             pointInterval: 100,
             lineWidth: 1,
             marker: {
-                enabled: false
+                enabled: false,
+                symbol: 'circle',
+                fillColor: '#666666',
+                lineColor: '#666666',
+                radius: 1
             },
             label: {
                 style: {
                     fontSize: '16px'
+                }
+            },
+            states: {
+                hover: {
+                    halo: {
+                        size: 0
+                    }
                 }
             }
         }
