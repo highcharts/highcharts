@@ -122,7 +122,10 @@
     );
 
     /* eslint-disable no-underscore-dangle */
-    const multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
+    const multipleLinesMixin = (
+        Highcharts._modules &&
+        Highcharts._modules['Mixins/MultipleLines.js']
+    );
 
     if (multipleLinesMixin) {
         Highcharts.extend(
@@ -136,7 +139,7 @@
             }
         );
     } else { // Highcharts v9.2.3+
-        Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
+        Highcharts.MultipleLinesComposition.compose(
             Highcharts.Series.types.linearregressionzones
         );
     }

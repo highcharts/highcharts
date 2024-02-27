@@ -90,7 +90,7 @@ namespace ScrollbarAxis {
         ScrollbarClass: typeof ScrollbarType
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Axis.Scrollbar')) {
             Scrollbar = ScrollbarClass;
 
             addEvent(AxisClass, 'afterGetOffset', onAxisAfterGetOffset);

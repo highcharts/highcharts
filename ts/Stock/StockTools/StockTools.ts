@@ -22,8 +22,6 @@ import type AxisType from '../../Core/Axis/AxisType';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
 import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
@@ -40,8 +38,7 @@ const {
     correctFloat,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -106,23 +103,21 @@ export interface YAxisPositions {
 function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
+    const navigationProto = NavigationBindingsClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const navigationProto = NavigationBindingsClass.prototype;
-
+    if (!navigationProto.utils?.manageIndicators) {
         // Extends NavigationBindings to support indicators and resizers:
         navigationProto.getYAxisPositions = navigationGetYAxisPositions;
         navigationProto.getYAxisResizers = navigationGetYAxisResizers;
         navigationProto.recalculateYAxisPositions =
             navigationRecalculateYAxisPositions;
         navigationProto.resizeYAxes = navigationResizeYAxes;
-        navigationProto.utils = {
-            indicatorsWithAxes: STU.indicatorsWithAxes,
-            indicatorsWithVolume: STU.indicatorsWithVolume,
-            getAssignedAxis,
-            isPriceIndicatorEnabled,
-            manageIndicators: STU.manageIndicators
-        };
+        navigationProto.utils = navigationProto.utils || {};
+        navigationProto.utils.indicatorsWithAxes = STU.indicatorsWithAxes;
+        navigationProto.utils.indicatorsWithVolume = STU.indicatorsWithVolume;
+        navigationProto.utils.getAssignedAxis = getAssignedAxis;
+        navigationProto.utils.isPriceIndicatorEnabled = isPriceIndicatorEnabled;
+        navigationProto.utils.manageIndicators = STU.manageIndicators;
 
         setOptions(StockToolsDefaults);
         setOptions({

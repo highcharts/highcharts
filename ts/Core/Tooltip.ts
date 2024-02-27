@@ -1904,7 +1904,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Core.Tooltip')) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 
