@@ -5,6 +5,8 @@ authors:
 js_wrap: b
 tags:
   - Highcharts demo
+  - Combinations
+  - Dashboard
 categories:
   - Area charts
 use_png_thumbnail: true
