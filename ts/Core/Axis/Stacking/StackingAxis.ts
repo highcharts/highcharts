@@ -25,8 +25,6 @@ import type { YAxisOptions } from '../AxisOptions';
 import A from '../../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Axis from '../Axis.js';
-import H from '../../Globals.js';
-const { composed } = H;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
@@ -40,8 +38,7 @@ const {
     isArray,
     isNumber,
     objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -692,11 +689,11 @@ namespace StackingAxis {
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype,
+            seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype,
-                seriesProto = SeriesClass.prototype;
 
+        if (!chartProto.getStacks) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
 

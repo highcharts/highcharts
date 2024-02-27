@@ -128,7 +128,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Series.XRange')) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',
