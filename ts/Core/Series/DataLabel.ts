@@ -545,7 +545,8 @@ namespace DataLabel {
                 (isString(backgroundColor) && backgroundColor) ||
                 Palette.neutralColor100
             ),
-            seriesDlOptions = mergedDataLabelOptions(series);
+            seriesDlOptions = mergedDataLabelOptions(series),
+            doCulling = points.length > series.xAxis?.len || 500;
 
         let pointOptions: Array<DataLabelOptions>,
             dataLabelsGroup: SVGElement;
@@ -561,6 +562,8 @@ namespace DataLabel {
 
         if (series.hasDataLabels?.()) {
             dataLabelsGroup = this.initDataLabels(animationConfig);
+
+            let prevPointWithDL: Point|undefined;
 
             // Make the labels for each point
             points.forEach((point): void => {
@@ -595,6 +598,30 @@ namespace DataLabel {
                             style = {}
                         } = labelOptions;
 
+
+                    // On dense data series, avoid creating thousands of data
+                    // labels just to hide them in the overlapping logic later
+                    // on (#20270).
+                    if (
+                        doCulling &&
+                        prevPointWithDL &&
+                        Math.sqrt(
+                            Math.pow(
+                                (prevPointWithDL.plotX || 0) -
+                                    (point.plotX || 0),
+                                2
+                            ) +
+                            Math.pow(
+                                (prevPointWithDL.plotY || 0) -
+                                    (point.plotY || 0),
+                                2
+                            )
+                        ) < 10
+                    ) {
+                        return;
+                    }
+
+
                     let labelConfig,
                         formatString,
                         labelText,
@@ -606,6 +633,8 @@ namespace DataLabel {
                         labelBgColor;
 
                     if (labelEnabled) {
+                        prevPointWithDL = point;
+
                         // Create individual options structure that can be
                         // extended without affecting others
                         formatString = pick(
