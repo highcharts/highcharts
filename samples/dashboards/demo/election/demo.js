@@ -39,26 +39,24 @@ const commonTitle = 'U.S. presidential election';
 // TBD: expand as more elections are added
 const electionYears = ['2020', '2016', '2012', '2008'];
 
-// Election data loaded from CSV file and converted to JSON
-let electionData = null;
+// Election data loaded from CSV and converted to JSON
+let electionData;
 
 
 // Launches the Dashboards application
 async function setupDashboard() {
     // Start with national results and latest election
     let selectedState = 'US';
-    let selectedYear = electionYears[0];
+    const defaultYear = electionYears[0];
 
     // Load the basic map
     const mapData = await fetch(mapUrl).then(response => response.json());
 
     // Load electoral college data and convert from CSV jo JSON
-    const elCollegeData = await fetch(elCollegeUrl)
-        .then(response => response.text()).then(csv => parseElectoralCollegeData(csv));
+    const elCollegeData = await loadAndParseCsv(elCollegeUrl, parseElectoralCollegeData);
 
-    // Load election results and convert to the JSON format used by this application.
-    electionData = await fetch(elVoteUrl)
-        .then(response => response.text()).then(csv => parseElectionData(csv));
+    // Load election results and convert from CSV jo JSON
+    electionData = await loadAndParseCsv(elVoteUrl, parseElectionData);
 
     // Create the Dashboard
     const board = await Dashboards.board('container', {
@@ -89,6 +87,9 @@ async function setupDashboard() {
                         map: mapData,
                         styledMode: false,
                         events: {
+                            load: function () {
+                                this.hideLoading();
+                            },
                             click: function () {
                                 // Clicked outside map
                                 onStateClicked(board, 'US');
@@ -185,7 +186,7 @@ async function setupDashboard() {
                         }
                     },
                     accessibility: {
-                        description: 'The map is displaying ' + commonTitle + ', ' + selectedYear
+                        description: 'The map is displaying ' + commonTitle + ', ' + defaultYear
                     }
                 }
             },
@@ -265,7 +266,7 @@ async function setupDashboard() {
                 renderTo: 'election-grid',
                 type: 'DataGrid',
                 connector: {
-                    id: 'votes' + selectedYear
+                    id: 'votes' + defaultYear
                 },
                 title: {
                     text: 'Updating...' // Populated later
@@ -311,48 +312,58 @@ async function setupDashboard() {
     }, true);
 
     // Apply initial election data
-    await onYearClicked(board, selectedYear);
+    await onYearClicked(board, defaultYear);
 
     // Handle change year events
     Highcharts.addEvent(
         document.getElementById('election-year'),
         'change',
-        async function () {
+        function () {
             const selectedOption = this.options[this.selectedIndex];
-            selectedYear = selectedOption.value;
 
-            await onYearClicked(board, selectedYear);
+            // Choose a different election year
+            onYearClicked(board, selectedOption.value);
 
             // Revert to national view
-            await onStateClicked(board, 'US');
-            resetMap(getComponent(board, 'election-map').chart);
+            onStateClicked(board, 'US');
+            const mapChart = getComponent(board, 'election-map').chart;
+            resetMap(mapChart);
         }
     );
 
 
     //
-    // Data set pre-processing (TBD: use external script instead ?)
+    // Data set pre-processing (TBD: consider external script)
     //
+
+    async function loadAndParseCsv(url, parser) {
+        const data = await fetch(url)
+            .then(response => response.text()).then(csv => parser(csv));
+
+        return data;
+    }
+
     function parseElectionData(csv) {
+        // One row per state
         const rowObj = {
             state: '',
             demColVotes: 0,
             repColVotes: 0,
-            demPercent: 0.0,
-            repPercent: 0.0,
-            'postal-code': '',
-            demVotes: 0,
-            repVotes: 0,
+            demPercent: 0.0, // Hidden
+            repPercent: 0.0, // Hidden
+            'postal-code': '', // Hidden
+            demVotes: 0, // Hidden
+            repVotes: 0, // Hidden
             demVoteSummary: 0,
             repVoteSummary: 0,
             totalVotes: 0
         };
-
         const header = Object.keys(rowObj);
 
         const national = {
             repCand: '',
             demCand: '',
+            // Additional row for national results
             data: { ...rowObj }
         };
         const rowObjNational = national.data;
@@ -366,7 +377,6 @@ async function setupDashboard() {
         // Create JSON data, one array per year
         const jsonData = {};
         const lines = csv.split('\n');
-
         let key = null;
 
         lines.forEach(function (line) {
