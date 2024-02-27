@@ -71,7 +71,7 @@ namespace ParallelSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'ParallelSeries')) {
             const CompoClass = SeriesClass as typeof Composition,
                 {
                     line: { prototype: { pointClass: LinePointClass } },

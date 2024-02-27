@@ -35,8 +35,6 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
@@ -47,7 +45,6 @@ const {
     extend,
     merge,
     pick,
-    pushUnique,
     removeEvent,
     wrap
 } = U;
@@ -132,13 +129,14 @@ function compose(
     SeriesClass: typeof Series,
     SVGRendererClass: typeof SVGRenderer
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
+    const PointClass = SeriesClass.prototype.pointClass,
+        pointProto = PointClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+    if (!pointProto.calculatePatternDimensions) {
         addEvent(ChartClass, 'endResize', onChartEndResize);
         addEvent(ChartClass, 'redraw', onChartRedraw);
 
-        extend(PointClass.prototype, {
+        extend(pointProto, {
             calculatePatternDimensions: pointCalculatePatternDimensions
         });
         addEvent(PointClass, 'afterInit', onPointAfterInit);
