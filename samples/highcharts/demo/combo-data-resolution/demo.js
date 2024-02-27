@@ -1,5 +1,3 @@
-const data = JSON.parse(document.getElementById('data').textContent);
-
 Highcharts.chart('container', {
     title: {
         text: 'Global temperature mean anomalies from 1880 to 2016'
@@ -15,11 +13,10 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'column',
-        data: data.map((d, i) => (i % 30 === 0) && d),
-        pointWidth: 30
+        pointWidth: 30,
+        data: JSON.parse(document.getElementById('columnData').textContent)
     }, {
-        data: data,
-        pointInterval: 36e5
+        data: JSON.parse(document.getElementById('lineData').textContent)
     }],
     yAxis: {
         max: 1,

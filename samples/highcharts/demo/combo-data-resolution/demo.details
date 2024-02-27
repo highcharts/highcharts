@@ -4,11 +4,9 @@ authors:
   - Markus Barstad
 js_wrap: b
 alt_text: >-
-  A chart of monthly mean temperature anomalies from 1880 to 2016.
-  It employs two series, one column and one line,
-  to convey the same data at different resolutions.
-  There is only one column per thirty years,
-  but the line series have a datapoint per year.
+  A chart of monthly mean temperature anomalies from 1880 to 2016,
+  employing a line and a column series which displays the same data,
+  at different intervals.
 tags:
   - Highcharts demo
 categories:
