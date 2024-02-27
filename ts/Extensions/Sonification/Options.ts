@@ -1167,6 +1167,7 @@ export default Options;
 /**
  * Sonification/audio chart options for a series.
  *
+ * @declare    Highcharts.SeriesSonificationOptions
  * @since 11.0.0
  * @requires   modules/sonification
  * @apioption  plotOptions.series.sonification
