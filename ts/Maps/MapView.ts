@@ -202,7 +202,7 @@ class MapView {
         MapChartClass: typeof MapChart
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'MapView')) {
             maps = MapChartClass.maps;
 
             // Initialize MapView after initialization, but before firstRender

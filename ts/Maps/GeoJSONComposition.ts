@@ -29,10 +29,7 @@ import type { ProjectedXY } from './MapViewOptions';
 import type Series from '../Core/Series/Series';
 
 import H from '../Core/Globals.js';
-const {
-    composed,
-    win
-} = H;
+const { win } = H;
 import T from '../Core/Templating.js';
 const { format } = T;
 import U from '../Core/Utilities.js';
@@ -40,7 +37,6 @@ const {
     error,
     extend,
     merge,
-    pushUnique,
     wrap
 } = U;
 
@@ -296,16 +292,16 @@ namespace GeoJSONComposition {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            const proto = ChartClass.prototype;
+        if (!chartProto.transformFromLatLon) {
 
-            proto.fromLatLonToPoint = chartFromLatLonToPoint;
-            proto.fromPointToLatLon = chartFromPointToLatLon;
-            proto.transformFromLatLon = chartTransformFromLatLon;
-            proto.transformToLatLon = chartTransformToLatLon;
+            chartProto.fromLatLonToPoint = chartFromLatLonToPoint;
+            chartProto.fromPointToLatLon = chartFromPointToLatLon;
+            chartProto.transformFromLatLon = chartTransformFromLatLon;
+            chartProto.transformToLatLon = chartTransformToLatLon;
 
-            wrap(proto, 'addCredits', wrapChartAddCredit);
+            wrap(chartProto, 'addCredits', wrapChartAddCredit);
         }
 
     }
@@ -477,7 +473,7 @@ namespace GeoJSONComposition {
             }
         }
 
-        // Recurse down any depth of multi-dimentional arrays of arcs and insert
+        // Recurse down any depth of multi-dimensional arrays of arcs and insert
         // the coordinates
         const arcsToCoordinates = (
             arcs: any
@@ -647,7 +643,7 @@ export default GeoJSONComposition;
  * @name Highcharts.GeoJSONTranslation#crs
  * @type {string}
  *//**
- * Define the portion of the map that this defintion applies to. Defined as a
+ * Define the portion of the map that this definition applies to. Defined as a
  * GeoJSON polygon feature object, with `type` and `coordinates` properties.
  * @name Highcharts.GeoJSONTranslation#hitZone
  * @type {Highcharts.Dictionary<*>|undefined}

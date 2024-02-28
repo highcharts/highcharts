@@ -410,7 +410,7 @@ function addIndicatorList(
         );
     }
 
-    // Sort indicators alphabeticaly.
+    // Sort indicators alphabetically.
     stableSort(filteredSeriesArray, (a, b): number => {
         const seriesAName = a.indicatorFullName.toLowerCase(),
             seriesBName = b.indicatorFullName.toLowerCase();
@@ -486,7 +486,7 @@ function addIndicatorList(
 }
 
 /**
- * Recurent function which lists all fields, from params object and
+ * Recurrent function which lists all fields, from params object and
  * create them as inputs. Each input has unique `data-name` attribute,
  * which keeps chain of fields i.e params.styles.fontSize.
  * @private
@@ -671,7 +671,7 @@ function addSearchBox(
             input.value = '';
             handleInputChange('');
 
-            // Hide clear filter button- no longer nececary.
+            // Hide clear filter button- no longer necessary.
             button.style.display = 'none';
         });
     });

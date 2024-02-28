@@ -32,11 +32,13 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
+import ChartNavigatorComposition from './ChartNavigatorComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
+import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -112,10 +114,18 @@ class Navigator {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
+    public static compose(
+        ChartClass: typeof Chart,
+        AxisClass: typeof Axis,
+        SeriesClass: typeof Series
+    ): void {
+        ChartNavigatorComposition.compose(ChartClass, Navigator);
+        NavigatorComposition.compose(ChartClass, AxisClass, SeriesClass);
+    }
 
     /* *
      *
@@ -1751,7 +1761,7 @@ class Navigator {
                 }
             }));
 
-            // Respond to updated data in the base series, unless explicitily
+            // Respond to updated data in the base series, unless explicitly
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {

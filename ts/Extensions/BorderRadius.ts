@@ -28,10 +28,7 @@ import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-const {
-    composed,
-    noop
-} = H;
+const { noop } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -39,7 +36,6 @@ const {
     extend,
     isObject,
     merge,
-    pushUnique,
     relativeLength
 } = U;
 
@@ -377,12 +373,12 @@ function seriesOnAfterColumnTranslate(
 /** @private */
 function compose(
     SeriesClass: typeof Series,
-    PieSeriesClass: typeof PieSeries,
     SVGElementClass: typeof SVGElement,
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const PieSeriesClass = SeriesClass.types.pie;
 
-    if (pushUnique(composed, compose)) {
+    if (!SVGElementClass.symbolCustomAttribs.includes('borderRadius')) {
         const symbols = SVGRendererClass.prototype.symbols;
 
         addEvent(

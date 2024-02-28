@@ -19,8 +19,6 @@
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
 
-import H from './Globals.js';
-const { composed } = H;
 import U from './Utilities.js';
 const {
     diffObjects,
@@ -28,7 +26,6 @@ const {
     find,
     merge,
     pick,
-    pushUnique,
     uniqueKey
 } = U;
 
@@ -122,15 +119,13 @@ namespace Responsive {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof Composition) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (pushUnique(composed, compose)) {
-            extend(
-                ChartClass.prototype as Composition,
-                {
-                    matchResponsiveRule,
-                    setResponsive
-                }
-            );
+        if (!chartProto.matchResponsiveRule) {
+            extend(chartProto, {
+                matchResponsiveRule,
+                setResponsive
+            });
         }
 
         return ChartClass as (T&typeof Composition);
@@ -336,7 +331,7 @@ export default Responsive;
  * [xAxis](#xAxis), [yAxis](#yAxis) or [series](#series). For these
  * collections, an `id` option is used to map the new option set to
  * an existing object. If an existing object of the same id is not found,
- * the item of the same indexupdated. So for example, setting `chartOptions`
+ * the item of the same index updated. So for example, setting `chartOptions`
  * with two series items without an `id`, will cause the existing chart's
  * two series to be updated with respective options.
  *

@@ -399,7 +399,7 @@ class SVGElement implements SVGElementLike {
      *        holds `width`, `height`, `x` and `y` properties.
      *
      * @param {boolean} [redraw]
-     *        Decide if SVGElement should be redrawed with new alignment or
+     *        Decide if SVGElement should be redrawn with new alignment or
      *        just change its attributes.
      *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
@@ -967,7 +967,7 @@ class SVGElement implements SVGElementLike {
                 stops = (colorOptions as GradientColor).stops;
                 radialReference = (elem as any).radialReference;
 
-                // Keep < 2.2 kompatibility
+                // Keep < 2.2 compatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
                         x1: gradAttr[0] as number,
@@ -1388,7 +1388,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#getBBox
      *
      * @param {boolean} [reload]
-     *        Skip the cache and get the updated DOM bouding box.
+     *        Skip the cache and get the updated DOM bounding box.
      *
      * @param {number} [rot]
      *        Override the element's rotation. This is internally used on axis
@@ -1573,26 +1573,54 @@ class SVGElement implements SVGElementLike {
         box: BBoxObject,
         rotation: number
     ): BBoxObject {
-        const width = box.width,
-            height = box.height,
-            alignValue = this.alignValue,
+        const { x: boxX, y: boxY, width, height } = box,
+            {
+                alignValue,
+                translateY,
+                rotationOriginX = 0,
+                rotationOriginY = 0
+            } = this,
             alignFactor = ({
                 'right': 1,
                 'center': 0.5
             } as Record<string, number>)[alignValue || 0] || 0,
             baseline = Number(this.element.getAttribute('y') || 0) -
-                (this.translateY ? 0 : box.y),
+                (translateY ? 0 : boxY),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
-            wCosRad = width * Math.cos(rad),
-            wSinRad = width * Math.sin(rad),
+            cosRad = Math.cos(rad),
+            sinRad = Math.sin(rad),
+            wCosRad = width * cosRad,
+            wSinRad = width * sinRad,
             cosRad90 = Math.cos(rad90),
             sinRad90 = Math.sin(rad90),
+            [
+                [
+                    xOriginCosRad,
+                    xOriginSinRad
+                ],
+                [
+                    yOriginCosRad,
+                    yOriginSinRad
+                ]
+            ] = [
+                rotationOriginX,
+                rotationOriginY
+            ].map((rotOrigin): number[] => [
+                rotOrigin - (rotOrigin * cosRad),
+                rotOrigin * sinRad
+            ]),
 
             // Find the starting point on the left side baseline of
             // the text
-            pX = box.x + alignFactor * (width - wCosRad),
-            pY = box.y + baseline - alignFactor * wSinRad,
+            pX = (
+                (boxX + alignFactor * (width - wCosRad)) +
+                xOriginCosRad + yOriginSinRad
+            ),
+            pY = (
+                (boxY + baseline - alignFactor * wSinRad) -
+                xOriginSinRad + yOriginCosRad
+            ),
 
             // Find all corners
             aX = pX + baseline * cosRad90,
@@ -2070,7 +2098,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#strokeWidth
      *
      * @return {number}
-     * The stroke width in pixels. Even if the given stroke widtch (in CSS or by
+     * The stroke width in pixels. Even if the given stroke width (in CSS or by
      * attributes) is based on `em` or other units, the pixel size is returned.
      */
     public strokeWidth(): number {
@@ -2236,6 +2264,8 @@ class SVGElement implements SVGElementLike {
             element,
             matrix,
             rotation = 0,
+            rotationOriginX,
+            rotationOriginY,
             scaleX,
             scaleY,
             translateX = 0,
@@ -2247,7 +2277,7 @@ class SVGElement implements SVGElementLike {
         // #1846).
         const transform = ['translate(' + translateX + ',' + translateY + ')'];
 
-        // apply matrix
+        // Apply matrix
         if (defined(matrix)) {
             transform.push(
                 'matrix(' + matrix.join(',') + ')'
@@ -2255,16 +2285,25 @@ class SVGElement implements SVGElementLike {
         }
 
         // Apply rotation
-        if (rotation) { // text rotation or inverted chart
+        if (rotation) {
             transform.push(
                 'rotate(' + rotation + ' ' +
-                pick(this.rotationOriginX, element.getAttribute('x'), 0) +
+                pick(rotationOriginX, element.getAttribute('x'), 0) +
                 ' ' +
-                pick(this.rotationOriginY, element.getAttribute('y') || 0) + ')'
+                pick(rotationOriginY, element.getAttribute('y') || 0) + ')'
             );
+
+            // HTML labels rotation (#20685)
+            if (this.text?.element.tagName === 'SPAN') {
+                this.text.attr({
+                    rotation,
+                    rotationOriginX: (rotationOriginX || 0) - this.padding,
+                    rotationOriginY: (rotationOriginY || 0) - this.padding
+                });
+            }
         }
 
-        // apply scale
+        // Apply scale
         if (defined(scaleX) || defined(scaleY)) {
             transform.push(
                 'scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')'
@@ -2292,7 +2331,7 @@ class SVGElement implements SVGElementLike {
         key: 'visibility',
         element: SVGDOMElement
     ): void {
-        // IE9-11 doesn't handle visibilty:inherit well, so we remove the
+        // IE9-11 doesn't handle visibility:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
@@ -2425,8 +2464,8 @@ class SVGElement implements SVGElementLike {
 interface SVGElement extends SVGElementLike {
     // takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    rotationOriginXSetter(value: number|null, key?: string): void;
+    rotationOriginYSetter(value: number|null, key?: string): void;
     rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;

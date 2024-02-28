@@ -48,8 +48,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
 import U from '../../Core/Utilities.js';
@@ -63,7 +61,6 @@ const {
     isNumber,
     merge,
     objectEach,
-    pushUnique,
     relativeLength,
     syncTimeout
 } = U;
@@ -401,10 +398,9 @@ function compose(
     highchartsDefaultOptions: Options,
     ScatterSeriesClass: typeof ScatterSeries
 ): void {
+    const scatterProto = ScatterSeriesClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const scatterProto = ScatterSeriesClass.prototype;
-
+    if (!scatterProto.markerClusterAlgorithms) {
         baseGeneratePoints = scatterProto.generatePoints;
 
         scatterProto.markerClusterAlgorithms = markerClusterAlgorithms;
@@ -737,7 +733,7 @@ function seriesAnimateClusterPoint(
             parentId = (newState || {})[clusterObj.stateId].parentsId[0];
             oldPointObj = oldState[parentId];
 
-            // If old and new poistions are the same do not animate.
+            // If old and new positions are the same do not animate.
             if (
                 newPointObj.point &&
                 newPointObj.point.graphic &&

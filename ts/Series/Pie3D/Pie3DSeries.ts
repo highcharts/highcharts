@@ -75,7 +75,7 @@ class Pie3DSeries extends PieSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Pie3D')) {
             SeriesClass.types.pie = Pie3DSeries;
         }
 
@@ -334,4 +334,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpilation
+''; // keeps doclets above after transpiledion

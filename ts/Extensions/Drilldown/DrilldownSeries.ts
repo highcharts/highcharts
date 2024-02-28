@@ -39,8 +39,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -48,7 +46,6 @@ const {
     fireEvent,
     merge,
     pick,
-    pushUnique,
     syncTimeout
 } = U;
 
@@ -332,15 +329,15 @@ function compose(
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
 ): void {
+    const PointClass = SeriesClass.prototype.pointClass,
+        pointProto = PointClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const PointClass = SeriesClass.prototype.pointClass,
-            pointProto = PointClass.prototype,
-            {
-                column: ColumnSeriesClass,
-                map: MapSeriesClass,
-                pie: PieSeriesClass
-            } = seriesTypes;
+    if (!pointProto.doDrilldown) {
+        const {
+            column: ColumnSeriesClass,
+            map: MapSeriesClass,
+            pie: PieSeriesClass
+        } = seriesTypes;
 
         addEvent(PointClass, 'afterInit', onPointAfterInit);
         addEvent(PointClass, 'afterSetState', onPointAfterSetState);
@@ -747,7 +744,7 @@ function pointRunDrilldown(
     }
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
-    // for  seriesOptions, and call addSeriesAsDrilldown async if necessary.
+    // for seriesOptions, and call addSeriesAsDrilldown async if necessary.
     fireEvent(chart, 'drilldown', {
         point,
         seriesOptions: seriesOptions,

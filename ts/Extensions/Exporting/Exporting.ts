@@ -44,7 +44,6 @@ import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
 import G from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     SVG_NS,
     win
@@ -64,7 +63,6 @@ const {
     merge,
     objectEach,
     pick,
-    pushUnique,
     removeEvent,
     uniqueKey
 } = U;
@@ -148,18 +146,6 @@ namespace Exporting {
 
     export declare interface ChartAdditions {
         update(options: ExportingOptions, redraw?: boolean): void;
-    }
-
-    export declare interface ChartComposition extends Chart {
-        new(
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
-        new(
-            renderTo: (string|globalThis.HTMLElement),
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
     }
 
     export declare class ChartComposition extends Chart {
@@ -478,7 +464,7 @@ namespace Exporting {
     }
 
     /**
-     * Clena up after printing a chart.
+     * Clean up after printing a chart.
      *
      * @function Highcharts#afterPrint
      *
@@ -645,9 +631,9 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
+        const chartProto = ChartClass.prototype as ChartComposition;
 
+        if (!chartProto.exportChart) {
             chartProto.afterPrint = afterPrint;
             chartProto.exportChart = exportChart;
             chartProto.inlineStyles = inlineStyles;
@@ -1140,13 +1126,13 @@ namespace Exporting {
      */
     function getSVG(
         this: ChartComposition,
-        chartOptions?: DeepPartial<Options>
+        chartOptions?: Partial<Options>
     ): string {
         const chart = this;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
             // Copy the options and add extra options
-            options = merge(chart.options, chartOptions);
+            options = merge<Options>(chart.options, chartOptions);
 
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(
@@ -1394,7 +1380,7 @@ namespace Exporting {
 
             /**
              * Check computed styles and whether they are in the allow/denylist
-             * for styles or atttributes.
+             * for styles or attributes.
              * @private
              * @param {string} val
              *        Style value
@@ -1720,7 +1706,7 @@ namespace Exporting {
 
     /**
      * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expando properties, browser bugs.
+     * account for expand properties, browser bugs.
      * Returns a cleaned SVG.
      *
      * @private
@@ -1809,10 +1795,10 @@ export default Exporting;
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -1822,10 +1808,10 @@ export default Exporting;
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**

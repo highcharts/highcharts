@@ -82,7 +82,7 @@ class CMFIndicator extends SMAIndicator {
             index: void 0, // unused index, do not inherit (#15362)
             /**
              * The id of another series to use its data as volume data for the
-             * indiator calculation.
+             * indicator calculation.
              */
             volumeSeriesID: 'volume'
         }

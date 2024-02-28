@@ -256,7 +256,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'MarkerClusters')) {
         const PointClass = SeriesClass.prototype.pointClass,
             { scatter: ScatterSeries } = SeriesClass.types;
 
@@ -443,7 +443,7 @@ export default MarkerClusters;
  * @callback Highcharts.MarkerClusterDrillCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
