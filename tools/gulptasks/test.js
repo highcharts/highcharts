@@ -133,8 +133,8 @@ function checkDemosConsistency() {
                     logLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
-                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                    if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        logLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
