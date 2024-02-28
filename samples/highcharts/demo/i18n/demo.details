@@ -1,13 +1,12 @@
 ---
-name: Basic line
+name: Internationalization
 authors:
-  - Torstein Hønsi
+  - Gøran Slettemark
 js_wrap: b
 alt_text: >-
-  Highcharts basic line chart JavaScript example displays graph plot of solar
-  employment growth areas over time.
+  Highcharts demo with selectable language.
 tags:
   - Highcharts demo
 categories:
-  - Line charts
+  - More chart types
 ...

@@ -3,15 +3,16 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/modules/sonification.js"></script>
 
+<div id="lang-select-wrapper">
+    <label for="lang-select">Select language:</label>
+    <select id="lang-select">
+        <option value="default">--</option>
+        <option value="zh-CN">Chinese</option>
+        <option value="fr-FR">French</option>
+        <option value="nb-NO">Norwegian Bokmål</option>
+    </select>
+</div>
 
-<label for="lang-select">Select language:</label>
-
-<select id="lang-select">
-    <option value="default">--</option>
-    <option value="nb-NO">Norwegian Bokmål</option>
-    <option value="zh-CN">Chinese</option>
-    <option value="fr-FR">French</option>
-</select>
 <figure class="highcharts-figure">
     <div id="container"></div>
 </figure>

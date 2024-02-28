@@ -40,5 +40,6 @@ document.querySelector('select#lang-select').addEventListener('change', async fu
         });
     }
 
+    // As the lang object is global we need to fully re-render the chart
     renderChart();
 });
