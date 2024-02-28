@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import SkiesTheme from '../../Extensions/Themes/Skies.js';
 H.theme = SkiesTheme.options;
 SkiesTheme.apply();
+export default H;

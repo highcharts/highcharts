@@ -73,6 +73,7 @@ const {
     merge,
     pick,
     pInt,
+    replaceNested,
     uniqueKey
 } = U;
 
@@ -429,13 +430,13 @@ class SVGRenderer implements SVGRendererLike {
             }
 
             if (hasInternalReferenceBug) {
-                return win.location.href
-                    .split('#')[0] // remove the hash
-                    .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parentheses and quotes
-                    .replace(/([\('\)])/g, '\\$1')
-                    // replace spaces (needed for Safari only)
-                    .replace(/ /g, '%20');
+                // Scan alert #[72]: Loop for nested patterns
+                return replaceNested(
+                    win.location.href.split('#')[0], // remove hash
+                    [/<[^>]*>/g, ''], // wing cut HTML
+                    [/([\('\)])/g, '\\$1'], // escape parantheses and quotes
+                    [/ /g, '%20'] // replace spaces (needed for Safari only)
+                );
             }
         }
         return '';

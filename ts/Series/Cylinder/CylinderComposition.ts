@@ -33,7 +33,6 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import H from '../../Core/Globals.js';
 const {
     charts,
-    composed,
     deg2rad
 } = H;
 import Math3D from '../../Core/Math3D.js';
@@ -42,8 +41,7 @@ import SVGElement3DCylinder from './SVGElement3DCylinder.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -96,10 +94,10 @@ interface CylinderPathsObject extends SVGPath3D {
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const rendererProto =
+        SVGRendererClass.prototype as SVGRenderer3D.Composition;
 
-    if (pushUnique(composed, compose)) {
-        const rendererProto =
-            SVGRendererClass.prototype as SVGRenderer3D.Composition;
+    if (!rendererProto.cylinder) {
 
         rendererProto.Element3D.types.cylinder = SVGElement3DCylinder;
 

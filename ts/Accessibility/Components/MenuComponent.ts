@@ -25,13 +25,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
-const {
-    attr,
-    pushUnique
-} = U;
+const { attr } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -501,10 +496,9 @@ namespace MenuComponent {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.hideExportMenu) {
             chartProto.hideExportMenu = chartHideExportMenu;
             chartProto.highlightExportItem = chartHighlightExportItem;
             chartProto.highlightLastExportItem = chartHighlightLastExportItem;

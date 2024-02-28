@@ -126,8 +126,12 @@ var TestTemplate = /** @class */ (function () {
             undoStack.push(TestTemplate.treeCopy(chart.options, args.options));
         });
         return function () {
-            removeEvent();
             var undoOption;
+            for (var _i = 0, _a = chart.axes; _i < _a.length; _i++) {
+                var axis = _a[_i];
+                axis.setExtremes(void 0, void 0, false);
+            }
+            removeEvent();
             while (!!(undoOption = undoStack.pop())) {
                 chart.update(undoOption, false, true, false);
             }

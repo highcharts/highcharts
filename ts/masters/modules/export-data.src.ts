@@ -16,7 +16,8 @@ import DownloadURL from '../../Extensions/DownloadURL.js';
 import ExportData from '../../Extensions/ExportData/ExportData.js';
 const G: AnyRecord = Highcharts;
 // Compatibility
-G.dataURLtoBlob = DownloadURL.dataURLtoBlob;
-G.downloadURL = DownloadURL.downloadURL;
+G.dataURLtoBlob = G.dataURLtoBlob || DownloadURL.dataURLtoBlob;
+G.downloadURL = G.downloadURL || DownloadURL.downloadURL;
 // Compose
-ExportData.compose(G.Chart);
+ExportData.compose(G.Chart, G.Series);
+export default Highcharts;
