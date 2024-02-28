@@ -94,7 +94,7 @@ Highcharts.chart('container', {
         {
             name: 'Agder',
             parent: 'E',
-            value: 1//4981
+            value: 14981
         }]
     }],
     title: {

@@ -501,13 +501,16 @@ class TreemapSeries extends ScatterSeries {
 
             // Make room for outside data labels
             if (child.children && child.point.dataLabels?.length) {
-                const dlHeight = arrayMax(
-                    child.point.dataLabels.map((dl): number => (
-                        dl.options?.inside === false ?
-                            dl.height || 0 :
-                            0
-                    ))
-                ) / series.yAxis.len * 100;
+                const dlHeight = Math.min(
+                    child.values.height - 1,
+                    arrayMax(
+                        child.point.dataLabels.map((dl): number => (
+                            dl.options?.inside === false ?
+                                dl.height || 0 :
+                                0
+                        ))
+                    ) / series.yAxis.len * 100
+                );
 
                 child.values.y += dlHeight;
                 child.values.height -= dlHeight;
@@ -532,6 +535,7 @@ class TreemapSeries extends ScatterSeries {
                     (p): boolean|undefined => p.node.isLeaf
                 ),
                 values = leafs.map((point): number => point.options.value || 0),
+                // Areas in terms of axis units squared
                 areas = leafs.map(({ node: { pointValues } }): number => (
                     pointValues ?
                         pointValues.width * pointValues.height :
@@ -559,10 +563,26 @@ class TreemapSeries extends ScatterSeries {
                 worstMiss = Math.max(worstMiss, Math.abs(miss));
 
                 if (typeof point.value === 'number') {
+                    let correction = 0;
+                    if (miss < 0) {
+                        // Best hits, Agder value => correction
+                        // 500 => 0.05
+                        // 1000 => 0.13
+                        // 1500 => 0.20
+                        // 2000 => 0.25
+                        // 2500 => 0.27
+                        correction = 1 - miss * 0.2;
+                    } else {
+                        correction = 1 - miss * 0.75;
+                    }
                     point.simulatedValue = (
                         point.simulatedValue || point.value
                     // @todo: Test the constant 0.75 with other charts
-                    ) / (1 - miss * 0.75);
+                    ) / correction;
+                    if (point.simulatedValue < 0) {
+                        point.simulatedValue = point.value * 2;
+                    }
+
                 }
             });
 
