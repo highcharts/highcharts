@@ -9,7 +9,7 @@ The Highcharts Component allows the end-user to define a chart in the dashboard.
 To get started quickly we need to load the JavaScript and CSS files in the following order.
 
 1. To be able to use Highcharts Component you first have to load [Highcharts](https://code.highcharts.com/highcharts.js) as usual and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
-    Order of the imports is important, so make sure that the Dashboards module is imported after the Highcharts module.
+    The order of the imports is important, so make sure that the Dashboards module is imported after the Highcharts module.
 
     ```html
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -41,7 +41,7 @@ To get started quickly we need to load the JavaScript and CSS files in the follo
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
     @import url("https://code.highcharts.com/css/highcharts.css");
     ```
-    More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+    You can find more information about styling charts in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 3. After loading the necessary files, define a cell using a unique identifier for example `renderTo: 'dashboard-col-0'`.
 
