@@ -293,51 +293,8 @@ class SVGLabel extends SVGElement {
 
         if (rotation) {
             bBox = this.getRotatedBox(bBox, rotation);
-        } else {
-            const tp = this.element
-                .querySelector('textPath')
-                ?.querySelector('tspan');
-            if (tp) {
-                const polygon: BBoxObject['polygon'] = [],
-                    // A couple of trail characters are always erroneous
-                    len = Math.max(tp.getNumberOfChars() - 2, 0),
-                    {
-                        translateX: parentTranslateX = 0,
-                        translateY: parentTranslateY = 0
-                    } = this.parentGroup || {
-                        translateX: 0,
-                        translateY: 0
-                    },
-                    offsetX = parentTranslateX,
-                    offsetY = parentTranslateY;
-
-                // Assemble left-side vertecies of every 5th character
-                for (let i = 0; i < len; i += 5) {
-                    const {
-                            x: x1,
-                            y: y1,
-                            height
-                        } = tp.getExtentOfChar(i),
-                        top = y1 + offsetY,
-                        left = x1 + offsetX;
-                    polygon.push(
-                        [left, top],
-                        [left, top + height]
-                    );
-                }
-
-                const { x, y, width, height } = tp.getExtentOfChar(len),
-                    rightEdge = x + width + offsetX,
-                    rightTop = y + offsetY;
-                // End of the polygon (vertex order does not matter)
-                polygon.push(
-                    [rightEdge, rightTop],
-                    [rightEdge, rightTop + height]
-                );
-
-                bBox.polygon = polygon;
-            }
         }
+
         return bBox;
     }
 
