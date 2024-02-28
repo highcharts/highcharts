@@ -1422,17 +1422,23 @@ function wrapPointPos(
     chartCoordinates?: boolean,
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
-    const { plotX, series } = this,
-        { chart } = series;
+    if (!this.destroyed) {
+        const { plotX, series } = this,
+            { chart } = series;
 
-    if (chart.polar && !this.destroyed && isNumber(plotX) && isNumber(plotY)) {
-        return [
-            plotX + (chartCoordinates ? chart.plotLeft : 0),
-            plotY + (chartCoordinates ? chart.plotTop : 0)
-        ];
+        if (
+            chart.polar &&
+            isNumber(plotX) &&
+            isNumber(plotY)
+        ) {
+            return [
+                plotX + (chartCoordinates ? chart.plotLeft : 0),
+                plotY + (chartCoordinates ? chart.plotTop : 0)
+            ];
+        }
+
+        return proceed.call(this, chartCoordinates, plotY);
     }
-
-    return proceed.call(this, chartCoordinates, plotY);
 }
 
 /* *
