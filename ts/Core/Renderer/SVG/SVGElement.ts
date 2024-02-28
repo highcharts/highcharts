@@ -69,6 +69,7 @@ const {
     objectEach,
     pick,
     pInt,
+    replaceNested,
     syncTimeout,
     uniqueKey
 } = U;
@@ -2197,12 +2198,10 @@ class SVGElement implements SVGElementLike {
         }
 
         // Replace text content and escape markup
-        titleNode.textContent =
-                // #3276, #3895
-                String(pick(value, ''))
-                    .replace(/<[^>]*>/g, '')
-                    .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>');
+        titleNode.textContent = replaceNested( // Scan #[73]
+            pick(value, ''), // #3276, #3895
+            [/<[^>]*>/g, '']
+        ).replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     }
 
     /**
