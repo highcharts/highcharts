@@ -299,6 +299,7 @@ class SVGLabel extends SVGElement {
                 ?.querySelector('tspan');
             if (tp) {
                 const polygon: BBoxObject['polygon'] = [],
+                    // A couple of trail characters are always erroneous
                     len = Math.max(tp.getNumberOfChars() - 2, 0),
                     {
                         translateX: parentTranslateX = 0,
@@ -307,7 +308,7 @@ class SVGLabel extends SVGElement {
                         translateX: 0,
                         translateY: 0
                     },
-                    offsetX = parentTranslateX - paddingLeft,
+                    offsetX = parentTranslateX,
                     offsetY = parentTranslateY;
 
                 // Assemble left-side vertecies of every 5th character
@@ -318,16 +319,15 @@ class SVGLabel extends SVGElement {
                             height
                         } = tp.getExtentOfChar(i),
                         top = y1 + offsetY,
-                        bottom = top + height,
                         left = x1 + offsetX;
                     polygon.push(
                         [left, top],
-                        [left, bottom]
+                        [left, top + height]
                     );
                 }
 
                 const { x, y, width, height } = tp.getExtentOfChar(len),
-                    rightEdge = x + width + offsetX + paddingLeft,
+                    rightEdge = x + width + offsetX,
                     rightTop = y + offsetY;
                 // End of the polygon (vertex order does not matter)
                 polygon.push(
