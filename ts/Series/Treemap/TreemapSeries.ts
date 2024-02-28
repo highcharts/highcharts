@@ -500,7 +500,10 @@ class TreemapSeries extends ScatterSeries {
             });
 
             // Make room for outside data labels
-            if (child.children && child.point.dataLabels?.length) {
+            if (
+                child.children.length &&
+                child.point.dataLabels?.length
+            ) {
                 const dlHeight = Math.min(
                     child.values.height - 1,
                     arrayMax(
@@ -512,6 +515,8 @@ class TreemapSeries extends ScatterSeries {
                     ) / series.yAxis.len * 100
                 );
 
+                child.areaCorrection = 1 + dlHeight /
+                    (dlHeight + child.values.height);
                 child.values.y += dlHeight;
                 child.values.height -= dlHeight;
             }
@@ -558,35 +563,20 @@ class TreemapSeries extends ScatterSeries {
                 const fit = values[i] ?
                         (areas[i] / values[i]) / expectedAreaPerValue :
                         1,
-                    miss = 1 - fit;
+                    miss = 1 - fit,
+                    areaCorrection = point.node.parentNode?.areaCorrection || 1;
+
 
                 worstMiss = Math.max(worstMiss, Math.abs(miss));
 
                 if (typeof point.value === 'number') {
-                    let correction = 0;
-                    if (miss < 0) {
-                        // Best hits, Agder value => correction
-                        // 500 => 0.05
-                        // 1000 => 0.13
-                        // 1500 => 0.20
-                        // 2000 => 0.25
-                        // 2500 => 0.27
-                        correction = 1 - miss * 0.2;
-                    } else {
-                        correction = 1 - miss * 0.75;
-                    }
                     point.simulatedValue = (
                         point.simulatedValue || point.value
-                    // @todo: Test the constant 0.75 with other charts
-                    ) / correction;
-                    if (point.simulatedValue < 0) {
-                        point.simulatedValue = point.value * 2;
-                    }
-
+                    ) * areaCorrection;
                 }
             });
 
-            // /console.log('--- simulation', this.simulation, worstMiss)
+            // / console.log('--- simulation', this.simulation, worstMiss)
 
             if (
                 // An area error less than 5% is acceptable, the human ability
