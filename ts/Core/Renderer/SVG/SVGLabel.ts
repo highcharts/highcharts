@@ -297,11 +297,9 @@ class SVGLabel extends SVGElement {
             const tp = this.element
                 .querySelector('textPath')
                 ?.querySelector('tspan');
-
             if (tp) {
                 const polygon: BBoxObject['polygon'] = [],
-                    // Two last chars always have wrong coordinates
-                    len = Math.max(0, tp.getNumberOfChars() - 2),
+                    len = Math.max(tp.getNumberOfChars() - 2, 0),
                     {
                         translateX: parentTranslateX = 0,
                         translateY: parentTranslateY = 0
@@ -317,18 +315,13 @@ class SVGLabel extends SVGElement {
                     const {
                             x: x1,
                             y: y1,
-                            height,
-                            width
+                            height
                         } = tp.getExtentOfChar(i),
                         top = y1 + offsetY,
                         bottom = top + height,
-                        left = x1 + offsetX,
-                        right = x1 + width;
-
+                        left = x1 + offsetX;
                     polygon.push(
                         [left, top],
-                        [right, top],
-                        [right, bottom],
                         [left, bottom]
                     );
                 }
@@ -336,7 +329,6 @@ class SVGLabel extends SVGElement {
                 const { x, y, width, height } = tp.getExtentOfChar(len),
                     rightEdge = x + width + offsetX + paddingLeft,
                     rightTop = y + offsetY;
-
                 // End of the polygon (vertex order does not matter)
                 polygon.push(
                     [rightEdge, rightTop],
