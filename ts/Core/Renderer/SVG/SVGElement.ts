@@ -1549,6 +1549,7 @@ class SVGElement implements SVGElementLike {
                 const tp = this.element
                     .querySelector('textPath')
                     ?.querySelector('tspan');
+
                 if (tp) {
                     const polygon: BBoxObject['polygon'] = [],
                         // A couple of trail characters are always erroneous
@@ -1581,6 +1582,7 @@ class SVGElement implements SVGElementLike {
                     const { x, y, width, height } = tp.getExtentOfChar(len),
                         rightEdge = x + width + offsetX,
                         rightTop = y + offsetY;
+
                     // End of the polygon (vertex order does not matter)
                     polygon.push(
                         [rightEdge, rightTop],
