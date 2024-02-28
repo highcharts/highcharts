@@ -26,7 +26,7 @@ const languageOptions = {
         "allTitle": "Vis alle",
         "monthText": "{count}m",
         "monthTitle": "Vis {count} {#eq count 1}måned{else}måneder{/eq}",
-        "yearText": "{count}å",
+        "yearText": "{count}år",
         "yearTitle": "Vis {count} {#eq count 1}år{else}år{/eq}",
         "ytdText": "YTD",
         "ytdTitle": "Vis år til dato"
@@ -34,10 +34,10 @@ const languageOptions = {
     "viewFullscreen": "Vis i fullskjerm",
     "exitFullscreen": "Avslutt fullskjerm",
     "printChart": "Skriv ut diagram",
-    "downloadPNG": "Last ned PNG-bilde",
-    "downloadJPEG": "Last ned JPEG-bilde",
-    "downloadPDF": "Last ned PDF-dokument",
-    "downloadSVG": "Last ned SVG-vektorgrafikk",
+    "downloadPNG": "Last ned PNG",
+    "downloadJPEG": "Last ned JPEG",
+    "downloadPDF": "Last ned PDF",
+    "downloadSVG": "Last ned SVG",
     "contextButtonTitle": "Diagramkontekstmeny",
     "loading": "Laster...",
     "months": [
@@ -97,7 +97,7 @@ const languageOptions = {
     "downloadCSV": "Last ned CSV",
     "downloadXLS": "Last ned XLS",
     "exportData": {
-        "annotationHeader": "Annotasjoner",
+        "annotationHeader": "Merknader",
         "categoryHeader": "Kategori",
         "categoryDatetimeHeader": "Dato og tid"
     },
@@ -134,8 +134,8 @@ const languageOptions = {
             "legendItem": "Vis {itemName}"
         },
         "zoom": {
-            "mapZoomIn": "Zoom diagram",
-            "mapZoomOut": "Zoom ut diagram",
+            "mapZoomIn": "Zoom inn",
+            "mapZoomOut": "Zoom ut",
             "resetZoomButton": "Tilbakestill zoom"
         },
         "rangeSelector": {
@@ -298,7 +298,7 @@ const languageOptions = {
             "measureXY": "Mål XY",
             "measureX": "Mål X",
             "measureY": "Mål Y",
-            "timeCycles": "Tidssykler",
+            "timeCycles": "Tidssykluser",
             "flags": "Flagg",
             "addButton": "Legg til",
             "saveButton": "Lagre",
@@ -491,7 +491,7 @@ const languageOptions = {
     },
     "mainBreadcrumb": "Hoved",
     "downloadMIDI": "Last ned MIDI",
-    "playAsSound": "Spill som lyd",
+    "playAsSound": "Spill av som lyd",
     "stockTools": {
         "gui": {
             "simpleShapes": "Enkle former",
@@ -548,7 +548,7 @@ const languageOptions = {
             "fibonacciTimeZones": "Fibonacci tidssoner",
             "pitchfork": "Høygaffel",
             "parallelChannel": "Parallel kanal",
-            "timeCycles": "Tidsykler"
+            "timeCycles": "Tidssykluser"
         }
     },
     "noData": "Ingen data å vise"
