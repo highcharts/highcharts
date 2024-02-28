@@ -2113,22 +2113,22 @@ class SVGElement implements SVGElementLike {
         const val = this.getStyle('stroke-width');
 
         let ret = 0,
-            dummy: SVGDOMElement;
+            tempElement: SVGDOMElement;
 
         // Read pixel values directly
-        if (val.indexOf('px') === val.length - 2) {
+        if (val.endsWith('px')) {
             ret = pInt(val);
 
         // Other values like em, pt etc need to be measured
         } else if (val !== '') {
-            dummy = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
-            attr(dummy, {
+            tempElement = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
+            attr(tempElement, {
                 width: val as any,
                 'stroke-width': 0
             });
-            (this.element.parentNode as any).appendChild(dummy);
-            ret = (dummy as any).getBBox().width;
-            (dummy.parentNode as any).removeChild(dummy);
+            this.element.parentNode.appendChild(tempElement);
+            ret = (tempElement as any).getBBox().width;
+            tempElement.parentNode.removeChild(tempElement);
         }
         return ret;
     }
