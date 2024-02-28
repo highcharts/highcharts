@@ -80,16 +80,14 @@ async function setupDashboard() {
                 renderTo: 'election-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
-                title: '', // Populated by year
+                title: '', // Populated by election year
                 chartOptions: {
                     chart: {
                         type: 'map',
                         map: mapData,
                         styledMode: false,
+                        animation: false,
                         events: {
-                            load: function () {
-                                this.hideLoading();
-                            },
                             click: function () {
                                 // Clicked outside map
                                 onStateClicked(board, 'US');
@@ -320,13 +318,13 @@ async function setupDashboard() {
         'change',
         function () {
             const selectedOption = this.options[this.selectedIndex];
+            const mapChart = getComponent(board, 'election-map').chart;
 
             // Choose a different election year
             onYearClicked(board, selectedOption.value);
 
             // Revert to national view
             onStateClicked(board, 'US');
-            const mapChart = getComponent(board, 'election-map').chart;
             resetMap(mapChart);
         }
     );
@@ -335,7 +333,6 @@ async function setupDashboard() {
     //
     // Data set pre-processing (TBD: consider external script)
     //
-
     async function loadAndParseCsv(url, parser) {
         const data = await fetch(url)
             .then(response => response.text()).then(csv => parser(csv));
@@ -674,20 +671,22 @@ function updateControlComponent(year) {
 
 
 async function updateMapComponent(component, electionTable, year) {
-    await component.update({
+    component.update({
         title: {
             text: commonTitle + ' ' + year
         }
     });
+    const chart = component.chart;
 
-    // U.S. states with election results
-    const voteSeries = component.chart.series[1].data;
-    voteSeries.forEach(function (state) {
-        const row = electionTable.getRowIndexBy('postal-code', state['postal-code']);
+    // Update all U.S. states with new election results
+    const voteSeries = chart.series[1].data;
+
+    voteSeries.forEach(async function (usState) {
+        const row = electionTable.getRowIndexBy('postal-code', usState['postal-code']);
         const percentRep = electionTable.getCellAsNumber('repPercent', row);
         const percentDem = electionTable.getCellAsNumber('demPercent', row);
 
-        state.update({
+        usState.update({
             // Determine color
             value: Number(percentRep - percentDem),
             // For use in tooltip
@@ -699,8 +698,11 @@ async function updateMapComponent(component, electionTable, year) {
                 votesRep: electionTable.getCell('repVoteSummary', row),
                 totalVotes: electionTable.getCellAsNumber('totalVotes', row)
             }
-        });
+        }, false); // No redraw at point level
     });
+
+    // Redraw points
+    chart.redraw();
 }
 
 
