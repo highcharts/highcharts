@@ -18,7 +18,7 @@ The order of the imports is important, so make sure that the Dashboards module i
     Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
     ```typescript
     import * as Dashboards from '@highcharts/dashboards';
-    import DataGrid from '@highcharts/dashboards/es-modules/DataGrid/DataGrid';
+    import * as DataGrid from '@highcharts/dashboards/datagrid';
 
     Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
     Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
