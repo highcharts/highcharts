@@ -11,7 +11,7 @@
             "highcharts": [
                 "../Dashboards/highcharts"
             ],
-            "@highcharts/datagrid": [
+            "datagrid": [
                 "../Dashboards/datagrid"
             ]
         }
