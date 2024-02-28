@@ -1266,9 +1266,10 @@ class Navigator {
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
-                // inherit base xAxis' break and ordinal options
+                // inherit base xAxis' break, ordinal options and overscroll
                 breaks: baseXaxis.options.breaks,
-                ordinal: baseXaxis.options.ordinal
+                ordinal: baseXaxis.options.ordinal,
+                overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
                 id: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',

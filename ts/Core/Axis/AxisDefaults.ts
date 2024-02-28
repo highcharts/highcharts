@@ -1538,16 +1538,17 @@ namespace AxisDefaults {
 
         /**
          * Additional range on the right side of the xAxis. Works similar to
-         * `xAxis.maxPadding`, but value is set in milliseconds, percentage or pixels.
+         * `xAxis.maxPadding`, but value is set in terms of axis values,
+         * percentage or pixels.
          *
-         * If it's a number, it is interpreted as milliseconds.
+         * If it's a number, it is interpreted as axis values, which in
+         * a datetime axis equals milliseconds.
          *
-         * If it's a percentage string,
-         * it is interpreted as percentages of axis length.
-         * An overscroll of 50% will make a 100px axis 50px longer.
+         * If it's a percentage string, is interpreted as percentages of axis
+         * length. An overscroll of 50% will make a 100px axis 50px longer.
          *
-         * If it's a pixel string, it is interpreted as fixed pixel value,
-         * but limited to 90% of axis width.
+         * If it's a pixel string, it is interpreted as a fixed pixel value, but
+         * limited to 90% of the axis width.
          *
          * This property should be set to the same value for both the main `xAxis` and the
          * navigator's `xAxis` to maintain consistent behavior during
