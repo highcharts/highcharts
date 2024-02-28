@@ -44,6 +44,24 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
         innerMenu.getAttribute('aria-label'),
         'Context menu should have aria-label'
     );
+
+    const targetPosition = exportProxy.getTargetPosition();
+    chart.series[0].addPoint(7);
+
+    assert.strictEqual(
+        targetPosition.x,
+        exportProxy.getTargetPosition().x,
+        'Context menu button position did not change after point adding, #18716'
+    );
+
+    chart.setSize(300);
+
+    assert.notStrictEqual(
+        targetPosition.x,
+        exportProxy.getTargetPosition().x,
+        'Context menu button position changed on chart resize, #18716'
+    );
+
 });
 
 

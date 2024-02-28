@@ -76,6 +76,7 @@ export interface AccessibilityOptions {
     enabled: boolean;
     highContrastTheme: AnyRecord;
     keyboardNavigation: AccessibilityKeyboardNavigationOptions;
+    oldLandmarkVerbosity: string;
     landmarkVerbosity: string;
     linkedDescription: (string|HTMLDOMElement);
     point: AccessibilityPointOptions;
