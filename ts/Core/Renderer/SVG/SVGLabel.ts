@@ -273,6 +273,7 @@ class SVGLabel extends SVGElement {
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
+
         const {
                 padding,
                 height = 0,
@@ -296,10 +297,11 @@ class SVGLabel extends SVGElement {
             const tp = this.element
                 .querySelector('textPath')
                 ?.querySelector('tspan');
+
             if (tp) {
                 const polygon: BBoxObject['polygon'] = [],
-                    len = tp.getNumberOfChars(),
-                    padding = this.box ? 0 : (this.padding || 0),
+                    // Two last chars always have wrong coordinates
+                    len = Math.max(0, tp.getNumberOfChars() - 2),
                     {
                         translateX: parentTranslateX = 0,
                         translateY: parentTranslateY = 0
@@ -307,25 +309,34 @@ class SVGLabel extends SVGElement {
                         translateX: 0,
                         translateY: 0
                     },
-                    offsetX = parentTranslateX + padding,
-                    offsetY = parentTranslateY + padding;
+                    offsetX = parentTranslateX - paddingLeft,
+                    offsetY = parentTranslateY;
 
                 // Assemble left-side vertecies of every 5th character
-                for (let i = 0; i < len - 1; i += 5) {
+                for (let i = 0; i < len; i += 5) {
                     const {
                             x: x1,
                             y: y1,
-                            height
+                            height,
+                            width
                         } = tp.getExtentOfChar(i),
                         top = y1 + offsetY,
                         bottom = top + height,
-                        left = x1 + offsetX;
-                    polygon.push([left, top], [left, bottom]);
+                        left = x1 + offsetX,
+                        right = x1 + width;
+
+                    polygon.push(
+                        [left, top],
+                        [right, top],
+                        [right, bottom],
+                        [left, bottom]
+                    );
                 }
 
-                const { x, y, width, height } = tp.getExtentOfChar(len - 1),
-                    rightEdge = x + width + offsetX,
+                const { x, y, width, height } = tp.getExtentOfChar(len),
+                    rightEdge = x + width + offsetX + paddingLeft,
                     rightTop = y + offsetY;
+
                 // End of the polygon (vertex order does not matter)
                 polygon.push(
                     [rightEdge, rightTop],
