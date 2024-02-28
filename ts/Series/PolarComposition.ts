@@ -1428,7 +1428,6 @@ function wrapPointPos(
 
         if (
             chart.polar &&
-            !this.destroyed &&
             isNumber(plotX) &&
             isNumber(plotY)
         ) {
