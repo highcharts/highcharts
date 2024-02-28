@@ -1,0 +1,52 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#container {
+    height: 600px;
+    min-width: 310px;
+}
+
+:root {
+    --highcharts-color-0: #fff;
+}
+
+.highcharts-grid-line {
+    stroke-width: 0;
+}
+
+#gradient stop[offset="0"] {
+    stop-color: #070210;
+}
+
+#gradient stop[offset="1"] {
+    stop-color: #170725;
+}
+
+.highcharts-graph {
+    stroke-width: 1px;
+    filter: url(#neon);
+}
+
+.highcharts-background {
+    fill: url(#gradient);
+}
+
+.highcharts-title {
+    fill: #fff;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    font-size: 3.5em;
+}
+
+.highcharts-range-selector-buttons .highcharts-button {
+    fill: none;
+    font-size: 1.5em;
+    font-weight: 100;
+}
+
+.highcharts-button text {
+    fill: #fff;
+}
+
+.highcharts-scrollbar-thumb {
+    fill: #fff;
+}
