@@ -584,25 +584,27 @@ namespace DataLabel {
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
                     // Options for one datalabel
-                    const labelEnabled = (
-                            labelOptions.enabled &&
-                            point.visible &&
-                            // #2282, #4641, #7112, #10049
-                            (!point.isNull || point.dataLabelOnNull) &&
-                            applyFilter(point, labelOptions)
-                        ),
-                        {
-                            backgroundColor,
-                            borderColor,
-                            distance,
-                            style = {}
-                        } = labelOptions;
+                    const {
+                        backgroundColor,
+                        borderColor,
+                        distance,
+                        style = {}
+                    } = labelOptions;
+
+                    let labelEnabled = (
+                        labelOptions.enabled &&
+                        point.visible &&
+                        // #2282, #4641, #7112, #10049
+                        (!point.isNull || point.dataLabelOnNull) &&
+                        applyFilter(point, labelOptions)
+                    );
 
 
                     // On dense data series, avoid creating thousands of data
                     // labels just to hide them in the overlapping logic later
                     // on (#20270).
                     if (
+                        labelEnabled &&
                         doCulling &&
                         prevPointWithDL &&
                         Math.sqrt(
@@ -618,7 +620,7 @@ namespace DataLabel {
                             )
                         ) < 10
                     ) {
-                        return;
+                        labelEnabled = false;
                     }
 
 
