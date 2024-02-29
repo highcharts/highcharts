@@ -1,5 +1,7 @@
 name: Highcharts webpack monitoring
 
+on: workflow_call
+
 jobs:
   test_webpack:
     name: Webpack tests
