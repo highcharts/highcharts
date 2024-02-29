@@ -139,7 +139,7 @@
             }
         );
     } else { // Highcharts v9.2.3+
-        Highcharts.MultipleLinesComposition.compose(
+        Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
             Highcharts.Series.types.linearregressionzones
         );
     }
