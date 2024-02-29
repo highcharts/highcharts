@@ -49,3 +49,5 @@ jobs:
   monitor_webpack:
     name: Webpack monitoring
     uses: ./.github/workflows/highcharts-webpack.yml
+    secrets:
+      PR_COMMENT_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}

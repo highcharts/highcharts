@@ -1,6 +1,10 @@
 name: Highcharts webpack monitoring
 
-on: workflow_call
+on:
+  workflow_call:
+    secrets:
+      PR_COMMENT_TOKEN:
+        required: true
 
 jobs:
   test_webpack:
