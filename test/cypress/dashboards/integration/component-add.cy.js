@@ -24,7 +24,7 @@ describe('Add components through UI', () => {
         })
     });
 
-    /*it('should close the add component sidebar, clicking outside', function() {
+    it('should close the add component sidebar, clicking outside', function() {
         cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({force: true});
         cy.board().then((board) => {
             cy.get('.highcharts-dashboards-edit-sidebar').should('exist');
@@ -46,7 +46,7 @@ describe('Add components through UI', () => {
                 'New layout should be added.'
             );
         });
-    });*/
+    });
 
     it('should be able to add a HTML component', function() {
 
@@ -92,7 +92,7 @@ describe('Add components through UI', () => {
             // HTML Component next to containers
             const firstCellHeight = m[0].component.contentElement.getBoundingClientRect().height;
             const secondCellHeight = m[m.length - 1].component.contentElement.getBoundingClientRect().height;
-console.log(firstCellHeight, secondCellHeight);
+
             assert.ok(
                 firstCellHeight === secondCellHeight,
                 'The HTML Component has the same height as siblings'
@@ -102,7 +102,7 @@ console.log(firstCellHeight, secondCellHeight);
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').children().should('be.visible')
     });
 
-    /*it('should be able to add a chart component and resize it', function() {
+    it('should be able to add a chart component and resize it', function() {
         // Act
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
@@ -208,9 +208,9 @@ console.log(firstCellHeight, secondCellHeight);
                 `New component's type should be 'Highcharts'.`
             );
         });
-    });*/
+    });
 });
-/*
+
 describe('Edit mode with toolbars disabled', () => {
     before(() => {
         cy.visit('/dashboards/edit-mode/toolbars-disabled');
@@ -231,4 +231,4 @@ describe('Edit mode with add component button disabled', () => {
     it('Add component button should not exist.', () => {
         cy.get('.highcharts-dashboards-edit-tools-btn').should('not.exist');
     });
-});*/
+});
