@@ -349,7 +349,6 @@ namespace DataLabel {
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
                     (bBox.height - unrotatedbBox.height) / 2,
-                rotation: options.rotation,
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
             });
