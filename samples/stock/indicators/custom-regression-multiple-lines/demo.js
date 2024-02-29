@@ -138,7 +138,11 @@
                 toYData: multipleLinesMixin.toYData
             }
         );
-    } else { // Highcharts v9.2.3+
+    } else if (Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js']) { // Highcharts v9.2.3 - v11.3.0
+        Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
+            Highcharts.seriesTypes.linearregressionzones
+        );
+    } else { // Highcharts v11.4.0+
         Highcharts.MultipleLinesComposition.compose(
             Highcharts.Series.types.linearregressionzones
         );
