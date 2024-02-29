@@ -44,4 +44,9 @@ jobs:
 
             const testLog = readFileSync('./test/console.log');
 
-            await createOrUpdateComment(github, context, 'Webpack monitoring', testLog || 'LGTM :+1:');
+            await createOrUpdateComment(github, context, 'Webpack monitoring',
+              testLog ?
+                ':rotating_light: Webpack tests failed.' +
+                ' Check demos and masters!' :
+                'LGTM :+1:'
+            );
