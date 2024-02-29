@@ -747,8 +747,6 @@ abstract class Component {
      * @internal
      */
     private getContentHeight(): number {
-        const parentHeight =
-            this.element.clientHeight || Number(getStyle(this.element, 'height'));
         const titleHeight = this.titleElement ?
             this.titleElement.clientHeight + getMargins(this.titleElement).y :
             0;

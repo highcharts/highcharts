@@ -246,8 +246,6 @@ class HTMLComponent extends Component {
         width?: number | string | null,
         height?: number | string | null
     ): this {
-        // update height only when resizer is enabled, otherwise,
-        // run default styles from CSS
         super.resize(width, height);
         return this;
     }

@@ -352,18 +352,10 @@ class KPIComponent extends Component {
                     'div',
                     {
                         className: `${this.options.className}-chart-container`
-                    }, {
-                        // height: '100%'
                     },
+                    {},
                     this.contentElement
                 );
-
-                // if (!this.cell?.container?.style.height) {
-                //     // If the cell height is specified, clear dimensions to make
-                //     // the container to adjust to the chart height.
-                //     this.contentElement.style.height = '100%';
-                //     super.resize(null, null);
-                // }
             }
 
             this.chart = charter.chart(
