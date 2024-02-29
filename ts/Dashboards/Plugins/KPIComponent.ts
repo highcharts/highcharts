@@ -355,7 +355,7 @@ class KPIComponent extends Component {
     ): this {
         super.resize(width, height);
 
-        if (this.chart) {
+        if (this.chart && this.chart.container) {
             this.chart.reflow();
         }
 
@@ -385,7 +385,7 @@ class KPIComponent extends Component {
                     this.contentElement
                 );
 
-                if (!this.cell.container.style.height) {
+                if (!this.cell?.container?.style.height) {
                     // If the cell height is specified, clear dimensions to make
                     // the container to adjust to the chart height.
                     this.contentElement.style.height = '100%';
@@ -447,6 +447,14 @@ class KPIComponent extends Component {
         this.setValue();
     }
 
+    /**
+     * Destroys the highcharts component.
+     */
+    public destroy(): void {
+        // Cleanup references in the global Highcharts scope
+        this.chart?.destroy();
+        super.destroy();
+    }
     /**
      * Gets the default value that should be displayed in the KPI.
      *

@@ -59,7 +59,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     attr,
-    pick
+    pick,
+    replaceNested
 } = U;
 
 
@@ -130,7 +131,7 @@ function buildTypeDescriptionFromSeries(
     context: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
     const firstType = types[0],
-        typeExplaination = chart.langFormat(
+        typeExplanation = chart.langFormat(
             'accessibility.seriesTypeDescriptions.' + firstType,
             context
         ),
@@ -145,13 +146,13 @@ function buildTypeDescriptionFromSeries(
             'accessibility.chartTypes.default' + multi,
             context
         )
-    ) + (typeExplaination ? ' ' + typeExplaination : '');
+    ) + (typeExplanation ? ' ' + typeExplanation : '');
 }
 
 
 /**
- * Return simplified explaination of chart type. Some types will not be
- * familiar to most users, but in those cases we try to add an explaination
+ * Return simplified explanation of chart type. Some types will not be
+ * familiar to most users, but in those cases we try to add an explanation
  * of the type.
  *
  * @private
@@ -194,7 +195,8 @@ function getTypeDescription(
  * @private
  */
 function stripEmptyHTMLTags(str: string): string {
-    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+    // Scan alert #[71]: Loop for nested patterns
+    return replaceNested(str, [/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '']);
 }
 
 
@@ -657,6 +659,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public getEndOfChartMarkerText(): string {
+        const endMarkerId = `highcharts-end-of-chart-marker-${this.chart.index}`,
+            endMarker = getElement(endMarkerId);
+
+        if (endMarker) {
+            return endMarker.outerHTML;
+        }
+
         const chart = this.chart,
             markerText = chart.langFormat(
                 'accessibility.screenReaderSection.endOfChartMarker',

@@ -28,8 +28,6 @@ import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import H from '../Globals.js';
-const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
@@ -38,8 +36,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -134,7 +131,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (pushUnique(composed, compose)) {
+        if (!AxisClass.keepProps.includes('brokenAxis')) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -702,7 +699,7 @@ namespace BrokenAxis {
 
         /**
          * Dynamically set or unset breaks in an axis. This function in lighter
-         * than usin Axis.update, and it also preserves animation.
+         * than using Axis.update, and it also preserves animation.
          *
          * @private
          * @function Highcharts.Axis#setBreaks
@@ -900,7 +897,7 @@ namespace BrokenAxis {
                         brokenAxis.breakArray = breakArray;
 
                         // Used with staticScale, and below the actual axis
-                        // length, when breaks are substracted.
+                        // length, when breaks are subtracted.
                         if (
                             isNumber(min) &&
                             isNumber(max) &&

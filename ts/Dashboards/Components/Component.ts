@@ -359,9 +359,8 @@ abstract class Component {
         this.contentElement = createElement(
             'div', {
                 className: `${this.options.className}-content`
-            }, {
-                height: '100%'
             },
+            {},
             this.element,
             true
         );
@@ -575,7 +574,7 @@ abstract class Component {
                 ].forEach((event: any): void => {
                     this.tableEvents.push((table)
                         .on(event, (e: any): void => {
-                            clearInterval(this.tableEventTimeout);
+                            clearTimeout(this.tableEventTimeout);
                             this.tableEventTimeout = Globals.win.setTimeout(
                                 (): void => {
                                     this.emit({
@@ -583,18 +582,22 @@ abstract class Component {
                                         type: 'tableChanged'
                                     });
                                     this.tableEventTimeout = void 0;
-                                },
-                                0
-                            );
+                                });
                         }));
                 });
             }
 
             this.tableEvents.push(connector.on('afterLoad', (): void => {
-                this.emit({
-                    target: this,
-                    type: 'tableChanged'
-                });
+                clearTimeout(this.tableEventTimeout);
+                this.tableEventTimeout = Globals.win.setTimeout(
+                    (): void => {
+                        this.emit({
+                            target: this,
+                            type: 'tableChanged'
+                        });
+
+                        this.tableEventTimeout = void 0;
+                    });
             }));
         }
     }
@@ -618,10 +621,16 @@ abstract class Component {
                 'afterSetModifier',
                 (e): void => {
                     if (e.type === 'afterSetModifier') {
-                        this.emit({
-                            ...e,
-                            type: 'tableChanged'
-                        });
+                        clearTimeout(this.tableEventTimeout);
+                        this.tableEventTimeout = Globals.win.setTimeout(
+                            (): void => {
+                                this.emit({
+                                    ...e,
+                                    type: 'tableChanged'
+                                });
+                                this.tableEventTimeout = void 0;
+                            });
+
                     }
                 }
             ));
@@ -945,7 +954,7 @@ abstract class Component {
                 } else {
                     captionElement.replaceWith(newCaption);
                 }
-                this.titleElement = newCaption;
+                this.captionElement = newCaption;
             }
         } else {
             if (captionElement) {

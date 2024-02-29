@@ -131,10 +131,12 @@ class Tooltip {
 
     public constructor(
         chart: Chart,
-        options: TooltipOptions
+        options: TooltipOptions,
+        pointer: Pointer
     ) {
         this.chart = chart;
         this.init(chart, options);
+        this.pointer = pointer;
     }
 
     /* *
@@ -169,6 +171,8 @@ class Tooltip {
     public options: TooltipOptions = {} as any;
 
     public outside: boolean = false;
+
+    public pointer: Pointer;
 
     public renderer?: SVGRenderer;
 
@@ -304,8 +308,7 @@ class Tooltip {
         points: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): Array<number> {
-        const chart = this.chart,
-            pointer = chart.pointer,
+        const { chart, pointer } = this,
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft;
@@ -562,7 +565,7 @@ class Tooltip {
             { chart, distance, outside } = this;
         return {
             width: outside ?
-                // Substract distance to prevent scrollbars
+                // Subtract distance to prevent scrollbars
                 Math.max(
                     body.scrollWidth,
                     documentElement.scrollWidth,
@@ -607,14 +610,14 @@ class Tooltip {
         point: Point
     ): PositionObject {
 
-        const { distance, chart, outside } = this,
+        const { distance, chart, outside, pointer } = this,
             { inverted, plotLeft, plotTop, polar } = chart,
             { plotX = 0, plotY = 0 } = point,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (inverted && (point as any).h) || 0, // #4117 ???
             { height: outerHeight, width: outerWidth } = this.getPlayingField(),
-            chartPosition = chart.pointer.getChartPosition(),
+            chartPosition = pointer.getChartPosition(),
             scaleX = (val: number): number => (
                 val * chartPosition.scaleX
             ),
@@ -929,7 +932,7 @@ class Tooltip {
             !this.followPointer &&
             this.options.stickOnContact &&
             (
-                !pointerEvent || this.chart.pointer.inClass(
+                !pointerEvent || this.pointer.inClass(
                     pointerEvent.target as any, 'highcharts-tooltip'
                 )
             )
@@ -1011,15 +1014,12 @@ class Tooltip {
         mouseEvent?: PointerEvent
     ): void {
         const tooltip = this,
-            chart = this.chart,
-            options = tooltip.options,
-            pointer = chart.pointer,
+            { chart, options, pointer, shared } = this,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             pointConfig = [] as Array<Tooltip.FormatterContextObject>,
             formatString = options.format,
             formatter = options.formatter || tooltip.defaultFormatter,
-            shared = tooltip.shared,
             styledMode = chart.styledMode;
         let formatterContext = {} as Tooltip.FormatterContextObject;
 
@@ -1049,7 +1049,7 @@ class Tooltip {
         if (shared && tooltip.allowShared) {
             pointer.applyInactiveState(points);
 
-            // Now set hover state for the choosen ones:
+            // Now set hover state for the chosen ones:
             points.forEach(function (item: Point): void {
                 item.setState('hover');
                 pointConfig.push(item.getLabelConfig());
@@ -1177,7 +1177,6 @@ class Tooltip {
                 plotHeight,
                 plotLeft,
                 plotTop,
-                pointer,
                 scrollablePixelsY = 0,
                 scrollablePixelsX,
                 styledMode
@@ -1186,7 +1185,8 @@ class Tooltip {
             options,
             options: {
                 positioner
-            }
+            },
+            pointer
         } = tooltip;
         const {
             scrollLeft = 0,
@@ -1403,7 +1403,7 @@ class Tooltip {
                 );
                 const isHeader: boolean = (point as any).isHeader;
 
-                // Store the tooltip label referance on the series
+                // Store the tooltip label reference on the series
                 const owner = isHeader ? tooltip : point.series;
                 const tt = owner.tt = updatePartialTooltip(
                     owner.tt, point, str.toString()
@@ -1463,7 +1463,7 @@ class Tooltip {
         }, []);
 
         // Realign the tooltips towards the right if there is not enough space
-        // to the left and there is space to to the right
+        // to the left and there is space to the right
         if (!positioner && boxes.some((box): boolean => {
             // Always realign if the beginning of a label is outside bounds
             const { outside } = tooltip;
@@ -1568,7 +1568,7 @@ class Tooltip {
 
         });
 
-        /* If we have a seperate tooltip container, then update the necessary
+        /* If we have a separate tooltip container, then update the necessary
          * container properties.
          * Test that tooltip has its own container and renderer before executing
          * the operation.
@@ -1597,7 +1597,7 @@ class Tooltip {
         // can remove this.
         if (isSafari) {
             tooltipLabel.attr({
-                // Force a redraw of the whole group by chaning the opacity
+                // Force a redraw of the whole group by chaining the opacity
                 // slightly
                 opacity: tooltipLabel.opacity === 1 ? 0.999 : 1
             });
@@ -1786,13 +1786,13 @@ class Tooltip {
                 container,
                 distance,
                 options,
+                pointer,
                 renderer
             } = this,
             {
                 height = 0,
                 width = 0
             } = this.getLabel(),
-            pointer = chart.pointer,
             // Needed for outside: true (#11688)
             { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
@@ -1904,7 +1904,7 @@ namespace Tooltip {
         PointerClass: typeof Pointer
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Core.Tooltip')) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 
@@ -1915,7 +1915,11 @@ namespace Tooltip {
                      * @name Highcharts.Chart#tooltip
                      * @type {Highcharts.Tooltip}
                      */
-                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                    chart.tooltip = new Tooltip(
+                        chart,
+                        chart.options.tooltip,
+                        this
+                    );
                 }
             });
         }
@@ -1941,7 +1945,7 @@ export default Tooltip;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
- * In case of single or shared tooltips, a string should be be returned. In case
+ * In case of single or shared tooltips, a string should be returned. In case
  * of splitted tooltips, it should return an array where the first item is the
  * header, and subsequent items are mapped to the points. Return `false` to
  * disable tooltip for a specific point on series.

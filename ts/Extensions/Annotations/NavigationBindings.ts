@@ -23,6 +23,7 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsLike from './NavigationBindingsLike';
 import type NavigationBindingsOptions from './NavigationBindingsOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     default as Popup,
@@ -43,7 +44,7 @@ const {
 } = H;
 import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
-const { getFieldType } = NBU;
+const { getAssignedAxis, getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -191,7 +192,7 @@ function onChartRender(
                 key
             ): void => {
 
-                // Get the HTML element coresponding to the className taken
+                // Get the HTML element corresponding to the className taken
                 // from StockToolsBindings.
                 const buttonNode = container.querySelectorAll('.' + key);
 
@@ -423,7 +424,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'NavigationBindings')) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -509,8 +510,19 @@ class NavigationBindings {
      *
      * */
 
+    getCoords(e: PointerEvent): [
+        Pointer.AxisCoordinateObject|undefined,
+        Pointer.AxisCoordinateObject|undefined
+    ] {
+        const coords = this.chart.pointer?.getCoordinates(e);
+        return [
+            coords && getAssignedAxis(coords.xAxis),
+            coords && getAssignedAxis(coords.yAxis)
+        ];
+    }
+
     /**
-     * Initi all events conencted to NavigationBindings.
+     * Init all events connected to NavigationBindings.
      *
      * @private
      * @function Highcharts.NavigationBindings#initEvents
@@ -616,7 +628,7 @@ class NavigationBindings {
     }
 
     /**
-     * Hook for click on a button, method selcts/unselects buttons,
+     * Hook for click on a button, method selects/unselects buttons,
      * then calls `bindings.init` callback.
      *
      * @private
@@ -878,18 +890,24 @@ class NavigationBindings {
                 let parent = config;
 
                 path.forEach((name, index): void => {
-                    const nextName = pick(path[index + 1], '');
 
-                    if (pathLength === index) {
-                        // Last index, put value:
-                        (parent as any)[name] = value;
-                    } else if (!(parent as any)[name]) {
-                        // Create middle property:
-                        (parent as any)[name] = nextName.match(/\d/g) ? [] : {};
-                        parent = (parent as any)[name];
-                    } else {
-                        // Jump into next property
-                        parent = (parent as any)[name];
+                    if (name !== '__proto__' && name !== 'constructor') {
+
+                        const nextName = pick(path[index + 1], '');
+
+                        if (pathLength === index) {
+                            // Last index, put value:
+                            (parent as any)[name] = value;
+                        } else if (!(parent as any)[name]) {
+                            // Create middle property:
+                            (parent as any)[name] = nextName.match(/\d/g) ?
+                                [] :
+                                {};
+                            parent = (parent as any)[name];
+                        } else {
+                            // Jump into next property
+                            parent = (parent as any)[name];
+                        }
                     }
                 });
             }

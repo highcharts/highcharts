@@ -30,8 +30,6 @@ import type {
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';
@@ -39,8 +37,7 @@ const {
     addEvent,
     getStyle,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -102,8 +99,9 @@ function compose(
     ChartClass: typeof Chart,
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+    if (!chartProto.setStockTools) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
@@ -112,7 +110,7 @@ function compose(
         addEvent(ChartClass, 'redraw', onChartRedraw);
         addEvent(ChartClass, 'render', onChartRender);
 
-        ChartClass.prototype.setStockTools = chartSetStockTools;
+        chartProto.setStockTools = chartSetStockTools;
 
         addEvent(
             NavigationBindingsClass,
@@ -247,8 +245,8 @@ function onChartRender(
         button
     ) {
         if (
-            this.navigationBindings.constructor.prototype.utils
-                .isPriceIndicatorEnabled(this.series)
+            this.navigationBindings.utils
+                ?.isPriceIndicatorEnabled?.(this.series)
         ) {
             button.firstChild.style['background-image'] =
             'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
@@ -295,7 +293,7 @@ function onNavigationBindingsSelectButton(
     if (gui && gui.guiEnabled) {
         let button = event.button;
 
-        // Unslect other active buttons
+        // Unselect other active buttons
         gui.unselectAllButtons(event.button);
 
         // If clicked on a submenu, select state for it's parent

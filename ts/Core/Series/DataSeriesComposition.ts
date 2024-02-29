@@ -184,7 +184,7 @@ class DataSeriesAdditions {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Core.DataSeries')) {
             const seriesProto = SeriesClass.prototype as DataSeriesComposition;
 
             addEvent(SeriesClass, 'init', function (): void {

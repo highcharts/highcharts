@@ -90,7 +90,7 @@ namespace ScrollbarAxis {
         ScrollbarClass: typeof ScrollbarType
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Axis.Scrollbar')) {
             Scrollbar = ScrollbarClass;
 
             addEvent(AxisClass, 'afterGetOffset', onAxisAfterGetOffset);
@@ -222,7 +222,7 @@ namespace ScrollbarAxis {
                     );
                 } else {
                     // When live redraw is disabled, don't change extremes
-                    // Only change the position of the scollbar thumb
+                    // Only change the position of the scrollbar thumb
                     this.setRange(this.from as any, this.to as any);
                 }
             });

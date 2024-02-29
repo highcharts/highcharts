@@ -33,6 +33,7 @@ import type {
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
@@ -50,7 +51,6 @@ import ControlPoint from './ControlPoint.js';
 import ControlTarget from './ControlTarget.js';
 import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
-import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
@@ -82,7 +82,7 @@ declare module '../../Core/Options'{
  * */
 
 /**
- * Hide or show annotaiton attached to points.
+ * Hide or show annotation attached to points.
  * @private
  */
 function adjustVisibility(
@@ -209,14 +209,15 @@ class Annotation extends EventEmitter implements ControlTarget {
      */
     public static compose(
         ChartClass: typeof Chart,
+        NavigationBindingsClass: typeof NavigationBindings,
         PointerClass: typeof Pointer,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         AnnotationChart.compose(Annotation, ChartClass, PointerClass);
         ControllableLabel.compose(SVGRendererClass);
         ControllablePath.compose(ChartClass, SVGRendererClass);
-        NavigationBindings.compose(Annotation, ChartClass);
-        PopupComposition.compose(NavigationBindings, PointerClass);
+        NavigationBindingsClass.compose(Annotation, ChartClass);
+        PopupComposition.compose(NavigationBindingsClass, PointerClass);
     }
 
     /* *
@@ -538,7 +539,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * Initialisation of a single shape
      * @private
      * @param {Object} shapeOptions
-     * a confg object for a single shape
+     * a config object for a single shape
      * @param {number} index
      * annotation may have many shapes, this is the shape's index saved in
      * shapes.index.
@@ -638,7 +639,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @private
      */
     public remove(): void {
-        // Let chart.update() remove annoations on demand
+        // Let chart.update() remove annotations on demand
         return this.chart.removeAnnotation(this);
     }
 

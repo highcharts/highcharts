@@ -21,18 +21,13 @@ import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 
 import Axis from './Axis.js';
-import AxisDefaults from './AxisDefaults.js';
-const { xAxis } = AxisDefaults;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import H from '../Globals.js';
-const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -118,20 +113,20 @@ class ZAxis extends Axis implements AxisLike {
     public static compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype;
 
-        if (pushUnique(composed, this.compose)) {
-            const chartProto = ChartClass.prototype;
+        if (!chartProto.addZAxis) {
 
-            defaultOptions.zAxis = merge(xAxis, {
+            defaultOptions.zAxis = merge(defaultOptions.xAxis, {
                 offset: 0,
                 lineWidth: 0
             });
 
-            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
-
             chartProto.addZAxis = chartAddZAxis;
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
             chartProto.collectionsWithUpdate.push('zAxis');
+
+            addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
         }
 
     }

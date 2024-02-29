@@ -46,7 +46,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     arrayMax,
@@ -266,7 +265,7 @@ class VBPIndicator extends SMAIndicator {
 
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
-            StockChart,
+            this.chart.constructor,
             'afterLinkSeries',
             function (): void {
                 // Protection for a case where the indicator is being updated,
@@ -641,7 +640,7 @@ class VBPIndicator extends SMAIndicator {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
-    // Specifing where each zone should start ans end
+    // Specifying where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
         xValues: Array<number>,
@@ -744,7 +743,7 @@ class VBPIndicator extends SMAIndicator {
         // Checks if each point has a corresponding volume value
         if (abs(baseSeriesLength - volumeSeriesLength)) {
             // If the first point don't have volume, add 0 value at the
-            // beggining of the volume array
+            // beginning of the volume array
             if (xValues[0] !== volumeXData[0]) {
                 volumeYData.unshift(0);
             }
@@ -823,7 +822,7 @@ class VBPIndicator extends SMAIndicator {
         return priceZones;
     }
 
-    // Function responsoble for drawing additional lines indicating zones
+    // Function responsible for drawing additional lines indicating zones
     public drawZones(
         chart: Chart,
         yAxis: AxisType,

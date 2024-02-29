@@ -67,6 +67,7 @@
     --color-background: #3c7496;
     --color-map: #dddbef;
     --color-marker-border: #fff;
+    --color-title-text: #fff;
     --color-marker-border-active: #336;
     --color-marker-border-hover: #5352be;
     --color-marker-text: #fff;
@@ -113,6 +114,15 @@
         --color-background: #20202c;
         --color-title: #dadae2;
         --color-text: #dadae2;
+    }
+
+    div#description {
+        background: #20202c;
+        color: #dadae2;
+    }
+
+    div#description a {
+        color: #fff;
     }
 }
 
@@ -175,6 +185,7 @@
     background-color: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
     cursor: pointer;
+    border-radius: 10px;
 }
 
 #kpi-layout .highcharts-dashboards-component-title {
@@ -243,28 +254,37 @@
     font-size: 1em;
 }
 
-#kpi-data .highcharts-dashboards-component {
-    cursor: default;
-}
-
-#kpi-data .highcharts-dashboards-component-title::before {
-    content: url("https://www.highcharts.com/samples/graphics/dashboards/climate/marker.svg");
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-}
-
-#kpi-data .highcharts-dashboards-component-kpi-value::before {
-    content: url("https://www.highcharts.com/samples/graphics/dashboards/climate/triangle.svg");
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-}
-
 #kpi-temperature .highcharts-dashboards-component-kpi-value,
 #kpi-wind .highcharts-dashboards-component-kpi-value,
 #kpi-precipitation .highcharts-dashboards-component-kpi-value {
     display: none;
+}
+
+/* *
+ *
+ *  HTML geographical information
+ *
+ * */
+
+#html-geo-info .highcharts-dashboards-component {
+    cursor: default;
+}
+
+#html-geo-info .highcharts-dashboards-component div#geo-info {
+    border: 1px dotted #ccc;
+    max-width: 200px;
+    border-radius: 10px;
+    text-align: center;
+    margin: auto;
+}
+
+#html-geo-info .highcharts-dashboards-component h2 {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#html-geo-info .highcharts-dashboards-component div#geo-info p {
+    font-size: 0.7em;
 }
 
 /* *
@@ -299,15 +319,24 @@
  *
  * */
 
+#world-map .highcharts-dashboards-component {
+    border-radius: 10px;
+}
+
 #world-map .highcharts-dashboards-component-content {
     background: var(--color-background);
+    border-radius: 5px;
 }
 
 #world-map .highcharts-background {
     fill: var(--color-background);
 }
 
-#world-map .highcharts-credits {
+#world-map text.highcharts-credits {
+    fill: var(--color-map);
+}
+
+#world-map text.highcharts-credits a {
     fill: var(--color-map);
 }
 
@@ -383,7 +412,7 @@
 }
 
 #world-map text.highcharts-title {
-    fill: var(--color-map);
+    fill: var(--color-title-text);
 }
 
 #world-map .highcharts-tooltip-box {

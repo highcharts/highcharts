@@ -112,7 +112,7 @@ async function runRest(testFile: string) : Promise<BenchResults>{
     const results = [];
     await mkdir(join(__dirname, 'test-data'), { recursive: true });
 
-    for (const size  of config.sizes) {
+    for (const size of config.sizes) {
         const details: BenchmarkDetails = {
             test: relative(__dirname, testFile),
             sampleSize: size,

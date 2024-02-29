@@ -339,6 +339,8 @@ class HTMLElement extends SVGElement {
                 element,
                 renderer,
                 rotation,
+                rotationOriginX = 0,
+                rotationOriginY = 0,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -374,12 +376,13 @@ class HTMLElement extends SVGElement {
 
         if (element.tagName === 'SPAN') {
             const currentTextTransform = [
-                rotation,
-                textAlign,
-                element.innerHTML,
-                textWidth,
-                this.textAlign
-            ].join(',');
+                    rotation,
+                    textAlign,
+                    element.innerHTML,
+                    textWidth,
+                    this.textAlign
+                ].join(','),
+                parentPadding = (this.parentGroup?.padding * -1) || 0;
 
             let baseline,
                 hasBoxWidthChanged = false;
@@ -433,8 +436,8 @@ class HTMLElement extends SVGElement {
                 ) {
                     this.setSpanRotation(
                         rotation,
-                        alignCorrection,
-                        baseline
+                        parentPadding,
+                        parentPadding
                     );
                 }
 
@@ -451,10 +454,16 @@ class HTMLElement extends SVGElement {
             }
 
             // Apply position with correction
-            css(element, {
+            const styles: CSSObject = {
                 left: (x + (this.xCorr || 0)) + 'px',
                 top: (y + (this.yCorr || 0)) + 'px'
-            });
+            };
+            if (rotationOriginX || rotationOriginY) {
+                styles.transformOrigin =
+                    `${rotationOriginX}px ${rotationOriginY}px`;
+            }
+            css(element, styles);
+
 
             // Record current text transform
             this.cTT = currentTextTransform;
@@ -469,15 +478,15 @@ class HTMLElement extends SVGElement {
      */
     private setSpanRotation(
         rotation: number,
-        alignCorrection: number,
-        baseline: number
+        originX: number,
+        originY: number
     ): void {
         // CSS transform and transform-origin both supported without prefix
         // since Firefox 16 (2012), IE 10 (2012), Chrome 36 (2014), Safari 9
         // (2015).;
         css(this.element, {
             transform: `rotate(${rotation}deg)`,
-            transformOrigin: `${alignCorrection * 100}% ${baseline}px`
+            transformOrigin: `${originX}% ${originY}px`
         });
     }
 
@@ -569,8 +578,10 @@ class HTMLElement extends SVGElement {
 // Some shared setters
 const proto = HTMLElement.prototype;
 (proto as any).visibilitySetter = proto.opacitySetter = commonSetter;
-proto.ySetter = proto.xSetter;
-proto.rotationSetter = proto.xSetter;
+proto.ySetter =
+proto.rotationSetter =
+proto.rotationOriginXSetter =
+proto.rotationOriginYSetter = proto.xSetter;
 
 
 /* *

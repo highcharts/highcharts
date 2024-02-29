@@ -31,17 +31,13 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-const {
-    composed,
-    doc
-} = H;
+const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     fireEvent,
-    merge,
-    pushUnique
+    merge
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -508,9 +504,9 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype;
+        const chartProto = ChartClass.prototype;
 
+        if (!chartProto.updateA11yEnabled) {
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
 
             addEvent(

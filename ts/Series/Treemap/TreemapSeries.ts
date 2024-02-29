@@ -174,7 +174,7 @@ class TreemapSeries extends ScatterSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'TreemapSeries')) {
             addEvent(SeriesClass, 'afterBindAxes', onSeriesAfterBindAxes);
         }
 

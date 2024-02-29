@@ -22,7 +22,10 @@ G.hasWebGLSupport = Boost.hasWebGLSupport;
 
 Boost.compose(
     G.Chart,
+    G.Axis,
     G.Series,
     G.seriesTypes,
     G.Color
 );
+
+export default Highcharts;

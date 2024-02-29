@@ -133,8 +133,8 @@ function checkDemosConsistency() {
                     logLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
-                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                    if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        logLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
@@ -238,6 +238,7 @@ function checkDocsConsistency() {
  *         Promise to keep
  */
 async function test() {
+    const fs = require('fs');
     const argv = require('yargs').argv;
     const log = require('./lib/log');
 
@@ -285,10 +286,9 @@ specified by config.imageCapture.resultsOutputPath.
         log.message('No tests to run, exiting early');
         return;
     }
-    const { runTasks } = require('./lib/gulp');
 
     // Conditionally build required code
-    await runTasks('scripts');
+    await gulp.task('scripts')();
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
@@ -365,6 +365,35 @@ specified by config.imageCapture.resultsOutputPath.
                 resolve();
             }
         ).start());
+
+        // Capture console.error, console.warn and console.log
+        const consoleLogPath = `${BASE}/test/console.log`;
+        const consoleLog = await fs.promises.readFile(
+            consoleLogPath,
+            'utf-8'
+        ).catch(() => {});
+        if (consoleLog) {
+            const errors = (consoleLog.match(/ ERROR:/g) || []).length,
+                warnings = (consoleLog.match(/ WARN:/g) || []).length,
+                logs = (consoleLog.match(/ LOG:/g) || []).length;
+
+            const message = [];
+            if (errors) {
+                message.push(`${errors} errors`.red);
+            }
+            if (warnings) {
+                message.push(`${warnings} warnings`.yellow);
+            }
+            if (logs) {
+                message.push(`${logs} logs`);
+            }
+
+            log.message(
+                `The browser console logged ${message.join(', ')}.\n` +
+                'They can be reviewed in ' + consoleLogPath.cyan + '.'
+            );
+        }
+
     }
 }
 

@@ -27,13 +27,10 @@ import type Pointer from '../../Core/Pointer';
 import AxisResizer from './AxisResizer.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
-    pushUnique,
     wrap
 } = U;
 
@@ -75,7 +72,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (!AxisClass.keepProps.includes('resizer')) {
         merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update

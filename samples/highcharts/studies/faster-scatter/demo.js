@@ -7,16 +7,16 @@
 (function (H) {
 
     // Skip advanced options testing, assume all points are given as [x, y]
-    H.seriesTypes.scatter.prototype.pointClass = H.extendClass(H.Point, {
-        init: function (series, options) {
+    class ScatterPoint extends H.Point {
+        init(series, options) {
             this.series = series;
             this.x = options[0];
             this.y = options[1];
             this.options = options;
             return this;
-        },
-        pointAttr: {}
-    });
+        }
+    }
+    H.seriesTypes.scatter.prototype.pointClass = ScatterPoint;
 
     // Draw points as composite shapes
     H.seriesTypes.scatter.prototype.drawPoints = function () {

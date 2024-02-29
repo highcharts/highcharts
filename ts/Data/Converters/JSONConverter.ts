@@ -134,6 +134,8 @@ class JSONConverter extends DataConverter {
             return;
         }
 
+        converter.columns = [];
+
         converter.emit<DataConverter.Event>({
             type: 'parse',
             columns: converter.columns,

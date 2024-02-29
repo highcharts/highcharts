@@ -3,7 +3,7 @@ describe('MathModifier created columns and interaction.', () => {
         cy.visit('/dashboards/cypress/datagrid-mathmodifier/');
     })
 
-    it('DataGrid nad HC component should disable changing the mathmodifier column.', () => {
+    it('DataGrid and HC component should disable changing the mathmodifier column.', () => {
         cy.board().then((board) => {
         const mComponents = board.mountedComponents,
             hcComponent = mComponents[0].component,

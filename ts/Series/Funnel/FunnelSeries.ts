@@ -697,7 +697,7 @@ namespace FunnelSeries {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'FunnelSeries')) {
             addEvent(
                 ChartClass,
                 'afterHideAllOverlappingLabels',

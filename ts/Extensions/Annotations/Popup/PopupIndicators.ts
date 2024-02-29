@@ -337,6 +337,42 @@ function addIndicatorList(
     listType: string,
     filter?: string
 ): void {
+    function selectIndicator(
+        series: SMAIndicator,
+        indicatorType: string
+    ): void {
+        const button = rhsColWrapper.parentNode
+            .children[1] as HTMLDOMElement;
+
+        addFormFields.call(
+            popup,
+            chart,
+            series,
+            indicatorType,
+            rhsColWrapper
+        );
+        if (button) {
+            button.style.display = 'block';
+        }
+
+
+        // add hidden input with series.id
+        if (isEdit && series.options) {
+            createElement(
+                'input',
+                {
+                    type: 'hidden',
+                    name: 'highcharts-id-' + indicatorType,
+                    value: series.options.id
+                },
+                void 0,
+                rhsColWrapper
+            ).setAttribute(
+                'highcharts-data-series-id',
+                (series as any).options.id
+            );
+        }
+    }
     const popup = this,
         lang = popup.lang,
         lhsCol = parentDiv.querySelectorAll(
@@ -374,7 +410,7 @@ function addIndicatorList(
         );
     }
 
-    // Sort indicators alphabeticaly.
+    // Sort indicators alphabetically.
     stableSort(filteredSeriesArray, (a, b): number => {
         const seriesAName = a.indicatorFullName.toLowerCase(),
             seriesBName = b.indicatorFullName.toLowerCase();
@@ -414,52 +450,30 @@ function addIndicatorList(
             void 0,
             indicatorList
         );
-        item.appendChild(doc.createTextNode(
-            indicatorFullName
-        ));
+
+        let btn = createElement(
+            'button',
+            {
+                className: 'highcharts-indicator-list-item',
+                textContent: indicatorFullName
+            },
+            void 0,
+            item
+        );
 
         ['click', 'touchstart'].forEach((
             eventName: string
         ): void => {
-            addEvent(item, eventName, function (): void {
-                const button = rhsColWrapper.parentNode
-                    .children[1] as HTMLDOMElement;
-
-                addFormFields.call(
-                    popup,
-                    chart,
-                    series,
-                    indicatorType,
-                    rhsColWrapper
-                );
-                if (button) {
-                    button.style.display = 'block';
-                }
-
-
-                // add hidden input with series.id
-                if (isEdit && series.options) {
-                    createElement(
-                        'input',
-                        {
-                            type: 'hidden',
-                            name: 'highcharts-id-' + indicatorType,
-                            value: series.options.id
-                        },
-                        void 0,
-                        rhsColWrapper
-                    ).setAttribute(
-                        'highcharts-data-series-id',
-                        (series as any).options.id
-                    );
-                }
+            addEvent(btn, eventName, function (): void {
+                selectIndicator(series, indicatorType);
             });
         });
     });
 
     // select first item from the list
-    if (indicatorList.childNodes.length > 0) {
-        (indicatorList.childNodes[0] as HTMLDOMElement).click();
+    if (filteredSeriesArray.length > 0) {
+        let { series, indicatorType } = filteredSeriesArray[0];
+        selectIndicator(series, indicatorType);
     } else if (!isEdit) {
         AST.setElementHTML(
             rhsColWrapper.parentNode.children[0],
@@ -468,10 +482,11 @@ function addIndicatorList(
         (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
             .style.display = 'none';
     }
+
 }
 
 /**
- * Recurent function which lists all fields, from params object and
+ * Recurrent function which lists all fields, from params object and
  * create them as inputs. Each input has unique `data-name` attribute,
  * which keeps chain of fields i.e params.styles.fontSize.
  * @private
@@ -656,7 +671,7 @@ function addSearchBox(
             input.value = '';
             handleInputChange('');
 
-            // Hide clear filter button- no longer nececary.
+            // Hide clear filter button- no longer necessary.
             button.style.display = 'none';
         });
     });

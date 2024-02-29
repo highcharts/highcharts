@@ -49,10 +49,7 @@ const { animObject } = A;
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
-const {
-    composed,
-    noop
-} = H;
+const { noop } = H;
 import DrilldownDefaults from './DrilldownDefaults.js';
 import DrilldownSeries from './DrilldownSeries.js';
 import U from '../../Core/Utilities.js';
@@ -65,7 +62,6 @@ const {
     merge,
     objectEach,
     pick,
-    pushUnique,
     removeEvent,
     syncTimeout
 } = U;
@@ -307,6 +303,8 @@ class ChartAdditions {
             (this as this).chart ||
             (this as Drilldown.ChartComposition)
         );
+
+        fireEvent(this, 'addSeriesAsDrilldown', { seriesOptions: options });
 
         if (chart.mapView) {
             // stop hovering while drilling down
@@ -569,14 +567,14 @@ class ChartAdditions {
                                     )).length
                                 ) {
                                     // We have a reset zoom button. Hide it and
-                                    // detatch it from the chart. It is
+                                    // detach it from the chart. It is
                                     // preserved to the layer config above.
                                     if (chart.resetZoomButton) {
                                         chart.resetZoomButton.hide();
                                         delete chart.resetZoomButton;
                                     }
 
-                                    chart.pointer.reset();
+                                    chart.pointer?.reset();
 
                                     fireEvent(chart, 'afterDrilldown');
 
@@ -598,14 +596,14 @@ class ChartAdditions {
         }
 
         if (!chart.mapView) {
-            // We have a reset zoom button. Hide it and detatch it from the
+            // We have a reset zoom button. Hide it and detach it from the
             // chart. It is preserved to the layer config above.
             if (chart.resetZoomButton) {
                 chart.resetZoomButton.hide();
                 delete chart.resetZoomButton;
             }
 
-            chart.pointer.reset();
+            chart.pointer?.reset();
 
             fireEvent(chart, 'afterDrilldown');
 
@@ -1013,12 +1011,13 @@ namespace Drilldown {
     ): void {
         DrilldownSeries.compose(SeriesClass, seriesTypes);
 
-        if (pushUnique(composed, compose)) {
-            const DrilldownChart = ChartClass as typeof ChartComposition,
-                SVGElementClass = SVGRendererClass.prototype.Element,
+        const DrilldownChart = ChartClass as typeof ChartComposition,
+            chartProto = DrilldownChart.prototype;
+
+        if (!chartProto.drillUp) {
+            const SVGElementClass = SVGRendererClass.prototype.Element,
                 addonProto = ChartAdditions.prototype,
                 axisProto = AxisClass.prototype,
-                chartProto = DrilldownChart.prototype,
                 elementProto = SVGElementClass.prototype,
                 tickProto = TickClass.prototype;
 
