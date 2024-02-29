@@ -40,3 +40,4 @@ PolarAdditions.compose(
     SeriesRegistry.seriesTypes.spline
 );
 WaterfallSeries.compose(G.Axis, G.Chart);
+export default G;

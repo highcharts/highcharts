@@ -64,7 +64,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Popup')) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',

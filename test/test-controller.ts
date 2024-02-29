@@ -173,7 +173,6 @@ class TestController {
         }
 
         this.chart = chart;
-        this.mouseEnterStack = [];
         this.positionX = 0;
         this.positionY = 0;
         this.relatedTarget = null;
@@ -188,8 +187,6 @@ class TestController {
      * */
 
     private chart: Highcharts.Chart;
-
-    private mouseEnterStack: Array<Element>;
 
     private positionX: number;
     

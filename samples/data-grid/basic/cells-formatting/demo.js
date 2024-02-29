@@ -8,6 +8,7 @@ const columns = {
 // eslint-disable-next-line
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataGrid.DataTable({ columns }),
+    editable: false,
     columns: {
         product: {
             cellFormat: '{text} No. 1',

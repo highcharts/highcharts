@@ -1,6 +1,5 @@
-/* global seatPlan */
-
 const colors = Highcharts.getOptions().colors,
+    seatPlan = JSON.parse(document.getElementById('data').innerHTML),
     selectedListHTML = document.getElementById('selected-list'),
     deselect = document.getElementById('deselect'),
     selectedList = [],
