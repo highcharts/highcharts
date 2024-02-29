@@ -8,12 +8,6 @@ Highcharts.stockChart('container', {
         overscroll: '50%'
     },
 
-    navigator: {
-        xAxis: {
-            overscroll: '50%'
-        }
-    },
-
     series: [{
         name: 'Random data',
         pointStart: Date.UTC(2017, 0, 1),

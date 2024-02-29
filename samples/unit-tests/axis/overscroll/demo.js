@@ -20,11 +20,6 @@
                 overscroll: 5,
                 ordinal: ordinal
             },
-            navigator: {
-                xAxis: {
-                    overscroll: 5
-                }
-            },
             series: [
                 {
                     data: [
@@ -181,7 +176,7 @@
                 xAxis;
 
             options.rangeSelector.selected = null;
-            options.xAxis.overscroll = options.navigator.xAxis.overscroll = 100;
+            options.xAxis.overscroll = 100;
 
             xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
@@ -201,8 +196,7 @@
             let overscrollPixelValue = 300;
 
             options.rangeSelector.selected = null;
-            options.xAxis.overscroll = options.navigator.xAxis.overscroll =
-                overscrollPixelValue + 'px';
+            options.xAxis.overscroll = overscrollPixelValue + 'px';
 
             options.series[0].data = [
                 [0, 1],
@@ -248,8 +242,7 @@
             let overscrollPercentageValue = 50;
 
             options.rangeSelector.selected = null;
-            options.xAxis.overscroll = options.navigator.xAxis.overscroll =
-                overscrollPercentageValue + '%';
+            options.xAxis.overscroll = overscrollPercentageValue + '%';
 
             options.series[0].data = [
                 [0, 1],
