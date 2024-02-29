@@ -13,7 +13,10 @@ function renderChart() {
             }
         },
         xAxis: {
-            type: 'datetime'
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                month: '%B %Y'
+            }
         },
         series: [
             {
