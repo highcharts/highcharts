@@ -71,6 +71,8 @@ document.querySelector('select#lang-select').addEventListener('change', async fu
         Highcharts.setOptions({
             lang: defaultLangOptions
         });
+
+        document.querySelector('#container').removeAttribute('lang');
     } else {
         const src = `https://code.highcharts.com/i18n/${lang}.json`;
 
@@ -80,8 +82,11 @@ document.querySelector('select#lang-select').addEventListener('change', async fu
         Highcharts.setOptions({
             lang: langOptions
         });
+
+        document.querySelector('#container').setAttribute('lang', lang);
     }
 
     // As the lang object is global we need to fully re-render the chart
     renderChart();
+
 });
