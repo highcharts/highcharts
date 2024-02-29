@@ -1552,8 +1552,7 @@ class SVGElement implements SVGElementLike {
 
                 if (tp) {
                     const polygon: BBoxObject['polygon'] = [],
-                        // A couple of trail characters are always erroneous
-                        len = Math.max(tp.getNumberOfChars() - 2, 0),
+                        len = Math.max(tp.getNumberOfChars() - 1, 0),
                         {
                             translateX: parentTranslateX = 0,
                             translateY: parentTranslateY = 0
