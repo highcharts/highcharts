@@ -9,11 +9,19 @@
 
 .row {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .cell {
+    flex: 1;
+    min-width: 20px;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
     margin: 10px;
+    background-clip: border-box;
+    background-color: var(--highcharts-background-color);
 }
 
 #kpi-wrapper {
@@ -32,7 +40,6 @@
 #kpi-vitamin-a,
 #kpi-iron {
     flex-grow: 1;
-    background-color: var(--highcharts-background-color);
 }
 
 h1#title {

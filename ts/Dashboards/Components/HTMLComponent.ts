@@ -248,9 +248,7 @@ class HTMLComponent extends Component {
     ): this {
         // update height only when resizer is enabled, otherwise,
         // run default styles from CSS
-        if (this.board.editMode?.resizer?.isActive) {
-            super.resize(width, height);
-        }
+        super.resize(width, height);
         return this;
     }
 

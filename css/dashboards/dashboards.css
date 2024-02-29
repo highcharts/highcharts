@@ -263,8 +263,10 @@
         0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
     border-radius: 3px;
-    height: calc(100% - 10px);
-    overflow: hidden;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component .highcharts-dashboards-component-kpi-chart-container {
+    flex: 1 1 100%;
 }
 
 .highcharts-dashboards-component {
@@ -272,7 +274,7 @@
 }
 
 .highcharts-dashboards-component-kpi {
-    min-height: 150px;
+    min-height: 20px;
     text-align: center;
 }
 
@@ -295,7 +297,6 @@
 }
 
 .highcharts-dashboards-component img {
-    width: 100%;
     height: 100%;
     overflow: auto;
 }
