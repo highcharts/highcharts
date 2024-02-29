@@ -9,21 +9,9 @@ Highcharts.chart('container', {
         highContrastMode: true, // force high contrast mode,
         highContrastTheme: {
             colors: [
-                '#ff0000',
-                {
-                    pattern: {
-                        ...Highcharts.patterns[6],
-                        backgroundColor: 'window',
-                        color: '#ffea00'
-                    }
-                },
-                {
-                    pattern: {
-                        ...Highcharts.patterns[5],
-                        backgroundColor: '#041867',
-                        color: 'window'
-                    }
-                }
+                '#FFFFFF',
+                '#f9455a',
+                '#041867'
             ]
         }
     },
