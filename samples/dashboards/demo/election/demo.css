@@ -446,8 +446,13 @@
     color: var(--color-hover-text);
 }
 
-/* Capitalize state name */
-.highcharts-datagrid-cell:nth-child(1) {
+/* Styling of first row (national results) */
+#election-grid .highcharts-datagrid-row:nth-of-type(1) {
+    font-weight: bold;
+}
+
+/* Capitalize first column (state names) */
+#election-grid .highcharts-datagrid-cell:nth-child(1) {
     text-transform: capitalize;
 }
 
@@ -498,6 +503,10 @@
     #election-chart,
     #election-grid {
         flex: 1 1 100%;
+    }
+
+    #election-grid .highcharts-datagrid-cell {
+        font-size: 12px;
     }
 }
 
