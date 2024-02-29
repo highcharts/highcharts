@@ -18,9 +18,6 @@ import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
-import type {
-    RangeSelectorButtonLangKey
-} from '../Stock/RangeSelector/RangeSelectorOptions.d.ts';
 
 /* *
  *
@@ -42,7 +39,6 @@ export interface LangOptions {
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
     pieSliceName: string;
-    rangeSelector: Partial<Record<RangeSelectorButtonLangKey, string>>;
     resetZoom: string;
     resetZoomTitle: string;
     seriesName: string;
