@@ -257,7 +257,7 @@ class Accessibility {
         // Should only be applied once, and not if explicitly disabled
         if (
             !chart.highContrastModeActive &&
-            !a11yOptions.highContrastMode === false && (
+            a11yOptions.highContrastMode !== false && (
                 whcm.isHighContrastModeActive() ||
                 a11yOptions.highContrastMode === true
             )
