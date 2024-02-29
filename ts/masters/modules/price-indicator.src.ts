@@ -16,3 +16,4 @@ import Highcharts from '../../Core/Globals.js';
 import PriceIndication from '../../Extensions/PriceIndication.js';
 const G: AnyRecord = Highcharts;
 PriceIndication.compose(G.Series);
+export default Highcharts;

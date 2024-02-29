@@ -16,3 +16,4 @@ import MarkerClusterSymbols from '../../Extensions/MarkerClusters/MarkerClusterS
 const G: AnyRecord = Highcharts;
 MarkerClusters.compose(G.Axis, G.Chart, G.defaultOptions, G.Series);
 MarkerClusterSymbols.compose(G.SVGRenderer);
+export default Highcharts;

@@ -21,14 +21,11 @@ import type MapNavigation from './MapNavigation';
 import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     defined,
     extend,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -83,10 +80,9 @@ namespace MapPointer {
     export function compose(
         PointerClass: typeof Pointer
     ): void {
+        const pointerProto = PointerClass.prototype as MapPointer;
 
-        if (pushUnique(composed, compose)) {
-            const pointerProto = PointerClass.prototype as MapPointer;
-
+        if (!pointerProto.onContainerDblClick) {
             extend(pointerProto, {
                 onContainerDblClick,
                 onContainerMouseWheel
