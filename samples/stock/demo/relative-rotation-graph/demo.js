@@ -13,7 +13,17 @@ Highcharts.chart('container', {
             strokeWidth: 0
         },
         shapes: [{
-            fill: 'rgba(255, 0, 0, 0.1)',
+            fill: {
+                radialGradient: {
+                    cx: 0,
+                    cy: 1,
+                    r: 1.1
+                },
+                stops: [
+                    [0, 'rgba(255, 0, 0, 0.2)'],
+                    [1, 'rgba(255,255,255, 0.1)']
+                ]
+            },
             points: [{
                 x: 96,
                 y: 100,
@@ -36,7 +46,17 @@ Highcharts.chart('container', {
                 yAxis: 0
             }]
         }, {
-            fill: 'rgba(0, 0, 255, 0.1)',
+            fill: {
+                radialGradient: {
+                    cx: 0,
+                    cy: 0,
+                    r: 1.1
+                },
+                stops: [
+                    [0, 'rgba(0, 0, 255, 0.1)'],
+                    [1, 'rgba(255,255,255, 0.1)']
+                ]
+            },
             points: [{
                 x: 96,
                 y: 104,
@@ -59,7 +79,17 @@ Highcharts.chart('container', {
                 yAxis: 0
             }]
         }, {
-            fill: 'rgba(0, 255, 0, 0.1)',
+            fill: {
+                radialGradient: {
+                    cx: 1,
+                    cy: 0,
+                    r: 1.1
+                },
+                stops: [
+                    [0, 'rgba(0, 255, 0, 0.1)'],
+                    [1, 'rgba(255,255,255, 0.1)']
+                ]
+            },
             points: [{
                 x: 100,
                 y: 104,
@@ -82,7 +112,17 @@ Highcharts.chart('container', {
                 yAxis: 0
             }]
         }, {
-            fill: 'rgba(255, 255, 0, 0.1)',
+            fill: {
+                radialGradient: {
+                    cx: 1,
+                    cy: 1,
+                    r: 1.1
+                },
+                stops: [
+                    [0, 'rgba(255, 255, 0, 0.2)'],
+                    [1, 'rgba(255,255,255, 0.1)']
+                ]
+            },
             points: [{
                 x: 100,
                 y: 100,
@@ -110,14 +150,14 @@ Highcharts.chart('container', {
             borderWidth: 0,
             y: 0,
             style: {
-                fontSize: '16px',
-                fontWeight: 'bold'
+                fontSize: '12px',
+                fontWeight: 700
             }
         },
         labels: [{
-            text: 'Lagging',
+            text: 'LAGGING',
             style: {
-                color: '#ff0000'
+                color: '#c80056'
             },
             point: {
                 x: 96,
@@ -126,9 +166,9 @@ Highcharts.chart('container', {
                 yAxis: 0
             }
         }, {
-            text: 'Improving',
+            text: 'IMPROVING',
             style: {
-                color: '#0000ff'
+                color: '#004bb3'
             },
             point: {
                 x: 96,
@@ -137,9 +177,9 @@ Highcharts.chart('container', {
                 yAxis: 0
             }
         }, {
-            text: 'Leading',
+            text: 'LEADING',
             style: {
-                color: '#00ff00'
+                color: '#008224'
             },
             point: {
                 x: 104,
@@ -148,9 +188,9 @@ Highcharts.chart('container', {
                 yAxis: 0
             }
         }, {
-            text: 'Weakening',
+            text: 'WEAKENING',
             style: {
-                color: '#ffc600'
+                color: '#9a5c00'
             },
             point: {
                 x: 104,
@@ -161,7 +201,7 @@ Highcharts.chart('container', {
         }]
     }],
     title: {
-        text: 'Relative Rotational Graph'
+        text: 'Relative Rotational Graph®️'
     },
     plotOptions: {
         series: {
@@ -174,19 +214,19 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: 'RS-Ratio: <b>{point.x}</b></br> RS-Momentum: <b>{point.y}</b>'
+        pointFormat: 'RS-Ratio®️: <b>{point.x}</b></br> RS-Momentum®️: <b>{point.y}</b>'
     },
     xAxis: {
         min: 96,
         max: 104,
         plotLines: [{
             value: 100,
-            width: 2,
+            width: 1,
             color: '#000000',
             zIndex: 1
         }],
         title: {
-            text: 'JdK RS-Ratio'
+            text: 'JdK RS-Ratio®️'
         },
         gridLineWidth: 1
     },
@@ -195,13 +235,14 @@ Highcharts.chart('container', {
         max: 104,
         plotLines: [{
             value: 100,
-            width: 2,
+            width: 1,
             color: '#000000',
             zIndex: 1
         }],
         title: {
-            text: 'JdK RS-Momentum'
-        }
+            text: 'JdK RS-Momentum®️'
+        },
+        gridLineWidth: 1
     },
     series: [{
         name: 'Stock 1',
@@ -249,10 +290,10 @@ Highcharts.chart('container', {
             [97.3, 100],
             [97.3, 99],
             [97.35, 98]
-
         ]
     }, {
         name: 'Stock 4',
+        color: '#f99908',
         data: [
             [98.5, 98.5],
             [98.7, 99],
