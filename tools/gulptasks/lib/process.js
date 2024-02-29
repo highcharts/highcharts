@@ -61,7 +61,7 @@ let onExitCallbacks;
  * Promise to keep with all terminal output
  */
 function exec(command, options = {}) {
-    const ChildProcess = require('child_process');
+    const ChildProcess = require('node:child_process');
 
     const silent = options.silent;
 

@@ -1753,7 +1753,7 @@ namespace Legend {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Core.Legend')) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,

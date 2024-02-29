@@ -22,7 +22,7 @@
 import type { DataGridNamespace } from './DataGridTypes';
 import type PluginHandler from '../PluginHandler';
 
-import DataGridComponent from './DataGridComponent/DataGridComponent.js';
+import DataGridComponent from '../Components/DataGridComponent/DataGridComponent.js';
 
 /* *
  *

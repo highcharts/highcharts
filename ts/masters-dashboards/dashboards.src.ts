@@ -21,7 +21,7 @@ import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
 import type { DataGridNamespace as D } from '../Dashboards/Plugins/DataGridTypes';
 
 // Fill registries
-import '../Dashboards/Components/HTMLComponent.js';
+import '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';

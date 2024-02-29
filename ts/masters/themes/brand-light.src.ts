@@ -12,3 +12,4 @@ import H from '../../Core/Globals.js';
 import BrandLight from '../../Extensions/Themes/BrandLight.js';
 H.theme = BrandLight.options;
 BrandLight.apply();
+export default H;

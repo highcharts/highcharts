@@ -12,3 +12,4 @@ import Highcharts from '../../Core/Globals.js';
 import SeriesLabel from '../../Extensions/SeriesLabel/SeriesLabel.js';
 const G: AnyRecord = Highcharts;
 SeriesLabel.compose(G.Chart, G.SVGRenderer);
+export default Highcharts;

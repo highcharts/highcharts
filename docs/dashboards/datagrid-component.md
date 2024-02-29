@@ -18,7 +18,7 @@ The order of the imports is important, so make sure that the Dashboards module i
     Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
     ```typescript
     import * as Dashboards from '@highcharts/dashboards';
-    import DataGrid from '@highcharts/dashboards/es-modules/DataGrid/DataGrid';
+    import DataGrid from '@highcharts/datagrid/es-modules/DataGrid/DataGrid';
 
     Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
     Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
@@ -113,45 +113,8 @@ Dashboards.board('container', {
 ```
 
 ## DataGrid options
-
-In the [DataGrid Component](https://api.highcharts.com/dashboards/#modules/Dashboards_Plugins_DataGridComponent.DataGridComponent), you can define some specific options for the [DataGrid](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGrid.DataGrid) itself. These options can be set in the [`dataGridOptions` option](https://api.highcharts.com/dashboards/typedoc/interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions.html#dataGridOptions).
-
-For example, using the [`editable` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
-
-Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#columns), you can format data and headers in cells, e.g. adding units to them. The key is the column name and the value is the object with the column-specific options.
-
-Example:
-```js
-components: [{
-    renderTo: 'dashboard-col-1',
-    type: 'DataGrid'
-    connector: {
-        id: 'data'
-    },
-    dataGridOptions: {
-        editable: false,
-        columns: {
-            product: {
-                cellFormat: '{text} No. 1',
-                headerFormat: '{text} name'
-            },
-            weight: {
-                cellFormat: '{value} kg',
-                headerFormat: '{text} (kg)'
-            },
-            price: {
-                cellFormat: '{value} $',
-                headerFormat: '($) {text}'
-            },
-            metaData: {
-                show: false
-            }
-        }
-    }
-}]
-```
-
-There are more DataGrid-specific options that can be found in the [Dashboards API](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1).
+See the [DataGrid documentation](https://www.highcharts.com/docs/datagrid/general) to read more about it
+or use [the API documentation](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1) to see the available options for the DataGrid Component.
 
 
 ## Data modifiers
