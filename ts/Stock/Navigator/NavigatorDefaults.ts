@@ -451,17 +451,17 @@ const NavigatorDefaults: NavigatorOptions = {
     xAxis: {
         /**
          * Additional range on the right side of the xAxis. Works similar to
-         * `xAxis.maxPadding`, but value is set in terms of axis values,
+         * `xAxis.maxPadding`, but the value is set in terms of axis values,
          * percentage or pixels.
          *
-         * If it's a number, it is interpreted as axis values, which in
-         * a datetime axis equals milliseconds.
+         * If it's a number, it is interpreted as axis values, which in a
+         * datetime axis equals milliseconds.
          *
-         * If it's a percentage string, is interpreted as percentages of axis
-         * length. An overscroll of 50% will make a 100px axis 50px longer.
+         * If it's a percentage string, is interpreted as percentages of the
+         * axis length. An overscroll of 50% will make a 100px axis 50px longer.
          *
          * If it's a pixel string, it is interpreted as a fixed pixel value, but
-         * limited to 90% of the axis width.
+         * limited to 90% of the axis length.
          *
          * If it's undefined, the value is inherited from `xAxis.overscroll`.
          *

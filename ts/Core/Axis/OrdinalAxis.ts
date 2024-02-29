@@ -1550,7 +1550,6 @@ namespace OrdinalAxis {
                 if (/px/.test(overscroll)) {
                     // If overscroll is pixels, it is limited to 90% of the axis
                     // length to prevent division by zero
-
                     const limitedOverscrollValue = Math.min(
                             overscrollValue,
                             axis.len * 0.9
