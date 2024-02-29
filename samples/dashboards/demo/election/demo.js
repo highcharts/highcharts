@@ -576,7 +576,7 @@ function getHistoricalElectionSeries(state = 'US') {
         }
     ];
 
-    Object.values(electionData).reverse().forEach(function (item) {
+    Object.values(electionData).reverse().forEach(item => {
         const row = item.data.find(c => c[5] === state);
 
         // Percentage, Democrat
@@ -593,6 +593,7 @@ function getHistoricalElectionSeries(state = 'US') {
             electors: row[2]
         });
     });
+
     return series;
 }
 
