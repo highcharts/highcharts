@@ -99,8 +99,8 @@ First, make sure that a plugin supports loading over NPM and load the required f
 In the example `DataGrid` supports NPM loading, so after installing the package you could initialize and register it like this:
 
 ```ts
-import * as Dashboards from '@highcharts/dashboards';
-import * as DataGrid from '@highcharts/dashboards/datagrid';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
+import DataGrid from '@highcharts/dashboards/es-modules/masters/datagrid.src';
 
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
