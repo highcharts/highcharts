@@ -25,6 +25,7 @@ const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
+    extend,
     extendClass,
     merge
 } = U;
@@ -144,10 +145,9 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass = extendClass(
-                Point,
-                pointProto
-            ) as any;
+            class PointClass extends Point {}
+            extend(PointClass.prototype, pointProto as any);
+            seriesTypes[type].prototype.pointClass = PointClass;
         }
 
         return seriesTypes[type] as unknown as T;
