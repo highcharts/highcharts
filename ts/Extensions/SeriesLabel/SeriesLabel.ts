@@ -869,7 +869,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         for (i = 0; i < len; i += 1) {
 
             const point = points[i],
-                [plotX, plotY] = point.pos() || [0, 0],
+                [plotX, plotY] = point.pos() || [],
                 { plotHigh } = point;
 
             if (isNumber(plotX) && isNumber(plotY)) {
