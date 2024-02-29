@@ -34,9 +34,11 @@ jobs:
           whereis firefox
 
       - name: Test Webpacks with Firefox
+        continue-on-error: true
         run: |
           export DISPLAY=:99
           npx gulp test --webpack --single-run --splitbrowsers Firefox --force
+          exit 1
 
       - name: Output logged errors
         run: cat ./test/console.log
@@ -54,6 +56,6 @@ jobs:
             await createOrUpdateComment(github, context, 'Webpack monitoring',
               failed ?
                 ':rotating_light: Webpack tests failed.' +
-                ' Check demos and masters!' :
+                ' Check demos and masters with `npx gulp test --webpack`.' :
                 'LGTM :+1:'
             );
