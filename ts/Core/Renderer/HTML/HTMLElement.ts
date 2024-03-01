@@ -455,13 +455,13 @@ class HTMLElement extends SVGElement {
 
             // Apply position with correction
             const styles: CSSObject = {
-                left: (x + (this.xCorr || 0)) + 'px',
-                top: (y + (this.yCorr || 0)) + 'px'
+                left: `${x + (this.xCorr || 0)}px`,
+                top: `${y + (this.yCorr || 0)}px`
             };
-            if (rotationOriginX || rotationOriginY) {
-                styles.transformOrigin =
-                    `${rotationOriginX}px ${rotationOriginY}px`;
-            }
+            // if (rotationOriginX || rotationOriginY) {
+            styles.transformOrigin =
+                `${rotationOriginX - (this.xCorr || 0) - (this.x || 0)}px ${rotationOriginY - (this.yCorr || 0) - (this.y || 0)}px`;
+            // }
             css(element, styles);
 
 
@@ -534,11 +534,11 @@ class HTMLElement extends SVGElement {
 
         this.added = true;
         if (this.alignOnAdd) {
-            const unrotatedBox = this.getBBox(void 0, 0);
-            this.attr({
-                rotationOriginX: unrotatedBox.width / 2,
-                rotationOriginY: unrotatedBox.height / 2
-            });
+            // const unrotatedBox = this.getBBox(void 0, 0);
+            // this.attr({
+            //     rotationOriginX: unrotatedBox.width / 2,
+            //     rotationOriginY: unrotatedBox.height / 2
+            // });
             this.updateTransform();
         }
 
