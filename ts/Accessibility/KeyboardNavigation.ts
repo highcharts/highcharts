@@ -344,7 +344,8 @@ class KeyboardNavigation {
         const target = (e.target as HTMLElement|undefined);
         if (target &&
             target.nodeName === 'INPUT' &&
-            !target.classList.contains('highcharts-a11y-proxy-element')
+            !target.classList.contains('highcharts-a11y-proxy-element') ||
+            (this as any).blocked
         ) {
             return;
         }
