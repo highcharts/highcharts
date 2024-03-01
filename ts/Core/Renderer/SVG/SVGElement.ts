@@ -1572,10 +1572,8 @@ class SVGElement implements SVGElementLike {
                             } = tp.getExtentOfChar(i),
                             top = y1 + offsetY,
                             left = x1 + offsetX;
-                        polygon.push(
-                            [left, top],
-                            [left, top + height]
-                        );
+                        polygon.push([left, top]);
+                        polygon.unshift([left, top + height]);
                     }
 
                     const { x, y, width, height } = tp.getExtentOfChar(len),
@@ -1583,10 +1581,11 @@ class SVGElement implements SVGElementLike {
                         rightTop = y + offsetY;
 
                     // End of the polygon (vertex order does not matter)
-                    polygon.push(
-                        [rightEdge, rightTop],
-                        [rightEdge, rightTop + height]
-                    );
+                    polygon.push([rightEdge, rightTop]);
+                    polygon.unshift([rightEdge, rightTop + height]);
+
+                    // Close it
+                    polygon.push(polygon[0].slice() as [number, number]);
 
                     bBox.polygon = polygon;
                 }
