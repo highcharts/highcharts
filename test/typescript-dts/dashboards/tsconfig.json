@@ -16,8 +16,8 @@
             "@highcharts/dashboards/*": ["code/dashboards/*"],
             "highcharts": ["code/highcharts.src"],
             "highcharts/*": ["code/*"],
-            "@highcharts/datagrid": ["code/datagrid/datagrid.src"],
-            "@highcharts/datagrid/*": ["code/datagrid/*"],
+            "@highcharts/dashboards/datagrid": ["code/datagrid/datagrid.src"],
+            "@highcharts/dashboards/datagrid/*": ["code/datagrid/*"],
 
         },
         "types": []

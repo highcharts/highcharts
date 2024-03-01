@@ -15,12 +15,12 @@ By incorporating this component, users can effectively interact with data in a s
 - Or it can be installed through NPM like this:
 
     ```bash
-    npm install @highcharts/datagrid
+    npm install @highcharts/dashboards
     ```
     Then import the module like this:
 
     ```typescript
-    import * as DataGrid from '@highcharts/datagrid';
+    import * as DataGrid from '@highcharts/dashboards/datagrid';
     ```
 
 ## Usage
@@ -37,7 +37,7 @@ Note that the DataGrid requires data to be in form of a data table.
 Check [the data documentation](https://www.highcharts.com/docs/dashboards/data-handling) to read more about data handling.
 
 ```javascript
-import DataGrid from '@highcharts/datagrid';
+import DataGrid from '@highcharts/dashboards/datagrid';
 
 const grid = new DataGrid.DataGrid('container', {
     dataTable: new DataGrid.DataTable({
