@@ -1,9 +1,11 @@
 const colors = Highcharts.getOptions().colors;
 
 const leafs = [
-    'Icelandic', 'Norwegian', 'Faroese', 'Swedish', 'Danish',
-    'English', 'Hollandic', 'Flemish', 'Dutch', 'Limburgish', 'Brabantian',
-    'Rhinelandic', 'Gothic'
+    'Bastarnisch', 'Brabantian', 'Burgundian', 'Crimean Gothic', 'Danish',
+    'Dutch', 'English', 'Faroese', 'Flemish', 'Frisian', 'Gepidisch', 'Gothic',
+    'Herulisch', '(High) German', 'Hollandic', 'Icelandic', 'Limburgish',
+    'Low German', 'Norwegian', 'Rhinelandic', 'Rugisch', 'Skirisch', 'Swedish',
+    'Vandalic', 'Yiddish'
 ].map(function (leaf) {
     return {
         id: leaf,
@@ -15,13 +17,13 @@ const leafs = [
 const hangingNodes = [
     {
         id: 'North Germanic',
-        layout: 'hanging'
+        layout: 'hanging',
+        // Push node a bit to the left.
+        offsetHorizontal: -15
     },
     {
         id: 'West Germanic',
-        layout: 'hanging',
-        // Slight overlap, push node a bit to the right.
-        offsetHorizontal: 15
+        layout: 'hanging'
     },
     {
         id: 'East Germanic',
@@ -34,7 +36,7 @@ const nodes = hangingNodes.concat(leafs);
 Highcharts.chart('container', {
 
     chart: {
-        height: 800,
+        height: 1200,
         inverted: true
     },
 
@@ -61,6 +63,8 @@ Highcharts.chart('container', {
         nodePadding: 20,
         colorByPoint: false,
         hangingIndentTranslation: 'cumulative',
+        // Crimp a bit to avoid nodes overlapping lines
+        hangingIndent: 10,
 
         levels: [{
             level: 0,
@@ -79,40 +83,58 @@ Highcharts.chart('container', {
             color: colors[8]
         }],
         nodes,
+        /* eslint-disable indent */
         data: [
-            // North Germanic branch
-            ['Germanic', 'North Germanic'],
-            ['North Germanic', 'Old Norse'],
-            ['North Germanic', 'Old Swedish'],
-            ['North Germanic', 'Old Danish'],
-            ['Old Norse', 'Old Icelandic'],
-            ['Old Norse', 'Old Norwegian'],
-            ['Old Norse', 'Faroese'],
-            ['Old Swedish', 'Middle Swedish'],
-            ['Old Danish', 'Middle Danish'],
-            ['Old Icelandic', 'Icelandic'],
-            ['Old Norwegian', 'Middle Norwegian'],
-            ['Middle Swedish', 'Swedish'],
-            ['Middle Danish', 'Danish'],
-            ['Middle Norwegian', 'Norwegian'],
-
             // West Germanic branch
             ['Germanic', 'West Germanic'],
-            ['West Germanic', 'Old English'],
-            ['West Germanic', 'Old Dutch'],
-            ['Old English', 'Middle English'],
-            ['Old Dutch', 'Middle Dutch'],
-            ['Middle English', 'English'],
-            ['Middle Dutch', 'Hollandic'],
-            ['Middle Dutch', 'Flemish'],
-            ['Middle Dutch', 'Dutch'],
-            ['Middle Dutch', 'Limburgish'],
-            ['Middle Dutch', 'Brabantian'],
-            ['Middle Dutch', 'Rhinelandic'],
+                ['West Germanic', 'Old English'],
+                    ['Old English', 'Middle English'],
+                        ['Middle English', 'English'],
+                ['West Germanic', 'Old Frisian'],
+                    ['Old Frisian', 'Frisian'],
+                ['West Germanic', 'Old Dutch'],
+                    ['Old Dutch', 'Middle Dutch'],
+                        ['Middle Dutch', 'Hollandic'],
+                        ['Middle Dutch', 'Flemish'],
+                        ['Middle Dutch', 'Dutch'],
+                        ['Middle Dutch', 'Limburgish'],
+                        ['Middle Dutch', 'Brabantian'],
+                        ['Middle Dutch', 'Rhinelandic'],
+                ['West Germanic', 'Old Low German'],
+                    ['Old Low German', 'Middle Low German'],
+                        ['Middle Low German', 'Low German'],
+                ['West Germanic', 'Old High German'],
+                    ['Old High German', 'Middle High German'],
+                        ['Middle High German', '(High) German'],
+                        ['Middle High German', 'Yiddish'],
 
             // East Germanic branch
             ['Germanic', 'East Germanic'],
-            ['East Germanic', 'Gothic']
+                ['East Germanic', 'Gothic'],
+                ['East Germanic', 'Vandalic'],
+                ['East Germanic', 'Burgundian'],
+                ['East Germanic', 'Bastarnisch'],
+                ['East Germanic', 'Gepidisch'],
+                ['East Germanic', 'Herulisch'],
+                ['East Germanic', 'Rugisch'],
+                ['East Germanic', 'Skirisch'],
+                ['East Germanic', 'Crimean Gothic'],
+
+            // North Germanic branch
+            ['Germanic', 'North Germanic'],
+                ['North Germanic', 'Old Norse'],
+                    ['Old Norse', 'Old Icelandic'],
+                        ['Old Icelandic', 'Icelandic'],
+                    ['Old Norse', 'Old Norwegian'],
+                        ['Old Norwegian', 'Norwegian'],
+                    ['Old Norse', 'Faroese'],
+                ['North Germanic', 'Old Swedish'],
+                    ['Old Swedish', 'Middle Swedish'],
+                        ['Middle Swedish', 'Swedish'],
+                ['North Germanic', 'Old Danish'],
+                    ['Old Danish', 'Middle Danish'],
+                        ['Middle Danish', 'Danish']
         ]
+        /* eslint-enable indent */
     }]
 });

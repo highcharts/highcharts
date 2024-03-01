@@ -1,8 +1,8 @@
 ---
- name: Organization chart with hanging nodes.
- authors:
-   - Kent Wincent Holt
- js_wrap: b
+name: Organization chart with hanging nodes.
+authors:
+  - Kent Wincent Holt
+js_wrap: b
 tags:
   - Highcharts demo
 categories:
