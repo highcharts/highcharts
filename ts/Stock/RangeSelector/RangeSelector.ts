@@ -1538,8 +1538,7 @@ class RangeSelector {
                 );
 
                 this.alignButtonGroup(xOffsetForExportButton);
-                const { translateX = 0, translateY = 0 } = this.buttonGroup!;
-                this.dropdownLabel.attr({ x: translateX, y: translateY });
+                this.dropdownLabel.attr({ y: this.buttonGroup?.translateY });
 
                 // Skip animation
                 group.placed = buttonGroup.placed = chart.hasLoaded;
