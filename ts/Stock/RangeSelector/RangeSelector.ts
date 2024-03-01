@@ -1330,7 +1330,7 @@ class RangeSelector {
         this.dropdownLabel = renderer.button(
             '',
             0,
-            10,
+            0,
             (): void => {},
             merge(buttonTheme, {
                 'stroke-width': pick(buttonTheme['stroke-width'], 0),
@@ -1538,6 +1538,8 @@ class RangeSelector {
                 );
 
                 this.alignButtonGroup(xOffsetForExportButton);
+                const { translateX = 0, translateY = 0 } = this.buttonGroup!;
+                this.dropdownLabel.attr({ x: translateX, y: translateY });
 
                 // Skip animation
                 group.placed = buttonGroup.placed = chart.hasLoaded;
@@ -1869,6 +1871,10 @@ class RangeSelector {
             zoomText
         } = this;
 
+        if (this.isCollapsed === true) {
+            return;
+        }
+
         this.isCollapsed = true;
 
         zoomText.hide();
@@ -1888,11 +1894,15 @@ class RangeSelector {
             zoomText
         } = this;
 
+        if (this.isCollapsed === false) {
+            return;
+        }
+
         this.isCollapsed = false;
 
+        this.hideDropdown();
         zoomText.show();
         buttons.forEach((button): void => void button.show());
-        this.hideDropdown();
         this.positionButtons();
     }
 
