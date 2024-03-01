@@ -1,6 +1,6 @@
 import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { reportError } from './test-utils';
+import { reportError, wrapRequire } from './test-utils';
 import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
 import { argv } from 'node:process';
 import yargs from 'yargs/yargs';
@@ -12,6 +12,8 @@ const errors = [];
 let testCounter: number = 0;
 
 const { pattern } = yargs(argv).argv as any;
+
+wrapRequire();
 
 starting('Unit tests');
 // require('./prepare-data');

@@ -24,8 +24,9 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart.js';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
@@ -102,7 +103,7 @@ class Fullscreen {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Fullscreen')) {
             // Initialize fullscreen
             addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         }

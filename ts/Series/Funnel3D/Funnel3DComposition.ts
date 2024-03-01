@@ -31,16 +31,12 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
-const {
-    charts,
-    composed
-} = H;
+const { charts } = H;
 import U from '../../Core/Utilities.js';
 const {
     error,
     extend,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -86,11 +82,10 @@ interface Funnel3DPathsObject extends SVGPath3D {
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const rendererProto =
+        SVGRendererClass.prototype as SVGRenderer3D.Composition;
 
-    if (pushUnique(composed, compose)) {
-        const rendererProto =
-            SVGRendererClass.prototype as SVGRenderer3D.Composition;
-
+    if (!rendererProto.funnel3d) {
         rendererProto.Element3D.types.funnel3d = SVGElement3DFunnel;
 
         extend(rendererProto, {

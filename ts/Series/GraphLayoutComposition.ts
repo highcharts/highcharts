@@ -98,7 +98,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'GraphLayout')) {
         addEvent(ChartClass, 'afterPrint', onChartAfterPrint);
         addEvent(ChartClass, 'beforePrint', onChartBeforePrint);
         addEvent(ChartClass, 'predraw', onChartPredraw);

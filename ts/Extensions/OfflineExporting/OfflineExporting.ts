@@ -35,7 +35,6 @@ const { downloadURL } = DownloadURL;
 import Exporting from '../Exporting/Exporting.js';
 import H from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
@@ -48,8 +47,7 @@ const {
     error,
     extend,
     fireEvent,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 AST.allowedAttributes.push(
@@ -156,10 +154,9 @@ namespace OfflineExporting {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (typeof Composition&T) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as Composition;
-
+        if (!chartProto.exportChartLocal) {
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
             chartProto.exportChartLocal = exportChartLocal;
 

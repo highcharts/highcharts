@@ -210,7 +210,7 @@ class Breadcrumbs {
         highchartsDefaultOptions: Options
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Breadcrumbs')) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(
                 ChartClass,

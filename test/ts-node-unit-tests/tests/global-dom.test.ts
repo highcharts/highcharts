@@ -1,18 +1,10 @@
-import { describe, setupDOM } from '../test-utils';
+import { describe, loadHCWithModules, setupDOM } from '../test-utils';
 import { strictEqual } from 'assert';
 
 export function testDOMDependencies() {
     describe('Testing DOM dependencies...');
-    const {win} = setupDOM(
-        `<!doctype html>
-        <html>
-            <body>
-                <div id="container"></div>
-            </body>
-        </html>`
-    );
 
-    const Highcharts = require('../../../code/highcharts.src.js')(win);
+    const Highcharts = loadHCWithModules();
     Highcharts.chart('container', {
         series: [{
             data: [1, 2, 3],

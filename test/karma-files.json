@@ -16,7 +16,6 @@
 	"code/modules/gantt.src.js",
 
 	"code/modules/exporting.src.js",
-	"code/modules/export-data.src.js",
 	"code/modules/parallel-coordinates.src.js",
 	"code/modules/accessibility.src.js",
 	"code/modules/annotations-advanced.src.js",
@@ -75,7 +74,7 @@
 	"code/modules/hollowcandlestick.src.js",
 	"code/modules/heikinashi.src.js",
 	"code/modules/flowmap.src.js",
-	"code/modules/navigator.src.js",
+	"code/modules/export-data.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

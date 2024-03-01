@@ -9,6 +9,7 @@
  * */
 
 const gulp = require('gulp');
+
 /* *
  *
  *  Tasks
@@ -75,7 +76,7 @@ async function scriptsTS(argv) {
 
         fsLib.copyAllFiles(
             'ts',
-            'js',
+            argv.webpack ? 'code/es-modules/' : 'js',
             true,
             sourcePath => sourcePath.endsWith('.d.ts')
         );
@@ -84,6 +85,8 @@ async function scriptsTS(argv) {
             await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
         } else if (argv.datagrid) {
             await processLib.exec(`npx tsc -p ${typeScriptFolderDatagrid}`);
+        } else if (argv.webpack) {
+            await processLib.exec('npx tsc -p ts --outDir code/es-modules/');
         } else {
             await processLib.exec('npx tsc --build ts');
         }
