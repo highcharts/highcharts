@@ -7,6 +7,7 @@
 
 :root {
     --highcharts-color-0: #fff;
+    --bright-color: #f4cff1;
 }
 
 .highcharts-grid-line {
@@ -31,10 +32,20 @@
 }
 
 .highcharts-title {
-    fill: #fff;
+    fill: var(--bright-color);
     font-weight: 500;
     letter-spacing: 0.2em;
-    font-size: 3.5em;
+    font-size: 1.5em;
+}
+
+.highcharts-subtitle {
+    fill: var(--bright-color);
+    font-weight: 100;
+    font-size: 4em;
+}
+
+.small-chart .highcharts-subtitle {
+    font-size: 3em;
 }
 
 .highcharts-range-selector-buttons .highcharts-button {
@@ -44,9 +55,39 @@
 }
 
 .highcharts-button text {
-    fill: #fff;
+    fill: var(--bright-color);
 }
 
 .highcharts-scrollbar-thumb {
-    fill: #fff;
+    fill: var(--bright-color);
+}
+
+.highcharts-scrollbar-track {
+    stroke: var(--bright-color);
+    stroke-opacity: 0.4;
+}
+
+.highcharts-button-box {
+    fill: none;
+}
+
+.highcharts-button-symbol {
+    stroke: var(--bright-color);
+}
+
+.highcharts-crosshair {
+    stroke-dasharray: 1, 3;
+    stroke: var(--bright-color);
+}
+
+.highcharts-point {
+    fill: none;
+    stroke: none;
+}
+
+.highcharts-tooltip-box {
+    fill: #070210;
+    stroke: var(--bright-color);
+    stroke-width: 1px;
+    stroke-opacity: 0.4;
 }
