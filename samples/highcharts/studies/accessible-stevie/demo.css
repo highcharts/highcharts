@@ -1,0 +1,29 @@
+.highcharts-figure {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#grammy-data {
+    display: none;
+}
+
+.tooltip-heading {
+    font-weight: 800;
+    text-align: center;
+}
+
+.win-nom {
+    font-weight: 600;
+    text-align: center;
+    padding: 5px;
+}
+
+.highcharts-tooltip span ul {
+    padding-left: 10px;
+}
+
+.highcharts-tooltip span li {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}

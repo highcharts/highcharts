@@ -1,0 +1,57 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">This chart visualizes Stevie Wonder's Grammy Awards wins and nominations over the years. It provides a detailed look at his recognition within the Grammy Awards from 1967 to 2010.</p>
+</figure>
+
+<pre id="grammy-data">
+year,  wins,  nominations, grammy, songwin, songnom, awardwin, awardnom
+-94694400000, 0, 2, 9th, None, Uptight;Uptight, None, Best Rhythm & Blues Recording;Best Rhythm & Blues Solo Vocal Performance
+-63158400000, 0, 0, 10th, None, None, None, None
+-31536000000, 0, 1, 11th, None, For Once In My Life, None, Best Rhythm & Blues Recording
+0, 0, 0, 12th, None, None, None, None
+31536000000, 0, 2, 13th, None, Signed Sealed Delivered;Signed Sealed Delivered, None, Best Male R&B Vocal Performance;Best Rhythm & Blues Song
+63072000000, 0, 1, 14th, None, We Can Work It Out, None, Best Male R&B Vocal Performance
+94694400000, 0, 0, 15th, None, None, None, None
+126230400000, 4, 2, 16th, Superstition;Superstition;You Are the Sunshine of My Life;Innervisions, You Are the Sunshine of My Life;You Are the Sunshine of My Life, Best Rhythm & Blues Song;Best Male R&B Vocal Performance;Best MalePop Vocal Performance;Album of the Year, Song Of The Year;Record Of The Year
+157766400000, 4, 2, 17th, Living for the City;Boogie On Reggae Woman;Fulfillingness' First Finale;Fulfillingness' First Finale, Tell Me Something Good;Best Producer Of The Year, Best Rhythm & Blues Song;Best Male R&B Vocal Performance;Best Male Pop Vocal Performance;Album of the Year, Best Rhythm & Blues Song;Best Producer Of The Year
+189302400000, 0, 0, 18th, None, None, None, None
+220924800000, 4, 3, 19th, I Wish;Songs in the Key of Life;Best Producer Of The Year;Songs in the Key of Life, Contusion;Have A Talk With God;Contusion, Best Male R&B Vocal Performance;Best Male Pop Vocal Performance;Best Producer Of The Year;Album of the Year, Best Instrumental Composition;Best Inspirational Performance;Best Pop Instrumental Performance
+252460800000, 0, 0, 20th, None, None, None, None
+283996800000, 0, 0, 21st, None, None, None, None
+315532800000, 0, 0, 22nd, None, None, None, None
+347155200000, 0, 4, 23rd, None, Producer Of The Year;Stevie Wonder’s Journey Through The Secret Life Of Plants;Let’s Get Serious;Master Blaster (Jammin’), None, Producer Of The Year;Best Album Of Original Score Written For A Motion Picture Or A Television Special;Best Rhythm & Blues Song;Best Male R&B Vocal Performance
+378691200000, 0, 0, 24th, None, None, None, None
+410227200000, 0, 7, 25th, None, Do I Do;That Girl;Do I Do;What’s That You’re Doing;Do I Do;Ebony And Ivory;Ebony And Ivory, None, Best Instrumental Arrangement Accompanying Vocal(s);Best Rhythm & Blues Song;Best Rhythm & Blues Song;Best R&B Performance by a Duo or Group with Vocals;Best Male R&B Vocal Performance;Best Pop Performance by a Duo or Group with Vocal;Record Of The Year
+441763200000, 0, 0, 26th, None, None, None, None
+473385600000, 0, 4, 27th, None, The Woman In Red;I Just Called to Say I Love You;I Just Called to Say I Love You;I Just Called to Say I Love You, None, Best Male R&B Vocal Performance;Best Pop Instrumental Performance;Best Male Pop Vocal Performance;Song Of The Year
+504921600000, 1, 1, 28th, In Square Circle, In Square Circle, Best Male R&B Vocal Performance, Best Male Pop Vocal Performance
+536457600000, 2, 0, 29th, That's What Friends Are For;That's What Friends Are For, None, Best Pop Performance by a Duo or Group with Vocal;Record Of The Year, None
+567993600000, 0, 2, 30th, None, Skeletons;Skeletons, None, Best Rhythm & Blues Song;Best Male R&B Vocal Performance
+599616000000, 0, 1, 31st, None, Characters, None, Best Male R&B Vocal Performance
+631152000000, 0, 0, 32nd, None, None, None, None
+662688000000, 0, 0, 33rd, None, None, None, None
+694224000000, 0, 3, 34th, None, Jungle Fever;Gotta Have You;Gotta Have You, None, Best Song Written Specifically For A Motion Picture Or For Television; Best Song Written Specifically For A Motion Picture Or For Television;Best Male R&B Vocal Performance
+725846400000, 0, 0, 35th, None, None, None, None
+757382400000, 0, 0, 36th, None, None, None, None
+788918400000, 0, 0, 37th, None, None, None, None
+820454400000, 2, 0, 38th, For Your Love;For Your Love, None, Best Rhythm & Blues Song;Best Male R&B Vocal Performance, None
+852076800000, 0, 1, 39th, None, Kiss Lonely Goodbye, None, Best Pop Instrumental Performance
+883612800000, 0, 2, 40th, None, How Come How Long;How Come How Long, None, Best Short Form Music Video; Best Pop Collaboration With Vocals
+915148800000, 2, 1, 41st, St. Louis Blues;St. Louis Blues, How Come How Long, Best Instrumental Arrangement Accompanying Vocal(s);Best Male R&B Vocal Performance, Best Pop Collaboration with Vocals
+946684800000, 0, 0, 42nd, None, None, None, None
+978307200000, 0, 0, 43rd, None, None, None, None
+1009843200000, 0, 0, 44th, None, None, None, None
+1041379200000, 1, 1, 45th, Love is in Need of Love Today, Christmas Song, Best R&B Performance by a Duo or Group with Vocals, Best Pop Collaboration with Vocals
+1072915200000, 0, 0, 46th, None, None, None, None
+1104537600000, 0, 1, 47th, None, Moon River, None, Best Pop Collaboration with Vocals
+1136073600000, 2, 4, 48th, So Amazing;From the Bottom of My Heart, A Time To Love;So What the Fuss;How Will I Know;A Time To Love, Best R&B Performance by a Duo or Group with Vocals;Best Male Pop Vocal Performance, Best R&B Album;Best Male R&B Vocal Performance;Best R&B Performance by a Duo or Group with Vocals;Best Pop Collaboration with Vocals
+1167609600000, 1, 0, 49th, For Once In My Life, None, Best Pop Collaboration with Vocals, None
+1199145600000, 0, 0, 50th, None, None, None, None
+1230768000000, 0, 1, 51st, None, Never Give You Up, None, Best R&B Performance by a Duo or Group with Vocals
+1262304000000, 0, 1, 52nd, None, All About the Love Again, None, Best Male Pop Vocal Performance
+</pre>
