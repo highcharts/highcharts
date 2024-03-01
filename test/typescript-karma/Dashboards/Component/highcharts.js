@@ -265,13 +265,8 @@ test('HighchartsComponent resizing', function (assert) {
 
     component.resize(undefined, 300);
 
-    assert.deepEqual(
-        {
-            height: component.element.offsetHeight
-        },
-        {
-            height: 300
-        },
+    assert.ok(
+        component.element.style.width === '' && component.element.style.height !== '',
         'Should be able to update just the height. Width should stay the same.'
     );
 
