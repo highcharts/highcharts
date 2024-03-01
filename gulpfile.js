@@ -81,7 +81,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-messages',
     'scripts-ts',
     'scripts-watch',
-    'scripts-webpacks',
+    'scripts-webpack',
     'test',
     'test-docs',
     'test-karma',

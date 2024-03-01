@@ -15,3 +15,4 @@ import GridAxis from '../../Core/Axis/GridAxis.js';
 const G: AnyRecord = Highcharts;
 // Compositions
 GridAxis.compose(G.Axis, G.Chart, G.Tick);
+export default Highcharts;

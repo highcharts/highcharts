@@ -75,7 +75,7 @@ const ohlc = [],
 
 const H = Highcharts,
     /* eslint-disable no-underscore-dangle */
-    bindingsUtils = H._modules['Extensions/Annotations/NavigationBindings.js'].prototype.utils;
+    bindingsUtils = H.NavigationBindings.prototype.utils;
 
 H.seriesType(
     'customIndicatorBasedOnRSI',
