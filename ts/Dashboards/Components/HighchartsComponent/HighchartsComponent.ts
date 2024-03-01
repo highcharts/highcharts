@@ -302,9 +302,13 @@ class HighchartsComponent extends Component {
 
         this.innerResizeTimeouts.push(setTimeout((): void => {
             if (this.chart && this.chart.container) {
+                const heightOffset = this.contentElement.offsetHeight -
+                    this.chart?.container.offsetHeight;
+
                 this.chart.setSize(
                     null,
-                    this.contentElement.clientHeight,
+                    (Math.abs(heightOffset) > 1) ?
+                        this.contentElement.offsetHeight : null,
                     false
                 );
             }

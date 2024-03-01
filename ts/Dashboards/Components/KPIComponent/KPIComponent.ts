@@ -327,11 +327,6 @@ class KPIComponent extends Component {
         height?: number | string | null
     ): this {
         super.resize(width, height);
-
-        if (this.chart && this.chart.container) {
-            this.chart.reflow();
-        }
-
         return this;
     }
 

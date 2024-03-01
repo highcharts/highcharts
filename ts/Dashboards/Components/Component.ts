@@ -777,13 +777,8 @@ abstract class Component {
             // Get offset for border, padding
             const pad =
                 getPaddings(this.element).y + getMargins(this.element).y;
-            const relativeHeight = Math.round(relativeLength(
-                height, Number(getStyle(this.parentElement, 'height'))
-            ));
-            this.dimensions.height = relativeHeight - pad;
             this.element.style.height = 'calc(100% - ' + pad + 'px)';
-            this.contentElement.style.height = 'calc(100% - ' +
-                this.getContentHeight() + 'px)';
+            this.contentElement.style.height = 'calc(100% - ' + (this.getContentHeight() ) + 'px)';
         } else if (height === null) {
             this.dimensions.height = null;
             this.element.style.removeProperty('height');
@@ -811,7 +806,6 @@ abstract class Component {
             const { width, height } = element.getBoundingClientRect();
             const padding = getPaddings(element);
             const margins = getMargins(element);
-
             this.resize(
                 width - padding.x - margins.x,
                 height - padding.y - margins.y
