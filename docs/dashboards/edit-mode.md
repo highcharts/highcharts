@@ -6,8 +6,22 @@ To be able to use Dashboards with layout system and editmode you first have to l
 The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
 
 ```html
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+```
+
+Alternatively, you can also use the NPM package.
+
+```bash
+npm install highcharts @highcharts/dashboards
+```
+
+and import it in your project like:
+```js
+import * as Dashboards from '@highcharts/dashboards';
+import LayoutModule from '@highcharts/dashboards/modules/layout';
+
+LayoutModule(Dashboards);
 ```
 
 
