@@ -95,17 +95,13 @@ For a board create the JavaScript files as shown below.
 
 ## To load a plugin
 A plugin is a third party/community made Highcharts Dashboards addon.
-First, make sure that a plugin supports loading over NPM and load the required
-files. In the example `DataGrid` supports NPM loading, so after installing the
-package you could initialise it like this:
+First, make sure that a plugin supports loading over NPM and load the required files.
+In the example `DataGrid` supports NPM loading, so after installing the package you could initialize and register it like this:
 
 ```ts
-import Dashboards from 'https://code.highcharts.com/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from 'https://code.highcharts.com/dashboards/es-modules/masters/datagrid.src.js';
-import DataGridPlugin from 'https://code.highcharts.com/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin.js';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
+import DataGrid from '@highcharts/dashboards/es-modules/masters/datagrid.src';
 
-const { PluginHandler } = Dashboards;
-DataGridPlugin.custom.connectDataGrid(DataGrid);
-
-PluginHandler.addPlugin(DataGridPlugin);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 ```
