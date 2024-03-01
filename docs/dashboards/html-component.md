@@ -23,6 +23,9 @@ The HTML Component serves as a fundamental building block in dashboards. It offe
     and import it in your project like:
     ```js
     import * as Dashboards from '@highcharts/dashboards';
+    import LayoutModule from '@highcharts/dashboards/modules/layout';
+
+    LayoutModule(Dashboards);
     ```
 
 2. After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.

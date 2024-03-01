@@ -60,10 +60,8 @@ const chart = Highcharts.mapChart('container', {
     },
     tooltip: {
         outside: true,
-        formatter: function () {
-            return `Seat <b>${this.point.name}</b> ` +
-                (this.point.selected ? 'Selected' : 'Available');
-        }
+        format: 'Seat <b>{point.name}</b> {#if point.selected}Selected{else}' +
+            'Available{/if}'
     },
     responsive: {
         rules: [{
@@ -104,25 +102,76 @@ const chart = Highcharts.mapChart('container', {
                 color: colors[3]
             }
         },
-        // Seats
-        data: (function () {
-            const rot = [18, 14, 8, 5, 0, 0, 0, -5, -8, -14, -18],
-                taken = [
-                    '11000000001', // A1-A11
-                    '10110000000',
-                    '00001100000',
-                    '00000011000',
-                    '00000000110',
-                    '00111000011'
-                ].join('');
-
-            return new Array(66).fill(1).map((seat, i) => [
-                String.fromCharCode(65 + Math.floor(i / 11)) + (i % 11 + 1),
-                +taken[i] ? null : void 0,
-                rot[i % 11]
-            ]);
-        }()),
-        keys: ['name', 'value', 'dataLabels.rotation'],
+        // Seats (null values are for taken seats, undefined for available ones)
+        keys: ['name', 'dataLabels.rotation', 'value'],
+        data: [
+            ['A1', 18, null],
+            ['A2', 14, null],
+            ['A3', 8],
+            ['A4', 5],
+            ['A5', 0],
+            ['A6', 0],
+            ['A7', 0],
+            ['A8', -5],
+            ['A9', -8],
+            ['A10', -14],
+            ['A11', -18, null],
+            ['B1', 18, null],
+            ['B2', 14],
+            ['B3', 8, null],
+            ['B4', 5, null],
+            ['B5', 0],
+            ['B6', 0],
+            ['B7', 0],
+            ['B8', -5],
+            ['B9', -8],
+            ['B10', -14],
+            ['B11', -18],
+            ['C1', 18],
+            ['C2', 14],
+            ['C3', 8],
+            ['C4', 5],
+            ['C5', 0, null],
+            ['C6', 0, null],
+            ['C7', 0],
+            ['C8', -5],
+            ['C9', -8],
+            ['C10', -14],
+            ['C11', -18],
+            ['D1', 18],
+            ['D2', 14],
+            ['D3', 8],
+            ['D4', 5],
+            ['D5', 0],
+            ['D6', 0],
+            ['D7', 0, null],
+            ['D8', -5, null],
+            ['D9', -8],
+            ['D10', -14],
+            ['D11', -18],
+            ['E1', 18],
+            ['E2', 14],
+            ['E3', 8],
+            ['E4', 5],
+            ['E5', 0],
+            ['E6', 0],
+            ['E7', 0],
+            ['E8', -5],
+            ['E9', -8, null],
+            ['E10', -14, null],
+            ['E11', -18],
+            ['F1', 18],
+            ['F2', 14],
+            ['F3', 8, null],
+            ['F4', 5, null],
+            ['F5', 0, null],
+            ['F6', 0],
+            ['F7', 0],
+            ['F8', -5],
+            ['F9', -8],
+            ['F10', -14, null],
+            ['F11', -18, null]
+        ],
         joinBy: 'name'
     }, {
         // Row & screen labels

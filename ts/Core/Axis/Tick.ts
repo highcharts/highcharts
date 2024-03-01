@@ -831,6 +831,7 @@ class Tick {
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
         // should not be visible (#20166)
         if (
+            !axis.chart.polar &&
             tick.isNew &&
             (pxPos < axisStart || pxPos > axisEnd)
         ) {

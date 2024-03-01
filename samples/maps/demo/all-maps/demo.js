@@ -246,9 +246,6 @@ function resetDrilldown(chart) {
                 color: '#fff',
                 fontWeight: 'normal',
                 textDecoration: 'none'
-            },
-            breadcrumbs: {
-                floating: true
             }
         },
 
@@ -307,6 +304,11 @@ function resetDrilldown(chart) {
                     },
                     legend: {
                         align: 'center'
+                    },
+                    mapNavigation: {
+                        buttonOptions: {
+                            verticalAlign: 'bottom'
+                        }
                     }
                 }
             }]
