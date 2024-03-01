@@ -79,6 +79,17 @@ class EventProvider {
     }
 
     /**
+     * Remove added event.
+     * @private
+     */
+    public removeEvent(event: Function): void {
+        const pos =
+            this.eventRemovers.indexOf(event);
+        this.eventRemovers[pos]();
+        this.eventRemovers.splice(pos, 1);
+    }
+
+    /**
      * Remove all added events.
      * @private
      */

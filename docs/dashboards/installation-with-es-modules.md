@@ -49,50 +49,6 @@ production.
     </script>
 ```
 
-## Creating a custom bundle (ES6 module)
-
-The advantage of core files over packages is, that only the required features
-are loaded. This reduces the total download size. We can create a bundle of all
-files to further improve the load size and load time. Create a NodeJS project
-and install Highcharts and Webpack as NPM packages.
-
-For a board create the JavaScript files as shown below.
-
-```js
-    import Dashboards from 'https://code.highcharts.com/dashboards/es-modules/masters/dashboards.src.js';
-
-    Dashboards.board('container', {
-        editMode: {
-            enabled: true,
-            contextMenu: {
-                enabled: true
-            }
-        },
-        gui: {
-            enabled: true,
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-col-0'
-                    }]
-                }]
-            }]
-        },
-        components: [
-            {
-                renderTo: 'dashboard-col-0',
-                type: 'HTML',
-                elements: [{
-                    tagName: 'h1',
-                    attributes: {
-                        text: 'Hello world'
-                    }
-                }]
-            }
-        ]
-    });
-```
-
 ## To load a plugin
 A plugin is a third party/community made Highcharts Dashboards addon.
 First, make sure that a plugin supports loading over NPM and load the required files.
