@@ -392,7 +392,8 @@ async function setupDashboard() {
                     // Wrap up the election that is currently being processed?
                     if (rowObjNational.totalVotes > 0) {
                         const prevKey = year - 4;
-                        addNationalSummary(jsonData[prevKey], national);
+
+                        addNationalSummary(jsonData, national, prevKey);
 
                         // Reset counting
                         rowObjNational.totalVotes = 0;
@@ -424,13 +425,11 @@ async function setupDashboard() {
                         rowObj.repPercent = percent;
                         rowObjNational.totalVotes += totalVote;
                         rowObjNational.repVotes += popVote;
-                        national.repCand = candidate;
                     } else { // DEMOCRAT
                         rowObj.demVotes = popVote;
                         rowObj.demPercent = percent;
                         rowObj.totalVotes = totalVote;
                         rowObjNational.demVotes += Number(popVote);
-                        national.demCand = candidate;
                     }
 
                     // Merge rows
@@ -468,6 +467,7 @@ async function setupDashboard() {
                         // Pre-format votes column
                         formatVotesColumns(rowObj);
 
+                        // Add row (state)
                         jsonData[key].data.push(Object.values(rowObj));
 
                         // Prepare for next row (state)
@@ -477,7 +477,7 @@ async function setupDashboard() {
                 }
             }
         });
-        addNationalSummary(jsonData[key], national);
+        addNationalSummary(jsonData, national, key);
 
         return jsonData;
     }
@@ -512,11 +512,7 @@ async function setupDashboard() {
     }
 
 
-    function addNationalSummary(jsonData, national) {
-        function getSurname(name) {
-            return name.split(',')[0];
-        }
-
+    function addNationalSummary(jsonAllData, national, year) {
         const summary = national.data;
 
         // Insert a row with national results (row 1, below header)
@@ -525,11 +521,13 @@ async function setupDashboard() {
 
         formatVotesColumns(summary);
 
-        jsonData.data.splice(1, 0, Object.values(summary));
+        const jsonElData = jsonAllData[year];
+        jsonElData.data.splice(1, 0, Object.values(summary));
 
         // Save candidate names (to be displayed in header)
-        jsonData.candRep = getSurname(national.repCand);
-        jsonData.candDem = getSurname(national.demCand);
+        const yearEl = document.querySelector('elections year#ei_' + year);
+        jsonElData.candDem = yearEl.querySelector('dem candidate').textContent;
+        jsonElData.candRep = yearEl.querySelector('rep candidate').textContent;
     }
 
     function getDataConnectors() {
