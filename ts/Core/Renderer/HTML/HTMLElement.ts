@@ -534,6 +534,11 @@ class HTMLElement extends SVGElement {
 
         this.added = true;
         if (this.alignOnAdd) {
+            const unrotatedBox = this.getBBox(void 0, 0);
+            this.attr({
+                rotationOriginX: unrotatedBox.width / 2,
+                rotationOriginY: unrotatedBox.height / 2
+            });
             this.updateTransform();
         }
 
