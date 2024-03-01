@@ -111,7 +111,7 @@ detailsButton.addEventListener('click', function () {
         const detailsText = document.createElement('p');
 
         detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'The gauge is divided into three color-coded areas, indicating low (0-4 cups), moderate (4-8 cups) and high (8-12 cups) coffee consumption. The current value is 7 cups per day.';
+        detailsText.innerText = 'The gauge is divided into three color-coded areas, green (0-4 cups), yellow (4-8 cups) and red (8-12 cups) coffee consumption. The current value is 7 cups per day.';
 
         detailsDiv.appendChild(detailsText);
         detailsButton.insertAdjacentElement('afterend', detailsDiv);
