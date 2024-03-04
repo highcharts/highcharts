@@ -47,7 +47,7 @@
     color: #aaa;
 }
 
-@container dashboard (max-width: 975px) {
+@container dashboard (max-width: 992px) {
     #rev-chart,
     #cost-chart,
     #stock-cell {
@@ -55,7 +55,7 @@
     }
 }
 
-@container dashboard (max-width: 550px) {
+@container dashboard (max-width: 576px) {
     #rev-chart-kpi,
     #cost-chart-kpi,
     #res-chart-kpi {
