@@ -45,10 +45,6 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            columnAssignment: {
-                Food: 'x',
-                'Vitamin A': 'y'
-            },
             title: {
                 text: 'sync highlight: true'
             },
@@ -61,10 +57,6 @@ Dashboards.board('container', {
             type: 'Highcharts',
             sync: {
                 highlight: false
-            },
-            columnAssignment: {
-                Food: 'x',
-                'Vitamin A': 'y'
             },
             title: {
                 text: 'sync highlight: false'

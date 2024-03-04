@@ -84,7 +84,7 @@ const configs: {
     handlers: {
         extremesHandler(
             this: Component
-        ): void {
+        ): void | (() => void) {
             const component = this as NavigatorComponent,
                 dataCursor = component.board.dataCursor;
 
@@ -144,7 +144,6 @@ const configs: {
 
             const registerCursorListeners = (): void => {
                 const table = component.connector && component.connector.table;
-
                 if (table) {
                     dataCursor.addListener(
                         table.id,
@@ -166,7 +165,6 @@ const configs: {
 
             const unregisterCursorListeners = (): void => {
                 const table = component.connector && component.connector.table;
-
                 if (table) {
                     dataCursor.removeListener(
                         table.id,
@@ -187,9 +185,7 @@ const configs: {
             };
 
             registerCursorListeners();
-
-            component.on('setConnector', (): void => unregisterCursorListeners());
-            component.on('afterSetConnector', (): void => registerCursorListeners());
+            return unregisterCursorListeners;
         }
 
     },

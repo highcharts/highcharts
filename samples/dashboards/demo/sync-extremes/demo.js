@@ -58,14 +58,14 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Population'
+            id: 'Population',
+            columnAssignment: [{
+                seriesId: 'Population (mln)',
+                data: ['City', 'Population (mln)']
+            }]
         },
         renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            City: 'x',
-            'Population (mln)': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -120,13 +120,13 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Population'
+            id: 'Population',
+            columnAssignment: [{
+                seriesId: 'Metro Area (km²)',
+                data: ['City', 'Metro Area (km²)']
+            }]
         },
         type: 'Highcharts',
-        columnAssignment: {
-            City: 'x',
-            'Metro Area (km²)': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -175,7 +175,11 @@ Dashboards.board('container', {
     {
         renderTo: 'dashboard-col-2',
         connector: {
-            id: 'Population'
+            id: 'Population',
+            columnAssignment: [{
+                seriesId: 'Highest Elevation (m)',
+                data: ['City', 'Highest Elevation (m)']
+            }]
         },
         title: {
             text: 'Highest Elevation'
@@ -184,10 +188,6 @@ Dashboards.board('container', {
             extremes: true
         },
         type: 'Highcharts',
-        columnAssignment: {
-            City: 'x',
-            'Highest Elevation (m)': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',

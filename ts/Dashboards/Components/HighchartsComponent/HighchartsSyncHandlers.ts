@@ -35,7 +35,7 @@ import type DataTable from '../../../Data/DataTable';
 import ComponentType from '../../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../../Core/Utilities.js';
-const { addEvent } = U;
+const { addEvent, isString } = U;
 
 
 /**
@@ -245,13 +245,9 @@ const configs: {
 
                                 // Prefer a series that's in a related table,
                                 // but allow for other data
-                                const seriesInTable = axis.series
-                                    .filter((series): boolean =>
-                                        table.hasColumns([series.name]));
-
-                                const [series] = seriesInTable.length ?
-                                    seriesInTable :
-                                    axis.series;
+                                const series = component.seriesFromConnector.length > 0 ?
+                                    chart.get(component.seriesFromConnector[0]) as Series :
+                                    axis.series[0];
 
                                 if (series) {
                                     // Get the indexes of the first and last drawn points
@@ -268,10 +264,34 @@ const configs: {
                                         state: `${axis.coll}.extremes.max`
                                     };
 
-                                    if (seriesInTable.length && axis.coll === 'xAxis' && visiblePoints.length) {
-                                        const columnName = axis.dateTime && table.hasColumns(['x']) ?
-                                            'x' :
-                                            series.name;
+                                    if (
+                                        component.seriesFromConnector.length > 0 &&
+                                        axis.coll === 'xAxis' &&
+                                        visiblePoints.length
+                                    ) {
+                                        let columnName: string | undefined;
+                                        const columnAssignment = component.options.connector?.columnAssignment;
+                                        if (columnAssignment) {
+                                            const assignment = columnAssignment.find((assignment): boolean =>
+                                                assignment.seriesId === series.options.id
+                                            );
+                                            if (assignment) {
+                                                const data = assignment.data;
+                                                if (isString(data)) {
+                                                    columnName = data;
+                                                } else if (Array.isArray(data)) {
+                                                    columnName = data[data.length - 1];
+                                                } else {
+                                                    columnName = data.y;
+                                                }
+                                            }
+                                        }
+
+                                        if (!columnName) {
+                                            columnName = axis.dateTime && table.hasColumns(['x']) ?
+                                                'x' :
+                                                series.options.id ?? series.name;
+                                        }
 
                                         minCursorData.row = visiblePoints[0].index;
                                         minCursorData.column = columnName;
@@ -558,7 +578,7 @@ const configs: {
                     // Abort if the affected chart is the same as the one
                     // that is currently affected manually.
                     if (point && (
-                        !point.isInside ||
+                        !point.isInside && point.series.isCartesian ||
                         point === chart.hoverPoint
                     )) {
                         return;

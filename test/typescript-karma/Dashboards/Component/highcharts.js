@@ -338,31 +338,37 @@ test('Data columnAssignment', async function (assert) {
             renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y'
+                id: 'EUR-USD',
+                columnAssignment: [{
+                    seriesId: 'EUR',
+                    data: ['Day', 'EUR']
+                }, {
+                    seriesId: 'Rate',
+                    data: ['Day', 'Rate']
+                }]
             }
         }, {
             renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y'
+                id: 'EUR-USD',
+                columnAssignment: [{
+                    seriesId: 'eur-series',
+                    data: ['Day', 'EUR']
+                }, {
+                    seriesId: 'rate-series',
+                    data: ['Day', 'Rate']
+                }],
             },
             chartOptions: {
                 yAxis: [{}, {
                     opposite: true
                 }],
                 series: [{
+                    id: 'eur-series',
                     name: 'EUR'
                 }, {
+                    id: 'rate-series',
                     name: 'Rate',
                     yAxis: 1
                 }]
@@ -371,18 +377,21 @@ test('Data columnAssignment', async function (assert) {
             renderTo: 'dashboard-col-2',
             type: 'Highcharts',
             connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y'
+                id: 'EUR-USD',
+                columnAssignment: [{
+                    seriesId: 'eur-series',
+                    data: ['Day', 'EUR']
+                }, {
+                    seriesId: 'Rate',
+                    data: ['Day', 'Rate']
+                }],
             },
             chartOptions: {
                 yAxis: [{}, {
                     opposite: true
                 }],
                 series: [{
+                    id: 'eur-series',
                     name: 'EUR',
                     yAxis: 1
                 }]
@@ -391,28 +400,33 @@ test('Data columnAssignment', async function (assert) {
             renderTo: 'dashboard-col-3',
             type: 'Highcharts',
             connector: {
-                id: 'micro-element'
-            },
-            columnAssignment: {
-                'x': 'x',
-                'mySeries1': 'value',
-                'mySeries2': 'value',
-                'mySeriesName': {
-                    'open': 'myOpen',
-                    'high': 'myHigh',
-                    'low': 'myLow',
-                    'close': 'myClose'
-                }
+                id: 'micro-element',
+                columnAssignment: [{
+                    seriesId: 'mySeries1',
+                    data: ['x', 'mySeries1']
+                }, {
+                    seriesId: 'mySeries2',
+                    data: ['x', 'mySeries2']
+                }, {
+                    seriesId: 'mySeriesId',
+                    data: {
+                        x: 'x',
+                        open: 'myOpen',
+                        high: 'myHigh',
+                        low: 'myLow',
+                        close: 'myClose'
+                    }
+                }]
             },
             chartOptions: {
                 series: [{
-                    name: 'mySeries1',
+                    id: 'mySeries1',
                     type: 'spline'
                 }, {
-                    name: 'mySeries2',
+                    id: 'mySeries2',
                     type: 'line'
                 }, {
-                    name: 'mySeriesName',
+                    id: 'mySeriesId',
                     type: 'ohlc'
                 }]
             }
@@ -420,28 +434,32 @@ test('Data columnAssignment', async function (assert) {
             renderTo: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
-                id: 'micro-element'
-            },
-            columnAssignment: {
-                'x': 'x',
-                'mySeries1': 'value',
-                'mySeries2': 'value',
-                'mySeriesName': {
-                    'open': 'myOpen',
-                    'high': 'myHigh',
-                    'low': 'myLow',
-                    'close': 'myClose'
-                }
+                id: 'micro-element',
+                columnAssignment: [{
+                    seriesId: 'my-series-1',
+                    data: 'mySeries1'
+                }, {
+                    seriesId: 'my-series-2',
+                    data: 'mySeries2'
+                }, {
+                    seriesId: 'my-series-3',
+                    data: {
+                        open: 'myOpen',
+                        high: 'myHigh',
+                        low: 'myLow',
+                        close: 'myClose'
+                    }
+                }]
             },
             chartOptions: {
                 series: [{
-                    name: 'mySeries1',
+                    id: 'my-series-1',
                     type: 'spline'
                 }, {
-                    name: 'mySeries2',
+                    id: 'my-series-2',
                     type: 'line'
                 }, {
-                    name: 'mySeriesName',
+                    id: 'my-series-3',
                     type: 'candlestick'
                 }]
             }
@@ -449,12 +467,14 @@ test('Data columnAssignment', async function (assert) {
             renderTo: 'dashboard-col-5',
             type: 'Highcharts',
             connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y'
+                id: 'EUR-USD',
+                columnAssignment: [{
+                    seriesId: 'EUR',
+                    data: ['Day', 'EUR']
+                }, {
+                    seriesId: 'rate-series',
+                    data: ['Day', 'Rate']
+                }],
             },
             chartOptions: {
                 yAxis: [{
@@ -468,6 +488,7 @@ test('Data columnAssignment', async function (assert) {
                     opposite: true
                 }],
                 series: [{
+                    id: 'rate-series',
                     name: 'Rate',
                     type: 'column'
                 }, {
@@ -487,14 +508,14 @@ test('Data columnAssignment', async function (assert) {
     assert.ok(
         // @ts-ignore
         mountedComponents[0].component.chart.series.length === 2,
-        'Columns parsed to series.'
+        'Columns parsed to series by the basic column assignment.'
     );
 
     // columnAssigment merged with the same series options array
     assert.ok(
         // @ts-ignore
         mountedComponents[1].component.chart.series.length === 2,
-        'Columns parsed to series.'
+        'Columns parsed to existing series.'
     );
 
     assert.ok(
@@ -513,7 +534,7 @@ test('Data columnAssignment', async function (assert) {
     assert.ok(
         // @ts-ignore
         mountedComponents[2].component.chart.series.length === 2,
-        'Columns parsed to series.'
+        'Columns parsed to series with shorter series options array.'
     );
 
     assert.ok(
@@ -533,7 +554,7 @@ test('Data columnAssignment', async function (assert) {
     assert.ok(
         // @ts-ignore
         mountedComponents[3].component.chart.series.length === 3,
-        'Columns parsed to series.'
+        'Columns parsed to series (OHLC).'
     );
 
     assert.ok(
@@ -558,7 +579,7 @@ test('Data columnAssignment', async function (assert) {
     assert.ok(
         // @ts-ignore
         mountedComponents[4].component.chart.series.length === 3,
-        'Columns parsed to series.'
+        'Columns parsed to series (Candlestick).'
     );
 
     assert.ok(
@@ -577,7 +598,7 @@ test('Data columnAssignment', async function (assert) {
     assert.ok(
         // @ts-ignore
         mountedComponents[5].component.chart.series.length === 3,
-        'Columns parsed to series.'
+        'Columns parsed to series (series options array and extra series with data).'
     );
 
     assert.ok(
@@ -694,7 +715,14 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
         components: [{
             renderTo: 'dashboard-col-1',
             connector: {
-                id: 'micro-element'
+                id: 'micro-element',
+                columnAssignment: [{
+                    seriesId: 'DiskSpace',
+                    data: ['InstanceType', 'DiskSpace']
+                }, {
+                    seriesId: 'ReadOps',
+                    data: ['InstanceType', 'ReadOps']
+                }]
             },
             type: 'Highcharts',
             chartOptions: {
@@ -704,11 +732,6 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
                 xAxis: {
                     type: 'category'
                 }
-            },
-            columnAssignment: {
-                InstanceType: 'x',
-                DiskSpace: 'y',
-                ReadOps: 'y'
             },
         }]
         }, true);

@@ -545,10 +545,6 @@ async function setupDashboard() {
             }, {
                 cell: 'city-chart',
                 type: 'Highcharts',
-                columnAssignment: {
-                    time: 'x',
-                    temperature: 'y'
-                },
                 sync: {
                     highlight: true
                 },
@@ -803,13 +799,11 @@ async function updateBoard(board, city, paramName,
 
     await cityChart.update({
         connector: {
-            id: city
-        },
-        columnAssignment: {
-            time: 'x',
-            temperature: paramName === 'temperature' ? 'y' : null,
-            wind: isWind ? 'y' : null,
-            precipitation: paramName === 'precipitation' ? 'y' : null
+            id: city,
+            columnAssignment: [{
+                seriesId: paramName,
+                data: ['time', paramName]
+            }]
         },
         chartOptions: options
     });

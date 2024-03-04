@@ -188,14 +188,15 @@ Dashboards.board('container', {
         renderTo: 'chart-cell',
         type: 'Highcharts',
         connector: {
-            id: 'data'
-        },
-        columnAssignment: {
-            Population: 'x',
-            'Happiness Score vs Population': {
-                y: 'Happiness Score',
-                name: 'Country'
-            }
+            id: 'data',
+            columnAssignment: [{
+                seriesId: 'happiness-vs-population',
+                data: {
+                    x: 'Population',
+                    y: 'Happiness Score',
+                    name: 'Country'
+                }
+            }]
         },
         chartOptions: {
             chart: {
@@ -227,7 +228,8 @@ Dashboards.board('container', {
             },
             series: [{
                 type: 'scatter',
-                name: 'Happiness Score vs Population'
+                name: 'Happiness Score vs Population',
+                id: 'happiness-vs-population'
             }],
             tooltip: {
                 formatter: function () {

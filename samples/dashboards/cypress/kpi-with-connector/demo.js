@@ -54,12 +54,12 @@ Dashboards.board('container', {
                 }
             }
         },
-        columnAssignment: {
-            Date: 'x',
-            Value: 'y'
-        },
         connector: {
-            id: 'value'
+            id: 'value',
+            columnAssignment: [{
+                seriesId: 'Values',
+                data: ['Date', 'Value']
+            }]
         }
     }, {
         renderTo: 'kpi-2'

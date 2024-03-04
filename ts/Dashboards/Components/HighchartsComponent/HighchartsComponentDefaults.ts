@@ -221,8 +221,8 @@ const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
                 'chartOptions',
                 'chartConfig'
             ]
-        }),
-    columnAssignment: void 0
+        }
+    )
 };
 
 

@@ -69,14 +69,15 @@ Dashboards.board('container', {
             }
         },
         connector: {
-            id: 'connector-1'
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: '$NOK',
+                data: '$NOK'
+            }]
         },
         sync: {
             visibility: true,
             highlight: true
-        },
-        columnAssignment: {
-            $NOK: 'y'
         }
     }, {
         renderTo: 'dashboard-col-1',
@@ -93,15 +94,18 @@ Dashboards.board('container', {
             }
         },
         connector: {
-            id: 'connector-1'
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: '$GME',
+                data: '$GME'
+            }, {
+                seriesId: '$AMC',
+                data: '$AMC'
+            }]
         },
         sync: {
             visibility: true,
             highlight: true
-        },
-        columnAssignment: {
-            $GME: 'y',
-            $AMC: 'y'
         }
     }]
 }, true);

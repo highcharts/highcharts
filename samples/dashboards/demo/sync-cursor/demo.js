@@ -32,10 +32,6 @@ Dashboards.board('container', {
         connector: {
             id: 'VegeTable'
         },
-        columnsAssignment: {
-            Vegetable: 'name',
-            Amount: 'y'
-        },
         chartOptions: {
             chart: {
                 type: 'bar'
@@ -71,10 +67,6 @@ Dashboards.board('container', {
         },
         connector: {
             id: 'VegeTable'
-        },
-        columnsAssignment: {
-            Vegetable: 'name',
-            Amount: 'y'
         },
         chartOptions: {
             chart: {
@@ -114,10 +106,6 @@ Dashboards.board('container', {
         },
         connector: {
             id: 'VegeTable'
-        },
-        columnsAssignment: {
-            Vegetable: 'name',
-            Amount: 'y'
         },
         chartOptions: {
             chart: {

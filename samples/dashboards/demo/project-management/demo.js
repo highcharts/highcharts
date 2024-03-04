@@ -200,49 +200,47 @@ Dashboards.board('container', {
                 headerFormat: ''
             },
             series: [{
-                data: [
-                    {
-                        name: 'F:1352',
-                        start: Date.UTC(2023, 4, 1, 9),
-                        end: Date.UTC(2023, 4, 19, 17)
-                    }, {
-                        name: 'I.20-00',
-                        start: Date.UTC(2023, 4, 1, 9),
-                        end: Date.UTC(2023, 4, 5, 17)
-                    }, {
-                        name: 'I.20-01',
-                        start: Date.UTC(2023, 4, 8, 9),
-                        end: Date.UTC(2023, 4, 12, 17)
-                    }, {
-                        name: 'F:2741',
-                        start: Date.UTC(2023, 4, 15, 9),
-                        end: Date.UTC(2023, 5, 2, 17)
-                    }, {
-                        name: 'I.20-02',
-                        start: Date.UTC(2023, 4, 15, 9),
-                        end: Date.UTC(2023, 4, 19, 17)
-                    }, {
-                        name: 'I.20-03',
-                        start: Date.UTC(2023, 4, 22, 9),
-                        end: Date.UTC(2023, 4, 26, 17)
-                    }, {
-                        name: 'I.20-04',
-                        start: Date.UTC(2023, 4, 29, 9),
-                        end: Date.UTC(2023, 5, 2, 17)
-                    }, {
-                        name: 'I.20-05',
-                        start: Date.UTC(2023, 5, 5, 9),
-                        end: Date.UTC(2023, 5, 9, 17)
-                    }, {
-                        name: 'F:1982',
-                        start: Date.UTC(2023, 4, 1, 9),
-                        end: Date.UTC(2023, 4, 26, 17)
-                    }, {
-                        name: 'F:673',
-                        start: Date.UTC(2023, 4, 29, 9),
-                        end: Date.UTC(2023, 5, 9, 17)
-                    }
-                ]
+                data: [{
+                    name: 'F:1352',
+                    start: Date.UTC(2023, 4, 1, 9),
+                    end: Date.UTC(2023, 4, 19, 17)
+                }, {
+                    name: 'I.20-00',
+                    start: Date.UTC(2023, 4, 1, 9),
+                    end: Date.UTC(2023, 4, 5, 17)
+                }, {
+                    name: 'I.20-01',
+                    start: Date.UTC(2023, 4, 8, 9),
+                    end: Date.UTC(2023, 4, 12, 17)
+                }, {
+                    name: 'F:2741',
+                    start: Date.UTC(2023, 4, 15, 9),
+                    end: Date.UTC(2023, 5, 2, 17)
+                }, {
+                    name: 'I.20-02',
+                    start: Date.UTC(2023, 4, 15, 9),
+                    end: Date.UTC(2023, 4, 19, 17)
+                }, {
+                    name: 'I.20-03',
+                    start: Date.UTC(2023, 4, 22, 9),
+                    end: Date.UTC(2023, 4, 26, 17)
+                }, {
+                    name: 'I.20-04',
+                    start: Date.UTC(2023, 4, 29, 9),
+                    end: Date.UTC(2023, 5, 2, 17)
+                }, {
+                    name: 'I.20-05',
+                    start: Date.UTC(2023, 5, 5, 9),
+                    end: Date.UTC(2023, 5, 9, 17)
+                }, {
+                    name: 'F:1982',
+                    start: Date.UTC(2023, 4, 1, 9),
+                    end: Date.UTC(2023, 4, 26, 17)
+                }, {
+                    name: 'F:673',
+                    start: Date.UTC(2023, 4, 29, 9),
+                    end: Date.UTC(2023, 5, 9, 17)
+                }]
             }],
             lang: {
                 accessibility: {
@@ -270,13 +268,17 @@ Dashboards.board('container', {
         type: 'Highcharts',
         title: 'Cumulative flow',
         connector: {
-            id: 'cumulativeData'
-        },
-        columnAssignment: {
-            Date: 'x',
-            Done: 'y',
-            'To Do': 'y',
-            Blocked: 'y'
+            id: 'cumulativeData',
+            columnAssignment: [{
+                seriesId: 'Done',
+                data: ['Date', 'Done']
+            }, {
+                seriesId: 'To Do',
+                data: ['Date', 'To Do']
+            }, {
+                seriesId: 'Blocked',
+                data: ['Date', 'Blocked']
+            }]
         },
         chartOptions: {
             chart: {

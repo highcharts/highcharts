@@ -22,8 +22,13 @@
 
 
 import type Component from '../Component';
+import type {
+    ComponentConnectorOptions
+} from '../../Components/ComponentOptions';
 import type Sync from '../Sync/Sync';
-import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
+import type {
+    Options as HighchartsOptions
+} from '../../Plugins/HighchartsTypes';
 
 
 /* *
@@ -64,6 +69,11 @@ export interface Options extends Component.Options {
     chartConstructor?: ConstructorType;
 
     /**
+     * Connector options for the component.
+     */
+    connector?: ConnectorOptions;
+
+    /**
      * Type of the component.
      */
     type: 'Highcharts';
@@ -85,25 +95,9 @@ export interface Options extends Component.Options {
     chartID?: string;
 
     /**
-     * Names that should be mapped to point values or props. You can
-     * declare which columns will be parameter of the point. It is useful for
-     * series like OHLC, candlestick, columnrange or arearange.
-     *
-     * The seriesName field is mandatory for displaying series (for instance in
-     * the legend) properly.
-     *
-     * @example
-     * ```
-     * columnAssignment: {
-     *      'Dates': 'x',
-     *      'mySeriesName': {
-     *             'open': 'myOpen',
-     *             'high': 'myHigh',
-     *             'low': 'myLow',
-     *             'close': 'myClose'
-     *      }
-     * }
-     * ```
+     * @deprecated
+     * This option is deprecated and does not work anymore.
+     * Use [`connector.columnAssignment`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
     */
     columnAssignment?: Record<string, string | Record<string, string>>;
 
@@ -130,6 +124,90 @@ export interface Options extends Component.Options {
     * Sync options for the component.
     */
     syncHandlers?: Sync.OptionsRecord;
+}
+
+/**
+ * Highcharts component connector options.
+ */
+export interface ConnectorOptions extends ComponentConnectorOptions {
+    /**
+     * It allows to assign the data from the connector to specific series in the
+     * chart in different ways using series IDs and column names.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
+     *
+     * @example
+     * ```
+     * // One-dimensional data column assignment
+     * columnAssignment: [{
+     *     seriesId: 'mySeriesId',
+     *     data: 'myData'
+     * }]
+     *
+     * // Two-dimensional data column assignment
+     * columnAssignment: [{
+     *     seriesId: 'mySeriesId',
+     *     data: ['myX', 'myY']
+     * }]
+     *
+     * // Key-defined two-dimensional data column assignment
+     * columnAssignment: [{
+     *     seriesId: 'myStockSeriesId',
+     *     data: {
+     *         x: 'myX',
+     *         open: 'myOpen',
+     *         high: 'myHigh',
+     *         low: 'myLow',
+     *         close: 'myClose'
+     *     },
+     * }, {
+     *     seriesId: 'myColumnSeriesId',
+     *     data: {
+     *         name: 'myNamesColumn',
+     *         y: 'myYColumn',
+     *         'dataLabels.style.visibility': 'myDataLabelVisibilityColumn'
+     *     }
+     * }]
+     * ```
+     */
+    columnAssignment?: ColumnAssignmentOptions[];
+}
+
+/**
+ * Column to series data assignment options.
+ */
+export interface ColumnAssignmentOptions {
+    /**
+     * The series id that the data should be assigned to. If the series with
+     * given `id` is not found, the series will be created automatically. The
+     * series name will be the same as the series `id` then.
+     */
+    seriesId: string;
+    /**
+     * The column data for the series in the chart. Value can be:
+     * - `string` - name of the column that contains the one-dimensional data.
+     * - `string[]` - names of the columns that data will be used in the
+     * two-dimensional format.
+     * - `Record<string, string>` - the object with the keys as [series data key names](https://api.highcharts.com/highcharts/plotOptions.series.keys)
+     * and column names that will be used for the key-defined two-dimensional
+     * series data.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-1d-data | One-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-2d-data | Two-dimensional data column assignment}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/highcharts-column-assignment-keys-data | Key-defined two-dimensional data column assignment}
+     *
+     */
+    data: string | string[] | Record<string, string>;
 }
 
 /**

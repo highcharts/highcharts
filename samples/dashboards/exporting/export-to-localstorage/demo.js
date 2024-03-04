@@ -53,10 +53,6 @@ let board = Dashboards.board('container', {
         },
         renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
         chartOptions: {
             chart: {
                 type: 'pie'
@@ -74,10 +70,6 @@ let board = Dashboards.board('container', {
             id: 'Vitamin'
         },
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'

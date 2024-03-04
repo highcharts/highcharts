@@ -40,18 +40,17 @@ Dashboards.board('container', {
         {
             renderTo: 'dashboard-col-0',
             connector: {
-                id: 'connector-1'
+                id: 'connector-1',
+                columnAssignment: [{
+                    seriesId: 'Vitamin A',
+                    data: ['Food', 'Vitamin A']
+                }]
             },
             type: 'Highcharts',
             sync: {
                 highlight: true,
                 visibility: true,
                 extremes: true
-            },
-            columnAssignment: {
-                Food: 'x',
-                'Vitamin A': 'y',
-                hiddenColumn: null
             },
             chartOptions: {
                 xAxis: {
