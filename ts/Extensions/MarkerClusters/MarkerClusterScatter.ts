@@ -48,8 +48,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
 import U from '../../Core/Utilities.js';
@@ -63,7 +61,6 @@ const {
     isNumber,
     merge,
     objectEach,
-    pushUnique,
     relativeLength,
     syncTimeout
 } = U;
@@ -401,10 +398,9 @@ function compose(
     highchartsDefaultOptions: Options,
     ScatterSeriesClass: typeof ScatterSeries
 ): void {
+    const scatterProto = ScatterSeriesClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const scatterProto = ScatterSeriesClass.prototype;
-
+    if (!scatterProto.markerClusterAlgorithms) {
         baseGeneratePoints = scatterProto.generatePoints;
 
         scatterProto.markerClusterAlgorithms = markerClusterAlgorithms;
@@ -617,7 +613,7 @@ function onPointDrillToCluster(
             xAxis = point.series.xAxis,
             yAxis = point.series.yAxis,
             chart = point.series.chart,
-            { inverted, mapView } = chart,
+            { inverted, mapView, pointer } = chart,
             clusterOptions = series.options.cluster,
             drillToCluster = (clusterOptions || {}).drillToCluster;
 
@@ -663,8 +659,12 @@ function onPointDrillToCluster(
                 if (y1Px > y2Px) {
                     [y1Px, y2Px] = [y2Px, y1Px];
                 }
-                chart.pointer.zoomX = true;
-                chart.pointer.zoomY = true;
+
+                if (pointer) {
+                    pointer.zoomX = true;
+                    pointer.zoomY = true;
+                }
+
                 chart.transform({
                     from: {
                         x: x1Px,
@@ -733,7 +733,7 @@ function seriesAnimateClusterPoint(
             parentId = (newState || {})[clusterObj.stateId].parentsId[0];
             oldPointObj = oldState[parentId];
 
-            // If old and new poistions are the same do not animate.
+            // If old and new positions are the same do not animate.
             if (
                 newPointObj.point &&
                 newPointObj.point.graphic &&

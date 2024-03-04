@@ -97,7 +97,7 @@ const getNormalizedTickInterval = (
     void 0,
     pick(
         axis.options.allowDecimals,
-        // If the tick interval is greather than 0.5, avoid decimals, as
+        // If the tick interval is greater than 0.5, avoid decimals, as
         // linear axes are often used to render discrete values (#3363). If
         // a tick amount is set, allow decimals by default, as it increases
         // the chances for a good fit.
@@ -129,7 +129,7 @@ declare module '../Series/SeriesOptions' {
  * */
 
 /**
- * Create a new axis object. Called internally when instanciating a new chart or
+ * Create a new axis object. Called internally when instantiating a new chart or
  * adding axes by {@link Highcharts.Chart#addAxis}.
  *
  * A chart can have from 0 axes (pie chart) to multiples. In a normal, single
@@ -250,7 +250,7 @@ class Axis {
     public linkedParent?: Axis;
     public max?: number;
     public maxLabelDimensions?: SizeObject;
-    public maxLabelLength!: number;
+    public maxLabelLength?: number;
     public min?: number;
     public minorTickInterval!: number;
     public minorTicks!: Record<string, Tick>;
@@ -469,7 +469,7 @@ class Axis {
         axis.isLinked = defined(options.linkedTo);
 
         /**
-         * List of major ticks mapped by postition on axis.
+         * List of major ticks mapped by position on axis.
          *
          * @see {@link Highcharts.Tick}
          *
@@ -1327,7 +1327,7 @@ class Axis {
                 min + minRange,
                 pick(options.max, min + minRange)
             ];
-            // If space is availabe, stay within the data range
+            // If space is available, stay within the data range
             if (spaceAvailable) {
                 maxArgs[2] = logarithmic ?
                     logarithmic.log2lin(axis.dataMax as any) :
@@ -1425,7 +1425,7 @@ class Axis {
                 ) :
                 point.series.autoIncrement();
         }
-        if (nameX === -1) { // Not found in currenct categories
+        if (nameX === -1) { // Not found in current categories
             if (!explicitCategories && names) {
                 x = names.length;
             }
@@ -1877,7 +1877,7 @@ class Axis {
                 this.tickAmount ?
                     range / Math.max(this.tickAmount - 1, 1) :
                     void 0,
-                // For categoried axis, 1 is default, for linear axis use
+                // For categorized axis, 1 is default, for linear axis use
                 // tickPix
                 categories ?
                     1 :

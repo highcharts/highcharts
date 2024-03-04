@@ -76,7 +76,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && pushUnique(composed, compose)) {
+    if (wglMode && pushUnique(composed, 'Boost.Chart')) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 
@@ -104,7 +104,7 @@ function getBoostClipRect(
             chart.plotHeight
     };
 
-    // Clipping of individal series (#11906, #19039).
+    // Clipping of individual series (#11906, #19039).
     if ((target as Series).getClipBox) {
         const { xAxis, yAxis } = target as Series;
         clipBox = (target as Series).getClipBox();

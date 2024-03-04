@@ -21,15 +21,12 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -110,13 +107,15 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (pushUnique(composed, compose)) {
+    const axisProto = AxisClass.prototype;
+
+    if (!axisProto.applyGrouping) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.
         addEvent(AxisClass, 'postProcessData', applyGrouping);
 
-        extend(AxisClass.prototype, {
+        extend(axisProto, {
             applyGrouping,
             getGroupPixelWidth,
             setDataGrouping
@@ -180,8 +179,8 @@ function getGroupPixelWidth(
 
 
 /**
- * When resetting the scale reset the hasProccessed flag to avoid taking
- * previous data grouping of neighbour series into accound when determining
+ * When resetting the scale reset the hasProcessed flag to avoid taking
+ * previous data grouping of neighbour series into account when determining
  * group pixel width (#2692).
  * @private
  */
@@ -235,7 +234,7 @@ function setDataGrouping(
             }, false);
         }
 
-    // Axis not yet instanciated, alter series options
+    // Axis not yet instantiated, alter series options
     } else {
         (this as any).chart.options.series.forEach(function (
             seriesOptions: any
@@ -247,7 +246,7 @@ function setDataGrouping(
         });
     }
 
-    // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
+    // Clear ordinal slope, so we won't accidentally use the old one (#7827)
     if (axis.ordinal) {
         axis.ordinal.slope = void 0;
     }

@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2024 Torstein Honsi
  *
- *  Extenstion for 3d axes
+ *  Extension for 3d axes
  *
  *  License: www.highcharts.com/license
  *
@@ -30,10 +30,7 @@ import Axis3DDefaults from './Axis3DDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const {
-    composed,
-    deg2rad
-} = H;
+const { deg2rad } = H;
 import Math3D from '../Math3D.js';
 const {
     perspective,
@@ -46,7 +43,6 @@ const {
     addEvent,
     merge,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -438,7 +434,7 @@ class Axis3DAdditions {
 
         Tick3D.compose(TickClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (!AxisClass.keepProps.includes('axis3D')) {
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
             AxisClass.keepProps.push('axis3D');
@@ -624,7 +620,7 @@ class Axis3DAdditions {
                 vecY = { x: vecX.z * sin, y: cos, z: -vecX.x * sin };
             }
         } else if (positionMode === 'ortho') {
-            // Labels will be rotated to be ortogonal to the axis
+            // Labels will be rotated to be orthogonal to the axis
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis

@@ -106,185 +106,181 @@ Dashboards.board('container', {
             }]
         }]
     },
-    components: [
-        {
-            renderTo: 'title',
-            type: 'HTML',
-            elements: [{
-                tagName: 'h1',
-                textContent: 'Polio (Pol3) immunization coverage'
-            },
-            {
-                tagName: 'div',
-                children: [{
-                    tagName: 'a',
-                    href: 'https://apps.who.int/gho/data/',
-                    class: 'subtitle',
-                    textContent: 'Among 1-year-olds (%)'
+    components: [{
+        renderTo: 'title',
+        type: 'HTML',
+        elements: [{
+            tagName: 'h1',
+            textContent: 'Polio (Pol3) immunization coverage'
+        }, {
+            tagName: 'div',
+            children: [{
+                tagName: 'a',
+                href: 'https://apps.who.int/gho/data/',
+                class: 'subtitle',
+                textContent: 'Among 1-year-olds (%)'
 
-                }]
+            }]
+        }]
+    }, {
+        renderTo: 'dashboard-col-1',
+        type: 'Highcharts',
+        connector: {
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: 'Global',
+                data: ['x', 'Global']
             }]
         },
-        {
-            renderTo: 'dashboard-col-1',
-            type: 'Highcharts',
-            connector: {
-                id: 'connector-1'
+        sync: {
+            extremes: true,
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                zoomType: 'x'
             },
-            sync: {
-                extremes: true,
-                highlight: true
+            title: {
+                text: 'Global'
             },
-            columnAssignment: {
-                x: 'x',
-                Global: 'y'
+            legend: {
+                enabled: false
             },
-            chartOptions: {
-                chart: {
-                    zoomType: 'x'
-                },
-                title: {
-                    text: 'Global'
-                },
-                legend: {
-                    enabled: false
-                },
-                credits: {
-                    enabled: false
-                }
-            },
-            lang: {
-                accessibility: {
-                    chartContainerLabel: 'Global Polio (Pol3) immunization coverage, Highcharts interactive chart.'
-                }
-            },
-            accessibility: {
-                description: `The chart is displaying the Global Polio (Pol3)
-                immunization coverage. The values are introduced in percents.`
+            credits: {
+                enabled: false
             }
-        }, {
-            renderTo: 'dashboard-col-2',
-            type: 'Highcharts',
-            connector: {
-                id: 'connector-1'
-            },
-            sync: {
-                extremes: true,
-                highlight: true
-            },
-            columnAssignment: {
-                x: 'x',
-                'South-East Asia': 'y'
-            },
-            chartOptions: {
-                chart: {
-                    zoomType: 'x'
-                },
-                title: {
-                    text: 'South-East Asia'
-                },
-                legend: {
-                    enabled: false
-                },
-                credits: {
-                    enabled: false
-                },
-                plotOptions: {
-                    series: {
-                        colorIndex: 1
-                    }
-                }
-            },
-            lang: {
-                accessibility: {
-                    chartContainerLabel: 'South-East Asia Polio (Pol3) immunization coverage, Highcharts interactive chart.'
-                }
-            },
+        },
+        lang: {
             accessibility: {
-                description: `The chart is displaying the Polio (Pol3)
-                immunization coverage in South-East Asia. The values are
-                introduced in percents.`
+                chartContainerLabel: 'Global Polio (Pol3) immunization coverage, Highcharts interactive chart.'
             }
-        }, {
-            renderTo: 'dashboard-col-3',
-            type: 'Highcharts',
-            connector: {
-                id: 'connector-2'
-            },
-            sync: {
-                extremes: true,
-                highlight: true
-            },
-            columnAssignment: {
-                x: 'x',
-                Africa: 'y'
-            },
-            chartOptions: {
-                chart: {
-                    zoomType: 'y'
-                },
-                title: {
-                    text: 'Africa'
-                },
-                plotOptions: {
-                    series: {
-                        colorIndex: 2
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                credits: {
-                    enabled: false
-                }
-            },
-            lang: {
-                accessibility: {
-                    chartContainerLabel: 'Africa Polio (Pol3) immunization coverage, Highcharts interactive chart.'
-                }
-            },
-            accessibility: {
-                description: `The chart is displaying the Polio (Pol3)
-                immunization coverage in Africa. The values are
-                introduced in percents.`
-            }
-        }, {
-            renderTo: 'dashboard-col-4',
-            type: 'Highcharts',
-            connector: {
-                id: 'connector-2'
-            },
-            sync: {
-                extremes: true,
-                highlight: true
-            },
-            columnAssignment: {
-                x: 'x',
-                Europe: 'y'
-            },
-            chartOptions: {
-                chart: {
-                    zoomType: 'y'
-                },
-                title: {
-                    text: 'Europe'
-                },
-                plotOptions: {
-                    series: {
-                        colorIndex: 3
-                    }
-                }
-            },
-            lang: {
-                accessibility: {
-                    chartContainerLabel: 'Europe Polio (Pol3) immunization coverage, Highcharts interactive chart.'
-                }
-            },
-            accessibility: {
-                description: `The chart is displaying the Polio (Pol3)
-                immunization coverage in Europe. The values are
-                introduced in percents.`
-            }
+        },
+        accessibility: {
+            description: `The chart is displaying the Global Polio (Pol3)
+            immunization coverage. The values are introduced in percents.`
         }
-    ]
+    }, {
+        renderTo: 'dashboard-col-2',
+        type: 'Highcharts',
+        connector: {
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: 'South-East Asia',
+                data: ['x', 'South-East Asia']
+            }]
+        },
+        sync: {
+            extremes: true,
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: 'South-East Asia'
+            },
+            legend: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    colorIndex: 1
+                }
+            }
+        },
+        lang: {
+            accessibility: {
+                chartContainerLabel: 'South-East Asia Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+            }
+        },
+        accessibility: {
+            description: `The chart is displaying the Polio (Pol3)
+            immunization coverage in South-East Asia. The values are
+            introduced in percents.`
+        }
+    }, {
+        renderTo: 'dashboard-col-3',
+        type: 'Highcharts',
+        connector: {
+            id: 'connector-2',
+            columnAssignment: [{
+                seriesId: 'Africa',
+                data: ['x', 'Africa']
+            }]
+        },
+        sync: {
+            extremes: true,
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                zoomType: 'y'
+            },
+            title: {
+                text: 'Africa'
+            },
+            plotOptions: {
+                series: {
+                    colorIndex: 2
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            }
+        },
+        lang: {
+            accessibility: {
+                chartContainerLabel: 'Africa Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+            }
+        },
+        accessibility: {
+            description: `The chart is displaying the Polio (Pol3)
+            immunization coverage in Africa. The values are
+            introduced in percents.`
+        }
+    }, {
+        renderTo: 'dashboard-col-4',
+        type: 'Highcharts',
+        connector: {
+            id: 'connector-2',
+            columnAssignment: [{
+                seriesId: 'Europe',
+                data: ['x', 'Europe']
+            }]
+        },
+        sync: {
+            extremes: true,
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                zoomType: 'y'
+            },
+            title: {
+                text: 'Europe'
+            },
+            plotOptions: {
+                series: {
+                    colorIndex: 3
+                }
+            }
+        },
+        lang: {
+            accessibility: {
+                chartContainerLabel: 'Europe Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+            }
+        },
+        accessibility: {
+            description: `The chart is displaying the Polio (Pol3)
+            immunization coverage in Europe. The values are
+            introduced in percents.`
+        }
+    }]
 }, true);

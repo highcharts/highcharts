@@ -41,13 +41,10 @@ import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
-import H from '../Globals.js';
-const { composed } = H;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
-import RangeSelectorDefaults from
-    '../../Stock/RangeSelector/RangeSelectorDefaults.js';
+import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
@@ -62,11 +59,8 @@ const {
     isString,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
-
-import '../Pointer.js';
 
 /* *
  *
@@ -220,7 +214,7 @@ class StockChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -399,8 +393,9 @@ namespace StockChart {
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
+        if (!seriesProto.forceCropping) {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
@@ -409,7 +404,8 @@ namespace StockChart {
 
             ChartClass.prototype.setFixedRange = setFixedRange;
 
-            SeriesClass.prototype.forceCropping = seriesForceCropping;
+            seriesProto.forceCropping = seriesForceCropping;
+
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
 
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
@@ -985,7 +981,7 @@ namespace StockChart {
                 end = points[i + 1];
 
             if (start[1] === end[1]) {
-                // Substract due to #1129. Now bottom and left axis gridlines
+                // Subtract due to #1129. Now bottom and left axis gridlines
                 // behave the same.
                 start[1] = end[1] =
                     Math.round(start[1]) - (width % 2 / 2);

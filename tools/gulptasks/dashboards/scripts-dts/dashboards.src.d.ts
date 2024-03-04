@@ -7,7 +7,7 @@
 import Board from "./es-modules/Dashboards/Board";
 import Globals from "./es-modules/Dashboards/Globals";
 
-import "./es-modules/Dashboards/Components/HTMLComponent";
+import "./es-modules/Dashboards/Components/HTMLComponent/HTMLComponent";
 import "./es-modules/Data/Connectors/CSVConnector";
 import "./es-modules/Data/Connectors/JSONConnector";
 import "./es-modules/Data/Connectors/GoogleSheetsConnector";

@@ -343,8 +343,8 @@ class TimelineSeries extends LineSeries {
                         // Initialize the targetPosition field within data label
                         // object. It's necessary because there is need to know
                         // expected position of specific data label, when
-                        // aligning connectors. This field is overrided inside
-                        // of SVGElement.animate() wrapped  method.
+                        // aligning connectors. This field is overridden inside
+                        // of SVGElement.animate() wrapped method.
                         if (!dataLabel.targetPosition) {
                             dataLabel.targetPosition = {};
                         }

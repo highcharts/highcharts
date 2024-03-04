@@ -74,13 +74,10 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'south-america-chart',
-                    width: '1/3'
+                    id: 'south-america-chart'
                 }, {
-                    width: '1/3',
                     id: 'north-america-chart'
                 }, {
-                    width: '1/3',
                     id: 'asia-chart'
                 }]
             }, {

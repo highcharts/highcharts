@@ -22,10 +22,10 @@
 import type PluginHandler from '../PluginHandler';
 import type { Highcharts as H } from './HighchartsTypes';
 
-import HighchartsComponent from './HighchartsComponent/HighchartsComponent.js';
-import HighchartsSyncHandlers from './HighchartsComponent/HighchartsSyncHandlers.js';
-import KPIComponent from './KPIComponent/KPIComponent.js';
-import NavigatorComponent from './NavigatorComponent/NavigatorComponent.js';
+import HighchartsComponent from '../Components/HighchartsComponent/HighchartsComponent.js';
+import HighchartsSyncHandlers from '../Components/HighchartsComponent/HighchartsSyncHandlers.js';
+import KPIComponent from '../Components/KPIComponent/KPIComponent.js';
+import NavigatorComponent from '../Components/NavigatorComponent/NavigatorComponent.js';
 
 /* *
  *

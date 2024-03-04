@@ -31,7 +31,6 @@ import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
 import H from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
@@ -39,8 +38,7 @@ import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    error,
-    pushUnique
+    error
 } = U;
 
 /* *
@@ -83,7 +81,7 @@ function compose(
         }
     }
 
-    if (ColorClass && pushUnique(composed, compose)) {
+    if (ColorClass && !ColorClass.names.lightgoldenrodyellow) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap
@@ -286,7 +284,7 @@ export default Boost;
  */
 
 /**
- * Time the the WebGL setup.
+ * Time the WebGL setup.
  *
  * This outputs the time spent on setting up the WebGL context,
  * creating shaders, and textures.
@@ -369,7 +367,7 @@ export default Boost;
  * Setting to e.g. 20 will cause the whole chart to enter boost mode
  * if there are 20 or more series active. When the chart is in boost mode,
  * every series in it will be rendered to a common canvas. This offers
- * a significant speed improvment in charts with a very high
+ * a significant speed improvement in charts with a very high
  * amount of series.
  *
  * @type      {number}
@@ -384,7 +382,7 @@ export default Boost;
  * This option may cause rendering issues with certain datasets.
  * Namely, if your dataset has large numbers with small increments (such as
  * timestamps), it won't work correctly. This is due to floating point
- * precission.
+ * precision.
  *
  * @type      {boolean}
  * @default   false

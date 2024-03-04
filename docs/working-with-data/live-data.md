@@ -32,7 +32,7 @@ generate: (state, counter) => {
 ```
 
 ### Define the chart variable globally
-We do this because we want to access the variable both from the document ready function and our requestData funcion. If the chart variable is defined inside the document ready callback function, it will not be available in the global scope later.
+We do this because we want to access the variable both from the document ready function and our requestData function. If the chart variable is defined inside the document ready callback function, it will not be available in the global scope later.
 
 ```js
 let chart; // global

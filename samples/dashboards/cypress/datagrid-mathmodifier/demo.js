@@ -35,13 +35,17 @@ Dashboards.board('container', {
             renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
-                id: 'EUR-USD'
-            },
-            columnAssignment: {
-                Day: 'x',
-                EUR: 'custom.eur',
-                Rate: 'y',
-                USD: 'custom.usd'
+                id: 'EUR-USD',
+                columnAssignment: [{
+                    seriesId: 'EUR',
+                    data: ['Day', 'EUR']
+                }, {
+                    seriesId: 'Rate',
+                    data: ['Day', 'Rate']
+                }, {
+                    seriesId: 'USD',
+                    data: ['Day', 'USD']
+                }]
             },
             sync: {
                 highlight: true

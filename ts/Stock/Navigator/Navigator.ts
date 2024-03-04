@@ -32,11 +32,13 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
+import ChartNavigatorComposition from './ChartNavigatorComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
+import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -112,10 +114,18 @@ class Navigator {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
+    public static compose(
+        ChartClass: typeof Chart,
+        AxisClass: typeof Axis,
+        SeriesClass: typeof Series
+    ): void {
+        ChartNavigatorComposition.compose(ChartClass, Navigator);
+        NavigatorComposition.compose(ChartClass, AxisClass, SeriesClass);
+    }
 
     /* *
      *
@@ -854,7 +864,7 @@ class Navigator {
         e: PointerEvent,
         index: number
     ): void {
-        e = this.chart.pointer.normalize(e);
+        e = this.chart.pointer?.normalize(e) || e;
 
         const navigator = this,
             chart = navigator.chart,
@@ -936,7 +946,7 @@ class Navigator {
         e: PointerEvent,
         index: number
     ): void {
-        e = this.chart.pointer.normalize(e);
+        e = this.chart.pointer?.normalize(e) || e;
 
         const navigator = this,
             chart = navigator.chart,
@@ -985,7 +995,7 @@ class Navigator {
         // ignored.
         if (!(e as any).touches || (e as any).touches[0].pageX !== 0) { // #4696
 
-            e = chart.pointer.normalize(e);
+            e = chart.pointer?.normalize(e) || e;
             chartX = e.chartX;
 
             // Swap some options for inverted chart
@@ -1256,9 +1266,10 @@ class Navigator {
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
-                // inherit base xAxis' break and ordinal options
+                // inherit base xAxis' break, ordinal options and overscroll
                 breaks: baseXaxis.options.breaks,
-                ordinal: baseXaxis.options.ordinal
+                ordinal: baseXaxis.options.ordinal,
+                overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
                 id: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
@@ -1751,7 +1762,7 @@ class Navigator {
                 }
             }));
 
-            // Respond to updated data in the base series, unless explicitily
+            // Respond to updated data in the base series, unless explicitly
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {
@@ -1845,7 +1856,9 @@ class Navigator {
             range = baseMax - baseMin,
             stickToMin = (navigator as any).stickToMin,
             stickToMax = (navigator as any).stickToMax,
-            overscroll = pick(baseXAxis.options.overscroll, 0),
+            overscroll = pick(baseXAxis.ordinal?.convertOverscroll(
+                baseXAxis.options.overscroll
+            ), 0),
             navigatorSeries =
                 (navigator as any).series && (navigator as any).series[0],
             hasSetExtremes = !!baseXAxis.setExtremes,

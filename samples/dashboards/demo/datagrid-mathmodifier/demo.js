@@ -42,13 +42,17 @@ Dashboards.board('container', {
         renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         connector: {
-            id: 'EUR-USD'
-        },
-        columnAssignment: {
-            Day: 'x',
-            EUR: 'custom.eur',
-            Rate: 'y',
-            USD: 'custom.usd'
+            id: 'EUR-USD',
+            columnAssignment: [{
+                seriesId: 'EUR',
+                data: ['Day', 'EUR']
+            }, {
+                seriesId: 'Rate',
+                data: ['Day', 'Rate']
+            }, {
+                seriesId: 'USD',
+                data: ['Day', 'USD']
+            }]
         },
         sync: {
             highlight: true
@@ -56,17 +60,7 @@ Dashboards.board('container', {
         chartOptions: {
             chart: {
                 animation: false,
-                type: 'line',
-                zooming: false,
-                events: {
-                    redraw: function () {
-                        if (!this.series[1].options.yAxis) {
-                            this.series[1].update({
-                                yAxis: 1
-                            });
-                        }
-                    }
-                }
+                type: 'line'
             },
             title: {
                 text: 'EUR to USD'
@@ -74,6 +68,11 @@ Dashboards.board('container', {
             subtitle: {
                 text: 'Euro foreign exchange reference rate to US dollar'
             },
+            series: [{
+                id: 'Rate',
+                name: 'Rate',
+                yAxis: 1
+            }],
             tooltip: {
                 shared: true,
                 split: true,

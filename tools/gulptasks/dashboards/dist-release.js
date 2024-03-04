@@ -81,6 +81,7 @@ async function distRelease() {
     // Copy build/dist into repository
 
     fsLib.copyAllFiles(path.join(buildFolder, 'code'), distRepository, true);
+    fsLib.copyAllFiles(path.join(buildFolderDataGrid, 'code'), distRepository, true);
 
     fsLib.copyFile(
         config.readmeFile,

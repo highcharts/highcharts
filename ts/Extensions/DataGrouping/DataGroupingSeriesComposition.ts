@@ -36,8 +36,6 @@ import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -52,8 +50,7 @@ const {
     extend,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -244,7 +241,7 @@ function anchorPoints(
 
     // Change the last point position but only when it is
     // the last point in the data set not in the current zoom,
-    // or if it is not the 1st point simutainously.
+    // or if it is not the 1st point simultaneously.
     if (
         groupedDataLastIndex > 0 &&
             lastAnchor &&
@@ -474,9 +471,12 @@ function applyGrouping(
 function compose(
     SeriesClass: typeof Series
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
+    const seriesProto = SeriesClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+
+    if (!seriesProto.applyGrouping) {
+        const PointClass = SeriesClass.prototype.pointClass;
+
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -489,7 +489,7 @@ function compose(
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 
-        extend(SeriesClass.prototype, {
+        extend(seriesProto, {
             applyGrouping,
             destroyGroupedData,
             generatePoints,

@@ -34,8 +34,7 @@ Dashboards.board('container', {
                     id: 'dashboard-col-1'
                 }, {
                     id: 'dashboard-col-2'
-                }
-                ]
+                }]
             }]
         }]
     },
@@ -57,7 +56,6 @@ Dashboards.board('container', {
                 }
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },
@@ -78,15 +76,13 @@ Dashboards.board('container', {
                 }
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },
         sync: {
             visibility: true
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
@@ -100,20 +96,11 @@ Dashboards.board('container', {
                 }
             }
         },
-        events: {},
         connector: {
             id: 'connector-1'
         },
         sync: {
             visibility: true
         }
-    }
-
-    ]
+    }]
 }, true);
-
-// window.addEventListener('resize', e => {
-//     board.mountedComponents.forEach(({ component }) => {
-//         component.resize();
-//     });
-// });

@@ -26,14 +26,11 @@ import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -123,16 +120,17 @@ namespace FocusBorderComposition {
         ChartClass: typeof Chart,
         SVGElementClass: typeof SVGElement
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition,
+            svgElementProto = (
+                SVGElementClass.prototype as SVGElementCompositon
+            );
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition,
-                svgElementProto = (
-                    SVGElementClass.prototype as SVGElementCompositon
-                );
-
+        if (!chartProto.renderFocusBorder) {
             chartProto.renderFocusBorder = chartRenderFocusBorder;
             chartProto.setFocusToElement = chartSetFocusToElement;
+        }
 
+        if (!svgElementProto.addFocusBorder) {
             svgElementProto.addFocusBorder = svgElementAddFocusBorder;
             svgElementProto.removeFocusBorder = svgElementRemoveFocusBorder;
         }

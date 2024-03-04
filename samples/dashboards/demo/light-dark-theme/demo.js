@@ -38,10 +38,6 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'

@@ -97,12 +97,16 @@ module.exports = {
             'dashboards/light-dark-theme',
             'dashboards/data-handling',
             'dashboards/data-pool-and-connectors',
+            'dashboards/data-table',
             'dashboards/data-modifiers',
             'dashboards/mathmodifier-module',
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
             'dashboards/frequently-asked-questions',
+        ],
+        'DataGrid': [
+            'datagrid/general',
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',

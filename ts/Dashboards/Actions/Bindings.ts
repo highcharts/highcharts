@@ -57,7 +57,7 @@ namespace Bindings {
      * */
 
     export interface MountedComponent {
-        cell: Cell;
+        cell: Cell|Cell.DOMCell;
         component: ComponentType;
         options: Partial<Component.Options>;
     }
@@ -89,8 +89,8 @@ namespace Bindings {
 
     export async function addComponent(
         options: Partial<ComponentType['options']>,
-        cell?: Cell,
-        board?: Board
+        board: Board,
+        cell?: Cell
     ): Promise<(Component|void)> {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
@@ -129,7 +129,8 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: cell.row.layout.board?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -138,7 +139,6 @@ namespace Bindings {
         }
 
         const component = new ComponentClass(cell, options, board);
-
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
             console.error(e);
@@ -147,7 +147,8 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text: cell?.row?.layout.board?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -158,13 +159,18 @@ namespace Bindings {
         if (cell) {
             component.setCell(cell);
             cell.mountedComponent = component;
-
-            cell.row.layout.board.mountedComponents.push({
-                options: options,
-                component: component,
-                cell: cell
-            });
         }
+
+
+        board.mountedComponents.push({
+            options: options,
+            component: component,
+            cell: cell || {
+                id: renderTo,
+                container: componentContainer as HTMLElement,
+                mountedComponent: component
+            }
+        });
 
         fireEvent(component, 'mount');
 

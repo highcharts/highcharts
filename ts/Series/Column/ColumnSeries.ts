@@ -165,8 +165,8 @@ class ColumnSeries extends Series {
                 attr.translateY = translatedThreshold;
             }
 
-            // apply finnal clipping (used in Highcharts Stock) (#7083)
-            // animation is done by scaleY, so cliping is for panes
+            // apply final clipping (used in Highcharts Stock) (#7083)
+            // animation is done by scaleY, so clipping is for panes
             if (series.clipBox) {
                 series.setClip();
             }
@@ -830,11 +830,12 @@ class ColumnSeries extends Series {
             chart = series.chart,
             pointer = chart.pointer,
             onMouseOver = function (e: PointerEvent): void {
-                const point = pointer.getPointFromEvent(e);
+                const point = pointer?.getPointFromEvent(e);
 
-                // undefined on graph in scatterchart
+                // Undefined on graph in scatterchart
                 if (
-                    typeof point !== 'undefined' &&
+                    pointer &&
+                    point &&
                     series.options.enableMouseTracking
                 ) {
                     pointer.isDirectTouch = true;
@@ -870,7 +871,7 @@ class ColumnSeries extends Series {
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
                         .on('mouseout', function (e: PointerEvent): void {
-                            pointer.onTrackerMouseOut(e);
+                            pointer?.onTrackerMouseOut(e);
                         })
                         .on('touchstart', onMouseOver);
 
@@ -929,7 +930,7 @@ extend(ColumnSeries.prototype, {
     getSymbol: noop,
 
     // Use separate negative stacks, unlike area stacks where a negative
-    // point is substracted from previous (#1910)
+    // point is subtracted from previous (#1910)
     negStacks: true,
 
     trackerGroups: ['group', 'dataLabelsGroup']

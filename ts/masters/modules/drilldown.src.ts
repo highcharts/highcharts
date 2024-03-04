@@ -14,7 +14,7 @@ import Highcharts from '../../Core/Globals.js';
 import Drilldown from '../../Extensions/Drilldown/Drilldown.js';
 import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 const G: AnyRecord = Highcharts;
-G.Breadcrumbs = Breadcrumbs;
+G.Breadcrumbs = G.Breadcrumbs || Breadcrumbs;
 Drilldown.compose(
     G.Axis,
     G.Chart,
@@ -24,3 +24,4 @@ Drilldown.compose(
     G.SVGRenderer,
     G.Tick
 );
+export default Highcharts;

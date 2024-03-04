@@ -106,10 +106,6 @@ Example of synchronized components
         },
         renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
         chartOptions: {
             chart: {
                 type: 'pie'
@@ -126,10 +122,6 @@ Example of synchronized components
             extremes: true
         },
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -169,6 +161,11 @@ Highcharts Dashboards supports the following browsers:
 | Safari   | 11.0+ (2017+) |
 | Opera    | 42.0+ (2016+) |
 | Edge     | 16.0+ (2017+) |
+
+* * *
+What versions of Highcharts are supported?
+---------------
+The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
 
 * * *
 

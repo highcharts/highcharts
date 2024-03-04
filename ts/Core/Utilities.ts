@@ -355,7 +355,11 @@ function diffObjects(
                 // If the newer key is explicitly undefined, keep it (#10525)
                 (key in newer && !(key in older))
             ) {
-                ret[key] = keeper[key];
+
+                if (key !== '__proto__' && key !== 'constructor') {
+                    ret[key] = keeper[key];
+                }
+
             }
         });
     }
@@ -973,6 +977,40 @@ function relativeLength(
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
+}
+
+/**
+ * Replaces text in a string with a given replacement in a loop to catch nested
+ * matches after previous replacements.
+ *
+ * @function Highcharts.replaceNested
+ *
+ * @param {string} text
+ * Text to search and modify.
+ *
+ * @param {...Array<(RegExp|string)>} replacements
+ * One or multiple tuples with search pattern (`[0]: (string|RegExp)`) and
+ * replacement (`[1]: string`) for matching text.
+ *
+ * @return {string}
+ * Text with replacements.
+ */
+function replaceNested(
+    text: string,
+    ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
+): string {
+    let previous: string,
+        replacement: [(string|RegExp), string];
+
+    do {
+        previous = text;
+
+        for (replacement of replacements) {
+            text = text.replace(replacement[0], replacement[1]);
+        }
+    } while (text !== previous);
+
+    return text;
 }
 
 /**
@@ -1737,7 +1775,7 @@ function objectEach<TObject, TContext>(
  *        The array to test
  *
  * @param {Function} fn
- *        The function to run on each item. Return truty to pass the test.
+ *        The function to run on each item. Return truthy to pass the test.
  *        Receives arguments `currentValue`, `index` and `array`.
  *
  * @param {*} ctx
@@ -2157,7 +2195,7 @@ if ((win as any).jQuery) {
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.
@@ -2284,6 +2322,7 @@ const Utilities = {
     pushUnique,
     relativeLength,
     removeEvent,
+    replaceNested,
     splat,
     stableSort,
     syncTimeout,
@@ -2309,7 +2348,7 @@ export default Utilities;
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
- * A callback function to exectute when the animation finishes.
+ * A callback function to execute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
  *//**
@@ -2349,7 +2388,7 @@ export default Utilities;
  * @interface Highcharts.Class<T>
  * @extends Function
  *//**
- * Class costructor.
+ * Class constructor.
  * @function Highcharts.Class<T>#new
  * @param {...Array<*>} args
  *        Constructor arguments.
@@ -2526,7 +2565,7 @@ export default Utilities;
  */
 
 /**
- * Formats data as a string. Usually the data is accessible throught the `this`
+ * Formats data as a string. Usually the data is accessible through the `this`
  * keyword.
  *
  * @callback Highcharts.FormatterCallbackFunction<T>

@@ -35,8 +35,6 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
 const { format } = F;
-import H from '../Globals.js';
-const { composed } = H;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
@@ -50,7 +48,6 @@ const {
     objectEach,
     pick,
     pInt,
-    pushUnique,
     splat
 } = U;
 
@@ -65,6 +62,7 @@ declare module './PointLike' {
         bottom?: number;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
+        dataLabelOnHidden?: boolean;
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
@@ -352,7 +350,6 @@ namespace DataLabel {
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
                     (bBox.height - unrotatedbBox.height) / 2,
-                rotation: options.rotation,
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
             });
@@ -412,7 +409,7 @@ namespace DataLabel {
             }
 
             // When we're using a shape, make it possible with a connector or an
-            // arrow pointing to thie point
+            // arrow pointing to this point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
                     anchorX: pos[0],
@@ -468,13 +465,14 @@ namespace DataLabel {
     /**
      * @private
      */
-    export function compose(SeriesClass: typeof Series): void {
+    export function compose(
+        SeriesClass: typeof Series
+    ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            const seriesProto = SeriesClass.prototype;
-
-            seriesProto.initDataLabelsGroup = initDataLabelsGroup;
+        if (!seriesProto.initDataLabels) {
             seriesProto.initDataLabels = initDataLabels;
+            seriesProto.initDataLabelsGroup = initDataLabelsGroup;
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
@@ -583,7 +581,7 @@ namespace DataLabel {
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&
-                            point.visible &&
+                            (point.visible || point.dataLabelOnHidden) &&
                             // #2282, #4641, #7112, #10049
                             (!point.isNull || point.dataLabelOnNull) &&
                             applyFilter(point, labelOptions)
