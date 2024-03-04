@@ -91,7 +91,7 @@ const locations = {
         ['San Diego', 32.71, -117.16, 36],
         ['Anchorage', 61.22, -149.89, 0],
         ['Winnipeg', 49.90, -97.14, 236],
-        ['Monterrey', 25.68, -99.13, 2230],
+        ['Monterrey', 25.68, -99.13, 540],
         ['Baracoa', 20.35, -74.50, 15]
     ]
 };
@@ -894,14 +894,6 @@ async function updateBoard(board, city, paramName,
         // Parameters update: e.g. temperature -> precipitation.
         // Affects: map
 
-        // Update map properties
-        await worldMap.chart.update({
-            colorAxis: colorAxis,
-            title: {
-                text: paramConfig.getColumnHeader(paramName)
-            }
-        });
-
         // Update all map points (series 1: weather data)
         const mapPoints = worldMap.chart.series[1].data;
 
@@ -918,8 +910,16 @@ async function updateBoard(board, city, paramName,
                     elevation: elevation,
                     unit: param.unit
                 }
-            }, true);
+            }, false);
         }
+
+        // Update map properties and redraw
+        worldMap.chart.update({
+            colorAxis: colorAxis,
+            title: {
+                text: paramConfig.getColumnHeader(paramName)
+            }
+        });
     }
 
     if (cityUpdated) {

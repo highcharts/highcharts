@@ -155,6 +155,22 @@ QUnit.test('Keyboard navigation', function (assert) {
         !chart.container.parentNode.querySelector('.highcharts-exit-anchor'),
         'The exit anchor element shouldn\'t be rendered (#19374).'
     );
+
+    chart.update({
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: ['#ff0000', '#00ff00', '#0000ff']
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.colors.length,
+        3,
+        'The colors array should be updated with high contrast colors.'
+    );
+
 });
 
 QUnit.test('No data', function (assert) {
