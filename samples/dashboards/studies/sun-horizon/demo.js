@@ -75,7 +75,7 @@ const getTrajectory = (
                 rotation: -90,
                 enabled: true,
                 format: `→ ${hourFormat}`,
-                x: 0
+                x: -12
             };
 
         // Sunset below horizon
@@ -89,7 +89,7 @@ const getTrajectory = (
                 rotation: 90,
                 enabled: true,
                 format: `${hourFormat} →`,
-                x: 0
+                x: 12
             };
         }
 
@@ -562,7 +562,7 @@ const createBoard = () => {
                     dataLabels: {
                         color: '#ffde85',
                         style: {
-                            textOutline: 'none',
+                            textOutline: '3px #00000030',
                             fontSize: '0.9rem'
                         },
                         y: -5
