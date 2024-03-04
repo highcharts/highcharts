@@ -18,14 +18,21 @@ Highcharts.chart('container', {
         lineWidth: 0,
         tickmarkPlacement: 'on',
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        accessibility: {
+            description: 'Months of the Year'
+        }
     },
     yAxis: {
         gridLineColor: '#8991ad',
         gridLineInterpolation: 'polygon',
         max: 75000,
         tickInterval: 25000,
+        accessibility: {
+            description: 'Bitcoin Price in USD'
+        },
         labels: {
+            format: '{#if isFirst}<text fill="#000">{value}</text>{else}{value}{/if}',
             align: 'left',
             style: {
                 color: '#fff'
