@@ -1,7 +1,48 @@
 let parsedData = [];
+const tooltipDivs = [];
+let checkboxChecked = false;
 Highcharts.chart('container', {
     chart: {
-        type: 'column'
+        type: 'column',
+        events: {
+            load: function () {
+                const points = this.series.map(s => s.points).flat();
+                points.forEach(point => {
+                    const id = `tooltip-${point.series.name}-${point.index}`;
+                    if (checkboxChecked) {
+                        point.graphic.element.setAttribute('aria-describedby', id);
+                    }
+
+                    const column = parsedData.find(columns =>
+                        columns[0].startsWith(point.x)
+                    );
+
+                    if (column) {
+                        const grammy = column[3],
+                            songwin = column[4],
+                            songnom = column[5],
+                            awardwin = column[6],
+                            awardnom = column[7];
+
+                        let tooltipText;
+                        if (point.series.name === 'wins') {
+                            tooltipText = createTooltipText(grammy, Highcharts.dateFormat('%Y', point.x), 'wins', point.y, songwin, awardwin);
+                        }
+                        if (point.series.name === 'nominations') {
+                            tooltipText = createTooltipText(grammy, Highcharts.dateFormat('%Y', point.x), 'nominations', point.y, songnom, awardnom);
+                        }
+
+                        const tooltipDiv = document.createElement('div');
+                        tooltipDiv.setAttribute('id', id);
+                        tooltipDiv.setAttribute('aria-hidden', 'true');
+                        tooltipDiv.classList.add('visually-hidden');
+                        tooltipDiv.innerHTML = tooltipText;
+                        document.body.appendChild(tooltipDiv);
+                        tooltipDivs.push(tooltipDiv);
+                    }
+                });
+            }
+        }
     },
 
     title: {
@@ -38,24 +79,12 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         formatter: function () {
-            const year = Highcharts.dateFormat('%Y', this.x);
-            const column = parsedData.find(columns =>
-                columns[0].startsWith(this.point.x)
-            );
-
-            if (column) {
-                const grammy = column[3],
-                    songwin = column[4],
-                    songnom = column[5],
-                    awardwin = column[6],
-                    awardnom = column[7];
-
-                if (this.series.name === 'wins') {
-                    return createTooltipText(grammy, year, 'wins', this.y, songwin, awardwin);
-                }
-                if (this.series.name === 'nominations') {
-                    return createTooltipText(grammy, year, 'nominations', this.y, songnom, awardnom);
-                }
+            const tooltipDiv =
+                document.getElementById(
+                    `tooltip-${this.point.series.name}-${this.point.index}`
+                );
+            if (tooltipDiv) {
+                return tooltipDiv.innerHTML;
             }
             return '';
         }
@@ -76,21 +105,71 @@ Highcharts.chart('container', {
 function createTooltipText(
     grammy, year, seriesName, y, songValues, awardValues
 ) {
-
     const songValuesArray = songValues.split(';'),
         awardValuesArray = awardValues.split(';'),
         mappedValues = songValuesArray.map((song, i) => ({
             song, award: awardValuesArray[i]
         }));
 
-    return `
-        <p class="tooltip-heading">${grammy} Grammy Awards (${year})</p>
+    let tooltipText =
+        `<p class="tooltip-heading">${grammy} Grammy Awards (${year})</p>
         <p class="win-nom">
             ${seriesName.charAt(0).toUpperCase() + seriesName.slice(1)}: ${y}
-        </p>
-        <ul>
-            ${mappedValues.map(value => `<li><strong>${value.award.trim()}: </strong>${value.song}</li>`).join('')}
-        </ul>
-    `;
+        </p>`;
 
+    if (songValues.includes('None') || awardValues.includes('None')) {
+        console.log(songValues);
+        return tooltipText;
+    }
+    tooltipText += mappedValues.map(value => `<li><strong>${value.award.trim()}: </strong>${value.song}</li>`).join('');
+
+
+    return tooltipText;
 }
+
+// Add a checkbox to the page to toggle verbosity of the chart
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('#container'),
+        checkbox = document.createElement('input'),
+        labelCheckbox = document.createElement('label');
+
+    checkbox.setAttribute('type', 'checkbox');
+    labelCheckbox.setAttribute('for', checkbox.id);
+    labelCheckbox.textContent = ' More information in each data point';
+
+    container.parentNode.insertBefore(checkbox, container);
+    container.parentNode.insertBefore(labelCheckbox, container);
+
+    checkbox.addEventListener('change', () => {
+        checkboxChecked = !checkboxChecked;
+
+        const chart = Highcharts.charts[0];
+        const points = chart.series.map(s => s.points).flat();
+
+        points.forEach(point => {
+            if (checkboxChecked) {
+                const id = `tooltip-${point.series.name}-${point.index}`;
+                point.graphic.element.setAttribute('aria-describedby', id);
+
+                // Store original aria-label
+                point.graphic.element.dataset.originalAriaLabel = point.graphic.element.getAttribute('aria-label');
+
+                // To avoid duplicate information
+                point.graphic.element.removeAttribute('aria-label');
+            } else {
+                point.graphic.element.removeAttribute('aria-describedby');
+                const originalAriaLabel =
+                    point.graphic.element.dataset.originalAriaLabel;
+
+                // Restore original aria-label if checkbox is unchecked after being checked
+                if (originalAriaLabel) {
+                    point.graphic.element.setAttribute('aria-label', originalAriaLabel);
+                }
+            }
+        });
+
+        tooltipDivs.forEach(tooltipDiv => {
+            tooltipDiv.setAttribute('aria-hidden', !checkboxChecked);
+        });
+    });
+});
