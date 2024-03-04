@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkbox.setAttribute('type', 'checkbox');
     checkbox.id = 'checkbox-info';
     labelCheckbox.setAttribute('for', checkbox.id);
-    labelCheckbox.textContent = ' More information in each data point';
+    labelCheckbox.textContent = ' Announce tooltip details';
 
     container.parentNode.insertBefore(checkbox, container);
     container.parentNode.insertBefore(labelCheckbox, container);
