@@ -61,15 +61,16 @@ class TreegraphPoint extends TreemapPoint {
      *
      * */
 
-    public options!: TreegraphPointOptions;
-    public isLink = false;
     public collapseButton?: SVGElement;
-    public series!: TreegraphSeries;
+    public collapseButtonOptions?: CollapseButtonOptions;
     public collapsed?: boolean;
-    public node!: TreegraphNode;
+    public dataLabelOnHidden = true;
+    public isLink = false;
     public level?: number;
     public linkToParent?: TreegraphLink;
-    public collapseButtonOptions?: CollapseButtonOptions;
+    public node!: TreegraphNode;
+    public options!: TreegraphPointOptions;
+    public series!: TreegraphSeries;
 
     /* *
      *

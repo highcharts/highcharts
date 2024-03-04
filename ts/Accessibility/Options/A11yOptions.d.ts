@@ -74,6 +74,7 @@ export interface AccessibilityOptions {
     customComponents?: AnyRecord;
     description?: string;
     enabled: boolean;
+    highContrastMode: boolean | 'auto';
     highContrastTheme: AnyRecord;
     keyboardNavigation: AccessibilityKeyboardNavigationOptions;
     landmarkVerbosity: string;
