@@ -903,7 +903,7 @@ class ChartAdditions {
      * simple SVGElement.fadeIn() is not enough, because of other features (e.g.
      * InactiveState) using `opacity` to fadeIn/fadeOut.
      *
-     * @requires module:modules/drilldown
+     * @requires modules/drilldown
      *
      * @private
      * @param {SVGElement} [group]
@@ -1195,7 +1195,7 @@ namespace Drilldown {
     /**
      * A general fadeIn method.
      *
-     * @requires module:modules/drilldown
+     * @requires modules/drilldown
      *
      * @function Highcharts.SVGElement#fadeIn
      *

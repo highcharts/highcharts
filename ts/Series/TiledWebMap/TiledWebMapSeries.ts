@@ -185,9 +185,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert map coordinates in longitude/latitude to tile
-     *
-     * @function Highcharts.MapView#lonLatToTile
-     * @since 11.1.0
+     * @private
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject}
@@ -215,9 +213,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert tile to map coordinates in longitude/latitude
-     *
-     * @function Highcharts.MapView#tileToLonLat
-     * @since 11.1.0
+     * @private
      * @param  xTile
      *         Position x of the tile
      * @param  yTile
