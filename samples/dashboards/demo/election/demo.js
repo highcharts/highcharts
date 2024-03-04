@@ -662,10 +662,18 @@ async function updateResultComponent(component, electionTable, year) {
 
 
 function updateControlComponent(year) {
-    const yearEl = document.querySelector('elections year#ei_' + year);
+    // Data element containing election info.
+    const el = document.querySelector('elections year#ei_' + year);
+
+    // Brief text about the election
+    const brief = el.querySelector('descr').innerHTML;
+
+    // Wikipedia link
+    const wikiUrl = el.querySelector('wiki').innerHTML;
+
+    // Update custom HTML component
     const domEl = document.getElementById('election-description');
-    const el = yearEl.querySelector('descr');
-    domEl.innerHTML = el.innerHTML;
+    domEl.innerHTML = `${brief}<a href="${wikiUrl}" target="_blank">Wikipedia</a>.`;
 }
 
 

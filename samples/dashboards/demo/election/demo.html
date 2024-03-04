@@ -23,7 +23,7 @@
 <!-- Demo description -->
 <div id="demo-description">
     <h1>Election demo</h1>
-    <p>The demo shows the results from recent U.S. presidential elections.</p>
+    <p>The demo shows the results of U.S. presidential elections from 2008 to 2020.</p>
     <h2>How to use</h2>
     <p>States are selected/deselected by clicking on the map. The election year is selected by the dropdown.</p>
     <h2>Dashboards components</h2>
@@ -38,8 +38,8 @@
         <li><b>Dashboards Datagrid</b> shows detailed results of all states. In the grid the electoral vote may be
             changed.</li>
     </ul>
-    <h2>Data set</h2>
-    <p>The data used in this demo are provided by ....</p>
+    <h2>Data sources</h2>
+    <p>The data used in this demo are provided by Wikipedia.com and the U.S. National Archives.</p>
 </div>
 
 <!-- XML data island: data for Custom HTML components-->
@@ -48,11 +48,11 @@
          Flex: 1 row, 3 cells
     -->
     <div id="html-result-div">
-        <!-- 1 row, cell 1: photo of Democrat candidate -->
+        <!-- Row 1, cell 1: photo of Democrat candidate -->
         <div id="dem-cand">
             <img alt="Photo of Democrat candidate" />
         </div>
-        <!-- 1 row, cell 2: detailed nationwide election result -->
+        <!-- Row 1, cell 2: detailed nationwide election result -->
         <!-- Flex: 1 column, 3 cells -->
         <div id="election-result">
             <div class="info">
@@ -68,12 +68,12 @@
                 <div id="bar-rep"></div>
             </div>
             <div class="info">
-                <!-- row 2: total votes, percentages -->
+                <!-- row 3: total votes, percentages -->
                 <div id="info-dem2">Left</div>
                 <div id="info-rep2">Right</div>
             </div>
         </div>
-        <!-- 1 row, cell 3: photo of Republican candidate -->
+        <!-- Row 1, cell 3: photo of Republican candidate -->
         <div id="rep-cand">
             <img alt="Photo of Republican candidate" />
         </div>
@@ -88,9 +88,7 @@
             <option value="2012">2012 - Obama vs Romney</option>
             <option value="2008">2008 - Obama vs McCain</option>
         </select>
-        <div id="election-description">
-            <p>Text describing the election will be added here... (includes relevant links)</p>
-        </div>
+        <div id="election-description"></div>
     </div>
 
     <!-- Data extracted from Wikipedia -->
