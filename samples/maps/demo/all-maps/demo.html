@@ -1,30 +1,43 @@
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/drilldown.js"></script>
 <script src="https://code.highcharts.com/mapdata/index.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
-<script src="https://www.highcharts.com/samples/static/jquery.combobox.js"></script>
-
-<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
 <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
 <div id="demo-wrapper">
-    <div id="map-box">
-        <div id="up"></div>
-        <div class="selector">
-            <button id="btn-prev-map" class="prev-next" aria-label="Previous map"><i class="fa fa-angle-left"></i></button>
-            <!-- Note: jQuery UI combobox should be replaced with an accessible widget -->
-            <select aria-label="Select a map to display" id="mapDropdown" class="ui-widget combobox"></select>
-            <button id="btn-next-map" class="prev-next" aria-label="Next map"><i class="fa fa-angle-right"></i></button>
-        </div>
-        <div id="container"></div>
-    </div>
+  <div id="selector">
+    <button id="prev-map-btn" class="prev-next" aria-label="Previous map"><i class="fa fa-angle-left"></i></button>
+
+    <input list="maps" id="map-datalist-input" name="map-choice" aria-label="Select a map to display" />
+    <datalist id="maps"></datalist>
+
+    <button id="next-map-btn" class="prev-next" aria-label="Next map"><i class="fa fa-angle-right"></i></button>
+  </div>
+  <div id="map-box">
+    <div id="container"></div>
+
     <div id="side-box">
-        <input type="checkbox" id="chkDataLabels" checked='checked' />
-        <label for="chkDataLabels">Data labels</label>
-        <div id="info-box">
-            <h4>This map</h4>
-            <div id="download"></div>
+        <div id="checkbox-wrapper">
+            <input type="checkbox" id="datalabels-checkbox" />
+          <label for="datalabels-checkbox">Data labels</label>
         </div>
+
+      <div id="info-box">
+        <h4 id="map-name-header"></h4>
+
+        <div id="download">
+          <a id="clean-demo-btn" target="_blank">View clean demo</a>
+          <div>
+            <p>... or view as</p>
+            <ul>
+              <li class='links'><a target="_blank" href="" id="svg-link">SVG</a></li>
+              <li class='links'><a target="_blank" href="" id="geojson-link">GeoJSON</a></li>
+              <li class='links'><a target="_blank" href="" id="topojson-link">TopoJSON</a></li>
+              <li class='links'><a target="_blank" href="" id="javascript-link">JavaScript</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

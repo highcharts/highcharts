@@ -150,11 +150,13 @@ namespace ColumnDataLabel {
     }
 
     /** @private */
-    export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
+    export function compose(
+        ColumnSeriesClass: typeof ColumnSeries
+    ): void {
 
         DataLabel.compose(Series);
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'ColumnDataLabel')) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

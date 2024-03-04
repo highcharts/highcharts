@@ -154,7 +154,7 @@ class TiledWebMapSeries extends MapSeries {
     public static compose(
         MapViewClass: typeof MapView
     ): void {
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'TiledWebMapSeries')) {
             addEvent(MapViewClass, 'onRecommendMapView', onRecommendMapView);
         }
     }

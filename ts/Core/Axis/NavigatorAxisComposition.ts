@@ -21,18 +21,14 @@ import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const {
-    composed,
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -157,7 +153,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (!AxisClass.keepProps.includes('navigatorAxis')) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -215,7 +211,10 @@ class NavigatorAxisAdditions {
         fixedMax?: number
     ): RangeSelector.RangeObject {
         const axis = this.axis,
-            chart = axis.chart;
+            chart = axis.chart,
+            overscroll = pick(axis.ordinal?.convertOverscroll(
+                axis.options.overscroll
+            ), 0);
 
         let newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
@@ -237,8 +236,11 @@ class NavigatorAxisAdditions {
 
         // Make sure panning to the edges does not decrease the zoomed range
         if (fixedRange && axis.dataMin && axis.dataMax) {
-            if (newMax >= axis.dataMax) {
-                newMin = correctFloat(axis.dataMax - fixedRange);
+            const maxWithOverscroll = axis.dataMax + overscroll;
+
+            if (newMax >= maxWithOverscroll) {
+                newMin = correctFloat(maxWithOverscroll - fixedRange);
+                newMax = correctFloat(maxWithOverscroll);
             }
 
             if (newMin <= axis.dataMin) {

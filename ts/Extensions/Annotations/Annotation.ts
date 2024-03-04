@@ -33,6 +33,7 @@ import type {
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
@@ -50,7 +51,6 @@ import ControlPoint from './ControlPoint.js';
 import ControlTarget from './ControlTarget.js';
 import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
-import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
@@ -209,14 +209,15 @@ class Annotation extends EventEmitter implements ControlTarget {
      */
     public static compose(
         ChartClass: typeof Chart,
+        NavigationBindingsClass: typeof NavigationBindings,
         PointerClass: typeof Pointer,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         AnnotationChart.compose(Annotation, ChartClass, PointerClass);
         ControllableLabel.compose(SVGRendererClass);
         ControllablePath.compose(ChartClass, SVGRendererClass);
-        NavigationBindings.compose(Annotation, ChartClass);
-        PopupComposition.compose(NavigationBindings, PointerClass);
+        NavigationBindingsClass.compose(Annotation, ChartClass);
+        PopupComposition.compose(NavigationBindingsClass, PointerClass);
     }
 
     /* *

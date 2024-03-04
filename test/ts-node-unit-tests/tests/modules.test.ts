@@ -27,8 +27,8 @@ export function testMapSeries() {
     const seriesTypes = Object.keys(Highmaps.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Maps source file should contain these series'
     );
 
@@ -62,8 +62,8 @@ export function testStockSeries() {
     const seriesTypes = Object.keys(Highstock.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Stock source file should contain these series'
     );
 
@@ -71,7 +71,7 @@ export function testStockSeries() {
         Highstock.product,
         'Highstock',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testGanttSeries() {
@@ -95,8 +95,8 @@ export function testGanttSeries() {
     const seriesTypes = Object.keys(Gantt.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Gantt source file should contain these series'
     );
 
@@ -104,7 +104,7 @@ export function testGanttSeries() {
         Gantt.product,
         'Highcharts Gantt',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testHighchartsSeries() {
@@ -127,8 +127,8 @@ export function testHighchartsSeries() {
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Highcharts source file should contain these series'
     );
 
@@ -136,7 +136,7 @@ export function testHighchartsSeries() {
         Highcharts.product,
         'Highcharts',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testHighchartsMoreSeries() {
@@ -169,8 +169,8 @@ export function testHighchartsMoreSeries() {
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Highcharts-more source file should contain these series'
     );
 }
@@ -195,75 +195,87 @@ export function test3dSeries() {
 export function testStockIndicators() {
     describe('Testing stock indicators series...');
 
-    const Highcharts = loadHCWithModules('highstock', ['indicators/indicators-all']);
+    const Highcharts = loadHCWithModules('highcharts', ['modules/stock', 'indicators/indicators-all']);
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     const expected = [
-        'line',
-        'area',
-        'spline',
-        'areaspline',
-        'column',
-        'bar',
-        'scatter',
-        'pie',
-        'hlc',
-        'ohlc',
-        'candlestick',
-        'flags',
-        'sma',
-        'ema',
-        'ad',
-        'ao',
-        'aroon',
-        'aroonoscillator',
-        'atr',
-        'bb',
-        'cci',
-        'cmf',
-        'dmi',
-        'dpo',
-        'chaikin',
-        'cmo',
-        'dema',
-        'tema',
-        'trix',
-        'apo',
-        'ikh',
-        'keltnerchannels',
-        'klinger',
-        'macd',
-        'mfi',
-        'momentum',
-        'natr',
-        'obv',
-        'pivotpoints',
-        'ppo',
-        'pc',
-        'priceenvelopes',
-        'psar',
-        'roc',
-        'rsi',
-        'stochastic',
-        'slowstochastic',
-        'supertrend',
-        'vbp',
-        'vwap',
-        'williamsr',
-        'wma',
-        'zigzag',
-        'linearRegression',
-        'linearRegressionSlope',
-        'linearRegressionIntercept',
-        'linearRegressionAngle',
-        'abands',
-        'trendline',
-        'disparityindex'
+        "abands",
+        "ad",
+        "ao",
+        "apo",
+        "area",
+        "arearange",
+        "areaspline",
+        "areasplinerange",
+        "aroon",
+        "aroonoscillator",
+        "atr",
+        "bar",
+        "bb",
+        "boxplot",
+        "bubble",
+        "candlestick",
+        "cci",
+        "chaikin",
+        "cmf",
+        "cmo",
+        "column",
+        "columnpyramid",
+        "columnrange",
+        "dema",
+        "disparityindex",
+        "dmi",
+        "dpo",
+        "ema",
+        "errorbar",
+        "flags",
+        "gauge",
+        "hlc",
+        "ikh",
+        "keltnerchannels",
+        "klinger",
+        "line",
+        "linearRegression",
+        "linearRegressionAngle",
+        "linearRegressionIntercept",
+        "linearRegressionSlope",
+        "macd",
+        "mfi",
+        "momentum",
+        "natr",
+        "obv",
+        "ohlc",
+        "packedbubble",
+        "pc",
+        "pie",
+        "pivotpoints",
+        "polygon",
+        "ppo",
+        "priceenvelopes",
+        "psar",
+        "roc",
+        "rsi",
+        "scatter",
+        "scatter3d",
+        "slowstochastic",
+        "sma",
+        "spline",
+        "stochastic",
+        "supertrend",
+        "tema",
+        "trendline",
+        "trix",
+        "vbp",
+        "vwap",
+        "waterfall",
+        "williamsr",
+        "wma",
+        "zigzag"
     ];
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'Highstock with the indicators-all module should add the indicators as series'
     );
 }
