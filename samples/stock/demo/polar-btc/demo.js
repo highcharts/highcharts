@@ -23,6 +23,8 @@ Highcharts.chart('container', {
     yAxis: {
         gridLineColor: '#8991ad',
         gridLineInterpolation: 'polygon',
+        max: 75000,
+        tickInterval: 25000,
         labels: {
             align: 'left',
             style: {
