@@ -210,14 +210,20 @@ const setupDashboard = instanceId => {
             title: 'Disk usage',
             type: 'Highcharts',
             connector: {
-                id: 'instanceDetails'
-            },
-            columnAssignment: {
-                index: 'x',
-                MediaGB: 'y',
-                RootGB: 'y',
-                Documents: 'y',
-                Downloads: 'y'
+                id: 'instanceDetails',
+                columnAssignment: [{
+                    seriesId: 'media-gb',
+                    data: ['x', 'MediaGB']
+                }, {
+                    seriesId: 'root-gb',
+                    data: ['x', 'RootGB']
+                }, {
+                    seriesId: 'documents',
+                    data: ['x', 'Documents']
+                }, {
+                    seriesId: 'downloads',
+                    data: ['x', 'Downloads']
+                }]
             },
             chartOptions: {
                 xAxis: {
@@ -233,18 +239,22 @@ const setupDashboard = instanceId => {
                 },
                 series: [{
                     name: 'MediaGB',
+                    id: 'media-gb',
                     pointStart: 0,
                     pointPlacement: -0.3
                 }, {
                     name: 'RootGB',
+                    id: 'root-gb',
                     pointStart: 1,
                     pointPlacement: -0.1
                 }, {
                     name: 'Documents',
+                    id: 'documents',
                     pointStart: 2,
                     pointPlacement: 0.1
                 }, {
                     name: 'Downloads',
+                    id: 'downloads',
                     pointStart: 3,
                     pointPlacement: 0.4
                 }],
@@ -294,11 +304,11 @@ const setupDashboard = instanceId => {
             title: 'CPU utilization',
             type: 'Highcharts',
             connector: {
-                id: 'charts'
-            },
-            columnAssignment: {
-                timestamp: 'x',
-                cpuUtilization: 'y'
+                id: 'charts',
+                columnAssignment: [{
+                    seriesId: 'cpu-utilization',
+                    data: ['timestamp', 'cpuUtilization']
+                }]
             },
             sync: {
                 highlight: true
@@ -308,7 +318,8 @@ const setupDashboard = instanceId => {
                     type: 'spline'
                 },
                 series: [{
-                    name: 'cpuUtilization'
+                    name: 'CPU utilization',
+                    id: 'cpu-utilization'
                 }],
                 xAxis: {
                     type: 'datetime',
@@ -491,12 +502,14 @@ const setupDashboard = instanceId => {
             type: 'Highcharts',
             title: 'Network (bytes)',
             connector: {
-                id: 'charts'
-            },
-            columnAssignment: {
-                timestamp: 'x',
-                networkIn: 'y',
-                networkOut: 'y'
+                id: 'charts',
+                columnAssignment: [{
+                    seriesId: 'in',
+                    data: ['timestamp', 'networkIn']
+                }, {
+                    seriesId: 'out',
+                    data: ['timestamp', 'networkOut']
+                }]
             },
             sync: {
                 highlight: true
@@ -536,7 +549,14 @@ const setupDashboard = instanceId => {
                     point: {
                         valueDescriptionFormat: 'bytes'
                     }
-                }
+                },
+                series: [{
+                    name: 'network in',
+                    id: 'in'
+                }, {
+                    name: 'network out',
+                    id: 'out'
+                }]
             }
         },
         {
@@ -544,12 +564,14 @@ const setupDashboard = instanceId => {
             type: 'Highcharts',
             title: 'Disk operations',
             connector: {
-                id: 'charts'
-            },
-            columnAssignment: {
-                timestamp: 'x',
-                writeOpt: 'y',
-                readOpt: 'y'
+                id: 'charts',
+                columnAssignment: [{
+                    seriesId: 'read',
+                    data: ['timestamp', 'readOpt']
+                }, {
+                    seriesId: 'write',
+                    data: ['timestamp', 'writeOpt']
+                }]
             },
             sync: {
                 highlight: true
