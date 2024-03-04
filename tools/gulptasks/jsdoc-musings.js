@@ -48,9 +48,9 @@ function declarationPropegation() {
                     const parsedTree = JSON.parse(tree);
                     for (const key of Object.keys(parsedTree)) {
                         if (!key.includes('HighchartsProductSeries')) {
+                            // To maybe be used in the future
                             const interfaceFileName = key.replace('plotOptions.', '') + 'Options.d.ts';
-                            const options = parsedTree[key];
-                            const samples = options.samples;
+                            const samples = parsedTree[key].samples;
 
                             if (samples) {
                                 for (const sample of samples) {
