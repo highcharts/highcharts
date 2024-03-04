@@ -10,6 +10,7 @@
 .row {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
 }
 
 .cell {
@@ -73,6 +74,11 @@ h1#title {
     color: var(--highcharts-neutral-color-60);
 }
 
+#kpi-vitamin-a .highcharts-dashboards-component-kpi,
+#kpi-iron .highcharts-dashboards-component-kpi {
+    padding: 10px;
+}
+
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value,
 #kpi-iron .highcharts-dashboards-component-kpi-value {
     font-size: 4em;
@@ -112,7 +118,7 @@ h1#title {
 
 @media (max-width: 992px) {
     .row {
-        flex-wrap: wrap;
+        flex-direction: column;
     }
 
     #kpi-wrapper {

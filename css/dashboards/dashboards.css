@@ -178,7 +178,7 @@
     padding: 20px 10px;
     position: relative;
     overflow: hidden;
-    min-height: 500px;
+    min-height: 300px;
     transition: 0.5s;
     overflow-x: scroll;
     font-family: Helvetica, Arial, sans-serif;
@@ -274,7 +274,7 @@
 }
 
 .highcharts-dashboards-component-kpi {
-    min-height: 20px;
+    min-height: 100px;
     text-align: center;
 }
 
@@ -297,6 +297,7 @@
 }
 
 .highcharts-dashboards-component img {
+    max-width: 100%;
     height: 100%;
     overflow: auto;
 }
@@ -693,7 +694,7 @@
     color: var(--highcharts-neutral-color-60);
     position: absolute;
     z-index: 1000;
-    min-height: 500px;
+    min-height: 300px;
     height: 100%;
     padding: 20px;
     overflow: scroll;
