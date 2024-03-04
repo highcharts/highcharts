@@ -453,15 +453,17 @@ class HTMLElement extends SVGElement {
                 );
             }
 
-            // Apply position with correction
-            const styles: CSSObject = {
-                left: `${x + (this.xCorr || 0)}px`,
-                top: `${y + (this.yCorr || 0)}px`
-            };
-            // if (rotationOriginX || rotationOriginY) {
-            styles.transformOrigin =
-                `${rotationOriginX - (this.xCorr || 0) - (this.x || 0)}px ${rotationOriginY - (this.yCorr || 0) - (this.y || 0)}px`;
-            // }
+            // Apply position with correction and rotation origin
+            const rotOriginX = rotationOriginX -
+                    (this.xCorr || 0) - (this.x || 0) - parentPadding,
+                rotOriginY = rotationOriginY -
+                        (this.yCorr || 0) - (this.y || 0) - parentPadding,
+                styles: CSSObject = {
+                    left: `${x + (this.xCorr || 0)}px`,
+                    top: `${y + (this.yCorr || 0)}px`,
+                    transformOrigin: `${rotOriginX}px ${rotOriginY}px`
+                };
+
             css(element, styles);
 
 
