@@ -8,13 +8,31 @@ Dashboards.board('container', {
                 cells: [{
                     id: 'dashboard-1'
                 }]
+            }, {
+                cells: [{
+                    id: 'dashboard-2'
+                }]
             }]
         }]
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-1',
+        renderTo: 'dashboard-1',
         caption: 'Caption (original)',
         title: 'Title (original)'
+    }, {
+        renderTo: 'dashboard-2',
+        type: 'HTML',
+        elements: [{
+            tagName: 'h1',
+            textContent: 'Loreum ipsum et omnia dolores, loreum ipsum'
+        }, {
+            tagName: 'div',
+            children: [{
+                tagName: 'span',
+                class: 'subtitle',
+                textContent: 'Loreum ipsum et omnia dolores'
+            }]
+        }]
     }]
 });

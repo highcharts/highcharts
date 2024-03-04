@@ -38,6 +38,7 @@
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     border-radius: 20px;
+    padding: 10px;
     text-align: left;
 }
 

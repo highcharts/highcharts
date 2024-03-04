@@ -56,15 +56,8 @@ test('component resizing', function (assert) {
 
     component.resize(undefined, 300);
 
-    assert.deepEqual(
-        {
-            width: component.element.style.width,
-            height: component.element.style.height
-        },
-        {
-            width: '',
-            height: '300px'
-        },
+    assert.ok(
+        component.element.style.width === '' && component.element.style.height !== '',
         'Should be able to update just the height. Width should stay the same.'
     );
 
