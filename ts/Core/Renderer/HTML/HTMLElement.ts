@@ -339,8 +339,8 @@ class HTMLElement extends SVGElement {
                 element,
                 renderer,
                 rotation,
-                rotationOriginX = 0,
-                rotationOriginY = 0,
+                rotationOriginX,
+                rotationOriginY,
                 styles,
                 textAlign = 'left',
                 textWidth,
@@ -453,15 +453,15 @@ class HTMLElement extends SVGElement {
                 );
             }
 
-            // Apply position with correction
-            const styles: CSSObject = {
-                left: (x + (this.xCorr || 0)) + 'px',
-                top: (y + (this.yCorr || 0)) + 'px'
-            };
-            if (rotationOriginX || rotationOriginY) {
-                styles.transformOrigin =
-                    `${rotationOriginX}px ${rotationOriginY}px`;
-            }
+            // Apply position with correction and rotation origin
+            const { xCorr = 0, yCorr = 0 } = this,
+                rotOriginX = (rotationOriginX ?? x) - xCorr - x - parentPadding,
+                rotOriginY = (rotationOriginY ?? y) - yCorr - y - parentPadding,
+                styles: CSSObject = {
+                    left: `${x + xCorr}px`,
+                    top: `${y + yCorr}px`,
+                    transformOrigin: `${rotOriginX}px ${rotOriginY}px`
+                };
             css(element, styles);
 
 
