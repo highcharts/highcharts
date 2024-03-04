@@ -133,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         labelCheckbox = document.createElement('label');
 
     checkbox.setAttribute('type', 'checkbox');
+    checkbox.id = 'checkbox-info';
     labelCheckbox.setAttribute('for', checkbox.id);
     labelCheckbox.textContent = ' More information in each data point';
 
