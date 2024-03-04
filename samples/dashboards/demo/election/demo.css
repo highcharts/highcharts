@@ -74,6 +74,7 @@
  *  HTML layout
  *
  * */
+
 #container {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-10);
@@ -86,6 +87,7 @@
 
 .cell {
     margin: 10px;
+    min-width: 40%;
 }
 
 /* *
@@ -93,6 +95,7 @@
  *  Common styles
  *
  * */
+
 .highcharts-dashboards-component-title {
     margin: 0;
     padding: 10px 0;
@@ -279,10 +282,6 @@
  *
  * */
 
-#election-map {
-    width: 100%;
-}
-
 #election-map .highcharts-background {
     fill: var(--color-background);
 }
@@ -373,9 +372,6 @@
  *  Election chart (history)
  *
  * */
-#election-chart {
-    width: 100%;
-}
 
 #election-chart .highcharts-title {
     fill: var(--color-title);
@@ -479,13 +475,13 @@
 
 /* MEDIUM */
 @media (max-width: 992px) {
+    #election-map,
+    #election-chart,
     #html-result,
     #html-control {
         flex: 1 1 50%;
     }
 
-    #election-map,
-    #election-chart,
     #election-grid {
         flex: 1 1 100%;
     }
