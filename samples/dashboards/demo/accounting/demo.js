@@ -70,6 +70,7 @@ const commonColumnOptions = {
     },
     series: [{
         name: 'Budget',
+        id: 'budget-series',
         colorIndex: 1
     }],
     tooltip: {
@@ -310,15 +311,17 @@ const board = Dashboards.board('container', {
         renderTo: 'rev-chart',
         type: 'Highcharts',
         connector: {
-            id: 'data'
+            id: 'data',
+            columnAssignment: [{
+                seriesId: 'budget-series',
+                data: ['Date', 'Budget']
+            }, {
+                seriesId: 'Revenue',
+                data: ['Date', 'Revenue']
+            }]
         },
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Date: 'x',
-            Budget: 'y',
-            Revenue: 'y'
         },
         chartOptions: {
             ...commonColumnOptions,
@@ -330,15 +333,17 @@ const board = Dashboards.board('container', {
         renderTo: 'cost-chart',
         type: 'Highcharts',
         connector: {
-            id: 'data'
+            id: 'data',
+            columnAssignment: [{
+                seriesId: 'budget-series',
+                data: ['Date', 'Budget']
+            }, {
+                seriesId: 'Cost',
+                data: ['Date', 'Cost']
+            }]
         },
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Date: 'x',
-            Budget: 'Budget',
-            Cost: 'Cost'
         },
         chartOptions: {
             ...commonColumnOptions,
@@ -351,25 +356,23 @@ const board = Dashboards.board('container', {
         type: 'Highcharts',
         chartConstructor: 'stockChart',
         connector: {
-            id: 'data'
+            id: 'data',
+            columnAssignment: [{
+                seriesId: 'result',
+                data: ['Date', 'AccResPredA']
+            }, {
+                seriesId: 'pessimistically',
+                data: ['Date', 'AccResPredP']
+            }, {
+                seriesId: 'optimistically',
+                data: ['Date', 'AccResPredO']
+            }]
         },
         sync: {
             highlight: true
         },
         tooltip: {
             useHTML: true
-        },
-        columnAssignment: {
-            Date: 'x',
-            Result: {
-                y: 'AccResPredA'
-            },
-            Pessimistically: {
-                y: 'AccResPredP'
-            },
-            Optimistically: {
-                y: 'AccResPredO'
-            }
         },
         chartOptions: {
             chart: {
@@ -460,11 +463,14 @@ const board = Dashboards.board('container', {
             },
             series: [{
                 name: 'Result',
+                id: 'result',
                 zIndex: 2
             }, {
-                name: 'Pessimistically'
+                name: 'Pessimistically',
+                id: 'pessimistically'
             }, {
-                name: 'Optimistically'
+                name: 'Optimistically',
+                id: 'optimistically'
             }]
         }
     }]
