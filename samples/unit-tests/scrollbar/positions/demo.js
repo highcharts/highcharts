@@ -148,12 +148,11 @@ QUnit.test(
             axis = chart.xAxis[0],
             bbox = axis.axisTitle.getBBox(true);
 
-        // TO DO - test failing, commenting only for commit purpose #20760
-        // assert.strictEqual(
-        //     axis.scrollbar.x > bbox.x + bbox.width,
-        //     true,
-        //     'Scrollbar rendered on the left side of the chart.'
-        // );
+        assert.strictEqual(
+            axis.scrollbar.x > bbox.x + bbox.width,
+            true,
+            'Scrollbar rendered on the left side of the chart.'
+        );
     }
 );
 

@@ -3702,17 +3702,13 @@ class Axis {
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
                 ][this.side],
-            x = horiz ?
-                alongAxis + xOption :
-                offAxis + (opposite ? this.width : 0) + offset + xOption,
-            y = horiz ?
-                offAxis + yOption - (opposite ? this.height : 0) + offset :
-                alongAxis + yOption,
             titlePosition = {
-                x: x,
-                y: y,
-                rotationOriginX: x,
-                rotationOriginY: y
+                x: horiz ?
+                    alongAxis + xOption :
+                    offAxis + (opposite ? this.width : 0) + offset + xOption,
+                y: horiz ?
+                    offAxis + yOption - (opposite ? this.height : 0) + offset :
+                    alongAxis + yOption
             };
 
         fireEvent(
