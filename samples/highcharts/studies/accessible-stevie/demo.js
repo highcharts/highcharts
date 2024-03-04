@@ -118,7 +118,6 @@ function createTooltipText(
         </p>`;
 
     if (songValues.includes('None') || awardValues.includes('None')) {
-        console.log(songValues);
         return tooltipText;
     }
     tooltipText += mappedValues.map(value => `<li><strong>${value.award.trim()}: </strong>${value.song}</li>`).join('');
