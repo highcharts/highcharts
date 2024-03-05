@@ -128,6 +128,7 @@
     display: flex;
     flex-direction: row;
     min-height: 160px;
+    padding: 5px;
 }
 
 /* Left: Democrat candidate */
@@ -151,9 +152,7 @@
 
 #html-result img {
     /* Candidate portraits: original dimension 290 x 400 */
-    max-height: 150px;
     width: auto;
-    padding: 5px;
 }
 
 /* Result bar */
@@ -281,7 +280,7 @@
     text-align: left;
     font-size: 0.9em;
     padding: 5px;
-    margin: 10px 20px 0;
+    margin: 10px 20px;
 }
 
 /* *
@@ -470,15 +469,17 @@
 /* Dashboards layout */
 
 /* LARGE */
-#html-result,
-#html-control,
-#election-map,
-#election-chart {
-    flex: 1 1 50%;
-}
+@media (max-width: 1200px) {
+    #html-result,
+    #html-control,
+    #election-map,
+    #election-chart {
+        flex: 1 1 50%;
+    }
 
-#election-grid {
-    flex: 1 1 100%;
+    #election-grid {
+        flex: 1 1 100%;
+    }
 }
 
 /* MEDIUM */
