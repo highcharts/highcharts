@@ -117,7 +117,7 @@ Highcharts.chart('container', {
         }
     },
     exporting: {
-        showTable: true
+        showTable: false
     },
     tooltip: {
         useHTML: true,
