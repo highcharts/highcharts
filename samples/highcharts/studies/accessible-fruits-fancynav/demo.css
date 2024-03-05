@@ -6,6 +6,11 @@
 
 #container {
     height: 450px;
+    padding: 3px;
+}
+
+.highcharts-container:focus {
+    outline: 3px solid #446299 !important;
 }
 
 .hint-button,
@@ -83,7 +88,11 @@ dialog {
 }
 
 #showTable {
-    right: 12rem;
+    top: 3px;
+}
+
+.hint-button {
+    right: 6rem;
 }
 
 .hidden {

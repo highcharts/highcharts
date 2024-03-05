@@ -92,6 +92,8 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
+// ============================================================================
+// Announcer
 const announcer = document.createElement('div');
 announcer.className = 'visually-hidden';
 announcer.setAttribute('aria-live', 'assertive');
@@ -110,9 +112,13 @@ const announce = (str, delay, clear) => {
 };
 chart.renderTo.appendChild(announcer);
 
+
+let focusReturnFromHelp;
+
+// ============================================================================
+// Help Btn & dialog
 const helpBtn = document.createElement('button');
-helpBtn.setAttribute('aria-label', 'Application, press H for keyboard shortcuts. Total fruit consumption interactive chart.');
-helpBtn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Iconoir_accessibility.svg"> Keyboard shortcuts';
+helpBtn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Iconoir_accessibility.svg" alt=""> Keyboard shortcuts';
 helpBtn.className = 'hint-button';
 
 const helpContent = document.createElement('dialog'),
@@ -132,15 +138,21 @@ helpContent.innerHTML = `
 `;
 helpContent.addEventListener('close', () => {
     chart.accessibility.keyboardNavigation.blocked = false;
-    helpBtn.focus();
+    if (focusReturnFromHelp) {
+        focusReturnFromHelp.focus();
+        focusReturnFromHelp = null;
+    } else {
+        helpBtn.focus();
+    }
 });
 
 helpBtn.onclick = () => {
     chart.accessibility.keyboardNavigation.blocked = true;
     helpContent.showModal();
 };
-chart.container.insertBefore(helpBtn, chart.container.firstChild);
-chart.container.setAttribute('role', 'application');
+chart.container.appendChild(helpBtn);
+chart.container.appendChild(helpContent);
+document.getElementById(closeID).onclick = () => helpContent.close();
 
 const HelpBtnComponent = function (chart) {
     this.initBase(chart);
@@ -170,6 +182,71 @@ Highcharts.extend(HelpBtnComponent.prototype, {
 });
 
 
+// ============================================================================
+// Application desc
+const desc = document.createElement('button');
+desc.innerText = 'Bar chart with 3 bars. Click to interact, or press H for keyboard shortcuts. Total fruit consumption.';
+desc.className = 'visually-hidden';
+desc.setAttribute('aria-hidden', 'false');
+desc.onclick = () => {
+    const a11y = chart.accessibility;
+    if (a11y) {
+        a11y.keyboardNavigation.currentModuleIx = 0;
+        a11y.keyboardNavigation.modules[0].init();
+        a11y.keyboardNavigation.move(1);
+    }
+};
+desc.onkeydown = function (e) {
+    if (e.key === 'h') {
+        focusReturnFromHelp = desc;
+        helpBtn.onclick();
+    }
+};
+chart.container.insertBefore(desc, chart.container.firstChild);
+
+
+// ============================================================================
+// Application
+const CustomContainerComponent = function (chart) {
+    this.initBase(chart);
+};
+CustomContainerComponent.prototype = new Highcharts.AccessibilityComponent();
+Highcharts.extend(CustomContainerComponent.prototype, {
+    getKeyboardNavigation: function () {
+        const keys = this.keyCodes,
+            chart = this.chart,
+            component = this;
+        return new Highcharts.KeyboardNavigationHandler(chart, {
+            keyCodeMap: [
+                // Space/enter means we enter chart
+                [[keys.space, keys.enter], function () {
+                    return this.response.next;
+                }],
+
+                // H key
+                [[72], function () {
+                    focusReturnFromHelp = chart.container;
+                    component.fakeClickEvent(helpBtn);
+                    return this.response.success;
+                }]
+            ],
+
+            init: function () {
+                announce('Bar chart with 3 bars. Click to interact, or press H for keyboard shortcuts. Total fruit consumption.');
+                const a11y = chart.accessibility;
+                if (a11y) {
+                    a11y.keyboardNavigation.tabindexContainer.focus();
+                }
+            }
+        });
+    }
+});
+chart.container.setAttribute('role', 'application');
+chart.container.setAttribute('aria-label', 'Total fruit consumption.');
+
+
+// ============================================================================
+// Custom series nav
 const CustomSeriesNav = function (chart) {
     this.initBase(chart);
 };
@@ -273,15 +350,15 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                     })
                     .add(chart.seriesGroup)
                 ];
+
+                chart.accessibility.keyboardNavigation
+                    .tabindexContainer.focus();
             },
             speakDataAtCurrent = () => {
                 const { drill, x, y } = component.dataPos,
                     content = component.dataContent[drill][x][y];
                 highlightCurrent();
-                announce(content, 300);
-                if (!drill) {
-                    announce('Press Enter for details', 3000, false);
-                }
+                announce(drill ? content : content + ' Press Enter for details.', 300);
             };
 
 
@@ -294,6 +371,9 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                 }],
 
                 [[keys.esc], function () {
+                    if (!component.dataPos.drill) {
+                        return this.response.prev;
+                    }
                     component.dataPos.drill = 0;
                     component.dataPos.y = 0;
                     speakDataAtCurrent();
@@ -302,6 +382,7 @@ Highcharts.extend(CustomSeriesNav.prototype, {
 
                 // H key
                 [[72], function () {
+                    focusReturnFromHelp = chart.container;
                     component.fakeClickEvent(helpBtn);
                     return this.response.prev;
                 }],
@@ -328,13 +409,13 @@ Highcharts.extend(CustomSeriesNav.prototype, {
             init: function () {
                 component.focusIndicators = component.focusIndicators || [];
                 component.dataContent = [[
-                    ['Ted, 12 fruits total.'],
-                    ['Øystein, 13 fruits total.'],
-                    ['Marita, 11 fruits total.']
+                    ['Ted, 12 fruits total. Bar 1 of 3 with 5 elements.'],
+                    ['Øystein, 13 fruits total. Bar 2 of 3 with 5 elements.'],
+                    ['Marita, 11 fruits total. Bar 3 of 3 with 5 elements.']
                 ], [
-                    ['2 raspberries, Ted.', '2 kiwi, Ted.', '4 blueberries, Ted.', '1 mango, Ted.', '3 strawberries, Ted.'],
-                    ['3 raspberries, Øystein.', '3 kiwi, Øystein.', '1 blueberries, Øystein.', '4 mango, Øystein.', '2 strawberries, Øystein.'],
-                    ['1 raspberries, Marita.', '1 kiwi, Marita.', '3 blueberries, Marita.', '2 mango, Marita.', '4 strawberries, Marita.']
+                    ['2 raspberries, Ted. 1 of 5 elements.', '2 kiwi, Ted. 2 of 5 elements.', '4 blueberries, Ted. 3 of 5 elements.', '1 mango, Ted. 4 of 5 elements.', '3 strawberries, Ted. 5 of 5 elements.'],
+                    ['3 raspberries, Øystein. 1 of 5 elements.', '3 kiwi, Øystein. 2 of 5 elements.', '1 blueberries, Øystein. 3 of 5 elements.', '4 mango, Øystein. 4 of 5 elements.', '2 strawberries, Øystein. 5 of 5 elements.'],
+                    ['1 raspberries, Marita. 1 of 5 elements.', '1 kiwi, Marita. 2 of 5 elements.', '3 blueberries, Marita. 3 of 5 elements.', '2 mango, Marita. 4 of 5 elements.', '4 strawberries, Marita. 5 of 5 elements.']
                 ]];
                 component.dataPos = { x: 0, y: 0, drill: 0 };
                 speakDataAtCurrent();
@@ -350,7 +431,8 @@ Highcharts.extend(CustomSeriesNav.prototype, {
 });
 
 
-// Update the chart with the new component, also adding it in the keyboard
+// ============================================================================
+// Update the chart with the new components, also adding in the keyboard
 // navigation order
 chart.update({
     chart: {
@@ -358,24 +440,25 @@ chart.update({
             afterA11yUpdate: function () {
                 helpBtn.setAttribute('aria-hidden', 'false');
                 helpContent.setAttribute('aria-hidden', 'false');
+                chart.container.style.outline = '';
             }
         }
     },
     accessibility: {
         customComponents: {
+            customContainer: new CustomContainerComponent(chart),
             helpBtn: new HelpBtnComponent(chart),
             customSeriesNav: new CustomSeriesNav(chart)
         },
         keyboardNavigation: {
-            order: ['helpBtn', 'customSeriesNav']
+            order: ['customContainer', 'customSeriesNav', 'helpBtn']
         }
     }
 });
 
-chart.container.setAttribute('aria-label', 'Total fruit consumption, interactive chart.');
-chart.container.insertBefore(helpContent, helpBtn.nextSibling);
-document.getElementById(closeID).onclick = () => helpContent.close();
 
+// ============================================================================
+// Table
 document.getElementById('showTable').onclick = function () {
     const table = document.getElementById('highcharts-data-table-0'),
         hidden = table.classList.toggle('hidden');
