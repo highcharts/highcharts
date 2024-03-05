@@ -628,14 +628,14 @@ async function updateResultComponent(component, electionTable, year) {
 
     // Election information
     let el = document.getElementById('info-dem1');
-    el.innerHTML = `<b>${demColVotes}</b> ${candDem}`;
+    el.innerHTML = `<b>${demColVotes}</b>&nbsp;${candDem}`;
     el = document.getElementById('info-dem2');
     el.innerHTML = `<b>${demPercent}%</b> ${demVotes.toLocaleString('en-US')}`;
 
     el = document.getElementById('info-rep1');
-    el.innerHTML = `${candRep} <b>${repColVotes}</b>`;
+    el.innerHTML = `${candRep}&nbsp;<b>${repColVotes}</b>`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = `${repVotes.toLocaleString('en-US')} <b>${repPercent}%</b>`;
+    el.innerHTML = `${repVotes.toLocaleString('en-US')}<b>${repPercent}%</b>`;
 
     // Result bar
     el = document.getElementById('bar-dem');
@@ -646,7 +646,7 @@ async function updateResultComponent(component, electionTable, year) {
     // Votes needed to win
     const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBC: is this safe?
     el = document.getElementById('info-to-win');
-    el.innerHTML = neededVotes + ' to win';
+    el.innerHTML = neededVotes + '&nbsp;to&nbsp;win';
 }
 
 

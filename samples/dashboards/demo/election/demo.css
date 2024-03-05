@@ -17,6 +17,7 @@
     /* Others */
     --highcharts-color-2: #c0c0c0;
     --color-background: var(--highcharts-neutral-color-3);
+    --color-link: #339;
 }
 
 #election-map {
@@ -59,6 +60,9 @@
 
         /* Republican */
         --highcharts-color-1: #dc4747;
+
+        /* Others */
+        --color-link: #cca;
     }
 
     #election-chart {
@@ -95,7 +99,6 @@
     position: relative;
     margin: 10px;
     background-clip: border-box;
-    background-color: var(--highcharts-background-color);
 }
 
 /* *
@@ -133,7 +136,9 @@
 
 /* Left: Democrat candidate */
 #html-result-div #dem-cand {
-    flex: 0 1 15%;
+    display: flex;
+    flex: 0 1 20%;
+    align-items: center;
 }
 
 /* Middle: Election result */
@@ -146,13 +151,18 @@
 }
 
 /* Right: Republican candidate */
-#html-result #rep-cand {
-    flex: 0 1 15%;
+#html-result-div #rep-cand {
+    display: flex;
+    flex: 0 1 20%;
+    align-items: center;
 }
 
-#html-result img {
-    /* Candidate portraits: original dimension 290 x 400 */
+#html-result-div img {
+    /* Candidate portraits */
     width: auto;
+    height: auto;
+    border-radius: 20%;
+    border: 3px solid var(--highcharts-color-2);
 }
 
 /* Result bar */
@@ -198,20 +208,20 @@
     border-radius: 0 5px 5px 0;
 }
 
-#html-result .info {
+#html-result-div .info {
     display: flex;
     flex-direction: row;
 }
 
-#html-result .info div {
+#html-result-div .info div {
     flex-grow: 1;
 }
 
-#html-result .info:nth-of-type(1) {
+#html-result-div .info:nth-of-type(1) {
     padding-top: 15px;
 }
 
-#html-result .info b {
+#html-result-div .info b {
     padding: 0 10px;
 }
 
@@ -281,6 +291,10 @@
     font-size: 0.9em;
     padding: 5px;
     margin: 10px 20px;
+}
+
+#html-control-div a {
+    color: var(--color-link);
 }
 
 /* *
@@ -454,9 +468,20 @@
     font-weight: bold;
 }
 
-/* Capitalize first column (state names) */
+/* Capitalize state names (first column) */
 #election-grid .highcharts-datagrid-cell:nth-child(1) {
     text-transform: capitalize;
+}
+
+/* Candidate votes columns */
+#election-grid .highcharts-datagrid-cell:nth-child(4),
+#election-grid .highcharts-datagrid-cell:nth-child(5) {
+    min-width: 70px;
+}
+
+/* Total votes column */
+#election-grid .highcharts-datagrid-cell:nth-child(6) {
+    min-width: 100px;
 }
 
 /* Safari fix for manual dark mode */
@@ -496,6 +521,11 @@
         flex: unset;
         width: 100%;
     }
+
+    #election-grid .highcharts-datagrid-cell {
+        font-size: 14px;
+        padding-left: 5px;
+    }
 }
 
 /* SMALL */
@@ -511,6 +541,7 @@
 
     #election-grid .highcharts-datagrid-cell {
         font-size: 12px;
+        padding-left: 3px;
     }
 }
 
