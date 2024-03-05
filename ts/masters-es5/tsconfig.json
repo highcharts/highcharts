@@ -11,7 +11,9 @@
         "lib": [
             "DOM",
             "ES5",
-            "ES2015.Promise"
+            "ES2017.Object",
+            "ES2015.Promise",
+            "ES2016.Array.Include"
         ]
     },
     "exclude": [

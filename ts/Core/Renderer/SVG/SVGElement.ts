@@ -2116,7 +2116,7 @@ class SVGElement implements SVGElementLike {
             tempElement: SVGDOMElement;
 
         // Read pixel values directly
-        if (val.endsWith('px')) {
+        if (/px$/.test(val)) {
             ret = pInt(val);
 
         // Other values like em, pt etc need to be measured

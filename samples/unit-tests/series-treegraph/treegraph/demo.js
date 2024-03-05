@@ -39,7 +39,7 @@ QUnit.test('Treegraph series',
             'The point A should not be X positioned on 0 (#19038)'
         );
 
-        assert.stricEqual(
+        assert.strictEqual(
             series.data[1].dataLabel.visibility,
             'hidden',
             'Hidden points should have hidden data labels (#18891, #20752)'

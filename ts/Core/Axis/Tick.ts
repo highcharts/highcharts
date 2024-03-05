@@ -829,11 +829,12 @@ class Tick {
             pxPos = horiz ? x : y;
 
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
-        // should not be visible (#20166)
+        // should not be visible (#20166). The `correctFloat` is for reversed
+        // axes in Safari.
         if (
             !axis.chart.polar &&
             tick.isNew &&
-            (pxPos < axisStart || pxPos > axisEnd)
+            (correctFloat(pxPos) < axisStart || pxPos > axisEnd)
         ) {
             opacity = 0;
         }
