@@ -55,10 +55,10 @@
     /* dark mode */
     :root {
         /* Democrat */
-        --highcharts-color-0: rgb(74, 131, 240);
+        --highcharts-color-0: #4a83f0;
 
         /* Republican */
-        --highcharts-color-1: rgb(220, 71, 71);
+        --highcharts-color-1: #dc4747;
     }
 
     #election-chart {
@@ -82,12 +82,20 @@
 
 .row {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
 }
 
 .cell {
+    flex: 1;
+    min-width: 20px;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
     margin: 10px;
-    min-width: 40%;
+    background-clip: border-box;
+    background-color: var(--highcharts-background-color);
 }
 
 /* *
@@ -475,20 +483,6 @@
 
 /* MEDIUM */
 @media (max-width: 992px) {
-    #election-map,
-    #election-chart,
-    #html-result,
-    #html-control {
-        flex: 1 1 50%;
-    }
-
-    #election-grid {
-        flex: 1 1 100%;
-    }
-}
-
-/* SMALL */
-@media (max-width: 576px) {
     .row {
         flex-direction: column;
     }
@@ -498,7 +492,20 @@
     #election-map,
     #election-chart,
     #election-grid {
-        flex: 1 1 100%;
+        flex: unset;
+        width: 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #html-result,
+    #html-control,
+    #election-map,
+    #election-chart,
+    #election-grid {
+        flex: unset;
+        width: 100%;
     }
 
     #election-grid .highcharts-datagrid-cell {

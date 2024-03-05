@@ -20,23 +20,12 @@
 // ........ | ............. | .........     | ........    | ........... | int
 // Wyoming  | int           | int           | int (%)     | int (%)     | int
 
-// Useful links (TBD: remove before release )
-// -----------------------------------------------------------------------------
-// * https://www.highcharts.com/demo/maps/data-class-two-ranges
-// * https://www.highcharts.com/demo/maps/map-pies
-// * https://www.highcharts.com/demo/highcharts/column-comparison
-// * https://www.presidency.ucsb.edu/statistics/elections
-// * https://edition.cnn.com/election/2020/results/president
-// * https://www.joshwcomeau.com/css/interactive-guide-to-flexbox/
-
 // Data sources
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
 const commonTitle = 'U.S. presidential election';
-
-// TBD: expand as more elections are added
 const electionYears = ['2020', '2016', '2012', '2008'];
 
 // Election data loaded from CSV and converted to JSON
