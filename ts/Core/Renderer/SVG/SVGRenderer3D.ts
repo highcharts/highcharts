@@ -38,7 +38,6 @@ const { parse: color } = Color;
 import H from '../../Globals.js';
 const {
     charts,
-    composed,
     deg2rad
 } = H;
 import Math3D from '../../Math3D.js';
@@ -52,8 +51,7 @@ const {
     defined,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -204,9 +202,10 @@ namespace SVGRenderer3D {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const rendererProto = SVGRendererClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            extend(SVGRendererClass.prototype, {
+        if (!rendererProto.element3d) {
+            extend(rendererProto, {
                 Element3D: SVGElement3D,
                 arc3d,
                 arc3dPath,

@@ -133,8 +133,8 @@ function checkDemosConsistency() {
                     logLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
-                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                    if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        logLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
@@ -286,10 +286,9 @@ specified by config.imageCapture.resultsOutputPath.
         log.message('No tests to run, exiting early');
         return;
     }
-    const { runTasks } = require('./lib/gulp');
 
     // Conditionally build required code
-    await runTasks('scripts');
+    await gulp.task('scripts')();
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {

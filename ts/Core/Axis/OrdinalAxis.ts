@@ -24,7 +24,6 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const { composed } = H;
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
@@ -36,8 +35,8 @@ const {
     error,
     isNumber,
     pick,
-    pushUnique,
-    timeUnits
+    timeUnits,
+    isString
 } = U;
 
 /* *
@@ -146,10 +145,9 @@ namespace OrdinalAxis {
         SeriesClass: typeof Series,
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
+        const axisProto = AxisClass.prototype as Composition;
 
-        if (pushUnique(composed, compose)) {
-            const axisProto = AxisClass.prototype as Composition;
-
+        if (!axisProto.ordinal2lin) {
             axisProto.getTimeTicks = getTimeTicks;
             axisProto.index2val = index2val;
             axisProto.lin2val = lin2val;
@@ -519,29 +517,44 @@ namespace OrdinalAxis {
         if (
             axis.isXAxis &&
             defined(options.overscroll) &&
+            options.overscroll !== 0 &&
             isNumber(axis.max) &&
-            isNumber(axis.min) &&
-            axis.max === axis.dataMax &&
-            (
-                // Panning is an exception. We don't want to apply overscroll
-                // when panning over the dataMax
-                eventArgs?.trigger !== 'pan' ||
-                axis.isInternal
-            ) &&
-            // Scrollbar buttons are the other execption
-            eventArgs?.trigger !== 'navigator'
+            isNumber(axis.min)
         ) {
 
-            axis.max += options.overscroll;
-
-            // Live data and buttons require translation for the min:
-            if (
-                !axis.isInternal &&
-                defined(axis.userMin) &&
-                eventArgs?.trigger !== 'mousewheel'
-            ) {
-                axis.min += options.overscroll;
+            if (axis.options.ordinal && !axis.ordinal.originalOrdinalRange) {
+                // Calculate the original ordinal range
+                axis.ordinal.getExtendedPositions(false);
             }
+
+            if (
+                axis.max === axis.dataMax &&
+                (
+                    // Panning is an exception. We don't want to apply
+                    // overscroll when panning over the dataMax
+                    eventArgs?.trigger !== 'pan' ||
+                    axis.isInternal
+                ) &&
+                // Scrollbar buttons are the other execption
+                eventArgs?.trigger !== 'navigator'
+            ) {
+
+                const overscroll = axis.ordinal.convertOverscroll(
+                    options.overscroll
+                );
+
+                axis.max += overscroll;
+
+                // Live data and buttons require translation for the min:
+                if (
+                    !axis.isInternal &&
+                    defined(axis.userMin) &&
+                    eventArgs?.trigger !== 'mousewheel'
+                ) {
+                    axis.min += overscroll;
+                }
+            }
+
         }
     }
 
@@ -582,7 +595,9 @@ namespace OrdinalAxis {
     function onChartPan(this: Chart, e: Event): void {
         const chart = this,
             xAxis = chart.xAxis[0] as OrdinalAxis.Composition,
-            overscroll = xAxis.options.overscroll,
+            overscroll = xAxis.ordinal.convertOverscroll(
+                xAxis.options.overscroll
+            ),
             chartX = (e as any).originalEvent.chartX,
             panning = chart.options.chart.panning;
         let runBase = false;
@@ -622,9 +637,7 @@ namespace OrdinalAxis {
                 index2val = xAxis.index2val,
                 val2lin = xAxis.val2lin;
             let trimmedRange,
-                ordinalPositions,
-                searchAxisLeft,
-                searchAxisRight;
+                ordinalPositions;
 
             // we have an ordinal axis, but the data is equally spaced
             if (!extendedAxis.ordinal.positions) {
@@ -639,21 +652,11 @@ namespace OrdinalAxis {
                     });
                 }
 
-                if (movedUnits < 0) {
-                    searchAxisLeft = extendedAxis;
-                    searchAxisRight = xAxis.ordinal.positions ?
-                        xAxis : extendedAxis;
-                } else {
-                    searchAxisLeft = xAxis.ordinal.positions ?
-                        xAxis : extendedAxis;
-                    searchAxisRight = extendedAxis;
-                }
-
                 // In grouped data series, the last ordinal position represents
                 // the grouped data, which is to the left of the real data max.
                 // If we don't compensate for this, we will be allowed to pan
                 // grouped data series passed the right of the plot area.
-                ordinalPositions = searchAxisRight.ordinal.positions;
+                ordinalPositions = extendedAxis.ordinal.positions;
                 if (dataMax >
                     (ordinalPositions as any)[
                         (ordinalPositions as any).length - 1
@@ -673,12 +676,12 @@ namespace OrdinalAxis {
                     .toFixedRange(
                         void 0,
                         void 0,
-                        index2val.apply(searchAxisLeft, [
-                            val2lin.apply(searchAxisLeft, [min, true]) +
+                        index2val.apply(extendedAxis, [
+                            val2lin.apply(extendedAxis, [min, true]) +
                             movedUnits
                         ]),
-                        index2val.apply(searchAxisRight, [
-                            val2lin.apply(searchAxisRight, [max, true]) +
+                        index2val.apply(extendedAxis, [
+                            val2lin.apply(extendedAxis, [max, true]) +
                             movedUnits
                         ])
                     );
@@ -686,8 +689,7 @@ namespace OrdinalAxis {
                 // Apply it if it is within the available data range
                 if (
                     trimmedRange.min >= Math.min(extremes.dataMin, min) &&
-                    trimmedRange.max <= Math.max(dataMax, max) +
-                        (overscroll as any)
+                    trimmedRange.max <= Math.max(dataMax, max) + overscroll
                 ) {
                     xAxis.setExtremes(
                         trimmedRange.min,
@@ -724,6 +726,7 @@ namespace OrdinalAxis {
         // and destroy extendedOrdinalPositions, #16055.
         if (xAxis && xAxis.options.ordinal) {
             delete xAxis.ordinal.index;
+            delete xAxis.ordinal.originalOrdinalRange;
         }
     }
 
@@ -876,6 +879,7 @@ namespace OrdinalAxis {
         public overscrollPointsRange?: number;
         public positions?: Array<number>;
         public slope?: number;
+        public originalOrdinalRange?: number;
 
         /* *
         *
@@ -998,6 +1002,12 @@ namespace OrdinalAxis {
                     }
                 });
 
+                if (!axis.ordinal.originalOrdinalRange) {
+                    // Calculate current originalOrdinalRange
+                    axis.ordinal.originalOrdinalRange =
+                        (ordinalPositions.length - 1) * overscrollPointsRange;
+                }
+
                 // If the distance between points is not identical throughout
                 // all series, remove the first and last ordinal position to
                 // avoid enabling ordinal logic when it is not needed, #17405.
@@ -1048,7 +1058,9 @@ namespace OrdinalAxis {
                     } else if (len === 1) {
                         // We have just one point, closest distance is unknown.
                         // Assume then it is last point and overscrolled range:
-                        overscrollPointsRange = axis.options.overscroll;
+                        overscrollPointsRange = axis.ordinal.convertOverscroll(
+                            axis.options.overscroll
+                        );
                         ordinalPositions = [
                             ordinalPositions[0],
                             ordinalPositions[0] + overscrollPointsRange
@@ -1166,16 +1178,19 @@ namespace OrdinalAxis {
          * it will be regenerated the next time a panning operation starts.
          * @private
          */
-        public getExtendedPositions(): Array<number> {
+        public getExtendedPositions(withOverscroll: boolean = true): Array<number> {
             const ordinal = this,
                 axis = ordinal.axis,
                 axisProto = axis.constructor.prototype,
                 chart = axis.chart,
-                grouping = axis.series[0].currentDataGrouping,
+                grouping = axis.series[0]?.currentDataGrouping,
                 key = grouping ?
                     grouping.count + (grouping.unitName as any) :
                     'raw',
-                overscroll = axis.options.overscroll,
+                overscroll = withOverscroll ?
+                    axis.ordinal.convertOverscroll(
+                        axis.options.overscroll
+                    ) : 0,
                 extremes = axis.getExtremes();
             let fakeAxis: Composition,
                 fakeSeries: Series = void 0 as any,
@@ -1233,9 +1248,11 @@ namespace OrdinalAxis {
                         visible: series.visible
                     } as any;
 
-                    fakeSeries.xData = (fakeSeries.xData as any).concat(
-                        ordinal.getOverscrollPositions()
-                    );
+                    if (withOverscroll) {
+                        fakeSeries.xData = (fakeSeries.xData as any).concat(
+                            ordinal.getOverscrollPositions()
+                        );
+                    }
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
@@ -1264,8 +1281,8 @@ namespace OrdinalAxis {
                 // weeks), #3825.
                 if (
                     (
-                        fakeSeries.closestPointRange !==
-                        fakeSeries.basePointRange
+                        fakeSeries?.closestPointRange !==
+                        fakeSeries?.basePointRange
                     ) &&
                     fakeSeries.currentDataGrouping
                 ) {
@@ -1274,6 +1291,14 @@ namespace OrdinalAxis {
 
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });
+
+                if (
+                    !axis.ordinal.originalOrdinalRange &&
+                    fakeAxis.ordinal.originalOrdinalRange
+                ) {
+                    axis.ordinal.originalOrdinalRange =
+                        fakeAxis.ordinal.originalOrdinalRange;
+                }
 
                 // Cache it
                 ordinalIndex[key] = fakeAxis.ordinal.positions as any;
@@ -1434,7 +1459,9 @@ namespace OrdinalAxis {
         public getOverscrollPositions(): Array<number> {
             const ordinal = this,
                 axis = ordinal.axis,
-                extraRange = axis.options.overscroll,
+                extraRange = ordinal.convertOverscroll(
+                    axis.options.overscroll
+                ),
                 distance = ordinal.overscrollPointsRange,
                 positions = [];
 
@@ -1487,6 +1514,60 @@ namespace OrdinalAxis {
             return ret;
         }
 
+        /**
+         * If overscroll is pixel or pecentage value, convert it to axis range.
+         *
+         * @private
+         * @param {number | string} overscroll
+         * Overscroll value in axis range, pixels or percentage value.
+         * @return {number}
+         * Overscroll value in axis range.
+         */
+        public convertOverscroll(overscroll : number | string = 0) : number {
+            const ordinal = this,
+                axis = ordinal.axis,
+                calculateOverscroll = function (
+                    overscrollPercentage : number
+                ): number {
+
+                    return pick(
+                        ordinal.originalOrdinalRange,
+                        defined(axis.dataMax) && defined(axis.dataMin) ?
+                            axis.dataMax - axis.dataMin : 0
+                    ) * overscrollPercentage;
+
+                };
+
+            if (isString(overscroll)) {
+                const overscrollValue = parseInt(overscroll, 10);
+
+                if (/%$/.test(overscroll)) {
+                    // If overscroll is percentage
+
+                    return calculateOverscroll(overscrollValue / 100);
+                }
+
+                if (/px/.test(overscroll)) {
+                    // If overscroll is pixels, it is limited to 90% of the axis
+                    // length to prevent division by zero
+                    const limitedOverscrollValue = Math.min(
+                            overscrollValue,
+                            axis.len * 0.9
+                        ),
+                        pixelToPercent = limitedOverscrollValue / axis.len;
+
+                    return calculateOverscroll(
+                        pixelToPercent / (1 - pixelToPercent)
+                    );
+                }
+
+                // If overscroll is a string but not pixels or percentage,
+                // return 0 as no overscroll
+                return 0;
+            }
+
+            return overscroll;
+        }
     }
 
 }
