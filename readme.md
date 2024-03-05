@@ -45,7 +45,7 @@ gulp
 
 ### Node setup for Apple Mx CPU
 
-Since [Node 16 TLS](https://nodejs.org/en/) is a ARM64 version available for Macs with Apple Ax CPU. Some node packages like [node-canvas](https://github.com/Automattic/node-canvas#compiling) with integrated compiling might fail. Install additional tools to resolve the problem:
+When running Node natively on ARM64 MacOS, some Node packages like [node-canvas](https://github.com/Automattic/node-canvas#compiling) with integrated compiling might fail. Install additional tools to resolve the problem:
 
 - [Homebrew](https://brew.sh/) and run `brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman`
 
