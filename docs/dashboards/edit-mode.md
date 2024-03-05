@@ -27,8 +27,8 @@ LayoutModule(Dashboards);
 If you use ESM, you can also import the modules directly from the package:
 
 ```js
-import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
-import '@highcharts/dashboards/es-modules/masters/modules/layout.src';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
 
 

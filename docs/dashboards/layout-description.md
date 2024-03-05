@@ -31,8 +31,8 @@ LayoutModule(Dashboards);
 If you use ESM, you can also import the modules directly from the package:
 
 ```js
-import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
-import '@highcharts/dashboards/es-modules/masters/modules/layout.src';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
 
 If you prefer to use your own layout structure, feel free to use it as well. Only what you need is disable the gui by option. Please remember that each container should have an unique `id` for rendered component.
