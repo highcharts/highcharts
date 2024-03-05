@@ -320,7 +320,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * This option applies only when the `nodeWidth` option is `auto`, making
      * the node width respond to the number of columns.
      *
-     * @since next
+     * @since 11.4.0
      * @sample highcharts/series-sankey/node-distance
      *         Sankey with dnode distance of 100% means equal to node width
      * @sample highcharts/series-organization/node-distance

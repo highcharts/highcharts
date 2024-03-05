@@ -227,6 +227,7 @@ const offscreenLabel = (chart, celestialBody) => {
 // Display the moon phase
 const moonPhase = chart => {
     const { fraction, phase } = SunCalc.getMoonIllumination(date),
+        renderer = chart.renderer,
         radius = 25;
 
     // The following code is borrowed from
@@ -252,23 +253,42 @@ const moonPhase = chart => {
     }
 
     if (!chart.moon) {
-        chart.moon = chart.renderer.g().add();
-        chart.moon.shadow = chart.renderer.circle()
+        chart.moon = renderer.g().add();
+        chart.moon.frame = renderer.rect().attr({
+            fill: '#ffffff20',
+            r: 3,
+            stroke: '#ffffff80',
+            'stroke-width': 1
+        }).add(chart.moon);
+        chart.moon.shadow = renderer.circle()
             .attr({
                 fill: '#eeeeee44'
             })
+            .translate(10, 25)
             .add(chart.moon);
-        chart.moon.light = chart.renderer.path()
+        chart.moon.light = renderer.path()
             .attr({
                 fill: '#eeeeee'
             })
+            .translate(10, 25)
             .add(chart.moon);
-        chart.moon.label = chart.renderer.text()
+        chart.moon.header = renderer.text('Moon phase')
+            .css({
+                textTransform: 'uppercase',
+                fontSize: '8px'
+            })
+            .attr({
+                'text-anchor': 'middle',
+                x: radius + 10,
+                y: 20
+            })
+            .add(chart.moon);
+        chart.moon.label = renderer.text()
             .attr({
                 'alignment-baseline': 'middle',
                 'text-anchor': 'middle',
-                x: radius,
-                y: radius
+                x: radius + 10,
+                y: radius + 25
             })
             .add(chart.moon);
     }
@@ -280,8 +300,12 @@ const moonPhase = chart => {
 
     chart.moon.attr({
         translateX: chart.plotWidth - 2 * radius -
-            (chart.scrollablePixelsX || 0) - 10,
-        translateY: 10
+            (chart.scrollablePixelsX || 0) - 15,
+        translateY: -5
+    });
+    chart.moon.frame.attr({
+        width: 2 * radius + 20,
+        height: 2 * radius + 35
     });
     chart.moon.shadow.attr({
         cx: radius,
