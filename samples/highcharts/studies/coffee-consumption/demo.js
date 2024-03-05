@@ -28,7 +28,7 @@ Highcharts.chart('container', {
         tickWidth: 2,
         minorTicks: true,
         minorTickWidth: 2,
-        minorTicksPerMajor: 3,
+        minorTicksPerMajor: 4,
         minorTickColor: '#000000',
         labels: {
             distance: 20,
@@ -94,10 +94,15 @@ svg.setAttribute('aria-label', '7 cups per day. Coffee consumption. Gauge chart.
 
 // Creating button
 const detailsButton = document.createElement('button');
+const announcerDiv = document.createElement('div');
+announcerDiv.className = 'visually-hidden';
 detailsButton.className = 'visually-hidden';
 detailsButton.setAttribute('aria-label', 'Gauge details');
 detailsButton.setAttribute('aria-expanded', 'false');
+announcerDiv.setAttribute('aria-live', 'polite');
 svg.insertAdjacentElement('afterend', detailsButton);
+detailsButton.insertAdjacentElement('afterend', announcerDiv);
+
 
 let detailsDiv;
 
@@ -122,3 +127,33 @@ detailsButton.addEventListener('click', function () {
         detailsDiv = null;
     }
 });
+
+let lastInterval = null;
+setInterval(() => {
+    const chart = Highcharts.charts[0];
+    if (chart && !chart.renderer.forExport) {
+        const point = chart.series[0].points[0],
+            newVal = Math.floor((Math.random() * 12) + 1);
+
+        point.update(newVal);
+
+        let announcement;
+        let currentInterval;
+        if (newVal <= 4) {
+            announcement = 'Coffee consumption, green zone, ' + newVal + ' cups.';
+            currentInterval = 'green';
+        } else if (newVal <= 8) {
+            announcement = 'Coffee consumption, yellow zone, ' + newVal + ' cups.';
+            currentInterval = 'yellow';
+        } else {
+            announcement = 'Coffee consumption, red zone, ' + newVal + ' cups.';
+            currentInterval = 'red';
+        }
+
+        if (currentInterval === lastInterval) {
+            announcement = '';
+        }
+        announcerDiv.innerText = announcement;
+        lastInterval = currentInterval;
+    }
+}, 3000);

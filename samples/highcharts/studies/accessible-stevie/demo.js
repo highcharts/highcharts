@@ -1,6 +1,22 @@
-let parsedData = [];
+const descriptionDivs = [];
 const tooltipDivs = [];
-let checkboxChecked = false;
+let parsedData = [],
+    checkboxChecked = false,
+    nullpointCheckboxChecked = true;
+
+
+Highcharts.addEvent(Highcharts.Chart, 'aftergetTableAST', function (e) {
+    e.tree.children[2].children.forEach(function (row) {
+        row.children.forEach(function (cell, i) {
+            if (i === 0) {
+                const split = cell.textContent.split('-');
+                row.children[i].textContent = split[0].trim();
+            }
+        });
+    });
+});
+
+
 Highcharts.chart('container', {
     chart: {
         type: 'column',
@@ -9,8 +25,14 @@ Highcharts.chart('container', {
                 const points = this.series.map(s => s.points).flat();
                 points.forEach(point => {
                     const id = `tooltip-${point.series.name}-${point.index}`;
+                    const descriptionDivId = id + '-description';
+                    const tooltipDivId = id + '-tooltip';
                     if (checkboxChecked) {
                         point.graphic.element.setAttribute('aria-describedby', id);
+                    }
+
+                    if (nullpointCheckboxChecked && point.y === 0) {
+                        point.graphic.element.setAttribute('aria-hidden', 'true');
                     }
 
                     const column = parsedData.find(columns =>
@@ -32,13 +54,26 @@ Highcharts.chart('container', {
                             tooltipText = createTooltipText(grammy, Highcharts.dateFormat('%Y', point.x), 'nominations', point.y, songnom, awardnom);
                         }
 
+                        // This text gets stripped of HTML tags and is used as the description for the points
+                        const descriptionDiv = document.createElement('div');
+                        descriptionDiv.setAttribute('id', descriptionDivId);
+                        descriptionDiv.setAttribute('aria-hidden', 'true');
+                        descriptionDiv.classList.add('visually-hidden');
+                        let strippedDescription = tooltipText.replace(/<[^>]*>?/gm, '');
+                        strippedDescription = strippedDescription.replace(/Wins: \d+|Nominations: \d+/g, '');
+                        descriptionDiv.innerHTML = strippedDescription;
+                        document.body.appendChild(descriptionDiv);
+                        descriptionDivs.push(descriptionDiv);
+
+                        // The same text as above, but contains html for tooltip formatting
                         const tooltipDiv = document.createElement('div');
-                        tooltipDiv.setAttribute('id', id);
+                        tooltipDiv.setAttribute('id', tooltipDivId);
                         tooltipDiv.setAttribute('aria-hidden', 'true');
                         tooltipDiv.classList.add('visually-hidden');
                         tooltipDiv.innerHTML = tooltipText;
                         document.body.appendChild(tooltipDiv);
                         tooltipDivs.push(tooltipDiv);
+
                     }
                 });
             }
@@ -47,6 +82,11 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Stevie Wonder Grammy Awards Wins and Nominations'
+    },
+    accessibility: {
+        series: {
+            descriptionFormat: '{series.options.custom.seriesDescription} with {series.options.custom.actualNumBars} bars.'
+        }
     },
     xAxis: {
         type: 'datetime',
@@ -76,12 +116,15 @@ Highcharts.chart('container', {
             return parsedData.map(columns => columns.slice(0, 3).join(',')).join('\n');
         }
     },
+    exporting: {
+        showTable: true
+    },
     tooltip: {
         useHTML: true,
         formatter: function () {
             const tooltipDiv =
                 document.getElementById(
-                    `tooltip-${this.point.series.name}-${this.point.index}`
+                    `tooltip-${this.point.series.name}-${this.point.index}-tooltip`
                 );
             if (tooltipDiv) {
                 return tooltipDiv.innerHTML;
@@ -95,9 +138,17 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        color: '#B18B0F'
+        color: '#B18B0F',
+        custom: {
+            seriesDescription: 'wins, bar series 1 of 2',
+            actualNumBars: 10
+        }
     }, {
-        color: '#214769'
+        color: '#214769',
+        custom: {
+            seriesDescription: 'nominations, bar series 2 of 2',
+            actualNumBars: 22
+        }
     }]
 });
 
@@ -113,7 +164,7 @@ function createTooltipText(
 
     let tooltipText =
         `<p class="tooltip-heading">${grammy} Grammy Awards (${year})</p>
-        <p class="win-nom">
+        <p class="win-nom" aria-hidden="true">
             ${seriesName.charAt(0).toUpperCase() + seriesName.slice(1)}: ${y}
         </p>`;
 
@@ -129,18 +180,77 @@ function createTooltipText(
 // Add a checkbox to the page to toggle verbosity of the chart
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('#container'),
-        checkbox = document.createElement('input'),
-        labelCheckbox = document.createElement('label');
+        screenReaderSection = document.querySelector('#highcharts-screen-reader-region-before-0'),
+        tooltipCheckbox = document.createElement('input'),
+        labelTooltipCheckbox = document.createElement('label'),
+        nullpointCheckbox = document.createElement('input'),
+        labelNullpointCheckbox = document.createElement('label'),
+        moreInfoButton = document.createElement('button'),
+        infoDiv = document.createElement('div'),
+        infoP = document.createElement('p'),
+        heading = document.createElement('h2');
 
-    checkbox.setAttribute('type', 'checkbox');
-    checkbox.id = 'checkbox-info';
-    labelCheckbox.setAttribute('for', checkbox.id);
-    labelCheckbox.textContent = ' Announce tooltip details';
+    tooltipCheckbox.setAttribute('type', 'checkbox');
+    tooltipCheckbox.id = '#checkbox-info';
+    labelTooltipCheckbox.setAttribute('for', tooltipCheckbox.id);
+    labelTooltipCheckbox.textContent = ' Announce tooltip details ';
 
-    container.parentNode.insertBefore(checkbox, container);
-    container.parentNode.insertBefore(labelCheckbox, container);
+    nullpointCheckbox.setAttribute('type', 'checkbox');
+    nullpointCheckbox.id = '#checkbox-nullpoint';
+    nullpointCheckbox.checked = true;
+    labelNullpointCheckbox.setAttribute('for', nullpointCheckbox.id);
+    labelNullpointCheckbox.textContent = ' Hide null points';
 
-    checkbox.addEventListener('change', () => {
+    moreInfoButton.textContent = 'Toggle more information';
+    moreInfoButton.setAttribute('aria-expanded', 'false');
+    infoDiv.setAttribute('id', '#info-div');
+    infoDiv.style.display = 'none';
+    infoDiv.setAttribute('aria-expanded', 'false');
+    infoP.textContent = document.getElementById('rich-description').textContent;
+    heading.textContent = 'Verbosity settings';
+
+    container.parentNode.insertBefore(heading, container);
+    container.parentNode.insertBefore(tooltipCheckbox, container);
+    container.parentNode.insertBefore(labelTooltipCheckbox, container);
+    container.parentNode.insertBefore(nullpointCheckbox, container);
+    container.parentNode.insertBefore(labelNullpointCheckbox, container);
+
+    screenReaderSection.firstChild.appendChild(moreInfoButton);
+    moreInfoButton.parentNode.appendChild(infoDiv);
+    infoDiv.appendChild(infoP);
+
+
+    moreInfoButton.addEventListener('click', () => {
+        const expanded = moreInfoButton.getAttribute('aria-expanded') === 'true';
+
+        if (!expanded) {
+            infoDiv.style.display = 'block';
+            moreInfoButton.setAttribute('aria-expanded', 'true');
+        } else {
+            infoDiv.style.display = 'none';
+            moreInfoButton.setAttribute('aria-expanded', 'false');
+        }
+
+    });
+
+    nullpointCheckbox.addEventListener('change', () => {
+        const chart = Highcharts.charts[0];
+        const points = chart.series.map(s => s.points).flat();
+
+        nullpointCheckboxChecked = !nullpointCheckboxChecked;
+
+        points.forEach(point => {
+            // If nullpointCheckbox is checked and the point's y value is 0, set aria-hidden to true
+            if (nullpointCheckbox.checked && point.y === 0) {
+                point.graphic.element.setAttribute('aria-hidden', 'true');
+            } else {
+                // If nullpointCheckbox is not checked or the point's y value is not 0, set aria-hidden to false
+                point.graphic.element.setAttribute('aria-hidden', 'false');
+            }
+        });
+    });
+
+    tooltipCheckbox.addEventListener('change', () => {
         checkboxChecked = !checkboxChecked;
 
         const chart = Highcharts.charts[0];
@@ -148,28 +258,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         points.forEach(point => {
             if (checkboxChecked) {
-                const id = `tooltip-${point.series.name}-${point.index}`;
+                const id = `tooltip-${point.series.name}-${point.index}-description`;
                 point.graphic.element.setAttribute('aria-describedby', id);
-
-                // Store original aria-label
-                point.graphic.element.dataset.originalAriaLabel = point.graphic.element.getAttribute('aria-label');
-
-                // To avoid duplicate information
-                point.graphic.element.removeAttribute('aria-label');
             } else {
                 point.graphic.element.removeAttribute('aria-describedby');
-                const originalAriaLabel =
-                    point.graphic.element.dataset.originalAriaLabel;
-
-                // Restore original aria-label if checkbox is unchecked after being checked
-                if (originalAriaLabel) {
-                    point.graphic.element.setAttribute('aria-label', originalAriaLabel);
-                }
             }
         });
 
-        tooltipDivs.forEach(tooltipDiv => {
-            tooltipDiv.setAttribute('aria-hidden', !checkboxChecked);
+        descriptionDivs.forEach(descriptionDiv => {
+            descriptionDiv.setAttribute('aria-hidden', !checkboxChecked);
         });
     });
 });
