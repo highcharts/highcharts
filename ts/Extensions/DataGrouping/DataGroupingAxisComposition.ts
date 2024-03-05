@@ -21,15 +21,12 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -110,13 +107,15 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (pushUnique(composed, compose)) {
+    const axisProto = AxisClass.prototype;
+
+    if (!axisProto.applyGrouping) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.
         addEvent(AxisClass, 'postProcessData', applyGrouping);
 
-        extend(AxisClass.prototype, {
+        extend(axisProto, {
             applyGrouping,
             getGroupPixelWidth,
             setDataGrouping

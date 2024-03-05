@@ -122,7 +122,9 @@
     );
 
     /* eslint-disable no-underscore-dangle */
-    const multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
+    const multipleLinesMixin = (
+        Highcharts._modules?.['Mixins/MultipleLines.js']
+    );
 
     if (multipleLinesMixin) {
         Highcharts.extend(
@@ -135,8 +137,17 @@
                 toYData: multipleLinesMixin.toYData
             }
         );
-    } else { // Highcharts v9.2.3+
-        Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
+
+    // Highcharts v9.2.3 - v11.3.0
+    } else if (
+        Highcharts._modules?.['Stock/Indicators/MultipleLinesComposition.js']
+    ) {
+        Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js']
+            .compose(Highcharts.seriesTypes.linearregressionzones);
+
+    // Highcharts v11.4.0+
+    } else {
+        Highcharts.MultipleLinesComposition.compose(
             Highcharts.Series.types.linearregressionzones
         );
     }

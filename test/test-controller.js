@@ -39,7 +39,6 @@ var TestController = /** @class */ (function () {
             return new TestController(chart);
         }
         this.chart = chart;
-        this.mouseEnterStack = [];
         this.positionX = 0;
         this.positionY = 0;
         this.relatedTarget = null;

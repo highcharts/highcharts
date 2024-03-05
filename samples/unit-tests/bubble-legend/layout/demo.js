@@ -24,8 +24,8 @@ QUnit.test('Bubble legend ranges', function (assert) {
 
     // Check if there is only one bubble-legend
     assert.strictEqual(
-        chart.legend.allItems.length === 2,
-        true,
+        chart.legend.allItems.length,
+        2,
         'Bubble legend correctly added with map module (#10101)'
     );
 

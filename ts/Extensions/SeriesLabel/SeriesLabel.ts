@@ -363,7 +363,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'SeriesLabel')) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(ChartClass, 'load', onChartRedraw);
         addEvent(ChartClass, 'redraw', onChartRedraw);
@@ -869,7 +869,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         for (i = 0; i < len; i += 1) {
 
             const point = points[i],
-                [plotX, plotY] = point.pos() || [0, 0],
+                [plotX, plotY] = point.pos() || [],
                 { plotHigh } = point;
 
             if (isNumber(plotX) && isNumber(plotY)) {
