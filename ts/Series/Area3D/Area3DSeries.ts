@@ -38,7 +38,7 @@ function compose(
     AreaSeriesClass: typeof AreaSeries
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Area3DSeries')) {
         wrap(
             AreaSeriesClass.prototype,
             'getGraphPath',

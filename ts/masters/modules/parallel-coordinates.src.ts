@@ -19,3 +19,4 @@ ParallelCoordinates.compose(
     G.defaultOptions,
     G.Series
 );
+export default Highcharts;

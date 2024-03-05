@@ -266,7 +266,7 @@ const TreegraphSeriesDefaults = {
      * This option applies only when the `nodeWidth` option is `auto`, making
      * the node width respond to the number of columns.
      *
-     * @since next
+     * @since 11.4.0
      * @sample highcharts/series-treegraph/node-distance
      *         Node distance of 100% means equal to node width
      * @type   {number|string}
@@ -282,7 +282,7 @@ const TreegraphSeriesDefaults = {
      * are sized to fill up the plot area in the longitudinal direction,
      * regardless of the number of levels.
      *
-     * @since next
+     * @since 11.4.0
      * @see    [treegraph.nodeDistance](#nodeDistance)
      * @sample highcharts/series-treegraph/node-distance
      *         Node width is auto and combined with node distance

@@ -112,7 +112,7 @@ namespace SeriesOnPointComposition {
         ChartClass: typeof Chart
     ): (typeof SeriesComposition&T) {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'SeriesOnPoint')) {
             const {
                 chartGetZData,
                 seriesAfterInit,

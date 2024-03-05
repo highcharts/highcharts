@@ -31,17 +31,13 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-const {
-    composed,
-    doc
-} = H;
+const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
     fireEvent,
-    merge,
-    pushUnique
+    merge
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -258,9 +254,13 @@ class Accessibility {
         this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
+        // Should only be applied once, and not if explicitly disabled
         if (
-            !chart.highContrastModeActive && // Only do this once
-            whcm.isHighContrastModeActive()
+            !chart.highContrastModeActive &&
+            a11yOptions.highContrastMode !== false && (
+                whcm.isHighContrastModeActive() ||
+                a11yOptions.highContrastMode === true
+            )
         ) {
             whcm.setHighContrastTheme(chart);
         }
@@ -508,9 +508,9 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype;
+        const chartProto = ChartClass.prototype;
 
+        if (!chartProto.updateA11yEnabled) {
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
 
             addEvent(
