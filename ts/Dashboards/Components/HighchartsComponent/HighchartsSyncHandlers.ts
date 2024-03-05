@@ -517,8 +517,8 @@ const configs: {
                     const point = getHoveredPoint(e);
 
                     if (!point || !chart ||
-                        // Pie series points do not use the 'isInside' parameter
-                        (!point.isInside && !point.series.is('pie')) ||
+                        // Non-cartesian points do not use 'isInside'
+                        (!point.isInside && point.series.isCartesian) ||
                         // Abort if the affected chart is the same as the one
                         // that is currently affected manually.
                         point === chart.hoverPoint
