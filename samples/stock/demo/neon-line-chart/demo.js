@@ -20,6 +20,15 @@
             animation: false
         },
 
+        exporting: {
+            chartOptions: {
+                chart: {
+                    className: 'exported'
+                },
+                responsive: null
+            }
+        },
+
         tooltip: {
             split: false,
             distance: 30,
@@ -34,7 +43,7 @@
             buttonSpacing: 40,
             inputEnabled: false,
             dropdown: 'never',
-            selected: 1
+            selected: 4
         },
 
         navigator: {
@@ -84,22 +93,6 @@
         },
 
         defs: {
-            // Chart background gradient
-            gradient: {
-                tagName: 'linearGradient',
-                id: 'gradient',
-                x1: 0,
-                y1: 0,
-                x2: 0,
-                y2: 1,
-                children: [{
-                    tagName: 'stop',
-                    offset: 0
-                }, {
-                    tagName: 'stop',
-                    offset: 1
-                }]
-            },
             // Graph glow effect
             neon: {
                 tagName: 'filter',
@@ -116,7 +109,7 @@
                     dy: 0,
                     stdDeviation: 2,
                     'flood-color': lightColor,
-                    'flood-opacity': 0.5
+                    'flood-opacity': 0.7
                 }, {
                     tagName: 'feDropShadow',
                     dx: 0,
@@ -129,7 +122,7 @@
                     dy: 0,
                     stdDeviation: 8,
                     'flood-color': ambientColor,
-                    'flood-opacity': 0.7
+                    'flood-opacity': 0.8
                 }]
             }
         },
