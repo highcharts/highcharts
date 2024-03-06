@@ -129,7 +129,24 @@ detailsButton.addEventListener('click', function () {
 });
 
 let lastInterval = null;
-setInterval(() => {
+let updateInterval = null;
+let updatesRunning = false;
+
+const toggleButton = document.getElementById('toggle');
+
+toggleButton.addEventListener('click', function () {
+    if (updatesRunning) {
+        clearInterval(updateInterval);
+        updatesRunning = false;
+        toggleButton.setAttribute('aria-pressed', 'false');
+    } else {
+        updateInterval = setInterval(updateFunction, 3000);
+        updatesRunning = true;
+        toggleButton.setAttribute('aria-pressed', 'true');
+    }
+});
+
+function updateFunction() {
     const chart = Highcharts.charts[0];
     if (chart && !chart.renderer.forExport) {
         const point = chart.series[0].points[0],
@@ -156,4 +173,7 @@ setInterval(() => {
         announcerDiv.innerText = announcement;
         lastInterval = currentInterval;
     }
-}, 3000);
+}
+
+updateInterval = setInterval(updateFunction, 3000);
+updatesRunning = true;
