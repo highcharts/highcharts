@@ -287,7 +287,7 @@ Highcharts.extend(HelpBtnComponent.prototype, {
 // ============================================================================
 // Application desc
 const desc = document.createElement('button');
-desc.innerText = 'Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Total fruit consumption.';
+desc.innerText = 'Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Use arrow keys to move around in chart. Total fruit consumption.';
 desc.className = 'visually-hidden';
 desc.setAttribute('aria-hidden', 'false');
 desc.onclick = () => {
@@ -301,7 +301,11 @@ desc.onclick = () => {
 desc.onkeydown = function (e) {
     if (e.key === 'h') {
         focusReturnFromHelp = desc;
+        e.preventDefault();
         helpBtn.onclick();
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.onclick();
     }
 };
 chart.container.insertBefore(desc, chart.container.firstChild);
@@ -334,7 +338,7 @@ Highcharts.extend(CustomContainerComponent.prototype, {
             ],
 
             init: function () {
-                announce('Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Total fruit consumption.');
+                announce('Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Use arrow keys to move around in chart. Total fruit consumption.');
                 const a11y = chart.accessibility;
                 if (a11y) {
                     a11y.keyboardNavigation.tabindexContainer.focus();
@@ -344,7 +348,7 @@ Highcharts.extend(CustomContainerComponent.prototype, {
     }
 });
 chart.container.setAttribute('role', 'application');
-chart.container.setAttribute('aria-label', 'Total fruit consumption.');
+chart.container.setAttribute('aria-label', 'Total fruit consumption. Press Tab to interact with chart.');
 
 
 // ============================================================================
@@ -460,7 +464,9 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                 const { drill, x, y } = component.dataPos,
                     content = component.dataContent[drill][x][y];
                 highlightCurrent();
-                announce(drill === 2 ? content : content + ' Press Enter for details.', 300);
+                announce(drill === 2 ?
+                    content + ' Press Escape for less detail.' :
+                    content + ' Press Enter for more details, or Escape for less detail.', 300);
             };
 
 
@@ -497,9 +503,18 @@ Highcharts.extend(CustomSeriesNav.prototype, {
 
                 [[keys.up, keys.down], function (keyCode) {
                     const { drill, x, y } = component.dataPos,
-                        dir = keyCode === keys.up ? 1 : -1;
-                    component.dataPos.y = clamp(
-                        y + dir, 0, component.dataContent[drill][x].length - 1);
+                        dir = keyCode === keys.up ? -1 : 1;
+                    if (component.dataContent[drill][x].length === 1) {
+                        component.dataPos.x = clamp(
+                            x + dir, 0,
+                            component.dataContent[drill].length - 1
+                        );
+                    } else {
+                        component.dataPos.y = clamp(
+                            y + dir, 0,
+                            component.dataContent[drill][x].length - 1
+                        );
+                    }
                     speakDataAtCurrent();
                     return this.response.success;
                 }],
