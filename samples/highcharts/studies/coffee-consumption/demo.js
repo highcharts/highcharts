@@ -140,13 +140,13 @@ setInterval(() => {
         let announcement;
         let currentInterval;
         if (newVal <= 4) {
-            announcement = 'Coffee consumption, green zone, ' + newVal + ' cups.';
+            announcement = 'Green zone, ' + newVal + ' cups.';
             currentInterval = 'green';
         } else if (newVal <= 8) {
-            announcement = 'Coffee consumption, yellow zone, ' + newVal + ' cups.';
+            announcement = 'Yellow zone, ' + newVal + ' cups.';
             currentInterval = 'yellow';
         } else {
-            announcement = 'Coffee consumption, red zone, ' + newVal + ' cups.';
+            announcement = 'Red zone, ' + newVal + ' cups.';
             currentInterval = 'red';
         }
 
