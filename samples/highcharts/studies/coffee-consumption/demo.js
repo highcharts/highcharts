@@ -99,7 +99,7 @@ announcerDiv.className = 'visually-hidden';
 detailsButton.className = 'visually-hidden';
 detailsButton.setAttribute('aria-label', 'Gauge details');
 detailsButton.setAttribute('aria-expanded', 'false');
-announcerDiv.setAttribute('aria-live', 'polite');
+announcerDiv.setAttribute('aria-live', 'assertive');
 svg.insertAdjacentElement('afterend', detailsButton);
 detailsButton.insertAdjacentElement('afterend', announcerDiv);
 
