@@ -50,9 +50,27 @@ const chart = Highcharts.chart('container', {
         align: 'right',
         verticalAlign: 'middle'
     },
+    tooltip: {
+        pointFormat: '<b><span style="color:{point.color}">●</span> {point.y} {series.name}</b><br>{point.custom.longdesc}'
+    },
     series: [{
         name: 'Strawberries',
-        data: [3, 2, 4],
+        data: [{
+            y: 3,
+            custom: {
+                longdesc: '1 from dessert, 2 from salad.'
+            }
+        }, {
+            y: 2,
+            custom: {
+                longdesc: 'Both from dessert.'
+            }
+        }, {
+            y: 4,
+            custom: {
+                longdesc: '1 from dessert, 2 from salad, 1 as a snack.'
+            }
+        }],
         color: {
             pattern: {
                 path: 'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
@@ -66,7 +84,22 @@ const chart = Highcharts.chart('container', {
         borderColor: '#ffffff'
     }, {
         name: 'Mango',
-        data: [1, 4, 2],
+        data: [{
+            y: 1,
+            custom: {
+                longdesc: 'As a snack.'
+            }
+        }, {
+            y: 4,
+            custom: {
+                longdesc: '2 as snacks, 2 in salad.'
+            }
+        }, {
+            y: 2,
+            custom: {
+                longdesc: 'Both from pie.'
+            }
+        }],
         color: {
             pattern: {
                 path: 'M 2 0 L 2 5 M 4 0 L 4 5',
@@ -80,7 +113,22 @@ const chart = Highcharts.chart('container', {
         borderColor: '#FFFFFF'
     }, {
         name: 'Blueberries',
-        data: [4, 1, 3],
+        data: [{
+            y: 4,
+            custom: {
+                longdesc: 'All 4 as snacks.'
+            }
+        }, {
+            y: 1,
+            custom: {
+                longdesc: 'On dessert.'
+            }
+        }, {
+            y: 3,
+            custom: {
+                longdesc: 'All 3 in salad.'
+            }
+        }],
         color: {
             pattern: {
                 path: 'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
@@ -94,7 +142,22 @@ const chart = Highcharts.chart('container', {
         borderColor: '#FFFFFF'
     }, {
         name: 'Kiwi',
-        data: [2, 3, 1],
+        data: [{
+            y: 2,
+            custom: {
+                longdesc: 'Both as snacks.'
+            }
+        }, {
+            y: 3,
+            custom: {
+                longdesc: 'All 3 as snacks.'
+            }
+        }, {
+            y: 1,
+            custom: {
+                longdesc: 'On dessert.'
+            }
+        }],
         borderWidth: 2,
         borderColor: '#FFFFFF',
         color: {
@@ -108,7 +171,22 @@ const chart = Highcharts.chart('container', {
         }
     }, {
         name: 'Grapes',
-        data: [2, 3, 1],
+        data: [{
+            y: 2,
+            custom: {
+                longdesc: 'Both as snacks.'
+            }
+        }, {
+            y: 3,
+            custom: {
+                longdesc: 'All on dessert.'
+            }
+        }, {
+            y: 1,
+            custom: {
+                longdesc: 'In salad.'
+            }
+        }],
         color: '#d270a9',
         borderWidth: 2,
         borderColor: '#ffffff'
@@ -382,14 +460,16 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                 const { drill, x, y } = component.dataPos,
                     content = component.dataContent[drill][x][y];
                 highlightCurrent();
-                announce(drill ? content : content + ' Press Enter for details.', 300);
+                announce(drill === 2 ? content : content + ' Press Enter for details.', 300);
             };
 
 
         return new Highcharts.KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 [[keys.space, keys.enter], function () {
-                    component.dataPos.drill = 1;
+                    component.dataPos.drill = Math.min(
+                        2, component.dataPos.drill + 1
+                    );
                     speakDataAtCurrent();
                     return this.response.success;
                 }],
@@ -398,8 +478,12 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                     if (!component.dataPos.drill) {
                         return this.response.prev;
                     }
-                    component.dataPos.drill = 0;
-                    component.dataPos.y = 0;
+                    component.dataPos.drill = Math.max(
+                        0, component.dataPos.drill - 1
+                    );
+                    if (!component.dataPos.drill) {
+                        component.dataPos.y = 0;
+                    }
                     speakDataAtCurrent();
                     return this.response.success;
                 }],
@@ -440,6 +524,10 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                     ['2 grapes, Ted. 1 of 5 elements.', '2 kiwi, Ted. 2 of 5 elements.', '4 blueberries, Ted. 3 of 5 elements.', '1 mango, Ted. 4 of 5 elements.', '3 strawberries, Ted. 5 of 5 elements.'],
                     ['3 grapes, Øystein. 1 of 5 elements.', '3 kiwi, Øystein. 2 of 5 elements.', '1 blueberries, Øystein. 3 of 5 elements.', '4 mango, Øystein. 4 of 5 elements.', '2 strawberries, Øystein. 5 of 5 elements.'],
                     ['1 grapes, Marita. 1 of 5 elements.', '1 kiwi, Marita. 2 of 5 elements.', '3 blueberries, Marita. 3 of 5 elements.', '2 mango, Marita. 4 of 5 elements.', '4 strawberries, Marita. 5 of 5 elements.']
+                ], [
+                    ['2 grapes, Ted. Both as snacks. 1 of 5 elements.', '2 kiwi, Ted. Both as snacks. 2 of 5 elements.', '4 blueberries, Ted. All 4 as snacks. 3 of 5 elements.', '1 mango, Ted. As a snack. 4 of 5 elements.', '3 strawberries, Ted. 1 from dessert, 2 from salad. 5 of 5 elements.'],
+                    ['3 grapes, Øystein. All on dessert. 1 of 5 elements.', '3 kiwi, Øystein. All 3 as snacks. 2 of 5 elements.', '1 blueberries, Øystein. On dessert. 3 of 5 elements.', '4 mango, Øystein. 2 as snacks, 2 in salad. 4 of 5 elements.', '2 strawberries, Øystein. Both from dessert. 5 of 5 elements.'],
+                    ['1 grapes, Marita. In salad. 1 of 5 elements.', '1 kiwi, Marita. On dessert. 2 of 5 elements.', '3 blueberries, Marita. All 3 in salad. 3 of 5 elements.', '2 mango, Marita. Both from pie. 4 of 5 elements.', '4 strawberries, Marita. 1 from dessert, 2 from salad, 1 as a snack. 5 of 5 elements.']
                 ]];
                 component.dataPos = { x: 0, y: 0, drill: 0 };
                 speakDataAtCurrent();
