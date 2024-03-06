@@ -26,8 +26,7 @@ Highcharts.chart('container', {
         draggable: false,
         shapeOptions: {
             type: 'path',
-            strokeWidth: 0,
-            zIndex: -999
+            strokeWidth: 0
         },
         shapes: [{
             fill: {
