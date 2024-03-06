@@ -42,6 +42,7 @@ rules:
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
     no-loss-of-precision: 1
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
+    no-multi-str: 0
     no-undefined: 0
     no-use-before-define: ["error", {"functions": false}]
     no-shadow: 0                # 10 violations as of 2015-10-31
