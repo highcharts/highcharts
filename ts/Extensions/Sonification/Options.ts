@@ -235,22 +235,26 @@ const Options: DeepPartial<OptionsType> = {
          * Defined as an array of either instrument or speech tracks,
          * or a combination.
          *
-         * @declare   Highcharts.SonificationGlobalTracksOptions
-         * @type      {Array<*>}
+         * @declare   Highcharts.SonificationTracksOptions
          * @extends   sonification.defaultSpeechOptions
          * @extends   sonification.defaultInstrumentOptions
+         * @type      {Array<*>}
          * @apioption sonification.globalTracks
          */
 
         /**
          * Rate mapping for speech tracks.
-         * @extends sonification.defaultSpeechOptions.mapping.rate
+         *
+         * @declare   Highcharts.SonificationTracksRateOptions
+         * @extends   sonification.defaultSpeechOptions.mapping.rate
          * @apioption sonification.globalTracks.mapping.rate
          */
 
         /**
          * Text mapping for speech tracks.
-         * @extends sonification.defaultSpeechOptions.mapping.text
+         *
+         * @declare   Highcharts.SonificationTracksTextOptions
+         * @extends   sonification.defaultSpeechOptions.mapping.text
          * @apioption sonification.globalTracks.mapping.text
          */
 
@@ -264,9 +268,9 @@ const Options: DeepPartial<OptionsType> = {
          * @sample  highcharts/demo/plotline-context
          *          Using contexts
          *
-         * @declare   Highcharts.SonificationGlobalContextTracksOptions
-         * @type      {Array<*>}
+         * @declare   Highcharts.SonificationContextTracksOptions
          * @extends   sonification.globalTracks
+         * @type      {Array<*>}
          * @apioption sonification.globalContextTracks
          */
 
@@ -318,6 +322,7 @@ const Options: DeepPartial<OptionsType> = {
 
         /**
          * Set up event handlers for the sonification
+         *
          * @apioption sonification.events
          */
 
@@ -327,7 +332,7 @@ const Options: DeepPartial<OptionsType> = {
          * A context object is passed to the function, with properties `chart`
          * and `timeline`.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.onPlay
          */
 
@@ -339,7 +344,7 @@ const Options: DeepPartial<OptionsType> = {
          * objects, referencing data points that were related to the audio
          * events played.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.onStop
          */
 
@@ -351,7 +356,7 @@ const Options: DeepPartial<OptionsType> = {
          * objects, referencing data points that were related to the audio
          * events played.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.onEnd
          */
 
@@ -361,7 +366,7 @@ const Options: DeepPartial<OptionsType> = {
          * A context object is passed to the function, with properties `chart`
          * and `timeline`.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.beforePlay
          */
 
@@ -371,7 +376,7 @@ const Options: DeepPartial<OptionsType> = {
          * A context object is passed to the function, with properties `chart`
          * and `timeline`.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.beforeUpdate
          */
 
@@ -381,7 +386,7 @@ const Options: DeepPartial<OptionsType> = {
          * A context object is passed to the function, with properties `chart`
          * and `timeline`.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.afterUpdate
          */
 
@@ -391,7 +396,7 @@ const Options: DeepPartial<OptionsType> = {
          * A context object is passed to the function, with properties `series`
          * and `timeline`.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.onSeriesStart
          */
 
@@ -401,7 +406,7 @@ const Options: DeepPartial<OptionsType> = {
          * A context object is passed to the function, with properties `series`
          * and `timeline`.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.onSeriesEnd
          */
 
@@ -417,7 +422,7 @@ const Options: DeepPartial<OptionsType> = {
          * the next series/point, and `false` if it was from trying to play the
          * previous.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption sonification.events.onBoundaryHit
          */
 
@@ -434,9 +439,11 @@ const Options: DeepPartial<OptionsType> = {
         /**
          * The time to wait in milliseconds after each data series when playing
          * the series one after the other.
+         *
+         * @sample highcharts/sonification/chart-earcon
+         *         Notification after series
+         *
          * @see [order](#sonification.order)
-         * @sample  highcharts/sonification/chart-earcon
-         *          Notification after series
          */
         afterSeriesWait: 700,
 
@@ -456,8 +463,10 @@ const Options: DeepPartial<OptionsType> = {
          * What order to play the data series in, either `sequential` where
          * the series play individually one after the other, or `simultaneous`
          * where the series play all at once.
-         * @sample  highcharts/sonification/chart-simultaneous
-         *          Simultaneous sonification
+         *
+         * @sample highcharts/sonification/chart-simultaneous
+         *         Simultaneous sonification
+         *
          * @type  {"sequential"|"simultaneous"}
          */
         order: 'sequential',
@@ -545,7 +554,7 @@ const Options: DeepPartial<OptionsType> = {
          * @sample  highcharts/sonification/point-sonify
          *          Sonify points on click
          *
-         * @declare Highcharts.SonificationDefaultInstrumentOptions
+         * @declare Highcharts.SonificationInstrumentOptions
          */
         defaultInstrumentOptions: {
             /**
@@ -570,8 +579,9 @@ const Options: DeepPartial<OptionsType> = {
 
             /**
              * Show play marker (tooltip and/or crosshair) for a track.
-             * @type {boolean}
-             * @default true
+             *
+             * @type      {boolean}
+             * @default   true
              * @apioption sonification.defaultInstrumentOptions.showPlayMarker
              */
 
@@ -579,13 +589,16 @@ const Options: DeepPartial<OptionsType> = {
              * Name to use for a track when exporting to MIDI.
              * By default it uses the series name if the track is related to
              * a series.
-             * @type {string}
+             *
+             * @type      {string}
              * @apioption sonification.defaultInstrumentOptions.midiName
              */
 
             /**
              * Options for point grouping, specifically for instrument tracks.
-             * @extends sonification.pointGrouping
+             *
+             * @declare   Highcharts.SonificationInstrumentPointGroupingOptions
+             * @extends   sonification.pointGrouping
              * @apioption sonification.defaultInstrumentOptions.pointGrouping
              */
 
@@ -602,21 +615,25 @@ const Options: DeepPartial<OptionsType> = {
              * data point. `value` is available if the track is used as a
              * context track, and `valueInterval` is used.
              *
-             * @sample  highcharts/sonification/mapping-zones
-             *          Mapping zones
-             * @type {Function|object}
+             * @sample highcharts/sonification/mapping-zones
+             *         Mapping zones
+             *
+             * @declare   Highcharts.SonificationInstrumentActiveWhenOptions
+             * @type      {Function|*}
              * @apioption sonification.defaultInstrumentOptions.activeWhen
              */
 
             /**
              * Track is only active when `prop` is above or at this value.
-             * @type {number}
+             *
+             * @type      {number}
              * @apioption sonification.defaultInstrumentOptions.activeWhen.min
              */
 
             /**
              * Track is only active when `prop` is below or at this value.
-             * @type {number}
+             *
+             * @type      {number}
              * @apioption sonification.defaultInstrumentOptions.activeWhen.max
              */
 
@@ -626,7 +643,8 @@ const Options: DeepPartial<OptionsType> = {
              *
              * If both `crossingUp` and `crossingDown` are defined, the track
              * is active if either condition is met.
-             * @type {number}
+             *
+             * @type      {number}
              * @apioption sonification.defaultInstrumentOptions.activeWhen.crossingUp
              */
 
@@ -636,13 +654,15 @@ const Options: DeepPartial<OptionsType> = {
              *
              * If both `crossingUp` and `crossingDown` are defined, the track
              * is active if either condition is met.
-             * @type {number}
+             *
+             * @type      {number}
              * @apioption sonification.defaultInstrumentOptions.activeWhen.crossingDown
              */
 
             /**
              * The point property to compare, for example `y` or `x`.
-             * @type {string}
+             *
+             * @type      {string}
              * @apioption sonification.defaultInstrumentOptions.activeWhen.prop
              */
 
@@ -686,18 +706,24 @@ const Options: DeepPartial<OptionsType> = {
              *          Inverted mapping to property
              * @sample  highcharts/sonification/log-mapping
              *          Logarithmic mapping to property
+             *
+             * @declare Highcharts.SonificationInstrumentMappingOptions
              */
             mapping: {
                 /**
                  * The volume of notes, from 0 to 1.
-                 * @default 1
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 *
+                 * @declare   Highcharts.SonificationInstrumentVolumeOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
+                 * @default   1
                  * @apioption sonification.defaultInstrumentOptions.mapping.volume
                  */
 
                 /**
                  * Frequency in Hertz of notes. Overrides pitch mapping if set.
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 *
+                 * @declare   Highcharts.SonificationInstrumentFrequencyOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultInstrumentOptions.mapping.frequency
                  */
 
@@ -707,7 +733,8 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * Can also be negative to play before the mapped time.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @declare   Highcharts.SonificationInstrumentPlayDelayOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultInstrumentOptions.mapping.playDelay
                  */
 
@@ -716,6 +743,7 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * Tremolo is repeated changes of volume over time.
                  *
+                 * @declare   Highcharts.SonificationInstrumentTremoloOptions
                  * @apioption sonification.defaultInstrumentOptions.mapping.tremolo
                  */
 
@@ -725,7 +753,8 @@ const Options: DeepPartial<OptionsType> = {
                  * This determines the intensity of the tremolo effect, how
                  * much the volume changes.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @declare   Highcharts.SonificationInstrumentTremoloDepthOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultInstrumentOptions.mapping.tremolo.depth
                  */
 
@@ -735,7 +764,8 @@ const Options: DeepPartial<OptionsType> = {
                  * This determines the speed of the tremolo effect, how fast
                  * the volume changes.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @declare   Highcharts.SonificationInstrumentTremoloSpeedOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultInstrumentOptions.mapping.tremolo.speed
                  */
 
@@ -745,13 +775,15 @@ const Options: DeepPartial<OptionsType> = {
                  * A lowpass filter lets low frequencies through, but stops high
                  * frequencies, making the sound more dull.
                  *
+                 * @declare   Highcharts.SonificationInstrumentLowpassOptions
                  * @apioption sonification.defaultInstrumentOptions.mapping.lowpass
                  */
 
                 /**
                  * Map to filter frequency in Hertz from 1 to 20,000Hz.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @declare   Highcharts.SonificationInstrumentLowpassFrequencyOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultInstrumentOptions.mapping.lowpass.frequency
                  */
 
@@ -759,7 +791,8 @@ const Options: DeepPartial<OptionsType> = {
                  * Map to filter resonance in dB. Can be negative to cause a
                  * dip, or positive to cause a bump.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @declare   Highcharts.SonificationInstrumentLowpassResonanceOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultInstrumentOptions.mapping.lowpass.resonance
                  */
 
@@ -769,7 +802,8 @@ const Options: DeepPartial<OptionsType> = {
                  * A highpass filter lets high frequencies through, but stops
                  * low frequencies, making the sound thinner.
                  *
-                 * @extends sonification.defaultInstrumentOptions.mapping.lowpass
+                 * @declare   Highcharts.SonificationInstrumentHighpassOptions
+                 * @extends   sonification.defaultInstrumentOptions.mapping.lowpass
                  * @apioption sonification.defaultInstrumentOptions.mapping.highpass
                  */
 
@@ -787,8 +821,10 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * @sample  highcharts/sonification/point-play-time
                  *          Play points in order of Y value
+                 *
+                 * @declare Highcharts.SonificationInstrumentTimeOptions
+                 * @type    {string|number|Function|*}
                  * @default "x"
-                 * @type {string|number|Function|object}
                  */
                 time: 'x',
 
@@ -800,21 +836,24 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * @sample  highcharts/sonification/polarity-invert
                  *          Inverted mapping to property
-                 * @type {string}
+                 *
+                 * @type      {string}
                  * @apioption sonification.defaultInstrumentOptions.mapping.time.mapTo
                  */
 
                 /**
                  * The minimum value for the audio parameter. This is the
                  * lowest value the audio parameter will be mapped to.
-                 * @type {number}
+                 *
+                 * @type      {number}
                  * @apioption sonification.defaultInstrumentOptions.mapping.time.min
                  */
 
                 /**
                  * The maximum value for the audio parameter. This is the
                  * highest value the audio parameter will be mapped to.
-                 * @type {number}
+                 *
+                 * @type      {number}
                  * @apioption sonification.defaultInstrumentOptions.mapping.time.max
                  */
 
@@ -832,17 +871,19 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * You can also map within the X or Y axis of each series.
                  *
-                 * @sample  highcharts/sonification/mapping-within
-                 *          Mapping within demonstrated
-                 * @type {"chart"|"series"|"xAxis"|"yAxis"}
+                 * @sample highcharts/sonification/mapping-within
+                 *         Mapping within demonstrated
+                 *
+                 * @type      {"chart"|"series"|"xAxis"|"yAxis"}
                  * @apioption sonification.defaultInstrumentOptions.mapping.time.within
                  */
 
                 /**
                  * How to perform the mapping.
-                 * @sample  highcharts/sonification/log-mapping
-                 *          Logarithmic mapping to property
-                 * @type {"linear"|"logarithmic"}
+                 * @sample highcharts/sonification/log-mapping
+                 *         Logarithmic mapping to property
+                 *
+                 * @type      {"linear"|"logarithmic"}
                  * @apioption sonification.defaultInstrumentOptions.mapping.time.mapFunction
                  */
 
@@ -852,9 +893,10 @@ const Options: DeepPartial<OptionsType> = {
                  * For example, if mapping to `y`, setting value to `4` will
                  * map as if all points had a y value of 4.
                  *
-                 * @sample  highcharts/demo/plotline-context
-                 *          Map to fixed y value
-                 * @type {number}
+                 * @sample highcharts/demo/plotline-context
+                 *         Map to fixed y value
+                 *
+                 * @type      {number}
                  * @apioption sonification.defaultInstrumentOptions.mapping.time.value
                  */
 
@@ -922,8 +964,10 @@ const Options: DeepPartial<OptionsType> = {
                  *          Inverted mapping to property
                  * @sample  highcharts/sonification/log-mapping
                  *          Logarithmic mapping to property
+                 *
+                 * @declare Highcharts.SonificationInstrumentPitchOptions
                  * @extends sonification.defaultInstrumentOptions.mapping.time
-                 * @type {string|number|Function|object|Array<string|number>}
+                 * @type    {string|number|Function|Array<string|number>|*}
                  */
                 pitch: {
                     mapTo: 'y',
@@ -938,7 +982,8 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * @sample  highcharts/sonification/all-scales
                  *          Predefined scale presets
-                 * @type {Array<number>}
+                 *
+                 * @type      {Array<number>}
                  * @apioption sonification.defaultInstrumentOptions.mapping.pitch.scale
                  */
 
@@ -951,6 +996,7 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * @sample  maps/demo/audio-map
                  *          Mapping to gap between notes
+                 *
                  * @extends sonification.defaultInstrumentOptions.mapping.time
                  * @default 100
                  */
@@ -967,7 +1013,7 @@ const Options: DeepPartial<OptionsType> = {
          * @sample  highcharts/sonification/speak-values
          *          Speak values
          *
-         * @declare   Highcharts.SonificationDefaultInstrumentOptions
+         * @declare   Highcharts.SonificationSpeechOptions
          * @extends   sonification.defaultInstrumentOptions
          * @excluding roundToMusicalNotes, midiName, instrument
          */
@@ -992,7 +1038,7 @@ const Options: DeepPartial<OptionsType> = {
              * Different platforms provide different voices for web speech
              * synthesis.
              *
-             * @type {string}
+             * @type      {string}
              * @apioption sonification.defaultSpeechOptions.preferredVoice
              */
 
@@ -1022,7 +1068,7 @@ const Options: DeepPartial<OptionsType> = {
              * data point, and `value` is available if the track is used for a
              * context track using `valueInterval`.
              *
-             * @declare   Highcharts.SonificationDefaultInstrumentMappingOptions
+             * @declare   Highcharts.SonificationSpeechMappingOptions
              * @extends   sonification.defaultInstrumentOptions.mapping
              * @excluding frequency, gapBetweenNotes, highpass, lowpass,
              *            tremolo, noteDuration, pan
@@ -1035,6 +1081,7 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * Can also be negative to play before the mapped time.
                  *
+                 * @declare   Highcharts.SonificationSpeechPlayDelayOptions
                  * @extends   sonification.defaultInstrumentOptions.mapping.time
                  * @apioption sonification.defaultSpeechOptions.mapping.playDelay
                  */
@@ -1044,30 +1091,31 @@ const Options: DeepPartial<OptionsType> = {
                  * @sample  highcharts/sonification/speak-values
                  *          Speak values
                  *
+                 * @declare   Highcharts.SonificationSpeechPitchOptions
                  * @extends   sonification.defaultInstrumentOptions.mapping.time
-                 * @type     {string|number|Function|object}
-                 * @default   1
                  * @excluding scale
+                 * @type      {string|number|Function|*}
+                 * @default   1
                  * @apioption sonification.defaultSpeechOptions.mapping.pitch
                  */
 
                 /**
-                 * @default undefined
+                 * @default   undefined
                  * @apioption sonification.defaultSpeechOptions.mapping.pitch.mapTo
                  */
 
                 /**
-                 * @default undefined
+                 * @default   undefined
                  * @apioption sonification.defaultSpeechOptions.mapping.pitch.min
                  */
 
                 /**
-                 * @default undefined
+                 * @default   undefined
                  * @apioption sonification.defaultSpeechOptions.mapping.pitch.max
                  */
 
                 /**
-                 * @default undefined
+                 * @default   undefined
                  * @apioption sonification.defaultSpeechOptions.mapping.pitch.within
                  */
 
@@ -1092,9 +1140,10 @@ const Options: DeepPartial<OptionsType> = {
                  * be accessed with dot notation, for example
                  * `"Density: {point.options.custom.density}"`
                  *
-                 * @sample  highcharts/sonification/speak-values
-                 *          Speak values
-                 * @type {string|Function}
+                 * @sample highcharts/sonification/speak-values
+                 *         Speak values
+                 *
+                 * @type      {string|Function}
                  * @apioption sonification.defaultSpeechOptions.mapping.text
                  */
 
@@ -1180,7 +1229,7 @@ export default Options;
 /**
  * Sonification/audio chart options for a series.
  *
- * @declare    Highcharts.PlotSeriesSonificationOptions
+ * @declare    Highcharts.SeriesSonificationOptions
  * @since      11.0.0
  * @requires   modules/sonification
  * @apioption  plotOptions.series.sonification
@@ -1200,7 +1249,7 @@ export default Options;
  *
  * Given as an array of instrument tracks, speech tracks, or a mix of both.
  *
- * @declare    Highcharts.PlotSeriesSonificationContextTracksOptions
+ * @declare    Highcharts.SeriesSonificationContextTracksOptions
  * @type       {Array<*>}
  * @extends    sonification.globalContextTracks
  * @apioption  plotOptions.series.sonification.contextTracks
@@ -1211,7 +1260,7 @@ export default Options;
  *
  * Given as an array of instrument tracks, speech tracks, or a mix of both.
  *
- * @declare    Highcharts.PlotSeriesSonificationTracksOptions
+ * @declare    Highcharts.SeriesSonificationTracksOptions
  * @type       {Array<*>}
  * @extends    sonification.globalTracks
  * @apioption  plotOptions.series.sonification.tracks
@@ -1220,7 +1269,7 @@ export default Options;
 /**
  * Default options for all this series' instrument tracks.
  *
- * @declare    Highcharts.PlotSeriesSonificationDefaultInstrumentOptions
+ * @declare    Highcharts.SeriesSonificationInstrumentOptions
  * @extends    sonification.defaultInstrumentOptions
  * @apioption  plotOptions.series.sonification.defaultInstrumentOptions
  */
@@ -1228,7 +1277,7 @@ export default Options;
 /**
  * Default options for all this series' speech tracks.
  *
- * @declare    Highcharts.PlotSeriesSonificationDefaultSpeechOptions
+ * @declare    Highcharts.SeriesSonificationSpeechOptions
  * @extends    sonification.defaultSpeechOptions
  * @apioption  plotOptions.series.sonification.defaultSpeechOptions
  */
@@ -1236,14 +1285,14 @@ export default Options;
 /**
  * Sonification point grouping options for this series.
  *
- * @declare    Highcharts.PlotSeriesSonificationPointGroupingOptions
-  * @extends    sonification.pointGrouping
+ * @declare    Highcharts.SeriesSonificationPointGroupingOptions
+ * @extends    sonification.pointGrouping
  * @apioption  plotOptions.series.sonification.pointGrouping
  */
 
 /**
  * Event context object sent to sonification chart events.
- * @requires modules/sonification
+ * @requires  modules/sonification
  * @interface Highcharts.SonificationChartEventCallbackContext
  *//**
  * The relevant chart
@@ -1261,7 +1310,7 @@ export default Options;
 
 /**
  * Event context object sent to sonification series events.
- * @requires modules/sonification
+ * @requires  modules/sonification
  * @interface Highcharts.SonificationSeriesEventCallbackContext
  *//**
  * The relevant series
