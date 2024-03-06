@@ -2,15 +2,42 @@ Highcharts.chart('container', {
     chart: {
         type: 'scatter',
         height: '100%',
-        plotBorderWidth: 1,
-        plotBorderColor: '#000000'
+        plotBorderWidth: 10,
+        plotBorderColor: '#ffffff',
+        backgroundColor: '#f7f7f8',
+        spacing: [10, 85, 15, 20],
+        events: {
+            load: function () {
+                this.plotBorder.attr({
+                    rx: 10,
+                    ry: 10,
+                    zIndex: 6
+                });
+            }
+        },
+        style: {
+            fontFamily: 'IBM Plex Sans'
+        }
     },
-
+    exporting: {
+        allowHTML: true,
+        chartOptions: {
+            chart: {
+                style: {
+                    fontFamily: 'IBM Plex Sans'
+                }
+            }
+        }
+    },
+    legend: {
+        enabled: false
+    },
     annotations: [{
         draggable: false,
         shapeOptions: {
             type: 'path',
-            strokeWidth: 0
+            strokeWidth: 0,
+            zIndex: -999
         },
         shapes: [{
             fill: {
@@ -149,6 +176,7 @@ Highcharts.chart('container', {
             backgroundColor: 'transparent',
             borderWidth: 0,
             y: 0,
+            padding: 10,
             style: {
                 fontSize: '12px',
                 fontWeight: 700
