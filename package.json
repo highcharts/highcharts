@@ -34,6 +34,7 @@
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
     "jsdoc-highstock": "npx gulp jsdoc-watch --products highstock --skip-websearch",
     "lint": "cd ts && npx eslint",
+    "lint-dashboards": "cd ts/Dashboards && npx eslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
     "utils": "highcharts-utils",
@@ -67,12 +68,12 @@
     "colors": "^1.4.0",
     "cypress": "^13.2.0",
     "cypress-visual-regression": "^3.0.0",
-    "eslint": "^8.33.0",
-    "eslint-config-eslint": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-eslint": "7.0.0",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.0.9",
-    "eslint-plugin-jsdoc": "^39.7.5",
+    "eslint-plugin-jsdoc": "^48.2.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-security": "^1.7.0",
+    "eslint-plugin-security": "^2.1.1",
     "fs-extra": "^11.1.0",
     "gifencoder": "^2.0.1",
     "glob": "^8.1.0",
@@ -130,8 +131,11 @@
     "*.js": [
       "eslint"
     ],
-    "./ts/**/*.ts": [
+    "./ts/!(Dashboards)**/*.ts": [
       "npm run lint"
+    ],
+    "./ts/Dashboards/**/*.ts": [
+      "npm run lint-dashboards"
     ],
     "*.css": [
       "stylelint"

@@ -28,6 +28,17 @@ class YouTubeComponent extends Component {
         return this;
     }
 
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
@@ -43,6 +54,9 @@ ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
 Dashboards.board('container', {
     editMode: {
         enabled: true,
+        lang: {
+            videoId: 'Video ID'
+        },
         contextMenu: {
             enabled: true
         },
@@ -74,6 +88,19 @@ Dashboards.board('container', {
     }, {
         renderTo: 'yt-highsoft',
         type: 'YouTube',
-        videoId: '115hdz9NsrY'
+        videoId: '115hdz9NsrY',
+        editableOptions: [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }]
     }]
 });

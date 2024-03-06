@@ -100,7 +100,8 @@ namespace ColorMapComposition {
 
     export const seriesMembers = {
         colorKey: 'value',
-        axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+        axisTypes: ['xAxis', 'yAxis', 'colorAxis'] as
+            Array<'xAxis'|'yAxis'|'colorAxis'>,
         parallelArrays: ['x', 'y', 'value'],
         pointArrayMap: ['value'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
