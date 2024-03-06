@@ -79,6 +79,10 @@
     }
 }
 
+.highcharts-gauge-chart {
+    max-height: 185px;
+}
+
 .highcharts-gauge-chart .highcharts-grid-line {
     stroke-width: 0;
 }
