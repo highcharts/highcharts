@@ -5,13 +5,7 @@ const chart = Highcharts.chart('container', {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive bar chart showing total and detailed fruit consumption for 3 persons, with each person\'s total shown as a stacked bar composed of different colors to represent various fruits.</p><p>There is 1 X axis showing persons, and 1 Y axis showing number of fruits consumed.</p>',
-            /*
-                Ted consumed 12 units, evenly distributed among five fruits,
-                Øystein had the most at 13 units with a preference for
-                strawberries, and Marita had 11 units, favoring strawberries
-                and mango equally.
-            */
+            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive bar chart showing total and detailed fruit consumption for 3 persons, with each person\'s total shown as a stacked bar composed of different colors to represent various fruits. Ted consumed 12 units, evenly distributed among five fruits, Øystein had the most at 13 units with a preference for strawberries, and Marita had 11 units, favoring strawberries and mango equally.</p><p>There is 1 X axis showing persons, and 1 Y axis showing number of fruits consumed.</p>',
             afterChartFormat: ''
         },
         landmarkVerbosity: 'disabled'
@@ -49,9 +43,6 @@ const chart = Highcharts.chart('container', {
     plotOptions: {
         column: {
             stacking: 'normal'
-        },
-        dataLabels: {
-            enabled: true
         }
     },
     legend: {
@@ -62,35 +53,68 @@ const chart = Highcharts.chart('container', {
     series: [{
         name: 'Strawberries',
         data: [3, 2, 4],
-        color: '#ff5757',
+        color: {
+            pattern: {
+                path: 'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+                color: '#ff4740',
+                backgroundColor: '#ff575740',
+                width: 4.2,
+                height: 4.2
+            }
+        },
         borderWidth: 2,
         borderColor: '#ffffff'
     }, {
         name: 'Mango',
         data: [1, 4, 2],
-        color: '#b38f00',
+        color: {
+            pattern: {
+                path: 'M 2 0 L 2 5 M 4 0 L 4 5',
+                color: '#b38f00',
+                backgroundColor: '#b38f0060',
+                width: 4,
+                height: 4
+            }
+        },
         borderWidth: 2,
         borderColor: '#FFFFFF'
     }, {
         name: 'Blueberries',
         data: [4, 1, 3],
-        color: '#369add',
+        color: {
+            pattern: {
+                path: 'M 0 5 L 5 0 M -0.5 0.5 L 0.5 -0.5 M 4.5 5.5 L 5.5 4.5',
+                color: '#369add',
+                backgroundColor: '#369add40',
+                width: 5,
+                height: 3
+            }
+        },
         borderWidth: 2,
         borderColor: '#FFFFFF'
     }, {
         name: 'Kiwi',
         data: [2, 3, 1],
-        color: '#68a14a',
         borderWidth: 2,
-        borderColor: '#FFFFFF'
+        borderColor: '#FFFFFF',
+        color: {
+            pattern: {
+                path: 'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+                color: '#68a14a',
+                backgroundColor: '#68a14a30',
+                width: 3,
+                height: 3
+            }
+        }
     }, {
-        name: 'Raspberries',
+        name: 'Grapes',
         data: [2, 3, 1],
         color: '#d270a9',
         borderWidth: 2,
         borderColor: '#ffffff'
     }]
 });
+
 
 // ============================================================================
 // Announcer
@@ -185,7 +209,7 @@ Highcharts.extend(HelpBtnComponent.prototype, {
 // ============================================================================
 // Application desc
 const desc = document.createElement('button');
-desc.innerText = 'Bar chart with 3 bars. Click to interact, or press H for keyboard shortcuts. Total fruit consumption.';
+desc.innerText = 'Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Total fruit consumption.';
 desc.className = 'visually-hidden';
 desc.setAttribute('aria-hidden', 'false');
 desc.onclick = () => {
@@ -232,7 +256,7 @@ Highcharts.extend(CustomContainerComponent.prototype, {
             ],
 
             init: function () {
-                announce('Bar chart with 3 bars. Click to interact, or press H for keyboard shortcuts. Total fruit consumption.');
+                announce('Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Total fruit consumption.');
                 const a11y = chart.accessibility;
                 if (a11y) {
                     a11y.keyboardNavigation.tabindexContainer.focus();
@@ -413,9 +437,9 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                     ['Øystein, 13 fruits total. Bar 2 of 3 with 5 elements.'],
                     ['Marita, 11 fruits total. Bar 3 of 3 with 5 elements.']
                 ], [
-                    ['2 raspberries, Ted. 1 of 5 elements.', '2 kiwi, Ted. 2 of 5 elements.', '4 blueberries, Ted. 3 of 5 elements.', '1 mango, Ted. 4 of 5 elements.', '3 strawberries, Ted. 5 of 5 elements.'],
-                    ['3 raspberries, Øystein. 1 of 5 elements.', '3 kiwi, Øystein. 2 of 5 elements.', '1 blueberries, Øystein. 3 of 5 elements.', '4 mango, Øystein. 4 of 5 elements.', '2 strawberries, Øystein. 5 of 5 elements.'],
-                    ['1 raspberries, Marita. 1 of 5 elements.', '1 kiwi, Marita. 2 of 5 elements.', '3 blueberries, Marita. 3 of 5 elements.', '2 mango, Marita. 4 of 5 elements.', '4 strawberries, Marita. 5 of 5 elements.']
+                    ['2 grapes, Ted. 1 of 5 elements.', '2 kiwi, Ted. 2 of 5 elements.', '4 blueberries, Ted. 3 of 5 elements.', '1 mango, Ted. 4 of 5 elements.', '3 strawberries, Ted. 5 of 5 elements.'],
+                    ['3 grapes, Øystein. 1 of 5 elements.', '3 kiwi, Øystein. 2 of 5 elements.', '1 blueberries, Øystein. 3 of 5 elements.', '4 mango, Øystein. 4 of 5 elements.', '2 strawberries, Øystein. 5 of 5 elements.'],
+                    ['1 grapes, Marita. 1 of 5 elements.', '1 kiwi, Marita. 2 of 5 elements.', '3 blueberries, Marita. 3 of 5 elements.', '2 mango, Marita. 4 of 5 elements.', '4 strawberries, Marita. 5 of 5 elements.']
                 ]];
                 component.dataPos = { x: 0, y: 0, drill: 0 };
                 speakDataAtCurrent();
