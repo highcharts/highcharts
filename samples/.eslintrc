@@ -34,7 +34,7 @@ rules:
     max-len: [
         "warn",
         {
-            "ignoreStrings": true
+            "ignoreUrls": true
         }
     ]
     new-cap: 0                  # The ill-named Color object. Fix in HC5
