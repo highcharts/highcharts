@@ -560,7 +560,7 @@ class Series {
             // repeat for xAxis and yAxis
             (series.axisTypes || []).forEach(function (coll: string): void {
                 // loop through the chart's axis objects
-                (chart as any)[coll].forEach(function (axis: Axis): void {
+                ((chart as any)[coll] || []).forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
                     // apply if the series xAxis or yAxis option matches
