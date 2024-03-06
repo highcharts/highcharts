@@ -1,0 +1,70 @@
+.highcharts-figure {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+#grammy-data {
+    display: none;
+}
+
+.tooltip-heading {
+    font-weight: 800;
+    text-align: center;
+}
+
+.win-nom {
+    font-weight: 600;
+    text-align: center;
+    padding: 5px;
+}
+
+.highcharts-tooltip span ul {
+    padding-left: 10px;
+}
+
+.highcharts-tooltip span li {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+#highcharts-data-table-0 {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+}
+
+#highcharts-data-table-0 thead {
+    background-color: #f2f2f2;
+}
+
+#highcharts-data-table-0 th,
+#highcharts-data-table-0 td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+#highcharts-data-table-0 th {
+    color: #222;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+ul li {
+    list-style-type: none;
+}
