@@ -555,9 +555,9 @@
     font-weight: bold;
 }
 
-/* Container for application meta data */
-#xml-data-island {
-    visibility: hidden;
+/* Storage for application meta data */
+#app-data {
+    display: none;
 }
 
 /* *

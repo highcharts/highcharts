@@ -514,7 +514,7 @@ async function setupDashboard() {
         jsonElData.data.splice(1, 0, Object.values(summary));
 
         // Save candidate names (to be displayed in header)
-        const yearEl = document.querySelector('elections year#ei_' + year);
+        const yearEl = document.querySelector('year#ei_' + year);
         jsonElData.candDem = yearEl.querySelector('dem candidate').textContent;
         jsonElData.candRep = yearEl.querySelector('rep candidate').textContent;
     }
