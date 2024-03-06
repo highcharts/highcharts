@@ -504,19 +504,16 @@ class TreemapSeries extends ScatterSeries {
                 child.children.length &&
                 child.point.dataLabels?.length
             ) {
-                const dlHeight = Math.min(
-                    child.values.height - 1,
-                    arrayMax(
-                        child.point.dataLabels.map((dl): number => (
-                            dl.options?.inside === false ?
-                                dl.height || 0 :
-                                0
-                        ))
-                    ) / series.yAxis.len * 100
-                );
+                const dlHeight = arrayMax(
+                    child.point.dataLabels.map((dl): number => (
+                        dl.options?.inside === false ?
+                            dl.height || 0 :
+                            0
+                    ))
+                ) / series.yAxis.len * 100;
 
-                child.areaCorrection = 1 + dlHeight /
-                    (dlHeight + child.values.height);
+                child.areaCorrection = (child.values.height + dlHeight) /
+                    child.values.height;
                 child.values.y += dlHeight;
                 child.values.height -= dlHeight;
             }
@@ -556,32 +553,64 @@ class TreemapSeries extends ScatterSeries {
                 ),
                 expectedAreaPerValue = areaSum / valueSum;
 
-            let worstMiss = 0;
+            let minMiss = 0,
+                maxMiss = 0;
+
             leafs.forEach((point, i): void => {
                 // Less than 1 => rendered too small, greater than 1 =>
                 // rendered too big
-                const fit = values[i] ?
-                        (areas[i] / values[i]) / expectedAreaPerValue :
-                        1,
-                    miss = 1 - fit,
-                    areaCorrection = point.node.parentNode?.areaCorrection || 1;
+                let fit = values[i] ?
+                    (areas[i] / values[i]) / expectedAreaPerValue :
+                    1;
+                const miss = 1 - fit,
+                    areaCorrection = point.node.parentNode?.areaCorrection || 1,
+                    lowerThreshold = 1 - 0.05,
+                    upperThreshold = 1 + 0.2;
 
+                // Negative fit means the outside data label requires more space
+                // than is available in the group. Gradually increase.
+                if (fit <= 0) {
+                    fit = 2 / areaCorrection;
 
-                worstMiss = Math.max(worstMiss, Math.abs(miss));
+                // Small areas are sensitive to size correction and the model
+                // risks exploding. Moderate.
+                } else if (fit < lowerThreshold) {
+                    fit = lowerThreshold;
+                } else if (fit > upperThreshold) {
+                    fit = upperThreshold;
+                }
+
+                if (miss > maxMiss) {
+                    maxMiss = miss;
+                }
+                if (miss < minMiss) {
+                    minMiss = miss;
+                }
 
                 if (typeof point.value === 'number') {
                     point.simulatedValue = (
                         point.simulatedValue || point.value
-                    ) * areaCorrection;
+                    ) / fit;
                 }
+
             });
 
-            // / console.log('--- simulation', this.simulation, worstMiss)
+            /* /
+            console.log('--- simulation',
+                this.simulation,
+                'minName',
+                minName,
+                'maxName',
+                maxName,
+                'worstMiss',
+                Math.max(Math.abs(minMiss), Math.abs(maxMiss))
+            );
+            */
 
             if (
                 // An area error less than 5% is acceptable, the human ability
                 // to assess area size is not that accurate
-                worstMiss > 0.05 &&
+                (minMiss < -0.05 || maxMiss > 0.05) &&
                 // In case an eternal loop is brewing, pull the emergency brake
                 this.simulation < 10
             ) {
@@ -590,8 +619,8 @@ class TreemapSeries extends ScatterSeries {
                 (area as any).val = parent.val;
                 this.calculateChildrenAreas(parent, area);
 
-            // Reset the simulated values and set the tree values with real
-            // data
+            // Simulation is settled, proceed to rendering. Reset the simulated
+            // values and set the tree values with real data.
             } else {
                 leafs.forEach((point): void => {
                     delete point.simulatedValue;
@@ -667,13 +696,11 @@ class TreemapSeries extends ScatterSeries {
                 return n.node.visible;
             });
 
-        let options: DataLabelOptions,
-            level: TreemapSeriesOptions;
-
         for (const point of points) {
-            level = mapOptionsToLevel[point.node.level];
-            // Set options to new object to avoid problems with scope
-            options = { style: {} };
+            const style: CSSObject = {},
+                // Set options to new object to avoid problems with scope
+                options: DataLabelOptions = { style },
+                level = mapOptionsToLevel[point.node.level];
 
             // If not a leaf, then label should be disabled as default
             if (!point.node.isLeaf) {
@@ -682,7 +709,7 @@ class TreemapSeries extends ScatterSeries {
 
             // If options for level exists, include them as well
             if (level && level.dataLabels) {
-                options = merge(options, level.dataLabels);
+                merge(true, options, splat(level.dataLabels)[0]);
                 series.hasDataLabels = (): boolean => true;
             }
 
@@ -695,7 +722,7 @@ class TreemapSeries extends ScatterSeries {
             if (point.shapeArgs) {
                 const width = point.shapeArgs.width;
                 if (width) {
-                    (options.style as any).width = width;
+                    style.width = `${width}px`;
                     if (point.dataLabel) {
 
                         // Make the label box itself fill the width
@@ -708,6 +735,9 @@ class TreemapSeries extends ScatterSeries {
 
                         point.dataLabel.css({ width: `${width}px` });
                     }
+                // Hide labels for shapes that are too small
+                } else if (point.dataLabel) {
+                    style.visibility = 'hidden';
                 }
             }
 

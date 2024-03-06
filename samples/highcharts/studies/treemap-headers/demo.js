@@ -1,3 +1,5 @@
+// window.misses = [];
+
 Highcharts.chart('container', {
     series: [{
         type: 'treemap',
@@ -112,3 +114,18 @@ Highcharts.chart('container', {
             'The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>'
     }
 });
+
+/*
+Highcharts.chart('container-range', {
+    chart: {
+        type: 'columnrange'
+    },
+    title: {
+        text: 'Misses'
+    },
+    series: [{
+        name: 'Misses',
+        data: window.misses
+    }]
+});
+*/
