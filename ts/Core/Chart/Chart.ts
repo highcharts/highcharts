@@ -1929,12 +1929,13 @@ class Chart {
             // resize observer (#19027).
             setTimeout((): void => {
                 if (chart) {
-                    fireEvent(chart, 'endResize', void 0, (): void => {
-                        chart.isResizing -= 1;
-                    });
+                    fireEvent(chart, 'endResize');
                 }
             }, animObject(globalAnimation).duration);
         }
+
+        // Handle resizing counter even if we've re-rendered or not (#20548).
+        chart.isResizing -= 1;
     }
 
     /**
