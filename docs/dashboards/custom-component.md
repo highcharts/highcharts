@@ -57,6 +57,17 @@ class YouTubeComponent extends Component {
         return this;
     }
 
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
@@ -86,7 +97,20 @@ Dashboards.board({
     components: [{
         cell: 'cell-id',
         type: 'YouTube',
-        videoId: 'video-id-from-youtube'
+        videoId: 'video-id-from-youtube',
+        editableOptions: [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }]
     }]
 });
 ```
@@ -109,7 +133,55 @@ Use the exact name which was used to register the component in the `ComponentReg
         }
     },
 ```
----
+
+### Making custom component editable
+To make the custom component editable, you need to define the `editableOptions` property in the component options. The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
+In the example below, the `videoId`, `title` and `caption` are editable options.
+```js
+    components: [{
+        cell: 'cell-id',
+        type: 'YouTube',
+        videoId: 'video-id-from-youtube',
+        editableOptions: [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }]
+    }]
+```
+Also the `update` method should be extended to update the component with new options. Here we simply have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after performing the update.  
+```js
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+```
+Additionally the `lang` options for the new option can be added.
+```js
+    editMode: {
+        enabled: true,
+        lang: {
+            videoId: 'Video ID'
+        },
+        ...
+    }
+```
+
+
 ## Custom HTML Component
 The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
 
