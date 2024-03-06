@@ -19,16 +19,6 @@ Highcharts.chart('container', {
             fontFamily: 'IBM Plex Sans'
         }
     },
-    exporting: {
-        allowHTML: true,
-        chartOptions: {
-            chart: {
-                style: {
-                    fontFamily: 'IBM Plex Sans'
-                }
-            }
-        }
-    },
     legend: {
         enabled: false
     },
