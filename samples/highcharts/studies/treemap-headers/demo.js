@@ -14,8 +14,7 @@ Highcharts.chart('container', {
             format: '{point.id}',
             style: {
                 textOutline: 'none'
-            },
-            inside: false
+            }
         },
         levels: [{
             level: 1,

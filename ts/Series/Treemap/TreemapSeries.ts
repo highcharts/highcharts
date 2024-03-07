@@ -713,7 +713,11 @@ class TreemapSeries extends ScatterSeries {
                 series.hasDataLabels = (): boolean => true;
             }
 
-            // Headers are always top-aligned
+            // Headers are always top-aligned. Leaf nodes no not support
+            // headers.
+            if (point.node.isLeaf) {
+                delete options.inside;
+            }
             if (options.inside === false) {
                 options.verticalAlign = 'top';
             }
