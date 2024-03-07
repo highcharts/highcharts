@@ -86,13 +86,14 @@ Highcharts.chart('container', {
 });
 
 const svg = document.getElementsByClassName('highcharts-root')[0];
+const container = document.getElementById('container');
 
 // Adding a title to the SVG
 document.getElementById('container').setAttribute('aria-hidden', 'false');
 svg.querySelector('desc').remove();
 svg.setAttribute('aria-label', '0 cups per day. Coffee consumption. Gauge chart.');
 
-// Creating button
+// Creating button and div for details
 const detailsButton = document.createElement('button');
 const announcerDiv = document.createElement('div');
 announcerDiv.className = 'visually-hidden';
@@ -100,13 +101,13 @@ detailsButton.className = 'visually-hidden';
 detailsButton.setAttribute('aria-label', 'Gauge details');
 detailsButton.setAttribute('aria-expanded', 'false');
 announcerDiv.setAttribute('aria-live', 'assertive');
-svg.insertAdjacentElement('afterend', detailsButton);
+container.insertAdjacentElement('afterend', detailsButton);
 detailsButton.insertAdjacentElement('afterend', announcerDiv);
 
 
 let detailsDiv;
 
-// Adding logic to clicking button
+// Adding logic to clicking  button
 detailsButton.addEventListener('click', function () {
     const isExpanded = detailsButton.getAttribute('aria-expanded') === 'true';
     detailsButton.setAttribute('aria-expanded', !isExpanded);
@@ -116,7 +117,7 @@ detailsButton.addEventListener('click', function () {
         const detailsText = document.createElement('p');
 
         detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'The gauge is divided into three color-coded areas, green (0-4 cups), yellow (4-8 cups) and red (8-12 cups) coffee consumption. The current value is 0 cups per day.';
+        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cups), yellow (4-8 cups) and red (8-12 cups) coffee consumption. The current value is 0 cups per day.';
 
         detailsDiv.appendChild(detailsText);
         detailsButton.insertAdjacentElement('afterend', detailsDiv);
