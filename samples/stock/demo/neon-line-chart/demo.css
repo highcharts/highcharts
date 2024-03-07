@@ -52,12 +52,10 @@
     font-weight: 100;
 }
 
-.highcharts-button text {
-    fill: var(--bright-color);
-}
-
+.highcharts-button text,
 .highcharts-scrollbar-thumb {
     fill: var(--bright-color);
+    cursor: pointer;
 }
 
 .highcharts-scrollbar-track {
@@ -65,8 +63,10 @@
     stroke-opacity: 0.4;
 }
 
-.highcharts-button-box {
+.highcharts-button-box,
+.highcharts-button {
     fill: none;
+    cursor: pointer;
 }
 
 .highcharts-button-symbol {
