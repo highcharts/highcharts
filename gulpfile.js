@@ -37,6 +37,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/scripts-dts',
     'dashboards/scripts-watch',
     'dashboards/test',
+    'dashboards/dlint',
     'default',
     'dist',
     'dist-clean',
