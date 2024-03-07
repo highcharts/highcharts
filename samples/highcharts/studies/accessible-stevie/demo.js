@@ -167,13 +167,13 @@ function createTooltipText(
         }));
 
     let tooltipText =
-        `<strong>${grammy} Grammy Awards (${year})</strong></br>` +
+        `<strong>${grammy} Grammy Awards (${year})</strong>. </br>` +
         `<strong>${seriesName.charAt(0).toUpperCase() + seriesName.slice(1)}</strong>: ${y}</br>`;
 
     if (songValues.includes('None') || awardValues.includes('None')) {
         return tooltipText;
     }
-    tooltipText += mappedValues.map(value => `<strong>${value.award.trim()}: </strong>${value.song}</br>`).join('');
+    tooltipText += mappedValues.map(value => `<strong>${value.award.trim()}: </strong>${value.song}. </br>`).join('');
 
 
     return tooltipText;
