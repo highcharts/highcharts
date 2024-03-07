@@ -351,7 +351,6 @@ Highcharts.extend(SoundGuideComponent.prototype, {
 const desc = document.createElement('button');
 desc.innerText = 'Bar chart with 3 bars. Press Tab to interact, or press H for keyboard shortcuts. Total fruit consumption.';
 desc.className = 'visually-hidden';
-desc.setAttribute('aria-hidden', 'false');
 desc.onclick = () => {
     const a11y = chart.accessibility;
     if (a11y) {
@@ -666,7 +665,9 @@ chart.update({
     chart: {
         events: {
             afterA11yUpdate: function () {
+                desc.setAttribute('aria-hidden', 'false');
                 helpBtn.setAttribute('aria-hidden', 'false');
+                soundGuide.setAttribute('aria-hidden', 'false');
                 helpContent.setAttribute('aria-hidden', 'false');
                 chart.container.style.outline = '';
             }
