@@ -185,38 +185,18 @@ function createTooltipText(
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('#container'),
         screenReaderSection = document.querySelector('#highcharts-screen-reader-region-before-0'),
-        tooltipCheckbox = document.createElement('input'),
-        labelTooltipCheckbox = document.createElement('label'),
-        nullpointCheckbox = document.createElement('input'),
-        labelNullpointCheckbox = document.createElement('label'),
         moreInfoButton = document.createElement('button'),
         infoDiv = document.createElement('div'),
-        infoP = document.createElement('p'),
-        heading = document.createElement('h2');
+        infoP = document.createElement('p');
 
-    tooltipCheckbox.setAttribute('type', 'checkbox');
-    tooltipCheckbox.id = '#checkbox-info';
-    labelTooltipCheckbox.setAttribute('for', tooltipCheckbox.id);
-    labelTooltipCheckbox.textContent = ' Announce tooltip details for screen readers ';
-
-    nullpointCheckbox.setAttribute('type', 'checkbox');
-    nullpointCheckbox.id = '#checkbox-nullpoint';
-    nullpointCheckbox.checked = true;
-    labelNullpointCheckbox.setAttribute('for', nullpointCheckbox.id);
-    labelNullpointCheckbox.textContent = ' Hide points with zero value';
+    const tooltipCheckbox = document.getElementById('checkbox-info');
+    const nullpointCheckbox = document.getElementById('checkbox-nullpoint');
 
     moreInfoButton.textContent = 'Toggle more information';
     moreInfoButton.setAttribute('aria-expanded', 'true');
     infoDiv.setAttribute('id', '#info-div');
     infoDiv.style.display = 'block';
     infoP.textContent = document.getElementById('rich-description').textContent;
-    heading.textContent = 'Verbosity settings';
-
-    container.parentNode.insertBefore(heading, container);
-    container.parentNode.insertBefore(tooltipCheckbox, container);
-    container.parentNode.insertBefore(labelTooltipCheckbox, container);
-    container.parentNode.insertBefore(nullpointCheckbox, container);
-    container.parentNode.insertBefore(labelNullpointCheckbox, container);
 
     screenReaderSection.firstChild.appendChild(moreInfoButton);
     moreInfoButton.parentNode.appendChild(infoDiv);
