@@ -184,8 +184,7 @@ function createTooltipText(
 
 // Add a checkbox to the page to toggle verbosity of the chart
 document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('#container'),
-        screenReaderSection = document.querySelector('#highcharts-screen-reader-region-before-0'),
+    const screenReaderSection = document.querySelector('#highcharts-screen-reader-region-before-0'),
         moreInfoButton = document.createElement('button'),
         infoDiv = document.createElement('div'),
         infoP = document.createElement('p');
