@@ -59,10 +59,9 @@ Highcharts.chart('container', {
                         descriptionDiv.setAttribute('id', descriptionDivId);
                         descriptionDiv.setAttribute('aria-hidden', 'true');
                         descriptionDiv.classList.add('visually-hidden');
-                        const addPunctuation = tooltipText.replace(/(?<!\d)<\/br>/g, '</br>. '); // Hack for adding punctuation after the song
+                        const addPunctuation = tooltipText.replace(/<\/li>/g, '</li>. '); // Hack for adding punctuation after the song
                         let strippedDescription = addPunctuation.replace(/<[^>]*>?/gm, '');
                         strippedDescription = strippedDescription.replace(/Wins: \d+|Nominations: \d+/g, '');
-                        strippedDescription = strippedDescription.replace(/\. $/, '');
                         descriptionDiv.innerHTML = strippedDescription;
                         document.body.appendChild(descriptionDiv);
                         descriptionDivs.push(descriptionDiv);
@@ -168,7 +167,7 @@ function createTooltipText(
         }));
 
     let tooltipText =
-        `<strong>${grammy} Grammy Awards (${year})</strong></br> ` +
+        `<strong>${grammy} Grammy Awards (${year})</strong></br>` +
         `<strong>${seriesName.charAt(0).toUpperCase() + seriesName.slice(1)}</strong>: ${y}</br>`;
 
     if (songValues.includes('None') || awardValues.includes('None')) {
