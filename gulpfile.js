@@ -59,7 +59,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-dts',
     'jsdoc-namespace',
     'jsdoc-options',
-    'jsdoc-musings',
+    'jsdoc-hack',
     'jsdoc-server',
     'jsdoc-watch',
     'jsdoc-websearch',
