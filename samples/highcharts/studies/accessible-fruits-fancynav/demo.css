@@ -14,6 +14,7 @@
 }
 
 .hint-button,
+.sound-button,
 .dlg-close,
 #showTable {
     position: absolute;
@@ -38,7 +39,8 @@ button img {
     width: 16px;
 }
 
-.hint-button:focus {
+.hint-button:focus,
+.sound-button:focus {
     outline: 3px solid #446299;
 }
 
@@ -93,6 +95,10 @@ dialog {
 
 .hint-button {
     right: 6rem;
+}
+
+.sound-button {
+    right: 17.5rem;
 }
 
 .hidden {

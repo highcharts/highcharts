@@ -5,7 +5,7 @@ const chart = Highcharts.chart('container', {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive bar chart showing total and detailed fruit consumption for 3 persons, with each person\'s total shown as a stacked bar composed of different colors to represent various fruits. Ted consumed 12 units, evenly distributed among five fruits, Øystein had the most at 13 units with a preference for strawberries, and Marita had 11 units, favoring strawberries and mango equally.</p><p>There is 1 X axis showing persons, and 1 Y axis showing number of fruits consumed.</p>',
+            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive bar chart showing total and detailed fruit consumption for 3 persons, with each person\'s total shown as a stacked bar composed of different colors to represent various fruits. Ted consumed 12 units, evenly distributed among five fruits, Øystein had the most at 13 units with a preference for strawberries, and Marita had 11 units, favoring strawberries and mango equally.</p><p>There is 1 X axis showing persons, and 1 Y axis showing number of fruits consumed.</p><p>Use tab key to move between chart sections. Use left/right arrow keys to move between bars on the X axis. When on the bars, use the Enter key for more detail, and Backspace for less.</p><p>Sounds play as you navigate the bars. Higher pitched tones indicate higher values.</p>',
             afterChartFormat: ''
         },
         landmarkVerbosity: 'disabled'
@@ -38,7 +38,8 @@ const chart = Highcharts.chart('container', {
         },
         stackLabels: {
             enabled: true
-        }
+        },
+        reversedStacks: false
     },
     plotOptions: {
         column: {
@@ -48,7 +49,8 @@ const chart = Highcharts.chart('container', {
     legend: {
         layout: 'vertical',
         align: 'right',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        reversed: true
     },
     tooltip: {
         pointFormat: '<b><span style="color:{point.color}">●</span> {point.y} {series.name}</b><br>{point.custom.longdesc}'
@@ -165,8 +167,8 @@ const chart = Highcharts.chart('container', {
                 path: 'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
                 color: '#68a14a',
                 backgroundColor: '#68a14a30',
-                width: 3,
-                height: 3
+                width: 2.5,
+                height: 2.5
             }
         }
     }, {
@@ -192,6 +194,19 @@ const chart = Highcharts.chart('container', {
         borderColor: '#ffffff'
     }]
 });
+
+
+// Utility function
+const play = (instr, note, time) => {
+    setTimeout(() =>
+        chart.sonification.playNote(instr, {
+            note: note,
+            noteDuration: 300,
+            pan: 0,
+            volume: 0.6
+        }), time
+    );
+};
 
 
 // ============================================================================
@@ -221,6 +236,7 @@ let focusReturnFromHelp;
 // Help Btn & dialog
 const helpBtn = document.createElement('button');
 helpBtn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Iconoir_accessibility.svg" alt=""> Keyboard shortcuts';
+helpBtn.setAttribute('aria-label', 'Keyboard shortcuts, Total fruit consumption');
 helpBtn.className = 'hint-button';
 
 const helpContent = document.createElement('dialog'),
@@ -285,9 +301,55 @@ Highcharts.extend(HelpBtnComponent.prototype, {
 
 
 // ============================================================================
+// Sound guide
+
+const soundGuide = document.createElement('button');
+soundGuide.className = 'sound-button';
+soundGuide.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt=""> Sound guide';
+soundGuide.setAttribute('aria-label', 'Sound guide, Total fruit consumption');
+soundGuide.onclick = () => {
+    chart.sonification.speak('Range of tones for bars, values 11 to 13');
+    play('flute', 64, 2600);
+    play('flute', 72, 3100);
+
+    chart.sonification.speak('Range of tones for bar segments, values 1 to 4', {}, 4200);
+    play('vibraphone', 50, 6800);
+    play('vibraphone', 58, 7300);
+};
+chart.container.appendChild(soundGuide);
+
+const SoundGuideComponent = function (chart) {
+    this.initBase(chart);
+};
+SoundGuideComponent.prototype = new Highcharts.AccessibilityComponent();
+Highcharts.extend(SoundGuideComponent.prototype, {
+    getKeyboardNavigation: function () {
+        const keys = this.keyCodes,
+            chart = this.chart,
+            component = this;
+        return new Highcharts.KeyboardNavigationHandler(chart, {
+            keyCodeMap: [
+                // Space/enter means we click the button
+                [[
+                    keys.space, keys.enter
+                ], function () {
+                    // Fake a click event on the button element
+                    component.fakeClickEvent(soundGuide);
+                    return this.response.success;
+                }]
+            ],
+            init: function () {
+                soundGuide.focus();
+            }
+        });
+    }
+});
+
+
+// ============================================================================
 // Application desc
 const desc = document.createElement('button');
-desc.innerText = 'Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Use arrow keys to move around in chart. Total fruit consumption.';
+desc.innerText = 'Bar chart with 3 bars. Press Tab to interact, or press H for keyboard shortcuts. Total fruit consumption.';
 desc.className = 'visually-hidden';
 desc.setAttribute('aria-hidden', 'false');
 desc.onclick = () => {
@@ -338,7 +400,7 @@ Highcharts.extend(CustomContainerComponent.prototype, {
             ],
 
             init: function () {
-                announce('Bar chart with 3 bars. Press Enter to interact, or press H for keyboard shortcuts. Use arrow keys to move around in chart. Total fruit consumption.');
+                announce('Bar chart with 3 bars. Press Tab to interact, or press H for keyboard shortcuts. Total fruit consumption.');
                 const a11y = chart.accessibility;
                 if (a11y) {
                     a11y.keyboardNavigation.tabindexContainer.focus();
@@ -382,11 +444,11 @@ Highcharts.extend(CustomSeriesNav.prototype, {
             highlightCurrent = () => {
                 const { drill, x, y } = component.dataPos,
                     series = chart.series[chart.series.length - 1 - y],
-                    startPoint = chart.series[0].points[x],
-                    endPoint = chart.series[chart.series.length - 1]
+                    endPoint = chart.series[0].points[x],
+                    startPoint = chart.series[chart.series.length - 1]
                         .points[x];
 
-                if (drill) {
+                if (drill > 1) {
                     const point = chart.highlightedPoint = series.points[x],
                         el = point.graphic.element,
                         labelContent = el.getAttribute('aria-label');
@@ -396,8 +458,8 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                     el.removeAttribute('aria-label');
 
                     point.onMouseOver();
-                    chart.sonification.playNote('vibraphone', {
-                        note: point.y * 2 + 60,
+                    chart.sonification.playNote(drill === 1 ? 'piano' : 'vibraphone', {
+                        note: point.y * 2 + 50,
                         noteDuration: 300,
                         pan: 0,
                         volume: 0.6
@@ -410,63 +472,97 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                             el.setAttribute('aria-label', labelContent);
                         }, 3000);
                     }
-                } else {
+                } else if (drill === 1) {
                     unHighlight();
-                    chart.sonification.playNote('piano', {
-                        note: startPoint.stackTotal * 3 + 20,
+                    chart.sonification.playNote('flute', {
+                        note: startPoint.stackTotal * 4 + 20,
                         noteDuration: 300,
                         pan: 0,
                         volume: 0.6
                     });
+                } else {
+                    play('flute', 12 * 4 + 20, 0);
+                    play('flute', 13 * 4 + 20, 300);
+                    play('flute', 11 * 4 + 20, 600);
+                    unHighlight();
                 }
 
                 // Bar indicator
                 component.focusIndicators.forEach(e => e.destroy());
 
-                component.focusIndicators = [chart.renderer
-                    .rect(
-                        startPoint.shapeArgs.x + chart.plotLeft,
-                        startPoint.plotY + chart.plotTop,
-                        startPoint.shapeArgs.width,
-                        endPoint.plotY - startPoint.plotY +
-                            endPoint.shapeArgs.height,
-                        2
-                    )
-                    .addClass('highcharts-focus-border')
-                    .attr({
-                        zIndex: 99,
-                        stroke: '#446299',
-                        'stroke-width': '4px'
-                    })
-                    .add(chart.seriesGroup), chart.renderer
-                    // -------------------------
-                    .rect(
-                        startPoint.shapeArgs.x + chart.plotLeft + 1.5,
-                        startPoint.plotY + chart.plotTop + 1.5,
-                        startPoint.shapeArgs.width - 3,
-                        endPoint.plotY - startPoint.plotY +
-                            endPoint.shapeArgs.height - 3,
-                        2
-                    )
-                    .addClass('highcharts-focus-border')
-                    .attr({
-                        zIndex: 99,
-                        stroke: '#fff',
-                        'stroke-width': '2px'
-                    })
-                    .add(chart.seriesGroup)
-                ];
+                if (drill) {
+                    component.focusIndicators = [chart.renderer
+                        .rect(
+                            startPoint.shapeArgs.x + chart.plotLeft,
+                            startPoint.plotY + chart.plotTop,
+                            startPoint.shapeArgs.width,
+                            endPoint.plotY - startPoint.plotY +
+                                endPoint.shapeArgs.height,
+                            2
+                        )
+                        .addClass('highcharts-focus-border')
+                        .attr({
+                            zIndex: 99,
+                            stroke: '#446299',
+                            'stroke-width': '4px'
+                        })
+                        .add(chart.seriesGroup), chart.renderer
+                        // -------------------------
+                        .rect(
+                            startPoint.shapeArgs.x + chart.plotLeft + 1.5,
+                            startPoint.plotY + chart.plotTop + 1.5,
+                            startPoint.shapeArgs.width - 3,
+                            endPoint.plotY - startPoint.plotY +
+                                endPoint.shapeArgs.height - 3,
+                            2
+                        )
+                        .addClass('highcharts-focus-border')
+                        .attr({
+                            zIndex: 99,
+                            stroke: '#fff',
+                            'stroke-width': '2px'
+                        })
+                        .add(chart.seriesGroup)
+                    ];
+                } else {
+                    component.focusIndicators = [chart.renderer
+                        .rect(
+                            chart.plotLeft,
+                            chart.plotTop,
+                            chart.plotWidth,
+                            chart.plotHeight,
+                            2
+                        )
+                        .addClass('highcharts-focus-border')
+                        .attr({
+                            zIndex: 99,
+                            stroke: '#446299',
+                            'stroke-width': '4px'
+                        })
+                        .add(chart.seriesGroup)];
+                }
 
                 chart.accessibility.keyboardNavigation
                     .tabindexContainer.focus();
             },
-            speakDataAtCurrent = () => {
+            speakDataAtCurrent = drillChange => {
                 const { drill, x, y } = component.dataPos,
-                    content = component.dataContent[drill][x][y];
+                    content = component.dataContent[drill][x][y],
+                    drillAnnouncement = drillChange ? `Detail level ${drill}. ` : '';
                 highlightCurrent();
-                announce(drill === 2 ?
-                    content + ' Press Escape for less detail.' :
-                    content + ' Press Enter for more details, or Escape for less detail.', 300);
+                announce(drillAnnouncement + (drillChange ?
+                    [
+                        content + ' Press Enter to interact.',
+                        content + ' Use left/right arrow to move between bars, Enter for more detail, or Backspace for less.',
+                        content + ' Use up/down arrow to move between segments, left/right to move between bars, Enter for more detail, or Backspace for less.',
+                        content + ' Use up/down arrow to move between segments, left/right to move between bars, or Backspace for less detail.'
+                    ][drill] : [
+                        content + ' Press Enter to interact.',
+                        content + ' Use left/right arrow to move between bars, Enter for more detail, or Backspace for less.',
+                        content + ' Use up/down arrow to move between segments, left/right to move between bars, Enter for more detail, or Backspace for less.',
+                        content + ' Use up/down arrow to move between segments, left/right to move between bars, or Backspace for less detail.'
+                    ][drill]
+                ), drill ? 300 : 900);
             };
 
 
@@ -474,23 +570,26 @@ Highcharts.extend(CustomSeriesNav.prototype, {
             keyCodeMap: [
                 [[keys.space, keys.enter], function () {
                     component.dataPos.drill = Math.min(
-                        2, component.dataPos.drill + 1
+                        3, component.dataPos.drill + 1
                     );
-                    speakDataAtCurrent();
+                    speakDataAtCurrent(true);
                     return this.response.success;
                 }],
 
-                [[keys.esc], function () {
+                [[keys.esc, 8], function () { // 8 is backspace
                     if (!component.dataPos.drill) {
                         return this.response.prev;
                     }
                     component.dataPos.drill = Math.max(
                         0, component.dataPos.drill - 1
                     );
-                    if (!component.dataPos.drill) {
+                    if (component.dataPos.drill < 2) {
                         component.dataPos.y = 0;
                     }
-                    speakDataAtCurrent();
+                    if (component.dataPos.drill < 1) {
+                        component.dataPos.x = 0;
+                    }
+                    speakDataAtCurrent(true);
                     return this.response.success;
                 }],
 
@@ -532,6 +631,8 @@ Highcharts.extend(CustomSeriesNav.prototype, {
             init: function () {
                 component.focusIndicators = component.focusIndicators || [];
                 component.dataContent = [[
+                    ['3 bars. Ted, Øystein, Marita.']
+                ], [
                     ['Ted, 12 fruits total. Bar 1 of 3 with 5 elements.'],
                     ['Øystein, 13 fruits total. Bar 2 of 3 with 5 elements.'],
                     ['Marita, 11 fruits total. Bar 3 of 3 with 5 elements.']
@@ -575,10 +676,11 @@ chart.update({
         customComponents: {
             customContainer: new CustomContainerComponent(chart),
             helpBtn: new HelpBtnComponent(chart),
-            customSeriesNav: new CustomSeriesNav(chart)
+            customSeriesNav: new CustomSeriesNav(chart),
+            soundGuide: new SoundGuideComponent(chart)
         },
         keyboardNavigation: {
-            order: ['customContainer', 'customSeriesNav', 'helpBtn']
+            order: ['customContainer', 'soundGuide', 'customSeriesNav', 'helpBtn']
         }
     }
 });
