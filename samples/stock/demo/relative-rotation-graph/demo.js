@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        height: '100%',
+        height: '90%',
         plotBorderWidth: 10,
         plotBorderColor: '#ffffff',
         backgroundColor: '#f7f7f8',
@@ -243,7 +243,10 @@ Highcharts.chart('container', {
             zIndex: 1
         }],
         title: {
-            text: 'JdK RS-Ratio®️'
+            text: 'JdK RS-Ratio®️',
+            style: {
+                fontWeight: 'bold'
+            }
         },
         tickWidth: 0,
         lineWidth: 0,
@@ -259,7 +262,10 @@ Highcharts.chart('container', {
             zIndex: 1
         }],
         title: {
-            text: 'JdK RS-Momentum®️'
+            text: 'JdK RS-Momentum®️',
+            style: {
+                fontWeight: 'bold'
+            }
         },
         gridLineWidth: 1
     },
