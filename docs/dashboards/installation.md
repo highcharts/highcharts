@@ -2,7 +2,7 @@ Installation
 ===
 
 ### Install via NPM
-One of the ways of adding the Highcharts Dashboards to your web page is via npm script. You can get all Dashboards functionality from packages, which can be installed using the following script:
+One of the ways of adding the Highcharts Dashboards to your web page is via npm script. You can get all Dashboards functionality through packages, which can be installed using the following script:
 ```bash
 npm install @highcharts/dashboards
 ```
