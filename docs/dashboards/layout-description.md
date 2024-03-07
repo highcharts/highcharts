@@ -35,31 +35,6 @@ import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src
 import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
 
-If you prefer to use your own layout structure, feel free to use it as well. Only what you need is disable the gui by option. Please remember that each container should have an unique `id` for rendered component.
-
-```js
-    gui: {
-        enabled: false
-    },
-    components: [{
-        renderTo: 'dashboard-col-0',
-        type: 'Highcharts',
-        chartOptions: {
-            chart: {
-                type: 'pie'
-            },
-            series: [{
-                data: [1,2,3]
-            }]
-        },
-    }]
-```
-
-[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
-[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
-
-*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
-
 ## Rows
 Each layout consists of at least one row. The row spans through the entire width of the outer layout it's defined in. Using Edit mode, you can change its width and height, and by doing so, you also resize the cells inside the row.
 Each row can have its own style defined, and its cells can be defined either as a js object or as a JSON.
@@ -98,3 +73,30 @@ Example:
     }
 }
 ```
+
+## Custom layout
+
+If you prefer to use your own layout structure, feel free to use it as well. Only what you need is disable the gui by option. Also, the `layout.js` module is not needed then. Please remember that each container should have an unique `id` for rendered component.
+
+```js
+    gui: {
+        enabled: false
+    },
+    components: [{
+        renderTo: 'dashboard-col-0',
+        type: 'Highcharts',
+        chartOptions: {
+            chart: {
+                type: 'pie'
+            },
+            series: [{
+                data: [1,2,3]
+            }]
+        },
+    }]
+```
+
+[Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
+[Here is the tailwind demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout-tailwind).
+
+*Please note that disabled GUI does not allow you to use the [Edit Mode](https://www.highcharts.com/docs/dashboards/edit-mode) module.
