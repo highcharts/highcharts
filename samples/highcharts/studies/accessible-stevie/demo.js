@@ -92,6 +92,10 @@ Highcharts.chart('container', {
         type: 'datetime',
         title: {
             enabled: false
+        },
+        accessibility: {
+            description: 'Years',
+            rangeDescription: 'Data ranges from 1967 to 2010'
         }
     },
 
