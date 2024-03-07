@@ -197,13 +197,13 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltipCheckbox.setAttribute('type', 'checkbox');
     tooltipCheckbox.id = '#checkbox-info';
     labelTooltipCheckbox.setAttribute('for', tooltipCheckbox.id);
-    labelTooltipCheckbox.textContent = ' Announce tooltip details ';
+    labelTooltipCheckbox.textContent = ' Announce tooltip details for screen readers ';
 
     nullpointCheckbox.setAttribute('type', 'checkbox');
     nullpointCheckbox.id = '#checkbox-nullpoint';
     nullpointCheckbox.checked = true;
     labelNullpointCheckbox.setAttribute('for', nullpointCheckbox.id);
-    labelNullpointCheckbox.textContent = ' Hide null points';
+    labelNullpointCheckbox.textContent = ' Hide points with zero value';
 
     moreInfoButton.textContent = 'Toggle more information';
     moreInfoButton.setAttribute('aria-expanded', 'true');
