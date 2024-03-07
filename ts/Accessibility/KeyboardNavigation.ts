@@ -447,10 +447,10 @@ class KeyboardNavigation {
         // Remove event from element and from eventRemovers array to prevent
         // memory leak (#20329).
         if (this.exitAnchor) {
-            if (defined((this.exitAnchor as any).focusEventRemover)) {
-                this.eventProvider.removeEvent(
-                    (this.exitAnchor as any).focusEventRemover);
-                delete (this.exitAnchor as any).focusEventRemover;
+            const el = this.eventProvider.eventRemovers.find((el): boolean =>
+                el.element === this.exitAnchor);
+            if (el && defined(el.remover)) {
+                this.eventProvider.removeEvent(el.remover);
             }
 
             if (this.exitAnchor.parentNode) {
@@ -472,7 +472,7 @@ class KeyboardNavigation {
         const chart = this.chart,
             keyboardNavigation = this;
 
-        (element as any).focusEventRemover = this.eventProvider.addEvent(
+        this.eventProvider.addEvent(
             element,
             'focus',
             function (ev: MouseEvent): void {
