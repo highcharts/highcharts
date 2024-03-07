@@ -1,6 +1,9 @@
 // window.misses = [];
 
 Highcharts.chart('container', {
+    chart: {
+        width: 600
+    },
     series: [{
         type: 'treemap',
         alternateStartingDirection: true,
@@ -113,6 +116,18 @@ Highcharts.chart('container', {
         pointFormat:
             'The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>'
     }
+});
+
+// Enable the update button
+document.getElementById('update').addEventListener('click', function () {
+    var chart = Highcharts.charts[0],
+        series = chart.series[0],
+        points = series.points,
+        point = points[10];
+
+    point.update({
+        color: '#FF0000'
+    });
 });
 
 /*
