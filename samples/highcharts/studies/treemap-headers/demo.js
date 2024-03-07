@@ -11,9 +11,11 @@ Highcharts.chart('container', {
         borderRadius: 6,
         borderWidth: 2,
         dataLabels: {
+            format: '{point.id}',
             style: {
                 textOutline: 'none'
-            }
+            },
+            inside: false
         },
         levels: [{
             level: 1,
@@ -21,7 +23,7 @@ Highcharts.chart('container', {
             dataLabels: {
                 allowOverlap: true,
                 enabled: true,
-                backgroundColor: '#cfcfef',
+                backgroundColor: '#cfcfef80',
                 borderColor: '#fff',
                 borderRadius: 6,
                 borderWidth: 2,
@@ -34,6 +36,30 @@ Highcharts.chart('container', {
             }
         }],
         data: [{
+            id: 'A'
+        }, {
+            id: 'B',
+            value: 1
+        }, {
+            id: 'C',
+            value: 1
+        }, {
+            id: 'A.1',
+            parent: 'A'
+        }, {
+            id: 'A.2',
+            parent: 'A',
+            value: 1
+        }, {
+            id: 'A.1.1',
+            parent: 'A.1',
+            value: 1
+        }, {
+            id: 'A.1.2',
+            parent: 'A.1',
+            value: 1
+        }],
+        _data: [{
             id: 'A',
             name: 'Nord-Norge',
             color: '#50FFB1'
@@ -113,8 +139,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         useHTML: true,
-        pointFormat:
-            'The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>'
+        pointFormat: 'The area of <b>{point.id}</b> is \
+            <b>{point.value} km<sup>2</sup></b>'
     }
 });
 
@@ -123,10 +149,11 @@ document.getElementById('update').addEventListener('click', function () {
     var chart = Highcharts.charts[0],
         series = chart.series[0],
         points = series.points,
-        point = points[10];
+        point = points[Math.floor(points.length / 2)];
 
     point.update({
-        color: '#FF0000'
+        color: '#FF0000',
+        value: 3
     });
 });
 
