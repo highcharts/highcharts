@@ -59,7 +59,8 @@ Highcharts.chart('container', {
                         descriptionDiv.setAttribute('id', descriptionDivId);
                         descriptionDiv.setAttribute('aria-hidden', 'true');
                         descriptionDiv.classList.add('visually-hidden');
-                        let strippedDescription = tooltipText.replace(/<[^>]*>?/gm, '');
+                        const addPunctuation = tooltipText.replace(/<\/li>/g, '</li>. '); // Hack for adding punctuation after the song
+                        let strippedDescription = addPunctuation.replace(/<[^>]*>?/gm, '');
                         strippedDescription = strippedDescription.replace(/Wins: \d+|Nominations: \d+/g, '');
                         descriptionDiv.innerHTML = strippedDescription;
                         document.body.appendChild(descriptionDiv);
