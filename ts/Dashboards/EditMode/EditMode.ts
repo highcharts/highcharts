@@ -551,7 +551,7 @@ class EditMode {
 
         // Remove highlight from the context row if exists.
         if (this.editCellContext) {
-            this.editCellContext.row.setHighlight(true);
+            this.editCellContext.row?.setHighlight(true);
         }
 
         // TODO all buttons should be deactivated.
