@@ -125,7 +125,6 @@ Highcharts.chart('container', {
         showTable: false
     },
     tooltip: {
-        useHTML: true,
         formatter: function () {
             const tooltipDiv =
                 document.getElementById(
@@ -168,15 +167,13 @@ function createTooltipText(
         }));
 
     let tooltipText =
-        `<p class="tooltip-heading">${grammy} Grammy Awards (${year})</p>
-        <p class="win-nom" aria-hidden="true">
-            ${seriesName.charAt(0).toUpperCase() + seriesName.slice(1)}: ${y}
-        </p>`;
+        `<strong>${grammy} Grammy Awards (${year})</strong></br>` +
+        `<strong>${seriesName.charAt(0).toUpperCase() + seriesName.slice(1)}</strong>: ${y}</br>`;
 
     if (songValues.includes('None') || awardValues.includes('None')) {
         return tooltipText;
     }
-    tooltipText += mappedValues.map(value => `<li><strong>${value.award.trim()}: </strong>${value.song}</li>`).join('');
+    tooltipText += mappedValues.map(value => `<strong>${value.award.trim()}: </strong>${value.song}</br>`).join('');
 
 
     return tooltipText;
