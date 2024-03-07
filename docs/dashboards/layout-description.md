@@ -74,7 +74,7 @@ Example:
 }
 ```
 
-Instead of regular CSS media queries, you can also use [container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries), which will make more sense if your dashboard does not cover the entire screen horizontally.
+Instead of regular CSS media queries, you can also use [container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries), which will make more sense if your dashboard does not cover the entire window horizontally.
 
 Example:
 ```css
