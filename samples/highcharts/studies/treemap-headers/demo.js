@@ -6,12 +6,13 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'treemap',
+        allowTraversingTree: true,
         alternateStartingDirection: true,
         borderColor: '#fff',
         borderRadius: 6,
         borderWidth: 2,
         dataLabels: {
-            format: '{point.id}',
+            format: '{point.name}',
             style: {
                 textOutline: 'none'
             }
@@ -34,7 +35,7 @@ Highcharts.chart('container', {
                 }
             }
         }],
-        data: [{
+        _data: [{
             id: 'A'
         }, {
             id: 'B',
@@ -58,7 +59,7 @@ Highcharts.chart('container', {
             parent: 'A.1',
             value: 1
         }],
-        _data: [{
+        data: [{
             id: 'A',
             name: 'Nord-Norge',
             color: '#50FFB1'
@@ -138,7 +139,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         useHTML: true,
-        pointFormat: 'The area of <b>{point.id}</b> is \
+        pointFormat: 'The area of <b>{point.name}</b> is \
             <b>{point.value} km<sup>2</sup></b>'
     }
 });

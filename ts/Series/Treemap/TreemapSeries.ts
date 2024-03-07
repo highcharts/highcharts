@@ -504,13 +504,16 @@ class TreemapSeries extends ScatterSeries {
                 child.children.length &&
                 child.point.dataLabels?.length
             ) {
+                const axisRange = series.rootNode === child.id ?
+                    values.height : 100;
+
                 const dlHeight = arrayMax(
                     child.point.dataLabels.map((dl): number => (
                         dl.options?.inside === false ?
                             dl.height || 0 :
                             0
                     ))
-                ) / series.yAxis.len * 100;
+                ) / series.yAxis.len * axisRange;
 
                 child.areaCorrection = (child.values.height + dlHeight) /
                     child.values.height;
