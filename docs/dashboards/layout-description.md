@@ -74,6 +74,38 @@ Example:
 }
 ```
 
+Instead of regular CSS media queries, you can also use [container queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries), which will make more sense if your dashboard does not cover the entire screen horizontally.
+
+Example:
+```css
+/* Create a containment context */
+#container {
+    container: dashboard / inline-size;
+}
+
+/* LARGE */
+@container dashboard (max-width: 1200px) {
+    #dashboard-cell-1 {
+        flex: 1 1 33.333%;
+    }
+}
+
+/* MEDIUM */
+@container dashboard (max-width: 992px) {
+    #dashboard-cell-1 {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@container dashboard (max-width: 576px) {
+    #dashboard-cell-1 {
+        flex: 1 1 100%;
+    }
+}
+
+```
+
 ## Custom layout
 
 If you prefer to use your own layout structure, feel free to use it as well. Only what you need is disable the gui by option. Also, the `layout.js` module is not needed then. Please remember that each container should have an unique `id` for rendered component.
