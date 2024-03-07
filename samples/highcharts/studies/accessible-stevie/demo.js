@@ -206,10 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
     labelNullpointCheckbox.textContent = ' Hide null points';
 
     moreInfoButton.textContent = 'Toggle more information';
-    moreInfoButton.setAttribute('aria-expanded', 'false');
+    moreInfoButton.setAttribute('aria-expanded', 'true');
     infoDiv.setAttribute('id', '#info-div');
-    infoDiv.style.display = 'none';
-    infoDiv.setAttribute('aria-expanded', 'false');
+    infoDiv.style.display = 'block';
     infoP.textContent = document.getElementById('rich-description').textContent;
     heading.textContent = 'Verbosity settings';
 
@@ -228,9 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const expanded = moreInfoButton.getAttribute('aria-expanded') === 'true';
 
         if (!expanded) {
+            console.log('expanded');
             infoDiv.style.display = 'block';
             moreInfoButton.setAttribute('aria-expanded', 'true');
         } else {
+            console.log('not expanded');
             infoDiv.style.display = 'none';
             moreInfoButton.setAttribute('aria-expanded', 'false');
         }
