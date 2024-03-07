@@ -58,7 +58,7 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Coffee',
-        data: [7],
+        data: [0],
         tooltip: {
             pointFormat: '{series.name}: <b>{point.y} cups/day</b>'
         },
@@ -90,7 +90,7 @@ const svg = document.getElementsByClassName('highcharts-root')[0];
 // Adding a title to the SVG
 document.getElementById('container').setAttribute('aria-hidden', 'false');
 svg.querySelector('desc').remove();
-svg.setAttribute('aria-label', '7 cups per day. Coffee consumption. Gauge chart.');
+svg.setAttribute('aria-label', '0 cups per day. Coffee consumption. Gauge chart.');
 
 // Creating button
 const detailsButton = document.createElement('button');
@@ -116,7 +116,7 @@ detailsButton.addEventListener('click', function () {
         const detailsText = document.createElement('p');
 
         detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'The gauge is divided into three color-coded areas, green (0-4 cups), yellow (4-8 cups) and red (8-12 cups) coffee consumption. The current value is 7 cups per day.';
+        detailsText.innerText = 'The gauge is divided into three color-coded areas, green (0-4 cups), yellow (4-8 cups) and red (8-12 cups) coffee consumption. The current value is 0 cups per day.';
 
         detailsDiv.appendChild(detailsText);
         detailsButton.insertAdjacentElement('afterend', detailsDiv);
@@ -131,6 +131,7 @@ detailsButton.addEventListener('click', function () {
 let lastInterval = null;
 let updateInterval = null;
 let updatesRunning = false;
+let currentValue = 0;
 
 const toggleButton = document.getElementById('toggle');
 
@@ -149,21 +150,22 @@ toggleButton.addEventListener('click', function () {
 function updateFunction() {
     const chart = Highcharts.charts[0];
     if (chart && !chart.renderer.forExport) {
-        const point = chart.series[0].points[0],
-            newVal = Math.floor((Math.random() * 12) + 1);
+        const point = chart.series[0].points[0];
 
-        point.update(newVal);
+        currentValue = (currentValue + 1) % 13;
+
+        point.update(currentValue);
 
         let announcement;
         let currentInterval;
-        if (newVal <= 4) {
-            announcement = 'Green zone, ' + newVal + ' cups.';
+        if (currentValue <= 4) {
+            announcement = 'Green zone, ' + currentValue + ' cups.';
             currentInterval = 'green';
-        } else if (newVal <= 8) {
-            announcement = 'Yellow zone, ' + newVal + ' cups.';
+        } else if (currentValue <= 8) {
+            announcement = 'Yellow zone, ' + currentValue + ' cups.';
             currentInterval = 'yellow';
         } else {
-            announcement = 'Red zone, ' + newVal + ' cups.';
+            announcement = 'Red zone, ' + currentValue + ' cups.';
             currentInterval = 'red';
         }
 
@@ -172,8 +174,7 @@ function updateFunction() {
         }
         announcerDiv.innerText = announcement;
         lastInterval = currentInterval;
+
+        svg.setAttribute('aria-label', currentValue + ' cups per day. Coffee consumption. Gauge chart.');
     }
 }
-
-updateInterval = setInterval(updateFunction, 3000);
-updatesRunning = true;
