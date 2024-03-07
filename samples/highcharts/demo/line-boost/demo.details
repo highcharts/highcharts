@@ -6,6 +6,7 @@ requiresManualTesting: true
 js_wrap: b
 tags:
   - Highcharts demo
+  - Performance
 categories:
   - Line charts
 ...

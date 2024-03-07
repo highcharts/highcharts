@@ -354,7 +354,7 @@ class SVGLabel extends SVGElement {
         value: ColorType,
         key: string
     ): void {
-        // for animation getter (#6776)
+        // For animation getter (#6776)
         this.stroke = value;
         this.boxAttr(key, value);
     }
@@ -400,7 +400,7 @@ class SVGLabel extends SVGElement {
                     !isNumber(this.heightSetting) ||
                     this.textAlign
                 ) && defined(text.textStr)) ?
-                    text.getBBox() :
+                    text.getBBox(void 0, 0) :
                     SVGLabel.emptyBBox
             );
 

@@ -318,7 +318,11 @@ class StackItem {
                 x: label.alignAttr.x,
                 y: label.alignAttr.y,
                 rotation: options.rotation,
-                rotationOriginX: labelBox.width / 2,
+                rotationOriginX: labelBox.width * {
+                    left: 0,
+                    center: 0.5,
+                    right: 1
+                }[options.textAlign || 'center'],
                 rotationOriginY: labelBox.height / 2
             });
 

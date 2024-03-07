@@ -34,6 +34,6 @@
 @media (max-width: 530px) {
     #sonify {
         position: static;
-        margin-bottom: 10px;
+        margin: 10px;
     }
 }

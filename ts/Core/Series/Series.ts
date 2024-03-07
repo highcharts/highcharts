@@ -24,6 +24,8 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
+import type Legend from '../Legend/Legend';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
@@ -65,8 +67,6 @@ const {
     svg,
     win
 } = H;
-import type Legend from '../Legend/Legend';
-import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -557,13 +557,13 @@ class Series {
 
         fireEvent(this, 'bindAxes', null as any, function (): void {
 
-            // repeat for xAxis and yAxis
-            (series.axisTypes || []).forEach(function (coll: string): void {
-                // loop through the chart's axis objects
-                (chart as any)[coll].forEach(function (axis: Axis): void {
+            // Repeat for xAxis and yAxis
+            (series.axisTypes || []).forEach(function (coll): void {
+                // Loop through the chart's axis objects
+                (chart[coll] || []).forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
-                    // apply if the series xAxis or yAxis option matches
+                    // Apply if the series xAxis or yAxis option matches
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
@@ -575,10 +575,10 @@ class Series {
                         )
                     ) {
 
-                        // register this series in the axis.series lookup
+                        // Register this series in the axis.series lookup
                         insertItem(series, axis.series);
 
-                        // set this series.xAxis or series.yAxis reference
+                        // Set this series.xAxis or series.yAxis reference
                         /**
                          * Read only. The unique xAxis object associated
                          * with the series.
@@ -595,7 +595,7 @@ class Series {
                          */
                         (series as any)[coll] = axis;
 
-                        // mark dirty for redraw
+                        // Mark dirty for redraw
                         axis.isDirty = true;
                     }
                 });
@@ -4865,7 +4865,7 @@ class Series {
  * */
 
 interface Series extends SeriesLike {
-    axisTypes: Array<string>;
+    axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
     coll: 'series';
     colorCounter: number;
     directTouch: boolean;
