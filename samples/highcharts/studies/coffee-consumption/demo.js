@@ -2,13 +2,16 @@ Highcharts.chart('container', {
     accessibility: {
         enabled: false
     },
+    credits: {
+        enabled: false
+    },
     chart: {
         type: 'gauge',
         height: '80%',
         marginTop: 20
     },
     title: {
-        text: 'Coffee Consumption'
+        text: 'Allergy level'
     },
 
     pane: {
@@ -57,13 +60,13 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'Coffee',
+        name: 'Cats',
         data: [0],
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.y} cups/day</b>'
+            pointFormat: '{series.name}: <b>{point.y} cats in the room</b>'
         },
         dataLabels: {
-            format: '{y} cups/day',
+            format: 'Cats in the room: {y}',
             borderWidth: 0,
             color: '#000000',
             style: {
@@ -91,7 +94,7 @@ const container = document.getElementById('container');
 // Adding a title to the SVG
 document.getElementById('container').setAttribute('aria-hidden', 'false');
 svg.querySelector('desc').remove();
-svg.setAttribute('aria-label', '0 cups per day. Coffee consumption. Gauge chart.');
+svg.setAttribute('aria-label', '0 cats in the room. Allergy level. Gauge chart.');
 
 // Creating button and div for details
 const detailsButton = document.createElement('button');
@@ -117,7 +120,7 @@ detailsButton.addEventListener('click', function () {
         const detailsText = document.createElement('p');
 
         detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cups), yellow (4-8 cups) and red (8-12 cups) coffee consumption. The current value is 0 cups per day.';
+        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the room. The current value is 0 cats in the room.';
 
         detailsDiv.appendChild(detailsText);
         detailsButton.insertAdjacentElement('afterend', detailsDiv);
@@ -153,20 +156,20 @@ function updateFunction() {
     if (chart && !chart.renderer.forExport) {
         const point = chart.series[0].points[0];
 
-        currentValue = (currentValue + 1) % 13;
+        currentValue = Math.floor(Math.random() * 12 + 1);
 
         point.update(currentValue);
 
         let announcement;
         let currentInterval;
         if (currentValue <= 4) {
-            announcement = 'Green zone, ' + currentValue + ' cups.';
+            announcement = 'Green zone, ' + currentValue + ' cats.';
             currentInterval = 'green';
         } else if (currentValue <= 8) {
-            announcement = 'Yellow zone, ' + currentValue + ' cups.';
+            announcement = 'Yellow zone, ' + currentValue + ' cats.';
             currentInterval = 'yellow';
         } else {
-            announcement = 'Red zone, ' + currentValue + ' cups.';
+            announcement = 'Red zone, ' + currentValue + ' cats.';
             currentInterval = 'red';
         }
 
