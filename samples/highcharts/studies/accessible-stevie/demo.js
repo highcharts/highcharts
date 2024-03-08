@@ -87,6 +87,11 @@ Highcharts.chart('container', {
     accessibility: {
         series: {
             descriptionFormat: '{series.options.custom.seriesDescription} with {series.options.custom.actualNumBars} bars.'
+        },
+        keyboardNavigation: {
+            seriesKeyboardNavigation: {
+                pointNavigationEnabledThreshold: true
+            }
         }
     },
     xAxis: {
