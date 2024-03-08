@@ -2,6 +2,10 @@
     max-width: 400px;
 }
 
+h1 {
+    font-size: 1.5rem;
+}
+
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -11,4 +15,38 @@
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-gap: 10px;
+    max-width: 400px;
+    padding: 10px;
+}
+
+.grid-cell {
+    border: 2px solid #000;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#chart {
+    grid-column: 1 / span 2;
+}
+
+.btn {
+    background: #5749ad;
+    color: #fff;
+    border: 2px solid #5749ad;
+    padding: 8px 16px;
+    font-weight: 700;
+    border-radius: 4px;
+}
+
+.btn:hover {
+    background: #fff;
+    cursor: pointer;
+    color: #5749ad;
 }

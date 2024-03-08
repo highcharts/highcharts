@@ -63,10 +63,10 @@ Highcharts.chart('container', {
         name: 'Cats',
         data: [0],
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.y} cats in the room</b>'
+            pointFormat: '{series.name}: <b>{point.y} cats in the living room</b>'
         },
         dataLabels: {
-            format: 'Cats in the room: {y}',
+            format: 'Cats in the living room: {y}',
             borderWidth: 0,
             color: '#000000',
             style: {
@@ -94,7 +94,7 @@ const container = document.getElementById('container');
 // Adding a title to the SVG
 document.getElementById('container').setAttribute('aria-hidden', 'false');
 svg.querySelector('desc').remove();
-svg.setAttribute('aria-label', '0 cats in the room. Allergy level. Gauge chart.');
+svg.setAttribute('aria-label', '0 cats in the living room. Allergy level. Gauge chart.');
 
 // Creating button and div for details
 const detailsButton = document.createElement('button');
@@ -120,7 +120,7 @@ detailsButton.addEventListener('click', function () {
         const detailsText = document.createElement('p');
 
         detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the room.';
+        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the living room.';
 
         detailsDiv.appendChild(detailsText);
         detailsButton.insertAdjacentElement('afterend', detailsDiv);
@@ -171,13 +171,13 @@ function updateFunction() {
         let announcement;
         let currentInterval;
         if (currentValue <= 4) {
-            announcement = 'Green zone, ' + currentValue + ' cats in the room.';
+            announcement = 'Green zone, ' + currentValue + ' cats in the living room.';
             currentInterval = 'green';
         } else if (currentValue <= 8) {
-            announcement = 'Yellow zone, ' + currentValue + ' cats in the room.';
+            announcement = 'Yellow zone, ' + currentValue + ' cats in the living room.';
             currentInterval = 'yellow';
         } else {
-            announcement = 'Red zone, ' + currentValue + ' cats in the room.';
+            announcement = 'Red zone, ' + currentValue + ' cats in the living room.';
             currentInterval = 'red';
         }
 
@@ -190,7 +190,7 @@ function updateFunction() {
             (previousValue <= 4 && currentValue > 4) ||
             (previousValue <= 8 && currentValue > 8) ||
             (previousValue > 8 && currentValue <= 8)) {
-            svg.setAttribute('aria-label', currentValue + ' cats in the room. Allergy level. Gauge chart.');
+            svg.setAttribute('aria-label', currentValue + ' cats in the living room. Allergy level. Gauge chart.');
         }
 
         // Clearning announcement after 1 second, to avoid data being read out twice if toggle is paused.
