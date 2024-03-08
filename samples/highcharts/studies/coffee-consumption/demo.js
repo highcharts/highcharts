@@ -177,6 +177,11 @@ function updateFunction() {
             announcement = '';
         }
         announcerDiv.innerText = announcement;
+
+        // Clearning announcement after 1 second, to avoid data being read out twice if toggle is paused.
+        setTimeout(() => {
+            announcerDiv.innerText = '';
+        }, 1000);
         lastInterval = currentInterval;
 
         svg.setAttribute('aria-label', currentValue + ' cups per day. Coffee consumption. Gauge chart.');
