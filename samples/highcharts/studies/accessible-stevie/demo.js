@@ -94,6 +94,9 @@ Highcharts.chart('container', {
             }
         }
     },
+    legend: {
+        enabled: false
+    },
     xAxis: {
         type: 'datetime',
         title: {
