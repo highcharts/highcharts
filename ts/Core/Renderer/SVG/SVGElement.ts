@@ -1553,36 +1553,43 @@ class SVGElement implements SVGElementLike {
                 if (tp) {
                     const polygon: BBoxObject['polygon'] = [],
                         len = Math.max(tp.getNumberOfChars() - 1, 0),
-                        {
-                            translateX: parentTranslateX = 0,
-                            translateY: parentTranslateY = 0
-                        } = this.parentGroup || {
-                            translateX: 0,
-                            translateY: 0
-                        },
-                        offsetX = parentTranslateX,
-                        offsetY = parentTranslateY;
-
+                        rotate = (
+                            cx: number,
+                            cy: number,
+                            x: number,
+                            y: number,
+                            rad: number
+                        ): [number, number] => {
+                            const xDist = x - cx,
+                                yDist = y - cy,
+                                cosRad = Math.cos(rad),
+                                sinRad = Math.sin(rad);
+                            return [
+                                cx + xDist * cosRad - yDist * sinRad,
+                                cy + xDist * sinRad + yDist * cosRad
+                            ];
+                        };
                     // Assemble left-side vertecies of every 5th character
                     for (let i = 0; i < len; i += 5) {
-                        const {
-                                x: x1,
-                                y: y1,
-                                height
-                            } = tp.getExtentOfChar(i),
-                            top = y1 + offsetY,
-                            left = x1 + offsetX;
-                        polygon.push([left, top]);
-                        polygon.unshift([left, top + height]);
+                        const { x, y, width, height } = tp.getExtentOfChar(i),
+                            rad = tp.getRotationOfChar(i) * deg2rad,
+                            centerX = x + width / 2,
+                            centerY = y + height / 2;
+                        polygon.push(rotate(centerX, centerY, x, y, rad));
+                        polygon.unshift(
+                            rotate(centerX, centerY, x, y + height, rad)
+                        );
                     }
 
+                    // For the last char we grab the right edge
                     const { x, y, width, height } = tp.getExtentOfChar(len),
-                        rightEdge = x + width + offsetX,
-                        rightTop = y + offsetY;
-
-                    // End of the polygon (vertex order does not matter)
-                    polygon.push([rightEdge, rightTop]);
-                    polygon.unshift([rightEdge, rightTop + height]);
+                        rad = tp.getRotationOfChar(len) * deg2rad,
+                        centerX = x + width / 2,
+                        centerY = y + height / 2;
+                    polygon.push(rotate(centerX, centerY, x + width, y, rad));
+                    polygon.unshift(
+                        rotate(centerX, centerY, x + width, y + height, rad)
+                    );
 
                     // Close it
                     polygon.push(polygon[0].slice() as [number, number]);
