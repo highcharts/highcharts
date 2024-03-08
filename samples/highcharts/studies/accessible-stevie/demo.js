@@ -199,58 +199,56 @@ function createTooltipText(
     return tooltipText;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    moreInfoButton.addEventListener('click', () => {
-        const expanded = moreInfoButton.getAttribute('aria-expanded') === 'true';
-        const infoDiv = document.getElementById('#info-div');
+moreInfoButton.addEventListener('click', () => {
+    const expanded = moreInfoButton.getAttribute('aria-expanded') === 'true';
+    const infoDiv = document.getElementById('#info-div');
 
-        if (!expanded) {
-            infoDiv.style.display = 'block';
-            moreInfoButton.setAttribute('aria-expanded', 'true');
+    if (!expanded) {
+        infoDiv.style.display = 'block';
+        moreInfoButton.setAttribute('aria-expanded', 'true');
+    } else {
+        infoDiv.style.display = 'none';
+        moreInfoButton.setAttribute('aria-expanded', 'false');
+    }
+
+});
+// Verbosity settings
+const tooltipCheckbox = document.getElementById('checkbox-info');
+const nullpointCheckbox = document.getElementById('checkbox-nullpoint');
+nullpointCheckbox.addEventListener('change', () => {
+    const chart = Highcharts.charts[0];
+    const points = chart.series.map(s => s.points).flat();
+
+    nullpointCheckboxChecked = !nullpointCheckboxChecked;
+
+    points.forEach(point => {
+        // If nullpointCheckbox is checked and the point's y value is 0, set aria-hidden to true
+        if (nullpointCheckbox.checked && point.y === 0) {
+            point.graphic.element.setAttribute('aria-hidden', 'true');
         } else {
-            infoDiv.style.display = 'none';
-            moreInfoButton.setAttribute('aria-expanded', 'false');
+            // If nullpointCheckbox is not checked or the point's y value is not 0, set aria-hidden to false
+            point.graphic.element.setAttribute('aria-hidden', 'false');
         }
-
     });
-    // Verbosity settings
-    const tooltipCheckbox = document.getElementById('checkbox-info');
-    const nullpointCheckbox = document.getElementById('checkbox-nullpoint');
-    nullpointCheckbox.addEventListener('change', () => {
-        const chart = Highcharts.charts[0];
-        const points = chart.series.map(s => s.points).flat();
+});
 
-        nullpointCheckboxChecked = !nullpointCheckboxChecked;
+tooltipCheckbox.addEventListener('change', () => {
+    checkboxChecked = !checkboxChecked;
 
-        points.forEach(point => {
-            // If nullpointCheckbox is checked and the point's y value is 0, set aria-hidden to true
-            if (nullpointCheckbox.checked && point.y === 0) {
-                point.graphic.element.setAttribute('aria-hidden', 'true');
-            } else {
-                // If nullpointCheckbox is not checked or the point's y value is not 0, set aria-hidden to false
-                point.graphic.element.setAttribute('aria-hidden', 'false');
-            }
-        });
+    const chart = Highcharts.charts[0];
+    const points = chart.series.map(s => s.points).flat();
+
+    points.forEach(point => {
+        if (checkboxChecked) {
+            const id = `tooltip-${point.series.name}-${point.index}-description`;
+            point.graphic.element.setAttribute('aria-describedby', id);
+        } else {
+            point.graphic.element.removeAttribute('aria-describedby');
+        }
     });
 
-    tooltipCheckbox.addEventListener('change', () => {
-        checkboxChecked = !checkboxChecked;
-
-        const chart = Highcharts.charts[0];
-        const points = chart.series.map(s => s.points).flat();
-
-        points.forEach(point => {
-            if (checkboxChecked) {
-                const id = `tooltip-${point.series.name}-${point.index}-description`;
-                point.graphic.element.setAttribute('aria-describedby', id);
-            } else {
-                point.graphic.element.removeAttribute('aria-describedby');
-            }
-        });
-
-        descriptionDivs.forEach(descriptionDiv => {
-            console.log(descriptionDiv);
-            descriptionDiv.setAttribute('aria-hidden', !checkboxChecked);
-        });
+    descriptionDivs.forEach(descriptionDiv => {
+        console.log(descriptionDiv);
+        descriptionDiv.setAttribute('aria-hidden', !checkboxChecked);
     });
 });
