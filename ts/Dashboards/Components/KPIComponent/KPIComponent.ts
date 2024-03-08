@@ -327,6 +327,12 @@ class KPIComponent extends Component {
         height?: number | string | null
     ): this {
         super.resize(width, height);
+
+        // animate
+        if (this.chart && this.chart.container) {
+            this.chart.reflow();
+        }
+
         return this;
     }
 
@@ -347,8 +353,9 @@ class KPIComponent extends Component {
                     'div',
                     {
                         className: `${this.options.className}-chart-container`
+                    }, {
+                        padding: '0.1px' // fix inner height, when using flex box
                     },
-                    {},
                     this.contentElement
                 );
             }
