@@ -62,6 +62,7 @@ declare module './PointLike' {
         bottom?: number;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
+        dataLabelOnHidden?: boolean;
         dataLabelOnNull?: boolean;
         dataLabelPath?: SVGElement;
         dataLabels?: Array<SVGElement>;
@@ -349,7 +350,6 @@ namespace DataLabel {
                     (bBox.width - unrotatedbBox.width) / 2,
                 y: dataLabel.alignAttr.y +
                     (bBox.height - unrotatedbBox.height) / 2,
-                rotation: options.rotation,
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
             });
@@ -581,7 +581,7 @@ namespace DataLabel {
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&
-                            point.visible &&
+                            (point.visible || point.dataLabelOnHidden) &&
                             // #2282, #4641, #7112, #10049
                             (!point.isNull || point.dataLabelOnNull) &&
                             applyFilter(point, labelOptions)

@@ -356,7 +356,11 @@ function diffObjects(
                 // If the newer key is explicitly undefined, keep it (#10525)
                 (key in newer && !(key in older))
             ) {
-                ret[key] = keeper[key];
+
+                if (key !== '__proto__' && key !== 'constructor') {
+                    ret[key] = keeper[key];
+                }
+
             }
         });
     }

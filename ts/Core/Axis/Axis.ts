@@ -251,7 +251,7 @@ class Axis {
     public linkedParent?: Axis;
     public max?: number;
     public maxLabelDimensions?: SizeObject;
-    public maxLabelLength!: number;
+    public maxLabelLength?: number;
     public min?: number;
     public minorTickInterval!: number;
     public minorTicks!: Record<string, Tick>;

@@ -28,9 +28,6 @@ const options = {
     },
 
     navigator: {
-        xAxis: {
-            overscroll: 500000
-        },
         series: {
             color: '#000000'
         }
