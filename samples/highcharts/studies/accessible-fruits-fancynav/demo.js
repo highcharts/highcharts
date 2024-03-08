@@ -505,7 +505,7 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                         content + ' Use up/down arrow to move between segments, left/right to move between bars, Enter for more detail, or Backspace for less.',
                         content + ' Use up/down arrow to move between segments, left/right to move between bars, or Backspace for less detail.'
                     ][drill]
-                ), drill ? 300 : 900);
+                ), drill ? 120 : 700);
             };
 
 
@@ -557,7 +557,10 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                         }
                     } else {
                         play('chop', 1);
-                        announce('Use left/right arrow to move between bars.', 300);
+                        announce(drill ?
+                            'Use left/right arrow to move between bars.' :
+                            'Press Enter to interact.', 300
+                        );
                     }
                     return this.response.success;
                 }],
@@ -567,13 +570,17 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                         maxLen = component.dataContent[drill].length - 1,
                         dir = keyCode === keys.right ? 1 : -1;
 
-                    if (x === 0 && dir < 0 || x === maxLen && dir > 0) {
-                        play('chop', 1);
+                    if (drill) {
+                        if (x === 0 && dir < 0 || x === maxLen && dir > 0) {
+                            play('chop', 1);
+                        } else {
+                            component.dataPos.x = clamp(x + dir, 0, maxLen);
+                            speakDataAtCurrent();
+                        }
                     } else {
-                        component.dataPos.x = clamp(x + dir, 0, maxLen);
-                        speakDataAtCurrent();
+                        play('chop', 1);
+                        announce('Press Enter to interact.', 300);
                     }
-
                     return this.response.success;
                 }]
             ],
