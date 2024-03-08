@@ -182,7 +182,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.index = Globals.boards.length;
         Globals.boards.push(this);
 
-        // a11y module
+        // A11y module
         this.a11y = new DashboardsAccessibility(this);
     }
 
@@ -535,7 +535,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public exportLocal(): void {
         localStorage.setItem(
             // Dashboard.prefix + this.id,
-            Globals.classNamePrefix + '1', // temporary for demo test
+            Globals.classNamePrefix + '1', // Temporary for demo test
             JSON.stringify(this.toJSON())
         );
     }
@@ -565,7 +565,7 @@ class Board implements Serializable<Board, Board.JSON> {
             board.editMode.hideToolbars(['cell', 'row']);
             board.editMode.hideContextPointer();
 
-            // update expanded context menu container
+            // Update expanded context menu container
             if (editModeTools.contextMenu) {
                 editModeTools.contextMenu
                     .updatePosition(editModeTools.contextButtonElement);
@@ -868,7 +868,7 @@ namespace Board {
     export function importLocal(): (Board|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
-            Globals.classNamePrefix + '1' // temporary for demo test
+            Globals.classNamePrefix + '1' // Temporary for demo test
         );
 
         if (dashboardJSON) {
@@ -876,7 +876,7 @@ namespace Board {
                 return Serializable
                     .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
-                // nothing to do
+                // Nothing to do
             }
         }
     }

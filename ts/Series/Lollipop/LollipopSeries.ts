@@ -340,4 +340,4 @@ export default LollipopSeries;
  * @apioption series.line.data.y
  */
 
-(''); // adds doclets above to transpiled file
+(''); // Adds doclets above to transpiled file

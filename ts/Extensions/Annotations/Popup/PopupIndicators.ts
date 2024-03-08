@@ -104,7 +104,7 @@ function addColsContainer(
     container: HTMLDOMElement
 ): Record<string, HTMLDOMElement> {
 
-    // left column
+    // Left column
     const lhsCol = createElement(
         'div',
         {
@@ -114,7 +114,7 @@ function addColsContainer(
         container
     );
 
-    // right column
+    // Right column
     const rhsCol = createElement(
         'div',
         {
@@ -124,7 +124,7 @@ function addColsContainer(
         container
     );
 
-    // wrapper content
+    // Wrapper content
     createElement(
         'div',
         {
@@ -159,10 +159,10 @@ function addForm(
         return;
     }
 
-    // add tabs
+    // Add tabs
     this.tabs.init.call(this, chart);
 
-    // get all tabs content divs
+    // Get all tabs content divs
     const tabsContainers = this.container
         .querySelectorAll('.highcharts-tab-item-content');
 
@@ -244,10 +244,10 @@ function addFormFields(
 ): void {
     const fields = (series as any).params || series.options.params;
 
-    // reset current content
+    // Reset current content
     rhsColWrapper.innerHTML = AST.emptyHTML;
 
-    // create title (indicator name in the right column)
+    // Create title (indicator name in the right column)
     createElement(
         'h3',
         {
@@ -261,7 +261,7 @@ function addFormFields(
         )
     );
 
-    // input type
+    // Input type
     createElement(
         'input',
         {
@@ -273,7 +273,7 @@ function addFormFields(
         rhsColWrapper
     );
 
-    // list all series with id
+    // List all series with id
     listAllSeries.call(
         this,
         seriesType,
@@ -296,7 +296,7 @@ function addFormFields(
         );
     }
 
-    // add param fields
+    // Add param fields
     addParamInputs.call(
         this,
         chart,
@@ -356,7 +356,7 @@ function addIndicatorList(
         }
 
 
-        // add hidden input with series.id
+        // Add hidden input with series.id
         if (isEdit && series.options) {
             createElement(
                 'input',
@@ -470,7 +470,7 @@ function addIndicatorList(
         });
     });
 
-    // select first item from the list
+    // Select first item from the list
     if (filteredSeriesArray.length > 0) {
         let { series, indicatorType } = filteredSeriesArray[0];
         selectIndicator(series, indicatorType);
@@ -516,11 +516,11 @@ function addParamInputs(
     const addInput = this.addInput;
 
     objectEach(fields, (value, fieldName): void => {
-        // create name like params.styles.fontSize
+        // Create name like params.styles.fontSize
         const parentFullName = parentNode + '.' + fieldName;
 
         if (
-            defined(value) && // skip if field is unnecessary, #15362
+            defined(value) && // Skip if field is unnecessary, #15362
             parentFullName
         ) {
             if (isObject(value)) {
@@ -577,7 +577,7 @@ function addParamInputs(
                     {
                         value: value as any,
                         type: 'number'
-                    } // all inputs are text type
+                    } // All inputs are text type
                 );
             }
         }
@@ -974,7 +974,7 @@ function getNameType(
     indicatorType: string
 ): IndicatorNameCouple {
     const options = series.options;
-    // add mode
+    // Add mode
     let seriesName = (seriesTypes[indicatorType] &&
             (
                 seriesTypes[indicatorType].prototype as SMAIndicator
@@ -982,7 +982,7 @@ function getNameType(
             indicatorType.toUpperCase(),
         seriesType = indicatorType;
 
-    // edit
+    // Edit
     if (options && options.type) {
         seriesType = series.options.type as any;
         seriesName = series.name;

@@ -28,7 +28,7 @@ export interface TRIXOptions extends SMAOptions {
 }
 
 export interface TRIXParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

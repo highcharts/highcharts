@@ -147,7 +147,7 @@ function recommendedMapViewAfterDrill(
 }
 
 /*
-const mergeCollections = <
+Const mergeCollections = <
     T extends Array<AnyRecord|undefined>
 >(a: T, b: T): T => {
     b.forEach((newer, i): void => {
@@ -1334,7 +1334,7 @@ class MapView {
             // Fit to natural bounds if center/zoom are not explicitly given
             if (
                 !options.center &&
-                // do not fire fitToBounds if user don't want to set zoom
+                // Do not fire fitToBounds if user don't want to set zoom
                 Object.hasOwnProperty.call(
                     options,
                     'zoom'

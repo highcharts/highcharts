@@ -999,8 +999,8 @@ class NavigationBindings {
                         parentEditables.indexOf &&
                         parentEditables.indexOf(key)
                     ) >= 0 ||
-                    parentEditables[key] || // nested array
-                    parentEditables === true // simple array
+                    parentEditables[key] || // Nested array
+                    parentEditables === true // Simple array
                 )
             ) {
                 // Roots:
@@ -1273,4 +1273,4 @@ export default NavigationBindings;
  * @type {Array<Function>|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

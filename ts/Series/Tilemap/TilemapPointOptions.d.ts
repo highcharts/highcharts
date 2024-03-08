@@ -26,7 +26,7 @@ import type HeatmapPointOptions from '../Heatmap/HeatmapPointOptions';
  * */
 
 export interface TilemapPointOptions extends HeatmapPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

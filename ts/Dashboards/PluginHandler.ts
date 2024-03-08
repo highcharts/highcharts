@@ -113,7 +113,7 @@ namespace PluginHandler {
         } = plugin;
 
         if (registry[key]) {
-            // only throw error with custom key
+            // Only throw error with custom key
             if (key !== plugin.name) {
                 throw new Error(`Plugin '${key}' already registered.`);
             }

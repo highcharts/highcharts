@@ -351,7 +351,7 @@ class TiledWebMapSeries extends MapSeries {
                 if (provider.theme && defined(def.themes[provider.theme])) {
                     theme = def.themes[provider.theme];
                 } else {
-                    // if nothing set take first theme
+                    // If nothing set take first theme
                     const firstTheme = Object.keys(def.themes)[0];
                     theme = def.themes[firstTheme];
                     error(
@@ -440,7 +440,7 @@ class TiledWebMapSeries extends MapSeries {
                 }
             }
 
-            // if zoom is smaller/higher than supported by provider
+            // If zoom is smaller/higher than supported by provider
             if (defined(this.minZoom) && zoomFloor < this.minZoom) {
                 zoomFloor = this.minZoom;
                 maxTile = Math.pow(2, zoomFloor);
@@ -529,7 +529,7 @@ class TiledWebMapSeries extends MapSeries {
                                             tiles[`${givenZoom}`]
                                                 .actualTilesCount++;
 
-                                            // if last tile
+                                            // If last tile
                                             if (
                                                 tiles[`${givenZoom}`]
                                                     .howManyTiles ===
@@ -538,7 +538,7 @@ class TiledWebMapSeries extends MapSeries {
                                             ) {
                                                 tiles[givenZoom].loaded = true;
 
-                                                // fade-in new tiles if there is
+                                                // Fade-in new tiles if there is
                                                 // no other animation
                                                 if (!series.isAnimating) {
                                                     series.redrawTiles = false;
@@ -561,7 +561,7 @@ class TiledWebMapSeries extends MapSeries {
                     }
                 };
 
-                // calculate topLeft and bottomRight corners without normalize
+                // Calculate topLeft and bottomRight corners without normalize
                 const topLeftUnits = mapView.pixelsToProjectedUnits({
                         x: 0,
                         y: 0
@@ -583,7 +583,7 @@ class TiledWebMapSeries extends MapSeries {
                         lat: bottomRightArr[1]
                     };
 
-                // do not support vertical looping
+                // Do not support vertical looping
                 if (
                     topLeft.lat > mapView.projection.maxLatitude ||
                     bottomRight.lat < -1 * mapView.projection.maxLatitude
@@ -595,7 +595,7 @@ class TiledWebMapSeries extends MapSeries {
                 const startPos = this.lonLatToTile(topLeft, zoomFloor),
                     endPos = this.lonLatToTile(bottomRight, zoomFloor);
 
-                // calculate group translations based on first loaded tile
+                // Calculate group translations based on first loaded tile
                 const firstTileLonLat = this.tileToLonLat(
                         startPos.x,
                         startPos.y,
@@ -635,7 +635,7 @@ class TiledWebMapSeries extends MapSeries {
             for (const zoomKey of Object.keys(tiles)) {
                 for (const key of Object.keys(tiles[zoomKey].tiles)) {
                     if (mapView.projection && mapView.projection.def) {
-                        // calculate group translations based on first loaded
+                        // Calculate group translations based on first loaded
                         // tile
                         const scale = ((tileSize / worldSize) *
                                 Math.pow(2, zoom)) / ((tileSize / worldSize) *
@@ -720,7 +720,7 @@ class TiledWebMapSeries extends MapSeries {
                                     .animate({ animator: 1 }, { step },
                                         function (): void {
                                             series.isAnimating = false;
-                                            // if animate ended after loading
+                                            // If animate ended after loading
                                             // the tiles
                                             if (series.redrawTiles) {
                                                 series.redrawTiles = false;
@@ -732,7 +732,7 @@ class TiledWebMapSeries extends MapSeries {
                             // When dragging or first rendering,
                             // animation is off
                             } else {
-                                // animate tiles if something broke
+                                // Animate tiles if something broke
                                 if (
                                     series.redrawTiles ||
                                     parseFloat(zoomKey) !== zoomFloor ||

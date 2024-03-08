@@ -432,4 +432,4 @@ export default HollowCandlestickSeries;
  * @apioption series.hollowcandlestick.data
  */
 
-''; // adds doclets above to transpiled
+''; // Adds doclets above to transpiled

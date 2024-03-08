@@ -711,4 +711,4 @@ export default AST;
  * @type {string|undefined}
  */
 
-(''); // keeps doclets above in file
+(''); // Keeps doclets above in file

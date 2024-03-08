@@ -97,7 +97,7 @@ const configs: {
 
                 const table = component.connector.table;
 
-                // assume first column with unique keys as fallback
+                // Assume first column with unique keys as fallback
                 let extremesColumn = table.getColumnNames()[0],
                     maxIndex = table.getRowCount(),
                     minIndex = 0;

@@ -74,7 +74,7 @@ class TrendLineIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
@@ -224,4 +224,4 @@ export default TrendLineIndicator;
  * @apioption series.trendline
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

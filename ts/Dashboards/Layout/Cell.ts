@@ -164,7 +164,7 @@ class Cell extends GUIElement {
             this.mountComponentFromJSON(this.options.mountedComponentJSON);
         }
 
-        // nested layout
+        // Nested layout
         if (this.options.layout) {
             this.setNestedLayout();
         }
@@ -299,7 +299,7 @@ class Cell extends GUIElement {
         // Destroy mounted component.
         cell.mountedComponent?.destroy();
 
-        // if layout exists in the cell - destroy it
+        // If layout exists in the cell - destroy it
         cell.nestedLayout?.destroy();
 
         row.unmountCell(cell);
@@ -394,9 +394,9 @@ class Cell extends GUIElement {
 
     // Method to get array of overlapping levels.
     public getOverlappingLevels(
-        align: string, // left, right, top, bottom
-        levelMaxGap: number, // max distance between levels
-        offset?: number // analized cell offset
+        align: string, // 'left', 'right', 'top', 'bottom'
+        levelMaxGap: number, // Max distance between levels
+        offset?: number // Analyzed cell offset
     ): Array<number> {
         const cell = this,
             parentCell = cell.row.layout.parentCell;
@@ -516,7 +516,7 @@ class Cell extends GUIElement {
     }
 
     public setActiveState(): void {
-        // reset other boxes
+        // Reset other boxes
         const cell = this;
 
         cell.row.layout.board.mountedComponents.forEach(
@@ -529,7 +529,7 @@ class Cell extends GUIElement {
             }
         );
 
-        // apply class
+        // Apply class
         if (cell.container) {
             cell.container.classList.add(
                 Globals.classNames.cellActive

@@ -141,7 +141,7 @@ namespace EditableOptions {
          */
         name: string;
         /**
-         * whether the option should have a toggle to be enabled or disabled.
+         * Whether the option should have a toggle to be enabled or disabled.
          */
         showToggle?: boolean;
         /**
@@ -158,7 +158,7 @@ namespace EditableOptions {
     export interface OptionsBindings {
         keyMap: Record<string, string>;
         typeMap: Record<string, string>;
-        skipRedraw: string[]; // keys of options that should not trigger redraw
+        skipRedraw: string[]; // Keys of options that should not trigger redraw
     }
 
 }

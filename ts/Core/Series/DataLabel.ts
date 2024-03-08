@@ -775,7 +775,7 @@ namespace DataLabel {
                                     point.dataLabelPath &&
                                     !textPathOptions.enabled
                                 ) {
-                                    // clean the DOM
+                                    // Clean the DOM
                                     point.dataLabelPath = (
                                         point.dataLabelPath.destroy()
                                     );
@@ -1068,4 +1068,4 @@ export default DataLabel;
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

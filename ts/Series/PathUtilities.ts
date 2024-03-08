@@ -136,13 +136,13 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
         const y = path[i][2];
 
         if (typeof x === 'number' && typeof y === 'number') {
-            // moveTo
+            // MoveTo
             if (i === 0) {
                 d.push(['M', x, y]);
             } else if (i === path.length - 1) {
                 d.push(['L', x, y]);
 
-                // curveTo
+                // CurveTo
             } else if (r) {
                 const prevSeg = path[i - 1];
                 const nextSeg = path[i + 1];
@@ -179,7 +179,7 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
                     }
                 }
 
-                // lineTo
+                // LineTo
             } else {
                 d.push(['L', x, y]);
             }

@@ -106,7 +106,7 @@ class MFIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -307,4 +307,4 @@ export default MFIIndicator;
  * @apioption series.mfi
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

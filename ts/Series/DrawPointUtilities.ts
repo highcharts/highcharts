@@ -113,7 +113,7 @@ function draw(
             }
         };
 
-        // animate only runs complete callback if something was animated.
+        // Animate only runs complete callback if something was animated.
         if (Object.keys(animatableAttribs).length) {
             graphic.animate(
                 animatableAttribs,

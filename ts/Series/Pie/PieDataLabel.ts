@@ -142,7 +142,7 @@ namespace ColumnDataLabel {
             let maxDataLabelWidth = 0,
                 dataLabelWidth;
 
-            // find widest data label
+            // Find widest data label
             points.forEach(function (point): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
@@ -696,11 +696,11 @@ namespace ColumnDataLabel {
 
             } else { // Auto center
                 newSize = Math.max(
-                    // horizontal overflow
+                    // Horizontal overflow
                     center[2] - overflow[1] - overflow[3],
                     minSize as any
                 );
-                // horizontal center
+                // Horizontal center
                 center[0] += (overflow[3] - overflow[1]) / 2;
             }
 
@@ -715,10 +715,10 @@ namespace ColumnDataLabel {
                 newSize = clamp(
                     newSize,
                     minSize as any,
-                    // vertical overflow
+                    // Vertical overflow
                     center[2] - overflow[0] - overflow[2]
                 );
-                // vertical center
+                // Vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;
             }
 

@@ -114,7 +114,7 @@ class HTMLComponent extends Component {
                 json.elements.map((el): AST.Node => JSON.parse(el)) :
                 []
         );
-        // const connector = (
+        /// const connector = (
         //     json.connector ? DataJSON.fromJSON(json.connector) : void 0
         // );
 
@@ -124,7 +124,7 @@ class HTMLComponent extends Component {
                 options as any,
                 {
                     elements
-                    // connector: (
+                    /// connector: (
                     //   connector instanceof DataConnector ? connector : void 0
                     // )
                 }

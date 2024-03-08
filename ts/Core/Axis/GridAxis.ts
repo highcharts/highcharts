@@ -365,7 +365,7 @@ function onAfterGetTitlePosition(
     const gridOptions = options.grid || {};
 
     if (gridOptions.enabled === true) {
-        // compute anchor points for each of the title align options
+        // Compute anchor points for each of the title align options
         const {
             axisTitle,
             height: axisHeight,
@@ -391,8 +391,8 @@ function onAfterGetTitlePosition(
         // the position in the perpendicular direction of the axis
         const offAxis = (
             (horiz ? axisTop + axisHeight : axisLeft) +
-            (horiz ? 1 : -1) * // horizontal axis reverses the margin
-            (opposite ? -1 : 1) * // so does opposite axes
+            (horiz ? 1 : -1) * // Horizontal axis reverses the margin
+            (opposite ? -1 : 1) * // So does opposite axes
             crispCorr +
             (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
         );
@@ -626,7 +626,7 @@ function onAfterRender(this: Axis): void {
                     });
                 }
 
-                // show or hide the line depending on options.showEmpty
+                // Show or hide the line depending on options.showEmpty
                 axis.axisLine[axis.showAxis ? 'show' : 'hide']();
             }
         }
@@ -724,7 +724,7 @@ function onAfterSetAxisTranslation(this: Axis): void {
                 (
                     (options.dateTimeLabelFormats[tickInfo.unitName] as any)
                         .range === false ||
-                    tickInfo.count > 1 // years
+                    tickInfo.count > 1 // Years
                 )
             ) {
                 options.labels.align = 'left';
@@ -818,7 +818,7 @@ function onAfterSetOptions(
             // for example we shouldn't have one grid cell spanning
             // two days.
             units: [[
-                'millisecond', // unit name
+                'millisecond', // Unit name
                 [1, 10, 100]
             ], [
                 'second',
@@ -909,7 +909,7 @@ function onAfterSetOptions(
                         // In case the base X axis shows years, make the
                         // secondary axis show ten times the years (#11427)
                         } else if (parentInfo.unitName === 'year') {
-                            // unitName is 'year'
+                            // `unitName` is 'year'
                             count = parentInfo.count * 10;
                         }
 
@@ -1089,8 +1089,8 @@ function onTickAfterGetLabelPosition(
         gridOptions = options.grid || {},
         labelOpts = axis.options.labels,
         align = labelOpts.align,
-        // verticalAlign is currently not supported for axis.labels.
-        verticalAlign: string = 'middle', // labelOpts.verticalAlign,
+        // `verticalAlign` is currently not supported for axis.labels.
+        verticalAlign: string = 'middle', // LabelOpts.verticalAlign,
         side = GridAxisSide[axis.side],
         tickmarkOffset = e.tickmarkOffset,
         tickPositions = axis.tickPositions,
@@ -1155,14 +1155,14 @@ function onTickAfterGetLabelPosition(
                 left :
                 align === 'right' ?
                     right :
-                    left + ((right - left) / 2) // default to center
+                    left + ((right - left) / 2) // Default to center
         );
         e.pos.y = (
             verticalAlign === 'top' ?
                 top :
                 verticalAlign === 'bottom' ?
                     bottom :
-                    top + ((bottom - top) / 2) // default to middle
+                    top + ((bottom - top) / 2) // Default to middle
         );
 
         if (label) {
@@ -1595,4 +1595,4 @@ export default GridAxis;
  * @apioption xAxis.grid.cellHeight
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

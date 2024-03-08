@@ -517,7 +517,7 @@ abstract class Component {
      * @internal
      */
     private attachCellListeners(): void {
-        // remove old listeners
+        // Remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
             if (destroy) {
@@ -687,7 +687,7 @@ abstract class Component {
             this.clearTableListeners();
             this.setupTableListeners(connector.table);
 
-            // re-setup if modifier changes
+            // Re-setup if modifier changes
             connector.table.on(
                 'setModifier',
                 (): void => this.clearTableListeners()
@@ -1014,7 +1014,7 @@ abstract class Component {
             this.element.firstChild.remove();
         }
 
-        // call unmount
+        // Call unmount
         fireEvent(this, 'unmount');
 
         // Unregister events
