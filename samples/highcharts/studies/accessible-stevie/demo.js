@@ -161,8 +161,11 @@ Highcharts.chart('container', {
 });
 
 // Button to toggle more information
-const screenReaderSection = document.getElementById('#highcharts-screen-reader-region-before-0'),
-    moreInfoButton = document.createElement('button'),
+let screenReaderSection;
+document.addEventListener('DOMContentLoaded', () => {
+    screenReaderSection = document.getElementById('#highcharts-screen-reader-region-before-0');
+});
+const moreInfoButton = document.createElement('button'),
     infoP = document.createElement('p'),
     infoDiv = document.createElement('div');
 
