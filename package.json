@@ -139,6 +139,9 @@
     ],
     "./ts/DataGrid/**/*.ts": [
       "cd ts/DataGrid && npx eslint"
+    ],
+    "*.css": [
+      "stylelint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"
