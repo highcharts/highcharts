@@ -354,7 +354,8 @@ class KPIComponent extends Component {
                     {
                         className: `${this.options.className}-chart-container`
                     }, {
-                        padding: '0.1px' // fix inner height, when using flex box
+                        // Fix inner height, when using flex box
+                        padding: '0.1px'
                     },
                     this.contentElement
                 );
