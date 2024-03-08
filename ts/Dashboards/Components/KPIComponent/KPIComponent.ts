@@ -328,7 +328,7 @@ class KPIComponent extends Component {
     ): this {
         super.resize(width, height);
 
-        // animate
+        // Animate
         if (this.chart && this.chart.container) {
             this.chart.reflow();
         }
