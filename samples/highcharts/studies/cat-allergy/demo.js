@@ -138,6 +138,9 @@ let updatesRunning = false;
 let currentValue = 0;
 
 const toggleButton = document.getElementById('toggle');
+const toggleButtonAnnounceMessage = 'Live updates enabled. Allergy zone crossings will be announced.';
+const toggleButtonAnnounceDiv = document.getElementById('toggle-button-announce');
+toggleButtonAnnounceDiv.className = 'visually-hidden';
 
 toggleButton.addEventListener('click', function () {
     if (updatesRunning) {
@@ -148,6 +151,10 @@ toggleButton.addEventListener('click', function () {
         updateInterval = setInterval(updateFunction, 3000);
         updatesRunning = true;
         toggleButton.setAttribute('aria-pressed', 'true');
+        toggleButtonAnnounceDiv.innerText = toggleButtonAnnounceMessage;
+        setTimeout(() => {
+            toggleButtonAnnounceDiv.innerText = '';
+        }, 500);
     }
 });
 
