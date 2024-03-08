@@ -198,4 +198,4 @@ export default AroonOscillatorIndicator;
  * @apioption series.aroonoscillator
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

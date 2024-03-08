@@ -83,7 +83,7 @@ class ChaikinIndicator extends EMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unused index, do not inherit (#15362)
+            index: void 0, // Unused index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -250,4 +250,4 @@ export default ChaikinIndicator;
  * @apioption series.chaikin
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

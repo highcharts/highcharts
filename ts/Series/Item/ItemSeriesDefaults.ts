@@ -199,7 +199,7 @@ const ItemSeriesDefaults: ItemSeriesOptions = {
  * @apioption series.item.events
  */
 
-''; // keeps the doclets above separate
+''; // Keeps the doclets above separate
 
 /* *
  *

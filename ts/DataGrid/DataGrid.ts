@@ -836,7 +836,7 @@ class DataGrid {
             Math.ceil(
                 (
                     this.outerContainer.offsetHeight ||
-                    this.options.defaultHeight // when datagrid is hidden,
+                    this.options.defaultHeight // When datagrid is hidden,
                     // offsetHeight is 0, so we need to get defaultValue to
                     // avoid empty rows
                 ) / this.options.cellHeight

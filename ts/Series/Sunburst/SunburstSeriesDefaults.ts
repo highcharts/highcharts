@@ -393,7 +393,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
   * @apioption series.sunburst.data.sliced
   */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *

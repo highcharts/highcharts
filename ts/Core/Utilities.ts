@@ -101,10 +101,10 @@ function error(
         if (stop) {
             throw new Error(message);
         }
-        // else ...
+        // Else ...
         if (
             win.console &&
-            error.messages.indexOf(message) === -1 // prevent console flooting
+            error.messages.indexOf(message) === -1 // Prevent console flooting
         ) {
             console.warn(message); // eslint-disable-line no-console
         }
@@ -1108,11 +1108,11 @@ function normalizeTickInterval(
     let i,
         retInterval = interval;
 
-    // round to a tenfold of 1, 2, 2.5 or 5
+    // Round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, getMagnitude(interval));
     const normalized = interval / magnitude;
 
-    // multiples for a linear scale
+    // Multiples for a linear scale
     if (!multiples) {
         multiples = hasTickAmount ?
             // Finer grained ticks when the tick amount is hard set, including
@@ -1123,7 +1123,7 @@ function normalizeTickInterval(
             [1, 2, 2.5, 5, 10];
 
 
-        // the allowDecimals option
+        // The allowDecimals option
         if (allowDecimals === false) {
             if (magnitude === 1) {
                 multiples = multiples.filter(function (num: number): boolean {
@@ -1135,10 +1135,10 @@ function normalizeTickInterval(
         }
     }
 
-    // normalize the interval to the nearest multiple
+    // Normalize the interval to the nearest multiple
     for (i = 0; i < multiples.length; i++) {
         retInterval = multiples[i];
-        // only allow tick amounts smaller than natural
+        // Only allow tick amounts smaller than natural
         if (
             (
                 hasTickAmount &&
@@ -1196,7 +1196,7 @@ function stableSort<T>(
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        (arr[i] as any).safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // Stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1206,7 +1206,7 @@ function stableSort<T>(
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete (arr[i] as any).safeI; // stable sort index
+        delete (arr[i] as any).safeI; // Stable sort index
     }
 }
 
@@ -1432,7 +1432,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof pathElement === 'undefined' ||
             pathElement === '__proto__'
         ) {
-            return; // undefined
+            return; // Undefined
         }
 
         if (pathElement === 'this') {
@@ -1454,7 +1454,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof child.nodeType === 'number' ||
             child as unknown === win
         ) {
-            return; // undefined
+            return; // Undefined
         }
 
         // Else, proceed
@@ -1845,7 +1845,7 @@ function addEvent<T>(
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // without H a dependency loop occurs
+    if ((H as any).Point && // Without H a dependency loop occurs
         el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
@@ -1940,7 +1940,7 @@ function removeEvent<T>(
             len;
 
         if (!(el as any).nodeName) {
-            return; // break on non-DOM events
+            return; // Break on non-DOM events
         }
 
         if (type) {
@@ -2206,7 +2206,7 @@ if ((win as any).jQuery) {
     (win as any).jQuery.fn.highcharts = function (): any {
         const args = [].slice.call(arguments) as any;
 
-        if (this[0]) { // this[0] is the renderTo div
+        if (this[0]) { // `this[0]` is the renderTo div
 
             // Create the chart
             if (args[0]) {
@@ -2679,4 +2679,4 @@ export default Utilities;
  * @namespace Highcharts
  */
 
-''; // detach doclets above
+''; // Detach doclets above

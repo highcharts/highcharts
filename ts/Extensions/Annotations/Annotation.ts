@@ -441,7 +441,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     public destroyItem(
         item: ControllableType
     ): void {
-        // erase from shapes or labels array
+        // Erase from shapes or labels array
         erase((this as any)[item.itemType + 's'], item);
         item.destroy();
     }
@@ -626,9 +626,8 @@ class Annotation extends EventEmitter implements ControlTarget {
     ): void {
         let i = items.length;
 
-        // needs a backward loop
-        // labels/shapes array might be modified
-        // due to destruction of the item
+        // Needs a backward loop. Labels/shapes array might be modified due to
+        // destruction of the item
         while (i--) {
             this.redrawItem(items[i], animation);
         }
@@ -671,7 +670,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.labelsGroup = renderer
             .g('annotation-labels')
             .attr({
-                // hideOverlappingLabels requires translation
+                // `hideOverlappingLabels` requires translation
                 translateX: 0,
                 translateY: 0
             })
@@ -969,4 +968,4 @@ export default Annotation;
  *     } Highcharts.AnnotationShapePointOptions
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

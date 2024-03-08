@@ -216,7 +216,7 @@ class HeatmapPoint extends ScatterPoint {
      * @private
      */
     public isValid(): boolean {
-        // undefined is allowed
+        // Undefined is allowed
         return (
             this.value !== Infinity &&
             this.value !== -Infinity
@@ -232,7 +232,7 @@ class HeatmapPoint extends ScatterPoint {
  * */
 
 interface HeatmapPoint extends ColorMapComposition.PointComposition {
-    // nothing to add
+    // Nothing to add
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: true,

@@ -745,4 +745,4 @@ export default PictorialSeries;
  * @apioption yAxis.stackShadow.enabled
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

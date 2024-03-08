@@ -816,4 +816,4 @@ export default GeoHeatmapSeries;
  * @type {number}
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file

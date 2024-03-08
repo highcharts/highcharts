@@ -48,7 +48,7 @@ declare module '../../Core/Axis/AxisLike' {
 
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions extends AxisResizerOptions {
-        // nothing more to add
+        // Nothing more to add
     }
 }
 

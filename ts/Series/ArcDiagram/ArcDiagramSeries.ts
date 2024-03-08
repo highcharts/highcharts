@@ -234,7 +234,7 @@ class ArcDiagramSeries extends SankeySeries {
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
             chart = series.chart,
-            // column needs casting, to much methods required at the same time
+            // Column needs casting, to much methods required at the same time
             column = SankeyColumnComposition.compose([] as Array<ArcDiagramPoint>, series);
 
         column.sankeyColumn.maxLength = chart.inverted ?
@@ -785,4 +785,4 @@ export default ArcDiagramSeries;
  * @apioption series.arcdiagram.data
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file

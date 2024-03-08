@@ -23,7 +23,7 @@ import type LinePointOptions from '../Line/LinePointOptions';
  * */
 
 export interface ScatterPointOptions extends LinePointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *
