@@ -6,7 +6,9 @@ Highcharts.chart('container', {
     accessibility: {
         enabled: false
     },
-
+    credits: {
+        enabled: false
+    },
     title: {
         text: 'Stevie Wonder Grammy Awards Wins and Nominations'
     },
