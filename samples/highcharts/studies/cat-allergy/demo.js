@@ -164,13 +164,13 @@ function updateFunction() {
         let announcement;
         let currentInterval;
         if (currentValue <= 4) {
-            announcement = 'Green zone, ' + currentValue + ' cats.';
+            announcement = 'Green zone, ' + currentValue + ' cats in the room.';
             currentInterval = 'green';
         } else if (currentValue <= 8) {
-            announcement = 'Yellow zone, ' + currentValue + ' cats.';
+            announcement = 'Yellow zone, ' + currentValue + ' cats in the room.';
             currentInterval = 'yellow';
         } else {
-            announcement = 'Red zone, ' + currentValue + ' cats.';
+            announcement = 'Red zone, ' + currentValue + ' cats in the room.';
             currentInterval = 'red';
         }
 
@@ -191,6 +191,6 @@ function updateFunction() {
             announcerDiv.innerText = '';
         }, 1000);
         lastInterval = currentInterval;
-        previousValue = currentValue; // Update previousValue at the end of each function call
+        previousValue = currentValue;
     }
 }
