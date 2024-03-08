@@ -102,33 +102,29 @@ const announcerDiv = document.createElement('div');
 announcerDiv.className = 'visually-hidden';
 detailsButton.className = 'visually-hidden';
 detailsButton.setAttribute('aria-label', 'Gauge details');
-detailsButton.setAttribute('aria-expanded', 'false');
+detailsButton.setAttribute('aria-expanded', 'true'); // Set to true by default
 announcerDiv.setAttribute('aria-live', 'assertive');
 container.insertAdjacentElement('afterend', detailsButton);
 detailsButton.insertAdjacentElement('afterend', announcerDiv);
 
+const detailsDiv = document.createElement('div');
+const detailsText = document.createElement('p');
 
-let detailsDiv;
+detailsText.className = 'visually-hidden';
+detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the living room.';
+
+detailsDiv.appendChild(detailsText);
+detailsButton.insertAdjacentElement('afterend', detailsDiv);
 
 // Adding logic to clicking  button
 detailsButton.addEventListener('click', function () {
     const isExpanded = detailsButton.getAttribute('aria-expanded') === 'true';
     detailsButton.setAttribute('aria-expanded', !isExpanded);
 
-    if (!detailsDiv) {
-        detailsDiv = document.createElement('div');
-        const detailsText = document.createElement('p');
-
-        detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the living room.';
-
-        detailsDiv.appendChild(detailsText);
-        detailsButton.insertAdjacentElement('afterend', detailsDiv);
-    }
-
     if (isExpanded) {
-        detailsDiv.remove();
-        detailsDiv = null;
+        detailsDiv.style.display = 'none';
+    } else {
+        detailsDiv.style.display = 'block';
     }
 });
 
