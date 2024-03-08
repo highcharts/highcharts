@@ -1559,7 +1559,7 @@ const defaultOptions: DefaultOptions = {
              */
             height: '13px'
         },
-        // /itemWidth: undefined,
+        /// itemWidth: undefined,
 
         /**
          * When this is true, the legend symbol width will be the same as

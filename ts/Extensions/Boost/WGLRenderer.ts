@@ -400,7 +400,7 @@ class WGLRenderer {
                 (series as any).processedZData
             ),
             useRaw = !xData || xData.length === 0,
-            // /threshold = options.threshold,
+            /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
             // hasThreshold = isNumber(threshold),
             // colorByPoint = series.options.colorByPoint,
@@ -741,7 +741,7 @@ class WGLRenderer {
                 continue;
             }
 
-            // /px = x = y = z = nx = low = false;
+            /// px = x = y = z = nx = low = false;
             // chartDestroyed = typeof chart.index === 'undefined';
             // nextInside = prevInside = pcolor = isXInside = isYInside = false;
             // drawAsBar = asBar[series.type];
@@ -971,7 +971,7 @@ class WGLRenderer {
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
             if (inst.hasMarkers && isXInside) {
-                // /x = Highcharts.correctFloat(
+                /// x = Highcharts.correctFloat(
                 //     Math.min(Math.max(-1e5, xAxis.translate(
                 //         x,
                 //         0,
@@ -1415,7 +1415,7 @@ class WGLRenderer {
                 gl.blendEquation(gl.FUNC_MIN);
 
             } else {
-                // /gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                /// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
                 // gl.blendEquation(gl.FUNC_ADD);
                 gl.blendFuncSeparate(
                     gl.SRC_ALPHA,
@@ -1602,10 +1602,10 @@ class WGLRenderer {
         }
 
         gl.enable(gl.BLEND);
-        // /gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        /// gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         gl.disable(gl.DEPTH_TEST);
-        // /gl.depthMask(gl.FALSE);
+        /// gl.depthMask(gl.FALSE);
         gl.depthFunc(gl.LESS);
 
         const shader = this.shader = new WGLShader(gl);
@@ -1648,7 +1648,7 @@ class WGLRenderer {
 
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, props.handle);
-                // /gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+                /// gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
                 gl.texImage2D(
                     gl.TEXTURE_2D,
@@ -1683,7 +1683,7 @@ class WGLRenderer {
                     gl.LINEAR
                 );
 
-                // /gl.generateMipmap(gl.TEXTURE_2D);
+                /// gl.generateMipmap(gl.TEXTURE_2D);
 
                 gl.bindTexture(gl.TEXTURE_2D, null);
 

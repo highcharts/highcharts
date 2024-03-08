@@ -1030,7 +1030,7 @@ class Data {
                 }
             }
 
-            // //Make sure that there's header columns for everything
+            // Make sure that there's header columns for everything
             // columns.forEach(function (col) {
 
             // });
@@ -1046,7 +1046,7 @@ class Data {
             }
 
 
-            // /lines.forEach(function (line, rowNo) {
+            /// lines.forEach(function (line, rowNo) {
             //    let trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',

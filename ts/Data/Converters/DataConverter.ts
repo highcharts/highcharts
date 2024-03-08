@@ -346,7 +346,7 @@ class DataConverter implements DataEvent.Emitter {
             guessedFormat: Array<string> = [],
             i = 0,
             madeDeduction = false,
-            // /candidates = {},
+            /// candidates = {},
             elem,
             j;
 
@@ -392,7 +392,7 @@ class DataConverter implements DataEvent.Emitter {
                                 } else {
                                     guessedFormat[j] = 'YYYY';
                                 }
-                                // /madeDeduction = true;
+                                /// madeDeduction = true;
                             } else if (
                                 elem > 12 &&
                                 elem <= 31

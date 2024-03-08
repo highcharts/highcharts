@@ -31,7 +31,7 @@ import type {
  * @private
  */
 const common = {
-    // /enabled: null, // (true for stock charts, false for basic),
+    /// enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
     groupPixelWidth: 2,
     // The first one is the point or start value, the second is the start
@@ -79,7 +79,7 @@ const common = {
             '-%Y'
         ]
     }
-    // /smoothed = false, // enable this for navigator series only
+    /// smoothed = false, // enable this for navigator series only
 };
 
 /**

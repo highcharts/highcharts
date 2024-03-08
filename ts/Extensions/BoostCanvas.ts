@@ -431,7 +431,7 @@ namespace BoostCanvas {
             boost.target.clip(boost.clipRect);
 
         } else if (!(target instanceof ChartConstructor)) {
-            // / ctx.clearRect(0, 0, width, height);
+            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {

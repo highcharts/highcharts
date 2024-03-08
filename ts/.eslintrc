@@ -68,6 +68,7 @@
         "require-unicode-regexp": 0, // incompatible with ES2017- targets
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "semi": 0,
+        "spaced-comment": ["error", "always", { "markers": ["/"] }],
         "valid-jsdoc": 0,
         "@typescript-eslint/array-type": 0,
         "@typescript-eslint/ban-types": 0, // @todo
