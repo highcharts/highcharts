@@ -16,6 +16,6 @@ const { testKarma } = require('../test-karma');
 
 gulp.task('dashboards/test', gulp.series(
     'dashboards/scripts',
-    'dlint',
+    'dashboards/lint',
     () => testKarma({ dashboards: true })
 ));
