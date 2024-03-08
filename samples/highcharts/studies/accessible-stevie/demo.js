@@ -1,7 +1,7 @@
 const descriptionDivs = [];
 const tooltipDivs = [];
 let parsedData = [],
-    checkboxChecked = false,
+    checkboxChecked = true,
     nullpointCheckboxChecked = true;
 
 
@@ -28,7 +28,7 @@ Highcharts.chart('container', {
                     const descriptionDivId = id + '-description';
                     const tooltipDivId = id + '-tooltip';
                     if (checkboxChecked) {
-                        point.graphic.element.setAttribute('aria-describedby', id);
+                        point.graphic.element.setAttribute('aria-describedby', descriptionDivId);
                     }
 
                     if (nullpointCheckboxChecked && point.y === 0) {
@@ -253,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         descriptionDivs.forEach(descriptionDiv => {
+            console.log(descriptionDiv);
             descriptionDiv.setAttribute('aria-hidden', !checkboxChecked);
         });
     });
