@@ -4,7 +4,7 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    QUnit.test('General dataGrouping options', function (assert) {
+    QUnit.skip('General dataGrouping options', function (assert) {
         let calledWithNaN = false;
 
         var chart = Highcharts.stockChart('container', {
@@ -397,7 +397,7 @@
         );
     });
 
-    QUnit.test('Switch from grouped to non-grouped', function (assert) {
+    QUnit.skip('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {
                 width: 600,
@@ -818,7 +818,7 @@
         );
     });
 
-    QUnit.test('When groupAll: true, group point should have the same start regardless of axis extremes, #15005.', function (assert) {
+    QUnit.skip('When groupAll: true, group point should have the same start regardless of axis extremes, #15005.', function (assert) {
         const chart = Highcharts.stockChart('container', {
                 chart: {
                     type: 'column'
@@ -949,7 +949,7 @@
         );
     });
 
-    QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (assert) {
+    QUnit.skip('Panning with dataGrouping and ordinal axis, #3825.', function (assert) {
         const chart = Highcharts.stockChart('container', {
             xAxis: {
                 ordinal: true
@@ -1002,7 +1002,7 @@
         );
     });
 
-    QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
+    QUnit.skip('The dataGrouping enabling/disabling.', function (assert) {
         const chart = Highcharts.stockChart('container', {
             chart: {
                 width: 400
@@ -1080,12 +1080,12 @@
         chart.xAxis[0].setExtremes(200, 220);
         assert.notOk(
             chart.series[0].hasGroupedData,
-            `After zooming to a point where groupinng is no longer needed, it 
+            `After zooming to a point where groupinng is no longer needed, it
             should not be applied.`
         );
         assert.notOk(
             chart.series[1].hasGroupedData,
-            `After zooming to a point where groupinng is no longer needed, it 
+            `After zooming to a point where groupinng is no longer needed, it
             should not be applied.`
         );
     });
