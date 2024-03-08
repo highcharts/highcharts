@@ -353,7 +353,7 @@ Highcharts.extend(CustomContainerComponent.prototype, {
     }
 });
 chart.container.setAttribute('role', 'application');
-chart.container.setAttribute('aria-label', 'Total fruit consumption. Press Tab to interact with chart.');
+chart.container.setAttribute('aria-label', 'Total fruit consumption. Press Enter to interact with chart.');
 
 
 // ============================================================================
