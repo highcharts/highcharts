@@ -23,7 +23,7 @@
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",
     "dtest": "gulp dashboards/test",
-    "dlint": "cd ts/Dashboards && npx eslint",
+    "dlint": "gulp dashboards/lint",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "test:precommit": "npx gulp test-ts --modified && npx gulp test --modified && npx ts-node ./test/ts-node-unit-tests",
     "testall": "npx gulp test --browsers all --force --speak",
@@ -131,14 +131,14 @@
     "*.js": [
       "eslint"
     ],
-    "./ts/!(Dashboards)**/*.ts": [
+    "./ts/!(Dashboards|DataGrid)**/*.ts": [
       "npm run lint"
     ],
     "./ts/Dashboards/**/*.ts": [
-      "npm run dlint"
+      "cd ts/Dashboards && npx eslint"
     ],
-    "*.css": [
-      "stylelint"
+    "./ts/DataGrid/**/*.ts": [
+      "cd ts/DataGrid && npx eslint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"
