@@ -180,11 +180,11 @@ export interface SeriesStateInactiveOptions extends StateInactiveOptions {
 }
 
 export interface SeriesStateNormalOptions extends StateNormalOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {

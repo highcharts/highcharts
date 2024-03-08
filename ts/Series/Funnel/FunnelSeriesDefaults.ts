@@ -227,7 +227,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * @apioption series.funnel.data
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

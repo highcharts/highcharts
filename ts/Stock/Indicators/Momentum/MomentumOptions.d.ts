@@ -29,7 +29,7 @@ export interface MomentumOptions extends SMAOptions {
 }
 
 export interface MomentumParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 /* *

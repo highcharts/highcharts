@@ -365,7 +365,7 @@ class NetworkgraphSeries extends Series {
         const attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
-        // series.render() is called before initial positions are set:
+        // Series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
         }
@@ -647,4 +647,4 @@ export default NetworkgraphSeries;
  *        The event that occurred.
  */
 
-''; // detach doclets above
+''; // Detach doclets above

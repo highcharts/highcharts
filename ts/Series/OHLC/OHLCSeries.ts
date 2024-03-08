@@ -85,7 +85,7 @@ function onSeriesInit(
     ) {
         extend(series, {
             pointValKey: OHLCSeries.prototype.pointValKey,
-            // keys: ohlcProto.keys, // @todo potentially nonsense
+            // Keys: ohlcProto.keys, // @todo potentially nonsense
             pointArrayMap: OHLCSeries.prototype.pointArrayMap,
             toYData: OHLCSeries.prototype.toYData
         });
@@ -164,7 +164,7 @@ class OHLCSeries extends HLCSeries {
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
         let plotOpen = point.plotOpen;
-        // crisp vector coordinates
+        // Crisp vector coordinates
 
         if (point.open !== null) {
             plotOpen = Math.round(point.plotOpen) + crispCorr;
@@ -203,7 +203,7 @@ class OHLCSeries extends HLCSeries {
     }
 
     public toYData(point: OHLCPoint): Array<number> {
-        // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     }
 

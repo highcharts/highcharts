@@ -112,7 +112,7 @@ class WGLVertexBuffer {
             return false;
         }
 
-        // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
+        /// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
         // gl.enableVertexAttribArray(vertAttribute);
         // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         this.gl.vertexAttribPointer(
@@ -123,7 +123,7 @@ class WGLVertexBuffer {
             0,
             0
         );
-        // gl.enableVertexAttribArray(vertAttribute);
+        /// gl.enableVertexAttribArray(vertAttribute);
     }
 
     /**
@@ -146,7 +146,7 @@ class WGLVertexBuffer {
         this.data = dataIn || [];
 
         if ((!this.data || this.data.length === 0) && !this.preAllocated) {
-            // console.error('trying to render empty vbuffer');
+            /// console.error('trying to render empty vbuffer');
             this.destroy();
             return false;
         }
@@ -169,7 +169,7 @@ class WGLVertexBuffer {
             this.gl.STATIC_DRAW
         );
 
-        // gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
+        /// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
         this.vertAttribute = this.gl
             .getAttribLocation(this.shader.getProgram() as any, attrib);
         this.gl.enableVertexAttribArray(this.vertAttribute);

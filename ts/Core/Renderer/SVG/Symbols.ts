@@ -69,12 +69,12 @@ function arc(
             );
 
         let arcSegment: SVGPath.Arc = [
-            'A', // arcTo
-            rx, // x radius
-            ry, // y radius
-            0, // slanting
-            longArc, // long or short arc
-            pick(options.clockwise, 1), // clockwise
+            'A', // ArcTo
+            rx, // X radius
+            ry, // Y radius
+            0, // Slanting
+            longArc, // Long or short arc
+            pick(options.clockwise, 1), // Clockwise
             cx + rx * cosEnd,
             cy + ry * sinEnd
         ];
@@ -90,11 +90,11 @@ function arc(
 
         if (defined(innerRadius)) {
             arcSegment = [
-                'A', // arcTo
-                innerRadius, // x radius
-                innerRadius, // y radius
-                0, // slanting
-                longArc, // long or short arc
+                'A', // ArcTo
+                innerRadius, // X radius
+                innerRadius, // Y radius
+                0, // Slanting
+                longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
                 cx + innerRadius * cosStart,
@@ -241,7 +241,7 @@ function callout(
             }
         }
 
-    } else if ( // replace bottom
+    } else if ( // Replace bottom
         anchorY > h &&
         anchorX < w - safeDistance
     ) {
@@ -254,7 +254,7 @@ function callout(
             ['L', x + r, y + h]
         );
 
-    } else if ( // replace top
+    } else if ( // Replace top
         anchorY < 0 &&
         anchorX > safeDistance
     ) {
@@ -330,15 +330,15 @@ function roundedRect(
     const r = options?.r || 0;
     return [
         ['M', x + r, y],
-        ['L', x + w - r, y], // top side
-        ['A', r, r, 0, 0, 1, x + w, y + r], // top-right corner
-        ['L', x + w, y + h - r], // right side
-        ['A', r, r, 0, 0, 1, x + w - r, y + h], // bottom-right corner
-        ['L', x + r, y + h], // bottom side
-        ['A', r, r, 0, 0, 1, x, y + h - r], // bottom-left corner
-        ['L', x, y + r], // left side
+        ['L', x + w - r, y], // Top side
+        ['A', r, r, 0, 0, 1, x + w, y + r], // Top-right corner
+        ['L', x + w, y + h - r], // Right side
+        ['A', r, r, 0, 0, 1, x + w - r, y + h], // Bottom-right corner
+        ['L', x + r, y + h], // Bottom side
+        ['A', r, r, 0, 0, 1, x, y + h - r], // Bottom-left corner
+        ['L', x, y + r], // Left side
         ['A', r, r, 0, 0, 1, x + r, y],
-        ['Z'] // top-left corner
+        ['Z'] // Top-left corner
     ];
 }
 

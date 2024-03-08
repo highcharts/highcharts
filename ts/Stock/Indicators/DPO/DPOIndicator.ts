@@ -173,7 +173,7 @@ class DPOIndicator extends SMAIndicator {
             periodIndex = j + period - 1;
             rangeIndex = j + range - 1;
 
-            // adding the last period point
+            // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
             price = pick<(number | undefined), number>(
                 (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
@@ -181,7 +181,7 @@ class DPOIndicator extends SMAIndicator {
 
             oscillator = price - sum / period;
 
-            // subtracting the first period point
+            // Subtracting the first period point
             sum = accumulatePoints(sum, yVal, j, index, true);
 
             DPO.push([xVal[rangeIndex], oscillator]);
@@ -254,4 +254,4 @@ export default DPOIndicator;
  * @apioption series.dpo
  */
 
-''; // to include the above in the js output'
+''; // To include the above in the js output'

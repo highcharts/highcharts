@@ -183,7 +183,7 @@ function integrate(
             (prevY as any)) * friction
         ),
         abs = Math.abs,
-        signX = abs(diffX) / (diffX || 1), // need to deal with 0
+        signX = abs(diffX) / (diffX || 1), // Need to deal with 0
         signY = abs(diffY) / (diffY || 1);
 
     // Apply max speed:

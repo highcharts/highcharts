@@ -213,7 +213,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#46465C',

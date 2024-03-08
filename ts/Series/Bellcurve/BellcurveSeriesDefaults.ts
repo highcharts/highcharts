@@ -140,7 +140,7 @@ const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
  * @apioption series.bellcurve.fillOpacity
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

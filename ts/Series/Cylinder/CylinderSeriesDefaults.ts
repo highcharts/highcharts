@@ -119,7 +119,7 @@ const CylinderSeriesDefaults: CylinderSeriesOptions = {};
  * @apioption series.cylinder.data
  */
 
-''; // detaches doclets above
+''; // Detaches doclets above
 
 /* *
  *

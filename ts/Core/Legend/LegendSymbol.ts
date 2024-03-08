@@ -39,13 +39,13 @@ const {
 
 declare module '../Axis/AxisLike' {
     interface AxisLike extends LegendItem {
-        // nothing to add
+        // Nothing to add
     }
 }
 
 declare module '../Series/PointLike' {
     interface PointLike extends LegendItem {
-        // nothing to add
+        // Nothing to add
     }
 }
 

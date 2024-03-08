@@ -105,7 +105,7 @@ const PyramidSeriesDefaults: PyramidSeriesOptions = {
  * @apioption series.pyramid.data
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

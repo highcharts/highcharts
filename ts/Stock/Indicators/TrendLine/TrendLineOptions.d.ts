@@ -24,7 +24,7 @@ import type {
  * */
 
 export interface TrendLineParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
     index: number;
 }
 

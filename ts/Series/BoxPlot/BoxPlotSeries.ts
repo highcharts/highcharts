@@ -94,7 +94,7 @@ class BoxPlotSeries extends ColumnSeries {
 
         super.translate.apply(series);
 
-        // do the translation on each point dimension
+        // Do the translation on each point dimension
         series.points.forEach(function (point: BoxPlotPoint): void {
             pointArrayMap.forEach(function (key: string): void {
                 if ((point as any)[key] !== null) {
@@ -121,7 +121,7 @@ class BoxPlotSeries extends ColumnSeries {
             options = series.options,
             chart = series.chart,
             renderer = chart.renderer,
-            // error bar inherits this series type but doesn't do quartiles
+            // Error bar inherits this series type but doesn't do quartiles
             doQuartiles = series.doQuartiles !== false,
             whiskerLength = series.options.whiskerLength;
 
@@ -154,7 +154,7 @@ class BoxPlotSeries extends ColumnSeries {
 
             if (typeof point.plotY !== 'undefined') {
 
-                // crisp vector coordinates
+                // Crisp vector coordinates
                 width = Math.round(shapeArgs.width);
                 left = Math.floor(shapeArgs.x);
                 right = left + width;
@@ -265,11 +265,11 @@ class BoxPlotSeries extends ColumnSeries {
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;
                 crispX = left + halfWidth + crispCorr;
                 d = [
-                    // stem up
+                    // Stem up
                     ['M', crispX, q3Plot],
                     ['L', crispX, highPlot],
 
-                    // stem down
+                    // Stem down
                     ['M', crispX, q1Plot],
                     ['L', crispX, lowPlot]
                 ];
@@ -328,7 +328,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     }
 
-    // return a plain array for speedy calculation
+    // Return a plain array for speedy calculation
     public toYData(point: BoxPlotPoint): Array<number> {
         return [point.low, point.q1, point.median, point.q3, point.high];
     }
@@ -349,9 +349,9 @@ interface BoxPlotSeries extends ColumnSeries {
 }
 
 extend(BoxPlotSeries.prototype, {
-    // array point configs are mapped to this
+    // Array point configs are mapped to this
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
-    // defines the top of the tracker
+    // Defines the top of the tracker
     pointValKey: 'high',
     // Disable data labels for box plot
     drawDataLabels: noop,

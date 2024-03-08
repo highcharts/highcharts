@@ -128,7 +128,7 @@ class DataConverter implements DataEvent.Emitter {
                         NaN
                 );
             },
-            alternative: 'mm/dd/YYYY' // different format with the same regex
+            alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
@@ -159,7 +159,7 @@ class DataConverter implements DataEvent.Emitter {
 
                 return Date.UTC(year, (match[3] as any) - 1, +match[1]);
             },
-            alternative: 'mm/dd/YY' // different format with the same regex
+            alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
             regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
@@ -346,7 +346,7 @@ class DataConverter implements DataEvent.Emitter {
             guessedFormat: Array<string> = [],
             i = 0,
             madeDeduction = false,
-            // candidates = {},
+            /// candidates = {},
             elem,
             j;
 
@@ -392,7 +392,7 @@ class DataConverter implements DataEvent.Emitter {
                                 } else {
                                     guessedFormat[j] = 'YYYY';
                                 }
-                                // madeDeduction = true;
+                                /// madeDeduction = true;
                             } else if (
                                 elem > 12 &&
                                 elem <= 31
@@ -523,10 +523,10 @@ class DataConverter implements DataEvent.Emitter {
             const floatValue = parseFloat(innerTrimedValue);
 
             if (+innerTrimedValue === floatValue) {
-                // string is numeric
+                // String is numeric
                 value = floatValue;
             } else {
-                // determine if a date string
+                // Determine if a date string
                 const dateValue = converter.parseDate(value);
 
                 result = isNumber(dateValue) ? 'Date' : 'string';
@@ -534,7 +534,7 @@ class DataConverter implements DataEvent.Emitter {
         }
 
         if (typeof value === 'number') {
-            // greater than milliseconds in a year assumed timestamp
+            // Greater than milliseconds in a year assumed timestamp
             result = value > 365 * 24 * 3600 * 1000 ? 'Date' : 'number';
         }
 
@@ -609,9 +609,9 @@ class DataConverter implements DataEvent.Emitter {
                     format = converter.dateFormats[key];
                     match = value.match(format.regex);
                     if (match) {
-                        // converter.options.dateFormat = dateFormat = key;
+                        // `converter.options.dateFormat` = dateFormat = key;
                         dateFormat = key;
-                        // converter.options.alternativeFormat =
+                        // `converter.options.alternativeFormat` =
                         // format.alternative || '';
                         result = format.parser(match);
                         break;
@@ -653,7 +653,7 @@ class DataConverter implements DataEvent.Emitter {
                     result = match - (
                         new Date(match)
                     ).getTimezoneOffset() * 60000;
-                    if (// reset dates without year in Chrome
+                    if (// Reset dates without year in Chrome
                         value.indexOf('2001') === -1 &&
                         (new Date(result)).getFullYear() === 2001
                     ) {
