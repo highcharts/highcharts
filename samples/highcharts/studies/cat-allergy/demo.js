@@ -120,7 +120,7 @@ detailsButton.addEventListener('click', function () {
         const detailsText = document.createElement('p');
 
         detailsText.className = 'visually-hidden';
-        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the room. The current value is 0 cats in the room.';
+        detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the room.';
 
         detailsDiv.appendChild(detailsText);
         detailsButton.insertAdjacentElement('afterend', detailsDiv);
