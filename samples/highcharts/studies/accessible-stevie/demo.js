@@ -81,6 +81,7 @@ Highcharts.chart('container', {
         }
     },
 
+    // Checking
     title: {
         text: 'Stevie Wonder Grammy Awards Wins and Nominations'
     },
