@@ -30,8 +30,9 @@
     font-size: 0.8rem;
     cursor: pointer;
     right: 0;
-    top: 0;
+    top: 4px;
     height: 1.8rem;
+    z-index: 99;
 }
 
 button img {
@@ -89,16 +90,12 @@ dialog {
     text-align: right;
 }
 
-#showTable {
-    top: 3px;
-}
-
 .hint-button {
-    right: 6rem;
+    right: 6.5rem;
 }
 
 .sound-button {
-    right: 17.5rem;
+    right: 18.3rem;
 }
 
 .hidden {

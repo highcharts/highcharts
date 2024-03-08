@@ -5,7 +5,7 @@ const chart = Highcharts.chart('container', {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive bar chart showing total and detailed fruit consumption for 3 persons, with each person\'s total shown as a stacked bar composed of different colors to represent various fruits. Ted consumed 12 units, evenly distributed among five fruits, Øystein had the most at 13 units with a preference for strawberries, and Marita had 11 units, favoring strawberries and mango equally.</p><p>There is 1 X axis showing persons, and 1 Y axis showing number of fruits consumed.</p><p>Use tab key to move between chart sections. Use left/right arrow keys to move between bars on the X axis. When on the bars, use the Enter key for more detail, and Backspace for less.</p><p>Sounds play as you navigate the bars. Higher pitched tones indicate higher values.</p>',
+            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive bar chart showing total and detailed fruit consumption for 3 persons, with each person\'s total shown as a stacked bar composed of different colors to represent various fruits. Ted consumed 12 units, with a preference for blueberries, Øystein had the most at 13 units with a preference for mangoes, and Marita had 11 units, favoring strawberries.</p><p>There is 1 X axis showing persons, and 1 Y axis showing units of fruits consumed.</p><p>Use tab key to move between chart sections. Use left/right arrow keys to move between bars on the X axis. When on the bars, use the Enter key for more detail, and Backspace for less.</p><p>Sounds play as you navigate the bars. Higher pitched tones indicate higher values.</p>',
             afterChartFormat: ''
         },
         landmarkVerbosity: 'disabled'
@@ -197,16 +197,18 @@ const chart = Highcharts.chart('container', {
 
 
 // Utility function
-const play = (instr, note, time) => {
+const play = (instr, note, time, vol) => {
     setTimeout(() =>
         chart.sonification.playNote(instr, {
             note: note,
             noteDuration: 300,
             pan: 0,
-            volume: 0.6
-        }), time
+            volume: vol || 0.6
+        }), time || 0
     );
 };
+
+let focusReturnFromHelp;
 
 
 // ============================================================================
@@ -216,21 +218,36 @@ announcer.className = 'visually-hidden';
 announcer.setAttribute('aria-live', 'assertive');
 announcer.setAttribute('aria-hidden', 'false');
 let clearAnnounceTimeout, nextAnnounceTimeout;
-const announce = (str, delay, clear) => {
-    if (clear !== false) {
-        clearTimeout(nextAnnounceTimeout);
-        announcer.innerText = '';
-    }
+const announce = (str, delay) => {
+    clearTimeout(nextAnnounceTimeout);
+    announcer.innerText = '';
     nextAnnounceTimeout = setTimeout(() => {
         clearTimeout(clearAnnounceTimeout);
         announcer.innerText = str;
         clearAnnounceTimeout = setTimeout(() => (announcer.innerText = ''), 3000);
-    }, delay);
+    }, delay || 0);
 };
 chart.renderTo.appendChild(announcer);
 
 
-let focusReturnFromHelp;
+// ============================================================================
+// Sound guide
+
+const soundGuide = document.createElement('button');
+soundGuide.className = 'sound-button';
+soundGuide.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt=""> Sound guide';
+soundGuide.setAttribute('aria-label', 'Sound guide, Total fruit consumption');
+soundGuide.onclick = () => {
+    chart.sonification.speak('Range of tones for bars, values 11 to 13');
+    play('flute', 62, 2600);
+    play('flute', 66, 3100);
+
+    chart.sonification.speak('Range of tones for bar segments, values 1 to 4', {}, 4200);
+    play('vibraphone', 50, 6800);
+    play('vibraphone', 58, 7300);
+};
+chart.renderTo.insertBefore(soundGuide, chart.container);
+
 
 // ============================================================================
 // Help Btn & dialog
@@ -250,7 +267,7 @@ helpContent.innerHTML = `
             <li>Tab: Move between chart sections.</li>
             <li>Arrow keys: Move between data points.</li>
             <li>Enter: Drill in to more details on a data point or bar.</li>
-            <li>Escape: Drill back up to less details on the data.</li>
+            <li>Backspace: Drill back up to less details on the data.</li>
         </ul>
     </div>
 `;
@@ -268,82 +285,9 @@ helpBtn.onclick = () => {
     chart.accessibility.keyboardNavigation.blocked = true;
     helpContent.showModal();
 };
-chart.container.appendChild(helpBtn);
-chart.container.appendChild(helpContent);
+chart.renderTo.insertBefore(helpBtn, chart.container);
+chart.renderTo.insertBefore(helpContent, chart.container);
 document.getElementById(closeID).onclick = () => helpContent.close();
-
-const HelpBtnComponent = function (chart) {
-    this.initBase(chart);
-};
-HelpBtnComponent.prototype = new Highcharts.AccessibilityComponent();
-Highcharts.extend(HelpBtnComponent.prototype, {
-    getKeyboardNavigation: function () {
-        const keys = this.keyCodes,
-            chart = this.chart,
-            component = this;
-        return new Highcharts.KeyboardNavigationHandler(chart, {
-            keyCodeMap: [
-                // Space/enter/H means we click the button
-                [[
-                    keys.space, keys.enter, 72 /* key === h */
-                ], function () {
-                    // Fake a click event on the button element
-                    component.fakeClickEvent(helpBtn);
-                    return this.response.success;
-                }]
-            ],
-            init: function () {
-                helpBtn.focus();
-            }
-        });
-    }
-});
-
-
-// ============================================================================
-// Sound guide
-
-const soundGuide = document.createElement('button');
-soundGuide.className = 'sound-button';
-soundGuide.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt=""> Sound guide';
-soundGuide.setAttribute('aria-label', 'Sound guide, Total fruit consumption');
-soundGuide.onclick = () => {
-    chart.sonification.speak('Range of tones for bars, values 11 to 13');
-    play('flute', 64, 2600);
-    play('flute', 72, 3100);
-
-    chart.sonification.speak('Range of tones for bar segments, values 1 to 4', {}, 4200);
-    play('vibraphone', 50, 6800);
-    play('vibraphone', 58, 7300);
-};
-chart.container.appendChild(soundGuide);
-
-const SoundGuideComponent = function (chart) {
-    this.initBase(chart);
-};
-SoundGuideComponent.prototype = new Highcharts.AccessibilityComponent();
-Highcharts.extend(SoundGuideComponent.prototype, {
-    getKeyboardNavigation: function () {
-        const keys = this.keyCodes,
-            chart = this.chart,
-            component = this;
-        return new Highcharts.KeyboardNavigationHandler(chart, {
-            keyCodeMap: [
-                // Space/enter means we click the button
-                [[
-                    keys.space, keys.enter
-                ], function () {
-                    // Fake a click event on the button element
-                    component.fakeClickEvent(soundGuide);
-                    return this.response.success;
-                }]
-            ],
-            init: function () {
-                soundGuide.focus();
-            }
-        });
-    }
-});
 
 
 // ============================================================================
@@ -474,15 +418,15 @@ Highcharts.extend(CustomSeriesNav.prototype, {
                 } else if (drill === 1) {
                     unHighlight();
                     chart.sonification.playNote('flute', {
-                        note: startPoint.stackTotal * 4 + 20,
+                        note: startPoint.stackTotal * 2 + 40,
                         noteDuration: 300,
                         pan: 0,
                         volume: 0.6
                     });
                 } else {
-                    play('flute', 12 * 4 + 20, 0);
-                    play('flute', 13 * 4 + 20, 300);
-                    play('flute', 11 * 4 + 20, 600);
+                    play('flute', 12 * 2 + 40, 0);
+                    play('flute', 13 * 2 + 40, 300);
+                    play('flute', 11 * 2 + 40, 600);
                     unHighlight();
                 }
 
@@ -601,28 +545,35 @@ Highcharts.extend(CustomSeriesNav.prototype, {
 
                 [[keys.up, keys.down], function (keyCode) {
                     const { drill, x, y } = component.dataPos,
+                        maxLen = component.dataContent[drill][x].length - 1,
                         dir = keyCode === keys.up ? -1 : 1;
-                    if (component.dataContent[drill][x].length === 1) {
-                        component.dataPos.x = clamp(
-                            x + dir, 0,
-                            component.dataContent[drill].length - 1
-                        );
+
+                    if (maxLen) {
+                        if (y === 0 && dir < 0 || y === maxLen && dir > 0) {
+                            play('chop', 1);
+                        } else {
+                            component.dataPos.y = clamp(y + dir, 0, maxLen);
+                            speakDataAtCurrent();
+                        }
                     } else {
-                        component.dataPos.y = clamp(
-                            y + dir, 0,
-                            component.dataContent[drill][x].length - 1
-                        );
+                        play('chop', 1);
+                        announce('Use left/right arrow to move between bars.', 300);
                     }
-                    speakDataAtCurrent();
                     return this.response.success;
                 }],
 
                 [[keys.left, keys.right], function (keyCode) {
                     const { drill, x } = component.dataPos,
+                        maxLen = component.dataContent[drill].length - 1,
                         dir = keyCode === keys.right ? 1 : -1;
-                    component.dataPos.x = clamp(
-                        x + dir, 0, component.dataContent[drill].length - 1);
-                    speakDataAtCurrent();
+
+                    if (x === 0 && dir < 0 || x === maxLen && dir > 0) {
+                        play('chop', 1);
+                    } else {
+                        component.dataPos.x = clamp(x + dir, 0, maxLen);
+                        speakDataAtCurrent();
+                    }
+
                     return this.response.success;
                 }]
             ],
@@ -650,7 +601,7 @@ Highcharts.extend(CustomSeriesNav.prototype, {
 
             terminate: function () {
                 component.focusIndicators.forEach(e => e.destroy());
-                announce('', 0);
+                announce('');
                 unHighlight();
             }
         });
@@ -676,12 +627,10 @@ chart.update({
     accessibility: {
         customComponents: {
             customContainer: new CustomContainerComponent(chart),
-            helpBtn: new HelpBtnComponent(chart),
-            customSeriesNav: new CustomSeriesNav(chart),
-            soundGuide: new SoundGuideComponent(chart)
+            customSeriesNav: new CustomSeriesNav(chart)
         },
         keyboardNavigation: {
-            order: ['customContainer', 'soundGuide', 'customSeriesNav', 'helpBtn']
+            order: ['customContainer', 'customSeriesNav']
         }
     }
 });
