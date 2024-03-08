@@ -256,7 +256,7 @@ class Tick {
             }
         }
 
-        // set properties for access in render method
+        // Set properties for access in render method
         /**
          * True if the tick is the first one on the axis.
          * @name Highcharts.Tick#isFirst
@@ -355,7 +355,7 @@ class Tick {
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
 
-        // update
+        // Update
         } else if (label && label.textStr !== str && !animateLabels) {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
@@ -980,7 +980,7 @@ class Tick {
 
         if (tickSize) {
 
-            // negate the length
+            // Negate the length
             if (axis.opposite) {
                 tickSize[0] = -tickSize[0];
             }
@@ -1088,9 +1088,9 @@ class Tick {
                 tick.handleOverflow(xy);
             }
 
-            // apply step
+            // Apply step
             if (step && index % step) {
-                // show those indices dividable by step
+                // Show those indices dividable by step
                 show = false;
             }
 
@@ -1143,7 +1143,7 @@ class Tick {
  * */
 
 interface Tick extends TickLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *
@@ -1214,4 +1214,4 @@ export default Tick;
  * @type {number}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

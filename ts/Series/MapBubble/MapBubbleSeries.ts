@@ -430,4 +430,4 @@ export default MapBubbleSeries;
  * @apioption series.mapbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

@@ -407,7 +407,7 @@ class BubbleLegendItem {
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
-            connectorLength = 0; // do not use connector
+            connectorLength = 0; // Do not use connector
             options.connectorDistance = 0;
             (range.labelAttribs as any).align = 'center';
         }
@@ -820,4 +820,4 @@ export default BubbleLegendItem;
  * @type {number}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

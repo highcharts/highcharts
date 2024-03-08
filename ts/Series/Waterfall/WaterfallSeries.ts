@@ -294,7 +294,7 @@ class WaterfallSeries extends ColumnSeries {
             if (prevStack && prevBox && box) {
                 const prevStackX = (prevStack as any)[i - 1];
 
-                // y position of the connector is different when series are
+                // Y position of the connector is different when series are
                 // stacked, yAxis is reversed and it also depends on point's
                 // value
                 let yPos: number;
@@ -550,7 +550,7 @@ class WaterfallSeries extends ColumnSeries {
             stackedYNeg = this.stackedYNeg = [];
             stackedYPos = this.stackedYPos = [];
 
-            // the visible y range can be different when stacking is set to
+            // The visible y range can be different when stacking is set to
             // overlap and different when it's set to normal
             if (stacking === 'overlap') {
                 objectEach(waterfallStacks[this.stackKey], function (
@@ -639,7 +639,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         const range = [0, yValue],
             pointY = point.y || 0;
 
-        // code responsible for correct positions of stacked points
+        // Code responsible for correct positions of stacked points
         // starts here
         if (stacking) {
             if (actualStack) {
@@ -696,7 +696,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 }
 
                 if (!point.isSum) {
-                    // the connectorThreshold property is later used in
+                    // The connectorThreshold property is later used in
                     // getCrispPath function to draw a connector line in a
                     // correct place
                     actualStackX.connectorThreshold =
@@ -746,14 +746,14 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 }
             }
         } else {
-            // up points
+            // Up points
             y = Math.max(
                 previousY,
                 previousY + pointY
             ) + range[0];
             box.y = yAxis.translate(y, false, true, false, true);
 
-            // sum points
+            // Sum points
             if (point.isSum) {
                 box.y = yAxis.translate(
                     range[1],
@@ -784,7 +784,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 }
 
                 if (yAxis.reversed) {
-                    // swapping values
+                    // Swapping values
                     yPos ^= hPos;
                     hPos ^= yPos;
                     yPos ^= hPos;

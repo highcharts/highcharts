@@ -80,7 +80,7 @@ class PivotPointsIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             period: 28,
             /**
              * Algorithm used to calculate resistance and support lines based
@@ -469,4 +469,4 @@ export default PivotPointsIndicator;
  * @apioption series.pivotpoints
  */
 
-''; // to include the above in the js output'
+''; // To include the above in the js output'

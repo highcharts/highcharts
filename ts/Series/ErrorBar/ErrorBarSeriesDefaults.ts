@@ -159,7 +159,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
  * @apioption series.errorbar.data
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file
 
 /* *
  *

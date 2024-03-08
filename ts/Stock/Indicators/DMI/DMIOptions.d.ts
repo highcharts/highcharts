@@ -36,7 +36,7 @@ export interface DMILineOptions {
 }
 
 export interface DMIParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
 
 export default DMIOptions;

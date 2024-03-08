@@ -174,7 +174,7 @@ namespace DarkBlueTheme {
             }
         },
 
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: {

@@ -686,10 +686,10 @@ function groupData(
 
         // Start with the first point within the X axis range (#2696)
         if (xData[i] < groupPositions[0]) {
-            continue; // with next point
+            continue; // With next point
         }
 
-        // when a new group is entered, summarize and initialize
+        // When a new group is entered, summarize and initialize
         // the previous group
         while (
             (
@@ -697,7 +697,7 @@ function groupData(
                 xData[i] >= groupPositions[pos + 1]
             ) ||
             i === dataLength
-        ) { // get the last group
+        ) { // Get the last group
 
             // get group x and y
             pointX = groupPositions[pos];
@@ -732,7 +732,7 @@ function groupData(
                 });
             }
 
-            // push the grouped data
+            // Push the grouped data
             if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
@@ -745,28 +745,28 @@ function groupData(
                 groupMap.push(series.dataGroupInfo);
             }
 
-            // reset the aggregate arrays
+            // Reset the aggregate arrays
             start = i;
             for (let j = 0; j < valuesLen; j++) {
-                values[j].length = 0; // faster than values[j] = []
+                values[j].length = 0; // Faster than values[j] = []
                 values[j].hasNulls = false;
             }
 
             // Advance on the group positions
             pos += 1;
 
-            // don't loop beyond the last group
+            // Don't loop beyond the last group
             if (i === dataLength) {
                 break;
             }
         }
 
-        // break out
+        // Break out
         if (i === dataLength) {
             break;
         }
 
-        // for each raw data point, push it to an array that contains all values
+        // For each raw data point, push it to an array that contains all values
         // for this specific group
         if (pointArrayMap) {
             const index = (

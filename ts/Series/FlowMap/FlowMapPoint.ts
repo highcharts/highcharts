@@ -76,7 +76,7 @@ class FlowMapPoint extends MapLinePoint {
         [this.options.to, this.options.from]
             .forEach(function (toOrFrom): void {
                 valid = !!(valid && (toOrFrom && (
-                    isString(toOrFrom) || ( // point id or has lat/lon coords
+                    isString(toOrFrom) || ( // Point id or has lat/lon coords
                         isNumber(pick(
                             (toOrFrom as LonLatArray)[0],
                             (toOrFrom as MapLonLatObject).lat)) &&

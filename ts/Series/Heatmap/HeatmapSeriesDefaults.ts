@@ -317,7 +317,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     clip: true,
 
     /** @ignore-option */
-    pointRange: null, // dynamically set to colsize by default
+    pointRange: null, // Dynamically set to colsize by default
 
     tooltip: {
         pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
@@ -702,7 +702,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  * @apioption series.heatmap.data.marker.states.select.heightPlus
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

@@ -87,7 +87,7 @@ const ParetoSeriesDefaults: ParetoSeriesOptions = {
  * @apioption series.pareto.data
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

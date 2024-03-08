@@ -167,7 +167,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         xData: Array<number>,
         yData: Array<number>
     ): RegressionLineParametersObject {
-        // least squares method
+        // Least squares method
         const yIndex: number = (this.options.params as any).index,
             getSingleYValue = function (
                 yValue: (number|Array<number>),
@@ -203,7 +203,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         }
 
         const slope: number = formulaDenominator ?
-            formulaNumerator / formulaDenominator : 0; // don't divide by 0
+            formulaNumerator / formulaDenominator : 0; // Don't divide by 0
 
         return {
             slope: slope,
@@ -299,11 +299,11 @@ class LinearRegressionIndicator extends SMAIndicator {
         const xData: Array<number> = (baseSeries.xData as any),
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
-            // format required to be returned
+            // Format required to be returned
             indicatorData: IndicatorValuesObject<
             TLinkedSeries
             > = {
-                xData: [], // by getValues() method
+                xData: [], // By getValues() method
                 yData: [],
                 values: []
             } as any,
@@ -325,7 +325,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         // of the entire period.
 
         for (i = period - 1; i <= xData.length - 1; i++) {
-            periodStart = i - period + 1; // adjusted for slice() function
+            periodStart = i - period + 1; // Adjusted for slice() function
             periodEnd = i + 1; // (as above)
             endPointX = xData[i];
             periodXData = xData.slice(periodStart, periodEnd);
@@ -420,4 +420,4 @@ export default LinearRegressionIndicator;
  * @apioption series.linearregression
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

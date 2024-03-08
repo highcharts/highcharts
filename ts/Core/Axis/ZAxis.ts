@@ -176,7 +176,7 @@ class ZAxis extends Axis implements AxisLike {
             this.stacking.buildStacks();
         }
 
-        // loop through this axis' series
+        // Loop through this axis' series
         this.series.forEach((series): void => {
 
             if (series.reserveSpace()) {

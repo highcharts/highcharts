@@ -177,4 +177,4 @@ export default NATRIndicator;
  * @apioption series.natr
  */
 
-''; // to include the above in the js output'
+''; // To include the above in the js output'

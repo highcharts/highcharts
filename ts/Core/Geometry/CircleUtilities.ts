@@ -183,9 +183,9 @@ namespace CircleUtilities {
             // then it exists intersecting points.
             const r1Square = r1 * r1,
                 r2Square = r2 * r2,
-                // d^2 - r^2 + R^2 / 2d
+                // `d^2 - r^2 + R^2 / 2d`
                 x = (r1Square - r2Square + d * d) / (2 * d),
-                // y^2 = R^2 - x^2
+                // `y^2 = R^2 - x^2`
                 y = Math.sqrt(r1Square - x * x),
                 x1 = c1.x,
                 x2 = c2.x,
@@ -464,9 +464,9 @@ namespace CircleUtilities {
                 }).arcs;
 
             if (arcs.length === 0) {
-                // empty
+                // Empty
             } else if (arcs.length === 1) {
-                // empty
+                // Empty
             } else {
                 arcs.unshift(['M', startPoint.x, startPoint.y]);
                 result = {

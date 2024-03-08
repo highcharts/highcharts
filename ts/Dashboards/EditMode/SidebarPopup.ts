@@ -354,7 +354,7 @@ class SidebarPopup extends BaseForm {
                             if (newCell) {
                                 const mountedComponent =
                                     newCell.mountedComponent;
-                                // skip init connector when is not defined by
+                                // Skip init connector when is not defined by
                                 // options f.e HTML component.
                                 if (mountedComponent.options?.connector?.id) {
                                     mountedComponent.initConnector();
@@ -508,7 +508,7 @@ class SidebarPopup extends BaseForm {
     protected addCloseButton(
         className: string = EditGlobals.classNames.popupCloseButton
     ): HTMLElement {
-        // close popup when click outside the popup
+        // Close popup when click outside the popup
         addEvent(document, 'click', (event): void => {
             event.stopPropagation();
             if (

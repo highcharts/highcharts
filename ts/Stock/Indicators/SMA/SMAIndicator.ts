@@ -625,7 +625,7 @@ extend(SMAIndicator.prototype, {
     },
     hasDerivedData: true,
     nameComponents: ['period'],
-    nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
+    nameSuffixes: [], // E.g. Zig Zag uses extra '%'' in the legend name
     useCommonDataGrouping: true
 });
 
@@ -668,4 +668,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-(''); // adds doclet above to the transpiled file
+(''); // Adds doclet above to the transpiled file

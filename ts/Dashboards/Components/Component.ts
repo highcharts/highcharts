@@ -496,7 +496,7 @@ abstract class Component {
      * @internal
      */
     private attachCellListeneres(): void {
-        // remove old listeners
+        // Remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
             if (destroy) {
@@ -666,7 +666,7 @@ abstract class Component {
             this.clearTableListeners();
             this.setupTableListeners(connector.table);
 
-            // re-setup if modifier changes
+            // Re-setup if modifier changes
             connector.table.on(
                 'setModifier',
                 (): void => this.clearTableListeners()
@@ -1011,7 +1011,7 @@ abstract class Component {
             this.element.firstChild.remove();
         }
 
-        // call unmount
+        // Call unmount
         fireEvent(this, 'unmount');
 
         // Unregister events
@@ -1061,7 +1061,7 @@ abstract class Component {
 
         const json: Component.JSON = {
             $class: this.options.type,
-            // connector: this.connector ? this.connector.toJSON() : void 0,
+            /// connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
                 parentElement: this.parentElement.id,
@@ -1143,7 +1143,7 @@ namespace Component {
     * */
     /** @internal */
     export interface JSON extends Serializable.JSON<string> {
-        // connector?: DataConnector.ClassJSON;
+        /// connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
@@ -1386,7 +1386,7 @@ namespace Component {
      * @internal
      *  */
     export interface ComponentOptionsJSON extends JSON.Object {
-        // connector?: DataConnector.ClassJSON; // connector id
+        /// connector?: DataConnector.ClassJSON; // connector id
         caption?: string;
         className?: string;
         cell?: string;
@@ -1394,7 +1394,7 @@ namespace Component {
         editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
         parentCell?: Cell.JSON;
-        // store?: DataStore.ClassJSON; // store id
+        /// store?: DataStore.ClassJSON; // store id
         parentElement?: string; // ID?
         style?: {};
         sync?: SyncOptions&JSON.Object;

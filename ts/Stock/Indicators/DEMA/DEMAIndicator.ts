@@ -161,7 +161,7 @@ class DEMAIndicator extends EMAIndicator {
                 yVal
             );
 
-        // first point
+        // First point
         SMA = accumulatePeriodPoints / period;
         accumulatePeriodPoints = 0;
 
@@ -265,4 +265,4 @@ export default DEMAIndicator;
  * @apioption series.dema
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

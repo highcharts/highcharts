@@ -75,7 +75,7 @@ class ADIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unused index, do not inherit (#15362)
+            index: void 0, // Unused index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -166,7 +166,7 @@ class ADIndicator extends SMAIndicator {
             return;
         }
 
-        // i = period <-- skip first N-points
+        // When i = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
 
@@ -250,4 +250,4 @@ export default ADIndicator;
  * @apioption series.ad
  */
 
-''; // add doclet above to transpiled file
+''; // Add doclet above to transpiled file

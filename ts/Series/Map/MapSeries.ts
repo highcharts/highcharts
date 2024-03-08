@@ -52,7 +52,7 @@ import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    // indirect dependency to keep product size low
+    // Indirect dependency to keep product size low
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
@@ -481,7 +481,7 @@ class MapSeries extends ScatterSeries {
                                 typeof renderer.globalAnimation !== 'boolean' &&
                                 renderer.globalAnimation.complete
                             ) {
-                                // fire complete only from this place
+                                // Fire complete only from this place
                                 renderer.globalAnimation.complete({
                                     applyDrilldown: true
                                 });

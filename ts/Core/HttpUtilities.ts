@@ -195,7 +195,7 @@ function post(
     fetchOptions?: RequestInit
 ): Promise<void> {
     const formData = new win.FormData();
-    // add the data
+    // Add the data
     objectEach(data, function (val: string, name: string): void {
         formData.append(name, val);
     });
@@ -275,4 +275,4 @@ export default HttpUtilities;
  * @type {string}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

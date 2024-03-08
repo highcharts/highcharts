@@ -560,7 +560,7 @@ function getPositionSnapshot(
                     point.plotX : point.plotY;
             } else {
                 pointProps[key + 'Offset'] =
-                    // e.g. yAxis.toPixels(point.high), xAxis.toPixels
+                    // E.g. yAxis.toPixels(point.high), xAxis.toPixels
                     // (point.end)
                     axis.toPixels(point[key as keyof typeof point]) -
                     (axis.horiz ? e.chartX : e.chartY);
@@ -1000,7 +1000,7 @@ function resizeGuideBox(point: Point, dX: number, dY: number): void {
         dragDropData: DragDropDataObject = chart.dragDropData as any,
         resizeProp =
             (series.dragDropProps as any)[dragDropData.updateProp as any],
-        // dragDropProp.resizeSide holds info on which side to resize.
+        // `dragDropProp.resizeSide` holds info on which side to resize.
         newPoint = (dragDropData as any).newPoints[point.id as any].newValues,
         resizeSide = typeof resizeProp.resizeSide === 'function' ?
             resizeProp.resizeSide(newPoint, point) : resizeProp.resizeSide;

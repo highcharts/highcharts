@@ -182,7 +182,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-top line, 2-middle line, 3-bottom line
             PE: Array<Array<number>> = [],
-            // middle line, top line and bottom line
+            // Middle line, top line and bottom line
             xData: Array<number> = [],
             yData: Array<Array<number>> = [];
 
@@ -318,4 +318,4 @@ export default PriceEnvelopesIndicator;
  * @apioption series.priceenvelopes
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

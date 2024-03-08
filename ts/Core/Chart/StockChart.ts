@@ -437,18 +437,18 @@ namespace StockChart {
 
         const chart = axis.chart,
             log = axis.logarithmic,
-            options = axis.crosshair.label, // the label's options
-            horiz = axis.horiz, // axis orientation
-            opposite = axis.opposite, // axis position
-            left = axis.left, // left position
-            top = axis.top, // top position
+            options = axis.crosshair.label, // The label's options
+            horiz = axis.horiz, // Axis orientation
+            opposite = axis.opposite, // Axis position
+            left = axis.left, // Left position
+            top = axis.top, // Top position
             width = axis.width,
             tickInside = axis.options.tickPosition === 'inside',
             snap = axis.crosshair.snap !== false,
             e = event.e || (axis.cross && axis.cross.e),
             point = event.point;
 
-        let crossLabel = axis.crossLabel, // the svgElement
+        let crossLabel = axis.crossLabel, // The svgElement
             posx,
             posy,
             formatOption = options.format,
@@ -647,7 +647,7 @@ namespace StockChart {
             // Do it only for the first Y axis of each pane
             if (!panes[key] && labelOptions.enabled) {
                 if (
-                    labelOptions.distance === 15 && // default
+                    labelOptions.distance === 15 && // Default
                     axis.side === 1
                 ) {
                     labelOptions.distance = 0;
@@ -802,7 +802,7 @@ namespace StockChart {
                         y2 = y1 + axis2.len;
                         x1 = x2 = Math.round(transVal + axis.transB);
 
-                        // outside plot area
+                        // Outside plot area
                         if (
                             force !== 'pass' &&
                             (x1 < axisLeft || x1 > axisLeft + axis.width)
@@ -829,7 +829,7 @@ namespace StockChart {
                         x2 = x1 + axis2.len;
                         y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
-                        // outside plot area
+                        // Outside plot area
                         if (
                             force !== 'pass' &&
                             (y1 < axisTop || y1 > axisTop + axis.height)
@@ -974,7 +974,7 @@ namespace StockChart {
         width: number
     ): SVGPath {
 
-        // points format: [['M', 0, 0], ['L', 100, 0]]
+        // Points format: [['M', 0, 0], ['L', 100, 0]]
         // normalize to a crisp line
         for (let i = 0; i < points.length; i = i + 2) {
             const start = points[i],

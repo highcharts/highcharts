@@ -521,7 +521,7 @@ class XRangeSeries extends ColumnSeries {
         if (!point.isNull && point.visible !== false) {
 
             // Original graphic
-            if (graphic) { // update
+            if (graphic) { // Update
                 graphic.rect[verb](shapeArgs);
             } else {
                 point.graphic = graphic = renderer.g('point')

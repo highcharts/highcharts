@@ -620,7 +620,7 @@ namespace DataModifyComposition {
                             (compareBase === 100 ? 0 : 100);
                     }
 
-                    // record for tooltip etc.
+                    // Record for tooltip etc.
                     if (typeof index !== 'undefined') {
                         const point = this.series.points[index];
 
@@ -768,4 +768,4 @@ export default DataModifyComposition;
  * @apioption plotOptions.series.cumulative
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file

@@ -41,7 +41,7 @@ const { isNumber } = U;
  */
 const GanttSeriesDefaults: GanttSeriesOptions = {
 
-    // options - default options merged with parent
+    // Options - default options merged with parent
 
     grouping: false,
 
@@ -289,7 +289,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.events
  */
 
-''; // detachs doclets above
+''; // Detachs doclets above
 
 /* *
  *

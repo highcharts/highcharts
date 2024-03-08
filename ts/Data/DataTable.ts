@@ -781,7 +781,7 @@ class DataTable implements DataEvent.Emitter {
                 ) {
                     cellValue = column[i];
                     if (typeof cellValue === 'number') {
-                        // assume unmixed data for performance reasons
+                        // Assume unmixed data for performance reasons
                         return column.slice() as Array<(number|null)>;
                     }
                     if (

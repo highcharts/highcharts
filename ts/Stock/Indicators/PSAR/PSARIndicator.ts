@@ -203,7 +203,7 @@ class PSARIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value
@@ -447,4 +447,4 @@ export default PSARIndicator;
  * @apioption series.psar
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

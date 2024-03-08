@@ -86,8 +86,6 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
 
         let x, y, gridX, gridY, key, i;
 
-        // drawGridLines(series, options);
-
         const scaledGridSize = series.getScaledGridSize(options);
 
         for (i = 0; i < dataX.length; i++) {

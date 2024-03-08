@@ -153,7 +153,7 @@ function onSeriesAfterRender(
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent' // line invisible by default
+                color: 'transparent' // Line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
@@ -456,4 +456,4 @@ export default PriceIndication;
  *
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

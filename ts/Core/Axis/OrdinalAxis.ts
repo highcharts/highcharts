@@ -420,13 +420,13 @@ namespace OrdinalAxis {
         let i = ordinalPositions.length - 1,
             distance;
 
-        if (index < 0) { // out of range, in effect panning to the left
+        if (index < 0) { // Out of range, in effect panning to the left
             index = ordinalPositions[0];
-        } else if (index > i) { // out of range, panning to the right
+        } else if (index > i) { // Out of range, panning to the right
             index = ordinalPositions[i];
-        } else { // split it up
+        } else { // Split it up
             i = Math.floor(index);
-            distance = index - i; // the decimal
+            distance = index - i; // The decimal
         }
 
         if (typeof distance !== 'undefined' &&
@@ -625,10 +625,10 @@ namespace OrdinalAxis {
                     xAxis.translationSlope *
                     (xAxis.ordinal.slope || (closestPointRange as any))
                 ),
-                // how many ordinal units did we move?
+                // How many ordinal units did we move?
                 movedUnits = Math.round(
                     ((mouseDownX as any) - chartX) / pointPixelWidth),
-                // get index of all the chart's points
+                // Get index of all the chart's points
                 extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
                     ordinal: {
@@ -641,7 +641,7 @@ namespace OrdinalAxis {
             let trimmedRange,
                 ordinalPositions;
 
-            // we have an ordinal axis, but the data is equally spaced
+            // We have an ordinal axis, but the data is equally spaced
             if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
@@ -702,7 +702,7 @@ namespace OrdinalAxis {
                     );
                 }
 
-                chart.mouseDownX = chartX; // set new reference for next run
+                chart.mouseDownX = chartX; // Set new reference for next run
                 css(chart.container, { cursor: 'move' });
             }
 
@@ -710,7 +710,7 @@ namespace OrdinalAxis {
             runBase = true;
         }
 
-        // revert to the linear chart.pan version
+        // Revert to the linear chart.pan version
         if (runBase || (panning && /y/.test(panning.type))) {
             if (overscroll) {
                 xAxis.max = (xAxis.dataMax as any) + overscroll;
@@ -769,7 +769,7 @@ namespace OrdinalAxis {
             ordinalPositions[ordinalLength - 1] >= val
         ) {
             ordinalIndex = getIndexInArray(ordinalPositions, val);
-            // final return value is based on ordinalIndex
+            // Final return value is based on ordinalIndex
         } else {
             extendedOrdinalPositions =
                 ordinal.getExtendedPositions &&
@@ -789,8 +789,8 @@ namespace OrdinalAxis {
                         extendedOrdinalPositions[0]) /
                     length;
             }
-            // OriginalPointReference is equal to the index of
-            // first point of ordinalPositions in extendedOrdinalPositions.
+            // `originalPointReference` is equal to the index of first point of
+            // ordinalPositions in extendedOrdinalPositions.
 
             const originalPositionsReference = getIndexInArray(
                 extendedOrdinalPositions,
@@ -950,7 +950,7 @@ namespace OrdinalAxis {
                         )
                     ) {
 
-                        // concatenate the processed X data into the existing
+                        // Concatenate the processed X data into the existing
                         // positions, or the empty array
                         ordinalPositions = ordinalPositions.concat(
                             xData as any
@@ -958,12 +958,12 @@ namespace OrdinalAxis {
 
                         len = ordinalPositions.length;
 
-                        // remove duplicates (#1588)
+                        // Remove duplicates (#1588)
                         ordinalPositions.sort(function (
                             a: number,
                             b: number
                         ): number {
-                            // without a custom function it is sorted as strings
+                            // Without a custom function it is sorted as strings
                             return a - b;
                         });
 
@@ -1021,13 +1021,13 @@ namespace OrdinalAxis {
                     ordinalPositions.shift();
                 }
 
-                // cache the length
+                // Cache the length
                 len = ordinalPositions.length;
 
                 // Check if we really need the overhead of mapping axis data
                 // against the ordinal positions. If the series consist of
                 // evenly spaced data any way, we don't need any ordinal logic.
-                if (len > 2) { // two points have equal distance by default
+                if (len > 2) { // Two points have equal distance by default
                     dist = ordinalPositions[1] - ordinalPositions[0];
                     i = len - 1;
                     while (i-- && !useOrdinal) {
@@ -1129,7 +1129,7 @@ namespace OrdinalAxis {
             }
 
             axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
-            ordinal.groupIntervalFactor = null as any; // reset for next run
+            ordinal.groupIntervalFactor = null as any; // Reset for next run
         }
 
         /**
@@ -1273,7 +1273,7 @@ namespace OrdinalAxis {
                             lastAnchor: 'lastPoint',
                             enabled: true,
                             forced: true,
-                            // doesn't matter which, use the fastest
+                            // Doesn't matter which, use the fastest
                             approximation: 'open',
                             units: [[
                                 (grouping as any).unitName,
@@ -1450,7 +1450,7 @@ namespace OrdinalAxis {
                     axis.closestPointRange ||
                     ordinal.overscrollPointsRange as number
                 ),
-                // toValue for the first point.
+                // `toValue` for the first point.
                 shiftIndex = correctFloat(
                     (val - firstPointX) / ordinalPointPixelInterval);
 

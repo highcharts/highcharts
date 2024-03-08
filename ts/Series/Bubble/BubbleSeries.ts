@@ -249,7 +249,7 @@ class BubbleSeries extends ScatterSeries {
          */
         marker: {
 
-            lineColor: null as any, // inherit from series.color
+            lineColor: null as any, // Inherit from series.color
 
             lineWidth: 1,
 
@@ -740,7 +740,7 @@ class BubbleSeries extends ScatterSeries {
                     width: 2 * radius,
                     height: 2 * radius
                 };
-            } else { // below zThreshold
+            } else { // Below zThreshold
                 // #1691
                 point.shapeArgs = point.plotY = point.dlBox = void 0;
                 point.isInside = false; // #17281
@@ -869,7 +869,7 @@ export default BubbleSeries;
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *
@@ -965,4 +965,4 @@ export default BubbleSeries;
  * @apioption series.bubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

@@ -20,7 +20,7 @@
  *
  */
 export interface TickLike {
-    // add with `declare module` pattern
+    // Add with `declare module` pattern
 }
 
 /* *

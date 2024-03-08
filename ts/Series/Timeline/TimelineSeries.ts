@@ -532,4 +532,4 @@ export default TimelineSeries;
  * @type {Highcharts.Series}
  */
 
-''; // dettach doclets above
+''; // Dettach doclets above

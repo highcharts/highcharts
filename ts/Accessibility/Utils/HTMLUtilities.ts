@@ -248,8 +248,8 @@ function getFakeMouseEvent(
                 false,
                 false,
                 false,
-                0, // button
-                null // related target
+                0, // Button
+                null // Related target
             );
             return evt;
         }

@@ -465,7 +465,7 @@ function onBeforeRender(
                     }
                 }
 
-                // setScale is fired after all the series is initialized,
+                // `setScale` is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
                     data,
@@ -585,7 +585,7 @@ function wrapGenerateTick(
                     options: options
                 });
         } else {
-            // update labels depending on tick interval
+            // Update labels depending on tick interval
             tick.parameters.category = gridNode.name;
             tick.options = options;
             tick.addLabel();
@@ -649,7 +649,7 @@ function wrapInit(
                     if (axis.brokenAxis) {
                         axis.brokenAxis.setBreaks(breaks, false);
 
-                        // remove the node from the axis collapsedNodes
+                        // Remove the node from the axis collapsedNodes
                         if (axis.treeGrid.collapsedNodes) {
                             axis.treeGrid.collapsedNodes = axis.treeGrid
                                 .collapsedNodes

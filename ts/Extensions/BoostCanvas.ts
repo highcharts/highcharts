@@ -432,7 +432,7 @@ namespace BoostCanvas {
             boost.target.clip(boost.clipRect);
 
         } else if (!(target instanceof ChartConstructor)) {
-            // ctx.clearRect(0, 0, width, height);
+            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {
@@ -559,7 +559,7 @@ namespace BoostCanvas {
             boost.clear();
         }
 
-        // if (series.canvas) {
+        // If (series.canvas) {
         //     ctx.clearRect(
         //         0,
         //         0,
@@ -589,7 +589,7 @@ namespace BoostCanvas {
             });
             U.clearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
-            chart.options.loading = loadingOptions; // reset
+            chart.options.loading = loadingOptions; // Reset
         }
 
         if (boostSettings.timeRendering) {
@@ -832,7 +832,7 @@ namespace BoostCanvas {
                         }
                         // Add points and reset
                         if (clientX !== lastClientX) {
-                            // maxI also a number:
+                            // `maxI` also a number:
                             if (typeof minI !== 'undefined') {
                                 plotY = yAxis.toPixels(maxVal, true);
                                 yBottom = yAxis.toPixels(minVal, true);
@@ -890,7 +890,7 @@ namespace BoostCanvas {
 
             stroke();
 
-            // if (series.boostCopy || series.chart.boostCopy) {
+            // If (series.boostCopy || series.chart.boostCopy) {
             //     (series.boostCopy || series.chart.boostCopy)();
             // }
 

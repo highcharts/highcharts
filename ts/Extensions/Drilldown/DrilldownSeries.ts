@@ -196,7 +196,7 @@ function columnAnimateDrillupFrom(
 
     // Cancel mouse events on the series group (#2787)
     (series.trackerGroups || []).forEach((key: string): void => {
-        // we don't always have dataLabelsGroup
+        // We don't always have dataLabelsGroup
         if ((series as AnyRecord)[key]) {
             (series as AnyRecord)[key].on('mouseover');
         }
@@ -453,7 +453,7 @@ function mapAnimateDrillupFrom(
     if (chart && chart.mapView) {
         chart.mapView.allowTransformAnimation = false;
     }
-    // stop duplicating and overriding animations
+    // Stop duplicating and overriding animations
     if (series.options) {
         series.options.inactiveOtherPoints = true;
     }
@@ -479,7 +479,7 @@ function mapAnimateDrillupTo(
             group.attr({
                 opacity: 0.01
             });
-            // stop duplicating and overriding animations
+            // Stop duplicating and overriding animations
             if (series.options) {
                 series.options.inactiveOtherPoints = true;
             }

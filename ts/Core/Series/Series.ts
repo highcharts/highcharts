@@ -146,12 +146,12 @@ export interface DataColumns extends DataTable.ColumnCollection{
 }
 
 export interface DataTableLightModified extends DataTable {
-    // columns: DataColumns;
+    /// columns: DataColumns;
     // rowCount: number;
 }
 
 export interface DataTableLight extends DataTable {
-    // modified?: DataTableLightModified;
+    /// modified?: DataTableLightModified;
 }
 
 interface KDNode {
@@ -782,7 +782,7 @@ class Series {
             ),
             userPlotOptionsType = userPlotOptions[this.type] || {};
 
-        // use copy to prevent undetected changes (#9762)
+        // Use copy to prevent undetected changes (#9762)
         /**
          * Contains series options by the user without defaults.
          * @name Highcharts.Series#userOptions
@@ -913,7 +913,7 @@ class Series {
                 prop === 'color' ? this.options.colorIndex : void 0,
                 this[indexName]
             );
-            if (defined(setting)) { // after Series.update()
+            if (defined(setting)) { // After Series.update()
                 i = setting;
             } else {
                 // #6138
@@ -1642,14 +1642,14 @@ class Series {
             updatingNames = false;
 
         if (xAxis) {
-            // corrected for log axis (#3053)
+            // Corrected for log axis (#3053)
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
             updatingNames = !!(xAxis.categories && !xAxis.names.length);
         }
 
-        // optionally filter out points outside the plot area
+        // Optionally filter out points outside the plot area
         if (isCartesian &&
             series.sorted &&
             !getExtremesFromAll &&
@@ -1660,7 +1660,7 @@ class Series {
             )
         ) {
 
-            // it's outside current extremes
+            // It's outside current extremes
             if ((processedXData as any)[dataLength - 1] < (min as any) ||
                 (processedXData as any)[0] > (max as any)
             ) {
@@ -1669,7 +1669,7 @@ class Series {
 
                 modified = new DataTable();
 
-            // only crop if it's actually spilling out
+            // Only crop if it's actually spilling out
             } else if (
                 // Don't understand why this condition is needed
                 series.getColumn(series.pointValKey || 'y').length && (
@@ -1754,7 +1754,7 @@ class Series {
 
         // Record the properties
         table.modified = processedData.modified || table;
-        series.cropped = processedData.cropped; // undefined or true
+        series.cropped = processedData.cropped; // Undefined or true
         series.cropStart = processedData.cropStart;
         series.closestPointRange = (
             series.basePointRange = processedData.closestPointRange
@@ -1927,7 +1927,7 @@ class Series {
             }
         }
 
-        // restore keys options (#6590)
+        // Restore keys options (#6590)
         series.options.keys = keys;
 
         // Hide cropped-away points - this only runs when the number of
@@ -1941,7 +1941,7 @@ class Series {
             )
         ) {
             for (i = 0; i < dataLength; i++) {
-                // when has grouped data, clear all points
+                // When has grouped data, clear all points
                 if (i === cropStart && !hasGroupedData) {
                     i += processedDataLength;
                 }
@@ -2281,7 +2281,7 @@ class Series {
                         (point.y / stackItem.total * 100) : void 0;
                     point.stackY = yValue;
 
-                    // in case of variwide series (where widths of points are
+                    // In case of variwide series (where widths of points are
                     // different in most cases), stack labels are positioned
                     // wrongly, so the call of the setOffset is omitted here and
                     // labels are correctly positioned later, at the end of the
@@ -2351,7 +2351,7 @@ class Series {
             // Negative points #19028
             point.negative = (point.y || 0) < (threshold || 0);
 
-            // some API data
+            // Some API data
             point.category = pick(
                 categories && categories[point.x],
                 point.x as any
@@ -2692,7 +2692,7 @@ class Series {
                     ) || pointMarkerOptions.enabled
                 ) && !point.isNull && point.visible !== false;
 
-                // only draw the point if y is defined
+                // Only draw the point if y is defined
                 if (shouldDrawMarker) {
                     // Shortcuts
                     const symbol = pick(
@@ -2762,7 +2762,7 @@ class Series {
                         }
                     }
 
-                    if (graphic && verb === 'animate') { // update
+                    if (graphic && verb === 'animate') { // Update
                         // Since the marker group isn't clipped, each
                         // individual marker must be toggled
                         graphic[isInside ? 'show' : 'hide'](isInside)
@@ -2858,7 +2858,7 @@ class Series {
         point.hasImage = symbol && symbol.indexOf('url') === 0;
 
         if (point.hasImage) {
-            radius = 0; // and subsequently width and height is not set
+            radius = 0; // And subsequently width and height is not set
         }
 
         const pos = point.pos();
@@ -4036,7 +4036,7 @@ class Series {
             fireEvent(series, 'addPoint', { point: point });
         }
 
-        // redraw
+        // Redraw
         series.isDirty = true;
         series.isDirtyData = true;
 
@@ -4095,7 +4095,7 @@ class Series {
 
                 point?.destroy();
 
-                // redraw
+                // Redraw
                 series.isDirty = true;
                 series.isDirtyData = true;
                 if (redraw) {
@@ -4206,7 +4206,7 @@ class Series {
 
         const series = this,
             chart = series.chart,
-            // must use user options when changing type because series.options
+            // Must use user options when changing type because series.options
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
             initialType = series.initialType || series.type,
@@ -4309,8 +4309,8 @@ class Series {
             });
 
             if (options.data) {
-                // setData uses dataSorting options so we need to update them
-                // earlier
+                // `setData` uses `dataSorting` options so we need to update
+                // them earlier
                 if (options.dataSorting) {
                     extend(series.options.dataSorting, options.dataSorting);
                 }
@@ -4526,18 +4526,18 @@ class Series {
 
         pointer?.setHoverChartIndex();
 
-        // set normal state to previous series
+        // Set normal state to previous series
         if (hoverSeries && hoverSeries !== series) {
             hoverSeries.onMouseOut();
         }
 
-        // trigger the event, but to save processing time,
+        // Trigger the event, but to save processing time,
         // only if defined
         if ((series.options.events as any).mouseOver) {
             fireEvent(series, 'mouseOver');
         }
 
-        // hover this
+        // Hover this
         series.setState('hover');
 
         /**
@@ -4557,7 +4557,7 @@ class Series {
      * @emits Highcharts.Series#event:mouseOut
      */
     public onMouseOut(): void {
-        // trigger the event only if listeners exist
+        // Trigger the event only if listeners exist
         const series = this,
             options = series.options,
             chart = series.chart,
@@ -4567,18 +4567,18 @@ class Series {
         // #182, set to null before the mouseOut event fires
         chart.hoverSeries = null as any;
 
-        // trigger mouse out on the point, which must be in this series
+        // Trigger mouse out on the point, which must be in this series
         if (hoverPoint) {
             hoverPoint.onMouseOut();
         }
 
-        // fire the mouse out event
+        // Fire the mouse out event
         if (series && (options.events as any).mouseOut) {
             fireEvent(series, 'mouseOut');
         }
 
 
-        // hide the tooltip
+        // Hide the tooltip
         if (
             tooltip &&
             !series.stickyTracking &&
@@ -4923,7 +4923,7 @@ class Series {
             ?.call(this, legend, item);
     }
 
-    /** eslint-enable valid-jsdoc */
+    // eslint-enable valid-jsdoc
 
 }
 
@@ -5278,7 +5278,7 @@ export default Series;
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *
@@ -5425,4 +5425,4 @@ export default Series;
  * @apioption series.zIndex
  */
 
-''; // include precedent doclets in transpiled
+''; // Include precedent doclets in transpiled

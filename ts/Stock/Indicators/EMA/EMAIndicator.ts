@@ -179,7 +179,7 @@ class EMAIndicator extends SMAIndicator {
             yVal
         );
 
-        // first point
+        // First point
         SMA = sum / period;
 
         // Calculate value one-by-one for each period in visible data
@@ -257,4 +257,4 @@ export default EMAIndicator;
  * @apioption series.ema
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

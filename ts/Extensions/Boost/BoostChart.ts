@@ -218,7 +218,7 @@ function isChartSeriesBoosting(
         if (patientMax(
             series.getColumn('x', true),
             seriesOptions.data as any,
-            // series.xData,
+            /// series.xData,
             series.points
         ) >= (seriesOptions.boostThreshold || Number.MAX_VALUE)) {
             ++needBoostCount;
@@ -286,7 +286,7 @@ function onChartCallback(
             chart.boost.wgl.allocateBuffer(chart);
         }
 
-        // see #6518 + #6739
+        // See #6518 + #6739
         if (
             chart.boost.markerGroup &&
             chart.xAxis &&

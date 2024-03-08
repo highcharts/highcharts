@@ -405,7 +405,7 @@ class WGLRenderer {
                 series.getColumn('z').length ? series.getColumn('z') : void 0
             ) || (options as any).zData || series.getColumn('z', true),
             useRaw = !xData || xData.length === 0,
-            // threshold = options.threshold,
+            /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
             // hasThreshold = isNumber(threshold),
             // colorByPoint = series.options.colorByPoint,
@@ -432,8 +432,7 @@ class WGLRenderer {
             threshold: number = options.threshold as any,
             pixelRatio = this.getPixelRatio();
 
-        let // plotHeight = series.chart.plotHeight,
-            plotWidth = series.chart.plotWidth,
+        let plotWidth = series.chart.plotWidth,
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
@@ -501,7 +500,6 @@ class WGLRenderer {
         }
 
         if (chart.inverted) {
-            // plotHeight = series.chart.plotWidth;
             plotWidth = series.chart.plotHeight;
         }
 
@@ -748,7 +746,7 @@ class WGLRenderer {
                 continue;
             }
 
-            // px = x = y = z = nx = low = false;
+            /// px = x = y = z = nx = low = false;
             // chartDestroyed = typeof chart.index === 'undefined';
             // nextInside = prevInside = pcolor = isXInside = isYInside = false;
             // drawAsBar = asBar[series.type];
@@ -978,7 +976,7 @@ class WGLRenderer {
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
             if (inst.hasMarkers && isXInside) {
-                // x = Highcharts.correctFloat(
+                /// x = Highcharts.correctFloat(
                 //     Math.min(Math.max(-1e5, xAxis.translate(
                 //         x,
                 //         0,
@@ -1140,7 +1138,6 @@ class WGLRenderer {
             settings = this.settings;
 
         if (series.length > 0) {
-            // series[series.length - 1].to = data.length;
             if (series[series.length - 1].hasMarkers) {
                 series[series.length - 1].markerTo = markerData.length;
             }
@@ -1152,7 +1149,6 @@ class WGLRenderer {
 
         const obj = {
             segments: [],
-            // from: data.length,
             markerFrom: markerData.length,
             // Push RGBA values to this array to use per. point coloring.
             // It should be 0-padded, so each component should be pushed in
@@ -1424,7 +1420,7 @@ class WGLRenderer {
                 gl.blendEquation(gl.FUNC_MIN);
 
             } else {
-                // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                /// gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
                 // gl.blendEquation(gl.FUNC_ADD);
                 gl.blendFuncSeparate(
                     gl.SRC_ALPHA,
@@ -1593,7 +1589,7 @@ class WGLRenderer {
 
         for (let i = 0; i < contexts.length; ++i) {
             this.gl = canvas.getContext(contexts[i], {
-            //    premultipliedAlpha: false
+            //    /premultipliedAlpha: false
             }) as any;
             if (this.gl) {
                 break;
@@ -1611,10 +1607,10 @@ class WGLRenderer {
         }
 
         gl.enable(gl.BLEND);
-        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        /// gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         gl.disable(gl.DEPTH_TEST);
-        // gl.depthMask(gl.FALSE);
+        /// gl.depthMask(gl.FALSE);
         gl.depthFunc(gl.LESS);
 
         const shader = this.shader = new WGLShader(gl);
@@ -1657,7 +1653,7 @@ class WGLRenderer {
 
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, props.handle);
-                // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+                /// gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
                 gl.texImage2D(
                     gl.TEXTURE_2D,
@@ -1692,13 +1688,13 @@ class WGLRenderer {
                     gl.LINEAR
                 );
 
-                // gl.generateMipmap(gl.TEXTURE_2D);
+                /// gl.generateMipmap(gl.TEXTURE_2D);
 
                 gl.bindTexture(gl.TEXTURE_2D, null);
 
                 props.isReady = true;
             } catch (e) {
-                // silent error
+                // Silent error
             }
         };
 
