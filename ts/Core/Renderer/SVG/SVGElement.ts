@@ -1568,27 +1568,29 @@ class SVGElement implements SVGElementLike {
                                 cx + xDist * cosRad - yDist * sinRad,
                                 cy + xDist * sinRad + yDist * cosRad
                             ];
-                        };
+                        },
+                        { h } = this.renderer.fontMetrics(this.element);
+
                     // Assemble left-side vertecies of every 5th character
                     for (let i = 0; i < len; i += 5) {
-                        const { x, y, width, height } = tp.getExtentOfChar(i),
+                        const { x, y, width } = tp.getExtentOfChar(i),
                             rad = tp.getRotationOfChar(i) * deg2rad,
                             centerX = x + width / 2,
-                            centerY = y + height / 2;
+                            centerY = y + h / 2;
                         polygon.push(rotate(centerX, centerY, x, y, rad));
                         polygon.unshift(
-                            rotate(centerX, centerY, x, y + height, rad)
+                            rotate(centerX, centerY, x, y + h, rad)
                         );
                     }
 
                     // For the last char we grab the right edge
-                    const { x, y, width, height } = tp.getExtentOfChar(len),
+                    const { x, y, width } = tp.getExtentOfChar(len),
                         rad = tp.getRotationOfChar(len) * deg2rad,
                         centerX = x + width / 2,
-                        centerY = y + height / 2;
+                        centerY = y + h / 2;
                     polygon.push(rotate(centerX, centerY, x + width, y, rad));
                     polygon.unshift(
-                        rotate(centerX, centerY, x + width, y + height, rad)
+                        rotate(centerX, centerY, x + width, y + h, rad)
                     );
 
                     // Close it
