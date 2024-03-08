@@ -299,7 +299,7 @@ class HighchartsComponent extends Component {
     ): HighchartsComponent {
         const options = json.options;
         const chartOptions = JSON.parse(json.options.chartOptions || '{}');
-        // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
+        /// const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HighchartsComponent(
             cell,
@@ -418,7 +418,7 @@ class HighchartsComponent extends Component {
         });
 
         if (this.connector) {
-            // reload the store when polling
+            // Reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
                 if (e.table && this.connector) {
                     this.connector.table.setColumns(e.table.getColumns());
@@ -615,7 +615,7 @@ class HighchartsComponent extends Component {
                     return true;
                 });
 
-            // create empty series for mapping custom props of data
+            // Create empty series for mapping custom props of data
             Object.keys(columnAssignment).forEach(
                 function (key):void {
                     if (isObject(columnAssignment[key])) {

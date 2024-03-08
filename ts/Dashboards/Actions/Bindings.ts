@@ -153,7 +153,7 @@ namespace Bindings {
             cell: cell
         });
 
-        // events
+        // Events
         if (optionsEvents && optionsEvents.click) {
             addEvent(componentContainer, 'click', ():void => {
                 optionsEvents.click();
@@ -170,7 +170,7 @@ namespace Bindings {
             });
         }
 
-        // states
+        // States
         if (optionsStates?.hover) {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }
