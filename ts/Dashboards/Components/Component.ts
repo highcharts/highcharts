@@ -370,8 +370,8 @@ abstract class Component {
         );
 
         if (!Number(getStyle(this.element, 'padding'))) {
-            // fix flex problem, because of wrong height in internal elements
-            this.element.style.padding = 0.1 + 'px';
+            // Fix flex problem, because of wrong height in internal elements
+            this.element.style.padding = '0.1px';
         }
 
         this.contentElement = createElement(
