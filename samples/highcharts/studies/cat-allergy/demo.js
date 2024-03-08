@@ -151,6 +151,7 @@ toggleButton.addEventListener('click', function () {
     }
 });
 
+let previousValue = 0;
 function updateFunction() {
     const chart = Highcharts.charts[0];
     if (chart && !chart.renderer.forExport) {
@@ -178,12 +179,18 @@ function updateFunction() {
         }
         announcerDiv.innerText = announcement;
 
+        if ((previousValue > 4 && currentValue <= 4) ||
+            (previousValue <= 4 && currentValue > 4) ||
+            (previousValue <= 8 && currentValue > 8) ||
+            (previousValue > 8 && currentValue <= 8)) {
+            svg.setAttribute('aria-label', currentValue + ' cats in the room. Allergy level. Gauge chart.');
+        }
+
         // Clearning announcement after 1 second, to avoid data being read out twice if toggle is paused.
         setTimeout(() => {
             announcerDiv.innerText = '';
         }, 1000);
         lastInterval = currentInterval;
-
-        svg.setAttribute('aria-label', currentValue + ' cats in the room. Allergy level. Gauge chart.');
+        previousValue = currentValue; // Update previousValue at the end of each function call
     }
 }
