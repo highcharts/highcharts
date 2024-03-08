@@ -1,6 +1,7 @@
 ---
- name: Highcharts Demo
+ name: Cat Allergy
  authors:
    - Marita Vindedal
+   - Øystein Moseng
  js_wrap: b
 ...
