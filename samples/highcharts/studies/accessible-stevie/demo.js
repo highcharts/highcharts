@@ -161,6 +161,21 @@ Highcharts.chart('container', {
     }]
 });
 
+// Button to toggle more information
+const screenReaderSection = document.querySelector('#highcharts-screen-reader-region-before-0'),
+    moreInfoButton = document.createElement('button'),
+    infoP = document.createElement('p'),
+    infoDiv = document.createElement('div');
+
+moreInfoButton.textContent = 'Toggle more information';
+moreInfoButton.setAttribute('aria-expanded', 'true');
+infoDiv.setAttribute('id', '#info-div');
+infoDiv.style.display = 'block';
+infoP.textContent = document.getElementById('rich-description').textContent;
+
+screenReaderSection.firstChild.appendChild(moreInfoButton);
+moreInfoButton.parentNode.appendChild(infoDiv);
+infoDiv.appendChild(infoP);
 
 function createTooltipText(
     grammy, year, seriesName, y, songValues, awardValues
@@ -184,42 +199,23 @@ function createTooltipText(
     return tooltipText;
 }
 
-// Add a checkbox to the page to toggle verbosity of the chart
 document.addEventListener('DOMContentLoaded', () => {
-    const screenReaderSection = document.querySelector('#highcharts-screen-reader-region-before-0'),
-        moreInfoButton = document.createElement('button'),
-        infoDiv = document.createElement('div'),
-        infoP = document.createElement('p');
-
-    const tooltipCheckbox = document.getElementById('checkbox-info');
-    const nullpointCheckbox = document.getElementById('checkbox-nullpoint');
-
-    moreInfoButton.textContent = 'Toggle more information';
-    moreInfoButton.setAttribute('aria-expanded', 'true');
-    infoDiv.setAttribute('id', '#info-div');
-    infoDiv.style.display = 'block';
-    infoP.textContent = document.getElementById('rich-description').textContent;
-
-    screenReaderSection.firstChild.appendChild(moreInfoButton);
-    moreInfoButton.parentNode.appendChild(infoDiv);
-    infoDiv.appendChild(infoP);
-
-
     moreInfoButton.addEventListener('click', () => {
         const expanded = moreInfoButton.getAttribute('aria-expanded') === 'true';
+        const infoDiv = document.getElementById('#info-div');
 
         if (!expanded) {
-            console.log('expanded');
             infoDiv.style.display = 'block';
             moreInfoButton.setAttribute('aria-expanded', 'true');
         } else {
-            console.log('not expanded');
             infoDiv.style.display = 'none';
             moreInfoButton.setAttribute('aria-expanded', 'false');
         }
 
     });
-
+    // Verbosity settings
+    const tooltipCheckbox = document.getElementById('checkbox-info');
+    const nullpointCheckbox = document.getElementById('checkbox-nullpoint');
     nullpointCheckbox.addEventListener('change', () => {
         const chart = Highcharts.charts[0];
         const points = chart.series.map(s => s.points).flat();
