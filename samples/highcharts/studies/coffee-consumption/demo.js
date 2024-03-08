@@ -184,6 +184,6 @@ function updateFunction() {
         }, 1000);
         lastInterval = currentInterval;
 
-        svg.setAttribute('aria-label', currentValue + ' cups per day. Coffee consumption. Gauge chart.');
+        svg.setAttribute('aria-label', currentValue + ' cats in the room. Allergy level. Gauge chart.');
     }
 }
