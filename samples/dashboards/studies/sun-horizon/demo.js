@@ -325,7 +325,61 @@ const moonPhase = chart => {
 
 };
 
-let ticker;
+
+const getSliderValue = (input, date) => {
+    if (input.id === 'date-input') {
+        const newYear = new Date(date.getTime());
+        newYear.setMonth(0);
+        newYear.setDate(1);
+        newYear.setHours(0);
+        newYear.setMinutes(0);
+        newYear.setSeconds(0);
+
+        return Math.floor((date - newYear) / (24 * 36e5));
+    }
+    if (input.id === 'time-input') {
+        return date.getHours() * 60 + date.getMinutes();
+    }
+};
+
+// When the inital date is current, keep the Sun up to date
+let ticker,
+    nowButton;
+const startTicker = () => {
+    const tick = () => {
+        date = new Date();
+        const chart = board.mountedComponents
+            .map(c => c.component)
+            .find(c => c.id === 'horizon-chart')
+            .chart;
+        nowButton.classList.add('active');
+        chart.get('sun-series').points[0]?.update(
+            getCelestialBodyXY('sun', date)
+        );
+
+        const dateInput = document.getElementById('date-input');
+        if (dateInput) {
+            dateInput.value = getSliderValue(dateInput, date);
+            dateInput.dispatchEvent(new CustomEvent(
+                'input', { detail: { keepGoing: true } }
+            ));
+        }
+
+        const timeInput = document.getElementById('time-input');
+        if (timeInput) {
+            timeInput.value = getSliderValue(timeInput, date);
+            timeInput.dispatchEvent(new CustomEvent(
+                'input', { detail: { keepGoing: true } }
+            ));
+        }
+    };
+    tick();
+    ticker = setInterval(tick, 60000);
+};
+const stopTicker = () => {
+    clearInterval(ticker);
+    nowButton.classList.remove('active');
+};
 
 Highcharts.setOptions({
     time: {
@@ -333,8 +387,8 @@ Highcharts.setOptions({
     }
 });
 
-const createBoard = () => {
-    board = Dashboards.board('container', {
+const createBoard = async () => {
+    board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'horizon',
@@ -469,7 +523,6 @@ const createBoard = () => {
             chartOptions: {
                 chart: {
                     animation: false,
-                    zoomType: 'xy',
                     scrollablePlotArea: {
                         minWidth: 3000,
                         scrollPositionX: 0.5
@@ -634,7 +687,8 @@ const createBoard = () => {
                         lineWidth: 1
                     },
                     tooltip: {
-                        pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
+                        pointFormat:
+                            'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
                     },
                     zIndex: -1
                 }, {
@@ -726,6 +780,11 @@ const createBoard = () => {
                     <label id="time-input-label" for="time-input"></label>
                     <input id="time-input" type="range" min="0" max="1440" />
                 </p>
+                <p>
+                    <button class="btn btn-secondary" id="now">
+                        Now
+                    </button>
+                </p>
             </div>
             `],
             events: {
@@ -753,13 +812,7 @@ const createBoard = () => {
                                 }
                             ).format(date);
                             currentDate = date.toDateString();
-                        },
-                        newYear = new Date(date.getTime());
-                    newYear.setMonth(0);
-                    newYear.setDate(1);
-                    newYear.setHours(0);
-                    newYear.setMinutes(0);
-                    newYear.setSeconds(0);
+                        };
 
                     // While dragging slider
                     const onInput = async e => {
@@ -768,10 +821,12 @@ const createBoard = () => {
                             .find(c => c.id === 'horizon-chart')
                             .chart;
 
-                        clearInterval(ticker);
+                        if (!e.detail?.keepGoing) {
+                            stopTicker();
+                        }
 
                         date.setMonth(0);
-                        date.setDate(Number(e.target.value));
+                        date.setDate(Number(e.target.value) + 1);
                         updateDateInputLabel();
 
                         const sunTrajectoryData = getTrajectory(
@@ -828,9 +883,7 @@ const createBoard = () => {
                     dateInput.min = 0;
                     dateInput.max = 365;
 
-                    dateInput.value = Math.floor(
-                        (date - newYear) / (24 * 36e5)
-                    );
+                    dateInput.value = getSliderValue(dateInput, date);
                     updateDateInputLabel();
 
 
@@ -848,7 +901,7 @@ const createBoard = () => {
                             .find(c => c.id === 'horizon-chart')
                             .chart;
                         if (!e.detail?.keepGoing) {
-                            clearInterval(ticker);
+                            stopTicker();
                         }
                         date.setTime(
                             Date.parse(currentDate)
@@ -873,7 +926,7 @@ const createBoard = () => {
                     timeInput.min = 0;
                     timeInput.max = 1440;
 
-                    timeInput.value = date.getHours() * 60 + date.getMinutes();
+                    timeInput.value = getSliderValue(timeInput, date);
                     updateTimeInputLabel();
 
 
@@ -987,28 +1040,22 @@ const createBoard = () => {
                 }]
             }
         }]
+    }, true);
+
+    // After the board is created
+    nowButton = document.getElementById('now');
+    nowButton.addEventListener('click', () => {
+        if (!nowButton.classList.contains('active')) {
+            startTicker();
+        }
     });
+
+    // If the date is current, start the ticker
+    if (Date.now() - date.getTime() < 1000) {
+        startTicker();
+    }
 };
 
-// When the inital date is current, keep the Sun up to date
-if (Date.now() - date.getTime() < 1000) {
-    ticker = setInterval(() => {
-        date = new Date();
-        const chart = board.mountedComponents
-            .map(c => c.component)
-            .find(c => c.id === 'horizon-chart')
-            .chart;
-        chart.get('sun-series').points[0].update(getCelestialBodyXY('sun', date));
-
-        const timeInput = document.getElementById('time-input');
-        if (timeInput) {
-            timeInput.value = date.getHours() * 60 + date.getMinutes();
-            timeInput.dispatchEvent(new CustomEvent(
-                'input', { detail: { keepGoing: true } }
-            ));
-        }
-    }, 60000);
-}
 
 const applyHorizon = horizonParam => {
     const json = document.getElementById('data')?.innerText;
