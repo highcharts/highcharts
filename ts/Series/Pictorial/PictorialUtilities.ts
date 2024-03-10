@@ -104,7 +104,7 @@ function invertShadowGroup(
     yAxis: Axis
 ): void {
 
-    let inverted = yAxis.chart.inverted;
+    const inverted = yAxis.chart.inverted;
 
     if (inverted) {
         shadowGroup.attr({

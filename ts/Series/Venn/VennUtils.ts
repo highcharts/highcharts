@@ -183,14 +183,15 @@ function bisect(
     tolerance?: number,
     maxIterations?: number
 ): number {
-    let fA = f(a),
+    const fA = f(a),
         fB = f(b),
         nMax = maxIterations || 100,
-        tol = tolerance || 1e-10,
-        delta = b - a,
-        n = 1,
+        tol = tolerance || 1e-10;
+
+    let delta = b - a,
         x: (number|undefined),
-        fX: (number|undefined);
+        fX: (number|undefined),
+        n = 1;
 
     if (a >= b) {
         throw new Error('a must be smaller than b.');
@@ -264,8 +265,9 @@ function getDistanceBetweenCirclesByOverlap(
     r2: number,
     overlap: number
 ): number {
-    let maxDistance = r1 + r2,
-        distance;
+    const maxDistance = r1 + r2;
+
+    let distance: number;
 
     if (overlap <= 0) {
         // If overlap is below or equal to zero, then there is no overlap.

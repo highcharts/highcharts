@@ -2025,10 +2025,11 @@ class Navigator {
                 this.chart,
                 'getMargins',
                 function (): void {
-                    let chart = this,
-                        navigator = chart.navigator as Navigator,
-                        marginName = navigator.opposite ?
-                            'plotTop' : 'marginBottom';
+                    const chart = this,
+                        navigator = chart.navigator as Navigator;
+
+                    let marginName = navigator.opposite ?
+                        'plotTop' : 'marginBottom';
 
                     if (chart.inverted) {
                         marginName = navigator.opposite ?

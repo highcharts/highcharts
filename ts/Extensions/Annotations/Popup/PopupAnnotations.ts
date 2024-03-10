@@ -154,7 +154,7 @@ function addToolbar(
     }
 
     // Create label
-    let label = createElement(
+    const label = createElement(
         'p',
         {
             className: 'highcharts-annotation-label'

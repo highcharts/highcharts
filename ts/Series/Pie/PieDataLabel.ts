@@ -679,11 +679,12 @@ namespace ColumnDataLabel {
         overflow: Array<number>
     ): boolean {
 
-        let center = this.center,
+        const center = this.center,
             options = this.options,
             centerOption = options.center,
-            minSize = options.minSize || 80,
-            newSize = minSize,
+            minSize = options.minSize || 80;
+
+        let newSize = minSize,
             // If a size is set, return true and don't try to shrink the pie
             // to fit the labels.
             ret = options.size !== null;

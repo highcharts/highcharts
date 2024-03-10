@@ -148,11 +148,12 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public deferLayout(): void {
-        let layoutOptions = this.options.layoutAlgorithm,
+        const layoutOptions = this.options.layoutAlgorithm,
+            chartOptions = this.chart.options.chart;
+
+        let layout: ReingoldFruchtermanLayout,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
-            graphLayoutsLookup = this.chart.graphLayoutsLookup,
-            chartOptions = this.chart.options.chart,
-            layout: ReingoldFruchtermanLayout;
+            graphLayoutsLookup = this.chart.graphLayoutsLookup;
 
         if (!this.visible) {
             return;
@@ -384,13 +385,14 @@ class NetworkgraphSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        let pointState = state || point && point.state || 'normal',
-            attribs = Series.prototype.pointAttribs.call(
-                this,
-                point,
-                pointState
-            ),
+        const pointState = state || point && point.state || 'normal',
             stateOptions = (this.options.states as any)[pointState];
+
+        let attribs = Series.prototype.pointAttribs.call(
+            this,
+            point,
+            pointState
+        );
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
