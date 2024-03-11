@@ -635,9 +635,8 @@ class RangeSelector {
 
                     if (state === 2) {
                         dropdown.selectedIndex = i + 1;
-                        dropdownLabel
-                            .attr({ text: rangeOptions.text + ' ▾' })
-                            .setState(2);
+                        dropdownLabel.setState(2);
+                        dropdownLabel.attr({ text: rangeOptions.text + ' ▾' });
                     }
                 }
 
@@ -1538,7 +1537,10 @@ class RangeSelector {
                 );
 
                 this.alignButtonGroup(xOffsetForExportButton);
-                this.dropdownLabel.attr({ y: this.buttonGroup?.translateY });
+                if (this.buttonGroup?.translateY) {
+                    this.dropdownLabel
+                        .attr({ y: this.buttonGroup.translateY + 0.5 });
+                }
 
                 // Skip animation
                 group.placed = buttonGroup.placed = chart.hasLoaded;
