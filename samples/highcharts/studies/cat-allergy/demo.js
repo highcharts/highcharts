@@ -166,13 +166,13 @@ function updateFunction() {
         let announcement;
         let currentInterval;
         if (currentValue <= 4) {
-            announcement = 'Green zone, ' + currentValue + ' cats in the living room.';
+            announcement = 'Green zone, ' + currentValue + ' cats.';
             currentInterval = 'green';
         } else if (currentValue <= 8) {
-            announcement = 'Yellow zone, ' + currentValue + ' cats in the living room.';
+            announcement = 'Yellow zone, ' + currentValue + ' cats.';
             currentInterval = 'yellow';
         } else {
-            announcement = 'Red zone, ' + currentValue + ' cats in the living room.';
+            announcement = 'Red zone, ' + currentValue + ' cats.';
             currentInterval = 'red';
         }
 
