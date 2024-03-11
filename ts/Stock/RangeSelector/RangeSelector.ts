@@ -1989,7 +1989,7 @@ class RangeSelector {
 
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
-            (rangeSelectorGroup.getBBox(true).height) + 13 +
+            (rangeSelectorGroup.getBBox(true).height) + 12.5 +
                 yPosition :
             0;
 
