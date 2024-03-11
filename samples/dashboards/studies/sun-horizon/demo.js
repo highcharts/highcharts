@@ -60,23 +60,14 @@ const getTrajectory = (
             }
         }
 
-        let dataLabels;
+        let flag;
         // Sunrise above horizon
         if (
             trajectory.length &&
             horizonPoint.angle <= y &&
-            trajectory.at(-1).horizonPoint.angle >= trajectory.at(-1).y &&
-            // Special case, remove when we fixed overlapping rotated data
-            // labels
-            Math.floor(x) !== 166
+            trajectory.at(-1).horizonPoint.angle >= trajectory.at(-1).y
         ) {
-            dataLabels = {
-                align: 'left',
-                rotation: -90,
-                enabled: true,
-                format: `→ ${hourFormat}`,
-                x: -12
-            };
+            flag = `↑ ${hourFormat}`;
 
         // Sunset below horizon
         } else if (
@@ -84,13 +75,7 @@ const getTrajectory = (
             horizonPoint.angle >= y &&
             trajectory.at(-1).horizonPoint.angle <= trajectory.at(-1).y
         ) {
-            dataLabels = {
-                align: 'right',
-                rotation: 90,
-                enabled: true,
-                format: `${hourFormat} →`,
-                x: 12
-            };
+            flag = `↓ ${hourFormat}`;
         }
 
         if (
@@ -98,12 +83,12 @@ const getTrajectory = (
             !trajectory.length ||
             x > trajectory.at(-1).x + 5 ||
             x < trajectory.at(-1).x ||
-            dataLabels
+            flag
         ) {
             trajectory.push({
                 x,
                 y,
-                dataLabels,
+                flag,
                 horizonPoint,
                 custom: {
                     datetime: tDate.getTime()
@@ -325,7 +310,61 @@ const moonPhase = chart => {
 
 };
 
-let ticker;
+
+const getSliderValue = (input, date) => {
+    if (input.id === 'date-input') {
+        const newYear = new Date(date.getTime());
+        newYear.setMonth(0);
+        newYear.setDate(1);
+        newYear.setHours(0);
+        newYear.setMinutes(0);
+        newYear.setSeconds(0);
+
+        return Math.floor((date - newYear) / (24 * 36e5));
+    }
+    if (input.id === 'time-input') {
+        return date.getHours() * 60 + date.getMinutes();
+    }
+};
+
+// When the inital date is current, keep the Sun up to date
+let ticker,
+    nowButton;
+const startTicker = () => {
+    const tick = () => {
+        date = new Date();
+        const chart = board.mountedComponents
+            .map(c => c.component)
+            .find(c => c.id === 'horizon-chart')
+            .chart;
+        nowButton.classList.add('active');
+        chart.get('sun-series').points[0]?.update(
+            getCelestialBodyXY('sun', date)
+        );
+
+        const dateInput = document.getElementById('date-input');
+        if (dateInput) {
+            dateInput.value = getSliderValue(dateInput, date);
+            dateInput.dispatchEvent(new CustomEvent(
+                'input', { detail: { keepGoing: true } }
+            ));
+        }
+
+        const timeInput = document.getElementById('time-input');
+        if (timeInput) {
+            timeInput.value = getSliderValue(timeInput, date);
+            timeInput.dispatchEvent(new CustomEvent(
+                'input', { detail: { keepGoing: true } }
+            ));
+        }
+    };
+    tick();
+    ticker = setInterval(tick, 60000);
+};
+const stopTicker = () => {
+    clearInterval(ticker);
+    nowButton.classList.remove('active');
+};
 
 Highcharts.setOptions({
     time: {
@@ -333,8 +372,8 @@ Highcharts.setOptions({
     }
 });
 
-const createBoard = () => {
-    board = Dashboards.board('container', {
+const createBoard = async () => {
+    board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
                 id: 'horizon',
@@ -412,47 +451,55 @@ const createBoard = () => {
         },
         components: [{
             connector: {
-                id: 'horizon'
+                id: 'horizon',
+                columnAssignment: [{
+                    seriesId: 'land',
+                    data: ['azimuth', 'angle']
+                }]
             },
             cell: 'horizon-chart',
             id: 'horizon-chart',
             type: 'Highcharts',
-            columnAssignment: {
-                azimuth: 'x',
-                Horizon: {
-                    y: 'angle'
-                }
-            },
             events: {
                 mount: async function () {
 
                     // @todo Is it possible to apply multiple connectors to one
                     // chart through config?
                     const dataPool = this.board.dataPool,
-                        sunTrajectory = await dataPool.getConnectorTable(
+                        sunTrajectoryTable = await dataPool.getConnectorTable(
                             'sun-trajectory-data'
                         ),
-                        moonTrajectory = await dataPool.getConnectorTable(
+                        sunData = sunTrajectoryTable.getRowObjects(),
+                        sunFlags = sunData.filter(p => p.flag)
+                            .map(p => ({
+                                x: p.x,
+                                title: p.flag
+                            })),
+                        moonTrajectoryTable = await dataPool.getConnectorTable(
                             'moon-trajectory-data'
                         ),
-                        contours = await dataPool.getConnectorTable(
+                        moonData = moonTrajectoryTable.getRowObjects(),
+                        moonFlags = moonData.filter(p => p.flag)
+                            .map(p => ({
+                                x: p.x,
+                                title: p.flag
+                            })),
+                        contoursTable = await dataPool.getConnectorTable(
                             'contours-data'
                         );
 
-                    this.chart.get('sun-trajectory').setData(
-                        sunTrajectory.getRowObjects(),
-                        false
-                    );
+                    this.chart.get('sun-trajectory').setData(sunData, false);
+
+                    this.chart.get('sun-flags').setData(sunFlags, false);
 
                     this.chart.get('sun-series').setData([{
                         id: 'sun-point',
                         ...getCelestialBodyXY('sun', date)
                     }], false);
 
-                    this.chart.get('moon-trajectory').setData(
-                        moonTrajectory.getRowObjects(),
-                        false
-                    );
+                    this.chart.get('moon-trajectory').setData(moonData, false);
+
+                    this.chart.get('moon-flags').setData(moonFlags, false);
 
                     this.chart.get('moon-series').setData([{
                         id: 'moon-point',
@@ -460,7 +507,7 @@ const createBoard = () => {
                     }], false);
 
                     this.chart.get('contours').setData(
-                        contours.getRows(),
+                        contoursTable.getRows(),
                         false
                     );
                     this.chart.redraw();
@@ -469,10 +516,9 @@ const createBoard = () => {
             chartOptions: {
                 chart: {
                     animation: false,
-                    zoomType: 'xy',
                     scrollablePlotArea: {
                         minWidth: 3000,
-                        scrollPositionX: 0.5
+                        scrollPositionX: date.getHours() / 23
                     },
                     margin: [0, 0, 60, 0],
                     events: {
@@ -563,6 +609,13 @@ const createBoard = () => {
                             }
                         },
                         turboThreshold: Infinity
+                    },
+                    flags: {
+                        borderRadius: 3,
+                        shape: 'squarepin',
+                        opacity: 0.75,
+                        lineWidth: 2,
+                        y: -50
                     }
                 },
                 series: [{
@@ -602,6 +655,14 @@ const createBoard = () => {
                     zIndex: -2,
                     enableMouseTracking: false
                 }, {
+                    type: 'flags',
+                    id: 'sun-flags',
+                    name: 'Sun flags',
+                    onSeries: 'sun-trajectory',
+                    color: '#FFFFD0',
+                    fillColor: '#FFFFD0',
+                    zIndex: -1
+                }, {
                     type: 'scatter',
                     id: 'sun-series',
                     name: 'The Sun',
@@ -634,7 +695,8 @@ const createBoard = () => {
                         lineWidth: 1
                     },
                     tooltip: {
-                        pointFormat: 'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
+                        pointFormat:
+                            'Azimuth: {point.x:.2f}°, angle: {point.y:.2f}°'
                     },
                     zIndex: -1
                 }, {
@@ -662,6 +724,14 @@ const createBoard = () => {
                     },
                     */
                     enableMouseTracking: false,
+                    zIndex: -2
+                }, {
+                    type: 'flags',
+                    id: 'moon-flags',
+                    name: 'Moon flags',
+                    onSeries: 'moon-trajectory',
+                    color: '#D0FFFF',
+                    fillColor: '#D0FFFF',
                     zIndex: -2
                 }, {
                     type: 'scatter',
@@ -726,6 +796,11 @@ const createBoard = () => {
                     <label id="time-input-label" for="time-input"></label>
                     <input id="time-input" type="range" min="0" max="1440" />
                 </p>
+                <p>
+                    <button class="btn btn-secondary" id="now">
+                        Now
+                    </button>
+                </p>
             </div>
             `],
             events: {
@@ -753,13 +828,7 @@ const createBoard = () => {
                                 }
                             ).format(date);
                             currentDate = date.toDateString();
-                        },
-                        newYear = new Date(date.getTime());
-                    newYear.setMonth(0);
-                    newYear.setDate(1);
-                    newYear.setHours(0);
-                    newYear.setMinutes(0);
-                    newYear.setSeconds(0);
+                        };
 
                     // While dragging slider
                     const onInput = async e => {
@@ -768,10 +837,12 @@ const createBoard = () => {
                             .find(c => c.id === 'horizon-chart')
                             .chart;
 
-                        clearInterval(ticker);
+                        if (!e.detail?.keepGoing) {
+                            stopTicker();
+                        }
 
                         date.setMonth(0);
-                        date.setDate(Number(e.target.value));
+                        date.setDate(Number(e.target.value) + 1);
                         updateDateInputLabel();
 
                         const sunTrajectoryData = getTrajectory(
@@ -779,12 +850,21 @@ const createBoard = () => {
                                 horizon.elevationProfile,
                                 e.type === 'input'
                             ),
+                            sunFlags = sunTrajectoryData.filter(p => p.flag)
+                                .map(p => ({
+                                    x: p.x,
+                                    title: p.flag
+                                })),
                             moonTrajectoryData = getTrajectory(
                                 'moon',
                                 horizon.elevationProfile,
                                 e.type === 'input'
-                            );
-
+                            ),
+                            moonFlags = moonTrajectoryData.filter(p => p.flag)
+                                .map(p => ({
+                                    x: p.x,
+                                    title: p.flag
+                                }));
 
                         // @todo - this is not working because the chart is not
                         // really connected to the table, it is just
@@ -798,12 +878,20 @@ const createBoard = () => {
                             sunTrajectoryData,
                             false
                         );
+                        chart.get('sun-flags').setData(
+                            sunFlags,
+                            false
+                        );
                         chart.get('sun-point').update(
                             getCelestialBodyXY('sun', date),
                             false
                         );
                         chart.get('moon-trajectory').setData(
                             moonTrajectoryData,
+                            false
+                        );
+                        chart.get('moon-flags').setData(
+                            moonFlags,
                             false
                         );
                         chart.get('moon-point').update(
@@ -828,9 +916,7 @@ const createBoard = () => {
                     dateInput.min = 0;
                     dateInput.max = 365;
 
-                    dateInput.value = Math.floor(
-                        (date - newYear) / (24 * 36e5)
-                    );
+                    dateInput.value = getSliderValue(dateInput, date);
                     updateDateInputLabel();
 
 
@@ -848,7 +934,7 @@ const createBoard = () => {
                             .find(c => c.id === 'horizon-chart')
                             .chart;
                         if (!e.detail?.keepGoing) {
-                            clearInterval(ticker);
+                            stopTicker();
                         }
                         date.setTime(
                             Date.parse(currentDate)
@@ -873,7 +959,7 @@ const createBoard = () => {
                     timeInput.min = 0;
                     timeInput.max = 1440;
 
-                    timeInput.value = date.getHours() * 60 + date.getMinutes();
+                    timeInput.value = getSliderValue(timeInput, date);
                     updateTimeInputLabel();
 
 
@@ -987,28 +1073,22 @@ const createBoard = () => {
                 }]
             }
         }]
+    }, true);
+
+    // After the board is created
+    nowButton = document.getElementById('now');
+    nowButton.addEventListener('click', () => {
+        if (!nowButton.classList.contains('active')) {
+            startTicker();
+        }
     });
+
+    // If the date is current, start the ticker
+    if (Date.now() - date.getTime() < 1000) {
+        startTicker();
+    }
 };
 
-// When the inital date is current, keep the Sun up to date
-if (Date.now() - date.getTime() < 1000) {
-    ticker = setInterval(() => {
-        date = new Date();
-        const chart = board.mountedComponents
-            .map(c => c.component)
-            .find(c => c.id === 'horizon-chart')
-            .chart;
-        chart.get('sun-series').points[0].update(getCelestialBodyXY('sun', date));
-
-        const timeInput = document.getElementById('time-input');
-        if (timeInput) {
-            timeInput.value = date.getHours() * 60 + date.getMinutes();
-            timeInput.dispatchEvent(new CustomEvent(
-                'input', { detail: { keepGoing: true } }
-            ));
-        }
-    }, 60000);
-}
 
 const applyHorizon = horizonParam => {
     const json = document.getElementById('data')?.innerText;

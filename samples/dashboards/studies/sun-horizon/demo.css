@@ -28,3 +28,9 @@ p {
 pre#data {
     display: none;
 }
+
+.btn-secondary.active {
+    color: #fff;
+    background-color: #0275d8;
+    border-color: #0275d8;
+}

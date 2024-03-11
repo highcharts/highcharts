@@ -2,7 +2,7 @@ const speedLimit = 150;
 
 const board = Dashboards.board('container', {
     components: [{
-        cell: 'kpi-00',
+        renderTo: 'kpi-00',
         type: 'KPI',
         title: 'Speed',
         value: 200,

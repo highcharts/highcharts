@@ -35,6 +35,7 @@ import type Component from '../Components/Component.js';
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
+import Board from '../Board';
 const {
     addEvent,
     fireEvent,
@@ -56,7 +57,7 @@ namespace Bindings {
      * */
 
     export interface MountedComponent {
-        cell: Cell;
+        cell: Cell|Cell.DOMCell;
         component: ComponentType;
         options: Partial<Component.Options>;
     }
@@ -88,22 +89,32 @@ namespace Bindings {
 
     export async function addComponent(
         options: Partial<ComponentType['options']>,
+        board: Board,
         cell?: Cell
     ): Promise<(Component|void)> {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
+        const renderTo = options.renderTo || options.cell;
 
-        cell = cell || Bindings.getCell(options.cell || '');
-
-        if (!cell?.container || !options.type) {
+        if (!renderTo) {
             error(
-                `The component is misconfigured and is unable to find the
-                HTML cell element ${options.cell} to render the content.`
+                'The `renderTo` option is required to render the component.'
             );
             return;
         }
 
-        const componentContainer = cell.container;
+        cell = cell || Bindings.getCell(renderTo);
+
+        const componentContainer =
+            cell?.container || document.querySelector('#' + renderTo);
+
+        if (!componentContainer || !options.type) {
+            error(
+                'The component is misconfigured and is unable to find the' +
+                'HTML cell element ${renderTo} to render the content.'
+            );
+            return;
+        }
 
         let ComponentClass =
             ComponentRegistry.types[options.type] as Class<ComponentType>;
@@ -112,19 +123,22 @@ namespace Bindings {
             error(
                 `The component's type ${options.type} does not exist.`
             );
-            ComponentClass =
-                ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
-            options.title = {
-                text: cell.row.layout.board?.editMode?.lang.errorMessage,
-                className:
-                    Globals.classNamePrefix + 'component-title-error ' +
-                    Globals.classNamePrefix + 'component-title'
-            };
+            if (cell) {
+                ComponentClass =
+                    ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
+                options.title = {
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                };
+            }
         }
 
-        const component = new ComponentClass(cell, options);
+        const component = new ComponentClass(cell, options, board);
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
             console.error(e);
@@ -133,8 +147,8 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text:
-                        cell?.row?.layout?.board?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -142,16 +156,23 @@ namespace Bindings {
             });
         });
 
-        fireEvent(component, 'mount');
+        if (cell) {
+            component.setCell(cell);
+            cell.mountedComponent = component;
+        }
 
-        component.setCell(cell);
-        cell.mountedComponent = component;
 
-        cell.row.layout.board.mountedComponents.push({
+        board.mountedComponents.push({
             options: options,
             component: component,
-            cell: cell
+            cell: cell || {
+                id: renderTo,
+                container: componentContainer as HTMLElement,
+                mountedComponent: component
+            }
         });
+
+        fireEvent(component, 'mount');
 
         // Events
         if (optionsEvents && optionsEvents.click) {
@@ -191,7 +212,8 @@ namespace Bindings {
         if (!componentClass) {
             return;
         }
-        const cell = Bindings.getCell(json.options.cell || '');
+
+        const cell = Bindings.getCell(json.options.renderTo || '');
         if (!cell) {
             return;
         }

@@ -9,9 +9,7 @@ class YouTubeComponent extends Component {
     }
 
     resize(width, height) {
-        super.resize.call(this, width, height);
-        this.youTubeElement.setAttribute('width', width - 10); // padding
-        this.youTubeElement.setAttribute('height', height - 10); // padding
+        super.resize(width, height);
     }
 
     async load() {
@@ -44,7 +42,7 @@ class YouTubeComponent extends Component {
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
-            cell: '',
+            renderTo: '',
             type: 'YouTube',
             videoId: '115hdz9NsrY'
         };
@@ -80,7 +78,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'chart',
+        renderTo: 'chart',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -88,7 +86,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'yt-highsoft',
+        renderTo: 'yt-highsoft',
         type: 'YouTube',
         videoId: '115hdz9NsrY',
         editableOptions: [{

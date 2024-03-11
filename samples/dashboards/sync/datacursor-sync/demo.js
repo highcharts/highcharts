@@ -10,31 +10,8 @@ Dashboards.board('container', {
             id: 'dashboards-layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'highcharts-dashboards-cell-a0'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-
-                    },
                     id: 'highcharts-dashboards-cell-b0'
                 }]
             }, {
@@ -46,15 +23,15 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'highcharts-dashboards-cell-a0',
+            renderTo: 'highcharts-dashboards-cell-a0',
             type: 'Highcharts',
             chartOptions: buildChartOptions('bar', vegeTable, cursor)
         }, {
-            cell: 'highcharts-dashboards-cell-b0',
+            renderTo: 'highcharts-dashboards-cell-b0',
             type: 'Highcharts',
             chartOptions: buildChartOptions('pie', vegeTable, cursor)
         }, {
-            cell: 'highcharts-dashboards-cell-a1',
+            renderTo: 'highcharts-dashboards-cell-a1',
             type: 'Highcharts',
             chartOptions: buildChartOptions('line', vegeTable, cursor)
         }
