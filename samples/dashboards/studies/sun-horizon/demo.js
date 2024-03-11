@@ -424,25 +424,11 @@ const createBoard = async () => {
             layouts: [{
                 rows: [{
                     cells: [{
-                        id: 'horizon-chart',
-                        width: '100%'
+                        id: 'horizon-chart'
                     }, {
-                        id: 'controls',
-                        width: '50%',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            }
-                        }
-
+                        id: 'controls'
                     }, {
-                        id: 'times',
-                        width: '50%',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'times'
                     }, {
                         id: 'horizon-map'
                     }]
