@@ -16,7 +16,6 @@ Highcharts.addEvent(Highcharts.Chart, 'aftergetTableAST', function (e) {
     });
 });
 
-
 Highcharts.chart('container', {
     chart: {
         type: 'column',
@@ -146,16 +145,24 @@ Highcharts.chart('container', {
         }
     },
     series: [{
+        borderColor: '#B18B0F',
+        borderWidth: 1,
         color: '#B18B0F',
         custom: {
             seriesDescription: 'wins, bar series 1 of 2',
             actualNumBars: 10
         }
     }, {
-        color: '#214769',
-        custom: {
-            seriesDescription: 'nominations, bar series 2 of 2',
-            actualNumBars: 22
+        borderColor: '#214769',
+        borderWidth: 1,
+        color: {
+            pattern: {
+                path: 'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+                color: '#214769',
+                backgroundColor: '#21476920',
+                width: 5.5,
+                height: 5.5
+            }
         }
     }]
 });
