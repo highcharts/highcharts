@@ -53,7 +53,8 @@ const chart = Highcharts.chart('container', {
         reversed: true
     },
     tooltip: {
-        pointFormat: '<b><span style="color:{point.color}">●</span> {point.y} {series.name}</b><br>{point.custom.longdesc}'
+        pointFormat: '<b><span style="color:{point.color}">●</span> {point.y} {series.name}</b><br>{point.custom.longdesc}',
+        stickOnContact: true
     },
     series: [{
         name: 'Strawberries',
@@ -238,6 +239,7 @@ soundGuide.className = 'sound-button';
 soundGuide.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt=""> Sound guide';
 soundGuide.setAttribute('aria-label', 'Sound guide, Total fruit consumption');
 soundGuide.onclick = () => {
+    chart.sonification.cancel();
     chart.sonification.speak('Range of tones for bars, values 11 to 13');
     play('flute', 62, 2600);
     play('flute', 66, 3100);
@@ -491,7 +493,7 @@ Highcharts.extend(CustomSeriesNav.prototype, {
             speakDataAtCurrent = drillChange => {
                 const { drill, x, y } = component.dataPos,
                     content = component.dataContent[drill][x][y],
-                    drillAnnouncement = drillChange ? `Detail level ${drill}. ` : '';
+                    drillAnnouncement = drillChange ? `Detail level ${drill + 1} of 4. ` : '';
                 highlightCurrent();
                 announce(drillAnnouncement + (drillChange ?
                     [
