@@ -2,6 +2,35 @@ Edit mode
 ===
 
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
+To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.
+The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
+
+```html
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+```
+
+Alternatively, you can also use the NPM package.
+
+```bash
+npm install highcharts @highcharts/dashboards
+```
+
+and import it in your project like:
+```js
+import * as Dashboards from '@highcharts/dashboards';
+import LayoutModule from '@highcharts/dashboards/modules/layout';
+
+LayoutModule(Dashboards);
+```
+
+If you use ESM, you can also import the modules directly from the package:
+
+```js
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
+```
+
 
 In addition, this option has to be enabled in the dashboard config:
 ```js
@@ -22,9 +51,7 @@ When edit mode is enabled, the appearance of the dashboard changes. When hoverin
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 
-Next to the burger menu, some additional buttons are added.
-
-The “Large”, “Medium”, and “Small” buttons change the width of the dashboard, to let the designer check how the dashboard will appear on smaller screens such as tablets and smartphones.
+Next to the burger menu, the [Add Component](#add-component) button is added.
 
 
 ## Add Component

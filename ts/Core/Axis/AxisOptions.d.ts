@@ -259,7 +259,7 @@ export interface AxisTitleOptions {
 }
 
 export interface XAxisOptions extends AxisOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface YAxisOptions extends AxisOptions {

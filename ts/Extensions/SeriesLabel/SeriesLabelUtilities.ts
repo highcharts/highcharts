@@ -80,10 +80,10 @@ function boxIntersectLine(
     y2: number
 ): boolean {
     return (
-        intersectLine(x, y, x + w, y, x1, y1, x2, y2) || // top of label
-        intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right
-        intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom
-        intersectLine(x, y, x, y + h, x1, y1, x2, y2) // left of label
+        intersectLine(x, y, x + w, y, x1, y1, x2, y2) || // Top of label
+        intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // Right
+        intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // Bottom
+        intersectLine(x, y, x, y + h, x1, y1, x2, y2) // Left of label
     );
 }
 

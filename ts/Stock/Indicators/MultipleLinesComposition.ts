@@ -219,7 +219,7 @@ namespace MultipleLinesComposition {
                     gapSize: mainLineOptions.gapSize
                 }
             },
-            // additional lines point place holders:
+            // Additional lines point place holders:
             secondaryLines = [] as Array<Array<SMAPoint>>,
             secondaryLinesNames = getTranslatedLinesNames(
                 indicator,
@@ -233,7 +233,7 @@ namespace MultipleLinesComposition {
         // Generate points for additional lines:
         secondaryLinesNames.forEach((plotLine, index): void => {
 
-            // create additional lines point place holders
+            // Create additional lines point place holders
             secondaryLines[index] = [];
 
             while (pointsLength--) {

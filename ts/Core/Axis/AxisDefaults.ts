@@ -2363,7 +2363,7 @@ namespace AxisDefaults {
          */
         tickColor: Palette.neutralColor80
 
-        // tickWidth: 1
+        // `tickWidth: 1`
     };
 
     /**

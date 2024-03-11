@@ -116,7 +116,7 @@ class SupertrendIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * Multiplier for Supertrend Indicator.
              */
@@ -570,7 +570,7 @@ class SupertrendIndicator extends SMAIndicator {
             supertrend: (number|undefined),
             prevFinalUp: number,
             prevFinalDown: number,
-            prevST: (number|undefined), // previous Supertrend
+            prevST: (number|undefined), // Previous Supertrend
             prevY: Array<number>,
             y: Array<number>,
             i: number;
@@ -708,4 +708,4 @@ export default SupertrendIndicator;
  * @apioption series.supertrend
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

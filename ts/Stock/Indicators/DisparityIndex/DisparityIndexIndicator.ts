@@ -121,7 +121,7 @@ class DisparityIndexIndicator extends SMAIndicator {
     public init(): void {
         const args = arguments,
             ctx = this, // Disparity Index indicator
-            params = args[1].params, // options.params
+            params = args[1].params, // Options.params
             averageType = params && params.average ? params.average : void 0;
 
         ctx.averageIndicator = SeriesRegistry
@@ -249,4 +249,4 @@ export default DisparityIndexIndicator;
  * @apioption series.disparityindex
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

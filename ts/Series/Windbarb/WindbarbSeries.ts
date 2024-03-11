@@ -188,16 +188,16 @@ class WindbarbSeries extends ColumnSeries {
 
         // The stem and the arrow head
         const path: SVGPath = [
-            ['M', 0, 7 * u], // base of arrow
+            ['M', 0, 7 * u], // Base of arrow
             ['L', -1.5 * u, 7 * u],
             ['L', 0, 10 * u],
             ['L', 1.5 * u, 7 * u],
             ['L', 0, 7 * u],
-            ['L', 0, -10 * u] // top
+            ['L', 0, -10 * u] // Top
         ];
 
         // For each full 50 knots, add a pennant
-        barbs = (knots - knots % 50) / 50; // pennants
+        barbs = (knots - knots % 50) / 50; // Pennants
         if (barbs > 0) {
             while (barbs--) {
                 path.push(
@@ -226,7 +226,7 @@ class WindbarbSeries extends ColumnSeries {
         }
 
         // For each full 5 knots, add a half barb
-        barbs = (knots - knots % 5) / 5; // half barbs
+        barbs = (knots - knots % 5) / 5; // Half barbs
         if (barbs > 0) {
             while (barbs--) {
                 path.push(

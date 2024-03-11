@@ -242,7 +242,7 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  * @apioption series.tilemap.data.y
  */
 
-''; // keeps doclets above detached
+''; // Keeps doclets above detached
 
 /* *
  *

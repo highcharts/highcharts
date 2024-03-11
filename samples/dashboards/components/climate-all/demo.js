@@ -102,154 +102,38 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'world-map',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'world-map'
                     }, {
                         id: 'kpi-layout',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        },
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'kpi-data',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-data'
                                 }, {
-                                    id: 'kpi-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-temperature'
                                 }, {
-                                    id: 'kpi-max-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-max-temperature'
                                 }, {
-                                    id: 'kpi-rain',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-rain'
                                 }, {
-                                    id: 'kpi-ice',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-ice'
                                 }, {
-                                    id: 'kpi-frost',
-                                    responsive: {
-                                        large: {
-                                            width: '1/3'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-frost'
                                 }]
                             }]
                         }
                     }]
                 }, {
                     cells: [{
-                        id: 'selection-grid',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'selection-grid'
                     }, {
-                        id: 'city-chart',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'city-chart'
                     }]
                 }]
             }]
         },
         components: [{
-            cell: 'time-range-selector',
+            renderTo: 'time-range-selector',
             type: 'Navigator',
             chartOptions: {
                 chart: {
@@ -299,7 +183,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'world-map',
+            renderTo: 'world-map',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
             chartOptions: {
@@ -408,14 +292,14 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-data',
+            renderTo: 'kpi-data',
             type: 'KPI',
             title: activeCity,
             value: 10,
             valueFormat: '{value:.0f}m',
             subtitle: 'Elevation'
         }, {
-            cell: 'kpi-temperature',
+            renderTo: 'kpi-temperature',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -486,7 +370,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-max-temperature',
+            renderTo: 'kpi-max-temperature',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -560,7 +444,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-rain',
+            renderTo: 'kpi-rain',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -630,7 +514,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-ice',
+            renderTo: 'kpi-ice',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -701,7 +585,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-frost',
+            renderTo: 'kpi-frost',
             type: 'KPI',
             chartOptions: {
                 chart: {
@@ -772,7 +656,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'selection-grid',
+            renderTo: 'selection-grid',
             type: 'DataGrid',
             connector: {
                 id: 'Range Selection'
@@ -824,12 +708,11 @@ async function setupBoard() {
             },
             editable: true
         }, {
-            cell: 'city-chart',
+            renderTo: 'city-chart',
             type: 'Highcharts',
             connector: {
                 id: 'Range Selection'
             },
-            columnAssignment: {},
             sync: {
                 highlight: true
             },
@@ -1098,16 +981,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data grid and city chart
     if (newData) {
         const showCelsius = scale === 'C';
-        const sharedColumnAssignment = {
-            time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
-            RR1: column === 'RR1' ? 'y' : null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null
-        };
 
         // Update city grid selection
         await selectionGrid.update({
@@ -1126,13 +999,17 @@ async function updateBoard(board, city, column, scale, newData) {
                         show: !showCelsius
                     }
                 }
-            },
-            columnAssignment: sharedColumnAssignment
+            }
         });
 
         // Update city chart selection
         await cityChart.update({
-            columnAssignment: sharedColumnAssignment,
+            connector: {
+                columnAssignment: [{
+                    seriesId: column,
+                    data: ['x', column]
+                }]
+            },
             chartOptions: {
                 chart: {
                     type: column[0] === 'T' ? 'spline' : 'column'

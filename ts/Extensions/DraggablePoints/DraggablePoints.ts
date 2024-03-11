@@ -576,7 +576,7 @@ function pointGetDropValues(
             }
 
             if (key === 'lat') {
-                // if map is bigger than possible projection range
+                // If map is bigger than possible projection range
                 if (isNaN(min) || min > mapView.projection.maxLatitude) {
                     min = mapView.projection.maxLatitude;
                 }
@@ -585,14 +585,14 @@ function pointGetDropValues(
                     max = -1 * mapView.projection.maxLatitude;
                 }
 
-                // swap for latitude
+                // Swap for latitude
                 const temp = max;
                 max = min;
                 min = temp;
             }
 
             if (!mapView.projection.hasCoordinates) {
-                // establish y value
+                // Establish y value
                 const lonLatRes = mapView.pixelsToLonLat({
                     x: newPos.chartX - chart.plotLeft,
                     y: chart.plotHeight - newPos.chartY + chart.plotTop
@@ -1037,4 +1037,4 @@ export default DraggablePoints;
  * @type {"drop"}
  */
 
-''; // detaches doclets above
+''; // Detaches doclets above

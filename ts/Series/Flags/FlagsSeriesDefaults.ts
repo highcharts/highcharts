@@ -329,7 +329,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * @apioption series.flags.data.title
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file
 
 /* *
  *

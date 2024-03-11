@@ -162,7 +162,7 @@ namespace BrandLightTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#fff',

@@ -637,11 +637,11 @@ class SunburstSeries extends TreemapSeries {
                 tooltipPos: [(shape as any).plotX, (shape as any).plotY],
                 drillId: getDrillId(point, idRoot, nodeMap),
                 name: '' + (point.name || point.id || point.index),
-                plotX: (shape as any).plotX, // used for data label position
-                plotY: (shape as any).plotY, // used for data label position
+                plotX: (shape as any).plotX, // Used for data label position
+                plotY: (shape as any).plotY, // Used for data label position
                 value: node.val,
                 isInside: visible,
-                isNull: !visible // used for dataLabels & point.draw
+                isNull: !visible // Used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({
                 point: point,
@@ -862,7 +862,7 @@ class SunburstSeries extends TreemapSeries {
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
-        if (!series.processedXData) { // hidden series
+        if (!series.processedXData) { // Hidden series
             series.processData();
         }
         series.generatePoints();
@@ -928,11 +928,11 @@ class SunburstSeries extends TreemapSeries {
             if (nodeIds[point.id]) {
                 error(31, false, series.chart);
             }
-            // map
+            // Map
             nodeIds[point.id] = true;
         }
 
-        // reset object
+        // Reset object
         nodeIds = {};
     }
 
@@ -953,7 +953,7 @@ interface SunburstSeries {
 
 extend(SunburstSeries.prototype, {
     axisTypes: [],
-    drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    drawDataLabels: noop, // `drawDataLabels` is called in `drawPoints`
     getCenter: getCenter,
     isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.

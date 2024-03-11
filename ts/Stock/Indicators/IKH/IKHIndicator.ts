@@ -217,7 +217,7 @@ class IKHIndicator extends SMAIndicator {
              * @excluding index
              */
             params: {
-                index: void 0, // unused index, do not inherit (#15362)
+                index: void 0, // Unused index, do not inherit (#15362)
                 period: 26,
                 /**
                  * The base period for Tenkan calculations.
@@ -519,8 +519,8 @@ class IKHIndicator extends SMAIndicator {
             // For span, we need an access to the next points, used in
             // getGraphPath()
             nextPoints: Array<Array<IKHPoint>> = [
-                [], // NextPoints color
-                [] // NextPoints negative color
+                [], // Next points color
+                [] // Next points negative color
             ];
 
         let pointsLength: number = mainLinePoints.length,
@@ -990,4 +990,4 @@ export default IKHIndicator;
  * @apioption series.ikh
  */
 
-(''); // add doclet above to transpiled file
+(''); // Add doclet above to transpiled file

@@ -116,7 +116,7 @@ function onChartAfterPrint(
 ): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach((layout): void => {
-            // return to default simulation
+            // Return to default simulation
             layout.updateSimulation();
         });
         this.redraw();

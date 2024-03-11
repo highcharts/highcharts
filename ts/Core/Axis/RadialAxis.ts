@@ -188,13 +188,13 @@ namespace RadialAxis {
      * @private
      */
     const defaultCircularOptions: DeepPartial<Options> = {
-        gridLineWidth: 1, // spokes
+        gridLineWidth: 1, // Spokes
         labels: {
-            align: void 0, // auto
+            align: void 0, // Auto
             x: 0,
-            y: void 0, // auto
+            y: void 0, // Auto
             style: {
-                textOverflow: 'none' // wrap lines by default (#7248)
+                textOverflow: 'none' // Wrap lines by default (#7248)
             }
         },
         maxPadding: 0,
@@ -409,7 +409,7 @@ namespace RadialAxis {
             if (
                 this.isRadial &&
                 this.tickPositions &&
-                // undocumented option for now, but working
+                // Undocumented option for now, but working
                 this.options.labels &&
                 this.options.labels.allowOverlap !== true
             ) {
@@ -1190,14 +1190,14 @@ namespace RadialAxis {
                         centerSlot = 0;
                     }
                     if (angle > centerSlot && angle < 180 - centerSlot) {
-                        align = 'left'; // right hemisphere
+                        align = 'left'; // Right hemisphere
                     } else if (
                         angle > 180 + centerSlot &&
                         angle < 360 - centerSlot
                     ) {
-                        align = 'right'; // left hemisphere
+                        align = 'right'; // Left hemisphere
                     } else {
-                        align = 'center'; // top or bottom
+                        align = 'center'; // Top or bottom
                     }
                 } else {
                     align = 'center';
@@ -1248,7 +1248,7 @@ namespace RadialAxis {
                     align = 'center';
                 }
 
-                // auto Y translation
+                // Auto Y translation
                 if (
                     reducedAngle1 < 15 ||
                     (reducedAngle1 >= 180 && reducedAngle1 < 195)
@@ -1268,7 +1268,7 @@ namespace RadialAxis {
                         labelBBox.height : -labelBBox.height * 0.25;
                 }
 
-                // auto X translation
+                // Auto X translation
                 if (reducedAngle2 < 15) {
                     translateX = labelDir === 'start' ?
                         -labelBBox.height * 0.15 : labelBBox.height * 0.15;
@@ -1394,7 +1394,7 @@ namespace RadialAxis {
         axisProto.setAxisTranslation.call(this);
 
         // Set transA and minPixelPadding
-        if (this.center) { // it's not defined the first time
+        if (this.center) { // It's not defined the first time
             if (this.isCircular) {
 
                 this.transA = (this.endAngleRad - this.startAngleRad) /

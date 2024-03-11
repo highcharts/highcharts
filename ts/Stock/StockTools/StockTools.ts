@@ -349,7 +349,7 @@ function navigationResizeYAxes(
         ),
         resizers = this.getYAxisResizers(yAxes);
 
-    // check if the axis is being either added or removed and
+    // Check if the axis is being either added or removed and
     // if the new indicator axis will fit under existing axes.
     // if so, there is no need to scale them.
     if (
