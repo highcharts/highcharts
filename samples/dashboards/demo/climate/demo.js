@@ -401,7 +401,7 @@ async function setupBoard() {
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
-                    text: 'Maximal Temperature',
+                    text: 'Maximum Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
                 },
@@ -468,13 +468,13 @@ async function setupBoard() {
                         show: false
                     },
                     FD: {
-                        headerFormat: 'Days with Frost'
+                        headerFormat: 'Days with frost'
                     },
                     ID: {
-                        headerFormat: 'Days with Ice'
+                        headerFormat: 'Days with ice'
                     },
                     RR1: {
-                        headerFormat: 'Days with Rain'
+                        headerFormat: 'Days with rain'
                     },
                     TN: {
                         show: false
@@ -483,20 +483,20 @@ async function setupBoard() {
                         show: false
                     },
                     TNC: {
-                        headerFormat: 'Average Temperature °C',
+                        headerFormat: 'Average temperature °C',
                         cellFormat: '{value:.1f}'
                     },
                     TNF: {
-                        headerFormat: 'Average Temperature °F',
+                        headerFormat: 'Average temperature °F',
                         cellFormat: '{value:.1f}',
                         show: false
                     },
                     TXC: {
-                        headerFormat: 'Maximal Temperature °C',
+                        headerFormat: 'Maximum temperature °C',
                         cellFormat: '{value:.1f}'
                     },
                     TXF: {
-                        headerFormat: 'Maximal Temperature °F',
+                        headerFormat: 'Maximum temperature °F',
                         cellFormat: '{value:.1f}',
                         show: false
                     }
@@ -508,16 +508,18 @@ async function setupBoard() {
             type: 'Highcharts',
             connector: {
                 id: 'Range Selection',
-                columnAssignment: [{
-                    seriesId: 'RR1',
-                    data: ['time', 'RR1']
-                }, {
-                    seriesId: 'TN' + activeScale,
-                    data: ['time', 'TN' + activeScale]
-                }, {
-                    seriesId: 'TX' + activeScale,
-                    data: ['time', 'TX' + activeScale]
-                }]
+                columnAssignment: [
+                    {
+                        seriesId: 'Days with rain',
+                        data: ['time', 'RR1']
+                    }, {
+                        seriesId: 'Average temperature',
+                        data: ['time', 'TN' + activeScale]
+                    }, {
+                        seriesId: 'Maximum temperature',
+                        data: ['time', 'TX' + activeScale]
+                    }
+                ]
             },
             sync: {
                 highlight: true
@@ -559,21 +561,20 @@ async function setupBoard() {
                     enabled: true,
                     stickOnContact: true,
                     formatter: function () {
-                        const point = this.point;
                         const name = this.series.name;
 
                         // Date
-                        let str = Highcharts.dateFormat('%Y-%m-%d<br />', point.x);
+                        const hdr = Highcharts.dateFormat('%Y-%m-%d<br />',
+                            this.point.x);
 
-                        if (name === 'RR1') {
-                            // Rainy days
-                            str += 'Days with rain: ' + point.y;
-                        } else {
-                            // Temperature (names TXC, TNC, TXF, TNF)
-                            const tempStr = (name[1] === 'X' ? 'Max: ' : 'Avg: ') + Highcharts.numberFormat(point.y, 1);
-                            str += tempStr + '˚' + name[2];
+                        if (name === 'Days with rain') {
+                            return hdr + 'Days with rain: ' + this.point.y;
                         }
-                        return str;
+
+                        // Temperature (names TXC, TNC, TXF, TNF)
+                        const temp = Highcharts.numberFormat(this.point.y, 1);
+
+                        return hdr + name + ': ' + temp + '˚' + activeScale;
                     }
                 },
                 xAxis: {
@@ -615,7 +616,14 @@ async function setupBoard() {
             id: cityRows[i].city,
             type: 'CSV',
             options: {
-                csvURL: cityRows[i].csv
+                csvURL: cityRows[i].csv,
+                dataTable: {
+                    aliases: {
+                        'Days with rain': 'RR1',
+                        'Average temperature': 'TNC',
+                        'Maximum temperature': 'TXC'
+                    }
+                }
             }
         });
     }
@@ -833,18 +841,24 @@ async function updateBoard(board, city, column, scale, newData) {
         options.colorAxis.max = colorMax;
         options.colorAxis.colorStops = colorStops;
 
+        const tempUnit = showCelsius ? 'Celsius' : 'Fahrenheit';
+        options.yAxis.title.text = tempUnit;
+        options.yAxis.accessibility.description = tempUnit;
+
         await cityChart.update({
             connector: {
-                columnAssignment: [{
-                    seriesId: 'RR1',
-                    data: ['time', 'RR1']
-                }, {
-                    seriesId: 'TN' + scale,
-                    data: ['time', 'TN' + scale]
-                }, {
-                    seriesId: 'TX' + scale,
-                    data: ['time', 'TX' + scale]
-                }]
+                columnAssignment: [
+                    {
+                        seriesId: 'Days with rain',
+                        data: ['time', 'RR1']
+                    }, {
+                        seriesId: 'Average temperature',
+                        data: ['time', 'TN' + scale]
+                    }, {
+                        seriesId: 'Maximum temperature',
+                        data: ['time', 'TX' + scale]
+                    }
+                ]
             },
             chartOptions: options
         });
