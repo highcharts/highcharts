@@ -334,13 +334,20 @@ class HighchartsComponent extends Component {
         const { connector: store, chart } = this;
 
         if (store && chart && this.options.allowConnectorUpdate) {
-            chart.series.forEach((series): void => {
-                series.points.forEach((point): void => {
-                    addEvent(point, 'drag', (): void => {
-                        this.onChartUpdate(point, store);
-                    });
-                });
-            });
+            for (let i = 0, iEnd = chart.series.length; i < iEnd; ++i) {
+                const series = chart.series[i];
+                series.update({
+                    point: {
+                        events: {
+                            drag: (e: { target: Point }): void => {
+                                this.onChartUpdate(e.target, store);
+                            }
+                        }
+                    }
+                }, false);
+            }
+
+            chart.redraw();
         }
     }
 
