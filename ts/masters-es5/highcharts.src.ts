@@ -35,27 +35,14 @@ if (!Array.prototype.includes) {
 if (!Array.prototype.find) {
     // eslint-disable-next-line no-extend-native
     Array.prototype.find = function <T> (
-        predicate: (search: T, index: number, array: any[]) => boolean
+        predicate: (search: T, index: number, array: any[]) => boolean,
+        thisArg?: T
     ): T | undefined {
-        if (this === null) {
-            throw new TypeError(
-                'Array.prototype.find called on null or undefined'
-            );
-        }
-        if (typeof predicate !== 'function') {
-            throw new TypeError('predicate must be a function');
-        }
-        const list = Object(this),
-            length = list.length >>> 0,
-            thisArg = arguments[1];
-        let value;
-        for (let i = 0; i < length; i++) {
-            value = list[i];
-            if (predicate.call(thisArg, value, i, list)) {
-                return value;
+        for (let i = 0; i < this.length; i++) {
+            if (predicate.call(thisArg, this[i], i, this)) {
+                return this[i];
             }
         }
-        return void 0;
     };
 }
 if (!Object.entries) {
