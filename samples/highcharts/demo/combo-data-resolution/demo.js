@@ -18,7 +18,11 @@ Highcharts.chart('container', {
         data: JSON.parse(document.getElementById('columnData').textContent)
     }, {
         name: 'Line Series',
-        data: JSON.parse(document.getElementById('lineData').textContent)
+        data: JSON.parse(document.getElementById('lineData').textContent),
+        description: `
+            A data series illustrating the same data as the first,
+            but at different time intervals
+        `
     }],
     yAxis: {
         name: 'Temperature anomalies',
