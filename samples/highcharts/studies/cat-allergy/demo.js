@@ -103,7 +103,7 @@ announcerDiv.className = 'visually-hidden';
 detailsButton.className = 'visually-hidden';
 detailsButton.setAttribute('aria-label', 'Gauge details');
 detailsButton.setAttribute('aria-expanded', 'true'); // Set to true by default
-announcerDiv.setAttribute('aria-live', 'assertive');
+announcerDiv.setAttribute('aria-live', 'polite');
 container.insertAdjacentElement('afterend', detailsButton);
 detailsButton.insertAdjacentElement('afterend', announcerDiv);
 
