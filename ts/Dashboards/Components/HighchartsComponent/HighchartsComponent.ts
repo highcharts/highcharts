@@ -51,7 +51,6 @@ import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
 const {
-    addEvent,
     createElement,
     diffObjects,
     isString,
