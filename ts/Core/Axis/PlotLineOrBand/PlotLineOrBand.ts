@@ -325,7 +325,11 @@ class PlotLineOrBand {
                     align: optionsLabel.textAlign || optionsLabel.align,
                     rotation: optionsLabel.rotation,
                     'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                        '-label-' + (optionsLabel.className || ''),
+                        '-label' + (
+                        optionsLabel.className ?
+                            '-' + optionsLabel.className :
+                            ''
+                    ),
                     zIndex
                 });
 
