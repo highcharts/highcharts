@@ -54,7 +54,7 @@ async function jsDocNamespace() {
 
     // Make sure master is in `code/`
     if (argv.force) {
-        await gulpLib.runTasks('scripts');
+        await gulpLib.run('scripts');
     } else {
         await gulpLib.requires(
             (
