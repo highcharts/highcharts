@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     accessibility: {
         enabled: false
     },
@@ -21,7 +21,6 @@ Highcharts.chart('container', {
         center: ['50%', '75%'],
         size: '110%'
     },
-
     yAxis: {
         min: 0,
         max: 12,
@@ -177,6 +176,10 @@ function updateFunction() {
             currentInterval = 'red';
         }
 
+        if (currentInterval !== lastInterval) {
+            playEarcon(currentInterval);
+        }
+
         if (currentInterval === lastInterval) {
             announcement = '';
         }
@@ -196,4 +199,22 @@ function updateFunction() {
         lastInterval = currentInterval;
         previousValue = currentValue;
     }
+}
+
+
+function playEarcon(id) {
+    const instr = {
+            green: ['flute', 'c4'],
+            yellow: ['flute', 'c5'],
+            red: ['flute', 'c6']
+        }[id],
+        opts = function (note) {
+            return {
+                note: note,
+                noteDuration: 200,
+                tremoloDepth: 0,
+                pan: 0
+            };
+        };
+    chart.sonification.playNote(instr[0], opts(instr[1]));
 }
