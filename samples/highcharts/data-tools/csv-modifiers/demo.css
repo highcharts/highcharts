@@ -38,3 +38,9 @@
 .highcharts-graph {
     stroke-width: 3px;
 }
+
+#south-america-chart,
+#north-america-chart,
+#asia-chart {
+    flex: 1 1 33.333%;
+}

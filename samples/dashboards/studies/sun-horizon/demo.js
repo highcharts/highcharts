@@ -466,17 +466,15 @@ const createBoard = async () => {
         },
         components: [{
             connector: {
-                id: 'horizon'
+                id: 'horizon',
+                columnAssignment: [{
+                    seriesId: 'land',
+                    data: ['azimuth', 'angle']
+                }]
             },
             cell: 'horizon-chart',
             id: 'horizon-chart',
             type: 'Highcharts',
-            columnAssignment: {
-                azimuth: 'x',
-                Horizon: {
-                    y: 'angle'
-                }
-            },
             events: {
                 mount: async function () {
 

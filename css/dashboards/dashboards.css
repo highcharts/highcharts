@@ -178,7 +178,7 @@
     padding: 20px 10px;
     position: relative;
     overflow: hidden;
-    min-height: 500px;
+    min-height: 300px;
     transition: 0.5s;
     overflow-x: scroll;
     font-family: Helvetica, Arial, sans-serif;
@@ -263,7 +263,10 @@
         0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
     border-radius: 3px;
-    overflow: hidden;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component .highcharts-dashboards-component-kpi-chart-container {
+    flex: 1 1 100%;
 }
 
 .highcharts-dashboards-component {
@@ -271,7 +274,7 @@
 }
 
 .highcharts-dashboards-component-kpi {
-    min-height: 150px;
+    min-height: 100px;
     text-align: center;
 }
 
@@ -294,7 +297,7 @@
 }
 
 .highcharts-dashboards-component img {
-    width: 100%;
+    max-width: 100%;
     height: 100%;
     overflow: auto;
 }
@@ -691,7 +694,7 @@
     color: var(--highcharts-neutral-color-60);
     position: absolute;
     z-index: 1000;
-    min-height: 500px;
+    min-height: 300px;
     height: 100%;
     padding: 20px;
     overflow: scroll;

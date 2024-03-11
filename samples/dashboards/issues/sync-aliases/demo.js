@@ -53,15 +53,17 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Vitamin'
+            id: 'Vitamin',
+            columnAssignment: [{
+                seriesId: 'water',
+                data: ['Date', 'water']
+            }, {
+                seriesId: 'air',
+                data: ['Date', 'air']
+            }]
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Date: 'x',
-            air: 'y',
-            water: 'y'
-        },
         chartOptions: {
             chart: {
                 type: 'line',
@@ -82,7 +84,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
             id: 'Vitamin'
         },

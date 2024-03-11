@@ -554,3 +554,72 @@ input:checked + .highcharts-dashboards-edit-toggle-slider {
 .highcharts-description {
     padding: 0 20px;
 }
+
+#kpi-layout {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#kpi-data,
+#kpi-temperature,
+#kpi-max-temperature,
+#kpi-rain,
+#kpi-ice,
+#kpi-frost {
+    height: 204px;
+    flex: 1 1 33.333%;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #world-map,
+    #kpi-layout,
+    #kpi-data,
+    #kpi-temperature,
+    #kpi-max-temperature,
+    #kpi-rain,
+    #kpi-ice,
+    #kpi-frost,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 50%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #world-map,
+    #kpi-layout,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 100%;
+    }
+
+    #kpi-data,
+    #kpi-temperature,
+    #kpi-max-temperature,
+    #kpi-rain,
+    #kpi-ice,
+    #kpi-frost {
+        flex: 1 1 50%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #world-map,
+    #kpi-layout,
+    #selection-grid,
+    #city-chart {
+        flex: 1 1 100%;
+    }
+
+    #kpi-data,
+    #kpi-temperature,
+    #kpi-max-temperature,
+    #kpi-rain,
+    #kpi-ice,
+    #kpi-frost {
+        flex: 1 1 50%;
+    }
+}

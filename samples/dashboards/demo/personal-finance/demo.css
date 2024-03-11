@@ -38,6 +38,7 @@
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     border-radius: 20px;
+    padding: 10px;
     text-align: left;
 }
 
@@ -122,4 +123,76 @@
 
 #gradient-0 stop[offset="1"] {
     stop-opacity: 0;
+}
+
+#dashboard-row-1-cell-1,
+#dashboard-row-1-cell-2,
+#dashboard-row-1-cell-3 {
+    height: 160px;
+}
+
+#dashboard-row-3-cell-1,
+#dashboard-row-3-cell-2,
+#dashboard-row-3-cell-3 {
+    height: 260px;
+}
+
+#dashboard-row-3-cell-1,
+#dashboard-row-3-cell-2 {
+    flex: 1 1 20%;
+}
+
+#dashboard-row-3-cell-3 {
+    flex: 1 1 60%;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-row-1-cell-1,
+    #dashboard-row-1-cell-2,
+    #dashboard-row-1-cell-3 {
+        flex: 1 1 33.333%;
+    }
+
+    #dashboard-row-3-cell-1,
+    #dashboard-row-3-cell-2 {
+        flex: 1 1 20%;
+    }
+
+    #dashboard-row-3-cell-3 {
+        flex: 1 1 60%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-row-1-cell-1,
+    #dashboard-row-1-cell-2,
+    #dashboard-row-1-cell-3 {
+        flex: 1 1 50%;
+    }
+
+    #dashboard-row-3-cell-1,
+    #dashboard-row-3-cell-2 {
+        flex: 1 1 50%;
+    }
+
+    #dashboard-row-3-cell-3 {
+        flex: 1 1 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-row-1-cell-1,
+    #dashboard-row-1-cell-2,
+    #dashboard-row-1-cell-3 {
+        flex: 1 1 50%;
+    }
+
+    #dashboard-row-3-cell-1,
+    #dashboard-row-3-cell-2,
+    #dashboard-row-3-cell-3 {
+        flex: 1 1 100%;
+    }
 }

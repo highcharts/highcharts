@@ -22,48 +22,21 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'dashboard-col-0'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-
-                    },
                     id: 'dashboard-col-1'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         connector: {
             id: 'sample'
         },
         type: 'Highcharts',
         sync: {
             highlight: true
-        },
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
         },
         chartOptions: {
             xAxis: {
@@ -121,7 +94,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'DataGrid',
         connector: {
             id: 'sample'
