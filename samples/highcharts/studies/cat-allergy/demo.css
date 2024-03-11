@@ -44,10 +44,23 @@ h1 {
     padding: 8px 16px;
     font-weight: 700;
     border-radius: 4px;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
 
 .btn:hover {
     background: #fff;
-    cursor: pointer;
     color: #5749ad;
+    border-color: #5749ad;
+    cursor: pointer;
+}
+
+.btn:focus {
+    outline: 2px solid black;
+    outline-offset: 3px;
+}
+
+.btn:active {
+    background: #5749ad;
+    color: #fff;
+    border-color: #5749ad;
 }
