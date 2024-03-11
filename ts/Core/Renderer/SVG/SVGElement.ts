@@ -29,6 +29,7 @@ import type {
 } from '../DOMElementType';
 import type FontMetricsObject from '../FontMetricsObject';
 import type GradientColor from '../../Color/GradientColor';
+import type PositionObject from '../PositionObject';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -1553,45 +1554,40 @@ class SVGElement implements SVGElementLike {
                 if (tp) {
                     const polygon: BBoxObject['polygon'] = [],
                         len = Math.max(tp.getNumberOfChars() - 1, 0),
-                        rotate = (
-                            cx: number,
-                            cy: number,
-                            x: number,
-                            y: number,
-                            rad: number
-                        ): [number, number] => {
-                            const xDist = x - cx,
-                                yDist = y - cy,
-                                cosRad = Math.cos(rad),
-                                sinRad = Math.sin(rad);
-                            return [
-                                cx + xDist * cosRad - yDist * sinRad,
-                                cy + xDist * sinRad + yDist * cosRad
-                            ];
-                        },
-                        { h } = this.renderer.fontMetrics(this.element);
+                        // The `b` value is the distance from the baseline to
+                        // the top of the text
+                        { b, h } = this.renderer.fontMetrics(this.element),
+                        // The descender is the distance from the baseline to
+                        // the bottom of the text
+                        descender = h - b;
 
+                    // Calculate top and bottom coordinates for either the start
+                    // or the end of a single character, and append it to the
+                    // polygon.
+                    const appendTopAndBottom = (
+                        charIndex: number,
+                        positionOfChar: PositionObject
+                    ): void => {
+                        const { x, y } = positionOfChar,
+                            rotation = (
+                                tp.getRotationOfChar(charIndex) - 90
+                            ) * deg2rad;
+                        polygon.push([
+                            x - descender * Math.cos(rotation),
+                            y - descender * Math.sin(rotation)
+                        ]);
+                        polygon.unshift([
+                            x + b * Math.cos(rotation),
+                            y + b * Math.sin(rotation)
+                        ]);
+                    };
                     // Assemble left-side vertecies of every 5th character
                     for (let i = 0; i < len; i += 5) {
-                        const { x, y, width } = tp.getExtentOfChar(i),
-                            rad = tp.getRotationOfChar(i) * deg2rad,
-                            centerX = x + width / 2,
-                            centerY = y + h / 2;
-                        polygon.push(rotate(centerX, centerY, x, y, rad));
-                        polygon.unshift(
-                            rotate(centerX, centerY, x, y + h, rad)
-                        );
+                        appendTopAndBottom(i, tp.getStartPositionOfChar(i));
                     }
 
                     // For the last char we grab the right edge
-                    const { x, y, width } = tp.getExtentOfChar(len),
-                        rad = tp.getRotationOfChar(len) * deg2rad,
-                        centerX = x + width / 2,
-                        centerY = y + h / 2;
-                    polygon.push(rotate(centerX, centerY, x + width, y, rad));
-                    polygon.unshift(
-                        rotate(centerX, centerY, x + width, y + h, rad)
-                    );
+                    appendTopAndBottom(len, tp.getEndPositionOfChar(len));
 
                     // Close it
                     polygon.push(polygon[0].slice() as [number, number]);
