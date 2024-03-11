@@ -163,6 +163,10 @@ Highcharts.chart('container', {
                 width: 5.5,
                 height: 5.5
             }
+        },
+        custom: {
+            seriesDescription: 'nominations, bar series 2 of 2',
+            actualNumBars: 22
         }
     }]
 });
