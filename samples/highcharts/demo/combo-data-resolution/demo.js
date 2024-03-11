@@ -14,11 +14,18 @@ Highcharts.chart('container', {
     series: [{
         type: 'column',
         pointWidth: 30,
+        name: 'Column Series',
         data: JSON.parse(document.getElementById('columnData').textContent)
     }, {
+        name: 'Line Series',
         data: JSON.parse(document.getElementById('lineData').textContent)
     }],
     yAxis: {
+        name: 'Temperature anomalies',
+        description: `
+            This axis serves as a y-axis, representing the degree of temperature
+            anomalies present in  a data point
+        `,
         max: 1,
         min: -0.5,
         title: {
