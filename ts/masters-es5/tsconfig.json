@@ -13,7 +13,8 @@
             "ES5",
             "ES2017.Object",
             "ES2015.Promise",
-            "ES2016.Array.Include"
+            "ES2016.Array.Include",
+            "ES2015"
         ]
     },
     "exclude": [
