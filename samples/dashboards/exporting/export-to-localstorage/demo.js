@@ -27,8 +27,7 @@ let board = Dashboards.board('container', {
                     {
                         cells: [
                             {
-                                id: 'dashboard-col-0',
-                                width: '50%'
+                                id: 'dashboard-col-0'
                             },
                             {
                                 id: 'dashboard-col-1'
