@@ -56,8 +56,7 @@ Highcharts.chart('container', {
                         // This text gets stripped of HTML tags and is used as the description for the points
                         const descriptionDiv = document.createElement('div');
                         descriptionDiv.setAttribute('id', descriptionDivId);
-                        descriptionDiv.setAttribute('aria-hidden', 'true');
-                        descriptionDiv.classList.add('visually-hidden');
+                        descriptionDiv.classList.add('tooltip-description');
                         const addPunctuation = tooltipText.replace(/<\/li>/g, '</li>. '); // Hack for adding punctuation after the song
                         let strippedDescription = addPunctuation.replace(/<[^>]*>?/gm, '');
                         strippedDescription = strippedDescription.replace(/Wins: \d+|Nominations: \d+/g, '');
@@ -260,6 +259,7 @@ tooltipCheckbox.addEventListener('change', () => {
 
     descriptionDivs.forEach(descriptionDiv => {
         console.log(descriptionDiv);
-        descriptionDiv.setAttribute('aria-hidden', !checkboxChecked);
+        descriptionDiv.setAttribute('style', 'display: none');
+        //descriptionDiv.setAttribute('aria-hidden', !checkboxChecked);
     });
 });
