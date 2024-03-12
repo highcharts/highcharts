@@ -1,69 +1,76 @@
 QUnit.test('Plot band labels', function (assert) {
-    var chart,
-        options = {
-            chart: {
-                width: 600
-            },
-            xAxis: {
-                plotBands: [
-                    {
-                        from: 5,
-                        to: 6,
-                        color: Highcharts.getOptions().colors[0],
-                        label: {
-                            text: 'Before'
-                        }
-                    },
-                    {
-                        from: 12,
-                        to: 13,
-                        color: Highcharts.getOptions().colors[2],
-                        label: {
-                            text: 'Within'
-                        }
-                    },
-                    {
-                        from: 25,
-                        to: 26,
-                        color: Highcharts.getOptions().colors[3],
-                        label: {
-                            text: 'After'
-                        }
-                    }
-                ]
-            },
-
-            yAxis: {
-                plotLines: [{
-                    value: 4,
-                    label: {
-                        text: 'Big text',
-                        useHTML: true,
-                        style: {
-                            fontSize: '2em'
-                        },
-                        align: 'right'
-                    }
-                }, {
-                    value: 5,
-                    label: {
-                        text: 'Small text',
-                        useHTML: true,
-                        align: 'right'
-                    }
-                }]
-            },
-
-            series: [
+    let chart;
+    const options = {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            plotBands: [
                 {
-                    data: [1, 2, 3, 4, 5, 6, 7],
-                    pointStart: 10
+                    from: 5,
+                    to: 6,
+                    color: Highcharts.getOptions().colors[0],
+                    label: {
+                        text: 'Before'
+                    }
+                },
+                {
+                    from: 12,
+                    to: 13,
+                    color: Highcharts.getOptions().colors[2],
+                    label: {
+                        text: 'Within'
+                    }
+                },
+                {
+                    from: 25,
+                    to: 26,
+                    color: Highcharts.getOptions().colors[3],
+                    label: {
+                        text: 'After'
+                    }
+                },
+                {
+                    value: 11,
+                    label: {
+                        text: 'A',
+                        useHTML: true
+                    }
                 }
             ]
-        };
+        },
+
+        yAxis: {
+            plotLines: [{
+                value: 4,
+                label: {
+                    text: 'Big text',
+                    useHTML: true,
+                    style: {
+                        fontSize: '2em'
+                    },
+                    align: 'right'
+                }
+            }, {
+                value: 5,
+                label: {
+                    text: 'Small text',
+                    useHTML: true,
+                    align: 'right'
+                }
+            }]
+        },
+
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6, 7],
+                pointStart: 10
+            }
+        ]
+    };
 
     // Create the Highcharts chart
-    chart = $('#container').highcharts(options).highcharts();
+    chart = Highcharts.chart('container', options);
 
     assert.equal(
         typeof chart.xAxis[0].plotLinesAndBands[0].label,
@@ -81,8 +88,18 @@ QUnit.test('Plot band labels', function (assert) {
         'Highcharts - after'
     );
 
+    const line = chart.xAxis[0].plotLinesAndBands[3].svgElem.getBBox(),
+        label = chart.xAxis[0].plotLinesAndBands[3].label.getBBox();
+
+    assert.close(
+        line.x,
+        label.x + chart.plotLeft,
+        2,
+        'HTML label should be placed (x-pos) near the plot line (#20792).'
+    );
+
     // Create the Highcharts Stock chart
-    chart = $('#container').highcharts('StockChart', options).highcharts();
+    chart = Highcharts.stockChart('container', options);
 
     assert.equal(
         typeof chart.xAxis[0].plotLinesAndBands[0].label,
