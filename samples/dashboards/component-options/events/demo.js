@@ -34,8 +34,7 @@ Dashboards.board('container', {
             }, {
                 id: 'dashboard-row-1',
                 cells: [{
-                    id: 'dashboard-col-2',
-                    width: '1'
+                    id: 'dashboard-col-2'
                 }]
             }]
         }]
