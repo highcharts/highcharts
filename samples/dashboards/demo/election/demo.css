@@ -144,22 +144,22 @@
 /* Left/Right: Democrat/Republican candidate */
 #html-result-div #dem-cand,
 #html-result-div #rep-cand {
-    flex: 1 1 auto;
-    width: 100px;
+    flex: 1 0 50px;
+    max-width: 100px;
     align-items: center;
+    padding: 1%;
 }
 
 #html-result-div img {
     /* Candidate portraits */
     width: auto;
     height: auto;
-    border-radius: 20%;
-    border: 3px solid var(--highcharts-color-2);
+    border-radius: 50%;
 }
 
 /* Middle: Election result */
 #html-result-div #election-result {
-    flex: 3 1 auto;
+    flex: 1 1 auto;
     flex-direction: column;
 }
 
@@ -171,7 +171,7 @@
 /* Result bar */
 #bar-container {
     position: relative;
-    margin: 5px;
+    margin: 1%;
 }
 
 #bar-dem {
@@ -213,21 +213,15 @@
     flex-direction: row;
 }
 
-/*
-#election-result .info div {
-    border: 1px solid orangered;
-}
-*/
-
 #election-result .info b {
-    padding: 0 10px;
+    padding: 1vw;
 }
 
 #info-to-win {
-    padding: 10px 0 0 10px;
+    padding: 5px 0 0 5px;
     margin: 0;
     justify-content: center;
-    font-size: 10px;
+    font-size: calc(8px + 0.1vw);
 }
 
 #info-rep1,
@@ -242,12 +236,12 @@
 
 #info-dem1 b,
 #info-rep1 b {
-    font-size: 28px;
+    font-size: 24px;
 }
 
 #info-dem2,
 #info-rep2 {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 #info-dem1,
@@ -272,6 +266,7 @@
 #html-control-div {
     text-align: center;
     min-height: 160px;
+    padding: 5px;
 }
 
 #html-control-div #election-year {
@@ -531,6 +526,29 @@
     #election-grid {
         flex: unset;
         width: 100%;
+    }
+
+    #info-dem1,
+    #info-rep1 {
+        font-size: 12px;
+    }
+
+    #info-dem1 b,
+    #info-rep1 b {
+        font-size: 12px;
+    }
+
+    #info-dem2,
+    #info-rep2 {
+        font-size: 10px;
+    }
+
+    #info-dem2 {
+        margin-left: -20px;
+    }
+
+    #info-rep2 {
+        margin-right: -20px;
     }
 
     #election-grid .highcharts-datagrid-cell {
