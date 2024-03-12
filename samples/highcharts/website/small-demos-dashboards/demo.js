@@ -639,7 +639,6 @@ function minimal() {
                 id: 'Vitamin'
             },
             type: 'DataGrid',
-            editable: true,
             sync: {
                 highlight: true
             }
