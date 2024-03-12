@@ -1010,6 +1010,8 @@ abstract class Component {
          * TODO: Should perhaps set an `isActive` flag to false.
          */
 
+        this.sync.stop();
+
         while (this.element.firstChild) {
             this.element.firstChild.remove();
         }
@@ -1020,7 +1022,6 @@ abstract class Component {
         // Unregister events
         this.tableEvents.forEach((eventCallback): void => eventCallback());
         this.element.remove();
-
     }
 
     /** @internal */
