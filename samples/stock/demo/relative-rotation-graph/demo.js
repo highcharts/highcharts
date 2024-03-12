@@ -1,3 +1,13 @@
+Highcharts.addEvent(Highcharts.Chart, 'load', function () {
+    if (this.options.chart.className.indexOf('rounded-plot-border') !== -1) {
+        this.plotBorder.attr({
+            rx: 10,
+            ry: 10,
+            zIndex: 6
+        });
+    }
+});
+
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
@@ -6,18 +16,10 @@ Highcharts.chart('container', {
         plotBorderColor: '#ffffff',
         backgroundColor: '#f7f7f8',
         spacing: [10, 85, 15, 20],
-        events: {
-            load: function () {
-                this.plotBorder.attr({
-                    rx: 10,
-                    ry: 10,
-                    zIndex: 6
-                });
-            }
-        },
         style: {
             fontFamily: 'IBM Plex Sans'
-        }
+        },
+        className: 'rounded-plot-border'
     },
     legend: {
         enabled: false
@@ -218,7 +220,7 @@ Highcharts.chart('container', {
         }]
     }],
     title: {
-        text: 'Relative Rotational Graph®️'
+        text: 'Relative Rotation Graph®️'
     },
     plotOptions: {
         series: {
@@ -357,11 +359,17 @@ Highcharts.chart('container', {
                 xAxis: {
                     title: {
                         enabled: false
+                    },
+                    labels: {
+                        distance: 6
                     }
                 },
                 yAxis: {
                     title: {
                         enabled: false
+                    },
+                    labels: {
+                        distance: 6
                     }
                 }
             }
