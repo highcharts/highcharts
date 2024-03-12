@@ -632,9 +632,10 @@ abstract class Component {
             tableEvents = this.tableEvents;
 
         if (tableEvents.length) {
-            tableEvents.forEach(
-                (removeEventCallback): void => removeEventCallback()
-            );
+            for (let i = 0; i < tableEvents.length; i++) {
+                tableEvents[i]();
+            }
+            tableEvents.length = 0;
         }
 
         if (connector) {
