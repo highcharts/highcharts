@@ -47,6 +47,8 @@ Highcharts.chart('container', {
                             awardwin = column[6],
                             awardnom = column[7];
 
+                        // Tooltip will be different depending on
+                        // the series.name
                         let tooltipText;
                         if (point.series.name === 'wins') {
                             tooltipText = createTooltipText(grammy, Highcharts.dateFormat('%Y', point.x), 'wins', point.y, songwin, awardwin);
@@ -55,15 +57,22 @@ Highcharts.chart('container', {
                             tooltipText = createTooltipText(grammy, Highcharts.dateFormat('%Y', point.x), 'nominations', point.y, songnom, awardnom);
                         }
 
-                        // This text gets stripped of HTML tags and is used as the description for the points
-                        const addPunctuation = tooltipText.replace(/<\/li>/g, '</li>. '); // Hack for adding punctuation after the song
-                        let strippedDescription = addPunctuation.replace(/<[^>]*>?/gm, '');
-                        strippedDescription = strippedDescription.replace(/Wins: \d+|Nominations: \d+/g, '');
-                        const descriptionDiv = createAndAppendDiv(descriptionDivId, strippedDescription);
+                        // Used as description of the points with
+                        // aria-describedby on the points. Stripped of HTML
+                        // and added punctuation to improve readability.
+                        const addPunctuation = tooltipText.replace(/ <\/br>/g, '.</br> ');
+                        const strippedDescription = addPunctuation
+                            .replace(/<[^>]*>?/gm, '')
+                            .replace(/Wins: \d+|Nominations: \d+/g, '');
+                        const descriptionDiv = createAndAppendDiv(
+                            descriptionDivId, strippedDescription
+                        );
                         descriptionDivs.push(descriptionDiv);
 
-                        // The same text as above, but contains html for tooltip formatting
-                        const tooltipDiv = createAndAppendDiv(tooltipDivId, tooltipText);
+                        // Has the same text as the description div, but
+                        // contains HTML tags for styling.
+                        const tooltipDiv =
+                            createAndAppendDiv(tooltipDivId, tooltipText);
                         tooltipDivs.push(tooltipDiv);
 
                     }
@@ -193,18 +202,19 @@ function createTooltipText(
         }));
 
     let tooltipText =
-        `<strong>${grammy} Grammy Awards (${year})</strong>. </br>` +
+        `<strong>${grammy} Grammy Awards (${year})</strong> </br>` +
         `<strong>${seriesName.charAt(0).toUpperCase() +
         seriesName.slice(1)}</strong>: ${y}</br>`;
 
     if (songValues.includes('None') || awardValues.includes('None')) {
         return tooltipText;
     }
-    tooltipText += mappedValues.map(value => `<strong>${value.award.trim()}: </strong>${value.song}. </br>`).join('');
+    tooltipText += mappedValues.map(value => `<strong>${value.award.trim()}: </strong>${value.song} </br>`).join('');
 
     return tooltipText;
 }
 
+// Function to create and append the tooltip and description divs to the DOM
 function createAndAppendDiv(id, innerHTML) {
     const div = document.createElement('div');
     div.setAttribute('id', id);
