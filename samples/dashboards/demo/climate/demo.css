@@ -189,6 +189,10 @@
     fill: #fff;
 }
 
+.highcharts-legend-item:hover > text {
+    fill: #cc0;
+}
+
 /* *
  *
  *  KPI
