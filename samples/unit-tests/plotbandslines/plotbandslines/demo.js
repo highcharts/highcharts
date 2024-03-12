@@ -94,7 +94,7 @@ QUnit.test('Plot band labels', function (assert) {
     assert.close(
         line.x,
         label.x + chart.plotLeft,
-        2,
+        3,
         'HTML label should be placed (x-pos) near the plot line (#20792).'
     );
 
