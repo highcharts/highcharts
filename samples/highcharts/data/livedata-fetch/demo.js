@@ -11,7 +11,8 @@ async function requestData() {
         const [date, value] = data[0];
         const point = [new Date(date).getTime(), value * 10];
         const series = chart.series[0],
-            shift = series.data.length > 20; // shift if the series is longer than 20
+            shift = series.data.length > 20; // shift if the series is
+            // longer than 20
 
         // add the point
         chart.series[0].addPoint(point, true, shift);

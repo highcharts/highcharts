@@ -43,7 +43,8 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Logarithmic color axis with custom conversion allows negative values'
+        text: 'Logarithmic color axis with custom conversion allows negative ' +
+            'values'
     },
 
     xAxis: {

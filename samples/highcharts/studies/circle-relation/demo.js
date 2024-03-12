@@ -74,7 +74,8 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['person', 'family', 'family_dwelling', 'dwelling', 'workplace', 'municipality'],
+        categories: [
+            'person', 'family', 'family_dwelling', 'dwelling', 'workplace', 'municipality'],
         min: 0,
         max: 6,
         gridLineWidth: 0,

@@ -24,7 +24,9 @@ Highcharts.stockChart('container', {
             chart.yAxis[0].setCumulative(true, false);
             chart.update({
                 tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>'
+                    pointFormat: '<span style="color:{series.color}">' +
+                        '{series.name}</span>: <b>{point.y}</b> ' +
+                        '({point.cumulativeSum})<br/>'
                 }
             });
         });
@@ -34,7 +36,8 @@ Highcharts.stockChart('container', {
             chart.yAxis[0].setCumulative(false, false);
             chart.update({
                 tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>'
+                    pointFormat: '<span style="color:{series.color}">' +
+                        '{series.name}</span>: <b>{point.y}</b><br/>'
                 }
             });
         });

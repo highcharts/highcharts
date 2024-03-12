@@ -41,7 +41,8 @@
 
             let i = 0;
 
-            if (typeof options === 'object' && typeof options.length !== 'number') {
+            if (typeof options ===
+                'object' && typeof options.length !== 'number') {
                 // TODO implement object input support?
                 throw new Error('Object input not yet supported');
             } else if (options.length) { // array
@@ -101,7 +102,8 @@
                 yValueLabels = series.options.yValueLabels,
                 yValues = point.yValues;
 
-            let tooltipHtml = '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
+            let tooltipHtml =
+                '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
 
             for (let i = 0; i < yValueLabels.length; i++) {
                 tooltipHtml += yValueLabels[i] + ': ' + yValues[i] + '<br />';

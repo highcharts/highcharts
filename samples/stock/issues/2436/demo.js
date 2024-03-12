@@ -455,7 +455,8 @@ Highcharts.stockChart('container', {
     },
     title: {
         text:
-            'In Highcharts Stock 1.3.7, the navigator did not span the full data'
+            'In Highcharts Stock 1.3.7, the navigator did not span the full ' +
+            'data'
     },
     series: [
         {

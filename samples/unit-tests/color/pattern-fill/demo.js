@@ -371,7 +371,8 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
     assert.strictEqual(
         patterns.length,
         3,
-        'Number of pattern defs should be 3 unique (defaults patterns not added unless used)'
+        'Number of pattern defs should be 3 unique (defaults patterns not ' +
+        'added unless used)'
     );
 
     Highcharts.each(patterns, function (pattern) {
@@ -613,7 +614,8 @@ QUnit.test('Image animation opacity', function (assert) {
                                                 columnPattern.firstChild
                                                     .getAttribute('opacity'),
                                                 '0.5',
-                                                'Pattern should end at 0.5 opacity'
+                                                'Pattern should end at 0.5 ' +
+                                                'opacity'
                                             );
                                             done();
                                         }

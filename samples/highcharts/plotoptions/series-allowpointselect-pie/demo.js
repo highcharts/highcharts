@@ -3,7 +3,8 @@ const chart = Highcharts.chart('container', {
         type: 'pie'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     plotOptions: {
         series: {
@@ -22,7 +23,8 @@ document.getElementById('button').addEventListener('click', () => {
     if (chart.lbl) {
         chart.lbl.destroy();
     }
-    chart.lbl = chart.renderer.label('You selected ' + selectedPoints.length + ' points', 10, 10)
+    chart.lbl = chart.renderer.label(
+        'You selected ' + selectedPoints.length + ' points', 10, 10)
         .attr({
             padding: 10,
             r: 5,

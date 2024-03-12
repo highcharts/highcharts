@@ -35,7 +35,8 @@ const minute = 1000 * 60,
                         describer.getPointValueDescription;
 
                     if (newPoint) {
-                        return 'Account balance updated. New data point: Time ' +
+                        return 'Account balance updated. New data point: ' +
+                            'Time ' +
                             getPointXDescription(newPoint) + ', ' +
                             getPointValueDescription(newPoint) + '.';
                     }
@@ -46,7 +47,9 @@ const minute = 1000 * 60,
         tooltip: {
             dateTimeLabelFormats: dateTimeLabelFormats,
             valuePrefix: '$',
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>- Checking: ${point.checking}<br/>- Savings: ${point.savings}'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}</b><br/>- Checking: ' +
+                '${point.checking}<br/>- Savings: ${point.savings}'
         },
         xAxis: {
             type: 'datetime',
@@ -129,7 +132,8 @@ document.getElementById('distribution').onclick = function () {
             id: 'distribution',
             name: 'Balance distribution',
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span><b>${point.y}</b>'
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    '<b>${point.y}</b>'
             },
             center: [90, 180],
             size: 100,

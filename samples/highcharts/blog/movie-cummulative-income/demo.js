@@ -42,7 +42,8 @@ Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: 'Only 3 movies: Jurassic Park (497 days) ET, Gladiator and were more than a year in theaters.'
+        text: 'Only 3 movies: Jurassic Park (497 days) ET, Gladiator and ' +
+            'were more than a year in theaters.'
     },
     xAxis: {
         title: {
@@ -9735,7 +9736,8 @@ Highcharts.chart('container', {
             enabled: false
         },
         extra: {
-            title: 'The Chronicles of Narnia: The Lion, the Witch and the Wardrobe',
+            title: 'The Chronicles of Narnia: The Lion, the Witch and the ' +
+                'Wardrobe',
             genre: 'Fantasy',
 
             mpaaRating: 'PG',

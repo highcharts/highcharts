@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         text: 'Mouse events demo'
     },
     subtitle: {
-        text: 'On point mouse over or mouse out, the values should be reported in top left'
+        text: 'On point mouse over or mouse out, the values should be ' +
+            'reported in top left'
     },
     plotOptions: {
         series: {

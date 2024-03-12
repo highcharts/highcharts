@@ -77,7 +77,8 @@ function createEnvelopeChart(type, containerEl, onEdit) {
                         btn.classList.remove('hidden');
                     });
                     this.renderTo.addEventListener('mouseleave', () => {
-                        hideTimeout = setTimeout(() => btn.classList.add('hidden'), 400);
+                        hideTimeout = setTimeout(() => btn.classList.add(
+                            'hidden'), 400);
                     });
                 }
             }
@@ -147,8 +148,10 @@ function createEnvelopeChart(type, containerEl, onEdit) {
 function addOscControls(controlsContainerEl, options) {
     let content = '';
     const opts = options || {},
-        typeOptions = ['sine', 'sawtooth', 'triangle', 'square', 'whitenoise', 'pulse']
-            .reduce((str, option) => `${str}<option value="${option}">${option}</option>`, ''),
+        typeOptions = [
+            'sine', 'sawtooth', 'triangle', 'square', 'whitenoise', 'pulse']
+            .reduce((str, option) => `${str}<option value="${option}">${option}</option>`,
+                ''),
         addChartContainer = (id, label) => {
             const uid = `${id}-${uidCounter++}`;
             content += `<div class="chart span2" id="${uid}"></div>
@@ -180,18 +183,23 @@ function addOscControls(controlsContainerEl, options) {
             opts.detune || '', 1),
         pulseWidth: addControl('input', 'PulseWidth', 'Pulse width',
             opts.pulseWidth || '', 0.05),
-        volPitchTrackingMult: addControl('input', 'VolPitchTrackingMult', 'Volume tracking multiplier',
+        volPitchTrackingMult: addControl(
+            'input', 'VolPitchTrackingMult', 'Volume tracking multiplier',
             opts.volumePitchTrackingMultiplier || '', 0.05),
         lowpassFreq: addControl('input', 'LowpassFreq', 'Lowpass frequency',
             opts.lowpass && opts.lowpass.frequency || '', 1),
-        lowpassPitchTrackingMult: addControl('input', 'LowpassPitchTrackingMult', 'Lowpass tracking multiplier',
-            opts.lowpass && opts.lowpass.frequencyPitchTrackingMultiplier || '', 0.1),
+        lowpassPitchTrackingMult: addControl(
+            'input', 'LowpassPitchTrackingMult', 'Lowpass tracking multiplier',
+            opts.lowpass && opts.lowpass.frequencyPitchTrackingMultiplier ||
+                '', 0.1),
         lowpassQ: addControl('input', 'LowpassQ', 'Lowpass resonance',
             opts.lowpass && opts.lowpass.Q || '', 0.1),
         highpassFreq: addControl('input', 'HighpassFreq', 'Highpass frequency',
             opts.highpass && opts.highpass.frequency || '', 1),
-        highpassPitchTrackingMult: addControl('input', 'HighpassPitchTrackingMult', 'Highpass tracking multiplier',
-            opts.highpass && opts.highpass.frequencyPitchTrackingMultiplier || '', 0.1),
+        highpassPitchTrackingMult: addControl(
+            'input', 'HighpassPitchTrackingMult', 'Highpass tracking multiplier',
+            opts.highpass && opts.highpass.frequencyPitchTrackingMultiplier ||
+                '', 0.1),
         highpassQ: addControl('input', 'HighpassQ', 'Highpass resonance',
             opts.highpass && opts.highpass.Q || '', 0.1),
         fmOsc: addControl('select', 'FMOsc', 'FM oscillator', ''),
@@ -217,7 +225,8 @@ class Synth {
         this.child('.playWideRange').onclick = playWideRange;
         this.child('.addOsc').onclick = this.addOscillator.bind(this);
         this.child('.resetEQ').onclick = this.resetEQ.bind(this);
-        this.child('.masterVolume').onchange = this.child('.glideDuration').onchange =
+        this.child(
+            '.masterVolume').onchange = this.child('.glideDuration').onchange =
             this.updateFromUI.bind(this);
         this.child('.preset').innerHTML = Object.keys(presets)
             .reduce((str, p) => `${str}<option value="${p}">${p}</option>`, '');
@@ -290,12 +299,14 @@ class Synth {
             el(oscillator.controlIds.vmOsc).onchange =
             el(oscillator.controlIds.fmOsc).onchange = function () {
                 if (this.value === '' + id) {
-                    alert('Oscillator can\'t modulate itself - please assign to a different oscillator.');
+                    alert(
+                        'Oscillator can\'t modulate itself - please assign to a different oscillator.');
                     this.value = '';
                 }
             };
             Object.values(oscillator.controlIds).forEach(id => el(id)
-                .addEventListener('change', synth.updateModulationLists.bind(synth)));
+                .addEventListener(
+                    'change', synth.updateModulationLists.bind(synth)));
             synth.updateModulationLists();
         }, 0);
     }
@@ -315,7 +326,8 @@ class Synth {
             const sliderContainer = eqContainers[ix];
             sliderContainer.querySelector('.gain').value = def.gain || 0;
             sliderContainer.querySelector('.freq').value = def.frequency;
-            sliderContainer.querySelector('.q').value = def.Q !== void 0 ? def.Q : 1;
+            sliderContainer.querySelector(
+                '.q').value = def.Q !== void 0 ? def.Q : 1;
         });
     }
 
@@ -345,9 +357,11 @@ class Synth {
             this.oscillators.forEach((osc, i) => {
                 el(osc.controlIds.type).value = opts[i].type;
                 el(osc.controlIds.fmOsc).value =
-                    opts[i].fmOscillator !== null ? opts[i].fmOscillator + 1 : '';
+                    opts[i].fmOscillator !== null ? opts[i].fmOscillator + 1 :
+                        '';
                 el(osc.controlIds.vmOsc).value =
-                    opts[i].vmOscillator !== null ? opts[i].vmOscillator + 1 : '';
+                    opts[i].vmOscillator !== null ? opts[i].vmOscillator + 1 :
+                        '';
                 envToChart(osc.controlIds.attackEnvChart,
                     opts[i].attackEnvelope);
                 envToChart(osc.controlIds.releaseEnvChart,
@@ -376,7 +390,8 @@ class Synth {
             .reduce((definitions, sliderContainer) => {
                 const gain = parseFloat(childValue(sliderContainer, '.gain'));
                 if (gain < -0.01 || gain > 0.01) {
-                    const frequency = parseFloat(childValue(sliderContainer, '.freq')) || 0,
+                    const frequency = parseFloat(childValue(sliderContainer,
+                            '.freq')) || 0,
                         Q = parseFloat(childValue(sliderContainer, '.q')) || 1;
                     definitions.push({ frequency, Q, gain });
                 }
@@ -410,8 +425,10 @@ class Synth {
         const options = {
             masterVolume: childValue(this.container, '.masterVolume'),
             noteGlideDuration: childValue(this.container, '.glideDuration'),
-            masterAttackEnvelope: this.getEnvelopeFromChart('masterAttackEnvChart'),
-            masterReleaseEnvelope: this.getEnvelopeFromChart('masterReleaseEnvChart'),
+            masterAttackEnvelope: this.getEnvelopeFromChart(
+                'masterAttackEnvChart'),
+            masterReleaseEnvelope: this.getEnvelopeFromChart(
+                'masterReleaseEnvChart'),
             eq: this.getEqFromUI(),
             oscillators: this.oscillators.map(osc => {
                 const i = osc.controlIds,
@@ -475,7 +492,8 @@ class Synth {
 
 
     resetEQ() {
-        this.container.querySelectorAll('.eqSliders .gain').forEach(input => (input.value = 0));
+        this.container.querySelectorAll(
+            '.eqSliders .gain').forEach(input => (input.value = 0));
         this.updateFromUI();
     }
 
@@ -521,7 +539,8 @@ class Synth {
 }
 
 
-// Use synth --------------------------------------------------------------------------------------------
+// Use synth
+// --------------------------------------------------------------------------------------------
 
 el('startSynth').onclick = function () {
     audioContext = new AudioContext();
@@ -534,7 +553,8 @@ el('startSynth').onclick = function () {
 };
 
 
-document.querySelectorAll('.json').forEach(el => (el.onclick = () => el.select()));
+document.querySelectorAll(
+    '.json').forEach(el => (el.onclick = () => el.select()));
 el('showHelp').onclick = () => el('help').classList.toggle('hidden');
 
 

@@ -1,7 +1,8 @@
 // create the chart
 Highcharts.chart('container', {
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     plotOptions: {
@@ -10,7 +11,8 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     unselect: function () {
-                        const text = this.category + ': ' + this.y + ' was last unselected',
+                        const text = this.category +
+                            ': ' + this.y + ' was last unselected',
                             chart = this.series.chart;
                         if (!chart.lbl) {
                             chart.lbl = chart.renderer.label(text, 100, 70)

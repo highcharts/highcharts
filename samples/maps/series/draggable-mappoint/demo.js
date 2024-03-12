@@ -90,7 +90,9 @@
         },
 
         subtitle: {
-            text: 'Click and drag the marker to change the map point position <br> Click and drag anywhere else to rotate globe<br>',
+            text: 'Click and drag the marker to change the map point ' +
+                'position <br> Click and drag anywhere else to rotate ' +
+                'globe<br>',
             align: 'left'
         },
 

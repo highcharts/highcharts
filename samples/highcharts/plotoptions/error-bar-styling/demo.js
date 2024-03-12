@@ -6,7 +6,8 @@ Highcharts.chart('container', {
         text: 'Temperature'
     },
     xAxis: [{
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }],
     yAxis: {
         labels: {
@@ -29,7 +30,9 @@ Highcharts.chart('container', {
             enabled: false
         },
         tooltip: {
-            pointFormat: '<span style="font-weight: bold; color: {series.color}">{series.name}</span>: <b>{point.y:.1f}°C</b><br/>'
+            pointFormat: '<span style="font-weight: bold; color: ' +
+                '{series.color}">{series.name}</span>: <b>{point.y:.1f}°C</b>' +
+                '<br/>'
         }
     }, {
         color: '#FF0000',

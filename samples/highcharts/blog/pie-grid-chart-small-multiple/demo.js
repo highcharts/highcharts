@@ -14,7 +14,17 @@ Highcharts.chart('nl', {
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -31,7 +41,17 @@ Highcharts.chart('ns', {
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -48,7 +68,17 @@ Highcharts.chart('nb', {
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -61,11 +91,26 @@ Highcharts.chart('nb', {
     }]
 });
 Highcharts.chart('qc', {
-    title: { text: 'Québec', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Québec',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -78,11 +123,26 @@ Highcharts.chart('qc', {
     }]
 });
 Highcharts.chart('on', {
-    title: { text: 'Ontario', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Ontario',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -95,11 +155,26 @@ Highcharts.chart('on', {
     }]
 });
 Highcharts.chart('mb', {
-    title: { text: 'Manitoba', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Manitoba',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -112,11 +187,26 @@ Highcharts.chart('mb', {
     }]
 });
 Highcharts.chart('sk', {
-    title: { text: 'Saskatchewan', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Saskatchewan',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -129,11 +219,26 @@ Highcharts.chart('sk', {
     }]
 });
 Highcharts.chart('ab', {
-    title: { text: 'Alberta', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Alberta',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -150,7 +255,17 @@ Highcharts.chart('bc', {
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -167,7 +282,17 @@ Highcharts.chart('nt', {
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -180,11 +305,26 @@ Highcharts.chart('nt', {
     }]
 });
 Highcharts.chart('yt', {
-    title: { text: 'Yukon', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Yukon',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -197,11 +337,26 @@ Highcharts.chart('yt', {
     }]
 });
 Highcharts.chart('nu', {
-    title: { text: 'Nunavut', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'Nunavut',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     redits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,
@@ -214,11 +369,26 @@ Highcharts.chart('nu', {
     }]
 });
 Highcharts.chart('pe', {
-    title: { text: 'P.E.I.', style: { fontSize: titleStyle }, margin: titleMargin },
+    title: {
+        text:
+        'P.E.I.',
+        style: { fontSize: titleStyle },
+        margin: titleMargin
+    },
     chart: { type: 'pie', height: heightChart + '%', borderWidth: borderWidth },
     credits: { enabled: false },
     tooltip: { headerFormat: '{point.key}: <b>{point.y}</b>', pointFormat: '' },
-    plotOptions: { pie: { allowPointSelect: true, cursor: 'pointer', borderWidth: 0, borderColor: null, dataLabels: { enabled: false }, showInLegend: false } },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor:
+        'pointer',
+            borderWidth: 0,
+            borderColor: null,
+            dataLabels: { enabled: false },
+            showInLegend: false
+        }
+    },
     series: [{
         name: 'Seats',
         colorByPoint: true,

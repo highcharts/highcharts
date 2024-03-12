@@ -14,13 +14,16 @@ $(function () {
         },
 
         subtitle: {
-            text: '- No colored lines should be visible next to the plot border.<br/>' +
-                '- In the line segments close to axis (Mar-Apr, Oct-Nov), <br/>' +
+            text: '- No colored lines should be visible next to the plot ' +
+                'border.<br/>' +
+                '- In the line segments close to axis (Mar-Apr, Oct-Nov), ' +
+                '<br/>' +
                 'half the line should be visible.',
             align: 'left'
         },
         xAxis: [{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             lineWidth: w,
             gridLineWidth: w,
             gridLineColor: 'red',
@@ -29,7 +32,8 @@ $(function () {
             min: 0,
             max: 11
         }, {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             opposite: true,
             lineWidth: w
         }],

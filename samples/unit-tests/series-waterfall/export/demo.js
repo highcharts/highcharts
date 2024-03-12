@@ -1,4 +1,5 @@
-QUnit.test('#14830: getSVG on waterfall chart with stackLabels and hidden series threw', assert => {
+QUnit.test('#14830: getSVG on waterfall chart with stackLabels and hidden ' +
+    'series threw', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'waterfall'

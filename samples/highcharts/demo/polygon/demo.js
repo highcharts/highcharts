@@ -38,7 +38,8 @@ Highcharts.chart('container', {
         enableMouseTracking: false,
         accessibility: {
             exposeAsGroupOnly: true,
-            description: 'Target ranges in an upwards trending diagonal from 161 to 182 on the x axis, and 42 to 100 on the y axis.'
+            description: 'Target ranges in an upwards trending diagonal from ' +
+                '161 to 182 on the x axis, and 42 to 100 on the y axis.'
         }
     }, {
         name: 'Observations',

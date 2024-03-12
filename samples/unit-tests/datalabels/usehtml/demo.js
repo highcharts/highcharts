@@ -131,7 +131,8 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
     assert.strictEqual(
         label.nodeName,
         'SPAN',
-        'Created dataLabel should be rendered as HTML element, not SVG (#10765).'
+        'Created dataLabel should be rendered as HTML element, not SVG ' +
+        '(#10765).'
     );
 
     assert.strictEqual(

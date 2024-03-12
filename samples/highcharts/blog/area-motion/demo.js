@@ -49,7 +49,8 @@ Highcharts.chart('container', {
         y: 50,
         floating: true,
         borderWidth: 1,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) ||
+            '#FFFFFF'
     },
     xAxis: {
         categories: [
@@ -101,7 +102,8 @@ function update(increment) {
     if (increment) {
         input.value = parseInt(input.value, 10) + increment;
     }
-    chart.series[0].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
+    chart.series[0].setData(dataSequence[input.value].data); // Increment
+    // dataset (updates chart)
     output.innerHTML = dataSequence[input.value].name; // Output value
     if (input.value >= input.max) { // Auto-pause
         pause(document.querySelector('#play-pause-button'));

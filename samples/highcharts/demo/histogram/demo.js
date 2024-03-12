@@ -34,7 +34,8 @@ Highcharts.chart('container', {
         histogram: {
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{index}. {point.x:.3f} to {point.x2:.3f}, {point.y}.'
+                    valueDescriptionFormat: '{index}. {point.x:.3f} to ' +
+                        '{point.x2:.3f}, {point.y}.'
                 }
             }
         }

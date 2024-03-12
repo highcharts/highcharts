@@ -6,7 +6,8 @@ Highcharts.stockChart('container', {
         text: 'Tooltip header didn\'t display minutes'
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.2f}</b><br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y:.2f}</b><br/>',
         shared: false
     },
     series: [{

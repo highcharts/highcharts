@@ -29,7 +29,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         pointFormat:
-      '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.0f}%</b><br/>',
+      '<span style="color:{series.color}">{series.name}</span>: <b>' +
+      '{point.percentage:.0f}%</b><br/>',
         shared: true
     },
     plotOptions: {

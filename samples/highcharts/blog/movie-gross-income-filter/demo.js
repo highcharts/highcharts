@@ -34,7 +34,11 @@ Highcharts.chart('container', {
     tooltip: {
         followPointer: false,
         useHTML: true,
-        pointFormat: '<table>  <tr>\n    <th>Gross</th>\n    <td>$ {point.y}</td>\n  </tr>\n  <tr>\n    <th>Genre</th>\n    <td>{point.series.options.extra.genre}</td>\n  </tr>\n  <tr>\n    <th>MPAA rating</th>\n    <td>{point.series.options.extra.mpaaRating}</td>\n  </tr>\n</table>',
+        pointFormat: '<table>  <tr>\n    <th>Gross</th>\n    <td>$ ' +
+            '{point.y}</td>\n  </tr>\n  <tr>\n    <th>Genre</th>\n    <td>' +
+            '{point.series.options.extra.genre}</td>\n  </tr>\n  <tr>\n    ' +
+            '<th>MPAA rating</th>\n    <td>' +
+            '{point.series.options.extra.mpaaRating}</td>\n  </tr>\n</table>',
         headerFormat: '<small>{point.key} days since release</small>'
     },
     yAxis: {
@@ -43,7 +47,8 @@ Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: 'Only 3 movies: Jurassic Park (497 days) ET, Gladiator and were more than a year in theaters.'
+        text: 'Only 3 movies: Jurassic Park (497 days) ET, Gladiator and ' +
+            'were more than a year in theaters.'
     },
     xAxis: {
         title: {
@@ -26732,7 +26737,8 @@ Highcharts.chart('container', {
             enabled: false
         },
         extra: {
-            title: 'The Chronicles of Narnia: The Lion, the Witch and the Wardrobe',
+            title: 'The Chronicles of Narnia: The Lion, the Witch and the ' +
+                'Wardrobe',
             genre: 'Fantasy',
 
             mpaaRating: 'PG',

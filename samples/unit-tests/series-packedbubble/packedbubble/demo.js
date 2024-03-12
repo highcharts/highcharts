@@ -68,7 +68,8 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     );
     assert.ok(
         chart.series[0].parentNode.selected,
-        'It should be possible to select a parent node that has enabled parentNode.allowPointSelect property'
+        'It should be possible to select a parent node that has enabled ' +
+        'parentNode.allowPointSelect property'
     );
     controller.triggerEvent(
         'mouseover',
@@ -134,7 +135,8 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     assert.strictEqual(
         chart.getSelectedParentNodes().length,
         2,
-        'It should be possible to select more than one parent node using key modifier.'
+        'It should be possible to select more than one parent node using key ' +
+        'modifier.'
     );
     controller.triggerEvent(
         'mouseover',
@@ -152,6 +154,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     assert.strictEqual(
         chart.getSelectedParentNodes().length,
         0,
-        'After clicking on the selected parent, all selected parents should be deselected.'
+        'After clicking on the selected parent, all selected parents should ' +
+        'be deselected.'
     );
 });

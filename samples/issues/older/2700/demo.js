@@ -5,10 +5,12 @@ $(function () {
             inverted: false
         },
         title: {
-            text: 'Highcharts <= 3.0.9: Data labels were not shown inside clipped columns'
+            text: 'Highcharts <= 3.0.9: Data labels were not shown inside ' +
+                'clipped columns'
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
         yAxis: {
             max: 250

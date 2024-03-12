@@ -44,23 +44,27 @@ Dashboards.board(
                                                         width: '1/3'
                                                     },
                                                     {
-                                                        id: 'db-col-1-row-1B-layout',
+                                                        id:
+                                                            'db-col-1-row-1B-layout',
                                                         layout: {
                                                             rows: [
                                                                 {
                                                                     cells: [
                                                                         {
-                                                                            id: 'db-col-1-row-1B-row-0'
+                                                                            id:
+                                                                                'db-col-1-row-1B-row-0'
                                                                         }
                                                                     ]
                                                                 },
                                                                 {
                                                                     cells: [
                                                                         {
-                                                                            id: 'db-col-1-row-1B-row-1A'
+                                                                            id:
+                                                                                'db-col-1-row-1B-row-1A'
                                                                         },
                                                                         {
-                                                                            id: 'db-col-1-row-1B-row-1B'
+                                                                            id:
+                                                                                'db-col-1-row-1B-row-1B'
                                                                         }
                                                                     ]
                                                                 }

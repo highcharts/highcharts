@@ -7,7 +7,8 @@ Highcharts.chart('container', {
         text: 'A gridZIndex of 4 renders the grid lines above the graph'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         gridLineWidth: 1,
         gridZIndex: 4
     },

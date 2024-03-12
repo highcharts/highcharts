@@ -28,15 +28,19 @@ Highcharts.chart('container', {
             load: function () {
                 const chart = this;
 
-                const flakeSet1 = document.querySelectorAll('.highcharts-series-12 .highcharts-point');
+                const flakeSet1 = document.querySelectorAll(
+                    '.highcharts-series-12 .highcharts-point');
 
-                const flakeSet2 = document.querySelectorAll('.highcharts-series-13 .highcharts-point');
+                const flakeSet2 = document.querySelectorAll(
+                    '.highcharts-series-13 .highcharts-point');
 
                 const berryPoints = [4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-                const branchSnow = document.querySelectorAll('.highcharts-areasplinerange-series');
+                const branchSnow = document.querySelectorAll(
+                    '.highcharts-areasplinerange-series');
 
-                const bottomSnow = document.querySelectorAll('.highcharts-series-19');
+                const bottomSnow = document.querySelectorAll(
+                    '.highcharts-series-19');
 
                 const buds = document.querySelectorAll('.highcharts-series-18');
 
@@ -104,7 +108,8 @@ Highcharts.chart('container', {
                         }
                     });
 
-                    document.querySelector('.highcharts-title').style.opacity = 1;
+                    document.querySelector(
+                        '.highcharts-title').style.opacity = 1;
 
 
                 }, 2000);
@@ -158,7 +163,8 @@ Highcharts.chart('container', {
 
                     chart.redraw();
 
-                    document.querySelector('.highcharts-subtitle').style.opacity = 1;
+                    document.querySelector(
+                        '.highcharts-subtitle').style.opacity = 1;
 
 
                 }, 2200);
@@ -174,7 +180,8 @@ Highcharts.chart('container', {
     },
     title: {
         useHTML: true,
-        text: '<div id="title">Wishing You A<br><span>Berry Bright</span> Holiday</div>',
+        text: '<div id="title">Wishing You A<br><span>Berry Bright</span> ' +
+            'Holiday</div>',
         align: 'center',
         x: 0,
         y: 70

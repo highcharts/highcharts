@@ -30,7 +30,8 @@ Highcharts.chart('container', {
         grid: {
             enabled: true
         },
-        categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
+        categories: [
+            'M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
         min: 0,
         max: 12
     }, {

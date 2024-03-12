@@ -8,7 +8,8 @@ $(function () {
         },
 
         title: {
-            text: 'Highcharts <= 3.0.9 - ignoreHiddenSeries had no effect on bubble sizes'
+            text: 'Highcharts <= 3.0.9 - ignoreHiddenSeries had no effect on ' +
+                'bubble sizes'
         },
 
         series: [{

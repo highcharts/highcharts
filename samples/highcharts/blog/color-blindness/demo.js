@@ -15,7 +15,8 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        categories: ['Normal vision', 'Deuteranomalia', 'Protanopia', 'Tritanopia'],
+        categories: [
+            'Normal vision', 'Deuteranomalia', 'Protanopia', 'Tritanopia'],
         title: null
     },
 

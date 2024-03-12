@@ -19,10 +19,12 @@ Math.easeOutQuint = function (pos) {
 //                 const chart = this;
 //                 const particles = chart.series[12].data;
 
-//                 const squares = document.querySelectorAll('.squares .highcharts-point');
+//                 const squares = document.querySelectorAll('.squares ' +
+    '.highcharts-point');
 
 //                 setTimeout(function () {
-//                     document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+//                     document.querySelector(
+    '.highcharts-markers.particles').style.opacity = 1;
 //                     particles[0].update({
 //                         x: 17,
 //                         y: 13
@@ -573,7 +575,8 @@ Highcharts.chart('container', {
 
                     chart.redraw();
 
-                    document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+                    document.querySelector(
+                        '.highcharts-markers.particles').style.opacity = 1;
 
                 }, 100);
 

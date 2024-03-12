@@ -38,6 +38,7 @@ QUnit.test('Testing zones vs colorAxis', function (assert) {
     assert.strictEqual(
         point.graphic.attr('fill').replace(/\ /g, ''),
         chart.colorAxis[0].toColor(point.value, point).replace(/\ /g, ''),
-        'Fill from colorAxis should be used when no color specified in zone (#10670).'
+        'Fill from colorAxis should be used when no color specified in zone ' +
+        '(#10670).'
     );
 });

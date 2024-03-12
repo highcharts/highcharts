@@ -160,7 +160,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Chart should be initialised when xAxis.min and rangeselector.selected are defined. (#602)',
+    'Chart should be initialised when xAxis.min and rangeselector.selected ' +
+    'are defined. (#602)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             rangeSelector: {

@@ -5,11 +5,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts Parallel Coordinates with <em>tooltipValueFormat</em> set'
+        text: 'Highcharts Parallel Coordinates with <em>' +
+            'tooltipValueFormat</em> set'
     },
 
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.formattedValue}</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: <b>{point.formattedValue}</b><br/>'
     },
     xAxis: {
         opposite: false,

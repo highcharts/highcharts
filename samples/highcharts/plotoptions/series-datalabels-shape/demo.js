@@ -13,7 +13,8 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     plotOptions: {
@@ -34,7 +35,8 @@ Highcharts.chart('container', {
             y: 29.9,
             dataLabels: {
                 enabled: true,
-                format: 'January<br><span style="font-size: 1.3em">Dryest</span>',
+                format: 'January<br><span style="font-size: 1.3em">' +
+                    'Dryest</span>',
                 verticalAlign: 'bottom',
                 y: -10
             }
@@ -56,7 +58,8 @@ Highcharts.chart('container', {
             y: 216.4,
             dataLabels: {
                 enabled: true,
-                format: 'September<br><span style="font-size: 1.3em">Wettest</span>',
+                format: 'September<br><span style="font-size: 1.3em">' +
+                    'Wettest</span>',
                 align: 'right',
                 verticalAlign: 'middle',
                 x: -35

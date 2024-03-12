@@ -78,7 +78,8 @@ function update(increment) {
     if (increment) {
         input.value = parseInt(input.value, 10) + increment;
     }
-    chart.series[0].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
+    chart.series[0].setData(dataSequence[input.value].data); // Increment
+    // dataset (updates chart)
     output.innerHTML = dataSequence[input.value].name; // Output value
     if (input.value >= input.max) { // Auto-pause
         pause(document.getElementById('play-pause-button'));

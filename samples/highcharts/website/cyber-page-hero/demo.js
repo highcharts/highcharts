@@ -259,13 +259,15 @@ function generateCaption(type) {
 
 function lightParticles() {
 
-    [].forEach.call(document.querySelectorAll('.highcharts-series-7 image'), function (element) {
+    [].forEach.call(document.querySelectorAll(
+        '.highcharts-series-7 image'), function (element) {
         element.style.opacity = '0.7';
         element.style.filter = 'saturate(2)';
         element.style.transition = '500ms';
     });
     setTimeout(function () {
-        [].forEach.call(document.querySelectorAll('.highcharts-series-7 image'), function (element) {
+        [].forEach.call(document.querySelectorAll('.highcharts-series-7 ' +
+            'image'), function (element) {
             element.style.opacity = '0.3';
             element.style.filter = 'saturate(0.5)';
             element.style.transition = '500ms';
@@ -273,7 +275,8 @@ function lightParticles() {
     }, 200);
 
     setTimeout(function () {
-        [].forEach.call(document.querySelectorAll('.highcharts-series-7 image'), function (element) {
+        [].forEach.call(document.querySelectorAll('.highcharts-series-7 ' +
+            'image'), function (element) {
             element.style.opacity = '0.7';
             element.style.filter = 'saturate(2)';
             element.style.transition = '500ms';

@@ -27,7 +27,8 @@
     // Skip or move some labels to avoid collision
     states.forEach(state => {
         // Disable data labels
-        if (state.properties.code_hasc === 'AU.CT' || state.properties.code_hasc === 'AU.JB') {
+        if (state.properties.code_hasc ===
+            'AU.CT' || state.properties.code_hasc === 'AU.JB') {
             state.dataLabels = {
                 enabled: false
             };
@@ -64,7 +65,10 @@
             point: {
                 valueDescriptionFormat: '{xDescription}.'
             },
-            description: 'Map of Australia, showing examples of multiple geometry types in Highcharts Maps: Map areas (used for regions), map lines (used for rivers), and map points (used for cities).'
+            description: 'Map of Australia, showing examples of multiple ' +
+                'geometry types in Highcharts Maps: Map areas (used for ' +
+                'regions), map lines (used for rivers), and map points (used ' +
+                'for cities).'
         },
 
         mapNavigation: {

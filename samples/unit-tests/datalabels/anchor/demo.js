@@ -95,7 +95,8 @@ QUnit.test(
                 assert.close(
                     chart.xAxis[0].toPixels(point.y, true),
                     point.dataLabel.translateY,
-                    30, // marker radius and dataLabel font size - it's translated to the top
+                    30, // marker radius and dataLabel font size - it
+                        's translated to the top
                     'Point: [' +
                         point.x +
                         ', ' +

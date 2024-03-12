@@ -34,7 +34,8 @@ Highcharts.chart('container', {
         labelOptions: {
             format: '' +
                 '<span style="font-size: 10px">{point.x}</span><br/>' /* header */ +
-                '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>' /* body */,
+                '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}</b><br/>' /* body */,
 
             backgroundColor: Highcharts.color('#f7f7f7').setOpacity(0.85).get(),
             borderWidth: 1,

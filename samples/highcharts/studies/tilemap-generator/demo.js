@@ -989,7 +989,8 @@ $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
     }
 });
 const searchText = 'Search ' + mapCount + ' maps';
-mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
+mapOptions =
+    '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
 $('#mapDropdown').append(mapOptions).combobox();
 
 
@@ -1016,7 +1017,8 @@ $('#mapDropdown').change(function () {
 
     // Show loading
     if (Highcharts.charts[0]) {
-        Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+        Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin ' +
+            'fa-2x"></i>');
     }
 
     // When the map is loaded or ready from cache...
@@ -1098,8 +1100,10 @@ $('#mapDropdown').change(function () {
                 dataLabels: {
                     enabled: showDataLabels,
                     formatter: function () {
-                        return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
-                            (this.point.properties && this.point.properties['hc-a2']) :
+                        return mapKey ===
+                            'custom/world' || mapKey === 'countries/us/us-all' ?
+                            (this.point.properties && this.point.properties[
+                                'hc-a2']) :
                             this.point.name;
                     }
                 }

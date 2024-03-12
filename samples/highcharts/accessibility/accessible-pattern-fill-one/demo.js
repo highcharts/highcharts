@@ -27,7 +27,8 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Area chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
     },

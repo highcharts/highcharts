@@ -49,7 +49,8 @@ QUnit.test('Series shadows', function (assert) {
         `url(#highcharts-drop-shadow-${
             chart.index
         }-filterunits-userspaceonuse)`,
-        'Shadows should be updated when old options defined as object and new as boolean (#12091, #19093).'
+        'Shadows should be updated when old options defined as object and ' +
+        'new as boolean (#12091, #19093).'
     );
 
     chart = Highcharts.chart('container', {
@@ -76,7 +77,8 @@ QUnit.test('Series shadows', function (assert) {
 
     assert.ok(
         chart.series[0].graph.attr('filter').indexOf('red') !== -1,
-        'Shadows should be updated when old options defined as boolean and new as object (#12091).'
+        'Shadows should be updated when old options defined as boolean and ' +
+        'new as object (#12091).'
     );
 
     chart.series[0].update({

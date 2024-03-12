@@ -14,7 +14,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        headerFormat: '<span style="font-size: 10px">{point.yCategory}</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{point.yCategory}</span>' +
+            '<br/>',
         pointFormat: '{point.name}'
     },
 

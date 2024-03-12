@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'The on-screen chart is 600x400.<br/>The exported chart is 800x400<br/>(sourceWidth and sourceHeight multiplied by scale)',
+        text: 'The on-screen chart is 600x400.<br/>The exported chart is ' +
+            '800x400<br/>(sourceWidth and sourceHeight multiplied by scale)',
         floating: true,
         align: 'left',
         x: 60,
@@ -13,7 +14,8 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     series: [{

@@ -8,7 +8,8 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     legendItemClick: function () {
-                        if (!confirm('Do you want to toggle the visibility of this slice?')) {
+                        if (!confirm('Do you want to toggle the visibility ' +
+                            'of this slice?')) {
                             return false;
                         }
                     }

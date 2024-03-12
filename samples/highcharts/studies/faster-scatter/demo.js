@@ -34,7 +34,8 @@
             layers = this.layers = [];
         }
 
-        // Divide the points into stripes. Points within the same group won't overlap in the y
+        // Divide the points into stripes. Points within the same group won
+            't overlap in the y
         // dimension
         while (i--) {
             point = data[i];
@@ -55,7 +56,8 @@
             }
         }
 
-        // Loop over the members of each stripe and add them to a group if they don't overlap
+        // Loop over the members of each stripe and add them to a group if they don
+            't overlap
         // in the x dimension.
         const groups = [];
 
@@ -66,7 +68,8 @@
             lastX,
             j;
 
-        // first do even stripes, where points are guaranteed not to overlap with points in even stripes
+        // first do even stripes, where points are guaranteed not to overlap
+        // with points in even stripes
         while (remaining) {
             group = [];
 
@@ -91,7 +94,8 @@
                 groups.push(group);
             }
 
-            if (!group.length && !oddOrEven) { // finished adding points to even stripes
+            if (!group.length && !oddOrEven) { // finished adding points to
+            // even stripes
                 oddOrEven = 1;
             }
         }
@@ -105,7 +109,8 @@
             group = groups[i];
 
             for (j = 0; j < group.length; j += 1) {
-                // Math.round reduces rendering times by 20% in a 50,000 points chart
+                // Math.round reduces rendering times by 20% in a 50,000
+                // points chart
                 x = Math.round(group[j].plotX);
                 y = Math.round(group[j].plotY);
                 path.push(

@@ -15,7 +15,8 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'Installation - a very very long text, this can happen and then ' +
+        name: 'Installation - a very very long text, this can happen and ' +
+            'then ' +
             'the text should either be shortened or wrapped',
         data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
     }, {

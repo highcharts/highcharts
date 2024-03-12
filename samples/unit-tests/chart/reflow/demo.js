@@ -66,7 +66,8 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                 'Width should be set'
             );
 
-            // Change the container size and trigger window resize to make the chart resize
+            // Change the container size and trigger window resize to make
+            // the chart resize
             container.style.width = '300px';
 
             if (navigator.userAgent.indexOf('Edge') === -1) {
@@ -147,7 +148,8 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                 'Chart width should be set'
             );
 
-            // Change the container size and trigger window resize to make the chart resize
+            // Change the container size and trigger window resize to make
+            // the chart resize
             container.style.width = '300px';
             chart.reflow();
         }, 200);
@@ -199,7 +201,8 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
     }
 });
 
-QUnit.test('#13220, #12788, #12489, 11975: Pointer position after setting size or scale on a parent', assert => {
+QUnit.test('#13220, #12788, #12489, 11975: Pointer position after setting ' +
+    'size or scale on a parent', assert => {
     const chart = Highcharts.chart('container', {
         series: [{
             data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]

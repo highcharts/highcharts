@@ -113,7 +113,8 @@ Highcharts.chart('container', {
                         } else {
                             const percents = ['2.35%', '13.5%', '34.0%'];
 
-                            s.stDevLabelsGroup = renderer.g('st-dev-labels').attr({
+                            s.stDevLabelsGroup = renderer.g(
+                                'st-dev-labels').attr({
                                 zIndex: 5
                             }).add();
                             s.stDevLabels = [];

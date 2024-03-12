@@ -666,45 +666,47 @@ QUnit.test(
     }
 );
 
-QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', assert => {
-    [
-        'column',
-        'bar'
-    ].forEach(type => {
-        const chart = Highcharts.chart('container', {
-            chart: {
-                type
-            },
-            yAxis: {
-                stackLabels: {
-                    enabled: true
-                }
-            },
-            plotOptions: {
-                [type]: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        inside: false
+QUnit.test(
+    '#8742: Some stackLabels did not render with dataLabels enabled', assert => {
+        [
+            'column',
+            'bar'
+        ].forEach(type => {
+            const chart = Highcharts.chart('container', {
+                chart: {
+                    type
+                },
+                yAxis: {
+                    stackLabels: {
+                        enabled: true
                     }
-                }
-            },
-            series: [{
-                data: [0, 99, 454, 297, 409]
-            }, {
-                data: [51, 150, 155, 106, 97]
-            }, {
-                data: [19, 107, 184, 138, 150]
-            }]
-        });
+                },
+                plotOptions: {
+                    [type]: {
+                        stacking: 'normal',
+                        dataLabels: {
+                            enabled: true,
+                            inside: false
+                        }
+                    }
+                },
+                series: [{
+                    data: [0, 99, 454, 297, 409]
+                }, {
+                    data: [51, 150, 155, 106, 97]
+                }, {
+                    data: [19, 107, 184, 138, 150]
+                }]
+            });
 
-        const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
-        assert.ok(
-            Object.values(stack).every(item => item.label.visibility !== 'hidden'),
-            `${type}: All stackLabels should be visible`
-        );
+            const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
+            assert.ok(
+                Object.values(stack).every(item => item.label.visibility !==
+                'hidden'),
+                `${type}: All stackLabels should be visible`
+            );
+        });
     });
-});
 
 QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
     const chart = Highcharts.chart('container', {
@@ -911,8 +913,10 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
     });
 
     const chart = Highcharts.chart('container', getOptions(false, true));
-    let alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
-    let alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+    let alignOptions1 = chart.yAxis[0].stacking.stacks[
+        'column,,,'][0].alignOptions;
+    let alignOptions2 = chart.yAxis[0].stacking.stacks[
+        '-column,,,'][3].alignOptions;
 
     assert.equal(
         alignOptions1.align,
@@ -936,7 +940,8 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
     );
     chart.update(getOptions(true, true));
     alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
-    alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking.stacks[
+        '-column,,,'][3].alignOptions;
 
     assert.equal(
         alignOptions1.align,
@@ -960,7 +965,8 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
     );
     chart.update(getOptions(true, false));
     alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
-    alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking.stacks[
+        '-column,,,'][3].alignOptions;
 
     assert.equal(
         alignOptions1.align,

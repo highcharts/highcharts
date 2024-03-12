@@ -59,7 +59,8 @@ $(function () {
                 text: null,
                 style: {}
             },
-            categories: ['36668 (Description 36668)', '226410 (Description 226410)', '237351 (Description 237351)', '9909 (Description 9909)', '47366 (Description 47366)', '293735 (Description 293735)', '237356 (Description 237356)', '237354 (Description 237354)', '237357 (Description 237357)', 'Rest']
+            categories: [
+                '36668 (Description 36668)', '226410 (Description 226410)', '237351 (Description 237351)', '9909 (Description 9909)', '47366 (Description 47366)', '293735 (Description 293735)', '237356 (Description 237356)', '237354 (Description 237354)', '237357 (Description 237357)', 'Rest']
         },
         yAxis: {
             title: {
@@ -91,7 +92,8 @@ $(function () {
         plotOptions: {
             bar: {
                 tooltip: {
-                    pointFormat: '<span>{series.name}</span>: <b>{point.y}</b><br/>',
+                    pointFormat: '<span>{series.name}</span>: <b>' +
+                        '{point.y}</b><br/>',
                     valueDecimals: 2,
                     valueSuffix: ''
                 }

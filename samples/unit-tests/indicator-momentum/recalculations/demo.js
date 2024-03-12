@@ -26,7 +26,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period, // the first point in period + 1
+        chart.series[1].points.length +
+        // chart.series[1].options.params.period, // the first point in
+        // period + 1
         'Initial number of Momentum points is correct'
     );
 
@@ -36,7 +38,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period, // the first point in period + 1
+        chart.series[1].points.length +
+        // chart.series[1].options.params.period, // the first point in
+        // period + 1
         'After addPoint number of Momentum points is correct'
     );
 

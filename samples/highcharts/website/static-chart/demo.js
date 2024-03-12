@@ -37,9 +37,12 @@ const iceberg = {
             load: function () {
                 const chart = this;
                 const cover = document.getElementsByClassName('cover')[0];
-                const background = document.getElementsByClassName('highcharts-background')[0];
-                const plotBackground = document.getElementsByClassName('highcharts-plot-background')[0];
-                const title = document.getElementsByClassName('highcharts-title')[0];
+                const background = document.getElementsByClassName(
+                    'highcharts-background')[0];
+                const plotBackground = document.getElementsByClassName(
+                    'highcharts-plot-background')[0];
+                const title = document.getElementsByClassName(
+                    'highcharts-title')[0];
 
 
                 cover.style.fill =  '#30426B';
@@ -131,7 +134,12 @@ const iceberg = {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive chart displaying 5 different styles of icebergs, their approximate size, and how frequently they occur in Iceberg Alley.</p><p>The visualization has shapes of icebergs laid out next to each other on the X-axis, with the Y-axis showing size in meters, both above and below water.</p>'
+            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive chart ' +
+                'displaying 5 different styles of icebergs, their ' +
+                'approximate size, and how frequently they occur in Iceberg ' +
+                'Alley.</p><p>The visualization has shapes of icebergs laid ' +
+                'out next to each other on the X-axis, with the Y-axis ' +
+                'showing size in meters, both above and below water.</p>'
         },
         landmarkVerbosity: 'disabled',
         series: {
@@ -144,7 +152,8 @@ const iceberg = {
         }
     },
     title: {
-        text: 'Distribution of Icebergs in Iceberg Alley <p style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
+        text: 'Distribution of Icebergs in Iceberg Alley <p ' +
+            'style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
         useHTML: true,
         floating: true
 
@@ -393,7 +402,10 @@ const iceberg = {
             },
             accessibility: {
                 enabled: true,
-                description: 'Pinnacle icebergs have a large central spire or pyramid and comprise 33% of icebergs found in Iceberg Alley. They are the tallest style of iceberg, reaching over 120m above and below water.'
+                description: 'Pinnacle icebergs have a large central spire ' +
+                    'or pyramid and comprise 33% of icebergs found in ' +
+                    'Iceberg Alley. They are the tallest style of iceberg, ' +
+                    'reaching over 120m above and below water.'
             },
             data: [
                 {
@@ -459,7 +471,10 @@ const iceberg = {
             type: 'line',
             accessibility: {
                 enabled: true,
-                description: 'Tabular icebergs are horizontal and flat-topped and comprise 23% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above and below water.'
+                description: 'Tabular icebergs are horizontal and ' +
+                    'flat-topped and comprise 23% of icebergs found in ' +
+                    'Iceberg Alley. They are medium sized, and often reach ' +
+                    '60m above and below water.'
             },
             name: 'Tabular Icebergs',
             className: 'berg-depth',
@@ -565,7 +580,10 @@ const iceberg = {
             },
             accessibility: {
                 enabled: true,
-                description: 'Dry Dock icebergs have eroded into a U shape and comprise 19% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above and below water.'
+                description: 'Dry Dock icebergs have eroded into a U shape ' +
+                    'and comprise 19% of icebergs found in Iceberg Alley. ' +
+                    'They are medium sized, and often reach 60m above and ' +
+                    'below water.'
             },
             data: [
                 {
@@ -664,7 +682,10 @@ const iceberg = {
             },
             accessibility: {
                 enabled: true,
-                description: 'Dome icebergs have smooth, rounded tops and comprise 15% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above water, and 40m below.'
+                description: 'Dome icebergs have smooth, rounded tops and ' +
+                    'comprise 15% of icebergs found in Iceberg Alley. They ' +
+                    'are medium sized, and often reach 60m above water, and ' +
+                    '40m below.'
             },
             data: [{
                 x: 12.5,
@@ -762,7 +783,10 @@ const iceberg = {
             },
             accessibility: {
                 enabled: true,
-                description: 'Wedge icebergs are tabular icebergs that have tilted and comprise 10% of icebergs found in Iceberg Alley. They are smaller sized than the others, reaching just a few metres below water, and around 40m above.'
+                description: 'Wedge icebergs are tabular icebergs that have ' +
+                    'tilted and comprise 10% of icebergs found in Iceberg ' +
+                    'Alley. They are smaller sized than the others, reaching ' +
+                    'just a few metres below water, and around 40m above.'
             },
             data: [{
                 x: 16.12,

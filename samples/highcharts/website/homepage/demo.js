@@ -2766,7 +2766,8 @@ const heroChart = {
         dateString = dateString.substr(0, 16);
         const string =
         '<div id="tooltipGrid">' +
-            '<div class="date" ><img src="/samples/graphics/homepage/apple.svg">' +
+            '<div class="date" ><img ' +
+            'src="/samples/graphics/homepage/apple.svg">' +
             dateString + '</div>' +
             '<div class="infoGrid">' +
                 '<div class="label">Open</div><div class="data">' +

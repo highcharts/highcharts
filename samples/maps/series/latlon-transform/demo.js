@@ -51,8 +51,10 @@ const chart = Highcharts.mapChart('container', {
 /** Add point relative to Shetland, outside Shetland zone in map. **/
 
 // Transform definition is grabbed from map, under the "hc-transform" object.
-// To get the mainland transform defintion, use the "default" definition instead of "gb-all-shetland".
-const transform = Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland'];
+// To get the mainland transform defintion, use the "default" definition
+// instead of "gb-all-shetland".
+const transform = Highcharts.maps[
+    'countries/gb/gb-all']['hc-transform']['gb-all-shetland'];
 
 const position = chart.transformFromLatLon({
     lat: 58.78,

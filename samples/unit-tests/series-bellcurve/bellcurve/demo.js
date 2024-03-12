@@ -57,7 +57,8 @@ QUnit.test('Curve bell', function (assert) {
     assert.strictEqual(
         bellcurve.points.length,
         41,
-        'Number of points is correct according to intervals and pointsInInterval options'
+        'Number of points is correct according to intervals and ' +
+        'pointsInInterval options'
     );
 
     bellcurve.update({

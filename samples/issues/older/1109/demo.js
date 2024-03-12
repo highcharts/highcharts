@@ -2,7 +2,8 @@ $(function () {
     $('#container').highcharts({
 
         title: {
-            text: 'Series.addPoint() in the midddle didn\'t work in Highcharts 3.0.8'
+            text:
+                'Series.addPoint() in the midddle didn\'t work in Highcharts 3.0.8'
         },
 
         xAxis: {

@@ -30,7 +30,8 @@ function getSubtitle() {
 
     chart = Highcharts.chart('container', {
         title: {
-            text: 'Nuclear energy production from 1965 to 2021 in US, UK, France, Germany, and Japan',
+            text: 'Nuclear energy production from 1965 to 2021 in US, UK, ' +
+                'France, Germany, and Japan',
             align: 'center'
         },
         subtitle: {

@@ -382,7 +382,8 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
     assert.deepEqual(
         xAxis.tickPositions.map(pos => xAxis.ticks[pos].label.rotation),
         [-45, -45, -45, -45, -45, -45, -45, -45, -45],
-        'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
+        'step = 1 and default autoRotation: all ticks should be labeled and ' +
+        'rotated (#14226)'
     );
 
     chart.update({
@@ -770,13 +771,15 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                         1
                     ],
                     [
-                        'it would be a great improvement if you could actually ' +
+                        'it would be a great improvement if you could ' +
+                        'actually ' +
                             'delete the image and replace it with another. ' +
                             'For example',
                         1
                     ],
                     [
-                        'this seems like a great feature and would like to see ' +
+                        'this seems like a great feature and would like to ' +
+                        'see ' +
                             'more choices',
                         1
                     ],
@@ -786,8 +789,10 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                         1
                     ],
                     [
-                        'there needs to be a paint brush option or some way to ' +
-                            'edit the colors of the icons within the text frames. ' +
+                        'there needs to be a paint brush option or some way ' +
+                        'to ' +
+                            'edit the colors of the icons within the text ' +
+                            'frames. ' +
                             ' Other than that',
                         1
                     ],

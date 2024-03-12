@@ -88,7 +88,9 @@ QUnit.test(
         // When allowDrillToNode extremes should be unaffected by zoom.
         xAxis.setExtremes(80, 100);
         extremes = xAxis.getExtremes();
-        assert.strictEqual(Highcharts.correctFloat(extremes.min), 0, 'xAxis.min is unaffected by zoom');
-        assert.strictEqual(Highcharts.correctFloat(extremes.max), 50, 'xAxis.max is unaffected by zoom');
+        assert.strictEqual(Highcharts.correctFloat(extremes.min), 0,
+            'xAxis.min is unaffected by zoom');
+        assert.strictEqual(Highcharts.correctFloat(extremes.max), 50,
+            'xAxis.max is unaffected by zoom');
     }
 );

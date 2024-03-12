@@ -104,7 +104,8 @@ function buildYAxisOpts(height, top, labelText, checkboxId, iconSrc) {
             // Checkbox, icon and axis title combined here
             text: '<label class="hc-axis-title"><input id="' + checkboxId +
                 '" type="checkbox" checked><img alt="" src="' +
-                iconSrc + '" class="hc-axis-icon"> <span class="hc-axis-title-text">' +
+                iconSrc + '" class="hc-axis-icon"> <span ' +
+                    'class="hc-axis-title-text">' +
                 labelText + '</span></label>'
         }
     };
@@ -156,14 +157,18 @@ Highcharts.chart('container', {
             enabled: false
         },
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>' +
+                '{xAxisDescription}</div><div>{yAxisDescription}</div>'
         },
         landmarkVerbosity: 'one'
     },
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionSingular: 'The chart has 1 X axis displaying time.'
+                xAxisDescriptionSingular: 'The chart has 1 X axis displaying ' +
+                    'time.'
             }
         }
     },

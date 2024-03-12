@@ -32,7 +32,8 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Area chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -104,7 +105,8 @@ Highcharts.chart('container-col', {
 
     lang: {
         accessibility: {
-            chartContainerLabel: 'Column chart showing use of visual pattern fills.'
+            chartContainerLabel: 'Column chart showing use of visual pattern ' +
+                'fills.'
         }
     },
 
@@ -215,7 +217,8 @@ Highcharts.chart('container-pie', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Pie chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Pie chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
     },

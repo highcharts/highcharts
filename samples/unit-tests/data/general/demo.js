@@ -162,7 +162,8 @@ QUnit.test('Combination charts and column mapping', function (assert) {
             return s.type;
         }),
         ['column', 'errorbar', 'line', 'errorbar'],
-        'Alternating series types should eat different numbers of columns (#8438)'
+        'Alternating series types should eat different numbers of columns ' +
+        '(#8438)'
     );
 
     chart = Highcharts.chart('container', {
@@ -297,7 +298,8 @@ QUnit.test('Data config on updates and setOptions', function (assert) {
     assert.strictEqual(
         chart.series.length,
         oldDataLength,
-        'Switching back switchRowsAndColumns should restore number of series (#11095).'
+        'Switching back switchRowsAndColumns should restore number of series ' +
+        '(#11095).'
     );
 
     assert.strictEqual(
@@ -438,6 +440,7 @@ QUnit.test('Updating with firstRowAsNames and dataGrouping', function (assert) {
     assert.strictEqual(
         chart.options.data.dataRefreshRate,
         90,
-        'Should be able to update data options despite using columns and having data grouping options.'
+        'Should be able to update data options despite using columns and ' +
+        'having data grouping options.'
     );
 });

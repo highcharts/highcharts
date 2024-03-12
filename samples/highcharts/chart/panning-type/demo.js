@@ -14,11 +14,13 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Click and drag to zoom in. Hold down shift key to pan in both directions.'
+        text: 'Click and drag to zoom in. Hold down shift key to pan in both ' +
+            'directions.'
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     series: [{

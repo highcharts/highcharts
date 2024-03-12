@@ -36,7 +36,8 @@ const chart = Highcharts.chart('container', {
 const start = Date.now();
 const svg = chart.getSVGForExport();
 
-document.getElementById('report').innerHTML = 'SVG size: ' + Highcharts.numberFormat(svg.length, 0) + ' B<br>Export generation time: ' + (Date.now() - start) + ' ms';
+document.getElementById(
+    'report').innerHTML = 'SVG size: ' + Highcharts.numberFormat(svg.length, 0) + ' B<br>Export generation time: ' + (Date.now() - start) + ' ms';
 document.getElementById('pre').innerHTML = (function () {
     let indent = '';
     return svg

@@ -29,29 +29,30 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
                 ];
 
                 if (!p.drilldownConnectorGraphicUnbind) {
-                    p.drilldownConnectorGraphicUnbind = Highcharts.addEvent(s, 'afterAnimate', function () {
-                        if (!p.drilldownConnectorGraphic) {
-                            p.drilldownConnectorGraphic = chart.renderer
-                                .path([
-                                    'M',
-                                    path[1], path[2],
-                                    'L',
-                                    path[1], path[2],
-                                    'M',
-                                    path[7], path[8],
-                                    'L',
-                                    path[7], path[8]
-                                ])
-                                .attr({
-                                    stroke: 'gray',
-                                    'stroke-width': 1
-                                })
-                                .animate({
-                                    d: path
-                                })
-                                .add();
-                        }
-                    });
+                    p.drilldownConnectorGraphicUnbind = Highcharts.addEvent(s,
+                        'afterAnimate', function () {
+                            if (!p.drilldownConnectorGraphic) {
+                                p.drilldownConnectorGraphic = chart.renderer
+                                    .path([
+                                        'M',
+                                        path[1], path[2],
+                                        'L',
+                                        path[1], path[2],
+                                        'M',
+                                        path[7], path[8],
+                                        'L',
+                                        path[7], path[8]
+                                    ])
+                                    .attr({
+                                        stroke: 'gray',
+                                        'stroke-width': 1
+                                    })
+                                    .animate({
+                                        d: path
+                                    })
+                                    .add();
+                            }
+                        });
                 }
 
                 if (p.drilldownConnectorGraphic) {

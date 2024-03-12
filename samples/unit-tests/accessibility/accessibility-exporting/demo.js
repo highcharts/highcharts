@@ -47,7 +47,8 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
 });
 
 
-QUnit.test('Exported chart should not contain HTML elements from a11y module', function (assert) {
+QUnit.test('Exported chart should not contain HTML elements from a11y ' +
+    'module', function (assert) {
     var chart = Highcharts.chart('container', {
             title: {
                 text: 'Title < title'
@@ -65,7 +66,8 @@ QUnit.test('Exported chart should not contain HTML elements from a11y module', f
         ),
         hasTitleChanged = svg.match(/\bTitle\b(?:\s&lt;\s)\btitle\b/g);
 
-    assert.strictEqual(hasHTMLElements, null, 'Should not have any HTML elements in the SVG');
+    assert.strictEqual(hasHTMLElements, null, 'Should not have any HTML ' +
+        'elements in the SVG');
 
     assert.strictEqual(
         hasTitleChanged[0],

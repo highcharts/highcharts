@@ -13,7 +13,8 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        categories: ['Q1 2019', 'Q2 2019', 'Q3 2019', 'Q4 2019', 'Q1 2020', 'Q2 2020',
+        categories: [
+            'Q1 2019', 'Q2 2019', 'Q3 2019', 'Q4 2019', 'Q1 2020', 'Q2 2020',
             'Q3 2020', 'Q4 2020', 'Q1 2021', 'Q2 2021', 'Q3 2021']
     },
     yAxis: {

@@ -15,7 +15,8 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            valueDescriptionFormat: '{index}. {point.category}, {point.y:,.1f} billions, {point.percentage:.1f}%.'
+            valueDescriptionFormat: '{index}. {point.category}, {point.y:,' +
+                '.1f} billions, {point.percentage:.1f}%.'
         }
     },
     yAxis: {
@@ -27,7 +28,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.1f} billion Gt)<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.percentage:.1f}%</b> ({point.y:,.1f} billion Gt)<br/>',
         split: true
     },
     plotOptions: {

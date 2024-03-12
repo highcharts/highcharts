@@ -24,7 +24,8 @@ Highcharts.chart('container', {
     },
     legend: {
         title: {
-            text: 'City<br/><span style="font-size: 9px; color: #666; font-weight: normal">(Click to hide)</span>',
+            text: 'City<br/><span style="font-size: 9px; color: #666; ' +
+                'font-weight: normal">(Click to hide)</span>',
             style: {
                 fontStyle: 'italic'
             }

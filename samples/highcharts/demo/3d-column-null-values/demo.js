@@ -24,7 +24,8 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: ['Belgium', 'China', 'Denmark', 'Fiji', 'Germany', 'Netherlands', 'Russia',
+        categories: [
+            'Belgium', 'China', 'Denmark', 'Fiji', 'Germany', 'Netherlands', 'Russia',
             'Sweden', 'Turkey', 'United States', 'Unspecified', 'Vietnam'],
         labels: {
             skew3d: true,

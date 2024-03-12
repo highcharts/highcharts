@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         text: 'Demo of the <em>showInLegend</em> option'
     },
     subtitle: {
-        text: 'The first series should show in the legend, the second series not'
+        text: 'The first series should show in the legend, the second series ' +
+            'not'
     },
 
     series: [{

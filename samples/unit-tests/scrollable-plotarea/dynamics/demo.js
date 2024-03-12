@@ -99,7 +99,8 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
     assert.ok(
         document.getElementsByClassName('highcharts-scrolling')[0]
             .clientHeight > 300,
-        'The scrollbar should disasppear after increasing the height of the chart (#12991)'
+        'The scrollbar should disasppear after increasing the height of the ' +
+        'chart (#12991)'
     );
 
     document.getElementById('container').style.height = '190px';
@@ -118,7 +119,8 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
 });
 
 QUnit.test(
-    'The radial axes like in the gauge series should have the ability to scroll, #14379.',
+    'The radial axes like in the gauge series should have the ability to ' +
+    'scroll, #14379.',
     function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {

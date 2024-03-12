@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'When clicking the legend to hide the series, the series name should become green.'
+        text: 'When clicking the legend to hide the series, the series name ' +
+            'should become green.'
     },
 
     legend: {
@@ -15,7 +16,8 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     series: [{

@@ -2,9 +2,11 @@ Highcharts.setOptions({
     lang: {
         months: ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli',
             'august', 'september', 'oktober', 'november', 'desember'],
-        weekdays: ['sundag', 'mï¿½ndag', 'tysdag', 'onsdag', 'torsdag', 'fredag', 'laurdag']
+        weekdays: [
+            'sundag', 'mï¿½ndag', 'tysdag', 'onsdag', 'torsdag', 'fredag', 'laurdag']
     },
-    colors: ['#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
+    colors: [
+        '#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
 });
 Highcharts.chart('container', {
     chart: {
@@ -41,7 +43,8 @@ Highcharts.chart('container', {
             color: '#444444',
             width: 3
         }],
-        dateTimeLabelFormats: { // TODO: should this be a language setting as well?
+        dateTimeLabelFormats: { // TODO: should this be a language setting
+        // as well?
             weekly: '%e. %b %y',
             twicemonthly: '%e. %b %y',
             monthly: '%b %y',

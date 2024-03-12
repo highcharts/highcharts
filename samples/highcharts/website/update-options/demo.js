@@ -460,7 +460,8 @@ function populateLabel(control, label) {
     if (control === 'opacity' || control === 'pointPadding') {
         valueToShow = parseFloat((valueToShow * 0.1), 10).toFixed(1);
     }
-    if (control === 'zones' || control === 'plotBands' || control === 'variwide') {
+    if (control ===
+        'zones' || control === 'plotBands' || control === 'variwide') {
         $(label + ' span').html('');
         $(label).addClass('font-weight-bold');
     } else {
@@ -835,7 +836,8 @@ $('document').ready(function () {
             if (ii === controlIndex) {
                 $(controlElement).parent().addClass('active');
                 $(controlElement).parent().addClass('flex-grow-1');
-                const valueSpan = '<span>' +  initialValues[seriesIndex][ii] + '</span>';
+                const valueSpan =
+                    '<span>' +  initialValues[seriesIndex][ii] + '</span>';
                 $(labelElement).html(
                     controlLabels[seriesIndex][ii] + ': ' + valueSpan);
                 populateLabel(controlsToUse[ii], labelElement);
@@ -849,7 +851,8 @@ $('document').ready(function () {
         // /configure chart for individual cases
 
         // /FOR COLUMN: disable polar, inverted, enabled animation
-        if (thingToChange === 'width' || thingToChange === 'plotBands' || thingToChange === 'zones') {
+        if (thingToChange ===
+            'width' || thingToChange === 'plotBands' || thingToChange === 'zones') {
             demoChart.update({
                 chart: {
                     polar: false,

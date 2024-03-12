@@ -639,7 +639,8 @@ QUnit.test(
         assert.strictEqual(
             initialWidth,
             chart.series[0].points[0].shapeArgs.width,
-            'Presence of axis.breaks option should not affect the columns width, #16368.'
+            'Presence of axis.breaks option should not affect the columns ' +
+            'width, #16368.'
         );
 
         chart.series[0].update({
@@ -896,7 +897,8 @@ QUnit.test('Axis.brokenAxis.hasBreaks', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].brokenAxis.hasBreaks,
         true,
-        'Axis.breaks with correct config results in Axis.brokenAxis.hasBreaks: true.'
+        'Axis.breaks with correct config results in ' +
+        'Axis.brokenAxis.hasBreaks: true.'
     );
 });
 
@@ -1086,7 +1088,8 @@ QUnit.test('#14833: Column series axis break regression', assert => {
     });
 
     assert.ok(
-        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility === 'hidden'),
+        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility ===
+            'hidden'),
         'Points in break should not render'
     );
 });
@@ -1118,33 +1121,34 @@ QUnit.test('connectNulls and stacking', assert => {
     );
 });
 
-QUnit.test('Axis with breaks and toValue method calculation, #13238.', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            width: 400
-        },
-        xAxis: {
-            breaks: [{
-                from: 3,
-                to: 7
+QUnit.test(
+    'Axis with breaks and toValue method calculation, #13238.', function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 400
+            },
+            xAxis: {
+                breaks: [{
+                    from: 3,
+                    to: 7
+                }]
+            },
+            series: [{
+                data: [
+                    [0, 1],
+                    [1, 1],
+                    [5, 2],
+                    [6, 2],
+                    [7, 2],
+                    [8, 2]
+                ]
             }]
-        },
-        series: [{
-            data: [
-                [0, 1],
-                [1, 1],
-                [5, 2],
-                [6, 2],
-                [7, 2],
-                [8, 2]
-            ]
-        }]
-    });
+        });
 
-    assert.close(
-        chart.xAxis[0].toValue(100),
-        0.26227,
-        0.05,
-        'The toValue method should return correct value when breakes enabled.'
-    );
-});
+        assert.close(
+            chart.xAxis[0].toValue(100),
+            0.26227,
+            0.05,
+            'The toValue method should return correct value when breakes enabled.'
+        );
+    });

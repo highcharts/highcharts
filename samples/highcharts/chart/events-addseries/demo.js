@@ -3,7 +3,8 @@ const chart = Highcharts.chart('container', {
     chart: {
         events: {
             addSeries: function () {
-                const label = this.renderer.label('A series was added, about to redraw chart', 100, 120)
+                const label = this.renderer.label('A series was added, about ' +
+                    'to redraw chart', 100, 120)
                     .attr({
                         fill: Highcharts.getOptions().colors[0],
                         padding: 10,
@@ -22,7 +23,8 @@ const chart = Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     series: [{
         data: [29.9, 71.5,

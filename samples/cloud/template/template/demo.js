@@ -12,16 +12,16 @@ window.addEventListener('DOMContentLoaded', function () {
             function parseData(completeHandler, chartOptions) {
                 try {
                     var dataOptions = {
-                        "seriesMapping": [
+                        seriesMapping: [
                             {
-                                "x": 0
+                                x: 0
                             }
                         ],
-                        "columnTypes": [
-                            "string",
-                            "float"
+                        columnTypes: [
+                            'string',
+                            'float'
                         ],
-                        "csv": ",Users\nJava (general),19.054\ndotNET,9.91\nAngularJS,8.333\nOther,6.604\nDjango,5.45\nJSF,4.099\nCodeIgniter,3.559\nCakePHP,2.838\nJersey,1.622\nJoomla,1.261\nDrupal,0.946\nDotNetNuke,0.946\nMeteorJS,0.856\nGWT,0.856\nKoaJS,0.766\nLaravel,0.315\nGrails,0.315\nDropwizard,0.315\nClojure,0.315\nMeanJS,0.27\nExpressJS,0.225\nMagento,0.18\nPHP (general),0.114"
+                        csv: ',Users\nJava (general),19.054\ndotNET,9.91\nAngularJS,8.333\nOther,6.604\nDjango,5.45\nJSF,4.099\nCodeIgniter,3.559\nCakePHP,2.838\nJersey,1.622\nJoomla,1.261\nDrupal,0.946\nDotNetNuke,0.946\nMeteorJS,0.856\nGWT,0.856\nKoaJS,0.766\nLaravel,0.315\nGrails,0.315\nDropwizard,0.315\nClojure,0.315\nMeanJS,0.27\nExpressJS,0.225\nMagento,0.18\nPHP (general),0.114'
                     };
                     dataOptions.sort = true;
                     dataOptions.complete = completeHandler;
@@ -62,59 +62,61 @@ window.addEventListener('DOMContentLoaded', function () {
                             }, {
                                 separator: true
                             }]
-                        .concat(Highcharts.getOptions().exporting.buttons.contextButton.menuItems)
-                        .concat([{
-                            separator: true
-                        }, {
-                            text: '<a href="' + shareUrl.replace('/show/', '/charts/') + '" target="_blank">Edit chart</a>'
-                        }, {
-                            text: '<a href="/charts" target="_blank">Create chart</a>'
-                        }])
+                                .concat(Highcharts.getOptions().exporting.buttons.contextButton.menuItems)
+                                .concat([{
+                                    separator: true
+                                }, {
+                                    text:
+                                '<a href="' + shareUrl.replace('/show/', '/charts/') + '" target="_blank">Edit chart</a>'
+                                }, {
+                                    text: '<a href="/charts" target="_blank">Create ' +
+                                'chart</a>'
+                                }])
                         }
                     }
                 }
             };
             var chartOptions = {
-                "plotOptions": {
-                    "series": {
-                        "colorByPoint": true
+                plotOptions: {
+                    series: {
+                        colorByPoint: true
                     }
                 },
-                "yAxis": {
-                    "title": {
-                        "text": "Users"
+                yAxis: {
+                    title: {
+                        text: 'Users'
                     },
-                    "labels": {
-                        "format": "{value}%"
+                    labels: {
+                        format: '{value}%'
                     }
                 },
-                "legend": {
-                    "enabled": false
+                legend: {
+                    enabled: false
                 },
-                "series": [
+                series: [
                     {
-                        "tooltip": {
-                            "valuePrefix": null,
-                            "valueSuffix": "%"
+                        tooltip: {
+                            valuePrefix: null,
+                            valueSuffix: '%'
                         },
-                        "index": 1
+                        index: 1
                     }
                 ],
-                "tooltip": {
-                    "valueDecimals": 1
+                tooltip: {
+                    valueDecimals: 1
                 },
-                "title": {
-                    "style": {
-                        "fontWeight": "normal"
+                title: {
+                    style: {
+                        fontWeight: 'normal'
                     },
-                    "text": "Frameworks"
+                    text: 'Frameworks'
                 },
-                "chart": {
-                    "backgroundColor": "#ffffff",
-                    "style": {
-                        "fontFamily": "Courier"
+                chart: {
+                    backgroundColor: '#ffffff',
+                    style: {
+                        fontFamily: 'Courier'
                     },
-                    "type": "column"
+                    type: 'column'
                 }
             };
             parseData(function (dataOptions) {
@@ -130,7 +132,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
         }
 
-    // Load the Highcharts script if undefined, and add the chart
+        // Load the Highcharts script if undefined, and add the chart
         if (typeof Highcharts !== 'undefined') {
             addChart();
         } else if (script) {
@@ -138,7 +140,8 @@ window.addEventListener('DOMContentLoaded', function () {
         } else {
             script = document.createElement('script');
             script.id = 'highcharts-script';
-            script.src = '//cloud.highcharts.com/resources/js/highstock-cloud-4.1.8.js';
+            script.src =
+                '//cloud.highcharts.com/resources/js/highstock-cloud-4.1.8.js';
             script.type = 'text/javascript';
             script.deferredCharts = [addChart];
             script.onload = function () {
@@ -151,7 +154,8 @@ window.addEventListener('DOMContentLoaded', function () {
                 }
             };
             script.onreadystatechange = function () {
-                if (this.readyState === 'complete' || this.readyState === 'loaded') {
+                if (this.readyState ===
+                    'complete' || this.readyState === 'loaded') {
                     script.onload();
                 }
             };

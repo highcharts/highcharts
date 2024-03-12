@@ -6,7 +6,8 @@
         xAxis: {
             events: {
                 setExtremes(e) {
-                    document.getElementById('report').innerHTML = '<b>Set extremes:</b> e.min: ' + Highcharts.dateFormat(null, e.min) +
+                    document.getElementById(
+                        'report').innerHTML = '<b>Set extremes:</b> e.min: ' + Highcharts.dateFormat(null, e.min) +
                         ' | e.max: ' + Highcharts.dateFormat(null, e.max) + ' | e.trigger: ' + e.trigger;
                 }
             }

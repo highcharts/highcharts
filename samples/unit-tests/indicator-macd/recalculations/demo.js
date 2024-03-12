@@ -409,7 +409,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.ok(true, 'No error when removing MACD without lines (#8848).');
 });
 
-QUnit.test('After changing the MACD params all points should calculate properly, #14197.', function (assert) {
+QUnit.test('After changing the MACD params all points should calculate ' +
+    'properly, #14197.', function (assert) {
     const chart = Highcharts.stockChart('container', {
             yAxis: [{
                 height: '60%'
@@ -554,6 +555,7 @@ QUnit.test('#14977: Index param', assert => {
     assert.notStrictEqual(
         getValues(0)[0][3],
         getValues(1)[0][3],
-        'getValues should return different values when passed different index param'
+        'getValues should return different values when passed different ' +
+        'index param'
     );
 });

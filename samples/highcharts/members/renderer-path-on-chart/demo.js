@@ -98,7 +98,8 @@ Highcharts.chart('container', {
             useHTML: true,
             formatter: function () {
                 let style = '';
-                const scale = document.getElementById('container').offsetWidth * 0.005;
+                const scale = document.getElementById(
+                    'container').offsetWidth * 0.005;
                 if (this.value.length === 1) {
                     style = 'font-size:' + (scale * 1.3) + 'em';
                 } else if (this.value.length === 2) {

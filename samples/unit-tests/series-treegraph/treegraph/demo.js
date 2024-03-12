@@ -72,7 +72,8 @@ QUnit.test('Treegraph series',
         }]);
 
         assert.strictEqual(
-            document.querySelectorAll('.highcharts-treegraph-series>.highcharts-point').length,
+            document.querySelectorAll('.highcharts-treegraph-series>' +
+                '.highcharts-point').length,
             2,
             'Correct amount of links after setData (#19524)'
         );
@@ -114,7 +115,8 @@ QUnit.test('Treegraph series',
         });
 
         let collapseButtonOpacity =
-            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+            series.data[2].collapseButton && series.data[2].collapseButton.attr(
+                'opacity');
 
         assert.strictEqual(
             collapseButtonOpacity,
@@ -127,7 +129,8 @@ QUnit.test('Treegraph series',
         });
 
         collapseButtonOpacity =
-            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+            series.data[2].collapseButton && series.data[2].collapseButton.attr(
+                'opacity');
 
         assert.strictEqual(
             collapseButtonOpacity,

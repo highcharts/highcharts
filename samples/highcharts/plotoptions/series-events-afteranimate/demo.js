@@ -9,14 +9,16 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     plotOptions: {
         series: {
             events: {
                 afterAnimate: function () {
-                    this.chart.renderer.label(this.name + ' has appeared', 100, 70)
+                    this.chart.renderer.label(this.name +
+                        ' has appeared', 100, 70)
                         .attr({
                             padding: 10,
                             fill: Highcharts.getOptions().colors[0]

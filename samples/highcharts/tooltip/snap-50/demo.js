@@ -6,7 +6,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'The stickyTracking option is false. Tooltip should display when hovering 50 pixels from the graphs',
+        text: 'The stickyTracking option is false. Tooltip should display ' +
+            'when hovering 50 pixels from the graphs',
         align: 'left'
     },
 
@@ -15,7 +16,8 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     plotOptions: {

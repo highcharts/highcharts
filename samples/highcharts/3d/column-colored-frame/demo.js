@@ -18,7 +18,8 @@ Highcharts.chart('container', {
     xAxis: {
         gridLineWidth: 0,
         type: 'category',
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         labels: {
             style: {
                 color: 'black',

@@ -12,7 +12,7 @@
         return '~' + n;
     };
 
-    const {default: Highcharts } = await import(
+    const { default: Highcharts } = await import(
         'https://code.highcharts.com/es-modules/masters/highcharts.src.js'
     );
     await import(

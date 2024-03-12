@@ -877,7 +877,8 @@ async function updateBoard(board, city, column, scale, newData) {
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const cityTable = await dataPool.getConnectorTable(city);
-    const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
+    const citiesTable = await dataPool.getConnectorTable(
+        'Cities'); // Geographical data
 
     const [
         timeRangeSelector,
@@ -934,7 +935,8 @@ async function updateBoard(board, city, column, scale, newData) {
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
         const cityName = mapPoints[i].name;
-        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
+        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy(
+            'city', cityName));
 
         const pointTable = await dataPool.getConnectorTable(cityName);
 
@@ -1050,7 +1052,8 @@ function changeTheme() {
     toggleContainer.className = className;
 }
 
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+window.matchMedia(
+    '(prefers-color-scheme: dark)').addEventListener('change', () => {
     toggle.checked = isDarkModeEnabled();
     changeTheme();
 });

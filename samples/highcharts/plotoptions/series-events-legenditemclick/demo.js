@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     plotOptions: {
@@ -9,7 +10,8 @@ Highcharts.chart('container', {
                 legendItemClick: function () {
                     const visibility = this.visible ? 'visible' : 'hidden';
                     if (!confirm('The series is currently ' +
-                                 visibility + '. Do you want to change that?')) {
+                                 visibility + '. Do you want to change ' +
+                                     'that?')) {
                         return false;
                     }
                 }

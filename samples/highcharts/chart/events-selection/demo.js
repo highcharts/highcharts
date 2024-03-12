@@ -5,7 +5,8 @@ Highcharts.chart('container', {
             selection: function (event) {
                 let text;
                 if (event.xAxis) {
-                    text = 'min: ' + Highcharts.numberFormat(event.xAxis[0].min, 2) + ', max: ' + Highcharts.numberFormat(event.xAxis[0].max, 2);
+                    text =
+                        'min: ' + Highcharts.numberFormat(event.xAxis[0].min, 2) + ', max: ' + Highcharts.numberFormat(event.xAxis[0].max, 2);
                 } else {
                     text = 'Selection reset';
                 }

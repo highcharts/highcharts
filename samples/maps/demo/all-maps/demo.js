@@ -138,7 +138,8 @@ function resetDrilldown(chart) {
             // Handle error, the timeout is cleared on success
             let fail = setTimeout(() => {
                 if (!Highcharts.maps[mapKey]) {
-                    chart.showLoading('<i class="fa fa-frown"></i> Map not found');
+                    chart.showLoading('<i class="fa fa-frown"></i> Map not ' +
+                        'found');
                     fail = setTimeout(() => {
                         chart.hideLoading();
                     }, 1000);
@@ -216,7 +217,8 @@ function resetDrilldown(chart) {
     const chart = Highcharts.mapChart('container', {
         accessibility: {
             series: {
-                descriptionFormat: '{series.name}, map with {series.points.length} areas.',
+                descriptionFormat: '{series.name}, map with ' +
+                    '{series.points.length} areas.',
                 pointDescriptionEnabledThreshold: 50
             }
         },
@@ -278,7 +280,8 @@ function resetDrilldown(chart) {
             name: initialMapName,
             dataLabels: {
                 formatter: function () {
-                    return this.point.properties && this.point.properties['hc-a2'];
+                    return this.point.properties && this.point.properties[
+                        'hc-a2'];
                 }
             },
             custom: {

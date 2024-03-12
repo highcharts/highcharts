@@ -18,7 +18,8 @@ Highcharts.chart('container', {
         events: {
             load: function () {
                 Highcharts.each(this.series[0].data, function (point, i) {
-                    const labels = ['4σ', '3σ', '2σ', 'σ', 'μ', 'σ', '2σ', '3σ', '4σ'];
+                    const labels = [
+                        '4σ', '3σ', '2σ', 'σ', 'μ', 'σ', '2σ', '3σ', '4σ'];
                     if (i % pointsInInterval === 0) {
                         point.update({
                             color: 'black',

@@ -2408,9 +2408,11 @@ function update(increment) {
     if (increment) {
         input.value = parseInt(input.value, 10) + increment;
     }
-    chart.series[1].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
+    chart.series[1].setData(dataSequence[input.value].data); // Increment
+    // dataset (updates chart)
     output.innerHTML = dataSequence[input.value].name + ' km/h'; // Output value
-    accidentsNumber.innerHTML = dataSequence[input.value].data.length + ' accidents'; // # of accidents
+    accidentsNumber.innerHTML = dataSequence[input.value].data.length + ' ' +
+        'accidents'; // # of accidents
     if (input.value >= input.max) { // Auto-pause
         pause(playBtn);
     }

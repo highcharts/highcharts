@@ -3,14 +3,16 @@ const chart = Highcharts.chart('container', {
         type: 'column'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
     plotOptions: {
         series: {
             point: {
                 events: {
                     update: event => {
-                        if (!confirm('Do you want to set the point\'s value to ' + event.options + '?')) {
+                        if (!confirm(
+                            'Do you want to set the point\'s value to ' + event.options + '?')) {
                             return false;
                         }
                     }

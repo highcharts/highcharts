@@ -13,7 +13,8 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text: '15th & 16th of April, 2020 at two locations in Vik i Sogn, Norway',
+        text: '15th & 16th of April, 2020 at two locations in Vik i Sogn, ' +
+            'Norway',
         align: 'left'
     },
     xAxis: {

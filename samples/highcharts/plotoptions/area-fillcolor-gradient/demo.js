@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         type: 'area'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     plotOptions: {
@@ -12,7 +13,8 @@ Highcharts.chart('container', {
                 linearGradient: [0, 0, 0, 300],
                 stops: [
                     [0, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get(
+                        'rgba')]
                 ]
             }
         }

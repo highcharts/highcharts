@@ -18,8 +18,10 @@
             yAxis: {
                 labels: {
                     formatter: function () {
-                        var compare = this.axis.series[0].userOptions.compare || 'none';
-                        return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
+                        var compare = this.axis.series[0].userOptions.compare ||
+                            'none';
+                        return (compare !==
+                            'none' && this.value > 0 ? ' + ' : '') + this.value +
                         { none: ' USD', value: ' USD', percent: ' %' }[compare];
                     }
                 }
@@ -32,7 +34,9 @@
             },
 
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} USD</b> ({point.change})<br/>',
+                pointFormat: '<span style="color:{series.color}">' +
+                    '{series.name}</span>: <b>{point.y} USD</b> ' +
+                    '({point.change})<br/>',
                 changeDecimals: 2,
                 valueDecimals: 2
             },

@@ -63,9 +63,13 @@ function indicators() {
                 series: {
                     descriptionFormat: '{seriesDescription}.'
                 },
-                description: 'Use the dropdown menus above to display different indicator series on the chart.',
+                description: 'Use the dropdown menus above to display ' +
+                    'different indicator series on the chart.',
                 screenReaderSection: {
-                    beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+                    beforeChartFormat: '<{headingTagName}>' +
+                        '{chartTitle}</{headingTagName}><div>' +
+                        '{typeDescription}</div><div>{chartSubtitle}</div>' +
+                        '<div>{chartLongdesc}</div>'
                 }
             },
             legend: {
@@ -282,7 +286,8 @@ function compare() {
                     gridLineColor: '#707073',
                     labels: {
                         formatter: function () {
-                            return (this.value > 0 ? ' + ' : '') + this.value + '%';
+                            return (this.value > 0 ? 
+                                ' + ' : '') + this.value + '%';
                         },
                         style: {
                             color: '#fff',
@@ -317,7 +322,9 @@ function compare() {
                     }
                 },
                 tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                    pointFormat: '<span style="color:{series.color}">' +
+                        '{series.name}</span>: <b>{point.y}</b> ' +
+                        '({point.change}%)<br/>',
                     valueDecimals: 2,
                     split: true
                 },
@@ -396,8 +403,10 @@ function compare() {
                 data: data
             };
 
-            // As we're loading the data asynchronously, we don't know what order it
-            // will arrive. So we keep a counter and create the chart when all the data is loaded.
+            // As we
+                're loading the data asynchronously, we don't know what order it
+            // will arrive. So we keep a counter and create the chart when
+            // all the data is loaded.
             seriesCounter += 1;
 
             if (seriesCounter === names.length) {
@@ -956,7 +965,8 @@ function flags() {
             'https://www.highcharts.com/samples/data/usdeur.json'
         ).then(response => response.json());
 
-        const lastDate = data[data.length - 1][0],  // Get year of last data point
+        const lastDate = data[data.length - 1][0],  // Get year of last data
+        // point
             days = 24 * 36e5; // Milliseconds in a day
 
         // Create the chart
@@ -1048,7 +1058,8 @@ function flags() {
                 name: 'Flags on series',
                 data: [{
                     x: lastDate - 60 * days,
-                    title: '<p style="margin-top:-14px;padding:0px 4px;text-align:center">On<br>series</p>'
+                    title: '<p style="margin-top:-14px;padding:0px ' +
+                        '4px;text-align:center">On<br>series</p>'
                 }, {
                     x: lastDate - 30 * days,
                     title: '&nbsp;On series&nbsp;'

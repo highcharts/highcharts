@@ -76,7 +76,8 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     assert.strictEqual(
         chart.options.annotations.length,
         0,
-        'Annotation options from the chart options are erased when the annotation is removed (#8393).'
+        'Annotation options from the chart options are erased when the ' +
+        'annotation is removed (#8393).'
     );
 
     var secondAnnotationOptions = {
@@ -122,7 +123,8 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         chart.options.annotations[0] === secondAnnotation.options &&
             chart.options.annotations[1] === thirdAnnotation.options &&
             chart.options.annotations.length === 2,
-        'Annotation options from the chart options are added when the annotations are added (#8393).'
+        'Annotation options from the chart options are added when the ' +
+        'annotations are added (#8393).'
     );
 
     thirdAnnotation.update({

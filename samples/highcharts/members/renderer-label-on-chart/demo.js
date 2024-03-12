@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
 
     series: [{
@@ -15,7 +16,8 @@ Highcharts.chart('container', {
 
 }, function (chart) { // on complete
     const point = chart.series[0].points[8];
-    chart.renderer.label('Max observation', 270, 50, 'callout', point.plotX + chart.plotLeft, point.plotY + chart.plotTop)
+    chart.renderer.label(
+        'Max observation', 270, 50, 'callout', point.plotX + chart.plotLeft, point.plotY + chart.plotTop)
         .css({
             color: '#FFFFFF'
         })

@@ -21,7 +21,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Click the context menu and choose "Print chart".<br>The chart size is set to 600x400 and restored after print.'
+        text: 'Click the context menu and choose "Print chart".<br>The chart ' +
+            'size is set to 600x400 and restored after print.'
     },
 
     xAxis: {

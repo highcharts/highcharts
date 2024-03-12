@@ -1,7 +1,8 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'The graphs connect from April to June, despite the null value in May'
+        text: 'The graphs connect from April to June, despite the null value ' +
+            'in May'
     },
 
     xAxis: {

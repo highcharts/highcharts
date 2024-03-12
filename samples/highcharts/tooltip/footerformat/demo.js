@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'The tooltip should provide a HTML table where the table is closed in the footerFormat'
+        text: 'The tooltip should provide a HTML table where the table is ' +
+            'closed in the footerFormat'
     },
 
     xAxis: {
@@ -16,7 +17,8 @@ Highcharts.chart('container', {
         shared: true,
         useHTML: true,
         headerFormat: '<table><tr><th colspan="2">{point.key}</th></tr>',
-        pointFormat: '<tr><td style="color: {series.color}">{series.name} </td>' +
+        pointFormat: '<tr><td style="color: {series.color}">{series.name} ' +
+            '</td>' +
             '<td style="text-align: right"><b>{point.y} EUR</b></td></tr>',
         footerFormat: '</table>',
         valueDecimals: 2

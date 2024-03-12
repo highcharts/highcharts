@@ -69,7 +69,8 @@
         }
     }
 
-    // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
+    // Add lower case codes to the data set for inclusion in the
+    // tooltip.pointFormat
     const mapData = Highcharts.geojson(topology);
     mapData.forEach(function (country) {
         country.id = country.properties['hc-key']; // for Chart.get()
@@ -90,11 +91,13 @@
             } else {
                 document.querySelector('#info #flag')
                     .className = 'flag';
-                document.querySelector('#info h2').innerHTML = 'Comparing countries';
+                document.querySelector(
+                    '#info h2').innerHTML = 'Comparing countries';
 
             }
             document.querySelector('#info .subheader')
-                .innerHTML = '<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>';
+                .innerHTML = '<h4>Historical population</h4><small><em>Shift ' +
+                    '+ Click on map to compare countries</em></small>';
 
             if (!countryChart) {
                 countryChart = Highcharts.chart('country-chart', {
@@ -205,7 +208,8 @@
         },
 
         tooltip: {
-            footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
+            footerFormat: '<span style="font-size: 10px">(Click for ' +
+                'details)</span>'
         },
 
         series: [{

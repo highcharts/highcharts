@@ -37,7 +37,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Bubble chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text:
+            'Bubble chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
 
     legend: {

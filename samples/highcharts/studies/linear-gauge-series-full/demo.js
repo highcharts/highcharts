@@ -198,7 +198,8 @@ seriesType('lineargauge', 'column',
 
             /**
              * The total length of the target.
-             * Can be pixel value or percentage value based on column point's width.
+             * Can be pixel value or percentage value based on column point
+                 's width.
              *
              * @type {Number|String}
              * @since 6.0.0
@@ -209,7 +210,8 @@ seriesType('lineargauge', 'column',
 
             /**
              * The width of the target.
-             * Can be pixel value or percentage value based on column point's width.
+             * Can be pixel value or percentage value based on column point
+                 's width.
              *
              * @type {Number|String}
              * @since 6.0.0
@@ -377,7 +379,8 @@ seriesType('lineargauge', 'column',
                     shapeArgs = point.shapeArgs;
                     shapeArgsWidth = shapeArgs.width;
 
-                    // The option which controls whether target should display on series or on axis
+                    // The option which controls whether target should
+                    // display on series or on axis
                     onPoint = pick(pointOptions.onPoint, seriesOptions.onPoint);
 
                     // Show/hide additional column
@@ -386,7 +389,8 @@ seriesType('lineargauge', 'column',
                         seriesOptions.showColumn
                     );
 
-                    // The option which controls whether target should have an additional line
+                    // The option which controls whether target should have
+                    // an additional line
                     showLine = pick(
                         pointOptions.showLine,
                         seriesOptions.showLine
@@ -470,7 +474,8 @@ seriesType('lineargauge', 'column',
                             symbolPath,
                             borderWidth || 1
                         );
-                    } else if (shape === 'rectangle') { // Shape for bullet series
+                    } else if (shape ===
+                        'rectangle') { // Shape for bullet series
                         onPoint = true;
                         showLine = false;
                         showColumn = true;
@@ -531,7 +536,8 @@ seriesType('lineargauge', 'column',
                             ['M', 0, 0],
                             ['L', offsetOnPoint, 0]
                         ];
-                        // linePath = renderer.crispLine(linePath, lineWidth || 1);
+                        // linePath = renderer.crispLine(linePath, lineWidth
+                        // || 1);
 
                         beginningAtrr.zIndex = lineZIndex;
 

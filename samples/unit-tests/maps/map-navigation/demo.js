@@ -39,7 +39,8 @@ QUnit.test(
 
         assert.ok(
             !chart.resetZoomButton,
-            'Reset zoom button should not appear while panning and chart is not zoomed.'
+            'Reset zoom button should not appear while panning and chart is ' +
+            'not zoomed.'
         );
 
         const zoomBefore = chart.mapView.zoom;
@@ -189,7 +190,8 @@ QUnit.test('Map navigation button alignment', assert => {
             chart.mapNavigation.navButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
-        'The buttons should initially be bottom-aligned to the plot box (#12776)'
+        'The buttons should initially be bottom-aligned to the plot box ' +
+        '(#12776)'
     );
 
     chart.setSize(undefined, 380);
@@ -199,7 +201,8 @@ QUnit.test('Map navigation button alignment', assert => {
             chart.mapNavigation.navButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
-        'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
+        'The buttons should be bottom-aligned to the plot box after redraw ' +
+        '(#12776)'
     );
 
     chart.tooltip.refresh(chart.series[0].data[0]);
@@ -207,7 +210,8 @@ QUnit.test('Map navigation button alignment', assert => {
     assert.ok(
         chart.mapNavigation.navButtonsGroup.zIndex <
         chart.tooltip.label.element.getAttribute('data-z-index'),
-        'Map navigation group zIndex should be lower than tooltip zIndex (#20476)'
+        'Map navigation group zIndex should be lower than tooltip zIndex ' +
+        '(#20476)'
     );
 });
 
@@ -393,7 +397,8 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
     assert.strictEqual(
         chart.get('B').dataLabel.attr('visibility'),
         'hidden',
-        'Data labels behind the horizon on an Ortho map should be hidden (#17907)'
+        'Data labels behind the horizon on an Ortho map should be hidden ' +
+        '(#17907)'
     );
     assert.notStrictEqual(
         chart.get('A').dataLabel.attr('visibility'),
