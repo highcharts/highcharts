@@ -229,7 +229,6 @@ Dashboards.board('container', {
             id: 'micro-element'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true,
             visibility: true

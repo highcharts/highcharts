@@ -705,8 +705,7 @@ async function setupBoard() {
                         show: false
                     }
                 }
-            },
-            editable: true
+            }
         }, {
             renderTo: 'city-chart',
             type: 'Highcharts',

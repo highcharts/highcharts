@@ -96,7 +96,6 @@ Dashboards.board(
                 connector: {
                     id: 'sample'
                 },
-                editable: true,
                 title: {
                     text: 'Grid component'
                 },

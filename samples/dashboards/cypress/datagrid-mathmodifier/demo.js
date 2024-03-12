@@ -87,8 +87,7 @@ Dashboards.board('container', {
             },
             sync: {
                 highlight: true
-            },
-            editable: true
+            }
         }
     ]
 });
