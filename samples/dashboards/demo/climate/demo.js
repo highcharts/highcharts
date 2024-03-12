@@ -216,7 +216,8 @@ async function setupBoard() {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Data range selector. Highcharts Interactive Chart.'
+                        chartContainerLabel:
+                            'Data range selector. Highcharts Interactive Chart.'
                     }
                 },
                 accessibility: {
@@ -343,14 +344,16 @@ async function setupBoard() {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                        chartContainerLabel:
+                            'Cities in the world. Highcharts Interactive Map.'
                     }
                 },
                 accessibility: {
                     description: `The chart is displaying maximal temperature
                     in cities.`,
                     point: {
-                        valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Cities'
+                        valueDescriptionFormat:
+                            '{value} degrees celsius, {xDescription}, Cities'
                     }
                 }
             }
@@ -508,18 +511,7 @@ async function setupBoard() {
             type: 'Highcharts',
             connector: {
                 id: 'Range Selection',
-                columnAssignment: [
-                    {
-                        seriesId: 'Days with rain',
-                        data: ['time', 'RR1']
-                    }, {
-                        seriesId: 'Average temperature',
-                        data: ['time', 'TN' + activeScale]
-                    }, {
-                        seriesId: 'Maximum temperature',
-                        data: ['time', 'TX' + activeScale]
-                    }
-                ]
+                columnAssignment: [] // Assigned on each city selection
             },
             sync: {
                 highlight: true
@@ -596,7 +588,8 @@ async function setupBoard() {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                        chartContainerLabel:
+                            'Cities in the world. Highcharts Interactive Map.'
                     }
                 },
                 accessibility: {
@@ -708,16 +701,20 @@ async function setupCity(board, city, column, scale) {
 
 async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
+    const colorMin = (column[0] !== 'T' ?
+        0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
+    const colorMax = (column[0] !== 'T' ?
+        10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
     const colorStops = (
         column[0] !== 'T' ?
             colorStopsDays :
             colorStopsTemperature
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
+    // Climate data for selected city
     const cityTable = await dataPool.getConnectorTable(city);
-    const citiesTable = await dataPool.getConnectorTable('Cities'); // Geographical data
+    // Geographical data
+    const citiesTable = await dataPool.getConnectorTable('Cities');
 
     const [
         timeRangeSelector,
@@ -772,6 +769,7 @@ async function updateBoard(board, city, column, scale, newData) {
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
         const cityName = mapPoints[i].name;
+        // eslint-disable-next-line max-len
         const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
 
         const pointTable = await dataPool.getConnectorTable(cityName);
@@ -847,18 +845,16 @@ async function updateBoard(board, city, column, scale, newData) {
 
         await cityChart.update({
             connector: {
-                columnAssignment: [
-                    {
-                        seriesId: 'Days with rain',
-                        data: ['time', 'RR1']
-                    }, {
-                        seriesId: 'Average temperature',
-                        data: ['time', 'TN' + scale]
-                    }, {
-                        seriesId: 'Maximum temperature',
-                        data: ['time', 'TX' + scale]
-                    }
-                ]
+                columnAssignment: [{
+                    seriesId: 'Days with rain',
+                    data: ['time', 'RR1']
+                }, {
+                    seriesId: 'Average temperature',
+                    data: ['time', 'TN' + scale]
+                }, {
+                    seriesId: 'Maximum temperature',
+                    data: ['time', 'TX' + scale]
+                }]
             },
             chartOptions: options
         });
