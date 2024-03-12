@@ -160,8 +160,8 @@ async function distBuildDataGrid() {
 gulp.task(
     'dashboards/dist-build',
     gulp.series(
-        buildCSS,
         distBuildDashboards,
-        distBuildDataGrid
+        distBuildDataGrid,
+        buildCSS
     )
 );
