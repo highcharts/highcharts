@@ -705,6 +705,7 @@ async function updateBoard(board, city, column, scale, newData) {
         0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
     const colorMax = (column[0] !== 'T' ?
         10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
+
     const colorStops = (
         column[0] !== 'T' ?
             colorStopsDays :
@@ -769,9 +770,9 @@ async function updateBoard(board, city, column, scale, newData) {
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
         // Get elevation of city
         const cityName = mapPoints[i].name;
-        // eslint-disable-next-line max-len
-        const cityInfo = citiesTable.getRowObject(citiesTable.getRowIndexBy('city', cityName));
-
+        const cityInfo = citiesTable.getRowObject(
+            citiesTable.getRowIndexBy('city', cityName)
+        );
         const pointTable = await dataPool.getConnectorTable(cityName);
 
         mapPoints[i].update({

@@ -138,7 +138,6 @@ Dashboards.board('container', {
             connector: {
                 id: 'sample'
             },
-            editable: true,
             title: {
                 text: ''
             },
