@@ -652,9 +652,10 @@ class RangeSelector {
             }
         });
         if (!selectedExists && dropdownLabel) {
+            dropdownLabel.setState(0);
             dropdownLabel.attr({
                 text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
-            }).setState(0);
+            });
         }
     }
 
