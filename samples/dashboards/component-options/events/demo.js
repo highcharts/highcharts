@@ -19,37 +19,26 @@ Dashboards.board('container', {
         }
     },
     gui: {
-        layouts: [
-            {
-                id: 'layout-1',
-                rowClassName: 'custom-row',
-                cellClassName: 'custom-cell',
-                rows: [
-                    {
-                        cells: [
-                            {
-                                id: 'dashboard-col-0'
-                            },
-                            {
-                                id: 'dashboard-col-1'
-                            },
-                            {
-                                id: 'dashboard-col-12'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'dashboard-row-1',
-                        cells: [
-                            {
-                                id: 'dashboard-col-2',
-                                width: '1'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+        layouts: [{
+            id: 'layout-1',
+            rowClassName: 'custom-row',
+            cellClassName: 'custom-cell',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }, {
+                    id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-12'
+                }]
+            }, {
+                id: 'dashboard-row-1',
+                cells: [{
+                    id: 'dashboard-col-2',
+                    width: '1'
+                }]
+            }]
+        }]
     },
     components: [{
         sync: {
@@ -67,8 +56,7 @@ Dashboards.board('container', {
                 type: 'pie'
             }
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-1',
         sync: {
             visibility: true,
@@ -88,8 +76,7 @@ Dashboards.board('container', {
                 type: 'column'
             }
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-12',
         connector: {
             id: 'Vitamin'
@@ -126,8 +113,7 @@ Dashboards.board('container', {
                 console.log('update');
             }
         }
-    },
-    {
+    }, {
         renderTo: 'dashboard-col-2',
         connector: {
             id: 'Vitamin'
