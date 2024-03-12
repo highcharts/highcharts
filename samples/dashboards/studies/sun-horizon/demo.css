@@ -34,3 +34,20 @@ pre#data {
     background-color: #0275d8;
     border-color: #0275d8;
 }
+
+#horizon-chart {
+    flex: 1 1 100%;
+}
+
+#controls,
+#times {
+    flex: 1 1 50%;
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #controls,
+    #times {
+        flex: 1 1 100%;
+    }
+}
