@@ -331,5 +331,40 @@ Highcharts.chart('container', {
             [100.5, 101.8],
             [101.3, 103]
         ]
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                chart: {
+                    spacing: [10, 10, 15, 10],
+                    height: '100%'
+                },
+                title: {
+                    style: {
+                        fontSize: 13
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            enabled: false
+                        }
+                    }
+                },
+                xAxis: {
+                    title: {
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: {
+                        enabled: false
+                    }
+                }
+            }
+        }]
+    }
 });
