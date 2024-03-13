@@ -153,7 +153,6 @@ function generateHTML() {
                 const name = changelog.header.name;
                 const downloadLink = getBaseURL(name) + gerURLPath(version, name) + '-' + version + '.zip';
 
-                console.log(downloadLink);
                 return (
                     `<h3 class="release-header">
                         <a id="${id}"></a>
