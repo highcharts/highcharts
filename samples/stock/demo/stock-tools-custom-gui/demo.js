@@ -41,7 +41,7 @@
                     }
                 });
 
-                chart.stockToolbar.indicatorsPopupContainer.style.display = 
+                chart.stockToolbar.indicatorsPopupContainer.style.display =
                     'none';
             }
         );
@@ -105,7 +105,7 @@
                         }]
                     });
                 }
-                chart.stockToolbar.annotationsPopupContainer.style.display = 
+                chart.stockToolbar.annotationsPopupContainer.style.display =
                     'none';
             }
         );
@@ -205,11 +205,11 @@
                     if (event.formType === 'indicators') {
                         this.indicatorsPopupContainer.style.display = 'block';
                     } else if (event.formType === 'annotation-toolbar') {
-                        // If user is still adding an annotation, don
-                            't show popup:
+                        // If user is still adding an annotation, don't show
+                        // popup:
                         if (!this.chart.activeButton) {
                             this.chart.currentAnnotation = event.annotation;
-                            this.annotationsPopupContainer.style.display = 
+                            this.annotationsPopupContainer.style.display =
                                 'block';
                         }
                     }

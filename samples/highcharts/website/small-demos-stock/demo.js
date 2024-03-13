@@ -286,7 +286,7 @@ function compare() {
                     gridLineColor: '#707073',
                     labels: {
                         formatter: function () {
-                            return (this.value > 0 ? 
+                            return (this.value > 0 ?
                                 ' + ' : '') + this.value + '%';
                         },
                         style: {
@@ -403,10 +403,9 @@ function compare() {
                 data: data
             };
 
-            // As we
-                're loading the data asynchronously, we don't know what order it
-            // will arrive. So we keep a counter and create the chart when
-            // all the data is loaded.
+            // As we 're loading the data asynchronously, we don't know what
+            // order it will arrive. So we keep a counter and create the chart
+            // when all the data is loaded.
             seriesCounter += 1;
 
             if (seriesCounter === names.length) {
@@ -965,8 +964,8 @@ function flags() {
             'https://www.highcharts.com/samples/data/usdeur.json'
         ).then(response => response.json());
 
-        const lastDate = data[data.length - 1][0],  // Get year of last data
-        // point
+        // Get year of last data point
+        const lastDate = data[data.length - 1][0],
             days = 24 * 36e5; // Milliseconds in a day
 
         // Create the chart

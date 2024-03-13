@@ -98,12 +98,11 @@ function buildData(chart, planet) {
                     const gas = gasStyles[series];
                     const label = $('#gas' + series);
                     const dataLabel = $(
-                        '.highcharts-data-label-color-' + seriesToShow[jj] + ' .gas-label');
+                        '.highcharts-data-label-color-' + seriesToShow[jj] +
+                        ' .gas-label'
+                    );
                     $(dataLabel).addClass('on');
-                    const color = 
-                        '#000';//
-                        // Highcharts.color(themeColors[seriesToShow[jj]]).brighten(-0.7).get(
-                            'rgb');
+                    const color = '#000';
                     // chart.series[series].show();
                     $(label).addClass(gas);
                     $(label).addClass('on');
@@ -182,13 +181,13 @@ Highcharts.chart('container', {
             if (data === 'undefined%') {
                 data = '--';
             }
-            let htmlString = 
+            let htmlString =
                 '<div id="gas' + index + '" class="planets-element-box">';
-            htmlString += 
+            htmlString +=
                 '<div class="planets-element-symbol">' + gasLabels[index] + '</div>';
-            htmlString += 
+            htmlString +=
                 '<div class="planets-element-value">' + data + '</div>';
-            htmlString += 
+            htmlString +=
                 '<div class="planets-element-name">'  + gases[index] + '</div></div>';
             return htmlString;
         }
@@ -236,7 +235,7 @@ Highcharts.chart('container', {
                     let htmlString = '<div class="gas-label" ' +
                         'style="position:absolute;';
                     htmlString += 'border-radius:4px;padding:4px;';
-                    htmlString += 
+                    htmlString +=
                         ';background-color:#fff;">' + gases[index] + ': ' + this.y + '% </div>';
                     if (this.y > 0) {
                         return htmlString;

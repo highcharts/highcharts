@@ -34,9 +34,8 @@
             layers = this.layers = [];
         }
 
-        // Divide the points into stripes. Points within the same group won
-            't overlap in the y
-        // dimension
+        // Divide the points into stripes. Points within the same group won't
+        // overlap in the y dimension
         while (i--) {
             point = data[i];
             group = Math.round(point.plotY / radius);
@@ -56,9 +55,8 @@
             }
         }
 
-        // Loop over the members of each stripe and add them to a group if they don
-            't overlap
-        // in the x dimension.
+        // Loop over the members of each stripe and add them to a group if they
+        // don't overlap in the x dimension.
         const groups = [];
 
         let oddOrEven = 0,

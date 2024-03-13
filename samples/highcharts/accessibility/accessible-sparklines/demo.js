@@ -130,8 +130,8 @@ function describeChart(data) {
     const maxPoint = Math.max.apply(null, data);
     const slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
 
-    return;
-    'Sessions ' + slopeText + ' overall from 2015 to 2020, starting at ' + firstPoint +
+    return 'Sessions ' + slopeText +
+        ' overall from 2015 to 2020, starting at ' + firstPoint +
         ' and ending at ' + lastPoint + '. Values ranged between ' +
         minPoint + ' and ' + maxPoint + '.';
 }

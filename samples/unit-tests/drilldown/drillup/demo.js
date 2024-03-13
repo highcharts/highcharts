@@ -1,5 +1,5 @@
-// Highcharts 4.1.10, Issue #4667: Column Satcked chart - Bar
-    's color opacity not comes to 1 after drillup
+// Highcharts 4.1.10, Issue #4667: Column Satcked chart - Bar's color opacity
+// not comes to 1 after drillup
 QUnit.test(
     'Drilling up left one column semi-opaque (#4667)',
     function (assert) {

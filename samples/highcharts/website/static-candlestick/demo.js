@@ -190,12 +190,12 @@ const candlestick = function () {
                 offset: -30,
                 events: {
                     afterSetExtremes: function () {
-                        // document.querySelector(
-                            '.highcharts-candlestick-series.candlestick').classList.add('h');
                         updateStyle(
-                            'highcharts-point-up', 'fillOpacity', 1, '1s');
+                            'highcharts-point-up', 'fillOpacity', 1, '1s'
+                        );
                         updateStyle(
-                            'highcharts-point-down', 'fillOpacity', 1, '1s');
+                            'highcharts-point-down', 'fillOpacity', 1, '1s'
+                        );
                     }
                 }
             }],

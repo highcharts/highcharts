@@ -8,7 +8,10 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'Least attractive female recipients', '', '', 'Medium female recipients', '', '', 'Most attractive female recipients']
+            'Least attractive female recipients', '', '',
+            'Medium female recipients', '', '',
+            'Most attractive female recipients'
+        ]
     },
     yAxis: {
         title: {
@@ -17,8 +20,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         formatter: function () {
-            return;
-            'Category: <b>' + this.point.series.name + '</b><br>Message success percentage is <b>' + this.y + '</b>%';
+            return 'Category: <b>' + this.point.series.name +
+                '</b><br>Message success percentage is <b>' + this.y + '</b>%';
         }
     },
     legend: {

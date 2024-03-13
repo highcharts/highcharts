@@ -168,13 +168,24 @@ Highcharts.chart('production_heatmap', {
 
     tooltip: {
         formatter: function () {
-            return;
-            '<b>Year: </b>' + this.series.xAxis.categories[this.point.x] + '<br>' +
-                '<b>Country: </b>' + this.series.yAxis.categories[this.point.y] + '<br>' +
-                '<b>Production: </b>' + Highcharts.numberFormat(this.point.value, 0, '.', ',') + ' tonnes<br>' +
-                '<b>Last Year: </b>' + Highcharts.numberFormat(this.point.lastValue, 0, '.', ',') + ' tonnes<br>' +
-                '<b>Difference: </b>' + Highcharts.numberFormat(this.point.diff, 0, '.', ',') + ' tonnes<br>' +
-                '<b>Variance: </b>' + Highcharts.numberFormat(this.point.variance, 0, '.', ',') + '%<br>';
+            return '<b>Year: </b>' + this.series.xAxis.categories[
+                this.point.x
+            ] + '<br>' +
+            '<b>Country: </b>' + this.series.yAxis.categories[
+                this.point.y
+            ] + '<br>' +
+            '<b>Production: </b>' + Highcharts.numberFormat(
+                this.point.value, 0, '.', ','
+            ) + ' tonnes<br>' +
+            '<b>Last Year: </b>' + Highcharts.numberFormat(
+                this.point.lastValue, 0, '.', ','
+            ) + ' tonnes<br>' +
+            '<b>Difference: </b>' + Highcharts.numberFormat(
+                this.point.diff, 0, '.', ','
+            ) + ' tonnes<br>' +
+            '<b>Variance: </b>' + Highcharts.numberFormat(
+                this.point.variance, 0, '.', ','
+            ) + '%<br>';
         }
     },
 
@@ -256,12 +267,21 @@ const chart2 = Highcharts.chart('trade', {
     },
     tooltip: {
         formatter: function () {
-            return;
-            '<b>Region: </b>' + this.series.name + ' (' + this.series.options.stack + ') <br>' +
-                '<b>Year: </b>' + this.x + ' <br>' +
-                '<b>Value: </b>' + Highcharts.numberFormat(this.y, 0, '.', ',') + ' tonnes<br>' +
-                '<b>Total: </b>' + Highcharts.numberFormat(this.total, 0, '.', ',') + ' tonnes<br>' +
-                '<b>Percentage: </b>' + Highcharts.numberFormat(this.total === 0 ? 0 : this.y / this.total * 100, 2, '.', ',') + '%';
+            return '<b>Region: </b>' + this.series.name + ' (' +
+            this.series.options.stack + ') <br>' +
+            '<b>Year: </b>' + this.x + ' <br>' +
+            '<b>Value: </b>' + Highcharts.numberFormat(
+                this.y, 0, '.', ','
+            ) + ' tonnes<br>' +
+            '<b>Total: </b>' + Highcharts.numberFormat(
+                this.total, 0, '.', ','
+            ) + ' tonnes<br>' +
+            '<b>Percentage: </b>' + Highcharts.numberFormat(
+                this.total === 0 ? 0 : this.y / this.total * 100,
+                2,
+                '.',
+                ','
+            ) + '%';
         }
     },
     plotOptions: {

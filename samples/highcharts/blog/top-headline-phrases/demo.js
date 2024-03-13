@@ -27,8 +27,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         formatter: function () {
-            return;
-            'This trigrams "<b> ' + this.x + ' </b>" was used <b>' + this.y + '</b>';
+            return 'This trigrams "<b> ' + this.x + ' </b>" was used <b>' +
+                this.y + '</b>';
         }
     },
     plotOptions: {

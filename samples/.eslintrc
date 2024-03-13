@@ -62,4 +62,6 @@ rules:
     jsdoc/require-param-description: 0
     jsdoc/require-param-type: 0
     jsdoc/valid-jsdoc: 0
+    node/no-unsupported-features/es-syntax: 0
+    node/no-missing-import: 0
 

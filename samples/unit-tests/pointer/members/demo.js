@@ -632,7 +632,7 @@ QUnit.test(
         //     events.shift(),
         //     'mouseOut.1.0',
         //     'mousemove to 10px above 0.1: mouseOut fired on ' +
-        'series[1].points[0]';
+        //          'series[1].points[0]';
         // );
         // assert.strictEqual(
         //     events.shift(),
@@ -648,7 +648,7 @@ QUnit.test(
         //     events.shift(),
         //     'mouseOver.0.1',
         //     'mousemove to 10px above 0.1: mouseOver fired on ' +
-        'series[0].points[1].';
+        //         'series[0].points[1].';
         // );
         // assert.strictEqual(
         //     events.length,

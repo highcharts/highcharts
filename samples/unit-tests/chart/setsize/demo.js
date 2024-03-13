@@ -352,9 +352,8 @@ QUnit.test('Polar chart resize (#5220)', function (assert) {
     );
 });
 
-// Highcharts 3.0.10, Issue #2857
-// Pie chart resize doesn
-    't always work propery when you have long titles that wrap
+// Highcharts 3.0.10, Issue #2857. Pie chart resize doesn't always work propery
+// when you have long titles that wrap.
 QUnit.test('Title resize (#2857)', function (assert) {
     var chart = Highcharts.chart('container', {
             title: {

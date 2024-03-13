@@ -120,8 +120,8 @@ Highcharts.chart('container', {
             'kg'
                 );
             }
-            return;
-            'There are <b>' + this.point.clusterPointsAmount + '</b> points';
+            return 'There are <b>' + this.point.clusterPointsAmount +
+                '</b> points';
 
         }
     },

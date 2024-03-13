@@ -2035,10 +2035,9 @@ const db = {
         plotBackgroundImage: imgPath + 'dash-bg.png',
         events: {
             redraw: function () {
-                // const dashboard = document.querySelectorAll(
-                    '.highcharts-scatter-series.dashboard');
-                const dashboard = document.querySelector('.highcharts-root ' +
-                    'image');
+                const dashboard = document.querySelector(
+                    '.highcharts-root image'
+                );
 
                 dashboard.classList.add('move');
 

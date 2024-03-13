@@ -404,10 +404,11 @@ function temps() {
                 dataLabels: {
                     crop: true,
                     formatter: function () {
-                        const value = Number.isInteger(this.point.temp) ? this.point.temp +
-                            '°C' : 'No data';
-                        return;
-                        '<span>' + this.key + '</span><br/><span>' + value + '</span>';
+                        const value = Number.isInteger(this.point.temp) ?
+                            this.point.temp + '°C' :
+                            'No data';
+                        return '<span>' + this.key + '</span><br/><span>' +
+                            value + '</span>';
                     }
                 },
                 accessibility: {
@@ -510,11 +511,12 @@ function clusters() {
             tooltip: {
                 formatter: function () {
                     if (this.point.clusteredData) {
-                        return;
-                        'Clustered points: ' + this.point.clusterPointsAmount;
+                        return 'Clustered points: ' +
+                            this.point.clusterPointsAmount;
                     }
-                    return;
-                    '<b>' + this.key + '</b><br>Lat: ' + this.point.lat.toFixed(2) + ', Lon: ' + this.point.lon.toFixed(2);
+                    return '<b>' + this.key + '</b><br>Lat: ' +
+                        this.point.lat.toFixed(2) + ', Lon: ' +
+                        this.point.lon.toFixed(2);
                 }
             },
             legend: {
