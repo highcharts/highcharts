@@ -37,7 +37,6 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        description: 'time',
         endOnTick: true,
         min: Date.UTC(1880, 0, 0),
         type: 'datetime'
