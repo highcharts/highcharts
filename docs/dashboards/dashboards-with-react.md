@@ -58,6 +58,6 @@ There are two ways to do it:
     - `options` - the options object for the dashboard
     - `isAsync` - whether the dashboard should be rendered asynchronously or not- useful when using external data resources
 
-See how it works in the [basic live example](https://stackblitz.com/edit/stackblitz-starters-fhbyc8)
-or [component live example](https://stackblitz.com/edit/stackblitz-starters-jklu62).
+See how it works in the [basic live example](https://stackblitz.com/edit/stackblitz-starters-xn8e17)
+or [component live example](https://stackblitz.com/edit/stackblitz-starters-sx8crk).
 
