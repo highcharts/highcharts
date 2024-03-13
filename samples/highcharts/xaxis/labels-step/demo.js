@@ -2,7 +2,9 @@ Highcharts.chart('container', {
 
     xAxis: {
         categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ],
         labels: {
             step: 2
         }

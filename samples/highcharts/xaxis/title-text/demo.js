@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     xAxis: {
         categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ],
         title: {
             enabled: true,
             text: 'Custom with <b>simple</b> <i>markup</i>',

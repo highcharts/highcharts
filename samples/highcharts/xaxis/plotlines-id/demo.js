@@ -1,7 +1,9 @@
 const chart = Highcharts.chart('container', {
     xAxis: {
         categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ],
         plotLines: [{ // summer months - treat from/to as numbers
             color: '#FF0000',
             width: 2,

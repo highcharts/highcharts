@@ -19,7 +19,9 @@ Highcharts.chart('container', {
         gridLineWidth: 0,
         type: 'category',
         categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ],
         labels: {
             style: {
                 color: 'black',

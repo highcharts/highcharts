@@ -4,7 +4,9 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
     series: [{
         data: [1, 2, 3, 4, null, 6, 7, null, 9],
