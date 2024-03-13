@@ -356,7 +356,7 @@ class AreaSeries extends LineSeries {
                     bottom,
                     isNull = true;
 
-                if (cliffVal || nullVal) {
+                if (cliffVal || nullVal || stackedValues) {
 
                     top = (nullVal ?
                         (stackedValues as any)[0] :
