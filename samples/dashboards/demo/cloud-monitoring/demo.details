@@ -1,5 +1,5 @@
 ---
-name: Cloud monitoring dashboard
+name: Cloud monitoring
 authors:
   - Sebastian Bochan
 js_wrap: b
