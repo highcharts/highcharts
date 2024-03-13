@@ -152,13 +152,18 @@ toggleButton.addEventListener('click', function () {
         }, 500);
     }
 
-    if (toggleButton.getAttribute('aria-pressed') === 'true') {
+    if (toggleButton.getAttribute('aria-pressed') === 'false') {
+        toggleButtonAnnounceDiv.innerText = 'Live updates stopped.';
+    }
+
+    // Removed this and added aria-live announcement instead when button is pressed.
+    /*if (toggleButton.getAttribute('aria-pressed') === 'true') {
         console.log(toggleButton.getAttribute('aria-pressed'));
         toggleButton.innerText = 'Put the cats away';
     } else {
         toggleButtonAnnounceDiv.innerText = 'Live updates stopped.';
         toggleButton.innerText = 'Set the cats loose';
-    }
+    }*/
 
 });
 
