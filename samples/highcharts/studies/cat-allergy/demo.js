@@ -156,6 +156,7 @@ toggleButton.addEventListener('click', function () {
         console.log(toggleButton.getAttribute('aria-pressed'));
         toggleButton.innerText = 'Put the cats away';
     } else {
+        toggleButtonAnnounceDiv.innerText = 'Live updates stopped.';
         toggleButton.innerText = 'Set the cats loose';
     }
 
