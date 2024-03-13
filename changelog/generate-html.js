@@ -132,7 +132,7 @@ function generateHTML() {
 
             return 'https://code.highcharts.com/zips/';
         }
-        function makeDownloadLinks(version, name) {
+        function gerURLPath(version, name) {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
                 'highcharts-maps': 'Highmaps',
@@ -151,7 +151,7 @@ function generateHTML() {
                 const version = changelog.header.version.split('-').join('.');
                 const id = changelog.header.name + '-v' + version;
                 const name = changelog.header.name;
-                const downloadLink = getBaseURL(name) + makeDownloadLinks(version, name) + '-' + version + '.zip';
+                const downloadLink = getBaseURL(name) + gerURLPath(version, name) + '-' + version + '.zip';
 
                 console.log(downloadLink);
                 return (
