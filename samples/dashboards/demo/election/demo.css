@@ -18,6 +18,9 @@
     --highcharts-color-2: #c0c0c0;
     --color-background: var(--highcharts-neutral-color-3);
     --color-link: #339;
+
+    /* Dimensions for result and control HTML */
+    --comp-min-height: 160px;
 }
 
 #election-map {
@@ -132,7 +135,7 @@
     text-align: center;
     display: flex;
     flex-direction: row;
-    min-height: 160px;
+    min-height: var(--comp-min-height);
     padding: 5px;
 }
 
@@ -163,15 +166,20 @@
     flex-direction: column;
 }
 
-#html-result-div #election-result div {
+#html-result-div #election-result div.info {
     flex: 1;
+    align-items: center;
+}
+
+#html-result-div #election-result div.info div {
+    flex: 1 1 auto;
     align-items: center;
 }
 
 /* Result bar */
 #bar-container {
     position: relative;
-    margin: 1%;
+    min-height: calc(var(--comp-min-height) * 0.25);
 }
 
 #bar-dem {
@@ -265,7 +273,7 @@
 
 #html-control-div {
     text-align: center;
-    min-height: 160px;
+    min-height: var(--comp-min-height);
     padding: 5px;
 }
 
