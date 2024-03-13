@@ -11,7 +11,9 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            '0', '1', '2', '1. Intermediate Sum', '4',  '2. Intermediate Sum', '6', 'Sum']
+            '0', '1', '2', '1. Intermediate Sum', '4',  '2. Intermediate Sum',
+            '6', 'Sum'
+        ]
     },
     yAxis: {
         tickInterval: 10

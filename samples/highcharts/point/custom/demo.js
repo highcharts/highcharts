@@ -40,7 +40,8 @@ Highcharts.chart('container', {
             descriptionFormatter: function (point) {
                 return (
                     point.options.custom.value +
-                        ' ' + point.series.options.custom.gender + 's have been named ' + point.name + '. ' +
+                    ' ' + point.series.options.custom.gender +
+                    's have been named ' + point.name + '. ' +
                     'This ranks on place #' + point.options.custom.rank + '.'
                 );
             }

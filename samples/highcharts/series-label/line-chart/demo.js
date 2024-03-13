@@ -3,10 +3,15 @@ Highcharts.setOptions({
         months: ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli',
             'august', 'september', 'oktober', 'november', 'desember'],
         weekdays: [
-            'sundag', 'mï¿½ndag', 'tysdag', 'onsdag', 'torsdag', 'fredag', 'laurdag']
+            'sundag', 'mï¿½ndag', 'tysdag', 'onsdag', 'torsdag', 'fredag',
+            'laurdag'
+        ]
     },
     colors: [
-        '#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
+        '#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B',
+        '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D',
+        '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
+    ]
 });
 Highcharts.chart('container', {
     chart: {

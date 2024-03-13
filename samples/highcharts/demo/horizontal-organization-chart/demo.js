@@ -103,8 +103,8 @@ Highcharts.chart('container', {
             title: null,
             name: 'Panthera pardus',
             color: '#fcc657',
-            image:
-                '../samples/graphics/horizontal-organizational-chart/panthera.png',
+            image: '../samples/graphics/horizontal-organizational-chart/' +
+                'panthera.png',
             custom: {
                 info: 'Panthera is a genus within the Felidae family that ' +
                     'was named and described by Lorenz Oken in 1816 who ' +
@@ -138,8 +138,8 @@ Highcharts.chart('container', {
             id: 'Taxidea taxus',
             name: 'Taxidea taxus',
             color: '#C4B1A0',
-            image:
-                '../samples/graphics/horizontal-organizational-chart/taxidea-taxus.png',
+            image: '../samples/graphics/horizontal-organizational-chart/' +
+                'taxidea-taxus.png',
             custom: {
                 info: 'Taxidea taxus is a North American badger, somewhat ' +
                     'similar in appearance to the European badger, although ' +
@@ -182,8 +182,8 @@ Highcharts.chart('container', {
             id: 'Canis latrans',
             name: 'Canis latrans',
             color: '#B0ACA2',
-            image:
-                '../samples/graphics/horizontal-organizational-chart/canis-latrans.png',
+            image: '../samples/graphics/horizontal-organizational-chart/' +
+                'canis-latrans.png',
             custom: {
                 info: 'Canis latrans, is a canine native to North America. ' +
                     'It is smaller than its close relative, the gray wolf, ' +
@@ -194,8 +194,8 @@ Highcharts.chart('container', {
             id: 'Canis lupus',
             name: 'Canis lupus',
             color: '#B0ACA2',
-            image:
-                '../samples/graphics/horizontal-organizational-chart/canis-lupus.png',
+            image: '../samples/graphics/horizontal-organizational-chart/' +
+                'canis-lupus.png',
             custom: {
                 info: 'Canis lupus is a canine native to the wilderness and ' +
                     'remote areas of Eurasia and North America. It is the ' +

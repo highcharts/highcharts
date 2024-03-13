@@ -8,7 +8,10 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
 
     // Set ARIA attributes
     chart.renderTo.setAttribute(
-        'aria-label', 'A chart. ' + chart.options.title.text + '. ' + chart.options.subtitle.text);
+        'aria-label',
+        'A chart. ' + chart.options.title.text + '. ' +
+            chart.options.subtitle.text
+    );
     chart.container.setAttribute('aria-hidden', true);
     div.setAttribute('aria-label', 'A tabular view of the data in the chart.');
     div.style.position = 'absolute';
@@ -26,8 +29,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text:
-            'A hidden but machine readable HTML table contains this chart\'s data'
+        text: 'A hidden but machine readable HTML table contains this ' +
+            'chart\'s data'
     },
 
     xAxis: {

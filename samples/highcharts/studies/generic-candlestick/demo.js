@@ -102,8 +102,9 @@
                 yValueLabels = series.options.yValueLabels,
                 yValues = point.yValues;
 
-            let tooltipHtml =
-                '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
+            let tooltipHtml = '<span style="color:' + series.color +
+                ';font-weight:bold">' + (point.name || series.name) +
+                '</span><br/>';
 
             for (let i = 0; i < yValueLabels.length; i++) {
                 tooltipHtml += yValueLabels[i] + ': ' + yValues[i] + '<br />';

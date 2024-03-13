@@ -279,8 +279,8 @@ const data = [{
 {
     id: 'Af.4',
     parent: '1.3',
-    name:
-        'Hong Kong Special Administrative Region of the People\'s Republic of China'
+    name: 'Hong Kong Special Administrative Region of the People\'s ' +
+        'Republic of China'
 },
 {
     parent: 'Af.4',

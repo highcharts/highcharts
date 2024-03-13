@@ -81,7 +81,11 @@ const rawData = getData(500000),
     simplifiedData = simplifyPath(rawData, 3);
 
 console.log(
-    'Raw data length:', rawData.length, 'Simplifid data length:', simplifiedData.length);
+    'Raw data length:',
+    rawData.length,
+    'Simplifid data length:',
+    simplifiedData.length
+);
 rawData.length = 0; // clear memory
 
 console.time('Highcharts.Chart');

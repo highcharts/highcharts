@@ -150,8 +150,11 @@ function addOscControls(controlsContainerEl, options) {
     const opts = options || {},
         typeOptions = [
             'sine', 'sawtooth', 'triangle', 'square', 'whitenoise', 'pulse']
-            .reduce((str, option) => `${str}<option value="${option}">${option}</option>`,
-                ''),
+            .reduce(
+                (str, option) =>
+                    `${str}<option value="${option}">${option}</option>`,
+                ''
+            ),
         addChartContainer = (id, label) => {
             const uid = `${id}-${uidCounter++}`;
             content += `<div class="chart span2" id="${uid}"></div>
@@ -197,9 +200,13 @@ function addOscControls(controlsContainerEl, options) {
         highpassFreq: addControl('input', 'HighpassFreq', 'Highpass frequency',
             opts.highpass && opts.highpass.frequency || '', 1),
         highpassPitchTrackingMult: addControl(
-            'input', 'HighpassPitchTrackingMult', 'Highpass tracking multiplier',
+            'input',
+            'HighpassPitchTrackingMult',
+            'Highpass tracking multiplier',
             opts.highpass && opts.highpass.frequencyPitchTrackingMultiplier ||
-                '', 0.1),
+                '',
+            0.1
+        ),
         highpassQ: addControl('input', 'HighpassQ', 'Highpass resonance',
             opts.highpass && opts.highpass.Q || '', 0.1),
         fmOsc: addControl('select', 'FMOsc', 'FM oscillator', ''),
@@ -236,10 +243,14 @@ class Synth {
         };
         this.charts = {
             masterAttackEnvChart: createEnvelopeChart(
-                'attack', this.child('.masterAttackEnvChart'), this.updateFromUI.bind(this)
+                'attack',
+                this.child('.masterAttackEnvChart'),
+                this.updateFromUI.bind(this)
             ),
             masterReleaseEnvChart: createEnvelopeChart(
-                'release', this.child('.masterReleaseEnvChart'), this.updateFromUI.bind(this)
+                'release',
+                this.child('.masterReleaseEnvChart'),
+                this.updateFromUI.bind(this)
             )
         };
         this.populateEQSliders();
@@ -289,18 +300,22 @@ class Synth {
             this.charts[
                 oscillator.controlIds.attackEnvChart
             ] = createEnvelopeChart(
-                'attack', oscillator.controlIds.attackEnvChart, this.updateFromUI.bind(this)
+                'attack',
+                oscillator.controlIds.attackEnvChart,
+                this.updateFromUI.bind(this)
             );
             this.charts[
                 oscillator.controlIds.releaseEnvChart
             ] = createEnvelopeChart(
-                'release', oscillator.controlIds.releaseEnvChart, this.updateFromUI.bind(this)
+                'release',
+                oscillator.controlIds.releaseEnvChart,
+                this.updateFromUI.bind(this)
             );
             el(oscillator.controlIds.vmOsc).onchange =
             el(oscillator.controlIds.fmOsc).onchange = function () {
                 if (this.value === '' + id) {
-                    alert(
-                        'Oscillator can\'t modulate itself - please assign to a different oscillator.');
+                    alert('Oscillator can\'t modulate itself - please assign ' +
+                        'to a different oscillator.');
                     this.value = '';
                 }
             };
@@ -540,7 +555,7 @@ class Synth {
 
 
 // Use synth
-// --------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 el('startSynth').onclick = function () {
     audioContext = new AudioContext();

@@ -108,8 +108,12 @@ Highcharts.chart('container', {
             x: Date.UTC(1976, 3, 17),
             name: 'Closest flyby of the Sun',
             label: 'Closest flyby of the Sun',
-            description:
-                'Helios-A and Helios-B (also known as Helios 1 and Helios 2) are a pair of probes launched into heliocentric orbit for the purpose of studying solar processes. A joint venture of West Germany\'s space agency DFVLR (70 percent share) and NASA (30 percent), the probes were launched from Cape Canaveral Air Force Station, Florida.'
+            description: 'Helios-A and Helios-B (also known as Helios 1 and ' +
+                'Helios 2) are a pair of probes launched into heliocentric ' +
+                'orbit for the purpose of studying solar processes. A joint ' +
+                'venture of West Germany\'s space agency DFVLR (70 percent ' +
+                'share) and NASA (30 percent), the probes were launched from ' +
+                'Cape Canaveral Air Force Station, Florida.'
         }, {
             x: Date.UTC(1978, 11, 4),
             name: 'First orbital exploration of Venus',

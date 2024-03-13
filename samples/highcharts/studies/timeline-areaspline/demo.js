@@ -85,8 +85,8 @@ const chart = Highcharts.chart('container', {
 });
 
 /**
- * Pause the timeline, either when the range is ended, or when clicking the pause button.
- * Pausing stops the timer and resets the button to play mode.
+ * Pause the timeline, either when the range is ended, or when clicking the
+ * pause button. Pausing stops the timer and resets the button to play mode.
  */
 function pause(button) {
     button.title = 'play';
