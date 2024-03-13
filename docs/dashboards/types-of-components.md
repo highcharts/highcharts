@@ -72,13 +72,13 @@ You can find more information about HighchartsComponent [here](https://www.highc
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.  
 With classic scripts import order matters, so make sure that the Dashboards module is imported after the DataGrid module.
 ```html
-<script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
+<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the DataGrid displays correctly.
 ```css
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
 If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/embed/dashboards/datagrid-component/datagrid-options). By default, some columns have this option disabled, if the data was created by [mathModifier](https://www.highcharts.com/docs/dashboards/data-handling#datamodifier).
