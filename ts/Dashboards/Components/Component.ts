@@ -632,7 +632,7 @@ abstract class Component {
             tableEvents = this.tableEvents;
 
         if (tableEvents.length) {
-            for (let i = 0; i < tableEvents.length; i++) {
+            for (let i = 0, iEnd = tableEvents.length; i < iEnd; i++) {
                 tableEvents[i]();
             }
             tableEvents.length = 0;
