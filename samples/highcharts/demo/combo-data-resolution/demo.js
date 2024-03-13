@@ -24,21 +24,22 @@ Highcharts.chart('container', {
             but at different time intervals
         `
     }],
+    tooltip: {
+        valueSuffix: '°C'
+    },
     yAxis: {
-        name: 'Temperature anomalies',
-        description: `
-            This axis serves as a y-axis, representing the degree of temperature
-            anomalies present in  a data point
-        `,
+        description: 'temperature',
         max: 1,
         min: -0.5,
+        name: 'Temperature anomalies',
         title: {
             enabled: false
         }
     },
     xAxis: {
-        type: 'datetime',
+        description: 'time',
         endOnTick: true,
-        min: Date.UTC(1880, 0, 0)
+        min: Date.UTC(1880, 0, 0),
+        type: 'datetime'
     }
 });
