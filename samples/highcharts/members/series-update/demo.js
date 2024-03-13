@@ -75,11 +75,11 @@ document.getElementById('color').addEventListener('click', () => {
     color = !color;
 });
 
-[
-    'line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie'].forEach(type =>
-    document.getElementById(type).addEventListener('click', () => {
-        chart.series[0].update({
-            type: type
-        });
-    })
-);
+['line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie']
+    .forEach(type =>
+        document.getElementById(type).addEventListener('click', () => {
+            chart.series[0].update({
+                type: type
+            });
+        })
+    );

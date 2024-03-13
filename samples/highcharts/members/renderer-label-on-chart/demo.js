@@ -19,7 +19,12 @@ Highcharts.chart('container', {
 }, function (chart) { // on complete
     const point = chart.series[0].points[8];
     chart.renderer.label(
-        'Max observation', 270, 50, 'callout', point.plotX + chart.plotLeft, point.plotY + chart.plotTop)
+        'Max observation',
+        270,
+        50,
+        'callout',
+        point.plotX + chart.plotLeft, point.plotY + chart.plotTop
+    )
         .css({
             color: '#FFFFFF'
         })

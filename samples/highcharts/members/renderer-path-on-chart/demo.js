@@ -35,7 +35,8 @@ function getPath(width, height) {
 }
 
 /**
- * Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
+ * Function to check if the drawing of the compassrose exists, if so - it
+ * updates the path, if not, it draws it.
  */
 function onDraw() {
     const path = getPath(this.chartWidth, this.chartHeight);
