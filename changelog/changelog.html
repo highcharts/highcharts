@@ -13628,6 +13628,45 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-dashboards-v2.0.0"></a>
+              <span>Highcharts Dashboards v2.0.0 (2024-03-13)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v2.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/undefined-2.0.0.zip" title="Download the zip archive for Highcharts Dashboards v2.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added support for <a href="https://www.highcharts.com/docs/dashboards/layout-description#custom-layout">custom HTML layout</a>. The use of <code>gui</code> is now optional.</li>
+              <li>Dashboard, and charts, are now <a href="https://www.highcharts.com/docs/dashboards/style-by-css">100% stylable via CSS</a> instead of JavaScript configuration.</li>
+              <li>Include what you need, with <a href="https://www.highcharts.com/docs/dashboards/installation">Dashboards Core</a>, <a href="https://www.highcharts.com/docs/dashboards/layout-description">Layout/EditMode</a> and <a href="https://www.highcharts.com/docs/dashboards/datagrid-component">DataGrid</a> as separate scripts. <code>dashboards-plugin</code> is removed and no longer needed.</li>
+              <li>Improved <a href="https://www.highcharts.com/docs/dashboards/synchronize-components">chart synchronization options</a>, and added additional options to highlight synchronization. <code>highlight</code>, <code>tooltip</code> and <code>crosshair</code> can now be set separately.</li>
+              <li>Improved and simplified <a href="https://www.highcharts.com/docs/dashboards/highcharts-component#working-with-data">column assignment</a>. Moved the option from <code>component</code> scope to <code>component.connector</code>.</li>
+              <li>Added support for HTML as string in the <a href="https://www.highcharts.com/docs/dashboards/html-component">HTML Component</a>.</li>
+            </ul>
+            <h2 id="upgrade-notes-and-breaking-changes">Upgrade notes and breaking changes</h2>
+            <ul>
+              <li><a href="https://www.highcharts.com/docs/dashboards/installation">Dashboards Core</a>, <a href="https://www.highcharts.com/docs/dashboards/layout-description">Layout/EditMode</a> and <a href="https://www.highcharts.com/docs/dashboards/datagrid-component">DataGrid</a> are now seperate scripts, and needs to be explicitly included whenever needed. See respective documentation articles for details.</li>
+              <li>The old <code>columnAssignment</code> logic is no longer supported, and needs to be refactored to <a href="https://www.highcharts.com/docs/dashboards/highcharts-component#working-with-data">the new one</a>.</li>
+              <li>Responsive layout should now be specified using <a href="https://www.highcharts.com/docs/dashboards/layout-description#how-the-dashboard-layout-engine-makes-your-dashboard-responsive">CSS media queries</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-2-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v2.0.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v2.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-2-0-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-2-0-0" class="collapse" aria-labelledby="hd-heading-2-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed synchronization was not stopping during component destroy.</li>
+                      <li>Fixed point dragging with <code>allowConnectorUpdate</code> in Highcharts Component.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-dashboards-v1.3.1"></a>
               <span>Highcharts Dashboards v1.3.1 (2024-03-05)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v1.3.1">#</a>
