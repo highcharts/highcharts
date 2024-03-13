@@ -12,7 +12,7 @@ To create a dashboard with React please follow the steps below: <br>
 2. Import the Dashboards package.
 
     ```typescript
-    import * as Dashboards from '@highcharts/dashboards/dashboards';
+    import * as Dashboards from '@highcharts/dashboards';
     ```
 
 3. To fully utilize the Dashboards potential, consider additional packages like Highcharts or DataGrid.
