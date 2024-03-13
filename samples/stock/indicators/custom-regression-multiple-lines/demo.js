@@ -113,7 +113,11 @@
             getLinearRegressionZones: getLinearRegressionZones,
 
             linesApiNames: [
-                'highRangeBottomLine', 'closeRangeBottomLine', 'closeRangeTopLine', 'highRangeTopLine'],
+                'highRangeBottomLine',
+                'closeRangeBottomLine',
+                'closeRangeTopLine',
+                'highRangeTopLine'
+            ],
             nameBase: 'Linear regression zones',
             nameComponents: ['zoneDistance'],
             nameSuffixes: ['%'],

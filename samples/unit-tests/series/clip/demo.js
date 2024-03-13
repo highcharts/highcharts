@@ -73,8 +73,8 @@ QUnit.test('General series clip tests', assert => {
             'applied'
         );
 
-        const widthBefore = chart.sharedClips[chart.series[3].sharedClipKey].attr(
-            'width');
+        const widthBefore = chart.sharedClips[chart.series[3].sharedClipKey]
+            .attr('width');
 
         chart.update({
             yAxis: [{}, {

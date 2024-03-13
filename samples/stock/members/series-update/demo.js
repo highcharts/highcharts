@@ -67,7 +67,9 @@
 
     // Set type
     [
-        'line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange', 'candlestick', 'ohlc'].forEach(function (type) {
+        'line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange',
+        'candlestick', 'ohlc'
+    ].forEach(function (type) {
         document.getElementById(type).addEventListener('click', function () {
             chart.series[0].update({
                 type: type

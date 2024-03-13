@@ -440,14 +440,16 @@ QUnit.test(
         assert.strictEqual(
             lin2val(420 / axis.transA + axis.min),
             7.4,
-            `For the pixel value higher than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
+            'For the pixel value higher than the first visible point, the ' +
+            'function should calculate value between that point and next ' +
+            'using EOP array.'
         );
         assert.strictEqual(
             lin2val(1000 / axis.transA + axis.min),
             1000 / axis.transA + axis.min, // #16784
-            `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should return requested value.`
+            'For the pixel value higher than any point in ' +
+            'extendedOrdinalPositions, array, the function should return ' +
+            'requested value.'
         );
     });
 

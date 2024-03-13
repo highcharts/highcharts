@@ -155,7 +155,8 @@
                 chart: {
                     style: {
                         fontFamily:
-                            'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif'
+                            'ProximaNova, Arial, \'Helvetica Neue\', ' +
+                            'Helvetica, sans-serif'
                     }
                 },
                 title: {

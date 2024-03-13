@@ -104,7 +104,8 @@ QUnit.test(
     });
 
 QUnit.test(
-    'Scrolling outside range (#3040) - stockChart contructor', function (assert) {
+    'Scrolling outside range (#3040) - stockChart contructor',
+    function (assert) {
         const chart = Highcharts.stockChart('container', {
             legend: {
                 enabled: false

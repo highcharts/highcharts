@@ -34,7 +34,7 @@ rules:
     max-len: [
         "warn",
         {
-            "ignorePattern": "(data:image/png)",
+            "ignorePattern": "(data:image/)",
             "ignoreUrls": true
         }
     ]

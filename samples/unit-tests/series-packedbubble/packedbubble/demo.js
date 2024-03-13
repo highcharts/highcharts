@@ -86,7 +86,8 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     );
     assert.notOk(
         chart.series[2].parentNode.selected,
-        'It shouldn\'t be possible to select a parent that has not enabled parentNode.allowPointSelect property.'
+        'It shouldn\'t be possible to select a parent that has not enabled ' +
+        'parentNode.allowPointSelect property.'
     );
     controller.triggerEvent(
         'mouseover',
@@ -117,7 +118,8 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     assert.strictEqual(
         chart.getSelectedParentNodes().length,
         1,
-        'It shouldn\'t be possible to select more than one parent node without using key modifier.'
+        'It shouldn\'t be possible to select more than one parent node ' +
+        'without using key modifier.'
     );
     controller.triggerEvent(
         'mouseover',

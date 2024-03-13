@@ -246,8 +246,9 @@ QUnit.module('XSS', function () {
                     [
                         '<customTag></customTag>',
                         '<span id="elemWithCustomAttribute" ' +
-                        'customAttribute="testValue"></span>',
-                        '<a href="javascript:alert(\'XSS\')">a simple JS directive</a>'
+                            'customAttribute="testValue"></span>',
+                        '<a href="javascript:alert(\'XSS\')">' +
+                            'a simple JS directive</a>'
                     ].join(',<br>'),
                     x,
                     y += lineHeight,

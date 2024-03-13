@@ -23,7 +23,8 @@ QUnit.test(
                     assert.strictEqual(
                         sample,
                         previousSample,
-                        'Parsed dates should be the same. (Index: ' + index + ')'
+                        'Parsed dates should be the same. (Index: ' +
+                            index + ')'
                     );
                 }
                 previousSample = sample;

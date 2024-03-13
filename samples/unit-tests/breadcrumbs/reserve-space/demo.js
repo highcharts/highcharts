@@ -1,5 +1,6 @@
 QUnit.test(
-    'Breadcrumbs button- check if the created path is correct.', function (assert) {
+    'Breadcrumbs button- check if the created path is correct.',
+    function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column'

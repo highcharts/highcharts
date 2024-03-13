@@ -817,7 +817,8 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
         'Auto-detect Anglo-american locale'
     );
     // Reset
-    Number.prototype.toLocaleString = toLocaleString; // eslint-disable-line no-extend-native
+    // eslint-disable-next-line no-extend-native
+    Number.prototype.toLocaleString = toLocaleString;
 
     // Explicit options
     chart.update({

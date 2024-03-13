@@ -159,13 +159,15 @@ QUnit.test('Align dataLabel', function (assert) {
         dataLabel.x + dataLabel.width / 2,
         bubbleCenter.x,
         1, // Assuming 1 pixel tolerance
-        `Data label for point (${point.x}, ${point.y}) is horizontally centered (#13240)`
+        `Data label for point (${point.x}, ${point.y}) is horizontally
+        centered (#13240)`
     );
 
     assert.close(
         dataLabel.y + dataLabel.height / 2,
         bubbleCenter.y,
         1, // Assuming 1 pixel tolerance
-        `Data label for point (${point.x}, ${point.y}) is vertically centered (#13240)`
+        `Data label for point (${point.x}, ${point.y}) is vertically centered
+        (#13240)`
     );
 });

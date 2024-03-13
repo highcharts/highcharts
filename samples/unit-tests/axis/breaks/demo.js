@@ -1088,8 +1088,9 @@ QUnit.test('#14833: Column series axis break regression', assert => {
     });
 
     assert.ok(
-        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility ===
-            'hidden'),
+        chart.series[0].points.slice(6, 10).every(
+            point => point.graphic.visibility === 'hidden'
+        ),
         'Points in break should not render'
     );
 });
@@ -1122,7 +1123,8 @@ QUnit.test('connectNulls and stacking', assert => {
 });
 
 QUnit.test(
-    'Axis with breaks and toValue method calculation, #13238.', function (assert) {
+    'Axis with breaks and toValue method calculation, #13238.',
+    function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
                 width: 400
@@ -1149,6 +1151,7 @@ QUnit.test(
             chart.xAxis[0].toValue(100),
             0.26227,
             0.05,
-            'The toValue method should return correct value when breakes enabled.'
+            'The toValue method should return correct value when breakes ' +
+            'enabled.'
         );
     });

@@ -4,8 +4,12 @@ const eventsData = [{
     name: 'The newspaper',
     custom: {
         location: 'Strasbourg',
-        details:
-            'The first newspaper was invented by Johann Carolus. It was named <i>Relation aller Fürnemmen und gedenckwürdigen Historien</i> (Account of all distinguished and commemorable stories). The Relation is recognised by the World Association of Newspapers, as well as many authors, as the world\'s first newspaper.'
+        details: 'The first newspaper was invented by Johann Carolus. It ' +
+            'was named <i>Relation aller Fürnemmen und gedenckwürdigen ' +
+            'Historien</i> (Account of all distinguished and commemorable ' +
+            'stories). The Relation is recognised by the World Association ' +
+            'of Newspapers, as well as many authors, as the world\'s first ' +
+            'newspaper.'
     }
 }, {
     x: -11399592920000,
@@ -83,8 +87,13 @@ const eventsData = [{
     x: -9159068120000,
     name: 'Pressure cooker',
     custom: {
-        details:
-            'In 1679, French physicist Denis Papin, better known for his studies on steam, invented the steam digester in an attempt to reduce the cooking time of food. His airtight cooker used steam pressure to raise the water\'s boiling point, thus cooking food more quickly. In 1681 Papin presented his invention to the Royal Society of London as a scientific study; he was later elected as a member.'
+        details: 'In 1679, French physicist Denis Papin, better known for ' +
+        'his studies on steam, invented the steam digester in an attempt to ' +
+        'reduce the cooking time of food. His airtight cooker used steam ' +
+        'pressure to raise the water\'s boiling point, thus cooking food ' +
+        'more quickly. In 1681 Papin presented his invention to the Royal ' +
+        'Society of London as a scientific study; he was later elected as ' +
+        'a member.'
     }
 }, {
     x: -8212383320000,
@@ -116,8 +125,15 @@ const eventsData = [{
     x: -7171004120000,
     name: 'Franklin stove',
     custom: {
-        details:
-            'The Franklin stove is a metal-lined fireplace named after Benjamin Franklin, who invented it in 1743. It had a hollow baffle near the rear (to transfer more heat from the fire to a room\'s air) and relied on an "inverted siphon" to draw the fire\'s hot fumes around the baffle. It was intended to produce more heat and less smoke than an ordinary open fireplace, but it achieved few sales until it was improved by David Rittenhouse. It is also known as a "circulating stove" or the "Pennsylvania fireplace". It is no longer used today.'
+        details: 'The Franklin stove is a metal-lined fireplace named after ' +
+        'Benjamin Franklin, who invented it in 1743. It had a hollow baffle ' +
+        'near the rear (to transfer more heat from the fire to a room\'s ' +
+        'air) and relied on an "inverted siphon" to draw the fire\'s hot ' +
+        'fumes around the baffle. It was intended to produce more heat and ' +
+        'less smoke than an ordinary open fireplace, but it achieved few ' +
+        'sales until it was improved by David Rittenhouse. It is also known ' +
+        'as a "circulating stove" or the "Pennsylvania fireplace". It is no ' +
+        'longer used today.'
     }
 }, {
     x: -6855384920000,
@@ -232,15 +248,31 @@ const eventsData = [{
     x: -2942328920000,
     name: 'Telephone',
     custom: {
-        details:
-            'Alexander Graham Bell was the first to be awarded a patent for the electric telephone by the United States Patent and Trademark Office (USPTO) in March 1876. Before Bell\'s patent, the telephone transmitted sound in a way that was similar to the telegraph. This method used vibrations and circuits to send electrical pulses, but was missing key features. Bell found that this method produced a sound through intermittent currents, but in order for the telephone to work a fluctuating current reproduced sounds the best. The fluctuating currents became the basis for the working telephone, creating Bell\'s patent. That first patent by Bell was the master patent of the telephone, from which other patents for electric telephone devices and features flowed.'
+        details: 'Alexander Graham Bell was the first to be awarded a patent ' +
+        'for the electric telephone by the United States Patent and ' +
+        'Trademark Office (USPTO) in March 1876. Before Bell\'s patent, the ' +
+        'telephone transmitted sound in a way that was similar to the ' +
+        'telegraph. This method used vibrations and circuits to send ' +
+        'electrical pulses, but was missing key features. Bell found that ' +
+        'this method produced a sound through intermittent currents, but in ' +
+        'order for the telephone to work a fluctuating current reproduced ' +
+        'sounds the best. The fluctuating currents became the basis for the ' +
+        'working telephone, creating Bell\'s patent. That first patent by ' +
+        'Bell was the master patent of the telephone, from which other ' +
+        'patents for electric telephone devices and features flowed.'
     }
 }, {
     x: -2847720920000,
     name: 'Incandescent light bulb',
     custom: {
-        details:
-            ' Joseph Swan and Thomas Edison both patent a functional incandescent light bulb. Some two dozen inventors had experimented with electric incandescent lighting over the first three-quarters of the 19th century but never came up with a practical design. Swan\'s, which he had been working on since the 1860s, had a low resistance so was only suited for small installations. Edison designed a high-resistance bulb as part of a large-scale commercial electric lighting utility.'
+        details: 'Joseph Swan and Thomas Edison both patent a functional ' +
+        'incandescent light bulb. Some two dozen inventors had experimented ' +
+        'with electric incandescent lighting over the first three-quarters ' +
+        'of the 19th century but never came up with a practical design. ' +
+        'Swan\'s, which he had been working on since the 1860s, had a low ' +
+        'resistance so was only suited for small installations. Edison ' +
+        'designed a high-resistance bulb as part of a large-scale commercial ' +
+        'electric lighting utility.'
     }
 }, {
     x: -2784562520000,
@@ -271,8 +303,17 @@ const eventsData = [{
     x: -2500565720000,
     name: 'Pre-cut cardboard box',
     custom: {
-        details:
-            'The Scottish-born Robert Gair invented the pre-cut cardboard or paperboard box in 1890 – flat pieces manufactured in bulk that folded into boxes. Gair\'s invention came about as a result of an accident: he was a Brooklyn printer and paper-bag maker during the 1870s, and one day, while he was printing an order of seed bags, a metal ruler normally used to crease bags shifted in position and cut them. Gair discovered that by cutting and creasing in one operation he could make prefabricated paperboard boxes. Applying this idea to corrugated boxboard was a straightforward development when the material became available around the turn of the twentieth century.'
+        details: 'The Scottish-born Robert Gair invented the pre-cut ' +
+        'cardboard or paperboard box in 1890 – flat pieces manufactured in ' +
+        'bulk that folded into boxes. Gair\'s invention came about as a ' +
+        'result of an accident: he was a Brooklyn printer and paper-bag ' +
+        'maker during the 1870s, and one day, while he was printing an ' +
+        'order of seed bags, a metal ruler normally used to crease bags ' +
+        'shifted in position and cut them. Gair discovered that by cutting ' +
+        'and creasing in one operation he could make prefabricated ' +
+        'paperboard boxes. Applying this idea to corrugated boxboard was ' +
+        'a straightforward development when the material became available ' +
+        'around the turn of the twentieth century.'
     }
 }, {
     x: -2405500330000,
@@ -443,8 +484,9 @@ const eventsData = [{
     x: 1476019670000,
     name: 'Laser Interferometer Gravitational-Wave Observatory',
     custom: {
-        details:
-            'The Laser Interferometer Gravitational-Wave Observatory makes the first observation of gravitational waves, fulfilling Einstein\'s prediction.'
+        details: 'The Laser Interferometer Gravitational-Wave Observatory ' +
+            'makes the first observation of gravitational waves, fulfilling ' +
+            'Einstein\'s prediction.'
     }
 }, {
     x: 1602250070000,

@@ -266,8 +266,9 @@ QUnit.test(
                 chart.setSize(700, 450);
 
                 assert.strictEqual(
-                    Number(chart.sharedClips[chart.series[1].sharedClipKey].attr(
-                        'width')),
+                    Number(chart.sharedClips[chart.series[1].sharedClipKey]
+                        .attr('width')
+                    ),
                     chart.series[1].xAxis.len,
                     'Correct clipbox width.'
                 );

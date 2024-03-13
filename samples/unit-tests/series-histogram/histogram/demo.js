@@ -486,13 +486,15 @@ QUnit.test('Histogram', function (assert) {
     assert.deepEqual(
         histogram.xData,
         [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87],
-        'After updating histogram\'s bin width bin ranges are calculated correctly'
+        'After updating histogram\'s bin width bin ranges are calculated ' +
+        'correctly'
     );
 
     assert.deepEqual(
         histogram.yData,
         [2, 0, 2, 2, 3, 1, 4, 2, 0, 2, 1, 0, 0, 1],
-        'After updating histogram\'s bin width bin frequencies are calculated correctly'
+        'After updating histogram\'s bin width bin frequencies are ' +
+        'calculated correctly'
     );
 
     baseSeries.addPoint(20);

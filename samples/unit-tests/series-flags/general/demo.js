@@ -200,7 +200,8 @@ QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
         [...chart.container.querySelectorAll('.highcharts-flags-series')]
             .some(group =>  group.getAttribute('transform').includes('NaN')),
         false,
-        'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
+        'The flag series\' DOM elements should not contain NaN attributes ' +
+        'values (#14063).'
     );
 });
 

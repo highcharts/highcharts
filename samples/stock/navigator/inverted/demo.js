@@ -30,7 +30,10 @@ const eventsData = [{
     y: 1,
     lbl: 'Financial Crisis of 1791-92',
     causes:
-        'Shares of First bank of US boom and bust in Aug and Sept 1791. Groundwork of Alexander Hamilton\'s cooperation with the Bank of New York to end this event would be crucial in ending the Panic of 1792 next year.',
+        'Shares of First bank of US boom and bust in Aug and Sept 1791. ' +
+        'Groundwork of Alexander Hamilton\'s cooperation with the Bank of ' +
+        'New York to end this event would be crucial in ending the Panic of ' +
+        '1792 next year.',
     country: 'United States'
 }, {
     x: -5490892800000,
@@ -149,7 +152,9 @@ const eventsData = [{
     y: 1,
     lbl: 'Recession of 1937–38',
     causes:
-        'Lasting around a year, this share price fall was triggered by an economic recession within the Great Depression and doubts about the effectiveness of Franklin D. Roosevelt\'s New Deal policy.',
+        'Lasting around a year, this share price fall was triggered by an ' +
+        'economic recession within the Great Depression and doubts about the ' +
+        'effectiveness of Franklin D. Roosevelt\'s New Deal policy.',
     country: 'United States'
 }, {
     x: -239767200000,
@@ -170,7 +175,8 @@ const eventsData = [{
     y: 1,
     lbl: '1973–74 stock market crash',
     causes:
-        'Lasting 23 months, dramatic rise in oil prices, the miners\' strike and the downfall of the Heath government.',
+        'Lasting 23 months, dramatic rise in oil prices, the miners\' ' +
+        'strike and the downfall of the Heath government.',
     country: 'United Kingdom'
 }, {
     x: 397000800000,
@@ -321,7 +327,10 @@ const eventsData = [{
     y: 1,
     lbl: 'European sovereign debt crisis',
     causes:
-        'Standard & Poor\'s downgrades Greece\'s sovereign credit rating to junk four days after the activation of a €45-billion EU–IMF bailout, triggering the decline of stock markets worldwide and of the Euro\'s value, and furthering a European sovereign debt crisis.',
+        'Standard & Poor\'s downgrades Greece\'s sovereign credit rating to ' +
+        'junk four days after the activation of a €45-billion EU-IMF ' +
+        'bailout, triggering the decline of stock markets worldwide and of ' +
+        'the Euro\'s value, and furthering a European sovereign debt crisis.',
     country: 'Europe'
 }, {
     x: 1273096800000,
@@ -434,13 +443,16 @@ Highcharts.stockChart('container', {
 
             if (this.point.options.country) {
                 tooltipString =
-                    '<div style="width: 140px;">Country: ' + this.point.options.country + '</div>';
+                    '<div style="width: 140px;">Country: ' +
+                    this.point.options.country + '</div>';
             }
             tooltipString +=
-                '<div style="width: 140px;">Year: ' + Highcharts.dateFormat('%Y', this.x) + '</div>';
+                '<div style="width: 140px;">Year: ' +
+                Highcharts.dateFormat('%Y', this.x) + '</div>';
             if (this.point.options.causes) {
                 tooltipString +=
-                    '<div style="width: 300px;">Causes: ' + this.point.options.causes + '</div>';
+                    '<div style="width: 300px;">Causes: ' +
+                    this.point.options.causes + '</div>';
             }
             return tooltipString + '</div>';
         }

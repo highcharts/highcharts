@@ -165,8 +165,12 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
             .join(',');
     }
 
-    assert.strictEqual(getStates(),
-        '0,0,3,2', 'Initial state. If selected range is greater than data, all should be selected (#19922).');
+    assert.strictEqual(
+        getStates(),
+        '0,0,3,2',
+        'Initial state. If selected range is greater than data, all should ' +
+        'be selected (#19922).'
+    );
 
     chart.rangeSelector.clickButton(1);
     assert.strictEqual(getStates(), '0,2,3,3', 'Selected 2h');

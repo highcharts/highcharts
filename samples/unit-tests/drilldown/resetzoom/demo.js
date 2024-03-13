@@ -386,7 +386,8 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
 
 
 QUnit.test(
-    'Drilldown and reset zoom should not crash the chart, #8095.', function (assert) {
+    'Drilldown and reset zoom should not crash the chart, #8095.',
+    function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',

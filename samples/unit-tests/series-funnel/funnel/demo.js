@@ -84,7 +84,7 @@ QUnit.test('Funnel size relative to center(#4738)', function (assert) {
     assert.equal(
         initialY,
         series.points[0].plotY,
-        '#17514, Negative value should have no influence on the chart\'s layout.'
+        '#17514, Negative value should have no influence on the chart\'s layout'
     );
 
 });

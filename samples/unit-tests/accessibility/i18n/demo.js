@@ -98,7 +98,8 @@ QUnit.test('i18nFormat', function (assert) {
     );
     assert.strictEqual(
         Highcharts.i18nFormat(
-            'Test {#each(nested.arr)}', { nested: { arr: [0, 1, 2, 3, 4, 5] } }),
+            'Test {#each(nested.arr)}', { nested: { arr: [0, 1, 2, 3, 4, 5] } }
+        ),
         'Test 012345',
         'Simple nested array each'
     );

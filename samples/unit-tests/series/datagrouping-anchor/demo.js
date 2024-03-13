@@ -1,5 +1,6 @@
 QUnit.test(
-    'Data grouping anchor for points in the middle of the data set.', function (assert) {
+    'Data grouping anchor for points in the middle of the data set.',
+    function (assert) {
         const chart = Highcharts.stockChart('container', {
                 yAxis: [{
                     height: '33.33%',
@@ -270,7 +271,7 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].x,
         0.2 * hour,
-        `When the smoothed enabled, the first point 
+        `When the smoothed enabled, the first point
         should be placed where the first group point is.`
     );
     assert.strictEqual(

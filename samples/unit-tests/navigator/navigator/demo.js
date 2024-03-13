@@ -1335,7 +1335,8 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
 
 
 QUnit.test(
-    'Initiation chart without data but with set range, #15864.', function (assert) {
+    'Initiation chart without data but with set range, #15864.',
+    function (assert) {
         const chart = Highcharts.stockChart('container', {
             rangeSelector: {
                 selected: 1

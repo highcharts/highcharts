@@ -171,7 +171,8 @@
 
         assert.ok(
             document.querySelector(
-                '.highcharts-plot-background').getBBox().height > originalPlotHeight,
+                '.highcharts-plot-background'
+            ).getBBox().height > originalPlotHeight,
             'Plot area is now higher than it was'
         );
 

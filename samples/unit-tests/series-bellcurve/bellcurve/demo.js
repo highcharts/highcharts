@@ -68,7 +68,8 @@ QUnit.test('Curve bell', function (assert) {
     assert.deepEqual(
         bellcurve.points.length,
         25,
-        'After updating bellcurve\'s pointsInInterval number of points is correct'
+        'After updating bellcurve\'s pointsInInterval number of points is ' +
+        'correct'
     );
 
     bellcurve.update({ visible: false });

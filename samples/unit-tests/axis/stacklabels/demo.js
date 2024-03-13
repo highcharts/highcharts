@@ -667,7 +667,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    '#8742: Some stackLabels did not render with dataLabels enabled', assert => {
+    '#8742: Some stackLabels did not render with dataLabels enabled',
+    assert => {
         [
             'column',
             'bar'

@@ -625,7 +625,8 @@ QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
     assert.strictEqual(
         xAxisLength,
         infinityLine.graphic.element.getBBox().width,
-        'The width of the infinityLine\'s graphic box should be the same as the xAxis\' width.'
+        'The width of the infinityLine\'s graphic box should be the same as ' +
+        'the xAxis\' width.'
     );
 
     assert.strictEqual(

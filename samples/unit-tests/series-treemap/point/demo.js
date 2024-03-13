@@ -114,13 +114,17 @@ QUnit.test('Treemap', assert => {
                     dataLabel1[prop],
                     dataLabel2[prop],
                     0.01,
-                    'Property ' + prop + ' of point ' + i + ' has the same behaviour after a resize as with a first render'
+                    'Property ' + prop + ' of point ' + i +
+                    ' has the same behaviour after a resize as with a ' +
+                    'first render'
                 );
                 assert.close(
                     bounding1[prop],
                     bounding2[prop],
                     0.01,
-                    'Property ' + prop + ' of point ' + i + ' bounding has the same behaviour after a resize as with a first render'
+                    'Property ' + prop + ' of point ' + i +
+                    ' bounding has the same behaviour after a resize as with ' +
+                    'a first render'
                 );
             });
         });
