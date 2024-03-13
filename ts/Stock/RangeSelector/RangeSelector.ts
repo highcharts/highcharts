@@ -1540,7 +1540,7 @@ class RangeSelector {
                 this.alignButtonGroup(xOffsetForExportButton);
                 if (this.buttonGroup?.translateY) {
                     this.dropdownLabel
-                        .attr({ y: this.buttonGroup.translateY + 0.5 });
+                        .attr({ y: this.buttonGroup.translateY });
                 }
 
                 // Skip animation
@@ -1925,7 +1925,7 @@ class RangeSelector {
         if (buttonGroup && dropdown) {
             const { translateX = 0, translateY = 0 } = buttonGroup,
                 left = chart.plotLeft + translateX,
-                top = translateY + 0.5,
+                top = translateY,
                 bBox = dropdownLabel
                     .attr({ x: left, y: top })
                     .show()
