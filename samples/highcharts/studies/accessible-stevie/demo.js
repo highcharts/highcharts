@@ -104,7 +104,7 @@ Highcharts.chart('container', {
 
     yAxis: {
         title: {
-            text: 'Number of awards/nominations'
+            text: 'Number of awards or nominations'
         },
         stackLabels: {
             enabled: true,
