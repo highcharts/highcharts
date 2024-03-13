@@ -100,7 +100,6 @@ Dashboards.board('container', {
             id: 'Vitamin'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true
         }
