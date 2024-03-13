@@ -110,7 +110,7 @@ const detailsDiv = document.createElement('div');
 const detailsText = document.createElement('p');
 
 detailsText.className = 'visually-hidden';
-detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the living room.';
+detailsText.innerText = 'A gauge chart shows a single value on an axis. The gauge is divided into three color-coded areas on the axis, green (0-4 cats), yellow (4-8 cats) and red (8-12 cats) of allergy level in the living room.';
 
 detailsDiv.appendChild(detailsText);
 detailsButton.insertAdjacentElement('afterend', detailsDiv);
@@ -151,6 +151,14 @@ toggleButton.addEventListener('click', function () {
             toggleButtonAnnounceDiv.innerText = '';
         }, 500);
     }
+
+    if (toggleButton.getAttribute('aria-pressed') === 'true') {
+        console.log(toggleButton.getAttribute('aria-pressed'));
+        toggleButton.innerText = 'Put the cats away';
+    } else {
+        toggleButton.innerText = 'Set the cats loose';
+    }
+
 });
 
 let previousValue = 0;
@@ -200,7 +208,6 @@ function updateFunction() {
         previousValue = currentValue;
     }
 }
-
 
 function playEarcon(id) {
     const instr = {
