@@ -51,7 +51,7 @@ const grid = new DataGrid.DataGrid('container', {
 The DataGrid component requires the following styles to be imported in your main CSS file:
 
 ```css
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
 

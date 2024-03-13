@@ -27,7 +27,7 @@ The order of the imports is important, so make sure that the Dashboards module i
 2. You also need to import the styles in your main CSS file.
     ```css
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-    @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+    @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
     ```
 
 3. After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.
