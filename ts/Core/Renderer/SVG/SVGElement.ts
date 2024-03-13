@@ -1553,13 +1553,18 @@ class SVGElement implements SVGElementLike {
 
                 if (tp) {
                     const polygon: BBoxObject['polygon'] = [],
-                        len = Math.max(tp.getNumberOfChars() - 1, 0),
+                        len = Math.max(tp.getNumberOfChars(), 0),
                         // The `b` value is the distance from the baseline to
                         // the top of the text
                         { b, h } = this.renderer.fontMetrics(this.element),
                         // The descender is the distance from the baseline to
                         // the bottom of the text
-                        descender = h - b;
+                        descender = h - b,
+                        polygonGroups = tp.innerHTML.split(
+                            '<tspan class="highcharts-br" dy="19" x="0">' +
+                            '​</tspan>'
+                        ),
+                        txt = tp.textContent;
 
                     // Calculate top and bottom coordinates for either the start
                     // or the end of a single character, and append it to the
@@ -1567,27 +1572,57 @@ class SVGElement implements SVGElementLike {
                     const appendTopAndBottom = (
                         charIndex: number,
                         positionOfChar: PositionObject
-                    ): void => {
+                    ): [[number, number], [number, number]] => {
                         const { x, y } = positionOfChar,
                             rotation = (
                                 tp.getRotationOfChar(charIndex) - 90
-                            ) * deg2rad;
-                        polygon.push([
-                            x - descender * Math.cos(rotation),
-                            y - descender * Math.sin(rotation)
-                        ]);
-                        polygon.unshift([
-                            x + b * Math.cos(rotation),
-                            y + b * Math.sin(rotation)
-                        ]);
+                            ) * deg2rad,
+                            cosRot = Math.cos(rotation),
+                            sinRot = Math.sin(rotation);
+                        return [
+                            [
+                                x - descender * cosRot,
+                                y - descender * sinRot
+                            ],
+                            [
+                                x + b * cosRot,
+                                y + b * sinRot
+                            ]
+                        ];
                     };
-                    // Assemble left-side vertecies of every 5th character
-                    for (let i = 0; i < len; i += 5) {
-                        appendTopAndBottom(i, tp.getStartPositionOfChar(i));
-                    }
 
-                    // For the last char we grab the right edge
-                    appendTopAndBottom(len, tp.getEndPositionOfChar(len));
+                    let groupIndex = 0;
+                    let groupCharIndex = 0;
+                    let group = polygonGroups[0];
+                    for (let i = 0; i < len; i++) {
+                        if (txt?.charCodeAt(i) === 8203) {
+                            continue;
+                        }
+
+                        if (groupCharIndex === 0) {
+                            const [upper, lower] = appendTopAndBottom(
+                                i,
+                                tp.getStartPositionOfChar(i)
+                            );
+                            polygon.push(lower);
+                            polygon.push(upper);
+                        } else if (groupCharIndex === group.length - 1) {
+                            const [upper, lower] = appendTopAndBottom(
+                                i,
+                                tp.getEndPositionOfChar(i)
+                            );
+                            polygon.unshift(lower);
+                            polygon.unshift(upper);
+                        }
+
+                        groupCharIndex++;
+
+                        if (groupCharIndex === group.length) {
+                            groupCharIndex = 0;
+                            group = polygonGroups[++groupIndex];
+                        }
+
+                    }
 
                     // Close it
                     polygon.push(polygon[0].slice() as [number, number]);
