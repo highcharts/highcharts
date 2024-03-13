@@ -73,7 +73,7 @@ The order of the imports is important, so make sure that the Dashboards module i
         type: 'DataGrid'
     }]
     ```
-    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions).
+    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
 
 See the summarized JS code needed to create a simple DataGrid:
 ```js
@@ -157,7 +157,7 @@ Note that you also need to import modules to use the appropriate modifiers. For 
 
 ## Components synchronization
 
-One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#sync), which allows setting the synchronization of component states with each other.
+One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other.
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
 
@@ -171,4 +171,4 @@ See demos of `sync` types below:
 
 ## Custom styling
 
-In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. You can set the [`style` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#style) for a component, in which you can define a CSS object, which allows you to set a style for the component from the option level. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#dataGridClassName) option can be very useful, it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.
+In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#dataGridClassName) option can be very useful, it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.

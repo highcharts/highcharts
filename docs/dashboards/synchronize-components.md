@@ -9,11 +9,15 @@ and highlighting specific data.
 ## How to synchronize the components?
 To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling).
 
-The events, that can be synchronized between components are:
-* [visibility](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#visibility)
-* [extremes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#extremes)
-* [highlight](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#highlight)
-* [crossfilter](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Component.Component.SyncOptions#crossfilter) (Can be applied only to [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component))
+List of synchronization types for each component type:
+
+|Component's type|highlight|extremes|visibility|crossfilter
+|---|---|---|---|---|
+|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no|no|
+|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.SyncOptions#highlight)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.SyncOptions#extremes)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.SyncOptions#visibility)|no|
+|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#highlight)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#extremes)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#visibility)|no|
+|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.SyncOptions#extremes)|no|no|
+|[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter)|
 
 ### Sync declaration
 
@@ -107,18 +111,6 @@ sync: {
 
 Demo:
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
-
-
-
-## Components sync compatibility
-
-|Component's type|highlight|extremes|visibility|crossfilter
-|---|---|---|---|---|
-|[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no|no|
-|[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|yes|yes|yes|no|
-|[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|yes|yes|yes|no|
-|[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|yes|no|no|
-|[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|yes|no|yes|
 
 
 ## Custom synchronization
