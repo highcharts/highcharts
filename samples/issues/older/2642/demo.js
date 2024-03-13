@@ -13,7 +13,11 @@ $(function () {
         },
         xAxis: {
             categories: [
-                'category1', 'longer category', 'category 3', 'longer category'],
+                'category1',
+                'longer category',
+                'category 3',
+                'longer category'
+            ],
             labels: {
                 align: 'right',
                 step: 0

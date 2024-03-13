@@ -851,8 +851,11 @@ $('document').ready(function () {
         // /configure chart for individual cases
 
         // /FOR COLUMN: disable polar, inverted, enabled animation
-        if (thingToChange ===
-            'width' || thingToChange === 'plotBands' || thingToChange === 'zones') {
+        if (
+            thingToChange === 'width' ||
+            thingToChange === 'plotBands' ||
+            thingToChange === 'zones'
+        ) {
             demoChart.update({
                 chart: {
                     polar: false,

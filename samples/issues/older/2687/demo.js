@@ -1,8 +1,8 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text:
-                'Highcharts <= 3.0.9, Axis.remove didn\'t remove all child series. Only one line series should remain.'
+            text: 'Highcharts <= 3.0.9, Axis.remove didn\'t remove all child ' +
+                'series. Only one line series should remain.'
         },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

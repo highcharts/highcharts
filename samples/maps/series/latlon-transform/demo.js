@@ -23,7 +23,10 @@ const chart = Highcharts.mapChart('container', {
     }, {
         name: 'Separators',
         type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/gb/gb-all'], 'mapline'),
+        data: Highcharts.geojson(
+            Highcharts.maps['countries/gb/gb-all'],
+            'mapline'
+        ),
         color: '#707070',
         showInLegend: false,
         enableMouseTracking: false

@@ -1500,7 +1500,10 @@ const presents = function () {
             }
         },
         colors: [
-            '#00786F', '#00786F', '#00786F', 'url(#bluestripe)', 'url(#bluestripe)', 'url(#bluestripe)', 'url(#stars)', 'url(#stars)', 'url(#stars)', 'url(#redstripe2)'],
+            '#00786F', '#00786F', '#00786F', 'url(#bluestripe)',
+            'url(#bluestripe)', 'url(#bluestripe)', 'url(#stars)',
+            'url(#stars)', 'url(#stars)', 'url(#redstripe2)'
+        ],
         title: {
             text: '',
             y: 30

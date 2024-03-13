@@ -111,8 +111,8 @@
             useHTML: true,
             borderColor: '#aaa',
             headerFormat: '<b>{point.point.name}</b><br>',
-            pointFormat:
-                '<img style="width: 150px; height: 100px;" src=\'{point.options.color.pattern.image}\'>'
+            pointFormat: '<img style="width: 150px; height: 100px;" ' +
+                'src=\'{point.options.color.pattern.image}\'>'
         },
 
         // Define the series
@@ -122,7 +122,8 @@
                 exposeAsGroupOnly: true
             },
             keys: [
-                'name', 'color.pattern.image', 'borderWidth', 'color.pattern.x', 'color.pattern.y', 'borderColor'
+                'name', 'color.pattern.image', 'borderWidth', 'color.pattern.x',
+                'color.pattern.y', 'borderColor'
             ],
             joinBy: 'name',
             data: data,

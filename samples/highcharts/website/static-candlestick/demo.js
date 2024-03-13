@@ -77,18 +77,28 @@ const candlestick = function () {
                         const p1 = function () {
                             chart.xAxis[0].update({ visible: true });
                             updateStyle(
-                                'highcharts-axis-labels', 'opacity', 1, '800ms');
+                                'highcharts-axis-labels', 'opacity', 1, '800ms'
+                            );
                             updateStyle('candlestick', 'opacity', 0, '0s');
                             updateStyle('candlestick', 'opacity', 1, '1s');
                             updateStyle(
                                 'highcharts-point-up', 'fillOpacity', 1, '1s');
                             updateStyle(
-                                'highcharts-point-down', 'fillOpacity', 1, '1s');
+                                'highcharts-point-down', 'fillOpacity', 1, '1s'
+                            );
                             updateStyle(
-                                'highcharts-range-selector-buttons', 'opacity', 1, '1s');
+                                'highcharts-range-selector-buttons',
+                                'opacity',
+                                1,
+                                '1s'
+                            );
                             if (!reduced) {
                                 updateStyle(
-                                    'candlestick', 'transform', 'rotate(0deg)', '1s');
+                                    'candlestick',
+                                    'transform',
+                                    'rotate(0deg)',
+                                    '1s'
+                                );
                             }
 
                         };

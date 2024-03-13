@@ -624,7 +624,9 @@ function nav() {
                     const completedValue = point.completed ?
                             point.completed.amount || point.completed : null,
                         completed = completedValue ?
-                            ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                            ' Task ' + Math.round(
+                                completedValue * 1000
+                            ) / 10 + '% completed.' :
                             '';
                     return Highcharts.format(
                         '{point.yCategory}.{completed} Start ' +
@@ -907,8 +909,9 @@ function drag() {
                 useHTML: true,
                 allowOverlap: true,
                 padding: 0,
-                format: '<p ' +
-                    'style="font-size:10px;background-color:transparent;color:transparent;padding:20px 8px 8px;">{value: %E}</p>'
+                format: '<p style="font-size:10px;background-color:' +
+                    'transparent;color:transparent;padding:20px 8px 8px;">' +
+                    '{value: %E}</p>'
             }
         },
         tooltip: {

@@ -126,19 +126,22 @@ function showMap(topology) {
 
         if (chart.get('points').data.length) {
             points = '{\n    type: "mappoint",\n    data: [\n        ' +
-                chart.get(
-                    'points').data.map(getPointConfigString).join(',\n        ') +
+                chart.get('points').data
+                    .map(getPointConfigString)
+                    .join(',\n        ') +
                 '\n    ]\n}';
             html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
         }
 
         if (chart.get('connected-points').data.length) {
-            points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
-                chart.get(
-                    'connected-points').data.map(getPointConfigString).join(',\n        ') +
+            points = '{\n    type: "mappoint",\n    lineWidth: 2,\n' +
+                '    data: [\n        ' +
+                chart.get('connected-points').data
+                    .map(getPointConfigString)
+                    .join(',\n        ') +
                 '\n    ]\n}';
-            html +=
-                '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
+            html += '<h3>Connected points configuration</h3><pre>' + points +
+                '</pre>';
         }
 
         if (!html) {

@@ -1,6 +1,8 @@
 // theme for planets
 const themeColors = [
-    '#31dcff', '#88e276', '#fe874c', '#c1e160', '#53f7fc', '#64E572', '#ff81ce', '#ffe372', '#d5b5e7'];
+    '#31dcff', '#88e276', '#fe874c', '#c1e160', '#53f7fc', '#64E572',
+    '#ff81ce', '#ffe372', '#d5b5e7'
+];
 
 Highcharts.theme = {
     colors: themeColors,
@@ -16,11 +18,24 @@ const animate = true;
 
 // planet data/info
 const gasLabels = [
-    'C0<sub>2</sub>', 'N', 'CH<sub>4</sub>', 'Ar', 'O', 'Na', 'H', 'He', 'Other'];
+    'C0<sub>2</sub>',
+    'N',
+    'CH<sub>4</sub>',
+    'Ar',
+    'O',
+    'Na',
+    'H',
+    'He',
+    'Other'
+];
 const gases = [
-    'Carbon<br>Dioxide', 'Nitrogen', 'Methane', 'Argon', 'Oxygen',  'Sodium', 'Hydrogen', 'Helium', 'Other'];
+    'Carbon<br>Dioxide', 'Nitrogen', 'Methane', 'Argon', 'Oxygen',
+    'Sodium', 'Hydrogen', 'Helium', 'Other'
+];
 const gasStyles = [
-    'carbon-dioxide', 'nitrogen', 'methane', 'argon', 'oxygen', 'sodium', 'hydrogen', 'helium', 'other'];
+    'carbon-dioxide', 'nitrogen', 'methane', 'argon', 'oxygen', 'sodium',
+    'hydrogen', 'helium', 'other'
+];
 const srcURL = 'https://www.highcharts.com/samples/graphics/homepage/';
 const planetImages = [
     'sun',
@@ -137,8 +152,10 @@ const planetStyles = function (index, chart) {
         }
     });
     // /set the background image to the right planet and show it
-    $(
-        '.planets-title-container').css({ backgroundImage: 'url(' + srcURL + planetImages[index] + '.png)' });
+    $('.planets-title-container')
+        .css({
+            backgroundImage: 'url(' + srcURL + planetImages[index] + '.png)'
+        });
     $('.planets-title-container').fadeIn(1000);
 
 };
@@ -184,11 +201,13 @@ Highcharts.chart('container', {
             let htmlString =
                 '<div id="gas' + index + '" class="planets-element-box">';
             htmlString +=
-                '<div class="planets-element-symbol">' + gasLabels[index] + '</div>';
+                '<div class="planets-element-symbol">' + gasLabels[index] +
+                '</div>';
             htmlString +=
                 '<div class="planets-element-value">' + data + '</div>';
             htmlString +=
-                '<div class="planets-element-name">'  + gases[index] + '</div></div>';
+                '<div class="planets-element-name">'  + gases[index] +
+                '</div></div>';
             return htmlString;
         }
     },
@@ -235,8 +254,8 @@ Highcharts.chart('container', {
                     let htmlString = '<div class="gas-label" ' +
                         'style="position:absolute;';
                     htmlString += 'border-radius:4px;padding:4px;';
-                    htmlString +=
-                        ';background-color:#fff;">' + gases[index] + ': ' + this.y + '% </div>';
+                    htmlString += ';background-color:#fff;">' +
+                        gases[index] + ': ' + this.y + '% </div>';
                     if (this.y > 0) {
                         return htmlString;
                     }

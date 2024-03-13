@@ -19,7 +19,10 @@ $(function () {
             min: 0,
             max: 14,
             categories: [
-                '', 'Ingen bestand', '', 'Svært god', '', 'God', '', 'Moderat påvirket', '', 'Dårlig', '', 'Svært dårlig', '', 'Kritisk<br/> eller tapt', ''],
+                '', 'Ingen bestand', '', 'Svært god', '', 'God', '',
+                'Moderat påvirket', '', 'Dårlig', '', 'Svært dårlig', '',
+                'Kritisk<br/> eller tapt', ''
+            ],
             tickPosition: 'outside',
             labels: {
                 rotation: 0,

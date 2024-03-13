@@ -365,7 +365,9 @@ QUnit.test(
             translationSlope: 0.2,
             minPixelPadding: 0,
             ordinal: {
-                extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
+                extendedOrdinalPositions: [
+                    0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9
+                ],
                 positions: [3, 4.2, 4.8, 5, 7],
                 slope: 500
             },
@@ -422,8 +424,9 @@ QUnit.test(
         assert.strictEqual(
             lin2val(-50 / axis.transA + axis.min),
             2.55,
-            `For the pixel value smaller than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
+            'For the pixel value smaller than the first visible point, the ' +
+            'function should calculate value between that point and next ' +
+            'using EOP array.'
         );
         assert.strictEqual(
             lin2val(-520 / axis.transA + axis.min),

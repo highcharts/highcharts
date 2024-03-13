@@ -180,18 +180,24 @@
             type: 'ikh',
             linkedTo: 'aapl',
             tooltip: {
-                pointFormat: '<br/><span style="color: #666666;">IKH</span>' +
-                    '<br/>' +
-                    'tenkan sen: <span ' +
-                    'style="color:{series.options.tenkanLine.styles.lineColor}">{point.tenkanSen:.3f}</span><br/>' +
-                    'kijun sen: <span ' +
-                    'style="color:{series.options.kijunLine.styles.lineColor}">{point.kijunSen:.3f}</span><br/>' +
-                    'chikou span: <span ' +
-                    'style="color:{series.options.chikouLine.styles.lineColor}">{point.chikouSpan:.3f}</span><br/>' +
-                    'senkou span A: <span ' +
-                    'style="color:{series.options.senkouSpanA.styles.lineColor}">{point.senkouSpanA:.3f}</span><br/>' +
-                    'senkou span B: <span ' +
-                    'style="color:{series.options.senkouSpanB.styles.lineColor}">{point.senkouSpanB:.3f}</span><br/>'
+                pointFormat: `<br/>
+                    <span style="color: #666666;">IKH</span>
+                    <br/>
+                    tenkan sen: <span
+                    style="color:{series.options.tenkanLine.styles.lineColor}">
+                    {point.tenkanSen:.3f}</span><br/>' +
+                    kijun sen: <span
+                    style="color:{series.options.kijunLine.styles.lineColor}">
+                    {point.kijunSen:.3f}</span><br/>
+                    chikou span: <span
+                    style="color:{series.options.chikouLine.styles.lineColor}">
+                    {point.chikouSpan:.3f}</span><br/>
+                    senkou span A: <span
+                    style="color:{series.options.senkouSpanA.styles.lineColor}">
+                    {point.senkouSpanA:.3f}</span><br/>
+                    senkou span B: <span
+                    style="color:{series.options.senkouSpanB.styles.lineColor}">
+                    {point.senkouSpanB:.3f}</span><br/>`
             },
             tenkanLine: {
                 styles: {

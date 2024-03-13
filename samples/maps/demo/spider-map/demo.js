@@ -78,7 +78,9 @@
             color: '#fe5f55',
             lineWidth: 1,
             keys: [
-                'city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver', 'bronze'],
+                'city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver',
+                'bronze'
+            ],
             data: data,
             minSize: '5%',
             maxSize: '12.5%',

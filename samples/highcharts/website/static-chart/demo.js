@@ -152,8 +152,9 @@ const iceberg = {
         }
     },
     title: {
-        text: 'Distribution of Icebergs in Iceberg Alley <p ' +
-            'style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
+        text: 'Distribution of Icebergs in Iceberg Alley ' +
+            '<p style="text-align:center;margin:0px;font-weight:300;' +
+            'font-size:0.8em">Newfoundland, Canada</p>',
         useHTML: true,
         floating: true
 
