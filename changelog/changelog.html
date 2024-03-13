@@ -13641,15 +13641,23 @@
               <li>Improved and simplified <a href="https://www.highcharts.com/docs/dashboards/highcharts-component#working-with-data">column assignment</a>. Moved the option from <code>component</code> scope to <code>component.connector</code>.</li>
               <li>Added support for HTML as string in the <a href="https://www.highcharts.com/docs/dashboards/html-component">HTML Component</a>.</li>
             </ul>
-            <h2 id="upgrade-notes-and-breaking-changes">Upgrade notes and breaking changes</h2>
-            <ul>
-              <li><a href="https://www.highcharts.com/docs/dashboards/installation">Dashboards Core</a>, <a href="https://www.highcharts.com/docs/dashboards/layout-description">Layout/EditMode</a> and <a href="https://www.highcharts.com/docs/dashboards/datagrid-component">DataGrid</a> are now seperate scripts, and needs to be explicitly included whenever needed. See respective documentation articles for details.</li>
-              <li>The old <code>columnAssignment</code> logic is no longer supported, and needs to be refactored to <a href="https://www.highcharts.com/docs/dashboards/highcharts-component#working-with-data">the new one</a>.</li>
-              <li>Responsive layout should now be specified using <a href="https://www.highcharts.com/docs/dashboards/layout-description#how-the-dashboard-layout-engine-makes-your-dashboard-responsive">CSS media queries</a>.</li>
-            </ul>
             <div class="accordion card-group">
               <div class="card">
+                <div id="hd-heading-2-0-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts-dashboards v2.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-hd-2-0-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-hd-2-0-0" class="collapse" aria-labelledby="hd-heading-2-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><a href="https://www.highcharts.com/docs/dashboards/installation">Dashboards Core</a>, <a href="https://www.highcharts.com/docs/dashboards/layout-description">Layout/EditMode</a> and <a href="https://www.highcharts.com/docs/dashboards/datagrid-component">DataGrid</a> are now seperate scripts, and needs to be explicitly included whenever needed. See respective documentation articles for details.</li>
+                      <li>The old <code>columnAssignment</code> logic is no longer supported, and needs to be refactored to <a href="https://www.highcharts.com/docs/dashboards/highcharts-component#working-with-data">the new one</a>.</li>
+                      <li>Responsive layout should now be specified using <a href="https://www.highcharts.com/docs/dashboards/layout-description#how-the-dashboard-layout-engine-makes-your-dashboard-responsive">CSS media queries</a>.</li>
+                    </ul>
 
+                  </div>
+                </div>
                 <div id="hd-heading-2-0-0-bug-fixes" class="card-header">
                   <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v2.0.0">
                     <button aria-label="Bug Fixes Highcharts-dashboards v2.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-2-0-0"><span> Bug fixes </span></button>
