@@ -97,7 +97,7 @@ Highcharts.chart('container', {
             enabled: false
         },
         accessibility: {
-            description: 'Years',
+            description: 'Years (horizontal)',
             rangeDescription: 'Data ranges from 1967 to 2010'
         }
     },
@@ -114,6 +114,10 @@ Highcharts.chart('container', {
                 }
                 return this.total;
             }
+        },
+        accessibility: {
+            description: 'Number of awards or nominations (vertical)',
+            rangeDescription: 'Range: 0 to 10'
         }
     },
     data: {
