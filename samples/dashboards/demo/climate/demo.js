@@ -556,8 +556,10 @@ async function setupBoard() {
                         const name = this.series.name;
 
                         // Date
-                        const hdr = Highcharts.dateFormat('%Y-%m-%d<br />',
-                            this.point.x);
+                        const hdr = Highcharts.dateFormat(
+                            '%Y-%m-%d<br />',
+                            this.point.x
+                        );
 
                         if (name === 'Days with rain') {
                             return hdr + 'Days with rain: ' + this.point.y;

@@ -381,7 +381,8 @@ async function setupDashboard() {
                     pane: kpiGaugeOptions.pane,
                     title: {
                         text: paramConfig.getColumnHeader(
-                            'temperature', false) + ' (latest)',
+                            'temperature', false
+                        ) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -391,7 +392,8 @@ async function setupDashboard() {
                         max: paramConfig.temperature.max,
                         accessibility: {
                             description: paramConfig.getColumnHeader(
-                                'temperature')
+                                'temperature'
+                            )
                         }
                     },
                     series: [{
@@ -431,7 +433,8 @@ async function setupDashboard() {
                     pane: kpiGaugeOptions.pane,
                     title: {
                         text: paramConfig.getColumnHeader(
-                            'wind', false) + ' (latest)',
+                            'wind', false
+                        ) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -476,7 +479,8 @@ async function setupDashboard() {
                     pane: kpiGaugeOptions.pane,
                     title: {
                         text: paramConfig.getColumnHeader(
-                            'precipitation', false) + ' (next 24 hours)',
+                            'precipitation', false
+                        ) + ' (next 24 hours)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -486,7 +490,8 @@ async function setupDashboard() {
                         max: 50, // Per 24 hours
                         accessibility: {
                             description: paramConfig.getColumnHeader(
-                                'precipitation')
+                                'precipitation'
+                            )
                         }
                     },
                     series: [{
@@ -537,7 +542,8 @@ async function setupDashboard() {
                         },
                         temperature: {
                             headerFormat: paramConfig.getColumnHeader(
-                                'temperature'),
+                                'temperature'
+                            ),
                             cellFormat: '{value:.1f}'
                         },
                         wind: {
@@ -546,12 +552,14 @@ async function setupDashboard() {
                         },
                         windDir: {
                             headerFormat: paramConfig.getColumnHeader(
-                                'windDir'),
+                                'windDir'
+                            ),
                             cellFormat: '{value:.0f}'
                         },
                         precipitation: {
                             headerFormat: paramConfig.getColumnHeader(
-                                'precipitation'),
+                                'precipitation'
+                            ),
                             cellFormat: '{value:.1f}'
                         }
                     }
