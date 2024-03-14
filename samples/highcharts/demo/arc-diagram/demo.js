@@ -1,7 +1,10 @@
 Highcharts.chart('container', {
 
     colors: [
-        '#293462', '#a64942', '#fe5f55', '#fff1c1', '#5bd1d7', '#ff502f', '#004d61', '#ff8a5c', '#fff591', '#f5587b', '#fad3cf', '#a696c8', '#5BE7C4', '#266A2E', '#593E1A'],
+        '#293462', '#a64942', '#fe5f55', '#fff1c1', '#5bd1d7', '#ff502f',
+        '#004d61', '#ff8a5c', '#fff591', '#f5587b', '#fad3cf', '#a696c8',
+        '#5BE7C4', '#266A2E', '#593E1A'
+    ],
 
     title: {
         text: 'Main train connections in Europe'

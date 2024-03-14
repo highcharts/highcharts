@@ -1,5 +1,7 @@
 const names = [
-    'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'];
+    'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon',
+    'Anna', 'Tim', 'Laura'
+];
 
 function getRandomData(row) {
     const data = [];

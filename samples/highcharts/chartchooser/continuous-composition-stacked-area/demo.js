@@ -1,6 +1,8 @@
 Highcharts.setOptions({
     colors: [
-        '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#FF9655', '#FFF263', '#6AF9C4']
+        '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#FF9655', '#FFF263',
+        '#6AF9C4'
+    ]
 });
 
 Highcharts.chart('container', {
@@ -11,8 +13,9 @@ Highcharts.chart('container', {
         text: 'MSIS atmospheric composition by height'
     },
     subtitle: {
-        text:
-          'Source: <a href="https://en.wikipedia.org/wiki/Atmosphere_of_Earth" target="_blank">Wikipedia.org</a>'
+        text: 'Source: ' +
+            '<a href="https://en.wikipedia.org/wiki/Atmosphere_of_Earth" ' +
+            'target="_blank">Wikipedia.org</a>'
     },
     xAxis: {
         tickmarkPlacement: 'on',

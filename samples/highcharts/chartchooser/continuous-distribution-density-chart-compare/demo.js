@@ -1802,8 +1802,8 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text:
-            '2022 Car\'s Fuel Consumption Ratings <br/> (City vs Highway Consumption)'
+        text: '2022 Car\'s Fuel Consumption Ratings <br/> ' +
+            '(City vs Highway Consumption)'
     },
 
     subtitle: {

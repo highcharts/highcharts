@@ -1,7 +1,8 @@
 let chart; // global
 
 /**
- * Request data from the server, add it to the graph and set a timeout to request again
+ * Request data from the server, add it to the graph and set a timeout to
+ * request again
  */
 async function requestData() {
     const result = await fetch('https://demo-live-data.highcharts.com/time-rows.json');
