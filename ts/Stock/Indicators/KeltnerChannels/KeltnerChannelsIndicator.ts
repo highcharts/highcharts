@@ -211,7 +211,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
                 }),
             xData: Array<number> = [],
             yData: Array<Array<number>> = [];
-            // middle line, top line and bottom lineI
+            // Middle line, top line and bottom lineI
         let ML: number,
             TL: number,
             BL: number,
@@ -310,4 +310,4 @@ export default KeltnerChannelsIndicator;
  * @apioption    series.keltnerchannels
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

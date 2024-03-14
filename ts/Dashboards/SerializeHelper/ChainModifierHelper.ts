@@ -51,13 +51,13 @@ function fromJSON(
         jsonChain = json.chain,
         modifiers: Array<DataModifier> = [];
 
-    // modifiers
+    // Modifiers
 
     for (let i = 0, iEnd = jsonChain.length; i < iEnd; ++i) {
         modifiers.push(Serializable.fromJSON(jsonChain[i]) as DataModifier);
     }
 
-    // apply chain options later
+    // Apply chain options later
 
     delete json.options.chain;
 
@@ -65,7 +65,7 @@ function fromJSON(
 
     chainModifier.options.chain = chainOptions;
 
-    // done
+    // Done
 
     return chainModifier;
 }
@@ -101,7 +101,7 @@ function toJSON(
     const chain: Array<ChainModifierHelper.ChainJSON> = [],
         options = obj.options as ChainModifierHelper.OptionsJSON;
 
-    // modifiers
+    // Modifiers
 
     const objChain = obj.chain;
 
@@ -111,7 +111,7 @@ function toJSON(
         );
     }
 
-    // done
+    // Done
 
     return {
         $class: 'Data.ChainModifier',

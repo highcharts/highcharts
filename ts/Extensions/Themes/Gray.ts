@@ -182,7 +182,7 @@ namespace GrayTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: {

@@ -36,7 +36,7 @@ import type { ApproximationTypeRegistry } from './ApproximationType';
  * @private
  */
 const ApproximationRegistry = {
-    // approximations added programmatically
+    // Approximations added programmatically
 } as ApproximationTypeRegistry;
 
 /* *

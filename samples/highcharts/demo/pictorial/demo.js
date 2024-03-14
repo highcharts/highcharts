@@ -6,13 +6,15 @@ Highcharts.chart('container', {
     colors: ['#B0FDFE', '#E3FED4', '#F9F492', '#FAF269', '#FAE146', '#FDA003'],
 
     title: {
-        text: 'Kelvin color temperature scale chart'
+        text: 'Kelvin color temperature scale chart',
+        align: 'left'
     },
 
     subtitle: {
         text: 'Source: ' +
-          '<a href="https://en.wikipedia.org/wiki/Color_temperature"' +
-          'target="_blank">Wikipedia.org</a> '
+            '<a href="https://en.wikipedia.org/wiki/Color_temperature"' +
+            'target="_blank">Wikipedia.org</a> ',
+        align: 'left'
     },
 
     accessibility: {

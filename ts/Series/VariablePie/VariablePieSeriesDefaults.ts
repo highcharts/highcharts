@@ -180,7 +180,7 @@ const VariablePieSeriesDefaults: VariablePieSeriesOptions = {
  * @apioption series.variablepie.data
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

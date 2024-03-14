@@ -92,7 +92,7 @@ function climate() {
                 }]
             },
             components: [{
-                cell: 'time-range-selector',
+                renderTo: 'time-range-selector',
                 type: 'Highcharts',
                 chartOptions: {
                     chart: {
@@ -202,7 +202,7 @@ function climate() {
                     }
                 }
             }, {
-                cell: 'world-map',
+                renderTo: 'world-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
@@ -592,7 +592,7 @@ function minimal() {
             connector: {
                 id: 'Vitamin'
             },
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             columnAssignment: {
                 Food: 'x',
@@ -634,7 +634,7 @@ function minimal() {
             }
         },
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             connector: {
                 id: 'Vitamin'
             },
@@ -674,15 +674,15 @@ function datacursor() {
         },
         components: [
             {
-                cell: 'highcharts-dashboards-cell-a0',
+                renderTo: 'highcharts-dashboards-cell-a0',
                 type: 'Highcharts',
                 chartOptions: buildChartOptions('bar', vegeTable, cursor)
             }, {
-                cell: 'highcharts-dashboards-cell-b0',
+                renderTo: 'highcharts-dashboards-cell-b0',
                 type: 'Highcharts',
                 chartOptions: buildChartOptions('line', vegeTable, cursor)
             }, {
-                cell: 'highcharts-dashboards-cell-a1',
+                renderTo: 'highcharts-dashboards-cell-a1',
                 type: 'Highcharts',
                 chartOptions: buildChartOptions('pie', vegeTable, cursor)
             }
@@ -844,7 +844,7 @@ function extremes() {
             connector: {
                 id: 'Population'
             },
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             columnAssignment: {
                 Town: 'x',
@@ -907,7 +907,7 @@ function extremes() {
             }
         },
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             title: {
                 text: ''
             },
@@ -979,7 +979,7 @@ function extremes() {
             }
         },
         {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             connector: {
                 id: 'Population'
             },
@@ -998,7 +998,7 @@ function extremes() {
             }
         },
         {
-            cell: 'dashboard-col-3',
+            renderTo: 'dashboard-col-3',
             connector: {
                 id: 'Population'
             },

@@ -520,6 +520,53 @@ QUnit.test('Labels with useHTML', assert => {
         'hidden',
         'Visibility should be set on parent group div'
     );
+
+
+    const html = ren.label('Rotated', 100, 100, true)
+        .attr({
+            rotation: 45
+        })
+        .css({
+            color: 'red'
+        })
+        .add();
+    const svg = ren.label('Rotated', 100, 100)
+        .attr({
+            rotation: 45
+        })
+        .css({
+            color: 'green'
+        })
+        .add();
+
+    ['x', 'y', 'width', 'height'].forEach(key => {
+        assert.close(
+            html.getBBox().x,
+            svg.getBBox().x,
+            1,
+            `Rotated HTML/SVG labels should have close bounding box ${key}`
+        );
+    });
+
+    html.attr({
+        rotationOriginX: 50,
+        rotationOriginY: 50
+    });
+
+    svg.attr({
+        rotationOriginX: 50,
+        rotationOriginY: 50
+    });
+
+    ['x', 'y', 'width', 'height'].forEach(key => {
+        assert.close(
+            html.getBBox().x,
+            svg.getBBox().x,
+            1,
+            'Rotated HTML/SVG labels with origin should have close bounding ' +
+            `box ${key}`
+        );
+    });
 });
 
 QUnit.test('Change of label alignment after add (#4652)', function (assert) {

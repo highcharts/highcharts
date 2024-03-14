@@ -1,17 +1,15 @@
 
 // Bring in other forms of Highcharts
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
+import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin.js';
 
-const { PluginHandler } = Dashboards;
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
-PluginHandler.addPlugin(DataGridPlugin);
-PluginHandler.addPlugin(HighchartsPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 Dashboards.board('container', {
     dataPool: {
@@ -64,7 +62,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             chartOptions: {
                 series: [
@@ -84,7 +82,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'HTML',
             elements: [
                 {
@@ -95,7 +93,7 @@ Dashboards.board('container', {
                 }
             ]
         }, {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             connector: {
                 id: 'connector-1'
             },

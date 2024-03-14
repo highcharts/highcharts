@@ -35,6 +35,7 @@ import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     fireEvent
 } = U;
 
@@ -443,8 +444,19 @@ class KeyboardNavigation {
      * @private
      */
     private removeExitAnchor(): void {
-        if (this.exitAnchor && this.exitAnchor.parentNode) {
-            this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+        // Remove event from element and from eventRemovers array to prevent
+        // memory leak (#20329).
+        if (this.exitAnchor) {
+            const el = this.eventProvider.eventRemovers.find((el): boolean =>
+                el.element === this.exitAnchor);
+            if (el && defined(el.remover)) {
+                this.eventProvider.removeEvent(el.remover);
+            }
+
+            if (this.exitAnchor.parentNode) {
+                this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+            }
+
             delete this.exitAnchor;
         }
     }
@@ -501,7 +513,8 @@ class KeyboardNavigation {
                             curModule &&
                             curModule.validate && !curModule.validate()
                         ) {
-                            // Invalid. Try moving backwards to find next valid.
+                            // Invalid.
+                            // Try moving backwards to find next valid.
                             keyboardNavigation.move(-1);
                         } else if (curModule) {
                             // We have a valid module, init it

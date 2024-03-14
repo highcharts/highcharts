@@ -203,22 +203,22 @@ function findAlignments(
 
     if (options.align === null) {
         if (angle > 20 && angle < 160) {
-            align = 'left'; // right hemisphere
+            align = 'left'; // Right hemisphere
         } else if (angle > 200 && angle < 340) {
-            align = 'right'; // left hemisphere
+            align = 'right'; // Left hemisphere
         } else {
-            align = 'center'; // top or bottom
+            align = 'center'; // Top or bottom
         }
         options.align = align;
     }
 
     if (options.verticalAlign === null) {
         if (angle < 45 || angle > 315) {
-            verticalAlign = 'bottom'; // top part
+            verticalAlign = 'bottom'; // Top part
         } else if (angle > 135 && angle < 225) {
-            verticalAlign = 'top'; // bottom part
+            verticalAlign = 'top'; // Bottom part
         } else {
-            verticalAlign = 'middle'; // left or right
+            verticalAlign = 'middle'; // Left or right
         }
         options.verticalAlign = verticalAlign;
     }
@@ -273,7 +273,7 @@ function getConnectors(
         previousY = previousPoint.plotY,
         nextX = nextPoint.plotX,
         nextY = nextPoint.plotY,
-        plotX = segment[i].plotX, // actual point
+        plotX = segment[i].plotX, // Actual point
         plotY = segment[i].plotY;
 
     leftContX = (smoothing * plotX + previousX) / denom;
@@ -281,7 +281,7 @@ function getConnectors(
     rightContX = (smoothing * plotX + nextX) / denom;
     rightContY = (smoothing * plotY + nextY) / denom;
 
-    // distance left control point
+    // Distance left control point
     const dLControlPoint = Math.sqrt(
             Math.pow(leftContX - plotX, 2) + Math.pow(leftContY - plotY, 2)
         ),
@@ -305,7 +305,7 @@ function getConnectors(
     rightContX = plotX + Math.cos(Math.PI + jointAngle) * dRControlPoint;
     rightContY = plotY + Math.sin(Math.PI + jointAngle) * dRControlPoint;
 
-    // push current point's connectors into returned object
+    // Push current point's connectors into returned object
 
     const ret: PolarConnector = {
         rightContX: rightContX,
@@ -316,7 +316,7 @@ function getConnectors(
         plotY: plotY
     };
 
-    // calculate connectors for previous and next point and push them inside
+    // Calculate connectors for previous and next point and push them inside
     // returned object
     if (calculateNeighbours) {
         ret.prevPointCont = getConnectors(
@@ -866,13 +866,13 @@ function wrapColumnSeriesAlignDataLabel(
                 // inside
                 labelPos =
                     (this as PolarSeriesComposition).yAxis.postTranslate(
-                    // angle
+                    // Angle
                         (
                             (shapeArgs.start || 0) + (shapeArgs.end || 0)
                         ) / 2 -
                         (this as PolarSeriesComposition)
                             .xAxis.startAngleRad,
-                        // radius
+                        // Radius
                         (point as ColumnPoint).barX +
                         (point as ColumnPoint).pointWidth / 2
                     );
@@ -1171,7 +1171,7 @@ function wrapLineSeriesGetGraphPath(
             this.options.connectEnds !== false &&
             typeof firstValid !== 'undefined'
         ) {
-            this.connectEnds = true; // re-used in splines
+            this.connectEnds = true; // Re-used in splines
             points.splice(points.length, 0, points[firstValid]);
             popLastPoint = true;
         }
@@ -1231,7 +1231,7 @@ function wrapPointerGetCoordinates(
                 axis: axis,
                 value: axis.translate(
                     isXAxis ?
-                        Math.PI - Math.atan2(x, y) : // angle
+                        Math.PI - Math.atan2(x, y) : // Angle
                         // distance from center
                         Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),
                     true
@@ -1311,12 +1311,12 @@ function wrapSeriesAnimate(
                         innerR = shapeArgs && shapeArgs.innerR;
 
                         if (graphic && shapeArgs) {
-                            // start values
+                            // Start values
                             graphic.attr({
                                 r: paneInnerR,
                                 innerR: paneInnerR
                             });
-                            // animate
+                            // Animate
                             graphic.animate({
                                 r: r,
                                 innerR: innerR
@@ -1376,10 +1376,10 @@ function wrapSplineSeriesGetPointSpline(
         connectors;
 
     if (this.chart.polar) {
-        // moveTo or lineTo
+        // `moveTo` or `lineTo`
         if (!i) {
             ret = ['M', point.plotX, point.plotY];
-        } else { // curve from last point to this
+        } else { // Curve from last point to this
             connectors = getConnectors(
                 segment,
                 i,
@@ -1422,17 +1422,23 @@ function wrapPointPos(
     chartCoordinates?: boolean,
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
-    const { plotX, series } = this,
-        { chart } = series;
+    if (!this.destroyed) {
+        const { plotX, series } = this,
+            { chart } = series;
 
-    if (chart.polar && !this.destroyed && isNumber(plotX) && isNumber(plotY)) {
-        return [
-            plotX + (chartCoordinates ? chart.plotLeft : 0),
-            plotY + (chartCoordinates ? chart.plotTop : 0)
-        ];
+        if (
+            chart.polar &&
+            isNumber(plotX) &&
+            isNumber(plotY)
+        ) {
+            return [
+                plotX + (chartCoordinates ? chart.plotLeft : 0),
+                plotY + (chartCoordinates ? chart.plotTop : 0)
+            ];
+        }
+
+        return proceed.call(this, chartCoordinates, plotY);
     }
-
-    return proceed.call(this, chartCoordinates, plotY);
 }
 
 /* *

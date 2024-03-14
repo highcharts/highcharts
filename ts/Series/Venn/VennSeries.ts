@@ -338,7 +338,7 @@ class VennSeries extends ScatterSeries {
         targetHeight: number,
         field: PolygonBoxObject
     ): Record<string, number> {
-        const height = field.bottom - field.top, // top is smaller than bottom
+        const height = field.bottom - field.top, // Top is smaller than bottom
             width = field.right - field.left,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1,
@@ -667,7 +667,6 @@ class VennSeries extends ScatterSeries {
  * */
 
 interface VennSeries {
-    axisTypes: Array<string>;
     directTouch: boolean;
     isCartesian: boolean;
     pointArrayMap: Array<string>;

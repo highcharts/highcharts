@@ -91,7 +91,7 @@ const locations = {
         ['San Diego', 32.71, -117.16, 36],
         ['Anchorage', 61.22, -149.89, 0],
         ['Winnipeg', 49.90, -97.14, 236],
-        ['Monterrey', 25.68, -99.13, 2230],
+        ['Monterrey', 25.68, -99.13, 540],
         ['Baracoa', 20.35, -74.50, 15]
     ]
 };
@@ -160,42 +160,6 @@ const kpiGaugeOptions = {
     }
 };
 
-// Configuration shared by the four top level cells
-// ! ------------ !
-// ! Map  ! KPI   !
-// ! ---- ! ----- !
-// ! Grid ! Chart !
-// ! ------------ !
-const topLevelCellLayout = {
-    responsive: {
-        large: {
-            width: '1/2'
-        },
-        medium: {
-            width: '100%'
-        },
-        small: {
-            width: '100%'
-        }
-    }
-};
-
-// Configuration shared by all KPI cells
-const kpiCellLayout = {
-    responsive: {
-        large: {
-            width: '1/3'
-        },
-        medium: {
-            width: '1/3'
-        },
-        small: {
-            width: '100%'
-        }
-    },
-    height: '204px'
-};
-
 // Launches the Dashboards application
 async function setupDashboard() {
     let activeCity = weatherStationConfig.location.default;
@@ -220,39 +184,22 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'world-map',
-                        ...topLevelCellLayout
+                        id: 'world-map'
                     }, {
                         // Top right
                         id: 'kpi-layout',
-                        ...topLevelCellLayout,
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'html-geo-info',
-                                    responsive: {
-                                        large: {
-                                            width: '100%'
-                                        },
-                                        medium: {
-                                            width: '100%'
-                                        },
-                                        small: {
-                                            width: '100%'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'html-geo-info'
                                 }]
                             }, {
                                 cells: [{
-                                    id: 'kpi-temperature',
-                                    ...kpiCellLayout
+                                    id: 'kpi-temperature'
                                 }, {
-                                    id: 'kpi-wind',
-                                    ...kpiCellLayout
+                                    id: 'kpi-wind'
                                 }, {
-                                    id: 'kpi-precipitation',
-                                    ...kpiCellLayout
+                                    id: 'kpi-precipitation'
                                 }]
                             }]
                         }
@@ -260,12 +207,10 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         // Bottom left
-                        id: 'selection-grid',
-                        ...topLevelCellLayout
+                        id: 'selection-grid'
                     }, {
                         // Bottom right
-                        id: 'city-chart',
-                        ...topLevelCellLayout
+                        id: 'city-chart'
                     }]
                 }]
             }]
@@ -600,10 +545,6 @@ async function setupDashboard() {
             }, {
                 cell: 'city-chart',
                 type: 'Highcharts',
-                columnAssignment: {
-                    time: 'x',
-                    temperature: 'y'
-                },
                 sync: {
                     highlight: true
                 },
@@ -858,13 +799,11 @@ async function updateBoard(board, city, paramName,
 
     await cityChart.update({
         connector: {
-            id: city
-        },
-        columnAssignment: {
-            time: 'x',
-            temperature: paramName === 'temperature' ? 'y' : null,
-            wind: isWind ? 'y' : null,
-            precipitation: paramName === 'precipitation' ? 'y' : null
+            id: city,
+            columnAssignment: [{
+                seriesId: paramName,
+                data: ['time', paramName]
+            }]
         },
         chartOptions: options
     });
@@ -894,14 +833,6 @@ async function updateBoard(board, city, paramName,
         // Parameters update: e.g. temperature -> precipitation.
         // Affects: map
 
-        // Update map properties
-        await worldMap.chart.update({
-            colorAxis: colorAxis,
-            title: {
-                text: paramConfig.getColumnHeader(paramName)
-            }
-        });
-
         // Update all map points (series 1: weather data)
         const mapPoints = worldMap.chart.series[1].data;
 
@@ -918,8 +849,16 @@ async function updateBoard(board, city, paramName,
                     elevation: elevation,
                     unit: param.unit
                 }
-            }, true);
+            }, false);
         }
+
+        // Update map properties and redraw
+        worldMap.chart.update({
+            colorAxis: colorAxis,
+            title: {
+                text: paramConfig.getColumnHeader(paramName)
+            }
+        });
     }
 
     if (cityUpdated) {

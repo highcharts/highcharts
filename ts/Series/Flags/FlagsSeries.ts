@@ -178,7 +178,7 @@ class FlagsSeries extends ColumnSeries {
                     (stackIndex * (options.stackDistance as any)) as any
                 );
             }
-            // skip connectors for higher level stacked points
+            // Skip connectors for higher level stacked points
             point.anchorX = stackIndex ? void 0 : point.plotX;
             anchorY = stackIndex ? void 0 : point.plotY;
             centered = shape !== 'flag';
@@ -326,10 +326,10 @@ class FlagsSeries extends ColumnSeries {
                 proceed
             ): SVGElement {
                 return SVGElement.prototype.on.apply(
-                    // for HTML
+                    // For HTML
                     // eslint-disable-next-line no-invalid-this
                     proceed.apply(this, [].slice.call(arguments, 1)),
-                    // and for SVG
+                    // And for SVG
                     [].slice.call(arguments, 1) as any
                 );
             });
@@ -503,4 +503,4 @@ export default FlagsSeries;
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-''; // detach doclets above
+''; // Detach doclets above

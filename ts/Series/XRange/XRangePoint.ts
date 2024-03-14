@@ -262,4 +262,4 @@ export default XRangePoint;
  * @requires modules/xrange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

@@ -233,7 +233,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
  * @apioption series.venn.states.select
  */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *

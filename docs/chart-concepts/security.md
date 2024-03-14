@@ -77,3 +77,9 @@ If you are using earlier Highcharts versions, consider either of these points:
 * Upgrade to Highcharts v9. It is fully backwards compatible and there is no need for changing any configuration.
 * If you are not using any of the pseudo-HTML capabilities of Highcharts to format text inputs, stripping the texts of HTML is a simple way to filter out malicious code. See the example of [allow-listing characters](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/security-strip-html/). While this does not render gracefully, it does effectively strip out HTML.
 * For more sophisticated sanitizing of the options, consider using a third party library like [DOMPurify](https://github.com/cure53/DOMPurify), either on the server or client side. See [the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/security-strip-html-dompurify/). This will strip out malicious code in a fast and secure way, while maintaining harmless markup.
+
+### Security reports and SAST code scanning
+
+We take security seriously and strive to ensure the safety of our codebase. We encourage our users and the community to report any security vulnerabilities they discover using the information that on our [GitHub repository](https://github.com/highcharts/highcharts/security/policy). If you have discovered a security vulnerability or have any security-related concerns, please report them to us.
+
+In addition to community reports, we also employ Static Application Security Testing (SAST) as part of our development workflow. SAST code scanning helps us identify and mitigate security risks by analyzing our codebase for potential vulnerabilities, such as common coding mistakes, insecure coding patterns, and known security issues.

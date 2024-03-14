@@ -316,8 +316,8 @@ class DependencyWheelSeries extends SankeySeries {
                                 'A',
                                 innerR, innerR,
                                 0,
-                                0, // long arc
-                                1, // clockwise
+                                0, // Long arc
+                                1, // Clockwise
                                 corners[1].x, corners[1].y
                             ], [
                                 'C',

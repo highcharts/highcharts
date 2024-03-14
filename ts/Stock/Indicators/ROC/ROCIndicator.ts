@@ -59,13 +59,13 @@ function populateAverage(
         rocY: (number|null);
 
     if (index < 0) {
-        // y data given as an array of values
+        // Y data given as an array of values
         nDaysAgoY = (yVal[i - period] as any);
         rocY = nDaysAgoY ?
             ((yVal as any)[i] - nDaysAgoY) / nDaysAgoY * 100 :
             null;
     } else {
-        // y data given as an array of arrays and the index should be used
+        // Y data given as an array of arrays and the index should be used
         nDaysAgoY = (yVal as any)[i - period][index];
         rocY = nDaysAgoY ?
             ((yVal as any)[i][index] - nDaysAgoY) / nDaysAgoY * 100 :
@@ -171,7 +171,7 @@ class ROCIndicator extends SMAIndicator {
             index = (params.index as any);
         }
 
-        // i = period <-- skip first N-points
+        // I = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
             ROCPoint = populateAverage(xVal, yVal, i, period, index);
@@ -255,4 +255,4 @@ export default ROCIndicator;
  * @apioption series.roc
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

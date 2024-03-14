@@ -93,7 +93,7 @@ class Pie3DSeries extends PieSeries {
     public addPoint(): void {
         super.addPoint.apply(this, arguments);
         if (this.chart.is3d()) {
-            // destroy (and rebuild) everything!!!
+            // Destroy (and rebuild) everything!!!
             this.update(this.userOptions, true); // #3845 pass the old options
         }
     }
@@ -334,4 +334,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpiledion
+''; // Keeps doclets above after transpiledion

@@ -142,7 +142,7 @@ namespace OnSeriesComposition {
             currentDataGrouping,
             distanceRatio;
 
-        // relate to a master series
+        // Relate to a master series
         if (onSeries && onSeries.visible && i) {
             xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
             currentDataGrouping = onSeries.currentDataGrouping;
@@ -168,7 +168,7 @@ namespace OnSeriesComposition {
 
                         point.plotY = leftPoint[onKey];
 
-                        // interpolate between points, #666
+                        // Interpolate between points, #666
                         if (leftPoint.x < (point.x as any) &&
                             !step
                         ) {
@@ -254,13 +254,13 @@ namespace OnSeriesComposition {
                                             yAxis.toValue(point.plotY, true);
                                     }
                                 } else {
-                                    // the distance ratio, between 0 and 1
+                                    // The distance ratio, between 0 and 1
                                     distanceRatio =
                                         ((point.x as any) - leftPoint.x) /
                                         (rightPoint.x - leftPoint.x);
                                     (point.plotY as any) +=
                                         distanceRatio *
-                                        // the plotY distance
+                                        // The plotY distance
                                         (rightPoint[onKey] - leftPoint[onKey]);
                                     (point.y as any) +=
                                         distanceRatio *
@@ -270,7 +270,7 @@ namespace OnSeriesComposition {
                         }
                     }
                     cursor--;
-                    i++; // check again for points in the same x position
+                    i++; // Check again for points in the same x position
                     if (cursor < 0) {
                         break;
                     }
@@ -322,7 +322,7 @@ namespace OnSeriesComposition {
                 }
             }
 
-            // if multiple flags appear at the same x, order them into a stack
+            // If multiple flags appear at the same x, order them into a stack
             lastPoint = points[i - 1];
             if (lastPoint && lastPoint.plotX === point.plotX) {
                 if (typeof lastPoint.stackIndex === 'undefined') {

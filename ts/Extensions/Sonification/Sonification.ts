@@ -141,7 +141,7 @@ class Sonification {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.audioContext.suspend();
             this.audioDestination = this.audioContext.destination;
-        } catch (e) { /* ignore */ }
+        } catch (e) { /* Ignore */ }
     }
 
 

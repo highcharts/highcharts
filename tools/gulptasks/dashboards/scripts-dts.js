@@ -51,12 +51,13 @@ const DTS_FOLDERS = [
  * Promise to keep.
  */
 async function scriptsDTS() {
-
     const logLib = require('../lib/log');
 
     const {
         bundleTargetFolder,
-        esModulesFolder
+        bundleTargetFolderDataGrid,
+        esModulesFolder,
+        esModulesFolderDataGrid
     } = require('./_config.json');
 
     for (const dtsFile of DTS_FILES) {
@@ -79,14 +80,20 @@ async function scriptsDTS() {
 
     const bundleDtsFolder = path.join(__dirname, 'scripts-dts/');
 
+    // Dashboards
     fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolder, true);
+    fsLib.deleteFile(path.join(bundleTargetFolder, 'datagrid.src.d.ts'));
+
+    // DataGrid
+    fsLib.copyAllFiles(bundleDtsFolder, bundleTargetFolderDataGrid, true);
+    fsLib.deleteFile(path.join(bundleTargetFolderDataGrid, 'dashboards.src.d.ts'));
 
     const bundleDtsFiles = fsLib.getFilePaths(bundleDtsFolder, true);
 
     for (const bundleDtsFile of bundleDtsFiles) {
         fs.writeFileSync(
             path.join(
-                bundleTargetFolder,
+                bundleDtsFile.includes('datagrid') ? bundleTargetFolderDataGrid : bundleTargetFolder,
                 path
                     .relative(bundleDtsFolder, bundleDtsFile)
                     .replace(/\.src\.d\.ts$/u, '.d.ts')

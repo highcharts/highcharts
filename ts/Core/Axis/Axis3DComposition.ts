@@ -202,7 +202,7 @@ function wrapAxisGetPlotBandPath(
                     fromStartSeg,
                     fromEndSeg,
                     toEndSeg,
-                    // lineTo instead of moveTo
+                    // `lineTo` instead of `moveTo`
                     ['L', toStartSeg[1], toStartSeg[2]],
                     ['Z']
                 );
@@ -646,7 +646,7 @@ class Axis3DAdditions {
                     x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z
                 };
             }
-        } else { // positionMode  == 'offset'
+        } else { // Position mode  == 'offset'
             // Labels will be skewd to maintain vertical / horizontal offsets
             // from axis
             if (!axis.horiz) { // Y Axis

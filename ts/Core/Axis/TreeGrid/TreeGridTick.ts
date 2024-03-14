@@ -387,7 +387,7 @@ class TreeGridTickAdditions {
             wrap(tickProto, 'getLabelPosition', wrapGetLabelPosition);
             wrap(tickProto, 'renderLabel', wrapRenderLabel);
 
-            // backwards compatibility
+            // Backwards compatibility
             tickProto.collapse = function (
                 this: TreeGridTick,
                 redraw?: boolean

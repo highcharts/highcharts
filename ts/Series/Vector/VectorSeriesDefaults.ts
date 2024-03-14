@@ -171,7 +171,7 @@ const VectorSeriesDefaults: VectorSeriesOptions = {
  * @apioption series.vector.data.direction
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file
 
 /* *
  *

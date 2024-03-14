@@ -72,7 +72,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions,
         {
-            tooltip: { // add a degree symbol
+            tooltip: { // Add a degree symbol
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'
             }
@@ -105,7 +105,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
     public slopeToAngle(
         slope: number
     ): number {
-        return Math.atan(slope) * (180 / Math.PI); // rad to deg
+        return Math.atan(slope) * (180 / Math.PI); // Rad to deg
     }
 
     public getEndPointY(
@@ -170,4 +170,4 @@ export default LinearRegressionAngleIndicator;
  * @apioption series.linearregressionangle
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output
