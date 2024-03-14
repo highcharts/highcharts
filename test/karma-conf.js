@@ -459,6 +459,8 @@ module.exports = function (config) {
                             );
                         }
                     }
+                    // Replace external data sources with internal data samples
+                    js = resolveJSON(js);
 
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
@@ -625,7 +627,7 @@ module.exports = function (config) {
 };
 
 function createVisualTestTemplate(argv, samplePath, js, assertion) {
-    let scriptBody = resolveJSON(js);
+    let scriptBody = js;
 
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');

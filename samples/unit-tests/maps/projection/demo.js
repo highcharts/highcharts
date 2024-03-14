@@ -65,6 +65,9 @@ QUnit.test('Recommend map view for map chart.', async function (assert) {
         ).then(response => response.json());
 
 
+    // Remove hc-recommended-map-view for test purpose
+    delete africa.objects.default['hc-recommended-mapview'];
+
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: world
