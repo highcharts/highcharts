@@ -53,6 +53,7 @@ const {
     isFunction,
     isNumber,
     isObject,
+    merge,
     pick,
     syncTimeout,
     removeEvent,
@@ -1299,7 +1300,10 @@ class Point {
      */
     public manageEvent(eventType: string): void {
         const point = this,
-            options = point.series.options.point || {},
+            options = merge(
+                point.series.options.point,
+                point.options
+            ),
             userEvent =
                 options.events?.[eventType as keyof typeof options.events];
 
