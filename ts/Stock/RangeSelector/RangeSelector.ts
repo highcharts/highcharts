@@ -626,6 +626,10 @@ class RangeSelector {
                 state = 2;
             }
 
+            if (!isNumber(button.state)) {
+                button.setState(0);
+            }
+
             // If state has changed, update the button
             if (button.state !== state) {
                 button.setState(state);
