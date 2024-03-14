@@ -1553,18 +1553,17 @@ class SVGElement implements SVGElementLike {
 
                 if (tp) {
                     const polygon: BBoxObject['polygon'] = [],
-                        len = Math.max(tp.getNumberOfChars(), 0),
                         // The `b` value is the distance from the baseline to
                         // the top of the text
                         { b, h } = this.renderer.fontMetrics(this.element),
                         // The descender is the distance from the baseline to
                         // the bottom of the text
                         descender = h - b,
-                        polygonGroups = tp.innerHTML.split(
+                        lines = tp.innerHTML.split(
                             '<tspan class="highcharts-br" dy="19" x="0">' +
                             '​</tspan>'
                         ),
-                        txt = tp.textContent;
+                        numOfLines = lines.length;
 
                     // Calculate top and bottom coordinates for either the start
                     // or the end of a single character, and append it to the
@@ -1591,37 +1590,50 @@ class SVGElement implements SVGElementLike {
                         ];
                     };
 
-                    let groupIndex = 0;
-                    let groupCharIndex = 0;
-                    let group = polygonGroups[0];
-                    for (let i = 0; i < len; i++) {
-                        if (txt?.charCodeAt(i) === 8203) {
-                            continue;
+                    for (
+                        let i = 0, lineIndex = 0;
+                        lineIndex < numOfLines;
+                        lineIndex++
+                    ) {
+                        const line = lines[lineIndex],
+                            lineLen = line.length;
+
+                        for (
+                            let lineCharIndex = 0;
+                            lineCharIndex < lineLen;
+                            lineCharIndex += 5
+                        ) {
+                            const srcCharIndex = (
+                                    i +
+                                    lineCharIndex +
+                                    lineIndex +
+                                    lineIndex
+                                ),
+                                [lower, upper] = appendTopAndBottom(
+                                    srcCharIndex,
+                                    tp.getStartPositionOfChar(srcCharIndex)
+                                );
+
+                            if (lineCharIndex === 0) {
+                                polygon.push(upper);
+                                polygon.push(lower);
+                            } else if (lineIndex === 0) {
+                                polygon.unshift(upper);
+                            } else if (lineIndex === numOfLines - 1) {
+                                polygon.push(lower);
+                            }
                         }
 
-                        if (groupCharIndex === 0) {
-                            const [upper, lower] = appendTopAndBottom(
-                                i,
-                                tp.getStartPositionOfChar(i)
+                        i += line.length - 1;
+
+                        const srcCharIndex = i + lineIndex + lineIndex,
+                            charPos = tp.getEndPositionOfChar(srcCharIndex),
+                            [lower, upper] = appendTopAndBottom(
+                                srcCharIndex,
+                                charPos
                             );
-                            polygon.push(lower);
-                            polygon.push(upper);
-                        } else if (groupCharIndex === group.length - 1) {
-                            const [upper, lower] = appendTopAndBottom(
-                                i,
-                                tp.getEndPositionOfChar(i)
-                            );
-                            polygon.unshift(lower);
-                            polygon.unshift(upper);
-                        }
-
-                        groupCharIndex++;
-
-                        if (groupCharIndex === group.length) {
-                            groupCharIndex = 0;
-                            group = polygonGroups[++groupIndex];
-                        }
-
+                        polygon.unshift(upper);
+                        polygon.unshift(lower);
                     }
 
                     // Close it
