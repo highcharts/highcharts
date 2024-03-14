@@ -390,7 +390,7 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         chart.series[0].points[0].options.dataLabels &&
             chart.series[0].points[0].options.dataLabels.enabled,
         true,
-        `Data labels should not be enabled, the function was not fired, becase
+        `Data labels should not be enabled, the function was not fired, because
         existing events are removed (#20435).`
     );
 
@@ -401,6 +401,28 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         true,
         `Data labels should be enabled, click callback function should be saved
         after removing mouseOver and mouseOut events (#20435).`
+    );
+
+    chart.series[0].points[1].update({
+        events: {
+            mouseOver() {
+                this.update({
+                    dataLabels: {
+                        enabled: true
+                    }
+                });
+            }
+        }
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].points[1].options.dataLabels &&
+            chart.series[0].points[1].options.dataLabels.enabled,
+        true,
+        `Data labels should be enabled, the mouse over function should be fired,
+        because event was added directly on point (#20851).`
     );
 });
 
