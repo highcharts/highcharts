@@ -1,0 +1,52 @@
+body {
+    background-color: #c2b8b8;
+}
+
+div#page_container {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin: 0 auto;
+    padding: 10px;
+    max-width: 1024px;
+    border: 1px solid #ccc;
+    height: auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+label {
+    color: blue;
+    width: 100px;
+    float: left;
+}
+
+input {
+    float: left;
+    margin: 0 20px;
+    width: 150px;
+}
+
+#messages {
+    background-color: yellow;
+    font-size: 12px;
+}
+
+div#status_bar {
+    background-color: red;
+    padding: 10px;
+    font-size: 14px;
+    color: white;
+}
+
+div#status_bar #status {
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+}
+
+div#status_bar #status_messages {
+    float: right;
+    padding-right: 20px;
+}
