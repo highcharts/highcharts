@@ -98,7 +98,9 @@ fetch(urlCountry).then(function (response) {
                         renderTo: 'container'
                     },
                     colors: [
-                        '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef', '#f4bb90'],
+                        '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e',
+                        '#00adef', '#f4bb90'
+                    ],
                     title: {
                         text: indicatorName,
                         style: {

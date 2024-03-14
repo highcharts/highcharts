@@ -28,7 +28,9 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 columnNames: [
-                    'City', 'Population (mln)', 'Metro Area (km²)', 'Highest Elevation (m)'],
+                    'City', 'Population (mln)', 'Metro Area (km²)',
+                    'Highest Elevation (m)'
+                ],
                 firstRowAsNames: false,
                 data
             }

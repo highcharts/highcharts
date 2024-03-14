@@ -49,8 +49,7 @@ Highcharts.chart('container', {
         y: 50,
         floating: true,
         borderWidth: 1,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) ||
-            '#FFFFFF'
+        backgroundColor: Highcharts.theme?.legendBackgroundColor || '#FFFFFF'
     },
     xAxis: {
         categories: [
@@ -124,8 +123,8 @@ function play(button) {
 
 const playBtn = document.querySelector('#play-pause-button');
 /**
- * Pause the timeline, either when the range is ended, or when clicking the pause button.
- * Pausing stops the timer and resets the button to play mode.
+ * Pause the timeline, either when the range is ended, or when clicking the
+ * pause button. Pausing stops the timer and resets the button to play mode.
  */
 function pause(button) {
     button.title = 'play';

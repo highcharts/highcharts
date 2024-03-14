@@ -206,7 +206,8 @@ const options = {
                 const completedValue = point.completed ?
                         point.completed.amount || point.completed : null,
                     completed = completedValue ?
-                        ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                        ' Task ' + Math.round(completedValue * 1000) / 10 +
+                            '% completed.' :
                         '',
                     dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,

@@ -87,10 +87,10 @@ const defaultChartOptions = {
         formatter: function () {
             const point = this.point;
             const chart = this.series.chart;
-            const longdescText = chart.accessibility.components.infoRegions.getLongdescText() ||
-                'Sessions';
-            const longdescFormat =
-                '<span style="font-size: 12px">' + longdescText + '</span><br/>';
+            const longdescText = chart.accessibility.components.infoRegions
+                .getLongdescText() || 'Sessions';
+            const longdescFormat = '<span style="font-size: 12px">' +
+                longdescText + '</span><br/>';
             const pointFormat = '<div style="margin-top:10px;"><span ' +
                 'style="color:' + point.color +
                 '">●</span> ' + point.x + ': <b>' + point.y + '</b></div>';

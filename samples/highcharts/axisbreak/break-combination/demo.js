@@ -39,7 +39,11 @@ function pointInBreak(item) {
         h = axis.toPixels(brk.from) - axis.toPixels(brk.to),
         w = sA.width - 1,
         path = [
-            'M', x, y + h, 'L', x + (w / 2), y + (h / 2), 'L', x + w, y + h, 'Z'];
+            'M', x, y + h,
+            'L', x + (w / 2), y + (h / 2),
+            'L', x + w, y + h,
+            'Z'
+        ];
 
     breakEffect(this, point, path, point.color || point.series.color);
 }

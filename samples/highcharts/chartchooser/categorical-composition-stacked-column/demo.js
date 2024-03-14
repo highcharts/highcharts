@@ -94,8 +94,8 @@ Highcharts.chart('container', {
             name: 'Troposphere',
             data: [1],
             height: '8 to 14.5km',
-            info:
-        '<b>The troposphere </b>starts at the Earth\'s surface <br>  and extends 8 to 14.5 kilometers high (5 to 9 miles)'
+            info: '<b>The troposphere </b>starts at the Earth\'s surface <br>' +
+                '  and extends 8 to 14.5 kilometers high (5 to 9 miles)'
         }
     ]
 });

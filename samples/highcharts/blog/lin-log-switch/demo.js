@@ -38,7 +38,13 @@
         stockTools: {
             gui: {
                 buttons: [
-                    'linLogSwitch', 'separator', 'indicators', 'separator', 'simpleShapes', 'lines', 'crookedLines', 'measure', 'advanced', 'toggleAnnotations', 'separator', 'verticalLabels', 'flags', 'separator', 'zoomChange', 'fullScreen', 'typeChange', 'separator', 'currentPriceIndicator', 'saveChart'],
+                    'linLogSwitch', 'separator', 'indicators', 'separator',
+                    'simpleShapes', 'lines', 'crookedLines', 'measure',
+                    'advanced', 'toggleAnnotations', 'separator',
+                    'verticalLabels', 'flags', 'separator', 'zoomChange',
+                    'fullScreen', 'typeChange', 'separator',
+                    'currentPriceIndicator', 'saveChart'
+                ],
                 definitions: {
                     linLogSwitch: {
                         className: 'highcharts-lin-log-switch',

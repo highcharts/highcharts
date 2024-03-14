@@ -10,7 +10,14 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'will make you', 'this is why', 'can we guess', 'only X in', 'the reason is', 'are freaking out', 'X stunning photos', 'tears of joy', 'is what happens', 'make you cry', 'give you gossebumps', 'talking about it', 'is too cute', 'shocked to see', 'melt your heart', 'X things only', 'can\'t stop laughing', 'top X songs', 'twitter reacts to', 'what happened next'],
+            'will make you', 'this is why', 'can we guess', 'only X in',
+            'the reason is', 'are freaking out', 'X stunning photos',
+            'tears of joy', 'is what happens', 'make you cry',
+            'give you gossebumps', 'talking about it', 'is too cute',
+            'shocked to see', 'melt your heart', 'X things only',
+            'can\'t stop laughing', 'top X songs', 'twitter reacts to',
+            'what happened next'
+        ],
         title: {
             text: null
         }

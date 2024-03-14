@@ -574,8 +574,9 @@ async function setupBoard() {
                             str += 'Days with rain: ' + point.y;
                         } else {
                             // Temperature (names TXC, TNC, TXF, TNF)
-                            const tempStr = (name[1] ===
-                                'X' ? 'Max: ' : 'Avg: ') + Highcharts.numberFormat(point.y, 1);
+                            const tempStr = (
+                                name[1] === 'X' ? 'Max: ' : 'Avg: '
+                            ) + Highcharts.numberFormat(point.y, 1);
                             str += tempStr + '˚' + name[2];
                         }
                         return str;

@@ -1,7 +1,23 @@
 const regionList = [
-    'Africa', 'Arab World', 'Central Europe and the Baltics', 'East Asia & Pacific (all income levels)', 'East Asia & Pacific (developing only)', 'Europe & Central Asia (all income levels)', 'Europe & Central Asia (developing only)', 'European Union', 'Latin America & Caribbean (all income levels)', 'Latin America & Caribbean (developing only)', 'Least developed countries: UN classification', 'Middle East & North Africa (all income levels)', 'Middle East & North Africa (developing only)', 'North America', 'South Asia', 'Sub-Saharan Africa (all income levels)', 'Sub-Saharan Africa (developing only)', 'Sub-Saharan Africa (excluding high income)'];
+    'Africa', 'Arab World', 'Central Europe and the Baltics',
+    'East Asia & Pacific (all income levels)',
+    'East Asia & Pacific (developing only)',
+    'Europe & Central Asia (all income levels)',
+    'Europe & Central Asia (developing only)', 'European Union',
+    'Latin America & Caribbean (all income levels)',
+    'Latin America & Caribbean (developing only)',
+    'Least developed countries: UN classification',
+    'Middle East & North Africa (all income levels)',
+    'Middle East & North Africa (developing only)', 'North America',
+    'South Asia', 'Sub-Saharan Africa (all income levels)',
+    'Sub-Saharan Africa (developing only)',
+    'Sub-Saharan Africa (excluding high income)'
+];
 const incomeList = [
-    'High income', 'High income: OECD', 'High income: nonOECD', 'Low income', 'Middle income', 'Lower middle income', 'Upper middle income', 'Low & middle income', 'OECD members'];
+    'High income', 'High income: OECD', 'High income: nonOECD', 'Low income',
+    'Middle income', 'Lower middle income', 'Upper middle income',
+    'Low & middle income', 'OECD members'
+];
 const worldList = ['World', 'world', 'WLD'];
 
 // Settings
@@ -69,7 +85,9 @@ fetch(url).then(function (response) {
             type: 'spline'
         },
         colors: [
-            '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef', '#f4bb90'],
+            '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef',
+            '#f4bb90'
+        ],
         title: {
             text: indicatorName
         },

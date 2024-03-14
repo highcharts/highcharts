@@ -36,7 +36,9 @@ Highcharts.chart('container-line', {
             text: 'Time'
         },
         categories: [
-            'January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
+            'January 2009', 'December 2010', 'May 2012', 'January 2014',
+            'July 2015'
+        ]
     },
 
     tooltip: {
@@ -220,7 +222,9 @@ Highcharts.chart('container-column', {
 
     xAxis: {
         categories: [
-            'Blindness', 'Low Vision/Visually-Impaired', 'Cognitive', 'Deafness/Hard-of-Hearing', 'Motor', 'Other']
+            'Blindness', 'Low Vision/Visually-Impaired', 'Cognitive',
+            'Deafness/Hard-of-Hearing', 'Motor', 'Other'
+        ]
     },
 
     series: [{
@@ -247,8 +251,10 @@ Highcharts.chart('container-pie-3d', {
     },
 
     caption: {
-        text:
-            'Respondents\' current level of employment. The results clearly reflect the significant unemployment and underemployment of individuals with disabilities, with only 40.7% of respondents being employed full time.'
+        text: 'Respondents\' current level of employment. The results ' +
+            'clearly reflect the significant unemployment and ' +
+            'underemployment of individuals with disabilities, with only ' +
+            '40.7% of respondents being employed full time.'
     },
 
     title: {

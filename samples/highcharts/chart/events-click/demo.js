@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         events: {
             click: function (event) {
                 const label = this.renderer.label(
-                    'x: ' + Highcharts.numberFormat(event.xAxis[0].value, 2) + ', y: ' + Highcharts.numberFormat(event.yAxis[0].value, 2),
+                    'x: ' + Highcharts.numberFormat(event.xAxis[0].value, 2) +
+                    ', y: ' + Highcharts.numberFormat(event.yAxis[0].value, 2),
                     event.xAxis[0].axis.toPixels(event.xAxis[0].value),
                     event.yAxis[0].axis.toPixels(event.yAxis[0].value)
                 )

@@ -14,7 +14,9 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'China', 'United States', 'Russia', 'India', 'Japan', 'Canada', 'Germany', 'France', 'South Korea', 'United Kingdom']
+            'China', 'United States', 'Russia', 'India', 'Japan', 'Canada',
+            'Germany', 'France', 'South Korea', 'United Kingdom'
+        ]
     },
     yAxis: {
         labels: {

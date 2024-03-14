@@ -9,7 +9,12 @@ const gameclock =
         612.92, 612.88, 612.84, 612.8];
 
 const playDescription =
-    '<p style = \'margin:0px; text-align:center;\'>Golden State Warriors vs. Toronto Raptors</p><p style=\'font-size: 10px; font-weight:bold; text-align:center; background-color: #e8c3ff; padding: 5px;\'>Home: Carroll 25` 3PT Jump Shot (3 PTS) (Lowry 1 AST)</p>';
+    '<p style = \'margin:0px; text-align:center;\'>' +
+    'Golden State Warriors vs. Toronto Raptors</p>' +
+    '<p style=\'font-size: 10px; font-weight:bold; text-align:center; ' +
+    'background-color: #e8c3ff; padding: 5px;\'>' +
+    'Home: Carroll 25` 3PT Jump Shot (3 PTS) (Lowry 1 AST)</p>';
+
 
 Highcharts.chart('container', {
     series: [{
@@ -62,7 +67,10 @@ Highcharts.chart('container', {
         headerFormat: '',
         hideDelay: 0,
         pointFormat:
-            '<div style=\'text-align:center;\'><strong>{point.name} ({point.team}{point.jersey})</strong><br>({point.x}, {point.y})<br><strong>Scoring Percent: </strong>{point.scorepercent}</div>'
+            '<div style=\'text-align:center;\'><strong>{point.name} ' +
+            '({point.team}{point.jersey})</strong><br>' +
+            '({point.x}, {point.y})<br><strong>Scoring Percent: </strong>' +
+            '{point.scorepercent}</div>'
     }
 }, function (chart) {
     chart.motion.reset();
@@ -77,12 +85,12 @@ function getBasketball() {
 }
 
 function returnData() {
+    /* eslint-disable max-len */
     return [{
         sequence: [{
             x: 35.3629,
             y: 21.4331,
-            scorepercent: [
-                'NaN'],
+            scorepercent: ['NaN'],
             name: [''],
             jersey: [''],
             team: ['Ball'],

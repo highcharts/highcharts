@@ -97,7 +97,9 @@ const chart = Highcharts.chart('container', {
             description: 'Months of the year'
         },
         categories: [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            'January', 'February', 'March', 'April', 'May', 'June', 'July',
+            'August', 'September', 'October', 'November', 'December'
+        ]
     }],
 
     yAxis: {
@@ -115,7 +117,9 @@ const chart = Highcharts.chart('container', {
             chartOptions: {
                 xAxis: {
                     categories: [
-                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+                        'Sep', 'Oct', 'Nov', 'Dec'
+                    ]
                 }
             }
         }]

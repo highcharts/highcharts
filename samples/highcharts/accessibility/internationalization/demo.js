@@ -28,11 +28,17 @@
                 thousandsSep: '.',
                 loading: 'Laster­...',
                 months: [
-                    'Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'],
+                    'Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli',
+                    'August', 'September', 'Oktober', 'November', 'Desember'
+                ],
                 shortMonths: [
-                    'Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+                    'Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug',
+                    'Sep', 'Okt', 'Nov', 'Des'
+                ],
                 weekdays: [
-                    'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag­'],
+                    'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag',
+                    'Lørdag', 'Søndag'
+                ],
                 exportButtonTitle: 'Eksporter',
                 printButtonTitle: 'Print',
                 printChart: 'Skriv ut diagram',
@@ -71,11 +77,18 @@
                 thousandsSep: '.',
                 loading: 'Daten werden geladen...',
                 months: [
-                    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                    'Juli', 'August', 'September', 'Oktober', 'November',
+                    'Dezember'
+                ],
                 weekdays: [
-                    'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+                    'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
+                    'Freitag', 'Samstag'
+                ],
                 shortMonths: [
-                    'Jan', 'Feb', 'Mrz', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                    'Jan', 'Feb', 'Mrz', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug',
+                    'Sep', 'Okt', 'Nov', 'Dez'
+                ],
                 exportButtonTitle: 'Exportieren',
                 printButtonTitle: 'Drucken',
                 printChart: 'Diagramm ausdrucken',

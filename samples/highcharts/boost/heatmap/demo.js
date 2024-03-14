@@ -93,5 +93,4 @@ Highcharts.chart('container', {
 
 });
 
-console.log(
-    'Rendered in ' + (new Date() - start) + ' ms'); // eslint-disable-line no-console
+console.log('Rendered in ' + (new Date() - start) + ' ms');

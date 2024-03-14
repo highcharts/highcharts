@@ -1,6 +1,7 @@
 /**
- * Extend the Axis.getLinePath method in order to visualize breaks with two parallel
- * slanted lines. For each break, the slanted lines are inserted into the line path.
+ * Extend the Axis.getLinePath method in order to visualize breaks with two
+ * parallel slanted lines. For each break, the slanted lines are inserted into
+ * the line path.
  */
 Highcharts.wrap(Highcharts.Axis.prototype,
     'getLinePath', function (proceed, lineWidth) {
@@ -50,7 +51,11 @@ function pointBreakColumn(e) {
         w = shapeArgs.width,
         key = ['brk', brk.from, brk.to],
         path = [
-            'M', x, y, 'L', x + w * 0.25, y + 4, 'L', x + w * 0.75, y - 4, 'L', x + w, y];
+            'M', x, y,
+            'L', x + w * 0.25, y + 4,
+            'L', x + w * 0.75, y - 4,
+            'L', x + w, y
+        ];
 
     if (!point[key]) {
         point[key] = this.chart.renderer.path(path)

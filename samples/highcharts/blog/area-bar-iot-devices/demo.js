@@ -144,7 +144,10 @@ const optionsTwo = {
     xAxis: {
         name: '',
         categories: [
-            'Bluetooth Headset', 'Body Camera', 'Chest Strap', 'Head Mounted Display', 'Other', 'Smart Glasses', 'Smart Watch', 'Sports Watch', 'Wristband'],
+            'Bluetooth Headset', 'Body Camera', 'Chest Strap',
+            'Head Mounted Display', 'Other', 'Smart Glasses', 'Smart Watch',
+            'Sports Watch', 'Wristband'
+        ],
         labels: {
             enabled: false
         }

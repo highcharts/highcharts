@@ -20,7 +20,10 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'Preschool teacher', 'Home care nurse', 'Nurse', 'Nanny', 'Nurse practitioner', 'Finance Assistant', 'Accountant', 'Nurse assistant', 'Office assistant/secretary'],
+            'Preschool teacher', 'Home care nurse', 'Nurse', 'Nanny',
+            'Nurse practitioner', 'Finance Assistant', 'Accountant',
+            'Nurse assistant', 'Office assistant/secretary'
+        ],
         accessibility: {
             description: 'Profession'
         }

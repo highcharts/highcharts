@@ -39,7 +39,9 @@ Highcharts.chart('container-column', {
 
     xAxis: {
         categories: [
-            'Blindness', 'Low Vision/Visually-Impaired', 'Cognitive', 'Deafness/Hard-of-Hearing', 'Motor', 'Other']
+            'Blindness', 'Low Vision/Visually-Impaired', 'Cognitive',
+            'Deafness/Hard-of-Hearing', 'Motor', 'Other'
+        ]
     },
 
     series: [{
@@ -113,7 +115,9 @@ const chart = Highcharts.chart('container-line', {
             description: 'Time from January 2009 to July 2015'
         },
         categories: [
-            'January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
+            'January 2009', 'December 2010', 'May 2012', 'January 2014',
+            'July 2015'
+        ]
     },
 
     tooltip: {

@@ -68,7 +68,9 @@ const setupDashboard = instanceId => {
                 options: {
                     firstRowAsNames: false,
                     columnNames: [
-                        'timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
+                        'timestamp', 'readOpt', 'writeOpt', 'networkIn',
+                        'networkOut', 'cpuUtilization'
+                    ],
                     dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
                     beforeParse: function (data) {
                         const currentInstance = data.find(
@@ -86,7 +88,10 @@ const setupDashboard = instanceId => {
                     firstRowAsNames: false,
                     orientantion: 'columns',
                     columnNames: [
-                        'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
+                        'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
+                        'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
+                        'Documents', 'Downloads'
+                    ],
                     dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
                     beforeParse: function (data) {
                         const currentInstance = data.find(
@@ -457,8 +462,8 @@ const setupDashboard = instanceId => {
             class: 'health-indicator',
             elements: [{
                 tagName: 'div',
-                class:
-                    'health-wrapper highcharts-' + instance.HealthIndicator + '-icon',
+                class: 'health-wrapper highcharts-' + instance.HealthIndicator +
+                    '-icon',
                 attributes: {
                     'aria-label': 'Health: ' + instance.HealthIndicator,
                     role: 'img'
@@ -632,7 +637,9 @@ const setupDashboard = instanceId => {
             type: 'DataGrid',
             title: 'Instances',
             visibleColumns: [
-                'InstanceId', 'InstanceType', 'PublicIpAddress', 'State', 'HealthIndicator'],
+                'InstanceId', 'InstanceType', 'PublicIpAddress', 'State',
+                'HealthIndicator'
+            ],
             dataGridOptions: {
                 editable: false,
                 columns: {
@@ -679,7 +686,8 @@ const setupDashboard = instanceId => {
                     setTimeout(() => {
                         const currentRow =
                             document.querySelector(
-                                '[data-original-data="' + instance.InstanceId + '"]').parentNode;
+                                `[data-original-data="${instance.InstanceId}"]`
+                            ).parentNode;
                         currentRow.classList.add('current');
                     }, 1);
                 }

@@ -45,7 +45,9 @@ Highcharts.chart('container', {
             }
         }, {
             sets: [
-                'Great Power Great Responsibility', 'Knows If You Have Been Naughty Or Nice'],
+                'Great Power Great Responsibility',
+                'Knows If You Have Been Naughty Or Nice'
+            ],
             value: 1,
             name: 'GOD',
             dataLabels: {
@@ -60,7 +62,10 @@ Highcharts.chart('container', {
             }
         }, {
             sets: [
-                'Great Power Great Responsibility', 'Wears Red Suit', 'Knows If You Have Been Naughty Or Nice'],
+                'Great Power Great Responsibility',
+                'Wears Red Suit',
+                'Knows If You Have Been Naughty Or Nice'
+            ],
             value: 1,
             name: 'Santa',
             dataLabels: {
