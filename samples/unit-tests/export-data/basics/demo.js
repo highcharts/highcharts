@@ -634,24 +634,8 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', '')
             .replace(/>/g, '>\n'),
-        '<table><caption class=\"highcharts-table-caption\">Chart ' +
-        'title</caption><thead><tr><th class=\"highcharts-text\" ' +
-        'scope=\"col\">Category</th><th class=\"highcharts-text\" ' +
-        'scope=\"col\">Drop 2</th><th class=\"highcharts-text\" ' +
-        'scope=\"col\">Full</th></tr></thead><tbody><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">0</th><td ' +
-        'class=\"highcharts-number\">1</td><td class=\"highcharts-number\">' +
-        '1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th>' +
-        '<td class=\"highcharts-number\">1</td><td ' +
-        'class=\"highcharts-number\">1</td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">2</th><td ' +
-        'class=\"highcharts-empty\"></td><td class=\"highcharts-number\">' +
-        '2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th>' +
-        '<td class=\"highcharts-number\">3</td><td ' +
-        'class=\"highcharts-number\">3</td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">4</th><td ' +
-        'class=\"highcharts-number\">4</td><td class=\"highcharts-number\">' +
-        '4</td></tr></tbody></table>'
+        // eslint-disable-next-line max-len
+        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\">Category</th><th class=\"highcharts-text\" scope=\"col\">Drop 2</th><th class=\"highcharts-text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-number\">2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">3</td><td class=\"highcharts-number\">3</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">4</td><td class=\"highcharts-number\">4</td></tr></tbody></table>'
             .replace(/>/g, '>\n'),
         'Empty data in table'
     );
@@ -696,8 +680,8 @@ QUnit.test('Multiple X axes (#119)', function (assert) {
 
     assert.equal(
         chart.getCSV(),
-        '"Category","Series 1","Category","Series 2","Series 3"\n"Jan",3,' +
-        '"Apples",8,3\n"Feb",5,"Bananas",9,6\n"Mar",6,"Oranges",6,2',
+        // eslint-disable-next-line max-len
+        '"Category","Series 1","Category","Series 2","Series 3"\n"Jan",3,"Apples",8,3\n"Feb",5,"Bananas",9,6\n"Mar",6,"Oranges",6,2',
         'Multiple X axes'
     );
 });
@@ -730,8 +714,8 @@ QUnit.test('Stock chart', function (assert) {
 
     assert.equal(
         chart.getCSV(),
-        '"DateTime","Series 1"\n"2013-01-01",1\n"2013-01-02",3\n"2013-01-03",' +
-        '2\n"2013-01-04",4',
+        // eslint-disable-next-line max-len
+        '"DateTime","Series 1"\n"2013-01-01",1\n"2013-01-02",3\n"2013-01-03",2\n"2013-01-04",4',
         'Stock chart'
     );
 });
@@ -817,7 +801,6 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
         'Auto-detect Anglo-american locale'
     );
     // Reset
-    // eslint-disable-next-line no-extend-native
     Number.prototype.toLocaleString = toLocaleString;
 
     // Explicit options
