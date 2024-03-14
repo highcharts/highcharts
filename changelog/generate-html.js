@@ -136,7 +136,7 @@ function generateHTML() {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
                 'highcharts-maps': 'Highmaps',
-                'highcharts-dashboards': 'Highcharts-Dashboard'
+                'highcharts-dashboards': 'Highcharts-Dashboards'
             };
             if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
                 return name
