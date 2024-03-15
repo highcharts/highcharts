@@ -235,48 +235,56 @@ class DataGridComponent extends Component {
             const connectorListeners = this.connectorListeners;
 
             // Reload the store when polling.
-            connectorListeners.push(this.connector
-                .on('afterLoad', (e: DataConnector.Event): void => {
-                    if (e.table && this.connector) {
-                        this.connector.table.setColumns(e.table.getColumns());
-                    }
-                })
+            connectorListeners.push(
+                this.connector
+                    .on('afterLoad', (e: DataConnector.Event): void => {
+                        if (e.table && this.connector) {
+                            this.connector.table.setColumns(
+                                e.table.getColumns()
+                            );
+                        }
+                    })
             );
 
             // Update the DataGrid when connector changed.
-            connectorListeners.push(this.connector.table
-                .on('afterSetCell', (e: any): void => {
-                    const dataGrid = this.dataGrid;
-                    let shouldUpdateTheGrid = true;
+            connectorListeners.push(
+                this.connector.table
+                    .on('afterSetCell', (e: any): void => {
+                        const dataGrid = this.dataGrid;
+                        let shouldUpdateTheGrid = true;
 
-                    if (dataGrid) {
-                        const row = dataGrid.rowElements[e.rowIndex];
-                        let cells = [];
+                        if (dataGrid) {
+                            const row = dataGrid.rowElements[e.rowIndex];
+                            let cells = [];
 
-                        if (row) {
-                            cells = Array.prototype.slice.call(row.childNodes);
-                        }
+                            if (row) {
+                                cells = Array.prototype.slice.call(
+                                    row.childNodes
+                                );
+                            }
 
-                        cells.forEach((cell: HTMLElement): void => {
-                            if (cell.childElementCount > 0) {
-                                const input =
+                            cells.forEach((cell: HTMLElement): void => {
+                                if (cell.childElementCount > 0) {
+                                    const input =
                                     cell.childNodes[0] as HTMLInputElement,
-                                    convertedInputValue =
+                                        convertedInputValue =
                                         typeof e.cellValue === 'string' ?
                                             input.value :
                                             +input.value;
 
-                                if (cell.dataset.columnName === e.columnName &&
-                                    convertedInputValue === e.cellValue
-                                ) {
-                                    shouldUpdateTheGrid = false;
+                                    if (
+                                        cell.dataset.columnName ===
+                                            e.columnName &&
+                                        convertedInputValue === e.cellValue
+                                    ) {
+                                        shouldUpdateTheGrid = false;
+                                    }
                                 }
-                            }
-                        });
-                    }
+                            });
+                        }
 
-                    shouldUpdateTheGrid ? this.update({}) : void 0;
-                })
+                        shouldUpdateTheGrid ? this.update({}) : void 0;
+                    })
             );
         }
 
