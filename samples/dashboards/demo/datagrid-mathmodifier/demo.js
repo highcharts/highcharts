@@ -31,46 +31,28 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'dashboard-col-1'
                 }, {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
                     id: 'dashboard-col-2'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         connector: {
-            id: 'EUR-USD'
-        },
-        columnAssignment: {
-            Day: 'x',
-            EUR: 'custom.eur',
-            Rate: 'y',
-            USD: 'custom.usd'
+            id: 'EUR-USD',
+            columnAssignment: [{
+                seriesId: 'EUR',
+                data: ['Day', 'EUR']
+            }, {
+                seriesId: 'Rate',
+                data: ['Day', 'Rate']
+            }, {
+                seriesId: 'USD',
+                data: ['Day', 'USD']
+            }]
         },
         sync: {
             highlight: true
@@ -78,17 +60,7 @@ Dashboards.board('container', {
         chartOptions: {
             chart: {
                 animation: false,
-                type: 'line',
-                zooming: false,
-                events: {
-                    redraw: function () {
-                        if (!this.series[1].options.yAxis) {
-                            this.series[1].update({
-                                yAxis: 1
-                            });
-                        }
-                    }
-                }
+                type: 'line'
             },
             title: {
                 text: 'EUR to USD'
@@ -96,6 +68,11 @@ Dashboards.board('container', {
             subtitle: {
                 text: 'Euro foreign exchange reference rate to US dollar'
             },
+            series: [{
+                id: 'Rate',
+                name: 'Rate',
+                yAxis: 1
+            }],
             tooltip: {
                 shared: true,
                 split: true,
@@ -103,15 +80,15 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: `Euro foreign exchange reference rate 
+                    chartContainerLabel: `Euro foreign exchange reference rate
                     to US dollar`
                 }
             },
             accessibility: {
-                description: `The chart is displaying the 3 linear series, the 
-                first of which corresponds to a certain value on a given day in 
-                Euro, the second to the Euro to US Dollar exchange rate, and 
-                the third to the same amount converted to US Dollars according 
+                description: `The chart is displaying the 3 linear series, the
+                first of which corresponds to a certain value on a given day in
+                Euro, the second to the Euro to US Dollar exchange rate, and
+                the third to the same amount converted to US Dollars according
                 to the given exchange rate.`
             },
             xAxis: {
@@ -133,7 +110,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'DataGrid',
         connector: {
             id: 'EUR-USD'

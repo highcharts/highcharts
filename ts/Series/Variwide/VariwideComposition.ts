@@ -71,7 +71,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Variwide')) {
         const tickProto = TickClass.prototype;
 
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
@@ -184,9 +184,11 @@ function wrapTickGetLabelPosition(
     _y: number,
     _label: SVGElement,
     horiz: boolean,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     _labelOptions: DataLabelOptions,
     _tickmarkOffset: number,
     _index: number
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';

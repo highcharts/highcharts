@@ -24,7 +24,6 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../../Core/Color/GradientColor';
-import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
@@ -80,9 +79,7 @@ class SVGElement3DFunnel extends SVGElement3D {
 
     // override opacity and color setters to control opacity
     public opacitySetter(
-        value: string,
-        _key: string,
-        _element: SVGDOMElement
+        value: string
     ): this {
         const funnel3d = this,
             opacity = parseFloat(value),
@@ -90,11 +87,11 @@ class SVGElement3DFunnel extends SVGElement3D {
             chart: Chart = charts[funnel3d.renderer.chartIndex] as any,
             filterId = 'group-opacity-' + opacity + '-' + chart.index;
 
-        // use default for top and bottom
+        // Use default for top and bottom
         funnel3d.parts = funnel3d.mainParts;
         funnel3d.singleSetterForParts('opacity', opacity);
 
-        // restore
+        // Restore
         funnel3d.parts = parts;
 
         if (!(chart.renderer as any).filterId) {
@@ -121,7 +118,7 @@ class SVGElement3DFunnel extends SVGElement3D {
                 });
             }
 
-            // styled mode
+            // Styled mode
             if (funnel3d.renderer.styledMode) {
                 chart.renderer.definition({
                     tagName: 'style',
@@ -143,11 +140,11 @@ class SVGElement3DFunnel extends SVGElement3D {
     ): this {
         let fillColor: (Color|ColorType) = color(fill);
 
-        // extract alpha channel to use the opacitySetter
+        // Extract alpha channel to use the opacitySetter
         const funnel3d = this,
             alpha: number = (fillColor as any).rgba[3],
             partsWithColor: Record<string, ColorType> = {
-                // standard color for top and bottom
+                // Standard color for top and bottom
                 top: color(fill).brighten(0.1).get() as any,
                 bottom: color(fill).brighten(-0.2).get() as any
             };
@@ -156,16 +153,16 @@ class SVGElement3DFunnel extends SVGElement3D {
             (fillColor as any).rgba[3] = 1;
             fillColor = (fillColor as any).get('rgb');
 
-            // set opacity through the opacitySetter
+            // Set opacity through the opacitySetter
             funnel3d.attr({
                 opacity: alpha
             });
         } else {
-            // use default for full opacity
+            // Use default for full opacity
             fillColor = fill;
         }
 
-        // add gradient for sides
+        // Add gradient for sides
         if (
             !(fillColor as any).linearGradient &&
             !(fillColor as any).radialGradient &&
@@ -181,15 +178,16 @@ class SVGElement3DFunnel extends SVGElement3D {
             };
         }
 
-        // gradient support
+        // Gradient support
         if ((fillColor as any).linearGradient) {
-            // color in steps, as each gradient will generate a key
+            // Color in steps, as each gradient will generate a key
             for (const sideGroupName of funnel3d.sideGroups) {
                 const box = funnel3d[sideGroupName].gradientBox,
                     gradient: NonNullable<GradientColor['linearGradient']> =
                         (fillColor as any).linearGradient,
                     alteredGradient = merge<GradientColor>(
-                        (fillColor as any),
+                        (
+                            fillColor as any),
                         {
                             linearGradient: {
                                 x1: box.x + gradient.x1 * box.width,
@@ -236,10 +234,10 @@ class SVGElement3DFunnel extends SVGElement3D {
 
         funnel3d.singleSetterForParts('fill', null, partsWithColor);
 
-        // fill for animation getter (#6776)
+        // Fill for animation getter (#6776)
         funnel3d.color = funnel3d.fill = fill;
 
-        // change gradientUnits to userSpaceOnUse for linearGradient
+        // Change gradientUnits to userSpaceOnUse for linearGradient
         if ((fillColor as any).linearGradient) {
             for (const part of [funnel3d.frontLower, funnel3d.frontUpper]) {
                 const elem: SVGElement = part.element,
@@ -268,7 +266,7 @@ class SVGElement3DFunnel extends SVGElement3D {
         let bbox: BBoxObject;
 
         for (const sideGroupName of funnel3d.sideGroups) {
-            // use common extremes for groups for matching gradients
+            // Use common extremes for groups for matching gradients
             let topLeftEdge = {
                     x: Number.MAX_VALUE,
                     y: Number.MAX_VALUE
@@ -278,7 +276,7 @@ class SVGElement3DFunnel extends SVGElement3D {
                     y: -Number.MAX_VALUE
                 };
 
-            // get extremes
+            // Get extremes
             for (const partName of funnel3d.sideParts[sideGroupName]) {
                 const part = funnel3d[partName];
 
@@ -293,7 +291,7 @@ class SVGElement3DFunnel extends SVGElement3D {
                 };
             }
 
-            // store for color fillSetter
+            // Store for color fillSetter
             funnel3d[sideGroupName].gradientBox = {
                 x: topLeftEdge.x,
                 width: bottomRightEdge.x - topLeftEdge.x,
@@ -304,13 +302,13 @@ class SVGElement3DFunnel extends SVGElement3D {
     }
 
     public zIndexSetter(): boolean {
-        // this.added won't work, because zIndex is set after the prop
-        // is set, but before the graphic is really added
+        // `this.added` won't work, because zIndex is set after the prop is set,
+        // but before the graphic is really added
         if (this.finishedOnAdd) {
             this.adjustForGradient();
         }
 
-        // run default
+        // Run default
         return this.renderer.Element.prototype.zIndexSetter.apply(
             this, arguments
         );

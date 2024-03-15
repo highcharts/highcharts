@@ -216,7 +216,10 @@ QUnit.test('getUnionExtremes', function (assert) {
         });
 
         chart.rangeSelector.clickButton(0);
-        assert.ok(true, 'HeikinAshi chart should not throw errors after selecting 1m.');
+        assert.ok(
+            true, 'HeikinAshi chart should not throw errors after ' +
+            'selecting 1m.'
+        );
 
         chart.rangeSelector.clickButton(5); // Reset rangeSelector to all
 
@@ -224,6 +227,9 @@ QUnit.test('getUnionExtremes', function (assert) {
             type: 'hollowcandlestick'
         });
         chart.rangeSelector.clickButton(0);
-        assert.ok(true, 'Hollow candlestick chart should not throw errors after selecting 1m.');
+        assert.ok(
+            true, 'Hollow candlestick chart should not throw errors ' +
+            'after selecting 1m.'
+        );
     });
 })();

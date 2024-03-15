@@ -177,7 +177,8 @@ namespace RendererUtilities {
             overlapping = false;
             while (i--) {
                 // Overlap
-                if (i > 0 &&
+                if (
+                    i > 0 &&
                     (boxes[i - 1].pos as any) + boxes[i - 1].size >
                     (boxes[i].pos as any)
                 ) {
@@ -213,7 +214,7 @@ namespace RendererUtilities {
 
                 // If the distance between the position and the target exceeds
                 // maxDistance, abort the loop and decrease the length in
-                // increments of 10% to recursively reduce the  number of
+                // increments of 10% to recursively reduce the number of
                 // visible boxes by rank. Once all boxes are within the
                 // maxDistance, we're good.
                 if (

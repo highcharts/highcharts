@@ -145,12 +145,16 @@ class VariwideSeries extends ColumnSeries {
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
-            minPx = axis.toPixels(axis.reversed ?
-                (axis.dataMax || 0) + axis.pointRange :
-                (axis.dataMin || 0)),
-            maxPx = axis.toPixels(axis.reversed ?
-                (axis.dataMin || 0) :
-                (axis.dataMax || 0) + axis.pointRange),
+            minPx = axis.toPixels(
+                axis.reversed ?
+                    (axis.dataMax || 0) + axis.pointRange :
+                    (axis.dataMin || 0)
+            ),
+            maxPx = axis.toPixels(
+                axis.reversed ?
+                    (axis.dataMin || 0) :
+                    (axis.dataMax || 0) + axis.pointRange
+            ),
             len = Math.abs(maxPx - minPx),
             totalZ = this.totalZ,
             left = this.chart.inverted ?
@@ -230,7 +234,7 @@ class VariwideSeries extends ColumnSeries {
     }
 }
 
-// Extend translation by distoring X position based on Z.
+// Extend translation by distorting X position based on Z.
 addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
 
     // Temporarily disable crisping when computing original shapeArgs

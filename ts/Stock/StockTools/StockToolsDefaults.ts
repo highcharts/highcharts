@@ -697,6 +697,7 @@ const stockTools: StockToolsOptions = {
          */
         definitions: {
             separator: {
+                elementType: 'span',
                 /**
                  * A predefined background symbol for the button.
                  */
@@ -1056,7 +1057,7 @@ const stockTools: StockToolsOptions = {
                 },
                 timeCycles: {
                     /**
-                     * A predefined backgroud symbol for the button.
+                     * A predefined background symbol for the button.
                      *
                      * @type {string}
                      */

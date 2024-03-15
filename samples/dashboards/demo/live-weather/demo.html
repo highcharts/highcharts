@@ -1,25 +1,29 @@
-<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/windbarb.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/datagrouping.js"></script>
+<script src="https://code.highcharts.com/modules/windbarb.js"></script>
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 
 <div id="container">Loading...</div>
 
 <div id="description">
-    <h1>Live weather demo</h1>
+    <h1>Live Weather Demo</h1>
     <p>The demo shows weather forecasts from the <a
             href="https://api.met.no/weatherapi/locationforecast/2.0/documentation" target="_blank">Norwegian
-            Meteorological Institute</a> in four Dashboards components. The first data row shows the latest 
-            observation, the rest the forecast for the next 24 hours.
+            Meteorological Institute</a> in five Dashboards components. The first data row shows the latest 
+            observation, the rest the forecast for the upcoming 24 hours.
     </p>
+    <h2>How to use</h2>
+    <p>Weather stations are selected by clicking on a map marker. Weather parameters (temperature, wind, precipitation) are selected by clicking on a KPI (gauge).</p>
     <h2>Dashboards components</h2>
     <ul>
         <li><b>Highcharts Maps</b> markers and tooltip show the selected parameter.</li>
+        <li><b>Dashboards HTML</b> shows the selected station with locational information.</li>
         <li><b>Dashboards KPI</b> shows info from the selected station: current temperature, current wind speed
             and expected precipitation over the next 24 hours.</li>
         <li><b>Dashboards Datagrid</b> shows all the parameters of the selected station for the next 24 hours.</li>
@@ -27,7 +31,7 @@
             for the next 24 hours.</li>
     </ul>
     <h2>Data set</h2>
-    <p>The data shown in this demo are weather forecasts containing temperature, wind strength and precipitation a
+    <p>The data shown in this demo are weather forecasts containing temperature, wind strength and precipitation for a
         selection of weather stations in North America.</p>
     <ul>
         <li>The station is selected by clicking on the map.</li>

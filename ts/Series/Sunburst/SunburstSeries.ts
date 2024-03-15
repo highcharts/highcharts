@@ -273,7 +273,8 @@ function getDlOptions(
             // Setting width and padding
             (options.style as any).width = Math.max(
                 (point.shapeExisting.r * 2) -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         } else if (
             point.dlOptions &&
             point.dlOptions.textPath &&
@@ -290,7 +291,8 @@ function getDlOptions(
             (options.style as any).width = Math.max(
                 ((point.outerArcLength as any) +
                 (point.innerArcLength as any)) / 2 -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         }
     }
     return options;
@@ -637,11 +639,11 @@ class SunburstSeries extends TreemapSeries {
                 tooltipPos: [(shape as any).plotX, (shape as any).plotY],
                 drillId: getDrillId(point, idRoot, nodeMap),
                 name: '' + (point.name || point.id || point.index),
-                plotX: (shape as any).plotX, // used for data label position
-                plotY: (shape as any).plotY, // used for data label position
+                plotX: (shape as any).plotX, // Used for data label position
+                plotY: (shape as any).plotY, // Used for data label position
                 value: node.val,
                 isInside: visible,
-                isNull: !visible // used for dataLabels & point.draw
+                isNull: !visible // Used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({
                 point: point,
@@ -671,7 +673,7 @@ class SunburstSeries extends TreemapSeries {
         }
 
         // Draw data labels after points
-        // TODO draw labels one by one to avoid addtional looping
+        // TODO draw labels one by one to avoid additional looping
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             (series.options.dataLabels as any).defer = true;
@@ -862,7 +864,7 @@ class SunburstSeries extends TreemapSeries {
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
-        if (!series.processedXData) { // hidden series
+        if (!series.processedXData) { // Hidden series
             series.processData();
         }
         series.generatePoints();
@@ -928,11 +930,11 @@ class SunburstSeries extends TreemapSeries {
             if (nodeIds[point.id]) {
                 error(31, false, series.chart);
             }
-            // map
+            // Map
             nodeIds[point.id] = true;
         }
 
-        // reset object
+        // Reset object
         nodeIds = {};
     }
 
@@ -953,7 +955,7 @@ interface SunburstSeries {
 
 extend(SunburstSeries.prototype, {
     axisTypes: [],
-    drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    drawDataLabels: noop, // `drawDataLabels` is called in `drawPoints`
     getCenter: getCenter,
     isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.

@@ -109,7 +109,7 @@ class VennSeries extends ScatterSeries {
 
     /**
      * Finds the optimal label position by looking for a position that has a low
-     * distance from the internal circles, and as large possible distane to the
+     * distance from the internal circles, and as large possible distance to the
      * external circles.
      * @private
      * @todo Optimize the intial position.
@@ -206,7 +206,7 @@ class VennSeries extends ScatterSeries {
     }
 
     /**
-     * Calulates data label values for a given relations object.
+     * Calculates data label values for a given relations object.
      *
      * @private
      * @todo add unit tests
@@ -251,7 +251,7 @@ class VennSeries extends ScatterSeries {
             )
         );
 
-        // Calulate the label position.
+        // Calculate the label position.
         const position = VennSeries.getLabelPosition(
             data.internal,
             data.external
@@ -277,7 +277,7 @@ class VennSeries extends ScatterSeries {
      * @todo Add support for constrained MDS.
      * @param {Array<Highchats.VennRelationObject>} relations
      * List of the overlap between two or more sets, or the size of a single
-     * sset.
+     * set.
      * @return {Highcharts.Dictionary<*>}
      * List of circles and their calculated positions.
      */
@@ -338,7 +338,7 @@ class VennSeries extends ScatterSeries {
         targetHeight: number,
         field: PolygonBoxObject
     ): Record<string, number> {
-        const height = field.bottom - field.top, // top is smaller than bottom
+        const height = field.bottom - field.top, // Top is smaller than bottom
             width = field.right - field.left,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1,
@@ -546,8 +546,10 @@ class VennSeries extends ScatterSeries {
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        const relations = VennUtils.processVennData(this.options.data as any,
-            VennSeries.splitter);
+        const relations = VennUtils.processVennData(
+            this.options.data as any,
+            VennSeries.splitter
+        );
 
         // Calculate the positions of each circle.
         const {
@@ -667,7 +669,6 @@ class VennSeries extends ScatterSeries {
  * */
 
 interface VennSeries {
-    axisTypes: Array<string>;
     directTouch: boolean;
     isCartesian: boolean;
     pointArrayMap: Array<string>;

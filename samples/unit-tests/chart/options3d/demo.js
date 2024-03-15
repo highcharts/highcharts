@@ -34,7 +34,8 @@ QUnit.test('options3d update', function (assert) {
 
     assert.ok(
         result,
-        'After updating chart options3d pie series points should be redrawn (#12714).'
+        'After updating chart options3d pie series points should be redrawn ' +
+        '(#12714).'
     );
 });
 

@@ -234,7 +234,7 @@ class ArcDiagramSeries extends SankeySeries {
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
             chart = series.chart,
-            // column needs casting, to much methods required at the same time
+            // Column needs casting, to much methods required at the same time
             column = SankeyColumnComposition.compose([] as Array<ArcDiagramPoint>, series);
 
         column.sankeyColumn.maxLength = chart.inverted ?
@@ -275,7 +275,10 @@ class ArcDiagramSeries extends SankeySeries {
                 while (i--) {
                     radius = (column[i].getSum()) * factor * scale;
 
-                    let plotArea = Math.min(chart.plotHeight, chart.plotWidth);
+                    const plotArea = Math.min(
+                        chart.plotHeight,
+                        chart.plotWidth
+                    );
 
                     if (radius > plotArea) {
                         scale = Math.min(plotArea / radius, scale);
@@ -377,7 +380,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (point.weight || 0) *
                     translationFactor *
                     fromNode.scale,
-                    (series.options.minLinkWidth || 0)
+                    (series.options.minLinkWidth || 0
+                    )
                 )),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
@@ -407,8 +411,7 @@ class ArcDiagramSeries extends SankeySeries {
             toX = centeredLinks ? toNode.nodeX +
                 ((toNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(toNode, 'linksTo'),
-            bottom = nodeTop,
-            linkWidth = linkWeight;
+            bottom = nodeTop;
 
         if (fromX > toX) {
             [fromX, toX] = [toX, fromX];
@@ -417,7 +420,6 @@ class ArcDiagramSeries extends SankeySeries {
         if (seriesOptions.reversed) {
             [fromX, toX] = [toX, fromX];
             bottom = (chart.plotSizeY || 0) - bottom;
-            linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
@@ -636,10 +638,11 @@ class ArcDiagramSeries extends SankeySeries {
 
     public pointAttribs(
         point?: ArcDiagramPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs
+            const { ...attrs } = Series.prototype.pointAttribs
                 .apply(this, arguments);
             return attrs;
         }
@@ -786,4 +789,4 @@ export default ArcDiagramSeries;
  * @apioption series.arcdiagram.data
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file

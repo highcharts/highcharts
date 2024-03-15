@@ -1,19 +1,17 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
+import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
-import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin.js';
 
 Highcharts.win.Highcharts = Highcharts;
 
-const { PluginHandler } = Dashboards;
 
-HighchartsPlugin.custom.connectHighcharts(Highcharts);
-PluginHandler.addPlugin(HighchartsPlugin);
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 
-DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
-PluginHandler.addPlugin(DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 const csvData = document.getElementById('csv').innerText;
 
@@ -40,20 +38,19 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             connector: {
-                id: 'connector-1'
+                id: 'connector-1',
+                columnAssignment: [{
+                    seriesId: 'Vitamin A',
+                    data: ['Food', 'Vitamin A']
+                }]
             },
             type: 'Highcharts',
             sync: {
                 highlight: true,
                 visibility: true,
                 extremes: true
-            },
-            columnAssignment: {
-                Food: 'x',
-                'Vitamin A': 'y',
-                hiddenColumn: null
             },
             chartOptions: {
                 xAxis: {
@@ -75,7 +72,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'DataGrid',
             connector: {
                 id: 'connector-1'

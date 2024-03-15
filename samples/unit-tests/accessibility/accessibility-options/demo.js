@@ -75,7 +75,10 @@ QUnit.test('Point hidden from AT', function (assert) {
         pointB = chart.series[0].points[1];
 
     assert.ok(getPointAriaLabel(pointA), 'There should be ARIA on point A');
-    assert.notOk(getPointAriaLabel(pointB), 'There should be no ARIA label on point B');
+    assert.notOk(
+        getPointAriaLabel(pointB), 'There should be no ARIA label ' +
+        'on point B'
+    );
     assert.ok(isPointAriaHidden(pointB), 'Point B should be ARIA hidden');
 });
 
@@ -155,6 +158,22 @@ QUnit.test('Keyboard navigation', function (assert) {
         !chart.container.parentNode.querySelector('.highcharts-exit-anchor'),
         'The exit anchor element shouldn\'t be rendered (#19374).'
     );
+
+    chart.update({
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: ['#ff0000', '#00ff00', '#0000ff']
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.colors.length,
+        3,
+        'The colors array should be updated with high contrast colors.'
+    );
+
 });
 
 QUnit.test('No data', function (assert) {

@@ -70,13 +70,15 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     assert.strictEqual(
         chart.labelCollectors.indexOf(labelCollector),
         -1,
-        'Annotation label collector is not kept in the chart\'s label collectors (#7677).'
+        'Annotation label collector is not kept in the chart\'s label ' +
+        'collectors (#7677).'
     );
 
     assert.strictEqual(
         chart.options.annotations.length,
         0,
-        'Annotation options from the chart options are erased when the annotation is removed (#8393).'
+        'Annotation options from the chart options are erased when the ' +
+        'annotation is removed (#8393).'
     );
 
     var secondAnnotationOptions = {
@@ -122,7 +124,8 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         chart.options.annotations[0] === secondAnnotation.options &&
             chart.options.annotations[1] === thirdAnnotation.options &&
             chart.options.annotations.length === 2,
-        'Annotation options from the chart options are added when the annotations are added (#8393).'
+        'Annotation options from the chart options are added when the ' +
+        'annotations are added (#8393).'
     );
 
     thirdAnnotation.update({
@@ -350,7 +353,8 @@ QUnit.test('Annotation\'s update methods', function (assert) {
             assert.equal(
                 isNaN(+x) || isNaN(+y) || isNaN(+width) || isNaN(+height),
                 false,
-                'Annotation\'s clipRect cannot have a NaN for numerical attributes'
+                'Annotation\'s clipRect cannot have a NaN for numerical ' +
+                'attributes'
             );
 
             done();

@@ -234,7 +234,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  * @apioption   series.dumbbell.data.lowColor
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

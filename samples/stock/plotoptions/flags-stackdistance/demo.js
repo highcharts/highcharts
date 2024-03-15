@@ -39,7 +39,8 @@
             }, {
                 x: Date.UTC(2015, 7, 25),
                 title: 'A',
-                text: 'Forex: U.S. Non-Farm Payrolls Expand 244K, U.S. Dollar Rally Cut Short By Risk Appetite'
+                text: 'Forex: U.S. Non-Farm Payrolls Expand 244K, U.S. ' +
+                    'Dollar Rally Cut Short By Risk Appetite'
             }],
             onSeries: 'dataseries',
             shape: 'circlepin',

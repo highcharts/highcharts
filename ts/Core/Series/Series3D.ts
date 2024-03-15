@@ -18,7 +18,6 @@
  *
  * */
 
-import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
 
@@ -86,7 +85,7 @@ class Series3D extends Series {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Core.Series3D')) {
             addEvent(SeriesClass, 'afterTranslate', function (): void {
                 if (this.chart.is3d()) {
                     this.translate3dPoints();
@@ -121,10 +120,8 @@ class Series3D extends Series {
                 (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
                 series.index || 0;
 
-        let rawPoint: Point,
-            projectedPoint: Position3DObject,
-            zValue: (number|null|undefined),
-            i: number;
+        let projectedPoint: Position3DObject,
+            zValue: (number|null|undefined);
 
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));

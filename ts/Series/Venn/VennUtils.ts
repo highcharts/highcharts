@@ -252,7 +252,7 @@ function getCentroid(
  * @param {number} r1
  * Radius of the first circle.
  * @param {number} r2
- * Radiues of the second circle.
+ * Radius of the second circle.
  * @param {number} overlap
  * The wanted overlap between the two circles.
  * @return {number}
@@ -278,7 +278,7 @@ function getDistanceBetweenCirclesByOverlap(
         distance = bisect((x: number): number => {
             const actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
 
-            // Return the differance between wanted and actual overlap.
+            // Return the difference between wanted and actual overlap.
             return overlap - actualOverlap;
         }, 0, maxDistance);
     }
@@ -329,8 +329,7 @@ function getLabelWidth(
                 );
 
             // If the position is valid, then we want to move towards the
-            // max distance. If not, then we want to  away from the max
-            // distance.
+            // max distance. If not, then we want to away from the max distance.
             return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
         }, 0, maxDistance);
     };
@@ -340,7 +339,7 @@ function getLabelWidth(
 }
 
 /**
- * Calculates a margin for a point based on the iternal and external
+ * Calculates a margin for a point based on the internal and external
  * circles. The margin describes if the point is well placed within the
  * internal circles, and away from the external.
  * @private
@@ -405,6 +404,9 @@ function getOverlapBetweenCircles(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isSet(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -412,6 +414,9 @@ function isSet(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isValidRelation(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -435,6 +440,9 @@ function isValidRelation(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isValidSet(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -659,7 +667,7 @@ function loss(
  * @param {Highcharts.NelderMeadPointArray} initial
  *        The initial point to optimize.
  * @return {Highcharts.NelderMeadPointArray}
- *         Returns the opimized position of a point.
+ *         Returns the optimized position of a point.
  */
 function nelderMead(
     fn: NelderMeadTestFunction,
@@ -908,8 +916,10 @@ function sortByTotalOverlap(
     a: VennRelationObject,
     b: VennRelationObject
 ): number {
-    if (typeof b.totalOverlap !== 'undefined' &&
-        typeof a.totalOverlap !== 'undefined') {
+    if (
+        typeof b.totalOverlap !== 'undefined' &&
+        typeof a.totalOverlap !== 'undefined'
+    ) {
         return b.totalOverlap - a.totalOverlap;
     }
     return NaN;

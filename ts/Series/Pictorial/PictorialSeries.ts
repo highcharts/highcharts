@@ -307,6 +307,9 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     });
 });
 
+/**
+ *
+ */
 function renderStackShadow(
     stack: StackItem
 ): void {
@@ -317,7 +320,8 @@ function renderStackShadow(
             .filter((p): boolean => p.split(',').length > 1),
         allSeries = stack.axis.chart.series,
         seriesIndexes = stackKeys.map((key): number =>
-            parseFloat(key.split(',')[0]));
+            parseFloat(key.split(',')[0])
+        );
 
     let seriesIndex = -1;
 
@@ -467,6 +471,9 @@ function renderStackShadow(
     }
 }
 
+/**
+ *
+ */
 function forEachStack(chart: Chart, callback: Function): void {
     if (chart.axes) {
         chart.axes.forEach(function (axis): void {
@@ -512,6 +519,9 @@ addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     }
 });
 
+/**
+ *
+ */
 function destroyAllStackShadows(chart: Chart): void {
     forEachStack(chart, function (stack: StackItem): void {
         if (stack.shadow && stack.shadowGroup) {
@@ -525,11 +535,11 @@ function destroyAllStackShadows(chart: Chart): void {
 }
 
 // This is a workaround due to no implementation of the animation drilldown.
-addEvent(Chart, 'afterDrilldown', function (e): void {
+addEvent(Chart, 'afterDrilldown', function (): void {
     destroyAllStackShadows(this);
 });
 
-addEvent(Chart, 'afterDrillUp', function (e): void {
+addEvent(Chart, 'afterDrillUp', function (): void {
     destroyAllStackShadows(this);
 });
 
@@ -745,4 +755,4 @@ export default PictorialSeries;
  * @apioption yAxis.stackShadow.enabled
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

@@ -36,7 +36,8 @@ Highcharts.mapChart('container', {
     },
 
     tooltip: {
-        headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon} Lat: {point.point.lat}</span><br/>',
+        headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon} ' +
+            'Lat: {point.point.lat}</span><br/>',
         pointFormat: 'Number of fire points: {point.value}'
     },
 

@@ -1,6 +1,6 @@
 # Security
 
-Highsoft takes security seriously. If you believe you have found a security vulnerability in Highcharts, Highcharts Gantt, Highcharts Stock, or Highcharts Maps, we encourage you to report it to us as described below. We will investigate all legitimate reports and do our best to quickly fix the problem. Before reporting, please read the Secure Usage section below.
+Highsoft takes security seriously. If you believe you have found a security vulnerability in Highcharts, Highcharts Gantt, Highcharts Stock, Highcharts Maps, or Highcharts Dashboards, we encourage you to report it to us as described below. We will investigate all legitimate reports and do our best to quickly fix the problem. Before reporting, please read the Secure Usage section below.
 
 ## Reporting Security Issues
 
@@ -26,6 +26,8 @@ The Highcharts product family is a set of client-side visualization libraries. A
 ## Process
 
 We utilize GitHubs workflow for managing security vulnerabilities. This means that GitHub Security Advisories are used to privately discuss, fix, and publish information about security vulnerabilities in our various repositories.
+
+As part of our security workflow, we also employ Static Application Security Testing (SAST) codescanning. This helps us identify potential security vulnerabilities and weaknesses in our codebase. We regularly run SAST codescans to ensure the overall security of our products.
 
 ## Bounties
 

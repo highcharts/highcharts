@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 .highcharts-title {
     font-size: 1em;
@@ -9,4 +9,33 @@
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+/* LARGE */
+@media (max-width: 1200px) {
+    #dashboard-col-0,
+    #dashboard-col-1,
+    #dashboard-col-2 {
+        flex: 1 1 33.333%;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 50%;
+    }
+
+    #dashboard-col-2 {
+        flex: 1 1 100%;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: 1 1 100%;
+    }
 }

@@ -31,7 +31,8 @@ QUnit.test('Selection event', function (assert) {
 
 QUnit.test('Chart select points by drag', function (assert) {
     /**
-     * Custom selection handler that selects points and cancels the default zoom behaviour
+     * Custom selection handler that selects points and cancels the default zoom
+     * behaviour
      */
     var selectPointsByDrag = function (e) {
         // Select points

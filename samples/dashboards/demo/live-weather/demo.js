@@ -8,6 +8,9 @@ const rangeConfig = {
     hours: 24 // max: 19 days
 };
 
+// The current date is used in several charts
+const currentDay = Highcharts.dateFormat('%e %B %Y', Date.now());
+
 // Windbarb series object (deleted when not showing wind)
 let windbarbSeries = null;
 
@@ -88,7 +91,7 @@ const locations = {
         ['San Diego', 32.71, -117.16, 36],
         ['Anchorage', 61.22, -149.89, 0],
         ['Winnipeg', 49.90, -97.14, 236],
-        ['Monterrey', 25.68, -99.13, 2230],
+        ['Monterrey', 25.68, -99.13, 540],
         ['Baracoa', 20.35, -74.50, 15]
     ]
 };
@@ -157,42 +160,6 @@ const kpiGaugeOptions = {
     }
 };
 
-// Configuration shared by the four top level cells
-// ! ------------ !
-// ! Map  ! KPI   !
-// ! ---- ! ----- !
-// ! Grid ! Chart !
-// ! ------------ !
-const topLevelCellLayout = {
-    responsive: {
-        large: {
-            width: '1/2'
-        },
-        medium: {
-            width: '100%'
-        },
-        small: {
-            width: '100%'
-        }
-    }
-};
-
-// Configuration shared by all KPI cells
-const kpiCellLayout = {
-    responsive: {
-        large: {
-            width: '1/2'
-        },
-        medium: {
-            width: '1/2'
-        },
-        small: {
-            width: '1/2'
-        }
-    },
-    height: '204px'
-};
-
 // Launches the Dashboards application
 async function setupDashboard() {
     let activeCity = weatherStationConfig.location.default;
@@ -217,26 +184,22 @@ async function setupDashboard() {
                 rows: [{
                     cells: [{
                         // Top left
-                        id: 'world-map',
-                        ...topLevelCellLayout
+                        id: 'world-map'
                     }, {
                         // Top right
                         id: 'kpi-layout',
-                        ...topLevelCellLayout,
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'kpi-data',
-                                    ...kpiCellLayout
+                                    id: 'html-geo-info'
+                                }]
+                            }, {
+                                cells: [{
+                                    id: 'kpi-temperature'
                                 }, {
-                                    id: 'kpi-temperature',
-                                    ...kpiCellLayout
+                                    id: 'kpi-wind'
                                 }, {
-                                    id: 'kpi-wind',
-                                    ...kpiCellLayout
-                                }, {
-                                    id: 'kpi-precipitation',
-                                    ...kpiCellLayout
+                                    id: 'kpi-precipitation'
                                 }]
                             }]
                         }
@@ -244,12 +207,10 @@ async function setupDashboard() {
                 }, {
                     cells: [{
                         // Bottom left
-                        id: 'selection-grid',
-                        ...topLevelCellLayout
+                        id: 'selection-grid'
                     }, {
                         // Bottom right
-                        id: 'city-chart',
-                        ...topLevelCellLayout
+                        id: 'city-chart'
                     }]
                 }]
             }]
@@ -347,11 +308,11 @@ async function setupDashboard() {
                         tooltip: {
                             footerFormat: '',
                             headerFormat: '',
-                            pointFormatter: function () {
-                                return `<b>${this.name}</b><br>` +
-                                    `Elevation: ${this.custom.elevation} m` +
-                                    `<br>${this.y} ${activeParam.unit}`;
-                            }
+                            pointFormat: (
+                                '<b>{point.name}</b><br>' +
+                                'Elevation: {point.custom.elevation} m<br>' +
+                                '{point.y:.1f} {point.custom.unit}'
+                            )
                         }
                     }],
                     tooltip: {
@@ -362,24 +323,56 @@ async function setupDashboard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'Weather stations. Highcharts Interactive Map.'
+                            chartContainerLabel: 'Weather stations. ' +
+                                'Highcharts Interactive Map.'
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying forecasted temperature.',
+                        description: 'The chart is displaying forecasted ' +
+                            'temperature.',
                         point: {
-                            valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Location'
+                            valueDescriptionFormat: '{value} degrees celsius,' +
+                                ' {xDescription}, Location'
                         }
                     }
                 }
             }, {
-                cell: 'kpi-data',
-                type: 'KPI',
-                title: activeCity,
-                value: 10,
-                valueFormat: '{value:.0f} m',
-                subtitle: 'Elevation'
-            }, {
+                cell: 'html-geo-info',
+                type: 'HTML',
+                elements: [{
+                    tagName: 'div',
+                    // textContent of children populated dynamically
+                    children: [{
+                        tagName: 'h2'
+                    },
+                    {
+                        tagName: 'div',
+                        attributes: {
+                            id: 'geo-info'
+                        },
+                        children: [{
+                            tagName: 'p',
+                            attributes: {
+                                id: 'lon',
+                                name: 'Longitude'
+                            }
+                        }, {
+                            tagName: 'p',
+                            attributes: {
+                                id: 'lat',
+                                name: 'Latitude'
+                            }
+                        }, {
+                            tagName: 'p',
+                            attributes: {
+                                id: 'elevation',
+                                name: 'Elevation'
+                            }
+                        }]
+                    }]
+                }]
+            },
+            {
                 cell: 'kpi-temperature',
                 type: 'KPI',
                 columnName: 'temperature',
@@ -387,7 +380,9 @@ async function setupDashboard() {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('temperature', false) + ' (latest)',
+                        text: paramConfig.getColumnHeader(
+                            'temperature', false
+                        ) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -396,7 +391,9 @@ async function setupDashboard() {
                         min: paramConfig.temperature.min,
                         max: paramConfig.temperature.max,
                         accessibility: {
-                            description: paramConfig.getColumnHeader('temperature')
+                            description: paramConfig.getColumnHeader(
+                                'temperature'
+                            )
                         }
                     },
                     series: [{
@@ -412,7 +409,10 @@ async function setupDashboard() {
                         // Update board
                         activeParam = paramConfig.temperature;
                         // Parameter update, city unchanged
-                        updateBoard(board, activeCity, 'temperature', true, false);
+                        updateBoard(
+                            board, activeCity,
+                            'temperature', true, false
+                        );
                     },
                     afterLoad: function () {
                         this.cell.setActiveState();
@@ -434,7 +434,9 @@ async function setupDashboard() {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('wind', false) + ' (latest)',
+                        text: paramConfig.getColumnHeader(
+                            'wind', false
+                        ) + ' (latest)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -478,7 +480,9 @@ async function setupDashboard() {
                     chart: kpiGaugeOptions.chart,
                     pane: kpiGaugeOptions.pane,
                     title: {
-                        text: paramConfig.getColumnHeader('precipitation', false) + ' (next 24 hours)',
+                        text: paramConfig.getColumnHeader(
+                            'precipitation', false
+                        ) + ' (next 24 hours)',
                         verticalAlign: 'bottom',
                         widthAdjust: 0
                     },
@@ -487,7 +491,9 @@ async function setupDashboard() {
                         min: paramConfig.precipitation.min,
                         max: 50, // Per 24 hours
                         accessibility: {
-                            description: paramConfig.getColumnHeader('precipitation')
+                            description: paramConfig.getColumnHeader(
+                                'precipitation'
+                            )
                         }
                     },
                     series: [{
@@ -503,7 +509,10 @@ async function setupDashboard() {
                         // Update board
                         activeParam = paramConfig.precipitation;
                         // Parameter update, city unchanged
-                        updateBoard(board, activeCity, 'precipitation', true, false);
+                        updateBoard(
+                            board, activeCity,
+                            'precipitation', true, false
+                        );
                     }
                 },
                 states: {
@@ -517,6 +526,10 @@ async function setupDashboard() {
             }, {
                 cell: 'selection-grid',
                 type: 'DataGrid',
+                title: {
+                    enabled: true,
+                    text: 'Forecast for ' + currentDay
+                },
                 sync: {
                     highlight: true
                 },
@@ -527,11 +540,15 @@ async function setupDashboard() {
                         time: {
                             headerFormat: 'Time UTC',
                             cellFormatter: function () {
-                                return Highcharts.dateFormat('%d/%m, %H:%M', this.value);
+                                return Highcharts.dateFormat(
+                                    '%H:%M', this.value
+                                );
                             }
                         },
                         temperature: {
-                            headerFormat: paramConfig.getColumnHeader('temperature'),
+                            headerFormat: paramConfig.getColumnHeader(
+                                'temperature'
+                            ),
                             cellFormat: '{value:.1f}'
                         },
                         wind: {
@@ -539,11 +556,15 @@ async function setupDashboard() {
                             cellFormat: '{value:.1f}'
                         },
                         windDir: {
-                            headerFormat: paramConfig.getColumnHeader('windDir'),
+                            headerFormat: paramConfig.getColumnHeader(
+                                'windDir'
+                            ),
                             cellFormat: '{value:.0f}'
                         },
                         precipitation: {
-                            headerFormat: paramConfig.getColumnHeader('precipitation'),
+                            headerFormat: paramConfig.getColumnHeader(
+                                'precipitation'
+                            ),
                             cellFormat: '{value:.1f}'
                         }
                     }
@@ -551,10 +572,6 @@ async function setupDashboard() {
             }, {
                 cell: 'city-chart',
                 type: 'Highcharts',
-                columnAssignment: {
-                    time: 'x',
-                    temperature: 'y'
-                },
                 sync: {
                     highlight: true
                 },
@@ -584,6 +601,19 @@ async function setupDashboard() {
                             marker: {
                                 enabled: true,
                                 symbol: 'circle'
+                            },
+                            tooltip: {
+                                pointFormatter: function () {
+                                    return this.y + ' ' + activeParam.unit;
+                                }
+                            }
+                        },
+                        windbarb: {
+                            tooltip: {
+                                pointFormat: '<b>{point.value} m/s</b> ' +
+                                    '({point.beaufort})<br/>Wind direction: ' +
+                                    '{point.direction} degrees',
+                                pointFormatter: null
                             }
                         }
                     },
@@ -595,32 +625,10 @@ async function setupDashboard() {
                     subtitle: {
                         text: '----'
                     },
-                    tooltip: {
-                        enabled: true,
-                        stickOnContact: true,
-                        formatter: function () {
-                            const point = this.point;
-                            const dateStr = Highcharts.dateFormat('%d/%m/%Y %H:%M<br />', point.x);
-
-                            if ('beaufort' in point) {
-                                // Windbarb series
-                                return dateStr +
-                                    `Beaufort level ${point.beaufortLevel}, ` +
-                                    `${point.beaufort}.<br />` +
-                                    `Wind direction ${point.direction} degrees`;
-                            }
-                            // Regular series
-                            return dateStr +
-                                Highcharts.numberFormat(point.y,
-                                    activeParam.floatRes) + ' ' + activeParam.unit;
-                        }
-                    },
                     xAxis: {
                         type: 'datetime',
                         labels: {
-                            formatter: function () {
-                                return Highcharts.dateFormat('%H:%M', this.value);
-                            },
+                            format: '{value:%H:%M}',
                             accessibility: {
                                 description: 'Hours, minutes'
                             }
@@ -636,11 +644,13 @@ async function setupDashboard() {
                     },
                     lang: {
                         accessibility: {
-                            chartContainerLabel: 'Weather stations. Highcharts Interactive Map.'
+                            chartContainerLabel: 'Weather stations. ' +
+                                'Highcharts Interactive Map.'
                         }
                     },
                     accessibility: {
-                        description: 'The chart is displaying forecasted temperature, wind or precipitation.'
+                        description: 'The chart is displaying forecasted ' +
+                            'temperature, wind or precipitation.'
                     }
                 }
             }]
@@ -656,41 +666,43 @@ async function setupDashboard() {
         const url = weatherStationConfig.buildUrl(city);
 
         if (!url) {
-            dataPool.setConnectorOptions({
-                id: city,
-                type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    dataUrl: url,
-                    // Pre-parsing for filtering incoming data
-                    beforeParse: function (data) {
-                        const retData = [];
-                        const forecastData = data.properties.timeseries;
-
-                        for (let i = 0; i < rangeConfig.hours; i++) {
-                            const item = forecastData[i];
-
-                            // Instant data
-                            const instantData = item.data.instant.details;
-
-                            // Data for the next hour
-                            const hourSpan = item.data.next_1_hours.details;
-
-                            // Picks the parameters this application uses
-                            retData.push({
-                                // UTC -> milliseconds
-                                time: new Date(item.time).getTime(),
-                                temperature: instantData.air_temperature,
-                                precipitation: hourSpan.precipitation_amount,
-                                wind: instantData.wind_speed,
-                                windDir: instantData.wind_from_direction
-                            });
-                        }
-                        return retData;
-                    }
-                }
-            });
+            continue;
         }
+
+        dataPool.setConnectorOptions({
+            id: city,
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                dataUrl: url,
+                // Pre-parsing for filtering incoming data
+                beforeParse: function (data) {
+                    const retData = [];
+                    const forecastData = data.properties.timeseries;
+
+                    for (let i = 0; i < rangeConfig.hours; i++) {
+                        const item = forecastData[i];
+
+                        // Instant data
+                        const instantData = item.data.instant.details;
+
+                        // Data for the next hour
+                        const hourSpan = item.data.next_1_hours.details;
+
+                        // Picks the parameters this application uses
+                        retData.push({
+                            // UTC -> milliseconds
+                            time: new Date(item.time).getTime(),
+                            temperature: instantData.air_temperature,
+                            precipitation: hourSpan.precipitation_amount,
+                            wind: instantData.wind_speed,
+                            windDir: instantData.wind_from_direction
+                        });
+                    }
+                    return retData;
+                }
+            }
+        });
     }
 
     // Update map (series 0 is the world map, series 1 the weather data)
@@ -744,7 +756,8 @@ async function addCityToMap(board, citiesTable, worldMap, city) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         custom: {
-            elevation: cityInfo.elevation
+            elevation: cityInfo.elevation,
+            unit: paramConfig.temperature.unit
         },
         // First item in current data set
         y: forecastTable.columns.temperature[rangeConfig.first]
@@ -764,8 +777,10 @@ function getObservation(forecastTable, param) {
 }
 
 // Update board after changing data set (city) or parameter (measurement type)
-async function updateBoard(board, city, paramName,
-    paramUpdated = true, cityUpdated = true) {
+async function updateBoard(
+    board, city, paramName,
+    paramUpdated = true, cityUpdated = true
+) {
 
     // Parameter info
     const param = paramConfig[paramName];
@@ -773,11 +788,14 @@ async function updateBoard(board, city, paramName,
     // Data access
     const dataPool = board.dataPool;
 
+    // Geographical information
+    const citiesTable = await dataPool.getConnectorTable('Cities');
+
     const [
         // The order here must be the same as in the component
         // definition in the Dashboard.
         worldMap,
-        kpiGeoData,
+        htmlGeoInfo,
         kpiTemperature,
         kpiWind,
         kpiRain,
@@ -796,9 +814,10 @@ async function updateBoard(board, city, paramName,
     const options = cityChart.chartOptions;
     const isWind = paramName === 'wind';
 
-    const title = isWind ? 'Wind' : paramConfig.getColumnHeader(paramName, false);
+    const title = isWind ?
+        'Wind' : paramConfig.getColumnHeader(paramName, false);
     options.title.text = title + ' forecast for ' + city;
-    options.subtitle.text = Highcharts.dateFormat('%d/%m/%Y', Date.now());
+    options.subtitle.text = currentDay;
     options.colorAxis = colorAxis;
     options.chart.type = param.chartType;
     options.xAxis.offset = isWind ? 40 : 0; // Allow space for Windbarb
@@ -814,13 +833,11 @@ async function updateBoard(board, city, paramName,
 
     await cityChart.update({
         connector: {
-            id: city
-        },
-        columnAssignment: {
-            time: 'x',
-            temperature: paramName === 'temperature' ? 'y' : null,
-            wind: isWind ? 'y' : null,
-            precipitation: paramName === 'precipitation' ? 'y' : null
+            id: city,
+            columnAssignment: [{
+                seriesId: paramName,
+                data: ['time', paramName]
+            }]
         },
         chartOptions: options
     });
@@ -850,26 +867,33 @@ async function updateBoard(board, city, paramName,
         // Parameters update: e.g. temperature -> precipitation.
         // Affects: map
 
-        // Update map properties
-        await worldMap.chart.update({
-            colorAxis: colorAxis,
-            title: {
-                text: paramConfig.getColumnHeader(paramName)
-            }
-        });
-
         // Update all map points (series 1: weather data)
         const mapPoints = worldMap.chart.series[1].data;
 
         for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
             // Forecast for city
-            const forecastTable = await dataPool.getConnectorTable(
-                mapPoints[i].name);
+            const city = mapPoints[i].name;
+            const forecastTable = await dataPool.getConnectorTable(city);
+            const elevation = citiesTable.getCellAsNumber(
+                'elevation', citiesTable.getRowIndexBy('city', city)
+            );
 
             mapPoints[i].update({
-                y: getObservation(forecastTable, paramName)
-            }, true);
+                y: getObservation(forecastTable, paramName),
+                custom: {
+                    elevation: elevation,
+                    unit: param.unit
+                }
+            }, false);
         }
+
+        // Update map properties and redraw
+        worldMap.chart.update({
+            colorAxis: colorAxis,
+            title: {
+                text: paramConfig.getColumnHeader(paramName)
+            }
+        });
     }
 
     if (cityUpdated) {
@@ -889,16 +913,23 @@ async function updateBoard(board, city, paramName,
             value: getObservation(forecastTable, 'precipitation')
         });
 
-        // Update geo KPI
-        const citiesTable = await dataPool.getConnectorTable('Cities');
+        // Update geo-info HTML
+        const options = htmlGeoInfo.getOptions();
+        const html = options.elements[0];
+        const cityRow = citiesTable.getRowIndexBy('city', city);
 
-        await kpiGeoData.update({
-            title: city,
-            value: citiesTable.getCellAsNumber(
-                'elevation',
-                citiesTable.getRowIndexBy('city', city)
-            )
-        });
+        html.children[0].textContent = 'Forecast for ' + city;
+
+        const geoInfo = html.children[1].children;
+        for (let i = 0; i < geoInfo.length; i++) {
+            const attr = geoInfo[i].attributes;
+            const value = citiesTable.getCellAsNumber(attr.id, cityRow);
+            const unit = attr.id === 'elevation' ? 'm.' : 'degr.';
+
+            geoInfo[i].textContent = `${attr.name}: ${value} ${unit}`;
+        }
+
+        await htmlGeoInfo.update(options);
 
         // Update grid
         await selectionGrid.update({

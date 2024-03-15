@@ -15,7 +15,6 @@
  * */
 
 import type CSSJSONObject from '../../CSSJSONObject';
-import type { RendererElement, SelectFormFieldItemOptions } from '../EditRenderer.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
@@ -92,7 +91,7 @@ class MenuItem {
             { className: className || '' },
             merge(
                 this.options.style || {},
-                // to remove
+                // To remove
                 this.isActive ? { display: 'block' } : {}
             ),
             this.menu.container

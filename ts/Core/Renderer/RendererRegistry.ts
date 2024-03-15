@@ -87,7 +87,7 @@ namespace RendererRegistry {
 
         if (!defaultRenderer || setAsDefault) {
             defaultRenderer = rendererType;
-            (H as AnyRecord).Renderer = rendererClass; // compatibility
+            (H as AnyRecord).Renderer = rendererClass; // Compatibility
         }
     }
 }

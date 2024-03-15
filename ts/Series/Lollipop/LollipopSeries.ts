@@ -29,6 +29,7 @@ const {
         dumbbell: {
             prototype: dumbbellProto
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -339,4 +340,4 @@ export default LollipopSeries;
  * @apioption series.line.data.y
  */
 
-(''); // adds doclets above to transpiled file
+(''); // Adds doclets above to transpiled file

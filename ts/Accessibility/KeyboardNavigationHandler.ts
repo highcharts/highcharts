@@ -189,4 +189,4 @@ export default KeyboardNavigationHandler;
  * @type {Function|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

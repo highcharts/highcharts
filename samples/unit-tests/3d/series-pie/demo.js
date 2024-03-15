@@ -61,7 +61,8 @@ QUnit.test('3d pie with zeroes (#4584)', function (assert) {
 });
 
 QUnit.test(
-    'Pie points\' graphic should have visibility=hidden when slices are hidden (#4891)',
+    'Pie points\' graphic should have visibility=hidden when slices are ' +
+    'hidden (#4891)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({

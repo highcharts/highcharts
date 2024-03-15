@@ -10,19 +10,9 @@ Dashboards.board('container', {
                         rows: [{
                             id: 'row',
                             cells: [{
-                                id: 'cell-1',
-                                responsive: {
-                                    small: {
-                                        width: '100%'
-                                    }
-                                }
+                                id: 'cell-1'
                             }, {
-                                id: 'cell-2',
-                                responsive: {
-                                    small: {
-                                        width: '100%'
-                                    }
-                                }
+                                id: 'cell-2'
                             }]
                         }]
                     }
@@ -31,7 +21,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'cell-1',
+        renderTo: 'cell-1',
         type: 'HTML',
         elements: [{
             tagName: 'h1',
@@ -39,7 +29,7 @@ Dashboards.board('container', {
         }]
 
     }, {
-        cell: 'cell-2',
+        renderTo: 'cell-2',
         type: 'HTML',
         elements: [{
             tagName: 'h1',

@@ -58,7 +58,8 @@ const chart = Highcharts.ganttChart('container', {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     },
@@ -68,7 +69,8 @@ const chart = Highcharts.ganttChart('container', {
             descriptionFormat: '{#if milestone}' +
                 '{name}, milestone for {yCategory} at {x:%Y-%m-%d}.' +
                 '{else}' +
-                '{name}, assigned to {yCategory} from {x:%Y-%m-%d} to {x2:%Y-%m-%d}.' +
+                '{name}, assigned to {yCategory} from {x:%Y-%m-%d} to ' +
+                '{x2:%Y-%m-%d}.' +
                 '{/if}'
         }
     },

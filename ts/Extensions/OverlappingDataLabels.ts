@@ -19,23 +19,17 @@
  *
  * */
 
-import type { AlignValue } from '../Core/Renderer/AlignObject';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -65,7 +59,7 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
 
 /**
  * Hide overlapping labels. Labels are moved and faded in and out on zoom to
- * provide a smooth visual imression.
+ * provide a smooth visual impression.
  *
  * @requires modules/overlapping-datalabels
  *
@@ -80,7 +74,6 @@ function chartHideOverlappingLabels(
 ): void {
     const chart = this,
         len = labels.length,
-        ren = chart.renderer,
         isIntersectRect = (
             box1: BBoxObject,
             box2: BBoxObject
@@ -183,10 +176,9 @@ function chartHideOverlappingLabels(
 function compose(
     ChartClass: typeof Chart
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.hideOverlappingLabels) {
         chartProto.hideOverlappingLabels = chartHideOverlappingLabels;
 
         addEvent(ChartClass, 'render', onChartRender);
@@ -257,7 +249,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 }
 
 /**
- * Collect potensial overlapping data labels. Stack labels probably don't need
+ * Collect potential overlapping data labels. Stack labels probably don't need
  * to be considered because they are usually accompanied by data labels that lie
  * inside the columns.
  * @private

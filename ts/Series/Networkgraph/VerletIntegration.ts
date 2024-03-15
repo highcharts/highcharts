@@ -34,14 +34,14 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
 /**
  * Attractive force.
  *
- * In Verlet integration, force is applied on a node immidatelly to it's
+ * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
  * @private
  * @param {Highcharts.Point} link
  *        Link that connects two nodes
  * @param {number} force
- *        Force calcualated in `repulsiveForceFunction`
+ *        Force calculated in `repulsiveForceFunction`
  * @param {Highcharts.PositionObject} distance
  *        Distance between two nodes e.g. `{x, y}`
  */
@@ -72,7 +72,7 @@ function attractive(
 }
 
 /**
- * Attractive force funtion. Can be replaced by API's
+ * Attractive force function. Can be replaced by API's
  * `layoutAlgorithm.attractiveForce`
  *
  * @private
@@ -92,7 +92,7 @@ function attractiveForceFunction(
  * Barycenter force. Calculate and applys barycenter forces on the
  * nodes. Making them closer to the center of their barycenter point.
  *
- * In Verlet integration, force is applied on a node immidatelly to it's
+ * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
  * @private
@@ -137,7 +137,7 @@ function getK(
 /**
  * Integration method.
  *
- * In Verlet integration, forces are applied on node immidatelly to it's
+ * In Verlet integration, forces are applied on node immediately to it's
  * `plotX` and `plotY` position.
  *
  * Verlet without velocity:
@@ -173,7 +173,7 @@ function integrate(
         maxSpeed = layout.options.maxSpeed,
         prevX = node.prevX,
         prevY = node.prevY,
-        // Apply friciton:
+        // Apply friction:
         diffX = (
             ((node.plotX as any) + (node.dispX as any) -
             (prevX as any)) * friction
@@ -183,7 +183,7 @@ function integrate(
             (prevY as any)) * friction
         ),
         abs = Math.abs,
-        signX = abs(diffX) / (diffX || 1), // need to deal with 0
+        signX = abs(diffX) / (diffX || 1), // Need to deal with 0
         signY = abs(diffY) / (diffY || 1);
 
     // Apply max speed:
@@ -207,14 +207,14 @@ function integrate(
 /**
  * Repulsive force.
  *
- * In Verlet integration, force is applied on a node immidatelly to it's
+ * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
  * @private
  * @param {Highcharts.Point} node
  *        Node that should be translated by force.
  * @param {number} force
- *        Force calcualated in `repulsiveForceFunction`
+ *        Force calculated in `repulsiveForceFunction`
  * @param {Highcharts.PositionObject} distance
  *        Distance between two nodes e.g. `{x, y}`
  */
@@ -234,7 +234,7 @@ function repulsive(
 }
 
 /**
- * Repulsive force funtion. Can be replaced by API's
+ * Repulsive force function. Can be replaced by API's
  * `layoutAlgorithm.repulsiveForce`
  *
  * @private

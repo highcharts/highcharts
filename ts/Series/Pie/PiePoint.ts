@@ -34,7 +34,6 @@ const {
     defined,
     extend,
     isNumber,
-    isString,
     pick,
     relativeLength
 } = U;
@@ -209,7 +208,7 @@ class PiePoint extends Point {
 
         setAnimation(animation, chart);
 
-        // redraw is true by default
+        // Redraw is true by default
         redraw = pick(redraw, true);
 
         /**
@@ -221,7 +220,7 @@ class PiePoint extends Point {
         // if called without an argument, toggle
         this.sliced = this.options.sliced = sliced =
             defined(sliced) ? sliced : !this.sliced;
-        // update userOptions.data
+        // Update userOptions.data
         (series.options.data as any)[series.data.indexOf(this)] =
             this.options;
 
@@ -242,7 +241,7 @@ interface PiePoint {
 }
 extend(PiePoint.prototype, {
     connectorShapes: {
-        // only one available before v7.0.0
+        // Only one available before v7.0.0
         fixedOffset: function (
             labelPosition: DataLabel.PositionObject,
             connectorPosition: DataLabel.LabelConnectorPositionObject,
@@ -251,7 +250,7 @@ extend(PiePoint.prototype, {
             const breakAt = connectorPosition.breakAt,
                 touchingSliceAt = connectorPosition.touchingSliceAt,
                 lineSegment = options.softConnector ? [
-                    'C', // soft break
+                    'C', // Soft break
                     // 1st control point (of the curve)
                     labelPosition.x +
                     // 5 gives the connector a little horizontal bend
@@ -259,15 +258,15 @@ extend(PiePoint.prototype, {
                     labelPosition.y, //
                     2 * breakAt.x - touchingSliceAt.x, // 2nd control point
                     2 * breakAt.y - touchingSliceAt.y, //
-                    breakAt.x, // end of the curve
+                    breakAt.x, // End of the curve
                     breakAt.y //
                 ] as SVGPath.CurveTo : [
-                    'L', // pointy break
+                    'L', // Pointy break
                     breakAt.x,
                     breakAt.y
                 ] as SVGPath.LineTo;
 
-            // assemble the path
+            // Assemble the path
             return ([
                 ['M', labelPosition.x, labelPosition.y],
                 lineSegment,
@@ -281,7 +280,7 @@ extend(PiePoint.prototype, {
         ): SVGPath {
             const touchingSliceAt = connectorPosition.touchingSliceAt;
 
-            // direct line to the slice
+            // Direct line to the slice
             return [
                 ['M', labelPosition.x, labelPosition.y],
                 ['L', touchingSliceAt.x, touchingSliceAt.y]

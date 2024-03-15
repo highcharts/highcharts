@@ -33,7 +33,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Click the context menu and choose "View in full screen".<br>The title size will be larger.'
+        text: 'Click the context menu and choose "View in full screen".<br>' +
+            'The title size will be larger.'
     },
 
     series: [{

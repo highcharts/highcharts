@@ -39,8 +39,10 @@ const chart = Highcharts.chart('container', {
     tooltip: {
         followPointer: true
     },
-    colors: ['#8E4161', '#4F685F', '#A4604D', '#4C5270', '#6A040F',
-        '#51574A', '#6F7D8C', '#824D5C', '#466365', '#7B6F72'],
+    colors: [
+        '#8E4161', '#4F685F', '#A4604D', '#4C5270', '#6A040F',
+        '#51574A', '#6F7D8C', '#824D5C', '#466365', '#7B6F72'
+    ],
     series: [{
         name: 'Exam scores',
         type: 'boxplot',

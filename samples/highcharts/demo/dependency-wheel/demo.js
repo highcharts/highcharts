@@ -6,7 +6,8 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            valueDescriptionFormat: '{index}. From {point.from} to {point.to}: {point.weight}.'
+            valueDescriptionFormat: '{index}. From {point.from} to ' +
+                '{point.to}: {point.weight}.'
         }
     },
 

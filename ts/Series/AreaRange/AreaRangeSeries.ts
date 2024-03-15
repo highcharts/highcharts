@@ -325,7 +325,7 @@ class AreaRangeSeries extends AreaSeries {
                 polarPlotY: (point as any).polarPlotY,
                 rectPlotX: point.rectPlotX,
                 yBottom: point.yBottom,
-                // plotHighX is for polar charts
+                // `plotHighX` is for polar charts
                 plotX: pick(point.plotHighX, point.plotX),
                 plotY: point.plotHigh,
                 isNull: point.isNull
@@ -355,7 +355,7 @@ class AreaRangeSeries extends AreaSeries {
                 left: 'right',
                 center: 'center',
                 right: 'left'
-            }[step] as any; // swap for reading in getGraphPath
+            }[step] as any; // Swap for reading in getGraphPath
         }
         const higherPath = getGraphPath.call(this, highPoints);
         const higherAreaPath = getGraphPath.call(this, highAreaPoints);
@@ -690,8 +690,7 @@ class AreaRangeSeries extends AreaSeries {
         options: DeepPartial<AreaRangeSeriesOptions>,
         oldOptions: DeepPartial<AreaRangeSeriesOptions>
     ): boolean | undefined {
-        const series = this,
-            lowMarker = options.lowMarker,
+        const lowMarker = options.lowMarker,
             oldMarker = oldOptions.lowMarker || {};
 
         return (lowMarker && (
@@ -738,7 +737,6 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
 }, { order: 0 });
 
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
-    const inverted = this.chart.inverted;
     this.points.forEach((point): void => {
         // Postprocessing after the PolarComposition's afterTranslate
         if (this.chart.polar) {
@@ -953,4 +951,4 @@ export default AreaRangeSeries;
  * @apioption series.arearange.data.low
  */
 
-''; // adds doclets above to tranpiled file
+''; // Adds doclets above to transpiled file

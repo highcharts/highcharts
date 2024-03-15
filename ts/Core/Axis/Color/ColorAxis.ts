@@ -228,7 +228,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.init(chart, userOptions, 'colorAxis');
 
-        // Super.init saves the extended user options, now replace it with the
+        // `super.init` saves the extended user options, now replace it with the
         // originals
         this.userOptions = userOptions;
         if (isArray(chart.userOptions.colorAxis)) {
@@ -440,7 +440,7 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz ?
                     itemDistance :
                     pick(labelOptions.x, labelOptions.distance) +
-                        this.maxLabelLength
+                        (this.maxLabelLength || 0)
             )
         );
         legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
@@ -482,7 +482,7 @@ class ColorAxis extends Axis implements AxisLike {
         this.dataMin = Infinity;
         this.dataMax = -Infinity;
 
-        while (i--) { // x, y, value, other
+        while (i--) { // X, y, value, other
             cSeries = series[i];
             colorKey = cSeries.colorKey = pick(
                 cSeries.options.colorKey,
@@ -813,6 +813,7 @@ class ColorAxis extends Axis implements AxisLike {
                             const affectedSeries: SeriesClass[] = [];
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
+                                point.hiddenInDataClass = !vis; // #20441
                                 if (
                                     affectedSeries.indexOf(point.series) === -1
                                 ) {
@@ -955,4 +956,4 @@ export default ColorAxis;
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 
-''; // detach doclet above
+''; // Detach doclet above

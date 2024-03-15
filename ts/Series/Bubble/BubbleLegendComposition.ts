@@ -144,7 +144,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Series.BubbleLegend')) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -218,7 +218,7 @@ function getLinesHeights(
         legendItem = items[i].legendItem || {};
         legendItem2 = (items[i + 1] || {}).legendItem || {};
         if (legendItem.labelHeight) {
-            // for bubbleLegend
+            // For bubbleLegend
             (items[i] as any).itemHeight = legendItem.labelHeight;
         }
         if ( // Line break
@@ -263,7 +263,8 @@ function onLegendAfterGetAllItems(
         legend.destroyItem(bubbleLegend);
     }
     // Create bubble legend
-    if (bubbleSeriesIndex >= 0 &&
+    if (
+        bubbleSeriesIndex >= 0 &&
             legendOptions.enabled &&
             (options as any).enabled
     ) {

@@ -30,7 +30,8 @@ Highcharts.chart('container', {
             sliced: true,
             selected: true
         }, {
-            name: 'Sim, e a educação musical tem o mesmo peso que outras atividades',
+            name: 'Sim, e a educação musical tem o mesmo peso que outras ' +
+                'atividades',
             y: 18
         }, {
             name: 'Não atua na educação musical',

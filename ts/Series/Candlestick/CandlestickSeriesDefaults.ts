@@ -18,11 +18,7 @@
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 
-import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *
@@ -189,7 +185,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  * @apioption series.candlestick.data
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled
 
 /* *
  *

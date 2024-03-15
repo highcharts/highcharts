@@ -291,7 +291,9 @@ QUnit.test('X-Range', function (assert) {
     assert.ok(result, 'Drag handles should be in correct positions (#12872).');
 
     assert.strictEqual(
-        document.querySelector('.highcharts-drag-handle').attributes.cursor.value,
+        document.querySelector(
+            '.highcharts-drag-handle'
+        ).attributes.cursor.value,
         'grab',
         '#16470: DragHandle cursor should use general options.'
     );

@@ -135,7 +135,7 @@ class CMOIndicator extends SMAIndicator {
                 sumOfLowerValues += values[j - 1] - values[j];
             }
         }
-        // You might devide by 0 if all values are equal,
+        // You might divide by 0 if all values are equal,
         // so return 0 in this case.
         y =
             sumOfHigherValues + sumOfLowerValues > 0 ?
@@ -158,7 +158,7 @@ class CMOIndicator extends SMAIndicator {
             }
 
             // Check, to which sum was the first value added to,
-            // and substract this value from given sum.
+            // and subtract this value from given sum.
             if (values[i - period] > values[i - period - 1]) {
                 sumOfHigherValues -= firstAddedSum;
             } else {
@@ -235,4 +235,4 @@ export default CMOIndicator;
  * @apioption series.cmo
  */
 
-(''); // to include the above in the js output
+(''); // To include the above in the js output

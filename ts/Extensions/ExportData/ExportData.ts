@@ -49,22 +49,9 @@ const { downloadURL } = DownloadURL;
 import ExportDataDefaults from './ExportDataDefaults.js';
 import H from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: SeriesClass,
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        gantt: GanttSeries,
-        map: MapSeries,
-        mapbubble: MapBubbleSeries,
-        treemap: TreemapSeries,
-        xrange: XRangeSeries
-    }
-} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -73,8 +60,7 @@ const {
     find,
     fireEvent,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -375,9 +361,15 @@ function chartGetDataRows(
                 return categoryHeader;
             }
 
-            if (!(item instanceof SeriesClass)) {
-                return (item.options.title && item.options.title.text) ||
-                    (item.dateTime ? categoryDatetimeHeader : categoryHeader);
+            if (!(item as Series).bindAxes) {
+                return (
+                    (item as Axis).options.title &&
+                    (item as Axis).options.title.text
+                ) || (
+                    (item as Axis).dateTime ?
+                        categoryDatetimeHeader :
+                        categoryHeader
+                );
             }
 
             if (multiLevelHeaders) {
@@ -385,7 +377,7 @@ function chartGetDataRows(
                     columnTitle: (keyLength as any) > 1 ?
                         (key as any) :
                         item.name,
-                    topLevelColumnTitle: item.name
+                    topLevelColumnTitle: (item as Series).name
                 };
             }
 
@@ -521,8 +513,6 @@ function chartGetDataRows(
                 index: series.index
             };
 
-            const seriesIndex = mockSeries.index;
-
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
@@ -582,7 +572,7 @@ function chartGetDataRows(
                         arr[i] = 0;
                     }
 
-                    // Create poiners array, holding information how many
+                    // Create pointers array, holding information how many
                     // duplicates of specific x occurs in each series.
                     // Used for creating rows with duplicates.
                     rows[key].pointers = arr;
@@ -1115,12 +1105,13 @@ function chartViewData(
  * @private
  */
 function compose(
-    ChartClass: typeof Chart
+    ChartClass: typeof Chart,
+    SeriesClass: typeof Series
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype,
-            exportingOptions = getOptions().exporting;
+    if (!chartProto.getCSV) {
+        const exportingOptions = getOptions().exporting;
 
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
@@ -1180,6 +1171,15 @@ function compose(
 
         setOptions(ExportDataDefaults);
 
+        const {
+            arearange: AreaRangeSeries,
+            gantt: GanttSeries,
+            map: MapSeries,
+            mapbubble: MapBubbleSeries,
+            treemap: TreemapSeries,
+            xrange: XRangeSeries
+        } = SeriesClass.types;
+
         if (AreaRangeSeries) {
             AreaRangeSeries.prototype.keyToAxis = {
                 low: 'y',
@@ -1195,12 +1195,6 @@ function compose(
             };
         }
 
-        if (XRangeSeries) {
-            XRangeSeries.prototype.keyToAxis = {
-                x2: 'x'
-            };
-        }
-
         if (MapSeries) {
             MapSeries.prototype.exportKey = 'name';
         }
@@ -1211,6 +1205,12 @@ function compose(
 
         if (TreemapSeries) {
             TreemapSeries.prototype.exportKey = 'name';
+        }
+
+        if (XRangeSeries) {
+            XRangeSeries.prototype.keyToAxis = {
+                x2: 'x'
+            };
         }
     }
 
@@ -1378,7 +1378,7 @@ export default ExportData;
  * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
  *
  * @param {Highcharts.Chart} this
- * Chart context where the event occured.
+ * Chart context where the event occurred.
  *
  * @param {Highcharts.ExportDataEventObject} event
  * Event object with data rows that can be modified.

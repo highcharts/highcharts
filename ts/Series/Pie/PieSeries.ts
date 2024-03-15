@@ -37,9 +37,7 @@ const {
     extend,
     fireEvent,
     merge,
-    pick,
-    relativeLength,
-    splat
+    pick
 } = U;
 
 /* *
@@ -132,16 +130,18 @@ class PieSeries extends Series {
                     args = point.shapeArgs;
 
                 if (graphic && args) {
-                // start values
+                // Start values
                     graphic.attr({
-                    // animate from inner radius (#779)
-                        r: pick(point.startR,
-                            (series.center && series.center[3] / 2)),
+                    // Animate from inner radius (#779)
+                        r: pick(
+                            point.startR,
+                            (series.center && series.center[3] / 2
+                            )),
                         start: startAngleRad,
                         end: startAngleRad
                     });
 
-                    // animate
+                    // Animate
                     graphic.animate({
                         r: args.r,
                         start: args.start,
@@ -301,7 +301,7 @@ class PieSeries extends Series {
             series.group.shadow(series.options.shadow);
         }
 
-        // draw the slices
+        // Draw the slices
         series.points.forEach(function (point): void {
             const animateTo = {};
             graphic = point.graphic;
@@ -386,7 +386,7 @@ class PieSeries extends Series {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // issue #172
+            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
             radians = getStartAndEndRadians(
@@ -413,6 +413,14 @@ class PieSeries extends Series {
         // given. If positions are passed as a parameter, we're in a
         // recursive loop for adjusting space for data labels.
         if (!positions) {
+            /**
+             * The series center position, read only. This applies only to
+             * circular chart types like pie and sunburst. It is an array of
+             * `[centerX, centerY, diameter, innerDiameter]`.
+             *
+             * @name Highcharts.Series#center
+             * @type {Array<number>}
+             */
             series.center = positions = series.getCenter();
         }
 

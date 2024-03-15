@@ -134,7 +134,7 @@ const ColumnPyramidSeriesDefaults: ColumnPyramidSeriesOptions = {
  * @apioption series.columnpyramid.data
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

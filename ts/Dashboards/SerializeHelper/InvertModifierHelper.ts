@@ -21,6 +21,7 @@
 
 import type Globals from '../Globals';
 import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
 import InvertModifier from '../../Data/Modifiers/InvertModifier';

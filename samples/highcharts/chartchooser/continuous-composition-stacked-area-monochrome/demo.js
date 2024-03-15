@@ -26,7 +26,8 @@ Highcharts.chart('container', {
     tooltip: {
         shared: true,
         headerFormat: null,
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: {point.y}<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': {point.y}<br/>',
         valueSuffix: ' %'
     },
     plotOptions: {

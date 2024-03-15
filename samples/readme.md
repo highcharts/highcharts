@@ -90,7 +90,7 @@ Test Templates
 
 ### Using Test Templates
 
-With the help of test templates you can increase the overal performance of the
+With the help of test templates you can increase the overall performance of the
 unit tests task. The chart and its container are shared between multiple tests
 and test-specific options get reverted after each test.
 
@@ -105,7 +105,7 @@ test-specific options:
 ```js
 QUnit.test('My test', function (assert) {
     TestTemplate.test('highcharts/line', {
-        // additional options to modifiy the template defaults
+        // additional options to modify the template defaults
         myOptionsToTest: {
             enabled: true
         }

@@ -77,7 +77,6 @@ declare class TestController {
      */
     constructor(chart: Highcharts.Chart);
     private chart;
-    private mouseEnterStack;
     private positionX;
     private positionY;
     private relatedTarget;

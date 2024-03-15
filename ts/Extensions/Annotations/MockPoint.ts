@@ -12,14 +12,12 @@
  *
  * */
 
-import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type {
     AnnotationPoint,
     AnnotationPointType
 } from './AnnotationSeries';
 import type Axis from '../../Core/Axis/Axis';
-import type Controllable from './Controllables/Controllable';
 import type ControlTarget from './ControlTarget';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -673,4 +671,4 @@ export default MockPoint;
  * @type {boolean|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

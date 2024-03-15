@@ -25,14 +25,12 @@ import Controllable from './Controllable.js';
 import ControllableDefaults from './ControllableDefaults.js';
 const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
-const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     defined,
     extend,
     merge,
-    pushUnique,
     uniqueKey
 } = U;
 
@@ -102,7 +100,7 @@ function onChartAfterGetContainer(
 ): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    // objectEach(this.options.defs, function (def): void {
+    ///  objectEach(this.options.defs, function (def): void {
     //     const attributes = def.attributes;
     //     if (
     //         def.tagName === 'marker' &&
@@ -212,10 +210,9 @@ class ControllablePath extends Controllable {
         ChartClass: typeof Chart,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const svgRendererProto = SVGRendererClass.prototype;
 
-        if (pushUnique(composed, this.compose)) {
-            const svgRendererProto = SVGRendererClass.prototype;
-
+        if (!svgRendererProto.addMarker) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
 
             svgRendererProto.addMarker = svgRendererAddMarker;

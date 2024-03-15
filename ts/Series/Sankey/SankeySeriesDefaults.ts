@@ -86,7 +86,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
         enabled: true,
 
-        backgroundColor: 'none', // enable padding
+        backgroundColor: 'none', // Enable padding
 
         crop: false,
 
@@ -320,7 +320,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * This option applies only when the `nodeWidth` option is `auto`, making
      * the node width respond to the number of columns.
      *
-     * @since next
+     * @since 11.4.0
      * @sample highcharts/series-sankey/node-distance
      *         Sankey with dnode distance of 100% means equal to node width
      * @sample highcharts/series-organization/node-distance
@@ -435,7 +435,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  */
 
 /**
- * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * The id of the auto-generated node, referring to the `from` or `to` setting of
  * the link.
  *
  * @type      {string}
@@ -527,7 +527,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * Positive values shift the node downwards, negative shift it upwards. In a
  * vertical layout, like organization chart, the offset is horizontal.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
  * @deprecated
@@ -542,7 +542,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * The horizontal offset of a node. Positive values shift the node right,
  * negative shift it left.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
  * @sample highcharts/plotoptions/sankey-node-column/
@@ -558,7 +558,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * The vertical offset of a node. Positive values shift the node down,
  * negative shift it up.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
  * @sample highcharts/plotoptions/sankey-node-column/
@@ -665,7 +665,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * @apioption series.sankey.data.weight
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file
 
 /* *
  *

@@ -17,7 +17,8 @@ Highcharts.chart('container', {
             width: 1,
             label: {
                 formatter: function () {
-                    return 'Plot band from ' + this.options.from + ' to: ' + this.options.to;
+                    return 'Plot band from ' + this.options.from +
+                        ' to: ' + this.options.to;
                 }
             }
         }]

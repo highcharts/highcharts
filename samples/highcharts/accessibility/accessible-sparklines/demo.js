@@ -87,9 +87,12 @@ const defaultChartOptions = {
         formatter: function () {
             const point = this.point;
             const chart = this.series.chart;
-            const longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
-            const longdescFormat = '<span style="font-size: 12px">' + longdescText + '</span><br/>';
-            const pointFormat = '<div style="margin-top:10px;"><span style="color:' + point.color +
+            const longdescText = chart.accessibility.components.infoRegions
+                .getLongdescText() || 'Sessions';
+            const longdescFormat = '<span style="font-size: 12px">' +
+                longdescText + '</span><br/>';
+            const pointFormat = '<div style="margin-top:10px;"><span ' +
+                'style="color:' + point.color +
                 '">●</span> ' + point.x + ': <b>' + point.y + '</b></div>';
 
             return longdescFormat + pointFormat;
@@ -127,7 +130,8 @@ function describeChart(data) {
     const maxPoint = Math.max.apply(null, data);
     const slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
 
-    return 'Sessions ' + slopeText + ' overall from 2015 to 2020, starting at ' + firstPoint +
+    return 'Sessions ' + slopeText +
+        ' overall from 2015 to 2020, starting at ' + firstPoint +
         ' and ending at ' + lastPoint + '. Values ranged between ' +
         minPoint + ' and ' + maxPoint + '.';
 }
@@ -154,7 +158,8 @@ function addAverageCell(tableRowElement, rowDefinition) {
     const getArrayAverage =
         arr => arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
 
-    cell.textContent = Math.round(getArrayAverage(rowDefinition.chartData)) + ' sessions';
+    cell.textContent = Math.round(getArrayAverage(rowDefinition.chartData)) +
+        ' sessions';
     tableRowElement.appendChild(cell);
 }
 

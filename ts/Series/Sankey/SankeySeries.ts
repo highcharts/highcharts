@@ -349,7 +349,7 @@ class SankeySeries extends ColumnSeries {
         this.nodePadding = this.getNodePadding();
 
         // Find out how much space is needed. Base it on the translation
-        // factor of the most spaceous column.
+        // factor of the most spacious column.
 
         this.translationFactor = nodeColumns.reduce(
             (
@@ -378,15 +378,15 @@ class SankeySeries extends ColumnSeries {
             to: nodeColumns.length - 1, // Height of the tree
             defaults: {
                 borderColor: options.borderColor,
-                borderRadius: options.borderRadius, // organization series
+                borderRadius: options.borderRadius, // Organization series
                 borderWidth: options.borderWidth,
                 color: series.color,
                 colorByPoint: options.colorByPoint,
                 // NOTE: if support for allowTraversingTree is added, then
                 // levelIsConstant should be optional.
                 levelIsConstant: true,
-                linkColor: options.linkColor, // organization series
-                linkLineWidth: options.linkLineWidth, // organization series
+                linkColor: options.linkColor, // Organization series
+                linkLineWidth: options.linkLineWidth, // Organization series
                 linkOpacity: options.linkOpacity,
                 states: options.states
             }
@@ -454,7 +454,8 @@ class SankeySeries extends ColumnSeries {
 
         let linkHeight = Math.max(
                 (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any)
+                (this.options.minLinkWidth as any
+                )
             ),
             fromY = getY(fromNode, 'linksFrom'),
             toY = getY(toNode, 'linksTo'),
@@ -829,7 +830,7 @@ export default SankeySeries;
  * The vertical offset of a node in terms of weight. Positive values shift the
  * node downwards, negative shift it upwards.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -844,7 +845,7 @@ export default SankeySeries;
  * The horizontal offset of a node. Positive values shift the node right,
  * negative shift it left.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -857,7 +858,7 @@ export default SankeySeries;
  * The vertical offset of a node. Positive values shift the node down,
  * negative shift it up.
  *
- * If a percantage string is given, the node is offset by the percentage of the
+ * If a percentage string is given, the node is offset by the percentage of the
  * node size.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -892,4 +893,4 @@ export default SankeySeries;
  * @type {Highcharts.SankeyNodeObject}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

@@ -1,0 +1,64 @@
+name: Highcharts webpack monitoring
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+  workflow_call:
+    secrets:
+      PR_COMMENT_TOKEN:
+        required: true
+
+jobs:
+  test_webpack:
+    name: Webpack tests
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+      - uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: latest-esr
+      - uses: browser-actions/setup-geckodriver@latest
+
+      - name: Setup Display
+        run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Check Firefox
+        run: |
+          firefox --version
+          whereis firefox
+
+      - name: Test Webpacks with Firefox
+        continue-on-error: true
+        run: |
+          export DISPLAY=:99
+          npx gulp test --webpack --single-run --splitbrowsers Firefox --force
+
+      - name: Output logged errors
+        continue-on-error: true
+        run: cat ./test/console.log
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
+
+            const failed = (readFileSync('./test/console.log') || '').includes('FAILED');
+
+            await createOrUpdateComment(github, context, 'Webpack monitoring',
+              failed ?
+                ':rotating_light: Webpack tests failed.' +
+                ' Check demos and masters with `npx gulp test --webpack`.' :
+                'LGTM :+1:'
+            );

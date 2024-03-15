@@ -80,6 +80,7 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     dataLabels: OrganizationDataLabelOptions;
     hangingIndent?: number;
     hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
+    hangingSide?: 'left' | 'right';
     levels?: Array<OrganizationSeriesLevelOptions>;
     link: OrganizationLinkOptions;
     linkColor?: ColorString;

@@ -239,7 +239,7 @@ class PlotLineOrBand {
             objectEach(events, (event, eventType): void => {
                 svgElem?.on(
                     eventType,
-                    function (this: SVGElement, e: any): void {
+                    (e: any): void => {
                         events[eventType].apply(this, [e]);
                     }
                 );
@@ -1105,4 +1105,4 @@ export default PlotLineOrBand;
  * @apioption yAxis.plotLines
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

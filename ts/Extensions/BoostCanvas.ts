@@ -51,7 +51,6 @@ import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../Core/Globals.js';
 const {
-    composed,
     doc,
     noop
 } = H;
@@ -63,7 +62,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -222,16 +220,16 @@ namespace BoostCanvas {
         SeriesClass: typeof Series,
         seriesTypes: typeof SeriesRegistry.seriesTypes
     ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
-            const seriesProto = SeriesClass.prototype,
-                {
-                    area: AreaSeries,
-                    bubble: BubbleSeries,
-                    column: ColumnSeries,
-                    heatmap: HeatmapSeries,
-                    scatter: ScatterSeries
-                } = seriesTypes;
+        if (!seriesProto.renderCanvas) {
+            const {
+                area: AreaSeries,
+                bubble: BubbleSeries,
+                column: ColumnSeries,
+                heatmap: HeatmapSeries,
+                scatter: ScatterSeries
+            } = seriesTypes;
 
             ChartConstructor = ChartClass;
             ChartClass.prototype.callbacks.push((chart): void => {
@@ -433,7 +431,7 @@ namespace BoostCanvas {
             boost.target.clip(boost.clipRect);
 
         } else if (!(target instanceof ChartConstructor)) {
-            // ctx.clearRect(0, 0, width, height);
+            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {
@@ -560,7 +558,7 @@ namespace BoostCanvas {
             boost.clear();
         }
 
-        // if (series.canvas) {
+        // If (series.canvas) {
         //     ctx.clearRect(
         //         0,
         //         0,
@@ -590,7 +588,7 @@ namespace BoostCanvas {
             });
             U.clearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
-            chart.options.loading = loadingOptions; // reset
+            chart.options.loading = loadingOptions; // Reset
         }
 
         if (boostSettings.timeRendering) {
@@ -798,7 +796,8 @@ namespace BoostCanvas {
                     isYInside = y >= yMin && y <= yMax;
                 }
 
-                if (!isNull &&
+                if (
+                    !isNull &&
                     (
                         (x >= xMin && x <= xMax && isYInside) ||
                         (isNextInside || isPrevInside)
@@ -830,7 +829,7 @@ namespace BoostCanvas {
                         }
                         // Add points and reset
                         if (clientX !== lastClientX) {
-                            // maxI also a number:
+                            // `maxI` also a number:
                             if (typeof minI !== 'undefined') {
                                 plotY = yAxis.toPixels(maxVal, true);
                                 yBottom = yAxis.toPixels(minVal, true);
@@ -888,7 +887,7 @@ namespace BoostCanvas {
 
             stroke();
 
-            // if (series.boostCopy || series.chart.boostCopy) {
+            // If (series.boostCopy || series.chart.boostCopy) {
             //     (series.boostCopy || series.chart.boostCopy)();
             // }
 

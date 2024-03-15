@@ -197,7 +197,7 @@ class StackItem {
                 (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden
-        // in case the serie is hidden
+        // in case the series is hidden
         if (this.label) {
             this.label.attr({ text: str, visibility: 'hidden' });
         } else {
@@ -217,9 +217,9 @@ class StackItem {
             const attr: SVGAttributes = {
                 r: options.borderRadius || 0,
                 text: str,
-                // set default padding to 5 as it is in datalabels #12308
+                // Set default padding to 5 as it is in datalabels #12308
                 padding: pick(options.padding, 5),
-                visibility: 'hidden' // hidden until setOffset is called
+                visibility: 'hidden' // Hidden until setOffset is called
             };
 
             if (!chart.styledMode) {
@@ -232,7 +232,7 @@ class StackItem {
             this.label.attr(attr);
 
             if (!this.label.added) {
-                this.label.add(group); // add to the labels-group
+                this.label.add(group); // Add to the labels-group
             }
         }
 
@@ -312,13 +312,17 @@ class StackItem {
                 );
             }
 
-            // Add attr to aviod the default animation of justifyDataLabel.
+            // Add attr to avoid the default animation of justifyDataLabel.
             // Also add correct rotation with its rotation origin. #15129
             label.attr({
                 x: label.alignAttr.x,
                 y: label.alignAttr.y,
                 rotation: options.rotation,
-                rotationOriginX: labelBox.width / 2,
+                rotationOriginX: labelBox.width * {
+                    left: 0,
+                    center: 0.5,
+                    right: 1
+                }[options.textAlign || 'center'],
                 rotationOriginY: labelBox.height / 2
             });
 
@@ -473,4 +477,4 @@ export default StackItem;
  * @type {number}
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

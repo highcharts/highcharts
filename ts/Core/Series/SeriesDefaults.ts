@@ -18,10 +18,7 @@
 
 import type Point from './Point';
 import type Series from './Series';
-import type {
-    PlotOptionsOf,
-    SeriesOptions
-} from './SeriesOptions';
+import type { PlotOptionsOf } from './SeriesOptions';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -37,7 +34,7 @@ import { Palette } from '../Color/Palettes.js';
  * @optionparent plotOptions.series
  */
 const seriesDefaults: PlotOptionsOf<Series> = {
-    // base series options
+    // Base series options
 
     /**
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
@@ -2206,8 +2203,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @product   highcharts highstock
              */
             marker: {
-                // lineWidth: base + 1,
-                // radius: base + 1
+                // `lineWidth: base + 1`,
+                // `radius: base + 1`
             },
 
             /**

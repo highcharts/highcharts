@@ -317,4 +317,4 @@ export default AOIndicator;
  * @apioption series.ao
  */
 
-''; // for including the above in the doclets
+''; // For including the above in the doclets
