@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Global temperature mean anomalies from 1880 to 2016'
+        text: 'Global temperature mean anomalies from 1880 to 2016',
+        align: 'left'
     },
     accessibility: {
         description: `
@@ -13,11 +14,10 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'column',
-        pointWidth: 30,
-        name: 'Column Series',
+        name: 'Average per thirty years',
         data: JSON.parse(document.getElementById('columnData').textContent)
     }, {
-        name: 'Line Series',
+        name: 'Monthly average',
         data: JSON.parse(document.getElementById('lineData').textContent),
         description: `
             A data series illustrating the same data as the first,
@@ -25,12 +25,16 @@ Highcharts.chart('container', {
         `
     }],
     tooltip: {
-        valueSuffix: '°C'
+        valueSuffix: '°C',
+        valueDecimals: 2
     },
     yAxis: {
         description: 'temperature',
-        max: 1,
-        min: -0.5,
+        minPadding: 0,
+        maxPadding: 0,
+        labels: {
+            format: '{value:.1f}°C'
+        },
         name: 'Temperature anomalies',
         title: {
             enabled: false
@@ -38,7 +42,6 @@ Highcharts.chart('container', {
     },
     xAxis: {
         endOnTick: true,
-        min: Date.UTC(1880, 0, 0),
         type: 'datetime'
     }
 });
