@@ -1,12 +1,176 @@
+// Data cache
+
+const sharedData = [
+    ['Event', 'Aggregat 1', 'Aggregat 2'],
+    ['Start', 0.1, 9.1],
+    ['Test', 0.2, 9.6]
+];
+
+let board = null;
+
+// Launches the Dashboards application
+async function setupDashboard() {
+    board = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                id: 'micro-element',
+                type: 'JSON',
+                options: {
+                    firstRowAsNames: true,
+                    enablePolling: true,
+                    dataRefreshRate: 5,
+                    data: sharedData
+                }
+            }]
+        },
+        editMode: {
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                items: ['editMode']
+            }
+        },
+        components: [{
+            type: 'KPI',
+            renderTo: 'kpi-vitamin-a',
+            value: 1,
+            valueFormat: '{value}',
+            title: 'Aggregat 1'
+        }, {
+            type: 'KPI',
+            renderTo: 'kpi-iron',
+            value: 1,
+            title: 'Aggregat 2',
+            valueFormat: '{value}'
+        }, {
+            sync: {
+                visibility: true,
+                highlight: true,
+                extremes: true
+            },
+            connector: {
+                id: 'micro-element',
+                columnAssignment: [{
+                    seriesId: 'Aggregat 1',
+                    data: ['Aggregat 1']
+                }]
+            },
+            renderTo: 'dashboard-col-0',
+            type: 'Highcharts',
+            chartOptions: {
+                yAxis: {
+                    title: {
+                        text: 'KWH'
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: true,
+                    verticalAlign: 'top'
+                },
+                chart: {
+                    animation: false,
+                    type: 'column',
+                    spacing: [30, 30, 30, 20]
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    valueSuffix: ' KWH',
+                    stickOnContact: true
+                }
+            }
+        }, {
+            renderTo: 'dashboard-col-1',
+            sync: {
+                visibility: true,
+                highlight: true,
+                extremes: true
+            },
+            connector: {
+                id: 'micro-element',
+                columnAssignment: [{
+                    seriesId: 'Aggregat 2',
+                    data: ['Aggregat 2']
+                }]
+            },
+            type: 'Highcharts',
+            chartOptions: {
+                yAxis: {
+                    title: {
+                        text: 'KWH'
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                legend: {
+                    enabled: true,
+                    verticalAlign: 'top'
+                },
+                chart: {
+                    animation: false,
+                    type: 'column',
+                    spacing: [30, 30, 30, 20]
+                },
+                tooltip: {
+                    valueSuffix: ' KWH',
+                    stickOnContact: true
+                }
+            }
+        }, {
+            renderTo: 'dashboard-col-2',
+            connector: {
+                id: 'micro-element'
+            },
+            type: 'DataGrid',
+            sync: {
+                highlight: true,
+                visibility: true
+            }
+        }]
+    });
+
+    const dataPool = board.dataPool;
+    const dataTable = await dataPool.getConnectorTable('micro-element');
+}
+
+// Launch  Dashboard
+setupDashboard();
+
+async function updateBoard() {
+    const dataTable = await board.dataPool.getConnectorTable('micro-element');
+
+    // Get Dashboard component
+    const dataGrid = board.mountedComponents[4];
+
+    // Update grid
+    await dataGrid.update({
+        connector: {
+            id: 'micro-element'
+        }
+    });
+}
+
+async function connectBoard() {
+    const dataTable = await board.dataPool.getConnectorTable('micro-element');
+}
+
+
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 
 let connectFlag = false;
 let mqtt;
-const reconnectTimeout = 2000;
+const reconnectTimeout = 10000;
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
-let row = 0;
 let outMsg = '';
 let msgCount = 0;
 
@@ -28,37 +192,36 @@ function onFailure(message) {
 function onMessageArrived(rawMessage) {
     outMsg = '<b>' + rawMessage.destinationName + '</b> = ' + rawMessage.payloadString + '<br>';
 
-    try {
-        document.getElementById('out_messages').innerHTML += outMsg;
-    } catch (err) {
-        document.getElementById('out_messages').innerHTML = err.message;
-    }
-
-    if (row === 10) {
-        row = 1;
-        document.getElementById('out_messages').innerHTML = outMsg;
-    } else {
-        row += 1;
-    }
-
     msgCount += 1;
+
+    // Test
+    sharedData.push(['MQTT', 0.25, msgCount]);
+    updateBoard();
 }
 
 function onConnected(recon, url) {
     console.log(' in onConnected ' + recon);
 }
 
-function onConnect() {
+async function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
     document.getElementById('status_messages').innerHTML = 'Connected to ' + host + ' on port ' + port;
     connectFlag = true;
     document.getElementById('status').innerHTML = 'Connected';
+
+    connectBoard();
+
+    // Test
+    sharedData.push(['Connect', 0.25, 8.8]);
 }
 
 function disconnect() {
     if (connectFlag) {
         mqtt.disconnect();
         connectFlag = false;
+        // Test
+        sharedData.push(['Connect', 0.25, 8.8]);
+        updateBoard();
     }
 }
 
@@ -129,7 +292,6 @@ function subTopics() {
     };
 
     mqtt.unsubscribe('/#');
-    document.getElementById('out_messages').innerHTML = null;
     mqtt.subscribe(stopic, soptions);
 
     return false;
