@@ -438,14 +438,14 @@ function seriesSetStackedPoints(
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
-                const test = stack.points[
+                const firstPoint = stack.points[
                     series.index + ',' + x + ',0'
                 ][0];
 
                 if (!reserveSpace) {
-                    stack.points[pointKey][0] = test;
+                    stack.points[pointKey][0] = firstPoint;
                 }
-                stack.allPoints[pointKey][0] = test;
+                stack.allPoints[pointKey][0] = firstPoint;
             }
 
         // When updating to null, reset the point stack (#7493)
