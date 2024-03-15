@@ -275,7 +275,10 @@ class ArcDiagramSeries extends SankeySeries {
                 while (i--) {
                     radius = (column[i].getSum()) * factor * scale;
 
-                    let plotArea = Math.min(chart.plotHeight, chart.plotWidth);
+                    const plotArea = Math.min(
+                        chart.plotHeight,
+                        chart.plotWidth
+                    );
 
                     if (radius > plotArea) {
                         scale = Math.min(plotArea / radius, scale);
@@ -377,7 +380,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (point.weight || 0) *
                     translationFactor *
                     fromNode.scale,
-                    (series.options.minLinkWidth || 0)
+                    (series.options.minLinkWidth || 0
+                    )
                 )),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;

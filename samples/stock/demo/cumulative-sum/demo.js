@@ -7,7 +7,8 @@ Highcharts.stockChart('container', {
     },
 
     subtitle: {
-        text: 'Displays the sum of all the previous values and the current value (only within visible range)',
+        text: 'Displays the sum of all the previous values and the current ' +
+            'value (only within visible range)',
         align: 'left'
     },
 
@@ -24,7 +25,8 @@ Highcharts.stockChart('container', {
     },
 
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> (${point.cumulativeSum})<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y}</b> (${point.cumulativeSum})<br/>',
         changeDecimals: 2,
         valueDecimals: 2,
         valuePrefix: '$',
@@ -38,9 +40,15 @@ Highcharts.stockChart('container', {
 
     series: [{
         name: 'The Local Bakery',
-        data: [678.78, 545.33, 788.72, 406.2, 744.87, 466.03, 822.7, 337.52, 396.67, 470.89]
+        data: [
+            678.78, 545.33, 788.72, 406.2, 744.87, 466.03, 822.7, 337.52,
+            396.67, 470.89
+        ]
     }, {
         name: 'The Local Fishmarket',
-        data: [1340.72, 982.43, 1437.99, 1476.2, 670.23, 429.58, 897.52, 845.11, 1275.79, 1843.01]
+        data: [
+            1340.72, 982.43, 1437.99, 1476.2, 670.23, 429.58, 897.52, 845.11,
+            1275.79, 1843.01
+        ]
     }]
 });

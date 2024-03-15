@@ -320,6 +320,9 @@ function onChartDestroy(
     }
 }
 
+/**
+ *
+ */
 function onChartGetMargins(
     this: Chart
 ): void {

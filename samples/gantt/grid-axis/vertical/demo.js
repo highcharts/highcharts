@@ -41,7 +41,8 @@ Highcharts.ganttChart('container', {
                     }
                 },
                 labels: {
-                    format: '{(divide (subtract point.end point.start) 86400000):.0f}'
+                    format: '{(divide (subtract point.end point.start) ' +
+                        '86400000):.0f}'
                 }
             }]
         }

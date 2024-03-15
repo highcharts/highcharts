@@ -210,7 +210,7 @@ const configs: {
                 }
 
                 return function (): void {
-                    if (!chart) {
+                    if (!chart || !chart.series?.length) {
                         return;
                     }
 
@@ -301,11 +301,13 @@ const configs: {
                                     }
 
                                     // Emit as lasting cursors
-                                    cursor.emitCursor(table,
+                                    cursor.emitCursor(
+                                        table,
                                         minCursorData,
                                         e as any,
                                         true
-                                    ).emitCursor(table,
+                                    ).emitCursor(
+                                        table,
                                         maxCursorData,
                                         e as any,
                                         true
@@ -402,7 +404,7 @@ const configs: {
 
                 const handleShow = (e: DataCursor.Event): void => {
                     const chart = component.chart;
-                    if (!chart) {
+                    if (!chart || !chart.series?.length) {
                         return;
                     }
                     if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
@@ -415,7 +417,7 @@ const configs: {
 
                 const handleHide = (e: DataCursor.Event): void => {
                     const chart = component.chart;
-                    if (!chart) {
+                    if (!chart || !chart.series?.length) {
                         return;
                     }
                     if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
@@ -477,7 +479,7 @@ const configs: {
                         );
                     }
 
-                    if (chart && chart.series.length) {
+                    if (chart && chart.series?.length) {
                         const cursor = e.cursor;
                         if (cursor.type === 'position') {
                             let [series] = chart.series;
@@ -516,7 +518,8 @@ const configs: {
 
                     const point = getHoveredPoint(e);
 
-                    if (!point || !chart ||
+                    if (
+                        !point || !chart ||
                         // Non-cartesian points do not use 'isInside'
                         (!point.isInside && point.series.isCartesian) ||
                         // Abort if the affected chart is the same as the one

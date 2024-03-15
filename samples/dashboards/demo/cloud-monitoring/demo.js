@@ -67,7 +67,10 @@ const setupDashboard = instanceId => {
                 type: 'JSON',
                 options: {
                     firstRowAsNames: false,
-                    columnNames: ['timestamp', 'readOpt', 'writeOpt', 'networkIn', 'networkOut', 'cpuUtilization'],
+                    columnNames: [
+                        'timestamp', 'readOpt', 'writeOpt', 'networkIn',
+                        'networkOut', 'cpuUtilization'
+                    ],
                     dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
                     beforeParse: function (data) {
                         const currentInstance = data.find(
@@ -84,7 +87,11 @@ const setupDashboard = instanceId => {
                 options: {
                     firstRowAsNames: false,
                     orientantion: 'columns',
-                    columnNames: ['index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB', 'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB', 'Documents', 'Downloads'],
+                    columnNames: [
+                        'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
+                        'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
+                        'Documents', 'Downloads'
+                    ],
                     dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
                     beforeParse: function (data) {
                         const currentInstance = data.find(
@@ -291,7 +298,8 @@ const setupDashboard = instanceId => {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'Disk usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 },
                 accessibility: {
@@ -364,9 +372,11 @@ const setupDashboard = instanceId => {
                     series: {
                         className: 'highcharts-live-kpi',
                         dataLabels: {
-                            format: '<div style="text-align:center; margin-top: -20px">' +
+                            format: '<div style="text-align:center; ' +
+                                'margin-top: -20px">' +
                             '<div style="font-size:1.2em;">{y}%</div>' +
-                            '<div style="font-size:14px; opacity:0.4; text-align: center;">CPU</div>' +
+                            '<div style="font-size:14px; opacity:0.4; ' +
+                            'text-align: center;">CPU</div>' +
                             '</div>',
                             useHTML: true
                         }
@@ -387,7 +397,8 @@ const setupDashboard = instanceId => {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'CPU usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'CPU usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 },
                 tooltip: {
@@ -416,9 +427,11 @@ const setupDashboard = instanceId => {
                     series: {
                         className: 'highcharts-live-kpi',
                         dataLabels: {
-                            format: '<div style="text-align:center; margin-top: -20px">' +
+                            format: '<div style="text-align:center; ' +
+                                'margin-top: -20px">' +
                             '<div style="font-size:1.2em;">{y} MB</div>' +
-                            '<div style="font-size:14px; opacity:0.4; text-align: center;">Memory</div>' +
+                            '<div style="font-size:14px; opacity:0.4; ' +
+                            'text-align: center;">Memory</div>' +
                             '</div>',
                             useHTML: true
                         }
@@ -434,7 +447,8 @@ const setupDashboard = instanceId => {
                 }],
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Memory usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'Memory usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 },
                 tooltip: {
@@ -448,7 +462,8 @@ const setupDashboard = instanceId => {
             class: 'health-indicator',
             elements: [{
                 tagName: 'div',
-                class: 'health-wrapper highcharts-' + instance.HealthIndicator + '-icon',
+                class: 'health-wrapper highcharts-' + instance.HealthIndicator +
+                    '-icon',
                 attributes: {
                     'aria-label': 'Health: ' + instance.HealthIndicator,
                     role: 'img'
@@ -471,9 +486,11 @@ const setupDashboard = instanceId => {
                 plotOptions: {
                     series: {
                         dataLabels: {
-                            format: '<div style="text-align:center; margin-top: -20px">' +
+                            format: '<div style="text-align:center; ' +
+                                'margin-top: -20px">' +
                             '<div style="font-size:1.2em;">{y} GB</div>' +
-                            '<div style="font-size:14px; opacity:0.4; text-align: center;">Disk space</div>' +
+                            '<div style="font-size:14px; opacity:0.4; ' +
+                            'text-align: center;">Disk space</div>' +
                             '</div>',
                             useHTML: true
                         }
@@ -492,7 +509,8 @@ const setupDashboard = instanceId => {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Disk usage. Highcharts interactive chart.'
+                        chartContainerLabel: 'Disk usage. Highcharts ' +
+                            'interactive chart.'
                     }
                 }
             }
@@ -618,7 +636,10 @@ const setupDashboard = instanceId => {
             cell: 'instances-table',
             type: 'DataGrid',
             title: 'Instances',
-            visibleColumns: ['InstanceId', 'InstanceType', 'PublicIpAddress', 'State', 'HealthIndicator'],
+            visibleColumns: [
+                'InstanceId', 'InstanceType', 'PublicIpAddress', 'State',
+                'HealthIndicator'
+            ],
             dataGridOptions: {
                 editable: false,
                 columns: {
@@ -664,7 +685,9 @@ const setupDashboard = instanceId => {
                 mount: function () {
                     setTimeout(() => {
                         const currentRow =
-                            document.querySelector('[data-original-data="' + instance.InstanceId + '"]').parentNode;
+                            document.querySelector(
+                                `[data-original-data="${instance.InstanceId}"]`
+                            ).parentNode;
                         currentRow.classList.add('current');
                     }, 1);
                 }

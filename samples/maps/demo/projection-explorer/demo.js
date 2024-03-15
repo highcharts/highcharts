@@ -3,7 +3,8 @@
     // Get random data for this sample
     function getRandomData(topology) {
         return topology.objects.default.geometries.map(() =>
-            Math.round(Math.random() * 100));
+            Math.round(Math.random() * 100)
+        );
     }
 
     const topology = await fetch(

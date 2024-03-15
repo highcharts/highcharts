@@ -1,4 +1,5 @@
-// Highcharts 4.1.10, Issue #4667: Column Satcked chart - Bar's color opacity not comes to 1 after drillup
+// Highcharts 4.1.10, Issue #4667: Column Satcked chart - Bar's color opacity
+// not comes to 1 after drillup
 QUnit.test(
     'Drilling up left one column semi-opaque (#4667)',
     function (assert) {
@@ -196,7 +197,10 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
 
     var breadcrumbsGroup = chart.breadcrumbs.group;
 
-    assert.notEqual(chart.drillUpButton, undefined, 'Drill up button is not undefined');
+    assert.notEqual(
+        chart.drillUpButton, undefined, 'Drill up button is not ' +
+        'undefined'
+    );
 
     controller.moveTo(
         breadcrumbsGroup.translateX + 10,
@@ -455,6 +459,9 @@ QUnit.test(
             assertPassed = false;
         }
 
-        assert.ok(assertPassed, 'It should not update the length of udefined ddDupes.');
+        assert.ok(
+            assertPassed, 'It should not update the length of udefined ' +
+            'ddDupes.'
+        );
     }
 );

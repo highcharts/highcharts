@@ -122,6 +122,30 @@ async function dataGridScripts() {
     }
 }
 
+/**
+ * Copy DataGrid files to the correct location so it matches the structure of
+ * code.highcharts.com
+ */
+async function copyDataGrid() {
+    const fsLib = require('../lib/fs');
+    const {
+        bundleTargetFolderDataGrid,
+        bundleTargetFolder,
+        cssFolder
+    } = require('./_config.json');
+
+    fsLib.copyAllFiles(
+        bundleTargetFolderDataGrid,
+        bundleTargetFolder,
+        false
+    );
+
+    fsLib.copyFile(
+        bundleTargetFolderDataGrid + 'css/datagrid.css',
+        cssFolder + 'datagrid.css'
+    );
+}
+
 const { scriptsTS } = require('../scripts-ts');
 const { scriptCSS } = require('../scripts-css');
 require('./scripts-dts');
@@ -132,5 +156,6 @@ gulp.task('dashboards/scripts', gulp.series(
     () => scriptsTS({ dashboards: true }),
     dashboardsScripts,
     () => scriptCSS({ dashboards: true }),
-    'dashboards/scripts-dts'
+    'dashboards/scripts-dts',
+    copyDataGrid
 ));

@@ -52,10 +52,12 @@ AST.allowedAttributes = [
     'checked',
     'src',
     'name',
-    'selected'];
+    'selected'
+];
 AST.allowedReferences = [
     ...AST.allowedReferences,
-    'data:image/'];
+    'data:image/'
+];
 
 /* *
  *

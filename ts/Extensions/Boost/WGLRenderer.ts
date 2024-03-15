@@ -850,7 +850,8 @@ class WGLRenderer {
                 low = (y as any) - (d as any).y;
             }
 
-            if (yMin !== null &&
+            if (
+                yMin !== null &&
                 typeof yMin !== 'undefined' &&
                 yMax !== null &&
                 typeof yMax !== 'undefined'
@@ -993,7 +994,8 @@ class WGLRenderer {
 
             // If the last _drawn_ point is closer to this point than the
             // threshold, skip it. Shaves off 20-100ms in processing.
-            if (!settings.useGPUTranslations &&
+            if (
+                !settings.useGPUTranslations &&
                 !settings.usePreallocated &&
                 (lastX && Math.abs(x - lastX) < cullXThreshold) &&
                 (lastY && Math.abs(y - lastY) < cullYThreshold)
@@ -1405,7 +1407,8 @@ class WGLRenderer {
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
                 gl.blendEquation(gl.FUNC_ADD);
 
-            } else if ((options.boostBlending as any) === 'mult' ||
+            } else if (
+                (options.boostBlending as any) === 'mult' ||
                 options.boostBlending === 'multiply'
             ) {
                 gl.blendFunc(gl.DST_COLOR, gl.ZERO);

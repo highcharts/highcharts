@@ -70,5 +70,8 @@ QUnit.test('Treemap and updates', function (assert) {
         }]
     });
 
-    assert.ok(true, '#10159: Updating data while traversed down should not throw');
+    assert.ok(
+        true, '#10159: Updating data while traversed down should not ' +
+        'throw'
+    );
 });

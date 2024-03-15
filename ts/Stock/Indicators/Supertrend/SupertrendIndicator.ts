@@ -483,7 +483,8 @@ class SupertrendIndicator extends SMAIndicator {
         }
 
         // Generate lines:
-        objectEach(groupedPoints,
+        objectEach(
+            groupedPoints,
             function (values, lineName): void {
                 indicator.points = values;
                 indicator.options = merge(
@@ -622,7 +623,8 @@ class SupertrendIndicator extends SMAIndicator {
                 finalDown[i] = prevFinalDown;
             }
 
-            if (prevST === prevFinalUp && y[close] < finalUp[i] ||
+            if (
+                prevST === prevFinalUp && y[close] < finalUp[i] ||
                 prevST === prevFinalDown && y[close] < finalDown[i]
             ) {
                 supertrend = finalUp[i];

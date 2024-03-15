@@ -21,7 +21,8 @@ Highcharts.chart('container', {
     accessibility: {
         point: {
             valueDescriptionFormat:
-          '{index}. {point.name}, valuation: ${point.x}B, revenue: ${point.y}B, LossesOrProfit: ${point.z}B.'
+          '{index}. {point.name}, valuation: ${point.x}B, revenue: ' +
+          '${point.y}B, LossesOrProfit: ${point.z}B.'
         }
     },
 

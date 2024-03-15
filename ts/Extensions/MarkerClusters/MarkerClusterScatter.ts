@@ -1442,7 +1442,8 @@ function seriesGetPointsState(
             oldState.parentStateId &&
             state[newState.parentStateId] &&
             state[newState.parentStateId].parentsId.indexOf(
-                oldState.parentStateId) === -1
+                oldState.parentStateId
+            ) === -1
         ) {
             state[newState.parentStateId].parentsId.push(
                 oldState.parentStateId

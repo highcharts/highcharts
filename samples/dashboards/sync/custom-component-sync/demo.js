@@ -217,7 +217,8 @@ Dashboards.board('container', {
                 text: 'Happiness Score vs Population 2022'
             },
             subtitle: {
-                text: 'Showing average happiness score below and above the chosen population.'
+                text: 'Showing average happiness score below and above the ' +
+                    'chosen population.'
             },
             credits: {
                 text: 'worldhappiness.report',
@@ -343,7 +344,8 @@ Dashboards.board('container', {
                             yColumn.slice(rowIndex, yColumn.length)
                         ].map(side => Math.round(
                             side.reduce(
-                                (acc, current) => acc + current, 0) /
+                                (acc, current) => acc + current, 0
+                            ) /
                                 side.length * 100
                         ) / 100);
 

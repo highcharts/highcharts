@@ -546,8 +546,10 @@ class VennSeries extends ScatterSeries {
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        const relations = VennUtils.processVennData(this.options.data as any,
-            VennSeries.splitter);
+        const relations = VennUtils.processVennData(
+            this.options.data as any,
+            VennSeries.splitter
+        );
 
         // Calculate the positions of each circle.
         const {

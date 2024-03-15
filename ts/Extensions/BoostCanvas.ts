@@ -796,7 +796,8 @@ namespace BoostCanvas {
                     isYInside = y >= yMin && y <= yMax;
                 }
 
-                if (!isNull &&
+                if (
+                    !isNull &&
                     (
                         (x >= xMin && x <= xMax && isYInside) ||
                         (isNextInside || isPrevInside)

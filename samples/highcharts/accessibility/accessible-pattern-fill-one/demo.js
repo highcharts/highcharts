@@ -27,7 +27,8 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Area chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -61,8 +62,10 @@ Highcharts.chart('container-area', {
             }
         }
     }, {
-        data: [null, null, null, null, null,
-            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        data: [
+            null, null, null, null, null,
+            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4
+        ],
         color: '#e88',
         fillColor: {
             pattern: {

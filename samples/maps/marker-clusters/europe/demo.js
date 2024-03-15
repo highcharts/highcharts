@@ -24,9 +24,12 @@
         tooltip: {
             formatter: function () {
                 if (this.point.clusteredData) {
-                    return 'Clustered points: ' + this.point.clusterPointsAmount;
+                    return 'Clustered points: ' +
+                        this.point.clusterPointsAmount;
                 }
-                return '<b>' + this.key + '</b><br>Lat: ' + this.point.lat.toFixed(2) + ', Lon: ' + this.point.lon.toFixed(2);
+                return '<b>' + this.key + '</b><br>Lat: ' +
+                    this.point.lat.toFixed(2) + ', Lon: ' +
+                    this.point.lon.toFixed(2);
             }
         },
         colorAxis: {

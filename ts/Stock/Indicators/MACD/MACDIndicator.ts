@@ -392,7 +392,8 @@ class MACDIndicator extends SMAIndicator {
             j = 0,
             signalLine: Array<Array<number>> = [];
 
-        if ((series.xData as any).length <
+        if (
+            (series.xData as any).length <
             (params.longPeriod as any) + params.signalPeriod
         ) {
             return;
@@ -472,10 +473,14 @@ class MACDIndicator extends SMAIndicator {
                     MACD[i][1] = 0;
                     yMACD[i][0] = 0;
                 } else {
-                    MACD[i][1] = correctFloat((MACD[i] as any)[3] -
-                    signalLine[j][1]);
-                    yMACD[i][0] = correctFloat((MACD[i] as any)[3] -
-                    signalLine[j][1]);
+                    MACD[i][1] = correctFloat(
+                        (MACD[i] as any)[3] -
+                    signalLine[j][1]
+                    );
+                    yMACD[i][0] = correctFloat(
+                        (MACD[i] as any)[3] -
+                    signalLine[j][1]
+                    );
                 }
 
                 j++;

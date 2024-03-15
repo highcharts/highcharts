@@ -22,7 +22,8 @@
         },
 
         accessibility: {
-            description: 'We see how China and India by far are the countries with the largest population.'
+            description: 'We see how China and India by far are the ' +
+                'countries with the largest population.'
         },
 
         legend: {

@@ -20,7 +20,10 @@ QUnit.module('Styled mode for series types', function () {
                 container
                     .querySelectorAll('*[' + attr + ']')
                     .forEach(function (elem) {
-                        if (elem.className === 'highcharts-a11y-proxy-element') {
+                        if (
+                            elem.className ===
+                            'highcharts-a11y-proxy-element'
+                        ) {
                             return;
                         }
                         var key = [
@@ -30,7 +33,8 @@ QUnit.module('Styled mode for series types', function () {
                         ].join(',');
                         if (!notified[key]) {
                             console.log(
-                                '⚠️ Found presentational attribute in styled mode:',
+                                '⚠️ Found presentational attribute in styled ' +
+                                'mode:',
                                 attr,
                                 elem
                             );
