@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -37,12 +37,12 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
-    public beaufort: string = void 0 as any;
-    public beaufortLevel: number = void 0 as any;
-    public direction: number = void 0 as any;
-    public options: WindbarbPointOptions = void 0 as any;
-    public series: WindbarbSeries = void 0 as any;
-    public value: number = void 0 as any;
+    public beaufort!: string;
+    public beaufortLevel!: number;
+    public direction!: number;
+    public options!: WindbarbPointOptions;
+    public series!: WindbarbSeries;
+    public value!: number;
 
     /* *
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,7 +34,6 @@ const {
     defined,
     extend,
     isNumber,
-    isString,
     pick,
     relativeLength
 } = U;
@@ -59,9 +58,9 @@ class PiePoint extends Point {
 
     public half: number = 0;
 
-    public options: PiePointOptions = void 0 as any;
+    public options!: PiePointOptions;
 
-    public series: PieSeries = void 0 as any;
+    public series!: PieSeries;
 
     public sliced?: boolean;
 
@@ -134,19 +133,21 @@ class PiePoint extends Point {
      * Initialize the pie slice.
      * @private
      */
-    public init(): PiePoint {
-        super.init.apply(this, arguments as any);
+    public constructor(
+        series: PieSeries,
+        options: PiePointOptions,
+        x?: number
+    ) {
+        super(series, options, x);
 
-        this.name = pick(this.name, 'Slice');
+        this.name ??= 'Slice';
 
-        // add event listener for select
+        // Add event listener for select
         const toggleSlice = (e: (AnyRecord|Event)): void => {
             this.slice(e.type === 'select');
         };
         addEvent(this, 'select', toggleSlice);
         addEvent(this, 'unselect', toggleSlice);
-
-        return this;
     }
 
     /**
@@ -174,51 +175,13 @@ class PiePoint extends Point {
      */
     public setVisible(
         vis: boolean,
-        redraw?: boolean
+        redraw: boolean = true
     ): void {
-        const series = this.series,
-            chart = series.chart,
-            ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-
-        redraw = pick(redraw, ignoreHiddenPoint);
-
         if (vis !== this.visible) {
-
             // If called without an argument, toggle visibility
-            this.visible = this.options.visible = vis =
-                typeof vis === 'undefined' ? !this.visible : vis;
-            // update userOptions.data
-            (series.options.data as any)[series.data.indexOf(this)] =
-                this.options;
-
-            // Show and hide associated elements. This is performed
-            // regardless of redraw or not, because chart.redraw only
-            // handles full series.
-            ['graphic', 'dataLabel', 'connector'].forEach(
-                (key: string): void => {
-                    if ((this as any)[key]) {
-                        (this as any)[key][vis ? 'show' : 'hide'](vis);
-                    }
-                }
-            );
-
-            if (this.legendItem) {
-                chart.legend.colorizeItem(this, vis);
-            }
-
-            // #4170, hide halo after hiding point
-            if (!vis && this.state === 'hover') {
-                this.setState('');
-            }
-
-            // Handle ignore hidden slices
-            if (ignoreHiddenPoint) {
-                series.isDirty = true;
-            }
-
-            if (redraw) {
-                chart.redraw();
-            }
+            this.update({
+                visible: vis ?? !this.visible
+            }, redraw, void 0, false);
         }
     }
 
@@ -245,7 +208,7 @@ class PiePoint extends Point {
 
         setAnimation(animation, chart);
 
-        // redraw is true by default
+        // Redraw is true by default
         redraw = pick(redraw, true);
 
         /**
@@ -257,7 +220,7 @@ class PiePoint extends Point {
         // if called without an argument, toggle
         this.sliced = this.options.sliced = sliced =
             defined(sliced) ? sliced : !this.sliced;
-        // update userOptions.data
+        // Update userOptions.data
         (series.options.data as any)[series.data.indexOf(this)] =
             this.options;
 
@@ -278,7 +241,7 @@ interface PiePoint {
 }
 extend(PiePoint.prototype, {
     connectorShapes: {
-        // only one available before v7.0.0
+        // Only one available before v7.0.0
         fixedOffset: function (
             labelPosition: DataLabel.PositionObject,
             connectorPosition: DataLabel.LabelConnectorPositionObject,
@@ -287,7 +250,7 @@ extend(PiePoint.prototype, {
             const breakAt = connectorPosition.breakAt,
                 touchingSliceAt = connectorPosition.touchingSliceAt,
                 lineSegment = options.softConnector ? [
-                    'C', // soft break
+                    'C', // Soft break
                     // 1st control point (of the curve)
                     labelPosition.x +
                     // 5 gives the connector a little horizontal bend
@@ -295,15 +258,15 @@ extend(PiePoint.prototype, {
                     labelPosition.y, //
                     2 * breakAt.x - touchingSliceAt.x, // 2nd control point
                     2 * breakAt.y - touchingSliceAt.y, //
-                    breakAt.x, // end of the curve
+                    breakAt.x, // End of the curve
                     breakAt.y //
                 ] as SVGPath.CurveTo : [
-                    'L', // pointy break
+                    'L', // Pointy break
                     breakAt.x,
                     breakAt.y
                 ] as SVGPath.LineTo;
 
-            // assemble the path
+            // Assemble the path
             return ([
                 ['M', labelPosition.x, labelPosition.y],
                 lineSegment,
@@ -317,7 +280,7 @@ extend(PiePoint.prototype, {
         ): SVGPath {
             const touchingSliceAt = connectorPosition.touchingSliceAt;
 
-            // direct line to the slice
+            // Direct line to the slice
             return [
                 ['M', labelPosition.x, labelPosition.y],
                 ['L', touchingSliceAt.x, touchingSliceAt.y]

@@ -199,142 +199,146 @@ QUnit.test('Ordinal axis and lazy loading', function (assert) {
 });
 
 
-QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238', function (assert) {
-    const data = [
-            [1585594800000, 1137.26],
-            [1585594860000, 1139.22],
-            [1585594920000, 1140.09],
-            [1585594980000, 1139.08],
-            [1585595040000, 1139.92],
-            [1585595100000, 1139.23],
-            [1585595160000, 1139.34],
-            [1585595220000, 1137.27],
-            [1585595280000, 1138.01],
-            [1585595340000, 1139.13],
-            [1585595400000, 1140.52],
-            [1585595460000, 1141.56],
-            [1585595520000, 1142.36],
-            [1585595580000, 1141.86],
-            [1585595640000, 1142.11],
-            [1585595700000, 1140.96],
-            [1585595760000, 1141.22],
-            [1585595820000, 1139.62],
-            [1585595880000, 1139.66],
-            [1585595940000, 1141.1],
-            [1585596000000, 1141.99],
-            [1585596060000, 1142.02],
-            [1585596120000, 1141.65],
-            [1585596180000, 1140.78],
-            [1585596240000, 1138.25],
-            [1585596300000, 1136.84],
-            [1585596360000, 1139.32],
-            [1585596420000, 1135.75],
-            [1585596480000, 1137.34],
-            [1585596540000, 1137.14],
-            [1585596600000, 1138.5],
-            [1585596660000, 1138.17],
-            [1585596720000, 1138.18],
-            [1585596780000, 1138.58],
-            [1585596840000, 1140.13],
-            [1585596900000, 1140.42],
-            [1585596960000, 1143.71],
-            [1585597020000, 1143.35],
-            [1585597080000, 1146.68],
-            [1585597140000, 1147.99],
-            [1585597200000, 1147.79],
-            [1585597260000, 1146.26],
-            [1585597320000, 1145.26],
-            [1585597380000, 1143.22],
-            [1585597440000, 1145.41],
-            [1585597500000, 1146.13],
-            [1585597560000, 1143.72],
-            [1585597620000, 1144.19],
-            [1585597680000, 1144.27],
-            [1585597740000, 1141.3],
-            [1585597800000, 1142.95],
-            [1585597860000, 1142.01],
-            [1585597920000, 1142.31],
-            [1585597980000, 1139.55],
-            [1585598040000, 1148.34],
-            [1585598100000, 1148.68],
-            [1585598160000, 1149.42],
-            [1585665060000, 1166.27],
-            [1585665120000, 1166.62],
-            [1585665180000, 1164.2],
-            [1585665240000, 1162.72],
-            [1585665300000, 1164.65],
-            [1585665360000, 1167.25],
-            [1585665420000, 1167.98],
-            [1585665480000, 1170.69],
-            [1585665540000, 1170.62],
-            [1585665600000, 1172.5],
-            [1585665660000, 1171.71],
-            [1585665720000, 1168.99],
-            [1585665780000, 1169.2],
-            [1585665840000, 1168.31],
-            [1585665900000, 1167.06],
-            [1585665960000, 1167.42],
-            [1585666020000, 1169.32],
-            [1585666080000, 1168.55],
-            [1585666140000, 1168.49],
-            [1585666200000, 1170.46],
-            [1585666260000, 1171.11]
-        ],
-        chart = Highcharts.stockChart('container', {
-            chart: {
-                width: 500
-            },
-            xAxis: {
-                min: 1585595880000
-            },
-            series: [{
-                data: data
-            }]
-        }),
-        axis = chart.xAxis[0];
+QUnit.test(
+    'Panning ordinal axis on mobile devices- lin2val calculation, ' +
+    '#13238', function (assert) {
+        const data = [
+                [1585594800000, 1137.26],
+                [1585594860000, 1139.22],
+                [1585594920000, 1140.09],
+                [1585594980000, 1139.08],
+                [1585595040000, 1139.92],
+                [1585595100000, 1139.23],
+                [1585595160000, 1139.34],
+                [1585595220000, 1137.27],
+                [1585595280000, 1138.01],
+                [1585595340000, 1139.13],
+                [1585595400000, 1140.52],
+                [1585595460000, 1141.56],
+                [1585595520000, 1142.36],
+                [1585595580000, 1141.86],
+                [1585595640000, 1142.11],
+                [1585595700000, 1140.96],
+                [1585595760000, 1141.22],
+                [1585595820000, 1139.62],
+                [1585595880000, 1139.66],
+                [1585595940000, 1141.1],
+                [1585596000000, 1141.99],
+                [1585596060000, 1142.02],
+                [1585596120000, 1141.65],
+                [1585596180000, 1140.78],
+                [1585596240000, 1138.25],
+                [1585596300000, 1136.84],
+                [1585596360000, 1139.32],
+                [1585596420000, 1135.75],
+                [1585596480000, 1137.34],
+                [1585596540000, 1137.14],
+                [1585596600000, 1138.5],
+                [1585596660000, 1138.17],
+                [1585596720000, 1138.18],
+                [1585596780000, 1138.58],
+                [1585596840000, 1140.13],
+                [1585596900000, 1140.42],
+                [1585596960000, 1143.71],
+                [1585597020000, 1143.35],
+                [1585597080000, 1146.68],
+                [1585597140000, 1147.99],
+                [1585597200000, 1147.79],
+                [1585597260000, 1146.26],
+                [1585597320000, 1145.26],
+                [1585597380000, 1143.22],
+                [1585597440000, 1145.41],
+                [1585597500000, 1146.13],
+                [1585597560000, 1143.72],
+                [1585597620000, 1144.19],
+                [1585597680000, 1144.27],
+                [1585597740000, 1141.3],
+                [1585597800000, 1142.95],
+                [1585597860000, 1142.01],
+                [1585597920000, 1142.31],
+                [1585597980000, 1139.55],
+                [1585598040000, 1148.34],
+                [1585598100000, 1148.68],
+                [1585598160000, 1149.42],
+                [1585665060000, 1166.27],
+                [1585665120000, 1166.62],
+                [1585665180000, 1164.2],
+                [1585665240000, 1162.72],
+                [1585665300000, 1164.65],
+                [1585665360000, 1167.25],
+                [1585665420000, 1167.98],
+                [1585665480000, 1170.69],
+                [1585665540000, 1170.62],
+                [1585665600000, 1172.5],
+                [1585665660000, 1171.71],
+                [1585665720000, 1168.99],
+                [1585665780000, 1169.2],
+                [1585665840000, 1168.31],
+                [1585665900000, 1167.06],
+                [1585665960000, 1167.42],
+                [1585666020000, 1169.32],
+                [1585666080000, 1168.55],
+                [1585666140000, 1168.49],
+                [1585666200000, 1170.46],
+                [1585666260000, 1171.11]
+            ],
+            chart = Highcharts.stockChart('container', {
+                chart: {
+                    width: 500
+                },
+                xAxis: {
+                    min: 1585595880000
+                },
+                series: [{
+                    data: data
+                }]
+            }),
+            axis = chart.xAxis[0];
 
-    function emulatePanning() {
-        const newMin = axis.toValue(-20),
-            newMax = axis.toValue(400);
+        function emulatePanning() {
+            const newMin = axis.toValue(-20),
+                newMax = axis.toValue(400);
 
-        chart.xAxis[0].setExtremes(newMin, newMax);
-    }
+            chart.xAxis[0].setExtremes(newMin, newMax);
+        }
 
-    emulatePanning();
+        emulatePanning();
 
-    assert.ok(
-        axis.min > chart.series[0].points[0].x,
-        `After panning 20px, the axis extremes should not be reset
+        assert.ok(
+            axis.min > chart.series[0].points[0].x,
+            `After panning 20px, the axis extremes should not be reset
         but changed respectively.`
-    );
+        );
 
-    const extendedOrdinalPositionsLength = chart.xAxis[0].ordinal.getExtendedPositions();
-    chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
+        const extendedOrdinalPositionsLength =
+        chart.xAxis[0].ordinal.getExtendedPositions();
+        chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
 
-    assert.notStrictEqual(
-        extendedOrdinalPositionsLength,
-        chart.xAxis[0].ordinal.getExtendedPositions(),
-        `After adding the point, the extendedOrdinalPositions array
+        assert.notStrictEqual(
+            extendedOrdinalPositionsLength,
+            chart.xAxis[0].ordinal.getExtendedPositions(),
+            `After adding the point, the extendedOrdinalPositions array
         should be recalculated, #16055.`
-    );
-    // #16068
-    chart.xAxis[0].setExtremes(1585665128355, 1586026260000);
-    const controller = new TestController(chart),
-        visiblePoints = chart.series[0].points.filter(p => p.isInside);
+        );
+        // #16068
+        chart.xAxis[0].setExtremes(1585665128355, 1586026260000);
+        const controller = new TestController(chart),
+            visiblePoints = chart.series[0].points.filter(p => p.isInside);
 
-    controller.pan([20, 100], [chart.xAxis[0].len, 100]);
+        controller.pan([20, 100], [chart.xAxis[0].len, 100]);
 
-    assert.strictEqual(
-        visiblePoints.length,
-        chart.series[0].points.filter(p => p.isInside).length,
-        'Amount of visible points should remain the same while panning, #16068.'
-    );
-});
+        assert.strictEqual(
+            visiblePoints.length,
+            chart.series[0].points.filter(p => p.isInside).length,
+            'Amount of visible points should remain the same while ' +
+                'panning, #16068.'
+        );
+    });
 
 QUnit.test('findIndexOf', assert => {
     const findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.findIndexOf;
+        Highcharts.OrdinalAxis.Additions.findIndexOf;
     const array = [0, 1, 3, 5, 10, 12, 13, 15];
     assert.equal(findIndexOf(array, 3), 2);
     assert.equal(findIndexOf(array, 0), 0);
@@ -353,100 +357,106 @@ QUnit.test('findIndexOf', assert => {
 });
 
 
-QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
-    const axis = {
-        transA: 0.04,
-        min: 3.24,
-        max: 7,
-        len: 500,
-        translationSlope: 0.2,
-        minPixelPadding: 0,
-        ordinal: {
-            extendedOrdinalPositions: [0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9],
-            positions: [3, 4.2, 4.8, 5, 7],
-            slope: 500
-        },
-        series: [{
-            points: [{
-                x: 3,
-                plotX: -20
-            }, {
-                x: 4.2,
-                plotX: 80 // distance between points 100px
+QUnit.test(
+    'lin2val- unit test for values outside the plotArea.', function (assert) {
+        const axis = {
+            transA: 0.04,
+            min: 3.24,
+            max: 7,
+            len: 500,
+            translationSlope: 0.2,
+            minPixelPadding: 0,
+            ordinal: {
+                extendedOrdinalPositions: [
+                    0, 0.5, 1.5, 3, 4.2, 4.8, 5, 7, 8, 9
+                ],
+                positions: [3, 4.2, 4.8, 5, 7],
+                slope: 500
+            },
+            series: [{
+                points: [{
+                    x: 3,
+                    plotX: -20
+                }, {
+                    x: 4.2,
+                    plotX: 80 // distance between points 100px
+                }]
             }]
-        }]
-    };
-    axis.ordinal.axis = axis;
+        };
+        axis.ordinal.axis = axis;
 
-    axis.ordinal.getExtendedPositions = function () {
-        return axis.ordinal.extendedOrdinalPositions;
-    };
+        axis.ordinal.getExtendedPositions = function () {
+            return axis.ordinal.extendedOrdinalPositions;
+        };
 
-    // On the chart there are 5 points equaly spaced.
-    // The distance between them equals 100px.
-    // Thare are some points that are out of the current range.
-    // The last visible point is located at 380px.
-    // EOP = extendedOrdinalPositions
+        // On the chart there are 5 points equaly spaced.
+        // The distance between them equals 100px.
+        // Thare are some points that are out of the current range.
+        // The last visible point is located at 380px.
+        // EOP = extendedOrdinalPositions
 
-    axis.ordinal.getIndexOfPoint =
+        axis.ordinal.getIndexOfPoint =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.getIndexOfPoint;
-    axis.ordinal.findIndexOf =
+        Highcharts.OrdinalAxis.Additions.prototype.getIndexOfPoint;
+        axis.ordinal.findIndexOf =
         // eslint-disable-next-line no-underscore-dangle
-        Highcharts._modules['Core/Axis/OrdinalAxis.js'].Additions.prototype.findIndexOf;
-    function lin2val(val) {
-        return Highcharts.Axis.prototype.lin2val.call(axis, val);
-    }
+        Highcharts.OrdinalAxis.Additions.prototype.findIndexOf;
+        function lin2val(val) {
+            return Highcharts.Axis.prototype.lin2val.call(axis, val);
+        }
 
-    assert.strictEqual(
-        lin2val(-20 / axis.transA + axis.min),
-        3,
-        `For the pixel value equal to the first point x position,
+        assert.strictEqual(
+            lin2val(-20 / axis.transA + axis.min),
+            3,
+            `For the pixel value equal to the first point x position,
         the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(80 / axis.transA + axis.min),
-        4.2,
-        `For the pixel value equal to the second point x position,
+        );
+        assert.strictEqual(
+            lin2val(80 / axis.transA + axis.min),
+            4.2,
+            `For the pixel value equal to the second point x position,
         the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(30 / axis.transA + axis.min),
-        3.6,
-        `For the pixel value located between two visible points,
+        );
+        assert.strictEqual(
+            lin2val(30 / axis.transA + axis.min),
+            3.6,
+            `For the pixel value located between two visible points,
         the function should calculate the value between them.`
-    );
-    assert.strictEqual(
-        lin2val(-50 / axis.transA + axis.min),
-        2.55,
-        `For the pixel value smaller than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
-    );
-    assert.strictEqual(
-        lin2val(-520 / axis.transA + axis.min),
-        -520 / axis.transA + axis.min, // #16784
-        `For the pixel value lower than any point in EOP array, the function
+        );
+        assert.strictEqual(
+            lin2val(-50 / axis.transA + axis.min),
+            2.55,
+            'For the pixel value smaller than the first visible point, the ' +
+            'function should calculate value between that point and next ' +
+            'using EOP array.'
+        );
+        assert.strictEqual(
+            lin2val(-520 / axis.transA + axis.min),
+            -520 / axis.transA + axis.min, // #16784
+            `For the pixel value lower than any point in EOP array, the function
         should return requested value.`
-    );
-    assert.strictEqual(
-        lin2val(380 / axis.transA + axis.min),
-        7,
-        `For the pixel value equal to last point,
+        );
+        assert.strictEqual(
+            lin2val(380 / axis.transA + axis.min),
+            7,
+            `For the pixel value equal to last point,
         the function should return the value for that point.`
-    );
-    assert.strictEqual(
-        lin2val(420 / axis.transA + axis.min),
-        7.4,
-        `For the pixel value higher than the first visible point, the function
-        should calculate value between that point and next using EOP array.`
-    );
-    assert.strictEqual(
-        lin2val(1000 / axis.transA + axis.min),
-        1000 / axis.transA + axis.min, // #16784
-        `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should return requested value.`
-    );
-});
+        );
+        assert.strictEqual(
+            lin2val(420 / axis.transA + axis.min),
+            7.4,
+            'For the pixel value higher than the first visible point, the ' +
+            'function should calculate value between that point and next ' +
+            'using EOP array.'
+        );
+        assert.strictEqual(
+            lin2val(1000 / axis.transA + axis.min),
+            1000 / axis.transA + axis.min, // #16784
+            'For the pixel value higher than any point in ' +
+            'extendedOrdinalPositions, array, the function should return ' +
+            'requested value.'
+        );
+    });
 
 QUnit.test('val2lin- unit tests', function (assert) {
     const axis = {
@@ -667,6 +677,9 @@ QUnit.test('Circular translation, #17128.', assert => {
 
     const chart = Highcharts.stockChart('container', {
             series: data,
+            boost: {
+                enabled: false
+            },
             legend: {
                 enabled: true
             }
@@ -675,10 +688,8 @@ QUnit.test('Circular translation, #17128.', assert => {
 
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `When two series (line and scatter) are visible, circular translation of
         the date should return the same value.`
     );
@@ -689,10 +700,8 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `After zooming, when the scatterer series is not visible, a circular
         translation of the date should return the same value.`
     );
@@ -703,10 +712,8 @@ QUnit.test('Circular translation, #17128.', assert => {
 
     // Perform the exact same tests as above
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
         `When two series (scatter and line) are visible, circular translation of
         the date should return the same value.`
     );
@@ -717,11 +724,9 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 
     assert.strictEqual(
-        Highcharts.dateFormat(undefined, x),
-        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
-            chart.xAxis[0].toPixels(x))
-        ),
-        `After zooming, when the scatterer series is not visible, a circular
+        x,
+        Math.round(chart.xAxis[0].toValue(chart.xAxis[0].toPixels(x))),
+        `After zooming, when the scatter series is not visible, a circular
         translation of the date should return the same value.`
     );
 });
@@ -811,7 +816,8 @@ QUnit.test('Moving annotations on ordinal axis.', assert => {
         x - 50,
         chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
         0.1,
-        'Annotation dragged on ordinal axis charts should follow mouse pointer, #18459.'
+        'Annotation dragged on ordinal axis charts should follow mouse ' +
+        'pointer, #18459.'
     );
 
     chart.xAxis[0].setExtremes(1622813400000, 1623245400000);
@@ -828,7 +834,8 @@ QUnit.test('Moving annotations on ordinal axis.', assert => {
         pixels,
         -150,
         0.0001,
-        'toValue <-> toPixels translation should return the same initial value, #16784. '
+        'toValue <-> toPixels translation should return the same initial ' +
+        'value, #16784. '
     );
 });
 
@@ -1175,6 +1182,72 @@ QUnit.test('Selection zoom with ordinal and multiple series.', assert => {
 
     const actualMin = chart.series[0].xAxis.min;
 
-    assert.close(actualMin, 1692634691003, 1,
-        'The xAxis should be zoomed correctly to selection.');
+    assert.close(
+        actualMin, 1692634691003, 1,
+        'The xAxis should be zoomed correctly to selection.'
+    );
+});
+
+QUnit.test('Ordinal axis + Scatter series #19243', function (assert) {
+    const linePoints = [10, 14, 20, 25],
+        scatterPoints = [10, 14, 20, 25, 10, 10],
+        scatterPointInterval = 15,
+        chart = Highcharts.stockChart('container', {
+            boost: {
+                enabled: false
+            },
+            series: [{
+                type: 'line',
+                data: linePoints,
+                pointInverval: 10
+            }, {
+                type: 'scatter',
+                data: scatterPoints,
+                pointInterval: scatterPointInterval
+            }]
+        });
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        (scatterPoints.length - 1) * scatterPointInterval,
+        'Max extreme should be equal to the last point in scatter series.'
+    );
+
+});
+
+
+QUnit.test('Scatter boost ordinal updates, #20284.', assert => {
+    const data = [{
+        type: 'line',
+        data: [
+            [0, 95.82],
+            [3, 95.84],
+            [6, 95.75],
+            [7, 95.48],
+            [11, 95.6],
+            [12, 95.37],
+            [13, 95.16],
+            [15, 95.15],
+            [18, 94.9],
+            [21, 95.04],
+            [22, 95.38]
+        ],
+        showInNavigator: true
+    }, {
+        type: 'scatter',
+        data: [
+            [3, 95],
+            [11, 95]
+        ],
+        showInNavigator: false
+    }];
+
+    const chart = Highcharts.stockChart('container', {
+        series: data
+    });
+
+    chart.update({ series: data.reverse() });
+
+    const length = chart.series[0].processedXData.length;
+    assert.notEqual(length, 0, 'The processedXData should be calculated.');
 });

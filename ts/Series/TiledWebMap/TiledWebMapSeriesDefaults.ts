@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Hubert Kozik, Kamil Musiałowski
+ *  (c) 2010-2024 Hubert Kozik, Kamil Musiałowski
  *
  *  License: www.highcharts.com/license
  *
@@ -155,7 +155,7 @@ const TiledWebMapSeriesDefaults: TiledWebMapSeriesOptions = {
  * @apioption plotOptions.tiledwebmap.provider.url
  */
 
-''; // keeps doclets above detached
+''; // Keeps doclets above detached
 
 /* *
  *

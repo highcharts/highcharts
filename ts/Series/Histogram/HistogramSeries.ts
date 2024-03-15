@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
@@ -35,8 +35,7 @@ const {
     correctFloat,
     extend,
     isNumber,
-    merge,
-    objectEach
+    merge
 } = U;
 
 /* ************************************************************************** *
@@ -116,13 +115,13 @@ class HistogramSeries extends ColumnSeries {
 
     public binWidth?: number;
 
-    public data: Array<HistogramPoint> = void 0 as any;
+    public data!: Array<HistogramPoint>;
 
-    public options: HistogramSeriesOptions = void 0 as any;
+    public options!: HistogramSeriesOptions;
 
-    public points: Array<HistogramPoint> = void 0 as any;
+    public points!: Array<HistogramPoint>;
 
-    public userOptions: HistogramSeriesOptions = void 0 as any;
+    public userOptions!: HistogramSeriesOptions;
 
     /* *
      *
@@ -217,7 +216,7 @@ class HistogramSeries extends ColumnSeries {
             data.push({
                 x: Number(key),
                 y: bins[key],
-                x2: correctFloat(Number(x) + binWidth)
+                x2: correctFloat(Number(key) + binWidth)
             });
         }
 

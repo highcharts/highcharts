@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -108,13 +108,13 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<FlagsPoint> = void 0 as any;
+    public data!: Array<FlagsPoint>;
 
     public onSeries?: typeof Series.prototype;
 
-    public options: FlagsSeriesOptions = void 0 as any;
+    public options!: FlagsSeriesOptions;
 
-    public points: Array<FlagsPoint> = void 0 as any;
+    public points!: Array<FlagsPoint>;
 
     /* *
      *
@@ -178,7 +178,7 @@ class FlagsSeries extends ColumnSeries {
                     (stackIndex * (options.stackDistance as any)) as any
                 );
             }
-            // skip connectors for higher level stacked points
+            // Skip connectors for higher level stacked points
             point.anchorX = stackIndex ? void 0 : point.plotX;
             anchorY = stackIndex ? void 0 : point.plotY;
             centered = shape !== 'flag';
@@ -213,7 +213,7 @@ class FlagsSeries extends ColumnSeries {
 
                     // Add reference to the point for tracker (#6303)
                     if (point.graphic.div) {
-                        point.graphic.div.point = point;
+                        (point.graphic.div as any).point = point;
                     }
 
                     graphic.isNew = true;
@@ -326,10 +326,10 @@ class FlagsSeries extends ColumnSeries {
                 proceed
             ): SVGElement {
                 return SVGElement.prototype.on.apply(
-                    // for HTML
+                    // For HTML
                     // eslint-disable-next-line no-invalid-this
                     proceed.apply(this, [].slice.call(arguments, 1)),
-                    // and for SVG
+                    // And for SVG
                     [].slice.call(arguments, 1) as any
                 );
             });
@@ -366,7 +366,8 @@ class FlagsSeries extends ColumnSeries {
                     function (): void {
 
                         // Raise this point
-                        if ((point.stackIndex as any) > 0 &&
+                        if (
+                            (point.stackIndex as any) > 0 &&
                             !point.raised
                         ) {
                             point._y = (graphic as any).y;
@@ -503,4 +504,4 @@ export default FlagsSeries;
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-''; // detach doclets above
+''; // Detach doclets above

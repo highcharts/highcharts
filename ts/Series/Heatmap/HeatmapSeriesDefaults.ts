@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -317,7 +317,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
     clip: true,
 
     /** @ignore-option */
-    pointRange: null, // dynamically set to colsize by default
+    pointRange: null, // Dynamically set to colsize by default
 
     tooltip: {
         pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
@@ -428,7 +428,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  */
 
 /**
- * The value of the point, resulting in a color controled by options
+ * The value of the point, resulting in a color controlled by options
  * as set in the [colorAxis](#colorAxis) configuration.
  *
  * @type      {number}
@@ -702,7 +702,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  * @apioption series.heatmap.data.marker.states.select.heightPlus
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

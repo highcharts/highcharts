@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@ export type ControllableLabelType = ControllableLabelTypeRegistry[
 ]['prototype'];
 
 export interface ControllableLabelTypeRegistry {
-    // placeholder to add class types
+    // Placeholder to add class types
 }
 
 export type ControllableShapeType = ControllableShapeTypeRegistry[
@@ -27,7 +27,7 @@ export type ControllableShapeType = ControllableShapeTypeRegistry[
 ]['prototype'];
 
 export interface ControllableShapeTypeRegistry {
-    // placeholder to add class types
+    // Placeholder to add class types
 }
 
 export type ControllableType = (ControllableLabelType|ControllableShapeType);

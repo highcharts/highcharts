@@ -1,0 +1,96 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#container {
+    height: 600px;
+    min-width: 310px;
+}
+
+:root {
+    --highcharts-color-0: #fff;
+    --bright-color: #f4cff1;
+}
+
+.highcharts-grid-line {
+    stroke-width: 0;
+}
+
+.highcharts-graph {
+    stroke-width: 1px;
+    filter: url(#neon);
+}
+
+.highcharts-background {
+    fill: #170725;
+}
+
+.highcharts-title {
+    fill: var(--bright-color);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    font-size: 1.5em;
+}
+
+.highcharts-subtitle {
+    fill: var(--bright-color);
+    font-weight: 100;
+    font-size: 4em;
+}
+
+.exported .highcharts-subtitle {
+    fill: var(--bright-color);
+    font-weight: 100;
+    font-size: 50px;
+}
+
+.small-chart .highcharts-subtitle {
+    font-size: 3em;
+}
+
+.highcharts-range-selector-buttons .highcharts-button {
+    fill: none;
+    font-size: 1.5em;
+    font-weight: 100;
+}
+
+.highcharts-button text,
+.highcharts-scrollbar-thumb {
+    fill: var(--bright-color);
+    cursor: pointer;
+}
+
+.highcharts-scrollbar-track {
+    stroke: var(--bright-color);
+    stroke-opacity: 0.4;
+}
+
+.highcharts-button-box,
+.highcharts-button {
+    fill: none;
+    cursor: pointer;
+}
+
+.highcharts-button-symbol {
+    stroke: var(--bright-color);
+}
+
+.highcharts-crosshair {
+    stroke-dasharray: 1, 3;
+    stroke: var(--bright-color);
+}
+
+.highcharts-point {
+    fill: none;
+    stroke: none;
+}
+
+.highcharts-tooltip-box {
+    fill: #070210;
+    stroke: var(--bright-color);
+    stroke-width: 1px;
+    stroke-opacity: 0.4;
+}
+
+.highcharts-tooltip text {
+    fill: var(--bright-color);
+    font-size: 1em;
+}

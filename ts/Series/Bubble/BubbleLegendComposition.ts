@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -28,20 +28,15 @@ import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import BubbleLegendItem from './BubbleLegendItem.js';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     objectEach,
+    pushUnique,
     wrap
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -149,7 +144,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, 'Series.BubbleLegend')) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -158,13 +153,9 @@ function compose(
         });
 
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
-    }
 
-    if (U.pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-    }
 
-    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 
@@ -227,7 +218,7 @@ function getLinesHeights(
         legendItem = items[i].legendItem || {};
         legendItem2 = (items[i + 1] || {}).legendItem || {};
         if (legendItem.labelHeight) {
-            // for bubbleLegend
+            // For bubbleLegend
             (items[i] as any).itemHeight = legendItem.labelHeight;
         }
         if ( // Line break
@@ -272,7 +263,8 @@ function onLegendAfterGetAllItems(
         legend.destroyItem(bubbleLegend);
     }
     // Create bubble legend
-    if (bubbleSeriesIndex >= 0 &&
+    if (
+        bubbleSeriesIndex >= 0 &&
             legendOptions.enabled &&
             (options as any).enabled
     ) {

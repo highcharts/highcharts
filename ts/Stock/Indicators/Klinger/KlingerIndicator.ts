@@ -76,7 +76,7 @@ class KlingerIndicator extends SMAIndicator {
      */
     public static defaultOptions: KlingerOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Paramters used in calculation of Klinger Oscillator.
+         * Parameters used in calculation of Klinger Oscillator.
          *
          * @excluding index, period
          */
@@ -139,10 +139,10 @@ class KlingerIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<KlingerPoint> = void 0 as any;
-    public points: Array<KlingerPoint> = void 0 as any;
-    public options: KlingerOptions = void 0 as any;
-    public volumeSeries: LineSeries = void 0 as any;
+    public data!: Array<KlingerPoint>;
+    public points!: Array<KlingerPoint>;
+    public options!: KlingerOptions;
+    public volumeSeries!: LineSeries;
 
     /* *
      *
@@ -220,12 +220,12 @@ class KlingerIndicator extends SMAIndicator {
     public getVolumeForce(yVal: Array<Array<number>>): Array<Array<number>> {
         const volumeForce: Array<Array<number>> = [];
 
-        let CM: number = 0, // cumulative measurement
-            DM: number, // daily measurement
+        let CM: number = 0, // Cumulative measurement
+            DM: number, // Daily measurement
             force: number,
-            i: number = 1, // start from second point
+            i: number = 1, // Start from second point
             previousCM: number = 0,
-            previousDM: number = yVal[0][1] - yVal[0][2], // initial DM
+            previousDM: number = yVal[0][1] - yVal[0][2], // Initial DM
             previousTrend: number = 0,
             trend: number;
 
@@ -296,7 +296,6 @@ class KlingerIndicator extends SMAIndicator {
             i: number = 0,
             fastEMA: number = 0,
             slowEMA: number,
-            // signalEMA: number|undefined = void 0,
             previousFastEMA: number | undefined = void 0,
             previousSlowEMA: number | undefined = void 0,
             signal: any = null;
@@ -353,7 +352,8 @@ class KlingerIndicator extends SMAIndicator {
                 if (calcSingal.length >= params.signalPeriod) {
                     signal = calcSingal.slice(-params.signalPeriod)
                         .reduce((prev, curr): number =>
-                            prev + curr) / params.signalPeriod;
+                            prev + curr
+                        ) / params.signalPeriod;
                 }
 
                 Klinger.push([xVal[i], KO, signal]);
@@ -435,4 +435,4 @@ export default KlingerIndicator;
  * @apioption series.klinger
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

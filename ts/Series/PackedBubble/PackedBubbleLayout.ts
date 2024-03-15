@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -42,14 +42,6 @@ declare module '../../Core/Chart/ChartLike' {
         getSelectedParentNodes(): Array<PackedBubblePoint>;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -109,10 +101,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+        const chartProto = ChartClass.prototype;
 
-            const chartProto = ChartClass.prototype;
+        if (!chartProto.getSelectedParentNodes) {
+            addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
             chartProto.getSelectedParentNodes = chartGetSelectedParentNodes;
         }
@@ -127,7 +119,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
     public enableSimulation?: boolean;
     public index: number = NaN;
     public nodes: Array<PackedBubblePoint> = [];
-    public options: PackedBubbleLayout.Options = void 0 as any;
+    public options!: PackedBubbleLayout.Options;
     public series: Array<PackedBubbleSeries> = [];
 
     /* *
@@ -272,8 +264,8 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         let distanceXY: Record<string, number>,
             distanceR: number;
 
-        // parentNodeLimit should be used together
-        // with seriesInteraction: false
+        // `parentNodeLimit` should be used together with seriesInteraction:
+        // false
         if (
             layout.options.splitSeries &&
             !node.isParentNode &&

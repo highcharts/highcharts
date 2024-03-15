@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Kacper Madej
+ *  (c) 2010-2024 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -67,7 +67,7 @@ function weightedSumArray(
     // The sum is 5 + 4 + 3 + 2 + 1 = 15.
     const denominator = (pLen + 1) / 2 * pLen;
 
-    // reduce VS loop => reduce
+    // Reduce VS loop => reduce
     return (array.reduce(
         function (
             prev: [(number|null), (number|Array<number>)],
@@ -91,7 +91,7 @@ function populateAverage(
         wmaY = weightedSumArray(points, pLen),
         wmaX = xVal[i - 1];
 
-    points.shift(); // remove point until range < period
+    points.shift(); // Remove point until range < period
 
     return [wmaX, wmaY];
 }
@@ -146,9 +146,9 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<WMAPoint> = void 0 as any;
-    public options: WMAOptions = void 0 as any;
-    public points: Array<WMAPoint> = void 0 as any;
+    public data!: Array<WMAPoint>;
+    public options!: WMAOptions;
+    public points!: Array<WMAPoint>;
 
     /* *
      *
@@ -270,4 +270,4 @@ export default WMAIndicator;
  * @apioption series.wma
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

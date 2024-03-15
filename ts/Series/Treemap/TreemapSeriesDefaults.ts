@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2021 Highsoft AS
+ *  (c) 2014-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -618,7 +618,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
  * @apioption series.treemap.data.parent
  */
 
-''; // keeps doclets above detached
+''; // Keeps doclets above detached
 
 /* *
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,6 @@
  * */
 
 import type {
-    AxisOptions,
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
@@ -528,6 +527,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             millisecond: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.millisecond.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.millisecond.main
+                 */
                 main: '%H:%M:%S.%L',
                 range: false
             },
@@ -536,6 +544,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             second: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.second.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.second.main
+                 */
                 main: '%H:%M:%S',
                 range: false
             },
@@ -544,6 +561,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             minute: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.minute.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.minute.main
+                 */
                 main: '%H:%M',
                 range: false
             },
@@ -552,6 +578,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             hour: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.hour.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.hour.main
+                 */
                 main: '%H:%M',
                 range: false
             },
@@ -560,6 +595,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             day: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.day.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.day.main
+                 */
                 main: '%e %b'
             },
             /**
@@ -567,6 +611,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             week: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.week.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.week.main
+                 */
                 main: '%e %b'
             },
             /**
@@ -574,6 +627,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             month: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.month.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.month.main
+                 */
                 main: '%b \'%y'
             },
             /**
@@ -581,6 +643,15 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             year: {
+                /**
+                 * @type {Array<string>}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.year.list
+                 */
+
+                /**
+                 * @apioption xAxis.dateTimeLabelFormats.year.main
+                 */
                 main: '%Y'
             }
         },
@@ -1319,6 +1390,8 @@ namespace AxisDefaults {
          * @sample {highcharts} highcharts/yaxis/minortickspermajor/
          *         2 minor ticks per major tick on Y axis
          *
+         * @since  11.0.0
+         *
          * @type {number}
          */
         minorTicksPerMajor: 5,
@@ -1465,15 +1538,26 @@ namespace AxisDefaults {
 
         /**
          * Additional range on the right side of the xAxis. Works similar to
-         * `xAxis.maxPadding`, but value is set in milliseconds. This property
-         * should be set to the same value for both the main `xAxis` and the
-         * navigator's `xAxis` to maintain consistent behavior during
-         * interactions such as dragging or resizing the navigator.
+         * `xAxis.maxPadding`, but the value is set in terms of axis values,
+         * percentage or pixels.
          *
-         * @sample {highstock} stock/xaxis/overscroll/
-         *         One minute overscroll with live data
+         * If it's a number, it is interpreted as axis values, which in a
+         * datetime axis equals milliseconds.
          *
-         * @type      {number}
+         * If it's a percentage string, is interpreted as percentages of axis
+         * length. An overscroll of 50% will make a 100px axis 50px longer.
+         *
+         * If it's a pixel string, it is interpreted as a fixed pixel value, but
+         * limited to 90% of the axis length.
+         *
+         * @sample {highstock} stock/xaxis/overscroll/ One minute overscroll
+         *         with live data
+         * @sample {highstock} stock/xaxis/overscroll-percent/ Overscroll set in
+         *         percentage
+         * @sample {highstock} stock/xaxis/overscroll-pixel/ Overscroll set in
+         *         pixels
+         *
+         * @type      {number | string}
          * @default   0
          * @since     6.0.0
          * @product   highstock
@@ -2279,7 +2363,7 @@ namespace AxisDefaults {
          */
         tickColor: Palette.neutralColor80
 
-        // tickWidth: 1
+        // `tickWidth: 1`
     };
 
     /**

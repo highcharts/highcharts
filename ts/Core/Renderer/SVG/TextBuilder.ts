@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -138,7 +138,7 @@ class TextBuilder {
         } else if (textStr !== '') {
 
             if (tempParent) {
-                // attach it to the DOM to read offset width and font size
+                // Attach it to the DOM to read offset width and font size
                 tempParent.appendChild(textNode);
             }
 
@@ -338,7 +338,7 @@ class TextBuilder {
                         SVG_NS,
                         'tspan'
                     ) as SVGDOMElement;
-                    br.textContent = '\u200B'; // zero-width space
+                    br.textContent = '\u200B'; // Zero-width space
                     attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
                 });
@@ -431,7 +431,7 @@ class TextBuilder {
             // Handle breaks
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
-                node.textContent = '\u200B'; // zero-width space
+                node.textContent = '\u200B'; // Zero-width space
 
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];

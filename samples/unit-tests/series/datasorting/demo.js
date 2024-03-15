@@ -3,11 +3,17 @@ QUnit.test('Data sorting ', function (assert) {
             chart: {
                 animation: false
             },
+            navigator: {
+                enabled: true
+            },
             series: [
                 {
                     type: 'column',
                     data: [1, 2, 3],
                     dataSorting: {
+                        enabled: true
+                    },
+                    dataGrouping: {
                         enabled: true
                     }
                 }
@@ -19,6 +25,29 @@ QUnit.test('Data sorting ', function (assert) {
         series.xData[0],
         2,
         'Series should be correctly sorted.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].xData[0],
+        2,
+        `Navigator series data should be correctly set and sorted on initial
+        load, #20318`
+    );
+
+    chart.update({
+        navigator: {
+            enabled: false
+        },
+        series: {
+            data: [3, 2, 1]
+        }
+    });
+
+    assert.strictEqual(
+        series.xData[0],
+        0,
+        `Series data should be set and sorted correctly after chart update
+        with dataSorting and dataGrouping enabled, #19715.`
     );
 
     chart.update({
@@ -108,6 +137,7 @@ QUnit.test('Data sorting ', function (assert) {
         0,
         'Series should be sorted in polar chart.'
     );
+
 });
 
 QUnit.test('Data sorting with sortKey', function (assert) {

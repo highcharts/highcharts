@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -17,10 +17,7 @@
  * */
 
 
-import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
-
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import type { ComponentTypeRegistry } from './ComponentType';
 
 /* *
  *

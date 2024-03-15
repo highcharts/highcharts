@@ -9,9 +9,7 @@ class YouTubeComponent extends Component {
     }
 
     resize(width, height) {
-        super.resize.call(this, width, height);
-        this.youTubeElement.setAttribute('width', width - 10); // padding
-        this.youTubeElement.setAttribute('height', height - 10); // padding
+        super.resize(width, height);
     }
 
     async load() {
@@ -29,6 +27,26 @@ class YouTubeComponent extends Component {
 
         return this;
     }
+
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+
+    getOptionsOnDrop(sidebar) {
+        super.getOptionsOnDrop.call(this, sidebar);
+        return {
+            renderTo: '',
+            type: 'YouTube',
+            videoId: '115hdz9NsrY'
+        };
+    }
 }
 
 ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
@@ -36,8 +54,16 @@ ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
 Dashboards.board('container', {
     editMode: {
         enabled: true,
+        lang: {
+            videoId: 'Video ID'
+        },
         contextMenu: {
             enabled: true
+        },
+        toolbars: {
+            sidebar: {
+                components: ['YouTube', 'HTML', 'Highcharts']
+            }
         }
     },
     gui: {
@@ -52,7 +78,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'chart',
+        renderTo: 'chart',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -60,8 +86,21 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'yt-highsoft',
+        renderTo: 'yt-highsoft',
         type: 'YouTube',
-        videoId: '115hdz9NsrY'
+        videoId: '115hdz9NsrY',
+        editableOptions: [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }]
     }]
 });

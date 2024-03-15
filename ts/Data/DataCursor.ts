@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2023 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -313,7 +313,7 @@ class DataCursor {
                 emittingTag = this.buildEmittingTag(e);
 
             if (emittingRegister.indexOf(emittingTag) >= 0) {
-                // break call stack loops
+                // Break call stack loops
                 return this;
             }
 

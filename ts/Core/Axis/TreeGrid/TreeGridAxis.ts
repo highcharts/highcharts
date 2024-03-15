@@ -140,14 +140,6 @@ interface TreeGridObject {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Variables
  *
  * */
@@ -475,7 +467,7 @@ function onBeforeRender(
                     }
                 }
 
-                // setScale is fired after all the series is initialized,
+                // `setScale` is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
                     data,
@@ -595,7 +587,7 @@ function wrapGenerateTick(
                     options: options
                 });
         } else {
-            // update labels depending on tick interval
+            // Update labels depending on tick interval
             tick.parameters.category = gridNode.name;
             tick.options = options;
             tick.addLabel();
@@ -636,7 +628,8 @@ function wrapInit(
         ): void {
             if (e.options.data) {
                 const treeGrid = getTreeGridFromData(
-                    (e.options.data as any),
+                    (
+                        e.options.data as any),
                     userOptions.uniqueNames || false,
                     1
                 );
@@ -659,7 +652,7 @@ function wrapInit(
                     if (axis.brokenAxis) {
                         axis.brokenAxis.setBreaks(breaks, false);
 
-                        // remove the node from the axis collapsedNodes
+                        // Remove the node from the axis collapsedNodes
                         if (axis.treeGrid.collapsedNodes) {
                             axis.treeGrid.collapsedNodes = axis.treeGrid
                                 .collapsedNodes
@@ -760,19 +753,14 @@ function wrapInit(
                     x: -5,
                     y: -5,
                     height: 10,
-                    width: 10,
-                    padding: 5
+                    width: 10
                 }
             },
             uniqueNames: false
 
         }, userOptions, { // User options
             // Forced options
-            reversed: true,
-            // grid.columns is not supported in treegrid
-            grid: {
-                columns: void 0
-            }
+            reversed: true
         });
     }
 
@@ -801,6 +789,9 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
+        linkedParent = typeof options.linkedTo === 'number' ?
+            this.chart[axis.coll]?.[options.linkedTo] :
+            void 0,
         isTreeGrid = options.type === 'treegrid';
 
     if (isTreeGrid) {
@@ -809,15 +800,30 @@ function wrapSetTickInterval(
 
         fireEvent(axis, 'foundExtremes');
 
-        // setAxisTranslation modifies the min and max according to
-        // axis breaks.
+        // `setAxisTranslation` modifies the min and max according to axis
+        // breaks.
         axis.setAxisTranslation();
 
-        axis.tickmarkOffset = 0.5;
         axis.tickInterval = 1;
+        axis.tickmarkOffset = 0.5;
         axis.tickPositions = axis.treeGrid.mapOfPosToGridNode ?
             axis.treeGrid.getTickPositions() :
             [];
+
+        if (linkedParent) {
+
+            const linkedParentExtremes = linkedParent.getExtremes();
+            axis.min = pick(
+                linkedParentExtremes.min,
+                linkedParentExtremes.dataMin
+            );
+            axis.max = pick(
+                linkedParentExtremes.max,
+                linkedParentExtremes.dataMax
+            );
+            axis.tickPositions = linkedParent.tickPositions;
+        }
+        axis.linkedParent = linkedParent;
     } else {
         proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
     }
@@ -880,12 +886,10 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
-            if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
-                AxisClass.keepProps.push('treeGrid');
-            }
-
+        if (!AxisClass.keepProps.includes('treeGrid')) {
             const axisProps = AxisClass.prototype;
+
+            AxisClass.keepProps.push('treeGrid');
 
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);
@@ -897,9 +901,6 @@ class TreeGridAxisAdditions {
                 getNode: Tree.getNode
             };
 
-        }
-
-        if (U.pushUnique(composedMembers, TickClass)) {
             if (!TickConstructor) {
                 TickConstructor = TickClass;
             }
@@ -1106,7 +1107,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks after toggling the collapse/expand
      * state of a node. If it is collapsed it will be expanded, and if it is
-     * exapended it will be collapsed.
+     * expanded it will be collapsed.
      *
      * @private
      *

@@ -5,7 +5,7 @@
  *
  * Boost module
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2024 Highsoft AS
  * Author: Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -22,3 +22,4 @@ const G: AnyRecord = Highcharts;
 G.initCanvasBoost = function (): void {
     BoostCanvas.compose(G.Chart, G.Series, G.seriesTypes);
 };
+export default Highcharts;

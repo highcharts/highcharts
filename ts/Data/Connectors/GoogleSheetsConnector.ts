@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -175,8 +175,6 @@ class GoogleSheetsConnector extends DataConnector {
             url
         });
 
-        // If already loaded, clear the current table
-        table.deleteColumns();
 
         return fetch(url)
             .then((
@@ -195,6 +193,8 @@ class GoogleSheetsConnector extends DataConnector {
                     json
                 });
 
+                // If already loaded, clear the current table
+                table.deleteColumns();
                 table.setColumns(
                     converter.getTable().getColumns()
                 );

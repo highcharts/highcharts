@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,6 +26,9 @@ import type GradientColor from '../Color/GradientColor';
 import type { OptionsOverflowValue } from '../Options';
 import type Point from '../Series/Point';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type {
+    RangeSelectorButtonOptions
+} from '../../Stock/RangeSelector/RangeSelectorOptions';
 import type Tick from './Tick';
 import type TickPositionsArray from './TickPositionsArray';
 
@@ -166,7 +169,7 @@ export interface AxisOptions {
     offsets?: [number, number, number, number];
     opposite?: boolean;
     ordinal?: boolean;
-    overscroll?: number;
+    overscroll?: number | string;
     pane?: number;
     panningEnabled: boolean;
     range?: number;
@@ -216,10 +219,17 @@ export interface AxisSetExtremesEventCallback {
     (this: Axis, evt: AxisSetExtremesEventObject): void;
 }
 
-export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
+export interface AxisSetExtremesEventObject {
+    DOMEvent?: any;
+    max?: number;
+    min?: number;
+    move?: number;
     preventDefault: Function;
+    rangeSelectorButton?: RangeSelectorButtonOptions;
+    scale?: number;
     target: SVGElement;
-    trigger: string;
+    trigger?: string;
+    triggerOp?: string;
     type: 'setExtremes';
 }
 
@@ -249,7 +259,7 @@ export interface AxisTitleOptions {
 }
 
 export interface XAxisOptions extends AxisOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface YAxisOptions extends AxisOptions {

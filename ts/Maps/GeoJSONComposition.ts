@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -37,7 +37,6 @@ const {
     error,
     extend,
     merge,
-    pushUnique,
     wrap
 } = U;
 
@@ -96,14 +95,6 @@ declare module '../Core/Chart/ChartOptions'{
  * */
 
 namespace GeoJSONComposition {
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -301,16 +292,16 @@ namespace GeoJSONComposition {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype;
 
-        if (pushUnique(composedMembers, ChartClass)) {
-            const proto = ChartClass.prototype;
+        if (!chartProto.transformFromLatLon) {
 
-            proto.fromLatLonToPoint = chartFromLatLonToPoint;
-            proto.fromPointToLatLon = chartFromPointToLatLon;
-            proto.transformFromLatLon = chartTransformFromLatLon;
-            proto.transformToLatLon = chartTransformToLatLon;
+            chartProto.fromLatLonToPoint = chartFromLatLonToPoint;
+            chartProto.fromPointToLatLon = chartFromPointToLatLon;
+            chartProto.transformFromLatLon = chartTransformFromLatLon;
+            chartProto.transformToLatLon = chartTransformToLatLon;
 
-            wrap(proto, 'addCredits', wrapChartAddCredit);
+            wrap(chartProto, 'addCredits', wrapChartAddCredit);
         }
 
     }
@@ -446,8 +437,11 @@ namespace GeoJSONComposition {
         }
         const obj = topology.objects[objectName];
 
-        // Already decoded => return cache
-        if (obj['hc-decoded-geojson']) {
+        // Already decoded with the same title => return cache
+        if (
+            obj['hc-decoded-geojson'] &&
+            obj['hc-decoded-geojson'].title === topology.title
+        ) {
             return obj['hc-decoded-geojson'];
         }
 
@@ -479,7 +473,7 @@ namespace GeoJSONComposition {
             }
         }
 
-        // Recurse down any depth of multi-dimentional arrays of arcs and insert
+        // Recurse down any depth of multi-dimensional arrays of arcs and insert
         // the coordinates
         const arcsToCoordinates = (
             arcs: any
@@ -649,7 +643,7 @@ export default GeoJSONComposition;
  * @name Highcharts.GeoJSONTranslation#crs
  * @type {string}
  *//**
- * Define the portion of the map that this defintion applies to. Defined as a
+ * Define the portion of the map that this definition applies to. Defined as a
  * GeoJSON polygon feature object, with `type` and `coordinates` properties.
  * @name Highcharts.GeoJSONTranslation#hitZone
  * @type {Highcharts.Dictionary<*>|undefined}
@@ -728,10 +722,17 @@ export default GeoJSONComposition;
  */
 
 /**
+ * An array of GeoJSON or TopoJSON objects or strings used as map data for
+ * series.
+ *
+ * @typedef {Array<*>|GeoJSON|TopoJSON|string} Highcharts.MapDataType
+ */
+
+/**
  * A TopoJSON object, see description on the
  * [project's GitHub page](https://github.com/topojson/topojson).
  *
  * @typedef {Object} Highcharts.TopoJSON
  */
 
-''; // detach doclets above
+''; // Detach doclets above

@@ -27,6 +27,7 @@ import type {
     BoostTargetObject
 } from './Boost/BoostTargetObject';
 import type BubbleSeries from '../Series/Bubble/BubbleSeries';
+import type Chart from '../Core/Chart/Chart';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
@@ -46,7 +47,6 @@ const {
 } = BoostChart;
 import BoostSeries from './Boost/BoostSeries.js';
 const { destroyGraphics } = BoostSeries;
-import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../Core/Globals.js';
@@ -62,7 +62,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -143,13 +142,13 @@ namespace BoostCanvas {
 
     const CHUNK_SIZE = 50000;
 
-    const composedMembers: Array<unknown> = [];
-
     /* *
      *
      *  Variables
      *
      * */
+
+    let ChartConstructor: typeof Chart;
 
     let destroyLoadingDiv: number;
 
@@ -221,82 +220,65 @@ namespace BoostCanvas {
         SeriesClass: typeof Series,
         seriesTypes: typeof SeriesRegistry.seriesTypes
     ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composedMembers, ChartClass)) {
-            Chart.prototype.callbacks.push((chart): void => {
+        if (!seriesProto.renderCanvas) {
+            const {
+                area: AreaSeries,
+                bubble: BubbleSeries,
+                column: ColumnSeries,
+                heatmap: HeatmapSeries,
+                scatter: ScatterSeries
+            } = seriesTypes;
+
+            ChartConstructor = ChartClass;
+            ChartClass.prototype.callbacks.push((chart): void => {
                 addEvent(chart, 'predraw', onChartClear);
                 addEvent(chart, 'render', onChartCanvasToSVG);
             });
-        }
-
-        if (pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype;
 
             seriesProto.canvasToSVG = seriesCanvasToSVG;
             seriesProto.cvsLineTo = seriesCvsLineTo;
             seriesProto.getContext = seriesGetContext;
             seriesProto.renderCanvas = seriesRenderCanvas;
-        }
 
-        const {
-            area: AreaSeries,
-            bubble: BubbleSeries,
-            column: ColumnSeries,
-            heatmap: HeatmapSeries,
-            scatter: ScatterSeries
-        } = seriesTypes;
+            if (AreaSeries) {
+                const areaProto = AreaSeries.prototype;
 
-        if (
-            AreaSeries &&
-            pushUnique(composedMembers, AreaSeries)
-        ) {
-            const areaProto = AreaSeries.prototype;
+                areaProto.cvsDrawPoint = areaCvsDrawPoint;
+                areaProto.fill = true;
+                areaProto.fillOpacity = true;
+                areaProto.sampling = true;
+            }
 
-            areaProto.cvsDrawPoint = areaCvsDrawPoint;
-            areaProto.fill = true;
-            areaProto.fillOpacity = true;
-            areaProto.sampling = true;
-        }
+            if (BubbleSeries) {
+                const bubbleProto = BubbleSeries.prototype;
 
-        if (
-            BubbleSeries &&
-            pushUnique(composedMembers, BubbleSeries)
-        ) {
-            const bubbleProto = BubbleSeries.prototype;
+                bubbleProto.cvsMarkerCircle = bubbleCvsMarkerCircle;
+                bubbleProto.cvsStrokeBatch = 1;
+            }
 
-            bubbleProto.cvsMarkerCircle = bubbleCvsMarkerCircle;
-            bubbleProto.cvsStrokeBatch = 1;
-        }
+            if (ColumnSeries) {
+                const columnProto = ColumnSeries.prototype;
 
-        if (
-            ColumnSeries &&
-            pushUnique(composedMembers, ColumnSeries)
-        ) {
-            const columnProto = ColumnSeries.prototype;
+                columnProto.cvsDrawPoint = columnCvsDrawPoint;
+                columnProto.fill = true;
+                columnProto.sampling = true;
+            }
 
-            columnProto.cvsDrawPoint = columnCvsDrawPoint;
-            columnProto.fill = true;
-            columnProto.sampling = true;
-        }
+            if (HeatmapSeries) {
+                const heatmapProto = HeatmapSeries.prototype;
 
-        if (
-            HeatmapSeries &&
-            pushUnique(composedMembers, HeatmapSeries)
-        ) {
-            const heatmapProto = HeatmapSeries.prototype;
+                wrap(heatmapProto, 'drawPoints', wrapHeatmapDrawPoints);
+            }
 
-            wrap(heatmapProto, 'drawPoints', wrapHeatmapDrawPoints);
-        }
+            if (ScatterSeries) {
+                const scatterProto = ScatterSeries.prototype;
 
-        if (
-            ScatterSeries &&
-            pushUnique(composedMembers, ScatterSeries)
-        ) {
-            const scatterProto = ScatterSeries.prototype;
-
-            scatterProto.cvsMarkerCircle = scatterCvsMarkerCircle;
-            scatterProto.cvsMarkerSquare = scatterCvsMarkerSquare;
-            scatterProto.fill = true;
+                scatterProto.cvsMarkerCircle = scatterCvsMarkerCircle;
+                scatterProto.cvsMarkerSquare = scatterCvsMarkerSquare;
+                scatterProto.fill = true;
+            }
         }
 
     }
@@ -448,8 +430,8 @@ namespace BoostCanvas {
             boost.clipRect = chart.renderer.clipRect();
             boost.target.clip(boost.clipRect);
 
-        } else if (!(target instanceof Chart)) {
-            // ctx.clearRect(0, 0, width, height);
+        } else if (!(target instanceof ChartConstructor)) {
+            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {
@@ -576,7 +558,7 @@ namespace BoostCanvas {
             boost.clear();
         }
 
-        // if (series.canvas) {
+        // If (series.canvas) {
         //     ctx.clearRect(
         //         0,
         //         0,
@@ -606,7 +588,7 @@ namespace BoostCanvas {
             });
             U.clearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
-            chart.options.loading = loadingOptions; // reset
+            chart.options.loading = loadingOptions; // Reset
         }
 
         if (boostSettings.timeRendering) {
@@ -814,7 +796,8 @@ namespace BoostCanvas {
                     isYInside = y >= yMin && y <= yMax;
                 }
 
-                if (!isNull &&
+                if (
+                    !isNull &&
                     (
                         (x >= xMin && x <= xMax && isYInside) ||
                         (isNextInside || isPrevInside)
@@ -846,7 +829,7 @@ namespace BoostCanvas {
                         }
                         // Add points and reset
                         if (clientX !== lastClientX) {
-                            // maxI also a number:
+                            // `maxI` also a number:
                             if (typeof minI !== 'undefined') {
                                 plotY = yAxis.toPixels(maxVal, true);
                                 yBottom = yAxis.toPixels(minVal, true);
@@ -904,7 +887,7 @@ namespace BoostCanvas {
 
             stroke();
 
-            // if (series.boostCopy || series.chart.boostCopy) {
+            // If (series.boostCopy || series.chart.boostCopy) {
             //     (series.boostCopy || series.chart.boostCopy)();
             // }
 

@@ -3,7 +3,7 @@
  * @module highcharts/modules/draggable-points
  * @requires highcharts
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -12,3 +12,4 @@ import Highcharts from '../../Core/Globals.js';
 import DraggablePoints from '../../Extensions/DraggablePoints/DraggablePoints.js';
 const G: AnyRecord = Highcharts;
 DraggablePoints.compose(G.Chart, G.Series);
+export default Highcharts;

@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -25,7 +25,7 @@ import type PiePointOptions from '../Pie/PiePointOptions';
  * */
 
 export interface VariablePiePointOptions extends PiePointOptions {
-    // nothing to add yet
+    // Nothing to add yet
 }
 
 /* *

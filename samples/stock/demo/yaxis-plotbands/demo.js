@@ -2,7 +2,7 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     const startDate = new Date(data[data.length - 1][0]);
@@ -12,7 +12,8 @@
         rate,
         index;
 
-    startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
+    startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year
+    // before last data point
 
     const startPeriod = Date.UTC(
         startDate.getFullYear(),

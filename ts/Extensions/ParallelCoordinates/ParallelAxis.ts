@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2021 Pawel Fus
+ *  (c) 2010-2024 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -31,7 +31,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -156,14 +155,6 @@ namespace ParallelAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -176,7 +167,7 @@ namespace ParallelAxis {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (!AxisClass.keepProps.includes('parallel')) {
             const axisCompo = AxisClass as typeof Composition;
 
             // On update, keep parallel additions.

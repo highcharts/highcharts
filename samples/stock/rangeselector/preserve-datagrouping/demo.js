@@ -41,7 +41,8 @@
         },
 
         subtitle: {
-            text: 'Click on rangeSelector buttons and use navigator to compare dataGroupings'
+            text: 'Click on rangeSelector buttons and use navigator to ' +
+                'compare dataGroupings'
         },
 
         series: [{

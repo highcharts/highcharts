@@ -3,7 +3,7 @@
  * @module highcharts/highcharts-more
  * @requires highcharts
  *
- * (c) 2009-2021 Torstein Honsi
+ * (c) 2009-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -33,9 +33,11 @@ PolarAdditions.compose(
     G.Pointer,
     G.Series,
     G.Tick,
+    G.Point,
     SeriesRegistry.seriesTypes.areasplinerange,
     SeriesRegistry.seriesTypes.column,
     SeriesRegistry.seriesTypes.line,
     SeriesRegistry.seriesTypes.spline
 );
 WaterfallSeries.compose(G.Axis, G.Chart);
+export default G;

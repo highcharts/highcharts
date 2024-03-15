@@ -1,7 +1,7 @@
 (async () => {
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.chart('container', {
@@ -14,7 +14,8 @@
         },
         subtitle: {
             text: document.ontouchstart === undefined ?
-                'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+                'Click and drag in the plot area to zoom in' :
+                'Pinch the chart to zoom in',
             align: 'left'
         },
         xAxis: {
@@ -39,7 +40,11 @@
                     },
                     stops: [
                         [0, Highcharts.getOptions().colors[0]],
-                        [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        [
+                            1,
+                            Highcharts.color(Highcharts.getOptions().colors[0])
+                                .setOpacity(0).get('rgba')
+                        ]
                     ]
                 },
                 marker: {

@@ -5,7 +5,7 @@
  *
  * Debugger module
  *
- * (c) 2012-2021 Torstein Honsi
+ * (c) 2012-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,5 +16,6 @@ import Highcharts from '../../Core/Globals.js';
 import Debugger from '../../Extensions/Debugger/Debugger.js';
 import ErrorMessages from '../../Extensions/Debugger/ErrorMessages.js';
 const G: AnyRecord = Highcharts;
-G.errorMessages = ErrorMessages;
+G.errorMessages = G.errorMessages || ErrorMessages;
 Debugger.compose(G.Chart);
+export default Highcharts;

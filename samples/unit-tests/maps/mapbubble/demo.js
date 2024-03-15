@@ -68,7 +68,8 @@ QUnit.test('MapBubble', function (assert) {
         assert.strictEqual(
             chart.tooltip.label.text.element.textContent,
             '●  Series 2​: 3',
-            'The tooltip should contain the correct capital information (#20086).'
+            'The tooltip should contain the correct capital information ' +
+            '(#20086).'
         );
 
         done();
@@ -130,6 +131,7 @@ QUnit.test('MapBubble', function (assert) {
     assert.strictEqual(
         newLength,
         origLength - 1,
-        'The length of the points array should be shorter by 1 after poit.remove() (#17297)'
+        'The length of the points array should be shorter by 1 after ' +
+        'poit.remove() (#17297)'
     );
 });

@@ -5,7 +5,7 @@
  *
  * StaticScale
  *
- * (c) 2016-2021 Torstein Honsi, Lars A. V. Cabrera
+ * (c) 2016-2024 Torstein Honsi, Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */
@@ -14,3 +14,4 @@ import Highcharts from '../../Core/Globals.js';
 import StaticScale from '../../Extensions/StaticScale.js';
 const G: AnyRecord = Highcharts;
 StaticScale.compose(G.Axis, G.Chart);
+export default Highcharts;

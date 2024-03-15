@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,6 +20,8 @@ import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
 import type Point from '../Core/Series/Point';
 
 import ColumnSeries from './Column/ColumnSeries.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import SplinePoint from './Spline/SplinePoint';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
@@ -27,6 +29,7 @@ const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
 const {
     defined,
+    pushUnique,
     stableSort
 } = U;
 
@@ -60,19 +63,9 @@ namespace OnSeriesComposition {
 
     /* *
      *
-     *  Properties
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -81,7 +74,7 @@ namespace OnSeriesComposition {
         SeriesClass: T
     ): (T&SeriesComposition) {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, 'OnSeries')) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getPlotBox = getPlotBox;
@@ -149,7 +142,7 @@ namespace OnSeriesComposition {
             currentDataGrouping,
             distanceRatio;
 
-        // relate to a master series
+        // Relate to a master series
         if (onSeries && onSeries.visible && i) {
             xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
             currentDataGrouping = onSeries.currentDataGrouping;
@@ -175,8 +168,9 @@ namespace OnSeriesComposition {
 
                         point.plotY = leftPoint[onKey];
 
-                        // interpolate between points, #666
-                        if (leftPoint.x < (point.x as any) &&
+                        // Interpolate between points, #666
+                        if (
+                            leftPoint.x < (point.x as any) &&
                             !step
                         ) {
                             rightPoint = (onData as any)[i + 1];
@@ -261,13 +255,13 @@ namespace OnSeriesComposition {
                                             yAxis.toValue(point.plotY, true);
                                     }
                                 } else {
-                                    // the distance ratio, between 0 and 1
+                                    // The distance ratio, between 0 and 1
                                     distanceRatio =
                                         ((point.x as any) - leftPoint.x) /
                                         (rightPoint.x - leftPoint.x);
                                     (point.plotY as any) +=
                                         distanceRatio *
-                                        // the plotY distance
+                                        // The plotY distance
                                         (rightPoint[onKey] - leftPoint[onKey]);
                                     (point.y as any) +=
                                         distanceRatio *
@@ -277,7 +271,7 @@ namespace OnSeriesComposition {
                         }
                     }
                     cursor--;
-                    i++; // check again for points in the same x position
+                    i++; // Check again for points in the same x position
                     if (cursor < 0) {
                         break;
                     }
@@ -299,13 +293,15 @@ namespace OnSeriesComposition {
             // to calculate position anyway, because series.invertGroups is not
             // defined
             if (typeof point.plotY === 'undefined' || inverted) {
-                if ((point.plotX as any) >= 0 &&
+                if (
+                    (point.plotX as any) >= 0 &&
                     (point.plotX as any) <= xAxis.len
                 ) {
                     // We're inside xAxis range
                     if (inverted) {
                         point.plotY = xAxis.translate(
-                            (point.x as any),
+                            (
+                                point.x as any),
                             0 as any,
                             1 as any,
                             0 as any,
@@ -329,7 +325,7 @@ namespace OnSeriesComposition {
                 }
             }
 
-            // if multiple flags appear at the same x, order them into a stack
+            // If multiple flags appear at the same x, order them into a stack
             lastPoint = points[i - 1];
             if (lastPoint && lastPoint.plotX === point.plotX) {
                 if (typeof lastPoint.stackIndex === 'undefined') {

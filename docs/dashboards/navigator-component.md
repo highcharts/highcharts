@@ -23,7 +23,7 @@ indicator for the active city.
 Dashboard.board('container', {
   components: [
     {
-      cell: 'time-range-selector'
+      renderTo: 'time-range-selector'
       type: 'Navigator',
       connector: {
         id: 'Range Selection'
@@ -50,6 +50,10 @@ synchronize extremes in a shared crossfilter. This crossfilter is managed by a
 a RangeModifier which sources the table of a connector. All components have to
 share the same connector and table to make the crossfilter work.
 
+For crossfilter sync, you can enable the `affectNavigators` option, which
+causes, in addition to changing the content of the table, also the content of
+other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators).
+
 Read more about components synchronization [here](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 ### Crossfilter Example
@@ -65,7 +69,7 @@ ranges with the help of the NavigatorComponent and a shared DataConnector.
 Dashboard.board('container', {
   components: [
     {
-      cell: 'Top-left'
+      renderTo: 'Top-left'
       type: 'Navigator',
       connector: {
         id: 'Economy'
@@ -78,7 +82,7 @@ Dashboard.board('container', {
       }
     },
     {
-      cell: 'Top-left'
+      renderTo: 'Top-left'
       type: 'Navigator',
       connector: {
         id: 'Economy'

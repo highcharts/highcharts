@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
@@ -127,7 +127,7 @@ function getNormalizedEvent<T extends PointerEvent>(
     return (
         typeof e.chartX === 'undefined' ||
         typeof e.chartY === 'undefined' ?
-            chart.pointer.normalize(e) :
+            chart.pointer?.normalize(e) || e :
             e
     );
 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -90,13 +90,6 @@ namespace Globals {
         row: 'row',
         cell: 'cell',
         layout: 'layout'
-    };
-
-    /** @internal */
-    export const responsiveBreakpoints: Record<string, string> = {
-        small: 'small',
-        medium: 'medium',
-        large: 'large'
     };
 
     /**

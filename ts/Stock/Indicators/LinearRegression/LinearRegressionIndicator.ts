@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2021 Kamil Kulig
+ *  (c) 2010-2024 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -79,10 +79,10 @@ class LinearRegressionIndicator extends SMAIndicator {
             params: {
                 /**
                  * Unit (in milliseconds) for the x axis distances used to
-                 * compute the regression line paramters (slope & intercept) for
-                 * every range. In Highcharts Stock the x axis values are always
-                 * represented in milliseconds which may cause that distances
-                 * between points are "big" integer numbers.
+                 * compute the regression line parameters (slope & intercept)
+                 * for every range. In Highcharts Stock the x axis values are
+                 * always represented in milliseconds which may cause that
+                 * distances between points are "big" integer numbers.
                  *
                  * Highcharts Stock's linear regression algorithm (least squares
                  * method) will utilize these "big" integers for finding the
@@ -90,10 +90,10 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * period. In consequence, this value may be a very "small"
                  * decimal number that's hard to interpret by a human.
                  *
-                 * For instance: `xAxisUnit` equealed to `86400000` ms (1 day)
+                 * For instance: `xAxisUnit` equaled to `86400000` ms (1 day)
                  * forces the algorithm to treat `86400000` as `1` while
-                 * computing the slope and the intercept. This may enchance the
-                 * legiblitity of the indicator's values.
+                 * computing the slope and the intercept. This may enhance the
+                 * legibility of the indicator's values.
                  *
                  * Default value is the closest distance between two data
                  * points.
@@ -138,9 +138,9 @@ class LinearRegressionIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionPoint> = void 0 as any;
+    public data!: Array<LinearRegressionPoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionPoint>;
 
     /* *
      *
@@ -167,7 +167,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         xData: Array<number>,
         yData: Array<number>
     ): RegressionLineParametersObject {
-        // least squares method
+        // Least squares method
         const yIndex: number = (this.options.params as any).index,
             getSingleYValue = function (
                 yValue: (number|Array<number>),
@@ -203,7 +203,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         }
 
         const slope: number = formulaDenominator ?
-            formulaNumerator / formulaDenominator : 0; // don't divide by 0
+            formulaNumerator / formulaDenominator : 0; // Don't divide by 0
 
         return {
             slope: slope,
@@ -299,11 +299,11 @@ class LinearRegressionIndicator extends SMAIndicator {
         const xData: Array<number> = (baseSeries.xData as any),
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
-            // format required to be returned
+            // Format required to be returned
             indicatorData: IndicatorValuesObject<
             TLinkedSeries
             > = {
-                xData: [], // by getValues() method
+                xData: [], // By getValues() method
                 yData: [],
                 values: []
             } as any,
@@ -325,20 +325,24 @@ class LinearRegressionIndicator extends SMAIndicator {
         // of the entire period.
 
         for (i = period - 1; i <= xData.length - 1; i++) {
-            periodStart = i - period + 1; // adjusted for slice() function
+            periodStart = i - period + 1; // Adjusted for slice() function
             periodEnd = i + 1; // (as above)
             endPointX = xData[i];
             periodXData = xData.slice(periodStart, periodEnd);
             periodYData = yData.slice(periodStart, periodEnd);
-            periodTransformedXData = this.transformXData(periodXData,
-                xAxisUnit);
+            periodTransformedXData = this.transformXData(
+                periodXData,
+                xAxisUnit
+            );
 
             lineParameters = this.getRegressionLineParameters(
                 periodTransformedXData, periodYData
             );
 
-            endPointY = this.getEndPointY(lineParameters,
-                periodTransformedXData[periodTransformedXData.length - 1]);
+            endPointY = this.getEndPointY(
+                lineParameters,
+                periodTransformedXData[periodTransformedXData.length - 1]
+            );
 
             // @todo this is probably not used anywhere
             indicatorData.values.push({
@@ -416,4 +420,4 @@ export default LinearRegressionIndicator;
  * @apioption series.linearregression
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

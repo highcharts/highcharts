@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Scatter 3D series.
  *
@@ -65,11 +65,11 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<Scatter3DPoint> = void 0 as any;
+    public data!: Array<Scatter3DPoint>;
 
-    public options: Scatter3DSeriesOptions = void 0 as any;
+    public options!: Scatter3DSeriesOptions;
 
-    public points: Array<Scatter3DPoint> = void 0 as any;
+    public points!: Array<Scatter3DPoint>;
 
     /* *
      *

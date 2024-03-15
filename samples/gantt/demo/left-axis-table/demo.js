@@ -7,8 +7,10 @@ Highcharts.ganttChart('container', {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
-                yAxisDescriptionSingular: 'The chart has a tabular Y axis showing a data table row for each point.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.',
+                yAxisDescriptionSingular: 'The chart has a tabular Y axis ' +
+                    'showing a data table row for each point.'
             }
         }
     },
@@ -18,7 +20,8 @@ Highcharts.ganttChart('container', {
             descriptionFormat: '{#if milestone}' +
                 '{name}, milestone for {yCategory} at {x:%Y-%m-%d}.' +
                 '{else}' +
-                '{name}, assigned to {yCategory} from {x:%Y-%m-%d} to {x2:%Y-%m-%d}.' +
+                '{name}, assigned to {yCategory} from {x:%Y-%m-%d} to ' +
+                '{x2:%Y-%m-%d}.' +
                 '{/if}'
         }
     },
@@ -52,7 +55,8 @@ Highcharts.ganttChart('container', {
                     text: 'Est. days'
                 },
                 labels: {
-                    format: '{(divide (subtract point.x2 point.x) 86400000):.2f}'
+                    format: '{(divide (subtract point.x2 point.x) ' +
+                        '86400000):.2f}'
                 }
             }, {
                 labels: {

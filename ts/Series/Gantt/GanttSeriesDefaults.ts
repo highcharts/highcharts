@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -41,7 +41,7 @@ const { isNumber } = U;
  */
 const GanttSeriesDefaults: GanttSeriesOptions = {
 
-    // options - default options merged with parent
+    // Options - default options merged with parent
 
     grouping: false,
 
@@ -289,7 +289,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.events
  */
 
-''; // detachs doclets above
+''; // Detachs doclets above
 
 /* *
  *

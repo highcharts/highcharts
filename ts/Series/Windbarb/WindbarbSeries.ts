@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -121,9 +121,9 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<WindbarbPoint> = void 0 as any;
-    public options: WindbarbSeriesOptions = void 0 as any;
-    public points: Array<WindbarbPoint> = void 0 as any;
+    public data!: Array<WindbarbPoint>;
+    public options!: WindbarbSeriesOptions;
+    public points!: Array<WindbarbPoint>;
 
     /* *
      *
@@ -188,16 +188,16 @@ class WindbarbSeries extends ColumnSeries {
 
         // The stem and the arrow head
         const path: SVGPath = [
-            ['M', 0, 7 * u], // base of arrow
+            ['M', 0, 7 * u], // Base of arrow
             ['L', -1.5 * u, 7 * u],
             ['L', 0, 10 * u],
             ['L', 1.5 * u, 7 * u],
             ['L', 0, 7 * u],
-            ['L', 0, -10 * u] // top
+            ['L', 0, -10 * u] // Top
         ];
 
         // For each full 50 knots, add a pennant
-        barbs = (knots - knots % 50) / 50; // pennants
+        barbs = (knots - knots % 50) / 50; // Pennants
         if (barbs > 0) {
             while (barbs--) {
                 path.push(
@@ -226,7 +226,7 @@ class WindbarbSeries extends ColumnSeries {
         }
 
         // For each full 5 knots, add a half barb
-        barbs = (knots - knots % 5) / 5; // half barbs
+        barbs = (knots - knots % 5) / 5; // Half barbs
         if (barbs > 0) {
             while (barbs--) {
                 path.push(
@@ -302,7 +302,8 @@ class WindbarbSeries extends ColumnSeries {
 
     // Fade in the arrows on initializing series.
     public animate(
-        init?: boolean): void {
+        init?: boolean
+    ): void {
         if (init) {
             (this.markerGroup as any).attr({
                 opacity: 0.01
@@ -314,10 +315,7 @@ class WindbarbSeries extends ColumnSeries {
         }
     }
 
-    public markerAttribs(
-        point: WindbarbPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
+    public markerAttribs(): SVGAttributes {
         return {};
     }
 
@@ -359,12 +357,16 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
 OnSeriesComposition.compose(WindbarbSeries);
 
 extend(WindbarbSeries.prototype, {
-    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-        24.5, 28.5, 32.7], // @todo dictionary with names?
-    beaufortName: ['Calm', 'Light air', 'Light breeze',
+    beaufortFloor: [
+        0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
+        24.5, 28.5, 32.7
+    ], // @todo dictionary with names?
+    beaufortName: [
+        'Calm', 'Light air', 'Light breeze',
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
-        'Violent storm', 'Hurricane'],
+        'Violent storm', 'Hurricane'
+    ],
     invertible: false,
     parallelArrays: ['x', 'value', 'direction'],
     pointArrayMap: ['value', 'direction'],

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -141,16 +141,20 @@ const EditGlobals: EditGlobals = {
         errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
         id: 'Id',
-        large: 'Large',
-        medium: 'Medium',
         off: 'off',
         on: 'on',
         pointFormat: 'Point format',
         settings: 'Settings',
-        small: 'Small',
         style: 'Styles',
         title: 'Title',
-        viewFullscreen: 'View in full screen'
+        viewFullscreen: 'View in full screen',
+        sidebar: {
+            HTML: 'HTML',
+            layout: 'Layout',
+            Highcharts: 'Highcharts',
+            DataGrid: 'DataGrid',
+            KPI: 'KPI'
+        }
     }
 };
 
@@ -321,14 +325,6 @@ namespace EditGlobals {
          */
         id: string;
         /**
-         * @default 'Large'
-         */
-        large: string;
-        /**
-         * @default 'Medium'
-         */
-        medium: string;
-        /**
          * @default 'off'
          */
         off: string;
@@ -345,9 +341,9 @@ namespace EditGlobals {
          */
         settings: string;
         /**
-         * @default 'Small'
+         * Options for the sidebar and its components.
          */
-        small: string;
+        sidebar:SidebarLangOptions
         /**
          * @default 'Styles'
          */
@@ -361,6 +357,30 @@ namespace EditGlobals {
          */
         viewFullscreen: string;
         [key: string]: any;
+    }
+
+    export interface SidebarLangOptions {
+        [key: string]: string;
+        /**
+         * @default 'HTML'
+         */
+        HTML: string;
+        /**
+         * @default 'Layout'
+         */
+        layout: string;
+        /**
+         * @default 'Highcharts'
+         */
+        Highcharts: string;
+        /**
+         * @default 'DataGrid'
+         */
+        DataGrid: string;
+        /**
+         * @default 'KPI'
+         */
+        KPI: string;
     }
 
     export interface LangAccessibilityOptions {

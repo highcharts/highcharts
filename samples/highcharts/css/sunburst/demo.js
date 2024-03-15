@@ -1425,6 +1425,7 @@ Highcharts.chart('container', {
     }],
     tooltip: {
         headerFormat: '',
-        pointFormat: 'The population of <b>{point.name}</b> is <b>{point.value}</b>'
+        pointFormat: 'The population of <b>{point.name}</b> is <b>' +
+            '{point.value}</b>'
     }
 });

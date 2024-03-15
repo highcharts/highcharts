@@ -1,5 +1,7 @@
 Highcharts.setOptions({
-    colors: ['rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)']
+    colors: [
+        'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
+    ]
 });
 
 const series = [{
@@ -27,7 +29,7 @@ const series = [{
 
 async function getData() {
     const response = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/olympic2012.json'
+        'https://www.highcharts.com/samples/data/olympic2012.json'
     );
     return response.json();
 }

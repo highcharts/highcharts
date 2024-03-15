@@ -71,7 +71,17 @@ const tipText = [
     'set node export server and send requests from .NET.'
 ];
 
-const text = 'Highcharts Sonification dynamic organization chart NetworkGraph candlestick dynamic zoom Highcharts .NET wordcloud local export server  labels live-data example columns xAxis candlestick  x-axis Windrose table data series  tooltip y-axis  Synchronize Highcharts.Point Barchart Text Navigator width dynamically windbarbs  dataseries type angular tooltip horizontally series  HighChart Heatmap.  Export   Export  JSON  value candlestick yAxis  yAxis crosshair  tickPositions  drilldown graph Highcharts legendItemClick  line chart color Stacked waterfall chart time series xAxis. Highcharts server Radial Gradient Gauge Exporting  Date format xAxis Stairs lines Gradient plotline  crosshair barchart areachart  treemap',
+const text = 'Highcharts Sonification dynamic organization chart ' +
+    'NetworkGraph candlestick dynamic zoom Highcharts .NET wordcloud local ' +
+    'export server  labels live-data example columns xAxis candlestick  ' +
+    'x-axis Windrose table data series  tooltip y-axis  Synchronize ' +
+    'Highcharts.Point Barchart Text Navigator width dynamically windbarbs  ' +
+    'dataseries type angular tooltip horizontally series  HighChart Heatmap. ' +
+    ' Export   Export  JSON  value candlestick yAxis  yAxis crosshair  ' +
+    'tickPositions  drilldown graph Highcharts legendItemClick  line chart ' +
+    'color Stacked waterfall chart time series xAxis. Highcharts server ' +
+    'Radial Gradient Gauge Exporting  Date format xAxis Stairs lines ' +
+    'Gradient plotline  crosshair barchart areachart  treemap',
     lines = text.split(/[,\. ]+/u),
     data = lines.reduce((arr, word) => {
         let obj = Highcharts.find(arr, obj => obj.name === word);

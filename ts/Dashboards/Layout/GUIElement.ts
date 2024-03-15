@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,8 +23,6 @@ import type {
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
-import Row from './Row';
-import Cell from './Cell';
 
 const {
     addEvent,
@@ -79,7 +77,7 @@ abstract class GUIElement {
 
     // Method for element id generation.
     public static createElementId(
-        elementType: string // col, row, layout
+        elementType: string // 'col', 'row', 'layout'
     ): string {
         return (
             Globals.classNamePrefix + elementType + '-' +
@@ -89,7 +87,7 @@ abstract class GUIElement {
 
     // Get width in percentages (0% - 100%).
     public static getPercentageWidth(
-        width: string // supported formats '50%' or '1/2'
+        width: string // Supported formats '50%' or '1/2'
     ): string | undefined {
         const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/;
 

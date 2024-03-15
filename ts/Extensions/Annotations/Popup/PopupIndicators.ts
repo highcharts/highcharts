@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -32,8 +32,6 @@ import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import NU from '../NavigationBindingsUtilities.js';
-const { annotationsFieldsTypes } = NU;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -106,7 +104,7 @@ function addColsContainer(
     container: HTMLDOMElement
 ): Record<string, HTMLDOMElement> {
 
-    // left column
+    // Left column
     const lhsCol = createElement(
         'div',
         {
@@ -116,7 +114,7 @@ function addColsContainer(
         container
     );
 
-    // right column
+    // Right column
     const rhsCol = createElement(
         'div',
         {
@@ -126,7 +124,7 @@ function addColsContainer(
         container
     );
 
-    // wrapper content
+    // Wrapper content
     createElement(
         'div',
         {
@@ -161,10 +159,10 @@ function addForm(
         return;
     }
 
-    // add tabs
+    // Add tabs
     this.tabs.init.call(this, chart);
 
-    // get all tabs content divs
+    // Get all tabs content divs
     const tabsContainers = this.container
         .querySelectorAll('.highcharts-tab-item-content');
 
@@ -246,10 +244,10 @@ function addFormFields(
 ): void {
     const fields = (series as any).params || series.options.params;
 
-    // reset current content
+    // Reset current content
     rhsColWrapper.innerHTML = AST.emptyHTML;
 
-    // create title (indicator name in the right column)
+    // Create title (indicator name in the right column)
     createElement(
         'h3',
         {
@@ -263,7 +261,7 @@ function addFormFields(
         )
     );
 
-    // input type
+    // Input type
     createElement(
         'input',
         {
@@ -275,7 +273,7 @@ function addFormFields(
         rhsColWrapper
     );
 
-    // list all series with id
+    // List all series with id
     listAllSeries.call(
         this,
         seriesType,
@@ -298,7 +296,7 @@ function addFormFields(
         );
     }
 
-    // add param fields
+    // Add param fields
     addParamInputs.call(
         this,
         chart,
@@ -339,6 +337,45 @@ function addIndicatorList(
     listType: string,
     filter?: string
 ): void {
+    /**
+     *
+     */
+    function selectIndicator(
+        series: SMAIndicator,
+        indicatorType: string
+    ): void {
+        const button = rhsColWrapper.parentNode
+            .children[1] as HTMLDOMElement;
+
+        addFormFields.call(
+            popup,
+            chart,
+            series,
+            indicatorType,
+            rhsColWrapper
+        );
+        if (button) {
+            button.style.display = 'block';
+        }
+
+
+        // Add hidden input with series.id
+        if (isEdit && series.options) {
+            createElement(
+                'input',
+                {
+                    type: 'hidden',
+                    name: 'highcharts-id-' + indicatorType,
+                    value: series.options.id
+                },
+                void 0,
+                rhsColWrapper
+            ).setAttribute(
+                'highcharts-data-series-id',
+                (series as any).options.id
+            );
+        }
+    }
     const popup = this,
         lang = popup.lang,
         lhsCol = parentDiv.querySelectorAll(
@@ -376,7 +413,7 @@ function addIndicatorList(
         );
     }
 
-    // Sort indicators alphabeticaly.
+    // Sort indicators alphabetically.
     stableSort(filteredSeriesArray, (a, b): number => {
         const seriesAName = a.indicatorFullName.toLowerCase(),
             seriesBName = b.indicatorFullName.toLowerCase();
@@ -416,52 +453,30 @@ function addIndicatorList(
             void 0,
             indicatorList
         );
-        item.appendChild(doc.createTextNode(
-            indicatorFullName
-        ));
+
+        const btn = createElement(
+            'button',
+            {
+                className: 'highcharts-indicator-list-item',
+                textContent: indicatorFullName
+            },
+            void 0,
+            item
+        );
 
         ['click', 'touchstart'].forEach((
             eventName: string
         ): void => {
-            addEvent(item, eventName, function (): void {
-                const button = rhsColWrapper.parentNode
-                    .children[1] as HTMLDOMElement;
-
-                addFormFields.call(
-                    popup,
-                    chart,
-                    series,
-                    indicatorType,
-                    rhsColWrapper
-                );
-                if (button) {
-                    button.style.display = 'block';
-                }
-
-
-                // add hidden input with series.id
-                if (isEdit && series.options) {
-                    createElement(
-                        'input',
-                        {
-                            type: 'hidden',
-                            name: 'highcharts-id-' + indicatorType,
-                            value: series.options.id
-                        },
-                        void 0,
-                        rhsColWrapper
-                    ).setAttribute(
-                        'highcharts-data-series-id',
-                        (series as any).options.id
-                    );
-                }
+            addEvent(btn, eventName, function (): void {
+                selectIndicator(series, indicatorType);
             });
         });
     });
 
-    // select first item from the list
-    if (indicatorList.childNodes.length > 0) {
-        (indicatorList.childNodes[0] as HTMLDOMElement).click();
+    // Select first item from the list
+    if (filteredSeriesArray.length > 0) {
+        const { series, indicatorType } = filteredSeriesArray[0];
+        selectIndicator(series, indicatorType);
     } else if (!isEdit) {
         AST.setElementHTML(
             rhsColWrapper.parentNode.children[0],
@@ -470,10 +485,11 @@ function addIndicatorList(
         (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
             .style.display = 'none';
     }
+
 }
 
 /**
- * Recurent function which lists all fields, from params object and
+ * Recurrent function which lists all fields, from params object and
  * create them as inputs. Each input has unique `data-name` attribute,
  * which keeps chain of fields i.e params.styles.fontSize.
  * @private
@@ -503,18 +519,11 @@ function addParamInputs(
     const addInput = this.addInput;
 
     objectEach(fields, (value, fieldName): void => {
-        const predefinedType = annotationsFieldsTypes[fieldName];
-        let fieldType = type;
-
-        if (predefinedType) {
-            fieldType = predefinedType;
-        }
-
-        // create name like params.styles.fontSize
+        // Create name like params.styles.fontSize
         const parentFullName = parentNode + '.' + fieldName;
 
         if (
-            defined(value) && // skip if field is unnecessary, #15362
+            defined(value) && // Skip if field is unnecessary, #15362
             parentFullName
         ) {
             if (isObject(value)) {
@@ -571,7 +580,7 @@ function addParamInputs(
                     {
                         value: value as any,
                         type: 'number'
-                    } // all inputs are text type
+                    } // All inputs are text type
                 );
             }
         }
@@ -646,7 +655,7 @@ function addSearchBox(
     button.classList.add('clear-filter-button');
 
     // Add input change events.
-    addEvent(input, 'input', function (e): void {
+    addEvent(input, 'input', function (): void {
         handleInputChange(this.value);
 
         // Show clear filter button.
@@ -665,7 +674,7 @@ function addSearchBox(
             input.value = '';
             handleInputChange('');
 
-            // Hide clear filter button- no longer nececary.
+            // Hide clear filter button- no longer necessary.
             button.style.display = 'none';
         });
     });
@@ -839,7 +848,6 @@ function filterSeries(
     filter?: string
 ): Array<FilteredSeries> {
     const popup = this,
-        indicators = popup.indicators,
         lang = popup.chart && popup.chart.options.lang,
         indicatorAliases = lang &&
             lang.navigation &&
@@ -969,7 +977,7 @@ function getNameType(
     indicatorType: string
 ): IndicatorNameCouple {
     const options = series.options;
-    // add mode
+    // Add mode
     let seriesName = (seriesTypes[indicatorType] &&
             (
                 seriesTypes[indicatorType].prototype as SMAIndicator
@@ -977,7 +985,7 @@ function getNameType(
             indicatorType.toUpperCase(),
         seriesType = indicatorType;
 
-    // edit
+    // Edit
     if (options && options.type) {
         seriesType = series.options.type as any;
         seriesName = series.name;
@@ -1019,8 +1027,7 @@ function listAllSeries(
     currentSeries: SMAIndicator,
     selectedOption?: string
 ): void {
-    const popup = this,
-        indicators = popup.indicators;
+    const popup = this;
 
     // Won't work without the chart.
     if (!chart) {

@@ -770,7 +770,8 @@ QUnit.test('Dynamically added plotbands', function (assert) {
 
     assert.ok(
         !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
-        '#14310: plotBand should render when axis visibility gets dynamically updated'
+        '#14310: plotBand should render when axis visibility gets ' +
+        'dynamically updated'
     );
 
     chart.xAxis[0].update({}, false);
@@ -784,7 +785,8 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].plotLinesAndBands.length,
         2,
-        '#14053: plotBands from before update with redraw=false should also be added'
+        '#14053: plotBands from before update with redraw=false should also ' +
+        'be added'
     );
 
     chart.series[0].hide();

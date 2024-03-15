@@ -1,0 +1,53 @@
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+h1#title {
+    padding: 10px;
+    margin: 0;
+    text-align: center;
+}
+
+p {
+    padding: 0 10px;
+}
+
+#controls .component-padding {
+    padding: 10px;
+}
+
+#controls label {
+    display: inline-block;
+    text-align: right;
+    width: 7em;
+}
+
+#controls input {
+    width: calc(100% - 10em);
+}
+
+pre#data {
+    display: none;
+}
+
+.btn-secondary.active {
+    color: #fff;
+    background-color: #0275d8;
+    border-color: #0275d8;
+}
+
+#horizon-chart {
+    flex: 1 1 100%;
+}
+
+#controls,
+#times {
+    flex: 1 1 50%;
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    #controls,
+    #times {
+        flex: 1 1 100%;
+    }
+}

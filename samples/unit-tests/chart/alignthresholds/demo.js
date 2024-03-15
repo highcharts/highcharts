@@ -168,7 +168,8 @@ QUnit.test('alignThresholds', function (assert) {
     assert.notEqual(
         chart.yAxis[1].tickPositions.indexOf(0),
         chart.yAxis[2].tickPositions.indexOf(0),
-        'One axis without threshold, thresholds should not (necessarily) be aligned'
+        'One axis without threshold, thresholds should not (necessarily) be ' +
+        'aligned'
     );
 
     chart.series[2].update({

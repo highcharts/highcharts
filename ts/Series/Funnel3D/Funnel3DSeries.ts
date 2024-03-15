@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -83,15 +83,15 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
     public centerX?: number;
 
-    public data: Array<Funnel3DPoint> = void 0 as any;
+    public data!: Array<Funnel3DPoint>;
 
-    public options: Funnel3DSeriesOptions = void 0 as any;
+    public options!: Funnel3DSeriesOptions;
 
-    public points: Array<Funnel3DPoint> = void 0 as any;
+    public points!: Array<Funnel3DPoint>;
 
     /* *
      *
@@ -144,7 +144,7 @@ class Funnel3DSeries extends ColumnSeries {
         if (inside) {
             dlBox.x -= dlBox.width / 2;
         } else {
-            // swap for inside
+            // Swap for inside
             if (options.align === 'left') {
                 options.align = 'right';
                 dlBox.x -= dlBox.width * 1.5;
@@ -209,10 +209,10 @@ class Funnel3DSeries extends ColumnSeries {
                 plotHeight
             ),
             neckY = (centerY - height / 2) + height - neckHeight,
-            data = series.data;
+            points = series.points;
 
         let sum = 0,
-            cumulative = 0, // start at top
+            cumulative = 0, // Start at top
             tempWidth,
             getWidthAt: (y: number) => number,
             fraction,
@@ -259,14 +259,14 @@ class Funnel3DSeries extends ColumnSeries {
             */
 
         // get the total sum
-        for (const point of data) {
+        for (const point of points) {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
         }
 
-        for (const point of data) {
-            // set start and end positions
+        for (const point of points) {
+            // Set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;
             y1 = centerY - height / 2 + cumulative * height;
@@ -274,7 +274,7 @@ class Funnel3DSeries extends ColumnSeries {
             tempWidth = getWidthAt(y1);
             h = y3 - y1;
             shapeArgs = {
-                // for fill setter
+                // For fill setter
                 gradientForSides: pick(
                     point.options.gradientForSides,
                     options.gradientForSides
@@ -295,11 +295,11 @@ class Funnel3DSeries extends ColumnSeries {
                 width: tempWidth
             };
 
-            // the entire point is within the neck
+            // The entire point is within the neck
             if (y1 >= neckY) {
                 shapeArgs.isCylinder = true;
             } else if (y3 > neckY) {
-                // the base of the neck
+                // The base of the neck
                 y5 = y3;
                 tempWidth = getWidthAt(neckY);
                 y3 = neckY;
@@ -325,7 +325,7 @@ class Funnel3DSeries extends ColumnSeries {
             }
             point.shapeArgs = extend(point.shapeArgs, shapeArgs);
 
-            // for tooltips and data labels context
+            // For tooltips and data labels context
             point.percentage = fraction * 100;
             point.plotX = centerX;
 
@@ -346,7 +346,7 @@ class Funnel3DSeries extends ColumnSeries {
             }], chart, true)[0];
             point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 
-            // base to be used when alignment options are known
+            // Base to be used when alignment options are known
             point.dlBoxRaw = {
                 x: centerX,
                 width: getWidthAt(point.plotY),
@@ -372,7 +372,7 @@ class Funnel3DSeries extends ColumnSeries {
  * */
 
 interface Funnel3DSeries {
-    getWidthAt(y: number): number; // added during translate
+    getWidthAt(y: number): number; // Added during translate
     pointClass: typeof Funnel3DPoint;
     translate3dShapes(): void;
 }

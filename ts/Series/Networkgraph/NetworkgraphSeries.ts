@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -120,13 +120,13 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
-    public data: Array<NetworkgraphPoint> = void 0 as any;
+    public data!: Array<NetworkgraphPoint>;
 
-    public nodes: Array<NetworkgraphPoint> = void 0 as any;
+    public nodes!: Array<NetworkgraphPoint>;
 
-    public options: NetworkgraphSeriesOptions = void 0 as any;
+    public options!: NetworkgraphSeriesOptions;
 
-    public points: Array<NetworkgraphPoint> = void 0 as any;
+    public points!: Array<NetworkgraphPoint>;
 
     public deferDataLabels: boolean = true;
 
@@ -204,7 +204,7 @@ class NetworkgraphSeries extends Series {
     }
 
     /**
-     * Networkgraph has two separate collecions of nodes and lines, render
+     * Networkgraph has two separate collections of nodes and lines, render
      * dataLabels for both sets:
      * @private
      */
@@ -250,7 +250,7 @@ class NetworkgraphSeries extends Series {
 
         NodesComposition.generatePoints.apply(this, arguments as any);
 
-        // In networkgraph, it's fine to define stanalone nodes, create
+        // In networkgraph, it's fine to define standalone nodes, create
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
@@ -365,7 +365,7 @@ class NetworkgraphSeries extends Series {
         const attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
-        // series.render() is called before initial positions are set:
+        // Series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
         }
@@ -443,7 +443,8 @@ class NetworkgraphSeries extends Series {
             series.redrawHalo(hoverPoint);
         }
 
-        if (series.chart.hasRendered &&
+        if (
+            series.chart.hasRendered &&
             !(series.options.dataLabels as any).allowOverlap
         ) {
             series.nodes.concat(series.points).forEach(function (node): void {
@@ -641,10 +642,10 @@ export default NetworkgraphSeries;
  * @callback Highcharts.NetworkgraphAfterSimulationCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occured.
+ *        The series where the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
-''; // detach doclets above
+''; // Detach doclets above

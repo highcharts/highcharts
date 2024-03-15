@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -106,7 +106,7 @@ const background: PaneBackgroundOptions = {
     },
 
     /** @ignore-option */
-    from: -Number.MAX_VALUE, // corrected to axis min
+    from: -Number.MAX_VALUE, // Corrected to axis min
 
     /**
      * The inner radius of the pane background. Can be either numeric
@@ -119,7 +119,7 @@ const background: PaneBackgroundOptions = {
     innerRadius: 0,
 
     /** @ignore-option */
-    to: Number.MAX_VALUE, // corrected to axis max
+    to: Number.MAX_VALUE, // Corrected to axis max
 
     /**
      * The outer radius of the circular pane background. Can be either

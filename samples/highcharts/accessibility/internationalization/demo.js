@@ -27,9 +27,18 @@
                 decimalPoint: ',',
                 thousandsSep: '.',
                 loading: 'Laster­...',
-                months: ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'],
-                shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
-                weekdays: ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag­'],
+                months: [
+                    'Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli',
+                    'August', 'September', 'Oktober', 'November', 'Desember'
+                ],
+                shortMonths: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug',
+                    'Sep', 'Okt', 'Nov', 'Des'
+                ],
+                weekdays: [
+                    'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag',
+                    'Lørdag', 'Søndag'
+                ],
                 exportButtonTitle: 'Eksporter',
                 printButtonTitle: 'Print',
                 printChart: 'Skriv ut diagram',
@@ -59,16 +68,27 @@
                     },
                     svgContainerLabel: 'Interaktives Diagramm',
                     screenReaderSection: {
-                        beforeRegionLabel: 'Screenreader-Information des Diagramms',
+                        beforeRegionLabel: 'Screenreader-Information des ' +
+                            'Diagramms',
                         endOfChartMarker: 'Ende des interaktiven Diagramms'
                     }
                 },
                 decimalPoint: ',',
                 thousandsSep: '.',
                 loading: 'Daten werden geladen...',
-                months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-                weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
-                shortMonths: ['Jan', 'Feb', 'Mrz', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                months: [
+                    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                    'Juli', 'August', 'September', 'Oktober', 'November',
+                    'Dezember'
+                ],
+                weekdays: [
+                    'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag',
+                    'Freitag', 'Samstag'
+                ],
+                shortMonths: [
+                    'Jan', 'Feb', 'Mrz', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug',
+                    'Sep', 'Okt', 'Nov', 'Dez'
+                ],
                 exportButtonTitle: 'Exportieren',
                 printButtonTitle: 'Drucken',
                 printChart: 'Diagramm ausdrucken',
@@ -97,7 +117,11 @@
         accessibility: {
             landmarkVerbosity: 'one',
             screenReaderSection: {
-                beforeChartFormat: '<p>The chart is demonstrating that you can switch between multiple languages in the same chart.</p><p>Financial line chart showing AAPL stock prices, with an additional navigator series showing an overview of the stock.</p>'
+                beforeChartFormat: '<p>The chart is demonstrating that you ' +
+                    'can switch between multiple languages in the same ' +
+                    'chart.</p><p>Financial line chart showing AAPL stock ' +
+                    'prices, with an additional navigator series showing an ' +
+                    'overview of the stock.</p>'
             },
             series: {
                 pointDescriptionEnabledThreshold: 30
@@ -204,10 +228,16 @@
             },
             accessibility: {
                 series: {
-                    descriptionFormat: '{series.name}, serie {seriesNumber} av {chart.series.length} med {series.points.length} datapunkt.'
+                    descriptionFormat: '{series.name}, serie {seriesNumber} ' +
+                        'av {chart.series.length} med {series.points.length} ' +
+                        'datapunkt.'
                 },
                 screenReaderSection: {
-                    beforeChartFormat: '<p>The chart is demonstrating that you can switch between multiple languages in the same chart.</p><p>Finansielt linjediagram som viser AAPL aksjepriser, med tilhørende navigeringsserie som gir et overblikk over aksjen.</p>'
+                    beforeChartFormat: '<p>The chart is demonstrating that ' +
+                        'you can switch between multiple languages in the ' +
+                        'same chart.</p><p>Finansielt linjediagram som viser ' +
+                        'AAPL aksjepriser, med tilhørende navigeringsserie ' +
+                        'som gir et overblikk over aksjen.</p>'
                 }
             },
             rangeSelector: {
@@ -252,10 +282,16 @@
             },
             accessibility: {
                 series: {
-                    descriptionFormat: '{series.name}, Graph {seriesNumber} von {chart.series.length}.'
+                    descriptionFormat: '{series.name}, Graph {seriesNumber} ' +
+                        'von {chart.series.length}.'
                 },
                 screenReaderSection: {
-                    beforeChartFormat: '<p>The chart is demonstrating that you can switch between multiple languages in the same chart.</p><p>Liniendiagramm des AAPL-Aktienkurses mit zusätzlichem Navigationsdiagramm für einen Überblick über den Aktienkurs.</p>'
+                    beforeChartFormat: '<p>The chart is demonstrating that ' +
+                        'you can switch between multiple languages in the ' +
+                        'same chart.</p><p>Liniendiagramm des ' +
+                        'AAPL-Aktienkurses mit zusätzlichem ' +
+                        'Navigationsdiagramm für einen Überblick über den ' +
+                        'Aktienkurs.</p>'
                 }
             },
             rangeSelector: {

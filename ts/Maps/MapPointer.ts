@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,7 +26,6 @@ const {
     defined,
     extend,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -61,14 +60,6 @@ namespace MapPointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -89,17 +80,15 @@ namespace MapPointer {
     export function compose(
         PointerClass: typeof Pointer
     ): void {
+        const pointerProto = PointerClass.prototype as MapPointer;
 
-        if (pushUnique(composedMembers, PointerClass)) {
-            const pointerProto = PointerClass.prototype as MapPointer;
-
+        if (!pointerProto.onContainerDblClick) {
             extend(pointerProto, {
                 onContainerDblClick,
                 onContainerMouseWheel
             });
 
             wrap(pointerProto, 'normalize', wrapNormalize);
-            wrap(pointerProto, 'pinchTranslate', wrapPinchTranslate);
             wrap(pointerProto, 'zoomOption', wrapZoomOption);
         }
     }
@@ -215,48 +204,6 @@ namespace MapPointer {
         }
 
         return e;
-    }
-
-    /**
-     * Extend the pinchTranslate method to preserve fixed ratio when zooming.
-     * @private
-     */
-    function wrapPinchTranslate(
-        this: MapPointer,
-        proceed: Function,
-        pinchDown: Array<any>,
-        touches: Array<any>,
-        transform: any,
-        selectionMarker: any,
-        clip: any,
-        lastValidTouch: any
-    ): void {
-        let xBigger;
-
-        proceed.call(
-            this,
-            pinchDown,
-            touches,
-            transform,
-            selectionMarker,
-            clip,
-            lastValidTouch
-        );
-
-        // Keep ratio
-        if (this.chart.options.chart.type === 'map' && this.hasZoom) {
-            xBigger = transform.scaleX > transform.scaleY;
-            this.pinchTranslateDirection(
-                !xBigger,
-                pinchDown,
-                touches,
-                transform,
-                selectionMarker,
-                clip,
-                lastValidTouch,
-                xBigger ? transform.scaleX : transform.scaleY
-            );
-        }
     }
 
     /**

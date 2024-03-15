@@ -7,8 +7,8 @@ describe('Responsive options.', () => {
 
     it('The nested layout should apply responsive options on resize', () => {
 
-        // Check after setting the size to small.
-        cy.get('.highcharts-dashboards-edit-button').eq(0).click(); // small
+        // Change the viewport to a mobile device.
+        cy.viewport('iphone-x');
 
 		cy.get('#cell-1').then((cell) => {
 			cy.get('#row').should((row) => {

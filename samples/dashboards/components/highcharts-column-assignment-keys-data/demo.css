@@ -1,0 +1,9 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+@media screen and (max-width: 680px) {
+    #dashboard-col-0 {
+        flex: 1 1 100%;
+    }
+}

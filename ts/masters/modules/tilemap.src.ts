@@ -6,7 +6,7 @@
  *
  * Tilemap module
  *
- * (c) 2010-2021 Highsoft AS
+ * (c) 2010-2024 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -15,3 +15,4 @@ import Highcharts from '../../Core/Globals.js';
 import TilemapSeries from '../../Series/Tilemap/TilemapSeries.js';
 const G: AnyRecord = Highcharts;
 TilemapSeries.compose(G.Axis);
+export default Highcharts;

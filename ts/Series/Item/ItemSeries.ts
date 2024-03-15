@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2021 Torstein Honsi
+ *  (c) 2019-2024 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -81,13 +81,13 @@ class ItemSeries extends PieSeries {
 
     public borderWidth?: number;
 
-    public data: Array<ItemPoint> = void 0 as any;
+    public data!: Array<ItemPoint>;
 
     public itemSize?: number;
 
-    public options: ItemSeriesOptions = void 0 as any;
+    public options!: ItemSeriesOptions;
 
-    public points: Array<ItemPoint> = void 0 as any;
+    public points!: Array<ItemPoint>;
 
     public slots?: Array<ItemSeries.GeometryObject>;
 
@@ -121,7 +121,7 @@ class ItemSeries extends PieSeries {
         if (this.center && this.slots) {
             super.drawDataLabels();
 
-        // or it's just a dot chart with no natural place to put the data labels
+        // Or it's just a dot chart with no natural place to put the data labels
         } else {
             for (const point of this.points) {
                 point.destroyElements({ dataLabel: 1 });
@@ -266,7 +266,7 @@ class ItemSeries extends PieSeries {
                 if (!graphic.isActive) {
                     graphic.destroy();
                     graphics.splice(j, 1);
-                    j--; // Need to substract 1 after splice, #19053
+                    j--; // Need to subtract 1 after splice, #19053
                 } else {
                     graphic.isActive = false;
                 }
@@ -462,7 +462,7 @@ class ItemSeries extends PieSeries {
     public translate(positions?: Array<number>): void {
         // Initialize chart without setting data, #13379.
         if (
-            this.total === 0 && // check if that is a (semi-)circle
+            this.total === 0 && // Check if that is a (semi-)circle
             isNumber(this.options.startAngle) &&
             isNumber(this.options.endAngle)
         ) {

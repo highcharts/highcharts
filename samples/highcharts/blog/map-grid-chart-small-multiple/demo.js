@@ -90,7 +90,10 @@ const bc = 0,
 
 for (let i = 0; i < seats.length; i++) {
     for (let j = 0; j < seats[i].data.length; j++) {
-        seats[i][Object.keys(seats[i])[0]] = seats[i][Object.keys(seats[i])[0]] + '<span style="color:' + parties[j].color + '">\u25CF</span>' + parties[j].name + ' ' + seats[i].data[j] + '<br>';
+        seats[i][Object.keys(seats[i])[0]] = seats[i][
+            Object.keys(seats[i])[0]
+        ] + '<span style="color:' + parties[j].color + '">\u25CF</span>' +
+            parties[j].name + ' ' + seats[i].data[j] + '<br>';
     }
 }
 const titleStyle = '14px';

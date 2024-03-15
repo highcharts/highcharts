@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,10 +16,7 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -332,7 +329,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * @apioption series.flags.data.title
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file
 
 /* *
  *

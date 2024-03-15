@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2021 Torstein Honsi
+ *  (c) 2019-2024 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -199,7 +199,7 @@ const ItemSeriesDefaults: ItemSeriesOptions = {
  * @apioption series.item.events
  */
 
-''; // keeps the doclets above separate
+''; // Keeps the doclets above separate
 
 /* *
  *

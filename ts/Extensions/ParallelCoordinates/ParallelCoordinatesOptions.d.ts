@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2021 Pawel Fus
+ *  (c) 2010-2024 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -26,7 +26,7 @@ import type AxisOptions from '../../Core/Axis/AxisOptions';
 
 declare module '../../Core/Chart/ChartOptions' {
     interface ChartOptions extends ParallelCoordinatesOptions {
-        // nothing to add
+        // Nothing to add
     }
 }
 

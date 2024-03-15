@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -48,15 +48,15 @@ class TilemapPoint extends HeatmapPoint {
      *
      * */
 
-    public options: TilemapPointOptions = void 0 as any;
+    public options!: TilemapPointOptions;
 
     public pointPadding?: number;
 
-    public radius: number = void 0 as any;
+    public radius!: number;
 
-    public series: TilemapSeries = void 0 as any;
+    public series!: TilemapSeries;
 
-    public tileEdges: Record<string, number> = void 0 as any;
+    public tileEdges!: Record<string, number>;
 
     /* *
      *

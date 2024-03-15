@@ -13,7 +13,9 @@ Highcharts.chart('container', {
             borderWidth: 1,
             maxSize: 60,
             minSize: 10,
-            color: '#7cb5ec', // In styled mode presentational styles from the API are replaced by CSS
+            color:
+                '#7cb5ec', // In styled mode presentational styles from the
+            // API are replaced by CSS
             connectorDistance: 40,
             ranges: [
                 { value: 1 },

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Handling for Windows High Contrast Mode.
  *
@@ -20,6 +20,7 @@
 
 import type Accessibility from './Accessibility';
 import type ColorType from '../Core/Color/ColorType';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const {
@@ -110,26 +111,40 @@ function setHighContrastTheme(
     const theme: AnyRecord = (
         chart.options.accessibility.highContrastTheme
     );
+
     chart.update(theme, false);
+
+    const hasCustomColors = theme.colors?.length > 1;
 
     // Force series colors (plotOptions is not enough)
     chart.series.forEach(function (s): void {
         const plotOpts = theme.plotOptions[s.type] || {};
-        s.update({
-            color: plotOpts.color || 'windowText',
-            colors: [plotOpts.color || 'windowText'],
-            borderColor: plotOpts.borderColor || 'window'
-        });
 
-        // Force point colors if existing
-        s.points.forEach(function (p): void {
-            if (p.options && p.options.color) {
-                p.update({
-                    color: plotOpts.color || 'windowText',
-                    borderColor: plotOpts.borderColor || 'window'
-                }, false);
-            }
-        });
+        const fillColor = hasCustomColors && s.colorIndex !== void 0 ?
+            theme.colors[s.colorIndex] :
+            plotOpts.color || 'window';
+
+        const seriesOptions: Partial<SeriesOptions> = {
+            color: plotOpts.color || 'windowText',
+            colors: hasCustomColors ?
+                theme.colors : [plotOpts.color || 'windowText'],
+            borderColor: plotOpts.borderColor || 'window',
+            fillColor
+        };
+
+        s.update(seriesOptions, false);
+
+        if (s.points) {
+            // Force point colors if existing
+            s.points.forEach(function (p): void {
+                if (p.options && p.options.color) {
+                    p.update({
+                        color: plotOpts.color || 'windowText',
+                        borderColor: plotOpts.borderColor || 'window'
+                    }, false);
+                }
+            });
+        }
     });
 
     // The redraw for each series and after is required for 3D pie

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
@@ -70,13 +70,13 @@ class GeoHeatmapPoint extends MapPoint {
      *
      * */
 
-    public lat: number = void 0 as any;
+    public lat!: number;
 
-    public lon: number = void 0 as any;
+    public lon!: number;
 
-    public options: GeoHeatmapPointOptions = void 0 as any;
+    public options!: GeoHeatmapPointOptions;
 
-    public series: GeoHeatmapSeries = void 0 as any;
+    public series!: GeoHeatmapSeries;
 
     /* *
      *

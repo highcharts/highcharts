@@ -13,6 +13,13 @@ const colorStopsTemperature = [
     [0.7, '#DD2323']
 ];
 
+const tempRange = {
+    minC: -10,
+    maxC: 50,
+    minF: 14,
+    maxF: 122
+};
+
 setupBoard();
 
 const KPIChartOptions = {
@@ -132,126 +139,34 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'world-map',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'world-map'
                     }, {
                         id: 'kpi-layout',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        },
                         layout: {
                             rows: [{
                                 cells: [{
-                                    id: 'kpi-data',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-data'
                                 }, {
-                                    id: 'kpi-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-temperature'
                                 }, {
-                                    id: 'kpi-max-temperature',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-max-temperature'
                                 }, {
-                                    id: 'kpi-rain',
-                                    responsive: {
-                                        large: {
-                                            width: '1/2'
-                                        },
-                                        medium: {
-                                            width: '1/2'
-                                        },
-                                        small: {
-                                            width: '1/2'
-                                        }
-                                    },
-                                    height: '204px'
+                                    id: 'kpi-rain'
                                 }]
                             }]
                         }
                     }]
                 }, {
                     cells: [{
-                        id: 'selection-grid',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'selection-grid'
                     }, {
-                        id: 'city-chart',
-                        responsive: {
-                            large: {
-                                width: '1/2'
-                            },
-                            medium: {
-                                width: '100%'
-                            },
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'city-chart'
                     }]
                 }]
             }]
         },
         components: [{
-            cell: 'time-range-selector',
+            renderTo: 'time-range-selector',
             type: 'Navigator',
             chartOptions: {
                 chart: {
@@ -301,7 +216,8 @@ async function setupBoard() {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Data range selector. Highcharts Interactive Chart.'
+                        chartContainerLabel:
+                            'Data range selector. Highcharts Interactive Chart.'
                     }
                 },
                 accessibility: {
@@ -318,7 +234,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'world-map',
+            renderTo: 'world-map',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
             chartOptions: {
@@ -332,8 +248,8 @@ async function setupBoard() {
                 colorAxis: {
                     startOnTick: false,
                     endOnTick: false,
-                    max: 50,
-                    min: 0,
+                    max: tempRange.maxC,
+                    min: tempRange.minC,
                     stops: colorStopsTemperature
                 },
                 legend: {
@@ -402,7 +318,7 @@ async function setupBoard() {
                             },
                             select: {
                                 lineWidthPlus: 4,
-                                radiusPlus: 0
+                                radiusPlus: 2
                             }
                         },
                         symbol: 'mapmarker'
@@ -428,26 +344,28 @@ async function setupBoard() {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                        chartContainerLabel:
+                            'Cities in the world. Highcharts Interactive Map.'
                     }
                 },
                 accessibility: {
                     description: `The chart is displaying maximal temperature
                     in cities.`,
                     point: {
-                        valueDescriptionFormat: '{value} degrees celsius, {xDescription}, Cities'
+                        valueDescriptionFormat:
+                            '{value} degrees celsius, {xDescription}, Cities'
                     }
                 }
             }
         }, {
-            cell: 'kpi-data',
+            renderTo: 'kpi-data',
             type: 'KPI',
             title: activeCity,
             value: 10,
             valueFormat: '{value:.0f}m',
             subtitle: 'Elevation'
         }, {
-            cell: 'kpi-temperature',
+            renderTo: 'kpi-temperature',
             type: 'KPI',
             connector: {
                 id: 'Range Selection'
@@ -464,8 +382,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -477,7 +395,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-max-temperature',
+            renderTo: 'kpi-max-temperature',
             type: 'KPI',
             connector: {
                 id: 'Range Selection'
@@ -486,7 +404,7 @@ async function setupBoard() {
             chartOptions: {
                 ...KPIChartOptions,
                 title: {
-                    text: 'Maximal Temperature',
+                    text: 'Maximum Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
                 },
@@ -494,8 +412,8 @@ async function setupBoard() {
                     accessibility: {
                         description: 'Celsius'
                     },
-                    max: 50,
-                    min: -10
+                    max: tempRange.maxC,
+                    min: tempRange.minC
                 }
             },
             states: {
@@ -507,7 +425,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'kpi-rain',
+            renderTo: 'kpi-rain',
             type: 'KPI',
             connector: {
                 id: 'Range Selection'
@@ -537,7 +455,7 @@ async function setupBoard() {
                 }
             }
         }, {
-            cell: 'selection-grid',
+            renderTo: 'selection-grid',
             type: 'DataGrid',
             connector: {
                 id: 'Range Selection'
@@ -553,13 +471,13 @@ async function setupBoard() {
                         show: false
                     },
                     FD: {
-                        headerFormat: 'Days with Frost'
+                        headerFormat: 'Days with frost'
                     },
                     ID: {
-                        headerFormat: 'Days with Ice'
+                        headerFormat: 'Days with ice'
                     },
                     RR1: {
-                        headerFormat: 'Days with Rain'
+                        headerFormat: 'Days with rain'
                     },
                     TN: {
                         show: false
@@ -568,37 +486,32 @@ async function setupBoard() {
                         show: false
                     },
                     TNC: {
-                        headerFormat: 'Average Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        headerFormat: 'Average temperature °C',
+                        cellFormat: '{value:.1f}'
                     },
                     TNF: {
-                        headerFormat: 'Average Temperature °F',
+                        headerFormat: 'Average temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     },
                     TXC: {
-                        headerFormat: 'Maximal Temperature °C',
-                        cellFormat: '{value:.2f}'
+                        headerFormat: 'Maximum temperature °C',
+                        cellFormat: '{value:.1f}'
                     },
                     TXF: {
-                        headerFormat: 'Maximal Temperature °F',
+                        headerFormat: 'Maximum temperature °F',
+                        cellFormat: '{value:.1f}',
                         show: false
                     }
                 }
             },
             editable: true
         }, {
-            cell: 'city-chart',
+            renderTo: 'city-chart',
             type: 'Highcharts',
             connector: {
-                id: 'Range Selection'
-            },
-            columnAssignment: {
-                time: 'x',
-                RR1: 'y',
-                TNC: activeScale === 'C' ? 'value' : null,
-                TNF: !activeScale === 'C' ? 'value' : null,
-                TXC: activeScale === 'C' ? 'value' : null,
-                TXF: !activeScale === 'C' ? 'value' : null
+                id: 'Range Selection',
+                columnAssignment: [] // Assigned on each city selection
             },
             sync: {
                 highlight: true
@@ -638,7 +551,25 @@ async function setupBoard() {
                 },
                 tooltip: {
                     enabled: true,
-                    stickOnContact: true
+                    stickOnContact: true,
+                    formatter: function () {
+                        const name = this.series.name;
+
+                        // Date
+                        const hdr = Highcharts.dateFormat(
+                            '%Y-%m-%d<br />',
+                            this.point.x
+                        );
+
+                        if (name === 'Days with rain') {
+                            return hdr + 'Days with rain: ' + this.point.y;
+                        }
+
+                        // Temperature (names TXC, TNC, TXF, TNF)
+                        const temp = Highcharts.numberFormat(this.point.y, 1);
+
+                        return hdr + name + ': ' + temp + '˚' + activeScale;
+                    }
                 },
                 xAxis: {
                     type: 'datetime',
@@ -659,7 +590,8 @@ async function setupBoard() {
                 },
                 lang: {
                     accessibility: {
-                        chartContainerLabel: 'Cities in the world. Highcharts Interactive Map.'
+                        chartContainerLabel:
+                            'Cities in the world. Highcharts Interactive Map.'
                     }
                 },
                 accessibility: {
@@ -679,14 +611,30 @@ async function setupBoard() {
             id: cityRows[i].city,
             type: 'CSV',
             options: {
-                csvURL: cityRows[i].csv
+                csvURL: cityRows[i].csv,
+                dataTable: {
+                    aliases: {
+                        'Days with rain': 'RR1',
+                        'Average temperature': 'TNC',
+                        'Maximum temperature': 'TXC'
+                    }
+                }
             }
         });
     }
 
-    // Load initial city
+    // Load active city
     await setupCity(board, activeCity, activeColumn, activeScale);
     await updateBoard(board, activeCity, activeColumn, activeScale, true);
+
+    // Select active city on the map
+    const worldMap = board.mountedComponents[1].component.chart.series[1];
+    for (let idx = 0; idx < worldMap.data.length; idx++) {
+        if (worldMap.data[idx].name === activeCity) {
+            worldMap.data[idx].select();
+            break;
+        }
+    }
 
     // Load additional cities
     for (let i = 0, iEnd = cityRows.length; i < iEnd; ++i) {
@@ -700,7 +648,7 @@ async function setupCity(board, city, column, scale) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const cityTable = await dataPool.getConnectorTable(city);
-    const time = board.mountedComponents[0].component.chart.axes[0].min;
+    const latestTime = board.mountedComponents[0].component.chart.axes[0].max;
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -735,6 +683,11 @@ async function setupCity(board, city, column, scale) {
         citiesTable.getRowIndexBy('city', city)
     );
 
+    const pointValue = cityTable.modified.getCellAsNumber(
+        column,
+        cityTable.modified.getRowIndexBy('time', latestTime)
+    );
+
     // Add city to world map
     worldMap.addPoint({
         custom: {
@@ -744,31 +697,38 @@ async function setupCity(board, city, column, scale) {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         name: cityInfo.city,
-        y: cityTable.modified.getCellAsNumber(
-            column,
-            cityTable.getRowIndexBy('time', time)
-        ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+        y: pointValue || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
     });
 }
 
 async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
-    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
-    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorMin = (column[0] !== 'T' ?
+        0 : (scale === 'C' ? tempRange.minC : tempRange.minF));
+    const colorMax = (column[0] !== 'T' ?
+        10 : (scale === 'C' ? tempRange.maxC : tempRange.maxF));
+
     const colorStops = (
         column[0] !== 'T' ?
             colorStopsDays :
             colorStopsTemperature
     );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
+    // Climate data for selected city
     const cityTable = await dataPool.getConnectorTable(city);
+    // Geographical data
+    const citiesTable = await dataPool.getConnectorTable('Cities');
+
     const [
         timeRangeSelector,
         worldMap,
         kpiData,
         kpiTemperature,
         kpiMaxTemperature,
-        selectionGrid
+        // eslint-disable-next-line no-unused-vars
+        kpiRain, // No need to update this chart
+        selectionGrid,
+        cityChart
     ] = board.mountedComponents.map(c => c.component);
 
     column = (column[0] === 'T' ? column + scale : column);
@@ -776,7 +736,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update data of time range selector
     if (newData) {
         timeRangeSelector.chart.series[0].update({
-            // type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
         });
@@ -811,10 +770,16 @@ async function updateBoard(board, city, column, scale, newData) {
     const lastTime = rangeTable.getCellAsNumber('time', rangeEnd);
 
     for (let i = 0, iEnd = mapPoints.length; i < iEnd; ++i) {
-        const pointTable = await dataPool.getConnectorTable(mapPoints[i].name);
+        // Get elevation of city
+        const cityName = mapPoints[i].name;
+        const cityInfo = citiesTable.getRowObject(
+            citiesTable.getRowIndexBy('city', cityName)
+        );
+        const pointTable = await dataPool.getConnectorTable(cityName);
 
         mapPoints[i].update({
             custom: {
+                elevation: cityInfo.elevation,
                 yScale: scale
             },
             y: pointTable.modified.getCellAsNumber(
@@ -837,9 +802,8 @@ async function updateBoard(board, city, column, scale, newData) {
         columnName: 'TX' + scale
     });
 
-    // Update KPIs
     if (newData) {
-        const citiesTable = await dataPool.getConnectorTable('Cities');
+        // Update KPIs
         await kpiData.update({
             title: city,
             value: citiesTable.getCellAsNumber(
@@ -850,14 +814,6 @@ async function updateBoard(board, city, column, scale, newData) {
 
         // Update data grid and city chart
         const showCelsius = scale === 'C';
-        const sharedColumnAssignment = {
-            time: 'x',
-            RR1: column === 'RR1' ? 'y' : null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null
-        };
 
         // Update city grid selection
         await selectionGrid.update({
@@ -876,8 +832,34 @@ async function updateBoard(board, city, column, scale, newData) {
                         show: !showCelsius
                     }
                 }
+            }
+        });
+
+        // Update city chart
+        const options = cityChart.chartOptions;
+        options.title.text = 'Temperature and rain in ' + city;
+        options.colorAxis.min = colorMin;
+        options.colorAxis.max = colorMax;
+        options.colorAxis.colorStops = colorStops;
+
+        const tempUnit = showCelsius ? 'Celsius' : 'Fahrenheit';
+        options.yAxis.title.text = tempUnit;
+        options.yAxis.accessibility.description = tempUnit;
+
+        await cityChart.update({
+            connector: {
+                columnAssignment: [{
+                    seriesId: 'Days with rain',
+                    data: ['time', 'RR1']
+                }, {
+                    seriesId: 'Average temperature',
+                    data: ['time', 'TN' + scale]
+                }, {
+                    seriesId: 'Maximum temperature',
+                    data: ['time', 'TX' + scale]
+                }]
             },
-            columnAssignment: sharedColumnAssignment
+            chartOptions: options
         });
     }
 }

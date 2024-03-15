@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2021 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2024 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -30,7 +30,10 @@ import type XRangeSeriesOptions from './XRangeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -48,18 +51,11 @@ const {
     isObject,
     merge,
     pick,
+    pushUnique,
     relativeLength
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -132,7 +128,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, 'Series.XRange')) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',
@@ -148,9 +144,9 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<XRangePoint> = void 0 as any;
-    public options: XRangeSeriesOptions = void 0 as any;
-    public points: Array<XRangePoint> = void 0 as any;
+    public data!: Array<XRangePoint>;
+    public options!: XRangeSeriesOptions;
+    public points!: Array<XRangePoint>;
 
     /* *
      *
@@ -263,6 +259,13 @@ class XRangeSeries extends ColumnSeries {
     public alignDataLabel(point: XRangePoint): void {
         const oldPlotX = point.plotX;
         point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
+
+        if (point.dataLabel && point.shapeArgs?.width) {
+            point.dataLabel.css({
+                width: `${point.shapeArgs.width}px`
+            });
+        }
+
         super.alignDataLabel.apply(this, arguments);
         point.plotX = oldPlotX;
     }
@@ -337,7 +340,8 @@ class XRangeSeries extends ColumnSeries {
             yAxis.categories
         ) {
             point.plotY = yAxis.translate(
-                (point.y as any),
+                (
+                    point.y as any),
                 0 as any,
                 1 as any,
                 0 as any,
@@ -513,7 +517,7 @@ class XRangeSeries extends ColumnSeries {
         if (!point.isNull && point.visible !== false) {
 
             // Original graphic
-            if (graphic) { // update
+            if (graphic) { // Update
                 graphic.rect[verb](shapeArgs);
             } else {
                 point.graphic = graphic = renderer.g('point')

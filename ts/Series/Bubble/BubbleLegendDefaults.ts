@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -192,7 +192,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
         y: 0
     },
     /**
-     * Miximum bubble legend range size. If values for ranges are
+     * Maximum bubble legend range size. If values for ranges are
      * not specified, the `minSize` and the `maxSize` are calculated
      * from bubble series.
      */
@@ -267,7 +267,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      */
     zIndex: 1,
     /**
-     * Ranges with with lower value than zThreshold, are skipped.
+     * Ranges with lower value than zThreshold are skipped.
      */
     zThreshold: 0
 };

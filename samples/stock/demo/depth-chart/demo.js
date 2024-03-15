@@ -58,7 +58,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="font-size=10px;">Price: {point.key}</span><br/>',
+        headerFormat: '<span style="font-size=10px;">Price: ' +
+            '{point.key}</span><br/>',
         valueDecimals: 2
     },
     series: [{

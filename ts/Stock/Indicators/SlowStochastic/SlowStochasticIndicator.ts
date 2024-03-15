@@ -90,9 +90,9 @@ class SlowStochasticIndicator extends StochasticIndicator {
      *
      * */
 
-    public data: Array<SlowStochasticPoint> = void 0 as any;
-    public options: SlowStochasticOptions = void 0 as any;
-    public points: Array<SlowStochasticPoint> = void 0 as any;
+    public data!: Array<SlowStochasticPoint>;
+    public options!: SlowStochasticOptions;
+    public points!: Array<SlowStochasticPoint>;
 
     /* *
      *
@@ -217,4 +217,4 @@ export default SlowStochasticIndicator;
  * @apioption series.slowstochastic
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

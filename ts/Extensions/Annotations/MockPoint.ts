@@ -12,14 +12,12 @@
  *
  * */
 
-import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type {
     AnnotationPoint,
     AnnotationPointType
 } from './AnnotationSeries';
 import type Axis from '../../Core/Axis/Axis';
-import type Controllable from './Controllables/Controllable';
 import type ControlTarget from './ControlTarget';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
@@ -280,8 +278,8 @@ class MockPoint {
     public isInside?: boolean;
     public negative?: boolean;
     public options: (MockPointOptions|Function);
-    public plotX: number = void 0 as any;
-    public plotY: number = void 0 as any;
+    public plotX!: number;
+    public plotY!: number;
     public series: MockSeries;
     public target: (ControlTarget|null);
     public ttBelow?: boolean;
@@ -673,4 +671,4 @@ export default MockPoint;
  * @type {boolean|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

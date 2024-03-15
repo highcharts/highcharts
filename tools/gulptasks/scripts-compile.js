@@ -13,19 +13,38 @@ const gulp = require('gulp');
 /**
  * Creates minified versions of `.src.js` bundles in `/code` folder.
  *
+ * @param {Array<string>} [filePaths]
+ * Optional list of files to compile.
+ *
+ * @param {object} [config]
+ * Configuration object.
+ *
+ * @param {string} [product]
+ * Product name.
+ *
  * @return {Promise}
  * Promise to keep
  */
-function scriptsCompile(filePaths, config = {}) {
+function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     const fs = require('fs'),
         fsLib = require('./lib/fs'),
         logLib = require('./lib/log'),
         path = require('path'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;
+    let esModulesFolder,
+        targetFolder;
 
-    const esModulesFolder = config.esModulesFolder || '/es-modules/',
-        targetFolder = config.bundleTargetFolder || 'code';
+    if (product === 'highcharts') {
+        esModulesFolder = '/es-modules/';
+        targetFolder = 'code';
+    } else if (product === 'dashboards') {
+        esModulesFolder = config.esModulesFolder;
+        targetFolder = config.bundleTargetFolder;
+    } else if (product === 'datagrid') {
+        esModulesFolder = config.esModulesFolderDataGrid;
+        targetFolder = config.bundleTargetFolderDataGrid;
+    }
 
     filePaths = filePaths instanceof Array ?
         filePaths :
@@ -48,17 +67,9 @@ function scriptsCompile(filePaths, config = {}) {
     ) {
         inputPath = filePaths[i];
 
-        if (
-            (
-                inputPath.includes('/dashboards/') &&
-                config.cdnFolder !== 'dashboards/'
-            ) ||
-            inputPath.includes(esModulesFolder) ||
-            !inputPath.endsWith('.src.js')
-        ) {
+        if (inputPath.includes(esModulesFolder) || !inputPath.endsWith('.src.js')) {
             continue;
         }
-
 
         const outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
@@ -77,8 +88,7 @@ function scriptsCompile(filePaths, config = {}) {
                 // Write compiled file
                 fs.writeFileSync(
                     outputPath,
-                    result.code.replace('@license ', '') +
-                    `//# sourceMappingURL=${path.basename(outputMapPath)}`
+                    result.code.replace('@license ', '')
                 );
 
                 // Write source map

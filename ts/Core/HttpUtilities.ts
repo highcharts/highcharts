@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-2024 Christer Vasseng, Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,16 +16,13 @@
  *
  * */
 
-import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type JSON from './JSON';
 
 import G from '../Core/Globals.js';
-const { doc } = G;
+const { win } = G;
 import U from '../Core/Utilities.js';
 const {
-    createElement,
     discardElement,
-    merge,
     objectEach
 } = U;
 
@@ -69,7 +66,7 @@ export interface AjaxSuccessCallbackFunction {
  *        The Ajax settings to use.
  *
  * @return {false|undefined}
- *         Returns false, if error occured.
+ *         Returns false, if error occurred.
  */
 function ajax(
     settings: AjaxSettingsObject
@@ -88,7 +85,7 @@ function ajax(
      * @param {XMLHttpRequest} xhr
      * Internal request object.
      * @param {string|Error} err
-     * Occured error.
+     * Occurred error.
      */
     function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
         if (settings.error) {
@@ -188,37 +185,44 @@ function getJSON(
  * @param {Object} data
  * Post data
  *
- * @param {Highcharts.Dictionary<string>} [formAttributes]
+ * @param {RequestInit} [fetchOptions]
  * Additional attributes for the post request
+ */
+
+/**
+ *
  */
 function post(
     url: string,
-    data: object,
-    formAttributes?: HTMLAttributes
-): void {
-    // create the form
-    const form: HTMLFormElement = createElement('form', merge({
-        method: 'post',
-        action: url,
-        enctype: 'multipart/form-data'
-    }, formAttributes), {
-        display: 'none'
-    }, doc.body) as unknown as HTMLFormElement;
-
-    // add the data
+    data: Record<string, any>,
+    fetchOptions?: RequestInit
+): Promise<void> {
+    const formData = new win.FormData();
+    // Add the data
     objectEach(data, function (val: string, name: string): void {
-        createElement('input', {
-            type: 'hidden',
-            name: name,
-            value: val
-        }, void 0, form);
+        formData.append(name, val);
     });
 
-    // submit
-    form.submit();
+    formData.append('b64', 'true');
 
-    // clean up
-    discardElement(form);
+    const { filename, type } = data;
+
+    return win.fetch(url, {
+        method: 'POST',
+        body: formData,
+        ...fetchOptions
+    }).then((res: Response): void => {
+        if (res.ok) {
+            res.text().then((text: string): void => {
+                const link = document.createElement('a');
+                link.href = `data:${type};base64,${text}`;
+                link.download = filename;
+                link.click();
+
+                discardElement(link);
+            });
+        }
+    });
 }
 
 /* *
@@ -274,4 +278,4 @@ export default HttpUtilities;
  * @type {string}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

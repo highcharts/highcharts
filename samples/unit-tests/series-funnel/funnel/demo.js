@@ -84,7 +84,7 @@ QUnit.test('Funnel size relative to center(#4738)', function (assert) {
     assert.equal(
         initialY,
         series.points[0].plotY,
-        '#17514, Negative value should have no influence on the chart\'s layout.'
+        '#17514, Negative value should have no influence on the chart\'s layout'
     );
 
 });
@@ -229,6 +229,37 @@ QUnit.test('Funnel path', function (assert) {
         points[3].graphic.d.split(' ').filter(s => s === 'C').length,
         6,
         'The last point should have 6 rounded corners, scope: point (#18839)'
+    );
+
+    series.update({
+        data: [
+            ['A', 4],
+            ['B', 1],
+            ['C', 1],
+            ['D', 1],
+            ['E', 1]
+        ]
+    });
+
+    assert.ok(
+        series.points[3].graphic.d.split(' ').filter(s => s === 'Z').length,
+        'The fourth point path is properly closed (#20319)'
+    );
+
+    assert.strictEqual(
+        series.points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The fourth point should have 4 rounded corners, scope: point (#20319)'
+    );
+
+    series.update({
+        borderRadius: 5
+    });
+
+    assert.strictEqual(
+        series.points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        0,
+        'The fourth point should not have rounded corners (#20319)'
     );
 });
 
@@ -408,14 +439,24 @@ QUnit.test('Funnel dataLabels', function (assert) {
     dataLabel = chart.series[0].points[4].dataLabel;
     const prevDataLabelPos = dataLabel.x;
 
-    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
+    Highcharts.fireEvent(
+        chart.series[0].points[0].legendItem.group.element,
+        'click'
+    );
+    Highcharts.fireEvent(
+        chart.series[0].points[0].legendItem.group.element,
+        'click'
+    );
+    Highcharts.fireEvent(
+        chart.series[0].points[0].legendItem.group.element,
+        'click'
+    );
 
     assert.equal(
         dataLabel.x,
         prevDataLabelPos,
-        'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
+        'DataLabels with allowOverlap set to false should be positioned ' +
+        'correctly after point hide (#12350)'
     );
 
     chart.update({

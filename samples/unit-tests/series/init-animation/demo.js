@@ -17,10 +17,14 @@ QUnit.test('General animation tests', function (assert) {
             done = assert.async(),
             width;
 
-        const initialClips = chart.container.querySelectorAll('defs clipPath').length;
+        const initialClips = chart.container.querySelectorAll(
+            'defs ' +
+            'clipPath'
+        ).length;
         assert.ok(
             initialClips >= 2,
-            'There should be at least clips initially, one for plot area and one for the series'
+            'There should be at least clips initially, one for plot area and ' +
+            'one for the series'
         );
 
         setTimeout(function () {
@@ -44,7 +48,8 @@ QUnit.test('General animation tests', function (assert) {
             assert.strictEqual(
                 width,
                 0,
-                'Animation should run when duration is set and series is added dynamically (#14362).'
+                'Animation should run when duration is set and series is ' +
+                'added dynamically (#14362).'
             );
         }, 100);
 

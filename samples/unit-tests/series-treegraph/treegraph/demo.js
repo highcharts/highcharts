@@ -1,4 +1,5 @@
-QUnit.test('Treegraph series',
+QUnit.test(
+    'Treegraph series',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 series: [{
@@ -39,10 +40,10 @@ QUnit.test('Treegraph series',
             'The point A should not be X positioned on 0 (#19038)'
         );
 
-        assert.ok(
-            !series.data[1].dataLabel ||
-                series.data[1].dataLabel.visibility === 'hidden',
-            'Hidden points should have hidden data labels (#18891)'
+        assert.strictEqual(
+            series.data[1].dataLabel.visibility,
+            'hidden',
+            'Hidden points should have hidden data labels (#18891, #20752)'
         );
 
         series.data[0].update({
@@ -72,7 +73,10 @@ QUnit.test('Treegraph series',
         }]);
 
         assert.strictEqual(
-            document.querySelectorAll('.highcharts-treegraph-series>.highcharts-point').length,
+            document.querySelectorAll(
+                '.highcharts-treegraph-series>' +
+                '.highcharts-point'
+            ).length,
             2,
             'Correct amount of links after setData (#19524)'
         );
@@ -114,7 +118,9 @@ QUnit.test('Treegraph series',
         });
 
         let collapseButtonOpacity =
-            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+            series.data[2].collapseButton && series.data[2].collapseButton.attr(
+                'opacity'
+            );
 
         assert.strictEqual(
             collapseButtonOpacity,
@@ -127,7 +133,9 @@ QUnit.test('Treegraph series',
         });
 
         collapseButtonOpacity =
-            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+            series.data[2].collapseButton && series.data[2].collapseButton.attr(
+                'opacity'
+            );
 
         assert.strictEqual(
             collapseButtonOpacity,
@@ -183,6 +191,22 @@ QUnit.test('Treegraph series',
         assert.ok(
             point2.collapsed && point3.collapsed,
             'Multiple nodes should collapse simultaneously (#19552).'
+        );
+
+        const exportedSVG = chart.getSVGForExport(),
+            selector = '#container .highcharts-series-1' +
+                ' .highcharts-level-group-3 path',
+            inChartPos = +document.querySelectorAll(selector)[0]
+                .getAttribute('x');
+
+        // Replace the chart with its exported image
+        chart.destroy();
+        document.getElementById('container').innerHTML = exportedSVG;
+
+        assert.strictEqual(
+            inChartPos,
+            +document.querySelectorAll(selector)[0].getAttribute('x'),
+            'Dynamically collapsed point should exported as such (#20006).'
         );
     }
 );

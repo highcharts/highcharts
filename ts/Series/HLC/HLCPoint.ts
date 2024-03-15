@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Pawel Lysy
+ *  (c) 2010-2024 Pawel Lysy
  *
  *  License: www.highcharts.com/license
  *
@@ -42,21 +42,21 @@ class HLCPoint extends ColumnPoint {
      *
      * */
 
-    public close: number = void 0 as any;
+    public close!: number;
 
-    public high: number = void 0 as any;
+    public high!: number;
 
-    public low: number = void 0 as any;
+    public low!: number;
 
-    public options: HLCPointOptions = void 0 as any;
+    public options!: HLCPointOptions;
 
-    public plotClose: number = void 0 as any;
+    public plotClose!: number;
 
     public plotHigh?: number;
 
     public plotLow?: number;
 
-    public series: HLCSeries = void 0 as any;
+    public series!: HLCSeries;
 
     public yBottom?: number;
 

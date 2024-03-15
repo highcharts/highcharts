@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -240,7 +240,7 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
  * @apioption series.wordcloud.data.weight
  */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *

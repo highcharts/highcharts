@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -451,12 +451,26 @@ const NavigatorDefaults: NavigatorOptions = {
     xAxis: {
         /**
          * Additional range on the right side of the xAxis. Works similar to
-         * xAxis.maxPadding, but value is set in milliseconds.
+         * `xAxis.maxPadding`, but the value is set in terms of axis values,
+         * percentage or pixels.
+         *
+         * If it's a number, it is interpreted as axis values, which in a
+         * datetime axis equals milliseconds.
+         *
+         * If it's a percentage string, is interpreted as percentages of the
+         * axis length. An overscroll of 50% will make a 100px axis 50px longer.
+         *
+         * If it's a pixel string, it is interpreted as a fixed pixel value, but
+         * limited to 90% of the axis length.
+         *
+         * If it's undefined, the value is inherited from `xAxis.overscroll`.
+         *
          * Can be set for both, main xAxis and navigator's xAxis.
          *
+         * @type    {number | string | undefined}
          * @since   6.0.0
+         * @apioption navigator.xAxis.overscroll
          */
-        overscroll: 0,
 
         className: 'highcharts-navigator-xaxis',
 
@@ -582,4 +596,4 @@ export default NavigatorDefaults;
  * @apioption xAxis.maxRange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

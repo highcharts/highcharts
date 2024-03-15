@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
 import type Globals from '../Globals';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
@@ -50,13 +51,13 @@ function fromJSON(
         jsonChain = json.chain,
         modifiers: Array<DataModifier> = [];
 
-    // modifiers
+    // Modifiers
 
     for (let i = 0, iEnd = jsonChain.length; i < iEnd; ++i) {
         modifiers.push(Serializable.fromJSON(jsonChain[i]) as DataModifier);
     }
 
-    // apply chain options later
+    // Apply chain options later
 
     delete json.options.chain;
 
@@ -64,7 +65,7 @@ function fromJSON(
 
     chainModifier.options.chain = chainOptions;
 
-    // done
+    // Done
 
     return chainModifier;
 }
@@ -100,7 +101,7 @@ function toJSON(
     const chain: Array<ChainModifierHelper.ChainJSON> = [],
         options = obj.options as ChainModifierHelper.OptionsJSON;
 
-    // modifiers
+    // Modifiers
 
     const objChain = obj.chain;
 
@@ -110,7 +111,7 @@ function toJSON(
         );
     }
 
-    // done
+    // Done
 
     return {
         $class: 'Data.ChainModifier',

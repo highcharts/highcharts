@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -41,6 +41,16 @@ class Sync {
      * Constructor
      *
      * */
+
+    /**
+     * Creates an instance of the sync class.
+     *
+     * @param component
+     * The component to which the emitters and handlers are attached.
+     *
+     * @param syncHandlers
+     * The emitters and handlers to use for each event.
+     */
     constructor(
         component: ComponentType,
         syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
@@ -57,10 +67,12 @@ class Sync {
      *  Properties
      *
      * */
+
     /**
      * Array of listeners that should be removed when the sync is stopped.
      */
     private listeners: Array<Function>;
+
     /**
      * Default handlers for the sync class. This property is extended by
      * different Components, where default syncs are added. Allows overwriting
@@ -72,6 +84,7 @@ class Sync {
      * Registry for the sync handlers used within the component.
      */
     private registeredSyncHandlers: Record<SyncHandler['id'], SyncHandler>;
+
     /**
      * Registry for the sync emitters used within the component.
      */
@@ -93,16 +106,6 @@ class Sync {
      */
     public isSyncing: boolean;
 
-    /**
-     * Creates an instance of the sync class.
-     *
-     * @param component
-     * The component to which the emitters and handlers are attached.
-     *
-     * @param syncHandlers
-     * The emitters and handlers to use for each event.
-     */
-
     /* *
      *
      *  Functions
@@ -110,8 +113,9 @@ class Sync {
      * */
     /**
      * Add new emitter to the registered emitters.
+     *
      * @param emitter
-     The emitter to register.
+     * The emitter to register.
      */
     public registerSyncEmitter(emitter: SyncEmitter): void {
         const { id } = emitter;
@@ -130,6 +134,7 @@ class Sync {
     public isRegisteredEmitter(id: string): boolean {
         return Boolean(this.registeredSyncEmitters[id]);
     }
+
     /**
      * Register new handler to the registered handlers.
      *
@@ -159,14 +164,17 @@ class Sync {
      */
     public start(): void {
         const { syncConfig, component } = this;
+
         for (const id of Object.keys(syncConfig)) {
-            if (!syncConfig[id]) {
+            const syncOptions = syncConfig[id];
+            if (!syncOptions) {
                 continue;
             }
+
             let {
                 emitter: emitterConfig,
                 handler: handlerConfig
-            } = syncConfig[id];
+            } = syncOptions;
             if (handlerConfig) {
                 // Avoid registering the same handler multiple times
                 // i.e. panning and selection uses the same handler
@@ -176,24 +184,11 @@ class Sync {
                             .handler as Sync.HandlerConfig;
                 }
 
-                // TODO: should rework the SyncHandler constructor when
-                // all handlers are updated
-                if (typeof handlerConfig === 'function') {
-                    handlerConfig = [id, void 0, handlerConfig];
-                }
-
-                const handler = new SyncHandler(...handlerConfig);
+                const handler = new SyncHandler(id, handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
 
-                    // TODO: workaround for now
-                    // we should only use register in the future
-                    if (handlerConfig[1] !== void 0) {
-                        handler.create(component);
-                    } else {
-                        handler.register(component);
-                    }
-
+                    handler.register(component);
                 }
             }
 
@@ -204,13 +199,7 @@ class Sync {
                             .emitter as Sync.EmitterConfig;
                 }
 
-                // TODO: should rework the SyncHandler constructor when
-                // all handlers are updated
-                if (typeof emitterConfig === 'function') {
-                    emitterConfig = [id, emitterConfig];
-                }
-
-                const emitter = new SyncEmitter(...emitterConfig);
+                const emitter = new SyncEmitter(id, emitterConfig);
                 if (!this.isRegisteredEmitter(emitter.id)) {
                     this.registerSyncEmitter(emitter);
                     emitter.create(component);
@@ -273,36 +262,27 @@ namespace Sync {
      *
      * */
 
-    export type EventType = (
-        | 'extremes'
-        | 'visibility'
-        | 'highlight'
-    );
+    /** @internal */
+    export type EmitterConfig = SyncEmitter['func'];
 
     /** @internal */
-    export type EmitterConfig = (
-        | [SyncEmitter['id'], SyncEmitter['func']]
-        | SyncEmitter['func']
-    );
-
-    /** @internal */
-    export type HandlerConfig = (
-        [
-            SyncHandler['id'],
-            SyncHandler['presentationStateTrigger'],
-            SyncHandler['func']
-        ] |
-        SyncHandler['func']
-    );
+    export type HandlerConfig = SyncHandler['func'];
 
     export interface OptionsEntry {
+
+        /**
+         * Whether the sync should be enabled.
+         *
+         * @default false
+         */
+        enabled?: boolean;
 
         /**
          * Responsible for communicating to the component group that the action
          * has been triggered on the component.
          *
-         * If `true` the default emitter will be used, if `false` or `null` it
-         * will be disabled
+         * If `true` or undefined the default emitter will be used, if `false`
+         * or `null` it will be disabled
          */
         emitter?: EmitterConfig | null | boolean;
 
@@ -310,8 +290,8 @@ namespace Sync {
          * Responsible for _handling_ incoming action from the synced component
          * group.
          *
-         * If `true` the default handler will be used, if `false` or `null` it
-         * will be disabled
+         * If `true` or undefined the default handler will be used, if `false`
+         * or `null` it will be disabled
          */
         handler?: HandlerConfig | null | boolean;
 
@@ -322,6 +302,99 @@ namespace Sync {
         Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
     );
 
+    /** @internal */
+    export type RawOptionsRecord = (
+        Record<(
+            SyncEmitter['id']|SyncHandler['id']
+        ), undefined|boolean|OptionsEntry>
+    );
+
+    /**
+     * Crossfilter sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     affectNavigator: true
+     * }
+     * ```
+     */
+    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether this navigator component's content should be affected by
+         * other navigators with crossfilter enabled.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
+         *
+         * @default false
+         */
+        affectNavigator?: boolean;
+    }
+
+    /**
+     * Highlight sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     highlightPoint: true,
+     *     showTooltip: false,
+     *     showCrosshair: true
+     * }
+     * ```
+     */
+    export interface HighlightSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether the marker should be synced. When hovering over a point in
+         * other component in the same group, the 'hover' state is enabled at
+         * the corresponding point in this component.
+         *
+         * @default true
+         */
+        highlightPoint?: boolean;
+        /**
+         * Whether the tooltip should be synced. When hovering over a point in
+         * other component in the same group, in this component the tooltip
+         * should be also shown.
+         *
+         * @default true
+         */
+        showTooltip?: boolean;
+        /**
+         * Whether the crosshair should be synced. When hovering over a point in
+         * other component in the same group, in this component the crosshair
+         * should be also shown.
+         *
+         * Works only for axes that have crosshair enabled.
+         *
+         * @default true
+         */
+        showCrosshair?: boolean;
+    }
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const defaultSyncOptions: Record<string, unknown> = {
+        crossfilter: {
+            affectNavigator: false
+        },
+        highlight: {
+            highlightPoint: true,
+            showTooltip: true,
+            showCrosshair: true
+        }
+    };
 }
 /* *
  *

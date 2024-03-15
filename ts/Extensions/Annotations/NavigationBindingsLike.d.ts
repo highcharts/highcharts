@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -15,11 +15,11 @@
  * */
 
 export interface NavigationBindingsLike {
-    // declare module to add members to NavigationBindings
+    // Declare module to add members to NavigationBindings
 
     // Private properties added by bindings:
 
-    // Active (selected) annotation that is editted through popup/forms
+    // Active (selected) annotation that is edited through popup/forms
     // activeAnnotation: Annotation
 
     // Holder for current step, used on mouse move to update bound object

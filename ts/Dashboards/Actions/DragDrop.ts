@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -380,8 +380,8 @@ class DragDrop {
     ): void {
         const dragDrop = this,
             mouseCellContext = dragDrop.mouseCellContext,
-            dropPointerSize = dragDrop.options.dropPointerSize,
-            offset = dragDrop.options.rowDropOffset;
+            dropPointerSize = dragDrop.options.dropPointerSize || 0,
+            offset = dragDrop.options.rowDropOffset || 0;
 
         let updateDropPointer = false;
 
@@ -486,7 +486,7 @@ class DragDrop {
     ): void {
         const dragDrop = this,
             mouseCellContext = dragDrop.mouseCellContext as Cell,
-            offset = dragDrop.options.cellDropOffset;
+            offset = dragDrop.options.cellDropOffset || 0;
 
         if (mouseCellContext || contextDetails) {
             dragDrop.onCellDragCellCtx(
@@ -514,7 +514,7 @@ class DragDrop {
         context: ContextDetection.ContextDetails
     ): void {
         const dragDrop = this,
-            dropPointerSize = dragDrop.options.dropPointerSize,
+            dropPointerSize = dragDrop.options.dropPointerSize || 0,
             align = context.side;
 
         let updateDropPointer = false;
@@ -530,7 +530,8 @@ class DragDrop {
 
         if (align === 'right' || align === 'left') {
             const dropContextOffsets = GUIElement.getOffsets(
-                dragDrop.dropContext, dragDrop.editMode.board.container);
+                dragDrop.dropContext, dragDrop.editMode.board.container
+            );
             const { width, height } =
                 GUIElement.getDimFromOffsets(dropContextOffsets);
 
@@ -595,7 +596,7 @@ class DragDrop {
         mouseRowContext: Row
     ): void {
         const dragDrop = this,
-            dropPointerSize = dragDrop.options.dropPointerSize,
+            dropPointerSize = dragDrop.options.dropPointerSize || 0,
             rowOffsets = GUIElement.getOffsets(mouseRowContext),
             rowLevelInfo = mouseRowContext.getRowLevelInfo(e.clientY);
 
@@ -789,25 +790,35 @@ namespace DragDrop {
         /**
          * Offset how far from the cell edge the context (dragged element)
          * should be detectable.
+         *
+         * @default 30
          */
-        cellDropOffset: number;
+        cellDropOffset?: number;
+
         /**
          * Size of the drop pointer in pixels.
+         *
+         * @default 16
          */
-        dropPointerSize: number;
+        dropPointerSize?: number;
+
         /**
          * Whether the drag and drop is enabled.
          *
          * Try it:
-         *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/dragdrop-disabled/ | Drag drop disabled}
+         *
+         * @default true
          */
-        enabled: boolean;
+        enabled?: boolean;
+
         /**
          * Offset how far from the row edge the context (dragged element) should
          * be detectable.
+         *
+         * @default 30
          */
-        rowDropOffset: number;
+        rowDropOffset?: number;
     }
 
     /**

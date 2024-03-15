@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -82,7 +82,7 @@ function toJSON(
             columns: obj.getColumns()
         };
 
-    // aliases
+    // Aliases
 
     if (aliasKeys.length) {
         const jsonAliases: JSON.Object = json.aliases = {};
@@ -92,13 +92,13 @@ function toJSON(
         }
     }
 
-    // custom ID
+    // Custom ID
 
     if (!obj.autoId) {
         json.id = obj.id;
     }
 
-    // done
+    // Done
 
     return json;
 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -140,7 +140,7 @@ const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
  * @apioption series.bellcurve.fillOpacity
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

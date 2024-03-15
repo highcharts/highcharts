@@ -74,7 +74,7 @@ class TrendLineIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
@@ -92,9 +92,9 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<TrendLinePoint> = void 0 as any;
-    public options: TrendLineOptions = void 0 as any;
-    public points: Array<TrendLinePoint> = void 0 as any;
+    public data!: Array<TrendLinePoint>;
+    public options!: TrendLineOptions;
+    public points!: Array<TrendLinePoint>;
     public updateAllPoints?: boolean = true;
 
     /* *
@@ -174,13 +174,13 @@ class TrendLineIndicator extends SMAIndicator {
 
 interface TrendLineIndicator {
     nameBase: string;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof TrendLinePoint;
 }
 
 extend(TrendLineIndicator.prototype, {
     nameBase: 'Trendline',
-    nameComponents: (false as any)
+    nameComponents: void 0
 });
 
 /* *
@@ -224,4 +224,4 @@ export default TrendLineIndicator;
  * @apioption series.trendline
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

@@ -27,11 +27,14 @@ jobs:
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm i
+
+      - name: Check TypeScript version
+        run: npx tsc -v
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -51,11 +54,14 @@ jobs:
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm i
+
+      - name: Check TypeScript version
+        run: npx tsc -v
 
       - name: Build Highcharts
         run: npx gulp scripts

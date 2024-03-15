@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -29,10 +29,13 @@ import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -61,14 +64,6 @@ declare module '../../Core/Chart/ChartLike'{
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -81,7 +76,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
+    if (wglMode && pushUnique(composed, 'Boost.Chart')) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 
@@ -109,7 +104,7 @@ function getBoostClipRect(
             chart.plotHeight
     };
 
-    // Clipping of individal series (#11906, #19039).
+    // Clipping of individual series (#11906, #19039).
     if ((target as Series).getClipBox) {
         const { xAxis, yAxis } = target as Series;
         clipBox = (target as Series).getClipBox();
@@ -222,7 +217,7 @@ function isChartSeriesBoosting(
         if (patientMax(
             series.processedXData,
             seriesOptions.data as any,
-            // series.xData,
+            /// series.xData,
             series.points
         ) >= (seriesOptions.boostThreshold || Number.MAX_VALUE)) {
             ++needBoostCount;
@@ -277,8 +272,8 @@ function onChartCallback(
         chart.boosted = false;
 
         // Clear the canvas
-        if (chart.boost.clear) {
-            chart.boost.clear();
+        if (!chart.axes.some((axis): boolean|undefined => axis.isPanning)) {
+            chart.boost.clear?.();
         }
 
         if (
@@ -290,7 +285,7 @@ function onChartCallback(
             chart.boost.wgl.allocateBuffer(chart);
         }
 
-        // see #6518 + #6739
+        // See #6518 + #6739
         if (
             chart.boost.markerGroup &&
             chart.xAxis &&
@@ -357,7 +352,7 @@ function patientMax(...args: Array<Array<unknown>>): number {
             t !== null &&
             typeof t.length !== 'undefined'
         ) {
-            // r = r < t.length ? t.length : r;
+            /// r = r < t.length ? t.length : r;
             if (t.length > 0) {
                 r = t.length;
                 return true;

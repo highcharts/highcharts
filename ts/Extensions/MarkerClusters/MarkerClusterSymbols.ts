@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -24,9 +24,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
-import U from '../../Core/Utilities.js';
-const { pushUnique } = U;
-
 /* *
  *
  *  Declarations
@@ -39,14 +36,6 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
         cluster: SymbolFunction;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const modifiedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -103,13 +92,9 @@ function cluster(
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    symbols = SVGRendererClass.prototype.symbols;
 
-    if (pushUnique(modifiedMembers, SVGRendererClass)) {
-        symbols = SVGRendererClass.prototype.symbols;
-
-        symbols.cluster = cluster;
-    }
-
+    symbols.cluster = cluster;
 }
 
 /* *

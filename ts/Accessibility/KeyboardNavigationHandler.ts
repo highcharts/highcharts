@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Keyboard navigation handler base class definition
  *
@@ -96,8 +96,6 @@ class KeyboardNavigationHandler {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.
      *
@@ -191,4 +189,4 @@ export default KeyboardNavigationHandler;
  * @type {Function|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

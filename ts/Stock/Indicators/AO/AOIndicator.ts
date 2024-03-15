@@ -126,9 +126,9 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<AOPoint> = void 0 as any;
-    public options: AOOptions = void 0 as any;
-    public points: Array<AOPoint> = void 0 as any;
+    public data!: Array<AOPoint>;
+    public options!: AOOptions;
+    public points!: Array<AOPoint>;
 
     /* *
      *
@@ -254,7 +254,7 @@ class AOIndicator extends SMAIndicator {
 
 interface AOIndicator {
     nameBase: string;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof AOPoint;
     crispCol: typeof columnProto.crispCol;
     drawPoints: typeof columnProto.drawPoints;
@@ -264,7 +264,7 @@ interface AOIndicator {
 
 extend(AOIndicator.prototype, {
     nameBase: 'AO',
-    nameComponents: (false as any),
+    nameComponents: void 0,
 
     // Columns support:
     markerAttribs: noop as any,
@@ -317,4 +317,4 @@ export default AOIndicator;
  * @apioption series.ao
  */
 
-''; // for including the above in the doclets
+''; // For including the above in the doclets

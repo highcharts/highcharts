@@ -901,7 +901,8 @@ QUnit.test('No ticks on short axis (#3195)', function (assert) {
 });
 
 QUnit.test(
-    'The ticks should be visible when specified tick amount and chart height <200px',
+    'The ticks should be visible when specified tick amount and chart height ' +
+    '<200px',
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
@@ -963,7 +964,8 @@ QUnit.test('Ticks and setSize', assert => {
                 pos150,
                 (pos100 + pos200) / 2,
                 1,
-                'The new tick should appear centered between the two existing ' +
+                'The new tick should appear centered between the two ' +
+                'existing ' +
                     'ticks (#13507)'
             );
             done();
@@ -976,7 +978,8 @@ QUnit.test('Ticks and setSize', assert => {
             assert.strictEqual(
                 chart.xAxis[0].ticks[0].label.attr('opacity'),
                 1,
-                'The label should remain visible after the update sequence (#12137)'
+                'The label should remain visible after the update sequence ' +
+                '(#12137)'
             );
             done();
         }, 2);
@@ -1163,7 +1166,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'In trimTicks, Min and max must be checked when start/endOntick are false (#14417).',
+    'In trimTicks, Min and max must be checked when start/endOntick are ' +
+    'false (#14417).',
     function (assert) {
         var chart = Highcharts.chart('container', {
             xAxis: {

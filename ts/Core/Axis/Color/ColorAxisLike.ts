@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -205,7 +205,8 @@ namespace ColorAxisLike {
                 dataClass = dataClasses[i];
                 from = dataClass.from;
                 to = dataClass.to;
-                if ((typeof from === 'undefined' || value >= from) &&
+                if (
+                    (typeof from === 'undefined' || value >= from) &&
                     (typeof to === 'undefined' || value <= to)
                 ) {
 

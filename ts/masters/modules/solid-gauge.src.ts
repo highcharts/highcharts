@@ -6,9 +6,11 @@
  *
  * Solid angular gauge module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import '../../Series/SolidGauge/SolidGaugeSeries.js';
+export default Highcharts;

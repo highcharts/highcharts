@@ -155,9 +155,9 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<KeltnerChannelsPoint> = void 0 as any;
-    public options: KeltnerChannelsOptions = void 0 as any;
-    public points: Array<KeltnerChannelsPoint> = void 0 as any;
+    public data!: Array<KeltnerChannelsPoint>;
+    public options!: KeltnerChannelsOptions;
+    public points!: Array<KeltnerChannelsPoint>;
 
     /* *
      *
@@ -198,20 +198,22 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             seriesEMA: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
-            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(
+                series,
                 {
                     period: period,
                     index: index
                 }),
             seriesATR: (
                 IndicatorValuesObject<TLinkedSeries>|undefined
-            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(
+                series,
                 {
                     period: periodATR
                 }),
             xData: Array<number> = [],
             yData: Array<Array<number>> = [];
-            // middle line, top line and bottom lineI
+            // Middle line, top line and bottom lineI
         let ML: number,
             TL: number,
             BL: number,
@@ -310,4 +312,4 @@ export default KeltnerChannelsIndicator;
  * @apioption    series.keltnerchannels
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

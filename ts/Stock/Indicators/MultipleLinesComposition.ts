@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2021 Wojciech Chmiel
+ *  (c) 2010-2024 Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *
@@ -64,12 +64,10 @@ namespace MultipleLinesComposition {
     }
 
     /* *
-    *
-    *  Constants
-    *
-    * */
-
-    const composedMembers: Array<unknown> = [];
+     *
+     *  Constants
+     *
+     * */
 
     /**
      * Additional lines DOCS names. Elements of linesApiNames array should
@@ -95,7 +93,7 @@ namespace MultipleLinesComposition {
     const pointArrayMap = ['top', 'bottom'];
 
     /**
-     * Names of the lines, bewteen which the area should be plotted.
+     * Names of the lines, between which the area should be plotted.
      * If the drawing of the area should
      * be disabled for some indicators, leave this option as an empty array.
      * Names should be the same as the names in the pointArrayMap.
@@ -114,10 +112,10 @@ namespace MultipleLinesComposition {
     const pointValKey = 'top';
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Composition useful for all indicators that have more than one line.
@@ -133,32 +131,30 @@ namespace MultipleLinesComposition {
         IndicatorClass: T
     ): (T&typeof IndicatorComposition) {
 
-        if (U.pushUnique(composedMembers, IndicatorClass)) {
-            const proto = IndicatorClass.prototype as IndicatorComposition;
+        const proto = IndicatorClass.prototype as IndicatorComposition;
 
-            proto.linesApiNames = (
-                proto.linesApiNames ||
-                linesApiNames.slice()
-            );
-            proto.pointArrayMap = (
-                proto.pointArrayMap ||
-                pointArrayMap.slice()
-            );
-            proto.pointValKey = (
-                proto.pointValKey ||
-                pointValKey
-            );
+        proto.linesApiNames = (
+            proto.linesApiNames ||
+            linesApiNames.slice()
+        );
+        proto.pointArrayMap = (
+            proto.pointArrayMap ||
+            pointArrayMap.slice()
+        );
+        proto.pointValKey = (
+            proto.pointValKey ||
+            pointValKey
+        );
 
-            proto.areaLinesNames = (
-                proto.areaLinesNames ||
-                areaLinesNames.slice()
-            );
+        proto.areaLinesNames = (
+            proto.areaLinesNames ||
+            areaLinesNames.slice()
+        );
 
-            proto.drawGraph = indicatorDrawGraph;
-            proto.getGraphPath = indicatorGetGraphPath;
-            proto.toYData = indicatorToYData;
-            proto.translate = indicatorTranslate;
-        }
+        proto.drawGraph = indicatorDrawGraph;
+        proto.getGraphPath = indicatorGetGraphPath;
+        proto.toYData = indicatorToYData;
+        proto.translate = indicatorTranslate;
 
         return IndicatorClass as (T&typeof IndicatorComposition);
     }
@@ -223,7 +219,7 @@ namespace MultipleLinesComposition {
                     gapSize: mainLineOptions.gapSize
                 }
             },
-            // additional lines point place holders:
+            // Additional lines point place holders:
             secondaryLines = [] as Array<Array<SMAPoint>>,
             secondaryLinesNames = getTranslatedLinesNames(
                 indicator,
@@ -237,7 +233,7 @@ namespace MultipleLinesComposition {
         // Generate points for additional lines:
         secondaryLinesNames.forEach((plotLine, index): void => {
 
-            // create additional lines point place holders
+            // Create additional lines point place holders
             secondaryLines[index] = [];
 
             while (pointsLength--) {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -66,19 +66,9 @@ namespace LogarithmicAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Provides logarithmic support for axes.
@@ -88,7 +78,7 @@ namespace LogarithmicAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!AxisClass.keepProps.includes('logarithmic')) {
             AxisClass.keepProps.push('logarithmic');
 
             addEvent(AxisClass, 'init', onInit);
@@ -130,7 +120,7 @@ namespace LogarithmicAxis {
         const axis = this as Composition;
         const log = axis.logarithmic;
 
-        // extend logarithmic axis
+        // Extend logarithmic axis
         if (log) {
             axis.lin2val = function (num: number): number {
                 return log.lin2log(num);

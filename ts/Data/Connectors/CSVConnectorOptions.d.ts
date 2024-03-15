@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -39,6 +39,12 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      */
     csvURL?: string;
     /**
+     * The decimal point used for parsing numbers in the CSV.
+     *
+     * @default '.'
+     */
+    decimalPoint?: string;
+    /**
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.
      */
@@ -52,6 +58,20 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      * @default true
      */
     firstRowAsNames?: boolean;
+    /**
+     * Item or cell delimiter for parsing CSV.
+     *
+     * @default ','
+     */
+    itemDelimiter?: string;
+}
+
+/**
+ * Callback function allowing modification of the data before parsing it.
+ * Must return a valid CSV structure.
+ */
+export interface BeforeParseCallbackFunction {
+    (csv: string): string;
 }
 
 /* *

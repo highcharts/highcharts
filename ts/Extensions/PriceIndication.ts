@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2021 Sebastian Bochann
+ * (c) 2009-2024 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -21,6 +21,8 @@ import type ColorType from '../Core/Color/ColorType';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
+import H from '../Core/Globals.js';
+const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -67,14 +69,6 @@ export interface LastVisiblePriceLabelOptions {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Composition
  *
  * */
@@ -84,9 +78,10 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composedMembers, SeriesClass)) {
+    if (pushUnique(composed, 'PriceIndication')) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
     }
+
 }
 
 /** @private */
@@ -118,7 +113,8 @@ function onSeriesAfterRender(
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            if (!series.chart.styledMode &&
+            if (
+                !series.chart.styledMode &&
                     yAxis.crosshair &&
                     yAxis.options.crosshair &&
                     seriesOptions.lastPrice
@@ -158,7 +154,7 @@ function onSeriesAfterRender(
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent' // line invisible by default
+                color: 'transparent' // Line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
@@ -461,4 +457,4 @@ export default PriceIndication;
  *
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -61,9 +61,9 @@ class PolygonSeries extends ScatterSeries {
      * */
 
     public areaPath?: SVGPath;
-    public data: Array<PolygonPoint> = void 0 as any;
-    public options: PolygonSeriesOptions = void 0 as any;
-    public points: Array<PolygonPoint> = void 0 as any;
+    public data!: Array<PolygonPoint>;
+    public options!: PolygonSeriesOptions;
+    public points!: Array<PolygonPoint>;
 
     /* *
      *

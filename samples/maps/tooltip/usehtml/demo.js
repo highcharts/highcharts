@@ -8,7 +8,8 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
     ).then(response => response.json());
 
-    // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
+    // Add lower case codes to the data set for inclusion in the
+    // tooltip.pointFormat
     data.forEach(function (p) {
         p.flag = p.code.toLowerCase();
     });
@@ -38,7 +39,8 @@
             borderWidth: 0,
             shadow: false,
             useHTML: true,
-            pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>' +
+            pointFormat: '<span class="f32"><span class="flag {point.flag}">' +
+                '</span></span>' +
                     ' {point.name}: <b>{point.value}</b>/km²'
         },
 

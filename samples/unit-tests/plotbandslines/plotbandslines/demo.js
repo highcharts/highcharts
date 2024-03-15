@@ -168,7 +168,8 @@ QUnit.test(
     'Events should be bound to all plotBands (#6166) and plotLines (#10302).',
     function (assert) {
         var clicked,
-            chart = Highcharts.stockChart('container', {
+            plotLineReference,
+            cfg = {
                 xAxis: {
                     min: 20,
                     max: 50,
@@ -196,7 +197,8 @@ QUnit.test(
                         ]
                     }
                 ]
-            });
+            },
+            chart = Highcharts.stockChart('container', cfg);
 
         chart.xAxis[0].setExtremes(0, 10);
 
@@ -217,6 +219,7 @@ QUnit.test(
                         zIndex: 1,
                         events: {
                             click: function () {
+                                plotLineReference = this;
                                 clicked = 'plotLine';
                             }
                         }
@@ -229,5 +232,12 @@ QUnit.test(
         controller.click(85, 100);
 
         assert.deepEqual(clicked, 'plotLine', 'Click event fired on plot line');
+
+        assert.strictEqual(
+            plotLineReference,
+            chart.xAxis[0].plotLinesAndBands[0],
+            '\"this\" in plotline event should refer to the corresponding ' +
+            'plotline object.'
+        );
     }
 );

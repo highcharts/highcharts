@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  Dot plot series type for Highcharts
  *
@@ -75,11 +75,11 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
-    public data: Array<DotPlotPoint> = void 0 as any;
+    public data!: Array<DotPlotPoint>;
 
-    public options: DotPlotSeriesOptions = void 0 as any;
+    public options!: DotPlotSeriesOptions;
 
-    public points: Array<DotPlotPoint> = void 0 as any;
+    public points!: Array<DotPlotPoint>;
 
     /* *
      *

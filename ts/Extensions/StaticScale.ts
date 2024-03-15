@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2024 Torstein Honsi, Lars Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -25,8 +25,7 @@ const {
     addEvent,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -52,14 +51,6 @@ declare module '../Core/Chart/ChartLike'{
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Composition
  *
  * */
@@ -69,13 +60,10 @@ function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (!chartProto.adjustHeight) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-    }
-
-    if (pushUnique(composedMembers, ChartClass)) {
-        const chartProto = ChartClass.prototype;
 
         chartProto.adjustHeight = chartAdjustHeight;
 
@@ -128,7 +116,7 @@ function chartAdjustHeight(
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale as any);
 
-                let diff = height - chart.plotHeight;
+                const diff = height - chart.plotHeight;
 
                 if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
@@ -192,4 +180,4 @@ export default StaticScale;
  * @apioption yAxis.staticScale
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

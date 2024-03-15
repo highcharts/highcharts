@@ -12,19 +12,9 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'top-left',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    }
+                    id: 'top-left'
                 }, {
-                    id: 'top-right',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        }
-                    }
+                    id: 'top-right'
                 }]
             }, {
                 cells: [{
@@ -34,17 +24,13 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'top-left',
+        renderTo: 'top-left',
         type: 'Highcharts',
         sync: {
             highlight: true
         },
         connector: {
             id: 'VegeTable'
-        },
-        columnsAssignment: {
-            Vegetable: 'name',
-            Amount: 'y'
         },
         chartOptions: {
             chart: {
@@ -74,17 +60,13 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'top-right',
+        renderTo: 'top-right',
         type: 'Highcharts',
         sync: {
             highlight: true
         },
         connector: {
             id: 'VegeTable'
-        },
-        columnsAssignment: {
-            Vegetable: 'name',
-            Amount: 'y'
         },
         chartOptions: {
             chart: {
@@ -117,17 +99,13 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'bottom',
+        renderTo: 'bottom',
         type: 'Highcharts',
         sync: {
             highlight: true
         },
         connector: {
             id: 'VegeTable'
-        },
-        columnsAssignment: {
-            Vegetable: 'name',
-            Amount: 'y'
         },
         chartOptions: {
             chart: {

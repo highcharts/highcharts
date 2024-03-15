@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2020-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -105,7 +105,7 @@ class DataSeriesConverter {
      * The id of the series.
      *
      * @return {Array<PointOptions>}
-     * Returns an array of series points opitons.
+     * Returns an array of series points options.
      */
     public getSeriesData(seriesId: string): Array<PointOptions> {
         const converter = this,
@@ -155,7 +155,7 @@ class DataSeriesConverter {
      * Get all series data stored in the converter.
      *
      * @return {Array<SeriesOptions>}
-     * Returns an array of series opitons.
+     * Returns an array of series options.
      */
     public getAllSeriesData(): Array<SeriesOptions> {
         const converter = this,

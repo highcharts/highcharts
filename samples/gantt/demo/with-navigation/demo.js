@@ -39,7 +39,8 @@ Highcharts.ganttChart('container', {
     accessibility: {
         point: {
             descriptionFormat: '{yCategory}. ' +
-                '{#if completed}Task {(multiply completed.amount 100):.1f}% completed. {/if}' +
+                '{#if completed}Task {(multiply completed.amount 100):.1f}% ' +
+                'completed. {/if}' +
                 'Start {x:%Y-%m-%d}, end {x2:%Y-%m-%d}.'
         },
         series: {
@@ -50,8 +51,10 @@ Highcharts.ganttChart('container', {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
-                yAxisDescriptionPlural: 'The chart has one Y axis showing task categories.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.',
+                yAxisDescriptionPlural: 'The chart has one Y axis showing ' +
+                    'task categories.'
             }
         }
     },

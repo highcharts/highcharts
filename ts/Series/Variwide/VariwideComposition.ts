@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,10 +24,13 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Tick from '../../Core/Axis/Tick';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -56,14 +59,6 @@ declare module '../../Core/Axis/TickLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -76,15 +71,13 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, 'Variwide')) {
+        const tickProto = TickClass.prototype;
+
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
-    }
 
-    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
-
-        const tickProto = TickClass.prototype;
 
         tickProto.postTranslate = tickPostTranslate;
 
@@ -191,9 +184,11 @@ function wrapTickGetLabelPosition(
     _y: number,
     _label: SVGElement,
     horiz: boolean,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     _labelOptions: DataLabelOptions,
     _tickmarkOffset: number,
     _index: number
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';

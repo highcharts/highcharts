@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -26,7 +26,7 @@ import type HeatmapPointOptions from '../Heatmap/HeatmapPointOptions';
  * */
 
 export interface TilemapPointOptions extends HeatmapPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

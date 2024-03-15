@@ -20,8 +20,6 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
-import U from '../Core/Utilities.js';
-
 /* *
  *
  *  Declarations
@@ -44,14 +42,6 @@ declare module '../Core/Renderer/SVG/SymbolType' {
         'triangle-left-half': typeof triangleLeftHalf;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -143,19 +133,17 @@ function arrowHalf(
 /**
  * @private
  */
-function compose(SVGRendererClass: typeof SVGRenderer): void {
+function compose(
+    SVGRendererClass: typeof SVGRenderer
+): void {
+    const symbols = SVGRendererClass.prototype.symbols;
 
-    if (U.pushUnique(composedMembers, SVGRendererClass)) {
-        const symbols = SVGRendererClass.prototype.symbols;
-
-        symbols.arrow = arrow;
-        symbols['arrow-filled'] = triangleLeft;
-        symbols['arrow-filled-half'] = triangleLeftHalf;
-        symbols['arrow-half'] = arrowHalf;
-        symbols['triangle-left'] = triangleLeft;
-        symbols['triangle-left-half'] = triangleLeftHalf;
-    }
-
+    symbols.arrow = arrow;
+    symbols['arrow-filled'] = triangleLeft;
+    symbols['arrow-filled-half'] = triangleLeftHalf;
+    symbols['arrow-half'] = arrowHalf;
+    symbols['triangle-left'] = triangleLeft;
+    symbols['triangle-left-half'] = triangleLeftHalf;
 }
 
 /**

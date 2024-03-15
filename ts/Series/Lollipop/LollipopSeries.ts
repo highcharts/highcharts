@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -29,6 +29,7 @@ const {
         dumbbell: {
             prototype: dumbbellProto
         },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -147,9 +148,9 @@ class LollipopSeries extends Series {
      *
      * */
 
-    public data: Array<LollipopPoint> = void 0 as any;
-    public options: LollipopSeriesOptions = void 0 as any;
-    public points: Array<LollipopPoint> = void 0 as any;
+    public data!: Array<LollipopPoint>;
+    public options!: LollipopSeriesOptions;
+    public points!: Array<LollipopPoint>;
 
     /**
      * Extend the series' drawPoints method by applying a connector
@@ -339,4 +340,4 @@ export default LollipopSeries;
  * @apioption series.line.data.y
  */
 
-(''); // adds doclets above to transpiled file
+(''); // Adds doclets above to transpiled file

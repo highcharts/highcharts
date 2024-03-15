@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -227,9 +227,9 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
          * `parallel` and `perpendicular`. When `circular`, the best fit
          * will be computed for the point, so that the label is curved
          * around the center when there is room for it, otherwise
-         * perpendicular. The legacy `auto` option works similiar to
+         * perpendicular. The legacy `auto` option works similar to
          * `circular`, but instead of curving the labels they are tangent to
-         * the perimiter.
+         * the perimeter.
          *
          * The `rotation` option takes precedence over `rotationMode`.
          *
@@ -295,7 +295,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
          * - `pixels` gives the ring a fixed width in pixels.
          *
          * - `weight` takes the remaining width after percentage and pixels,
-         *   and distributes it accross all "weighted" levels. The value
+         *   and distributes it across all "weighted" levels. The value
          *   relative to the sum of all weights determines the width.
          *
          * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
@@ -393,7 +393,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
   * @apioption series.sunburst.data.sliced
   */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *

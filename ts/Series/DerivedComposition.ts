@@ -79,8 +79,6 @@ namespace DerivedComposition {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     export const hasDerivedData = true;
 
     /**
@@ -106,16 +104,13 @@ namespace DerivedComposition {
     export function compose<T extends typeof Series>(
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
+        const seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
-
-            seriesProto.addBaseSeriesEvents = addBaseSeriesEvents;
-            seriesProto.addEvents = addEvents;
-            seriesProto.destroy = destroy;
-            seriesProto.init = init;
-            seriesProto.setBaseSeries = setBaseSeries;
-        }
+        seriesProto.addBaseSeriesEvents = addBaseSeriesEvents;
+        seriesProto.addEvents = addEvents;
+        seriesProto.destroy = destroy;
+        seriesProto.init = init;
+        seriesProto.setBaseSeries = setBaseSeries;
 
         return SeriesClass as (T&typeof SeriesComposition);
     }
