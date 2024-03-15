@@ -777,8 +777,10 @@ function getObservation(forecastTable, param) {
 }
 
 // Update board after changing data set (city) or parameter (measurement type)
-async function updateBoard(board, city, paramName,
-    paramUpdated = true, cityUpdated = true) {
+async function updateBoard(
+    board, city, paramName,
+    paramUpdated = true, cityUpdated = true
+) {
 
     // Parameter info
     const param = paramConfig[paramName];

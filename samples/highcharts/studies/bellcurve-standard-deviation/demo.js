@@ -8,7 +8,8 @@
     }
     H.seriesTypes.bellcurve.prototype.derivedData = function (
         mean,
-        standardDeviation) {
+        standardDeviation
+    ) {
 
         const intervals = this.options.intervals,
             pointsInInterval = this.options.pointsInInterval,

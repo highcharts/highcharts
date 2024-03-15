@@ -26,7 +26,8 @@ const minute = 1000 * 60,
                 announcementFormatter: function (
                     allSeries,
                     newSeries,
-                    newPoint) {
+                    newPoint
+                ) {
                     const describer =
                         Highcharts.SeriesAccessibilityDescriber,
                         getPointXDescription =
