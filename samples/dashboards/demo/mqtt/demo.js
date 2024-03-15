@@ -1,11 +1,5 @@
 // Data cache
 
-const sharedData = [
-    ['Event', 'Aggregat 1', 'Aggregat 2'],
-    ['Start', 0.1, 9.1],
-    ['Test', 0.2, 9.6]
-];
-
 let board = null;
 
 // Launches the Dashboards application
@@ -13,13 +7,17 @@ async function setupDashboard() {
     board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
-                id: 'micro-element',
+                id: 'mqtt-data',
                 type: 'JSON',
                 options: {
                     firstRowAsNames: true,
                     enablePolling: true,
                     dataRefreshRate: 5,
-                    data: sharedData
+                    data: [
+                        ['Event', 'Aggregat 1', 'Aggregat 2'],
+                        ['Start', 0.1, 9.1],
+                        ['Test', 0.2, 9.6]
+                    ]
                 }
             }]
         },
@@ -49,7 +47,7 @@ async function setupDashboard() {
                 extremes: true
             },
             connector: {
-                id: 'micro-element',
+                id: 'mqtt-data',
                 columnAssignment: [{
                     seriesId: 'Aggregat 1',
                     data: ['Aggregat 1']
@@ -91,7 +89,7 @@ async function setupDashboard() {
                 extremes: true
             },
             connector: {
-                id: 'micro-element',
+                id: 'mqtt-data',
                 columnAssignment: [{
                     seriesId: 'Aggregat 2',
                     data: ['Aggregat 2']
@@ -127,7 +125,7 @@ async function setupDashboard() {
         }, {
             renderTo: 'dashboard-col-2',
             connector: {
-                id: 'micro-element'
+                id: 'mqtt-data'
             },
             type: 'DataGrid',
             sync: {
@@ -138,30 +136,38 @@ async function setupDashboard() {
     });
 
     const dataPool = board.dataPool;
-    const dataTable = await dataPool.getConnectorTable('micro-element');
+    const dataTable = await dataPool.getConnectorTable('mqtt-data');
 }
 
 // Launch  Dashboard
 setupDashboard();
 
-async function updateBoard() {
-    const dataTable = await board.dataPool.getConnectorTable('micro-element');
+async function updateBoard(msg) {
+    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 
-    // Get Dashboard component
-    const dataGrid = board.mountedComponents[4];
-
-    // Update grid
-    await dataGrid.update({
-        connector: {
-            id: 'micro-element'
-        }
-    });
+    // Add a row
+    await dataTable.setRow(['mqtt', 3, 8]);
+    updateComponents();
 }
 
 async function connectBoard() {
-    const dataTable = await board.dataPool.getConnectorTable('micro-element');
+    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+
+    // Clear the data
+    await dataTable.deleteRows();
+    updateComponents();
 }
 
+async function updateComponents() {
+    for (let i = 2; i <= 4; i++) {
+        const comp = board.mountedComponents[i].component;
+        await comp.update({
+            connector: {
+                id: 'mqtt-data'
+            }
+        });
+    }
+}
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
@@ -171,7 +177,6 @@ let mqtt;
 const reconnectTimeout = 10000;
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
-let outMsg = '';
 let msgCount = 0;
 
 
@@ -190,13 +195,10 @@ function onFailure(message) {
 }
 
 function onMessageArrived(rawMessage) {
-    outMsg = '<b>' + rawMessage.destinationName + '</b> = ' + rawMessage.payloadString + '<br>';
-
     msgCount += 1;
 
     // Test
-    sharedData.push(['MQTT', 0.25, msgCount]);
-    updateBoard();
+    updateBoard(rawMessage);
 }
 
 function onConnected(recon, url) {
@@ -210,18 +212,12 @@ async function onConnect() {
     document.getElementById('status').innerHTML = 'Connected';
 
     connectBoard();
-
-    // Test
-    sharedData.push(['Connect', 0.25, 8.8]);
 }
 
 function disconnect() {
     if (connectFlag) {
         mqtt.disconnect();
         connectFlag = false;
-        // Test
-        sharedData.push(['Connect', 0.25, 8.8]);
-        updateBoard();
     }
 }
 
