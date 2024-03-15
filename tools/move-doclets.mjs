@@ -46,6 +46,11 @@ const HELP = [
 ].join('\n');
 
 
+const MAP_PROPERTY_TYPES = {
+    '.tooltip': 'TooltipOptions'
+};
+
+
 /* *
  *
  *  Variables
@@ -215,6 +220,17 @@ function decorateType(
 ) {
 
     /**
+     * @param {string} fullName
+     * @return {string}
+     */
+    const reflectInMap = (fullName) => {
+        return (
+            MAP_PROPERTY_TYPES[fullName] ||
+            MAP_PROPERTY_TYPES[fullName.replace(/^.*\./g, '.')]
+        );
+    };
+
+    /**
      * @param {string} name
      * @return {string}
      */
@@ -272,8 +288,24 @@ function decorateType(
         optionType = getTagText(branch.doclet, 'type')?.replace(/[{}]/g, '');
     }
 
-    if (!optionType) {
+    if (
+        !optionType &&
+        branch.fullName
+    ) {
+        optionType = reflectInMap(branch.fullName);
+        if (optionType) {
+            branch.isMappedType = true;
+        }
+    }
+
+    if (
+        !optionType &&
+        branch.name
+    ) {
         optionType = reflectInOptions(branch.name);
+        if (optionType) {
+            branch.isMappedType = true;
+        }
     }
 
     if (
@@ -596,9 +628,13 @@ function getDocletsTree(
             tree.push(branch);
 
             if (
-                TS.isExpressionStatement(node) &&
-                TS.isStringLiteral(node.getFirstToken())
+                branch.isMappedType ||
+                (
+                    TS.isExpressionStatement(node) &&
+                    TS.isStringLiteral(node.getFirstToken())
+                )
             ) {
+                console.log('!!!', branch.fullName);
                 return;
             }
 
@@ -749,17 +785,6 @@ function getNodesChildren(
 
 
 /**
- * @param {TS.Node} node
- * @return {boolean}
- */
-function hasNodeChildren(
-    node
-) {
-    return !!TS.forEachChild(node, () => true);
-}
-
-
-/**
  * @param {Record<string,*>} branch
  * @return {string}
  */
@@ -875,7 +900,7 @@ async function main() {
     }
 
     if (argv.series) {
-        verbose && console.info('Reading series doclets...');
+        verbose && console.info('Moving series doclets...');
         await moveSeriesDoclets(argv.series, argv.json);
     }
 
@@ -913,20 +938,13 @@ function mergeInterfaceOverwrite(
                     removeTag(newBranch.doclet, 'optionparent');
                 }
             }
-            newBranch.merged = true;
+            newBranch.isMerged = true;
         } else {
-            if (branch.name) {
-                newBranch.name = branch.name;
-            }
-            if (branch.fullName) {
-                newBranch.fullName = branch.fullName;
-            }
-            if (branch.type) {
-                newBranch.type = branch.type;
-            }
-            if (branch.doclet) {
-                newBranch.doclet = branch.doclet;
-            }
+            newBranch.name = branch.name;
+            newBranch.fullName = branch.fullName;
+            newBranch.type = branch.type;
+            newBranch.isMappedType = branch.isMappedType;
+            newBranch.doclet = branch.doclet;
             newParent.children.push(newBranch);
             visitedBranches[interfaceName] = newBranch;
         }
@@ -1044,6 +1062,8 @@ function writeDocletsTree(
                                 name: branch.name,
                                 fullName: branch.fullName,
                                 type: branch.type,
+                                isMappedType: branch.isMappedType,
+                                isMerged: branch.isMerged,
                                 doclet,
                                 children
                             }
@@ -1059,6 +1079,7 @@ function writeDocletsTree(
                     branch
                 ]);
             }
+
         } else if (branch.children) {
             for (const subBranch of branch.children) {
                 addOptions(subBranch);
