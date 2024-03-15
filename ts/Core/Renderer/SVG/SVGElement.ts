@@ -1617,10 +1617,13 @@ class SVGElement implements SVGElementLike {
                             if (lineCharIndex === 0) {
                                 polygon.push(upper);
                                 polygon.push(lower);
-                            } else if (lineIndex === 0) {
-                                polygon.unshift(upper);
-                            } else if (lineIndex === numOfLines - 1) {
-                                polygon.push(lower);
+                            } else {
+                                if (lineIndex === 0) {
+                                    polygon.unshift(upper);
+                                }
+                                if (lineIndex === numOfLines - 1) {
+                                    polygon.push(lower);
+                                }
                             }
                         }
 
