@@ -170,7 +170,8 @@ Highcharts.chart('container', {
             padding: 10,
             style: {
                 fontSize: '12px',
-                fontWeight: 700
+                fontWeight: 700,
+                textOutline: '3px #ffffff80'
             }
         },
         labels: [{
@@ -334,6 +335,14 @@ Highcharts.chart('container', {
             [101.3, 103]
         ]
     }],
+    navigation: {
+        buttonOptions: {
+            theme: {
+                fill: 'none'
+            },
+            y: -7
+        }
+    },
     responsive: {
         rules: [{
             condition: {
@@ -342,7 +351,8 @@ Highcharts.chart('container', {
             chartOptions: {
                 chart: {
                     spacing: [10, 10, 15, 10],
-                    height: '100%'
+                    height: '100%',
+                    plotBorderWidth: 7
                 },
                 title: {
                     style: {
@@ -357,19 +367,29 @@ Highcharts.chart('container', {
                     }
                 },
                 xAxis: {
-                    title: {
-                        enabled: false
-                    },
                     labels: {
-                        distance: 6
+                        distance: 6,
+                        style: {
+                            fontSize: '0.6em'
+                        }
+                    },
+                    title: {
+                        style: {
+                            fontWeight: 'normal'
+                        }
                     }
                 },
                 yAxis: {
-                    title: {
-                        enabled: false
-                    },
                     labels: {
-                        distance: 6
+                        distance: 8,
+                        style: {
+                            fontSize: '0.6em'
+                        }
+                    },
+                    title: {
+                        style: {
+                            fontWeight: 'normal'
+                        }
                     }
                 }
             }
