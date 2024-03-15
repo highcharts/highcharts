@@ -1280,14 +1280,15 @@ class MapView {
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
-        const newProjection = options.projection;
-        let isDirtyProjection = newProjection && (
+        const newProjection = options.projection,
+            isDirtyProjection = newProjection && (
                 (
                     Projection.toString(newProjection) !==
                     Projection.toString(this.options.projection)
                 )
-            ),
-            isDirtyInsets = false;
+            );
+
+        let isDirtyInsets = false;
 
         merge(true, this.userOptions, options);
         merge(true, this.options, options);
