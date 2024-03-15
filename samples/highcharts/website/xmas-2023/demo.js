@@ -522,7 +522,8 @@ Highcharts.chart('container', {
             name: 'snow flakes',
             enableMouseTracking: false,
             type: 'scatter',
-            data: [{ x: 17, y: 8 },
+            data: [
+                { x: 17, y: 8 },
                 { x: 8, y: 6 },
                 { x: 20, y: 1 },
                 { x: 2, y: 6 },
@@ -603,7 +604,8 @@ Highcharts.chart('container', {
                 { x: 18, y: 3 },
                 { x: 19, y: 3 },
                 { x: 18, y: 8 },
-                { x: 3, y: 20 }],
+                { x: 3, y: 20 }
+            ],
             xAxis: 1,
             yAxis: 1
         },
@@ -613,7 +615,8 @@ Highcharts.chart('container', {
             enableMouseTracking: false,
             type: 'scatter',
             color: '#f0f0f0',
-            data: [{ x: 0, y: 6 },
+            data: [
+                { x: 0, y: 6 },
                 { x: 7, y: 15 },
                 { x: 0, y: 7 },
                 { x: 18, y: 9 },
@@ -653,7 +656,8 @@ Highcharts.chart('container', {
                 { x: 0, y: 10 },
                 { x: 8, y: 14 },
                 { x: 9, y: 7 },
-                { x: 16, y: 6 }]
+                { x: 16, y: 6 }
+            ]
         },
         // 14 arearange snow
         {

@@ -6,8 +6,10 @@ const chart = Highcharts.chart('container', {
         text: 'Drag slider to change the chart width'
     },
     xAxis: {
-        categories: ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December']
+        categories: [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ]
     },
     series: [{
         data: [

@@ -6,8 +6,10 @@ Highcharts.chart('container', {
         marginBottom: 100
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
-            'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+            'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
     tooltip: {
         headerFormat: '<b>{series.name}</b><br/>',

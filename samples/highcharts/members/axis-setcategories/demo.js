@@ -16,5 +16,6 @@ const chart = Highcharts.chart('container', {
 // the button action
 document.getElementById('button').addEventListener('click', () => {
     chart.xAxis[0].setCategories([
-        'J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']);
+        'J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'
+    ]);
 });

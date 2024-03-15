@@ -401,7 +401,8 @@ itemChart = Highcharts.chart('container', {
             { x: 3.7, y: 2 },
             { x: 8, y: 1.2 },
             { x: 9.78, y: 2 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
@@ -433,7 +434,8 @@ itemChart = Highcharts.chart('container', {
             { x: 4.17, y: 1.92 },
             { x: 8, y: 1.2 },
             { x: 10, y: 1.86 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
@@ -457,7 +459,8 @@ itemChart = Highcharts.chart('container', {
             { x: 4.5, y: 1.3 },
             { x: 8.13, y: 0.76 },
             { x: 9.9, y: 1.78 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },

@@ -41,8 +41,10 @@
                 invGravity = 1 - gravity;
 
             if (point && last) {
-                center = this.xAxis.center || [(point.plotX +
-                     last.plotX) / 2, this.yAxis.len];
+                center = this.xAxis.center || [
+                    (point.plotX +
+                     last.plotX) / 2, this.yAxis.len
+                ];
                 ret = [
                     'C',
                     last.plotX * invGravity + center[0] * gravity,

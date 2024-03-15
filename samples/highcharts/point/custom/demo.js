@@ -64,7 +64,8 @@ Highcharts.chart('container', {
                 sortKey: 'custom.rank'
             },
             keys: [
-                'name', 'custom.value', 'y', 'custom.rank'], // 4th data
+                'name', 'custom.value', 'y', 'custom.rank'
+            ], // 4th data
             // position as custom property
             stacking: 'normal'
         }

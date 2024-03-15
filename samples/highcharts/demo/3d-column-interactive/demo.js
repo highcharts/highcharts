@@ -14,7 +14,8 @@ const chart = new Highcharts.Chart({
     xAxis: {
         categories: [
             'Toyota', 'BMW', 'Volvo', 'Audi', 'Peugeot', 'Mercedes-Benz',
-            'Volkswagen', 'Polestar', 'Kia', 'Nissan']
+            'Volkswagen', 'Polestar', 'Kia', 'Nissan'
+        ]
     },
     yAxis: {
         title: {

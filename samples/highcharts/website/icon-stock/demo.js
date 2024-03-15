@@ -409,8 +409,10 @@
                         '.particle-5');
                     const particle6 = document.querySelector('#stock ' +
                         '.particle-6');
-                    const particles = [particle1, particle2, particle3,
-                        particle4, particle5, particle6];
+                    const particles = [
+                        particle1, particle2, particle3,
+                        particle4, particle5, particle6
+                    ];
                     const greenLine = document.querySelector('#stock ' +
                         '.highcharts-series-2.green-line');
                     const greenArrow = document.getElementsByClassName(

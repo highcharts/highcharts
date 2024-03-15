@@ -7,7 +7,8 @@ Highcharts.setOptions({ // Apply the exporting height to print as well
                     this.resetParams = [
                         this.chartWidth,
                         this.chartHeight,
-                        false];
+                        false
+                    ];
                     this.setSize(this.chartWidth, height, false);
                 }
             },

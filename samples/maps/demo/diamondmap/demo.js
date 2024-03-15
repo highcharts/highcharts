@@ -77,37 +77,55 @@ Highcharts.chart('container', {
         name: 'Main idea',
         pointPadding: 10,
         data: [
-            [5, 3, 'Main idea',
+            [
+                5, 3, 'Main idea',
                 'The main idea tile outlines the overall theme of the idea ' +
-                'map.']
+                'map.'
+            ]
         ],
         color: '#7eb'
     }, {
         name: 'Steps',
         colorByPoint: true, // Pick new color for each point from colors array
         data: [
-            [3, 3, 'Step 1',
+            [
+                3, 3, 'Step 1',
                 'First step towards the main idea. Describe the starting ' +
-                'point of the situation.'],
-            [4, 3, 'Step 2',
+                'point of the situation.'
+            ],
+            [
+                4, 3, 'Step 2',
                 'Describe where to move next in a short term time ' +
-                'perspective.'],
-            [5, 4, 'Step 3',
+                'perspective.'
+            ],
+            [
+                5, 4, 'Step 3',
                 'This can be a larger milestone, after the initial steps ' +
-                'have been taken.'],
-            [6, 3, 'Step 4',
-                'Evaluate progress and readjust the course of the project.'],
-            [7, 3, 'Step 5',
+                'have been taken.'
+            ],
+            [
+                6, 3, 'Step 4',
+                'Evaluate progress and readjust the course of the project.'
+            ],
+            [
+                7, 3, 'Step 5',
                 'At this point, major progress should have been made, and we ' +
-                'should be well on our way to implementing the main idea.'],
-            [6, 2, 'Step 6',
+                'should be well on our way to implementing the main idea.'
+            ],
+            [
+                6, 2, 'Step 6',
                 'Second evaluation and readjustment step. Implement final ' +
-                'changes.'],
-            [5, 2, 'Step 7',
-                'Testing and final verification step.'],
-            [4, 2, 'Step 8',
+                'changes.'
+            ],
+            [
+                5, 2, 'Step 7',
+                'Testing and final verification step.'
+            ],
+            [
+                4, 2, 'Step 8',
                 'Iterate after final testing and finalize implementation of ' +
-                'the idea.']
+                'the idea.'
+            ]
         ]
     }]
 }, function (chart) {

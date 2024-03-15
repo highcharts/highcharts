@@ -3,8 +3,10 @@ Math.easeOutQuint = function (pos) {
 };
 
 Highcharts.theme = {
-    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    colors: [
+        '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+    ],
     chart: {
         style: {
             fontFamily: 'IBM Plex Sans, sans-serif'
@@ -67,7 +69,8 @@ Highcharts.theme = {
 Highcharts.setOptions(Highcharts.theme);
 
 
-const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
+const data = [
+    3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2,
     3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3,
     3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3,
@@ -76,7 +79,8 @@ const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     2.7, 3, 2.9, 2.9, 2.5, 2.8, 3.3, 2.7, 3, 2.9, 3, 3, 2.5, 2.9, 2.5, 3.6,
     3.2, 2.7, 3, 2.5, 2.8, 3.2, 3, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2,
     2.8, 3, 2.8, 3, 2.8, 3.8, 2.8, 2.8, 2.6, 3, 3.4, 3.1, 3, 3.1, 3.1, 3.1, 2.7,
-    3.2, 3.3, 3, 2.5, 3, 3.4, 3];
+    3.2, 3.3, 3, 2.5, 3, 3.4, 3
+];
 
 const randomIntFromInterval = function (min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -263,7 +267,8 @@ const words = function () {
             enabled: false
         },
         colors: [
-            '#E04B44', '#51BFA7', '#6699A1', '#00786F', '#E04B44', '#A3EDBA'],
+            '#E04B44', '#51BFA7', '#6699A1', '#00786F', '#E04B44', '#A3EDBA'
+        ],
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat: '<h5>{chartTitle}</h5>' +
@@ -1280,8 +1285,10 @@ const candycane = function () {
             enabled: false
         },
         xAxis: [{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ],
             visible: false,
             gridLineColor: '#fff',
             labels: {
@@ -2010,7 +2017,8 @@ const wreath = function () {
             max: 20
         },
         yAxis1,
-        yAxis2],
+        yAxis2
+        ],
 
         series: [
             // 0 left side
@@ -3747,7 +3755,8 @@ const ball = function () {
                         xAxis: 3,
                         yAxis: 3,
                         color: '#fff',
-                        data: [[9, 81, 63],
+                        data: [
+                            [9, 81, 63],
                             [98, 5, 89],
                             [51, 50, 73],
                             [41, 22, 14],

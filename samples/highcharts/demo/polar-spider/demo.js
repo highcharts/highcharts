@@ -35,8 +35,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Sales', 'Marketing', 'Development', 'Customer Support',
-            'Information Technology', 'Administration'],
+        categories: [
+            'Sales', 'Marketing', 'Development', 'Customer Support',
+            'Information Technology', 'Administration'
+        ],
         tickmarkPlacement: 'on',
         lineWidth: 0
     },

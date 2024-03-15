@@ -76,7 +76,8 @@ Highcharts.chart('container', {
         ]
     }, {
         name: 'USSR/Russia',
-        data: [null, null, null, null, null, null, null, null, null,
+        data: [
+            null, null, null, null, null, null, null, null, null,
             1, 5, 25, 50, 120, 150, 200, 426, 660, 863, 1048, 1627, 2492,
             3346, 4259, 5242, 6144, 7091, 8400, 9490, 10671, 11736, 13279,
             14600, 15878, 17286, 19235, 22165, 24281, 26169, 28258, 30665,

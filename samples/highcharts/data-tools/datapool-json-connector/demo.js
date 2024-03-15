@@ -52,7 +52,8 @@ Dashboards.board('container', {
             options: {
                 firstRowAsNames: false,
                 columnNames: [
-                    'random name', 'second random name', 'third random name'],
+                    'random name', 'second random name', 'third random name'
+                ],
                 data: [
                     [1, 2, 3],
                     [2, 3, 4]

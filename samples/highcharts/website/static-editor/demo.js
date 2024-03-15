@@ -9791,7 +9791,8 @@ highed.DataTable = function (parent, attributes) {
             inputs = [
                 { label: 'URL', placeholder: 'Spreadsheet ID', colspan: 2, linkedTo: liveDataInput },
                 { label: 'Refresh Time in Seconds', placeholder: 'Refresh time  (leave blank for no refresh)', colspan: 2, linkedTo: liveDataIntervalInput },
-                { label: 'Type', colspan: 2, linkedTo: liveDataTypeSelect, type: 'select' }],
+                { label: 'Type', colspan: 2, linkedTo: liveDataTypeSelect, type: 'select' }
+            ],
             table = createTableInputs(inputs, 2, 'highed-live-data'),
             importData = highed.dom.cr('button', 'highed-ok-button highed-import-button negative', 'Import Data'),
             cancel = createCancelBtn();
@@ -9831,7 +9832,8 @@ highed.DataTable = function (parent, attributes) {
             { label: 'End Row', colspan: 2, linkedTo: gsheetEndRow },
             { label: 'Start Column', colspan: 2, linkedTo: gsheetStartCol },
             // eslint-disable-next-line no-sequences
-            { label: 'End Column', colspan: 2, linkedTo: gsheetEndCol }],
+            { label: 'End Column', colspan: 2, linkedTo: gsheetEndCol }
+        ],
         table = createTableInputs(inputs, 4),
         connectSheet = highed.dom.cr('button', 'highed-ok-button highed-import-button negative', 'Connect Sheet');
         cancel = createCancelBtn();
@@ -9933,10 +9935,12 @@ highed.DataTable = function (parent, attributes) {
             sampleDataContainer = createSampleData(toNextPage, loading);
         cutAndPasteContainer = createCutAndPasteContainer(toNextPage);
 
-        const buttons = [{ title: 'Connect Google Sheet', linkedTo: gSheetContainer },
+        const buttons = [
+            { title: 'Connect Google Sheet', linkedTo: gSheetContainer },
             { title: 'Import Live Data', linkedTo: liveContainer, height: 321 },
             { title: 'Cut and Paste Data', linkedTo: cutAndPasteContainer, height: 448, width: 518 },
-            { title: 'Load Sample Data', linkedTo: sampleDataContainer }];
+            { title: 'Load Sample Data', linkedTo: sampleDataContainer }
+        ];
 
         buttons.forEach(function (buttonProp) {
             const button = highed.dom.cr('button', 'highed-ok-button highed-import-button', buttonProp.title);

@@ -4,7 +4,8 @@
 
     Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
         return [
-            'M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'];
+            'M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'
+        ];
     };
 
     function markerAttribs(point) {

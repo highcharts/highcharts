@@ -4,8 +4,10 @@ Highcharts.chart('container', {
         type: 'line'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-            'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+            'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
     yAxis: [{
         title: {
@@ -38,8 +40,10 @@ Highcharts.chart('container', {
         ]
 
     }, {
-        data: [129.9, 271.5, 306.4, 29.2, 544.0, 376.0, 435.6, 348.5, 216.4,
-            294.1, 35.6, 354.4],
+        data: [
+            129.9, 271.5, 306.4, 29.2, 544.0, 376.0, 435.6, 348.5, 216.4,
+            294.1, 35.6, 354.4
+        ],
         yAxis: 1
 
     }]

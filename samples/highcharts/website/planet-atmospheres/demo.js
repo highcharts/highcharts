@@ -57,7 +57,8 @@ const planets = [
     'Jupiter',
     'Saturn',
     'Uranus',
-    'Neptune'];
+    'Neptune'
+];
 // /these correspond to the gases
 const atmosphereData = [
     [0, 0, 96, 0, 95, 0, 0, 0, 0],

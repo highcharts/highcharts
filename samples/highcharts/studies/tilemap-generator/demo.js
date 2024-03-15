@@ -343,8 +343,10 @@
     function getInsertionGrids(baseGrid, overflow) {
         const insertionGrids = [],
             baseTile = baseGrid[overflow.row][overflow.col];
-        each(filter(['left', 'leftTop', 'centerTop', 'rightTop', 'right',
-            'rightBottom', 'centerBottom', 'leftBottom'], function (dir) {
+        each(filter([
+            'left', 'leftTop', 'centerTop', 'rightTop', 'right',
+            'rightBottom', 'centerBottom', 'leftBottom'
+        ], function (dir) {
             // Filter out positions we don't want to use for this overflow
             return !startsWith(dir,
                 baseTile.center.x > overflow.area.center.x ?
@@ -802,8 +804,10 @@ function generateTileChart() {
         outputData = function () {
             $('#outputData').val(JSON.stringify(
                 currentData.map(point => {
-                    const filterProps = ['center', 'extremes', 'hc-middle-y',
-                        'hc-middle-x', 'selected', 'color'];
+                    const filterProps = [
+                        'center', 'extremes', 'hc-middle-y',
+                        'hc-middle-x', 'selected', 'color'
+                    ];
                     filterProps.forEach(prop => delete point[prop]);
                     return point;
                 }), null,

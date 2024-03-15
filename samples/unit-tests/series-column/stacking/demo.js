@@ -134,7 +134,8 @@ QUnit.test('Single series stacking (#2592)', function (assert) {
                     colorByPoint: true
                 }
             },
-            yAxis: [{},
+            yAxis: [
+                {},
                 {
                     opposite: true
                 }

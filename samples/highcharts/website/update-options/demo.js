@@ -1,6 +1,8 @@
 Highcharts.theme = {
-    colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
-        '#FF9655', '#FFF263', '#6AF9C4'],
+    colors: [
+        '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
+        '#FF9655', '#FFF263', '#6AF9C4'
+    ],
     chart: {
         backgroundColor: 'transparent'
     },
@@ -144,22 +146,30 @@ const controlLabels = [
     ['alpha', 'beta', 'view distance', 'depth']
 ];
 const controlText = [
-    ['Adjust the start angle',
+    [
+        'Adjust the start angle',
         'Adjust the end angle',
         'Adjust the inner size',
-        'Adjust the size'],
-    ['Use the slider to adjust the slices',
+        'Adjust the size'
+    ],
+    [
+        'Use the slider to adjust the slices',
         'Adjust the inner size',
         'Adjust the size',
-        'Add/remove slices'],
-    ['Adjust the point width',
+        'Add/remove slices'
+    ],
+    [
+        'Adjust the point width',
         'Slide to +/- plot bands on the x axis',
         'Slide to move the columns through the zones',
-        'Adjust the y axis max'],
-    ['Adjust the alpha angle',
+        'Adjust the y axis max'
+    ],
+    [
+        'Adjust the alpha angle',
         'Adjust the beta angle',
         'Adjust the view distance',
-        'Adjust the fill opacity']
+        'Adjust the fill opacity'
+    ]
 ];
 
 let controlIndex = 0;

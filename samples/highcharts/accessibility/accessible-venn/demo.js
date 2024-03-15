@@ -1,5 +1,6 @@
 const colors =  [
-    '#8085ef', '#8bf0b6', '#569ba3', '#30426b', 'rgba(255,255,255,0.1)'];
+    '#8085ef', '#8bf0b6', '#569ba3', '#30426b', 'rgba(255,255,255,0.1)'
+];
 Highcharts.setOptions({
     colors: colors
 });

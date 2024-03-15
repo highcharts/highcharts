@@ -126,7 +126,8 @@ function area() {
         },
         xAxis: {
             categories: [
-                '1750', '1800', '1850', '1900', '1950', '1999', '2050'],
+                '1750', '1800', '1850', '1900', '1950', '1999', '2050'
+            ],
             tickmarkPlacement: 'on',
             title: {
                 enabled: false

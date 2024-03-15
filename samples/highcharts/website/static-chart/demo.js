@@ -20,8 +20,10 @@ Math.easeOutBounce = pos => {
 };
 
 const countOffset = 2;
-const  icebergLabels = [180, 160, 140, 120, 100, 80, 60, 40, 20,
-    10, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180];
+const  icebergLabels = [
+    180, 160, 140, 120, 100, 80, 60, 40, 20,
+    10, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180
+];
 
 const iceberg = {
     chart: {

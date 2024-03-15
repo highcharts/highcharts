@@ -28,7 +28,8 @@ function onRender() {
     };
 
     // Handle checkbox clicks for each instrument
-    ['bass-on', 'chimes-on', 'shaker1-on', 'piano-on', 'flute-on',
+    [
+        'bass-on', 'chimes-on', 'shaker1-on', 'piano-on', 'flute-on',
         'synth-on', 'shaker2-on', 'pad-on', 'basspad-on'
     ].forEach(function (id, seriesIx) {
         const series = chart.series[seriesIx];

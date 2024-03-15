@@ -73,8 +73,10 @@ const fakeData = [
 const streamSeries = [{
     name: 'Finland',
     data:
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4, 3,
-        6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5]
+    [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4,
+        3, 6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5
+    ]
 }, {
     name: 'Austria',
     data: [
@@ -938,7 +940,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), 1.10],
             [Date.UTC(2020, 2, 1), 4.70],
             [Date.UTC(2020, 3, 1), -2.50],
-            [Date.UTC(2020, 4, 1), -6.90]]
+            [Date.UTC(2020, 4, 1), -6.90]
+        ]
     },
     {
         type: 'spline',
@@ -1166,7 +1169,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -2.20],
             [Date.UTC(2020, 2, 1), -2.60],
             [Date.UTC(2020, 3, 1), -8.10],
-            [Date.UTC(2020, 4, 1), -14.10]]
+            [Date.UTC(2020, 4, 1), -14.10]
+        ]
     },
     {
         type: 'spline',
@@ -1394,7 +1398,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -8.00],
             [Date.UTC(2020, 2, 1), -7.60],
             [Date.UTC(2020, 3, 1), -12.30],
-            [Date.UTC(2020, 4, 1), -24.30]]
+            [Date.UTC(2020, 4, 1), -24.30]
+        ]
     },
     {
         type: 'spline',
@@ -1622,7 +1627,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -1.50],
             [Date.UTC(2020, 2, 1), -1.90],
             [Date.UTC(2020, 3, 1), -7.90],
-            [Date.UTC(2020, 4, 1), -9.70]]
+            [Date.UTC(2020, 4, 1), -9.70]
+        ]
     },
     {
         type: 'spline',
@@ -1850,7 +1856,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), 4.60],
             [Date.UTC(2020, 2, 1), 2.90],
             [Date.UTC(2020, 3, 1), -2.60],
-            [Date.UTC(2020, 4, 1), -7.10]]
+            [Date.UTC(2020, 4, 1), -7.10]
+        ]
     }];
 
 // for the last chart in the animation (science)
@@ -3701,7 +3708,8 @@ const heroChart = {
             },
             dashStyle: 'solid',
             name: 'Import air passenger fares',
-            data: [[Date.UTC(2002, 4, 1), 4.80],
+            data: [
+                [Date.UTC(2002, 4, 1), 4.80],
                 [Date.UTC(2002, 5, 1), 4.30],
                 [Date.UTC(2002, 6, 1), 5.60],
                 [Date.UTC(2002, 7, 1), 7.60],
@@ -4037,7 +4045,8 @@ const heroChart = {
             },
 
             // data:[],
-            data: [['0', '1'],
+            data: [
+                ['0', '1'],
                 ['1', '2'],
                 ['1', '3'],
                 ['1', '4'],

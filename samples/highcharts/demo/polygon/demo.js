@@ -31,8 +31,10 @@ Highcharts.chart('container', {
     series: [{
         name: 'Target',
         type: 'polygon',
-        data: [[163, 42], [162, 46], [162, 55], [163, 64], [164, 70], [170, 90],
-            [181, 100], [182, 90], [173, 52], [166, 45]],
+        data: [
+            [163, 42], [162, 46], [162, 55], [163, 64], [164, 70], [170, 90],
+            [181, 100], [182, 90], [173, 52], [166, 45]
+        ],
         color: Highcharts.color(Highcharts.getOptions()
             .colors[0]).setOpacity(0.5).get(),
         enableMouseTracking: false,

@@ -1,6 +1,7 @@
 Highcharts.setOptions({
     colors: [
-        'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)']
+        'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
+    ]
 });
 
 const series = [{

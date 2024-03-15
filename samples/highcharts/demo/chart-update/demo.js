@@ -34,8 +34,10 @@ const chart = Highcharts.chart('container', {
         name: 'Unemployed',
         borderRadius: 5,
         colorByPoint: true,
-        data: [5412, 4977, 4730, 4437, 3947, 3707, 4143, 3609,
-            3311, 3072, 2899, 2887],
+        data: [
+            5412, 4977, 4730, 4437, 3947, 3707, 4143, 3609,
+            3311, 3072, 2899, 2887
+        ],
         showInLegend: false
     }]
 });

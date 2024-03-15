@@ -33,7 +33,8 @@ Highcharts.chart('nl', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('ns', {
@@ -60,7 +61,8 @@ Highcharts.chart('ns', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('nb', {
@@ -87,7 +89,8 @@ Highcharts.chart('nb', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('qc', {
@@ -119,7 +122,8 @@ Highcharts.chart('qc', {
             { name: 'Conservative', color: conservative, y: 12 },
             { name: 'New Democratic', color: newDemocratic, y: 16 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 10 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('on', {
@@ -151,7 +155,8 @@ Highcharts.chart('on', {
             { name: 'Conservative', color: conservative, y: 33 },
             { name: 'New Democratic', color: newDemocratic, y: 8 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('mb', {
@@ -183,7 +188,8 @@ Highcharts.chart('mb', {
             { name: 'Conservative', color: conservative, y: 5 },
             { name: 'New Democratic', color: newDemocratic, y: 2 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('sk', {
@@ -215,7 +221,8 @@ Highcharts.chart('sk', {
             { name: 'Conservative', color: conservative, y: 10 },
             { name: 'New Democratic', color: newDemocratic, y: 3 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('ab', {
@@ -247,7 +254,8 @@ Highcharts.chart('ab', {
             { name: 'Conservative', color: conservative, y: 29 },
             { name: 'New Democratic', color: newDemocratic, y: 1 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('bc', {
@@ -274,7 +282,8 @@ Highcharts.chart('bc', {
             { name: 'Conservative', color: conservative, y: 10 },
             { name: 'New Democratic', color: newDemocratic, y: 14 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 1 }]
+            { name: 'Green', color: green, y: 1 }
+        ]
     }]
 });
 Highcharts.chart('nt', {
@@ -301,7 +310,8 @@ Highcharts.chart('nt', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('yt', {
@@ -333,7 +343,8 @@ Highcharts.chart('yt', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('nu', {
@@ -365,7 +376,8 @@ Highcharts.chart('nu', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });
 Highcharts.chart('pe', {
@@ -397,6 +409,7 @@ Highcharts.chart('pe', {
             { name: 'Conservative', color: conservative, y: 0 },
             { name: 'New Democratic', color: newDemocratic, y: 0 },
             { name: 'Bloc Québécois', color: blocQuebecios, y: 0 },
-            { name: 'Green', color: green, y: 0 }]
+            { name: 'Green', color: green, y: 0 }
+        ]
     }]
 });

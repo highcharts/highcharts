@@ -149,7 +149,8 @@ function addOscControls(controlsContainerEl, options) {
     let content = '';
     const opts = options || {},
         typeOptions = [
-            'sine', 'sawtooth', 'triangle', 'square', 'whitenoise', 'pulse']
+            'sine', 'sawtooth', 'triangle', 'square', 'whitenoise', 'pulse'
+        ]
             .reduce(
                 (str, option) =>
                     `${str}<option value="${option}">${option}</option>`,
