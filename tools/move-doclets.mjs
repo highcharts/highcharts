@@ -680,7 +680,7 @@ function getDocletsTree(
 /**
  * @param {Record<string,*>} branch
  * @param {boolean} [ofParent]
- * @return {string}
+ * @return {string|undefined}
  */
 function getInterfaceName(
     branch,
@@ -713,10 +713,14 @@ function getInterfaceName(
     }
 
     if (doclet) {
-        return convertName(
+        const name = (
             getTagText(doclet, 'apioption') ||
             getTagText(doclet, 'optionparent')
         );
+
+        if (name) {
+            return convertName(name);
+        }
     }
 
 }
@@ -739,7 +743,8 @@ function getMemberType(
         .replace(/[{}]/gu, '')
         .replace(/\*/gu, (
             (doclet && getTagText(doclet, 'declare')) ||
-            getInterfaceName(branch)
+            getInterfaceName(branch) ||
+            '*'
         ));
 }
 
