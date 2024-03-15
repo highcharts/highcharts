@@ -106,8 +106,10 @@ const freqToNote = (f: number): number => Math.round(
                         add({
                             timeMS: t,
                             type: 'CTRL_CHG',
-                            data: [0xB0, parseInt(ctrlSignal, 10),
-                                ctrlDef.valMap(val)]
+                            data: [
+                                0xB0, parseInt(ctrlSignal, 10),
+                                ctrlDef.valMap(val)
+                            ]
                         });
                     }
                 }));

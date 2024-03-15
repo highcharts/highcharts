@@ -330,6 +330,9 @@ function getConnectors(
     return ret;
 }
 
+/**
+ *
+ */
 function onChartAfterDrawChartBox(
     this: Chart
 ): void {
@@ -361,6 +364,9 @@ function onChartAfterInit(event: any): void {
     }
 }
 
+/**
+ *
+ */
 function onChartGetAxes(
     this: Chart
 ): void {

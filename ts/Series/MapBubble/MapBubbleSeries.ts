@@ -298,7 +298,7 @@ class MapBubbleSeries extends BubbleSeries {
             iArgs
         );
 
-        let processedXData = this.processedXData,
+        const processedXData = this.processedXData,
             xData = this.xData;
 
         if (processedXData && xData) {

@@ -356,12 +356,16 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
 OnSeriesComposition.compose(WindbarbSeries);
 
 extend(WindbarbSeries.prototype, {
-    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-        24.5, 28.5, 32.7], // @todo dictionary with names?
-    beaufortName: ['Calm', 'Light air', 'Light breeze',
+    beaufortFloor: [
+        0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
+        24.5, 28.5, 32.7
+    ], // @todo dictionary with names?
+    beaufortName: [
+        'Calm', 'Light air', 'Light breeze',
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
-        'Violent storm', 'Hurricane'],
+        'Violent storm', 'Hurricane'
+    ],
     invertible: false,
     parallelArrays: ['x', 'value', 'direction'],
     pointArrayMap: ['value', 'direction'],

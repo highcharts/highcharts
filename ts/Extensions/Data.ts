@@ -175,6 +175,9 @@ function getFreeIndexes(
     return freeIndexValues;
 }
 
+/**
+ *
+ */
 function hasURLOption(options: DataOptions): boolean {
     return Boolean(
         options &&

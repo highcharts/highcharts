@@ -4093,8 +4093,10 @@ class Axis {
         }
 
         // Destroy elements
-        ['axisLine', 'axisTitle', 'axisGroup',
-            'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
+        [
+            'axisLine', 'axisTitle', 'axisGroup',
+            'gridGroup', 'labelGroup', 'cross', 'scrollbar'
+        ].forEach(
             function (prop: string): void {
                 if ((axis as any)[prop]) {
                     (axis as any)[prop] = (axis as any)[prop].destroy();

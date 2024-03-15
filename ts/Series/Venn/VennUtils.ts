@@ -404,6 +404,9 @@ function getOverlapBetweenCircles(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isSet(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -411,6 +414,9 @@ function isSet(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isValidRelation(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -434,6 +440,9 @@ function isValidRelation(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isValidSet(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {

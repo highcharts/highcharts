@@ -10,10 +10,16 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
+        "brackets",
         "highcharts",
         "@typescript-eslint"
     ],
     "rules": {
+        "brackets/array-bracket-newline": 2,
+        "brackets/call-parens-newline": 0,
+        "brackets/conditional-parens-newline": 0,
+        "brackets/func-parens-newline": 0,
+        "brackets/object-curly-newline": 0,
         "camelcase": [
             2,
             {

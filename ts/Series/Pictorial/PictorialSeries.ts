@@ -307,6 +307,9 @@ addEvent(PictorialSeries, 'afterRender', function (): void {
     });
 });
 
+/**
+ *
+ */
 function renderStackShadow(
     stack: StackItem
 ): void {
@@ -467,6 +470,9 @@ function renderStackShadow(
     }
 }
 
+/**
+ *
+ */
 function forEachStack(chart: Chart, callback: Function): void {
     if (chart.axes) {
         chart.axes.forEach(function (axis): void {
@@ -512,6 +518,9 @@ addEvent(StackItem, 'afterSetOffset', function (e: AfterSetOffsetEvent): void {
     }
 });
 
+/**
+ *
+ */
 function destroyAllStackShadows(chart: Chart): void {
     forEachStack(chart, function (stack: StackItem): void {
         if (stack.shadow && stack.shadowGroup) {

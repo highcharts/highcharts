@@ -91,6 +91,9 @@ interface CylinderPathsObject extends SVGPath3D {
  *
  * */
 
+/**
+ *
+ */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {

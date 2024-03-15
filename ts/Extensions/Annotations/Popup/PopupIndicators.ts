@@ -337,6 +337,9 @@ function addIndicatorList(
     listType: string,
     filter?: string
 ): void {
+    /**
+     *
+     */
     function selectIndicator(
         series: SMAIndicator,
         indicatorType: string
@@ -451,7 +454,7 @@ function addIndicatorList(
             indicatorList
         );
 
-        let btn = createElement(
+        const btn = createElement(
             'button',
             {
                 className: 'highcharts-indicator-list-item',
@@ -472,7 +475,7 @@ function addIndicatorList(
 
     // Select first item from the list
     if (filteredSeriesArray.length > 0) {
-        let { series, indicatorType } = filteredSeriesArray[0];
+        const { series, indicatorType } = filteredSeriesArray[0];
         selectIndicator(series, indicatorType);
     } else if (!isEdit) {
         AST.setElementHTML(
