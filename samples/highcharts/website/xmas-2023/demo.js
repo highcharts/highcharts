@@ -29,18 +29,22 @@ Highcharts.chart('container', {
                 const chart = this;
 
                 const flakeSet1 = document.querySelectorAll(
-                    '.highcharts-series-12 .highcharts-point');
+                    '.highcharts-series-12 .highcharts-point'
+                );
 
                 const flakeSet2 = document.querySelectorAll(
-                    '.highcharts-series-13 .highcharts-point');
+                    '.highcharts-series-13 .highcharts-point'
+                );
 
                 const berryPoints = [4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
                 const branchSnow = document.querySelectorAll(
-                    '.highcharts-areasplinerange-series');
+                    '.highcharts-areasplinerange-series'
+                );
 
                 const bottomSnow = document.querySelectorAll(
-                    '.highcharts-series-19');
+                    '.highcharts-series-19'
+                );
 
                 const buds = document.querySelectorAll('.highcharts-series-18');
 
@@ -109,7 +113,8 @@ Highcharts.chart('container', {
                     });
 
                     document.querySelector(
-                        '.highcharts-title').style.opacity = 1;
+                        '.highcharts-title'
+                    ).style.opacity = 1;
 
 
                 }, 2000);
@@ -164,7 +169,8 @@ Highcharts.chart('container', {
                     chart.redraw();
 
                     document.querySelector(
-                        '.highcharts-subtitle').style.opacity = 1;
+                        '.highcharts-subtitle'
+                    ).style.opacity = 1;
 
 
                 }, 2200);

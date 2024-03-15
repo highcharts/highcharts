@@ -219,7 +219,8 @@ function getTurnover() {
 
             return turnover;
         },
-        [])
+        []
+    )
         .sort((a, b) => a.x - b.x)
         .map(event => Object.assign(
             event, {

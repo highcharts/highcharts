@@ -678,7 +678,8 @@
             e.test = value;
         });
 
-        Highcharts.fireEvent(container,
+        Highcharts.fireEvent(
+            container,
             'testEvent', { a: 'test' }, function (e) {
                 assert.equal(e.test, value);
             });

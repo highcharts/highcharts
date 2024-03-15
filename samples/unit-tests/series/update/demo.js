@@ -214,7 +214,8 @@ QUnit.test('Series.update', function (assert) {
 
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute(
-            'd').indexOf('C') !== -1, // has curved path
+            'd'
+        ).indexOf('C') !== -1, // has curved path
         true,
         'Curved path'
     );
@@ -247,7 +248,8 @@ QUnit.test('Series.update', function (assert) {
 
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute(
-            'd').indexOf('C') !== -1, // has curved path
+            'd'
+        ).indexOf('C') !== -1, // has curved path
         true,
         'Curved path'
     );
@@ -302,8 +304,10 @@ QUnit.test('Series.update', function (assert) {
         animation: true
     });
 
-    assert.strictEqual(chart.series[0].options.animation, false, 'Series ' +
-        'animation on update should always be false even if set from options');
+    assert.strictEqual(
+        chart.series[0].options.animation, false, 'Series ' +
+        'animation on update should always be false even if set from options'
+    );
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {

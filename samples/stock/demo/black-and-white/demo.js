@@ -204,10 +204,12 @@
 
                     if (this.isFirst || isAboveD1) {
                         return this.chart.time.dateFormat(
-                            '%d %b %Y', this.value);
+                            '%d %b %Y', this.value
+                        );
                     }
                     return this.chart.time.dateFormat(
-                        '%d %b %k:%M', this.value);
+                        '%d %b %k:%M', this.value
+                    );
                 }
             }
         },

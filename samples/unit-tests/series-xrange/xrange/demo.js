@@ -292,7 +292,8 @@ QUnit.test('X-Range', function (assert) {
 
     assert.strictEqual(
         document.querySelector(
-            '.highcharts-drag-handle').attributes.cursor.value,
+            '.highcharts-drag-handle'
+        ).attributes.cursor.value,
         'grab',
         '#16470: DragHandle cursor should use general options.'
     );

@@ -121,7 +121,9 @@ Highcharts.chart('container', {
 }, function (chart) {
     document.querySelector('.change').addEventListener('click', function () {
         const seriesInd = parseInt(document.querySelector(
-            '.series').value, 10) - 1;
+            '.series'
+        ).value, 10
+        ) - 1;
         const type = chart.series[seriesInd].type ===
             'column' ? 'scatter' : 'column';
         chart.series[seriesInd].update({

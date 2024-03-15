@@ -10,7 +10,8 @@
                         themeSelect = document.getElementById('theme'),
                         apikeyInput = document.getElementById('apikey'),
                         submitAPIkeyBtn = document.getElementById(
-                            'submitAPIkey'),
+                            'submitAPIkey'
+                        ),
                         { TilesProviderRegistry } = Highcharts;
 
                     function updateTWM() {

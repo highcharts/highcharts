@@ -2048,8 +2048,10 @@ const db = {
                 const purple = chart.series[1];
                 const green = chart.series[2];
 
-                const dashboard = document.querySelector('.highcharts-root ' +
-                    'image');
+                const dashboard = document.querySelector(
+                    '.highcharts-root ' +
+                    'image'
+                );
 
 
                 // console.log(chart.chartWidth);

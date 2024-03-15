@@ -29,7 +29,8 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
                 ];
 
                 if (!p.drilldownConnectorGraphicUnbind) {
-                    p.drilldownConnectorGraphicUnbind = Highcharts.addEvent(s,
+                    p.drilldownConnectorGraphicUnbind = Highcharts.addEvent(
+                        s,
                         'afterAnimate', function () {
                             if (!p.drilldownConnectorGraphic) {
                                 p.drilldownConnectorGraphic = chart.renderer
@@ -98,11 +99,14 @@ Highcharts.chart('container', {
         colors: [
             Highcharts.getOptions().colors[1],
             Highcharts.color(
-                Highcharts.getOptions().colors[1]).brighten(0.1).get(),
+                Highcharts.getOptions().colors[1]
+            ).brighten(0.1).get(),
             Highcharts.color(
-                Highcharts.getOptions().colors[1]).brighten(0.2).get(),
+                Highcharts.getOptions().colors[1]
+            ).brighten(0.2).get(),
             Highcharts.color(
-                Highcharts.getOptions().colors[1]).brighten(0.3).get()
+                Highcharts.getOptions().colors[1]
+            ).brighten(0.3).get()
         ],
         type: 'pie',
         center: ['75%', '50%'],

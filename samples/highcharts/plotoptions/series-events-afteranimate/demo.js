@@ -19,8 +19,10 @@ Highcharts.chart('container', {
         series: {
             events: {
                 afterAnimate: function () {
-                    this.chart.renderer.label(this.name +
-                        ' has appeared', 100, 70)
+                    this.chart.renderer.label(
+                        this.name +
+                        ' has appeared', 100, 70
+                    )
                         .attr({
                             padding: 10,
                             fill: Highcharts.getOptions().colors[0]

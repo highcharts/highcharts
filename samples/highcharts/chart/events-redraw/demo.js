@@ -3,8 +3,10 @@ const chart = Highcharts.chart('container', {
     chart: {
         events: {
             redraw: function () {
-                const label = this.renderer.label('The chart was just ' +
-                    'redrawn', 100, 120)
+                const label = this.renderer.label(
+                    'The chart was just ' +
+                    'redrawn', 100, 120
+                )
                     .attr({
                         fill: Highcharts.getOptions().colors[0],
                         padding: 10,

@@ -409,8 +409,10 @@ async function setupDashboard() {
                         // Update board
                         activeParam = paramConfig.temperature;
                         // Parameter update, city unchanged
-                        updateBoard(board, activeCity,
-                            'temperature', true, false);
+                        updateBoard(
+                            board, activeCity,
+                            'temperature', true, false
+                        );
                     },
                     afterLoad: function () {
                         this.cell.setActiveState();
@@ -507,8 +509,10 @@ async function setupDashboard() {
                         // Update board
                         activeParam = paramConfig.precipitation;
                         // Parameter update, city unchanged
-                        updateBoard(board, activeCity,
-                            'precipitation', true, false);
+                        updateBoard(
+                            board, activeCity,
+                            'precipitation', true, false
+                        );
                     }
                 },
                 states: {
@@ -537,7 +541,8 @@ async function setupDashboard() {
                             headerFormat: 'Time UTC',
                             cellFormatter: function () {
                                 return Highcharts.dateFormat(
-                                    '%H:%M', this.value);
+                                    '%H:%M', this.value
+                                );
                             }
                         },
                         temperature: {
@@ -868,7 +873,8 @@ async function updateBoard(board, city, paramName,
             const city = mapPoints[i].name;
             const forecastTable = await dataPool.getConnectorTable(city);
             const elevation = citiesTable.getCellAsNumber(
-                'elevation', citiesTable.getRowIndexBy('city', city));
+                'elevation', citiesTable.getRowIndexBy('city', city)
+            );
 
             mapPoints[i].update({
                 y: getObservation(forecastTable, paramName),

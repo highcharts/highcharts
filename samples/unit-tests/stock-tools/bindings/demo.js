@@ -696,7 +696,8 @@ QUnit.test(
         annotationBBox = chart.annotations[1].graphic.getBBox();
 
         assert.close(
-            (annotationBBox.x + (annotationBBox.width) + yOffset),
+            (
+                annotationBBox.x + (annotationBBox.width) + yOffset),
             chart.plotLeft + yAxis.len - point.plotY,
             1,
             'Annotation\'s element should be placed ' + yOffset +

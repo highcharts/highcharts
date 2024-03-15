@@ -340,8 +340,10 @@ QUnit.test('Annotations events - general', function (assert) {
     );
 
     setTimeout(() => {
-        assert.ok(chart.series[0].kdTree, 'kdTree should be built upon mouse ' +
-            'move on a chart.');
+        assert.ok(
+            chart.series[0].kdTree, 'kdTree should be built upon mouse ' +
+            'move on a chart.'
+        );
         done();
     }, 0);
     let clicks = 0;

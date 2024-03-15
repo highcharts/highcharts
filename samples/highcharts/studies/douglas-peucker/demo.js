@@ -30,9 +30,11 @@ function simplifyPath(data, epsilon) {
         // Evaluate
         if (dmax >= epsilon) {
             result = result.concat(
-                douglasPecker(data.slice(0, index + 1), epsilon));
+                douglasPecker(data.slice(0, index + 1), epsilon)
+            );
             result = result.concat(
-                douglasPecker(data.slice(index + 1, data.length), epsilon));
+                douglasPecker(data.slice(index + 1, data.length), epsilon)
+            );
         } else {
             result = [start];
         }

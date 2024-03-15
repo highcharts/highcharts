@@ -40,11 +40,14 @@ const iceberg = {
                 const chart = this;
                 const cover = document.getElementsByClassName('cover')[0];
                 const background = document.getElementsByClassName(
-                    'highcharts-background')[0];
+                    'highcharts-background'
+                )[0];
                 const plotBackground = document.getElementsByClassName(
-                    'highcharts-plot-background')[0];
+                    'highcharts-plot-background'
+                )[0];
                 const title = document.getElementsByClassName(
-                    'highcharts-title')[0];
+                    'highcharts-title'
+                )[0];
 
 
                 cover.style.fill =  '#30426B';

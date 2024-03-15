@@ -22,8 +22,10 @@ QUnit.test('Lots of series', function (assert) {
 
     assert.strictEqual(
         chart.sonification.timeline.channels
-            .map(c => c.events[0].time +
-                ',' + c.events[c.events.length - 1].time)
+            .map(
+                c => c.events[0].time +
+                ',' + c.events[c.events.length - 1].time
+            )
             .join('#'),
         '0,50#350,400#700,750#1050,1100#1400,1450#1750,1800#2100,2150#2450,' +
         '2500#' +

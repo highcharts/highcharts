@@ -20,13 +20,17 @@ const table = new Highcharts.DataTable({
 
 document.querySelector('#modify').addEventListener('click', async () => {
     const sortModifierActivate = document.querySelector(
-        '#sortmodifier-activate');
+        '#sortmodifier-activate'
+    );
     const rangeModifierActivate = document.querySelector(
-        '#rangemodifier-activate');
+        '#rangemodifier-activate'
+    );
     const mathModifierActivate = document.querySelector(
-        '#mathmodifier-activate');
+        '#mathmodifier-activate'
+    );
     const invertModifierActivate = document.querySelector(
-        '#invertmodifier-activate');
+        '#invertmodifier-activate'
+    );
 
     // reset chain
     chainModifier.clear();

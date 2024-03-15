@@ -92,7 +92,8 @@
                 document.querySelector('#info #flag')
                     .className = 'flag';
                 document.querySelector(
-                    '#info h2').innerHTML = 'Comparing countries';
+                    '#info h2'
+                ).innerHTML = 'Comparing countries';
 
             }
             document.querySelector('#info .subheader')

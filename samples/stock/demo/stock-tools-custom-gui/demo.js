@@ -2,7 +2,8 @@
 
     function addPopupEvents(chart) {
         const closePopupButtons = document.getElementsByClassName(
-            'highcharts-close-popup');
+            'highcharts-close-popup'
+        );
         // Close popup button:
         Highcharts.addEvent(
             closePopupButtons[0],
@@ -48,8 +49,10 @@
 
         // Update an annotaiton from popup
         Highcharts.addEvent(
-            document.querySelectorAll('.highcharts-popup-annotations ' +
-                'button')[0],
+            document.querySelectorAll(
+                '.highcharts-popup-annotations ' +
+                'button'
+            )[0],
             'click',
             function () {
                 const strokeWidth = parseInt(
@@ -174,7 +177,8 @@
                     // If this is a button with sub buttons,
                     // change main icon to the current one:
                     if (!topButton.classList.contains(
-                        'highcharts-menu-wrapper')) {
+                        'highcharts-menu-wrapper'
+                    )) {
                         topButton.className = newClassName;
                     }
 
@@ -183,7 +187,8 @@
                 },
                 deselectButton: function (event) {
                     event.button.parentNode.parentNode.classList.remove(
-                        'highcharts-active');
+                        'highcharts-active'
+                    );
 
                     // Remove info about active button:
                     this.chart.activeButton = null;
@@ -193,13 +198,15 @@
                     if (!this.indicatorsPopupContainer) {
                         this.indicatorsPopupContainer = document
                             .getElementsByClassName(
-                                'highcharts-popup-indicators')[0];
+                                'highcharts-popup-indicators'
+                            )[0];
                     }
 
                     if (!this.annotationsPopupContainer) {
                         this.annotationsPopupContainer = document
                             .getElementsByClassName(
-                                'highcharts-popup-annotations')[0];
+                                'highcharts-popup-annotations'
+                            )[0];
                     }
 
                     if (event.formType === 'indicators') {

@@ -248,7 +248,8 @@ QUnit.test('titleSetter', function (assert) {
 
     assert.strictEqual(
         text.element.getElementsByTagName(
-            'title')[0].textContent, // Ideally there should be a
+            'title'
+        )[0].textContent, // Ideally there should be a
         // titleGetter. text.attr('title')
         str.replace('<br>', ''),
         'Text element has a correct title. #5211'
@@ -258,7 +259,8 @@ QUnit.test('titleSetter', function (assert) {
     text.attr('title', newTitle);
     assert.strictEqual(
         text.element.getElementsByTagName(
-            'title')[0].textContent, // Ideally there should be a
+            'title'
+        )[0].textContent, // Ideally there should be a
         // titleGetter. text.attr('title')
         newTitle,
         'Text element title has been updated. #5211'

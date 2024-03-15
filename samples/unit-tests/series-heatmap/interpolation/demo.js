@@ -50,8 +50,10 @@ QUnit.test('Interpolated image test', function (assert) {
         { image: { element }, points } = series[0],
         { plotX, plotY } = points[0];
 
-    assert.strictEqual(element.tagName,
-        'image', 'An image-tagname should exist');
+    assert.strictEqual(
+        element.tagName,
+        'image', 'An image-tagname should exist'
+    );
 
     assert.ok(
         element.getAttribute('height') > (chartWidth / 2),

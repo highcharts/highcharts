@@ -225,13 +225,15 @@ QUnit.test('Drawing path with a marker', function (assert) {
     var shape = chart.annotations[0].shapes[0];
     assert.strictEqual(
         shape.graphic.element.getAttribute(
-            'marker-end').replace(/"/g, ''), // Edge inserts double quotes
+            'marker-end'
+        ).replace(/"/g, ''), // Edge inserts double quotes
         'url(#' + shape.markerEnd.id + ')',
         'End marker id is correctly attached to the annotation\'s path'
     );
     assert.strictEqual(
         shape.graphic.element.getAttribute(
-            'marker-start').replace(/"/g, ''), // Edge inserts double quotes,
+            'marker-start'
+        ).replace(/"/g, ''), // Edge inserts double quotes,
         'url(#' + shape.markerStart.id + ')',
         'Start marker is correctly attached to the annotation\'s path'
     );

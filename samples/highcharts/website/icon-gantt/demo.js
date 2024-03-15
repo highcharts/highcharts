@@ -89,9 +89,11 @@ const ganttChart = function () {
 
                     const buttonGroup = document.getElementById('button-group');
                     const background = document.querySelector(
-                        '.highcharts-background');
+                        '.highcharts-background'
+                    );
                     const scrollMask = document.querySelector(
-                        '.highcharts-scrollable-mask');
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -114,9 +116,11 @@ const ganttChart = function () {
                 },
                 redraw: function () {
                     const background = document.querySelector(
-                        '.highcharts-background');
+                        '.highcharts-background'
+                    );
                     const scrollMask = document.querySelector(
-                        '.highcharts-scrollable-mask');
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
@@ -550,13 +554,17 @@ const gantt = {
                 const flag = document.querySelector('.flag');
                 const flagpole = document.querySelector('.pole');
                 const particle2 = document.getElementsByClassName(
-                    'particle-2')[1];
+                    'particle-2'
+                )[1];
                 const particle3 = document.getElementsByClassName(
-                    'particle-3')[1];
+                    'particle-3'
+                )[1];
                 const particle5 = document.getElementsByClassName(
-                    'particle-5')[1];
+                    'particle-5'
+                )[1];
                 const particle6 = document.getElementsByClassName(
-                    'particle-6')[1];
+                    'particle-6'
+                )[1];
                 const cover = document.querySelector('.cover');
 
                 // /if reduced motion....

@@ -85,7 +85,8 @@
             color: colors[0],
             name: 'UTC',
             data: Highcharts.geojson(topology).filter(el =>
-                ['IE', 'IS', 'GB', 'PT'].includes(el.properties['iso-a2']))
+                ['IE', 'IS', 'GB', 'PT'].includes(el.properties['iso-a2'])
+            )
         }, {
             name: 'UTC + 1',
             color: colors[2],

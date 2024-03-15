@@ -68,7 +68,8 @@ QUnit.test('Bottom -90', function (assert) {
 
     assert.ok(
         chart.series[0].points[0].dataLabel.element.getAttribute(
-            'visibility') !== 'hidden',
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.close(
@@ -111,7 +112,8 @@ QUnit.test('Top -90', function (assert) {
 
     assert.ok(
         chart.series[0].points[0].dataLabel.element.getAttribute(
-            'visibility') !== 'hidden',
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -198,7 +200,8 @@ QUnit.test('Bottom 90', function (assert) {
 
     assert.ok(
         chart.series[0].points[0].dataLabel.element.getAttribute(
-            'visibility') !== 'hidden',
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -236,7 +239,8 @@ QUnit.test('Top 90', function (assert) {
 
     assert.ok(
         chart.series[0].points[0].dataLabel.element.getAttribute(
-            'visibility') !== 'hidden',
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.ok(

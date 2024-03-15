@@ -59,7 +59,8 @@ const candlestick = function () {
                         updateStyle('highcharts-title', 'opacity', 0, '0s');
                         updateStyle('candlestick', 'opacity', 0, '0s');
                         updateStyle(
-                            'highcharts-yaxis-labels', 'opacity', 0, '0s');
+                            'highcharts-yaxis-labels', 'opacity', 0, '0s'
+                        );
 
                         chart.update({
                             navigator: {
@@ -67,7 +68,8 @@ const candlestick = function () {
                             }
                         });
                         updateStyle(
-                            'candlestick', 'transform', 'rotate(0deg)', '0s');
+                            'candlestick', 'transform', 'rotate(0deg)', '0s'
+                        );
                         if (big) {
                             chart.rangeSelector.clickButton(3);
                         } else {
@@ -82,7 +84,8 @@ const candlestick = function () {
                             updateStyle('candlestick', 'opacity', 0, '0s');
                             updateStyle('candlestick', 'opacity', 1, '1s');
                             updateStyle(
-                                'highcharts-point-up', 'fillOpacity', 1, '1s');
+                                'highcharts-point-up', 'fillOpacity', 1, '1s'
+                            );
                             updateStyle(
                                 'highcharts-point-down', 'fillOpacity', 1, '1s'
                             );

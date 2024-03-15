@@ -7,8 +7,10 @@ Highcharts.dateFormats.W = function (timestamp) {
 
     date.setDate(date.getUTCDate() + 4 - day);
     const dayNumber =
-     Math.floor((date.getTime() - new Date(date.getUTCFullYear(), 0, 1, -6)) /
-      86400000);
+     Math.floor(
+         (date.getTime() - new Date(date.getUTCFullYear(), 0, 1, -6)) /
+      86400000
+     );
 
     return 1 + Math.floor(dayNumber / 7);
 };

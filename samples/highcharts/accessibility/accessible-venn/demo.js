@@ -93,7 +93,8 @@ const chart = Highcharts.chart('container', {
                         if (mq.matches) {
                             caption.className = 'visible content-' + category;
                             getEl(
-                                'caption-content').innerHTML = label.innerHTML;
+                                'caption-content'
+                            ).innerHTML = label.innerHTML;
                         } else {
                             caption.classList.remove('visible');
                             label.classList.add('over');

@@ -164,7 +164,8 @@ QUnit.test('Tracks', function (assert) {
 
     assert.strictEqual(
         chart.sonification.timeline.channels.map(c => c.events[0].time).join(
-            ','),
+            ','
+        ),
         '0,0,0,0,0,0,0',
         'All channels start immediately when order is simultaneous'
     );

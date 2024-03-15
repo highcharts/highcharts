@@ -4,8 +4,10 @@ const chart = Highcharts.chart('container', {
             point: {
                 events: {
                     remove: () => {
-                        if (!confirm('Do you really want to remove the first ' +
-                            'point?')) {
+                        if (!confirm(
+                            'Do you really want to remove the first ' +
+                            'point?'
+                        )) {
                             return false;
                         }
                     }

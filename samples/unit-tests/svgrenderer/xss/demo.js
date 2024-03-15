@@ -29,7 +29,8 @@ QUnit.module('XSS', function () {
                 .add();
             assert.strictEqual(
                 document.getElementById(
-                    'container').innerHTML.indexOf('onclick'),
+                    'container'
+                ).innerHTML.indexOf('onclick'),
                 -1,
                 'There should be no translation of anchors to onclick like ' +
                 'historically'

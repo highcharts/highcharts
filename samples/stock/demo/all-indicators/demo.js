@@ -95,7 +95,8 @@
         }]
     }, function (chart) {
         document.getElementById(
-            'overlays').addEventListener('change', function (e) {
+            'overlays'
+        ).addEventListener('change', function (e) {
             const series = chart.get('overlay');
 
             if (series) {
@@ -109,7 +110,8 @@
         });
 
         document.getElementById(
-            'oscillators').addEventListener('change', function (e) {
+            'oscillators'
+        ).addEventListener('change', function (e) {
             const series = chart.get('oscillator');
 
             if (series) {

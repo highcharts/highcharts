@@ -63,28 +63,36 @@ fetch(urlCountry).then(function (response) {
                     // longer (the one with no missing values)
                     if (arrayStringCountry[i] !== null) {
                         arrayCountry.push(parseFloat(
-                            arrayStringCountry[i]));
+                            arrayStringCountry[i]
+                        )
+                        );
                     } else {
                         arrayCountry.push(null);
                     }
 
                     if (arrayStringRegion[i] !== null) {
                         arrayRegion.push(parseFloat(
-                            arrayStringRegion[i]));
+                            arrayStringRegion[i]
+                        )
+                        );
                     } else {
                         arrayRegion.push(null);
                     }
 
                     if (arrayStringIncome[i] !== null) {
                         arrayIncome.push(parseFloat(
-                            arrayStringIncome[i]));
+                            arrayStringIncome[i]
+                        )
+                        );
                     } else {
                         arrayIncome.push(null);
                     }
 
                     if (arrayStringWorld[i] !== null) {
                         arrayWorld.push(parseFloat(
-                            arrayStringWorld[i]));
+                            arrayStringWorld[i]
+                        )
+                        );
                     } else {
                         arrayWorld.push(null);
                     }

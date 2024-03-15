@@ -89,11 +89,16 @@
                     });
 
                     const rangeSelectorGroup =  document.querySelector(
-                        '#stock .highcharts-range-selector-group');
-                    const candlestick =  document.querySelector('#stock ' +
-                        '.stick');
-                    const column = document.querySelector('#stock ' +
-                        '.highcharts-column-series.column');
+                        '#stock .highcharts-range-selector-group'
+                    );
+                    const candlestick =  document.querySelector(
+                        '#stock ' +
+                        '.stick'
+                    );
+                    const column = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-column-series.column'
+                    );
                     candlestick.classList.add('fade-in');
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
@@ -102,9 +107,11 @@
                 redraw: function () {
                     const candlestick =  document.querySelector('.stick');
                     const rangeSelectorGroup =  document.querySelector(
-                        '.highcharts-range-selector-group');
+                        '.highcharts-range-selector-group'
+                    );
                     const column = document.querySelector(
-                        '.highcharts-column-series.column');
+                        '.highcharts-column-series.column'
+                    );
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
                     candlestick.classList.add('fade-in');

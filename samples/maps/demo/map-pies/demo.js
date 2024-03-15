@@ -202,7 +202,8 @@
                         ]
                             .sort((a, b) => b[1] - a[1]) // Sort tooltip by
                             // most votes
-                            .map(line => '<span style="color:' + line[2] +
+                            .map(
+                                line => '<span style="color:' + line[2] +
                                 // Colorized bullet
                                 '">\u25CF</span> ' +
                                 // Party and votes
@@ -210,7 +211,8 @@
                                 line[0] + ': ' +
                                 Highcharts.numberFormat(line[1], 0) +
                                 (line[0] === hoverVotes ? '</b>' : '') +
-                                '<br/>')
+                                '<br/>'
+                            )
                             .join('') +
                         '<hr/>Total: ' +
                         Highcharts.numberFormat(this.sumVotes, 0);

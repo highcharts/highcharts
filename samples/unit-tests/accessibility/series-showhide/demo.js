@@ -62,7 +62,8 @@ QUnit.test(
 
         assert.notStrictEqual(
             chart.series[0].a11yProxyElement.innerElement.getAttribute(
-                'aria-label').indexOf('Bean'),
+                'aria-label'
+            ).indexOf('Bean'),
             -1,
             '#15902: Proxy button aria-label should have been updated'
         );

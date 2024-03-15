@@ -128,8 +128,10 @@ function resetDrilldown(chart) {
     // On point click, look for a detailed map to drill into
     const drilldown = async function (e) {
         const map = Object.entries(allMaps).find(map =>
-            map[0] === e.point.name) || Object.entries(allMaps).find(map =>
-            map[0].indexOf(e.point.name) === 0);
+            map[0] === e.point.name
+        ) || Object.entries(allMaps).find(map =>
+            map[0].indexOf(e.point.name) === 0
+        );
         if (!e.seriesOptions && map) {
             const chart = this,
                 mapName = map[0],
@@ -138,8 +140,10 @@ function resetDrilldown(chart) {
             // Handle error, the timeout is cleared on success
             let fail = setTimeout(() => {
                 if (!Highcharts.maps[mapKey]) {
-                    chart.showLoading('<i class="fa fa-frown"></i> Map not ' +
-                        'found');
+                    chart.showLoading(
+                        '<i class="fa fa-frown"></i> Map not ' +
+                        'found'
+                    );
                     fail = setTimeout(() => {
                         chart.hideLoading();
                     }, 1000);

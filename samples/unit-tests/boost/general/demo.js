@@ -287,8 +287,10 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                 Highcharts,
                 'displayError',
                 function (e) {
-                    assert.strictEqual(e.code, 12, 'Error 12 should be ' +
-                        'invoked');
+                    assert.strictEqual(
+                        e.code, 12, 'Error 12 should be ' +
+                        'invoked'
+                    );
                     remove();
                     done();
                 }

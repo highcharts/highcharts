@@ -1,4 +1,5 @@
-var removeEvent = Highcharts.addEvent(Highcharts,
+var removeEvent = Highcharts.addEvent(
+    Highcharts,
     'displayError', function (event) {
     // See https://github.com/highcharts/highcharts/blob/master/errors/errors.xml
     // for error id's

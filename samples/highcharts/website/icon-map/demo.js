@@ -44,17 +44,21 @@ const maps = {
                 const chart = this;
 
                 const mapPointPoint = document.querySelector(
-                    '.map-point-point');
+                    '.map-point-point'
+                );
                 const mapPointTop = document.getElementsByClassName(
-                    'map-point-top')[1];
+                    'map-point-top'
+                )[1];
                 const mapPointCenter = document.getElementsByClassName(
-                    'map-point-center')[1];
+                    'map-point-center'
+                )[1];
                 const leftSide =  document.querySelector('.left');
                 const rightSide =  document.querySelector('.right');
                 const top =  document.querySelector('.top');
                 const bottom =  document.querySelector('.bottom');
                 const background = document.getElementsByClassName(
-                    'highcharts-plot-background')[0];
+                    'highcharts-plot-background'
+                )[0];
 
                 const finalHide = function () {
                     [].forEach.call(
@@ -608,11 +612,14 @@ const finalMap = function () {
                 events: {
                     load: function () {
                         const mapSeries = document.querySelector(
-                            '.highcharts-map-series');
+                            '.highcharts-map-series'
+                        );
                         const title = document.querySelector(
-                            '.highcharts-title');
+                            '.highcharts-title'
+                        );
                         const subtitle = document.querySelector(
-                            '.highcharts-subtitle');
+                            '.highcharts-subtitle'
+                        );
                         mapSeries.style.opacity = 0;
                         setTimeout(function () {
                             mapSeries.style.opacity = 0;
@@ -631,7 +638,8 @@ const finalMap = function () {
                     },
                     redraw: function () {
                         const mapSeries = document.querySelector(
-                            '.highcharts-map-series');
+                            '.highcharts-map-series'
+                        );
                         if (mapLoaded) {
                             mapSeries.classList.add('show');
                         }

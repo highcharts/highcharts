@@ -20,7 +20,9 @@ QUnit.test(
 
         assert.strictEqual(
             parseInt(chart.sharedClips[chart.series[0].sharedClipKey].attr(
-                'height'), 10),
+                'height'
+            ), 10
+            ),
             chart.yAxis[0].len -
                 Math.floor(chart.xAxis[0].userOptions.lineWidth / 2),
             'The column should be clipped to the edge of the X axis line'
@@ -32,7 +34,9 @@ QUnit.test(
 
         assert.strictEqual(
             parseInt(chart.sharedClips[chart.series[0].sharedClipKey].attr(
-                'height'), 10),
+                'height'
+            ), 10
+            ),
             chart.yAxis[0].len,
             'The column should be clipped to the length of the Y axis'
         );

@@ -68,7 +68,8 @@
         chart.get('EC').zoomTo();
     });
     document.getElementById(
-        'south-korea').addEventListener('click', function () {
+        'south-korea'
+    ).addEventListener('click', function () {
         chart.get('KR').zoomTo();
     });
     document.getElementById('zoom-out').addEventListener('click', function () {

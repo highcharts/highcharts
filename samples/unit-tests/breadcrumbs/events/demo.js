@@ -78,7 +78,8 @@ QUnit.test('Breadcrumbs format', function (assert) {
     );
     assert.strictEqual(
         chart.container.getElementsByClassName(
-            'highcharts-breadcrumbs-group').length,
+            'highcharts-breadcrumbs-group'
+        ).length,
         1,
         'The breadcrumbs separators group should be destroyed.'
     );

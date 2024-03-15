@@ -274,7 +274,8 @@ function fillCenter(percentage, decade, chart, customLabel) {
     </table>`;
 
     if (!customLabel) {
-        customLabel = chart.renderer.label(labelText, 0, 0, void 0, void 0,
+        customLabel = chart.renderer.label(
+            labelText, 0, 0, void 0, void 0,
             void 0, true
         ).css({
             color: '#000',

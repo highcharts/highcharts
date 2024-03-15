@@ -25,8 +25,10 @@
     };
 
     const big = window.matchMedia('(min-width: 500px)').matches;
-    const reduced = window.matchMedia('(prefers-reduced-motion: ' +
-        'reduce)').matches;
+    const reduced = window.matchMedia(
+        '(prefers-reduced-motion: ' +
+        'reduce)'
+    ).matches;
 
 
     const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
@@ -94,11 +96,16 @@
                     });
 
                     const rangeSelectorGroup =  document.querySelector(
-                        '#stock .highcharts-range-selector-group');
-                    const candlestick =  document.querySelector('#stock ' +
-                        '.stick');
-                    const column = document.querySelector('#stock ' +
-                        '.highcharts-column-series.column');
+                        '#stock .highcharts-range-selector-group'
+                    );
+                    const candlestick =  document.querySelector(
+                        '#stock ' +
+                        '.stick'
+                    );
+                    const column = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-column-series.column'
+                    );
                     candlestick.classList.add('fade-in');
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
@@ -107,9 +114,11 @@
                 redraw: function () {
                     const candlestick =  document.querySelector('.stick');
                     const rangeSelectorGroup =  document.querySelector(
-                        '.highcharts-range-selector-group');
+                        '.highcharts-range-selector-group'
+                    );
                     const column = document.querySelector(
-                        '.highcharts-column-series.column');
+                        '.highcharts-column-series.column'
+                    );
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
                     candlestick.classList.add('fade-in');
@@ -397,36 +406,59 @@
                 load: function () {
                     const chart = this;
 
-                    const particle1 = document.querySelector('#stock ' +
-                        '.particle-1');
-                    const particle2 = document.querySelector('#stock ' +
-                        '.particle-2');
-                    const particle3 = document.querySelector('#stock ' +
-                        '.particle-3');
-                    const particle4 = document.querySelector('#stock ' +
-                        '.particle-4');
-                    const particle5 = document.querySelector('#stock ' +
-                        '.particle-5');
-                    const particle6 = document.querySelector('#stock ' +
-                        '.particle-6');
+                    const particle1 = document.querySelector(
+                        '#stock ' +
+                        '.particle-1'
+                    );
+                    const particle2 = document.querySelector(
+                        '#stock ' +
+                        '.particle-2'
+                    );
+                    const particle3 = document.querySelector(
+                        '#stock ' +
+                        '.particle-3'
+                    );
+                    const particle4 = document.querySelector(
+                        '#stock ' +
+                        '.particle-4'
+                    );
+                    const particle5 = document.querySelector(
+                        '#stock ' +
+                        '.particle-5'
+                    );
+                    const particle6 = document.querySelector(
+                        '#stock ' +
+                        '.particle-6'
+                    );
                     const particles = [
                         particle1, particle2, particle3,
                         particle4, particle5, particle6
                     ];
-                    const greenLine = document.querySelector('#stock ' +
-                        '.highcharts-series-2.green-line');
+                    const greenLine = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-series-2.green-line'
+                    );
                     const greenArrow = document.getElementsByClassName(
-                        'green-line')[1];
-                    const purpleLine = document.querySelector('#stock ' +
-                        '.highcharts-series-3.purple-line');
+                        'green-line'
+                    )[1];
+                    const purpleLine = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-series-3.purple-line'
+                    );
                     const purpleArrow = document.getElementsByClassName(
-                        'purple-line')[1];
-                    const bottomArea =  document.querySelector('#stock ' +
-                        '.stock-bottom');
-                    const topArea =  document.querySelector('#stock ' +
-                        '.stock-top');
+                        'purple-line'
+                    )[1];
+                    const bottomArea =  document.querySelector(
+                        '#stock ' +
+                        '.stock-bottom'
+                    );
+                    const topArea =  document.querySelector(
+                        '#stock ' +
+                        '.stock-top'
+                    );
                     const rangeSelectorGroup =  document.querySelector(
-                        '#stock .highcharts-range-selector-group');
+                        '#stock .highcharts-range-selector-group'
+                    );
 
                     // /for the arrow head sizes
                     // /based on screen size

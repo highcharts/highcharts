@@ -78,7 +78,9 @@ function createEnvelopeChart(type, containerEl, onEdit) {
                     });
                     this.renderTo.addEventListener('mouseleave', () => {
                         hideTimeout = setTimeout(() => btn.classList.add(
-                            'hidden'), 400);
+                            'hidden'
+                        ), 400
+                        );
                     });
                 }
             }
@@ -177,29 +179,47 @@ function addOscControls(controlsContainerEl, options) {
 
     const controlIds = {
         type: addControl('select', 'Type', 'Waveform type', typeOptions),
-        freqMultiplier: addControl('input', 'FreqMultiplier', 'Freq multiplier',
-            opts.freqMultiplier || '', 1),
-        fixedFrequency: addControl('input', 'FixedFreq', 'Fixed frequency',
-            opts.fixedFrequency || '', 1),
-        volume: addControl('input', 'Vol', 'Volume',
-            opts.volume || '0.5', 0.05),
-        detune: addControl('input', 'Detune', 'Detune (cents)',
-            opts.detune || '', 1),
-        pulseWidth: addControl('input', 'PulseWidth', 'Pulse width',
-            opts.pulseWidth || '', 0.05),
+        freqMultiplier: addControl(
+            'input', 'FreqMultiplier', 'Freq multiplier',
+            opts.freqMultiplier || '', 1
+        ),
+        fixedFrequency: addControl(
+            'input', 'FixedFreq', 'Fixed frequency',
+            opts.fixedFrequency || '', 1
+        ),
+        volume: addControl(
+            'input', 'Vol', 'Volume',
+            opts.volume || '0.5', 0.05
+        ),
+        detune: addControl(
+            'input', 'Detune', 'Detune (cents)',
+            opts.detune || '', 1
+        ),
+        pulseWidth: addControl(
+            'input', 'PulseWidth', 'Pulse width',
+            opts.pulseWidth || '', 0.05
+        ),
         volPitchTrackingMult: addControl(
             'input', 'VolPitchTrackingMult', 'Volume tracking multiplier',
-            opts.volumePitchTrackingMultiplier || '', 0.05),
-        lowpassFreq: addControl('input', 'LowpassFreq', 'Lowpass frequency',
-            opts.lowpass && opts.lowpass.frequency || '', 1),
+            opts.volumePitchTrackingMultiplier || '', 0.05
+        ),
+        lowpassFreq: addControl(
+            'input', 'LowpassFreq', 'Lowpass frequency',
+            opts.lowpass && opts.lowpass.frequency || '', 1
+        ),
         lowpassPitchTrackingMult: addControl(
             'input', 'LowpassPitchTrackingMult', 'Lowpass tracking multiplier',
             opts.lowpass && opts.lowpass.frequencyPitchTrackingMultiplier ||
-                '', 0.1),
-        lowpassQ: addControl('input', 'LowpassQ', 'Lowpass resonance',
-            opts.lowpass && opts.lowpass.Q || '', 0.1),
-        highpassFreq: addControl('input', 'HighpassFreq', 'Highpass frequency',
-            opts.highpass && opts.highpass.frequency || '', 1),
+                '', 0.1
+        ),
+        lowpassQ: addControl(
+            'input', 'LowpassQ', 'Lowpass resonance',
+            opts.lowpass && opts.lowpass.Q || '', 0.1
+        ),
+        highpassFreq: addControl(
+            'input', 'HighpassFreq', 'Highpass frequency',
+            opts.highpass && opts.highpass.frequency || '', 1
+        ),
         highpassPitchTrackingMult: addControl(
             'input',
             'HighpassPitchTrackingMult',
@@ -208,8 +228,10 @@ function addOscControls(controlsContainerEl, options) {
                 '',
             0.1
         ),
-        highpassQ: addControl('input', 'HighpassQ', 'Highpass resonance',
-            opts.highpass && opts.highpass.Q || '', 0.1),
+        highpassQ: addControl(
+            'input', 'HighpassQ', 'Highpass resonance',
+            opts.highpass && opts.highpass.Q || '', 0.1
+        ),
         fmOsc: addControl('select', 'FMOsc', 'FM oscillator', ''),
         vmOsc: addControl('select', 'VMOsc', 'VM oscillator', ''),
         attackEnvChart: addChartContainer('AttackEnv', 'Attack envelope'),
@@ -234,7 +256,8 @@ class Synth {
         this.child('.addOsc').onclick = this.addOscillator.bind(this);
         this.child('.resetEQ').onclick = this.resetEQ.bind(this);
         this.child(
-            '.masterVolume').onchange = this.child('.glideDuration').onchange =
+            '.masterVolume'
+        ).onchange = this.child('.glideDuration').onchange =
             this.updateFromUI.bind(this);
         this.child('.preset').innerHTML = Object.keys(presets)
             .reduce((str, p) => `${str}<option value="${p}">${p}</option>`, '');
@@ -315,14 +338,19 @@ class Synth {
             el(oscillator.controlIds.vmOsc).onchange =
             el(oscillator.controlIds.fmOsc).onchange = function () {
                 if (this.value === '' + id) {
-                    alert('Oscillator can\'t modulate itself - please assign ' +
-                        'to a different oscillator.');
+                    alert(
+                        'Oscillator can\'t modulate itself - please assign ' +
+                        'to a different oscillator.'
+                    );
                     this.value = '';
                 }
             };
-            Object.values(oscillator.controlIds).forEach(id => el(id)
-                .addEventListener(
-                    'change', synth.updateModulationLists.bind(synth)));
+            Object.values(oscillator.controlIds).forEach(
+                id => el(id)
+                    .addEventListener(
+                        'change', synth.updateModulationLists.bind(synth)
+                    )
+            );
             synth.updateModulationLists();
         }, 0);
     }
@@ -343,7 +371,8 @@ class Synth {
             sliderContainer.querySelector('.gain').value = def.gain || 0;
             sliderContainer.querySelector('.freq').value = def.frequency;
             sliderContainer.querySelector(
-                '.q').value = def.Q !== void 0 ? def.Q : 1;
+                '.q'
+            ).value = def.Q !== void 0 ? def.Q : 1;
         });
     }
 
@@ -378,10 +407,14 @@ class Synth {
                 el(osc.controlIds.vmOsc).value =
                     opts[i].vmOscillator !== null ? opts[i].vmOscillator + 1 :
                         '';
-                envToChart(osc.controlIds.attackEnvChart,
-                    opts[i].attackEnvelope);
-                envToChart(osc.controlIds.releaseEnvChart,
-                    opts[i].releaseEnvelope);
+                envToChart(
+                    osc.controlIds.attackEnvChart,
+                    opts[i].attackEnvelope
+                );
+                envToChart(
+                    osc.controlIds.releaseEnvChart,
+                    opts[i].releaseEnvelope
+                );
             });
             setTimeout(this.updateFromUI.bind(this), 0);
             setTimeout(playJingle, 150);
@@ -406,8 +439,12 @@ class Synth {
             .reduce((definitions, sliderContainer) => {
                 const gain = parseFloat(childValue(sliderContainer, '.gain'));
                 if (gain < -0.01 || gain > 0.01) {
-                    const frequency = parseFloat(childValue(sliderContainer,
-                            '.freq')) || 0,
+                    const frequency = parseFloat(
+                            childValue(
+                                sliderContainer,
+                                '.freq'
+                            )
+                        ) || 0,
                         Q = parseFloat(childValue(sliderContainer, '.q')) || 1;
                     definitions.push({ frequency, Q, gain });
                 }
@@ -442,9 +479,11 @@ class Synth {
             masterVolume: childValue(this.container, '.masterVolume'),
             noteGlideDuration: childValue(this.container, '.glideDuration'),
             masterAttackEnvelope: this.getEnvelopeFromChart(
-                'masterAttackEnvChart'),
+                'masterAttackEnvChart'
+            ),
             masterReleaseEnvelope: this.getEnvelopeFromChart(
-                'masterReleaseEnvChart'),
+                'masterReleaseEnvChart'
+            ),
             eq: this.getEqFromUI(),
             oscillators: this.oscillators.map(osc => {
                 const i = osc.controlIds,
@@ -501,15 +540,20 @@ class Synth {
             `;
             container.appendChild(col);
         }
-        setTimeout(() => this.container.querySelectorAll('.eqSliders input')
-            .forEach(input => (input.onchange = this.updateFromUI.bind(this))),
-        0);
+        setTimeout(
+            () => this.container.querySelectorAll('.eqSliders input')
+                .forEach(
+                    input => (input.onchange = this.updateFromUI.bind(this))
+                ),
+            0
+        );
     }
 
 
     resetEQ() {
         this.container.querySelectorAll(
-            '.eqSliders .gain').forEach(input => (input.value = 0));
+            '.eqSliders .gain'
+        ).forEach(input => (input.value = 0));
         this.updateFromUI();
     }
 
@@ -570,7 +614,8 @@ el('startSynth').onclick = function () {
 
 
 document.querySelectorAll(
-    '.json').forEach(el => (el.onclick = () => el.select()));
+    '.json'
+).forEach(el => (el.onclick = () => el.select()));
 el('showHelp').onclick = () => el('help').classList.toggle('hidden');
 
 

@@ -53,7 +53,8 @@ const data = [
 
 Highcharts.setOptions({
     colors: [Highcharts.color(
-        Highcharts.getOptions().colors[0]).brighten(-0.15).get()
+        Highcharts.getOptions().colors[0]
+    ).brighten(-0.15).get()
     ]
 });
 
@@ -106,8 +107,10 @@ Highcharts.chart('container', {
                         if (s.stDevLabelsGroup) {
                             s.stDevLabels.forEach(function (label, i) {
                                 label.attr({
-                                    x: xAxis.toPixels(zoneStops[i] -
-                                         (base / 2)) - (label.width / 2),
+                                    x: xAxis.toPixels(
+                                        zoneStops[i] -
+                                         (base / 2)
+                                    ) - (label.width / 2),
                                     y: chart.plotBox.y +
                                          s.yAxis.len - label.height
                                 });
@@ -116,7 +119,8 @@ Highcharts.chart('container', {
                             const percents = ['2.35%', '13.5%', '34.0%'];
 
                             s.stDevLabelsGroup = renderer.g(
-                                'st-dev-labels').attr({
+                                'st-dev-labels'
+                            ).attr({
                                 zIndex: 5
                             }).add();
                             s.stDevLabels = [];
@@ -130,8 +134,10 @@ Highcharts.chart('container', {
                                 ).add(s.stDevLabelsGroup);
 
                                 label.attr({
-                                    x: xAxis.toPixels(zoneStops[i] -
-                                         (base / 2)) - (label.width / 2),
+                                    x: xAxis.toPixels(
+                                        zoneStops[i] -
+                                         (base / 2)
+                                    ) - (label.width / 2),
                                     y: chart.plotBox.y +
                                          s.yAxis.len - label.height
                                 });

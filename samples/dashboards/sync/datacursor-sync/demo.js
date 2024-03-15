@@ -49,7 +49,8 @@ function buildChartOptions(type, table, cursor) {
                     const chart = this;
                     const series = chart.series[0];
                     // react to table cursor
-                    cursor.addListener(table.id,
+                    cursor.addListener(
+                        table.id,
                         'point.mouseOver', function (e) {
                             const point = series.data[e.cursor.row];
 

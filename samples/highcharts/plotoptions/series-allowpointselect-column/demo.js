@@ -28,7 +28,8 @@ document.getElementById('button').addEventListener('click', () =>  {
         chart.lbl.destroy();
     }
     chart.lbl = chart.renderer.label(
-        'You selected ' + selectedPoints.length + ' points', 100, 60)
+        'You selected ' + selectedPoints.length + ' points', 100, 60
+    )
         .attr({
             padding: 10,
             r: 5,

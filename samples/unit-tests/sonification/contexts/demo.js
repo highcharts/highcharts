@@ -82,10 +82,11 @@ QUnit.test('Contexts', function (assert) {
     });
 
     function getChannelsString(timeline) {
-        return timeline.channels.map(c => c.events
-            .map(e => e.time + ':' + (
-                e.message ? e.message : e.instrumentEventOptions.note
-            )).join(',')).join('#');
+        return timeline.channels.map(
+            c => c.events
+                .map(e => e.time + ':' + (
+                    e.message ? e.message : e.instrumentEventOptions.note
+                )).join(',')).join('#');
     }
 
     // Common to both tests

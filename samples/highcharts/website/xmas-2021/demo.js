@@ -347,14 +347,22 @@ const bell = function () {
                         color: '#8BD6F3'
                     });
 
-                    const bell = document.querySelector('#bell-chart  ' +
-                        '.highcharts-bellcurve-series');
-                    const hammer = document.querySelector('#bell-chart ' +
-                        '.highcharts-series-4');
-                    const bellLine = document.querySelector('#bell-chart ' +
-                        '.highcharts-series-5');
-                    const bow = document.querySelector('#bell-chart ' +
-                        '.highcharts-series-6.highcharts-markers');
+                    const bell = document.querySelector(
+                        '#bell-chart  ' +
+                        '.highcharts-bellcurve-series'
+                    );
+                    const hammer = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-4'
+                    );
+                    const bellLine = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-5'
+                    );
+                    const bow = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-6.highcharts-markers'
+                    );
 
                     let transY = '-40px';
                     if (!big) {
@@ -663,8 +671,10 @@ const tree = function () {
                         [0, 0]
                     ];
 
-                    const topTree = document.querySelector('#tree-chart ' +
-                        '.highcharts-series-2');
+                    const topTree = document.querySelector(
+                        '#tree-chart ' +
+                        '.highcharts-series-2'
+                    );
 
                     chart.series[0].update({
                         color: '#E05283'
@@ -2183,8 +2193,10 @@ const flake = function () {
             events: {
                 load: function () {
                     const chart = this;
-                    const seriesGroup = document.querySelector('#flake-chart ' +
-                        '.highcharts-series-group');
+                    const seriesGroup = document.querySelector(
+                        '#flake-chart ' +
+                        '.highcharts-series-group'
+                    );
                     seriesGroup.style.transformOrigin = 'center';
                     seriesGroup.style.transform = 'translateY(-200px)';
 
@@ -3558,7 +3570,8 @@ const ball = function () {
                                     noseCount = 1;
                                 } else {
                                     chart.series[2].points[0].setState(
-                                        'normal');
+                                        'normal'
+                                    );
                                     noseCount = 0;
                                 }
                             }, 1000);
@@ -3857,7 +3870,8 @@ candycane();
 ball();
 words();
 
-document.getElementById('open').addEventListener('click',
+document.getElementById('open').addEventListener(
+    'click',
     function () {
 
         [].forEach.call(

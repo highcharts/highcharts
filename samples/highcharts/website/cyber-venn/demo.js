@@ -794,7 +794,8 @@ setTimeout(function () {
     });
 
     document.getElementById(
-        'terms').addEventListener('mouseover', function (e) {
+        'terms'
+    ).addEventListener('mouseover', function (e) {
         document.getElementById('tip').style.opacity = 1;
         document.getElementById('tip').style.visibility = 'visible';
     });

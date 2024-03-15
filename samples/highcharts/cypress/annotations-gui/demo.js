@@ -32,7 +32,8 @@ Highcharts.chart('container', {
             },
             deselectButton: function (event) {
                 event.button.parentNode.parentNode.classList.remove(
-                    'highcharts-active');
+                    'highcharts-active'
+                );
 
                 // Remove info about active button:
                 this.chart.activeButton = null;

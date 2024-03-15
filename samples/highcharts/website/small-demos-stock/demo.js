@@ -632,8 +632,10 @@ function dynamic() {
                                 price,
                                 Math.round(price * 1.2),
                                 Math.round(price * 0.8),
-                                Math.round(price + price * 0.3 *
-                                    (Math.random() - 0.5))
+                                Math.round(
+                                    price + price * 0.3 *
+                                    (Math.random() - 0.5)
+                                )
                             ]);
                             count = count + 1;
                         } else {

@@ -51,10 +51,14 @@ QUnit.test('Pitch and note mapping', function (assert) {
         frequency: 440
     });
 
-    assert.strictEqual(notes(),
-        '100,10', 'Note mapping remains after setting frequency');
+    assert.strictEqual(
+        notes(),
+        '100,10', 'Note mapping remains after setting frequency'
+    );
     assert.strictEqual(notes(
-        'frequency'), '440,440', 'Fixed frequency mapping');
+        'frequency'
+    ), '440,440', 'Fixed frequency mapping'
+    );
 
     updateMapping({
         pitch: [60, 'C6', 'e4', 96],
@@ -65,8 +69,10 @@ QUnit.test('Pitch and note mapping', function (assert) {
         }
     });
 
-    assert.strictEqual(notes(),
-        '60,72,52,96,60,72,52,96', 'Multiple note mapping');
+    assert.strictEqual(
+        notes(),
+        '60,72,52,96,60,72,52,96', 'Multiple note mapping'
+    );
     assert.strictEqual(
         chart.sonification.timeline
             .channels[0].events.map(e => e.time)

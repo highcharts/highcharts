@@ -38,7 +38,8 @@ QUnit.test('General series clip tests', assert => {
 
         assert.strictEqual(
             chart.sharedClips[chart.series[0].getSharedClipKey()].attr(
-                'height'),
+                'height'
+            ),
             chart.yAxis[0].len,
             '#13858: clipBox should have been updated in compliance with ' +
             'responsive rule'
@@ -85,7 +86,8 @@ QUnit.test('General series clip tests', assert => {
 
         assert.ok(
             chart.sharedClips[chart.series[3].sharedClipKey].attr(
-                'width') > widthBefore,
+                'width'
+            ) > widthBefore,
             '#15435: Shared clip should have been updated'
         );
 

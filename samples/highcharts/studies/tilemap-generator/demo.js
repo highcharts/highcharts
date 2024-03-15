@@ -348,20 +348,26 @@
             'rightBottom', 'centerBottom', 'leftBottom'
         ], function (dir) {
             // Filter out positions we don't want to use for this overflow
-            return !startsWith(dir,
+            return !startsWith(
+                dir,
                 baseTile.center.x > overflow.area.center.x ?
                     'right' : // Base tile should be to the right or center
-                    'left') && // Base tile should be to the left or center
-                   !endsWith(dir,
+                    'left'
+            ) && // Base tile should be to the left or center
+                   !endsWith(
+                       dir,
                        baseTile.center.y > overflow.area.center.y ?
                            'Top' : // Base tile should be on top or center
-                           'Bottom'); // Base tile should be below or center
+                           'Bottom'
+                   ); // Base tile should be below or center
         }),
         function (dir) {
             // Get insertion grids for each position
             insertionGrids.push({
-                grid: insertInGrid(baseGrid, overflow.area,
-                    [overflow.row, overflow.col], dir),
+                grid: insertInGrid(
+                    baseGrid, overflow.area,
+                    [overflow.row, overflow.col], dir
+                ),
                 dir: dir
             });
         });
@@ -880,8 +886,10 @@ function generateTileChart() {
     }
 
     // Warn for huge maps
-    if (mapLen > 300 && !window.confirm('This map contains ' + mapLen +
-        ' areas. Converting this much data could take a while. Continue?')) {
+    if (mapLen > 300 && !window.confirm(
+        'This map contains ' + mapLen +
+        ' areas. Converting this much data could take a while. Continue?'
+    )) {
         return;
     }
 
@@ -1021,8 +1029,10 @@ $('#mapDropdown').change(function () {
 
     // Show loading
     if (Highcharts.charts[0]) {
-        Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin ' +
-            'fa-2x"></i>');
+        Highcharts.charts[0].showLoading(
+            '<i class="fa fa-spinner fa-spin ' +
+            'fa-2x"></i>'
+        );
     }
 
     // When the map is loaded or ready from cache...
@@ -1137,7 +1147,8 @@ $('#mapDropdown').change(function () {
 // Toggle pretty print
 $('#prettyprint').change(function () {
     $('#outputData').val(JSON.stringify(
-        currentData, null, $('#prettyprint').prop('checked') ? 2 : null)
+        currentData, null, $('#prettyprint').prop('checked') ? 2 : null
+    )
     );
 });
 
@@ -1180,8 +1191,10 @@ $('#zoomOut').click(function () {
 $('#xRes').change(generateTileChart);
 $('#xRes').on('input', function () {
     const val = $('#xRes').val();
-    $('#xResLabel').text(val === '1' ? 'X resolution factor' :
-        'X resolution factor (' + val + ')');
+    $('#xResLabel').text(
+        val === '1' ? 'X resolution factor' :
+            'X resolution factor (' + val + ')'
+    );
 });
 
 
@@ -1189,8 +1202,10 @@ $('#xRes').on('input', function () {
 $('#yRes').change(generateTileChart);
 $('#yRes').on('input', function () {
     const val = $('#yRes').val();
-    $('#yResLabel').text(val === '1' ? 'Y resolution factor' :
-        'Y resolution factor (' + val + ')');
+    $('#yResLabel').text(
+        val === '1' ? 'Y resolution factor' :
+            'Y resolution factor (' + val + ')'
+    );
 });
 
 

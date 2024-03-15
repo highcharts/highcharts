@@ -17,8 +17,10 @@ QUnit.test('General animation tests', function (assert) {
             done = assert.async(),
             width;
 
-        const initialClips = chart.container.querySelectorAll('defs ' +
-            'clipPath').length;
+        const initialClips = chart.container.querySelectorAll(
+            'defs ' +
+            'clipPath'
+        ).length;
         assert.ok(
             initialClips >= 2,
             'There should be at least clips initially, one for plot area and ' +

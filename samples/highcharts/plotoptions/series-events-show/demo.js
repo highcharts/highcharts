@@ -16,7 +16,8 @@ Highcharts.chart('container', {
                         this.chart.lbl = this.chart.renderer.label(
                             text,
                             100,
-                            70)
+                            70
+                        )
                             .attr({
                                 padding: 10,
                                 r: 5,

@@ -189,14 +189,18 @@ QUnit.test('The stock chart in hidden div, #16901.', function (assert) {
     });
     assert.strictEqual(
         getComputedStyle(document.querySelector(
-            '.highcharts-navigator')).visibility,
+            '.highcharts-navigator'
+        )
+        ).visibility,
         'hidden',
         'Navigator should be hidden.'
     );
 
     assert.strictEqual(
         getComputedStyle(document.querySelector(
-            '.highcharts-button-box')).visibility,
+            '.highcharts-button-box'
+        )
+        ).visibility,
         'hidden',
         'Elements of range selector should be hidden.'
     );

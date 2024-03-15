@@ -702,8 +702,10 @@ QUnit.test(
 
             const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
             assert.ok(
-                Object.values(stack).every(item => item.label.visibility !==
-                'hidden'),
+                Object.values(stack).every(
+                    item => item.label.visibility !==
+                'hidden'
+                ),
                 `${type}: All stackLabels should be visible`
             );
         });

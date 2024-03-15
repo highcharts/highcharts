@@ -8,7 +8,8 @@ Math.easeOutQuint = function (pos) {
 
 
 const editor = function () {
-    Highcharts.chart('editor',
+    Highcharts.chart(
+        'editor',
         {
             chart: {
                 animation: {

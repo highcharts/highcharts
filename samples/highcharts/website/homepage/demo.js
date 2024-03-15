@@ -2247,8 +2247,10 @@ function section3() {
             if (demoChart.chartWidth < 500) {
                 yearMax = 1920;
             }
-            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                , Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1)
+            );
 
             demoChart.series[5].update({
                 animation: false
@@ -2312,8 +2314,10 @@ function section3() {
         }
         // /adjust the axes for full animation
         if (!reduced) {
-            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                , Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1)
+            );
 
             $('.highcharts-axis-labels').fadeIn(100);
             $('.highcharts-pie-series').hide();
@@ -2394,8 +2398,10 @@ function section3() {
                 }
             });
 
-            demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
-                Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(1970, 7, 1),
+                Date.UTC(2016, 11, 1)
+            );
         }
     };
     currentTimeout = window.setTimeout(s6, 6700);
@@ -2442,17 +2448,22 @@ function section2() {
         });
         // /set up the finance stuff for section 2 for accessibility
         if (reduced) {
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
             demoChart.update({
                 tooltip: {
                     enabled: true
                 }
             });
             demoChart.tooltip.refresh(
-                [demoChart.series[2].points[22]]);
+                [demoChart.series[2].points[22]]
+            );
             $('.highcharts-tooltip').hide();
             $('.highcharts-tooltip').fadeIn(1000);
         }
@@ -2465,10 +2476,14 @@ function section2() {
         if (!reduced) {
             $('.highcharts-networkgraph-series').hide();
 
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
 
             $('.highcharts-candlestick-series').show();
         }
@@ -2484,7 +2499,8 @@ function section2() {
                 }
             });
             demoChart.tooltip.refresh(
-                [demoChart.series[2].points[22]]);
+                [demoChart.series[2].points[22]]
+            );
             $('.highcharts-tooltip').hide();
             $('.highcharts-tooltip').fadeIn(1000);
         }
@@ -2668,10 +2684,14 @@ function section1() {
         }, 0);
         // /set the axes now so they're ready for section 2 without animation
         if (reduced) {
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
         }
     };
     currentTimeout = setTimeout(s14, 4000);

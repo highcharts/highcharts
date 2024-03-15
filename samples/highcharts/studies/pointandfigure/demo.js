@@ -153,7 +153,8 @@
         };
     }
 
-    Highcharts.wrap(Highcharts.Axis.prototype,
+    Highcharts.wrap(
+        Highcharts.Axis.prototype,
         'getClosest', function (proceed) {
             let ret = proceed.apply(
                 this,
@@ -161,7 +162,9 @@
             );
 
             const pnfSeries = this.series.filter(series => series.is(
-                'pointandfigure'));
+                'pointandfigure'
+            )
+            );
 
             pnfSeries.forEach(() => {
                 if (this.categories) {
@@ -184,11 +187,13 @@
         });
 
     // eslint-disable-next-line no-underscore-dangle
-    Highcharts.wrap(Highcharts.Series.prototype,
+    Highcharts.wrap(
+        Highcharts.Series.prototype,
         'groupData', function (proceed) {
             if (this.is && this.is('pointandfigure')) {
                 return generatePnfData.apply(
-                    this, Array.prototype.slice.call(arguments, 1
+                    this, Array.prototype.slice.call(
+                        arguments, 1
                     ));
             }
             return proceed.apply(

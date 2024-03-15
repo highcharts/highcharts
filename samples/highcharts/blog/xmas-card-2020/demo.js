@@ -95,7 +95,8 @@ itemChart = Highcharts.chart('container', {
             load: function () {
                 itemChart = this;
                 chartToChange = itemChart.series.findIndex(
-                    series => series.options.type === 'item');
+                    series => series.options.type === 'item'
+                );
 
                 $('#item1').attr('value', chartToChange);
                 $('#item2').attr('value', chartToChange + 1);

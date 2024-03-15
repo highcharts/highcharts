@@ -577,7 +577,8 @@ Highcharts.chart('container', {
                     chart.redraw();
 
                     document.querySelector(
-                        '.highcharts-markers.particles').style.opacity = 1;
+                        '.highcharts-markers.particles'
+                    ).style.opacity = 1;
 
                 }, 100);
 

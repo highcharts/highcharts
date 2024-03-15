@@ -100,8 +100,10 @@ fromAccount.onchange = function () {
 document.getElementById('pay').onclick = function () {
     const time = +new Date() - startTime + 10 * minute,
         accountID = fromAccount.options[fromAccount.selectedIndex].value,
-        newBalance = Math.round(parseFloat(accountBalance.innerHTML) -
-            parseFloat(payAmount.value));
+        newBalance = Math.round(
+            parseFloat(accountBalance.innerHTML) -
+            parseFloat(payAmount.value)
+        );
 
     if (newBalance >= 0) {
         accountBalance.innerHTML = newBalance;

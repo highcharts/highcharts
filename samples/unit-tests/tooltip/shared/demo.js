@@ -268,8 +268,10 @@ QUnit.test('Shared tooltip with pointPlacement and stickOnContact', assert => {
         target: chart.container
     });
 
-    assert.strictEqual(chart.hoverPoints.length, 5, '#5832: All series ' +
-        'present');
+    assert.strictEqual(
+        chart.hoverPoints.length, 5, '#5832: All series ' +
+        'present'
+    );
 
     const heightBefore = chart.tooltip.tracker.attr('height');
     chart.series[1].points[0].onMouseOver();

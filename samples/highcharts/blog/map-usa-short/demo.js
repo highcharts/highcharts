@@ -3,7 +3,8 @@
 const data = [],
     // Get the map data
     mapData = Highcharts.geojson(Highcharts.maps[
-        'countries/us/custom/us-small']);
+        'countries/us/custom/us-small']
+    );
 
 Highcharts.data({
     table: document.getElementById('data'),

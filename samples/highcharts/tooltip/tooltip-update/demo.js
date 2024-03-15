@@ -27,7 +27,8 @@ document.getElementById('update-tooltip-dark').addEventListener('click', () => {
 });
 
 document.getElementById(
-    'update-tooltip-light').addEventListener('click', () => {
+    'update-tooltip-light'
+).addEventListener('click', () => {
     chart.tooltip.update({
         backgroundColor: 'rgba(255, 255, 255, 0.85)',
         borderWidth: 1,

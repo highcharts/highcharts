@@ -140,8 +140,10 @@
             'Point with milestone:true is a milestone'
         );
 
-        assert.equal(typeof milestone.d,
-            'string', 'Milestone has a \'d\' value');
+        assert.equal(
+            typeof milestone.d,
+            'string', 'Milestone has a \'d\' value'
+        );
 
         // Remove path letters
         path = milestone.d.replace(/[a-zA-Z]/g, '');

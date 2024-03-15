@@ -205,7 +205,8 @@ function updateCountdown(type) {
     // Time calculations for days, hours, minutes and seconds
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -260,27 +261,34 @@ function generateCaption(type) {
 function lightParticles() {
 
     [].forEach.call(document.querySelectorAll(
-        '.highcharts-series-7 image'), function (element) {
+        '.highcharts-series-7 image'
+    ), function (element) {
         element.style.opacity = '0.7';
         element.style.filter = 'saturate(2)';
         element.style.transition = '500ms';
     });
     setTimeout(function () {
-        [].forEach.call(document.querySelectorAll('.highcharts-series-7 ' +
-            'image'), function (element) {
-            element.style.opacity = '0.3';
-            element.style.filter = 'saturate(0.5)';
-            element.style.transition = '500ms';
-        });
+        [].forEach.call(
+            document.querySelectorAll(
+                '.highcharts-series-7 ' +
+            'image'
+            ), function (element) {
+                element.style.opacity = '0.3';
+                element.style.filter = 'saturate(0.5)';
+                element.style.transition = '500ms';
+            });
     }, 200);
 
     setTimeout(function () {
-        [].forEach.call(document.querySelectorAll('.highcharts-series-7 ' +
-            'image'), function (element) {
-            element.style.opacity = '0.7';
-            element.style.filter = 'saturate(2)';
-            element.style.transition = '500ms';
-        });
+        [].forEach.call(
+            document.querySelectorAll(
+                '.highcharts-series-7 ' +
+            'image'
+            ), function (element) {
+                element.style.opacity = '0.7';
+                element.style.filter = 'saturate(2)';
+                element.style.transition = '500ms';
+            });
     }, 600);
 
 }

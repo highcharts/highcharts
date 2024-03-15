@@ -11,9 +11,11 @@ Highcharts.chart('container', {
             events: {
                 legendItemClick: function () {
                     const visibility = this.visible ? 'visible' : 'hidden';
-                    if (!confirm('The series is currently ' +
+                    if (!confirm(
+                        'The series is currently ' +
                                  visibility + '. Do you want to change ' +
-                                     'that?')) {
+                                     'that?'
+                    )) {
                         return false;
                     }
                 }

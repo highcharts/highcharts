@@ -43,11 +43,14 @@ const finalMap = function () {
                 events: {
                     load: function () {
                         const mapSeries = document.querySelector(
-                            '.highcharts-map-series');
+                            '.highcharts-map-series'
+                        );
                         const title = document.querySelector(
-                            '.highcharts-title');
+                            '.highcharts-title'
+                        );
                         const subtitle = document.querySelector(
-                            '.highcharts-subtitle');
+                            '.highcharts-subtitle'
+                        );
                         mapSeries.style.opacity = 0;
                         setTimeout(function () {
                             mapSeries.style.opacity = 0;
@@ -61,7 +64,8 @@ const finalMap = function () {
                     },
                     redraw: function () {
                         const mapSeries = document.querySelector(
-                            '.highcharts-map-series');
+                            '.highcharts-map-series'
+                        );
                         mapSeries.classList.add('show');
 
                     }

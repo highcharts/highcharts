@@ -70,8 +70,10 @@ QUnit.test('RangeSelector.dropdown', assert => {
     });
 
     assert.strictEqual(
-        chart.rangeSelector.buttons.filter(b => b.visibility !==
-            'hidden').length,
+        chart.rangeSelector.buttons.filter(
+            b => b.visibility !==
+            'hidden'
+        ).length,
         1,
         '800px + always: Only 1 button should be visible'
     );
@@ -87,8 +89,10 @@ QUnit.test('RangeSelector.dropdown', assert => {
     });
 
     assert.strictEqual(
-        chart.rangeSelector.buttons.filter(b => b.visibility !==
-            'hidden').length,
+        chart.rangeSelector.buttons.filter(
+            b => b.visibility !==
+            'hidden'
+        ).length,
         1,
         '400px + always: Only 1 button should be visible'
     );
@@ -104,8 +108,10 @@ QUnit.test('RangeSelector.dropdown', assert => {
     });
 
     assert.strictEqual(
-        chart.rangeSelector.buttons.filter(b => b.visibility !==
-            'hidden').length,
+        chart.rangeSelector.buttons.filter(
+            b => b.visibility !==
+            'hidden'
+        ).length,
         1,
         '400px + resonsive: Only 1 button should be visible'
     );
@@ -135,6 +141,8 @@ QUnit.test('RangeSelector.dropdown', assert => {
             dropdown: 'always'
         }
     });
-    assert.ok(true, '#15124: Attempting to collapse with no buttons should ' +
-        'not throw');
+    assert.ok(
+        true, '#15124: Attempting to collapse with no buttons should ' +
+        'not throw'
+    );
 });

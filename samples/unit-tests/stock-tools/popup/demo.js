@@ -118,7 +118,8 @@ QUnit.test('Touch event test on popup', function (assert) {
     // closing popup
 
     const closeButton = chart.container.getElementsByClassName(
-        'highcharts-popup-close')[0];
+        'highcharts-popup-close'
+    )[0];
     // css are not loaded in karma, so it is mandatory to set the position
     // of the button manually
     closeButton.style.position = 'absolute';
@@ -130,7 +131,8 @@ QUnit.test('Touch event test on popup', function (assert) {
 
     chartPos = Highcharts.offset(chart.container);
     testController.triggerEvent(
-        'click', left - chartPos.left + 20, top - chartPos.top + 20, {}, true);
+        'click', left - chartPos.left + 20, top - chartPos.top + 20, {}, true
+    );
 
     assert.equal(
         fired,

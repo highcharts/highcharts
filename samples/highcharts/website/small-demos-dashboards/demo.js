@@ -417,8 +417,10 @@ function climate() {
                 colorStopsDays :
                 colorStopsTemperature
         );
-        const selectionTable = await dataPool.getConnectorTable('Range ' +
-            'Selection');
+        const selectionTable = await dataPool.getConnectorTable(
+            'Range ' +
+            'Selection'
+        );
         const [
             timeRangeSelector,
             worldMap
@@ -700,7 +702,8 @@ function datacursor() {
                         const series = chart.series[0];
 
                         // react to table cursor
-                        cursor.addListener(table.id,
+                        cursor.addListener(
+                            table.id,
                             'point.mouseOver', function (e) {
                                 const point = series.data[e.cursor.row];
 
@@ -708,7 +711,8 @@ function datacursor() {
                                     chart.tooltip.refresh(point);
                                 }
                             });
-                        cursor.addListener(table.id,
+                        cursor.addListener(
+                            table.id,
                             'point.mouseOut', function () {
                                 chart.tooltip.hide();
                             });

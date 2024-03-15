@@ -102,5 +102,6 @@ document.getElementById('play').onclick = function () {
             highpassFreq: 0
         }
     ].forEach((e, ix) =>
-        instr.scheduleEventAtTime(ctx.currentTime + ix * 0.35, e));
+        instr.scheduleEventAtTime(ctx.currentTime + ix * 0.35, e)
+    );
 };

@@ -15,8 +15,10 @@
                     // Select the save button of the popup and assign a
                     // click event
                     document
-                        .querySelectorAll('.highcharts-popup-annotations ' +
-                            'button')[0]
+                        .querySelectorAll(
+                            '.highcharts-popup-annotations ' +
+                            'button'
+                        )[0]
                         .addEventListener(
                             'click',
                             // Function which saves the new background color.
@@ -54,7 +56,8 @@
                         // Get and store the popup annotations container
                         chart.annotationsPopupContainer = document
                             .getElementsByClassName(
-                                'highcharts-popup-annotations')[0];
+                                'highcharts-popup-annotations'
+                            )[0];
                     }
 
                     // Show the popup container, but not when we add the

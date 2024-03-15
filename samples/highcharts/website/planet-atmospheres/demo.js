@@ -123,11 +123,14 @@ function buildData(chart, planet) {
                     $(label).addClass(gas);
                     $(label).addClass('on');
                     $(label).find(
-                        '.planets-element-value').css({ color: color });
+                        '.planets-element-value'
+                    ).css({ color: color });
                     $(label).find(
-                        '.planets-element-symbol').css({ color: color });
+                        '.planets-element-symbol'
+                    ).css({ color: color });
                     $(label).find(
-                        '.planets-element-name').css({ color: color });
+                        '.planets-element-name'
+                    ).css({ color: color });
                     $(dataLabel).addClass(planet);
                     $(dataLabel).addClass(gas);
 

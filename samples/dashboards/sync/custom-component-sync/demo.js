@@ -344,7 +344,8 @@ Dashboards.board('container', {
                             yColumn.slice(rowIndex, yColumn.length)
                         ].map(side => Math.round(
                             side.reduce(
-                                (acc, current) => acc + current, 0) /
+                                (acc, current) => acc + current, 0
+                            ) /
                                 side.length * 100
                         ) / 100);
 

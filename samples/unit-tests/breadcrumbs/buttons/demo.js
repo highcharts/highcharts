@@ -108,7 +108,8 @@ QUnit.test(
         );
         assert.strictEqual(
             chart.container.getElementsByClassName(
-                'highcharts-breadcrumbs-group').length,
+                'highcharts-breadcrumbs-group'
+            ).length,
             1,
             'Breadcrumbs groups should be created.'
         );
@@ -134,7 +135,8 @@ QUnit.test(
         Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
         assert.strictEqual(
             chart.container.getElementsByClassName(
-                'highcharts-breadcrumbs-group').length,
+                'highcharts-breadcrumbs-group'
+            ).length,
             1,
             'The breadcrumbs separators group should be destroyed.'
         );

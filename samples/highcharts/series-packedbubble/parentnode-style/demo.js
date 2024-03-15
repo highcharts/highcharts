@@ -38,7 +38,8 @@ Highcharts.chart('container', {
                             stops: [
                                 [0, 'rgba(255,255,255,0.5)'],
                                 [1, Highcharts.color(
-                                    '#00ff00').setOpacity(0.5).get('rgba')
+                                    '#00ff00'
+                                ).setOpacity(0.5).get('rgba')
                                 ]
                             ]
                         },

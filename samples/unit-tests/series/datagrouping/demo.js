@@ -459,8 +459,10 @@
         });
 
         assert.strictEqual(
-            chart.container.querySelectorAll('.highcharts-series-0 ' +
-                'path').length,
+            chart.container.querySelectorAll(
+                '.highcharts-series-0 ' +
+                'path'
+            ).length,
             12,
             'Monthly columns'
         );
@@ -474,8 +476,10 @@
 
         chart.rangeSelector.clickButton(0);
         assert.strictEqual(
-            chart.container.querySelectorAll('.highcharts-series-0 ' +
-                'path').length,
+            chart.container.querySelectorAll(
+                '.highcharts-series-0 ' +
+                'path'
+            ).length,
             32,
             'Daily columns, monthlies should be removed (#7547) (Timezone: ' +
             'UTC ' +
@@ -829,142 +833,146 @@
             );
         });
 
-    QUnit.test('When groupAll: true, group point should have the same start ' +
-        'regardless of axis extremes, #15005.', function (assert) {
-        const chart = Highcharts.stockChart('container', {
-                chart: {
-                    type: 'column'
-                },
-                plotOptions: {
-                    series: {
-                        dataGrouping: {
-                            enabled: true,
-                            forced: true,
-                            units: [
-                                ['millisecond', [5]]
-                            ]
-                        }
-                    }
-                },
-                series: [{
-                    dataGrouping: {
-                        groupAll: true
+    QUnit.test(
+        'When groupAll: true, group point should have the same start ' +
+        'regardless of axis extremes, #15005.',
+        function (assert) {
+            const chart = Highcharts.stockChart('container', {
+                    chart: {
+                        type: 'column'
                     },
-                    data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                }, {
-                    data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                }]
-            }),
-            groupAllFirstGroupStart = chart.series[0].points[0].dataGroup.start,
-            groupAllSecondGroupStart =
-            chart.series[0].points[1].dataGroup.start,
-            firstGroupStart = chart.series[1].points[0].dataGroup.start,
-            secondGroupStart = chart.series[1].points[1].dataGroup.start;
+                    plotOptions: {
+                        series: {
+                            dataGrouping: {
+                                enabled: true,
+                                forced: true,
+                                units: [
+                                    ['millisecond', [5]]
+                                ]
+                            }
+                        }
+                    },
+                    series: [{
+                        dataGrouping: {
+                            groupAll: true
+                        },
+                        data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                    }, {
+                        data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                    }]
+                }),
+                groupAllFirstGroupStart = chart.series[0].points[0].dataGroup
+                    .start,
+                groupAllSecondGroupStart =
+                    chart.series[0].points[1].dataGroup.start,
+                firstGroupStart = chart.series[1].points[0].dataGroup.start,
+                secondGroupStart = chart.series[1].points[1].dataGroup.start;
 
-        assert.strictEqual(
-            firstGroupStart,
-            0,
-            'When the groupAll: false, and all points visible, the first ' +
+            assert.strictEqual(
+                firstGroupStart,
+                0,
+                'When the groupAll: false, and all points visible, the first ' +
             'group should start from the beginning (0).'
-        );
+            );
 
-        chart.xAxis[0].setExtremes(1);
+            chart.xAxis[0].setExtremes(1);
 
-        assert.strictEqual(
-            groupAllFirstGroupStart,
-            chart.series[0].points[0].dataGroup.start,
-            'When the groupAll: true, the start of the group should not be ' +
-            'changed after changing extremes.'
-        );
-        assert.strictEqual(
-            groupAllSecondGroupStart,
-            chart.series[0].points[1].dataGroup.start,
-            'When the groupAll: true, the start of the group should not be ' +
-            'changed after changing extremes.'
-        );
-        assert.strictEqual(
-            chart.series[1].points[0].dataGroup.start,
-            1,
-            'When the groupAll: false, and after changing extremes, the ' +
-            'group start should be increased.'
-        );
-        assert.strictEqual(
-            secondGroupStart,
-            chart.series[1].points[1].dataGroup.start,
-            'When the groupAll: false, and new extremes don\t influence the ' +
-            'group, the start should not be changed.'
-        );
+            assert.strictEqual(
+                groupAllFirstGroupStart,
+                chart.series[0].points[0].dataGroup.start,
+                'When the groupAll: true, the start of the group should not' +
+                    ' be changed after changing extremes.'
+            );
+            assert.strictEqual(
+                groupAllSecondGroupStart,
+                chart.series[0].points[1].dataGroup.start,
+                'When the groupAll: true, the start of the group should not' +
+                    ' be changed after changing extremes.'
+            );
+            assert.strictEqual(
+                chart.series[1].points[0].dataGroup.start,
+                1,
+                'When the groupAll: false, and after changing extremes, the ' +
+                    'group start should be increased.'
+            );
+            assert.strictEqual(
+                secondGroupStart,
+                chart.series[1].points[1].dataGroup.start,
+                'When the groupAll: false, and new extremes don\t influence ' +
+                    'the group, the start should not be changed.'
+            );
 
-        // Change the data set to check the group start,
-        // when the extremes overlap with the point x.
-        chart.series[0].update({
-            type: 'line',
-            dataGrouping: {
-                groupAll: true,
-                units: [
-                    ['minute', [5]]
+            // Change the data set to check the group start,
+            // when the extremes overlap with the point x.
+            chart.series[0].update({
+                type: 'line',
+                dataGrouping: {
+                    groupAll: true,
+                    units: [
+                        ['minute', [5]]
+                    ]
+                },
+                data: [
+                    [1610028057000, 0.25],
+                    [1610033040000, 0.80125],
+                    [1610118031000, 0.8475],
+                    [1610118209000, 0.8475],
+                    [1610118426000, 0.8475],
+                    [1610118691000, 0.8475],
+                    [1610120241000, 0.8475],
+                    [1610372248000, 0.8325],
+                    [1610373264000, 0.83],
+                    [1610373445000, 0.8275],
+                    [1610384401000, 0.835],
+                    [1610384401000, 0.835],
+                    [1610392040000, 0.375],
+                    [1610719978000, 0.915],
+                    [1610720025000, 0.915],
+                    [1610724043000, 0.91],
+                    [1610724275000, 0],
+                    [1610725033000, 0.9],
+                    [1610725069000, 0.9],
+                    [1610729723000, 0],
+                    [1611071398000, 0.84375],
+                    [1611138383000, 0.835],
+                    [1611159135000, 0.77],
+                    [1611162097000, 0.7825],
+                    [1611162097000, 0.7825]
                 ]
-            },
-            data: [
-                [1610028057000, 0.25],
-                [1610033040000, 0.80125],
-                [1610118031000, 0.8475],
-                [1610118209000, 0.8475],
-                [1610118426000, 0.8475],
-                [1610118691000, 0.8475],
-                [1610120241000, 0.8475],
-                [1610372248000, 0.8325],
-                [1610373264000, 0.83],
-                [1610373445000, 0.8275],
-                [1610384401000, 0.835],
-                [1610384401000, 0.835],
-                [1610392040000, 0.375],
-                [1610719978000, 0.915],
-                [1610720025000, 0.915],
-                [1610724043000, 0.91],
-                [1610724275000, 0],
-                [1610725033000, 0.9],
-                [1610725069000, 0.9],
-                [1610729723000, 0],
-                [1611071398000, 0.84375],
-                [1611138383000, 0.835],
-                [1611159135000, 0.77],
-                [1611162097000, 0.7825],
-                [1611162097000, 0.7825]
-            ]
-        }, false);
-        chart.series[1].remove();
+            }, false);
+            chart.series[1].remove();
 
-        const point = chart.series[0].points[10],
-            pointX = point.x;
+            const point = chart.series[0].points[10],
+                pointX = point.x;
 
-        assert.strictEqual(
-            point.dataGroup.start,
-            12,
-            'When groupAll: true, this point group should start from 12.'
-        );
+            assert.strictEqual(
+                point.dataGroup.start,
+                12,
+                'When groupAll: true, this point group should start from 12.'
+            );
 
-        chart.xAxis[0].setExtremes(1610033050000);
-        assert.strictEqual(
-            pointX,
-            chart.series[0].points[9].x,
-            'The same point should be selected as previously.'
-        );
-        assert.strictEqual(
-            chart.series[0].points[9].dataGroup.start,
-            12,
-            `When groupAll: true, after changing extremes,
-        the point should have the same start.`
-        );
+            chart.xAxis[0].setExtremes(1610033050000);
+            assert.strictEqual(
+                pointX,
+                chart.series[0].points[9].x,
+                'The same point should be selected as previously.'
+            );
+            assert.strictEqual(
+                chart.series[0].points[9].dataGroup.start,
+                12,
+                `When groupAll: true, after changing extremes,
+                    the point should have the same start.`
+            );
 
-        chart.xAxis[0].setExtremes(1610033040000);
-        assert.strictEqual(
-            chart.series[0].points[9].dataGroup.start,
-            12,
-            `When groupAll: true, after changing extremes to the same as other
-        point x, the groups should not change the start property.`
-        );
-    });
+            chart.xAxis[0].setExtremes(1610033040000);
+            assert.strictEqual(
+                chart.series[0].points[9].dataGroup.start,
+                12,
+                `When groupAll: true, after changing extremes to the same as
+                other point x, the groups should not change the start
+                property.`
+            );
+        });
 
     QUnit.test(
         'Panning with dataGrouping and ordinal axis, #3825.',

@@ -45,7 +45,8 @@ H.SVGRenderer.prototype.symbols.target = function (
  * @class seriesTypes.lineargauge
  * @augments seriesTypes.column
  */
-seriesType('lineargauge', 'column',
+seriesType(
+    'lineargauge', 'column',
     /**
      * A lineargauge graph is used for visualizing data on linear scale
      * within the specific range. It uses special pointers (targets).
@@ -526,7 +527,8 @@ seriesType('lineargauge', 'column',
                             xPosition,
                             yPosition,
                             beginningAtrr,
-                            (inverted ? xAttr : yAttr)
+                            (inverted ? xAttr : yAttr
+                            )
                         );
 
                     if (showLine) {
@@ -557,7 +559,8 @@ seriesType('lineargauge', 'column',
                                 xPosition,
                                 yPosition,
                                 beginningAtrr,
-                                (inverted ? xAttr : yAttr)
+                                (inverted ? xAttr : yAttr
+                                )
                             );
                     }
 

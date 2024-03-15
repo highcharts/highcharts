@@ -3,7 +3,8 @@
  * parallel slanted lines. For each break, the slanted lines are inserted into
  * the line path.
  */
-Highcharts.wrap(Highcharts.Axis.prototype,
+Highcharts.wrap(
+    Highcharts.Axis.prototype,
     'getLinePath', function (proceed, lineWidth) {
         const axis = this,
             brokenAxis = axis.brokenAxis,
@@ -16,7 +17,8 @@ Highcharts.wrap(Highcharts.Axis.prototype,
         (brokenAxis.breakArray || []).forEach(function (brk) {
             if (axis.horiz) {
                 x = axis.toPixels(brk.from);
-                path.splice(1, 0,
+                path.splice(
+                    1, 0,
                     ['L', x - 4, y], // stop
                     ['M', x - 9, y + 5],
                     ['L', x + 1, y - 5], // left slanted line
@@ -26,7 +28,8 @@ Highcharts.wrap(Highcharts.Axis.prototype,
                 );
             } else {
                 y = axis.toPixels(brk.from);
-                path.splice(1, 0,
+                path.splice(
+                    1, 0,
                     ['L', x, y - 4], // stop
                     ['M', x + 5, y - 9],
                     ['L', x - 5, y + 1], // lower slanted line

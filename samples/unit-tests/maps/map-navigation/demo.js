@@ -127,8 +127,10 @@ QUnit.test(
         );
 
         assert.ok(
-            !/NaN/.test(chart.series[0].group.element.childNodes[0]
-                .getAttribute('transform')),
+            !/NaN/.test(
+                chart.series[0].group.element.childNodes[0]
+                    .getAttribute('transform')
+            ),
             'The map should not flip when drag causes invalid center, #19190.'
         );
     }
@@ -373,7 +375,8 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
     // eslint-disable-next-line
     if (!/14\.1\.[0-9] Safari/.test(navigator.userAgent)) {
         assert.ok(
-            (point.plotX > oldPlotX),
+            (
+                point.plotX > oldPlotX),
             'Panning should be activated (#16722).'
         );
     }

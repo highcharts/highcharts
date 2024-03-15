@@ -86,9 +86,11 @@ const ganttChart = function () {
 
                     const buttonGroup = document.getElementById('button-group');
                     const background = document.querySelector(
-                        '.highcharts-background');
+                        '.highcharts-background'
+                    );
                     const scrollMask = document.querySelector(
-                        '.highcharts-scrollable-mask');
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -113,9 +115,11 @@ const ganttChart = function () {
                 },
                 redraw: function () {
                     const background = document.querySelector(
-                        '.highcharts-background');
+                        '.highcharts-background'
+                    );
                     const scrollMask = document.querySelector(
-                        '.highcharts-scrollable-mask');
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';

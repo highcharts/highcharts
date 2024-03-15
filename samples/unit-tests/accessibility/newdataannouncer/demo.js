@@ -14,7 +14,8 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
         }),
         series = chart.series[0],
         announcerDiv = document.querySelector(
-            '.highcharts-announcer-container').querySelectorAll('div')[0];
+            '.highcharts-announcer-container'
+        ).querySelectorAll('div')[0];
 
     assert.ok(
         chart.accessibility.components.infoRegions.announcer.announceRegion,
