@@ -213,7 +213,40 @@ function decorateType(
     branch,
     node
 ) {
-    const reflection = token => ({
+
+    /**
+     * @param {string} name
+     * @return {string}
+     */
+    const reflectInOptions = (name) => {
+        const optionsPath = 'ts/Core/Series/SeriesOptions.d.ts';
+        const optionsSource = TS.createSourceFile(
+            optionsPath,
+            FS.readFileSync(optionsPath, 'utf8'),
+            TS.ScriptTarget.Latest,
+            true
+        );
+        for (const node of getNodesChildren(optionsSource)) {
+            if (
+                TS.isInterfaceDeclaration(node) &&
+                node.name.text.endsWith('Options')
+            ) {
+                for (const child of getNodesChildren(node)) {
+                    if (
+                        TS.isPropertySignature(child) &&
+                        child.name.text === name
+                    ) {
+                        return child.type?.getText();
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * @param {TS.Node} node
+     */
+    const reflectWithNode = node => ({
         [TS.SyntaxKind.BigIntKeyword]: 'bigint',
         [TS.SyntaxKind.BigIntLiteral]: 'bigint',
         [TS.SyntaxKind.FalseKeyword]: 'boolean',
@@ -227,7 +260,8 @@ function decorateType(
         [TS.SyntaxKind.ObjectLiteralExpression]: '*',
         [TS.SyntaxKind.StringKeyword]: 'string',
         [TS.SyntaxKind.StringLiteral]: 'string',
-    }[token.kind]);
+    }[node.kind]);
+
 
     let optionType;
 
@@ -235,12 +269,11 @@ function decorateType(
         !optionType &&
         branch.doclet
     ) {
-        for (const part of branch.doclet) {
-            if (part.tag === 'type') {
-                optionType = part.text.replace(/[{}]/g, '');
-                break;
-            }
-        }
+        optionType = getTagText(branch.doclet, 'type')?.replace(/[{}]/g, '');
+    }
+
+    if (!optionType) {
+        optionType = reflectInOptions(branch.name);
     }
 
     if (
@@ -256,8 +289,8 @@ function decorateType(
             }
 
             optionType = (
-                reflection(child) ||
-                reflection(getNodesFirstChild(node))
+                reflectWithNode(child) ||
+                reflectWithNode(getNodesFirstChild(node))
             );
 
         }
@@ -271,7 +304,7 @@ function decorateType(
         if (node.type) {
             optionType = node.type.getText();
         } else {
-            optionType = reflection(node.getLastToken());
+            optionType = reflectWithNode(node.getLastToken());
         }
     }
 
