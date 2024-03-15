@@ -152,7 +152,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'Global Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'Global Polio (Pol3) immunization ' +
+                    'coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {
@@ -194,7 +195,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'South-East Asia Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'South-East Asia Polio (Pol3) ' +
+                    'immunization coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {
@@ -237,7 +239,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'Africa Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'Africa Polio (Pol3) immunization ' +
+                    'coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {
@@ -274,7 +277,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'Europe Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'Europe Polio (Pol3) immunization ' +
+                    'coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {

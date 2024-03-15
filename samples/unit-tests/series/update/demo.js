@@ -213,7 +213,9 @@ QUnit.test('Series.update', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
+        chart.series[0].graph.element.getAttribute(
+            'd'
+        ).indexOf('C') !== -1, // has curved path
         true,
         'Curved path'
     );
@@ -245,7 +247,9 @@ QUnit.test('Series.update', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
+        chart.series[0].graph.element.getAttribute(
+            'd'
+        ).indexOf('C') !== -1, // has curved path
         true,
         'Curved path'
     );
@@ -300,7 +304,10 @@ QUnit.test('Series.update', function (assert) {
         animation: true
     });
 
-    assert.strictEqual(chart.series[0].options.animation, false, 'Series animation on update should always be false even if set from options');
+    assert.strictEqual(
+        chart.series[0].options.animation, false, 'Series ' +
+        'animation on update should always be false even if set from options'
+    );
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {
@@ -725,7 +732,8 @@ QUnit.test(
 // Highcharts 4.1.10, Issue #4801:
 // setting 'visible' by series.update has no effect
 QUnit.test(
-    'Updating series.visible in series.update() should also update visibility. (#4801)',
+    'Updating series.visible in series.update() should also update ' +
+    'visibility. (#4801)',
     function (assert) {
         var chart = $('#container')
             .highcharts({
@@ -1019,7 +1027,8 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].options.lineWidth,
             10,
-            'Series level option survived after plotOptions.series update (#9762)'
+            'Series level option survived after plotOptions.series update ' +
+            '(#9762)'
         );
     }
 );

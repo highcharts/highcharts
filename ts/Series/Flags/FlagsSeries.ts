@@ -366,7 +366,8 @@ class FlagsSeries extends ColumnSeries {
                     function (): void {
 
                         // Raise this point
-                        if ((point.stackIndex as any) > 0 &&
+                        if (
+                            (point.stackIndex as any) > 0 &&
                             !point.raised
                         ) {
                             point._y = (graphic as any).y;

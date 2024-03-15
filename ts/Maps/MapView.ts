@@ -799,7 +799,8 @@ class MapView {
 
         // Handle the global map and series-level mapData
         const geoMaps = mapDataArray.map((mapData): GeoJSON|undefined =>
-            this.getGeoMap(mapData));
+            this.getGeoMap(mapData)
+        );
 
         const allGeoBounds: MapBounds[] = [];
         geoMaps.forEach((geoMap): void => {
@@ -945,7 +946,8 @@ class MapView {
                 ],
                 isDrilling = this.chart.series.some(
                     (series): boolean | undefined =>
-                        series.isDrilling);
+                        series.isDrilling
+                );
 
             if (!isDrilling) {
                 // Constrain to data bounds

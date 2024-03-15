@@ -93,13 +93,19 @@ QUnit.test('Prop metrics are calculated correctly', function (assert) {
         minmax(metrics.seriesExtremes[2].x), '0,2', 'Last series X'
     );
     assert.strictEqual(
-        minmax(metrics.seriesExtremes[0]['custom.extra1']), '16,97', 'Series custom prop'
+        minmax(metrics.seriesExtremes[0][
+            'custom.extra1']
+        ), '16,97', 'Series custom prop'
     );
     assert.strictEqual(
-        minmax(metrics.globalExtremes['custom.extra2']), '10,30', 'Chart-level custom prop'
+        minmax(metrics.globalExtremes[
+            'custom.extra2']
+        ), '10,30', 'Chart-level custom prop'
     );
     assert.strictEqual(
-        minmax(metrics.globalExtremes['custom.extra3']), '100,300', 'Plotoptions-level custom prop'
+        minmax(metrics.globalExtremes[
+            'custom.extra3']
+        ), '100,300', 'Plotoptions-level custom prop'
     );
 
     delete Highcharts.sonification.Sonification.prototype.forceReady;

@@ -371,7 +371,8 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
     assert.strictEqual(
         patterns.length,
         3,
-        'Number of pattern defs should be 3 unique (defaults patterns not added unless used)'
+        'Number of pattern defs should be 3 unique (defaults patterns not ' +
+        'added unless used)'
     );
 
     Highcharts.each(patterns, function (pattern) {
@@ -613,7 +614,8 @@ QUnit.test('Image animation opacity', function (assert) {
                                                 columnPattern.firstChild
                                                     .getAttribute('opacity'),
                                                 '0.5',
-                                                'Pattern should end at 0.5 opacity'
+                                                'Pattern should end at 0.5 ' +
+                                                'opacity'
                                             );
                                             done();
                                         }
@@ -725,7 +727,8 @@ function testPatternfillForChart(assert, chart) {
     );
     assert.ok(
         customPattern.getAttribute('patternTransform').includes('scale'),
-        'Custom pattern\'s patternTransform attribute should contain a scale transform'
+        'Custom pattern\'s patternTransform attribute should contain a scale ' +
+        'transform'
     );
     assert.ok(
         defaultPattern.hasAttribute('patternTransform'),
@@ -733,13 +736,16 @@ function testPatternfillForChart(assert, chart) {
     );
     assert.ok(
         defaultPattern.getAttribute('patternTransform').includes('scale'),
-        'Default pattern\'s patternTransform attribute should contain a scale transform'
+        'Default pattern\'s patternTransform attribute should contain a ' +
+        'scale transform'
     );
 }
 
 QUnit.test('#19980/pattern-fill/geojson', function (assert) {
     var done = assert.async();
-    fetch('https://code.highcharts.com/mapdata/custom/world-continents.geo.json')
+    fetch(
+        'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
+    )
         .then(response => response.json())
         .then(geoJSON => {
             var chart = Highcharts.mapChart('container', {

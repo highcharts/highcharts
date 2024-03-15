@@ -330,6 +330,9 @@ function getConnectors(
     return ret;
 }
 
+/**
+ *
+ */
 function onChartAfterDrawChartBox(
     this: Chart
 ): void {
@@ -361,6 +364,9 @@ function onChartAfterInit(event: any): void {
     }
 }
 
+/**
+ *
+ */
 function onChartGetAxes(
     this: Chart
 ): void {
@@ -583,7 +589,8 @@ function onPointerGetSelectionMarkerAttrs(
             }
         }
 
-        if (this.zoomHor &&
+        if (
+            this.zoomHor &&
             this.zoomVert &&
             linearAxis.options.gridLineInterpolation === 'polygon'
         ) {
@@ -899,8 +906,10 @@ function wrapColumnSeriesAlignDataLabel(
 
         // Hide label of a point (only inverted) that is outside the
         // visible y range
-        if (this.isRadialBar && point.shapeArgs &&
-            point.shapeArgs.start === point.shapeArgs.end) {
+        if (
+            this.isRadialBar && point.shapeArgs &&
+            point.shapeArgs.start === point.shapeArgs.end
+        ) {
             dataLabel.hide();
         } else {
             dataLabel.show();
@@ -1108,8 +1117,10 @@ function onAfterColumnTranslate(
             series.polar.toXY(point);
 
             if (chart.inverted) {
-                tooltipPos = yAxis.postTranslate(point.rectPlotY,
-                    barX + point.pointWidth / 2);
+                tooltipPos = yAxis.postTranslate(
+                    point.rectPlotY,
+                    barX + point.pointWidth / 2
+                );
 
                 point.tooltipPos = [
                     tooltipPos.x - chart.plotLeft,
@@ -1292,8 +1303,10 @@ function wrapSeriesAnimate(
         if (series.isRadialBar) {
             if (!init) {
                 // Run the pie animation for radial bars
-                series.startAngleRad = pick(series.translatedThreshold,
-                    series.xAxis.startAngleRad);
+                series.startAngleRad = pick(
+                    series.translatedThreshold,
+                    series.xAxis.startAngleRad
+                );
                 H.seriesTypes.pie.prototype.animate.call(series, init);
             }
         } else {
@@ -1490,12 +1503,14 @@ class PolarAdditions {
             wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
             wrap(pointerProto, 'pinch', wrapPointerPinch);
 
-            addEvent(PointerClass,
+            addEvent(
+                PointerClass,
                 'getSelectionMarkerAttrs',
                 onPointerGetSelectionMarkerAttrs
             );
 
-            addEvent(PointerClass,
+            addEvent(
+                PointerClass,
                 'getSelectionBox',
                 onPointerGetSelectionBox
             );
@@ -1526,7 +1541,8 @@ class PolarAdditions {
                 wrap(
                     columnProto,
                     'alignDataLabel',
-                    wrapColumnSeriesAlignDataLabel);
+                    wrapColumnSeriesAlignDataLabel
+                );
                 wrap(columnProto, 'animate', wrapSeriesAnimate);
             }
 
@@ -1542,7 +1558,8 @@ class PolarAdditions {
                 wrap(
                     splineProto,
                     'getPointSpline',
-                    wrapSplineSeriesGetPointSpline);
+                    wrapSplineSeriesGetPointSpline
+                );
 
                 if (AreaSplineRangeSeriesClass) {
                     const areaSplineRangeProto =

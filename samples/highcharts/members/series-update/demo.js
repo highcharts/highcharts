@@ -1,6 +1,9 @@
 const chart = Highcharts.chart('container', {
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ],
         showEmpty: false
     },
     yAxis: {
@@ -72,10 +75,11 @@ document.getElementById('color').addEventListener('click', () => {
     color = !color;
 });
 
-['line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie'].forEach(type =>
-    document.getElementById(type).addEventListener('click', () => {
-        chart.series[0].update({
-            type: type
-        });
-    })
-);
+['line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie']
+    .forEach(type =>
+        document.getElementById(type).addEventListener('click', () => {
+            chart.series[0].update({
+                type: type
+            });
+        })
+    );

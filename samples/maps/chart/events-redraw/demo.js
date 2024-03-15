@@ -31,7 +31,8 @@
         },
 
         title: {
-            text: 'Set subtitle on chart resize. Resize browser or frame to view.'
+            text: 'Set subtitle on chart resize. Resize browser or frame to ' +
+                'view.'
         },
 
         mapNavigation: {

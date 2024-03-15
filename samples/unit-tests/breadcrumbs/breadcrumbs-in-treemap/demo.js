@@ -79,7 +79,8 @@ QUnit.test('Breadcrumbs button', function (assert) {
     series.setRootNode('1_1_1');
     assert.ok(
         chart.drillUpButton.element,
-        'Initially, the breadcrumbs should be disabled and the single drillUp button should exist.'
+        'Initially, the breadcrumbs should be disabled and the single ' +
+        'drillUp button should exist.'
     );
 
     assert.strictEqual(
@@ -127,7 +128,9 @@ QUnit.test('Breadcrumbs button', function (assert) {
     Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
 
     assert.strictEqual(
-        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
+        chart.container.getElementsByClassName(
+            'highcharts-breadcrumbs-group'
+        ).length,
         1,
         'The breadcrumbs separators group should be destroyed.'
     );

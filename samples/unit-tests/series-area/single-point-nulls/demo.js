@@ -36,7 +36,8 @@ QUnit.test('Single point marker surrounded by null (#5099)', function (assert) {
         },
         tooltip: {
             pointFormat:
-                '{series.name} produced <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
+                '{series.name} produced <b>{point.y:,.0f}</b><br/>warheads ' +
+                'in {point.x}'
         },
         plotOptions: {
             spline: {

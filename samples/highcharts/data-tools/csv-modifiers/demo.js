@@ -16,7 +16,8 @@ Highcharts.setOptions({
         type: 'category'
     },
     tooltip: {
-        pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> population growth in {point.name}'
+        pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
+            'population growth in {point.name}'
     },
     legend: {
         enabled: false

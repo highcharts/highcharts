@@ -57,7 +57,8 @@ QUnit.test('MapPoint with LineWidth', function (assert) {
             Math.abs(Math.round(chart.series[1].data[0].plotY)),
             252,
             10,
-            'The proj4 library was loaded correctly from the chart.proj4 property'
+            'The proj4 library was loaded correctly from the chart.proj4 ' +
+            'property'
         );
 
     } finally {

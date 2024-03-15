@@ -109,7 +109,8 @@ class EditMode {
                     }
                 }
             } as EditMode.Options,
-            options || {});
+            options || {}
+        );
 
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);

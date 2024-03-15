@@ -26,7 +26,8 @@ QUnit.test('Plot options and series options priority (#3881)', assert => {
     assert.strictEqual(
         chart.series[0].options.cropThreshold,
         100,
-        'Pri 3: When an option is set in the chart config plotOptions.series, it should override type default'
+        'Pri 3: When an option is set in the chart config plotOptions.series,' +
+        ' it should override type default'
     );
 
     options.plotOptions.column = {
@@ -36,7 +37,8 @@ QUnit.test('Plot options and series options priority (#3881)', assert => {
     assert.strictEqual(
         chart.series[0].options.cropThreshold,
         150,
-        'Pri 2: When an option is set in the chart config plotOptions[type], it should override plotOptions.series'
+        'Pri 2: When an option is set in the chart config plotOptions[type], ' +
+        'it should override plotOptions.series'
     );
 
     options.series[0].cropThreshold = 200;
@@ -200,7 +202,8 @@ QUnit.test('hasOptionChanged() method', assert => {
     assert.strictEqual(
         chart.series[0].hasOptionChanged('pointStart'),
         false,
-        'Property defined in both series and plotOptions should not be detected as change.'
+        'Property defined in both series and plotOptions should not be ' +
+        'detected as change.'
     );
 
     chart = Highcharts.chart('container', {

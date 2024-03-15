@@ -301,11 +301,13 @@ const configs: {
                                     }
 
                                     // Emit as lasting cursors
-                                    cursor.emitCursor(table,
+                                    cursor.emitCursor(
+                                        table,
                                         minCursorData,
                                         e as any,
                                         true
-                                    ).emitCursor(table,
+                                    ).emitCursor(
+                                        table,
                                         maxCursorData,
                                         e as any,
                                         true
@@ -516,7 +518,8 @@ const configs: {
 
                     const point = getHoveredPoint(e);
 
-                    if (!point || !chart ||
+                    if (
+                        !point || !chart ||
                         // Non-cartesian points do not use 'isInside'
                         (!point.isInside && point.series.isCartesian) ||
                         // Abort if the affected chart is the same as the one

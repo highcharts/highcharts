@@ -781,8 +781,10 @@ class Pointer {
             // Only search on hovered series if it has stickyTracking false
             [hoverSeries as any] :
             // Filter what series to look in.
-            series.filter((s): boolean => s.stickyTracking &&
-                (eventArgs.filter || filter)(s));
+            series.filter(
+                (s): boolean => s.stickyTracking &&
+                (eventArgs.filter || filter)(s)
+            );
 
         // Use existing hovered point or find the one closest to coordinates.
         const hoverPoint = useExisting || !e ?
@@ -976,7 +978,8 @@ class Pointer {
                     touches.item(0) as Touch :
                     (pick( // #13534
                         touches.changedTouches,
-                        (e as TouchEvent).changedTouches)
+                        (e as TouchEvent).changedTouches
+                    )
                     )[0] :
                 e as unknown as PointerEvent
         );
@@ -1014,7 +1017,8 @@ class Pointer {
         if (!chart.cancelClick) {
 
             // On tracker click, fire the series and point events. #783, #1583
-            if (hoverPoint &&
+            if (
+                hoverPoint &&
                 this.inClass(pEvt.target as any, 'highcharts-tracker')
             ) {
 

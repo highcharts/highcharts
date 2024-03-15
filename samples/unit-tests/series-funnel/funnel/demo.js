@@ -84,7 +84,7 @@ QUnit.test('Funnel size relative to center(#4738)', function (assert) {
     assert.equal(
         initialY,
         series.points[0].plotY,
-        '#17514, Negative value should have no influence on the chart\'s layout.'
+        '#17514, Negative value should have no influence on the chart\'s layout'
     );
 
 });
@@ -439,14 +439,24 @@ QUnit.test('Funnel dataLabels', function (assert) {
     dataLabel = chart.series[0].points[4].dataLabel;
     const prevDataLabelPos = dataLabel.x;
 
-    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
+    Highcharts.fireEvent(
+        chart.series[0].points[0].legendItem.group.element,
+        'click'
+    );
+    Highcharts.fireEvent(
+        chart.series[0].points[0].legendItem.group.element,
+        'click'
+    );
+    Highcharts.fireEvent(
+        chart.series[0].points[0].legendItem.group.element,
+        'click'
+    );
 
     assert.equal(
         dataLabel.x,
         prevDataLabelPos,
-        'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
+        'DataLabels with allowOverlap set to false should be positioned ' +
+        'correctly after point hide (#12350)'
     );
 
     chart.update({

@@ -177,12 +177,16 @@ function navigationGetYAxisPositions(
     }
 
     const positions = yAxes.map((yAxis, index): Record<string, number> => {
-        let height = correctFloat(isPercentage(yAxis.options.height) ?
-                parseFloat(yAxis.options.height as any) / 100 :
-                yAxis.height / plotHeight),
-            top = correctFloat(isPercentage(yAxis.options.top) ?
-                parseFloat(yAxis.options.top as any) / 100 :
-                (yAxis.top - yAxis.chart.plotTop) / plotHeight);
+        let height = correctFloat(
+                isPercentage(yAxis.options.height) ?
+                    parseFloat(yAxis.options.height as any) / 100 :
+                    yAxis.height / plotHeight
+            ),
+            top = correctFloat(
+                isPercentage(yAxis.options.top) ?
+                    parseFloat(yAxis.options.top as any) / 100 :
+                    (yAxis.top - yAxis.chart.plotTop) / plotHeight
+            );
 
         if (!removedHeight) {
             // New axis' height is NaN so we can check if
