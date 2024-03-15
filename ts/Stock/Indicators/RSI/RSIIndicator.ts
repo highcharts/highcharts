@@ -40,6 +40,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }

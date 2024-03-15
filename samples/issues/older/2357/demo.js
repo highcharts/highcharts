@@ -1,7 +1,8 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Reading point names from different series.<br/>Categories should be Apr, May, Jun.'
+            text: 'Reading point names from different series.<br/>Categories ' +
+                'should be Apr, May, Jun.'
         },
         series: [{
             data: [{

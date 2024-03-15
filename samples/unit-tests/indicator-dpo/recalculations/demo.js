@@ -64,7 +64,8 @@ QUnit.test(
         assert.strictEqual(
             mainSeries.data.length,
             dpoSeries.data.length + range - 1,
-            'After addPoint number of Detrended Price Oscillator points is correct'
+            'After addPoint number of Detrended Price Oscillator points is ' +
+            'correct'
         );
 
         mainSeries.setData(
@@ -121,7 +122,8 @@ QUnit.test(
         assert.strictEqual(
             mainSeries.data.length,
             dpoSeries.data.length + range - 1,
-            'After setData number of Detrended Price Oscillator points is correct'
+            'After setData number of Detrended Price Oscillator points is ' +
+            'correct'
         );
 
         dpoSeries.update({

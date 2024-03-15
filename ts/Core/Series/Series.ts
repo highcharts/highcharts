@@ -606,7 +606,8 @@ class Series {
                 });
 
                 // The series needs an X and an Y axis
-                if (!(series as any)[coll] &&
+                if (
+                    !(series as any)[coll] &&
                     series.optionalAxis !== coll
                 ) {
                     error(18, true, chart);
@@ -1089,7 +1090,8 @@ class Series {
         }
 
         // Reduce pointIndex if data is cropped
-        if (pointIndex !== -1 &&
+        if (
+            pointIndex !== -1 &&
             typeof pointIndex !== 'undefined' &&
             this.cropped
         ) {
@@ -1650,7 +1652,8 @@ class Series {
         }
 
         // Optionally filter out points outside the plot area
-        if (isCartesian &&
+        if (
+            isCartesian &&
             series.sorted &&
             !getExtremesFromAll &&
             (
@@ -1661,7 +1664,8 @@ class Series {
         ) {
 
             // It's outside current extremes
-            if ((processedXData as any)[dataLength - 1] < (min as any) ||
+            if (
+                (processedXData as any)[dataLength - 1] < (min as any) ||
                 (processedXData as any)[0] > (max as any)
             ) {
                 processedXData = [];
@@ -1741,7 +1745,8 @@ class Series {
         // If the series data or axes haven't changed, don't go through
         // this. Return false to pass the message on to override methods
         // like in data grouping.
-        if (series.isCartesian &&
+        if (
+            series.isCartesian &&
             !series.isDirty &&
             !xAxis.isDirty &&
             !series.yAxis.isDirty &&
@@ -2239,7 +2244,8 @@ class Series {
             ) : void 0;
 
             // Calculate the bottom y value for stacked series
-            if (stacking &&
+            if (
+                stacking &&
                 series.visible &&
                 stacks &&
                 stacks[xValue]
@@ -2259,7 +2265,8 @@ class Series {
                     lowValue = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (lowValue === stackThreshold &&
+                    if (
+                        lowValue === stackThreshold &&
                         stackIndicator.key === stacks[xValue].base
                     ) {
                         lowValue = pick(
@@ -4657,7 +4664,8 @@ class Series {
 
             if (!series.chart.styledMode) {
 
-                if ((stateOptions as any)[state] &&
+                if (
+                    (stateOptions as any)[state] &&
                     (stateOptions as any)[state].enabled === false
                 ) {
                     return;

@@ -1015,7 +1015,8 @@ class DataTable implements DataEvent.Emitter {
                 i2 = 0,
                 iEnd = Math.min(
                     table.rowCount,
-                    (rowIndex + rowCount)
+                    (rowIndex + rowCount
+                    )
                 ),
                 column: DataTable.Column,
                 row: DataTable.RowObject;
@@ -1067,7 +1068,8 @@ class DataTable implements DataEvent.Emitter {
                 i2 = 0,
                 iEnd = Math.min(
                     table.rowCount,
-                    (rowIndex + rowCount)
+                    (rowIndex + rowCount
+                    )
                 ),
                 column: DataTable.Column,
                 row: DataTable.Row;

@@ -2,8 +2,10 @@ Math.easeInQuint =  function (pos) {
     return Math.pow(pos, 5);
 };
 /* STUFF FOR DONUT CHART*/
-const gases = ['Carbon Dioxide', 'Nitrogen', 'Oxygen', 'Argon', 'Methane',
-    'Sodium', 'Hydrogen', 'Helium', 'Other'];
+const gases = [
+    'Carbon Dioxide', 'Nitrogen', 'Oxygen', 'Argon', 'Methane',
+    'Sodium', 'Hydrogen', 'Helium', 'Other'
+];
 
 const planets = [
     'Sun',

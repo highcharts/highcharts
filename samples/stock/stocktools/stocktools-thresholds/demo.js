@@ -9,7 +9,8 @@
         lang: {
             stockTools: {
                 gui: {
-                    thresholds: 'Click on a chart to add an alarm-line which will change color of the series'
+                    thresholds: 'Click on a chart to add an alarm-line which ' +
+                        'will change color of the series'
                 }
             },
             navigation: {

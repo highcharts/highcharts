@@ -28,12 +28,14 @@ QUnit.test('Legend Item colors', function (assert) {
     assert.strictEqual(
         legendSymbol.getAttribute('fill'),
         legend.itemHiddenStyle.color,
-        'When point is hidden legend item color should equal the legend hidden color'
+        'When point is hidden legend item color should equal the legend ' +
+        'hidden color'
     );
     point.setVisible(true);
     assert.strictEqual(
         legendSymbol.getAttribute('fill'),
         series.color,
-        'When point is visible again, legend item color should equal the series color'
+        'When point is visible again, legend item color should equal the ' +
+        'series color'
     );
 });

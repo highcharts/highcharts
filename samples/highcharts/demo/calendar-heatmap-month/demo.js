@@ -218,7 +218,8 @@ Highcharts.chart('container', {
         outside: true,
         zIndex: 20,
         headerFormat: '',
-        pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, %Y}{/unless}',
+        pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, ' +
+            '%Y}{/unless}',
         nullFormat: 'No data'
     },
 
@@ -238,7 +239,8 @@ Highcharts.chart('container', {
         },
         accessibility: {
             description: 'weekdays',
-            rangeDescription: 'X Axis is showing all 7 days of the week, starting with Sunday.'
+            rangeDescription: 'X Axis is showing all 7 days of the week, ' +
+                'starting with Sunday.'
         }
     },
 
@@ -289,7 +291,8 @@ Highcharts.chart('container', {
             enabled: true,
             align: 'left',
             verticalAlign: 'top',
-            format: '{#unless point.custom.empty}{point.custom.monthDay}{/unless}',
+            format: '{#unless ' +
+                'point.custom.empty}{point.custom.monthDay}{/unless}',
             backgroundColor: 'whitesmoke',
             padding: 2,
             style: {

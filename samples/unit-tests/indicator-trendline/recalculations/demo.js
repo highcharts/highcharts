@@ -94,13 +94,15 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         alpha * firstPointX + beta,
         firstPointY,
         0.0001,
-        'Data values should be equal to the math linear regression calculations.'
+        'Data values should be equal to the math linear regression ' +
+        'calculations.'
     );
     assert.close(
         // y = ax + b
         alpha * lastPointX + beta,
         lastPointY,
         0.0001,
-        'Data values should be equal to the math linear regression calculations.'
+        'Data values should be equal to the math linear regression ' +
+        'calculations.'
     );
 });

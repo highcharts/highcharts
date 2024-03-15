@@ -121,7 +121,6 @@ Dashboards.board('container', {
             id: 'synchro-data'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true
         }

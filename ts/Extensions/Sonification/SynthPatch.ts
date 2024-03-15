@@ -346,8 +346,10 @@ class Oscillator {
         time: number, frequency: number, glideDuration = 0
     ): void {
         const opts = this.options,
-            f = clamp(pick(opts.fixedFrequency, frequency) *
-                (opts.freqMultiplier || 1), 0, 21000),
+            f = clamp(
+                pick(opts.fixedFrequency, frequency) *
+                (opts.freqMultiplier || 1), 0, 21000
+            ),
             oscTarget = this.getOscTarget(),
             timeConstant = glideDuration / 5000;
 
@@ -390,8 +392,10 @@ class Oscillator {
         }
         const env = (type === 'attack' ? this.options.attackEnvelope :
             this.options.releaseEnvelope) || [];
-        scheduleGainEnvelope(env, type, time, this.gainNode,
-            this.options.volume);
+        scheduleGainEnvelope(
+            env, type, time, this.gainNode,
+            this.options.volume
+        );
     }
 
 
@@ -433,7 +437,8 @@ class Oscillator {
                 v, time, rampTime / 5
             );
             this.volTrackingNode.gain.setValueAtTime(
-                v, time + rampTime);
+                v, time + rampTime
+            );
         }
     }
 
@@ -542,8 +547,10 @@ class Oscillator {
     // Gain node used for frequency dependent volume tracking
     private createVolTracking(): void {
         const opts = this.options;
-        if (opts.volumePitchTrackingMultiplier &&
-            opts.volumePitchTrackingMultiplier !== 1) {
+        if (
+            opts.volumePitchTrackingMultiplier &&
+            opts.volumePitchTrackingMultiplier !== 1
+        ) {
             this.volTrackingNode = new GainNode(this.audioContext, {
                 gain: 1
             });
@@ -620,12 +627,16 @@ class SynthPatch {
                 }
             };
             if (defined(osc.fmOscillatorIx)) {
-                connectTarget('getFMTarget',
-                    this.oscillators[osc.fmOscillatorIx]);
+                connectTarget(
+                    'getFMTarget',
+                    this.oscillators[osc.fmOscillatorIx]
+                );
             }
             if (defined(osc.vmOscillatorIx)) {
-                connectTarget('getVMTarget',
-                    this.oscillators[osc.vmOscillatorIx]);
+                connectTarget(
+                    'getVMTarget',
+                    this.oscillators[osc.vmOscillatorIx]
+                );
             }
         });
     }
@@ -722,7 +733,8 @@ class SynthPatch {
      */
     cancelScheduled(): void {
         this.outputNode.gain.cancelScheduledValues(
-            this.audioContext.currentTime);
+            this.audioContext.currentTime
+        );
         this.oscillators.forEach((o): void => o.cancelScheduled());
     }
 

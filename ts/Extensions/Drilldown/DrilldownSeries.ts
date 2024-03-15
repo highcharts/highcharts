@@ -672,7 +672,8 @@ function pieAnimateDrilldown(
                         start: start + i * startAngle,
                         end: start + (i + 1) * startAngle
                     }))[animationOptions ? 'animate' : 'attr'](
-                        (animateTo as any),
+                        (
+                            animateTo as any),
                         animationOptions
                     );
                 }

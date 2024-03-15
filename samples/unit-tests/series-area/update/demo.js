@@ -88,6 +88,7 @@ QUnit.test('Updating series stacked property', assert => {
 
     assert.ok(
         true,
-        '#15534: Updating from data containing nulls to no data should not throw'
+        '#15534: Updating from data containing nulls to no data should not ' +
+        'throw'
     );
 });

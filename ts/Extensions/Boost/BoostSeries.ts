@@ -164,7 +164,8 @@ function allocateIfNotSeriesBoosting(
 ): void {
     const boost = series.boost;
 
-    if (renderer &&
+    if (
+        renderer &&
         boost &&
         boost.target &&
         boost.canvas &&

@@ -309,7 +309,8 @@ class WaterfallSeries extends ColumnSeries {
                             false,
                             true
                         ) +
-                        (reversedYAxis ? isPos : 0))
+                        (reversedYAxis ? isPos : 0)
+                        )
                     ) - graphNormalizer;
                 } else {
                     yPos =
@@ -432,8 +433,10 @@ class WaterfallSeries extends ColumnSeries {
                 // In case of a redraw, stack for each x value must be emptied
                 // (only for the first series in a specific stack) and
                 // recalculated once more
-                if (alreadyChanged &&
-                    alreadyChanged.indexOf(stackKey) < 0) {
+                if (
+                    alreadyChanged &&
+                    alreadyChanged.indexOf(stackKey) < 0
+                ) {
                     changed = true;
                 }
 

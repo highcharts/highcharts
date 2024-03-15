@@ -331,8 +331,10 @@ class MapSeries extends ScatterSeries {
                         ) ? 'inherit' : 'hidden'
                     });
 
-                    graphic.animate = function (params,
-                        options, complete): SVGElement {
+                    graphic.animate = function (
+                        params,
+                        options, complete
+                    ): SVGElement {
 
                         const animateIn = (
                                 isNumber(params['stroke-width']) &&

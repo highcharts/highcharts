@@ -14,7 +14,7 @@ declare global {
         sign(x: number): number;
     }
     interface ObjectConstructor {
-        setPrototypeOf?<T>(o: T, proto: object | null): T;
+        setPrototypeOf<T>(o: T, proto: object | null): T;
     }
 }
 const G: AnyRecord = Highcharts;
@@ -24,15 +24,29 @@ if (MSPointer.isRequired()) {
     MSPointer.compose(G.Chart);
 }
 if (!Array.prototype.includes) {
-    Array.prototype.includes = function <T>(
+    // eslint-disable-next-line no-extend-native
+    Array.prototype.includes = function <T> (
         searchElement: T,
         fromIndex?: number
-    ) {
+    ): boolean {
         return this.indexOf(searchElement, fromIndex) > -1;
     };
 }
+if (!Array.prototype.find) {
+    // eslint-disable-next-line no-extend-native
+    Array.prototype.find = function <T> (
+        predicate: (search: T, index: number, array: any[]) => boolean,
+        thisArg?: T
+    ): T | undefined {
+        for (let i = 0; i < this.length; i++) {
+            if (predicate.call(thisArg, this[i], i, this)) {
+                return this[i];
+            }
+        }
+    };
+}
 if (!Object.entries) {
-    Object.entries = function <T>(obj: Record<string, T>): Array<[string, T]> {
+    Object.entries = function <T> (obj: Record<string, T>): Array<[string, T]> {
         const keys = Object.keys(obj),
             iEnd = keys.length,
             entries = [] as Array<[string, T]>;

@@ -133,10 +133,14 @@ const colorize = (chart, angle) => {
             color: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 stops: [
-                    [0, Highcharts.color('#89c269')
-                        .brighten(relativeBrightness + 0.2).get()],
-                    [1, Highcharts.color('#89c269')
-                        .brighten(relativeBrightness - 0.2).get()]
+                    [
+                        0, Highcharts.color('#89c269')
+                            .brighten(relativeBrightness + 0.2).get()
+                    ],
+                    [
+                        1, Highcharts.color('#89c269')
+                            .brighten(relativeBrightness - 0.2).get()
+                    ]
                 ]
             }
         }, false);
@@ -424,25 +428,11 @@ const createBoard = async () => {
             layouts: [{
                 rows: [{
                     cells: [{
-                        id: 'horizon-chart',
-                        width: '100%'
+                        id: 'horizon-chart'
                     }, {
-                        id: 'controls',
-                        width: '50%',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            }
-                        }
-
+                        id: 'controls'
                     }, {
-                        id: 'times',
-                        width: '50%',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'times'
                     }, {
                         id: 'horizon-map'
                     }]

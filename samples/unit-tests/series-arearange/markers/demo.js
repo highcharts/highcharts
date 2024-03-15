@@ -160,13 +160,15 @@ QUnit.test('Markers for arearange.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].graphics[0].symbol,
         'square',
-        'After series.lowMarker.symbol update, the graphics[0] should have a correct symbol.'
+        'After series.lowMarker.symbol update, the graphics[0] should have a ' +
+        'correct symbol.'
     );
 
     assert.strictEqual(
         chart.series[0].points[0].graphics[0].fillColor,
         '#00ff00',
-        'After series.lowMarker.fillColor update, the graphics[0] should have a correct color.'
+        'After series.lowMarker.fillColor update, the graphics[0] should ' +
+        'have a correct color.'
     );
 
 });
@@ -220,7 +222,8 @@ QUnit.test('Zones', function (assert) {
             ['blue', 'red'],
             ['red', 'red']
         ],
-        'Upper and lower markers should individually respect the zone setting (#8100)'
+        'Upper and lower markers should individually respect the zone ' +
+        'setting (#8100)'
     );
 });
 
@@ -256,7 +259,8 @@ QUnit.test('Shared tooltip marker.', function (assert) {
     );
     assert.ok(
         chart.series[0].stateMarkerGraphic,
-        'Bottom shared marker exists (stored at stateMarkerGraphic due to #7021)'
+        'Bottom shared marker exists (stored at stateMarkerGraphic due to ' +
+        '#7021)'
     );
     assert.ok(
         chart.series[0].upperStateMarkerGraphic.d !==

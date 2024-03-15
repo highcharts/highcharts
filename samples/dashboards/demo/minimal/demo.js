@@ -130,7 +130,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Vitamin A in food. Highcharts Interactive Chart.'
+                    chartContainerLabel: 'Vitamin A in food. Highcharts ' +
+                        'Interactive Chart.'
                 }
             },
             accessibility: {
@@ -210,7 +211,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Iron in food. Highcharts Interactive Chart.'
+                    chartContainerLabel: 'Iron in food. Highcharts ' +
+                        'Interactive Chart.'
                 }
             },
             accessibility: {
@@ -229,7 +231,6 @@ Dashboards.board('container', {
             id: 'micro-element'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true,
             visibility: true

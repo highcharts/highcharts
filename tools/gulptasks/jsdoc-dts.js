@@ -58,6 +58,8 @@ function jsDocESMDTS() {
             dtsFile.substring(0, dtsFile.length - 5)
         );
 
+        fsLib.makePath(path.dirname(target));
+
         promises.push(fs.promises.writeFile(
             target,
             productBundles.some(

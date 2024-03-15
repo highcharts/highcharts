@@ -324,11 +324,17 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
     let touchStartX: number,
         touchStartY: number;
 
+    /**
+     *
+     */
     function saveCoords(this: Annotation, e: AnyRecord): void {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
     }
 
+    /**
+     *
+     */
     function checkForTouchmove(this: Annotation, e: AnyRecord): void {
         const hasMoved = touchStartX ? Math.sqrt(
             Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +

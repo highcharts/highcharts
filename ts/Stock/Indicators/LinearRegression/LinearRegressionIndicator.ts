@@ -330,15 +330,19 @@ class LinearRegressionIndicator extends SMAIndicator {
             endPointX = xData[i];
             periodXData = xData.slice(periodStart, periodEnd);
             periodYData = yData.slice(periodStart, periodEnd);
-            periodTransformedXData = this.transformXData(periodXData,
-                xAxisUnit);
+            periodTransformedXData = this.transformXData(
+                periodXData,
+                xAxisUnit
+            );
 
             lineParameters = this.getRegressionLineParameters(
                 periodTransformedXData, periodYData
             );
 
-            endPointY = this.getEndPointY(lineParameters,
-                periodTransformedXData[periodTransformedXData.length - 1]);
+            endPointY = this.getEndPointY(
+                lineParameters,
+                periodTransformedXData[periodTransformedXData.length - 1]
+            );
 
             // @todo this is probably not used anywhere
             indicatorData.values.push({

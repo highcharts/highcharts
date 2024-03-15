@@ -81,7 +81,8 @@ QUnit.test(
             assert.strictEqual(
                 pointColor === seriesPosColor,
                 true,
-                'Color matched with options (series with marker and hover.fillColor)'
+                'Color matched with options (series with marker and ' +
+                'hover.fillColor)'
             );
         });
     }

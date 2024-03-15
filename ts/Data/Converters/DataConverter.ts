@@ -427,9 +427,11 @@ class DataConverter implements DataEvent.Emitter {
 
             // If the middle one is dd, and the last one is dd,
             // the last should likely be year.
-            if (guessedFormat.length === 3 &&
+            if (
+                guessedFormat.length === 3 &&
                 guessedFormat[1] === 'dd' &&
-                guessedFormat[2] === 'dd') {
+                guessedFormat[2] === 'dd'
+            ) {
                 guessedFormat[2] = 'YY';
             }
 

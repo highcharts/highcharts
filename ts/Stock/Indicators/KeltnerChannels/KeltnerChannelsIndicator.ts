@@ -198,14 +198,16 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             seriesEMA: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
-            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(
+                series,
                 {
                     period: period,
                     index: index
                 }),
             seriesATR: (
                 IndicatorValuesObject<TLinkedSeries>|undefined
-            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(
+                series,
                 {
                     period: periodATR
                 }),

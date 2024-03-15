@@ -7,7 +7,9 @@ const sort = new Highcharts.DataModifier.types.Sort({
 const table = new Highcharts.DataTable({
     columns: {
         Rank: [1, 2, 3, 4, 5, 6],
-        City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
+        City: [
+            'Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'
+        ],
         State: ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'ACT'],
         Population: [5259764, 4976157, 2568927, 2192229, 1402393, 453558]
     }

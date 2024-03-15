@@ -429,8 +429,10 @@ namespace OrdinalAxis {
             distance = index - i; // The decimal
         }
 
-        if (typeof distance !== 'undefined' &&
-            typeof ordinalPositions[i] !== 'undefined') {
+        if (
+            typeof distance !== 'undefined' &&
+            typeof ordinalPositions[i] !== 'undefined'
+        ) {
             return ordinalPositions[i] + (distance ?
                 distance *
                     (ordinalPositions[i + 1] - ordinalPositions[i]) :
@@ -453,7 +455,7 @@ namespace OrdinalAxis {
             localMin = axis.old ? axis.old.min : axis.min,
             localA = axis.old ? axis.old.transA : axis.transA;
         // Always use extendedPositions (#19816)
-        let positions = ordinal.getExtendedPositions();
+        const positions = ordinal.getExtendedPositions();
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
@@ -461,7 +463,8 @@ namespace OrdinalAxis {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
-                    axis.minPixelPadding),
+                    axis.minPixelPadding
+                ),
                 index = correctFloat(
                     ordinal.getIndexOfPoint(pixelVal, positions)
                 ),
@@ -627,7 +630,8 @@ namespace OrdinalAxis {
                 ),
                 // How many ordinal units did we move?
                 movedUnits = Math.round(
-                    ((mouseDownX as any) - chartX) / pointPixelWidth),
+                    ((mouseDownX as any) - chartX) / pointPixelWidth
+                ),
                 // Get index of all the chart's points
                 extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
@@ -659,7 +663,8 @@ namespace OrdinalAxis {
                 // If we don't compensate for this, we will be allowed to pan
                 // grouped data series passed the right of the plot area.
                 ordinalPositions = extendedAxis.ordinal.positions;
-                if (dataMax >
+                if (
+                    dataMax >
                     (ordinalPositions as any)[
                         (ordinalPositions as any).length - 1
                     ]
@@ -1452,7 +1457,8 @@ namespace OrdinalAxis {
                 ),
                 // `toValue` for the first point.
                 shiftIndex = correctFloat(
-                    (val - firstPointX) / ordinalPointPixelInterval);
+                    (val - firstPointX) / ordinalPointPixelInterval
+                );
 
             return Additions.findIndexOf(
                 ordinalArray,

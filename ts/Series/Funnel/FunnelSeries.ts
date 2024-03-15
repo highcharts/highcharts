@@ -422,7 +422,8 @@ class FunnelSeries extends PieSeries {
 
         // get the total sum
         for (const point of points) {
-            if (point.y && point.isValid() &&
+            if (
+                point.y && point.isValid() &&
                 (!ignoreHiddenPoint || point.visible !== false)
             ) {
                 sum += point.y;
@@ -500,13 +501,15 @@ class FunnelSeries extends PieSeries {
                 } else {
                     path = [
                         ['M', x1 + f.dx[0], y1 + f.dy[0]],
-                        ['C',
+                        [
+                            'C',
                             x1 + f.dx[1], y1 + f.dy[1],
                             x1 + f.dx[2], y1,
                             x1 + f.dx[3], y1
                         ],
                         ['L', x2 - f.dx[3], y1],
-                        ['C',
+                        [
+                            'C',
                             x2 - f.dx[2], y1,
                             x2 - f.dx[1], y1 + f.dy[1],
                             x2 - f.dx[0], y1 + f.dy[0]
@@ -520,7 +523,8 @@ class FunnelSeries extends PieSeries {
                     f = roundingFactors(Math.PI / 2 + alpha);
                     path.push(
                         ['L', x4 + f.dx[0], y3 - f.dy[0]],
-                        ['C',
+                        [
+                            'C',
                             x4 + f.dx[1], y3 - f.dy[1],
                             x4, y3 + f.dy[2],
                             x4, y3 + f.dy[3]
@@ -535,13 +539,15 @@ class FunnelSeries extends PieSeries {
                     } else {
                         path.push(
                             ['L', x4, y5 - fr.dy[3]],
-                            ['C',
+                            [
+                                'C',
                                 x4, y5 - fr.dy[2],
                                 x4 - fr.dx[2], y5,
                                 x4 - fr.dx[3], y5
                             ],
                             ['L', x3 + fr.dx[3], y5],
-                            ['C',
+                            [
+                                'C',
                                 x3 + fr.dx[2], y5,
                                 x3, y5 - fr.dy[2],
                                 x3, y5 - fr.dy[3]
@@ -551,7 +557,8 @@ class FunnelSeries extends PieSeries {
 
                     path.push(
                         ['L', x3, y3 + f.dy[3]],
-                        ['C',
+                        [
+                            'C',
                             x3, y3 + f.dy[2],
                             x3 - f.dx[1], y3 - f.dy[1],
                             x3 - f.dx[0], y3 - f.dy[0]
@@ -565,13 +572,15 @@ class FunnelSeries extends PieSeries {
                     } else {
                         path.push(
                             ['L', x4 + f.dx[0], y3 - f.dy[0]],
-                            ['C',
+                            [
+                                'C',
                                 x4 + f.dx[1], y3 - f.dy[1],
                                 x4 - f.dx[2], y3,
                                 x4 - f.dx[3], y3
                             ],
                             ['L', x3 + f.dx[3], y3],
-                            ['C',
+                            [
+                                'C',
                                 x3 + f.dx[2], y3,
                                 x3 - f.dx[1], y3 - f.dy[1],
                                 x3 - f.dx[0], y3 - f.dy[0]
@@ -583,7 +592,8 @@ class FunnelSeries extends PieSeries {
                     f = roundingFactors(Math.PI - alpha * 2);
                     path.push(
                         ['L', x3 + f.dx[0], y3 - f.dy[0]],
-                        ['C',
+                        [
+                            'C',
                             x3 + f.dx[1], y3 - f.dy[1],
                             x3 - f.dx[1], y3 - f.dy[1],
                             x3 - f.dx[0], y3 - f.dy[0]
@@ -638,8 +648,10 @@ class FunnelSeries extends PieSeries {
             // Mimicking pie data label placement logic
             point.half = half;
 
-            if (point.isValid() &&
-                (!ignoreHiddenPoint || point.visible !== false)) {
+            if (
+                point.isValid() &&
+                (!ignoreHiddenPoint || point.visible !== false)
+            ) {
                 cumulative += fraction;
             }
         }

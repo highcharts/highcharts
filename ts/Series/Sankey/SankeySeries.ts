@@ -450,7 +450,8 @@ class SankeySeries extends ColumnSeries {
 
         let linkHeight = Math.max(
                 (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any)
+                (this.options.minLinkWidth as any
+                )
             ),
             fromY = getY(fromNode, 'linksFrom'),
             toY = getY(toNode, 'linksTo'),

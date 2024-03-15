@@ -192,7 +192,8 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         );
     }
 
-    // Klinger Oscilator needs at least 56 points to calculate the default period: 55.
+    // Klinger Oscilator needs at least 56 points to calculate the default
+    // period: 55.
     assert.strictEqual(
         series[0].points.length,
         series[2].points.length + series[2].options.params.slowAvgPeriod,

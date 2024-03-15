@@ -54,7 +54,8 @@ function accumulatePoints(
     subtract?: boolean
 ): number {
     const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any)
+        (yVal[i] as any)[index], (yVal[i] as any
+    )
     );
 
     if (subtract) {
@@ -177,7 +178,8 @@ class DPOIndicator extends SMAIndicator {
             // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
             price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
+                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
+            )
             );
 
             oscillator = price - sum / period;

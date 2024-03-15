@@ -711,7 +711,8 @@ class BubbleLegendItem {
             bubbleSeriesSize = pxSizes.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
-        if (Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
+        if (
+            Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
             1
         ) {
             this.updateRanges(

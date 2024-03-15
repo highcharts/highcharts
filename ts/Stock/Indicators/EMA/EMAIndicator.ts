@@ -137,8 +137,10 @@ class EMAIndicator extends SMAIndicator {
                 yVal[i - 1] :
                 (yVal as any)[i - 1][index],
             y: number = typeof calEMA === 'undefined' ?
-                SMA : correctFloat((yValue * EMApercent) +
-                (calEMA * (1 - EMApercent)));
+                SMA : correctFloat(
+                    (yValue * EMApercent) +
+                (calEMA * (1 - EMApercent))
+                );
         return [x, y];
     }
 

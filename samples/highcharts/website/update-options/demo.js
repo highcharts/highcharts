@@ -1,6 +1,8 @@
 Highcharts.theme = {
-    colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
-        '#FF9655', '#FFF263', '#6AF9C4'],
+    colors: [
+        '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
+        '#FF9655', '#FFF263', '#6AF9C4'
+    ],
     chart: {
         backgroundColor: 'transparent'
     },
@@ -144,22 +146,30 @@ const controlLabels = [
     ['alpha', 'beta', 'view distance', 'depth']
 ];
 const controlText = [
-    ['Adjust the start angle',
+    [
+        'Adjust the start angle',
         'Adjust the end angle',
         'Adjust the inner size',
-        'Adjust the size'],
-    ['Use the slider to adjust the slices',
+        'Adjust the size'
+    ],
+    [
+        'Use the slider to adjust the slices',
         'Adjust the inner size',
         'Adjust the size',
-        'Add/remove slices'],
-    ['Adjust the point width',
+        'Add/remove slices'
+    ],
+    [
+        'Adjust the point width',
         'Slide to +/- plot bands on the x axis',
         'Slide to move the columns through the zones',
-        'Adjust the y axis max'],
-    ['Adjust the alpha angle',
+        'Adjust the y axis max'
+    ],
+    [
+        'Adjust the alpha angle',
         'Adjust the beta angle',
         'Adjust the view distance',
-        'Adjust the fill opacity']
+        'Adjust the fill opacity'
+    ]
 ];
 
 let controlIndex = 0;
@@ -460,7 +470,10 @@ function populateLabel(control, label) {
     if (control === 'opacity' || control === 'pointPadding') {
         valueToShow = parseFloat((valueToShow * 0.1), 10).toFixed(1);
     }
-    if (control === 'zones' || control === 'plotBands' || control === 'variwide') {
+    if (
+        control ===
+        'zones' || control === 'plotBands' || control === 'variwide'
+    ) {
         $(label + ' span').html('');
         $(label).addClass('font-weight-bold');
     } else {
@@ -835,9 +848,11 @@ $('document').ready(function () {
             if (ii === controlIndex) {
                 $(controlElement).parent().addClass('active');
                 $(controlElement).parent().addClass('flex-grow-1');
-                const valueSpan = '<span>' +  initialValues[seriesIndex][ii] + '</span>';
+                const valueSpan =
+                    '<span>' +  initialValues[seriesIndex][ii] + '</span>';
                 $(labelElement).html(
-                    controlLabels[seriesIndex][ii] + ': ' + valueSpan);
+                    controlLabels[seriesIndex][ii] + ': ' + valueSpan
+                );
                 populateLabel(controlsToUse[ii], labelElement);
                 controlElementActive = controlElement;
                 labelElementActive = labelElement;
@@ -849,7 +864,11 @@ $('document').ready(function () {
         // /configure chart for individual cases
 
         // /FOR COLUMN: disable polar, inverted, enabled animation
-        if (thingToChange === 'width' || thingToChange === 'plotBands' || thingToChange === 'zones') {
+        if (
+            thingToChange === 'width' ||
+            thingToChange === 'plotBands' ||
+            thingToChange === 'zones'
+        ) {
             demoChart.update({
                 chart: {
                     polar: false,
@@ -978,7 +997,8 @@ $('document').ready(function () {
 
     // /EVENT LISTENERS for the sliders
     // /innerSize - item and pie
-    document.getElementById('innerSize').addEventListener('input',
+    document.getElementById('innerSize').addEventListener(
+        'input',
         function (e) {
             e.preventDefault();
             rvalue = parseFloat(this.value);
@@ -988,7 +1008,8 @@ $('document').ready(function () {
         }
     );
     // /size - item and pie
-    document.getElementById('size').addEventListener('input',
+    document.getElementById('size').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -997,7 +1018,8 @@ $('document').ready(function () {
         }
     );
     // /endAngle - item
-    document.getElementById('endAngle').addEventListener('input',
+    document.getElementById('endAngle').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1007,7 +1029,8 @@ $('document').ready(function () {
 
     );
     // startAngle - item
-    document.getElementById('startAngle').addEventListener('input',
+    document.getElementById('startAngle').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1016,7 +1039,8 @@ $('document').ready(function () {
         }
     );
     // slices - pie
-    document.getElementById('slices').addEventListener('input',
+    document.getElementById('slices').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1025,7 +1049,8 @@ $('document').ready(function () {
         }
     );
     // /variwide - pie
-    document.getElementById('variwide').addEventListener('input',
+    document.getElementById('variwide').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1034,7 +1059,8 @@ $('document').ready(function () {
         }
     );
     // column width - column
-    document.getElementById('width').addEventListener('input',
+    document.getElementById('width').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1043,7 +1069,8 @@ $('document').ready(function () {
         }
     );
     // /radial - for column
-    document.getElementById('radial').addEventListener('input',
+    document.getElementById('radial').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1052,7 +1079,8 @@ $('document').ready(function () {
         }
     );
     // /plotBands - column
-    document.getElementById('plotBands').addEventListener('input',
+    document.getElementById('plotBands').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1061,7 +1089,8 @@ $('document').ready(function () {
         }
     );
     // /zones - column
-    document.getElementById('zones').addEventListener('input',
+    document.getElementById('zones').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1070,7 +1099,8 @@ $('document').ready(function () {
         }
     );
     // /alpha - 3d area
-    document.getElementById('alpha').addEventListener('input',
+    document.getElementById('alpha').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1078,7 +1108,8 @@ $('document').ready(function () {
             alphaChange(rvalue);
         });
     // /beta - 3d area
-    document.getElementById('beta').addEventListener('input',
+    document.getElementById('beta').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1086,7 +1117,8 @@ $('document').ready(function () {
             betaChange(rvalue);
         });
     // viewDistance - 3d area
-    document.getElementById('viewDistance').addEventListener('input',
+    document.getElementById('viewDistance').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
@@ -1094,7 +1126,8 @@ $('document').ready(function () {
             viewDistanceChange(rvalue);
         });
     // depth - 3d area
-    document.getElementById('depth').addEventListener('input',
+    document.getElementById('depth').addEventListener(
+        'input',
         function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];

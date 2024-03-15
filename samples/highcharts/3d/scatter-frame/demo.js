@@ -58,7 +58,8 @@ const chart = Highcharts.chart('container', {
         text: 'Draggable box'
     },
     subtitle: {
-        text: 'Click and drag the plot area to rotate in space.<br> Frames will hide and show automatically.'
+        text: 'Click and drag the plot area to rotate in space.<br> Frames ' +
+            'will hide and show automatically.'
     },
     plotOptions: {
         scatter: {
