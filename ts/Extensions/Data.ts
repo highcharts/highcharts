@@ -960,9 +960,11 @@ class Data {
 
                 // If the middle one is dd, and the last one is dd,
                 // the last should likely be year.
-                if (guessedFormat.length === 3 &&
+                if (
+                    guessedFormat.length === 3 &&
                     guessedFormat[1] === 'dd' &&
-                    guessedFormat[2] === 'dd') {
+                    guessedFormat[2] === 'dd'
+                ) {
                     guessedFormat[2] = 'YY';
                 }
 
@@ -1040,11 +1042,13 @@ class Data {
 
             deduceAxisTypes();
 
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
+            if (
+                (!options.columnTypes || options.columnTypes.length === 0) &&
                 dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
+                !options.dateFormat
+            ) {
                 options.dateFormat = deduceDateFormat(columns[0] as any);
             }
 

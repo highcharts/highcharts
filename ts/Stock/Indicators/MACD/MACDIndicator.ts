@@ -392,7 +392,8 @@ class MACDIndicator extends SMAIndicator {
             j = 0,
             signalLine: Array<Array<number>> = [];
 
-        if ((series.xData as any).length <
+        if (
+            (series.xData as any).length <
             (params.longPeriod as any) + params.signalPeriod
         ) {
             return;

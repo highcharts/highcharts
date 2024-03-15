@@ -422,7 +422,8 @@ class FunnelSeries extends PieSeries {
 
         // get the total sum
         for (const point of points) {
-            if (point.y && point.isValid() &&
+            if (
+                point.y && point.isValid() &&
                 (!ignoreHiddenPoint || point.visible !== false)
             ) {
                 sum += point.y;
@@ -647,8 +648,10 @@ class FunnelSeries extends PieSeries {
             // Mimicking pie data label placement logic
             point.half = half;
 
-            if (point.isValid() &&
-                (!ignoreHiddenPoint || point.visible !== false)) {
+            if (
+                point.isValid() &&
+                (!ignoreHiddenPoint || point.visible !== false)
+            ) {
                 cumulative += fraction;
             }
         }

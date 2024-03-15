@@ -916,8 +916,10 @@ function sortByTotalOverlap(
     a: VennRelationObject,
     b: VennRelationObject
 ): number {
-    if (typeof b.totalOverlap !== 'undefined' &&
-        typeof a.totalOverlap !== 'undefined') {
+    if (
+        typeof b.totalOverlap !== 'undefined' &&
+        typeof a.totalOverlap !== 'undefined'
+    ) {
         return b.totalOverlap - a.totalOverlap;
     }
     return NaN;

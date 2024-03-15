@@ -781,8 +781,10 @@ function fastAvoid(
                 // We are not going anywhere. If this happens for the first
                 // time, do nothing. Otherwise, try to go to the extreme of
                 // the obstacle pair in the current direction.
-                if (fromPoint.x === envelopWaypoint.x &&
-                    fromPoint.y === envelopWaypoint.y) {
+                if (
+                    fromPoint.x === envelopWaypoint.x &&
+                    fromPoint.y === envelopWaypoint.y
+                ) {
                     if (forceObstacleBreak) {
                         envelopWaypoint[dir] = waypointUseMax ?
                             max(

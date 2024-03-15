@@ -792,8 +792,10 @@ namespace SeriesKeyboardNavigation {
             }
 
             series.points.forEach((point): void => {
-                if (!defined(point.plotY) || !defined(point.plotX) ||
-                    point === curPoint) {
+                if (
+                    !defined(point.plotY) || !defined(point.plotX) ||
+                    point === curPoint
+                ) {
                     return;
                 }
 

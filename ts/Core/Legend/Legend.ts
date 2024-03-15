@@ -1343,8 +1343,10 @@ class Legend {
                     );
                 let len = pages.length;
 
-                if (!len || (y - pages[len - 1] > clipHeight &&
-                        (lastY || y) !== pages[len - 1])) {
+                if (
+                    !len || (y - pages[len - 1] > clipHeight &&
+                        (lastY || y) !== pages[len - 1])
+                ) {
                     pages.push(lastY || y);
                     len++;
                 }

@@ -2179,8 +2179,10 @@ class Axis {
             if (endOnTick) {
                 this.max = roundedMax;
             } else {
-                while ((this.max as any) + minPointOffset <
-                        tickPositions[tickPositions.length - 1]) {
+                while (
+                    (this.max as any) + minPointOffset <
+                        tickPositions[tickPositions.length - 1]
+                ) {
                     tickPositions.pop();
                 }
             }
@@ -3313,7 +3315,8 @@ class Axis {
         }
 
         // Max width defaults to the length of the axis
-        if (!styledMode &&
+        if (
+            !styledMode &&
             !axisTitleOptions.style.width &&
             !axis.isRadial
         ) {

@@ -427,8 +427,10 @@ namespace OrdinalAxis {
             distance = index - i; // The decimal
         }
 
-        if (typeof distance !== 'undefined' &&
-            typeof ordinalPositions[i] !== 'undefined') {
+        if (
+            typeof distance !== 'undefined' &&
+            typeof ordinalPositions[i] !== 'undefined'
+        ) {
             return ordinalPositions[i] + (distance ?
                 distance *
                     (ordinalPositions[i + 1] - ordinalPositions[i]) :
@@ -659,7 +661,8 @@ namespace OrdinalAxis {
                 // If we don't compensate for this, we will be allowed to pan
                 // grouped data series passed the right of the plot area.
                 ordinalPositions = extendedAxis.ordinal.positions;
-                if (dataMax >
+                if (
+                    dataMax >
                     (ordinalPositions as any)[
                         (ordinalPositions as any).length - 1
                     ]

@@ -1017,7 +1017,8 @@ class Pointer {
         if (!chart.cancelClick) {
 
             // On tracker click, fire the series and point events. #783, #1583
-            if (hoverPoint &&
+            if (
+                hoverPoint &&
                 this.inClass(pEvt.target as any, 'highcharts-tracker')
             ) {
 

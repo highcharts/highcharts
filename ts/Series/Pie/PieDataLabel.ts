@@ -552,7 +552,8 @@ namespace ColumnDataLabel {
 
         // Do not apply the final placement and draw the connectors until we
         // have verified that labels are not spilling over.
-        if (arrayMax(overflow) === 0 ||
+        if (
+            arrayMax(overflow) === 0 ||
             (this.verifyDataLabelOverflow as any)(overflow)
         ) {
 

@@ -235,7 +235,8 @@ function intersectsAnyWord(
         isIntersecting = function (p: WordcloudPoint): boolean {
             let result = isRectanglesIntersecting(rect, p.rect as any);
 
-            if (result &&
+            if (
+                result &&
                 ((point.rotation as any) % 90 || (p.rotation as any) % 90)
             ) {
                 result = isPolygonsColliding(

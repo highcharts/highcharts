@@ -547,8 +547,10 @@ class Oscillator {
     // Gain node used for frequency dependent volume tracking
     private createVolTracking(): void {
         const opts = this.options;
-        if (opts.volumePitchTrackingMultiplier &&
-            opts.volumePitchTrackingMultiplier !== 1) {
+        if (
+            opts.volumePitchTrackingMultiplier &&
+            opts.volumePitchTrackingMultiplier !== 1
+        ) {
             this.volTrackingNode = new GainNode(this.audioContext, {
                 gain: 1
             });

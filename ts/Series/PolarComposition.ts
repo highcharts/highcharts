@@ -589,7 +589,8 @@ function onPointerGetSelectionMarkerAttrs(
             }
         }
 
-        if (this.zoomHor &&
+        if (
+            this.zoomHor &&
             this.zoomVert &&
             linearAxis.options.gridLineInterpolation === 'polygon'
         ) {
@@ -905,8 +906,10 @@ function wrapColumnSeriesAlignDataLabel(
 
         // Hide label of a point (only inverted) that is outside the
         // visible y range
-        if (this.isRadialBar && point.shapeArgs &&
-            point.shapeArgs.start === point.shapeArgs.end) {
+        if (
+            this.isRadialBar && point.shapeArgs &&
+            point.shapeArgs.start === point.shapeArgs.end
+        ) {
             dataLabel.hide();
         } else {
             dataLabel.show();

@@ -714,7 +714,8 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false,
             nodeParent: TreemapNode;
 
-        if ((point.node.parent !== this.rootNode) &&
+        if (
+            (point.node.parent !== this.rootNode) &&
             point.node.isLeaf
         ) {
             nodeParent = point.node;

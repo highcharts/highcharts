@@ -290,8 +290,10 @@ class TiledWebMapSeries extends MapSeries {
                                 }, {
                                     duration: duration
                                 }, (): void => {
-                                    if (i === Object.keys(tiles[zoomKey].tiles)
-                                        .length - 1) {
+                                    if (
+                                        i === Object.keys(tiles[zoomKey].tiles)
+                                            .length - 1
+                                    ) {
                                         tiles[zoomKey].isActive = true;
                                     }
                                 });
@@ -308,8 +310,10 @@ class TiledWebMapSeries extends MapSeries {
                                 }, (): void => {
                                     tiles[zoomKey].tiles[key].destroy();
                                     delete tiles[zoomKey].tiles[key];
-                                    if (i === Object.keys(tiles[zoomKey].tiles)
-                                        .length - 1) {
+                                    if (
+                                        i === Object.keys(tiles[zoomKey].tiles)
+                                            .length - 1
+                                    ) {
                                         tiles[zoomKey].isActive = false;
                                         tiles[zoomKey].loaded = false;
                                     }
