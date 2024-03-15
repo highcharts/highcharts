@@ -340,7 +340,7 @@ namespace OrdinalAxis {
                 }
                 translatedArr[i] = lastTranslated = translated;
             }
-            distances.sort();
+            distances.sort((a, b): number => a - b);
             medianDistance = distances[Math.floor(distances.length / 2)];
             if (medianDistance < (tickPixelIntervalOption as any) * 0.6) {
                 medianDistance = null;
@@ -451,7 +451,7 @@ namespace OrdinalAxis {
             localMin = axis.old ? axis.old.min : axis.min,
             localA = axis.old ? axis.old.transA : axis.transA;
         // Always use extendedPositions (#19816)
-        let positions = ordinal.getExtendedPositions();
+        const positions = ordinal.getExtendedPositions();
 
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.

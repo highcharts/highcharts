@@ -2902,6 +2902,7 @@ class Axis {
      */
     public unsquish(): number {
         const labelOptions = this.options.labels,
+            padding = labelOptions.padding,
             horiz = this.horiz,
             tickInterval = this.tickInterval,
             slotSize = this.len / (
@@ -2915,12 +2916,12 @@ class Axis {
             rotationOption = labelOptions.rotation,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.75em
-            lineHeight = this.labelMetrics().h,
+            lineHeight = this.labelMetrics().h * 0.75,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded: number): number {
-                let step = spaceNeeded / (slotSize || 1);
+                let step = (spaceNeeded + 2 * padding) / (slotSize || 1);
 
                 step = step > 1 ? Math.ceil(step) : 1;
 
