@@ -3543,8 +3543,10 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                     e.cancelBubble = true;
                 });
 
-                if (typeof (val || value || '') === 'string' &&
-            (val || value || '').indexOf('\\u') > -1) {
+                if (
+                    typeof (val || value || '') === 'string' &&
+            (val || value || '').indexOf('\\u') > -1
+                ) {
                     input.value = decodeURIComponent(JSON.parse('"' + (val || value).replace(/\"/g, '\\"') + '"'));
                 } else {
                     input.value = (val || value);
@@ -4437,8 +4439,10 @@ highed.List = function (parent, responsive, props, planCode) {
                 warning = highed.dom.cr('div', 'highed-customize-warning', 'You need to be on a paid plan for this to work in production');
                 doInclude = shouldInclude(group);
 
-                if (group.warning && group.warning.length > 0 &&
-          planCode && group.warning.indexOf(planCode) > -1) {
+                if (
+                    group.warning && group.warning.length > 0 &&
+          planCode && group.warning.indexOf(planCode) > -1
+                ) {
                     highed.dom.ap(table, highed.dom.ap(warningContainer, warning));
                 }
 
@@ -7652,8 +7656,10 @@ highed.DataTable = function (parent, attributes) {
 
                 allSelectedCopyCells = [];
 
-            } else if (selectedFirstCell[0] === selectedEndCell[0] &&
-          selectedFirstCell[1] === selectedEndCell[1]) {
+            } else if (
+                selectedFirstCell[0] === selectedEndCell[0] &&
+          selectedFirstCell[1] === selectedEndCell[1]
+            ) {
             // Have not dragged anywhere else on the grid. So the user has just clicked on a cell.
 
                 lastSelectedCell[0] = colNumber;
@@ -7785,7 +7791,8 @@ highed.DataTable = function (parent, attributes) {
 
     function selectNewCells(firstCell, endCell) { // firstCell, endCell
 
-        if (firstCell.length === 0 || endCell.length === 0 ||   // Weird bug when opening the console and hovering over cells
+        if (
+            firstCell.length === 0 || endCell.length === 0 ||   // Weird bug when opening the console and hovering over cells
       (firstCell[0] === null || firstCell[1] === null)
         ) {
             return;
@@ -14500,7 +14507,8 @@ highed.SearchAdvancedOptions = function (parent, attr) {
 
             if (Object.keys(node.meta.types)[0] === 'function' || (
                 node.meta.products &&
-        Object.keys(node.meta.products) > 0)) {
+        Object.keys(node.meta.products) > 0)
+            ) {
                 return;
             }
 
@@ -19474,7 +19482,8 @@ highed.ChartPreview = function (parent, attributes) {
             assignDataFields = false;
         }
 
-        if (chart &&
+        if (
+            chart &&
         chart.options &&
         chart.options.data &&
         chart.options.data.url
@@ -20135,9 +20144,11 @@ highed.ChartPreview = function (parent, attributes) {
         if (!skipEmit) {
             updateAggregated();
 
-            if (!customizedOptions.data || (customizedOptions &&
+            if (
+                !customizedOptions.data || (customizedOptions &&
          customizedOptions.data &&
-         !customizedOptions.data.googleSpreadsheetKey)) {
+         !customizedOptions.data.googleSpreadsheetKey)
+            ) {
                 init(aggregatedOptions);
             }
 

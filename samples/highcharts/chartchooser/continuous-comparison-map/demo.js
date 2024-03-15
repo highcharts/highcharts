@@ -51,8 +51,10 @@
                 dataLabels: {
                     enabled: true,
                     formatter: function () {
-                        if (typeof (this.point.clusterPointsAmount) ===
-                            'undefined') {
+                        if (
+                            typeof (this.point.clusterPointsAmount) ===
+                            'undefined'
+                        ) {
                             return '';
                         }
                         return this.point.clusterPointsAmount;

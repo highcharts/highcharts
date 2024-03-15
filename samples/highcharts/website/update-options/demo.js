@@ -470,8 +470,10 @@ function populateLabel(control, label) {
     if (control === 'opacity' || control === 'pointPadding') {
         valueToShow = parseFloat((valueToShow * 0.1), 10).toFixed(1);
     }
-    if (control ===
-        'zones' || control === 'plotBands' || control === 'variwide') {
+    if (
+        control ===
+        'zones' || control === 'plotBands' || control === 'variwide'
+    ) {
         $(label + ' span').html('');
         $(label).addClass('font-weight-bold');
     } else {

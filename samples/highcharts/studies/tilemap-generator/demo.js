@@ -236,8 +236,10 @@
             largestIx = 0,
             largestArea = 0;
         while (i--) {
-            if (areas[i].extremes.width * areas[i].extremes.height >
-                largestArea) {
+            if (
+                areas[i].extremes.width * areas[i].extremes.height >
+                largestArea
+            ) {
                 largestIx = i;
                 largestArea = areas[i].extremes.width *
                     areas[i].extremes.height;
@@ -270,9 +272,11 @@
         }
 
         // Determine if we need to shift the row horizontally
-        if (direction === 'left' ||
+        if (
+            direction === 'left' ||
             direction === 'leftTop' ||
-            direction === 'leftBottom') {
+            direction === 'leftBottom'
+        ) {
             shift = true;
         }
 
@@ -487,7 +491,8 @@
 
             // Loop over all remaining overflows and change them.
             for (let j = i + 1; j < oLen; ++j) {
-                if (overflows[j].row === rowShiftIx &&
+                if (
+                    overflows[j].row === rowShiftIx &&
                     ((overflows[j].col < of.col && rowShift < 0) ||
                     (overflows[j].col > of.col && rowShift > 0))
                 ) {
@@ -495,7 +500,8 @@
                     // follow
                     overflows[j].col += rowShift;
                 }
-                if (overflows[j].col === of.col &&
+                if (
+                    overflows[j].col === of.col &&
                     ((overflows[j].row < of.row && colShift < 0) ||
                     (overflows[j].row > of.row && colShift > 0))
                 ) {
@@ -854,8 +860,10 @@ function generateTileChart() {
             } else {
                 // Should b be a point?
                 for (let i = 0, pLen = a.series.points.length; i < pLen; ++i) {
-                    if (a.series.points[i].x === b.x &&
-                        a.series.points[i].y === b.y) {
+                    if (
+                        a.series.points[i].x === b.x &&
+                        a.series.points[i].y === b.y
+                    ) {
                         a.series.points[i].update({
                             x: a.x,
                             y: a.y

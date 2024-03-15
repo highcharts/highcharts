@@ -41,8 +41,10 @@
 
             let i = 0;
 
-            if (typeof options ===
-                'object' && typeof options.length !== 'number') {
+            if (
+                typeof options ===
+                'object' && typeof options.length !== 'number'
+            ) {
                 // TODO implement object input support?
                 throw new Error('Object input not yet supported');
             } else if (options.length) { // array

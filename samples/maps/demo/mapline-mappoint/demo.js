@@ -27,8 +27,10 @@
     // Skip or move some labels to avoid collision
     states.forEach(state => {
         // Disable data labels
-        if (state.properties.code_hasc ===
-            'AU.CT' || state.properties.code_hasc === 'AU.JB') {
+        if (
+            state.properties.code_hasc ===
+            'AU.CT' || state.properties.code_hasc === 'AU.JB'
+        ) {
             state.dataLabels = {
                 enabled: false
             };

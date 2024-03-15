@@ -1543,8 +1543,10 @@ document.getElementById('speed').onchange = function () {
 // Add sonification button handlers
 document.getElementById('play').onclick = function () {
     openCard();
-    if (!soundChart.sonification.timeline ||
-        soundChart.sonification.timeline.atStart()) {
+    if (
+        !soundChart.sonification.timeline ||
+        soundChart.sonification.timeline.atStart()
+    ) {
         soundChart.sonify({
             duration: 5000 / document.getElementById('speed').value,
             order: 'simultaneous',

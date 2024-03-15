@@ -483,8 +483,10 @@ seriesType(
                             symbolPath,
                             borderWidth || 1
                         );
-                    } else if (shape ===
-                        'rectangle') { // Shape for bullet series
+                    } else if (
+                        shape ===
+                        'rectangle'
+                    ) { // Shape for bullet series
                         onPoint = true;
                         showLine = false;
                         showColumn = true;

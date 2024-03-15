@@ -512,8 +512,10 @@ const sale = {
         point: {
             events: {
                 mouseOver: function () {
-                    if (this.name ===
-                        'creativity' || this.name === 'customize') {
+                    if (
+                        this.name ===
+                        'creativity' || this.name === 'customize'
+                    ) {
                         this.series.chart.update({
                             tooltip: {
                                 distance: 60

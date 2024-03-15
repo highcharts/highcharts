@@ -46,8 +46,10 @@ Highcharts.chart('container', {
                 enabled: true,
                 color: '#ffffff',
                 formatter: function () {
-                    if (typeof (this.point.clusterPointsAmount) ===
-                        'undefined') {
+                    if (
+                        typeof (this.point.clusterPointsAmount) ===
+                        'undefined'
+                    ) {
                         return '';
                     }
                     return this.point.clusterPointsAmount;
@@ -1122,8 +1124,10 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 formatter: function () {
-                    if (typeof (this.point.clusterPointsAmount) ===
-                        'undefined') {
+                    if (
+                        typeof (this.point.clusterPointsAmount) ===
+                        'undefined'
+                    ) {
                         return '';
                     }
                     return this.point.clusterPointsAmount;

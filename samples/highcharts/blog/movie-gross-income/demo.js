@@ -18,7 +18,8 @@ Highcharts.chart('container', {
                 formatter: function () {
                     if (this.point.x === this.series.data[
                         this.series.data.length - 1].x &
-                        this.series.options.showlabel) {
+                        this.series.options.showlabel
+                    ) {
                         return this.series.options.extra.title;
                     }
                 },
