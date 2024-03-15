@@ -177,7 +177,8 @@ function rendererCylinderPath(
  */
 function rendererGetCurvedPath(
     this: SVGRenderer3D.Composition,
-    points: Array<PositionObject>): SVGPath {
+    points: Array<PositionObject>
+): SVGPath {
     const path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2;
 
