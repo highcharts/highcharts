@@ -18,7 +18,7 @@ module.exports = {
         path: '/maps/'
     },
     'Highcharts Stock': {
-        categories: ['General', 'Chart types', 'Various features', 'Flags and Technical indicators', 'Designs'],
+        categories: ['General', 'Chart types', 'Various features', 'Flags and Technical indicators', 'Designs', 'Crypto'],
         filter: { tags: ['Highcharts Stock demo'] },
         path: '/stock/'
     },
