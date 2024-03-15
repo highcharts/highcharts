@@ -1128,7 +1128,7 @@ QUnit.test(
         assert.strictEqual(
             isLabelsWidthCorrect,
             true,
-            'Data label(s) text shouldn\'t be wider than its box (useHTML: false).'
+            'Data label text shouldn\'t be wider than its box (useHTML: false)'
         );
 
         series.update({
@@ -1157,7 +1157,7 @@ QUnit.test(
         assert.strictEqual(
             isLabelsWidthCorrect,
             true,
-            'Data label(s) text shouldn\'t be wider than its box (useHTML: true).'
+            'Data label text shouldn\'t be wider than its box (useHTML: true)'
         );
 
         series.update({

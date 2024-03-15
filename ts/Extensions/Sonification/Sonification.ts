@@ -126,7 +126,8 @@ class Sonification {
     private boundaryInstrument?: SynthPatch;
 
     constructor(private chart: Chart) {
-        this.unbindKeydown = addEvent(doc, 'keydown',
+        this.unbindKeydown = addEvent(
+            doc, 'keydown',
             function (e: KeyboardEvent): void {
                 if (
                     chart && chart.sonification &&
@@ -141,7 +142,7 @@ class Sonification {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.audioContext.suspend();
             this.audioDestination = this.audioContext.destination;
-        } catch (e) { /* ignore */ }
+        } catch (e) { /* Ignore */ }
     }
 
 
@@ -253,9 +254,11 @@ class Sonification {
             const targetSeriesIx = lastPlayed.series.index + (
                 next ? 1 : -1
             );
-            this.playClosestToProp(prop, lastPlayed[prop] as number,
+            this.playClosestToProp(
+                prop, lastPlayed[prop] as number,
                 (e): boolean => !!e.relatedPoint &&
-                    e.relatedPoint.series.index === targetSeriesIx, onEnd);
+                    e.relatedPoint.series.index === targetSeriesIx, onEnd
+            );
             return this.chart.series[targetSeriesIx] || null;
         }
         return null;
@@ -280,7 +283,9 @@ class Sonification {
         onEnd?: globalThis.Sonification.ChartCallback
     ): void {
         if (!this.ready(this.playClosestToProp.bind(
-            this, prop, targetValue, targetFilter, onEnd))) {
+            this, prop, targetValue, targetFilter, onEnd
+        )
+        )) {
             return;
         }
         if (this.timeline) {
@@ -452,7 +457,8 @@ class Sonification {
             this.beforePlay();
             this.timeline.play((e): boolean =>
                 !!e.relatedPoint && e.relatedPoint.series === series,
-            void 0, resetAfter, onEnd);
+            void 0, resetAfter, onEnd
+            );
         }
     }
 
@@ -472,7 +478,8 @@ class Sonification {
             this.timeline.reset();
             this.beforePlay();
             this.timeline.anchorPlayMoment(
-                (e): boolean => e.relatedPoint === point, onEnd);
+                (e): boolean => e.relatedPoint === point, onEnd
+            );
         }
     }
 

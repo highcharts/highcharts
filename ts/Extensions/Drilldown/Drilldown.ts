@@ -307,14 +307,14 @@ class ChartAdditions {
         fireEvent(this, 'addSeriesAsDrilldown', { seriesOptions: options });
 
         if (chart.mapView) {
-            // stop hovering while drilling down
+            // Stop hovering while drilling down
             point.series.isDrilling = true;
 
             chart.series.forEach((series): void => {
-                // stop duplicating and overriding animations
+                // Stop duplicating and overriding animations
                 series.options.inactiveOtherPoints = true;
 
-                // hide and disable dataLabels
+                // Hide and disable dataLabels
                 series.dataLabelsGroup?.destroy();
                 delete series.dataLabelsGroup;
             });
@@ -330,7 +330,7 @@ class ChartAdditions {
                     DrilldownDefaults
                 );
 
-                // set mapZooming to false if user didn't set any in chart
+                // Set mapZooming to false if user didn't set any in chart
                 // config
                 if (!defined(userDrilldown.mapZooming)) {
                     chart.options.drilldown.mapZooming = false;
@@ -342,7 +342,7 @@ class ChartAdditions {
                 chart.options.drilldown.animation &&
                 chart.options.drilldown.mapZooming
             ) {
-                // first zoomTo then crossfade series
+                // First zoomTo then crossfade series
                 chart.mapView.allowTransformAnimation = true;
 
                 const animOptions =
@@ -351,7 +351,8 @@ class ChartAdditions {
                 if (typeof animOptions !== 'boolean') {
                     const userComplete = animOptions.complete,
                         drilldownComplete = function (
-                            obj?: { applyDrilldown?: boolean }): void {
+                            obj?: { applyDrilldown?: boolean }
+                        ): void {
                             if (obj && obj.applyDrilldown && chart.mapView) {
                                 chart
                                     .addSingleSeriesAsDrilldown(point, options);
@@ -452,7 +453,7 @@ class ChartAdditions {
             levelSeriesOptions: levelSeriesOptions,
             levelSeries: levelSeries,
             shapeArgs: point.shapeArgs,
-            // no graphic in line series with markers disabled
+            // No graphic in line series with markers disabled
             bBox: point.graphic ? point.graphic.getBBox() : {},
             color: point.isNull ?
                 Color.parse(colorProp.color).setOpacity(0).get() :
@@ -683,7 +684,7 @@ class ChartAdditions {
             removeSeries = (oldSeries: Series): void => {
                 oldSeries.remove(false);
                 chart.series.forEach((series): void => {
-                    // ensures to redraw series to get correct colors
+                    // Ensures to redraw series to get correct colors
                     if (series.colorAxis) {
                         series.isDirtyData = true;
                     }
@@ -764,7 +765,7 @@ class ChartAdditions {
                 }
 
                 const seriesToRemove = oldSeries;
-                // cannot access variable changed in loop
+                // Cannot access variable changed in loop
                 if (!chart.mapView) {
                     seriesToRemove.remove(false);
                 }
@@ -809,7 +810,7 @@ class ChartAdditions {
                     if (shouldAnimate) {
                         oldSeries.remove(false);
                     } else {
-                        // hide and disable dataLabels
+                        // Hide and disable dataLabels
                         if (oldSeries.dataLabelsGroup) {
                             oldSeries.dataLabelsGroup.destroy();
                             delete oldSeries.dataLabelsGroup;
@@ -817,7 +818,7 @@ class ChartAdditions {
 
                         if (chart.mapView && newSeries) {
                             if (zoomingDrill) {
-                                // stop hovering while drilling down
+                                // Stop hovering while drilling down
                                 oldSeries.isDrilling = true;
                                 newSeries.isDrilling = true;
                                 chart.redraw(false);
@@ -845,7 +846,7 @@ class ChartAdditions {
                                     true,
                                     {
                                         complete: function (): void {
-                                            // fire it only on complete in this
+                                            // Fire it only on complete in this
                                             // place (once)
                                             if (
                                                 Object.prototype.hasOwnProperty
@@ -899,7 +900,7 @@ class ChartAdditions {
      * simple SVGElement.fadeIn() is not enough, because of other features (e.g.
      * InactiveState) using `opacity` to fadeIn/fadeOut.
      *
-     * @requires module:modules/drilldown
+     * @requires modules/drilldown
      *
      * @private
      * @param {SVGElement} [group]
@@ -1192,7 +1193,7 @@ namespace Drilldown {
     /**
      * A general fadeIn method.
      *
-     * @requires module:modules/drilldown
+     * @requires modules/drilldown
      *
      * @function Highcharts.SVGElement#fadeIn
      *
@@ -1210,7 +1211,7 @@ namespace Drilldown {
                 visibility: 'inherit'
             })
             .animate({
-                opacity: pick(elem.newOpacity, 1) // newOpacity used in maps
+                opacity: pick(elem.newOpacity, 1) // `newOpacity` used in maps
             }, animation || {
                 duration: 250
             });
@@ -1265,7 +1266,7 @@ namespace Drilldown {
                 label.drillable && label.removeOnDrillableClick
             ) {
                 if (!styledMode) {
-                    label.styles = {}; // reset for full overwrite of styles
+                    label.styles = {}; // Reset for full overwrite of styles
                     label.element.removeAttribute('style'); // #17933
                     label.css(label.basicStyles);
                 }
@@ -1411,4 +1412,4 @@ export default Drilldown;
  * @type {"drillup"}
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

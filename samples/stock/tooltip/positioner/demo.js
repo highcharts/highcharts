@@ -11,7 +11,8 @@
             borderWidth: 0,
             borderRadius: 0,
             headerFormat: '{point.key} ',
-            pointFormat: ' | <span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>',
+            pointFormat: ' | <span style="color:{series.color}">' +
+                '{series.name}</span>: <b>{point.y}</b>',
             positioner: function () {
                 return { x: 10, y: 35 };
             },

@@ -162,12 +162,15 @@ const getBBox = geometry => {
         },
 
         subtitle: {
-            text: 'Study for a separate map (world-cropped.topo.json) where Pacific islands are inset to allow a better fit for the continents',
+            text: 'Study for a separate map (world-cropped.topo.json) where ' +
+                'Pacific islands are inset to allow a better fit for the ' +
+                'continents',
             align: 'left'
         },
 
         accessibility: {
-            description: 'We see how China and India by far are the countries with the largest population.'
+            description: 'We see how China and India by far are the ' +
+                'countries with the largest population.'
         },
 
         legend: {
@@ -215,7 +218,8 @@ const getBBox = geometry => {
                 minSize: 4,
                 maxSize: '12%',
                 tooltip: {
-                    pointFormat: '{point.properties.name} ({point.properties.hc-a2}): {point.z} thousands'
+                    pointFormat: '{point.properties.name} ' +
+                        '({point.properties.hc-a2}): {point.z} thousands'
                 }
             }
         ]

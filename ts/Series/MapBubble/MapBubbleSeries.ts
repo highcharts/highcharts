@@ -298,7 +298,7 @@ class MapBubbleSeries extends BubbleSeries {
             iArgs
         );
 
-        let processedXData = this.processedXData,
+        const processedXData = this.processedXData,
             xData = this.xData;
 
         if (processedXData && xData) {
@@ -449,4 +449,4 @@ export default MapBubbleSeries;
  * @apioption series.mapbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

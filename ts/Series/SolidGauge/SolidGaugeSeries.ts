@@ -138,7 +138,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
         for (const point of series.points) {
             // #10630 null point should not be draw
-            if (!point.isNull) { // condition like in pie chart
+            if (!point.isNull) { // Condition like in pie chart
                 const radius = ((
                         pInt(
                             pick(
@@ -232,7 +232,7 @@ class SolidGaugeSeries extends GaugeSeries {
                     d = shapeArgs.d;
                     graphic.animate(extend({ fill: toColor }, shapeArgs));
                     if (d) {
-                        shapeArgs.d = d; // animate alters it
+                        shapeArgs.d = d; // Animate alters it
                     }
                 } else {
                     point.graphic = graphic = renderer.arc(shapeArgs)

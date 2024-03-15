@@ -54,7 +54,8 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
             ['#d3d3d3', '#ff69b4', '#000000'],
             ['#d3d3d3', '#00ff00', '#d3d3d3']
         ],
-        'Upper and lower markers with connector should individually respect all the colors settings.'
+        'Upper and lower markers with connector should individually respect ' +
+        'all the colors settings.'
     );
 
     // Testing setState()
@@ -83,7 +84,8 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[1].graphics[0].attr('fill'),
         chart.series[0].lowColor,
-        'The lower marker should have a correct color (lowColor) without any state.'
+        'The lower marker should have a correct color (lowColor) without any ' +
+        'state.'
     );
 
     // Color all upper graphics
@@ -100,7 +102,8 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[1].graphics[1].attr('fill'),
         chart.series[0].options.marker.fillColor,
-        'After mouseOut (without any state), the upper marker should have a correct color.'
+        'After mouseOut (without any state), the upper marker should have a ' +
+        'correct color.'
     );
 });
 
@@ -156,7 +159,8 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[1].graphics[1].attr('fill'),
         '#ff0000',
-        'After point.marker.fillColor update, the graphics[1] should have a correct color.'
+        'After point.marker.fillColor update, the graphics[1] should have a ' +
+        'correct color.'
     );
 
     chart.series[0].update({
@@ -167,7 +171,8 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
         assert.strictEqual(
             point.graphics[0].attr('fill'),
             '#000000',
-            'After series.lowColor update, all the graphics[0]s should have a correct color.'
+            'After series.lowColor update, all the graphics[0]s should have ' +
+            'a correct color.'
         );
     });
 
@@ -182,7 +187,8 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
         assert.strictEqual(
             point.graphics[0].attr('fill'),
             '#00ff00',
-            'After series.lowMarker update, all the graphics[0]s should have a correct color.'
+            'After series.lowMarker update, all the graphics[0]s should have ' +
+            'a correct color.'
         );
     });
 });

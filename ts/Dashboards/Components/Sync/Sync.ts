@@ -164,14 +164,17 @@ class Sync {
      */
     public start(): void {
         const { syncConfig, component } = this;
+
         for (const id of Object.keys(syncConfig)) {
-            if (!syncConfig[id]) {
+            const syncOptions = syncConfig[id];
+            if (!syncOptions) {
                 continue;
             }
+
             let {
                 emitter: emitterConfig,
                 handler: handlerConfig
-            } = syncConfig[id];
+            } = syncOptions;
             if (handlerConfig) {
                 // Avoid registering the same handler multiple times
                 // i.e. panning and selection uses the same handler
@@ -181,12 +184,7 @@ class Sync {
                             .handler as Sync.HandlerConfig;
                 }
 
-                // Create a tuple if the handler is a function.
-                if (typeof handlerConfig === 'function') {
-                    handlerConfig = [id, handlerConfig];
-                }
-
-                const handler = new SyncHandler(...handlerConfig);
+                const handler = new SyncHandler(id, handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
 
@@ -201,13 +199,7 @@ class Sync {
                             .emitter as Sync.EmitterConfig;
                 }
 
-                // TODO: should rework the SyncHandler constructor when
-                // all handlers are updated
-                if (typeof emitterConfig === 'function') {
-                    emitterConfig = [id, emitterConfig];
-                }
-
-                const emitter = new SyncEmitter(...emitterConfig);
+                const emitter = new SyncEmitter(id, emitterConfig);
                 if (!this.isRegisteredEmitter(emitter.id)) {
                     this.registerSyncEmitter(emitter);
                     emitter.create(component);
@@ -270,26 +262,11 @@ namespace Sync {
      *
      * */
 
-    export type EventType = (
-        | 'extremes'
-        | 'visibility'
-        | 'highlight'
-    );
+    /** @internal */
+    export type EmitterConfig = SyncEmitter['func'];
 
     /** @internal */
-    export type EmitterConfig = (
-        | [SyncEmitter['id'], SyncEmitter['func']]
-        | SyncEmitter['func']
-    );
-
-    /** @internal */
-    export type HandlerConfig = (
-        [
-            SyncHandler['id'],
-            SyncHandler['func']
-        ] |
-        SyncHandler['func']
-    );
+    export type HandlerConfig = SyncHandler['func'];
 
     export interface OptionsEntry {
 
@@ -325,6 +302,99 @@ namespace Sync {
         Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
     );
 
+    /** @internal */
+    export type RawOptionsRecord = (
+        Record<(
+            SyncEmitter['id']|SyncHandler['id']
+        ), undefined|boolean|OptionsEntry>
+    );
+
+    /**
+     * Crossfilter sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     affectNavigator: true
+     * }
+     * ```
+     */
+    export interface CrossfilterSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether this navigator component's content should be affected by
+         * other navigators with crossfilter enabled.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators | Affect Navigators Enabled }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Affect Navigators Disabled }
+         *
+         * @default false
+         */
+        affectNavigator?: boolean;
+    }
+
+    /**
+     * Highlight sync options.
+     *
+     * Example:
+     * ```
+     * {
+     *     enabled: true,
+     *     highlightPoint: true,
+     *     showTooltip: false,
+     *     showCrosshair: true
+     * }
+     * ```
+     */
+    export interface HighlightSyncOptions extends Sync.OptionsEntry {
+        /**
+         * Whether the marker should be synced. When hovering over a point in
+         * other component in the same group, the 'hover' state is enabled at
+         * the corresponding point in this component.
+         *
+         * @default true
+         */
+        highlightPoint?: boolean;
+        /**
+         * Whether the tooltip should be synced. When hovering over a point in
+         * other component in the same group, in this component the tooltip
+         * should be also shown.
+         *
+         * @default true
+         */
+        showTooltip?: boolean;
+        /**
+         * Whether the crosshair should be synced. When hovering over a point in
+         * other component in the same group, in this component the crosshair
+         * should be also shown.
+         *
+         * Works only for axes that have crosshair enabled.
+         *
+         * @default true
+         */
+        showCrosshair?: boolean;
+    }
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const defaultSyncOptions: Record<string, unknown> = {
+        crossfilter: {
+            affectNavigator: false
+        },
+        highlight: {
+            highlightPoint: true,
+            showTooltip: true,
+            showCrosshair: true
+        }
+    };
 }
 /* *
  *

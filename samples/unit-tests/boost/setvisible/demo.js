@@ -67,6 +67,7 @@ QUnit.test('Boosted and not boosted series - visibility', function (assert) {
     assert.strictEqual(
         series.markerGroup.attr('visibility'),
         'hidden',
-        'Markers are hidden altogether with series even in the not boosted series (#10013).'
+        'Markers are hidden altogether with series even in the not boosted ' +
+        'series (#10013).'
     );
 });

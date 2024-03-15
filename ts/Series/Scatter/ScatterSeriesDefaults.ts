@@ -204,7 +204,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  * @apioption series.scatter.data
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file
 
 /* *
  *

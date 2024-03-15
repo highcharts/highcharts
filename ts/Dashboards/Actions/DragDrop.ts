@@ -530,7 +530,8 @@ class DragDrop {
 
         if (align === 'right' || align === 'left') {
             const dropContextOffsets = GUIElement.getOffsets(
-                dragDrop.dropContext, dragDrop.editMode.board.container);
+                dragDrop.dropContext, dragDrop.editMode.board.container
+            );
             const { width, height } =
                 GUIElement.getDimFromOffsets(dropContextOffsets);
 

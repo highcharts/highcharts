@@ -23,7 +23,8 @@ QUnit.test('Pyramid centering (issue #5500)', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].group.getBBox().y >= chart.plotHeight / 2 - 2, // substract two for future rounding adjustments
+        chart.series[0].group.getBBox().y >= chart.plotHeight / 2 - 2, //
+        // substract two for future rounding adjustments
         'Pyramid is in lower half'
     );
 });

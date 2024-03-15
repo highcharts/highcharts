@@ -5,7 +5,11 @@ Highcharts.chart('container', {
             selection: function (event) {
                 let text;
                 if (event.xAxis) {
-                    text = 'min: ' + Highcharts.numberFormat(event.xAxis[0].min, 2) + ', max: ' + Highcharts.numberFormat(event.xAxis[0].max, 2);
+                    text = 'min: ' + Highcharts.numberFormat(
+                        event.xAxis[0].min, 2
+                    ) + ', max: ' + Highcharts.numberFormat(
+                        event.xAxis[0].max, 2
+                    );
                 } else {
                     text = 'Selection reset';
                 }
@@ -37,18 +41,22 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'column',
-        data: [29.9, 71.5,
+        data: [
+            29.9, 71.5,
             106.4, 129.2,
             144.0, 176.0,
             135.6, 148.5,
             216.4, 194.1,
-            95.6, 54.4]
+            95.6, 54.4
+        ]
     }, {
-        data: [29.9, 71.5,
+        data: [
+            29.9, 71.5,
             106.4, 129.2,
             144.0, 176.0,
             135.6, 148.5,
             216.4, 194.1,
-            95.6, 54.4].reverse()
+            95.6, 54.4
+        ].reverse()
     }]
 });

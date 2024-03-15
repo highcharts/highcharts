@@ -215,7 +215,8 @@
                 },
                 description:
                     'This is a map showing flight routes to Qatar ' +
-                        'from countries that participated in the 2022 World Cup.'
+                        'from countries that participated in the 2022 World ' +
+                        'Cup.'
             },
             fillOpacity: 1,
             width: 0.2,

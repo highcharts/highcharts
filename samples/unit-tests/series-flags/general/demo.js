@@ -135,7 +135,8 @@ QUnit.test('Flags in panes', function (assert) {
     assert.strictEqual(
         chart.series[2].group.attr('translateY'),
         chart.series[1].group.attr('translateY'),
-        'The flag series group should have the same vertical translation as its onSeries group'
+        'The flag series group should have the same vertical translation as ' +
+        'its onSeries group'
     );
 });
 
@@ -199,7 +200,8 @@ QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
         [...chart.container.querySelectorAll('.highcharts-flags-series')]
             .some(group =>  group.getAttribute('transform').includes('NaN')),
         false,
-        'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
+        'The flag series\' DOM elements should not contain NaN attributes ' +
+        'values (#14063).'
     );
 });
 

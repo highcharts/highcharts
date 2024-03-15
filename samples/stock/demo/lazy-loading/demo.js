@@ -45,7 +45,8 @@ fetch(dataURL)
             },
 
             subtitle: {
-                text: 'Displaying 1.7 million data points in Highcharts Stock by async server loading',
+                text: 'Displaying 1.7 million data points in Highcharts ' +
+                    'Stock by async server loading',
                 align: 'left'
             },
 

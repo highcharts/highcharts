@@ -25,7 +25,7 @@ const {
 class ContextDetection {
     public static isGUIElementOnParentEdge(
         mouseContext: Cell,
-        side: string // right, left, top, bottom
+        side: string // 'right', 'left', 'top', 'bottom'
     ): boolean {
         const visibleElements = (side === 'top' || side === 'bottom') ?
             mouseContext.row.layout.getVisibleRows() :
@@ -83,7 +83,7 @@ class ContextDetection {
     ): ContextDetection.ContextDetails {
         let sideOffset;
 
-        // get cell offsets, width, height
+        // Get cell offsets, width, height
         const mouseCellContextOffsets = GUIElement.getOffsets(mouseCellContext);
         const { width, height } =
             GUIElement.getDimFromOffsets(mouseCellContextOffsets);
@@ -97,7 +97,7 @@ class ContextDetection {
         const leftSideX = e.clientX - mouseCellContextOffsets.left;
         const topSideY = e.clientY - mouseCellContextOffsets.top;
 
-        // get cell side - right, left, top, bottom
+        // Get cell side - right, left, top, bottom
         const sideY =
             topSideY >= -offset && topSideY <= offset ? 'top' :
                 topSideY - height >= -offset && topSideY - height <= offset ?
@@ -159,7 +159,7 @@ class ContextDetection {
 namespace ContextDetection {
     export interface ContextDetails {
         cell: Cell;
-        side: string; // right, left, top, bottom
+        side: string; // 'right', 'left', 'top', 'bottom'
     }
 }
 

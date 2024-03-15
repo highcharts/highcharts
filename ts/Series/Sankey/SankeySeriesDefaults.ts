@@ -86,7 +86,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
         enabled: true,
 
-        backgroundColor: 'none', // enable padding
+        backgroundColor: 'none', // Enable padding
 
         crop: false,
 
@@ -665,7 +665,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * @apioption series.sankey.data.weight
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file
 
 /* *
  *

@@ -71,7 +71,7 @@ const board = Dashboards.board('container', {
     },
     components: [{
         type: 'Threshold',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         component: 'HTML',
         value: 10,
         options: {

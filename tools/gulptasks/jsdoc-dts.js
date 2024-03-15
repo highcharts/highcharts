@@ -40,6 +40,7 @@ function jsDocESMDTS() {
             file.endsWith('.src.d.ts') &&
             !file.endsWith('globals.src.d.ts') &&
             !file.includes('dashboards') &&
+            !file.includes('datagrid') &&
             !file.includes('es-modules')
         ));
     const path = require('path');
@@ -56,6 +57,8 @@ function jsDocESMDTS() {
             path.dirname(target),
             dtsFile.substring(0, dtsFile.length - 5)
         );
+
+        fsLib.makePath(path.dirname(target));
 
         promises.push(fs.promises.writeFile(
             target,

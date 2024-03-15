@@ -163,7 +163,8 @@ function allocateIfNotSeriesBoosting(
 ): void {
     const boost = series.boost;
 
-    if (renderer &&
+    if (
+        renderer &&
         boost &&
         boost.target &&
         boost.canvas &&
@@ -506,13 +507,12 @@ function createAndAttachRenderer(
         });
 
         if (!boost.wgl.init(boost.canvas)) {
-            // The OGL renderer couldn't be inited.
-            // This likely means a shader error as we wouldn't get to this point
-            // if there was no WebGL support.
+            // The OGL renderer couldn't be inited. This likely means a shader
+            // error as we wouldn't get to this point if there was no WebGL
+            // support.
             error('[highcharts boost] - unable to init WebGL renderer');
         }
 
-        // target.ogl.clear();
         boost.wgl.setOptions(chart.options.boost || {});
 
         if (target instanceof ChartClass) {
@@ -632,7 +632,7 @@ function enterBoost(
     series: Series
 ): void {
     series.boost = series.boost || {
-        // faster than a series bind:
+        // Faster than a series bind:
         getPoint: ((bp): BoostPointComposition => getPoint(series, bp))
     };
 
@@ -1256,7 +1256,7 @@ function seriesRenderCanvas(this: Series): void {
                     }
                     // Add points and reset
                     if (!compareX || clientX !== lastClientX) {
-                        // maxI is number too:
+                        // `maxI` is number too:
                         if (typeof minI !== 'undefined') {
                             plotY =
                                 yAxis.toPixels(maxVal as any, true);
