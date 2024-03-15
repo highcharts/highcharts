@@ -65,5 +65,10 @@
         "enabled": true,
         "indentStyle": "space",
         "indentWidth": 4
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single"
+        }
     }
 }
