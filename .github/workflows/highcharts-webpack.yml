@@ -1,6 +1,9 @@
 name: Highcharts webpack monitoring
 
 on:
+  pull_request:
+    branches:
+      - 'master'
   workflow_call:
     secrets:
       PR_COMMENT_TOKEN:
