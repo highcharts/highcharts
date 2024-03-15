@@ -348,16 +348,17 @@ class AreaSeries extends LineSeries {
             ): void {
                 const point = points[i],
                     stackedValues = stacking &&
-                        stacks[point.x as any].points[seriesIndex as any],
+                        stacks[point.x as any].allPoints[seriesIndex as any],
                     nullVal = (point as any)[side + 'Null'] || 0,
-                    cliffVal = (point as any)[side + 'Cliff'] || 0;
+                    cliffVal = (point as any)[side + 'Cliff'] || 0,
+                    cliffHidden =
+                        (point as any)[side + 'CliffHidden'] || false;
 
                 let top,
                     bottom,
                     isNull = true;
 
-                if (cliffVal || nullVal || stackedValues) {
-
+                if (cliffVal || nullVal || cliffHidden) {
                     top = (nullVal ?
                         (stackedValues as any)[0] :
                         (stackedValues as any)[1]
@@ -513,8 +514,6 @@ class AreaSeries extends LineSeries {
                 return (a as any) - (b as any);
             });
 
-            const visibleSeries = yAxisSeries.map((s): boolean => s.visible);
-
             keys.forEach(function (x: string, idx: number): void {
                 let y = 0,
                     stackPoint,
@@ -534,7 +533,8 @@ class AreaSeries extends LineSeries {
                                 'leftCliff',
                             otherStack = stack[keys[idx + direction]];
 
-                        let cliff = 0;
+                        let cliff = 0,
+                            hiddenCliff = false;
 
                         // If there is a stack next to this one,
                         // to the left or to the right...
@@ -544,26 +544,34 @@ class AreaSeries extends LineSeries {
                             // depending on reversedStacks
                             while (i >= 0 && i < seriesLength) {
                                 const si = yAxisSeries[i].index;
-                                stackPoint = otherStack.points[si];
+                                stackPoint = otherStack.allPoints[si];
                                 if (!stackPoint) {
-                                    // If the next point in this series is
-                                    // missing, mark the point with
-                                    // point.leftNull or point.rightNull = true.
-                                    if (si === series.index) {
-                                        (pointMap[x] as any)[nullName] = true;
+                                    if (yAxisSeries[i].visible) {
+                                        // If the next point in this series is
+                                        // missing, mark the point with
+                                        // point.leftNull or
+                                        // point.rightNull = true.
+                                        if (si === series.index) {
+                                            (pointMap[x] as any)[nullName] =
+                                                true;
 
-                                    // If there are missing points in the next
-                                    // stack in any of the series below this
-                                    // one, we need to subtract the missing
-                                    // values and add a hiatus to the left or
-                                    // right.
-                                    } else if (visibleSeries[i]) {
-                                        stackedValues = stack[x].points[si];
-                                        if (stackedValues) {
-                                            cliff -= (
-                                                stackedValues[1] -
-                                                stackedValues[0]
-                                            );
+                                        // If there are missing points in the
+                                        // next stack in any of the series below
+                                        // this one, we need to substract the
+                                        // missing values and add a hiatus to
+                                        // the left or right.
+                                        } else if (yAxisSeries[i]) {
+                                            stackedValues = stack[x].points[si];
+                                            if (stackedValues) {
+                                                cliff -= (
+                                                    stackedValues[1] -
+                                                    stackedValues[0]
+                                                );
+                                            }
+                                        }
+                                    } else {
+                                        if (stack[x].allPoints[si]) {
+                                            hiddenCliff = true;
                                         }
                                     }
                                 }
@@ -573,6 +581,8 @@ class AreaSeries extends LineSeries {
                             }
                         }
                         (pointMap[x] as any)[cliffName] = cliff;
+                        (pointMap[x] as any)[`${cliffName}Hidden`] =
+                            hiddenCliff;
                     });
 
 

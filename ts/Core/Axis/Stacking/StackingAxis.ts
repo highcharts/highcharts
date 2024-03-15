@@ -144,7 +144,7 @@ function chartGetStacks(
     chart.series.forEach((series): void => {
         const xAxisOptions = series.xAxis && series.xAxis.options || {};
 
-        if (series.options.stacking && series.reserveSpace()) {
+        if (series.options.stacking) {
             series.stackKey = [
                 series.type,
                 pick(series.options.stack, ''),
@@ -340,7 +340,6 @@ function seriesSetStackedPoints(
 
     if (
         !type ||
-        !this.reserveSpace() ||
         // Group stacks (centerInCategory) belong on the x-axis, other stacks on
         // the y-axis.
         ({ group: 'xAxis' }[type] || 'yAxis') !== axis.coll
@@ -363,7 +362,8 @@ function seriesSetStackedPoints(
         negStacks = series.negStacks,
         stacking = axis.stacking,
         stacks = stacking.stacks,
-        oldStacks = stacking.oldStacks;
+        oldStacks = stacking.oldStacks,
+        reserveSpace = !this.reserveSpace();
 
     let stackIndicator: (StackItemIndicatorObject|undefined),
         isNegative,
@@ -374,7 +374,6 @@ function seriesSetStackedPoints(
         i,
         x,
         y;
-
 
     stacking.stacksTouched += 1;
 
@@ -418,28 +417,43 @@ function seriesSetStackedPoints(
         // If the StackItem doesn't exist, create it first
         stack = stacks[key][x];
         if (y !== null) {
-            stack.points[pointKey] = stack.points[series.index] = [
+            const stackPoints = [
                 pick(stack.cumulative, stackThreshold)
             ];
 
-            // Record the base of the stack
-            if (!defined(stack.cumulative)) {
-                stack.base = pointKey;
+            if (!reserveSpace) {
+                stack.points[pointKey] = stack.points[series.index] =
+                    stackPoints;
+
+                // Record the base of the stack
+                if (!defined(stack.cumulative)) {
+                    stack.base = pointKey;
+                }
+                stack.touched = stacking.stacksTouched;
             }
-            stack.touched = stacking.stacksTouched;
+            // Prevent reference with spread
+            stack.allPoints[pointKey] = stack.allPoints[series.index] =
+                [...stackPoints];
 
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
-                stack.points[pointKey][0] = stack.points[
+                const test = stack.points[
                     series.index + ',' + x + ',0'
                 ][0];
+
+                if (!reserveSpace) {
+                    stack.points[pointKey][0] = test;
+                }
+                stack.allPoints[pointKey][0] = test;
             }
 
         // When updating to null, reset the point stack (#7493)
         } else {
             delete stack.points[pointKey];
             delete stack.points[series.index];
+            delete stack.allPoints[pointKey];
+            delete stack.allPoints[series.index];
         }
 
         // Add value to the stack total
@@ -474,34 +488,44 @@ function seriesSetStackedPoints(
             total = correctFloat(total + (y || 0));
         }
 
+        let cumulative;
+
         if (type === 'group') {
             // This point's index within the stack, pushed to stack.points[1]
-            stack.cumulative = (total || 1) - 1;
+            cumulative = (total || 1) - 1;
         } else {
-            stack.cumulative = correctFloat(
+            cumulative = correctFloat(
                 pick(stack.cumulative, stackThreshold) +
                 (y || 0)
             );
         }
-        stack.total = total;
+        if (!reserveSpace) {
+            stack.cumulative = cumulative;
+            stack.total = total;
+        }
 
         if (y !== null) {
-            stack.points[pointKey].push(stack.cumulative);
-            stackedYData[i] = stack.cumulative;
-            stack.hasValidPoints = true;
+            if (!reserveSpace) {
+                stack.points[pointKey].push(cumulative);
+                stackedYData[i] = cumulative;
+                stack.hasValidPoints = true;
+            }
+            stack.allPoints[pointKey].push(cumulative);
         }
     }
 
-    if (type === 'percent') {
-        stacking.usePercentage = true;
-    }
+    if (!reserveSpace) {
+        if (type === 'percent') {
+            stacking.usePercentage = true;
+        }
 
-    if (type !== 'group') {
-        this.stackedYData = stackedYData; // To be used in getExtremes
-    }
+        if (type !== 'group') {
+            this.stackedYData = stackedYData; // To be used in getExtremes
+        }
 
-    // Reset old stacks
-    stacking.oldStacks = {};
+        // Reset old stacks
+        stacking.oldStacks = {};
+    }
 }
 
 /* *
