@@ -346,13 +346,13 @@ function generateDynamicCode(
         } else {
             return (
                 '\n    ' + generatePropertyComment(branch) +
-                getPropertyName(branch) + ': ' + getMemberType(branch) + ';\n'
+                getPropertyName(branch) + '?: ' + getMemberType(branch) + ';\n'
             );
         }
     }
 
     return (
-        '\n    ' + getPropertyName(branch) + ': '
+        '\n    ' + getPropertyName(branch) + '?: '
         + getMemberType(branch) + ';\n'
     );
 
@@ -388,6 +388,15 @@ function generateInterfaceComment(
         result += '\n * @todo write doclet';
     }
 
+    result = result.split(/\n/gu).map(l => {
+        l = l.trimEnd();
+        if (l.length > 80) {
+            const br = l.substring(0, 80).lastIndexOf(' ');
+            return l.substring(0, br) + '\n * ' + l.substring(br);
+        }
+        return l;
+    }).join('\n');
+
     return `${result}\n */\n`;
 }
 
@@ -413,14 +422,23 @@ function generatePropertyComment(
                 result.length === 3 &&
                 part.tag === 'description'
             ) {
-                result += `\n     * ${text}`;
+                result += `\n     * ${text}\n     *`;
             } else {
-                result += `\n     *\n     * @${part.tag} ${text}`;
+                result += `\n     * @${part.tag} ${text}`;
             }
         }
     } else {
         result += '\n     * @todo write doclet';
     }
+
+    result = result.split(/\n/gu).map(l => {
+        l = l.trimEnd();
+        if (l.length > 80) {
+            const br = l.substring(0, 80).lastIndexOf(' ');
+            return l.substring(0, br) + '\n     * ' + l.substring(br);
+        }
+        return l;
+    }).join('\n');
 
     return `${result}\n     */\n    `;
 }
@@ -800,8 +818,12 @@ async function moveSeriesDoclets(
             true
         );
 
-        putDocletsTree(target, tree);
+        writeDocletsTree(target, tree);
 
+        verbose && console.info('');
+        console.info('Updateing', source.fileName);
+
+        removeDoclets(source);
     }
 
 }
@@ -901,7 +923,7 @@ function mergeInterfaceOverwrite(
  * @param {TS.SourceFile} target
  * @param {Record<string,*>} tree
  */
-function putDocletsTree(
+function writeDocletsTree(
     target,
     tree
 ) {
@@ -1034,8 +1056,8 @@ function putDocletsTree(
     if (changes.length) {
 
         if (verbose) {
+            console.info('');
             console.info('Applying', changes.length, 'change(s)...');
-            console.info(JSON.stringify(changes.map(c => c[2].fullName + ' ' + c[2].type), null, '  '));
         }
 
         let targetCode = target.getFullText();
@@ -1074,6 +1096,7 @@ function putDocletsTree(
 
 }
 
+
 /**
  * @param {Array<Record<string,string>>} doclet
  * @param {string} tag
@@ -1095,6 +1118,21 @@ function removeTag(
         doclet.splice(index, 1);
     }
 
+}
+
+
+/**
+ * @param {TS.SourceFile} source
+ * @return {string}
+ */
+function removeDoclets(
+    source
+) {
+    FS.writeFileSync(
+        source.fileName, 
+        source.getFullText().replace(/\n[ \t]*\/\*\*.*?\*\//gsu, ''),
+        'utf8'
+    );
 }
 
 
