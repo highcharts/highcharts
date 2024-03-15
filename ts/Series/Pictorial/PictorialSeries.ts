@@ -320,7 +320,8 @@ function renderStackShadow(
             .filter((p): boolean => p.split(',').length > 1),
         allSeries = stack.axis.chart.series,
         seriesIndexes = stackKeys.map((key): number =>
-            parseFloat(key.split(',')[0]));
+            parseFloat(key.split(',')[0])
+        );
 
     let seriesIndex = -1;
 

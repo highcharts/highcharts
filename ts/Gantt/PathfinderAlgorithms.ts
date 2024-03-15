@@ -550,8 +550,10 @@ function fastAvoid(
         // fromPoint in the X-dimension.
         let i = searchDirection < 0 ?
             // Searching backwards, start at last obstacle before last point
-            min(findLastObstacleBefore(chartObstacles, lastPoint.x),
-                chartObstacles.length - 1) :
+            min(
+                findLastObstacleBefore(chartObstacles, lastPoint.x),
+                chartObstacles.length - 1
+            ) :
             // Forwards. Since we're not sorted by xMax, we have to look
             // at all obstacles.
             0;

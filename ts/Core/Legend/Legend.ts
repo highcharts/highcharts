@@ -774,7 +774,8 @@ class Legend {
             legendItem.labelWidth ||
             bBox.width + itemExtraWidth;
         legend.maxItemWidth = Math.max(
-            legend.maxItemWidth, (item.itemWidth as any)
+            legend.maxItemWidth, (item.itemWidth as any
+            )
         );
         legend.totalItemWidth += item.itemWidth as any;
 

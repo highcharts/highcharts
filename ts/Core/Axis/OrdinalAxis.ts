@@ -459,7 +459,8 @@ namespace OrdinalAxis {
             // Convert back from modivied value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
-                    axis.minPixelPadding),
+                    axis.minPixelPadding
+                ),
                 index = correctFloat(
                     ordinal.getIndexOfPoint(pixelVal, positions)
                 ),
@@ -625,7 +626,8 @@ namespace OrdinalAxis {
                 ),
                 // How many ordinal units did we move?
                 movedUnits = Math.round(
-                    ((mouseDownX as any) - chartX) / pointPixelWidth),
+                    ((mouseDownX as any) - chartX) / pointPixelWidth
+                ),
                 // Get index of all the chart's points
                 extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
@@ -1438,7 +1440,8 @@ namespace OrdinalAxis {
                 ),
                 // `toValue` for the first point.
                 shiftIndex = correctFloat(
-                    (val - firstPointX) / ordinalPointPixelInterval);
+                    (val - firstPointX) / ordinalPointPixelInterval
+                );
 
             return Additions.findIndexOf(
                 ordinalArray,

@@ -380,7 +380,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (point.weight || 0) *
                     translationFactor *
                     fromNode.scale,
-                    (series.options.minLinkWidth || 0)
+                    (series.options.minLinkWidth || 0
+                    )
                 )),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;

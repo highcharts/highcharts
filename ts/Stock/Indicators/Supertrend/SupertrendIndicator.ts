@@ -483,7 +483,8 @@ class SupertrendIndicator extends SMAIndicator {
         }
 
         // Generate lines:
-        objectEach(groupedPoints,
+        objectEach(
+            groupedPoints,
             function (values, lineName): void {
                 indicator.points = values;
                 indicator.options = merge(

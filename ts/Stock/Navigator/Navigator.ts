@@ -453,8 +453,10 @@ class Navigator {
             !maskInside
         ].forEach((hasMask: (boolean|undefined), index: number): void => {
             const shade = renderer.rect()
-                .addClass('highcharts-navigator-mask' +
-                    (index === 1 ? '-inside' : '-outside'))
+                .addClass(
+                    'highcharts-navigator-mask' +
+                    (index === 1 ? '-inside' : '-outside')
+                )
                 .add(navigatorGroup);
 
             if (!chart.styledMode) {
@@ -1932,8 +1934,10 @@ class Navigator {
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data comes in, unless user set navigator.stickToMax to false.
-        navigator.stickToMax = pick(this.chart.options.navigator &&
-            this.chart.options.navigator.stickToMax, shouldStickToMax);
+        navigator.stickToMax = pick(
+            this.chart.options.navigator &&
+            this.chart.options.navigator.stickToMax, shouldStickToMax
+        );
 
         navigator.stickToMin = navigator.shouldStickToMin(
             baseSeries,

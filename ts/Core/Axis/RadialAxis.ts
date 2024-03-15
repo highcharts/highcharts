@@ -389,7 +389,8 @@ namespace RadialAxis {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetPosition',
-                onTickAfterGetPosition);
+                onTickAfterGetPosition
+            );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
 
@@ -873,9 +874,10 @@ namespace RadialAxis {
             // In case when translatedVal is negative, the 0 value must be
             // used instead, in order to deal with lines and labels that
             // fall out of the visible range near the center of a pane
-            pick(this.isCircular ?
-                length :
-                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            pick(
+                this.isCircular ?
+                    length :
+                    (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
             ) - this.offset
         );
     }

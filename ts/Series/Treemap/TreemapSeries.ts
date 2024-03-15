@@ -970,7 +970,8 @@ class TreemapSeries extends ScatterSeries {
             );
 
             series.eventsToUnbind.push(
-                addEvent(series, 'destroy',
+                addEvent(
+                    series, 'destroy',
                     function destroyEvents(e: any): void {
                         const chart = this.chart;
                         if (chart.breadcrumbs && !e.keepEventsForUpdate) {

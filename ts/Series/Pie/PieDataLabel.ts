@@ -691,8 +691,10 @@ namespace ColumnDataLabel {
         if (!ret) {
             // Handle horizontal size and center
             if ((centerOption as any)[0] !== null) { // Fixed center
-                newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize as any);
+                newSize = Math.max(
+                    center[2] -
+                    Math.max(overflow[1], overflow[3]), minSize as any
+                );
 
             } else { // Auto center
                 newSize = Math.max(

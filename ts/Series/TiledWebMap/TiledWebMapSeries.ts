@@ -78,7 +78,8 @@ function onRecommendMapView(
     const { geoBounds, chart } = e,
         twm: TiledWebMapSeriesOptions =
         (chart.options.series || []).filter(
-            (s: any): boolean => s.type === 'tiledwebmap')[0];
+            (s: any): boolean => s.type === 'tiledwebmap'
+        )[0];
 
     if (twm && twm.provider && twm.provider.type && !twm.provider.url) {
         const ProviderDefinition =
@@ -517,7 +518,8 @@ class TiledWebMapSeries extends MapSeries {
                                                     (
                                                         mapView.zoom < 0 ? 0 :
                                                             Math.floor(
-                                                                mapView.zoom)
+                                                                mapView.zoom
+                                                            )
                                                     )
                                             ) ||
                                             givenZoom === series.minZoom
@@ -563,7 +565,8 @@ class TiledWebMapSeries extends MapSeries {
                         y: 0
                     }),
                     topLeftArr = mapView.projection.def.inverse(
-                        [topLeftUnits.x, topLeftUnits.y]),
+                        [topLeftUnits.x, topLeftUnits.y]
+                    ),
                     topLeft = {
                         lon: topLeftArr[0] - lambda,
                         lat: topLeftArr[1]
@@ -573,7 +576,8 @@ class TiledWebMapSeries extends MapSeries {
                         y: chart.plotHeight
                     }),
                     bottomRightArr = mapView.projection.def.inverse(
-                        [bottomRightUnits.x, bottomRightUnits.y]),
+                        [bottomRightUnits.x, bottomRightUnits.y]
+                    ),
                     bottomRight = {
                         lon: bottomRightArr[0] - lambda,
                         lat: bottomRightArr[1]
@@ -638,7 +642,8 @@ class TiledWebMapSeries extends MapSeries {
                                 Math.pow(2, parseFloat(zoomKey))),
                             scaledTileSize = scale * 256,
                             firstTile = tiles[zoomKey].tiles[Object.keys(
-                                tiles[zoomKey].tiles)[0]],
+                                tiles[zoomKey].tiles
+                            )[0]],
                             { posX, posY } = tiles[zoomKey].tiles[key];
 
                         if (
@@ -713,7 +718,8 @@ class TiledWebMapSeries extends MapSeries {
                                 series.isAnimating = true;
                                 tiles[zoomKey].tiles[key]
                                     .attr({ animator: 0 })
-                                    .animate({ animator: 1 }, { step },
+                                    .animate(
+                                        { animator: 1 }, { step },
                                         function (): void {
                                             series.isAnimating = false;
                                             // If animate ended after loading
@@ -739,9 +745,11 @@ class TiledWebMapSeries extends MapSeries {
                                         ) &&
                                         Object.keys(tiles[zoomKey].tiles)
                                             .map((key): TileItem =>
-                                                tiles[zoomKey].tiles[key])
+                                                tiles[zoomKey].tiles[key]
+                                            )
                                             .some((tile): boolean =>
-                                                tile.opacity === 0)
+                                                tile.opacity === 0
+                                            )
                                     )
                                 ) {
                                     series.redrawTiles = false;

@@ -298,7 +298,8 @@ namespace OnSeriesComposition {
                     // We're inside xAxis range
                     if (inverted) {
                         point.plotY = xAxis.translate(
-                            (point.x as any),
+                            (
+                                point.x as any),
                             0 as any,
                             1 as any,
                             0 as any,

@@ -323,7 +323,8 @@ class WaterfallSeries extends ColumnSeries {
                             false,
                             true
                         ) +
-                        (reversedYAxis ? isPos : 0))
+                        (reversedYAxis ? isPos : 0)
+                        )
                     ) - graphNormalizer;
                 } else {
                     yPos =

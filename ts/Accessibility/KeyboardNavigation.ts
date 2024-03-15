@@ -124,15 +124,21 @@ class KeyboardNavigation {
 
         this.update();
 
-        ep.addEvent(this.tabindexContainer, 'keydown',
-            (e: KeyboardEvent): void => this.onKeydown(e));
+        ep.addEvent(
+            this.tabindexContainer, 'keydown',
+            (e: KeyboardEvent): void => this.onKeydown(e)
+        );
 
-        ep.addEvent(this.tabindexContainer, 'focus',
-            (e: FocusEvent): void => this.onFocus(e));
+        ep.addEvent(
+            this.tabindexContainer, 'focus',
+            (e: FocusEvent): void => this.onFocus(e)
+        );
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName,
-                (e): void => this.onMouseUp(e as MouseEvent))
+            ep.addEvent(
+                doc, eventName,
+                (e): void => this.onMouseUp(e as MouseEvent)
+            )
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
@@ -448,7 +454,8 @@ class KeyboardNavigation {
         // memory leak (#20329).
         if (this.exitAnchor) {
             const el = this.eventProvider.eventRemovers.find((el): boolean =>
-                el.element === this.exitAnchor);
+                el.element === this.exitAnchor
+            );
             if (el && defined(el.remover)) {
                 this.eventProvider.removeEvent(el.remover);
             }

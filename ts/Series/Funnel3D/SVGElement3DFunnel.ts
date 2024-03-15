@@ -186,7 +186,8 @@ class SVGElement3DFunnel extends SVGElement3D {
                     gradient: NonNullable<GradientColor['linearGradient']> =
                         (fillColor as any).linearGradient,
                     alteredGradient = merge<GradientColor>(
-                        (fillColor as any),
+                        (
+                            fillColor as any),
                         {
                             linearGradient: {
                                 x1: box.x + gradient.x1 * box.width,

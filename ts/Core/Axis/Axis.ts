@@ -394,7 +394,8 @@ class Axis {
             axis.side,
             (horiz ?
                 (axis.opposite ? 0 : 2) : // Top : bottom
-                (axis.opposite ? 1 : 3)) // Right : left
+                (axis.opposite ? 1 : 3)
+            ) // Right : left
         );
 
         /**
@@ -1479,7 +1480,8 @@ class Axis {
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        (axis.max as any), (series.xData as any).length - 1
+                        (
+                            axis.max as any), (series.xData as any).length - 1
                     );
 
                     series.processData();
