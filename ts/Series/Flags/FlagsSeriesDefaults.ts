@@ -34,13 +34,15 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Flags on a line series
  *
  * @extends      plotOptions.column
- * @excluding    animation, borderColor, borderRadius, borderWidth,
+ * @excluding    animation, borderColor, borderWidth,
  *               colorByPoint, cropThreshold, dataGrouping, pointPadding,
  *               pointWidth, turboThreshold
  * @product      highstock
  * @optionparent plotOptions.flags
  */
 const FlagsSeriesDefaults: FlagsSeriesOptions = {
+
+    borderRadius: 0,
 
     /**
      * In case the flag is placed on a series, on what point key to place
