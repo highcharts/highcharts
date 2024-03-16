@@ -40,6 +40,9 @@ interface PathParams {
     parentVisible: boolean;
 }
 
+/**
+ *
+ */
 function getDefaultPath(pathParams: PathParams): SVGPath {
     const {
         x1,
@@ -72,6 +75,9 @@ function getDefaultPath(pathParams: PathParams): SVGPath {
         ) :
         path;
 }
+/**
+ *
+ */
 function getStraightPath(pathParams: PathParams): SVGPath {
     const {
         x1,
@@ -93,6 +99,9 @@ function getStraightPath(pathParams: PathParams): SVGPath {
         ['L', x1, y2]
     ];
 }
+/**
+ *
+ */
 function getCurvedPath(pathParams: PathParams): SVGPath {
     const {
         x1,

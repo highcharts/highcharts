@@ -39,8 +39,10 @@ function initDataLabelsDefer(this: SimulationSeries): void {
     // dataLabels.animation.defer time unless
     // the dataLabels.animation = false or dataLabels.defer = false
     // or if the simulation is disabled
-    if (!dlOptions?.defer ||
-        !this.options.layoutAlgorithm?.enableSimulation) {
+    if (
+        !dlOptions?.defer ||
+        !this.options.layoutAlgorithm?.enableSimulation
+    ) {
         this.deferDataLabels = false;
     } else {
         syncTimeout((): void => {

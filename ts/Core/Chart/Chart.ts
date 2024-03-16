@@ -3290,7 +3290,8 @@ class Chart {
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
         objectEach(options, function (val, key): void {
-            if ((chart as any)[key] &&
+            if (
+                (chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
                 (chart as any)[key].update(val, false);

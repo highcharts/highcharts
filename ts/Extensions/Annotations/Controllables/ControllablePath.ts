@@ -379,8 +379,8 @@ class ControllablePath extends Controllable {
         const setMarker = function (
             markerType: ('markerEnd'|'markerStart')
         ): void {
-            let markerId = itemOptions[markerType],
-                def,
+            const markerId = itemOptions[markerType];
+            let def,
                 predefinedMarker,
                 key,
                 marker;

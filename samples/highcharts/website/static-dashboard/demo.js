@@ -58,7 +58,8 @@ Dashboards.board('container', {
                 },
                 subtitle: {
                     useHTML: true,
-                    text: '<p>DV = 700mcg - 900mcg (based on age and gender)</p>',
+                    text: '<p>DV = 700mcg - 900mcg (based on age and ' +
+                        'gender)</p>',
                     y: 30
                 },
                 chart: {

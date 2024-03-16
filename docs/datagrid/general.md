@@ -9,7 +9,7 @@ By incorporating this component, users can effectively interact with data in a s
 - The package can be imported through a script tag from the Highcharts CDN like this:
 
     ```html
-    <script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
+    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
     ```
 
 - Or it can be installed through NPM like this:
@@ -51,7 +51,7 @@ const grid = new DataGrid.DataGrid('container', {
 The DataGrid component requires the following styles to be imported in your main CSS file:
 
 ```css
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
 

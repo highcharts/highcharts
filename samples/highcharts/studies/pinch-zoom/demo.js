@@ -51,7 +51,8 @@ Highcharts.addEvent(Highcharts.Axis, 'setExtremes', function (e) {
         },
         subtitle: {
             text: document.ontouchstart === undefined ?
-                'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+                'Click and drag in the plot area to zoom in' :
+                'Pinch the chart to zoom in',
             align: 'left'
         },
         xAxis: {

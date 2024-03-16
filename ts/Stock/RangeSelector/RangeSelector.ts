@@ -2000,7 +2000,8 @@ class RangeSelector {
 
         const minPosition = Math.min(inputPositionY, buttonPositionY);
 
-        if ((inputPositionY < 0 && buttonPositionY < 0) ||
+        if (
+            (inputPositionY < 0 && buttonPositionY < 0) ||
             (inputPositionY > 0 && buttonPositionY > 0)
         ) {
             rangeSelectorHeight += Math.abs(minPosition);

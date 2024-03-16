@@ -9,13 +9,15 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            valueDescriptionFormat: '{index}. {point.from} to {point.to}, {point.weight}.'
+            valueDescriptionFormat: '{index}. {point.from} to {point.to}, ' +
+                '{point.weight}.'
         }
     },
     tooltip: {
         headerFormat: null,
         pointFormat:
-      '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight:.2f} quads',
+      '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight:.2f} ' +
+      'quads',
         nodeFormat: '{point.name}: {point.sum:.2f} quads'
     },
     series: [{

@@ -123,7 +123,8 @@ const changeType = () => {
     const series = document.querySelector('.series');
     const seriesInd =
         parseInt(series.options[series.selectedIndex].value, 10) - 1;
-    const type = chart.series[seriesInd].type === 'column' ? 'scatter' : 'column';
+    const type = chart.series[seriesInd].type ===
+        'column' ? 'scatter' : 'column';
     chart.series[seriesInd].update({
         type: type
     });

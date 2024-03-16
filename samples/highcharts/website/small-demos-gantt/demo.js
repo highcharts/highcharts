@@ -45,7 +45,8 @@ function inverted() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.'
                 }
             }
         },
@@ -288,10 +289,12 @@ function subtasks() {
                 descriptionFormatter: function (point) {
                     const dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,
-                        dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
+                        dependsOn = dependency ?
+                            ' Depends on ' + dependency + '.' : '';
 
                     return Highcharts.format(
-                        '{point.yCategory}. Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.{dependsOn}',
+                        '{point.yCategory}. Start {point.x:%Y-%m-%d}, end ' +
+                        '{point.x2:%Y-%m-%d}.{dependsOn}',
                         { point, dependsOn }
                     );
                 }
@@ -330,7 +333,8 @@ function subtasks() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.'
                 }
             }
         },
@@ -620,10 +624,13 @@ function nav() {
                     const completedValue = point.completed ?
                             point.completed.amount || point.completed : null,
                         completed = completedValue ?
-                            ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                            ' Task ' + Math.round(
+                                completedValue * 1000
+                            ) / 10 + '% completed.' :
                             '';
                     return Highcharts.format(
-                        '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
+                        '{point.yCategory}.{completed} Start ' +
+                        '{point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
                         { point, completed }
                     );
                 }
@@ -637,8 +644,10 @@ function nav() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
-                    yAxisDescriptionPlural: 'The chart has one Y axis showing task categories.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.',
+                    yAxisDescriptionPlural: 'The chart has one Y axis ' +
+                        'showing task categories.'
                 }
             }
         },
@@ -768,7 +777,8 @@ function drag() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.'
                 }
             }
         },
@@ -777,8 +787,10 @@ function drag() {
                 descriptionFormatter: function (point) {
                     return Highcharts.format(
                         point.milestone ?
-                            '{point.name}, milestone for {point.yCategory} at {point.x:%Y-%m-%d}.' :
-                            '{point.name}, assigned to {point.yCategory} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
+                            '{point.name}, milestone for {point.yCategory} ' +
+                            'at {point.x:%Y-%m-%d}.' :
+                            '{point.name}, assigned to {point.yCategory} ' +
+                            'from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
                         { point }
                     );
                 }
@@ -855,7 +867,8 @@ function drag() {
                 rotation: 270,
                 indentation: 0,
                 padding: 0,
-                format: '<p style="background-color:transparent;border: 0px solid #e6e6e6;padding:10px 8px 8px;">{text}</p>'
+                format: '<p style="background-color:transparent;border: 0px ' +
+                    'solid #e6e6e6;padding:10px 8px 8px;">{text}</p>'
             },
             grid: {
                 enabled: false
@@ -896,7 +909,9 @@ function drag() {
                 useHTML: true,
                 allowOverlap: true,
                 padding: 0,
-                format: '<p style="font-size:10px;background-color:transparent;color:transparent;padding:20px 8px 8px;">{value: %E}</p>'
+                format: '<p style="font-size:10px;background-color:' +
+                    'transparent;color:transparent;padding:20px 8px 8px;">' +
+                    '{value: %E}</p>'
             }
         },
         tooltip: {

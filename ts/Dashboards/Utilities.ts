@@ -105,7 +105,8 @@ function merge<T>(): T {
                 }
 
                 // Copy the contents of objects, but not arrays or DOM nodes
-                if (isObject(value, true) &&
+                if (
+                    isObject(value, true) &&
                     !isClass(value) &&
                     !isDOMElement(value)
                 ) {

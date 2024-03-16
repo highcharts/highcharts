@@ -3,7 +3,8 @@ const chart = Highcharts.chart('container', {
         text: 'Remove cropped point'
     },
     subtitle: {
-        text: 'Click button to remove a point [0, 0] and shift zoom to verify that it is removed'
+        text: 'Click button to remove a point [0, 0] and shift zoom to ' +
+            'verify that it is removed'
     },
     xAxis: {
         min: 100

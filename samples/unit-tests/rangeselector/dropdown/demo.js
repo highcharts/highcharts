@@ -155,5 +155,8 @@ QUnit.test('RangeSelector.dropdown', assert => {
             dropdown: 'always'
         }
     });
-    assert.ok(true, '#15124: Attempting to collapse with no buttons should not throw');
+    assert.ok(
+        true, '#15124: Attempting to collapse with no buttons should ' +
+        'not throw'
+    );
 });

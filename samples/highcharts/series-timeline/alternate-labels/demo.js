@@ -22,15 +22,19 @@ Highcharts.chart('container', {
         }, {
             name: 'Sputnik 1',
             label: '1957: First artificial satellite',
-            description: '4 October 1957 First artificial satellite. First signals from space.'
+            description: '4 October 1957 First artificial satellite. First ' +
+                'signals from space.'
         }, {
             name: 'First human spaceflight',
             label: '1961: First human spaceflight (Yuri Gagarin)',
-            description: 'First human spaceflight (Yuri Gagarin), and the first human-crewed orbital flight'
+            description: 'First human spaceflight (Yuri Gagarin), and the ' +
+                'first human-crewed orbital flight'
         }, {
             name: 'First human on the Moon',
             label: '1969: First human on the Moon',
-            description: 'First human on the Moon, and first space launch from a celestial body other than the Earth. First sample return from the Moon'
+            description: 'First human on the Moon, and first space launch ' +
+                'from a celestial body other than the Earth. First sample ' +
+                'return from the Moon'
         }]
     }]
 });

@@ -1,5 +1,5 @@
 ---
-name: Minimal with HTML
+name: Minimal with custom layout
 authors:
   - Karol Kolodziej
 js_wrap: b

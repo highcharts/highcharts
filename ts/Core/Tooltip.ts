@@ -1650,7 +1650,7 @@ class Tooltip {
         box.width = (
             anchorPos[0] < 0 ?
                 Math.max(
-                    Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])
+                    Math.abs(anchorPos[0]), labelBBox.width - anchorPos[0]
                 ) :
                 Math.max(Math.abs(anchorPos[0]), labelBBox.width)
         );
@@ -1658,7 +1658,7 @@ class Tooltip {
             anchorPos[1] < 0 ?
                 Math.max(
                     Math.abs(anchorPos[1]),
-                    (labelBBox.height - Math.abs(anchorPos[1]))
+                    labelBBox.height - Math.abs(anchorPos[1])
                 ) :
                 Math.max(Math.abs(anchorPos[1]), labelBBox.height)
         );

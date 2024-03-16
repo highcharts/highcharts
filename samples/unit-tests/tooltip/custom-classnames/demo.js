@@ -13,14 +13,16 @@ QUnit.test(
                         className: 'blood-orange',
                         y: 4
                     },
-                    7]
+                    7
+                ]
             }, {
                 name: 'Apples',
                 className: 'apples',
                 data: [
                     0,
                     3,
-                    0]
+                    0
+                ]
             }]
         });
         const point = chart.series[0].points[0];

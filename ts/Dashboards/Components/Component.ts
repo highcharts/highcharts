@@ -593,18 +593,19 @@ abstract class Component {
                     'afterSetColumns',
                     'afterSetRows'
                 ].forEach((event: any): void => {
-                    this.tableEvents.push((table)
-                        .on(event, (e: any): void => {
-                            clearTimeout(this.tableEventTimeout);
-                            this.tableEventTimeout = Globals.win.setTimeout(
-                                (): void => {
-                                    this.emit({
-                                        ...e,
-                                        type: 'tableChanged'
+                    this.tableEvents.push(
+                        (table)
+                            .on(event, (e: any): void => {
+                                clearTimeout(this.tableEventTimeout);
+                                this.tableEventTimeout = Globals.win.setTimeout(
+                                    (): void => {
+                                        this.emit({
+                                            ...e,
+                                            type: 'tableChanged'
+                                        });
+                                        this.tableEventTimeout = void 0;
                                     });
-                                    this.tableEventTimeout = void 0;
-                                });
-                        }));
+                            }));
                 });
             }
 
@@ -632,9 +633,10 @@ abstract class Component {
             tableEvents = this.tableEvents;
 
         if (tableEvents.length) {
-            tableEvents.forEach(
-                (removeEventCallback): void => removeEventCallback()
-            );
+            for (let i = 0, iEnd = tableEvents.length; i < iEnd; i++) {
+                tableEvents[i]();
+            }
+            tableEvents.length = 0;
         }
 
         if (connector) {

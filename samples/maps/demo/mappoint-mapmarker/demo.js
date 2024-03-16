@@ -61,7 +61,8 @@
         },
 
         tooltip: {
-            headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}<br/>',
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{point.key}<br/>',
             pointFormat: '{series.name}'
         },
 
