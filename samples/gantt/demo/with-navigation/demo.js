@@ -23,7 +23,10 @@ Highcharts.ganttChart('container', {
             min: 0,
             max: 3,
             reversed: true,
-            categories: []
+            categories: [],
+            labels: {
+                padding: 0
+            }
         }
     },
 

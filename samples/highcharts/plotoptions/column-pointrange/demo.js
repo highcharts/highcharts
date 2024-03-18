@@ -5,16 +5,14 @@ Highcharts.chart('container', {
 
     xAxis: {
         type: 'datetime',
-        tickInterval: 24 * 3600 * 1000
+        tickInterval: 24 * 3600 * 1000,
+        labels: {
+            padding: 0
+        }
     },
 
     title: {
         text: 'One point per day'
-    },
-
-    plotOptions: {
-        series: {
-        }
     },
 
     series: [{

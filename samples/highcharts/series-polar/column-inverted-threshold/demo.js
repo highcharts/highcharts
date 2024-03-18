@@ -27,12 +27,18 @@ Highcharts.chart('container', {
     yAxis: [{
         min: -10,
         max: 10,
-        tickInterval: 1
+        tickInterval: 1,
+        labels: {
+            padding: 0
+        }
     }, {
         pane: 1,
         min: -10,
         max: 10,
-        tickInterval: 1
+        tickInterval: 1,
+        labels: {
+            padding: 0
+        }
     }],
     plotOptions: {
         series: {
