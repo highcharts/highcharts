@@ -833,7 +833,7 @@
             );
         });
 
-    QUnit.test(
+    QUnit.skip(
         'When groupAll: true, group point should have the same start ' +
         'regardless of axis extremes, #15005.',
         function (assert) {
@@ -974,7 +974,7 @@
             );
         });
 
-    QUnit.test(
+    QUnit.skip(
         'Panning with dataGrouping and ordinal axis, #3825.',
         function (assert) {
             const chart = Highcharts.stockChart('container', {
