@@ -108,7 +108,8 @@ function shouldDoLegendA11y(chart: Chart): boolean {
             (chart.options.legend as any).accessibility || {}
         ),
         unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
-            (c): boolean => !c.dataClasses || !c.dataClasses.length);
+            (c): boolean => !c.dataClasses || !c.dataClasses.length
+        );
 
     return !!(
         items && items.length &&

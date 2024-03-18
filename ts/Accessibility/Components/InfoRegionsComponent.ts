@@ -91,10 +91,14 @@ function getTypeDescForMapChart(
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
     return formatContext.mapTitle ?
-        chart.langFormat('accessibility.chartTypes.mapTypeDescription',
-            formatContext) :
-        chart.langFormat('accessibility.chartTypes.unknownMap',
-            formatContext);
+        chart.langFormat(
+            'accessibility.chartTypes.mapTypeDescription',
+            formatContext
+        ) :
+        chart.langFormat(
+            'accessibility.chartTypes.unknownMap',
+            formatContext
+        );
 }
 
 
@@ -105,8 +109,10 @@ function getTypeDescForCombinationChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
-    return chart.langFormat('accessibility.chartTypes.combinationChart',
-        formatContext);
+    return chart.langFormat(
+        'accessibility.chartTypes.combinationChart',
+        formatContext
+    );
 }
 
 
@@ -117,8 +123,10 @@ function getTypeDescForEmptyChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
-    return chart.langFormat('accessibility.chartTypes.emptyChart',
-        formatContext);
+    return chart.langFormat(
+        'accessibility.chartTypes.emptyChart',
+        formatContext
+    );
 }
 
 
@@ -481,7 +489,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
         sectionDiv.style.position = 'relative';
 
         if (labelText) {
-            sectionDiv.setAttribute('role',
+            sectionDiv.setAttribute(
+                'role',
                 chart.options.accessibility.landmarkVerbosity === 'all' ?
                     'region' : 'group'
             );

@@ -113,7 +113,8 @@ function onSeriesAfterRender(
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            if (!series.chart.styledMode &&
+            if (
+                !series.chart.styledMode &&
                     yAxis.crosshair &&
                     yAxis.options.crosshair &&
                     seriesOptions.lastPrice

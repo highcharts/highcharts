@@ -25,15 +25,24 @@ globals:
     TestUtilities: true
     usdeur: true
 
+plugins:
+    [brackets]
+
 rules:
+    brackets/array-bracket-newline: 2
+    brackets/call-parens-newline: 2
+    brackets/conditional-parens-newline: 2
+    brackets/func-parens-newline: 2
+    brackets/object-curly-newline: 2
     consistent-return: 0
     eol-last: 0
     func-style: 0
     function-paren-newline: 0
     indent: [2, 4]
     max-len: [
-        "warn",
+        "error",
         {
+            "ignorePattern": "(data:image/)",
             "ignoreUrls": true
         }
     ]
@@ -61,4 +70,6 @@ rules:
     jsdoc/require-param-description: 0
     jsdoc/require-param-type: 0
     jsdoc/valid-jsdoc: 0
+    node/no-unsupported-features/es-syntax: 0
+    node/no-missing-import: 0
 

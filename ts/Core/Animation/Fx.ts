@@ -455,8 +455,10 @@ class Fx {
                     shift = i;
                     break;
                 // Moving right
-                } else if (startX[0] ===
-                        endX[endX.length - startX.length + i]) {
+                } else if (
+                    startX[0] ===
+                        endX[endX.length - startX.length + i]
+                ) {
                     shift = i;
                     reverse = true;
                     break;

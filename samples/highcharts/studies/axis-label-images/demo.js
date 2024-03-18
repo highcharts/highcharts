@@ -21,7 +21,8 @@
 
             if (!tick.image) {
                 tick.image = axis.chart.renderer.image(
-                    image, xy.x, xy.y, iconSize, iconSize)
+                    image, xy.x, xy.y, iconSize, iconSize
+                )
                     .add();
             } else { // Update existing
                 tick.image.animate({

@@ -36,7 +36,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{chartLongdesc}</div>' +
+                '<div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
         }
     },
 

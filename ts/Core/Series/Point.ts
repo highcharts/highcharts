@@ -53,6 +53,7 @@ const {
     isFunction,
     isNumber,
     isObject,
+    merge,
     pick,
     syncTimeout,
     removeEvent,
@@ -1299,7 +1300,10 @@ class Point {
      */
     public manageEvent(eventType: string): void {
         const point = this,
-            options = point.series.options.point || {},
+            options = merge(
+                point.series.options.point,
+                point.options
+            ),
             userEvent =
                 options.events?.[eventType as keyof typeof options.events];
 
@@ -1486,7 +1490,8 @@ class Point {
 
                 // If the point has another symbol than the previous one, throw
                 // away the state marker graphic and force a new one (#1459)
-                if (stateMarkerGraphic &&
+                if (
+                    stateMarkerGraphic &&
                     stateMarkerGraphic.currentSymbol !== newSymbol
                 ) {
                     stateMarkerGraphic = stateMarkerGraphic.destroy();
@@ -1518,7 +1523,8 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic &&
+                if (
+                    !chart.styledMode && stateMarkerGraphic &&
                     point.state !== 'inactive'
                 ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
@@ -1542,7 +1548,8 @@ class Point {
             markerGraphic && markerGraphic.visibility || 'inherit'
         );
 
-        if (haloOptions &&
+        if (
+            haloOptions &&
             haloOptions.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&

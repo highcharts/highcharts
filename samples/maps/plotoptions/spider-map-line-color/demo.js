@@ -43,9 +43,12 @@
             headerFormat: '',
             pointFormat: '{point.city} ({point.country}, {point.year})<br/>' +
                 'Total medals: {point.z}<br/>' +
-                '<span style="color: #ffd700;">\u25CF</span> {point.gold}<br/>' +
-                '<span style="color: #c0c0c0;">\u25CF</span> {point.silver}<br/>' +
-                '<span style="color: #cd7f32;">\u25CF</span> {point.bronze}<br/>'
+                '<span style="color: #ffd700;">\u25CF</span> ' +
+                '{point.gold}<br/>' +
+                '<span style="color: #c0c0c0;">\u25CF</span> ' +
+                '{point.silver}<br/>' +
+                '<span style="color: #cd7f32;">\u25CF</span> ' +
+                '{point.bronze}<br/>'
         },
 
         series: [{
@@ -56,7 +59,10 @@
             color: '#fe5f55',
             lineWidth: 1,
             lineColor: '#ffd700',
-            keys: ['city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver', 'bronze'],
+            keys: [
+                'city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver',
+                'bronze'
+            ],
             data: data,
             minSize: '5%',
             maxSize: '12.5%'

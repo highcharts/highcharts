@@ -3,7 +3,9 @@
     const { isNumber, relativeLength, defined } = Highcharts;
 
     Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
-        return ['M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'];
+        return [
+            'M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'
+        ];
     };
 
     function markerAttribs(point) {
@@ -151,40 +153,54 @@
         };
     }
 
-    Highcharts.wrap(Highcharts.Axis.prototype, 'getClosest', function (proceed) {
-        let ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    Highcharts.wrap(
+        Highcharts.Axis.prototype,
+        'getClosest', function (proceed) {
+            let ret = proceed.apply(
+                this,
+                Array.prototype.slice.call(arguments, 1)
+            );
 
-        const pnfSeries = this.series.filter(series => series.is('pointandfigure'));
+            const pnfSeries = this.series.filter(series => series.is(
+                'pointandfigure'
+            )
+            );
 
-        pnfSeries.forEach(() => {
-            if (this.categories) {
-                ret = 1;
-            } else {
-                this.series.forEach(function (series) {
-                    const seriesClosest = series.closestPointRange,
-                        visible = series.visible ||
+            pnfSeries.forEach(() => {
+                if (this.categories) {
+                    ret = 1;
+                } else {
+                    this.series.forEach(function (series) {
+                        const seriesClosest = series.closestPointRange,
+                            visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
 
-                    if (defined(seriesClosest) && visible) {
-                        ret = defined(ret) ?
-                            Math.min(ret, seriesClosest) :
-                            seriesClosest;
-                    }
-                });
-            }
+                        if (defined(seriesClosest) && visible) {
+                            ret = defined(ret) ?
+                                Math.min(ret, seriesClosest) :
+                                seriesClosest;
+                        }
+                    });
+                }
+            });
+            return ret;
         });
-        return ret;
-    });
 
     // eslint-disable-next-line no-underscore-dangle
-    Highcharts.wrap(Highcharts.Series.prototype, 'groupData', function (proceed) {
-        if (this.is && this.is('pointandfigure')) {
-            return generatePnfData.apply(
-                this, Array.prototype.slice.call(arguments, 1
-                ));
-        }
-        return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-    });
+    Highcharts.wrap(
+        Highcharts.Series.prototype,
+        'groupData', function (proceed) {
+            if (this.is && this.is('pointandfigure')) {
+                return generatePnfData.apply(
+                    this, Array.prototype.slice.call(
+                        arguments, 1
+                    ));
+            }
+            return proceed.apply(
+                this,
+                Array.prototype.slice.call(arguments, 1)
+            );
+        });
 
     Highcharts.seriesType(
         'pointandfigure',
@@ -193,7 +209,8 @@
             boxSize: '5%',
             reversalAmount: 3,
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    ' ' +
                 '<b> {series.name}</b><br/>' +
                 'Close: {point.y}<br/>',
                 headerFormat: ''

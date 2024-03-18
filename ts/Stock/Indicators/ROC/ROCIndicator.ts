@@ -42,6 +42,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function populateAverage(
     xVal: Array<number>,
     yVal: (Array<number>|Array<Array<number>>),

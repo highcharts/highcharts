@@ -133,8 +133,10 @@ class PieSeries extends Series {
                 // Start values
                     graphic.attr({
                     // Animate from inner radius (#779)
-                        r: pick(point.startR,
-                            (series.center && series.center[3] / 2)),
+                        r: pick(
+                            point.startR,
+                            (series.center && series.center[3] / 2
+                            )),
                         start: startAngleRad,
                         end: startAngleRad
                     });

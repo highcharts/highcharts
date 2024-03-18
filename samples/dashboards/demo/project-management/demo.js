@@ -170,7 +170,8 @@ Dashboards.board('container', {
             xAxis: [{
                 plotLines,
                 dateTimeLabelFormats: {
-                    day: '%e<br><span style="opacity: 0.5; font-size: 0.7em;">%a</span>'
+                    day: '%e<br><span style="opacity: 0.5; font-size: ' +
+                        '0.7em;">%a</span>'
                 },
                 grid: {
                     borderWidth: 0

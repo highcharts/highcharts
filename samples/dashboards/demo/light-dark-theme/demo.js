@@ -100,7 +100,6 @@ Dashboards.board('container', {
             id: 'sample'
         },
         className: 'datagrid',
-        editable: true,
         sync: {
             highlight: true
         },

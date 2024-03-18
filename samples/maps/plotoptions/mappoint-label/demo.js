@@ -37,7 +37,8 @@
                     lineWidth: 1
                 },
                 tooltip: {
-                    pointFormat: '{point.name} [{point.lon:.2f}, {point.lat:.2f}]'
+                    pointFormat: '{point.name} [{point.lon:.2f}, ' +
+                        '{point.lat:.2f}]'
                 }
             }
         },

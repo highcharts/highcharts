@@ -331,7 +331,8 @@ function retrieveStacks(
     series.forEach(function (s): void {
         stackNumber = pick(
             s.options.stack as any,
-            (stacking ? 0 : series.length - 1 - (s.index as any))
+            (stacking ? 0 : series.length - 1 - (s.index as any)
+            )
         ); // #3841, #4532
         if (!stacks[stackNumber]) {
             stacks[stackNumber] = { series: [s], position: i };

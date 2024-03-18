@@ -78,7 +78,9 @@ QUnit.test(
             plotOptions: {
                 pie: {
                     animation: false,
-                    size: '70%' // Removing size option will fix labels reflow issue
+                    size:
+                        '70%' // Removing size option will fix labels reflow
+                        // issue
                 }
             },
             series: [

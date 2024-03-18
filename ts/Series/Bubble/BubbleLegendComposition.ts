@@ -263,7 +263,8 @@ function onLegendAfterGetAllItems(
         legend.destroyItem(bubbleLegend);
     }
     // Create bubble legend
-    if (bubbleSeriesIndex >= 0 &&
+    if (
+        bubbleSeriesIndex >= 0 &&
             legendOptions.enabled &&
             (options as any).enabled
     ) {

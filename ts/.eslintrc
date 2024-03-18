@@ -10,10 +10,16 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
+        "brackets",
         "highcharts",
         "@typescript-eslint"
     ],
     "rules": {
+        "brackets/array-bracket-newline": 2,
+        "brackets/call-parens-newline": 2,
+        "brackets/conditional-parens-newline": 2,
+        "brackets/func-parens-newline": 2,
+        "brackets/object-curly-newline": 2,
         "camelcase": [
             2,
             {
@@ -60,7 +66,7 @@
         "no-useless-return": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": 0,
-        "prefer-const": [1, {
+        "prefer-const": [2, {
             "destructuring": "all"
         }], // @todo
         "prefer-spread": 0, // @todo

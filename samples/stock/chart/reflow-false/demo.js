@@ -15,7 +15,8 @@
         },
 
         subtitle: {
-            text: 'When resizing the window or the frame, the chart should not resize'
+            text: 'When resizing the window or the frame, the chart should ' +
+                'not resize'
         },
 
         rangeSelector: {

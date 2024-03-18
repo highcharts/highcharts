@@ -132,7 +132,7 @@ Dashboards.board('container', {
 
 ### Assigning column data to series data
 
-The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
+The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
 You can declare which columns will be parameter of the point as well. Specifically, it is useful for series like OHLC, candlestick, columnrange or arearange. The `seriesId` field is mandatory for displaying series (for instance in the legend) properly.
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment). 
 
@@ -178,7 +178,7 @@ columnAssignment: [{
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-keys-data allow="fullscreen"></iframe>
 
 ## API options
-For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent.HighchartsComponent.Options).
+For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions).
 
 ## Highcharts Compatibility
 The Highcharts component is compatible with all Highcharts modules in v10 or higher.

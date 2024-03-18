@@ -176,18 +176,21 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     assert.strictEqual(
         points[0].high,
         firstAxisMax,
-        'The first yAxis\' max should be equal to the first point\'s high value.'
+        'The first yAxis\' max should be equal to the first point\'s high ' +
+        'value.'
     );
 
     assert.strictEqual(
         points[2].low,
         thirdAxisMin,
-        'The third yAxis\' min should be equal to the third point\'s low value.'
+        'The third yAxis\' min should be equal to the third point\'s low ' +
+        'value.'
     );
     assert.strictEqual(
         points[2].high,
         thirdAxisMax,
-        'The third yAxis\' max should be equal to the third point\'s high value.'
+        'The third yAxis\' max should be equal to the third point\'s high ' +
+        'value.'
     );
 
     // Calculate plotHigh value based on each yAxis scale (#15752)
@@ -224,7 +227,8 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     assert.strictEqual(
         firstSeries.points[0].high,
         firstAxisMax,
-        'The first yAxis\' max should be equal to the first point\'s high value.'
+        'The first yAxis\' max should be equal to the first point\'s high ' +
+        'value.'
     );
 
     assert.strictEqual(
@@ -235,6 +239,7 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
     assert.strictEqual(
         firstSeries.points[2].high,
         thirdAxisMax,
-        'The third yAxis\' max should be equal to the third point\'s high value.'
+        'The third yAxis\' max should be equal to the third point\'s high ' +
+        'value.'
     );
 });
