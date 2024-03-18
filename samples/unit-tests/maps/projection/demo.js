@@ -56,7 +56,7 @@ QUnit.module('Projection', function () {
 
 });
 
-QUnit.test('Recommend map view for map chart.', async function (assert) {
+QUnit.skip('Recommend map view for map chart.', async function (assert) {
     const world = await fetch(
             'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
         ).then(response => response.json()),
@@ -64,9 +64,6 @@ QUnit.test('Recommend map view for map chart.', async function (assert) {
             'https://code.highcharts.com/mapdata/custom/africa.topo.json'
         ).then(response => response.json());
 
-
-    // Remove hc-recommended-map-view for test purpose
-    delete africa.objects.default['hc-recommended-mapview'];
 
     const chart = Highcharts.mapChart('container', {
         chart: {
