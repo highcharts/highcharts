@@ -1,6 +1,7 @@
 (async () => {
     // Load the dataset
-    const colorTemplate = '{#ge point.open point.close}#ff6e6e{else}#51af7b{/ge}';
+    const colorTemplate =
+        '{#ge point.open point.close}#ff6e6e{else}#51af7b{/ge}';
     const data = await fetch(
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
@@ -22,7 +23,9 @@
         volume.push([
             data[i][0], // the date
             data[i][5],
-            data[i][1] < data[i][4] ? 'highcharts-point-up' : 'highcharts-point-down' // the volume
+            data[i][1] < data[i][4] ?
+                'highcharts-point-up' :
+                'highcharts-point-down' // the volume
         ]);
     }
 
@@ -65,7 +68,9 @@
                 snap: false,
                 enabled: true,
                 label: {
-                    format: '{#if value ge 1000000} {(divide value 1000000):.2f} M {else} {value} {/if}',
+                    format:
+                        '{#if value ge 1000000} {(divide value 1000000):.2f} ' +
+                        'M {else} {value} {/if}',
                     className: 'highcharts-crosshair-custom-label',
                     enabled: true
                 }
@@ -116,7 +121,8 @@ Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`,
             lastPrice: {
                 enabled: true,
                 label: {
-                    format: '{#if value ge 1000000} {(divide value 1000000):.2f} M {else} {value} {/if}',
+                    format: '{#if value ge 1000000} ' +
+                        '{(divide value 1000000):.2f} M {else} {value} {/if}',
                     enabled: true,
                     align: 'left',
                     x: 8
