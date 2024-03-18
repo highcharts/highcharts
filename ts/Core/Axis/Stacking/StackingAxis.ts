@@ -248,7 +248,8 @@ function seriesModifyStacks(
             let i = processedXData.length,
                 x,
                 stackItem: StackItem|undefined,
-                pointExtremes;
+                pointExtremes,
+                allPointExtremes;
 
             while (i--) {
                 x = processedXData[i];
@@ -260,8 +261,11 @@ function seriesModifyStacks(
                 );
                 stackItem = stacks[key]?.[x];
                 pointExtremes = stackItem?.points[stackIndicator.key || ''];
+                allPointExtremes =
+                    stackItem?.allPoints[stackIndicator.key || ''];
                 if (pointExtremes) {
                     stacker.call(series, pointExtremes, stackItem, i);
+                    stacker.call(series, allPointExtremes, stackItem, i);
                 }
             }
         });
