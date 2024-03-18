@@ -1,6 +1,7 @@
 // Data cache
 
 let board = null;
+let dataTable = null;
 
 // Launches the Dashboards application
 async function setupDashboard() {
@@ -11,12 +12,10 @@ async function setupDashboard() {
                 type: 'JSON',
                 options: {
                     firstRowAsNames: true,
-                    enablePolling: true,
-                    dataRefreshRate: 5,
                     data: [
                         ['Event', 'Aggregat 1', 'Aggregat 2'],
-                        ['Start', 0.1, 9.1],
-                        ['Test', 0.2, 9.6]
+                        ['Test 1', 8.1, 9.1],
+                        ['Test 2', 4.2, 9.6]
                     ]
                 }
             }]
@@ -30,14 +29,14 @@ async function setupDashboard() {
         },
         components: [{
             type: 'KPI',
-            renderTo: 'kpi-vitamin-a',
-            value: 1,
+            renderTo: 'kpi-agg-1',
+            value: 0,
             valueFormat: '{value}',
             title: 'Aggregat 1'
         }, {
             type: 'KPI',
-            renderTo: 'kpi-iron',
-            value: 1,
+            renderTo: 'kpi-agg-2',
+            value: 0,
             title: 'Aggregat 2',
             valueFormat: '{value}'
         }, {
@@ -70,8 +69,7 @@ async function setupDashboard() {
                 },
                 chart: {
                     animation: false,
-                    type: 'column',
-                    spacing: [30, 30, 30, 20]
+                    type: 'column'
                 },
                 title: {
                     text: ''
@@ -114,8 +112,7 @@ async function setupDashboard() {
                 },
                 chart: {
                     animation: false,
-                    type: 'column',
-                    spacing: [30, 30, 30, 20]
+                    type: 'spline'
                 },
                 tooltip: {
                     valueSuffix: ' KWH',
@@ -134,28 +131,30 @@ async function setupDashboard() {
             }
         }]
     });
-
-    const dataPool = board.dataPool;
-    const dataTable = await dataPool.getConnectorTable('mqtt-data');
+    // Load initial data table
+    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 }
 
 // Launch  Dashboard
 setupDashboard();
 
 async function updateBoard(msg) {
-    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    const data = JSON.parse(msg.payloadString);
+    const p1 = data.aggs[0].P_gen;
+    const p2 = data.aggs[1].P_gen;
 
     // Add a row
-    await dataTable.setRow(['mqtt', 3, 8]);
-    updateComponents();
+    await dataTable.setRow(['mqtt', p1, p2]);
+    await updateComponents();
 }
 
 async function connectBoard() {
-    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 
     // Clear the data
     await dataTable.deleteRows();
-    updateComponents();
+    await updateComponents();
 }
 
 async function updateComponents() {
@@ -172,27 +171,45 @@ async function updateComponents() {
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 
-let connectFlag = false;
+// MQTT handle
 let mqtt;
-const reconnectTimeout = 10000;
+
+// Connection parameters
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
+const reconnectTimeout = 10000;
+
+// Connection status
 let msgCount = 0;
+let connectFlag = false;
+
+// Contains id's of UI elements
+let uiId;
+
+window.onload = () => {
+    msgCount = 0;
+    connectFlag = false;
+
+    uiId = {
+        status: document.getElementById('status'),
+        statusMsg: document.getElementById('status_messages')
+    };
+};
 
 
 function onConnectionLost() {
-    document.getElementById('status').innerHTML = 'Disconnected';
-    document.getElementById('status_messages').innerHTML = 'Connection lost';
+    setUiElement('status', 'Disconnected');
+    setUiElement('statusMsg', '');
+    subscribeEnable(false);
+    topicEnable(true);
 }
+
 
 function onFailure(message) {
-    console.log('Failed');
-    document.getElementById('status_messages').innerHTML = 'Connection failed - Retrying';
-
-    if (connectFlag) {
-        setTimeout(MQTTconnect, reconnectTimeout);
-    }
+    setUiElement('statusMsg', 'Failed: ' + message);
+    subscribeEnable(false);
 }
+
 
 function onMessageArrived(rawMessage) {
     msgCount += 1;
@@ -201,18 +218,23 @@ function onMessageArrived(rawMessage) {
     updateBoard(rawMessage);
 }
 
+
 function onConnected(recon, url) {
     console.log(' in onConnected ' + recon);
 }
 
+
 async function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
-    document.getElementById('status_messages').innerHTML = 'Connected to ' + host + ' on port ' + port;
+    setUiElement('statusMsg', 'Connected to ' + host + ' on port ' + port);
     connectFlag = true;
-    document.getElementById('status').innerHTML = 'Connected';
+    setUiElement('status', 'Connected');
 
     connectBoard();
+    subscribeEnable(true);
+    topicEnable(false);
 }
+
 
 function disconnect() {
     if (connectFlag) {
@@ -221,11 +243,12 @@ function disconnect() {
     }
 }
 
+
 function MQTTconnect() {
     const connBtn = document.getElementsByName('conn')[0];
 
     if (connectFlag) {
-        document.getElementById('status_messages').innerHTML = 'disconnecting';
+        setUiElement('statusMsg', 'disconnecting...');
         disconnect();
         connBtn.value = 'Connect';
 
@@ -235,7 +258,7 @@ function MQTTconnect() {
     const userName = document.forms.connform.username.value;
     const password = document.forms.connform.password.value;
 
-    document.getElementById('status_messages').innerHTML = 'connecting';
+    setUiElement('statusMsg', 'connecting...');
 
     const cname = 'orderform-' + Math.floor(Math.random() * 10000);
 
@@ -269,12 +292,10 @@ function MQTTconnect() {
     return false;
 }
 
-function subTopics() {
-    document.getElementById('status_messages').innerHTML = '';
 
+function subTopics() {
     if (connectFlag === 0) {
-        const outMsg = '<b>Not Connected so can\'t subscribe</b>';
-        document.getElementById('status_messages').innerHTML = outMsg;
+        setUiElement('statusMsg', 'Not connected, subscription not possible');
 
         return false;
     }
@@ -282,7 +303,9 @@ function subTopics() {
     const stopic = document.forms.subs.Stopic.value;
     const sqos = 0;
 
-    document.getElementById('status_messages').innerHTML = 'Subscribing to topic =' + stopic;
+    // document.getElementById('status_messages').innerHTML = 'Subscribing to topic =' + stopic;
+    setUiElement('statusMsg', 'Subscribing to topic =' + stopic);
+
     const soptions = {
         qos: sqos
     };
@@ -291,4 +314,18 @@ function subTopics() {
     mqtt.subscribe(stopic, soptions);
 
     return false;
+}
+
+
+function subscribeEnable(enabled) {
+    document.getElementById('subscribe').disabled = !enabled;
+}
+
+
+function topicEnable(enabled) {
+    document.getElementById('topic').disabled = enabled;
+}
+
+function setUiElement(elName, msg) {
+    uiId[elName].innerHTML = msg;
 }
