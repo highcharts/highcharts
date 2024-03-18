@@ -6,8 +6,10 @@ and highlighting specific data.
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/demo/minimal allow="fullscreen"></iframe>
 
+
 ## How to synchronize the components?
-To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling).
+
+To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) which is needed for all the predefined synchronization types to work.
 
 List of synchronization types for each component type:
 
@@ -18,6 +20,9 @@ List of synchronization types for each component type:
 |[DataGrid](https://www.highcharts.com/docs/dashboards/datagrid-component)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#highlight)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#extremes)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#visibility)|no|
 |[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.SyncOptions#extremes)|no|no|
 |[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter)|
+
+In addition to the predefined syncs, you can define your own custom synchronization. See [here](#custom-synchronization) how to do it.
+
 
 ### Sync declaration
 
@@ -43,7 +48,7 @@ sync: {
 }
 ```
 
-The full example of synchronized components:
+An example of synchronized components:
 
 ```js
 Dashboards.board('container', {
@@ -94,6 +99,28 @@ Dashboards.board('container', {
   }]
 });
 ```
+
+Each synchronization has also `handler` and `emitter` options. The `handler` handles events coming to the component, while the `emitter` sends events from the component. In the case of synchronization types that communicate bilaterally (e.g. highlight), you can disable `emitter` or `handler` by overwriting their value to `false`. You can read about it more in [API docs](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry).
+
+For example, a component with this set of highlight options will cause other components with this synchronization enabled to respond to hover, but this component will not respond to the hover of the others:
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        handler: false
+    }
+}
+```
+Similarly, this set of options allows a component to have highlighted points, but it will not trigger highlighting in other components:
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        emitter: false
+    }
+}
+```
+
 
 ### Highlight sync options
 

@@ -115,5 +115,11 @@ The most common way to style the HTML component is to use the CSS and utilize th
 If some of the HTML elements are used frequently or requires to be more customable, it is possible to create a custom component that will simplify the configuration. The custom component can be created by extending the basic HTML component.  
 More in the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section.
 
+
+### Components synchronization
+
+HTML Component is the only component that does not have predefined synchronization types for itself (mainly because it cannot be connected to data pool). However, you can define your own sync types as needed. You can read more about it [here](https://www.highcharts.com/docs/dashboards/synchronize-components#custom-synchronization).
+
+
 ### API options
 For the full set of available options, see [the API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HTMLComponent_HTMLComponentOptions.Options).
