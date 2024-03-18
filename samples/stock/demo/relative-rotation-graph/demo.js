@@ -234,7 +234,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: 'RS-Ratio®️: <b>{point.x}</b></br> RS-Momentum®️: <b>{point.y}</b>'
+        pointFormat: 'RS-Ratio®️: <b>{point.x}</b></br>' +
+            'RS-Momentum®️: <b>{point.y}</b>'
     },
     xAxis: {
         min: 96,

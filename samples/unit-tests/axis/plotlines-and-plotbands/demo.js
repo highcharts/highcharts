@@ -288,18 +288,11 @@ QUnit.test('General tests', function (assert) {
         ]
     });
 
-    assert.notEqual(
+    assert.ok(
         chart.yAxis[0].plotLinesAndBands[0].svgElem.element
-            .getAttribute('class')
-            .indexOf('my-custom-class'),
-        -1,
-        'Class name should be applied to plot lines (#8415)'
-    );
-
-    assert.strictEqual(
-        chart.yAxis[0].plotLinesAndBands[0].svgElem.element.className,
-        'highcharts-plot-line-label my-custom-class',
-        'Class names should be spaced (#20586)'
+            .classList
+            .contains('my-custom-class'),
+        'Class name should be applied to plot lines (#8415, #20586)'
     );
 
     var line = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' ');
