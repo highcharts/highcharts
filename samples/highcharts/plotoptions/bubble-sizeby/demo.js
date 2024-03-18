@@ -10,7 +10,8 @@ Highcharts.chart('container', {
         text: 'Highcharts Bubbles Sizing'
     },
     subtitle: {
-        text: 'Smallest and largest bubbles are equal, intermediate bubbles different.'
+        text: 'Smallest and largest bubbles are equal, intermediate bubbles ' +
+            'different.'
     },
 
     xAxis: {

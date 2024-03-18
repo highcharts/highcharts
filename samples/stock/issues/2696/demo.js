@@ -7,7 +7,8 @@ Highcharts.stockChart('container', {
     },
 
     title: {
-        text: 'Highcharts Stock <= 1.3.9: Data grouping included single point immediately to the left of zoomed range.'
+        text: 'Highcharts Stock <= 1.3.9: Data grouping included single ' +
+            'point immediately to the left of zoomed range.'
     },
 
     xAxis: {
@@ -19,7 +20,9 @@ Highcharts.stockChart('container', {
             [1073520000000, 1],
             [1073606400000, 1],
             [1073692800000, 1],
-            [1073779200001, 0.99999], // This point is included in the week from Jan 12, 2004 when "From" date in rangeSelector is set to Jan 11, 2004
+            [1073779200001, 0.99999], // This point is included in the week
+            // from Jan 12, 2004 when "From" date in rangeSelector is set to
+            // Jan 11, 2004
             [1073865600000, 1], // Jan 12, 2004
             [1073952000000, 1],
             [1074038400000, 1],

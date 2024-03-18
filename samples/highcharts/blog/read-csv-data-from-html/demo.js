@@ -19,7 +19,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         useHTML: true,
-        headerFormat: '<table><tr><th colspan="2">{point.key} (100gr)</th></tr>',
+        headerFormat: '<table><tr><th colspan="2">{point.key} (100gr)</th>' +
+            '</tr>',
         pointFormat: '<tr><td>{series.name}: </td>' +
             '<td style="text-align: right"><b>{point.y} mcg</b></td></tr>',
         footerFormat: '</table>'

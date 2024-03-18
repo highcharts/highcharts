@@ -287,7 +287,7 @@ const mapNavigation: MapNavigationOptions = {
      */
     mouseWheelSensitivity: 1.1
 
-    // enabled: false,
+    // Enabled: false,
     // enableButtons: null, // inherit from enabled
     // enableTouchZoom: null, // inherit from enabled
     // enableDoubleClickZoom: null, // inherit from enabled

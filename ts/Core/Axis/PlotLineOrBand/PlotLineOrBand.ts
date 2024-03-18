@@ -325,7 +325,7 @@ class PlotLineOrBand {
                     align: optionsLabel.textAlign || optionsLabel.align,
                     rotation: optionsLabel.rotation,
                     'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                        '-label' + (optionsLabel.className || ''),
+                        '-label ' + (optionsLabel.className || ''),
                     zIndex
                 });
 
@@ -1105,4 +1105,4 @@ export default PlotLineOrBand;
  * @apioption yAxis.plotLines
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

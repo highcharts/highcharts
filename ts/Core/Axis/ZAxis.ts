@@ -101,6 +101,7 @@ function onChartAfterGetAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
+ * @private
  */
 class ZAxis extends Axis implements AxisLike {
 
@@ -176,7 +177,7 @@ class ZAxis extends Axis implements AxisLike {
             this.stacking.buildStacks();
         }
 
-        // loop through this axis' series
+        // Loop through this axis' series
         this.series.forEach((series): void => {
 
             if (series.reserveSpace()) {

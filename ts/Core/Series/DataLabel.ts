@@ -268,7 +268,8 @@ namespace DataLabel {
             },
             justify = rotation === 0 ? pick(
                 options.overflow,
-                (enabledDataSorting ? 'none' : 'justify')
+                (enabledDataSorting ? 'none' : 'justify'
+                )
             ) === 'justify' : false;
 
         // Math.round for rounding errors (#2683), alignTo to allow column
@@ -775,7 +776,7 @@ namespace DataLabel {
                                     point.dataLabelPath &&
                                     !textPathOptions.enabled
                                 ) {
-                                    // clean the DOM
+                                    // Clean the DOM
                                     point.dataLabelPath = (
                                         point.dataLabelPath.destroy()
                                     );
@@ -1068,4 +1069,4 @@ export default DataLabel;
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

@@ -175,6 +175,9 @@ function getFreeIndexes(
     return freeIndexValues;
 }
 
+/**
+ *
+ */
 function hasURLOption(options: DataOptions): boolean {
     return Boolean(
         options &&
@@ -287,7 +290,7 @@ class Data {
     public firstRowAsNames?: boolean;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>>;
-    public rowsToColumns = Data.rowsToColumns; // backwards compatibility
+    public rowsToColumns = Data.rowsToColumns; // Backwards compatibility
     public options: DataOptions;
     public valueCount?: DataValueCountObject;
 
@@ -569,7 +572,6 @@ class Data {
             endRow = options.endRow || Number.MAX_VALUE,
             itemDelimiter: string,
             lines,
-            // activeRowNo = 0,
             rowIt = 0;
 
         /*
@@ -873,7 +875,6 @@ class Data {
                 calculatedFormat: string,
                 i = 0,
                 madeDeduction = false,
-                // candidates = {},
                 j;
 
             if (!limit || limit > data.length) {
@@ -925,7 +926,6 @@ class Data {
                                     } else {
                                         guessedFormat[j] = 'YYYY';
                                     }
-                                    // madeDeduction = true;
                                 } else if (
                                     (thing[j] as any) > 12 &&
                                     (thing[j] as any) <= 31
@@ -960,9 +960,11 @@ class Data {
 
                 // If the middle one is dd, and the last one is dd,
                 // the last should likely be year.
-                if (guessedFormat.length === 3 &&
+                if (
+                    guessedFormat.length === 3 &&
                     guessedFormat[1] === 'dd' &&
-                    guessedFormat[2] === 'dd') {
+                    guessedFormat[2] === 'dd'
+                ) {
                     guessedFormat[2] = 'YY';
                 }
 
@@ -1033,23 +1035,25 @@ class Data {
                 }
             }
 
-            // //Make sure that there's header columns for everything
+            // Make sure that there's header columns for everything
             // columns.forEach(function (col) {
 
             // });
 
             deduceAxisTypes();
 
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
+            if (
+                (!options.columnTypes || options.columnTypes.length === 0) &&
                 dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
+                !options.dateFormat
+            ) {
                 options.dateFormat = deduceDateFormat(columns[0] as any);
             }
 
 
-            // lines.forEach(function (line, rowNo) {
+            /// lines.forEach(function (line, rowNo) {
             //    let trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',
@@ -1143,7 +1147,7 @@ class Data {
                 }
             });
 
-            this.dataFound(); // continue
+            this.dataFound(); // Continue
         }
         return columns;
     }
@@ -1532,7 +1536,7 @@ class Data {
             ) {
                 column[row] = '' + trimVal;
 
-            } else if (+trimInsideVal === floatVal) { // is numeric
+            } else if (+trimInsideVal === floatVal) { // Is numeric
 
                 column[row] = floatVal;
 
@@ -1586,7 +1590,7 @@ class Data {
                         descending = diff;
                     }
 
-                } else { // string
+                } else { // String
                     column[row] = trimVal === '' ? null : trimVal;
                     if (
                         row !== 0 &&
@@ -1649,7 +1653,7 @@ class Data {
                         NaN
                 );
             },
-            alternative: 'mm/dd/YYYY' // different format with the same regex
+            alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
@@ -1680,7 +1684,7 @@ class Data {
 
                 return Date.UTC(year, (match[2] as any) - 1, +match[1]);
             },
-            alternative: 'mm/dd/YY' // different format with the same regex
+            alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
@@ -2852,4 +2856,4 @@ export default Data;
  * @apioption data.enablePolling
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

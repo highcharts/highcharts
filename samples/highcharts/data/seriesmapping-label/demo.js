@@ -5,7 +5,8 @@ Highcharts.chart('container', {
         seriesMapping: [{
             // x: 0, // X values are pulled from column 0 by default
             // y: 1, // Y values are pulled from column 1 by default
-            label: 2 // Labels are pulled from column 2 and picked up in the dataLabels.format below
+            label: 2 // Labels are pulled from column 2 and picked up in the
+            // dataLabels.format below
         }]
     },
     chart: {

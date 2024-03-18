@@ -114,13 +114,15 @@ QUnit.test(
         assert.strictEqual(
             Math.round(annotationLabel.attr('y')),
             Math.round(point.plotY + point.series.group.translateY),
-            'For series without marker - label is placed correctly - y coordinate'
+            'For series without marker - label is placed correctly - y ' +
+            'coordinate'
         );
 
         assert.strictEqual(
             Math.round(annotationLabel.attr('x')),
             Math.round(point.plotX + point.series.group.translateX),
-            'For series without marker - label is placed correctly - x coordinate'
+            'For series without marker - label is placed correctly - x ' +
+            'coordinate'
         );
 
         assert.ok(

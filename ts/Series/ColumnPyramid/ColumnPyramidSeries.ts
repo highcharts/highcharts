@@ -100,7 +100,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
         let translatedThreshold = series.translatedThreshold =
                 yAxis.getThreshold(threshold as any),
-            // postprocessed for border width
+            // Postprocessed for border width
             seriesBarW = series.barW =
                 Math.max(pointWidth, 1 + 2 * borderWidth);
 
@@ -139,7 +139,6 @@ class ColumnPyramidSeries extends ColumnSeries {
             let barX = (point.plotX as any) + pointXOffset,
                 stackTotal: number,
                 stackHeight: number,
-                topPointY: number,
                 topXwidth: number,
                 bottomXwidth: number,
                 invBarPos: number,
@@ -175,7 +174,7 @@ class ColumnPyramidSeries extends ColumnSeries {
             stackTotal =
                 (threshold as any) + ((point.total || point.y) as any);
 
-            // overwrite stacktotal (always 100 / -100)
+            // Overwrite stacktotal (always 100 / -100)
             if (options.stacking === 'percent') {
                 stackTotal =
                     (threshold as any) + ((point.y as any) < 0) ?
@@ -183,20 +182,19 @@ class ColumnPyramidSeries extends ColumnSeries {
                         100;
             }
 
-            // get the highest point (if stack, extract from total)
-            topPointY = yAxis.toPixels((stackTotal), true);
+            // Get the highest point (if stack, extract from total)
+            const topPointY = yAxis.toPixels((stackTotal), true);
 
-            // calculate height of stack (in pixels)
+            // Calculate height of stack (in pixels)
             stackHeight =
                 chart.plotHeight - topPointY -
                 (chart.plotHeight - (translatedThreshold as any));
 
-            // topXwidth and bottomXwidth = width of lines from the center
-            // calculated from tanges proportion.
-            // Cannot be a NaN #12514
+            // `topXwidth` and `bottomXwidth` = width of lines from the center
+            // calculated from tanges proportion. Cannot be a NaN #12514.
             topXwidth = stackHeight ?
                 (barW * (barY - topPointY)) / stackHeight : 0;
-            // like topXwidth, but with height of point
+            // Like topXwidth, but with height of point
             bottomXwidth = stackHeight ?
                 (barW * (barY + barH - topPointY)) / stackHeight :
                 0;
@@ -223,22 +221,22 @@ class ColumnPyramidSeries extends ColumnSeries {
                 y2 = barY + barH + minPointLength;
             }
 
-            // inverted chart
+            // Inverted chart
             if (chart.inverted) {
                 invBarPos = yAxis.width - barY;
                 stackHeight =
                     topPointY - (yAxis.width - (translatedThreshold as any));
 
-                // proportion tanges
+                // Proportion tanges
                 topXwidth = (barW *
                 (topPointY - invBarPos)) / stackHeight;
                 bottomXwidth = (barW *
                 (topPointY - (invBarPos - barH))) / stackHeight;
 
-                x1 = barX + barW + topXwidth; // top bottom
-                x2 = x1 - 2 * topXwidth; // top top
-                x3 = barX - bottomXwidth + barW; // bottom top
-                x4 = barX + bottomXwidth + barW; // bottom bottom
+                x1 = barX + barW + topXwidth; // Top bottom
+                x2 = x1 - 2 * topXwidth; // Top top
+                x3 = barX - bottomXwidth + barW; // Bottom top
+                x4 = barX + bottomXwidth + barW; // Bottom bottom
 
                 y1 = barY;
                 y2 = barY + barH - minPointLength;
@@ -250,12 +248,12 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // Register shape type and arguments to be used in drawPoints
             point.shapeType = 'path';
-            point.shapeArgs = { // args for datalabels positioning
+            point.shapeArgs = { // Args for datalabels positioning
                 x: x1,
                 y: y1,
                 width: x2 - x1,
                 height: barH,
-                // path of pyramid
+                // Path of pyramid
                 d: [
                     ['M', x1, y1],
                     ['L', x2, y1],

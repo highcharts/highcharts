@@ -53,14 +53,18 @@ async function jsDocNamespace() {
     const logLib = require('./lib/log');
 
     // Make sure master is in `code/`
-    await gulpLib.requires(
-        (
-            argv.custom ?
-                ['code/custom.src.js'] :
-                ['code/highcharts.src.js']
-        ),
-        ['scripts']
-    );
+    if (argv.force) {
+        await gulpLib.run('scripts');
+    } else {
+        await gulpLib.requires(
+            (
+                argv.custom ?
+                    ['code/custom.src.js'] :
+                    ['code/highcharts.src.js']
+            ),
+            ['scripts']
+        );
+    }
 
     const codeFiles = (
         argv.custom ?

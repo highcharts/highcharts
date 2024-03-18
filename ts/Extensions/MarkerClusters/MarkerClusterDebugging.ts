@@ -14,7 +14,7 @@
 
 'use strict';
 
-// /**
+// **
 //  * Useful for debugging.
 //  * @private
 //  */

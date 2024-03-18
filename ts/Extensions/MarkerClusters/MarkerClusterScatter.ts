@@ -85,8 +85,6 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
 
         let x, y, gridX, gridY, key, i;
 
-        // drawGridLines(series, options);
-
         const scaledGridSize = series.getScaledGridSize(options);
 
         for (i = 0; i < dataX.length; i++) {
@@ -1444,7 +1442,8 @@ function seriesGetPointsState(
             oldState.parentStateId &&
             state[newState.parentStateId] &&
             state[newState.parentStateId].parentsId.indexOf(
-                oldState.parentStateId) === -1
+                oldState.parentStateId
+            ) === -1
         ) {
             state[newState.parentStateId].parentsId.push(
                 oldState.parentStateId

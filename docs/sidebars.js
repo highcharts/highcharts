@@ -105,6 +105,9 @@ module.exports = {
             'dashboards/get-options',
             'dashboards/frequently-asked-questions',
         ],
+        'DataGrid': [
+            'datagrid/general',
+        ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
             'chart-and-series-types/combining-chart-types',

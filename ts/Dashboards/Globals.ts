@@ -92,13 +92,6 @@ namespace Globals {
         layout: 'layout'
     };
 
-    /** @internal */
-    export const responsiveBreakpoints: Record<string, string> = {
-        small: 'small',
-        medium: 'medium',
-        large: 'large'
-    };
-
     /**
      * Contains all Board instances of this window.
      */

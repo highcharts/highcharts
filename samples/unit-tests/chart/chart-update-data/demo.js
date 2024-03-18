@@ -41,9 +41,13 @@ QUnit.test(
     'Soft series and axis update by data module update, datetime axis',
     function (assert) {
         var csv1 =
-            'Chart,Apples\n2018-03-13T13:00:00Z,4\n2018-03-13T14:00:00Z,2\n2018-03-13T15:00:00Z,1\n2018-03-13T16:00:00Z,4\n2018-03-13T17:00:00Z,2';
+            'Chart,Apples\n2018-03-13T13:00:00Z,4\n2018-03-13T14:00:00Z,' +
+            '2\n2018-03-13T15:00:00Z,1\n2018-03-13T16:00:00Z,' +
+            '4\n2018-03-13T17:00:00Z,2';
         var csv2 =
-            'Chart,Apples\n2018-03-13T14:00:00Z,2\n2018-03-13T15:00:00Z,1\n2018-03-13T16:00:00Z,4\n2018-03-13T17:00:00Z,2\n2018-03-13T18:00:00Z,5';
+            'Chart,Apples\n2018-03-13T14:00:00Z,2\n2018-03-13T15:00:00Z,' +
+            '1\n2018-03-13T16:00:00Z,4\n2018-03-13T17:00:00Z,' +
+            '2\n2018-03-13T18:00:00Z,5';
 
         var chart = Highcharts.chart('container', {
             chart: {

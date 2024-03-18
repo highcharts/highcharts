@@ -109,25 +109,51 @@ QUnit.module('Mapping tests', hooks => {
             }]
         });
     });
-    hooks.after(() => delete Highcharts.sonification
-        .Sonification.prototype.forceReady);
+    hooks.after(
+        () => delete Highcharts.sonification
+            .Sonification.prototype.forceReady
+    );
 
 
     QUnit.test('Basic mappings', function (assert) {
         var channels = chart.sonification.timeline.channels;
-        assert.strictEqual(channels.length, 2, 'Has two channels, one for each track');
-        assert.strictEqual(channels[0].type, 'instrument', 'First track is instrument');
-        assert.strictEqual(channels[1].type, 'speech', 'Second track is speech');
+        assert.strictEqual(
+            channels.length, 2, 'Has two channels, one for ' +
+            'each track'
+        );
+        assert.strictEqual(
+            channels[0].type,
+            'instrument', 'First track is instrument'
+        );
+        assert.strictEqual(
+            channels[1].type,
+            'speech', 'Second track is speech'
+        );
 
         function assertInstrumentEvent(event, expectedTime, expectedProps) {
-            assert.strictEqual(event.time, expectedTime, 'Instrument event has expected time');
-            assert.propEqual(event.instrumentEventOptions, expectedProps, 'Instrument event has expected props');
+            assert.strictEqual(
+                event.time, expectedTime, 'Instrument event ' +
+                'has expected time'
+            );
+            assert.propEqual(
+                event.instrumentEventOptions, expectedProps,
+                'Instrument event has expected props'
+            );
         }
 
         function assertSpeechEvent(event, expectedTime, text, expectedProps) {
-            assert.strictEqual(event.time, expectedTime, 'Speech event has expected time');
-            assert.strictEqual(event.message, text, 'Speech event has expected text');
-            assert.propEqual(event.speechOptions, expectedProps, 'Speech event has expected props');
+            assert.strictEqual(
+                event.time, expectedTime, 'Speech event has ' +
+                'expected time'
+            );
+            assert.strictEqual(
+                event.message, text, 'Speech event has ' +
+                'expected text'
+            );
+            assert.propEqual(
+                event.speechOptions, expectedProps, 'Speech ' +
+                'event has expected props'
+            );
         }
 
         assertInstrumentEvent(channels[0].events[0], 10, {
@@ -247,7 +273,11 @@ QUnit.module('Mapping tests', hooks => {
 
         assert.strictEqual(
             sonification.timeline.channels[2].events
-                .map(e => Math.round(e.instrumentEventOptions.pan * 1000) / 1000).join(','),
+                .map(e => Math.round(
+                    e.instrumentEventOptions.pan * 1000
+                ) / 1000
+                )
+                .join(','),
             '0,12.5,25,37.5,46.516,49.532,50,50.468,53.484,62.5,75,87.5,100',
             'Negative and 0 logarithmic mapping works as expected'
         );

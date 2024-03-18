@@ -253,7 +253,7 @@ namespace ParallelCoordinates {
 
             options.yAxis = defaultYAxis.concat(newYAxes);
             options.xAxis = merge(
-                ParallelCoordinatesDefaults.xAxis, // docs
+                ParallelCoordinatesDefaults.xAxis, // Docs
                 splat(options.xAxis || {})[0]
             );
         }

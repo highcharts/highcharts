@@ -30,13 +30,15 @@ Highcharts.ganttChart('container', {
             }
         },
         point: {
-            descriptionFormat: '{yCategory}. Start {x:%Y-%m-%d}, end {x2:%Y-%m-%d}.'
+            descriptionFormat: '{yCategory}. Start {x:%Y-%m-%d}, end ' +
+                '{x2:%Y-%m-%d}.'
         }
     },
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     },

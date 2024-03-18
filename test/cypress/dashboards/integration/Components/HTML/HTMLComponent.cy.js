@@ -19,4 +19,19 @@ describe('Updating HTML component.', () => {
             cy.get('.highcharts-dashboards-component-caption').should('have.text', 'Changed caption');
         })
     });
+
+    it('HTML content should adjust height when resizing.', () => {
+        cy.board().then(dashboard => {
+            const mComponents = dashboard.mountedComponents;
+            const componentSize =
+                mComponents[1].cell.container.getBoundingClientRect().toJSON();
+            // resize the window to squeeze the text inside
+            cy.viewport(600, 1000);
+
+            cy.get('#dashboard-2').invoke('height').should(
+                'be.greaterThan',
+                componentSize.height
+            );
+        })
+    });
 });

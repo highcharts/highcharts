@@ -37,7 +37,14 @@
     Highcharts.stockChart('container', {
         stockTools: {
             gui: {
-                buttons: ['linLogSwitch', 'separator', 'indicators', 'separator', 'simpleShapes', 'lines', 'crookedLines', 'measure', 'advanced', 'toggleAnnotations', 'separator', 'verticalLabels', 'flags', 'separator', 'zoomChange', 'fullScreen', 'typeChange', 'separator', 'currentPriceIndicator', 'saveChart'],
+                buttons: [
+                    'linLogSwitch', 'separator', 'indicators', 'separator',
+                    'simpleShapes', 'lines', 'crookedLines', 'measure',
+                    'advanced', 'toggleAnnotations', 'separator',
+                    'verticalLabels', 'flags', 'separator', 'zoomChange',
+                    'fullScreen', 'typeChange', 'separator',
+                    'currentPriceIndicator', 'saveChart'
+                ],
                 definitions: {
                     linLogSwitch: {
                         className: 'highcharts-lin-log-switch',
@@ -53,7 +60,8 @@
                     init: function (button) {
                         const chart = this.chart,
                             isLogarithmic = chart.yAxis[0].logarithmic,
-                            axisTypeIcon = isLogarithmic ? 'logarithmic.svg' : 'linear.svg',
+                            axisTypeIcon = isLogarithmic ?
+                                'logarithmic.svg' : 'linear.svg',
                             iconURL = 'https://code.highcharts.com/9.2.2/gfx/stock-icons/' + axisTypeIcon;
 
                         // Change the axis type accordingly.
@@ -67,7 +75,8 @@
                         });
 
                         // Change the button icon.
-                        button.firstChild.style['background-image'] = `url(${iconURL})`;
+                        button.firstChild.style[
+                            'background-image'] = `url(${iconURL})`;
 
                         // Deselect button after click.
                         Highcharts.fireEvent(

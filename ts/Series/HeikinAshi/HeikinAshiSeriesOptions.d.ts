@@ -23,7 +23,7 @@ import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptio
  * */
 
 export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
-    // nothing to add
+    // Nothing to add
 }
 
 /* *

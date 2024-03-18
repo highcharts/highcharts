@@ -484,7 +484,8 @@ class GeoHeatmapSeries extends MapSeries {
                         };
 
                         const animOptions = merge(
-                                animObject(chart.renderer.globalAnimation)),
+                                animObject(chart.renderer.globalAnimation)
+                            ),
                             userStep = animOptions.step;
 
                         animOptions.step =
@@ -816,4 +817,4 @@ export default GeoHeatmapSeries;
  * @type {number}
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file
