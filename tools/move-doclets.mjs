@@ -47,9 +47,16 @@ const HELP = [
 
 
 const MAP_PROPERTY_TYPES = {
-    '.tooltip': 'TooltipOptions'
+    '.dataLabels': 'DataLabelOptions',
+    '.legendType': '(\'point\'|\'series\')',
+    '.tooltip': 'TooltipOptions',
+    'series.heatmap.colorKey': 'string',
 };
 
+const MAP_TYPE_IMPORTS = {
+    'DataLabelOptions': 'Core/Series/DataLabelOptions',
+    'TooltipOptions': 'Core/TooltipOptions'
+};
 
 /* *
  *
@@ -67,6 +74,25 @@ let verbose = false;
  *
  * */
 
+
+/**
+ * @param {Record<string,*>} branch
+ * @param {string} path
+ * @param {string} type
+ */
+function addImport(
+    branch,
+    path,
+    type
+) {
+    const imports = branch.imports = branch.imports || {};
+    const types = imports[path] = imports[path] || [];
+
+    if (!types.includes(type)) {
+        types.push(type);
+    }
+
+}
 
 /**
  * @param {Array<Record<string,*>>} doclet
@@ -154,7 +180,7 @@ function decorateDoclet(
             tree.push(anonymousBranch);
         }
 
-        // Check relation of the last doclet
+        // Add last doclet to branch, if custom option path is missing
         if (
             !tree[tree.length - 1]
                 .doclet
@@ -295,6 +321,9 @@ function decorateType(
         optionType = reflectInMap(branch.fullName);
         if (optionType) {
             branch.isMappedType = true;
+            if (MAP_TYPE_IMPORTS[optionType]) {
+                addImport(branch, MAP_TYPE_IMPORTS[optionType], optionType);
+            }
         }
     }
 
@@ -305,6 +334,7 @@ function decorateType(
         optionType = reflectInOptions(branch.name);
         if (optionType) {
             branch.isMappedType = true;
+            addImport(branch, 'Core/SeriesOptions', optionType);
         }
     }
 
@@ -510,6 +540,91 @@ function generatePropertyComment(
 
 
 /**
+ * @param {TS.SourceFile} source
+ * @param {Record<string,*>} tree
+ * @return {string}
+ */
+function generateTypeImports(
+    source,
+    tree
+) {
+    const currentPath = Path.dirname(source.fileName);
+    const sourceCode = source.getFullText();
+
+    /** @type {Record<string, Array<string>>} */
+    const imports = {};
+
+    /**
+     * @param {TS.ImportDeclaration} importNode
+     * @return {string}
+     */
+    const getImportPath = (importNode) => {
+        return importNode.moduleSpecifier
+            .getText()
+            .replace(/^(['"])(.*)\1$/, '$2');
+    };
+
+    /**
+     * @param {TS.Node} node
+     */
+    const extractImports = (node) => {
+        if (TS.isSourceFile(node)) {
+            for (const child of getNodesChildren(node)) {
+                extractImports(child);
+            }
+        } else if (
+            TS.isImportDeclaration(node)
+        ) {
+            const path = getImportPath(node);
+
+            console.log('***', node.importClause?.getText());
+        }
+    };
+
+    /**
+     * @param {Record<string,*>} branch
+     */
+    const mergeImports = (branch) => {
+
+        if (branch.imports) {
+            const branchImports = branch.imports;
+            /** @type {Array<string>} */
+            let branchTypes;
+            /** @type {Record<string,Array<string>>} */
+            let codeTypes;
+
+            for (const path in branchImports) {
+
+                branchTypes = branchImports[path];
+                codeTypes = codeImports[path] = codeImports[path] || [];
+
+                for (const branchType of branchTypes) {
+                    if (!codeTypes.includes(branchType)) {
+                        codeTypes.push(branchType);
+                    }
+                }
+
+            }
+
+        }
+
+        if (branch.children) {
+            for (const subBranch of branch.children) {
+                mergeImports(subBranch);
+            }
+        }
+
+    };
+
+    extractImports(source);
+    mergeImports(tree);
+    console.log(imports);
+
+    return sourceCode;
+}
+
+
+/**
  * @param {TS.JSDoc|TS.JSDocTag} docletPart
  * @return {string}
  */
@@ -634,7 +749,9 @@ function getDocletsTree(
                     TS.isStringLiteral(node.getFirstToken())
                 )
             ) {
-                console.log('!!!', branch.fullName);
+                if (verbose) {
+                    console.info('Skipping children:', TS.SyntaxKind[node.kind], branch.fullName);
+                }
                 return;
             }
 
@@ -688,9 +805,9 @@ function getInterfaceName(
 ) {
     const doclet = branch.doclet;
 
-    /** @param {string} name */
-    const convertName = (name) => {
-        const splittedName = name.split('.');
+    /** @param {string} fullName */
+    const convertName = (fullName) => {
+        const splittedName = fullName.split('.');
 
         if (ofParent) {
             splittedName.pop();
@@ -713,13 +830,13 @@ function getInterfaceName(
     }
 
     if (doclet) {
-        const name = (
+        const fullName = (
             getTagText(doclet, 'apioption') ||
             getTagText(doclet, 'optionparent')
         );
 
-        if (name) {
-            return convertName(name);
+        if (fullName) {
+            return convertName(fullName);
         }
     }
 
@@ -1119,7 +1236,7 @@ function writeDocletsTree(
             console.info('Applying', changes.length, 'change(s)...');
         }
 
-        let targetCode = target.getFullText();
+        let targetCode = generateTypeImports(target, tree);
 
         for (const change of changes.sort((a, b) => b[0] - a[0])) {
             /** @type {string} */
