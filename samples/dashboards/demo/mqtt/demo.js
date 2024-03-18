@@ -3,6 +3,25 @@
 let board = null;
 let dataTable = null;
 
+const powerUnit = 'kWh';
+
+const xAxisOptions = {
+    type: 'datetime',
+    labels: {
+        format: '{value:%H:%M}',
+        accessibility: {
+            description: 'Hours, minutes'
+        }
+    }
+};
+
+const yAxisOptions = {
+    title: {
+        text: powerUnit
+    }
+};
+
+
 // Launches the Dashboards application
 async function setupDashboard() {
     board = await Dashboards.board('container', {
@@ -13,19 +32,11 @@ async function setupDashboard() {
                 options: {
                     firstRowAsNames: true,
                     data: [
-                        ['Event', 'Aggregat 1', 'Aggregat 2'],
-                        ['Test 1', 8.1, 9.1],
-                        ['Test 2', 4.2, 9.6]
+                        ['time', 'aggr1', 'aggr2'],
+                        [Date.UTC(2024, 0, 1), 0.5, 0.7]
                     ]
                 }
             }]
-        },
-        editMode: {
-            enabled: true,
-            contextMenu: {
-                enabled: true,
-                items: ['editMode']
-            }
         },
         components: [{
             type: 'KPI',
@@ -40,26 +51,23 @@ async function setupDashboard() {
             title: 'Aggregat 2',
             valueFormat: '{value}'
         }, {
+            type: 'Highcharts',
+            renderTo: 'dashboard-col-0',
+            connector: {
+                id: 'mqtt-data',
+                columnAssignment: [{
+                    seriesId: 'Aggregat 1',
+                    data: ['time', 'aggr1']
+                }]
+            },
             sync: {
                 visibility: true,
                 highlight: true,
                 extremes: true
             },
-            connector: {
-                id: 'mqtt-data',
-                columnAssignment: [{
-                    seriesId: 'Aggregat 1',
-                    data: ['Aggregat 1']
-                }]
-            },
-            renderTo: 'dashboard-col-0',
-            type: 'Highcharts',
             chartOptions: {
-                yAxis: {
-                    title: {
-                        text: 'KWH'
-                    }
-                },
+                xAxis: xAxisOptions,
+                yAxis: yAxisOptions,
                 credits: {
                     enabled: false
                 },
@@ -68,38 +76,33 @@ async function setupDashboard() {
                     verticalAlign: 'top'
                 },
                 chart: {
-                    animation: false,
-                    type: 'column'
+                    type: 'spline'
                 },
                 title: {
                     text: ''
                 },
                 tooltip: {
-                    valueSuffix: ' KWH',
-                    stickOnContact: true
+                    valueSuffix: powerUnit
                 }
             }
         }, {
+            type: 'Highcharts',
             renderTo: 'dashboard-col-1',
+            connector: {
+                id: 'mqtt-data',
+                columnAssignment: [{
+                    seriesId: 'Aggregat 2',
+                    data: ['time', 'aggr2']
+                }]
+            },
             sync: {
                 visibility: true,
                 highlight: true,
                 extremes: true
             },
-            connector: {
-                id: 'mqtt-data',
-                columnAssignment: [{
-                    seriesId: 'Aggregat 2',
-                    data: ['Aggregat 2']
-                }]
-            },
-            type: 'Highcharts',
             chartOptions: {
-                yAxis: {
-                    title: {
-                        text: 'KWH'
-                    }
-                },
+                xAxis: xAxisOptions,
+                yAxis: yAxisOptions,
                 credits: {
                     enabled: false
                 },
@@ -115,19 +118,37 @@ async function setupDashboard() {
                     type: 'spline'
                 },
                 tooltip: {
-                    valueSuffix: ' KWH',
+                    valueSuffix: powerUnit,
                     stickOnContact: true
                 }
             }
         }, {
+            type: 'DataGrid',
             renderTo: 'dashboard-col-2',
             connector: {
                 id: 'mqtt-data'
             },
-            type: 'DataGrid',
             sync: {
                 highlight: true,
                 visibility: true
+            },
+            dataGridOptions: {
+                editable: false,
+                columns: {
+                    time: {
+                        headerFormat: 'Time UTC',
+                        cellFormatter: function () {
+                            // eslint-disable-next-line max-len
+                            return Highcharts.dateFormat('%Y-%m-%m', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
+                        }
+                    },
+                    aggr1: {
+                        headerFormat: 'Aggregat 1'
+                    },
+                    aggr2: {
+                        headerFormat: 'Aggregat 2'
+                    }
+                }
             }
         }]
     });
@@ -140,12 +161,16 @@ setupDashboard();
 
 async function updateBoard(msg) {
     dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+
     const data = JSON.parse(msg.payloadString);
+    const d = new Date(data.tst_iso);
+    const time = d.valueOf();
+
     const p1 = data.aggs[0].P_gen;
     const p2 = data.aggs[1].P_gen;
 
     // Add a row
-    await dataTable.setRow(['mqtt', p1, p2]);
+    await dataTable.setRow([time, p1, p2]);
     await updateComponents();
 }
 

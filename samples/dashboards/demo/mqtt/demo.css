@@ -156,7 +156,7 @@ h1#title {
 
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value::after,
 #kpi-iron .highcharts-dashboards-component-kpi-value::after {
-    content: "KWH";
+    content: "kWh";
     display: block;
     font-size: 1rem;
 }
