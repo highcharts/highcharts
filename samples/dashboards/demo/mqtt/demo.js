@@ -5,6 +5,40 @@ let dataTable = null;
 
 const powerUnit = 'kWh';
 
+const kpiGaugeOptions = {
+    chart: {
+        type: 'solidgauge',
+        spacing: [8, 8, 8, 8]
+    },
+    pane: {
+        center: ['50%', '85%'],
+        size: '140%',
+        startAngle: -90,
+        endAngle: 90,
+        background: {
+            innerRadius: '60%',
+            outerRadius: '100%',
+            shape: 'arc'
+        }
+    },
+    yAxis: {
+        labels: {
+            distance: '105%',
+            y: 5,
+            align: 'auto'
+        },
+        lineWidth: 2,
+        minorTicks: false,
+        tickWidth: 2,
+        tickAmount: 2,
+        visible: true
+    },
+    accessibility: {
+        typeDescription: 'The gauge chart with 1 data point.'
+    }
+};
+
+
 const xAxisOptions = {
     type: 'datetime',
     labels: {
@@ -43,13 +77,37 @@ async function setupDashboard() {
             renderTo: 'kpi-agg-1',
             value: 0,
             valueFormat: '{value}',
-            title: 'Aggregat 1'
+            title: 'Aggregat 1',
+            chartOptions: {
+                chart: kpiGaugeOptions.chart,
+                pane: kpiGaugeOptions.pane,
+                yAxis: {
+                    ...kpiGaugeOptions.yAxis,
+                    min: 0,
+                    max: 20,
+                    accessibility: {
+                        description: 'Årøy, aggregat 1'
+                    }
+                }
+            }
         }, {
             type: 'KPI',
             renderTo: 'kpi-agg-2',
             value: 0,
             title: 'Aggregat 2',
-            valueFormat: '{value}'
+            valueFormat: '{value}',
+            chartOptions: {
+                chart: kpiGaugeOptions.chart,
+                pane: kpiGaugeOptions.pane,
+                yAxis: {
+                    ...kpiGaugeOptions.yAxis,
+                    min: 0,
+                    max: 20,
+                    accessibility: {
+                        description: 'Årøy, aggregat 2'
+                    }
+                }
+            }
         }, {
             type: 'Highcharts',
             renderTo: 'dashboard-col-0',
@@ -139,7 +197,7 @@ async function setupDashboard() {
                         headerFormat: 'Time UTC',
                         cellFormatter: function () {
                             // eslint-disable-next-line max-len
-                            return Highcharts.dateFormat('%Y-%m-%m', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
+                            return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
                         }
                     },
                     aggr1: {
@@ -163,14 +221,36 @@ async function updateBoard(msg) {
     dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 
     const data = JSON.parse(msg.payloadString);
-    const d = new Date(data.tst_iso);
-    const time = d.valueOf();
 
-    const p1 = data.aggs[0].P_gen;
-    const p2 = data.aggs[1].P_gen;
+    if (dataTable.getRowCount() === 0) {
+        // Get history
+        const hist = data.aggs[1].P_hist;
+        const d = new Date(hist.start);
+        let time = Number(d.valueOf());
 
-    // Add a row
-    await dataTable.setRow([time, p1, p2]);
+        const step = hist.res * 100 * 5;
+        for (let i = 0; i < hist.values.length; i++) {
+            const p1 = 0; // TBD: grab data
+            const p2 = hist.values[i];
+
+            // Add row with historical data
+            await dataTable.setRow([time, p1, p2]);
+
+            // Next measurement
+            time += step;
+        }
+
+    } else {
+        const d = new Date(data.tst_iso);
+        const time = d.valueOf();
+
+        const p1 = data.aggs[0].P_gen;
+        const p2 = data.aggs[1].P_gen;
+
+        // Add row with latest data
+        await dataTable.setRow([time, p1, p2]);
+    }
+    // Refresh all components
     await updateComponents();
 }
 
@@ -183,7 +263,7 @@ async function connectBoard() {
 }
 
 async function updateComponents() {
-    for (let i = 2; i <= 4; i++) {
+    for (let i = 0; i < board.mountedComponents.length; i++) {
         const comp = board.mountedComponents[i].component;
         await comp.update({
             connector: {
@@ -191,7 +271,21 @@ async function updateComponents() {
             }
         });
     }
+
+    // Update the KPI components
+    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+
+    const kpiAgg1 = board.mountedComponents[0].component;
+    await kpiAgg1.update({
+        value: dataTable.columns.aggr1[0]
+    });
+
+    const kpiAgg2 = board.mountedComponents[1].component;
+    await kpiAgg2.update({
+        value: dataTable.columns.aggr2[0]
+    });
 }
+
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
