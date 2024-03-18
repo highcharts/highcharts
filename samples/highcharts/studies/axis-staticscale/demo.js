@@ -20,7 +20,10 @@ const chart = Highcharts.chart('container', {
     xAxis: {
         staticScale: 24,
         minRange: 1,
-        categories: true
+        categories: true,
+        labels: {
+            padding: 0
+        }
     },
     series: [{
         data: data,

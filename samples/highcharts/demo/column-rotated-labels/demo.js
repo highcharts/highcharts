@@ -12,6 +12,7 @@ Highcharts.chart('container', {
         type: 'category',
         labels: {
             autoRotation: [-45, -90],
+            padding: 0,
             style: {
                 fontSize: '13px',
                 fontFamily: 'Verdana, sans-serif'

@@ -36,7 +36,8 @@ Highcharts.chart('container', {
         tickPositions: false,
         labels: {
             format: '{value}',
-            useHTML: true
+            useHTML: true,
+            padding: 0
         }
     },
     credits: {
