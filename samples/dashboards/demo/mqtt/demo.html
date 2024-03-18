@@ -21,9 +21,9 @@
 		</form>
 		<br /><br />
 		<form name="subs" action="" onsubmit="return subTopics()">
-			<input type="submit" value="Subscribe">
+			<input id="subscribe" type="submit" value="Subscribe" disabled>
 			<label for="Stopic">Topic</label>
-			<input type="text" name="Stopic" value="public/test/overview">
+			<input id="topic" type="text" name="Stopic" value="public/test/overview">
 		</form>
 	</div>
 	<br />
@@ -32,8 +32,8 @@
 	<div id="container">
 		<div class="row">
 			<div id="kpi-wrapper">
-				<div class="cell" id="kpi-vitamin-a"></div>
-				<div class="cell" id="kpi-iron"></div>
+				<div class="cell" id="kpi-agg-1"></div>
+				<div class="cell" id="kpi-agg-2"></div>
 			</div>
 			<div class="cell" id="dashboard-col-0"></div>
 			<div class="cell" id="dashboard-col-1"></div>
