@@ -228,18 +228,22 @@ async function updateBoard(msg) {
         const d = new Date(hist.start);
         let time = Number(d.valueOf());
 
-        const step = hist.res * 100 * 5;
-        for (let i = 0; i < hist.values.length; i++) {
+        const step = hist.res * 1000; // P_hist resolution: seconds
+        const rowData = [];
+        const histLen = hist.values.length;
+
+        for (let i = 0; i < histLen; i++) {
             const p1 = 0; // TBD: grab data
             const p2 = hist.values[i];
 
-            // Add row with historical data
-            await dataTable.setRow([time, p1, p2]);
+            // Add row with historical data (reversed)
+            rowData.push([time, p1, p2]);
 
             // Next measurement
             time += step;
         }
-
+        // Add the rows to the data table
+        await dataTable.setRows(rowData);
     } else {
         const d = new Date(data.tst_iso);
         const time = d.valueOf();
@@ -263,7 +267,7 @@ async function connectBoard() {
 }
 
 async function updateComponents() {
-    for (let i = 0; i < board.mountedComponents.length; i++) {
+    for (let i = 2; i < board.mountedComponents.length; i++) {
         const comp = board.mountedComponents[i].component;
         await comp.update({
             connector: {
@@ -274,15 +278,16 @@ async function updateComponents() {
 
     // Update the KPI components
     dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    const lastRow = await dataTable.getRowCount() - 1;
 
     const kpiAgg1 = board.mountedComponents[0].component;
     await kpiAgg1.update({
-        value: dataTable.columns.aggr1[0]
+        value: dataTable.getCellAsNumber('aggr1', lastRow)
     });
 
     const kpiAgg2 = board.mountedComponents[1].component;
     await kpiAgg2.update({
-        value: dataTable.columns.aggr2[0]
+        value: dataTable.getCellAsNumber('aggr2', lastRow)
     });
 }
 
@@ -316,8 +321,15 @@ window.onload = () => {
 };
 
 
+function setConnectionStatus(connected) {
+    setUiElement('status', connected ? 'Connected' : 'Disconnected');
+    const el = document.getElementById('status_bar');
+    el.style.backgroundColor = connected ? 'green' : 'red';
+}
+
+
 function onConnectionLost() {
-    setUiElement('status', 'Disconnected');
+    setConnectionStatus(false);
     setUiElement('statusMsg', '');
     subscribeEnable(false);
     topicEnable(true);
@@ -347,7 +359,7 @@ async function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
     setUiElement('statusMsg', 'Connected to ' + host + ' on port ' + port);
     connectFlag = true;
-    setUiElement('status', 'Connected');
+    setConnectionStatus(true);
 
     connectBoard();
     subscribeEnable(true);
@@ -435,15 +447,16 @@ function subTopics() {
     return false;
 }
 
-
 function subscribeEnable(enabled) {
     document.getElementById('subscribe').disabled = !enabled;
 }
 
 
 function topicEnable(enabled) {
+    // TBD: static topic until application is made scalable
     document.getElementById('topic').disabled = enabled;
 }
+
 
 function setUiElement(elName, msg) {
     uiId[elName].innerHTML = msg;
