@@ -160,7 +160,7 @@ QUnit.test('getUnionExtremes', function (assert) {
 
     // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2c6e89641888ae94c988649d96552c06c4e47351/samples/data/aapl-ohlcv.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-ohlcv.json'
     ).then(response => response.json());
 
     QUnit.test('Range selector with Stock charts', function (assert) {

@@ -382,8 +382,8 @@ module.exports = function (config) {
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
-                    '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    'Expected: ',
+                    'Debug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n        Expected: '
                 );
 
                 ret = ret.replace(regex, a => a.cyan);
@@ -459,6 +459,8 @@ module.exports = function (config) {
                             );
                         }
                     }
+                    // Replace external data sources with internal data samples
+                    js = resolveJSON(js);
 
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
@@ -624,9 +626,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, samplePath, js, assertion) {
-    let scriptBody = resolveJSON(js);
-
+function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
