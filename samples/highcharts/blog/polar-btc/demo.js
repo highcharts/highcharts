@@ -32,7 +32,8 @@ Highcharts.chart('container', {
             description: 'Bitcoin Price in USD'
         },
         labels: {
-            format: '{#if isFirst}<text fill="#000">{value}</text>{else}{value}{/if}',
+            format: `{#if isFirst}<text fill="#000">{value}</text>
+                {else}{value}{/if}`,
             align: 'left',
             style: {
                 color: '#fff'
