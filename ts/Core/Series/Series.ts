@@ -1414,7 +1414,7 @@ class Series {
                                 pt = data[i];
                                 (xData as any)[i] = (pt as any)[0];
                                 (yData as any)[i] =
-                                    (pt as any).slice(1, valueCount);
+                                    (pt as any).slice(1, valueCount + 1);
                             }
                         }
                     } else { // [x, y]
