@@ -55,7 +55,7 @@ div#status_bar #status_messages {
 
 /* Dashboards */
 
-#kpi-layout {
+.el-aggr {
     --color-axis-labels: #a7a4b0;
     --color-background: #fff;
     --color-gauge: #4caffe;
@@ -67,7 +67,7 @@ div#status_bar #status_messages {
     --color-text: #2f2b38;
 }
 
-#container.highcharts-dark #kpi-layout {
+#container.highcharts-dark .el-aggr {
     --color-axis-labels: #838394;
     --color-background: #0d0d0d;
     --color-pane: #20202c;
@@ -78,7 +78,7 @@ div#status_bar #status_messages {
 @media (prefers-color-scheme: dark) {
     /* dark mode */
 
-    #kpi-layout {
+    .el-aggr {
         --color-axis-labels: #838394;
         --color-background: #0d0d0d;
         --color-pane: #20202c;
@@ -115,106 +115,105 @@ div#status_bar #status_messages {
  *  KPI
  *
  * */
-#kpi-layout {
+.el-aggr {
     display: flex;
     flex-direction: column;
 }
 
-#kpi-layout,
-#dashboard-col-0,
-#dashboard-col-1,
-#dashboard-col-2 {
+.el-aggr,
+#data-grid {
     flex: 1;
     min-width: 0;
 }
 
-#kpi-layout,
-#dashboard-col-0,
-#dashboard-col-1 {
-    height: 400px;
+.el-aggr {
+    height: 500px;
 }
 
 #kpi-agg-1,
 #kpi-agg-2 {
-    flex: 1 1 100%;
-    height: 50%;
-}
-
-#kpi-layout .highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
-    color: var(--highcharts-neutral-color-100);
-    border-radius: 10px;
-}
-
-#kpi-layout .highcharts-dashboards-component-title {
-    white-space: nowrap;
-}
-
-#kpi-layout #kpi-data .highcharts-dashboards-component-kpi-value {
-    margin: 0.5em 0;
-}
-
-#kpi-layout .highcharts-dashboards-component-kpi-content {
-    background: none;
-}
-
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
-    fill: var(--color-axis);
-}
-
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
-    fill: none;
-    stroke: none;
-}
-
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
-    font-size: 20px;
-}
-
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
-    fill: var(--highcharts-neutral-color-5);
-    fill-opacity: 1;
-    stroke: var(--highcharts-neutral-color-20);
-}
-
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
-    fill: var(--color-gauge);
-    stroke: none;
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
-    background-color: var(--color-active);
-    color: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component {
-    background-color: var(--color-hover);
-    color: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-active text {
-    fill: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover text {
-    fill: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
-    fill: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text {
-    fill: var(--color-hover-text);
-}
-
-#kpi-layout .highcharts-title {
-    font-size: 1em;
+    height: 40%;
 }
 
 #kpi-agg-1 .highcharts-dashboards-component-kpi-value,
 #kpi-agg-2 .highcharts-dashboards-component-kpi-value {
     display: none;
+}
+
+.el-chart {
+    height: 50%;
+}
+
+.el-aggr .highcharts-dashboards-component {
+    background-color: var(--highcharts-neutral-color-0);
+    color: var(--highcharts-neutral-color-100);
+    border-radius: 10px;
+}
+
+.el-aggr .highcharts-dashboards-component-title {
+    white-space: nowrap;
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-value {
+    margin: 0.5em 0;
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-content {
+    background: none;
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
+    fill: var(--color-axis);
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
+    fill: none;
+    stroke: none;
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
+    font-size: 20px;
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
+    fill: var(--highcharts-neutral-color-5);
+    fill-opacity: 1;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+    fill: var(--color-gauge);
+    stroke: none;
+}
+
+.el-aggr .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
+    background-color: var(--color-active);
+    color: var(--color-hover-text);
+}
+
+.el-aggr .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
+}
+
+.el-aggr .highcharts-dashboards-cell-state-active text {
+    fill: var(--color-hover-text);
+}
+
+.el-aggr .highcharts-dashboards-cell-state-hover:hover text {
+    fill: var(--color-hover-text);
+}
+
+.el-aggr .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
+}
+
+.el-aggr .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
+}
+
+.el-aggr .highcharts-title {
+    font-size: 1em;
 }
 
 @media (max-width: 992px) {
