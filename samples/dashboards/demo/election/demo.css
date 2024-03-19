@@ -461,7 +461,7 @@
 }
 
 /* Styling of first row (national results) */
-#election-grid .highcharts-datagrid-row:nth-of-type(1) {
+#election-grid .highcharts-datagrid-row[data-row-index="0"] {
     font-weight: bold;
 }
 
