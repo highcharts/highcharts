@@ -45,7 +45,7 @@ Dashboard.board('container', {
 
 ## Components synchronization
 
-The Navigator Component can be synced with other components in dashboards. Two synchronization types are predefined for the Navigator Component: [`crossfilter`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter) and [`extremes`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes). You can find more information about it in the [sync chapter](https://www.highcharts.com/docs/dashboards/synchronize-components).
+The Navigator Component can be synced with other components in Dashboards. Two synchronization types are predefined for the Navigator Component: [`crossfilter`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter) and [`extremes`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes). You can find more information about it in the [sync chapter](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 Crossfilter sync is specific to the Navigator Component. You can learn more about this below.
 

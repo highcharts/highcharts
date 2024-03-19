@@ -9,7 +9,8 @@ and highlighting specific data.
 
 ## How to synchronize the components?
 
-To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) which is needed for all the predefined synchronization types to work.
+To synchronize components, you need to specify the event you want to synchronize between each component.
+Additionally, both components must use the same connector defined in the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling), which is necessary for all predefined synchronization types to work.
 
 List of synchronization types for each component type:
 
