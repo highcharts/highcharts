@@ -112,7 +112,7 @@ async function setupDashboard() {
             }
         }, {
             type: 'Highcharts',
-            renderTo: 'dashboard-col-0',
+            renderTo: 'chart-agg-1',
             connector: {
                 id: 'mqtt-data',
                 columnAssignment: [{
@@ -147,7 +147,7 @@ async function setupDashboard() {
             }
         }, {
             type: 'Highcharts',
-            renderTo: 'dashboard-col-1',
+            renderTo: 'chart-agg-2',
             connector: {
                 id: 'mqtt-data',
                 columnAssignment: [{
@@ -184,7 +184,7 @@ async function setupDashboard() {
             }
         }, {
             type: 'DataGrid',
-            renderTo: 'dashboard-col-2',
+            renderTo: 'data-grid',
             connector: {
                 id: 'mqtt-data'
             },

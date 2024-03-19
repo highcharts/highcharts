@@ -33,20 +33,22 @@
 	<!-- Dashboards container-->
 	<div id="container">
 		<div class="row">
-			<div id="kpi-layout">
+			<div class="el-aggr">
 				<div class="cell" id="kpi-agg-1"></div>
-				<div class="cell" id="kpi-agg-2"></div>
+				<div class="cell el-chart" id="chart-agg-1"></div>
 			</div>
-			<div class="cell" id="dashboard-col-0"></div>
-			<div class="cell" id="dashboard-col-1"></div>
+			<div class="el-aggr">
+				<div class="cell" id="kpi-agg-2"></div>
+				<div class="cell el-chart" id="chart-agg-2"></div>
+			</div>
 		</div>
 		<div class="row">
-			<div class="cell" id="dashboard-col-2"></div>
+			<div class="cell" id="data-grid"></div>
 		</div>
 	</div>
 
+	<p class="highcharts-description">
+		Proof of concept for integrating MQTT data with Dashboards.
+	</p>
 </div>
 
-<p class="highcharts-description">
-	Proof of concept for integrating MQTT data with Dashboards.
-</p>
