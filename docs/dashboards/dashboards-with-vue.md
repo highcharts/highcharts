@@ -63,4 +63,7 @@ There are two ways to do it:
     - `options` - the options object for the dashboard
     - `isAsync` - whether the dashboard should be rendered asynchronously or not - useful when using external data resources
 
-See how it works in this [basic live example](https://stackblitz.com/edit/dashboards-vue3-fcutdg?file=src%2FApp.vue).
+## Demos
+See how it works in the demos like below:
+- [basic live example](https://stackblitz.com/edit/dashboards-vue3-fcutdg?file=src%2FApp.vue)
+- [custom layout live example]()
