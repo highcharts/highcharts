@@ -52,187 +52,180 @@ const yAxisOptions = {
 };
 
 
-// Launches the Dashboards application
-async function setupDashboard() {
-    board = await Dashboards.board('container', {
-        dataPool: {
-            connectors: [{
-                id: 'mqtt-data',
-                type: 'JSON',
-                options: {
-                    firstRowAsNames: true,
-                    data: [
-                        ['time', 'aggr1', 'aggr2'],
-                        // Test data: to be removed
-                        [Date.UTC(2024, 0, 1), 0.5, 0.7]
-                    ],
-                    dataModifier: {
-                        type: 'Sort',
-                        orderByColumn: 'time'
-                    }
+function getDataConnector(id) {
+    return {
+        id: id,
+        type: 'JSON',
+        options: {
+            firstRowAsNames: true,
+            data: [
+                ['time', 'power'],
+                // Test data: to be removed
+                [Date.UTC(2024, 0, 1), 0]
+            ],
+            dataModifier: {
+                type: 'Sort',
+                orderByColumn: 'time'
+            }
+        }
+    };
+}
+
+
+function getKpiComponent(domEl, title) {
+    return {
+        type: 'KPI',
+        renderTo: domEl,
+        value: 0,
+        valueFormat: '{value}',
+        title: title,
+        chartOptions: {
+            chart: kpiGaugeOptions.chart,
+            pane: kpiGaugeOptions.pane,
+            yAxis: {
+                ...kpiGaugeOptions.yAxis,
+                min: 0,
+                max: 20,
+                accessibility: {
+                    description: title
                 }
+            }
+        }
+    };
+}
+
+
+function getChartComponent(connId, domEl, title) {
+    return {
+        type: 'Highcharts',
+        renderTo: domEl,
+        connector: {
+            id: connId,
+            columnAssignment: [{
+                seriesId: title,
+                data: ['time', 'power']
             }]
         },
-        components: [{
-            type: 'KPI',
-            renderTo: 'kpi-agg-1',
-            value: 0,
-            valueFormat: '{value}',
-            title: 'Aggregat 1',
-            chartOptions: {
-                chart: kpiGaugeOptions.chart,
-                pane: kpiGaugeOptions.pane,
-                yAxis: {
-                    ...kpiGaugeOptions.yAxis,
-                    min: 0,
-                    max: 20,
-                    accessibility: {
-                        description: 'Årøy, aggregat 1'
+        sync: {
+            visibility: true,
+            extremes: true,
+            highlight: true
+        },
+        chartOptions: {
+            chart: {
+                type: 'spline',
+                styledMode: true,
+                animation: true
+            },
+            xAxis: xAxisOptions,
+            yAxis: yAxisOptions,
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: true,
+                verticalAlign: 'top'
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                valueSuffix: powerUnit
+            }
+        }
+    };
+}
+
+
+function getGridComponent(connId, domEl, title) {
+    return {
+        type: 'DataGrid',
+        renderTo: domEl,
+        connector: {
+            id: connId
+        },
+        sync: {
+            highlight: true,
+            extremes: true,
+            visibility: true
+        },
+        dataGridOptions: {
+            editable: false,
+            columns: {
+                time: {
+                    headerFormat: 'Time UTC',
+                    cellFormatter: function () {
+                        // eslint-disable-next-line max-len
+                        return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
                     }
+                },
+                power: {
+                    headerFormat: title
                 }
             }
-        }, {
-            type: 'KPI',
-            renderTo: 'kpi-agg-2',
-            value: 0,
-            title: 'Aggregat 2',
-            valueFormat: '{value}',
-            chartOptions: {
-                chart: kpiGaugeOptions.chart,
-                pane: kpiGaugeOptions.pane,
-                yAxis: {
-                    ...kpiGaugeOptions.yAxis,
-                    min: 0,
-                    max: 20,
-                    accessibility: {
-                        description: 'Årøy, aggregat 2'
-                    }
-                }
-            }
-        }, {
-            type: 'Highcharts',
-            renderTo: 'chart-agg-1',
-            connector: {
-                id: 'mqtt-data',
-                columnAssignment: [{
-                    seriesId: 'Aggregat 1',
-                    data: ['time', 'aggr1']
-                }]
-            },
-            sync: {
-                visibility: true,
-                extremes: true,
-                highlight: true
-            },
-            chartOptions: {
-                chart: {
-                    type: 'spline',
-                    styledMode: true,
-                    animation: true
-                },
-                xAxis: xAxisOptions,
-                yAxis: yAxisOptions,
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: true,
-                    verticalAlign: 'top'
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    valueSuffix: powerUnit
-                }
-            }
-        }, {
-            type: 'Highcharts',
-            renderTo: 'chart-agg-2',
-            connector: {
-                id: 'mqtt-data',
-                columnAssignment: [{
-                    seriesId: 'Aggregat 2',
-                    data: ['time', 'aggr2']
-                }]
-            },
-            sync: {
-                visibility: true,
-                extremes: true,
-                highlight: true
-            },
-            chartOptions: {
-                chart: {
-                    type: 'spline',
-                    styledMode: true,
-                    animation: true
-                },
-                xAxis: xAxisOptions,
-                yAxis: yAxisOptions,
-                credits: {
-                    enabled: false
-                },
-                title: {
-                    text: ''
-                },
-                legend: {
-                    enabled: true,
-                    verticalAlign: 'top'
-                },
-                tooltip: {
-                    valueSuffix: powerUnit,
-                    stickOnContact: true
-                }
-            }
-        }, {
-            type: 'DataGrid',
-            renderTo: 'data-grid',
-            connector: {
-                id: 'mqtt-data'
-            },
-            sync: {
-                highlight: true,
-                extremes: true,
-                visibility: true
-            },
-            dataGridOptions: {
-                editable: false,
-                columns: {
-                    time: {
-                        headerFormat: 'Time UTC',
-                        cellFormatter: function () {
-                            // eslint-disable-next-line max-len
-                            return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
-                        }
-                    },
-                    aggr1: {
-                        headerFormat: 'Aggregat 1'
-                    },
-                    aggr2: {
-                        headerFormat: 'Aggregat 2'
-                    }
-                }
-            }
-        }]
+        }
+    };
+}
+
+
+// Launches the Dashboards application
+async function setupDashboard() {
+    // TBD: Calculate based on available data
+    function getPowerUnits(numUnits) {
+        const powerUnits = {
+            connectors: [],
+            components: []
+        };
+
+        for (let i = 0; i < numUnits; i++) {
+            // Data connectors
+            const id = i + 1;
+            const connId = 'mqtt-data-' + id;
+            powerUnits.connectors.push(getDataConnector(connId));
+
+            // Dash components
+            const title = 'Aggregate ' + id;
+
+            let name = 'kpi-agg-' + id;
+            powerUnits.components.push(getKpiComponent(name, title));
+
+            name = 'chart-agg-' + id;
+            powerUnits.components.push(getChartComponent(connId, name, title));
+
+            name = 'data-grid-' + id;
+            powerUnits.components.push(getGridComponent(connId, name, title));
+        }
+
+        return powerUnits;
+    }
+
+    // Get data for two power units (TBD: use data stream content to calculate)
+    const pu = getPowerUnits(2);
+
+    return await Dashboards.board('container', {
+        dataPool: {
+            connectors: pu.connectors
+        },
+        components: pu.components
     });
 }
 
-// Launch  Dashboard
-setupDashboard();
 
 async function updateBoard(mqttPacket) {
-    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
+    const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
 
     const data = JSON.parse(mqttPacket.payloadString);
 
-    if (dataTable.getRowCount() === 0) {
+    if (dataTable1.getRowCount() === 0) {
         // Get history
         const hist = data.aggs[1].P_hist;
         const d = new Date(hist.start);
         let time = Number(d.valueOf());
 
         const step = hist.res * 1000; // P_hist resolution: seconds
-        const rowData = [];
+        const rowData1 = [];
+        const rowData2 = [];
         const histLen = hist.values.length;
 
         for (let i = 0; i < histLen; i++) {
@@ -240,13 +233,15 @@ async function updateBoard(mqttPacket) {
             const p2 = hist.values[i];
 
             // Add row with historical data (reversed)
-            rowData.push([time, p1, p2]);
+            rowData1.push([time, p1]);
+            rowData2.push([time, p2]);
 
             // Next measurement
             time += step;
         }
         // Add the rows to the data table
-        await dataTable.setRows(rowData);
+        await dataTable1.setRows(rowData1);
+        await dataTable2.setRows(rowData2);
     } else {
         const d = new Date(data.tst_iso);
         const time = d.valueOf();
@@ -255,7 +250,8 @@ async function updateBoard(mqttPacket) {
         const p2 = data.aggs[1].P_gen;
 
         // Add row with latest data
-        await dataTable.setRow([time, p1, p2]);
+        await dataTable1.setRow([time, p1]);
+        await dataTable2.setRow([time, p2]);
     }
     // Refresh all components
     await updateComponents();
@@ -263,45 +259,63 @@ async function updateBoard(mqttPacket) {
 
 
 async function connectBoard() {
-    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    // Launch  Dashboard
+    if (board === null) {
+        board = await setupDashboard();
+    }
+
+    const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
+    const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
 
     // Clear the data
-    await dataTable.deleteRows();
-    // await dataTable.modified.deleteRows();
+    await dataTable1.deleteRows();
+    await dataTable2.deleteRows();
+
     await updateComponents();
 }
 
 
 async function updateComponents() {
-    // Update charts and datagrid
-    for (let i = 2; i < board.mountedComponents.length; i++) {
+    // Update charts and datagrids
+    for (let i = 0; i < board.mountedComponents.length; i++) {
         const comp = board.mountedComponents[i].component;
-        await comp.update({
-            connector: {
-                id: 'mqtt-data'
-            }
-        });
+        if (comp.type !== 'KPI') {
+            await comp.initConnector();
+        }
+
+        if (comp.type === 'Highcharts') {
+            await comp.update({
+                connector: {
+                    columnAssignment: [{
+                        seriesId: 'power',
+                        data: ['time', 'power']
+                    }]
+                }
+            });
+        }
     }
 
     // Update the KPI components
-    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
-    const rowCount = await dataTable.getRowCount();
+    const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
+    const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
+    const rowCount = await dataTable1.getRowCount();
     let data1, data2;
 
     if (rowCount > 0) {
-        data1 = dataTable.getCellAsNumber('aggr1', rowCount - 1);
-        data2 = dataTable.getCellAsNumber('aggr2', rowCount - 1);
+        data1 = dataTable1.getCellAsNumber('power', rowCount - 1);
+        data2 = dataTable2.getCellAsNumber('power', rowCount - 1);
     } else {
         data1 = 0;
         data2 = 0;
     }
 
+    // TBD: calculate indexes
     const kpiAgg1 = board.mountedComponents[0].component;
     await kpiAgg1.update({
         value: data1
     });
 
-    const kpiAgg2 = board.mountedComponents[1].component;
+    const kpiAgg2 = board.mountedComponents[3].component;
     await kpiAgg2.update({
         value: data2
     });
@@ -345,7 +359,7 @@ function setConnectionStatus(connected) {
 }
 
 
-function onConnectionLost() {
+async function onConnectionLost() {
     setConnectionStatus(false);
     setUiElement('statusMsg', '');
     subscribeEnable(false);

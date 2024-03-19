@@ -118,7 +118,8 @@ div#status_bar #status_messages {
 .el-aggr,
 .el-chart,
 .el-kpi,
-#data-grid {
+#data-grid-1,
+#data-grid-2 {
     min-width: 0;
     flex: 1;
 }
@@ -138,7 +139,7 @@ div#status_bar #status_messages {
 }
 
 .el-chart {
-    max-height: 200px;
+    max-height: 250px;
 }
 
 .el-aggr .highcharts-dashboards-component {
