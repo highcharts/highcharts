@@ -78,7 +78,7 @@ namespace Bindings {
         if (typeof idOrElement === 'string') {
             container = parentElement ?
                 parentElement.querySelector('#' + idOrElement) :
-                document.getElementById(idOrElement)
+                document.getElementById(idOrElement);
         } else {
             container = idOrElement;
         }
