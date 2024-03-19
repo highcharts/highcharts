@@ -32,11 +32,13 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
+import ChartNavigatorComposition from './ChartNavigatorComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
+import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -112,10 +114,18 @@ class Navigator {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
+    public static compose(
+        ChartClass: typeof Chart,
+        AxisClass: typeof Axis,
+        SeriesClass: typeof Series
+    ): void {
+        ChartNavigatorComposition.compose(ChartClass, Navigator);
+        NavigatorComposition.compose(ChartClass, AxisClass, SeriesClass);
+    }
 
     /* *
      *
@@ -274,11 +284,11 @@ class Navigator {
                     left + height,
                     navigatorTop - scrollButtonSize - outlineCorrection
                 ],
-                // top right of zoomed range
+                // Top right of zoomed range
                 ['L', left + height, verticalMin],
-                ['L', left, verticalMin], // top left of z.r.
-                ['M', left, zoomedMax], // bottom left of z.r.
-                ['L', left + height, zoomedMax], // bottom right of z.r.
+                ['L', left, verticalMin], // Top left of z.r.
+                ['M', left, zoomedMax], // Bottom left of z.r.
+                ['L', left + height, zoomedMax], // Bottom right of z.r.
                 [
                     'L',
                     left + height,
@@ -287,9 +297,9 @@ class Navigator {
             ];
             if (maskInside) {
                 path.push(
-                    // upper left of zoomed range
+                    // Upper left of zoomed range
                     ['M', left + height, verticalMin - halfOutline],
-                    // upper right of z.r.
+                    // Upper right of z.r.
                     [
                         'L',
                         left + height,
@@ -303,17 +313,17 @@ class Navigator {
             zoomedMax += left + scrollButtonSize - outlineCorrection;
 
             path = [
-                // left
+                // Left
                 ['M', left, lineTop],
-                // upper left of zoomed range
+                // Upper left of zoomed range
                 ['L', zoomedMin, lineTop],
-                // lower left of z.r.
+                // Lower left of z.r.
                 ['L', zoomedMin, lineBtm],
-                // lower right of z.r.
+                // Lower right of z.r.
                 ['M', zoomedMax, lineBtm],
-                // upper right of z.r.
+                // Upper right of z.r.
                 ['L', zoomedMax, lineTop],
-                // right
+                // Right
                 [
                     'L',
                     left + navigatorSize + scrollButtonSize * 2,
@@ -323,9 +333,9 @@ class Navigator {
 
             if (maskInside) {
                 path.push(
-                    // upper left of zoomed range
+                    // Upper left of zoomed range
                     ['M', zoomedMin - halfOutline, lineTop],
-                    // upper right of z.r.
+                    // Upper right of z.r.
                     ['L', zoomedMax + halfOutline, lineTop]
                 );
             }
@@ -443,8 +453,10 @@ class Navigator {
             !maskInside
         ].forEach((hasMask: (boolean|undefined), index: number): void => {
             const shade = renderer.rect()
-                .addClass('highcharts-navigator-mask' +
-                    (index === 1 ? '-inside' : '-outside'))
+                .addClass(
+                    'highcharts-navigator-mask' +
+                    (index === 1 ? '-inside' : '-outside')
+                )
                 .add(navigatorGroup);
 
             if (!chart.styledMode) {
@@ -497,8 +509,8 @@ class Navigator {
                     });
                 }
 
-                // zIndex = 6 for right handle, 7 for left.
-                // Can't be 10, because of the tooltip in inverted chart #2908
+                // Z index is 6 for right handle, 7 for left. Can't be 10,
+                // because of the tooltip in inverted chart (#2908).
                 navigator.handles[index].attr({ zIndex: 7 - index })
                     .addClass(
                         'highcharts-navigator-handle ' +
@@ -604,7 +616,7 @@ class Navigator {
 
         navigator.left = pick(
             xAxis.left,
-            // in case of scrollbar only, without navigator
+            // In case of scrollbar only, without navigator
             chart.plotLeft + scrollButtonSize +
             (inverted ? chart.plotWidth : 0)
         );
@@ -897,7 +909,7 @@ class Navigator {
                     fixedMax = (navigator.getUnionExtremes() as any).dataMax;
                 }
             }
-            if (left !== zoomedMin) { // it has actually moved
+            if (left !== zoomedMin) { // It has actually moved
                 navigator.fixedWidth = range; // #1370
 
                 ext = xAxis.navigatorAxis.toFixedRange(
@@ -1015,10 +1027,11 @@ class Navigator {
             // Drag scrollbar or open area in navigator
             } else if (navigator.grabbedCenter) {
                 navigator.hasDragged = true;
-                if (chartX < (dragOffset as any)) { // outside left
+                if (chartX < (dragOffset as any)) { // Outside left
                     chartX = dragOffset;
-                // outside right
-                } else if (chartX >
+                // Outside right
+                } else if (
+                    chartX >
                     navigatorSize + (dragOffset as any) - range
                 ) {
                     chartX = navigatorSize + (dragOffset as any) - range;
@@ -1254,11 +1267,12 @@ class Navigator {
         chart.isDirtyBox = true;
 
         if (navigator.navigatorEnabled) {
-            // an x axis is required for scrollbar also
+            // An x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
-                // inherit base xAxis' break and ordinal options
+                // Inherit base xAxis' break, ordinal options and overscroll
                 breaks: baseXaxis.options.breaks,
-                ordinal: baseXaxis.options.ordinal
+                ordinal: baseXaxis.options.ordinal,
+                overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
                 id: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
@@ -1318,7 +1332,7 @@ class Navigator {
                         // We've got one, now add it as base
                         if (chart.series.length > 0 && !navigator.series) {
                             navigator.setBaseSeries();
-                            (navigator.unbindRedraw as any)(); // reset
+                            (navigator.unbindRedraw as any)(); // Reset
                         }
                     }
                 );
@@ -1335,7 +1349,7 @@ class Navigator {
             // Add mouse events
             navigator.addMouseEvents();
 
-        // in case of scrollbar only, fake an x axis to get translation
+        // In case of scrollbar only, fake an x axis to get translation
         } else {
             navigator.xAxis = {
                 chart,
@@ -1358,9 +1372,9 @@ class Navigator {
                         ) as any) - (min as any);
 
                     return reverse ?
-                        // from pixel to value
+                        // From pixel to value
                         (value * valueRange / scrollTrackWidth) + (min as any) :
-                        // from value to pixel
+                        // From value to pixel
                         scrollTrackWidth * (value - (min as any)) / valueRange;
                 },
                 toPixels: function (
@@ -1544,7 +1558,7 @@ class Navigator {
                 enableMouseTracking: false,
                 index: null, // #6162
                 linkedTo: null, // #6734
-                group: 'nav', // for columns
+                group: 'nav', // For columns
                 padXAxis: false,
                 xAxis: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
@@ -1668,7 +1682,8 @@ class Navigator {
         // If user has defined data (and no base series) or explicitly defined
         // navigator.series as an array, we create these series on top of any
         // base series.
-        if ((chartNavigatorSeriesOptions as any).data &&
+        if (
+            (chartNavigatorSeriesOptions as any).data &&
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
@@ -1845,7 +1860,9 @@ class Navigator {
             range = baseMax - baseMin,
             stickToMin = (navigator as any).stickToMin,
             stickToMax = (navigator as any).stickToMax,
-            overscroll = pick(baseXAxis.options.overscroll, 0),
+            overscroll = pick(baseXAxis.ordinal?.convertOverscroll(
+                baseXAxis.options.overscroll
+            ), 0),
             navigatorSeries =
                 (navigator as any).series && (navigator as any).series[0],
             hasSetExtremes = !!baseXAxis.setExtremes,
@@ -1876,7 +1893,7 @@ class Navigator {
                 // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
                     newMin = Math.max(
-                        baseDataMin, // don't go below data extremes (#13184)
+                        baseDataMin, // Don't go below data extremes (#13184)
                         newMax - range,
                         (navigator as any).getBaseSeriesMin(
                             navigatorSeries && navigatorSeries.xData ?
@@ -1919,8 +1936,10 @@ class Navigator {
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data comes in, unless user set navigator.stickToMax to false.
-        navigator.stickToMax = pick(this.chart.options.navigator &&
-            this.chart.options.navigator.stickToMax, shouldStickToMax);
+        navigator.stickToMax = pick(
+            this.chart.options.navigator &&
+            this.chart.options.navigator.stickToMax, shouldStickToMax
+        );
 
         navigator.stickToMin = navigator.shouldStickToMin(
             baseSeries,
@@ -2012,10 +2031,11 @@ class Navigator {
                 this.chart,
                 'getMargins',
                 function (): void {
-                    let chart = this,
-                        navigator = chart.navigator as Navigator,
-                        marginName = navigator.opposite ?
-                            'plotTop' : 'marginBottom';
+                    const chart = this,
+                        navigator = chart.navigator as Navigator;
+
+                    let marginName = navigator.opposite ?
+                        'plotTop' : 'marginBottom';
 
                     if (chart.inverted) {
                         marginName = navigator.opposite ?

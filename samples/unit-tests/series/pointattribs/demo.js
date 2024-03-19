@@ -267,14 +267,16 @@ QUnit.test(
         assert.strictEqual(
             pointAttribs.call(series, point, state)['stroke-width'],
             3,
-            'strokeWidth + point.options.marker.states.hover.lineWidthPlus ranks as #3'
+            'strokeWidth + point.options.marker.states.hover.lineWidthPlus ' +
+            'ranks as #3'
         );
 
         point.options.marker.states.hover.lineWidthPlus = undefined;
         assert.strictEqual(
             pointAttribs.call(series, point, state)['stroke-width'],
             4,
-            'strokeWidth + series.options.marker.states.hover.lineWidthPlus ranks as #4'
+            'strokeWidth + series.options.marker.states.hover.lineWidthPlus ' +
+            'ranks as #4'
         );
 
         series.options.marker.states.hover.lineWidthPlus = undefined;

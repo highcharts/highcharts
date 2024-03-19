@@ -11,12 +11,12 @@ PluginHandler.addPlugin(HighchartsPlugin);
 Dashboards.board('container', {
     editMode: {
         enabled: true,
-            dragDrop: {
-                enabled: false
-            },
-            resize: {
-                enabled: false
-            },
+        dragDrop: {
+            enabled: false
+        },
+        resize: {
+            enabled: false
+        },
         contextMenu: {
             enabled: true,
             items: ['editMode']

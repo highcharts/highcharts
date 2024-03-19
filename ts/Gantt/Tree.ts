@@ -70,9 +70,6 @@ export interface TreePointOptionsObject {
  * @param {Array<*>} data
  *        List of points set in options. `Array.parent` is parent id of point.
  *
- * @param {Array<string>} ids
- *        List of all point ids.
- *
  * @return {Highcharts.Dictionary<Array<*>>}
  * Map from parent id to children index in data
  */

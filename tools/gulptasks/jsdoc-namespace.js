@@ -11,11 +11,16 @@ const path = require('node:path');
  *
  * */
 
-const LINT_DIRECTORY = path.join('test', 'typescript-lint');
+const INGNORED_MASTERS = [
+    'data-tools', // internal
+    'globals', // internal
+    'highcharts-gantt', // = modules/gantt
+    'highstock', // = modules/stock
+    'highmaps', // = modules/maps
+    'standalone-navigator' // external
+];
 
 const TREE_FILE = 'tree-namespace.json';
-
-const TSCONFIG_FILE = path.join(LINT_DIRECTORY, 'tsconfig.json');
 
 const TARGET_DIRECTORIES = [
     'gantt',
@@ -39,77 +44,85 @@ const TARGET_DIRECTORIES = [
  * @return {Promise<void>}
  *         Promise to keep
  */
-function jsDocNamespace() {
+async function jsDocNamespace() {
 
     const argv = require('yargs').argv;
-    const fs = require('node:fs');
     const fsLib = require('./lib/fs');
     const gulpLib = require('./lib/gulp');
     const jsdoc = require('gulp-jsdoc3');
     const logLib = require('./lib/log');
 
-    return new Promise((resolve, reject) => {
+    // Make sure master is in `code/`
+    if (argv.force) {
+        await gulpLib.run('scripts');
+    } else {
+        await gulpLib.requires(
+            (
+                argv.custom ?
+                    ['code/custom.src.js'] :
+                    ['code/highcharts.src.js']
+            ),
+            ['scripts']
+        );
+    }
 
-        const codeFiles = (
-            argv.custom ?
-                ['code/custom.src.js'] :
-                JSON.parse(fs.readFileSync(TSCONFIG_FILE)).files
-                    .map(file => path.normalize(
-                        path.join(path.dirname(TSCONFIG_FILE), file)
-                    ))
-                    .filter(file => !file.includes('.src.d.ts'))
-                    .map(file => file.replace(
-                        /.d.ts$/u, '.src.js'
-                    ))
-        ).filter(file => !file.includes('global.src.js'));
-
-        const gulpOptions = [codeFiles, { read: false }],
-            jsdoc3Options = {
-                plugins: [
-                    path.posix.join(
-                        'node_modules', '@highcharts',
-                        'highcharts-documentation-generators', 'jsdoc',
-                        'plugins', 'highcharts.namespace'
-                    )
-                ]
-            };
-
-        if (codeFiles.length === 0) {
-            reject(new Error('No files found in', TSCONFIG_FILE));
-            return;
-        }
-
-        gulpLib
-            .requires(['code/highcharts.src.js'], ['scripts'])
-            .then(() => logLib.message('Generating', TREE_FILE + '...'))
-            .then(() => gulp.src(...gulpOptions).pipe(
-                jsdoc(jsdoc3Options, error => {
-
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-
-                    Promise
-                        .all(TARGET_DIRECTORIES.map(
-                            targetDirectory => new Promise(done => {
-                                fsLib.copyFile(
-                                    TREE_FILE,
-                                    path.join(
-                                        targetDirectory,
-                                        path.basename(TREE_FILE)
-                                    )
-                                );
-                                done();
-                            })
-                        ))
-                        .then(() => logLib.success('Created', TREE_FILE))
-                        .then(resolve)
-                        .catch(reject);
-                })
+    const codeFiles = (
+        argv.custom ?
+            ['code/custom.src.js'] :
+            [
+                ...fsLib.getFilePaths('code/', false),
+                ...fsLib.getFilePaths('code/modules', true),
+                ...fsLib.getFilePaths('code/indicators', true),
+                ...fsLib.getFilePaths('code/themes', true)
+            ].filter(file => (
+                file.endsWith('.src.js') &&
+                !INGNORED_MASTERS.includes(path.basename(file, '.src.js'))
             ))
-            .catch(reject);
-    });
+    );
+
+    if (codeFiles.includes('code/highcharts.src.js')) {
+        codeFiles.unshift(
+            ...codeFiles.splice(codeFiles.indexOf('code/highcharts.src.js'), 1)
+        );
+    }
+
+    const gulpOptions = [codeFiles, { read: false }],
+        jsdoc3Options = {
+            plugins: [
+                path.posix.join(
+                    'node_modules', '@highcharts',
+                    'highcharts-documentation-generators', 'jsdoc',
+                    'plugins', 'highcharts.namespace'
+                )
+            ]
+        };
+
+    if (codeFiles.length === 0) {
+        throw new Error('No master files found in code/.');
+    }
+
+    logLib.message('Generating', TREE_FILE + '...');
+
+    await new Promise((resolve, reject) => (
+        gulp
+            .src(...gulpOptions)
+            .pipe(jsdoc(jsdoc3Options, error => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            }))
+    ));
+
+    for (const directory of TARGET_DIRECTORIES) {
+        fsLib.copyFile(
+            TREE_FILE,
+            path.join(directory, path.basename(TREE_FILE))
+        );
+    }
+
+    logLib.success('Created', TREE_FILE);
 }
 
 gulp.task('jsdoc-namespace', jsDocNamespace);

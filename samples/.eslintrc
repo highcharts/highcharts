@@ -25,16 +25,25 @@ globals:
     TestUtilities: true
     usdeur: true
 
+plugins:
+    [brackets]
+
 rules:
+    brackets/array-bracket-newline: 2
+    brackets/call-parens-newline: 2
+    brackets/conditional-parens-newline: 2
+    brackets/func-parens-newline: 2
+    brackets/object-curly-newline: 2
     consistent-return: 0
     eol-last: 0
     func-style: 0
     function-paren-newline: 0
     indent: [2, 4]
     max-len: [
-        "warn",
+        "error",
         {
-            "ignoreStrings": true
+            "ignorePattern": "(data:image/)",
+            "ignoreUrls": true
         }
     ]
     new-cap: 0                  # The ill-named Color object. Fix in HC5
@@ -42,6 +51,7 @@ rules:
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
     no-loss-of-precision: 1
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
+    no-multi-str: 0
     no-undefined: 0
     no-use-before-define: ["error", {"functions": false}]
     no-shadow: 0                # 10 violations as of 2015-10-31
@@ -60,4 +70,6 @@ rules:
     jsdoc/require-param-description: 0
     jsdoc/require-param-type: 0
     jsdoc/valid-jsdoc: 0
+    node/no-unsupported-features/es-syntax: 0
+    node/no-missing-import: 0
 

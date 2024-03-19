@@ -89,8 +89,8 @@ namespace Bindings {
 
     export async function addComponent(
         options: Partial<ComponentType['options']>,
-        cell?: Cell,
-        board?: Board
+        board: Board,
+        cell?: Cell
     ): Promise<(Component|void)> {
         const optionsStates = (options as any).states;
         const optionsEvents = options.events;
@@ -129,8 +129,8 @@ namespace Bindings {
                     ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
                 options.title = {
-                    text: cell.row?.layout.board?.editMode?.lang.errorMessage ||
-                        board?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -139,7 +139,6 @@ namespace Bindings {
         }
 
         const component = new ComponentClass(cell, options, board);
-
         const promise = component.load()['catch']((e): void => {
             // eslint-disable-next-line no-console
             console.error(e);
@@ -148,7 +147,8 @@ namespace Bindings {
                     id: ''
                 },
                 title: {
-                    text: cell?.row?.layout.board?.editMode?.lang.errorMessage,
+                    text: board.editMode?.lang.errorMessage ||
+                        'Something went wrong',
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'
@@ -161,21 +161,20 @@ namespace Bindings {
             cell.mountedComponent = component;
         }
 
-        if (board) {
-            board.mountedComponents.push({
-                options: options,
-                component: component,
-                cell: cell || {
-                    id: renderTo,
-                    container: componentContainer as HTMLElement,
-                    mountedComponent: component
-                }
-            });
-        }
+
+        board.mountedComponents.push({
+            options: options,
+            component: component,
+            cell: cell || {
+                id: renderTo,
+                container: componentContainer as HTMLElement,
+                mountedComponent: component
+            }
+        });
 
         fireEvent(component, 'mount');
 
-        // events
+        // Events
         if (optionsEvents && optionsEvents.click) {
             addEvent(componentContainer, 'click', ():void => {
                 optionsEvents.click();
@@ -192,7 +191,7 @@ namespace Bindings {
             });
         }
 
-        // states
+        // States
         if (optionsStates?.hover) {
             componentContainer.classList.add(Globals.classNames.cellHover);
         }

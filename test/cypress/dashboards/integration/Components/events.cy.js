@@ -64,4 +64,10 @@ describe('Component events', () => {
 
     cy.get('#unmount').should('have.value', 'unmount');
   });
+
+  it('Disabling edit mode should be possible after removing component', () => {
+    cy.toggleEditMode();
+    cy.get('.highcharts-dashboards-edit-toggle-container')
+      .should('have.attr', 'aria-checked', 'false');
+  });
 });

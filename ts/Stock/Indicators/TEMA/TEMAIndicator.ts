@@ -178,7 +178,7 @@ class TEMAIndicator extends EMAIndicator {
             yVal
         );
 
-        // first point
+        // First point
         sma = accumulatePeriodPoints / period;
         accumulatePeriodPoints = 0;
 
@@ -340,4 +340,4 @@ export default TEMAIndicator;
  * @apioption series.tema
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

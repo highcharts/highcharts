@@ -163,7 +163,8 @@ QUnit.test('dateFormats', function (assert) {
         assert.equal(
             Highcharts.dateFormat('%E', date),
             expectedDay,
-            'Single character week day format produces correct output when using UTC'
+            'Single character week day format produces correct output when ' +
+            'using UTC'
         );
     });
 
@@ -1477,7 +1478,8 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     assert.deepEqual(
         tickPositions,
         userTickPositions,
-        'should not adjust last or first tick when they are within axis min and max. #10470'
+        'should not adjust last or first tick when they are within axis min ' +
+        'and max. #10470'
     );
 });
 
@@ -2064,7 +2066,9 @@ QUnit.test('yAxis label adjustment #10281', assert => {
                     },
                     {
                         name:
-                            'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
+                            'Really Long series name that is very long ' +
+                            'indeed. Really Long series name that is very ' +
+                            'long indeed.',
                         start: Date.UTC(2014, 10, 23),
                         end: Date.UTC(2014, 10, 26)
                     }
@@ -2079,7 +2083,8 @@ QUnit.test('yAxis label adjustment #10281', assert => {
     assert.strictEqual(
         yAxis.maxLabelDimensions.width,
         Math.round(label.getBBox().width),
-        'The yAxis max label dimensions should be same as the width of the longest label (#10281)'
+        'The yAxis max label dimensions should be same as the width of the ' +
+        'longest label (#10281)'
     );
 });
 
@@ -2119,7 +2124,8 @@ QUnit.test('yAxis max value #10779', assert => {
 });
 
 QUnit.test(
-    'When the grid axis label has format "%E", time zone declared per chart should be respected., #13591.',
+    'When the grid axis label has format "%E", time zone declared per chart ' +
+    'should be respected., #13591.',
     assert => {
         const chart = Highcharts.ganttChart('container', {
             chart: {
@@ -2254,7 +2260,8 @@ QUnit.test('slotWidth', assert => {
 
     assert.ok(
         xAxis.ticks[xAxis.tickPositions[3]].slotWidth < 30,
-        '#15742: Rightmost tick slotWidth should be much smaller than the other ticks'
+        '#15742: Rightmost tick slotWidth should be much smaller than the ' +
+        'other ticks'
     );
 
     assert.ok(

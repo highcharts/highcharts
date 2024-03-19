@@ -163,6 +163,11 @@ Highcharts Dashboards supports the following browsers:
 | Edge     | 16.0+ (2017+) |
 
 * * *
+What versions of Highcharts are supported?
+---------------
+The Highcharts Dashboards is compatible with all Highcharts modules in v10 or higher.
+
+* * *
 
 ## I modified series names in a chart, and now sync is not working? What can I do?
 
@@ -209,7 +214,7 @@ You need to import the default CSS stylesheet to your project, so that the dashb
 ```css
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
 

@@ -112,7 +112,7 @@ namespace SeriesOnPointComposition {
         ChartClass: typeof Chart
     ): (typeof SeriesComposition&T) {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'SeriesOnPoint')) {
             const {
                 chartGetZData,
                 seriesAfterInit,
@@ -547,4 +547,4 @@ export default SeriesOnPointComposition;
  * @apioption  plotOptions.series.onPoint.position.y
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file

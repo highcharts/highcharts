@@ -29,15 +29,11 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
-const {
-    composed,
-    doc
-} = H;
+const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent,
-    pushUnique
+    fireEvent
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -398,7 +394,8 @@ class SeriesKeyboardNavigation {
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                [inverted ? [keys.up, keys.down] : [keys.left, keys.right],
+                [
+                    inverted ? [keys.up, keys.down] : [keys.left, keys.right],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number
@@ -406,7 +403,8 @@ class SeriesKeyboardNavigation {
                         return keyboardNavigation.onKbdSideways(this, keyCode);
                     }],
 
-                [inverted ? [keys.left, keys.right] : [keys.up, keys.down],
+                [
+                    inverted ? [keys.left, keys.right] : [keys.up, keys.down],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number
@@ -414,7 +412,8 @@ class SeriesKeyboardNavigation {
                         return keyboardNavigation.onKbdVertical(this, keyCode);
                     }],
 
-                [[keys.enter, keys.space],
+                [
+                    [keys.enter, keys.space],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number,
@@ -429,19 +428,22 @@ class SeriesKeyboardNavigation {
                         return this.response.success;
                     }],
 
-                [[keys.home],
+                [
+                    [keys.home],
                     function (this: KeyboardNavigationHandler): number {
                         highlightFirstValidPointInChart(chart);
                         return this.response.success;
                     }],
 
-                [[keys.end],
+                [
+                    [keys.end],
                     function (this: KeyboardNavigationHandler): number {
                         highlightLastValidPointInChart(chart);
                         return this.response.success;
                     }],
 
-                [[keys.pageDown, keys.pageUp],
+                [
+                    [keys.pageDown, keys.pageUp],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number
@@ -790,8 +792,10 @@ namespace SeriesKeyboardNavigation {
             }
 
             series.points.forEach((point): void => {
-                if (!defined(point.plotY) || !defined(point.plotX) ||
-                    point === curPoint) {
+                if (
+                    !defined(point.plotY) || !defined(point.plotX) ||
+                    point === curPoint
+                ) {
                     return;
                 }
 
@@ -897,12 +901,11 @@ namespace SeriesKeyboardNavigation {
         PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition,
-                pointProto = PointClass.prototype as PointComposition,
-                seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!chartProto.highlightAdjacentPoint) {
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
             chartProto.highlightAdjacentPointVertical = (
                 chartHighlightAdjacentPointVertical

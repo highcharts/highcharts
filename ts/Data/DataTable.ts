@@ -776,7 +776,7 @@ class DataTable implements DataEvent.Emitter {
                 ) {
                     cellValue = column[i];
                     if (typeof cellValue === 'number') {
-                        // assume unmixed data for performance reasons
+                        // Assume unmixed data for performance reasons
                         return column.slice() as Array<(number|null)>;
                     }
                     if (
@@ -1010,7 +1010,8 @@ class DataTable implements DataEvent.Emitter {
                 i2 = 0,
                 iEnd = Math.min(
                     table.rowCount,
-                    (rowIndex + rowCount)
+                    (rowIndex + rowCount
+                    )
                 ),
                 column: DataTable.Column,
                 row: DataTable.RowObject;
@@ -1062,7 +1063,8 @@ class DataTable implements DataEvent.Emitter {
                 i2 = 0,
                 iEnd = Math.min(
                     table.rowCount,
-                    (rowIndex + rowCount)
+                    (rowIndex + rowCount
+                    )
                 ),
                 column: DataTable.Column,
                 row: DataTable.Row;

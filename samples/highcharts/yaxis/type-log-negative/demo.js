@@ -85,9 +85,11 @@
                         (log.lin2log(-i) || 1) * intermediate[j]
                     );
 
-                    if (pos > min &&
+                    if (
+                        pos > min &&
                         (!minor || lastPos <= max) &&
-                        typeof lastPos !== 'undefined') {
+                        typeof lastPos !== 'undefined'
+                    ) {
                         positions.push(lastPos);
                     }
                     if (lastPos > max) {
@@ -109,9 +111,11 @@
                 for (j = 0; j < len && !break2; j++) {
                     pos = log.log2lin((log.lin2log(i) || 1) * intermediate[j]);
 
-                    if (pos > min &&
+                    if (
+                        pos > min &&
                         (!minor || lastPos <= max) &&
-                        typeof lastPos !== 'undefined') {
+                        typeof lastPos !== 'undefined'
+                    ) {
                         positions.push(lastPos);
                     }
                     if (lastPos > max) {
@@ -135,8 +139,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     yAxis: {

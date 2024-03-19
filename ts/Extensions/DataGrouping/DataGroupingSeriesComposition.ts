@@ -36,8 +36,6 @@ import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -52,8 +50,7 @@ const {
     extend,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -416,7 +413,8 @@ function applyGrouping(
             // the group to capture varying group sizes like months or DST
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
-            if (!(groupPositions.info as any).segmentStarts ||
+            if (
+                !(groupPositions.info as any).segmentStarts ||
                 (groupPositions.info as any).segmentStarts.indexOf(i) === -1
             ) {
                 gapSize = Math.max(
@@ -474,9 +472,12 @@ function applyGrouping(
 function compose(
     SeriesClass: typeof Series
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
+    const seriesProto = SeriesClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+
+    if (!seriesProto.applyGrouping) {
+        const PointClass = SeriesClass.prototype.pointClass;
+
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -489,7 +490,7 @@ function compose(
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 
-        extend(SeriesClass.prototype, {
+        extend(seriesProto, {
             applyGrouping,
             destroyGroupedData,
             generatePoints,
@@ -608,8 +609,8 @@ function groupData(
         groupedYData = [],
         groupMap = [],
         dataLength = xData.length,
-        // when grouping the fake extended axis for panning,
-        // we don't need to consider y
+        // When grouping the fake extended axis for panning, we don't need to
+        // consider y
         handleYData = !!yData,
         values = [] as Array<ApproximationArray>,
         pointArrayMap = series.pointArrayMap,
@@ -653,10 +654,10 @@ function groupData(
 
         // Start with the first point within the X axis range (#2696)
         if (xData[i] < groupPositions[0]) {
-            continue; // with next point
+            continue; // With next point
         }
 
-        // when a new group is entered, summarize and initialize
+        // When a new group is entered, summarize and initialize
         // the previous group
         while (
             (
@@ -664,7 +665,7 @@ function groupData(
                 xData[i] >= groupPositions[pos + 1]
             ) ||
             i === dataLength
-        ) { // get the last group
+        ) { // Get the last group
 
             // get group x and y
             pointX = groupPositions[pos];
@@ -699,35 +700,35 @@ function groupData(
                 });
             }
 
-            // push the grouped data
+            // Push the grouped data
             if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
                 groupMap.push(series.dataGroupInfo);
             }
 
-            // reset the aggregate arrays
+            // Reset the aggregate arrays
             start = i;
             for (let j = 0; j < valuesLen; j++) {
-                values[j].length = 0; // faster than values[j] = []
+                values[j].length = 0; // Faster than values[j] = []
                 values[j].hasNulls = false;
             }
 
             // Advance on the group positions
             pos += 1;
 
-            // don't loop beyond the last group
+            // Don't loop beyond the last group
             if (i === dataLength) {
                 break;
             }
         }
 
-        // break out
+        // Break out
         if (i === dataLength) {
             break;
         }
 
-        // for each raw data point, push it to an array that contains all values
+        // For each raw data point, push it to an array that contains all values
         // for this specific group
         if (pointArrayMap) {
             const index = (

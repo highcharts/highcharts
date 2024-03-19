@@ -8,17 +8,17 @@ The DataGrid Component can be placed inside a dashboard's cell to allow users to
 
 ## How to start
 
-1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. the [Datagrid](https://code.highcharts.com/datagrid/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
+1. To use the DataGrid Component in Dashboards, you need to import the appropriate modules i.e. the [Datagrid](https://code.highcharts.com/dashboards/datagrid.js) and the [Dashboards](https://code.highcharts.com/dashboards/dashboards.js) to bind them together.
 The order of the imports is important, so make sure that the Dashboards module is imported after the DataGrid module.
     ```html
-    <script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
+    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
     <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
     ```
 
     Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
     ```typescript
     import * as Dashboards from '@highcharts/dashboards';
-    import DataGrid from '@highcharts/dashboards/es-modules/DataGrid/DataGrid';
+    import * as DataGrid from '@highcharts/dashboards/datagrid';
 
     Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
     Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
@@ -27,7 +27,7 @@ The order of the imports is important, so make sure that the Dashboards module i
 2. You also need to import the styles in your main CSS file.
     ```css
     @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-    @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+    @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
     ```
 
 3. After loading the necessary files, define a cell using a unique identifier for the cell, e.g. `dashboard-col-0`. This cell will be used to place the component in the dashboard.
@@ -73,7 +73,7 @@ The order of the imports is important, so make sure that the Dashboards module i
         type: 'DataGrid'
     }]
     ```
-    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions).
+    To see more options available for the DataGrid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
 
 See the summarized JS code needed to create a simple DataGrid:
 ```js
@@ -113,45 +113,8 @@ Dashboards.board('container', {
 ```
 
 ## DataGrid options
-
-In the [DataGrid Component](https://api.highcharts.com/dashboards/#modules/Dashboards_Plugins_DataGridComponent.DataGridComponent), you can define some specific options for the [DataGrid](https://api.highcharts.com/dashboards/#classes/DataGrid_DataGrid.DataGrid) itself. These options can be set in the [`dataGridOptions` option](https://api.highcharts.com/dashboards/typedoc/interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions.html#dataGridOptions).
-
-For example, using the [`editable` option](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#editable) you can make all the cells in a DataGrid editable (`true`) or read-only (`false`):
-
-Using [`columns`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#columns), you can format data and headers in cells, e.g. adding units to them. The key is the column name and the value is the object with the column-specific options.
-
-Example:
-```js
-components: [{
-    renderTo: 'dashboard-col-1',
-    type: 'DataGrid'
-    connector: {
-        id: 'data'
-    },
-    dataGridOptions: {
-        editable: false,
-        columns: {
-            product: {
-                cellFormat: '{text} No. 1',
-                headerFormat: '{text} name'
-            },
-            weight: {
-                cellFormat: '{value} kg',
-                headerFormat: '{text} (kg)'
-            },
-            price: {
-                cellFormat: '{value} $',
-                headerFormat: '($) {text}'
-            },
-            metaData: {
-                show: false
-            }
-        }
-    }
-}]
-```
-
-There are more DataGrid-specific options that can be found in the [Dashboards API](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1).
+See the [DataGrid documentation](https://www.highcharts.com/docs/datagrid/general) to read more about it
+or use [the API documentation](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1) to see the available options for the DataGrid Component.
 
 
 ## Data modifiers
@@ -194,7 +157,7 @@ Note that you also need to import modules to use the appropriate modifiers. For 
 
 ## Components synchronization
 
-One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#sync), which allows setting the synchronization of component states with each other.
+One of the many available options for the DataGrid Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other.
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
 
@@ -208,4 +171,4 @@ See demos of `sync` types below:
 
 ## Custom styling
 
-In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. You can set the [`style` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#style) for a component, in which you can define a CSS object, which allows you to set a style for the component from the option level. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_DataGridComponent.DataGridComponent.ComponentOptions#dataGridClassName) option can be very useful, it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.
+In addition to DataGrid-specific options, such as [`cellHeight`](https://api.highcharts.com/dashboards/#interfaces/DataGrid_DataGridOptions.DataGridOptions-1#cellHeight), which allows setting the height of the row, you can use CSS to style the component. The [`dataGridClassName`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#dataGridClassName) option can be very useful, it allows setting an additional class for a given DataGrid container, so you can style separate components in your CSS file.

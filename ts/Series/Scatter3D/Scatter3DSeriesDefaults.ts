@@ -127,7 +127,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @apioption series.scatter3d.data.z
  */
 
-''; // detachs doclets above
+''; // Detachs doclets above
 
 /* *
  *

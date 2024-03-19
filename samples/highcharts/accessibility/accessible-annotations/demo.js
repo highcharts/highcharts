@@ -101,7 +101,8 @@ Highcharts.chart('container', {
             },
             borderRadius: 5,
             shape: 'rect',
-            text: 'Annotations showing presentation info for Elsevier and Highcharts',
+            text: 'Annotations showing presentation info for Elsevier and ' +
+                'Highcharts',
             backgroundColor: 'rgb(250, 245, 245)',
             borderColor: 'rgb(255, 250, 250)',
             padding: 10
@@ -117,12 +118,14 @@ Highcharts.chart('container', {
         },
         labels: [{
             point: '2015',
-            text: 'Ted nearly plows into Stevie Wonder on his way to the bathroom',
+            text: 'Ted nearly plows into Stevie Wonder on his way to the ' +
+                'bathroom',
             distance: null,
             y: 60
         }, {
             point: '2016',
-            text: 'Elsevier and Highcharts presented first session together: Accessible SVG Charts'
+            text: 'Elsevier and Highcharts presented first session together: ' +
+                'Accessible SVG Charts'
         }, {
             point: '2018',
             text: 'Vidar got selfie with Stevie'
@@ -134,7 +137,8 @@ Highcharts.chart('container', {
             distance: 110
         }, {
             point: '2019',
-            text: 'Elsevier and Highcharts presented 2nd session together:  Highcharts, The Next Chapter',
+            text: 'Elsevier and Highcharts presented 2nd session together:  ' +
+                'Highcharts, The Next Chapter',
             shape: 'rect',
             verticalAlign: 'top',
             distance: 55
@@ -143,7 +147,8 @@ Highcharts.chart('container', {
             text: 'Ted passes by Stevie in the hotel lobby'
         }, {
             point: '2020',
-            text: 'Elsevier and Highcharts presented together: Accessible Visualizations: Maps, Annotations, and Sparklines',
+            text: 'Elsevier and Highcharts presented together: Accessible ' +
+                'Visualizations: Maps, Annotations, and Sparklines',
             y: -35
         }]
     }]

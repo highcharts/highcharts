@@ -6,8 +6,29 @@ To be able to use Dashboards with layout system and editmode you first have to l
 The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
 
 ```html
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+```
+
+Alternatively, you can also use the NPM package.
+
+```bash
+npm install highcharts @highcharts/dashboards
+```
+
+and import it in your project like:
+```js
+import * as Dashboards from '@highcharts/dashboards';
+import LayoutModule from '@highcharts/dashboards/modules/layout';
+
+LayoutModule(Dashboards);
+```
+
+If you use ESM, you can also import the modules directly from the package:
+
+```js
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
 
 
@@ -58,7 +79,7 @@ Below you can see the settings categories for the [Highcharts Component](https:/
 
 The first three categories, `Connector name`, `Title` and `Caption`, are options that are also shared by other components. In `Connector name` you can connect an existing connector that will provide data to the component (in this case, a chart). The rest of the options are typical for this component. You can use them to configure the appearance of the chart.
 
-If you do not intend to use the connector, you can set the data using the component's internal options. In [Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component) you can do this by defining data in the [`series.data`](https://api.highcharts.com/highcharts/series.line.data) option. In the [KPI Component](https://www.highcharts.com/docs/dashboards/kpi-component), by setting the [`value`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent.KPIComponent.ComponentOptions#value) option.
+If you do not intend to use the connector, you can set the data using the component's internal options. In [Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component) you can do this by defining data in the [`series.data`](https://api.highcharts.com/highcharts/series.line.data) option. In the [KPI Component](https://www.highcharts.com/docs/dashboards/kpi-component), by setting the [`value`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options#value) option.
 
 Check how the component settings sidebar works in practice using the [edit mode live example](https://www.highcharts.com/docs/dashboards/edit-mode#edit-mode-live-example).
 

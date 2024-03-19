@@ -266,7 +266,8 @@ const chartOptions = {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: 'Column chart showing a selected high contrast theme'
+            beforeChartFormat: 'Column chart showing a selected high ' +
+                'contrast theme'
         },
         landmarkVerbosity: 'one'
     },

@@ -95,7 +95,10 @@ Highcharts.mapChart('container', {
     }, {
         name: 'Separators',
         type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
+        data: Highcharts.geojson(
+            Highcharts.maps['countries/us/us-all'],
+            'mapline'
+        ),
         color: 'silver',
         showInLegend: false,
         enableMouseTracking: false

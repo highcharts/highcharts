@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 /* Colors */
 :root {
@@ -38,6 +38,7 @@
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
     background-color: var(--highcharts-neutral-color-0);
     border-radius: 20px;
+    padding: 10px;
     text-align: left;
 }
 

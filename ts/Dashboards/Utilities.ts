@@ -85,7 +85,7 @@ function merge<T>(): T {
         copyDepth = 0,
         ret = {} as T;
 
-    // descriptive error stack:
+    // Descriptive error stack:
     const copyDepthError = new Error('Recursive copy depth > 100'),
         doCopy = (copy: any, original: any): any => {
             // An object is replacing a primitive
@@ -105,7 +105,8 @@ function merge<T>(): T {
                 }
 
                 // Copy the contents of objects, but not arrays or DOM nodes
-                if (isObject(value, true) &&
+                if (
+                    isObject(value, true) &&
                     !isClass(value) &&
                     !isDOMElement(value)
                 ) {

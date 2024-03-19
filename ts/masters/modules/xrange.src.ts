@@ -14,3 +14,4 @@ import Highcharts from '../../Core/Globals.js';
 import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 const G: AnyRecord = Highcharts;
 XRangeSeries.compose(G.Axis);
+export default Highcharts;

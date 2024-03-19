@@ -44,16 +44,13 @@ import DraggableChart from './DraggableChart.js';
 const { initDragDrop } = DraggableChart;
 import DragDropDefaults from './DragDropDefaults.js';
 import DragDropProps from './DragDropProps.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -212,10 +209,11 @@ function compose(
 ): void {
     DraggableChart.compose(ChartClass);
 
-    if (pushUnique(composed, compose)) {
+    const seriesProto = SeriesClass.prototype;
+
+    if (!seriesProto.dragDropProps) {
         const PointClass = SeriesClass.prototype.pointClass,
             seriesTypes = SeriesClass.types,
-            seriesProto = SeriesClass.prototype,
             pointProto = PointClass.prototype;
 
         pointProto.getDropValues = pointGetDropValues;
@@ -578,7 +576,7 @@ function pointGetDropValues(
             }
 
             if (key === 'lat') {
-                // if map is bigger than possible projection range
+                // If map is bigger than possible projection range
                 if (isNaN(min) || min > mapView.projection.maxLatitude) {
                     min = mapView.projection.maxLatitude;
                 }
@@ -587,14 +585,14 @@ function pointGetDropValues(
                     max = -1 * mapView.projection.maxLatitude;
                 }
 
-                // swap for latitude
+                // Swap for latitude
                 const temp = max;
                 max = min;
                 min = temp;
             }
 
             if (!mapView.projection.hasCoordinates) {
-                // establish y value
+                // Establish y value
                 const lonLatRes = mapView.pixelsToLonLat({
                     x: newPos.chartX - chart.plotLeft,
                     y: chart.plotHeight - newPos.chartY + chart.plotTop
@@ -1039,4 +1037,4 @@ export default DraggablePoints;
  * @type {"drop"}
  */
 
-''; // detaches doclets above
+''; // Detaches doclets above

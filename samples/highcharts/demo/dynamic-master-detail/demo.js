@@ -216,10 +216,12 @@
         }); // return chart instance
     }
 
-    // make the container smaller and add a second container for the master chart
+    // make the container smaller and add a second container for the master
+    // chart
     const container = document.getElementById('container');
     container.style.position = 'relative';
-    container.innerHTML += '<div id="detail-container"></div><div id="master-container"></div>';
+    container.innerHTML += '<div id="detail-container"></div><div ' +
+        'id="master-container"></div>';
 
     // create master and in its callback, create the detail chart
     createMaster();

@@ -55,7 +55,10 @@ Highcharts.mapChart('container', {
                     const clicked = this,
                         chart = this.chart;
                     chart.series.forEach(series => {
-                        if (series.name !== clicked.name && series.type === 'tiledwebmap') {
+                        if (
+                            series.name !== clicked.name && series.type ===
+                            'tiledwebmap'
+                        ) {
                             series.setVisible(false);
                         } else if (clicked) {
                             clicked.setVisible(!clicked.visible);

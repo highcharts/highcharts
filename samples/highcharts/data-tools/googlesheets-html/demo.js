@@ -10,7 +10,10 @@ const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
 document.querySelector('#load-button').addEventListener('click', () => {
     const connector = new GoogleSheetsConnector({
         googleAPIKey: keyInput.value,
-        googleSpreadsheetKey: sheetsInput.value.replace(/^https?:\/\/.+\/d\/|\/edit.*$/g, '')
+        googleSpreadsheetKey: sheetsInput.value.replace(
+            /^https?:\/\/.+\/d\/|\/edit.*$/g,
+            ''
+        )
     });
 
     connector

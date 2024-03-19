@@ -18,7 +18,8 @@
         },
 
         title: {
-            text: 'Longer animation on updates. Click the Plus button or use mousewheel to test.'
+            text: 'Longer animation on updates. Click the Plus button or use ' +
+                'mousewheel to test.'
         },
 
         mapNavigation: {

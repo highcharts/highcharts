@@ -64,10 +64,10 @@ namespace MultipleLinesComposition {
     }
 
     /* *
-    *
-    *  Constants
-    *
-    * */
+     *
+     *  Constants
+     *
+     * */
 
     /**
      * Additional lines DOCS names. Elements of linesApiNames array should
@@ -112,10 +112,10 @@ namespace MultipleLinesComposition {
     const pointValKey = 'top';
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Composition useful for all indicators that have more than one line.
@@ -219,7 +219,7 @@ namespace MultipleLinesComposition {
                     gapSize: mainLineOptions.gapSize
                 }
             },
-            // additional lines point place holders:
+            // Additional lines point place holders:
             secondaryLines = [] as Array<Array<SMAPoint>>,
             secondaryLinesNames = getTranslatedLinesNames(
                 indicator,
@@ -233,7 +233,7 @@ namespace MultipleLinesComposition {
         // Generate points for additional lines:
         secondaryLinesNames.forEach((plotLine, index): void => {
 
-            // create additional lines point place holders
+            // Create additional lines point place holders
             secondaryLines[index] = [];
 
             while (pointsLength--) {

@@ -177,7 +177,8 @@ namespace RendererUtilities {
             overlapping = false;
             while (i--) {
                 // Overlap
-                if (i > 0 &&
+                if (
+                    i > 0 &&
                     (boxes[i - 1].pos as any) + boxes[i - 1].size >
                     (boxes[i].pos as any)
                 ) {

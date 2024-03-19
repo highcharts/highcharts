@@ -45,7 +45,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Axis.Tick3D')) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

@@ -79,6 +79,15 @@ class DOMElementProvider {
     }
 
     /**
+     * Destroy created element, removing it from the DOM.
+     * @private
+     */
+    public removeElement(element: HTMLDOMElement): void {
+        removeElement(element);
+        this.elements.splice(this.elements.indexOf(element), 1);
+    }
+
+    /**
      * Destroy all created elements, removing them from the DOM.
      * @private
      */

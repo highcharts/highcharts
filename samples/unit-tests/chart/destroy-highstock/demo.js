@@ -1,4 +1,5 @@
-// Fails because of #8004 Accessibility does not remove itself completely during destroy
+// Fails because of #8004 Accessibility does not remove itself completely
+// during destroy
 QUnit.test('Chart destroy', function (assert) {
     assert.expect(0);
 

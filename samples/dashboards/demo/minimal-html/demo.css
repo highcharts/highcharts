@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 #container {
@@ -9,11 +9,20 @@
 
 .row {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
 }
 
 .cell {
+    flex: 1;
+    min-width: 20px;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
     margin: 10px;
+    background-clip: border-box;
+    background-color: var(--highcharts-background-color);
 }
 
 #kpi-wrapper {
@@ -32,7 +41,6 @@
 #kpi-vitamin-a,
 #kpi-iron {
     flex-grow: 1;
-    background-color: var(--highcharts-background-color);
 }
 
 h1#title {
@@ -64,6 +72,11 @@ h1#title {
     margin-top: 10px;
     font-size: 1.2em;
     color: var(--highcharts-neutral-color-60);
+}
+
+#kpi-vitamin-a .highcharts-dashboards-component-kpi,
+#kpi-iron .highcharts-dashboards-component-kpi {
+    padding: 10px;
 }
 
 #kpi-vitamin-a .highcharts-dashboards-component-kpi-value,
@@ -105,7 +118,7 @@ h1#title {
 
 @media (max-width: 992px) {
     .row {
-        flex-wrap: wrap;
+        flex-direction: column;
     }
 
     #kpi-wrapper {

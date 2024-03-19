@@ -256,7 +256,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'MarkerClusters')) {
         const PointClass = SeriesClass.prototype.pointClass,
             { scatter: ScatterSeries } = SeriesClass.types;
 
@@ -449,4 +449,4 @@ export default MarkerClusters;
  *        Event arguments.
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

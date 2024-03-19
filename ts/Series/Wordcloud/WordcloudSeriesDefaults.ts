@@ -240,7 +240,7 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
  * @apioption series.wordcloud.data.weight
  */
 
-''; // detach doclets above
+''; // Detach doclets above
 
 /* *
  *

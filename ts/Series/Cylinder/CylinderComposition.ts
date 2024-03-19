@@ -33,7 +33,6 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import H from '../../Core/Globals.js';
 const {
     charts,
-    composed,
     deg2rad
 } = H;
 import Math3D from '../../Core/Math3D.js';
@@ -42,8 +41,7 @@ import SVGElement3DCylinder from './SVGElement3DCylinder.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -93,13 +91,16 @@ interface CylinderPathsObject extends SVGPath3D {
  *
  * */
 
+/**
+ *
+ */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const rendererProto =
+        SVGRendererClass.prototype as SVGRenderer3D.Composition;
 
-    if (pushUnique(composed, compose)) {
-        const rendererProto =
-            SVGRendererClass.prototype as SVGRenderer3D.Composition;
+    if (!rendererProto.cylinder) {
 
         rendererProto.Element3D.types.cylinder = SVGElement3DCylinder;
 
@@ -143,7 +144,7 @@ function rendererCylinderPath(
     const renderer = this,
         chart = charts[renderer.chartIndex],
 
-        // decide zIndexes of parts based on cuboid logic, for consistency.
+        // Decide zIndexes of parts based on cuboid logic, for consistency.
         cuboidData = this.cuboidPath(shapeArgs),
         isTopFirst = !cuboidData.isTop,
         isFronFirst = !cuboidData.isFront,
@@ -176,7 +177,8 @@ function rendererCylinderPath(
  */
 function rendererGetCurvedPath(
     this: SVGRenderer3D.Composition,
-    points: Array<PositionObject>): SVGPath {
+    points: Array<PositionObject>
+): SVGPath {
     const path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2;
 
@@ -294,7 +296,7 @@ function rendererGetCylinderEnd(
         centerX = width / 2 + (shapeArgs.x || 0),
         centerZ = depth / 2 + (shapeArgs.z || 0),
 
-        // points could be generated in a loop, but readability will plummet
+        // Points could be generated in a loop, but readability will plummet
         points: Array<Position3DObject> = [{ // M - starting point
             x: 0,
             y: y,
@@ -358,24 +360,22 @@ function rendererGetCylinderEnd(
     let path: SVGPath,
         x, z;
 
-    // rotate to match chart's beta and translate to the shape center
+    // Rotate to match chart's beta and translate to the shape center
     for (const point of points) {
         x = point.x;
         z = point.z;
 
-        // x′ = (x * cosθ − z * sinθ) + centerX
-        // z′ = (z * cosθ + x * sinθ) + centerZ
         point.x = (x * cosTheta - z * sinTheta) + centerX;
         point.z = (z * cosTheta + x * sinTheta) + centerZ;
     }
     const perspectivePoints = perspective(points, chart, true);
 
-    // check for sub-pixel curve issue, compare front and back edges
+    // Check for sub-pixel curve issue, compare front and back edges
     if (
         Math.abs(perspectivePoints[3].y - perspectivePoints[9].y) < 2.5 &&
         Math.abs(perspectivePoints[0].y - perspectivePoints[6].y) < 2.5
     ) {
-        // use simplified shape
+        // Use simplified shape
         path = this.toLinePath([
             perspectivePoints[0],
             perspectivePoints[3],
@@ -383,7 +383,7 @@ function rendererGetCylinderEnd(
             perspectivePoints[9]
         ], true);
     } else {
-        // or default curved path to imitate ellipse (2D circle)
+        // Or default curved path to imitate ellipse (2D circle)
         path = this.getCurvedPath(perspectivePoints);
     }
 

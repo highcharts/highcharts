@@ -42,8 +42,7 @@ Dashboards.board('container', {
                     {
                         cells: [
                             {
-                                id: 'dashboard-col-0',
-                                width: '50%'
+                                id: 'dashboard-col-0'
                             },
                             {
                                 id: 'dashboard-col-1'
@@ -101,7 +100,6 @@ Dashboards.board('container', {
             id: 'Vitamin'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true
         }

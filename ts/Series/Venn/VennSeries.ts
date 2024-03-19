@@ -338,7 +338,7 @@ class VennSeries extends ScatterSeries {
         targetHeight: number,
         field: PolygonBoxObject
     ): Record<string, number> {
-        const height = field.bottom - field.top, // top is smaller than bottom
+        const height = field.bottom - field.top, // Top is smaller than bottom
             width = field.right - field.left,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,
             scaleY = height > 0 ? 1 / height * targetHeight : 1,
@@ -546,8 +546,10 @@ class VennSeries extends ScatterSeries {
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        const relations = VennUtils.processVennData(this.options.data as any,
-            VennSeries.splitter);
+        const relations = VennUtils.processVennData(
+            this.options.data as any,
+            VennSeries.splitter
+        );
 
         // Calculate the positions of each circle.
         const {
@@ -585,14 +587,15 @@ class VennSeries extends ScatterSeries {
 
         // Iterate all points and calculate and draw their graphics.
         for (const point of this.points) {
-            let sets: Array<string> = isArray(point.sets) ? point.sets : [],
+            const sets: Array<string> = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
-                shapeArgs: (SVGAttributes|undefined),
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
-                dataLabelWidth = dataLabelValues.width,
-                dataLabelPosition = dataLabelValues.position,
                 dlOptions = point.options && point.options.dataLabels;
+
+            let shapeArgs: (SVGAttributes|undefined),
+                dataLabelWidth = dataLabelValues.width,
+                dataLabelPosition = dataLabelValues.position;
 
             if (shape) {
                 if ((shape as any).r) {
@@ -667,7 +670,6 @@ class VennSeries extends ScatterSeries {
  * */
 
 interface VennSeries {
-    axisTypes: Array<string>;
     directTouch: boolean;
     isCartesian: boolean;
     pointArrayMap: Array<string>;

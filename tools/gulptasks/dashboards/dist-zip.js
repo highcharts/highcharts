@@ -56,42 +56,6 @@ async function distZipDashboards() {
 }
 
 /**
- * Creates zip files for dataGrid.
- *
- * @return {Promise<*> | Promise | Promise} Promise to keep
- */
-async function distZipDataGrid() {
-    const argv = require('yargs').argv;
-    const logLib = require('../lib/log');
-    const zip = require('gulp-zip');
-    const release = argv.release;
-
-    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
-        throw new Error('No valid `--release x.x.x` provided.');
-    }
-
-    const { buildFolderDataGrid, productDataGrid } = require('./_config.json');
-    const zipCacheFolder = path.join(buildFolderDataGrid, 'js-gzip');
-    const zipDistFile = `${productDataGrid.replace(/ /gu, '-')}-${release}.zip`;
-
-    await new Promise(
-        (resolve, reject) => gulp
-            .src([
-                `${buildFolderDataGrid}/**`,
-                `!${zipCacheFolder}/**`
-            ])
-            .pipe(zip(zipDistFile))
-            .pipe(gulp.dest(buildFolderDataGrid))
-            .on('error', reject)
-            .on('end', resolve)
-    );
-
-    logLib.message(`Created ZIP archive: ${buildFolderDataGrid}/${zipDistFile}...`);
-
-}
-
-
-/**
  * Creates gzipped versions in ./js-gzip for dashboards.
  *
  * @return {Promise<void>}
@@ -189,7 +153,6 @@ gulp.task(
     gulp.series(
         distJSGZipDashboards,
         distJSGZipDataGrid,
-        distZipDashboards,
-        distZipDataGrid
+        distZipDashboards
     )
 );

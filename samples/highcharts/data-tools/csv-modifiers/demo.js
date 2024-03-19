@@ -16,7 +16,8 @@ Highcharts.setOptions({
         type: 'category'
     },
     tooltip: {
-        pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> population growth in {point.name}'
+        pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
+            'population growth in {point.name}'
     },
     legend: {
         enabled: false
@@ -74,13 +75,10 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'south-america-chart',
-                    width: '1/3'
+                    id: 'south-america-chart'
                 }, {
-                    width: '1/3',
                     id: 'north-america-chart'
                 }, {
-                    width: '1/3',
                     id: 'asia-chart'
                 }]
             }, {

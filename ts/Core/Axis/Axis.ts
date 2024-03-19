@@ -250,7 +250,7 @@ class Axis {
     public linkedParent?: Axis;
     public max?: number;
     public maxLabelDimensions?: SizeObject;
-    public maxLabelLength!: number;
+    public maxLabelLength?: number;
     public min?: number;
     public minorTickInterval!: number;
     public minorTicks!: Record<string, Tick>;
@@ -393,8 +393,9 @@ class Axis {
             userOptions.side,
             axis.side,
             (horiz ?
-                (axis.opposite ? 0 : 2) : // top : bottom
-                (axis.opposite ? 1 : 3)) // right : left
+                (axis.opposite ? 0 : 2) : // Top : bottom
+                (axis.opposite ? 1 : 3)
+            ) // Right : left
         );
 
         /**
@@ -1479,7 +1480,8 @@ class Axis {
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        (axis.max as any), (series.xData as any).length - 1
+                        (
+                            axis.max as any), (series.xData as any).length - 1
                     );
 
                     series.processData();
@@ -2177,8 +2179,10 @@ class Axis {
             if (endOnTick) {
                 this.max = roundedMax;
             } else {
-                while ((this.max as any) + minPointOffset <
-                        tickPositions[tickPositions.length - 1]) {
+                while (
+                    (this.max as any) + minPointOffset <
+                        tickPositions[tickPositions.length - 1]
+                ) {
                     tickPositions.pop();
                 }
             }
@@ -3311,7 +3315,8 @@ class Axis {
         }
 
         // Max width defaults to the length of the axis
-        if (!styledMode &&
+        if (
+            !styledMode &&
             !axisTitleOptions.style.width &&
             !axis.isRadial
         ) {
@@ -3320,7 +3325,7 @@ class Axis {
             });
         }
 
-        // hide or show the title depending on whether showEmpty is set
+        // Hide or show the title depending on whether showEmpty is set
         axis.axisTitle[display ? 'show' : 'hide'](display);
     }
 
@@ -3343,7 +3348,7 @@ class Axis {
         if (!ticks[pos]) {
             ticks[pos] = new Tick(axis, pos);
         } else {
-            ticks[pos].addLabel(); // update labels depending on tick interval
+            ticks[pos].addLabel(); // Update labels depending on tick interval
         }
     }
 
@@ -3432,7 +3437,7 @@ class Axis {
             titleOffset = 0,
             titleOffsetOption,
             titleMargin = 0,
-            labelOffset = 0, // reset
+            labelOffset = 0, // Reset
             labelOffsetPadded,
             lineHeightCorrection;
 
@@ -3448,7 +3453,6 @@ class Axis {
 
             // Generate ticks
             tickPositions.forEach(function (pos: number): void {
-                // i is not used here, but may be used in overrides
                 axis.generateTick(pos);
             });
 
@@ -3468,7 +3472,7 @@ class Axis {
                 axis.reserveSpaceDefault
             )) {
                 tickPositions.forEach(function (pos: number): void {
-                    // get the highest offset
+                    // Get the highest offset
                     labelOffset = Math.max(
                         ticks[pos].getLabelSize(),
                         labelOffset
@@ -3482,7 +3486,7 @@ class Axis {
             }
             axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 
-        } else { // doesn't have data
+        } else { // Doesn't have data
             objectEach(ticks, function (tick, n): void {
                 tick.destroy();
                 delete ticks[n];
@@ -3514,13 +3518,13 @@ class Axis {
         // Render the axis line
         axis.renderLine();
 
-        // handle automatic or user set offset
+        // Handle automatic or user set offset
         axis.offset = directionFactor * pick(
             options.offset,
             axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
         );
 
-        axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
+        axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // Polar
         if (side === 0) {
             lineHeightCorrection = -axis.labelMetrics().h;
         } else if (side === 2) {
@@ -3606,7 +3610,7 @@ class Axis {
                 (opposite ? this.height : 0) + offset;
 
         if (opposite) {
-            lineWidth *= -1; // crispify the other way - #1480, #1687
+            lineWidth *= -1; // Crispify the other way - #1480, #1687
         }
 
         return chart.renderer
@@ -3664,7 +3668,7 @@ class Axis {
      * X and Y positions for the title.
      */
     public getTitlePosition(axisTitle: SVGElement): PositionObject {
-        // compute anchor points for each of the title align options
+        // Compute anchor points for each of the title align options
         const horiz = this.horiz,
             axisLeft = this.left,
             axisTop = this.top,
@@ -3684,23 +3688,23 @@ class Axis {
                 0
             ) : 0,
 
-            // the position in the length direction of the axis
+            // The position in the length direction of the axis
             alongAxis = ({
                 low: margin + (horiz ? 0 : axisLength),
                 middle: margin + axisLength / 2,
                 high: margin + (horiz ? axisLength : 0)
             })[axisTitleOptions.align],
 
-            // the position in the perpendicular direction of the axis
+            // The position in the perpendicular direction of the axis
             offAxis = (horiz ? axisTop + this.height : axisLeft) +
-                (horiz ? 1 : -1) * // horizontal axis reverses the margin
-                (opposite ? -1 : 1) * // so does opposite axes
+                (horiz ? 1 : -1) * // Horizontal axis reverses the margin
+                (opposite ? -1 : 1) * // So does opposite axes
                 (this.axisTitleMargin || 0) +
                 [
-                    -textHeightOvershoot, // top
-                    textHeightOvershoot, // right
-                    fontMetrics.f, // bottom
-                    -textHeightOvershoot // left
+                    -textHeightOvershoot, // Top
+                    textHeightOvershoot, // Right
+                    fontMetrics.f, // Bottom
+                    -textHeightOvershoot // Left
                 ][this.side],
             titlePosition = {
                 x: horiz ?
@@ -3854,7 +3858,7 @@ class Axis {
             const slideInTicks = axis.chart.hasRendered &&
                 axis.old && isNumber(axis.old.min);
 
-            // minor ticks
+            // Minor ticks
             if (axis.minorTickInterval && !axis.categories) {
                 axis.getMinorTickPositions().forEach(function (
                     pos: number
@@ -3918,8 +3922,8 @@ class Axis {
                 });
             }
 
-            // custom plot lines and bands
-            if (!axis._addedPlotLB) { // only first time
+            // Custom plot lines and bands
+            if (!axis._addedPlotLB) { // Only first time
                 axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
@@ -3931,7 +3935,7 @@ class Axis {
                     );
             }
 
-        } // end if hasData
+        } // End if hasData
 
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
@@ -4026,16 +4030,16 @@ class Axis {
     public redraw(): void {
 
         if (this.visible) {
-            // render the axis
+            // Render the axis
             this.render();
 
-            // move plot lines and bands
+            // Move plot lines and bands
             this.plotLinesAndBands.forEach(function (plotLine): void {
                 plotLine.render();
             });
         }
 
-        // mark associated series as dirty and ready for redraw
+        // Mark associated series as dirty and ready for redraw
         this.series.forEach(function (series): void {
             series.isDirty = true;
         });
@@ -4094,8 +4098,10 @@ class Axis {
         }
 
         // Destroy elements
-        ['axisLine', 'axisTitle', 'axisGroup',
-            'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
+        [
+            'axisLine', 'axisTitle', 'axisGroup',
+            'gridGroup', 'labelGroup', 'cross', 'scrollbar'
+        ].forEach(
             function (prop: string): void {
                 if ((axis as any)[prop]) {
                     (axis as any)[prop] = (axis as any)[prop].destroy();
@@ -4184,7 +4190,7 @@ class Axis {
 
             if (defined(pos)) {
                 crossOptions = {
-                    // value, only used on radial
+                    // Value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
                         pick(point.stackY, point.y)) as any,
@@ -4402,7 +4408,7 @@ class Axis {
  * */
 
 interface Axis extends AxisComposition, AxisLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *
@@ -4697,4 +4703,4 @@ export default Axis;
  */
 
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

@@ -25,7 +25,7 @@ Dashboards.board('container', {
             cellClassName: 'custom-cell',
             rows: [{
                 cells: [
-                    { id: 'dashboard-col-0',  width: '50%' },
+                    { id: 'dashboard-col-0' },
                     { id: 'dashboard-col-1' },
                     { id: 'dashboard-col-2' }
                 ]

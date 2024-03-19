@@ -22,15 +22,12 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 
 import GraphLayout from '../GraphLayoutComposition.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -104,10 +101,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
-        if (pushUnique(composed, this.compose)) {
-            addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+        const chartProto = ChartClass.prototype;
 
-            const chartProto = ChartClass.prototype;
+        if (!chartProto.getSelectedParentNodes) {
+            addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
             chartProto.getSelectedParentNodes = chartGetSelectedParentNodes;
         }
@@ -267,8 +264,8 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         let distanceXY: Record<string, number>,
             distanceR: number;
 
-        // parentNodeLimit should be used together
-        // with seriesInteraction: false
+        // `parentNodeLimit` should be used together with seriesInteraction:
+        // false
         if (
             layout.options.splitSeries &&
             !node.isParentNode &&

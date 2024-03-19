@@ -37,14 +37,14 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'micro-element'
+            id: 'micro-element',
+            columnAssignment: [{
+                seriesId: 'Vitamin A',
+                data: ['Food', 'Vitamin A']
+            }]
         },
         renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -97,7 +97,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Vitamin A in food. Highcharts Interactive Chart.'
+                    chartContainerLabel: 'Vitamin A in food. Highcharts ' +
+                        'Interactive Chart.'
                 }
             },
             accessibility: {
@@ -118,13 +119,13 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'micro-element'
+            id: 'micro-element',
+            columnAssignment: [{
+                seriesId: 'Iron',
+                data: ['Food', 'Iron']
+            }]
         },
         type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            Iron: 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -177,7 +178,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Iron in food. Highcharts Interactive Chart.'
+                    chartContainerLabel: 'Iron in food. Highcharts ' +
+                        'Interactive Chart.'
                 }
             },
             accessibility: {
@@ -196,7 +198,6 @@ Dashboards.board('container', {
             id: 'micro-element'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true,
             visibility: true
