@@ -575,8 +575,8 @@ namespace StockChart {
         // Check the edges
         if (horiz) {
             limit = {
-                left: left - crossBox.x,
-                right: left + axis.width - crossBox.x
+                left,
+                right: left + axis.width
             };
         } else {
             limit = {
