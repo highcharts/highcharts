@@ -205,7 +205,7 @@ namespace Bindings {
     export function componentFromJSON(
         json: Component.JSON
     ): (Component|undefined) {
-        let componentClass = ComponentRegistry.types[
+        const componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry
         ];
 
