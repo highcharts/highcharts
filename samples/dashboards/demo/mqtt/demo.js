@@ -4,8 +4,7 @@ const powerUnit = 'kWh';
 
 const kpiGaugeOptions = {
     chart: {
-        type: 'solidgauge',
-        spacing: [8, 8, 8, 8]
+        type: 'solidgauge'
     },
     pane: {
         center: ['50%', '85%'],
@@ -126,6 +125,11 @@ async function setupDashboard() {
                 highlight: true
             },
             chartOptions: {
+                chart: {
+                    type: 'spline',
+                    styledMode: true,
+                    animation: true
+                },
                 xAxis: xAxisOptions,
                 yAxis: yAxisOptions,
                 credits: {
@@ -134,9 +138,6 @@ async function setupDashboard() {
                 legend: {
                     enabled: true,
                     verticalAlign: 'top'
-                },
-                chart: {
-                    type: 'spline'
                 },
                 title: {
                     text: ''
@@ -161,6 +162,11 @@ async function setupDashboard() {
                 highlight: true
             },
             chartOptions: {
+                chart: {
+                    type: 'spline',
+                    styledMode: true,
+                    animation: true
+                },
                 xAxis: xAxisOptions,
                 yAxis: yAxisOptions,
                 credits: {
@@ -172,10 +178,6 @@ async function setupDashboard() {
                 legend: {
                     enabled: true,
                     verticalAlign: 'top'
-                },
-                chart: {
-                    animation: false,
-                    type: 'spline'
                 },
                 tooltip: {
                     valueSuffix: powerUnit,

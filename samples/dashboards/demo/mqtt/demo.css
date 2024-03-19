@@ -115,33 +115,30 @@ div#status_bar #status_messages {
  *  KPI
  *
  * */
+.el-aggr,
+.el-chart,
+.el-kpi,
+#data-grid {
+    min-width: 0;
+    flex: 1;
+}
+
 .el-aggr {
     display: flex;
     flex-direction: column;
 }
 
-.el-aggr,
-#data-grid {
-    flex: 1;
-    min-width: 0;
+.el-kpi {
+    flex-grow: 1;
+    max-height: 150px;
 }
 
-.el-aggr {
-    height: 500px;
-}
-
-#kpi-agg-1,
-#kpi-agg-2 {
-    height: 40%;
-}
-
-#kpi-agg-1 .highcharts-dashboards-component-kpi-value,
-#kpi-agg-2 .highcharts-dashboards-component-kpi-value {
+.el-kpi .highcharts-dashboards-component-kpi-value {
     display: none;
 }
 
 .el-chart {
-    height: 50%;
+    max-height: 200px;
 }
 
 .el-aggr .highcharts-dashboards-component {
@@ -152,6 +149,7 @@ div#status_bar #status_messages {
 
 .el-aggr .highcharts-dashboards-component-title {
     white-space: nowrap;
+    font-size: 16px;
 }
 
 .el-aggr .highcharts-dashboards-component-kpi-value {
@@ -172,7 +170,7 @@ div#status_bar #status_messages {
 }
 
 .el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
@@ -213,24 +211,17 @@ div#status_bar #status_messages {
 }
 
 .el-aggr .highcharts-title {
-    font-size: 1em;
+    font-size: 0.8em;
 }
 
 @media (max-width: 992px) {
     .row {
         flex-direction: column;
     }
-
-    #kpi-wrapper {
-        flex-direction: row;
-        flex: unset;
-        width: 100%;
-    }
 }
 
 @media (max-width: 576px) {
-    #dashboard-col-0,
-    #dashboard-col-1 {
+    .el-aggr {
         flex: unset;
         width: 100%;
     }
