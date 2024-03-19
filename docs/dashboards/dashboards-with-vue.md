@@ -65,5 +65,5 @@ There are two ways to do it:
 
 ## Demos
 See how it works in the demos like below:
-- [basic live example](https://stackblitz.com/edit/dashboards-vue3-fcutdg?file=src%2FApp.vue)
-- [custom layout live example]()
+- [basic live example](https://stackblitz.com/edit/dashboards-vue3-fcutdg)
+- [custom layout live example](https://stackblitz.com/edit/dashboards-vue3-4qzk97)
