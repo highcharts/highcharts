@@ -159,7 +159,7 @@ class ComponentConnectorHandler {
             this.clearTableListeners();
             this.setupTableListeners(connector.table);
 
-            // re-setup if modifier changes
+            // Re-setup if modifier changes
             connector.table.on(
                 'setModifier',
                 (): void => this.clearTableListeners()
@@ -207,8 +207,8 @@ class ComponentConnectorHandler {
                     'afterSetColumns',
                     'afterSetRows'
                 ].forEach((event: any): void => {
-                    this.tableEvents.push((table)
-                        .on(event, (e: any): void => {
+                    this.tableEvents.push(
+                        table.on(event, (e: any): void => {
                             clearTimeout(this.tableEventTimeout);
                             this.tableEventTimeout = Globals.win.setTimeout(
                                 (): void => {
@@ -219,7 +219,8 @@ class ComponentConnectorHandler {
                                     });
                                     this.tableEventTimeout = void 0;
                                 });
-                        }));
+                        })
+                    );
                 });
             }
 
