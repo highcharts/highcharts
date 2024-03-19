@@ -382,8 +382,8 @@ module.exports = function (config) {
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
-                    '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    'Expected: ',
+                    'Debug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n        Expected: '
                 );
 
                 ret = ret.replace(regex, a => a.cyan);

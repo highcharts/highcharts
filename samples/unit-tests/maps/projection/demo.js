@@ -56,7 +56,7 @@ QUnit.module('Projection', function () {
 
 });
 
-QUnit.skip('Recommend map view for map chart.', async function (assert) {
+QUnit.test('Recommend map view for map chart.', async function (assert) {
     const world = await fetch(
             'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
         ).then(response => response.json()),
@@ -64,6 +64,8 @@ QUnit.skip('Recommend map view for map chart.', async function (assert) {
             'https://code.highcharts.com/mapdata/custom/africa.topo.json'
         ).then(response => response.json());
 
+    delete africa.objects.default['hc-recommended-mapview'];
+    delete world.objects.default['hc-recommended-mapview'];
 
     const chart = Highcharts.mapChart('container', {
         chart: {
@@ -108,4 +110,7 @@ QUnit.skip('Recommend map view for map chart.', async function (assert) {
         `If chart.map is set to small mapData, but series mapData is a big map,
         then recommended projection should be EqualEarth.`
     );
+
+    delete africa.objects.default['hc-decoded-geojson'];
+    delete world.objects.default['hc-decoded-geojson'];
 });
