@@ -12,7 +12,6 @@
  * */
 
 import Component from './Component';
-import ComponentGroup from './ComponentGroup.js';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import DataTable from '../../Data/DataTable.js';
 
@@ -172,17 +171,6 @@ class ComponentConnectorHandler {
                     }
                 }
             );
-
-
-            // Add the component to a group based on the
-            // connector table id by default
-            // TODO: make this configurable
-            // DO WE NEED THIS? (DD)
-            const tableID = connector.table.id;
-
-            if (!ComponentGroup.getComponentGroup(tableID)) {
-                ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
-            }
         }
 
         return this.component;

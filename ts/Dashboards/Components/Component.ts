@@ -37,7 +37,6 @@ import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
 import ComponentConnectorHandler from './ComponentConnectorHandler.js';
-import ComponentGroup from './ComponentGroup.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
@@ -258,13 +257,6 @@ abstract class Component {
      * @internal
      */
     protected syncHandlers?: Sync.OptionsRecord;
-
-    /**
-     * The active group of the component. Used for sync.
-     *
-     * @internal
-     */
-    public activeGroup: ComponentGroup | undefined;
 
     /** @internal */
     public abstract sync: Sync;
@@ -547,34 +539,11 @@ abstract class Component {
 
         fireEvent(this, 'setConnector', { connector });
 
-        // What the component group exactly does?
-        // const group = ComponentGroup.getComponentGroup(tableID);
-        // if (group) {
-        //     group.addComponents([this.id]);
-        //     this.activeGroup = group;
-        // }
-
         fireEvent(this, 'afterSetConnector', { connector });
 
         return this;
     }
 
-
-    // /** @internal */ - not used (DD)
-    // setActiveGroup(group: ComponentGroup | string | null): void {
-    //     if (typeof group === 'string') {
-    //         group = ComponentGroup.getComponentGroup(group) || null;
-    //     }
-    //     if (group instanceof ComponentGroup) {
-    //         this.activeGroup = group;
-    //     }
-    //     if (group === null) {
-    //         this.activeGroup = void 0;
-    //     }
-    //     if (this.activeGroup) {
-    //         this.activeGroup.addComponents([this.id]);
-    //     }
-    // }
 
     /**
      * Gets height of the component's content.
