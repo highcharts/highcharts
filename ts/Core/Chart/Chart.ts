@@ -3636,7 +3636,7 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted, resetZoomButton } = this;
+            { inverted } = this;
 
         let hasZoomed = false,
             displayButton: boolean|undefined;
@@ -3858,10 +3858,10 @@ class Chart {
             } else {
 
                 // Show or hide the Reset zoom button
-                if (displayButton && !resetZoomButton) {
+                if (displayButton && !this.resetZoomButton) {
                     this.showResetZoom();
-                } else if (!displayButton && resetZoomButton) {
-                    this.resetZoomButton = resetZoomButton.destroy();
+                } else if (!displayButton && this.resetZoomButton) {
+                    this.resetZoomButton = this.resetZoomButton.destroy();
                 }
 
                 this.redraw(
