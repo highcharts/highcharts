@@ -7,7 +7,6 @@
 div#page_container {
     background-color: #f0f0f0;
     border-radius: 10px;
-    margin: 0 auto;
     padding: 10px;
     border: 1px solid #ccc;
     height: auto;
@@ -33,11 +32,6 @@ div#inputs input {
     float: left;
     margin: 0 20px;
     width: 150px;
-}
-
-div#page_container #messages {
-    background-color: yellow;
-    font-size: 12px;
 }
 
 div#status_bar {

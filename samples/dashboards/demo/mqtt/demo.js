@@ -1,9 +1,6 @@
-// Data cache
-
 let board = null;
-let dataTable = null;
-
 const powerUnit = 'kWh';
+
 
 const kpiGaugeOptions = {
     chart: {
@@ -67,8 +64,13 @@ async function setupDashboard() {
                     firstRowAsNames: true,
                     data: [
                         ['time', 'aggr1', 'aggr2'],
+                        // Test data: to be removed
                         [Date.UTC(2024, 0, 1), 0.5, 0.7]
-                    ]
+                    ],
+                    dataModifier: {
+                        type: 'Sort',
+                        orderByColumn: 'time'
+                    }
                 }
             }]
         },
@@ -120,8 +122,8 @@ async function setupDashboard() {
             },
             sync: {
                 visibility: true,
-                highlight: true,
-                extremes: true
+                extremes: true,
+                highlight: true
             },
             chartOptions: {
                 xAxis: xAxisOptions,
@@ -155,8 +157,8 @@ async function setupDashboard() {
             },
             sync: {
                 visibility: true,
-                highlight: true,
-                extremes: true
+                extremes: true,
+                highlight: true
             },
             chartOptions: {
                 xAxis: xAxisOptions,
@@ -188,6 +190,7 @@ async function setupDashboard() {
             },
             sync: {
                 highlight: true,
+                extremes: true,
                 visibility: true
             },
             dataGridOptions: {
@@ -210,17 +213,15 @@ async function setupDashboard() {
             }
         }]
     });
-    // Load initial data table
-    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 }
 
 // Launch  Dashboard
 setupDashboard();
 
-async function updateBoard(msg) {
-    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+async function updateBoard(mqttPacket) {
+    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 
-    const data = JSON.parse(msg.payloadString);
+    const data = JSON.parse(mqttPacket.payloadString);
 
     if (dataTable.getRowCount() === 0) {
         // Get history
@@ -258,15 +259,19 @@ async function updateBoard(msg) {
     await updateComponents();
 }
 
+
 async function connectBoard() {
-    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
 
     // Clear the data
     await dataTable.deleteRows();
+    // await dataTable.modified.deleteRows();
     await updateComponents();
 }
 
+
 async function updateComponents() {
+    // Update charts and datagrid
     for (let i = 2; i < board.mountedComponents.length; i++) {
         const comp = board.mountedComponents[i].component;
         await comp.update({
@@ -277,17 +282,26 @@ async function updateComponents() {
     }
 
     // Update the KPI components
-    dataTable = await board.dataPool.getConnectorTable('mqtt-data');
-    const lastRow = await dataTable.getRowCount() - 1;
+    const dataTable = await board.dataPool.getConnectorTable('mqtt-data');
+    const rowCount = await dataTable.getRowCount();
+    let data1, data2;
+
+    if (rowCount > 0) {
+        data1 = dataTable.getCellAsNumber('aggr1', rowCount - 1);
+        data2 = dataTable.getCellAsNumber('aggr2', rowCount - 1);
+    } else {
+        data1 = 0;
+        data2 = 0;
+    }
 
     const kpiAgg1 = board.mountedComponents[0].component;
     await kpiAgg1.update({
-        value: dataTable.getCellAsNumber('aggr1', lastRow)
+        value: data1
     });
 
     const kpiAgg2 = board.mountedComponents[1].component;
     await kpiAgg2.update({
-        value: dataTable.getCellAsNumber('aggr2', lastRow)
+        value: data2
     });
 }
 
@@ -318,6 +332,7 @@ window.onload = () => {
         status: document.getElementById('status'),
         statusMsg: document.getElementById('status_messages')
     };
+    topicEnable(false);
 };
 
 
@@ -332,7 +347,6 @@ function onConnectionLost() {
     setConnectionStatus(false);
     setUiElement('statusMsg', '');
     subscribeEnable(false);
-    topicEnable(true);
 }
 
 
@@ -363,7 +377,6 @@ async function onConnect() {
 
     connectBoard();
     subscribeEnable(true);
-    topicEnable(false);
 }
 
 
@@ -454,7 +467,7 @@ function subscribeEnable(enabled) {
 
 function topicEnable(enabled) {
     // TBD: static topic until application is made scalable
-    document.getElementById('topic').disabled = enabled;
+    document.getElementById('topic').disabled = true; // enabled;
 }
 
 
