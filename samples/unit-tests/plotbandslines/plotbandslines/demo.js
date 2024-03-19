@@ -33,7 +33,8 @@ QUnit.test('Plot band labels', function (assert) {
                 {
                     value: 11,
                     label: {
-                        text: 'A',
+                        text: 'Abcdef',
+                        x: 0,
                         useHTML: true
                     }
                 }
@@ -89,12 +90,12 @@ QUnit.test('Plot band labels', function (assert) {
     );
 
     const line = chart.xAxis[0].plotLinesAndBands[3].svgElem.getBBox(),
-        label = chart.xAxis[0].plotLinesAndBands[3].label.getBBox();
+        label = chart.xAxis[0].plotLinesAndBands[3].label;
 
     assert.close(
         line.x,
-        label.x + chart.plotLeft,
-        3,
+        label.x,
+        1,
         'HTML label should be placed (x-pos) near the plot line (#20792).'
     );
 
