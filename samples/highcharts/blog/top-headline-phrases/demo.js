@@ -20,9 +20,6 @@ Highcharts.chart('container', {
         ],
         title: {
             text: null
-        },
-        labels: {
-            padding: 0
         }
     },
     yAxis: {

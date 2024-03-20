@@ -6,14 +6,6 @@ QUnit.test('#12248 - Correct visible range for points.', function (assert) {
         yAxis: {
             stackLabels: {
                 enabled: true
-            },
-            labels: {
-                padding: 0
-            }
-        },
-        xAxis: {
-            labels: {
-                padding: 0
             }
         },
         plotOptions: {

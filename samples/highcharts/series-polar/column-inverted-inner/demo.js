@@ -19,10 +19,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'category',
-        lineWidth: 0,
-        labels: {
-            padding: 0
-        }
+        lineWidth: 0
     },
     yAxis: {
         min: 0,

@@ -76,8 +76,7 @@ Highcharts.chart('container', {
     yAxis: {
         tickInterval: 1,
         labels: {
-            enabled: false,
-            padding: 0
+            enabled: false
         },
         gridLineWidth: 0.5,
         gridLineColor: '#BBBAC5',
