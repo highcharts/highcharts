@@ -171,6 +171,17 @@ class ComponentConnectorHandler {
                     }
                 }
             );
+
+            if (connector.table) {
+                if (this.presentationModifier) {
+                    this.presentationTable =
+                        this.presentationModifier.modifyTable(
+                            connector.table.modified.clone()
+                        ).modified;
+                } else {
+                    this.presentationTable = connector.table;
+                }
+            }
         }
 
         return this.component;
@@ -240,6 +251,7 @@ class ComponentConnectorHandler {
             tableEvents.forEach(
                 (removeEventCallback): void => removeEventCallback()
             );
+            tableEvents.length = 0;
         }
 
         if (connector) {

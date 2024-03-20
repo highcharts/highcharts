@@ -27,16 +27,18 @@ import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
 import type Cell from '../../Layout/Cell';
+import type {
+    CrossfilterSyncOptions
+} from './NavigatorSyncs/NavigatorCrossfilterSync';
 import type { Options } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
-import type Sync from '../Sync/Sync';
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import DataTable from '../../../Data/DataTable.js';
-import NavigatorSyncHandler from './NavigatorSyncHandlers.js';
+import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import U from '../../../Core/Utilities.js';
 const {
     diffObjects,
@@ -75,6 +77,11 @@ class NavigatorComponent extends Component {
         NavigatorComponentDefaults as Partial<Options>
     );
 
+    /**
+     * Predefined sync configuration for the Navigator component.
+     */
+    public static predefinedSyncConfig = NavigatorSyncs.predefinedSyncConfig;
+
 
     /* *
      *
@@ -111,7 +118,6 @@ class NavigatorComponent extends Component {
         return component;
     }
 
-
     /* *
      *
      *  Constructor
@@ -137,10 +143,9 @@ class NavigatorComponent extends Component {
         this.chartContainer.classList
             .add(Globals.classNamePrefix + 'navigator');
 
-        this.filterAndAssignSyncOptions(NavigatorSyncHandler);
-        this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
+        /// this.filterAndAssignSyncOptions(NavigatorSyncHandler);
 
-        if (this.sync.syncConfig.crossfilter?.enabled) {
+        if (this.sync.syncConfig?.crossfilter?.enabled) {
             this.chart.update(
                 merge(
                     { navigator: { xAxis: { labels: { format: '{value}' } } } },
@@ -173,12 +178,6 @@ class NavigatorComponent extends Component {
      * Options for the navigator component
      */
     public options: Options;
-
-    /**
-     * Reference to the sync system that allow to sync i.e tooltips.
-     * @private
-     */
-    public sync: Component['sync'];
 
 
     /**
@@ -392,7 +391,7 @@ class NavigatorComponent extends Component {
                 Array<[number|string, number|null]>
             );
 
-            if (this.sync.syncConfig.crossfilter?.enabled) {
+            if (this.sync.syncConfig?.crossfilter?.enabled) {
                 data = this.generateCrossfilterData();
             } else {
                 data = columnValues.slice() as Array<string|number|null>;
@@ -414,7 +413,7 @@ class NavigatorComponent extends Component {
      */
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
-            this.sync.syncConfig.crossfilter as Sync.CrossfilterSyncOptions;
+            this.sync.syncConfig?.crossfilter as CrossfilterSyncOptions;
         const table = this.connectorHandlers?.[0]?.connector?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
@@ -546,12 +545,12 @@ class NavigatorComponent extends Component {
         await super.update(options, false);
 
         if (options.sync) {
-            this.filterAndAssignSyncOptions(NavigatorSyncHandler);
+            /// this.filterAndAssignSyncOptions(NavigatorSyncHandler);
         }
 
         if (options.chartOptions) {
             chart.update(
-                merge(this.sync.syncConfig.crossfilter?.enabled ? (
+                merge(this.sync.syncConfig?.crossfilter?.enabled ? (
                     { navigator: { xAxis: { labels: { format: '{value}' } } } }
                 ) : {}, options.chartOptions),
                 false

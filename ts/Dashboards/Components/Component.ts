@@ -54,7 +54,6 @@ const {
     addEvent,
     objectEach,
     isFunction,
-    isObject,
     getStyle,
     diffObjects
 } = U;
@@ -185,7 +184,7 @@ abstract class Component {
     /**
      * Default sync Handlers.
      */
-    public static syncHandlers: Sync.OptionsRecord = {};
+    public static predefinedSyncConfig: Sync.PredefinedSyncConfig;
     /**
      * The connector handlers for the component.
      */
@@ -259,7 +258,7 @@ abstract class Component {
     protected syncHandlers?: Sync.OptionsRecord;
 
     /** @internal */
-    public abstract sync: Sync;
+    public sync: Sync;
 
     /**
      * Timeouts for calls to `Component.resizeTo()`.
@@ -354,7 +353,11 @@ abstract class Component {
             true
         );
 
-        this.filterAndAssignSyncOptions();
+        this.sync = new Sync(
+            this,
+            (this.constructor as typeof Component).predefinedSyncConfig
+        );
+
         this.setupEventListeners();
 
         if (cell) {
@@ -394,67 +397,12 @@ abstract class Component {
         return {};
     }
 
+
     /* *
      *
      *  Functions
      *
      * */
-
-    /**
-    * Filter the sync options that are declared in the component options.
-    * Assigns the sync options to the component and to the sync instance.
-    *
-    * @param defaultHandlers
-    * Sync handlers on component.
-    *
-    * @internal
-    */
-    protected filterAndAssignSyncOptions(
-        defaultHandlers: typeof Sync.defaultHandlers = (
-            this.constructor as typeof Component
-        ).syncHandlers
-    ): void {
-        const sync = this.options.sync || {};
-        const syncHandlers = Object.keys(sync).reduce((
-            carry: Sync.OptionsRecord,
-            handlerName
-        ): Sync.OptionsRecord => {
-            if (handlerName) {
-                const defaultHandler = defaultHandlers[handlerName];
-                const defaultOptions = Sync.defaultSyncOptions[handlerName];
-                const handler = sync[handlerName];
-
-                // Make it always an object
-                carry[handlerName] = merge(
-                    defaultOptions || {},
-                    { enabled: isObject(handler) ? handler.enabled : handler },
-                    isObject(handler) ? handler : {}
-                );
-
-                // Set emitter and handler default functions
-                if (defaultHandler && carry[handlerName].enabled) {
-                    const keys: (keyof Sync.OptionsEntry)[] = [
-                        'emitter', 'handler'
-                    ];
-
-                    for (const key of keys) {
-                        if (
-                            carry[handlerName][key] === true ||
-                            carry[handlerName][key] === void 0
-                        ) {
-                            carry[handlerName][key] =
-                                defaultHandler[key] as any;
-                        }
-                    }
-                }
-            }
-
-            return carry;
-        }, {});
-
-        this.sync ? this.sync.syncConfig = syncHandlers : void 0;
-        this.syncHandlers = syncHandlers;
-    }
 
     /**
      * Setup listeners on cell/other things up the chain
@@ -520,30 +468,22 @@ abstract class Component {
     }
 
     /**
-     * TODO(DD)
+     * Initializes connector handlers for the component.
      */
-    public async initConnector(): Promise<this> {
+    public async initConnectors(): Promise<this> {
+        fireEvent(this, 'setConnectors', {
+            connectorHandlers: this.connectorHandlers
+        });
+
         for (const connectorHandler of this.connectorHandlers) {
             await connectorHandler.initConnector();
         }
-        this.setConnector();
+
+        fireEvent(this, 'afterSetConnectors', {
+            connectorHandlers: this.connectorHandlers
+        });
         return this;
     }
-
-
-    /**
-     * TODO(DD) - reconsider existence of this method
-     */
-    public setConnector(): this {
-        const { connector } = this.connectorHandlers[0] ?? {};
-
-        fireEvent(this, 'setConnector', { connector });
-
-        fireEvent(this, 'afterSetConnector', { connector });
-
-        return this;
-    }
-
 
     /**
      * Gets height of the component's content.
@@ -630,8 +570,6 @@ abstract class Component {
      * @param shouldRerender
      * Set to true if the update should rerender the component.
      */
-    // (DD)
-    // eslint-disable-next-line @typescript-eslint/require-await
     public async update(
         newOptions: Partial<Component.Options>,
         shouldRerender: boolean = true
@@ -645,19 +583,45 @@ abstract class Component {
         fireEvent(this, 'update', eventObject);
 
         this.options = merge(this.options, newOptions);
+        const connectorOptions: ComponentConnectorHandler.ConnectorOptions[] = (
+            this.options.connector ? (
+                isArray(this.options.connector) ? this.options.connector :
+                    [this.options.connector]
+            ) : []
+        );
 
-        // (DD) - make possible to update multiple connectors
-        // if (this.options.connector) {
-        //     if (!this.connectorHandler) {
-        //         this.connectorHandler = new ComponentConnectorHandler(
-        //             this, this.options.connector
-        //         );
-        //     }
+        let connectorsHaveChanged = false;
+        for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
+            const oldConnectorId = this.connectorHandlers[i]?.options.id;
+            const newConnectorId = connectorOptions[i]?.id;
 
-        //     await this.connectorHandler.update(this.options.connector);
-        //     this.setConnector();
-        // }
-        // ---
+            if (oldConnectorId !== newConnectorId) {
+                connectorsHaveChanged = true;
+                break;
+            }
+        }
+
+        if (connectorsHaveChanged) {
+            fireEvent(this, 'setConnectors', {
+                connectorHandlers: this.connectorHandlers
+            });
+
+            for (const connectorHandler of this.connectorHandlers) {
+                connectorHandler.destroy();
+            }
+            this.connectorHandlers.length = 0;
+
+            for (const options of connectorOptions) {
+                this.connectorHandlers.push(
+                    new ComponentConnectorHandler(this, options)
+                );
+            }
+            await this.initConnectors();
+
+            fireEvent(this, 'afterSetConnectors', {
+                connectorHandlers: this.connectorHandlers
+            });
+        }
 
         if (shouldRerender || eventObject.shouldForceRerender) {
             this.render();
@@ -789,7 +753,7 @@ abstract class Component {
      */
     public async load(): Promise<this> {
 
-        await this.initConnector();
+        await this.initConnectors();
         this.render();
 
         return this;
@@ -967,7 +931,7 @@ namespace Component {
      */
     /** @internal */
     export type EventTypes =
-        SetConnectorEvent |
+        SetConnectorsEvent |
         ResizeEvent |
         UpdateEvent |
         TableChangedEvent |
@@ -976,8 +940,8 @@ namespace Component {
         JSONEvent |
         PresentationModifierEvent;
 
-    export type SetConnectorEvent =
-        Event<'setConnector'|'afterSetConnector', {}>;
+    export type SetConnectorsEvent =
+        Event<'setConnectors'|'afterSetConnectors', {}>;
 
     /** @internal */
     export type ResizeEvent = Event<'resize', {

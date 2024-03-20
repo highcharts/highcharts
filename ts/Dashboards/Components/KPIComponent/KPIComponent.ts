@@ -35,7 +35,7 @@ import type Types from '../../../Shared/Types';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
-import KPISyncHandlers from './KPISyncHandlers.js';
+import KPISyncs from './KPISyncs/KPISyncs.js';
 import KPIComponentDefaults from './KPIComponentDefaults.js';
 import Templating from '../../../Core/Templating.js';
 const {
@@ -122,8 +122,10 @@ class KPIComponent extends Component {
         KPIComponentDefaults
     );
 
-    /** @internal */
-    public static syncHandlers = KPISyncHandlers;
+    /**
+     * Predefined sync config for the KPI component.
+     */
+    public static predefinedSyncConfig = KPISyncs.predefinedSyncConfig;
 
     /**
      * Default options of the KPI component.
@@ -242,13 +244,6 @@ class KPIComponent extends Component {
     public chart?: Chart;
 
     /**
-     * Reference to sync component that allows to sync.
-     *
-     * @internal
-     */
-    public sync: Component['sync'];
-
-    /**
      * Previous value of KPI.
      *
      * @internal
@@ -284,10 +279,6 @@ class KPIComponent extends Component {
         this.options = options as Options;
 
         this.type = 'KPI';
-        this.sync = new KPIComponent.Sync(
-            this,
-            this.syncHandlers
-        );
 
         this.value = createElement(
             'span',
@@ -388,7 +379,7 @@ class KPIComponent extends Component {
      * @private
      */
     private setOptions(): void {
-        this.filterAndAssignSyncOptions(KPISyncHandlers);
+        /// this.filterAndAssignSyncOptions(KPISyncHandlers);
     }
 
     /**

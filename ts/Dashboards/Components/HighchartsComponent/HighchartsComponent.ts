@@ -48,7 +48,7 @@ import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
-import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
+import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
 import ComponentConnectorHandler from '../../Components/ComponentConnectorHandler';
@@ -82,8 +82,10 @@ class HighchartsComponent extends Component {
     /** @private */
     public static charter: H;
 
-    /** @private */
-    public static syncHandlers = HighchartsSyncHandlers;
+    /**
+     * Predefined sync config for Highcharts component.
+     */
+    public static predefinedSyncConfig = HighchartsSyncs.predefinedSyncConfig;
 
     /**
      * Default options of the Highcharts component.
@@ -123,12 +125,9 @@ class HighchartsComponent extends Component {
             merge<Options>(
                 options as any,
                 {
-                    chartOptions,
+                    chartOptions
                     // Highcharts, // TODO: Find a solution
                     // store: store instanceof DataConnector ? store : void 0,
-
-                    // Get from static registry:
-                    syncHandlers: HighchartsComponent.syncHandlers
                 }
             )
         );
@@ -189,13 +188,6 @@ class HighchartsComponent extends Component {
     public chartConstructor: ConstructorType;
 
     /**
-     * Reference to sync component that allows to sync i.e tooltips.
-     *
-     * @private
-     */
-    public sync: Component['sync'];
-
-    /**
      * List of series IDs created from the connector using `columnAssignment`.
      */
     public seriesFromConnector: string[] = [];
@@ -238,10 +230,6 @@ class HighchartsComponent extends Component {
         );
 
         this.setOptions();
-        this.sync = new HighchartsComponent.Sync(
-            this,
-            this.syncHandlers
-        );
 
         this.chartOptions = merge((
             this.options.chartOptions ||
@@ -291,9 +279,10 @@ class HighchartsComponent extends Component {
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
 
-        this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
+
+        this.sync.start();
 
         return this;
     }
@@ -397,7 +386,7 @@ class HighchartsComponent extends Component {
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
-        this.filterAndAssignSyncOptions(HighchartsSyncHandlers);
+        /// this.filterAndAssignSyncOptions(HighchartsSyncHandlers); (DD)
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
@@ -418,12 +407,21 @@ class HighchartsComponent extends Component {
             return;
         }
 
-        const connectorOptions =
-            Array.isArray(this.options.connector) ? this.options.connector : (
-                this.options.connector ? [this.options.connector] : []
-            );
         const newSeriesIds = [];
-        for (const { columnAssignment } of connectorOptions) {
+        for (const connectorHandler of connectorHandlers) {
+            const options: ConnectorOptions = connectorHandler.options;
+            let columnAssignment = options.columnAssignment;
+
+            if (!columnAssignment && connectorHandler.presentationTable) {
+                columnAssignment = this.getDefaultColumnAssignment(
+                    connectorHandler.presentationTable.getColumnNames(),
+                    connectorHandler.presentationTable
+                );
+
+                (connectorHandler as HighchartsComponent.HCConnectorHandler)
+                    .defaultColumnAssignment = columnAssignment;
+            }
+
             if (columnAssignment) {
                 for (const { seriesId } of columnAssignment) {
                     if (seriesId) {
@@ -464,18 +462,12 @@ class HighchartsComponent extends Component {
         connectorHandler: ComponentConnectorHandler
     ): void {
         const chart = this.chart;
-        if (!connectorHandler.connector || !chart) {
+        if (
+            !connectorHandler.connector ||
+            !chart ||
+            !connectorHandler.presentationTable
+        ) {
             return;
-        }
-
-        if (connectorHandler.presentationModifier) {
-            connectorHandler.presentationTable =
-                connectorHandler.presentationModifier.modifyTable(
-                    connectorHandler.connector.table.modified.clone()
-                ).modified;
-        } else {
-            connectorHandler.presentationTable =
-                connectorHandler.connector.table;
         }
 
         const table = connectorHandler.presentationTable.modified;
@@ -484,13 +476,10 @@ class HighchartsComponent extends Component {
 
         this.emit({ type: 'afterPresentationModifier', table: table });
 
-        const columnNames = table.getColumnNames();
         const connectorOptions = connectorHandler.options as ConnectorOptions;
         const columnAssignment = connectorOptions.columnAssignment ??
-            this.getDefaultColumnAssignment(
-                columnNames,
-                connectorHandler.presentationTable
-            );
+            (connectorHandler as HighchartsComponent.HCConnectorHandler)
+                .defaultColumnAssignment ?? [];
 
         // Create the series or update the existing ones.
         for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
@@ -900,6 +889,11 @@ namespace HighchartsComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
+
+    /** @private */
+    export interface HCConnectorHandler extends ComponentConnectorHandler {
+        defaultColumnAssignment?: ColumnAssignmentOptions[];
+    }
 
     /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {

@@ -21,6 +21,7 @@
 
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
+import type ComponentConnectorHandler from '../ComponentConnectorHandler';
 import type { DataGrid, DataGridNamespace } from '../../Plugins/DataGridTypes';
 import type DataTable from '../../../Data/DataTable';
 import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
@@ -32,7 +33,7 @@ import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../Component.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
+import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
 import DataGridComponentDefaults from './DataGridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -58,8 +59,10 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @private */
-    public static syncHandlers = DataGridSyncHandlers;
+    /**
+     * Predefined sync config for the DataGrid component.
+     */
+    public static predefinedSyncConfig = DataGridSyncs.predefinedSyncConfig;
 
     /** @private */
     public static DataGridNamespace?: DataGridNamespace;
@@ -86,10 +89,7 @@ class DataGridComponent extends Component {
 
         const component = new DataGridComponent(
             cell,
-            merge<Options>(options as any, {
-                dataGridOptions,
-                syncHandlers: DataGridComponent.syncHandlers
-            })
+            merge<Options>(options as any, { dataGridOptions })
         );
 
         component.emit({
@@ -114,9 +114,6 @@ class DataGridComponent extends Component {
 
     /** @private */
     public options: Options;
-
-    /** @private */
-    public sync: Component['sync'];
 
     /** @private */
     private connectorListeners: Array<Function>;
@@ -147,11 +144,6 @@ class DataGridComponent extends Component {
             this.contentElement.id = this.options.dataGridID;
         }
 
-        this.sync = new DataGridComponent.Sync(
-            this,
-            this.syncHandlers
-        );
-
         this.dataGridOptions = (
             this.options.dataGridOptions ||
             ({} as BaseDataGridOptions)
@@ -160,8 +152,11 @@ class DataGridComponent extends Component {
         this.innerResizeTimeouts = [];
 
 
-        this.on('afterSetConnector', (e: any): void => {
-            this.disableEditingModifiedColumns(e.connector);
+        this.on('afterSetConnectors', (e: any): void => {
+            const connector = e.connectorHandlers?.[0]?.connector;
+            if (connector) {
+                this.disableEditingModifiedColumns(connector);
+            }
         });
 
     }
@@ -338,7 +333,7 @@ class DataGridComponent extends Component {
         }
         await super.update(options);
         if (this.dataGrid) {
-            this.filterAndAssignSyncOptions(DataGridSyncHandlers);
+            /// this.filterAndAssignSyncOptions(DataGridSyncHandlers); (DD)
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }
         this.emit({ type: 'afterUpdate' });

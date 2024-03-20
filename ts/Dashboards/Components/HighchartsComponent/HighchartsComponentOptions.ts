@@ -25,6 +25,9 @@ import type ComponentConnectorHandler from '../ComponentConnectorHandler.js';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 import type {
+    HighchartsHighlightSyncOptions
+} from './HighchartsSyncs/HighchartsHighlightSync.js';
+import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
 
@@ -242,7 +245,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|Sync.HighlightSyncOptions;
+    highlight?: boolean|HighchartsHighlightSyncOptions;
     /**
      * Visibility sync is available for Highcharts and DataGrid components.
      * Synchronizes the visibility of data from a hidden/shown series.

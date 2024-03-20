@@ -23,7 +23,12 @@
 
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
-import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
+import type {
+    Options as HighchartsOptions
+} from '../../Plugins/HighchartsTypes';
+import {
+    CrossfilterSyncOptions
+} from './NavigatorSyncs/NavigatorCrossfilterSync';
 
 
 /* *
@@ -124,7 +129,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    crossfilter?: boolean|Sync.CrossfilterSyncOptions;
+    crossfilter?: boolean|CrossfilterSyncOptions;
     /**
      * Extremes sync is available for Highcharts, KPI, DataGrid and
      * Navigator components. Sets a common range of displayed data. For the
