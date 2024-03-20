@@ -348,7 +348,7 @@ class AreaSeries extends LineSeries {
             ): void {
                 const point = points[i],
                     stackedValues = stacking &&
-                        stacks[point.x as any].allPoints[seriesIndex as any],
+                        stacks[point.x].allPoints[seriesIndex],
                     nullVal = (point as any)[side + 'Null'] || 0,
                     cliffVal = (point as any)[side + 'Cliff'] || 0,
                     cliffHidden =
@@ -560,7 +560,7 @@ class AreaSeries extends LineSeries {
                                         // this one, we need to substract the
                                         // missing values and add a hiatus to
                                         // the left or right.
-                                        } else if (yAxisSeries[i]) {
+                                        } else {
                                             stackedValues = stack[x].points[si];
                                             if (stackedValues) {
                                                 cliff -= (
