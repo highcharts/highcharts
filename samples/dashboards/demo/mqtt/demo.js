@@ -55,10 +55,10 @@ function createDataConnector(connId) {
 }
 
 
-function createKpiComponent(domEl, title) {
+function createKpiComponent(unitIndex, title) {
     return {
         type: 'KPI',
-        renderTo: domEl,
+        renderTo: 'kpi-agg-' + unitIndex,
         value: 0,
         valueFormat: '{value}',
         title: title,
@@ -78,10 +78,10 @@ function createKpiComponent(domEl, title) {
 }
 
 
-function createChartComponent(connId, domEl, title) {
+function createChartComponent(connId, unitIndex, title) {
     return {
         type: 'Highcharts',
-        renderTo: domEl,
+        renderTo: 'chart-agg-' + unitIndex,
         connector: {
             id: connId,
             columnAssignment: [{
@@ -131,10 +131,10 @@ function createChartComponent(connId, domEl, title) {
 }
 
 
-function createDatagridComponent(connId, domEl, title) {
+function createDatagridComponent(connId, unitIndex, title) {
     return {
         type: 'DataGrid',
-        renderTo: domEl,
+        renderTo: 'data-grid-' + unitIndex,
         connector: {
             id: connId
         },
@@ -163,41 +163,40 @@ function createDatagridComponent(connId, domEl, title) {
 
 
 // Launches the Dashboards application
-async function setupDashboard(nPowerGenUnits) {
-    // TBD: Calculate based on available data
-    function createPowerGeneratorUnit(numUnits) {
+async function setupDashboard(powerPlantInfo) {
+    function createPowerGeneratorUnit() {
         const powerGenUnits = {
             connectors: [],
             components: []
         };
 
-        for (let i = 0; i < numUnits; i++) {
+        for (let i = 0; i < powerPlantInfo.numGenerators; i++) {
+            // Power generator index (1...n)
+            const unitIndex = i + 1;
+
+            // Data connector ID
+            const connId = 'mqtt-data-' + unitIndex;
+
+            // Name of power generator unit
+            const title = 'Aggregat ' + unitIndex;
+
             // Data connectors
-            const id = i + 1;
-            const connId = 'mqtt-data-' + id;
             powerGenUnits.connectors.push(createDataConnector(connId));
 
             // Dash components
-            const title = 'Aggregat ' + id;
-
-            let name = 'kpi-agg-' + id;
-            powerGenUnits.components.push(createKpiComponent(name, title));
-
-            name = 'chart-agg-' + id;
+            powerGenUnits.components.push(createKpiComponent(unitIndex, title));
             powerGenUnits.components.push(
-                createChartComponent(connId, name, title)
+                createChartComponent(connId, unitIndex, title)
             );
-
-            name = 'data-grid-' + id;
             powerGenUnits.components.push(
-                createDatagridComponent(connId, name, title)
+                createDatagridComponent(connId, unitIndex, title)
             );
         }
         return powerGenUnits;
     }
 
     // Create configuration for power generator units
-    const pu = createPowerGeneratorUnit(nPowerGenUnits);
+    const pu = createPowerGeneratorUnit();
 
     return await Dashboards.board('container', {
         dataPool: {
@@ -253,10 +252,10 @@ async function updateBoard(mqttData) {
 }
 
 
-async function connectBoard(nPowerGenUnits) {
+async function connectBoard(powerPlantInfo) {
     // Launch  Dashboard
     if (board === null) {
-        board = await setupDashboard(nPowerGenUnits);
+        board = await setupDashboard(powerPlantInfo);
     }
 
     const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
@@ -371,8 +370,14 @@ async function onMessageArrived(mqttPacketRaw) {
     const mqttData = JSON.parse(mqttPacketRaw.payloadString);
 
     if (msgCount === 0) {
-        // Connect the Dashboard with number of power generation units
-        await connectBoard(mqttData.aggs.length);
+        // Connect the Dashboard
+        const powerPlantStatus = {
+            name: mqttData.name,
+            timestamp: mqttData.tst_iso,
+            numGenerators: mqttData.aggs.length
+        };
+        await connectBoard(powerPlantStatus);
+        setUiElement('statusMsg', `Data from <b>${powerPlantStatus.name}</b>. Connected: ${powerPlantStatus.timestamp}`);
     }
     msgCount += 1;
 
@@ -391,7 +396,6 @@ async function onConnect() {
     connectFlag = true;
     setConnectionStatus(true);
 
-    // connectBoard(2); // TBD: get one package before calculating the number of power generation units
     subscribeEnable(true);
 }
 
@@ -462,10 +466,6 @@ function subTopics() {
 
     const stopic = document.forms.subs.Stopic.value;
     const sqos = 0;
-
-    // document.getElementById('status_messages').innerHTML = 'Subscribing to topic =' + stopic;
-    setUiElement('statusMsg', 'Subscribing to topic =' + stopic);
-
     const soptions = {
         qos: sqos
     };
