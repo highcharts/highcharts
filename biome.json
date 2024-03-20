@@ -68,7 +68,8 @@
     },
     "javascript": {
         "formatter": {
-            "quoteStyle": "single"
+            "quoteStyle": "single",
+            "trailingComma": "none"
         }
     }
 }
