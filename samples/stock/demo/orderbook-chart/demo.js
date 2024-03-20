@@ -1,3 +1,5 @@
+Highcharts.Templating.helpers.abs = value => Math.abs(value);
+
 function getRandomNumber(min, max) {
     return Math.round(Math.random() * (max - min)) + min;
 }
@@ -26,15 +28,19 @@ function generateBidAndAskData(n) {
 
 const [bidsData, asksData] = generateBidAndAskData(10);
 
-function updateData(series) {
+function updateData(chart) {
     const data = generateBidAndAskData(10);
-    series.forEach((s, i) => {
-        s.setData(data[i]);
+    chart.series.forEach((s, i) => {
+        s.setData(data[i], false);
     });
+    chart.redraw();
 }
 
 Highcharts.chart('container', {
     chart: {
+        animation: {
+            duration: 200
+        },
         type: 'bar',
         backgroundColor: '#23232f',
         marginTop: 70,
@@ -42,7 +48,7 @@ Highcharts.chart('container', {
             load() {
                 this.titles = [];
                 setInterval(() => {
-                    updateData(this.series);
+                    updateData(this);
                 }, 200);
             },
             render() {
@@ -82,7 +88,7 @@ Highcharts.chart('container', {
 
                 this.titles.push(
                     renderer.text(
-                        'Price', plotWidth / 2 - plotLeft, plotTop - 5
+                        'Price ($)', plotWidth / 2 - plotLeft, plotTop - 5
                     )
                         .attr({ fill: '#ffffff' })
                         .css({
@@ -99,6 +105,19 @@ Highcharts.chart('container', {
         text: 'Orderbook live chart',
         style: {
             color: '#ffffff'
+        }
+    },
+
+    tooltip: {
+        headerFormat: 'Price: <b>{point.point.price}$</b></br>',
+        pointFormat: '{series.name}: <b>{(abs point.y):,.0f}</b>',
+        shape: 'rect',
+        positioner(labelWidth, _, point) {
+            const { plotX, plotY, h, negative } = point;
+            return {
+                x: negative ? plotX + h - labelWidth : plotX - h,
+                y: plotY
+            };
         }
     },
 
@@ -138,7 +157,8 @@ Highcharts.chart('container', {
                 enabled: true,
                 color: '#ffffff'
             },
-            borderWidth: 0
+            borderWidth: 0,
+            crisp: false
         }
     },
 
@@ -149,9 +169,7 @@ Highcharts.chart('container', {
                 fontSize: 14,
                 textOutline: 0
             },
-            formatter() {
-                return Math.abs(this.point.y);
-            }
+            format: '{(abs point.y):,.0f}'
         }, {
             align: 'right',
             style: {
@@ -166,6 +184,7 @@ Highcharts.chart('container', {
     }, {
         dataLabels: [{
             x: 999,
+            align: 'right',
             style: {
                 fontSize: 14,
                 textOutline: 0
