@@ -476,6 +476,111 @@ function decorateType(
 
 
 /**
+ * @param {TS.SourceFile} source
+ * @return {Record<string,*>}
+ */
+function extractDocletsTree(
+    source
+) {
+    /**
+     * @param {TS.Node} node
+     * @param {TS.Node} previousNode
+     * @param {Array<Record<string,*>>} tree
+     */
+    const process = (node, previousNode, parentName, tree) => {
+
+        if (
+            TS.isAsExpression(node) ||
+            TS.isObjectLiteralExpression(node) ||
+            TS.isVariableDeclaration(node) ||
+            TS.isVariableDeclarationList(node)
+        ) {
+            for (const child of getNodesChildren(node)) {
+                process(child, previousNode, parentName, tree);
+                previousNode = child;
+            }
+            return;
+        }
+
+        const branch = {};
+
+        if (
+            TS.isExpressionStatement(node) ||
+            TS.isPropertyAssignment(node) ||
+            TS.isVariableStatement(node)
+        ) {
+
+            decorateDoclet(branch, node, previousNode, tree);
+            decorateName(branch, node, parentName);
+            decorateType(branch, node);
+
+            if (verbose) {
+                console.info('Found:', TS.SyntaxKind[node.kind], branch.fullName);
+            }
+
+            if (!branch.fullName) {
+                for (const child of getNodesChildren(node)) {
+                    process(child, previousNode, parentName, tree);
+                    previousNode = child;
+                }
+                return;
+            }
+
+            tree.push(branch);
+
+            if (
+                branch.isMappedType ||
+                (
+                    TS.isExpressionStatement(node) &&
+                    TS.isStringLiteral(node.getFirstToken())
+                )
+            ) {
+                if (verbose) {
+                    console.info('Skipping children:', TS.SyntaxKind[node.kind], branch.fullName);
+                }
+                return;
+            }
+
+            /** @type {Array<Record<string,any>>} */
+            let children = [];
+            /** @type {TS.Node} */
+            let previousChild;
+
+            parentName = branch.fullName || parentName;
+
+            for (const child of getNodesChildren(node)) {
+                process(child, previousChild, parentName, children);
+                previousChild = child;
+            }
+
+            if (children.length) {
+                branch.children = children;
+            }
+
+        } else if (verbose) {
+            console.info('Skipping:', TS.SyntaxKind[node.kind]);
+        }
+
+    };
+
+    const tree = [];
+
+    /** @type {TS.Node} */
+    let previousNode;
+
+    for (const node of getNodesChildren(source)) {
+        process(node, previousNode, undefined, tree);
+        previousNode = node;
+    }
+
+    return {
+        fileName: source.fileName,
+        children: tree
+    };
+}
+
+
+/**
  * @param {string} type
  */
 function extractTypes(
@@ -608,7 +713,7 @@ function generateImportCode(
         if (namedImports.length === 1) { // > 1 comma
             namedImports = `{ ${namedImports[0]} }`;
         } else {
-            namedImports = `{\n${namedImports.join(',\n    ')}\n}`;
+            namedImports = `{\n    ${namedImports.join(',\n    ')}\n}`;
         }
     }
     if (defaultImport.length) {
@@ -717,156 +822,6 @@ function generatePropertyComment(
 
 
 /**
- * @param {TS.SourceFile} source
- * @param {Record<string,*>} tree
- * @return {string}
- */
-function generateTypeImports(
-    source,
-    tree
-) {
-    const currentPath = Path.dirname(source.fileName);
-    /** @type {Record<string, Array<string>>} */
-    const imports = {};
-
-    /**
-     * @param {TS.ImportDeclaration} importNode
-     * @return {string}
-     */
-    const getImportPath = (importNode) => {
-        return Path.join(
-            currentPath,
-            importNode.moduleSpecifier
-                .getText()
-                .replace(/^(['"])(.*)\1$/, '$2')
-        );
-    };
-
-    /**
-     * @param {TS.Node} node
-     */
-    const extractImports = (node) => {
-        if (TS.isSourceFile(node)) {
-            for (const child of getNodesChildren(node)) {
-                extractImports(child);
-            }
-        } else if (
-            TS.isImportDeclaration(node)
-        ) {
-            const path = getImportPath(node);
-            const nodeTypes = extractTypes(node.importClause?.getText());
-            const allTypes = imports[path] = imports[path] || [];
-
-            for (const nodeType of nodeTypes) {
-                if (!allTypes.includes(nodeType)) {
-                    allTypes.push(nodeType);
-                }
-            }
-
-        }
-    };
-
-    /**
-     * @param {Record<string,*>} branch
-     */
-    const mergeImports = (branch) => {
-
-        if (branch.imports) {
-            const branchImports = branch.imports;
-            /** @type {Array<string>} */
-            let branchTypes;
-            /** @type {Record<string,Array<string>>} */
-            let allTypes;
-
-            for (const path in branchImports) {
-
-                branchTypes = branchImports[path];
-                allTypes = imports[path] = imports[path] || [];
-
-                for (const branchType of branchTypes) {
-                    if (!allTypes.includes(branchType)) {
-                        allTypes.push(branchType);
-                    }
-                }
-
-            }
-
-        }
-
-        if (branch.children) {
-            for (const subBranch of branch.children) {
-                mergeImports(subBranch);
-            }
-        }
-
-    };
-
-    extractImports(source);
-    mergeImports(tree);
-
-    let sourceCode = source.getFullText();
-
-    if (Object.keys(imports)) {
-        /** @type {Array<[number,number,string]>} */
-        const replacements = [];
-
-        let replacementEnd = 0;
-
-        for (const node of getNodesChildren(source)) {
-            if (TS.isImportDeclaration(node)) {
-                const path = getImportPath(node);
-                if (imports[path]) {
-                    replacementEnd = Math.max(replacementEnd, node.getEnd());
-                    replacements.push([
-                        node.getStart(),
-                        node.getEnd(),
-                        imports[path],
-                        path,
-                    ]);
-                }
-            }
-        }
-
-        for (const path in imports) {
-            if (!replacements.some(r => r[3] === path)) {
-                replacements.push([
-                    replacementEnd,
-                    replacementEnd,
-                    imports[path],
-                    path
-                ]);
-            }
-        }
-        console.log(Object.keys(imports));
-        console.log(replacements.map(r => r[3]));
-        for (const replacement of replacements.sort((a, b) => b[0] - a[0])) {
-            console.log(
-                'REPLACING',
-                sourceCode.substring(replacement[0], replacement[1]),
-                generateImportCode(
-                    currentPath,
-                    replacement[2],
-                    replacement[3]
-                )
-            );
-            sourceCode = (
-                sourceCode.substring(0, replacement[0]) +
-                generateImportCode(
-                    currentPath,
-                    replacement[2],
-                    replacement[3]
-                ) +
-                sourceCode.substring(replacement[1])
-            );
-        }
-
-    }
-
-    return sourceCode;
-}
-
-
-/**
  * @param {TS.JSDoc|TS.JSDocTag} docletPart
  * @return {string}
  */
@@ -933,106 +888,6 @@ function getDocletsBetween(
     );
 
     return doclets;
-}
-
-
-/**
- * @param {TS.SourceFile} source
- * @return {Record<string,*>}
- */
-function getDocletsTree(
-    source
-) {
-    /**
-     * @param {TS.Node} node
-     * @param {TS.Node} previousNode
-     * @param {Array<Record<string,*>>} tree
-     */
-    const process = (node, previousNode, parentName, tree) => {
-
-        if (
-            TS.isObjectLiteralExpression(node) ||
-            TS.isVariableDeclaration(node) ||
-            TS.isVariableDeclarationList(node)
-        ) {
-            for (const child of getNodesChildren(node)) {
-                process(child, previousNode, parentName, tree);
-                previousNode = child;
-            }
-            return;
-        }
-
-        const branch = {};
-
-        if (
-            TS.isExpressionStatement(node) ||
-            TS.isPropertyAssignment(node) ||
-            TS.isVariableStatement(node)
-        ) {
-
-            decorateDoclet(branch, node, previousNode, tree);
-            decorateName(branch, node, parentName);
-            decorateType(branch, node);
-
-            if (verbose) {
-                console.info('Found:', TS.SyntaxKind[node.kind], branch.fullName);
-            }
-
-            if (!branch.fullName) {
-                return;
-            }
-
-            tree.push(branch);
-
-            if (
-                branch.isMappedType ||
-                (
-                    TS.isExpressionStatement(node) &&
-                    TS.isStringLiteral(node.getFirstToken())
-                )
-            ) {
-                if (verbose) {
-                    console.info('Skipping children:', TS.SyntaxKind[node.kind], branch.fullName);
-                }
-                return;
-            }
-
-            /** @type {Array<Record<string,any>>} */
-            let children = [];
-            /** @type {TS.Node} */
-            let previousChild;
-
-            parentName = branch.fullName || parentName;
-
-            for (const child of getNodesChildren(node)) {
-                process(child, previousChild, parentName, children);
-                previousChild = child;
-            }
-
-            if (children.length) {
-                branch.children = children;
-            }
-
-        } else if (verbose) {
-            console.info('Skipping:', TS.SyntaxKind[node.kind]);
-        }
-
-    };
-
-    const tree = [];
-
-    /** @type {TS.Node} */
-    let previousNode;
-
-    for (const node of getNodesChildren(source)) {
-        process(node, previousNode, undefined, tree);
-        previousNode = node;
-    }
-
-    return {
-        fileName: source.fileName,
-        children: tree
-    };
 }
 
 
@@ -1212,78 +1067,6 @@ function isCapitalCase(
 }
 
 
-/**
- * @param {string} path
- * @param {boolean} logJSON
- */
-async function moveSeriesDoclets(
-    path,
-    logJSON
-) {
-    const files = FSLib.getFilePaths(path, true);
-
-    /** @type {TS.SourceFile} */
-    let source;
-    /** @type {string} */
-    let sourcePath;
-    /** @type {TS.SourceFile} */
-    let target;
-    /** @type {Record<string,*>} */
-    let tree;
-
-    for (const file of files) {
-
-        if (!file.endsWith('Options.d.ts')) {
-            continue;
-        }
-
-        sourcePath = findPairedSource(file);
-
-        if (!sourcePath) {
-            continue;
-        }
-
-        verbose && console.info('');
-        console.info('Reading', sourcePath);
-
-        source = TS.createSourceFile(
-            sourcePath,
-            await FS.promises.readFile(sourcePath, 'utf8'),
-            TS.ScriptTarget.Latest,
-            true
-        );
-
-        tree = getDocletsTree(source);
-
-        if (!tree) {
-            continue;
-        }
-
-        if (logJSON) {
-            writeJSON(Path.join('tmp', 'move-doclets.json'), tree);
-        }
-
-        verbose && console.info('');
-        console.info('Writing', file);
-
-        target = TS.createSourceFile(
-            file,
-            await FS.promises.readFile(file, 'utf8'),
-            TS.ScriptTarget.Latest,
-            true
-        );
-
-        writeDocletsTree(target, tree);
-
-        verbose && console.info('');
-        console.info('Updateing', source.fileName);
-
-        removeDoclets(source);
-    }
-
-}
-
-
 async function main() {
     const argv = Yargs(process.argv).argv;
 
@@ -1301,6 +1084,146 @@ async function main() {
         await moveSeriesDoclets(argv.series, argv.json);
     }
 
+}
+
+
+/**
+ * @param {TS.SourceFile} source
+ * @param {Record<string,*>} tree
+ * @return {string}
+ */
+function mergeImports(
+    source,
+    tree
+) {
+    const currentPath = Path.dirname(source.fileName);
+    /** @type {Record<string, Array<string>>} */
+    const imports = {};
+
+    /**
+     * @param {TS.ImportDeclaration} importNode
+     * @return {string}
+     */
+    const getImportPath = (importNode) => {
+        return Path.join(
+            currentPath,
+            importNode.moduleSpecifier
+                .getText()
+                .replace(/^(['"])(.*)\1$/, '$2')
+        );
+    };
+
+    /**
+     * @param {TS.Node} node
+     */
+    const extractImports = (node) => {
+        if (TS.isSourceFile(node)) {
+            for (const child of getNodesChildren(node)) {
+                extractImports(child);
+            }
+        } else if (
+            TS.isImportDeclaration(node)
+        ) {
+            const path = getImportPath(node);
+            const nodeTypes = extractTypes(node.importClause?.getText());
+            const allTypes = imports[path] = imports[path] || [];
+
+            for (const nodeType of nodeTypes) {
+                if (!allTypes.includes(nodeType)) {
+                    allTypes.push(nodeType);
+                }
+            }
+
+        }
+    };
+
+    /**
+     * @param {Record<string,*>} branch
+     */
+    const connectImports = (branch) => {
+
+        if (branch.imports) {
+            const branchImports = branch.imports;
+            /** @type {Array<string>} */
+            let branchTypes;
+            /** @type {Record<string,Array<string>>} */
+            let allTypes;
+
+            for (const path in branchImports) {
+
+                branchTypes = branchImports[path];
+                allTypes = imports[path] = imports[path] || [];
+
+                for (const branchType of branchTypes) {
+                    if (!allTypes.includes(branchType)) {
+                        allTypes.push(branchType);
+                    }
+                }
+
+            }
+
+        }
+
+        if (branch.children) {
+            for (const subBranch of branch.children) {
+                connectImports(subBranch);
+            }
+        }
+
+    };
+
+    extractImports(source);
+    connectImports(tree);
+
+    let sourceCode = source.getFullText();
+
+    if (Object.keys(imports)) {
+        /** @type {Array<[number,number,string]>} */
+        const replacements = [];
+
+        let replacementEnd = 0;
+
+        for (const node of getNodesChildren(source)) {
+            if (TS.isImportDeclaration(node)) {
+                const path = getImportPath(node);
+                if (imports[path]) {
+                    replacementEnd = Math.max(replacementEnd, node.getEnd());
+                    replacements.push([
+                        node.getStart(),
+                        node.getEnd(),
+                        imports[path],
+                        path,
+                    ]);
+                }
+            }
+        }
+
+        for (const path in imports) {
+            if (!replacements.some(r => r[3] === path)) {
+                replacements.push([
+                    replacementEnd,
+                    replacementEnd,
+                    imports[path],
+                    path
+                ]);
+            }
+        }
+
+        for (const replacement of replacements.sort((a, b) => b[0] - a[0])) {
+            sourceCode = (
+                sourceCode.substring(0, replacement[0]) +
+                generateImportCode(
+                    currentPath,
+                    replacement[2],
+                    replacement[3]
+                ) +
+                sourceCode.substring(replacement[1])
+            );
+        }
+
+    }
+
+    return sourceCode;
 }
 
 
@@ -1394,32 +1317,36 @@ function writeDocletsTree(
     /**
      * @param {Record<string,*>} branch
      * @param {TS.Node} node
+     * @param {TS.Node} parent
      */
-    const connectOptions = (branch, node) => {
-
+    const connectOptions = (branch, node, parent) => {
         if (!isRegistered(branch, node)) {
-            if (
-                TS.isInterfaceDeclaration(node) &&
-                getInterfaceName(branch) === node.name.text
-            ) {
-                changes.push([node.getStart(), node.kind, branch]);
+            if (TS.isInterfaceDeclaration(node)) {
+                if (getInterfaceName(branch) === node.name.text) {
+                    changes.push([node.getStart(), node.kind, branch]);
+                }
             } else if (
                 TS.isPropertySignature(node) &&
-                getPropertyName(branch) === node.name.text
+                TS.isInterfaceDeclaration(parent)
             ) {
-                changes.push([node.getStart(), node.kind, branch]);
+                if (
+                    getPropertyName(branch) === node.name.text &&
+                    getInterfaceName(branch, true) === parent.name.text
+                ) {
+                    changes.push([node.getStart(), node.kind, branch]);
+                }
             }
         }
 
         if (!TS.isModuleDeclaration(node)) {
             for (const child of getNodesChildren(node)) {
-                connectOptions(branch, child);
+                connectOptions(branch, child, node);
             }
         }
 
         if (branch.children) {
             for (const subBranch of branch.children) {
-                connectOptions(subBranch, node);
+                connectOptions(subBranch, node, parent);
             }
         }
 
@@ -1544,10 +1471,82 @@ function writeDocletsTree(
             true
         );
 
-        targetCode = generateTypeImports(target, tree);
+        targetCode = mergeImports(target, tree);
 
         FS.writeFileSync(target.fileName, targetCode, 'utf8');
 
+    }
+
+}
+
+
+/**
+ * @param {string} path
+ * @param {boolean} logJSON
+ */
+async function moveSeriesDoclets(
+    path,
+    logJSON
+) {
+    const files = FSLib.getFilePaths(path, true);
+
+    /** @type {TS.SourceFile} */
+    let source;
+    /** @type {string} */
+    let sourcePath;
+    /** @type {TS.SourceFile} */
+    let target;
+    /** @type {Record<string,*>} */
+    let tree;
+
+    for (const file of files) {
+
+        if (!file.endsWith('Options.d.ts')) {
+            continue;
+        }
+
+        sourcePath = findPairedSource(file);
+
+        if (!sourcePath) {
+            continue;
+        }
+
+        verbose && console.info('');
+        console.info('Reading', sourcePath);
+
+        source = TS.createSourceFile(
+            sourcePath,
+            await FS.promises.readFile(sourcePath, 'utf8'),
+            TS.ScriptTarget.Latest,
+            true
+        );
+
+        tree = extractDocletsTree(source);
+
+        if (!tree) {
+            continue;
+        }
+
+        if (logJSON) {
+            writeJSON(Path.join('tmp', 'move-doclets.json'), tree);
+        }
+
+        verbose && console.info('');
+        console.info('Writing', file);
+
+        target = TS.createSourceFile(
+            file,
+            await FS.promises.readFile(file, 'utf8'),
+            TS.ScriptTarget.Latest,
+            true
+        );
+
+        writeDocletsTree(target, tree);
+
+        verbose && console.info('');
+        console.info('Updateing', source.fileName);
+
+        removeDoclets(source);
     }
 
 }
