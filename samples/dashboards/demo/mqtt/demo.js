@@ -30,31 +30,14 @@ const kpiGaugeOptions = {
         visible: true
     },
     accessibility: {
-        typeDescription: 'The gauge chart with 1 data point.'
+        typeDescription: 'Gauge chart with 1 data point.'
     }
 };
 
 
-const xAxisOptions = {
-    type: 'datetime',
-    labels: {
-        format: '{value:%H:%M}',
-        accessibility: {
-            description: 'Hours, minutes'
-        }
-    }
-};
-
-const yAxisOptions = {
-    title: {
-        text: powerUnit
-    }
-};
-
-
-function getDataConnector(id) {
+function createDataConnector(connId) {
     return {
-        id: id,
+        id: connId,
         type: 'JSON',
         options: {
             firstRowAsNames: true,
@@ -72,7 +55,7 @@ function getDataConnector(id) {
 }
 
 
-function getKpiComponent(domEl, title) {
+function createKpiComponent(domEl, title) {
     return {
         type: 'KPI',
         renderTo: domEl,
@@ -85,7 +68,7 @@ function getKpiComponent(domEl, title) {
             yAxis: {
                 ...kpiGaugeOptions.yAxis,
                 min: 0,
-                max: 20,
+                max: 20, // TBD: use actual data from power generation unit
                 accessibility: {
                     description: title
                 }
@@ -95,7 +78,7 @@ function getKpiComponent(domEl, title) {
 }
 
 
-function getChartComponent(connId, domEl, title) {
+function createChartComponent(connId, domEl, title) {
     return {
         type: 'Highcharts',
         renderTo: domEl,
@@ -117,14 +100,25 @@ function getChartComponent(connId, domEl, title) {
                 styledMode: true,
                 animation: true
             },
-            xAxis: xAxisOptions,
-            yAxis: yAxisOptions,
+            xAxis: {
+                type: 'datetime',
+                labels: {
+                    format: '{value:%H:%M}',
+                    accessibility: {
+                        description: 'Hours, minutes'
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: powerUnit
+                }
+            },
             credits: {
                 enabled: false
             },
             legend: {
-                enabled: true,
-                verticalAlign: 'top'
+                enabled: false
             },
             title: {
                 text: ''
@@ -137,7 +131,7 @@ function getChartComponent(connId, domEl, title) {
 }
 
 
-function getGridComponent(connId, domEl, title) {
+function createDatagridComponent(connId, domEl, title) {
     return {
         type: 'DataGrid',
         renderTo: domEl,
@@ -169,10 +163,10 @@ function getGridComponent(connId, domEl, title) {
 
 
 // Launches the Dashboards application
-async function setupDashboard() {
+async function setupDashboard(nPowerGenUnits) {
     // TBD: Calculate based on available data
-    function getPowerUnits(numUnits) {
-        const powerUnits = {
+    function createPowerGeneratorUnit(numUnits) {
+        const powerGenUnits = {
             connectors: [],
             components: []
         };
@@ -181,26 +175,29 @@ async function setupDashboard() {
             // Data connectors
             const id = i + 1;
             const connId = 'mqtt-data-' + id;
-            powerUnits.connectors.push(getDataConnector(connId));
+            powerGenUnits.connectors.push(createDataConnector(connId));
 
             // Dash components
-            const title = 'Aggregate ' + id;
+            const title = 'Aggregat ' + id;
 
             let name = 'kpi-agg-' + id;
-            powerUnits.components.push(getKpiComponent(name, title));
+            powerGenUnits.components.push(createKpiComponent(name, title));
 
             name = 'chart-agg-' + id;
-            powerUnits.components.push(getChartComponent(connId, name, title));
+            powerGenUnits.components.push(
+                createChartComponent(connId, name, title)
+            );
 
             name = 'data-grid-' + id;
-            powerUnits.components.push(getGridComponent(connId, name, title));
+            powerGenUnits.components.push(
+                createDatagridComponent(connId, name, title)
+            );
         }
-
-        return powerUnits;
+        return powerGenUnits;
     }
 
-    // Get data for two power units (TBD: use data stream content to calculate)
-    const pu = getPowerUnits(2);
+    // Create configuration for power generator units
+    const pu = createPowerGeneratorUnit(nPowerGenUnits);
 
     return await Dashboards.board('container', {
         dataPool: {
@@ -211,15 +208,13 @@ async function setupDashboard() {
 }
 
 
-async function updateBoard(mqttPacket) {
+async function updateBoard(mqttData) {
     const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
     const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
 
-    const data = JSON.parse(mqttPacket.payloadString);
-
     if (dataTable1.getRowCount() === 0) {
         // Get history
-        const hist = data.aggs[1].P_hist;
+        const hist = mqttData.aggs[1].P_hist; // TBD: make modular
         const d = new Date(hist.start);
         let time = Number(d.valueOf());
 
@@ -243,11 +238,11 @@ async function updateBoard(mqttPacket) {
         await dataTable1.setRows(rowData1);
         await dataTable2.setRows(rowData2);
     } else {
-        const d = new Date(data.tst_iso);
+        const d = new Date(mqttData.tst_iso);
         const time = d.valueOf();
 
-        const p1 = data.aggs[0].P_gen;
-        const p2 = data.aggs[1].P_gen;
+        const p1 = mqttData.aggs[0].P_gen;
+        const p2 = mqttData.aggs[1].P_gen;
 
         // Add row with latest data
         await dataTable1.setRow([time, p1]);
@@ -258,10 +253,10 @@ async function updateBoard(mqttPacket) {
 }
 
 
-async function connectBoard() {
+async function connectBoard(nPowerGenUnits) {
     // Launch  Dashboard
     if (board === null) {
-        board = await setupDashboard();
+        board = await setupDashboard(nPowerGenUnits);
     }
 
     const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
@@ -334,8 +329,8 @@ const port = 8083;
 const reconnectTimeout = 10000;
 
 // Connection status
-let msgCount = 0;
-let connectFlag = false;
+let msgCount;
+let connectFlag;
 
 // Contains id's of UI elements
 let uiId;
@@ -372,11 +367,16 @@ function onFailure(message) {
 }
 
 
-function onMessageArrived(rawMessage) {
+async function onMessageArrived(mqttPacketRaw) {
+    const mqttData = JSON.parse(mqttPacketRaw.payloadString);
+
+    if (msgCount === 0) {
+        // Connect the Dashboard with number of power generation units
+        await connectBoard(mqttData.aggs.length);
+    }
     msgCount += 1;
 
-    // Test
-    updateBoard(rawMessage);
+    updateBoard(mqttData);
 }
 
 
@@ -391,7 +391,7 @@ async function onConnect() {
     connectFlag = true;
     setConnectionStatus(true);
 
-    connectBoard();
+    // connectBoard(2); // TBD: get one package before calculating the number of power generation units
     subscribeEnable(true);
 }
 
