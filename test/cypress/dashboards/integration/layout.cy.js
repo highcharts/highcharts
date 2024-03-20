@@ -151,7 +151,7 @@ describe('Components in multiple layouts', () => {
     })
 
     it('Components should be placed in different dashboards', () => {
-        cy.window().its('Dashboards.boards').should('have.length.gte', 1).then(boards => {
+        cy.window().its('Dashboards.boards').should('have.length', 2).then(boards => {
             assert.ok(
                 boards[0].mountedComponents.length === boards[1].mountedComponents.length,
                 'Components are assigned to each dashboard.'
