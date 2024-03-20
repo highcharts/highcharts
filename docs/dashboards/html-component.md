@@ -112,7 +112,7 @@ The most common way to style the HTML component is to use the CSS and utilize th
 
 ### Extending the HTML component
 
-If some of the HTML elements are used frequently or require to be more customable, it is possible to create a custom component that will simplify the configuration. The custom component can be created by extending the basic HTML component.  
+If some of the HTML elements are used frequently or require to be more customizable, it is possible to create a custom component that will simplify the configuration. The custom component can be created by extending the basic HTML component.  
 More in the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section.
 
 
