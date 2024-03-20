@@ -92,7 +92,7 @@ function climate() {
                 }]
             },
             components: [{
-                cell: 'time-range-selector',
+                renderTo: 'time-range-selector',
                 type: 'Highcharts',
                 chartOptions: {
                     chart: {
@@ -202,7 +202,7 @@ function climate() {
                     }
                 }
             }, {
-                cell: 'world-map',
+                renderTo: 'world-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 chartOptions: {
@@ -417,7 +417,10 @@ function climate() {
                 colorStopsDays :
                 colorStopsTemperature
         );
-        const selectionTable = await dataPool.getConnectorTable('Range Selection');
+        const selectionTable = await dataPool.getConnectorTable(
+            'Range ' +
+            'Selection'
+        );
         const [
             timeRangeSelector,
             worldMap
@@ -592,7 +595,7 @@ function minimal() {
             connector: {
                 id: 'Vitamin'
             },
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             columnAssignment: {
                 Food: 'x',
@@ -634,12 +637,11 @@ function minimal() {
             }
         },
         {
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             connector: {
                 id: 'Vitamin'
             },
             type: 'DataGrid',
-            editable: true,
             sync: {
                 highlight: true
             }
@@ -674,15 +676,15 @@ function datacursor() {
         },
         components: [
             {
-                cell: 'highcharts-dashboards-cell-a0',
+                renderTo: 'highcharts-dashboards-cell-a0',
                 type: 'Highcharts',
                 chartOptions: buildChartOptions('bar', vegeTable, cursor)
             }, {
-                cell: 'highcharts-dashboards-cell-b0',
+                renderTo: 'highcharts-dashboards-cell-b0',
                 type: 'Highcharts',
                 chartOptions: buildChartOptions('line', vegeTable, cursor)
             }, {
-                cell: 'highcharts-dashboards-cell-a1',
+                renderTo: 'highcharts-dashboards-cell-a1',
                 type: 'Highcharts',
                 chartOptions: buildChartOptions('pie', vegeTable, cursor)
             }
@@ -700,16 +702,20 @@ function datacursor() {
                         const series = chart.series[0];
 
                         // react to table cursor
-                        cursor.addListener(table.id, 'point.mouseOver', function (e) {
-                            const point = series.data[e.cursor.row];
+                        cursor.addListener(
+                            table.id,
+                            'point.mouseOver', function (e) {
+                                const point = series.data[e.cursor.row];
 
-                            if (chart.hoverPoint !== point) {
-                                chart.tooltip.refresh(point);
-                            }
-                        });
-                        cursor.addListener(table.id, 'point.mouseOut', function () {
-                            chart.tooltip.hide();
-                        });
+                                if (chart.hoverPoint !== point) {
+                                    chart.tooltip.refresh(point);
+                                }
+                            });
+                        cursor.addListener(
+                            table.id,
+                            'point.mouseOut', function () {
+                                chart.tooltip.hide();
+                            });
                     }
                 }
             },
@@ -844,7 +850,7 @@ function extremes() {
             connector: {
                 id: 'Population'
             },
-            cell: 'dashboard-col-0',
+            renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             columnAssignment: {
                 Town: 'x',
@@ -907,7 +913,7 @@ function extremes() {
             }
         },
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             title: {
                 text: ''
             },
@@ -979,7 +985,7 @@ function extremes() {
             }
         },
         {
-            cell: 'dashboard-col-2',
+            renderTo: 'dashboard-col-2',
             connector: {
                 id: 'Population'
             },
@@ -998,7 +1004,7 @@ function extremes() {
             }
         },
         {
-            cell: 'dashboard-col-3',
+            renderTo: 'dashboard-col-3',
             connector: {
                 id: 'Population'
             },

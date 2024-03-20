@@ -236,7 +236,8 @@ QUnit.test(
         assert.strictEqual(
             plotLineReference,
             chart.xAxis[0].plotLinesAndBands[0],
-            '\"this\" in plotline event should refer to the corresponding plotline object.'
+            '\"this\" in plotline event should refer to the corresponding ' +
+            'plotline object.'
         );
     }
 );

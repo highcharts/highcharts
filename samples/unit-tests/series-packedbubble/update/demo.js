@@ -40,7 +40,8 @@ QUnit.test('Series update', function (assert) {
     assert.strictEqual(
         radius,
         point.radius,
-        'Point radius should not be updated after adding series other than packedbubble.'
+        'Point radius should not be updated after adding series other than ' +
+        'packedbubble.'
     );
 
     chart.series[1].remove(false);

@@ -13,7 +13,8 @@ Highcharts.chart('container', {
         parsed: function (columns) {
             // We want to keep the values since 1950 only
             columns.forEach(column => {
-                // Keep the first item which is the series name, then remove the following 70
+                // Keep the first item which is the series name, then remove
+                // the following 70
                 column.splice(1, 70);
             });
         }

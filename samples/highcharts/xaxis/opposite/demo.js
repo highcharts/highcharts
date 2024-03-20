@@ -4,7 +4,10 @@ Highcharts.chart('container', {
     },
     xAxis: {
         opposite: true,
-        categories: ['Prod AAA AAA', 'Prod BBB', 'Prod CCC', 'Prod DDD', 'Prod EEE', 'Prod FFF'],
+        categories: [
+            'Prod AAA AAA', 'Prod BBB', 'Prod CCC', 'Prod DDD', 'Prod EEE',
+            'Prod FFF'
+        ],
         // categories: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF'],
         labels: {
             autoRotation: 0,

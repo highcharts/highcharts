@@ -236,8 +236,10 @@
             largestIx = 0,
             largestArea = 0;
         while (i--) {
-            if (areas[i].extremes.width * areas[i].extremes.height >
-                largestArea) {
+            if (
+                areas[i].extremes.width * areas[i].extremes.height >
+                largestArea
+            ) {
                 largestIx = i;
                 largestArea = areas[i].extremes.width *
                     areas[i].extremes.height;
@@ -270,9 +272,11 @@
         }
 
         // Determine if we need to shift the row horizontally
-        if (direction === 'left' ||
+        if (
+            direction === 'left' ||
             direction === 'leftTop' ||
-            direction === 'leftBottom') {
+            direction === 'leftBottom'
+        ) {
             shift = true;
         }
 
@@ -343,23 +347,31 @@
     function getInsertionGrids(baseGrid, overflow) {
         const insertionGrids = [],
             baseTile = baseGrid[overflow.row][overflow.col];
-        each(filter(['left', 'leftTop', 'centerTop', 'rightTop', 'right',
-            'rightBottom', 'centerBottom', 'leftBottom'], function (dir) {
+        each(filter([
+            'left', 'leftTop', 'centerTop', 'rightTop', 'right',
+            'rightBottom', 'centerBottom', 'leftBottom'
+        ], function (dir) {
             // Filter out positions we don't want to use for this overflow
-            return !startsWith(dir,
+            return !startsWith(
+                dir,
                 baseTile.center.x > overflow.area.center.x ?
                     'right' : // Base tile should be to the right or center
-                    'left') && // Base tile should be to the left or center
-                   !endsWith(dir,
+                    'left'
+            ) && // Base tile should be to the left or center
+                   !endsWith(
+                       dir,
                        baseTile.center.y > overflow.area.center.y ?
                            'Top' : // Base tile should be on top or center
-                           'Bottom'); // Base tile should be below or center
+                           'Bottom'
+                   ); // Base tile should be below or center
         }),
         function (dir) {
             // Get insertion grids for each position
             insertionGrids.push({
-                grid: insertInGrid(baseGrid, overflow.area,
-                    [overflow.row, overflow.col], dir),
+                grid: insertInGrid(
+                    baseGrid, overflow.area,
+                    [overflow.row, overflow.col], dir
+                ),
                 dir: dir
             });
         });
@@ -479,7 +491,8 @@
 
             // Loop over all remaining overflows and change them.
             for (let j = i + 1; j < oLen; ++j) {
-                if (overflows[j].row === rowShiftIx &&
+                if (
+                    overflows[j].row === rowShiftIx &&
                     ((overflows[j].col < of.col && rowShift < 0) ||
                     (overflows[j].col > of.col && rowShift > 0))
                 ) {
@@ -487,7 +500,8 @@
                     // follow
                     overflows[j].col += rowShift;
                 }
-                if (overflows[j].col === of.col &&
+                if (
+                    overflows[j].col === of.col &&
                     ((overflows[j].row < of.row && colShift < 0) ||
                     (overflows[j].row > of.row && colShift > 0))
                 ) {
@@ -802,8 +816,10 @@ function generateTileChart() {
         outputData = function () {
             $('#outputData').val(JSON.stringify(
                 currentData.map(point => {
-                    const filterProps = ['center', 'extremes', 'hc-middle-y',
-                        'hc-middle-x', 'selected', 'color'];
+                    const filterProps = [
+                        'center', 'extremes', 'hc-middle-y',
+                        'hc-middle-x', 'selected', 'color'
+                    ];
                     filterProps.forEach(prop => delete point[prop]);
                     return point;
                 }), null,
@@ -844,8 +860,10 @@ function generateTileChart() {
             } else {
                 // Should b be a point?
                 for (let i = 0, pLen = a.series.points.length; i < pLen; ++i) {
-                    if (a.series.points[i].x === b.x &&
-                        a.series.points[i].y === b.y) {
+                    if (
+                        a.series.points[i].x === b.x &&
+                        a.series.points[i].y === b.y
+                    ) {
                         a.series.points[i].update({
                             x: a.x,
                             y: a.y
@@ -876,8 +894,10 @@ function generateTileChart() {
     }
 
     // Warn for huge maps
-    if (mapLen > 300 && !window.confirm('This map contains ' + mapLen +
-        ' areas. Converting this much data could take a while. Continue?')) {
+    if (mapLen > 300 && !window.confirm(
+        'This map contains ' + mapLen +
+        ' areas. Converting this much data could take a while. Continue?'
+    )) {
         return;
     }
 
@@ -989,7 +1009,8 @@ $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
     }
 });
 const searchText = 'Search ' + mapCount + ' maps';
-mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
+mapOptions =
+    '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
 $('#mapDropdown').append(mapOptions).combobox();
 
 
@@ -1016,7 +1037,10 @@ $('#mapDropdown').change(function () {
 
     // Show loading
     if (Highcharts.charts[0]) {
-        Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+        Highcharts.charts[0].showLoading(
+            '<i class="fa fa-spinner fa-spin ' +
+            'fa-2x"></i>'
+        );
     }
 
     // When the map is loaded or ready from cache...
@@ -1098,8 +1122,10 @@ $('#mapDropdown').change(function () {
                 dataLabels: {
                     enabled: showDataLabels,
                     formatter: function () {
-                        return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
-                            (this.point.properties && this.point.properties['hc-a2']) :
+                        return mapKey ===
+                            'custom/world' || mapKey === 'countries/us/us-all' ?
+                            (this.point.properties && this.point.properties[
+                                'hc-a2']) :
                             this.point.name;
                     }
                 }
@@ -1129,7 +1155,8 @@ $('#mapDropdown').change(function () {
 // Toggle pretty print
 $('#prettyprint').change(function () {
     $('#outputData').val(JSON.stringify(
-        currentData, null, $('#prettyprint').prop('checked') ? 2 : null)
+        currentData, null, $('#prettyprint').prop('checked') ? 2 : null
+    )
     );
 });
 
@@ -1172,8 +1199,10 @@ $('#zoomOut').click(function () {
 $('#xRes').change(generateTileChart);
 $('#xRes').on('input', function () {
     const val = $('#xRes').val();
-    $('#xResLabel').text(val === '1' ? 'X resolution factor' :
-        'X resolution factor (' + val + ')');
+    $('#xResLabel').text(
+        val === '1' ? 'X resolution factor' :
+            'X resolution factor (' + val + ')'
+    );
 });
 
 
@@ -1181,8 +1210,10 @@ $('#xRes').on('input', function () {
 $('#yRes').change(generateTileChart);
 $('#yRes').on('input', function () {
     const val = $('#yRes').val();
-    $('#yResLabel').text(val === '1' ? 'Y resolution factor' :
-        'Y resolution factor (' + val + ')');
+    $('#yResLabel').text(
+        val === '1' ? 'Y resolution factor' :
+            'Y resolution factor (' + val + ')'
+    );
 });
 
 

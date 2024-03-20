@@ -19,10 +19,10 @@
  *
  * */
 
-import type DataGrid from '../../DataGrid/DataGrid';
+import type { DataGridNamespace } from './DataGridTypes';
 import type PluginHandler from '../PluginHandler';
 
-import DataGridComponent from './DataGridComponent.js';
+import DataGridComponent from '../Components/DataGridComponent/DataGridComponent.js';
 
 /* *
  *
@@ -48,9 +48,9 @@ declare module '../Components/ComponentType' {
  * @param {Dashboards.DataGrid} dataGrid DataGrid core to connect.
  */
 function connectDataGrid(
-    DataGridClass: typeof DataGrid
+    DataGridNS: DataGridNamespace
 ): void {
-    DataGridComponent.DataGridConstructor = DataGridClass;
+    DataGridComponent.DataGridNamespace = DataGridNS;
 }
 
 /**

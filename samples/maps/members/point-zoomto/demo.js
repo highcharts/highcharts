@@ -21,7 +21,8 @@
         },
 
         subtitle: {
-            text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
+            text: 'Click a country to zoom to it. Use buttons below map for ' +
+                'selected tests.'
         },
 
         legend: {
@@ -66,7 +67,9 @@
     document.getElementById('ecuador').addEventListener('click', function () {
         chart.get('EC').zoomTo();
     });
-    document.getElementById('south-korea').addEventListener('click', function () {
+    document.getElementById(
+        'south-korea'
+    ).addEventListener('click', function () {
         chart.get('KR').zoomTo();
     });
     document.getElementById('zoom-out').addEventListener('click', function () {

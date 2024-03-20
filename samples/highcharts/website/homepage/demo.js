@@ -73,8 +73,10 @@ const fakeData = [
 const streamSeries = [{
     name: 'Finland',
     data:
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4, 3,
-        6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5]
+    [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4,
+        3, 6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5
+    ]
 }, {
     name: 'Austria',
     data: [
@@ -938,7 +940,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), 1.10],
             [Date.UTC(2020, 2, 1), 4.70],
             [Date.UTC(2020, 3, 1), -2.50],
-            [Date.UTC(2020, 4, 1), -6.90]]
+            [Date.UTC(2020, 4, 1), -6.90]
+        ]
     },
     {
         type: 'spline',
@@ -1166,7 +1169,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -2.20],
             [Date.UTC(2020, 2, 1), -2.60],
             [Date.UTC(2020, 3, 1), -8.10],
-            [Date.UTC(2020, 4, 1), -14.10]]
+            [Date.UTC(2020, 4, 1), -14.10]
+        ]
     },
     {
         type: 'spline',
@@ -1394,7 +1398,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -8.00],
             [Date.UTC(2020, 2, 1), -7.60],
             [Date.UTC(2020, 3, 1), -12.30],
-            [Date.UTC(2020, 4, 1), -24.30]]
+            [Date.UTC(2020, 4, 1), -24.30]
+        ]
     },
     {
         type: 'spline',
@@ -1622,7 +1627,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -1.50],
             [Date.UTC(2020, 2, 1), -1.90],
             [Date.UTC(2020, 3, 1), -7.90],
-            [Date.UTC(2020, 4, 1), -9.70]]
+            [Date.UTC(2020, 4, 1), -9.70]
+        ]
     },
     {
         type: 'spline',
@@ -1850,7 +1856,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), 4.60],
             [Date.UTC(2020, 2, 1), 2.90],
             [Date.UTC(2020, 3, 1), -2.60],
-            [Date.UTC(2020, 4, 1), -7.10]]
+            [Date.UTC(2020, 4, 1), -7.10]
+        ]
     }];
 
 // for the last chart in the animation (science)
@@ -2240,8 +2247,10 @@ function section3() {
             if (demoChart.chartWidth < 500) {
                 yearMax = 1920;
             }
-            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                , Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1)
+            );
 
             demoChart.series[5].update({
                 animation: false
@@ -2305,8 +2314,10 @@ function section3() {
         }
         // /adjust the axes for full animation
         if (!reduced) {
-            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                , Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1)
+            );
 
             $('.highcharts-axis-labels').fadeIn(100);
             $('.highcharts-pie-series').hide();
@@ -2387,8 +2398,10 @@ function section3() {
                 }
             });
 
-            demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
-                Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(1970, 7, 1),
+                Date.UTC(2016, 11, 1)
+            );
         }
     };
     currentTimeout = window.setTimeout(s6, 6700);
@@ -2435,17 +2448,22 @@ function section2() {
         });
         // /set up the finance stuff for section 2 for accessibility
         if (reduced) {
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
             demoChart.update({
                 tooltip: {
                     enabled: true
                 }
             });
             demoChart.tooltip.refresh(
-                [demoChart.series[2].points[22]]);
+                [demoChart.series[2].points[22]]
+            );
             $('.highcharts-tooltip').hide();
             $('.highcharts-tooltip').fadeIn(1000);
         }
@@ -2458,10 +2476,14 @@ function section2() {
         if (!reduced) {
             $('.highcharts-networkgraph-series').hide();
 
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
 
             $('.highcharts-candlestick-series').show();
         }
@@ -2477,7 +2499,8 @@ function section2() {
                 }
             });
             demoChart.tooltip.refresh(
-                [demoChart.series[2].points[22]]);
+                [demoChart.series[2].points[22]]
+            );
             $('.highcharts-tooltip').hide();
             $('.highcharts-tooltip').fadeIn(1000);
         }
@@ -2661,10 +2684,14 @@ function section1() {
         }, 0);
         // /set the axes now so they're ready for section 2 without animation
         if (reduced) {
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
         }
     };
     currentTimeout = setTimeout(s14, 4000);
@@ -2766,7 +2793,8 @@ const heroChart = {
         dateString = dateString.substr(0, 16);
         const string =
         '<div id="tooltipGrid">' +
-            '<div class="date" ><img src="/samples/graphics/homepage/apple.svg">' +
+            '<div class="date" ><img ' +
+            'src="/samples/graphics/homepage/apple.svg">' +
             dateString + '</div>' +
             '<div class="infoGrid">' +
                 '<div class="label">Open</div><div class="data">' +
@@ -3700,7 +3728,8 @@ const heroChart = {
             },
             dashStyle: 'solid',
             name: 'Import air passenger fares',
-            data: [[Date.UTC(2002, 4, 1), 4.80],
+            data: [
+                [Date.UTC(2002, 4, 1), 4.80],
                 [Date.UTC(2002, 5, 1), 4.30],
                 [Date.UTC(2002, 6, 1), 5.60],
                 [Date.UTC(2002, 7, 1), 7.60],
@@ -4036,7 +4065,8 @@ const heroChart = {
             },
 
             // data:[],
-            data: [['0', '1'],
+            data: [
+                ['0', '1'],
                 ['1', '2'],
                 ['1', '3'],
                 ['1', '4'],

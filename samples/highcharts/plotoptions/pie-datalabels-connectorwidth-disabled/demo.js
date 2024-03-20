@@ -3,7 +3,8 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Connectorline is not visible, with setting connectorWidth to zero'
+        text: 'Connectorline is not visible, with setting connectorWidth to ' +
+            'zero'
     },
     plotOptions: {
         pie: {

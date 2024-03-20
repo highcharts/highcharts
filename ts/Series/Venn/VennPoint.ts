@@ -79,7 +79,7 @@ class VennPoint extends ScatterPoint {
  * */
 
 interface VennPoint {
-    // nothing to add
+    // Nothing to add
 }
 
 /* *

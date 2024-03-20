@@ -10,7 +10,10 @@
             events: {
                 click: function (event) {
                     alert(
-                        'x: ' + Highcharts.dateFormat('%Y-%m-%d', event.xAxis[0].value) + ', ' +
+                        'x: ' + Highcharts.dateFormat(
+                            '%Y-%m-%d',
+                            event.xAxis[0].value
+                        ) + ', ' +
                         'y: ' + event.yAxis[0].value
                     );
                 }

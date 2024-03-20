@@ -74,7 +74,8 @@ QUnit.test('Polar chart data', function (assert) {
     );
 });
 QUnit.test(
-    'Polar and categorized chart should not render extra alternate band.(#2248)',
+    'Polar and categorized chart should not render extra alternate ' +
+    'band.(#2248)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({
@@ -156,7 +157,8 @@ QUnit.test('Paddings and extremes', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].max,
         10,
-        'Data max same as before, but padding is now gone because we have hard extremes (#5662).'
+        'Data max same as before, but padding is now gone because we have ' +
+        'hard extremes (#5662).'
     );
 
     // #7996

@@ -100,7 +100,7 @@ function onChartAfterGetContainer(
 ): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    // objectEach(this.options.defs, function (def): void {
+    ///  objectEach(this.options.defs, function (def): void {
     //     const attributes = def.attributes;
     //     if (
     //         def.tagName === 'marker' &&
@@ -379,8 +379,8 @@ class ControllablePath extends Controllable {
         const setMarker = function (
             markerType: ('markerEnd'|'markerStart')
         ): void {
-            let markerId = itemOptions[markerType],
-                def,
+            const markerId = itemOptions[markerType];
+            let def,
                 predefinedMarker,
                 key,
                 marker;

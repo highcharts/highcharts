@@ -62,7 +62,8 @@
         assert.strictEqual(
             elem.attr('class'),
             'highcharts-point highcharts-color-0',
-            'Sandwiched class name should be removed without leaving or removing white-space #(13590)'
+            'Sandwiched class name should be removed without leaving or ' +
+            'removing white-space #(13590)'
         );
     }
 

@@ -1,4 +1,5 @@
-QUnit.test('Treegraph series',
+QUnit.test(
+    'Treegraph series',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 series: [{
@@ -39,7 +40,7 @@ QUnit.test('Treegraph series',
             'The point A should not be X positioned on 0 (#19038)'
         );
 
-        assert.stricEqual(
+        assert.strictEqual(
             series.data[1].dataLabel.visibility,
             'hidden',
             'Hidden points should have hidden data labels (#18891, #20752)'
@@ -72,7 +73,10 @@ QUnit.test('Treegraph series',
         }]);
 
         assert.strictEqual(
-            document.querySelectorAll('.highcharts-treegraph-series>.highcharts-point').length,
+            document.querySelectorAll(
+                '.highcharts-treegraph-series>' +
+                '.highcharts-point'
+            ).length,
             2,
             'Correct amount of links after setData (#19524)'
         );
@@ -114,7 +118,9 @@ QUnit.test('Treegraph series',
         });
 
         let collapseButtonOpacity =
-            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+            series.data[2].collapseButton && series.data[2].collapseButton.attr(
+                'opacity'
+            );
 
         assert.strictEqual(
             collapseButtonOpacity,
@@ -127,7 +133,9 @@ QUnit.test('Treegraph series',
         });
 
         collapseButtonOpacity =
-            series.data[2].collapseButton && series.data[2].collapseButton.attr('opacity');
+            series.data[2].collapseButton && series.data[2].collapseButton.attr(
+                'opacity'
+            );
 
         assert.strictEqual(
             collapseButtonOpacity,

@@ -298,7 +298,7 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
-        // copy to avoid problem with index when shifting array of cells during
+        // Copy to avoid problem with index when shifting array of cells during
         // the destroy.
         const rowCells = [...row.cells];
 
@@ -609,7 +609,7 @@ namespace Row {
      * @internal
      **/
     export interface RowLevelInfo {
-        index: number; // level position in RowLevels Array
+        index: number; // Level position in RowLevels Array
         rowLevels: Array<RowLevel>;
         rowLevel: RowLevel;
     }

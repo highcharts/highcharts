@@ -113,7 +113,8 @@ function onSeriesAfterRender(
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            if (!series.chart.styledMode &&
+            if (
+                !series.chart.styledMode &&
                     yAxis.crosshair &&
                     yAxis.options.crosshair &&
                     seriesOptions.lastPrice
@@ -153,7 +154,7 @@ function onSeriesAfterRender(
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent' // line invisible by default
+                color: 'transparent' // Line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
@@ -456,4 +457,4 @@ export default PriceIndication;
  *
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

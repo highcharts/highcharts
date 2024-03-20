@@ -51,6 +51,7 @@ QUnit.test('Drag panes on zoomable chart', function (assert) {
     assert.notEqual(
         yAxisHeight,
         chart.yAxis[0].height,
-        'The height of the yAxis is proportionally adjusted after resize (#8660)'
+        'The height of the yAxis is proportionally adjusted after resize ' +
+        '(#8660)'
     );
 });
