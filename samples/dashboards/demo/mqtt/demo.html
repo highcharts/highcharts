@@ -9,28 +9,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
 <div id="page_container">
-	<h1>MQTT Websockets</h1>
 
 	<!-- Application control -->
-	<div id="status_bar"><span id="status">Disconnected</span><span id="status_messages"></span></div>
-	<div id="inputs">
-		<form name="connform" action="" onsubmit="return MQTTconnect()">
-			<input name="conn" type="submit" value="Connect">
-			<label for="username">User</label>
-			<input type="text" name="username" value="public" disabled>
-			<label for="password">Password</label>
-			<input type="password" name="password" value="public" disabled>
-		</form>
-		<br /><br />
-		<form name="subs" action="" onsubmit="return subTopics()">
-			<input id="subscribe" type="submit" value="Subscribe" disabled>
-			<label for="Stopic">Topic</label>
-			<input id="topic" type="text" name="Stopic" value="public/test/overview" disabled>
-		</form>
+	<div id="connect_bar">
+		<h1>Sognekraft</h1>
+		<span id="status">Disconnected</span>
+		<button id="connect_toggle" type="button" onclick="MQTTconnect()">Connect</button>
 	</div>
-	<br />
 
-	<!-- Dashboards container-->
+	<!-- Dashboards container -->
 	<div id="container">
 		<div class="row">
 			<div class="el-aggr">
@@ -49,7 +36,7 @@
 	</div>
 
 	<p class="highcharts-description">
-		Proof of concept for integrating MQTT data with Dashboards.
+		Click <b>Connect</b> to start collecting and displaying data from one of Sognekraft's hydroelectric power plants.
 	</p>
 </div>
 

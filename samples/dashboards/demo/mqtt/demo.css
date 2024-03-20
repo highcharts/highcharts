@@ -12,45 +12,30 @@ div#page_container {
     height: auto;
 }
 
-div#page_container > h1 {
-    text-align: center;
-}
-
-div#inputs {
-    margin: auto;
-    max-width: 768px;
-}
-
-div#inputs label {
-    font-size: 12px;
-    color: blue;
-    width: 80px;
-    float: left;
-}
-
-div#inputs input {
-    float: left;
-    margin: 0 20px;
-    width: 150px;
-}
-
-div#status_bar {
-    background-color: red;
-    padding: 10px;
+div#connect_bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    background-color: hsla(202.19deg, 100%, 37.65%, 1);
+    padding: 5px;
     font-size: 14px;
     color: white;
-    margin: 10px;
 }
 
-div#status_bar #status {
+div#connect_bar h1 {
+    padding-left: 20px;
+}
+
+div#connect_bar #status {
     font-weight: bold;
     color: white;
-    text-transform: uppercase;
 }
 
-div#status_bar #status_messages {
-    float: right;
-    padding-right: 20px;
+div#connect_bar button {
+    padding: 5px;
+    height: 70%;
+    margin: 0 10px 0 0;
 }
 
 /* Dashboards */
