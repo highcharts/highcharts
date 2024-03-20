@@ -46,6 +46,17 @@ const HELP = [
 ].join('\n');
 
 
+const KEYWORDS = [
+    'as',
+    'extends',
+    'implements',
+    'instanceof',
+    'is',
+    'keyof',
+    'typeof'
+];
+
+
 const MAP_PROPERTY_TYPES = {
     '.dataLabels': 'DataLabelOptions',
     '.legendType': '(\'point\'|\'series\')',
@@ -54,9 +65,105 @@ const MAP_PROPERTY_TYPES = {
 };
 
 const MAP_TYPE_IMPORTS = {
-    'DataLabelOptions': 'Core/Series/DataLabelOptions',
-    'TooltipOptions': 'Core/TooltipOptions'
+    'DataLabelOptions': 'ts/Core/Series/DataLabelOptions',
+    'TooltipOptions': 'ts/Core/TooltipOptions'
 };
+
+const OPTION_CASTING = {
+    'abands': 'ABands',
+    'ad': 'AD',
+    'ao': 'AO',
+    'apo': 'APO',
+    'arcdiagram': 'ArcDiagram',
+    'area3d': 'Area3D',
+    'arearange': 'AreaRange',
+    'areaspline': 'AreaSpline',
+    'areasplinerange': 'AreaSplineRange',
+    'aroonoscillator': 'AroonOscillator',
+    'atr': 'ATR',
+    'bb': 'BB',
+    'boxplot': 'BoxPlot',
+    'cci': 'CCI',
+    'cmf': 'CMF',
+    'cmo': 'CMO',
+    'column3d': 'Column3D',
+    'columnpyramid': 'ColumnPyramid',
+    'columnrange': 'ColumnRange',
+    'dema': 'DEMA',
+    'dependencywheel': 'DependencyWheel',
+    'disparityindex': 'DisparityIndex',
+    'dmi': 'DMI',
+    'dotplot': 'DotPlot',
+    'dpo': 'DPO',
+    'ema': 'EMA',
+    'errorbar': 'ErrorBar',
+    'flowmap': 'FlowMap',
+    'funnel3d': 'Funnel3D',
+    'geoheatmap': 'GeoHeatmap',
+    'heikinashi': 'HeikinAshi',
+    'hlc': 'HLC',
+    'hollowcandlestick': 'HollowCandlestick',
+    'ikh': 'IKH',
+    'keltnerchannels': 'KeltnerChannels',
+    'linearregression': 'LinearRegression',
+    'linearregressionangle': 'LinearRegressionAngle',
+    'linearregressionintercept': 'LinearRegressionIntercept',
+    'linearregressionslopes': 'LinearRegressionSlopes',
+    'macd': 'MACD',
+    'mapbubble': 'MapBubble',
+    'mapline': 'MapLine',
+    'mappoint': 'MapPoint',
+    'mfi': 'MFI',
+    'natr': 'NATR',
+    'obv': 'OBV',
+    'ohlc': 'OHLC',
+    'packedbubble': 'PackedBubble',
+    'pc': 'PC',
+    'pivotpoints': 'PivotPoints',
+    'ppo': 'PPO',
+    'priceenvelopes': 'PriceEnvelopes',
+    'psar': 'PSAR',
+    'pyramid3d': 'Pyramid3D',
+    'roc': 'ROC',
+    'rsi': 'RSI',
+    'scatter3d': 'Scatter3D',
+    'slowstochastic': 'SlowStochastic',
+    'sma': 'SMA',
+    'solidgauge': 'SolidGauge',
+    'tema': 'TEMA',
+    'tiledwebmap': 'TiledWebMap',
+    'trendline': 'TrendLine',
+    'trix': 'TRIX',
+    'variablepie': 'VariablePie',
+    'vbp': 'VBP',
+    'vwap': 'VWAP',
+    'williamsr': 'WilliamsR',
+    'wma': 'WMA',
+    'xrange': 'XRange'
+};
+
+const PRIMITIVES = [
+    '0',
+    'bigint',
+    'boolean',
+    'false',
+    'function',
+    'null',
+    'number',
+    'object',
+    'string',
+    'symbol',
+    'true',
+    'void',
+    'Array',
+    'Function',
+    'NaN',
+    'Number',
+    'Object',
+    'String',
+    'Symbol',
+    'undefined'
+];
 
 /* *
  *
@@ -88,8 +195,13 @@ function addImport(
     const imports = branch.imports = branch.imports || {};
     const types = imports[path] = imports[path] || [];
 
-    if (!types.includes(type)) {
-        types.push(type);
+    for (const part of type.split(/\W+/gsu)) {
+        if (
+            !isIntegratedType(part) &&
+            !types.includes(part)
+        ) {
+            types.push(part);
+        }
     }
 
 }
@@ -299,11 +411,11 @@ function decorateType(
         [TS.SyntaxKind.FunctionKeyword]: 'function',
         [TS.SyntaxKind.NumberKeyword]: 'number',
         [TS.SyntaxKind.NumericLiteral]: 'number',
+        [TS.SyntaxKind.ObjectKeyword]: '*',
         [TS.SyntaxKind.ObjectLiteralExpression]: '*',
         [TS.SyntaxKind.StringKeyword]: 'string',
         [TS.SyntaxKind.StringLiteral]: 'string',
     }[node.kind]);
-
 
     let optionType;
 
@@ -334,7 +446,9 @@ function decorateType(
         optionType = reflectInOptions(branch.name);
         if (optionType) {
             branch.isMappedType = true;
-            addImport(branch, 'Core/SeriesOptions', optionType);
+            if (isCapitalCase(optionType)) {
+                addImport(branch, 'ts/Core/Series/SeriesOptions', optionType);
+            }
         }
     }
 
@@ -406,12 +520,6 @@ function findPairedSource(
             return pairedPath;
         }
 
-        pairedPath = Path.join(path, name.replace(/Options$/, '.ts'));
-
-        if (FS.existsSync(pairedPath)) {
-            return pairedPath;
-        }
-
     }
 
 }
@@ -452,6 +560,59 @@ function generateDynamicCode(
     );
 
 }
+
+
+/**
+ * @param {string} moduleFolder
+ * @param {Array<string>} imports
+ * @param {string} importPath
+ * @return {string}
+ */
+function generateImportCode(
+    moduleFolder,
+    imports,
+    importPath
+) {
+    const dtsPath = importPath.replace(/(?:\.js)?$/u, '.d.ts');
+    const tsPath = importPath.replace(/(?:\.js)?$/u, '.ts');
+    const moduleCode = FS.readFileSync(
+        (
+            FS.existsSync(tsPath) ?
+                tsPath :
+                dtsPath
+        ),
+        'utf8'
+    );
+
+    /** @type {string|undefined} */
+    let defaultImport = '';
+    let namedImports = '';
+
+    for (const item of imports) {
+        if (moduleCode.includes(`export default ${item.trim()};`)) {
+            defaultImport = `${item}, `;
+        } else {
+            namedImports += `    ${item},\n`;
+        }
+    }
+
+    if (namedImports) {
+        namedImports = `{\n${namedImports}}`;
+    } else if (defaultImport) {
+        defaultImport = defaultImport.substring(0, defaultImport.length - 2);
+    }
+
+    let relativePath = Path.relative(moduleFolder, importPath);
+
+    relativePath = (
+        relativePath[0] === '.' ?
+            relativePath :
+            `./${relativePath}`
+    );
+
+    return `\nimport ${defaultImport}${namedImports} from '${relativePath}';`
+}
+
 
 /**
  * @param {Record<string,*>} branch
@@ -549,8 +710,6 @@ function generateTypeImports(
     tree
 ) {
     const currentPath = Path.dirname(source.fileName);
-    const sourceCode = source.getFullText();
-
     /** @type {Record<string, Array<string>>} */
     const imports = {};
 
@@ -559,9 +718,12 @@ function generateTypeImports(
      * @return {string}
      */
     const getImportPath = (importNode) => {
-        return importNode.moduleSpecifier
-            .getText()
-            .replace(/^(['"])(.*)\1$/, '$2');
+        return Path.join(
+            currentPath,
+            importNode.moduleSpecifier
+                .getText()
+                .replace(/^(['"])(.*)\1$/, '$2')
+        );
     };
 
     /**
@@ -576,8 +738,13 @@ function generateTypeImports(
             TS.isImportDeclaration(node)
         ) {
             const path = getImportPath(node);
+            const clause = node.importClause
+                ?.getText()
+                .replace(/^type\s+|[{}]/gsu, '')
+                .split(/,/gu)
+                .map(item => item.trim());
 
-            console.log('***', node.importClause?.getText());
+            imports[path] = clause;
         }
     };
 
@@ -596,7 +763,7 @@ function generateTypeImports(
             for (const path in branchImports) {
 
                 branchTypes = branchImports[path];
-                codeTypes = codeImports[path] = codeImports[path] || [];
+                codeTypes = imports[path] = imports[path] || [];
 
                 for (const branchType of branchTypes) {
                     if (!codeTypes.includes(branchType)) {
@@ -618,7 +785,54 @@ function generateTypeImports(
 
     extractImports(source);
     mergeImports(tree);
-    console.log(imports);
+
+    let sourceCode = source.getFullText();
+
+    if (Object.keys(imports)) {
+        /** @type {Array<[number,number,string]>} */
+        const replacements = [];
+
+        let replacementEnd = 0;
+
+        for (const node of getNodesChildren(source)) {
+            if (TS.isImportDeclaration(node)) {
+                const path = getImportPath(node);
+                if (imports[path]) {
+                    replacementEnd = Math.max(replacementEnd, node.getEnd());
+                    replacements.push([
+                        node.getStart(),
+                        node.getEnd(),
+                        imports[path],
+                        path,
+                    ]);
+                }
+            }
+        }
+
+        for (const path in imports) {
+            if (!replacements.some(r => r[3] === path)) {
+                replacements.push([
+                    replacementEnd,
+                    replacementEnd,
+                    imports[path],
+                    path
+                ]);
+            }
+        }
+
+        for (const replacement of replacements.sort((a, b) => b[0] - a[0])) {
+            sourceCode = (
+                sourceCode.substring(0, replacement[0]) +
+                generateImportCode(
+                    currentPath,
+                    replacement[2],
+                    replacement[3]
+                ) +
+                sourceCode.substring(replacement[1])
+            );
+        }
+
+    }
 
     return sourceCode;
 }
@@ -816,10 +1030,13 @@ function getInterfaceName(
         if (splittedName[0] === 'series') {
             splittedName.shift();
             splittedName.splice(1, 0, 'series');
-        } 
+        }
 
         return splittedName
-            .map(p => p[0].toUpperCase() + p.substring(1))
+            .map(p => (
+                OPTION_CASTING[p] ||
+                (p[0].toUpperCase() + p.substring(1))
+            ))
             .join('')
             .replace(/Options/g, '')
             .concat('Options');
@@ -934,6 +1151,40 @@ function getTagText(
             return part.text;
         }
     }
+}
+
+
+/**
+ * @param {string} type
+ * @return {boolean}
+ */
+function isIntegratedType(
+    type
+) {
+    return (
+        KEYWORDS.includes(type) ||
+        PRIMITIVES.includes(type) ||
+        type.length < 2 ||
+        type.startsWith('Array') ||
+        (
+            type.startsWith('T') &&
+            isCapitalCase(type[1])
+        )
+    )
+}
+
+
+/**
+ * @param {string} text
+ * @return {boolean}
+ */
+function isCapitalCase(
+    text
+) {
+    return (
+        text.charCodeAt(0) > 64 &&
+        text.charCodeAt(0) < 91
+    );
 }
 
 
@@ -1066,6 +1317,7 @@ function mergeInterfaceOverwrite(
             newBranch.fullName = branch.fullName;
             newBranch.type = branch.type;
             newBranch.isMappedType = branch.isMappedType;
+            newBranch.imports = branch.imports;
             newBranch.doclet = branch.doclet;
             newParent.children.push(newBranch);
             visitedBranches[interfaceName] = newBranch;
@@ -1135,8 +1387,10 @@ function writeDocletsTree(
             }
         }
 
-        for (const child of getNodesChildren(node)) {
-            connectOptions(branch, child);
+        if (!TS.isModuleDeclaration(node)) {
+            for (const child of getNodesChildren(node)) {
+                connectOptions(branch, child);
+            }
         }
 
         if (branch.children) {
@@ -1236,7 +1490,7 @@ function writeDocletsTree(
             console.info('Applying', changes.length, 'change(s)...');
         }
 
-        let targetCode = generateTypeImports(target, tree);
+        let targetCode = target.getFullText();
 
         for (const change of changes.sort((a, b) => b[0] - a[0])) {
             /** @type {string} */
@@ -1266,7 +1520,9 @@ function writeDocletsTree(
             true
         );
 
-        FS.writeFileSync(target.fileName, target.getFullText(), 'utf8');
+        targetCode = generateTypeImports(target, tree);
+
+        FS.writeFileSync(target.fileName, targetCode, 'utf8');
 
     }
 
