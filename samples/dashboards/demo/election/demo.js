@@ -331,6 +331,20 @@ async function setupDashboard() {
     }
 
     function parseElectionData(csv) {
+        function parseLine(line) {
+            // Example of line:
+            //    2020,"FLORIDA","FL",12,59,43,"US PRESIDENT","TRUMP, DONALD J.","REPUBLICAN",FALSE,5668731,11067456,"20210113",NA,"REPUBLICAN"
+
+            // Remove separators from column(e.g. "TRUMP, DONALD J.")
+            let tmp = line.replace(', ', ' ');
+
+            // Remove all double quotes
+            tmp = tmp.replaceAll('"', '');
+
+            // Split on separator (",")
+            return tmp.split(',');
+        }
+
         // One row per state
         const rowObj = {
             state: '',
@@ -357,17 +371,14 @@ async function setupDashboard() {
         rowObjNational.state = 'National';
         rowObjNational['postal-code'] = 'US';
 
-        // RegEx for splitting a single line
-        const csvSplit = /(?:,|\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\n]*|(?:\n|$))/g;
-        const tidyCol = /[,\"]/g;
-
         // Create JSON data, one array per year
         const jsonData = {};
         const lines = csv.split('\n');
         let key = null;
 
         lines.forEach(function (line) {
-            const match = line.match(csvSplit);
+            // const match = line.match(csvSplit);
+            const match = parseLine(line);
             const year = match[0]; // Year
 
             if (electionYears.includes(year)) {
@@ -395,15 +406,15 @@ async function setupDashboard() {
                 }
 
                 // Create processed data record
-                const party = match[8].replace(tidyCol, '');
-                const candidate = match[7].replace(/^,/, '').replace(/["]/g, '');
+                const party = match[8];
+                const candidate = match[7];
 
                 // Ignore "other" candidates and empty candidate names
                 if ((party === 'REPUBLICAN' || party === 'DEMOCRAT') && candidate.length > 0) {
-                    const state = match[1].replace(tidyCol, '');
-                    const postCode = match[2].replace(tidyCol, '');
-                    const popVote = Number(match[10].replace(tidyCol, ''));
-                    const totalVote = Number(match[11].replace(tidyCol, ''));
+                    const state = match[1];
+                    const postCode = match[2];
+                    const popVote = Number(match[10]);
+                    const totalVote = Number(match[11]);
                     const percent = ((popVote / totalVote) * 100).toFixed(1);
 
                     // Accumulate nationwide data
