@@ -10,7 +10,11 @@
                 borderWidth: 1
             },
 
-            colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
+            colors: [
+                'rgba(19,64,117,0.1)',
+                'rgba(19,64,117,0.5)',
+                'rgba(19,64,117,1)'
+            ],
 
             title: {
                 text: 'Data classes with legend label formatter'

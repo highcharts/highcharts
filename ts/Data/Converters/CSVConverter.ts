@@ -298,7 +298,8 @@ class CSVConverter extends DataConverter {
                 }
             }
 
-            if (dataTypes.length &&
+            if (
+                dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' && // Format is a string date
                 !converter.options.dateFormat

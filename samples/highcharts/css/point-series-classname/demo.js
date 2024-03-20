@@ -19,7 +19,8 @@ const chart = Highcharts.chart('container', {
             -1,
             3,
             1,
-            0]
+            0
+        ]
     }, {
         type: 'line',
         name: 'Oranges',
@@ -32,7 +33,8 @@ const chart = Highcharts.chart('container', {
                 y: 4
             },
             6,
-            7]
+            7
+        ]
     }]
 });
 

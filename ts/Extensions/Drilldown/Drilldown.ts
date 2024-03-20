@@ -351,7 +351,8 @@ class ChartAdditions {
                 if (typeof animOptions !== 'boolean') {
                     const userComplete = animOptions.complete,
                         drilldownComplete = function (
-                            obj?: { applyDrilldown?: boolean }): void {
+                            obj?: { applyDrilldown?: boolean }
+                        ): void {
                             if (obj && obj.applyDrilldown && chart.mapView) {
                                 chart
                                     .addSingleSeriesAsDrilldown(point, options);

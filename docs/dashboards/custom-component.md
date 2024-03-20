@@ -29,8 +29,24 @@ The custom code looks like below:
 class YouTubeComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
+
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
+
+        this.options.editableOptions = [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }];
+
 
         return this;
     }
@@ -97,20 +113,7 @@ Dashboards.board({
     components: [{
         renderTo: 'cell-id',
         type: 'YouTube',
-        videoId: 'video-id-from-youtube',
-        editableOptions: [{
-            name: 'videoId',
-            propertyPath: ['videoId'],
-            type: 'input'
-        }, {
-            name: 'title',
-            propertyPath: ['title'],
-            type: 'input'
-        }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }]
+        videoId: 'video-id-from-youtube'
     }]
 });
 ```
@@ -135,27 +138,23 @@ Use the exact name which was used to register the component in the `ComponentReg
 ```
 
 ### Making custom component editable
-To make the custom component editable, you need to define the `editableOptions` property in the component options. The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
+To make the custom component editable, you need to define the `editableOptions` property in the component options. The best place to define the `editableOptions` is in the constructor of the custom component.  
+The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
 In the example below, the `videoId`, `title` and `caption` are editable options.
 ```js
-    components: [{
-        cell: 'cell-id',
-        type: 'YouTube',
-        videoId: 'video-id-from-youtube',
-        editableOptions: [{
-            name: 'videoId',
-            propertyPath: ['videoId'],
-            type: 'input'
-        }, {
-            name: 'title',
-            propertyPath: ['title'],
-            type: 'input'
-        }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }]
-    }]
+    this.options.editableOptions = [{
+        name: 'videoId',
+        propertyPath: ['videoId'],
+        type: 'input'
+    }, {
+        name: 'title',
+        propertyPath: ['title'],
+        type: 'input'
+    }, {
+        name: 'caption',
+        propertyPath: ['caption'],
+        type: 'input'
+    }];
 ```
 Also the `update` method should be extended to update the component with new options. Here we simply have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after performing the update.  
 ```js

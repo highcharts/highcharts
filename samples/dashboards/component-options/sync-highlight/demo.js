@@ -72,7 +72,6 @@ Dashboards.board('container', {
             connector: {
                 id: 'Vitamin'
             },
-            editable: true,
             sync: {
                 highlight: true
             }

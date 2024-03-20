@@ -6,7 +6,8 @@
     Highcharts.setOptions({
         lang: {
             accessibility: {
-                defaultChartTitle: 'Black and white themed Highcharts Stock demo'
+                defaultChartTitle: 'Black and white themed Highcharts Stock ' +
+                    'demo'
             },
             rangeSelectorZoom: ''
         },
@@ -182,7 +183,8 @@
                     y: 0
                 };
             },
-            format: '{series.name} {point.open:.2f} {point.high:.2f} {point.low:.2f} {point.close:.2f}'
+            format: '{series.name} {point.open:.2f} {point.high:.2f} ' +
+                '{point.low:.2f} {point.close:.2f}'
         },
         xAxis: {
             crosshair: {
@@ -201,9 +203,13 @@
                         86400000;
 
                     if (this.isFirst || isAboveD1) {
-                        return this.chart.time.dateFormat('%d %b %Y', this.value);
+                        return this.chart.time.dateFormat(
+                            '%d %b %Y', this.value
+                        );
                     }
-                    return this.chart.time.dateFormat('%d %b %k:%M', this.value);
+                    return this.chart.time.dateFormat(
+                        '%d %b %k:%M', this.value
+                    );
                 }
             }
         },

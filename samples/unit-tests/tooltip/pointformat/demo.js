@@ -50,7 +50,8 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
             },
             useHTML: true,
             headerFormat: '',
-            pointFormat: '<div style="width: 200px; height: 300px; background-color: blue;">Hello</div>'
+            pointFormat: '<div style="width: 200px; height: 300px; ' +
+                'background-color: blue;">Hello</div>'
         }
     });
 
@@ -72,6 +73,7 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
     assert.notEqual(
         chart.tooltip.label.visibility,
         'hidden',
-        'Tooltip should show after hovering over a point even with pointer-events set (#19025)'
+        'Tooltip should show after hovering over a point even with ' +
+        'pointer-events set (#19025)'
     );
 });

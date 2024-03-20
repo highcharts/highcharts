@@ -484,7 +484,8 @@ class GeoHeatmapSeries extends MapSeries {
                         };
 
                         const animOptions = merge(
-                                animObject(chart.renderer.globalAnimation)),
+                                animObject(chart.renderer.globalAnimation)
+                            ),
                             userStep = animOptions.step;
 
                         animOptions.step =

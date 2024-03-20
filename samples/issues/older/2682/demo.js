@@ -5,7 +5,8 @@ $(function () {
         },
 
         title: {
-            text: 'Highcharts <= 3.0.9: Couldn\'t update from percent to normal stack'
+            text: 'Highcharts <= 3.0.9: Couldn\'t update from percent to ' +
+                'normal stack'
         },
         series: [{
             stacking: 'percent',

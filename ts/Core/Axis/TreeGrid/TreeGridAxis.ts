@@ -628,7 +628,8 @@ function wrapInit(
         ): void {
             if (e.options.data) {
                 const treeGrid = getTreeGridFromData(
-                    (e.options.data as any),
+                    (
+                        e.options.data as any),
                     userOptions.uniqueNames || false,
                     1
                 );

@@ -108,7 +108,8 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
     assert.strictEqual(
         series.graph.attr('d').lastIndexOf('M'),
         0,
-        'Graph should be continuous when dataGrouping is days and crossing DST (#10000)'
+        'Graph should be continuous when dataGrouping is days and crossing ' +
+        'DST (#10000)'
     );
 
     series.update({

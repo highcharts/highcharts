@@ -497,7 +497,8 @@ class Projection {
                 // primarily to Antarctica.
                 if (intersections.length % 2 === 1) {
                     polarIntersection = intersections.slice().sort(
-                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat))[0];
+                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat)
+                    )[0];
 
                     erase(intersections, polarIntersection);
                 }
@@ -816,7 +817,8 @@ class Projection {
                                         lonLat
                                     );
                                     greatCircle.forEach((lonLat): void =>
-                                        pushToPath(postclip.forward(lonLat)));
+                                        pushToPath(postclip.forward(lonLat))
+                                    );
 
                                 // For lines, just jump over the gap
                                 } else {

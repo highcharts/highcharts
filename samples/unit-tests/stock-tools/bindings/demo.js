@@ -102,7 +102,8 @@ QUnit.test('Bindings general tests', function (assert) {
     assert.deepEqual(
         JSON.parse(annotationStorage).annotations[0].typeOptions,
         verticalAnnotation.userOptions.typeOptions,
-        'Annotation position saves correctly in localStorage after drag and drop'
+        'Annotation position saves correctly in localStorage after drag and ' +
+        'drop'
     );
 
     verticalAnnotation.destroy();
@@ -430,7 +431,8 @@ QUnit.test('Bindings general tests', function (assert) {
 });
 
 QUnit.test(
-    'Bindings on multiple axes. Checks whether a pointer action returns a proper axis (#12268).',
+    'Bindings on multiple axes. Checks whether a pointer action returns a ' +
+    'proper axis (#12268).',
     assert => {
         const chart = Highcharts.stockChart('container', {
                 yAxis: [{
@@ -465,7 +467,8 @@ QUnit.test(
         assert.strictEqual(
             coordsY.axis.options.id,
             'topYAxis',
-            'Y coord on both yAxes (they overlap) - the top yAxis should be found.'
+            'Y coord on both yAxes (they overlap) - the top yAxis should be ' +
+            'found.'
         );
 
         chart.yAxis[1].update({
@@ -616,80 +619,88 @@ QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
         infinityLine
     );
 
-    // The infinityLine should be drawn from bottom-left to top-right plotarea corner.
+    // The infinityLine should be drawn from bottom-left to top-right
+    // plotarea corner.
 
     assert.strictEqual(
         xAxisLength,
         infinityLine.graphic.element.getBBox().width,
-        'The width of the infinityLine\'s graphic box should be the same as the xAxis\' width.'
+        'The width of the infinityLine\'s graphic box should be the same as ' +
+        'the xAxis\' width.'
     );
 
     assert.strictEqual(
         yAxisLength,
         infinityLine.graphic.element.getBBox().height,
-        'The height of the infinityLine\'s graphic box should be the same as the yAxis\' height.'
+        'The height of the infinityLine\'s graphic box should be the same as ' +
+        'the yAxis\' height.'
     );
 });
 
-QUnit.test('Stock Tools annotations\' positions with yAxis.top (#15075)', assert => {
-    const chart = Highcharts.stockChart('container', {
+QUnit.test(
+    'Stock Tools annotations\' positions with yAxis.top (#15075)', assert => {
+        const chart = Highcharts.stockChart('container', {
+                chart: {
+                    width: 800
+                },
+                yAxis: {
+                    top: '40%',
+                    height: '60%'
+                },
+                series: [{
+                    data: [4, 2, 5, 6, 4]
+                }]
+            }),
+            series = chart.series[0],
+            yAxis = series.yAxis;
+
+        let point = series.points[1];
+
+        // Add vertical counter annotation near to the second point
+        chart.navigationBindings.options.bindings.verticalLabel.start.call(
+            chart.navigationBindings,
+            {
+                chartX: point.plotX,
+                chartY: point.plotY + yAxis.top
+            }
+        );
+
+        const yOffset = chart.annotations[0].options.typeOptions.yOffset;
+        let annotationBBox = chart.annotations[0].graphic.getBBox();
+
+        assert.strictEqual(
+            annotationBBox.y + annotationBBox.height + yOffset,
+            point.plotY + yAxis.top,
+            'Annotation\'s element should be placed ' + yOffset +
+            'px from the second point.'
+        );
+
+        chart.update({
             chart: {
-                width: 800
-            },
-            yAxis: {
-                top: '40%',
-                height: '60%'
-            },
-            series: [{
-                data: [4, 2, 5, 6, 4]
-            }]
-        }),
-        series = chart.series[0],
-        yAxis = series.yAxis;
+                inverted: true
+            }
+        });
 
-    let point = series.points[1];
+        point = series.points[2];
 
-    // Add vertical counter annotation near to the second point
-    chart.navigationBindings.options.bindings.verticalLabel.start.call(
-        chart.navigationBindings,
-        {
-            chartX: point.plotX,
-            chartY: point.plotY + yAxis.top
-        }
-    );
+        // Add vertical arrow annotation near to the third point on inverted
+        // chart
+        chart.navigationBindings.options.bindings.verticalArrow.start.call(
+            chart.navigationBindings,
+            {
+                chartX: chart.plotLeft + yAxis.len - point.plotY,
+                chartY: chart.plotTop + series.xAxis.len - point.plotX
+            }
+        );
 
-    const yOffset = chart.annotations[0].options.typeOptions.yOffset;
-    let annotationBBox = chart.annotations[0].graphic.getBBox();
+        annotationBBox = chart.annotations[1].graphic.getBBox();
 
-    assert.strictEqual(
-        annotationBBox.y + annotationBBox.height + yOffset,
-        point.plotY + yAxis.top,
-        'Annotation\'s element should be placed ' + yOffset + 'px from the second point.'
-    );
-
-    chart.update({
-        chart: {
-            inverted: true
-        }
+        assert.close(
+            (
+                annotationBBox.x + (annotationBBox.width) + yOffset),
+            chart.plotLeft + yAxis.len - point.plotY,
+            1,
+            'Annotation\'s element should be placed ' + yOffset +
+            'px from the third point.'
+        );
     });
-
-    point = series.points[2];
-
-    // Add vertical arrow annotation near to the third point on inverted chart
-    chart.navigationBindings.options.bindings.verticalArrow.start.call(
-        chart.navigationBindings,
-        {
-            chartX: chart.plotLeft + yAxis.len - point.plotY,
-            chartY: chart.plotTop + series.xAxis.len - point.plotX
-        }
-    );
-
-    annotationBBox = chart.annotations[1].graphic.getBBox();
-
-    assert.close(
-        (annotationBBox.x + (annotationBBox.width) + yOffset),
-        chart.plotLeft + yAxis.len - point.plotY,
-        1,
-        'Annotation\'s element should be placed ' + yOffset + 'px from the third point.'
-    );
-});

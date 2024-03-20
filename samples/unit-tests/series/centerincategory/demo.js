@@ -207,7 +207,8 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.ok(
         chart.plotLeft + pointBBox.x < tickX &&
             chart.plotLeft + pointBBox.x + pointBBox.width > tickX,
-        '#19127: Point should be centered on the tick if series is columnpyramid.'
+        '#19127: Point should be centered on the tick if series is ' +
+        'columnpyramid.'
     );
 
     chart.update({

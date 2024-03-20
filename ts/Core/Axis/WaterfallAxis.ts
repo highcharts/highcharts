@@ -130,8 +130,10 @@ namespace WaterfallAxis {
         const axis = this as WaterfallAxis,
             stackLabelOptions = axis.options.stackLabels;
 
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
+        if (
+            stackLabelOptions && stackLabelOptions.enabled &&
+            axis.waterfall.stacks
+        ) {
             axis.waterfall.renderStackTotals();
         }
     }

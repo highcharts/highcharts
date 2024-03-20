@@ -778,7 +778,8 @@ function wrapSeriesGetColor(
     const oldColor = this.options.color;
 
     // Temporarily remove color options to get defaults
-    if (oldColor &&
+    if (
+        oldColor &&
         (oldColor as PatternObject).pattern &&
         !(oldColor as PatternObject).pattern.color
     ) {

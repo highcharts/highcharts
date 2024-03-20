@@ -202,8 +202,10 @@ class BulletSeries extends ColumnSeries {
                     (targetGraphic.element as any).point = point;
                 }
 
-                targetGraphic.addClass(point.getClassName() +
-                ' highcharts-bullet-target', true);
+                targetGraphic.addClass(
+                    point.getClassName() +
+                ' highcharts-bullet-target', true
+                );
             } else if (targetGraphic) {
                 // #1269:
                 point.targetGraphic = targetGraphic.destroy() as any;

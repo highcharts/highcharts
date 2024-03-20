@@ -57,8 +57,6 @@ class DumbbellPoint extends AreaRangePoint {
      * (between low and high value).
      *
      * @private
-     * @param {Highcharts.Point} this The point to inspect.
-     *
      */
     public setState(): void {
         const point = this,

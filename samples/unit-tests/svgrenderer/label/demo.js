@@ -242,7 +242,8 @@ QUnit.test('Box with nested ems (#5932)', function (assert) {
 
     var label = ren
         .label(
-            'This is line 1<br><span style="font-size: 2em">This is line 2</span>',
+            'This is line 1<br><span style="font-size: 2em">This is line ' +
+            '2</span>',
             10,
             10
         )
@@ -475,7 +476,8 @@ QUnit.test('Labels with useHTML', assert => {
 
     const lbl = ren
         .label(
-            'This is a long text that requires the label to wrap into multiple lines',
+            'This is a long text that requires the label to wrap into ' +
+            'multiple lines',
             10,
             19,
             null,
@@ -671,7 +673,8 @@ QUnit.test('Label padding', assert => {
 });
 
 QUnit.test('Label callout tests', assert => {
-    // #14858: Callout missing line when anchorX within width and no room for chevron
+    // #14858: Callout missing line when anchorX within width and no room
+    // for chevron
     const ren = new Highcharts.Renderer(
         document.getElementById('container'),
         600,
@@ -727,6 +730,7 @@ QUnit.test('Label callout tests', assert => {
     assert.strictEqual(
         customLabel.element.getBBox().height,
         100,
-        'Callout label should always have a connector when chevron is not displayed, #19505.'
+        'Callout label should always have a connector when chevron is not ' +
+        'displayed, #19505.'
     );
 });
