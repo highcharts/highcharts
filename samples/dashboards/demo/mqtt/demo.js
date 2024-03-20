@@ -326,8 +326,18 @@ let mqtt;
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
 const reconnectTimeout = 10000;
+const mqttTopic = 'public/test/overview';
+const mqttQos = 0;
+const userName = 'public';
+const password = 'public';
 
-// Connection status
+// Connection bar
+const connectBar = {
+    el: null,
+    offColor: '',
+    onColor: 'green'
+};
+
 let msgCount;
 let connectFlag;
 
@@ -337,32 +347,25 @@ let uiId;
 window.onload = () => {
     msgCount = 0;
     connectFlag = false;
-
-    uiId = {
-        status: document.getElementById('status'),
-        statusMsg: document.getElementById('status_messages')
-    };
-    topicEnable(false);
+    connectBar.el = document.getElementById('connect_bar');
+    connectBar.offColor = connectBar.id.style.backgroundColor;
 };
 
 
 function setConnectionStatus(connected) {
-    setUiElement('status', connected ? 'Connected' : 'Disconnected');
-    const el = document.getElementById('status_bar');
-    el.style.backgroundColor = connected ? 'green' : 'red';
+    setStatus(connected ? 'Connected' : 'Disconnected');
+    const el = connectBar.el;
+    el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
 }
 
 
 async function onConnectionLost() {
     setConnectionStatus(false);
-    setUiElement('statusMsg', '');
-    subscribeEnable(false);
 }
 
 
 function onFailure(message) {
-    setUiElement('statusMsg', 'Failed: ' + message);
-    subscribeEnable(false);
+    setStatus('Failed: ' + message);
 }
 
 
@@ -377,7 +380,7 @@ async function onMessageArrived(mqttPacketRaw) {
             numGenerators: mqttData.aggs.length
         };
         await connectBoard(powerPlantStatus);
-        setUiElement('statusMsg', `Data from <b>${powerPlantStatus.name}</b>. Connected: ${powerPlantStatus.timestamp}`);
+        setStatus(`Data from <b>${powerPlantStatus.name}</b>.`); // Connected: ${powerPlantStatus.timestamp}`);
     }
     msgCount += 1;
 
@@ -392,11 +395,12 @@ function onConnected(recon, url) {
 
 async function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
-    setUiElement('statusMsg', 'Connected to ' + host + ' on port ' + port);
+    setStatus('Connected to ' + host + ' on port ' + port);
     connectFlag = true;
     setConnectionStatus(true);
 
-    subscribeEnable(true);
+    // Subscribe to the default topic
+    subscribe();
 }
 
 
@@ -409,84 +413,61 @@ function disconnect() {
 
 
 function MQTTconnect() {
-    const connBtn = document.getElementsByName('conn')[0];
+    const connBtn = document.getElementById('connect_toggle');
 
     if (connectFlag) {
-        setUiElement('statusMsg', 'disconnecting...');
+        // Already connect, so disconnect
+        setStatus('disconnecting...');
         disconnect();
-        connBtn.value = 'Connect';
+        connBtn.innerHTML = 'Connect';
 
         return false;
     }
 
-    const userName = document.forms.connform.username.value;
-    const password = document.forms.connform.password.value;
-
-    setUiElement('statusMsg', 'connecting...');
+    setStatus('connecting...');
 
     const cname = 'orderform-' + Math.floor(Math.random() * 10000);
 
     // eslint-disable-next-line no-undef
     mqtt = new Paho.MQTT.Client(host, port, cname);
 
-    const options = {
-        useSSL: true,
-        timeout: 3,
-        cleanSession: true,
-        onSuccess: onConnect,
-        onFailure: onFailure
-    };
-
-    if (userName !== '') {
-        options.userName = document.forms.connform.username.value;
-    }
-
-    if (password !== '') {
-        options.password = document.forms.connform.password.value;
-    }
-
+    // Register callbacks
     mqtt.onConnectionLost = onConnectionLost;
     mqtt.onMessageArrived = onMessageArrived;
     mqtt.onConnected = onConnected;
 
-    mqtt.connect(options);
+    // Connect to broker
+    mqtt.connect({
+        useSSL: true,
+        timeout: 3,
+        cleanSession: true,
+        onSuccess: onConnect,
+        onFailure: onFailure,
+        userName: userName,
+        password: password
+    });
 
-    connBtn.value = 'Disconnect';
+    connBtn.innerHTML = 'Disconnect';
 
     return false;
 }
 
 
-function subTopics() {
-    if (connectFlag === 0) {
-        setUiElement('statusMsg', 'Not connected, subscription not possible');
+function subscribe() {
+    if (connectFlag) {
+        // Unsubscribe any existing topics
+        mqtt.unsubscribe('/#');
 
-        return false;
+        // Subscribe to new topic
+        mqtt.subscribe(mqttTopic, {
+            qos: mqttQos
+        });
+    } else {
+        setStatus('Not connected, subscription not possible');
     }
-
-    const stopic = document.forms.subs.Stopic.value;
-    const sqos = 0;
-    const soptions = {
-        qos: sqos
-    };
-
-    mqtt.unsubscribe('/#');
-    mqtt.subscribe(stopic, soptions);
-
-    return false;
-}
-
-function subscribeEnable(enabled) {
-    document.getElementById('subscribe').disabled = !enabled;
 }
 
 
-function topicEnable(enabled) {
-    // TBD: static topic until application is made scalable
-    document.getElementById('topic').disabled = true; // enabled;
-}
-
-
-function setUiElement(elName, msg) {
-    uiId[elName].innerHTML = msg;
+function setStatus(msg) {
+    document.getElementById('status').innerHTML = msg;
 }
