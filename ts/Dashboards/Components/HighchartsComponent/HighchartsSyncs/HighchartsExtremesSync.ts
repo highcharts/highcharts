@@ -23,11 +23,12 @@
 import type { Axis, Series } from '../../../Plugins/HighchartsTypes';
 import type Sync from '../../Sync/Sync';
 import type HighchartsComponent from '../HighchartsComponent.js';
+import type { ConnectorOptions } from '../HighchartsComponentOptions';
 
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
 import U from '../../../../Core/Utilities.js';
-const { addEvent } = U;
+const { addEvent, isString } = U;
 
 
 /* *
@@ -89,32 +90,38 @@ const syncPair: Sync.SyncPair = {
                             axis.coll === 'xAxis' &&
                             visiblePoints.length
                         ) {
-                            // (DD) - sync is out of scope for now
-                            // let columnName: string | undefined;
-                            // const columnAssignment =
-                            //    component.options.connector?.columnAssignment;
-                            // if (columnAssignment) {
-                            //     const assignment =
-                            //  columnAssignment.find((assignment): boolean =>
-                            //         assignment.seriesId === series.options.id
-                            //     );
-                            //     if (assignment) {
-                            //         const data = assignment.data;
-                            //         if (isString(data)) {
-                            //             columnName = data;
-                            //         } else if (Array.isArray(data)) {
-                            //             columnName = data[data.length - 1];
-                            //         } else {
-                            //             columnName = data.y;
-                            //         }
-                            //     }
-                            // }
+                            let columnName: string | undefined;
+                            const columnAssignment = (
+                                component.connectorHandlers[0]
+                                    ?.options as ConnectorOptions
+                            ).columnAssignment;
 
-                            // if (!columnName) {
-                            const columnName =
-                                axis.dateTime && table.hasColumns(['x']) ? 'x' :
-                                    series.options.id ?? series.name;
-                            // }
+                            if (columnAssignment) {
+                                const assignment = columnAssignment.find(
+                                    (assignment): boolean => (
+                                        assignment.seriesId ===
+                                            series.options.id
+                                    )
+                                );
+
+                                if (assignment) {
+                                    const data = assignment.data;
+                                    if (isString(data)) {
+                                        columnName = data;
+                                    } else if (Array.isArray(data)) {
+                                        columnName = data[data.length - 1];
+                                    } else {
+                                        columnName = data.y;
+                                    }
+                                }
+                            }
+
+                            if (!columnName) {
+                                columnName = axis.dateTime && (
+                                    table.hasColumns(['x']) ? 'x' :
+                                        series.options.id ?? series.name
+                                );
+                            }
 
                             minCursorData.row = visiblePoints[0].index;
                             minCursorData.column = columnName;
