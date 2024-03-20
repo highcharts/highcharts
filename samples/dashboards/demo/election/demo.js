@@ -20,6 +20,7 @@
 // ........ | ............. | .........     | ........    | ........... | int
 // Wyoming  | int           | int           | int (%)     | int (%)     | int
 
+
 // Data sources
 const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json';
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
@@ -620,8 +621,8 @@ async function updateResultComponent(component, electionTable, year) {
     const yearEl = document.querySelector('elections year#ei_' + year);
 
     // Photos
-    const imgDemUrl = yearEl.querySelector('dem imgUrl').textContent;
-    const imgRepUrl = yearEl.querySelector('rep imgUrl').textContent;
+    const imgDemUrl = yearEl.querySelector('dem imgUrl').innerHTML;
+    const imgRepUrl = yearEl.querySelector('rep imgUrl').innerHTML;
 
     document.querySelector('div#dem-cand img').src = imgDemUrl;
     document.querySelector('div#rep-cand img').src = imgRepUrl;
