@@ -258,7 +258,7 @@ class SVGLabel extends SVGElement {
         if (value) {
             this.needsBox = true;
         }
-        // for animation getter (#6776)
+        // For animation getter (#6776)
         this.fill = value;
         this.boxAttr(key, value);
     }
@@ -480,7 +480,7 @@ class SVGLabel extends SVGElement {
 
             let textX = pick(this.paddingLeft, this.padding);
 
-            // compensate for alignment
+            // Compensate for alignment
             if (
                 defined(this.widthSetting) &&
                 this.bBox &&
@@ -491,7 +491,7 @@ class SVGLabel extends SVGElement {
                 ] * (this.widthSetting - this.bBox.width);
             }
 
-            // update if anything changed
+            // Update if anything changed
             if (textX !== text.x || textY !== text.y) {
                 text.attr('x', textX);
                 // #8159 - prevent misplaced data labels in treemap
@@ -504,14 +504,14 @@ class SVGLabel extends SVGElement {
                 }
             }
 
-            // record current values
+            // Record current values
             text.x = textX;
             text.y = textY;
         }
     }
 
     public widthSetter(value: (number|string)): void {
-        // width:auto => null
+        // `width:auto` => null
         this.widthSetting = isNumber(value) ? value : void 0;
     }
 
@@ -527,7 +527,7 @@ class SVGLabel extends SVGElement {
     }
 
     public xSetter(value: number): void {
-        this.x = value; // for animation getter
+        this.x = value; // For animation getter
         if (this.alignFactor) {
             value -= this.alignFactor * this.getPaddedWidth();
 

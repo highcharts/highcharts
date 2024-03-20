@@ -149,12 +149,14 @@ QUnit.test(
 
         assert.notOk(
             isInsidePlot.call(points[2]),
-            'After set extremes - the real point without marker is outside the pane area'
+            'After set extremes - the real point without marker is outside ' +
+            'the pane area'
         );
 
         assert.ok(
             isInsidePlot.call(points[3]),
-            'After set extreems - the real point without marker is inside the pane area'
+            'After set extreems - the real point without marker is inside ' +
+            'the pane area'
         );
 
         assert.ok(

@@ -78,7 +78,7 @@ class WilliamsRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * Period for Williams %R oscillator
              */
@@ -221,4 +221,4 @@ export default WilliamsRIndicator;
  * @apioption series.williamsr
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file

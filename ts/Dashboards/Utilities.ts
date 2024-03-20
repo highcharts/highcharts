@@ -24,6 +24,7 @@
 
 import U from '../Core/Utilities.js';
 const {
+    error: coreError,
     isClass,
     isDOMElement,
     isObject,
@@ -84,7 +85,7 @@ function merge<T>(): T {
         copyDepth = 0,
         ret = {} as T;
 
-    // descriptive error stack:
+    // Descriptive error stack:
     const copyDepthError = new Error('Recursive copy depth > 100'),
         doCopy = (copy: any, original: any): any => {
             // An object is replacing a primitive
@@ -104,7 +105,8 @@ function merge<T>(): T {
                 }
 
                 // Copy the contents of objects, but not arrays or DOM nodes
-                if (isObject(value, true) &&
+                if (
+                    isObject(value, true) &&
                     !isClass(value) &&
                     !isDOMElement(value)
                 ) {
@@ -149,6 +151,38 @@ function uniqueKey(): string {
     return `dashboard-${coreUniqueKey().replace('highcharts-', '')}`;
 }
 
+/**
+ * Provide error messages for debugging, with links to online explanation. This
+ * function can be overridden to provide custom error handling.
+ *
+ * @sample highcharts/chart/highcharts-error/
+ *         Custom error handler
+ *
+ * @function Dashboards.error
+ *
+ * @param {number|string} code
+ *        The error code. See
+ *        [errors.xml](https://github.com/highcharts/highcharts/blob/master/errors/errors.xml)
+ *        for available codes. If it is a string, the error message is printed
+ *        directly in the console.
+ *
+ * @param {boolean} [stop=false]
+ *        Whether to throw an error or just log a warning in the console.
+ *
+ * @return {void}
+ */
+function error(code: number|string, stop?: boolean): void {
+    // TODO- replace with proper error handling
+    if (code === 16) {
+        console.warn( // eslint-disable-line no-console
+            'Dashboard error: Dashboards library loaded more than once.' +
+            'This may cause undefined behavior.'
+        );
+        return;
+    }
+    coreError(code, stop);
+}
+
 /* *
  *
  *  Default Export
@@ -156,6 +190,7 @@ function uniqueKey(): string {
  * */
 
 const Utilities = {
+    error,
     merge,
     uniqueKey
 };

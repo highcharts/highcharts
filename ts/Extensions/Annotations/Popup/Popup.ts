@@ -107,13 +107,13 @@ function getFields(
         const param = input.getAttribute('highcharts-data-name'),
             seriesId = input.getAttribute('highcharts-data-series-id');
 
-        // params
+        // Params
         if (seriesId) {
             fieldsOutput.seriesId = input.value;
         } else if (param) {
             fieldsOutput.fields[param] = input.value;
         } else {
-            // type like sma / ema
+            // Type like sma / ema
             fieldsOutput.type = input.value;
         }
     });
@@ -233,7 +233,7 @@ class Popup extends BaseForm {
             );
 
         if (!optionName.match(/^\d+$/)) {
-            // add label
+            // Add label
             createElement(
                 'label',
                 {
@@ -247,7 +247,7 @@ class Popup extends BaseForm {
             );
         }
 
-        // add input
+        // Add input
         const input = createElement(
             'input',
             {
@@ -346,25 +346,25 @@ class Popup extends BaseForm {
             return;
         }
 
-        // show blank popup
+        // Show blank popup
         this.showPopup();
 
-        // indicator form
+        // Indicator form
         if (type === 'indicators') {
             this.indicators.addForm.call(this, chart, options, callback);
         }
 
-        // annotation small toolbar
+        // Annotation small toolbar
         if (type === 'annotation-toolbar') {
             this.annotations.addToolbar.call(this, chart, options, callback);
         }
 
-        // annotation edit form
+        // Annotation edit form
         if (type === 'annotation-edit') {
             this.annotations.addForm.call(this, chart, options, callback);
         }
 
-        // flags form - add / edit
+        // Flags form - add / edit
         if (type === 'flag') {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }

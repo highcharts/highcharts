@@ -27,7 +27,7 @@ import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
  * */
 
 export interface SunburstPointOptions extends TreemapPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

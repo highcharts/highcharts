@@ -3,6 +3,25 @@
 <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
 <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
 
+<figure class="highcharts-figure">
+    <div class="controls">
+        <small class="label">Selected seats: </small>
+        <span id="selected-list">None</span>
+        <br />
+        <button id="deselect" disabled>Clear selection</button>
+    </div>
+
+    <div id="container"></div>
+
+    <p class="highcharts-description">
+        Explore our cinema seat plan using Highcharts Maps.
+        This interactive chart uses custom markers to represent individual
+        seats, providing a clear and engaging overview of the seating layout.
+        Click on seats to select them, and view your choices at the top with
+        a convenient deselect button.
+    </p>
+</figure>
+
 <pre id="data">
     [{
         "id": "stage",
@@ -339,22 +358,3 @@
         "path": "M248.162 169.072L246.378 155.006L244.384 155.321L243.439 148.184L228.429 150.178L229.373 157.316L227.379 157.631L229.268 171.696C232.522 172.011 245.118 170.332 248.162 169.072Z"
     }]
 </pre>
-
-<figure class="highcharts-figure">
-    <div class="controls">
-        <small class="label">Selected seats: </small>
-        <span id="selected-list">None</span>
-        <br />
-        <button id="deselect" disabled>Clear selection</button>
-    </div>
-
-    <div id="container"></div>
-    
-    <p class="highcharts-description">
-        Explore our cinema seat plan using Highcharts Maps.
-        This interactive chart uses custom markers to represent individual
-        seats, providing a clear and engaging overview of the seating layout.
-        Click on seats to select them, and view your choices at the top with
-        a convenient deselect button.
-    </p>
-</figure>

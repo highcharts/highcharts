@@ -103,7 +103,10 @@ const arc = {
 
     accessibility: {
         description:
-            'Arc diagram chart with circles of different sizes along the X axis, and connections drawn as arcs between them. From the chart we can see that Paris is the city with the most connections to other cities.',
+            'Arc diagram chart with circles of different sizes along the X ' +
+            'axis, and connections drawn as arcs between them. From the ' +
+            'chart we can see that Paris is the city with the most ' +
+            'connections to other cities.',
         point: {
             valueDescriptionFormat:
                 'Connection from {point.from} to {point.to}.'
@@ -415,7 +418,8 @@ const cr = {
 const sk = {
     accessibility: {
         description:
-            'Sankey chart that shows the total funding for Fintech companies in the internet software & services through 2022.',
+            'Sankey chart that shows the total funding for Fintech companies ' +
+            'in the internet software & services through 2022.',
         point: {
             descriptionFormatter: function (point) {
                 const nodeFrom = point.fromNode.name,
@@ -482,9 +486,13 @@ const sk = {
         valueDecimals: 2,
         backgroundColor: '#fff',
         pointFormat:
-            '<b>{point.fromNode.name}</b> ({point.toNode.name})<br>${point.weight} Total Funding Millions USD</span>',
+            '<b>{point.fromNode.name}</b> ({point.toNode.name})<br>' +
+            '${point.weight} Total Funding Millions USD</span>',
         nodeFormat:
-            '<p style="margin:6px 0;padding: 0;font-size: 14px;line-height:24px"><span style="font-weight: bold;color:{point.color}">{point.name}:</span> ${point.sum} million USD</p>'
+            '<p style="margin:6px 0;padding: 0;font-size: ' +
+            '14px;line-height:24px"><span style="font-weight: ' +
+            'bold;color:{point.color}">{point.name}:</span> ${point.sum} ' +
+            'million USD</p>'
     },
     plotOptions: {
         series: {
@@ -704,7 +712,9 @@ const str = {
     },
     accessibility: {
         description:
-            'Streamgraphs are a type of stacked area charts where the areas are displaced around a central axis. This chart is showing price indices for air freight, importing and exporting.'
+            'Streamgraphs are a type of stacked area charts where the areas ' +
+            'are displaced around a central axis. This chart is showing ' +
+            'price indices for air freight, importing and exporting.'
     },
     responsive: {
         rules: [
@@ -2025,8 +2035,9 @@ const db = {
         plotBackgroundImage: imgPath + 'dash-bg.png',
         events: {
             redraw: function () {
-                // const dashboard = document.querySelectorAll('.highcharts-scatter-series.dashboard');
-                const dashboard = document.querySelector('.highcharts-root image');
+                const dashboard = document.querySelector(
+                    '.highcharts-root image'
+                );
 
                 dashboard.classList.add('move');
 
@@ -2037,7 +2048,10 @@ const db = {
                 const purple = chart.series[1];
                 const green = chart.series[2];
 
-                const dashboard = document.querySelector('.highcharts-root image');
+                const dashboard = document.querySelector(
+                    '.highcharts-root ' +
+                    'image'
+                );
 
 
                 // console.log(chart.chartWidth);

@@ -321,7 +321,9 @@ QUnit.test(
     }
 );
 
-QUnit.test('Pie chart initialized through the stockChart constructor and splitted tooltip, (#14773).',
+QUnit.test(
+    'Pie chart initialized through the stockChart constructor and ' +
+    'splitted tooltip, (#14773).',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             series: [{

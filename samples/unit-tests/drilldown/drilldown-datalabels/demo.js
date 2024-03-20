@@ -1,5 +1,6 @@
 QUnit.test(
-    'Point.dataLabels options should have higher priority than activeDataLabelStyle (#6752).',
+    'Point.dataLabels options should have higher priority than ' +
+    'activeDataLabelStyle (#6752).',
     function (assert) {
         var red = 'red',
             chart = Highcharts.chart('container', {

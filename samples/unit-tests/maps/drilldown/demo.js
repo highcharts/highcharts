@@ -76,6 +76,9 @@ QUnit.test('Map drilldown with disabled animation', async assert => {
 
     // Drill up to prevent default animation breaking lolex.
     chart.drillUp();
+
+    delete africa.objects.default['hc-decoded-geojson'];
+    delete world.objects.default['hc-decoded-geojson'];
 });
 
 QUnit.test('Map drilldown with zooming animation', async assert => {
@@ -152,6 +155,9 @@ QUnit.test('Map drilldown with zooming animation', async assert => {
         }, duration * 3);
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
+
+        delete africa.objects.default['hc-decoded-geojson'];
+        delete world.objects.default['hc-decoded-geojson'];
         TestUtilities.lolexUninstall(clock);
     }
 });
@@ -234,6 +240,9 @@ QUnit.test('Map drilldown with disabled zooming animation', async assert => {
         }, duration / 2);
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
+
+        delete africa.objects.default['hc-decoded-geojson'];
+        delete world.objects.default['hc-decoded-geojson'];
         TestUtilities.lolexUninstall(clock);
     }
 });

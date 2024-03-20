@@ -383,7 +383,8 @@ class TreegraphSeries extends TreemapSeries {
 
                 y1 = Math.floor(
                     (fromNode.shapeArgs.y || 0) +
-                    (fromNode.shapeArgs.height || 0) / 2) + crisp,
+                    (fromNode.shapeArgs.height || 0) / 2
+                ) + crisp,
 
                 y2 = Math.floor(
                     (toNode.shapeArgs.y || 0) +
@@ -860,4 +861,4 @@ export default TreegraphSeries;
  * @apioption series.treegraph.data.collapsed
  */
 
-''; // gets doclets above into transpiled version
+''; // Gets doclets above into transpiled version

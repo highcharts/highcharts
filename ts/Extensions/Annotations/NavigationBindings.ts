@@ -324,11 +324,17 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
     let touchStartX: number,
         touchStartY: number;
 
+    /**
+     *
+     */
     function saveCoords(this: Annotation, e: AnyRecord): void {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
     }
 
+    /**
+     *
+     */
     function checkForTouchmove(this: Annotation, e: AnyRecord): void {
         const hasMoved = touchStartX ? Math.sqrt(
             Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +
@@ -890,18 +896,24 @@ class NavigationBindings {
                 let parent = config;
 
                 path.forEach((name, index): void => {
-                    const nextName = pick(path[index + 1], '');
 
-                    if (pathLength === index) {
-                        // Last index, put value:
-                        (parent as any)[name] = value;
-                    } else if (!(parent as any)[name]) {
-                        // Create middle property:
-                        (parent as any)[name] = nextName.match(/\d/g) ? [] : {};
-                        parent = (parent as any)[name];
-                    } else {
-                        // Jump into next property
-                        parent = (parent as any)[name];
+                    if (name !== '__proto__' && name !== 'constructor') {
+
+                        const nextName = pick(path[index + 1], '');
+
+                        if (pathLength === index) {
+                            // Last index, put value:
+                            (parent as any)[name] = value;
+                        } else if (!(parent as any)[name]) {
+                            // Create middle property:
+                            (parent as any)[name] = nextName.match(/\d/g) ?
+                                [] :
+                                {};
+                            parent = (parent as any)[name];
+                        } else {
+                            // Jump into next property
+                            parent = (parent as any)[name];
+                        }
                     }
                 });
             }
@@ -993,8 +1005,8 @@ class NavigationBindings {
                         parentEditables.indexOf &&
                         parentEditables.indexOf(key)
                     ) >= 0 ||
-                    parentEditables[key] || // nested array
-                    parentEditables === true // simple array
+                    parentEditables[key] || // Nested array
+                    parentEditables === true // Simple array
                 )
             ) {
                 // Roots:
@@ -1267,4 +1279,4 @@ export default NavigationBindings;
  * @type {Array<Function>|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

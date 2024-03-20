@@ -351,7 +351,7 @@ const DrilldownDefaults: DrilldownOptions = {
  * @apioption lang.drillUpText
  */
 
-''; // keep doclets above detached in JS file
+''; // Keep doclets above detached in JS file
 
 /* *
  *

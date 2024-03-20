@@ -30,8 +30,7 @@ const {
     addEvent,
     createElement,
     fireEvent,
-    removeEvent,
-    pick
+    removeEvent
 } = U;
 
 import EditMode from '../EditMode/EditMode';
@@ -290,32 +289,23 @@ class Resizer {
         const currentCell = this.currentCell;
 
         if (currentCell) {
-            const currentRwdMode = this.editMode.rwdMode,
-                cellOffsets = GUIElement.getOffsets(currentCell),
+            const cellOffsets = GUIElement.getOffsets(currentCell),
                 rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top),
                 rowLevelCells =
                     (rowLevelInfo && rowLevelInfo.rowLevel.cells) || [];
 
-            let cellContainer, cell, optionsWidth;
+            let cellContainer, cell;
 
             for (let i = 0, iEnd = rowLevelCells.length; i < iEnd; ++i) {
                 cell = rowLevelCells[i];
                 cellContainer = cell.container;
-                optionsWidth = pick(
-                    ((cell.options.responsive || {})[currentRwdMode] || {})
-                        .width,
-                    cell.options.width
-                );
 
                 // Do not convert width on the current cell and next siblings.
                 if (cell === currentCell) {
                     break;
                 }
 
-                if (
-                    cellContainer &&
-                    (!optionsWidth || optionsWidth === 'auto')
-                ) {
+                if (cellContainer) {
                     cellContainer.style.flex =
                         '0 0 ' + cellContainer.offsetWidth + 'px';
                     this.tempSiblingsWidth.push(cell);
@@ -450,8 +440,6 @@ class Resizer {
         const currentCell = this.currentCell as Resizer.ResizedCell;
         const cellContainer = currentCell && currentCell.container;
         const currentDimension = this.currentDimension;
-        const sidebar = this.editMode.sidebar;
-        const currentRwdMode = sidebar && sidebar.editMode.rwdMode;
 
         if (
             currentCell &&
@@ -472,7 +460,6 @@ class Resizer {
                     '%';
 
                 currentCell.setSize(newWidth);
-                currentCell.updateSize(newWidth, currentRwdMode);
                 this.startX = e.clientX;
             }
 

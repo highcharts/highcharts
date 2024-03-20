@@ -70,7 +70,8 @@
                 zoneDistance: 3
             },
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>' +
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    ' {series.name}:<br/>' +
                 '110%: <b>{point.y4}</b><br/>' +
                 '105%: <b>{point.y3}</b><br/>' +
                 '100%: <b>{point.y}</b><br/>' +
@@ -111,7 +112,12 @@
             },
             getLinearRegressionZones: getLinearRegressionZones,
 
-            linesApiNames: ['highRangeBottomLine', 'closeRangeBottomLine', 'closeRangeTopLine', 'highRangeTopLine'],
+            linesApiNames: [
+                'highRangeBottomLine',
+                'closeRangeBottomLine',
+                'closeRangeTopLine',
+                'highRangeTopLine'
+            ],
             nameBase: 'Linear regression zones',
             nameComponents: ['zoneDistance'],
             nameSuffixes: ['%'],
@@ -123,8 +129,7 @@
 
     /* eslint-disable no-underscore-dangle */
     const multipleLinesMixin = (
-        Highcharts._modules &&
-        Highcharts._modules['Mixins/MultipleLines.js']
+        Highcharts._modules?.['Mixins/MultipleLines.js']
     );
 
     if (multipleLinesMixin) {
@@ -138,7 +143,16 @@
                 toYData: multipleLinesMixin.toYData
             }
         );
-    } else { // Highcharts v9.2.3+
+
+    // Highcharts v9.2.3 - v11.3.0
+    } else if (
+        Highcharts._modules?.['Stock/Indicators/MultipleLinesComposition.js']
+    ) {
+        Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js']
+            .compose(Highcharts.seriesTypes.linearregressionzones);
+
+    // Highcharts v11.4.0+
+    } else {
         Highcharts.MultipleLinesComposition.compose(
             Highcharts.Series.types.linearregressionzones
         );

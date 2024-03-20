@@ -1,5 +1,6 @@
 const csvData = document.getElementById('csv').innerText;
 
+/* eslint-disable max-len */
 Dashboards.board(
     'container',
     {
@@ -90,17 +91,13 @@ Dashboards.board(
         },
         components: [
             {
-                cell: 'db-col-0-nolayout',
+                renderTo: 'db-col-0-nolayout',
                 type: 'Highcharts',
                 connector: {
                     id: 'sample'
                 },
                 sync: {
                     highlight: true
-                },
-                columnAssignment: {
-                    Food: 'x',
-                    'Vitamin A': 'y'
                 },
                 title: {
                     text: 'Column 0'
@@ -118,7 +115,7 @@ Dashboards.board(
                 }
             },
             {
-                cell: 'db-col-1-row-0',
+                renderTo: 'db-col-1-row-0',
                 type: 'HTML',
 
                 title: {
@@ -135,7 +132,7 @@ Dashboards.board(
                 ]
             },
             {
-                cell: 'db-col-1-row-1A',
+                renderTo: 'db-col-1-row-1A',
                 type: 'HTML',
                 elements: [
                     {
@@ -148,7 +145,7 @@ Dashboards.board(
                 ]
             },
             {
-                cell: 'db-col-1-row-1B-row-0',
+                renderTo: 'db-col-1-row-1B-row-0',
                 type: 'HTML',
                 elements: [
                     {
@@ -161,7 +158,7 @@ Dashboards.board(
                 ]
             },
             {
-                cell: 'db-col-1-row-1B-row-1A',
+                renderTo: 'db-col-1-row-1B-row-1A',
                 type: 'HTML',
                 elements: [
                     {
@@ -174,7 +171,7 @@ Dashboards.board(
                 ]
             },
             {
-                cell: 'db-col-1-row-1B-row-1B',
+                renderTo: 'db-col-1-row-1B-row-1B',
                 type: 'HTML',
                 elements: [
                     {
@@ -188,7 +185,7 @@ Dashboards.board(
             },
 
             {
-                cell: 'db-col-1-row-2',
+                renderTo: 'db-col-1-row-2',
                 type: 'HTML',
                 elements: [
                     {
@@ -201,7 +198,7 @@ Dashboards.board(
                 ]
             },
             {
-                cell: 'db-col-2-nolayout',
+                renderTo: 'db-col-2-nolayout',
                 type: 'DataGrid',
                 connector: {
                     id: 'sample'

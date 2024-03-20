@@ -300,7 +300,7 @@ class AxisResizer {
             // Main axis is included in the prev array by default
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
-            // prev and next configs
+            // Prev and next configs
             axesConfigs: Array<AnyRecord> = [],
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -339,9 +339,9 @@ class AxisResizer {
                         (
                             // If it's first elem. in first group
                             isFirst ?
-                                // then it's an Axis object
+                                // Then it's an Axis object
                                 axisInfo as any :
-                                // else it should be an id
+                                // Else it should be an id
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,

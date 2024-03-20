@@ -15,7 +15,7 @@
  * */
 
 export interface NavigationBindingsLike {
-    // declare module to add members to NavigationBindings
+    // Declare module to add members to NavigationBindings
 
     // Private properties added by bindings:
 

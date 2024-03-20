@@ -467,7 +467,8 @@ QUnit.test('positioning', assert => {
     // Test tooltip position when point is inside plot area
     assert.ok(
         isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip anchorY aligned within yAxis when point is inside plot area'
+        'Should have Series 2 tooltip anchorY aligned within yAxis when ' +
+        'point is inside plot area'
     );
 });
 
@@ -524,7 +525,8 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
         assert.strictEqual(
             chart.series[0].tt,
             undefined,
-            'When a point is outside the plot height, its tooltip should not show'
+            'When a point is outside the plot height, its tooltip should not ' +
+            'show'
         );
     } finally {
         container.style.width = originalContainerWidth;

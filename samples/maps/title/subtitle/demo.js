@@ -22,8 +22,10 @@
             style: {
                 color: '#303030'
             },
-            text: 'This is a subtitle text<br>with <span style="font-style:italic">formatted</span><br>' +
-                    'and <span style="color: green; font-weight:bold">colored</span> text',
+            text: 'This is a subtitle text<br>with <span ' +
+                'style="font-style:italic">formatted</span><br>' +
+                    'and <span style="color: green; font-weight:bold">' +
+                    'colored</span> text',
             verticalAlign: 'middle',
             x: 0,
             y: 50

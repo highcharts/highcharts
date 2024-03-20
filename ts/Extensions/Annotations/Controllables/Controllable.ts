@@ -326,7 +326,7 @@ abstract class Controllable implements ControlTarget {
  * */
 
 interface Controllable extends ControllableLike, ControlTarget {
-    // placeholder for additional class members
+    // Placeholder for additional class members
 }
 
 ControlTarget.compose(Controllable);
@@ -381,4 +381,4 @@ export default Controllable;
  * @type {Array<Highcharts.Point>}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

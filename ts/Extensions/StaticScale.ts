@@ -116,7 +116,7 @@ function chartAdjustHeight(
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale as any);
 
-                let diff = height - chart.plotHeight;
+                const diff = height - chart.plotHeight;
 
                 if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
@@ -180,4 +180,4 @@ export default StaticScale;
  * @apioption yAxis.staticScale
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

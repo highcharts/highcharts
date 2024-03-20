@@ -14,8 +14,10 @@ Highcharts.chart('container', {
     },
     colors: ['red', 'orange', 'green', 'blue', 'purple', 'brown'],
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
     series: [{
         data: [4, 3, 5, 4, 6, 1],

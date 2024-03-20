@@ -23,15 +23,19 @@ QUnit.test(
             });
 
         assert.strictEqual(
-            Math.round(chart.series[0].legendItem.symbol
-                .getBBox().height),
+            Math.round(
+                chart.series[0].legendItem.symbol
+                    .getBBox().height
+            ),
             Math.round(chart.legend.symbolHeight),
             'Legend symbol is reduced to symbolHeight'
         );
 
         assert.strictEqual(
-            Math.round(chart.series[1].legendItem.symbol
-                .getBBox().height),
+            Math.round(
+                chart.series[1].legendItem.symbol
+                    .getBBox().height
+            ),
             Math.round(chart.legend.symbolHeight),
             'Legend image is reduced to symbolHeight'
         );

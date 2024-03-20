@@ -448,7 +448,7 @@ namespace BrokenAxis {
                 gapSize = groupingSize;
             }
 
-            // extension for ordinal breaks
+            // Extension for ordinal breaks
             let current, next;
             while (i--) {
                 // Reassign next if it is not visible
@@ -464,7 +464,7 @@ namespace BrokenAxis {
                 if ((next.x as any) - (current.x as any) > gapSize) {
                     const xRange = ((current.x as any) + (next.x as any)) / 2;
 
-                    points.splice( // insert after this one
+                    points.splice( // Insert after this one
                         i + 1,
                         0,
                         {

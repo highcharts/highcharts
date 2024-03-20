@@ -120,7 +120,7 @@ class MapChart extends Chart {
                     followTouchMove: false
                 }
             },
-            userOptions // user's options
+            userOptions // User's options
         );
 
         super.init(options, callback);
@@ -311,7 +311,7 @@ namespace MapChart {
             const split = path.split(/[ ,;]+/);
 
             arr = split.map((item): (number|string) => {
-                if (!/[A-za-z]/.test(item)) {
+                if (!/[A-Za-z]/.test(item)) {
                     return parseFloat(item);
                 }
                 return item;

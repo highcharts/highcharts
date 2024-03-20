@@ -107,7 +107,7 @@ const HeikinAshiDefaults: HeikinAshiSeriesOptions = {
  * @apioption series.heikinashi.data
  */
 
-''; // adds doclets above to transpiled
+''; // Adds doclets above to transpiled
 
 /* *
  *

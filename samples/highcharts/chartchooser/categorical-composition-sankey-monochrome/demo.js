@@ -11,7 +11,8 @@ Highcharts.chart('container', {
     tooltip: {
         headerFormat: null,
         pointFormat:
-      '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight} million USD',
+      '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight} ' +
+      'million USD',
         nodeFormat: '{point.name}: {point.sum} million USD'
     },
     series: [

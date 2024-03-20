@@ -148,11 +148,12 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public deferLayout(): void {
-        let layoutOptions = this.options.layoutAlgorithm,
+        const layoutOptions = this.options.layoutAlgorithm,
+            chartOptions = this.chart.options.chart;
+
+        let layout: ReingoldFruchtermanLayout,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
-            graphLayoutsLookup = this.chart.graphLayoutsLookup,
-            chartOptions = this.chart.options.chart,
-            layout: ReingoldFruchtermanLayout;
+            graphLayoutsLookup = this.chart.graphLayoutsLookup;
 
         if (!this.visible) {
             return;
@@ -365,7 +366,7 @@ class NetworkgraphSeries extends Series {
         const attribs =
             Series.prototype.markerAttribs.call(this, point, state);
 
-        // series.render() is called before initial positions are set:
+        // Series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
         }
@@ -384,13 +385,14 @@ class NetworkgraphSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        let pointState = state || point && point.state || 'normal',
-            attribs = Series.prototype.pointAttribs.call(
-                this,
-                point,
-                pointState
-            ),
+        const pointState = state || point && point.state || 'normal',
             stateOptions = (this.options.states as any)[pointState];
+
+        let attribs = Series.prototype.pointAttribs.call(
+            this,
+            point,
+            pointState
+        );
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
@@ -443,7 +445,8 @@ class NetworkgraphSeries extends Series {
             series.redrawHalo(hoverPoint);
         }
 
-        if (series.chart.hasRendered &&
+        if (
+            series.chart.hasRendered &&
             !(series.options.dataLabels as any).allowOverlap
         ) {
             series.nodes.concat(series.points).forEach(function (node): void {
@@ -647,4 +650,4 @@ export default NetworkgraphSeries;
  *        The event that occurred.
  */
 
-''; // detach doclets above
+''; // Detach doclets above

@@ -182,7 +182,7 @@ function onChartAfterSetChartSize(
                 );
         }
 
-        if (xAxis && yAxis) { // false if navigator is disabled (#904)
+        if (xAxis && yAxis) { // False if navigator is disabled (#904)
 
             if (this.inverted) {
                 xAxis.options.left = yAxis.options.left = navigator.left;
@@ -205,7 +205,8 @@ function onChartAfterUpdate(
     event: Chart.AfterUpdateEventObject
 ): void {
 
-    if (!this.navigator && !this.scroller &&
+    if (
+        !this.navigator && !this.scroller &&
         ((this.options.navigator as any).enabled ||
         (this.options.scrollbar as any).enabled)
     ) {
@@ -227,7 +228,8 @@ function onChartBeforeRender(
 ): void {
     const options = this.options;
 
-    if ((options.navigator as any).enabled ||
+    if (
+        (options.navigator as any).enabled ||
         (options.scrollbar as any).enabled
     ) {
         this.scroller = this.navigator = new NavigatorConstructor(this);
@@ -247,7 +249,8 @@ function onChartBeforeShowResetZoom(
         navigator = chartOptions.navigator,
         rangeSelector = chartOptions.rangeSelector;
 
-    if (((navigator && navigator.enabled) ||
+    if (
+        ((navigator && navigator.enabled) ||
         (rangeSelector && rangeSelector.enabled)) &&
         ((!isTouchDevice &&
         this.zooming.type === 'x') ||
@@ -284,7 +287,8 @@ function onChartUpdate(
     const navigatorOptions = (e.options.navigator || {}),
         scrollbarOptions = (e.options.scrollbar || {});
 
-    if (!this.navigator && !this.scroller &&
+    if (
+        !this.navigator && !this.scroller &&
         (navigatorOptions.enabled || scrollbarOptions.enabled)
     ) {
         merge(true, this.options.navigator, navigatorOptions);

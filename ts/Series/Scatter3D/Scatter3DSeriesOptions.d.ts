@@ -23,7 +23,7 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
  * */
 
 export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

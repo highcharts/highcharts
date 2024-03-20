@@ -122,7 +122,7 @@ class TreegraphLayout {
                     // single parent-child pairs till the column is achieved.
                     let gapSize = child.level - node.level - 1;
 
-                    // parent -> dummyNode -> child
+                    // Parent -> dummyNode -> child
                     while (gapSize > 0) {
                         child = TreegraphLayout.createDummyNode(
                             node,

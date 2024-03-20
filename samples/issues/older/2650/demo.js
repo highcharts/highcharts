@@ -1,7 +1,8 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Data label was mispositioned due to rounding error, Highcharts 3.0.9'
+            text: 'Data label was mispositioned due to rounding error, ' +
+                'Highcharts 3.0.9'
         },
         series: [{
             type: 'pie',

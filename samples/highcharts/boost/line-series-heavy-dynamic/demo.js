@@ -51,7 +51,8 @@ const chart =  Highcharts.stockChart('container', {
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text:
+            'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
     },
 
     navigator: {

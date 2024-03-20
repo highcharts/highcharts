@@ -541,7 +541,8 @@
             dateFormat(
                 '%Y-%m-%d',
                 new Date(
-                    'Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'
+                    'Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight ' +
+                    'Time)'
                 )
             )
         );
@@ -952,7 +953,8 @@
         assert.strictEqual(
             result,
             7,
-            'initialValue = 1 - should return sum of values in array plus intialValue.'
+            'initialValue = 1 - should return sum of values in array plus ' +
+            'intialValue.'
         );
 
         assert.deepEqual(
