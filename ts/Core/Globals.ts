@@ -201,7 +201,10 @@ namespace Globals {
                 doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
             ).createSVGRect
         ),
-        userAgent = (win.navigator && win.navigator.userAgent) || '',
+
+        userAgent =
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0)' +
+            ' Gecko/20100101 Firefox/123.0',
         isChrome = userAgent.indexOf('Chrome') !== -1,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
         isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
