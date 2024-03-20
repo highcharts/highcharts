@@ -358,8 +358,8 @@ async function setupDashboard() {
         rowObjNational['postal-code'] = 'US';
 
         // RegEx for splitting a single line
-        const csvSplit = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
-        const tidyCol = /[,"]/g;
+        const csvSplit = /(?:,|\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\n]*|(?:\n|$))/g;
+        const tidyCol = /[,\"]/g;
 
         // Create JSON data, one array per year
         const jsonData = {};
