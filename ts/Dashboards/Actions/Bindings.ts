@@ -76,6 +76,13 @@ namespace Bindings {
         let guiElement;
 
         if (typeof idOrElement === 'string') {
+            if (document.querySelectorAll('#' + idOrElement).length > 1) {
+                console.warn(
+                    'A few cells have the same id: `' + idOrElement +
+                    '`. The id should be unique per each cell.'
+                );
+            } 
+
             container = parentElement ?
                 parentElement.querySelector('#' + idOrElement) :
                 document.getElementById(idOrElement);
