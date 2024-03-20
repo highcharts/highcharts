@@ -25,8 +25,8 @@ import type Sync from '../../Sync/Sync';
 import type NavigatorComponent from '../NavigatorComponent.js';
 
 import Component from '../../Component';
-import NavigatorSyncs from './NavigatorSyncs.js';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
+import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
 const { Range: RangeModifier } = DataModifier.types;
@@ -62,7 +62,7 @@ const syncPair: Sync.SyncPair = {
                 let modifier = table.getModifier();
 
                 if (modifier instanceof RangeModifier) {
-                    NavigatorSyncs.setRangeOptions(
+                    NavigatorSyncUtils.setRangeOptions(
                         modifier.options.ranges,
                         filterColumn,
                         min,

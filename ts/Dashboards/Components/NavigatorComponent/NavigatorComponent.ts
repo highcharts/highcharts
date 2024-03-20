@@ -80,7 +80,7 @@ class NavigatorComponent extends Component {
     /**
      * Predefined sync configuration for the Navigator component.
      */
-    public static predefinedSyncConfig = NavigatorSyncs.predefinedSyncConfig;
+    public static predefinedSyncConfig = NavigatorSyncs;
 
 
     /* *

@@ -34,9 +34,10 @@ const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
     defaultSyncOptions: {}
 };
 
+
 /* *
  *
  *  Default export
  *
  * */
-export default { predefinedSyncConfig };
+export default predefinedSyncConfig;

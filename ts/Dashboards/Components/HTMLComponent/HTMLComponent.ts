@@ -90,7 +90,7 @@ class HTMLComponent extends Component {
     /**
      * Predefined sync config for HTML component.
      */
-    public static predefinedSyncConfig = HTMLSyncs.predefinedSyncConfig;
+    public static predefinedSyncConfig = HTMLSyncs;
 
     /* *
      *

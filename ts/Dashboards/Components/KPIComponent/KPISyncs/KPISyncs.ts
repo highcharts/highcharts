@@ -45,4 +45,4 @@ const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
  *  Default export
  *
  * */
-export default { predefinedSyncConfig };
+export default predefinedSyncConfig;

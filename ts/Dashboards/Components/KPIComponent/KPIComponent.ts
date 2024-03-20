@@ -125,7 +125,7 @@ class KPIComponent extends Component {
     /**
      * Predefined sync config for the KPI component.
      */
-    public static predefinedSyncConfig = KPISyncs.predefinedSyncConfig;
+    public static predefinedSyncConfig = KPISyncs;
 
     /**
      * Default options of the KPI component.

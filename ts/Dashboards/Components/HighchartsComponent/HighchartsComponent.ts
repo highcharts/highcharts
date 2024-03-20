@@ -30,7 +30,6 @@ import type {
     Chart,
     Options as ChartOptions,
     Highcharts as H,
-    Point,
     Series,
     SeriesOptions
 } from '../../Plugins/HighchartsTypes';
@@ -45,7 +44,6 @@ import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../Component.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
-import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
@@ -85,7 +83,7 @@ class HighchartsComponent extends Component {
     /**
      * Predefined sync config for Highcharts component.
      */
-    public static predefinedSyncConfig = HighchartsSyncs.predefinedSyncConfig;
+    public static predefinedSyncConfig = HighchartsSyncs;
 
     /**
      * Default options of the Highcharts component.
@@ -358,23 +356,6 @@ class HighchartsComponent extends Component {
     }
 
     /**
-     * Update the store, when the point is being dragged.
-     * @param  {Point} point Dragged point.
-     * @param  {Component.ConnectorTypes} store Connector to update.
-     */
-    private onChartUpdate(
-        point: Point,
-        store: Component.ConnectorTypes
-    ): void {
-        const table = store.table,
-            columnName = point.series.name,
-            rowNumber = point.index,
-            converter = new DataConverter(),
-            valueToSet = converter.asNumber(point.y);
-
-        table.setCell(columnName, rowNumber, valueToSet);
-    }
-    /**
      * Handles updating via options.
      * @param options
      * The options to apply.
@@ -386,7 +367,6 @@ class HighchartsComponent extends Component {
     ): Promise<void> {
         await super.update(options, false);
         this.setOptions();
-        /// this.filterAndAssignSyncOptions(HighchartsSyncHandlers); (DD)
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
@@ -720,32 +700,6 @@ class HighchartsComponent extends Component {
             });
         }
     }
-
-    // (DD) - need to handle this differently
-    // public setConnector(): this {
-    //     const chart = this.chart;
-    //     const connector = this.connectorHandler?.connector;
-
-    //     if (
-    //         connector &&
-    //         chart &&
-    //         chart.series &&
-    //         this.connector.table.id !== connector?.table.id
-    //     ) {
-    //         const storeTableID = this.connector.table.id;
-    //         for (let i = chart.series.length - 1; i >= 0; i--) {
-    //             const series = chart.series[i];
-
-    //             if (series.options.id?.indexOf(storeTableID) !== -1) {
-    //                 series.remove(false);
-    //             }
-    //         }
-    //     }
-    //     super.setConnector(connector);
-
-
-    //     return this;
-    // }
 
     public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds =

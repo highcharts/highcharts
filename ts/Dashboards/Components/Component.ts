@@ -599,6 +599,8 @@ abstract class Component {
                 connectorsHaveChanged = true;
                 break;
             }
+
+            this.connectorHandlers[i].updateOptions(connectorOptions[i]);
         }
 
         if (connectorsHaveChanged) {

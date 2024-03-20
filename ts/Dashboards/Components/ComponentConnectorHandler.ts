@@ -168,6 +168,10 @@ class ComponentConnectorHandler {
                 (e: DataTable.SetModifierEvent): void => {
                     if (e.type === 'afterSetModifier' && e.modified) {
                         this.setupTableListeners(e.modified);
+                        this.component.emit({
+                            type: 'tableChanged',
+                            targetConnector: connector
+                        });
                     }
                 }
             );
@@ -199,10 +203,8 @@ class ComponentConnectorHandler {
         if (connector) {
             if (table) {
                 [
-                    'afterDeleteColumns',
                     'afterDeleteRows',
                     'afterSetCell',
-                    'afterSetConnector',
                     'afterSetColumns',
                     'afterSetRows'
                 ].forEach((event: any): void => {
@@ -222,20 +224,6 @@ class ComponentConnectorHandler {
                     );
                 });
             }
-
-            this.tableEvents.push(connector.on('afterLoad', (): void => {
-                clearTimeout(this.tableEventTimeout);
-                this.tableEventTimeout = Globals.win.setTimeout(
-                    (): void => {
-                        this.component.emit({
-                            target: this.component,
-                            type: 'tableChanged',
-                            targetConnector: connector
-                        });
-
-                        this.tableEventTimeout = void 0;
-                    });
-            }));
         }
     }
 
@@ -247,12 +235,7 @@ class ComponentConnectorHandler {
         const connector = this.connector;
         const tableEvents = this.tableEvents;
 
-        if (tableEvents.length) {
-            tableEvents.forEach(
-                (removeEventCallback): void => removeEventCallback()
-            );
-            tableEvents.length = 0;
-        }
+        this.destroy();
 
         if (connector) {
             tableEvents.push(connector.table.on(
@@ -275,23 +258,15 @@ class ComponentConnectorHandler {
         }
     }
 
-    public async update(
+    public updateOptions(
         newOptions: ComponentConnectorHandler.ConnectorOptions
-    ): Promise<void> {
+    ): void {
         this.options = newOptions;
-
-        if (this.connectorId !== newOptions.id) {
-            const connector =
-                await this.component.board.dataPool.getConnector(newOptions.id);
-
-            this.setConnector(connector);
-        }
     }
 
     public destroy(): void {
-        // Unregister events (DD) - check the difference between this and
-        // clearTableListeners.
-        this.tableEvents.forEach((eventCallback): void => eventCallback());
+        this.tableEvents.forEach((clearEvent): void => clearEvent());
+        this.tableEvents.length = 0;
     }
 }
 

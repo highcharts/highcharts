@@ -21,7 +21,6 @@
 
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
-import type ComponentConnectorHandler from '../ComponentConnectorHandler';
 import type { DataGrid, DataGridNamespace } from '../../Plugins/DataGridTypes';
 import type DataTable from '../../../Data/DataTable';
 import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
@@ -62,7 +61,7 @@ class DataGridComponent extends Component {
     /**
      * Predefined sync config for the DataGrid component.
      */
-    public static predefinedSyncConfig = DataGridSyncs.predefinedSyncConfig;
+    public static predefinedSyncConfig = DataGridSyncs;
 
     /** @private */
     public static DataGridNamespace?: DataGridNamespace;

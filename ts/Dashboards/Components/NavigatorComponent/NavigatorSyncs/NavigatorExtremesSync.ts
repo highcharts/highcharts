@@ -27,7 +27,7 @@ import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorComponent from '../NavigatorComponent.js';
-import NavigatorSyncs from './NavigatorSyncs.js';
+import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
 const { Range: RangeModifier } = DataModifier.types;
@@ -144,7 +144,10 @@ const syncPair: Sync.SyncPair = {
                     max !== null && typeof max !== 'undefined' &&
                     min !== null && typeof min !== 'undefined'
                 ) {
-                    NavigatorSyncs.unsetRangeOptions(ranges, extremesColumn);
+                    NavigatorSyncUtils.unsetRangeOptions(
+                        ranges, extremesColumn
+                    );
+
                     ranges.unshift({
                         column: extremesColumn,
                         maxValue: max,

@@ -25,13 +25,11 @@ import DataGridExtremesSync from './DataGridExtremesSync.js';
 import DataGridHighlightSync from './DataGridHighlightSync.js';
 import DataGridVisibilitySync from './DataGridVisibilitySync.js';
 
-
 /* *
 *
-*  Constants
+*  Namespace
 *
 * */
-
 const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
     defaultSyncPairs: {
         extremes: DataGridExtremesSync.syncPair,
@@ -51,4 +49,4 @@ const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
  *  Default export
  *
  * */
-export default { predefinedSyncConfig };
+export default predefinedSyncConfig;
