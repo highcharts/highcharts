@@ -46,21 +46,10 @@ const HELP = [
 ].join('\n');
 
 
-const KEYWORDS = [
-    'as',
-    'extends',
-    'implements',
-    'instanceof',
-    'is',
-    'keyof',
-    'typeof'
-];
-
-
 const MAP_PROPERTY_TYPES = {
-    '.dataLabels': 'DataLabelOptions',
+    '.dataLabels': 'Partial<DataLabelOptions>',
     '.legendType': '(\'point\'|\'series\')',
-    '.tooltip': 'TooltipOptions',
+    '.tooltip': 'Partial<TooltipOptions>',
     'series.heatmap.colorKey': 'string',
 };
 
@@ -195,11 +184,8 @@ function addImport(
     const imports = branch.imports = branch.imports || {};
     const types = imports[path] = imports[path] || [];
 
-    for (const part of type.split(/\W+/gsu)) {
-        if (
-            !isIntegratedType(part) &&
-            !types.includes(part)
-        ) {
+    for (const part of extractTypes(type)) {
+        if (!types.includes(part)) {
             types.push(part);
         }
     }
@@ -490,6 +476,28 @@ function decorateType(
 
 
 /**
+ * @param {string} type
+ */
+function extractTypes(
+    type
+) {
+    /** @type {Array<string>} */
+    const types = [];
+
+    for (const part of type.split(/\W+/gsu)) {
+        if (
+            !isIntegratedType(part) &&
+            !types.includes(part)
+        ) {
+            types.push(part);
+        }
+    }
+
+    return types;
+}
+
+
+/**
  * @param {string} path
  * @return {string|undefined}
  */
@@ -584,22 +592,30 @@ function generateImportCode(
         'utf8'
     );
 
-    /** @type {string|undefined} */
-    let defaultImport = '';
-    let namedImports = '';
+    /** @type {string|Array<string>} */
+    let defaultImport = [];
+    let namedImports = [];
 
     for (const item of imports) {
         if (moduleCode.includes(`export default ${item.trim()};`)) {
-            defaultImport = `${item}, `;
+            defaultImport.push(item);
         } else {
-            namedImports += `    ${item},\n`;
+            namedImports.push(item);
         }
     }
 
-    if (namedImports) {
-        namedImports = `{\n${namedImports}}`;
-    } else if (defaultImport) {
-        defaultImport = defaultImport.substring(0, defaultImport.length - 2);
+    if (namedImports.length) {
+        if (namedImports.length === 1) { // > 1 comma
+            namedImports = `{ ${namedImports[0]} }`;
+        } else {
+            namedImports = `{\n${namedImports.join(',\n    ')}\n}`;
+        }
+    }
+    if (defaultImport.length) {
+        defaultImport = defaultImport[0];
+        if (typeof namedImports === 'string') {
+            defaultImport += ', ';
+        }
     }
 
     let relativePath = Path.relative(moduleFolder, importPath);
@@ -610,7 +626,7 @@ function generateImportCode(
             `./${relativePath}`
     );
 
-    return `\nimport ${defaultImport}${namedImports} from '${relativePath}';`
+    return `import ${defaultImport}${namedImports} from '${relativePath}';`
 }
 
 
@@ -738,13 +754,15 @@ function generateTypeImports(
             TS.isImportDeclaration(node)
         ) {
             const path = getImportPath(node);
-            const clause = node.importClause
-                ?.getText()
-                .replace(/^type\s+|[{}]/gsu, '')
-                .split(/,/gu)
-                .map(item => item.trim());
+            const nodeTypes = extractTypes(node.importClause?.getText());
+            const allTypes = imports[path] = imports[path] || [];
 
-            imports[path] = clause;
+            for (const nodeType of nodeTypes) {
+                if (!allTypes.includes(nodeType)) {
+                    allTypes.push(nodeType);
+                }
+            }
+
         }
     };
 
@@ -758,16 +776,16 @@ function generateTypeImports(
             /** @type {Array<string>} */
             let branchTypes;
             /** @type {Record<string,Array<string>>} */
-            let codeTypes;
+            let allTypes;
 
             for (const path in branchImports) {
 
                 branchTypes = branchImports[path];
-                codeTypes = imports[path] = imports[path] || [];
+                allTypes = imports[path] = imports[path] || [];
 
                 for (const branchType of branchTypes) {
-                    if (!codeTypes.includes(branchType)) {
-                        codeTypes.push(branchType);
+                    if (!allTypes.includes(branchType)) {
+                        allTypes.push(branchType);
                     }
                 }
 
@@ -819,8 +837,18 @@ function generateTypeImports(
                 ]);
             }
         }
-
+        console.log(Object.keys(imports));
+        console.log(replacements.map(r => r[3]));
         for (const replacement of replacements.sort((a, b) => b[0] - a[0])) {
+            console.log(
+                'REPLACING',
+                sourceCode.substring(replacement[0], replacement[1]),
+                generateImportCode(
+                    currentPath,
+                    replacement[2],
+                    replacement[3]
+                )
+            );
             sourceCode = (
                 sourceCode.substring(0, replacement[0]) +
                 generateImportCode(
@@ -1162,14 +1190,10 @@ function isIntegratedType(
     type
 ) {
     return (
-        KEYWORDS.includes(type) ||
         PRIMITIVES.includes(type) ||
         type.length < 2 ||
         type.startsWith('Array') ||
-        (
-            type.startsWith('T') &&
-            isCapitalCase(type[1])
-        )
+        !isCapitalCase(type)
     )
 }
 
