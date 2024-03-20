@@ -1550,18 +1550,20 @@ class SVGElement implements SVGElementLike {
                 const tp = this.element.querySelector('textPath');
 
                 if (tp) {
-                    const text = tp?.querySelector('tspan') || tp,
-                        polygon: BBoxObject['polygon'] = [],
+                    const polygon: BBoxObject['polygon'] = [],
                         // The `b` value is the distance from the baseline to
                         // the top of the text
                         { b, h } = this.renderer.fontMetrics(this.element),
                         // The descender is the distance from the baseline to
                         // the bottom of the text
                         descender = h - b,
-                        lines = text.innerHTML.split(
-                            '<tspan class="highcharts-br" dy="19" x="0">' +
-                            '​</tspan>'
-                        ),
+                        lines = tp
+                            .innerHTML
+                            .replace(/(^<tspan>|<\/tspan>$)/gm, '')
+                            .split(
+                                '<tspan class="highcharts-br" dy="19" x="0">' +
+                                '​</tspan>'
+                            ),
                         numOfLines = lines.length;
 
                     // Calculate top and bottom coordinates for either the start
@@ -1573,7 +1575,7 @@ class SVGElement implements SVGElementLike {
                     ): [[number, number], [number, number]] => {
                         const { x, y } = positionOfChar,
                             rotation = (
-                                text.getRotationOfChar(charIndex) - 90
+                                tp.getRotationOfChar(charIndex) - 90
                             ) * deg2rad,
                             cosRot = Math.cos(rotation),
                             sinRot = Math.sin(rotation);
@@ -1610,7 +1612,7 @@ class SVGElement implements SVGElementLike {
                                 ),
                                 [lower, upper] = appendTopAndBottom(
                                     srcCharIndex,
-                                    text.getStartPositionOfChar(srcCharIndex)
+                                    tp.getStartPositionOfChar(srcCharIndex)
                                 );
 
                             if (lineCharIndex === 0) {
@@ -1629,7 +1631,7 @@ class SVGElement implements SVGElementLike {
                         i += line.length - 1;
 
                         const srcCharIndex = i + lineIndex + lineIndex,
-                            charPos = text.getEndPositionOfChar(srcCharIndex),
+                            charPos = tp.getEndPositionOfChar(srcCharIndex),
                             [lower, upper] = appendTopAndBottom(
                                 srcCharIndex,
                                 charPos
