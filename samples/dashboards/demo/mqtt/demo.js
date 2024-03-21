@@ -55,12 +55,10 @@ function createDataConnector(connId) {
 }
 
 
-function createKpiComponent(unitIndex, title) {
+function createKpiComponent(pgIdx, title, maxPowr) {
     return {
         type: 'KPI',
-        renderTo: 'kpi-agg-' + unitIndex,
-        value: 0,
-        valueFormat: '{value}',
+        renderTo: 'kpi-agg-' + pgIdx,
         title: title,
         chartOptions: {
             chart: kpiGaugeOptions.chart,
@@ -68,7 +66,11 @@ function createKpiComponent(unitIndex, title) {
             yAxis: {
                 ...kpiGaugeOptions.yAxis,
                 min: 0,
-                max: 20, // TBD: use actual data from power generation unit
+                max: maxPowr,
+                title: {
+                    text: 'Power',
+                    y: -55
+                },
                 accessibility: {
                     description: title
                 }
@@ -78,10 +80,10 @@ function createKpiComponent(unitIndex, title) {
 }
 
 
-function createChartComponent(connId, unitIndex, title) {
+function createChartComponent(connId, pgIdx, title, maxPowr) {
     return {
         type: 'Highcharts',
-        renderTo: 'chart-agg-' + unitIndex,
+        renderTo: 'chart-agg-' + pgIdx,
         connector: {
             id: connId,
             columnAssignment: [{
@@ -104,6 +106,7 @@ function createChartComponent(connId, unitIndex, title) {
                 type: 'datetime'
             },
             yAxis: {
+                max: maxPowr,
                 title: {
                     text: powerUnit
                 }
@@ -125,10 +128,10 @@ function createChartComponent(connId, unitIndex, title) {
 }
 
 
-function createDatagridComponent(connId, unitIndex, title) {
+function createDatagridComponent(connId, pgIdx, title) {
     return {
         type: 'DataGrid',
-        renderTo: 'data-grid-' + unitIndex,
+        renderTo: 'data-grid-' + pgIdx,
         connector: {
             id: connId
         },
@@ -165,25 +168,32 @@ async function setupDashboard(powerPlantInfo) {
         };
 
         for (let i = 0; i < powerPlantInfo.nAggs; i++) {
+            const aggInfo = powerPlantInfo.aggs[i];
+
             // Power generator index (1...n)
-            const unitIndex = i + 1;
+            const pgIdx = i + 1;
 
             // Data connector ID
-            const connId = 'mqtt-data-' + unitIndex;
+            const connId = 'mqtt-data-' + pgIdx;
 
             // Name of power generator unit
-            const title = 'Aggregat ' + unitIndex;
+            const title = `Aggregat "${aggInfo.name}"`;
+
+            // Get maximum generated power
+            const maxPowr = aggInfo.P_max;
 
             // Data connectors
             powerGenUnits.connectors.push(createDataConnector(connId));
 
             // Dash components
-            powerGenUnits.components.push(createKpiComponent(unitIndex, title));
+            powerGenUnits.components.push(createKpiComponent(
+                pgIdx, title, maxPowr
+            ));
             powerGenUnits.components.push(
-                createChartComponent(connId, unitIndex, title)
+                createChartComponent(connId, pgIdx, title, maxPowr)
             );
             powerGenUnits.components.push(
-                createDatagridComponent(connId, unitIndex, title)
+                createDatagridComponent(connId, pgIdx, title)
             );
         }
         return powerGenUnits;
@@ -203,40 +213,46 @@ async function setupDashboard(powerPlantInfo) {
 
 async function updateBoard(powerPlantInfo) {
     const dataPool = board.dataPool;
+
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
-        const puId = i + 1;
-        const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
+        const pgIdx = i + 1;
+        const connId = 'mqtt-data-' + pgIdx;
 
-        if (dataTable.getRowCount() === 0) {
-            // Get power generation history history
-            const hist = powerPlantInfo.aggs[i].P_hist;
-            let time = new Date(hist.start).valueOf();
+        const dataTable = await dataPool.getConnectorTable(connId);
 
-            const step = hist.res * 1000; // Resolution: seconds
-            const rowData = [];
-            const histLen = hist.values.length;
+        // Clear the data
+        await dataTable.deleteRows();
 
-            for (let j = 0; j < histLen; j++) {
-                const power = hist.values[j];
+        // Get measurement history (24 hours, 10 minute intervals)
+        const hist = powerPlantInfo.aggs[i].P_hist;
+        let time = new Date(hist.start).valueOf();
 
-                // Add row with historical data (reversed)
-                rowData.push([time, power]);
+        const interval = hist.res * 1000; // Resolution: seconds
+        const rowData = [];
+        const histLen = hist.values.length;
 
-                // Next measurement
-                time += step;
-            }
-            // Add the rows to the data table
-            await dataTable.setRows(rowData);
-        } else {
-            // Add single measurement
-            const time = new Date(powerPlantInfo.time).valueOf();
-            const power = powerPlantInfo.aggs[i].P_gen;
+        for (let j = 0; j < histLen; j++) {
+            const power = hist.values[j];
 
-            // Add row with latest data
-            await dataTable.setRow([time, power]);
+            // Add row with historical data (reversed)
+            rowData.push([time, power]);
+
+            // Next measurement
+            time += interval;
         }
+
+        // Add the latest measurement
+        time = new Date(powerPlantInfo.time).valueOf();
+        const power = powerPlantInfo.aggs[i].P_gen;
+
+        // Add row with latest data
+        rowData.push([time, power]);
+
+        // Add all rows to the data table
+        await dataTable.setRows(rowData);
+
     }
-    // Refresh all components
+    // Refresh all Dashboards components
     await updateComponents(powerPlantInfo);
 }
 
@@ -268,22 +284,22 @@ async function updateComponents(powerPlantInfo) {
 
     // Update the KPI components
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
-        const puId = i + 1;
-        const connId = 'mqtt-data-' + puId;
+        const pgIdx = i + 1;
+        const connId = 'mqtt-data-' + pgIdx;
 
         // Get data
         const dataTable = await board.dataPool.getConnectorTable(connId);
         const rowCount = await dataTable.getRowCount();
 
         // KPI
-        const kpiComp = getComponent(board, 'kpi-agg-' + puId);
+        const kpiComp = getComponent(board, 'kpi-agg-' + pgIdx);
         await kpiComp.update({
             value: rowCount > 0 ?
                 dataTable.getCellAsNumber('power', rowCount - 1) : 0
         });
 
         // Chart
-        const chartComp = getComponent(board, 'chart-agg-' + puId);
+        const chartComp = getComponent(board, 'chart-agg-' + pgIdx);
         await chartComp.update({
             connector: {
                 id: connId
@@ -291,7 +307,7 @@ async function updateComponents(powerPlantInfo) {
         });
 
         // Datagrid
-        const gridComp = getComponent(board, 'data-grid-' + puId);
+        const gridComp = getComponent(board, 'data-grid-' + pgIdx);
         await gridComp.update({
             connector: {
                 id: connId
@@ -305,8 +321,26 @@ async function updateComponents(powerPlantInfo) {
 /* eslint-disable max-len */
 
 // Documentation for PAHO MQTT client:
-// https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
-// https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
+//     https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
+//     https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
+
+// NB! REMOVE before publishing on the web !!!!
+
+// Private credentials: highsoft, Qs0URPjxnWlcuYBmFWNK
+// Private topics: prod/[stad]/[kraftverk]/overview
+
+// Available:
+//  - LEIK/leikanger
+//  - SOG/aaroy_I|aaroy_II
+//  - VAD/dyrnesli
+//  - SOG/aaroy_I
+//  - KUV/fosseteigen|tynjadalen|leinafoss
+//  - NYD/helgheim|timbra|nydalselva|indreboe|sandal|steinsvik
+//  - SMKR/dale|thue|horpedal
+//  - FJL/berge|bjaastad|hatlestad|jordal|lidal|romoyri
+
+// For test
+const kraftverk = 'SOG/aaroy_II';
 
 // MQTT handle
 let mqtt;
@@ -315,10 +349,12 @@ let mqtt;
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
 const reconnectTimeout = 10000;
-const mqttTopic = 'public/test/overview';
+const mqttTopic = 'prod/' + kraftverk + '/overview'; // public/test/overview';
 const mqttQos = 0;
-const userName = 'public';
-const password = 'public';
+
+// NB! Replace with public before publishing on the web !!!!!
+const userName = 'highsoft'; // 'public';
+const password = 'Qs0URPjxnWlcuYBmFWNK'; // 'public';
 
 // Connection status
 let connectFlag;
