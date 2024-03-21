@@ -63,7 +63,7 @@ const board = new Dashboards.Board('container', {...})
         },
         ```
 
-    * __components__ - this is an array with components to be inserted into the dashboard. To place a component in a cell, use the cell id. You also have to declare the type of the component (more on that in a dedicated chapter) and its options.
+    * __components__ - this is an array with components to be inserted into the dashboard. To place a component in a cell, use the cell id. You also have to declare the type of the component (more on that in a dedicated article) and its options.
 
         ```js
         components: [{
