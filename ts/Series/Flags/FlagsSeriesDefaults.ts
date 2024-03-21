@@ -42,6 +42,11 @@ import { Palette } from '../../Core/Color/Palettes.js';
  */
 const FlagsSeriesDefaults: FlagsSeriesOptions = {
 
+    /**
+     * The corner radius of the border surrounding each flag. For `squarepin`
+     * shaped flags only. A number signifies pixels. A percentage string, like
+     * for example 50%, signifies a relative size.
+     */
     borderRadius: 0,
 
     /**
