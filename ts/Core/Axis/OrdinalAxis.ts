@@ -1261,9 +1261,11 @@ namespace OrdinalAxis {
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
-                            firstAnchor: 'firstPoint',
-                            anchor: 'middle',
-                            lastAnchor: 'lastPoint',
+                            firstAnchor:
+                                series.options.dataGrouping?.firstAnchor,
+                            anchor: series.options.dataGrouping?.anchor,
+                            lastAnchor:
+                                series.options.dataGrouping?.firstAnchor,
                             enabled: true,
                             forced: true,
                             // Doesn't matter which, use the fastest
