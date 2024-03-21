@@ -999,7 +999,7 @@ function getNodesChildren(
     const children = [];
 
     TS.forEachChild(node, child => {
-        children.push(child)
+        children.push(child);
     });
 
     return children;
@@ -1400,6 +1400,10 @@ function writeDocletsTree(
             }
 
             if (!isRegistered(branch)) {
+                branch.doclet = branch.doclet || [];
+                if (!getTagText(branch.doclet, 'apioption')) {
+                    addTag(branch.doclet, 'apioption', branch.fullName)
+                }
                 changes.push([
                     target.getEnd(),
                     TS.SyntaxKind.InterfaceDeclaration,
@@ -1462,6 +1466,10 @@ function writeDocletsTree(
                 targetComment +
                 targetCode.substring(change[0])
             );
+        }
+
+        if (!targetCode.includes('\n(\'\');')) {
+            targetCode += '\n(\'\');\n';
         }
 
         target = TS.createSourceFile(
