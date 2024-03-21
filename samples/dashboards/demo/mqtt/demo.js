@@ -170,7 +170,7 @@ async function setupDashboard(powerPlantInfo) {
             components: []
         };
 
-        for (let i = 0; i < powerPlantInfo.numGenerators; i++) {
+        for (let i = 0; i < powerPlantInfo.genCount; i++) {
             // Power generator index (1...n)
             const unitIndex = i + 1;
 
@@ -258,12 +258,14 @@ async function connectBoard(powerPlantInfo) {
         board = await setupDashboard(powerPlantInfo);
     }
 
-    const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
-    const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
+    const dataPool = board.dataPool;
+    for (let i = 0; i < powerPlantInfo.genCount; i++) {
+        const puId = i + 1;
+        const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
-    // Clear the data
-    await dataTable1.deleteRows();
-    await dataTable2.deleteRows();
+        // Clear the data
+        await dataTable.deleteRows();
+    }
 
     await updateComponents();
 }
@@ -348,7 +350,7 @@ window.onload = () => {
     msgCount = 0;
     connectFlag = false;
     connectBar.el = document.getElementById('connect_bar');
-    connectBar.offColor = connectBar.id.style.backgroundColor;
+    connectBar.offColor = connectBar.el.style.backgroundColor;
 };
 
 
@@ -372,13 +374,15 @@ function onFailure(message) {
 async function onMessageArrived(mqttPacketRaw) {
     const mqttData = JSON.parse(mqttPacketRaw.payloadString);
 
+    const powerPlantStatus = {
+        name: mqttData.name,
+        timestamp: mqttData.tst_iso,
+        genCount: mqttData.aggs.length,
+        data: mqttData.aggs
+    };
+
     if (msgCount === 0) {
         // Connect the Dashboard
-        const powerPlantStatus = {
-            name: mqttData.name,
-            timestamp: mqttData.tst_iso,
-            numGenerators: mqttData.aggs.length
-        };
         await connectBoard(powerPlantStatus);
         setStatus(`Data from <b>${powerPlantStatus.name}</b>.`); // Connected: ${powerPlantStatus.timestamp}`);
     }
