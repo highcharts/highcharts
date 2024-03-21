@@ -19,10 +19,11 @@
 
 
 import FS from 'node:fs';
+import FSLib from './gulptasks/lib/fs.js';
 import Path from 'node:path';
 import TS from 'typescript';
+import TSLib from './gulptasks/lib/ts.js';
 import Yargs from 'yargs';
-import FSLib from './gulptasks/lib/fs.js';
 
 
 /* *
@@ -30,9 +31,6 @@ import FSLib from './gulptasks/lib/fs.js';
  *  Constants
  *
  * */
-
-
-const DOCLET = /\/\*\*.*?\*\//gs;
 
 
 const HELP = [
@@ -131,28 +129,6 @@ const OPTION_CASTING = {
     'xrange': 'XRange'
 };
 
-const PRIMITIVES = [
-    '0',
-    'bigint',
-    'boolean',
-    'false',
-    'function',
-    'null',
-    'number',
-    'object',
-    'string',
-    'symbol',
-    'true',
-    'void',
-    'Array',
-    'Function',
-    'NaN',
-    'Number',
-    'Object',
-    'String',
-    'Symbol',
-    'undefined'
-];
 
 /* *
  *
@@ -174,17 +150,17 @@ let verbose = false;
 /**
  * @param {Record<string,*>} branch
  * @param {string} path
- * @param {string} type
+ * @param {string} statement
  */
 function addImport(
     branch,
     path,
-    type
+    statement
 ) {
     const imports = branch.imports = branch.imports || {};
     const types = imports[path] = imports[path] || [];
 
-    for (const part of extractTypes(type)) {
+    for (const part of TSLib.extractTypes(statement)) {
         if (!types.includes(part)) {
             types.push(part);
         }
@@ -207,32 +183,6 @@ function addTag(
 
 
 /**
- * @param {TS.Node} node
- */
-function debug(
-    node,
-    includeChildren
-) {
-    console.info(
-        node.kind,
-        TS.SyntaxKind[node.kind],
-        `[${node.getFullStart()}:${node.getEnd()}]`
-    );
-    if (includeChildren) {
-        TS.forEachChild(
-            node,
-            child => console.info(
-                ' ',
-                child.kind,
-                TS.SyntaxKind[child.kind],
-                `[${child.getFullStart()}:${child.getEnd()}]`
-            )
-        );
-    }
-}
-
-
-/**
  * @param {Record<string,*>} branch
  * @param {TS.Node} node
  * @param {TS.Node} previousNode
@@ -244,7 +194,7 @@ function decorateDoclet(
     previousNode,
     tree
 ) {
-    const doclets = getDocletsBetween(previousNode, node)
+    const doclets = TSLib.getDocletsBetween(previousNode, node)
 
     if (doclets.length) {
         const transfer = (jsdoc, branch) => {
@@ -366,12 +316,12 @@ function decorateType(
             TS.ScriptTarget.Latest,
             true
         );
-        for (const node of getNodesChildren(optionsSource)) {
+        for (const node of TSLib.getNodesChildren(optionsSource)) {
             if (
                 TS.isInterfaceDeclaration(node) &&
                 node.name.text.endsWith('Options')
             ) {
-                for (const child of getNodesChildren(node)) {
+                for (const child of TSLib.getNodesChildren(node)) {
                     if (
                         TS.isPropertySignature(child) &&
                         child.name.text === name
@@ -432,7 +382,7 @@ function decorateType(
         optionType = reflectInOptions(branch.name);
         if (optionType) {
             branch.isMappedType = true;
-            if (isCapitalCase(optionType)) {
+            if (!TSLib.isNativeType(optionType)) {
                 addImport(branch, 'ts/Core/Series/SeriesOptions', optionType);
             }
         }
@@ -442,17 +392,17 @@ function decorateType(
         !optionType &&
         TS.isPropertyAssignment(node)
     ) {
-        let child = getNodesLastChild(node);
+        let child = TSLib.getNodesLastChild(node);
 
         if (child) {
 
             if (TS.isBinaryExpression(child)) {
-                child = getNodesFirstChild(child);
+                child = TSLib.getNodesFirstChild(child);
             }
 
             optionType = (
                 reflectWithNode(child) ||
-                reflectWithNode(getNodesFirstChild(node))
+                reflectWithNode(TSLib.getNodesFirstChild(node))
             );
 
         }
@@ -495,7 +445,7 @@ function extractDocletsTree(
             TS.isVariableDeclaration(node) ||
             TS.isVariableDeclarationList(node)
         ) {
-            for (const child of getNodesChildren(node)) {
+            for (const child of TSLib.getNodesChildren(node)) {
                 process(child, previousNode, parentName, tree);
                 previousNode = child;
             }
@@ -519,7 +469,7 @@ function extractDocletsTree(
             }
 
             if (!branch.fullName) {
-                for (const child of getNodesChildren(node)) {
+                for (const child of TSLib.getNodesChildren(node)) {
                     process(child, previousNode, parentName, tree);
                     previousNode = child;
                 }
@@ -548,7 +498,7 @@ function extractDocletsTree(
 
             parentName = branch.fullName || parentName;
 
-            for (const child of getNodesChildren(node)) {
+            for (const child of TSLib.getNodesChildren(node)) {
                 process(child, previousChild, parentName, children);
                 previousChild = child;
             }
@@ -568,7 +518,7 @@ function extractDocletsTree(
     /** @type {TS.Node} */
     let previousNode;
 
-    for (const node of getNodesChildren(source)) {
+    for (const node of TSLib.getNodesChildren(source)) {
         process(node, previousNode, undefined, tree);
         previousNode = node;
     }
@@ -577,28 +527,6 @@ function extractDocletsTree(
         fileName: source.fileName,
         children: tree
     };
-}
-
-
-/**
- * @param {string} type
- */
-function extractTypes(
-    type
-) {
-    /** @type {Array<string>} */
-    const types = [];
-
-    for (const part of type.split(/\W+/gsu)) {
-        if (
-            !isIntegratedType(part) &&
-            !types.includes(part)
-        ) {
-            types.push(part);
-        }
-    }
-
-    return types;
 }
 
 
@@ -848,50 +776,6 @@ function getComment(
 
 
 /**
- * @param {TS.Node} node1
- * @param {TS.Node} node2
- * @return {Array<ReturnType<TS.getJSDocCommentsAndTags>>}
- */
-function getDocletsBetween(
-    node1, node2
-) {
-    /** @type {Array<ReturnType<TS.getJSDocCommentsAndTags>>} */
-    const doclets = [];
-    const source = node2.getSourceFile();
-    const start = node1?.end || node2.getFullStart();
-    const end = node2.getStart(source, false);
-
-    /** @type {ReturnType<TS.getJSDocCommentsAndTags>} */
-    let parts;
-
-    TS.forEachChild(
-        TS.createSourceFile(
-            'doclets.ts',
-            Array
-                .from(
-                    source
-                        .getFullText()
-                        .substring(start, end)
-                        .matchAll(DOCLET)
-                )
-                .map(match => match[0] + '\n\'\';\n')
-                .join(''),
-            TS.ScriptTarget.Latest,
-            true
-        ),
-        node => {
-            parts = TS.getJSDocCommentsAndTags(node);
-            if (parts.length) {
-                doclets.push(parts);
-            }
-        }
-    );
-
-    return doclets;
-}
-
-
-/**
  * @param {Record<string,*>} branch
  * @param {boolean} [ofParent]
  * @return {string|undefined}
@@ -967,46 +851,6 @@ function getMemberType(
 
 
 /**
- * @param {TS.Node} node
- * @return {TS.Node|undefined}
- */
-function getNodesFirstChild(
-    node
-) {
-    return getNodesChildren(node).shift();
-}
-
-
-/**
- * @param {TS.Node} node
- * @return {TS.Node|undefined}
- */
-function getNodesLastChild(
-    node
-) {
-    return getNodesChildren(node).pop();
-}
-
-
-/**
- * @param {TS.Node} node
- * @return {Array<TS.Node>}
- */
-function getNodesChildren(
-    node
-) {
-    /** @type {Array<TS.Node>} */
-    const children = [];
-
-    TS.forEachChild(node, child => {
-        children.push(child);
-    });
-
-    return children;
-}
-
-
-/**
  * @param {Record<string,*>} branch
  * @return {string}
  */
@@ -1034,36 +878,6 @@ function getTagText(
             return part.text;
         }
     }
-}
-
-
-/**
- * @param {string} type
- * @return {boolean}
- */
-function isIntegratedType(
-    type
-) {
-    return (
-        PRIMITIVES.includes(type) ||
-        type.length < 2 ||
-        type.startsWith('Array') ||
-        !isCapitalCase(type)
-    )
-}
-
-
-/**
- * @param {string} text
- * @return {boolean}
- */
-function isCapitalCase(
-    text
-) {
-    return (
-        text.charCodeAt(0) > 64 &&
-        text.charCodeAt(0) < 91
-    );
 }
 
 
@@ -1118,14 +932,14 @@ function mergeImports(
      */
     const extractImports = (node) => {
         if (TS.isSourceFile(node)) {
-            for (const child of getNodesChildren(node)) {
+            for (const child of TSLib.getNodesChildren(node)) {
                 extractImports(child);
             }
         } else if (
             TS.isImportDeclaration(node)
         ) {
             const path = getImportPath(node);
-            const nodeTypes = extractTypes(node.importClause?.getText());
+            const nodeTypes = TSLib.extractTypes(node.importClause?.getText());
             const allTypes = imports[path] = imports[path] || [];
 
             for (const nodeType of nodeTypes) {
@@ -1183,7 +997,7 @@ function mergeImports(
 
         let replacementEnd = 0;
 
-        for (const node of getNodesChildren(source)) {
+        for (const node of TSLib.getNodesChildren(source)) {
             if (TS.isImportDeclaration(node)) {
                 const path = getImportPath(node);
                 if (imports[path]) {
@@ -1191,8 +1005,11 @@ function mergeImports(
                     replacements.push([
                         node.getStart(),
                         node.getEnd(),
-                        imports[path],
-                        path,
+                        generateImportCode(
+                            currentPath,
+                            imports[path],
+                            path
+                        )
                     ]);
                 }
             }
@@ -1203,23 +1020,16 @@ function mergeImports(
                 replacements.push([
                     replacementEnd,
                     replacementEnd,
-                    imports[path],
-                    path
+                    '\n' + generateImportCode(
+                        currentPath,
+                        imports[path],
+                        path
+                    )
                 ]);
             }
         }
 
-        for (const replacement of replacements.sort((a, b) => b[0] - a[0])) {
-            sourceCode = (
-                sourceCode.substring(0, replacement[0]) +
-                generateImportCode(
-                    currentPath,
-                    replacement[2],
-                    replacement[3]
-                ) +
-                sourceCode.substring(replacement[1])
-            );
-        }
+        sourceCode = TSLib.changeSourceCode(sourceCode, replacements);
 
     }
 
@@ -1339,7 +1149,7 @@ function writeDocletsTree(
         }
 
         if (!TS.isModuleDeclaration(node)) {
-            for (const child of getNodesChildren(node)) {
+            for (const child of TSLib.getNodesChildren(node)) {
                 connectOptions(branch, child, node);
             }
         }
@@ -1358,7 +1168,7 @@ function writeDocletsTree(
     const addOptions = (branch) => {
 
         if (!isRegistered(branch)) {
-            for (const node of getNodesChildren(target)) {
+            for (const node of TSLib.getNodesChildren(target)) {
                 if (
                     TS.isInterfaceDeclaration(node) &&
                     getInterfaceName(branch, true) === node.name.text
@@ -1426,7 +1236,7 @@ function writeDocletsTree(
 
         // connect related options
         for (const branch of tree.children) {
-            for (const node of getNodesChildren(target)) {
+            for (const node of TSLib.getNodesChildren(target)) {
                 connectOptions(branch, node);
             }
         }
@@ -1445,41 +1255,42 @@ function writeDocletsTree(
             console.info('Applying', changes.length, 'change(s)...');
         }
 
-        let targetCode = target.getFullText();
+        /** @type {Array<[number,number,string]>} */
+        const replacements = [];
 
-        for (const change of changes.sort((a, b) => b[0] - a[0])) {
-            /** @type {string} */
-            let targetComment;
+        for (const change of changes) {
             switch (change[1]) {
                 case TS.SyntaxKind.InterfaceDeclaration:
-                    targetComment = generateInterfaceComment(change[2]);
+                    replacements.push([
+                        change[0],
+                        change[0],
+                        generateInterfaceComment(change[2])
+                    ]);
                     break;
                 case TS.SyntaxKind.PropertySignature:
-                    targetComment = generatePropertyComment(change[2]);
+                    replacements.push([
+                        change[0],
+                        change[0],
+                        generatePropertyComment(change[2])
+                    ]);
                     break;
                 default:
-                    targetComment = generateDynamicCode(change[2]);
+                    replacements.push([
+                        change[0],
+                        change[0],
+                        generateDynamicCode(change[2])
+                    ]);
                     break;
             }
-            targetCode = (
-                targetCode.substring(0, change[0]) +
-                targetComment +
-                targetCode.substring(change[0])
-            );
         }
+
+        target = TSLib.changeSourceFile(target, replacements);
+
+        let targetCode = mergeImports(target, tree);
 
         if (!targetCode.includes('\n(\'\');')) {
             targetCode += '\n(\'\');\n';
         }
-
-        target = TS.createSourceFile(
-            target.fileName,
-            targetCode,
-            TS.ScriptTarget.Latest,
-            true
-        );
-
-        targetCode = mergeImports(target, tree);
 
         FS.writeFileSync(target.fileName, targetCode, 'utf8');
 
@@ -1552,7 +1363,7 @@ async function moveSeriesDoclets(
         writeDocletsTree(target, tree);
 
         verbose && console.info('');
-        console.info('Updateing', source.fileName);
+        console.info('Cleaning', source.fileName);
 
         removeDoclets(source);
     }
