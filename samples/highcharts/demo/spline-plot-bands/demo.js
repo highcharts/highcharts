@@ -13,7 +13,8 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text: '15th & 16th of April, 2020 at two locations in Vik i Sogn, Norway',
+        text: '15th & 16th of April, 2020 at two locations in Vik i Sogn, ' +
+            'Norway',
         align: 'left'
     },
     xAxis: {
@@ -141,17 +142,21 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Hestavollane',
-        data: [5.4, 5.2, 5.7, 6.3, 5.2, 5.6, 6.1,
+        data: [
+            5.4, 5.2, 5.7, 6.3, 5.2, 5.6, 6.1,
             5.6, 5.9, 7.1, 8.6, 7.8, 8.6,
             8.0, 9.7, 11.2, 12.5, 13.1, 10.6,
-            10.9, 8.9, 9.5, 7.5, 3.5, 4.2]
+            10.9, 8.9, 9.5, 7.5, 3.5, 4.2
+        ]
 
     }, {
         name: 'Vik',
-        data: [0.2, 0.1, 0.1, 0.5, 0.3, 0.2, 0.1,
+        data: [
+            0.2, 0.1, 0.1, 0.5, 0.3, 0.2, 0.1,
             0.1, 0.1, 0.1, 0.2, 1.1, 1.3,
             2.0, 1.5, 1.5, 1.5, 1.4, 1.7,
-            2.0, 2.9, 2.1, 2.1, 3.5, 2.9]
+            2.0, 2.9, 2.1, 2.1, 3.5, 2.9
+        ]
     }],
     navigation: {
         menuItemStyle: {

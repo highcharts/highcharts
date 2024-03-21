@@ -268,7 +268,8 @@ namespace DataLabel {
             },
             justify = rotation === 0 ? pick(
                 options.overflow,
-                (enabledDataSorting ? 'none' : 'justify')
+                (enabledDataSorting ? 'none' : 'justify'
+                )
             ) === 'justify' : false;
 
         // Math.round for rounding errors (#2683), alignTo to allow column

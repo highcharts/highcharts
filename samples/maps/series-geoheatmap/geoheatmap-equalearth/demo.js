@@ -79,7 +79,8 @@
             data,
             type: 'geoheatmap',
             tooltip: {
-                pointFormat: 'Lat: {point.lat}, Lon: {point.lon} <br/> Value: {point.value}'
+                pointFormat: 'Lat: {point.lat}, Lon: {point.lon} <br/> ' +
+                    'Value: {point.value}'
             }
         }]
     });

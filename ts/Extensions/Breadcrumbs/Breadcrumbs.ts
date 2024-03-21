@@ -352,7 +352,8 @@ class Breadcrumbs {
             chart = breadcrumbs.chart,
             breadcrumbsOptions = breadcrumbs.options,
             lang = chart.options.lang,
-            textFormat = pick(breadcrumbsOptions.format,
+            textFormat = pick(
+                breadcrumbsOptions.format,
                 breadcrumbsOptions.showFullPath ?
                     '{level.name}' : '← {level.name}'
             ),

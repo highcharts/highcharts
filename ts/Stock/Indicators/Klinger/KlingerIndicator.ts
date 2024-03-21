@@ -352,7 +352,8 @@ class KlingerIndicator extends SMAIndicator {
                 if (calcSingal.length >= params.signalPeriod) {
                     signal = calcSingal.slice(-params.signalPeriod)
                         .reduce((prev, curr): number =>
-                            prev + curr) / params.signalPeriod;
+                            prev + curr
+                        ) / params.signalPeriod;
                 }
 
                 Klinger.push([xVal[i], KO, signal]);

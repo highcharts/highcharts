@@ -48,7 +48,8 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].points[7].x,
             pointStart + 2 * 10 * 24 * 36e5,
-            'X = 10 and pointInterval given, X value should be properly scaled by pointIntervalUnit and pointInterval'
+            'X = 10 and pointInterval given, X value should be properly ' +
+            'scaled by pointIntervalUnit and pointInterval'
         );
 
         chart.series[0].points[5].graphic.marked = true;

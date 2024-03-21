@@ -145,5 +145,8 @@
       "stylelint"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "dependencies": {
+    "eslint-plugin-brackets": "^0.1.3"
+  }
 }

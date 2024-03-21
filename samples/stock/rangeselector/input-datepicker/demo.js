@@ -17,7 +17,8 @@
         },
 
         subtitle: {
-            text: 'Note: This sample is obsolete as of v9.0, when native browser date pickers were implemented',
+            text: 'Note: This sample is obsolete as of v9.0, when native ' +
+                'browser date pickers were implemented',
             style: {
                 color: 'red'
             }

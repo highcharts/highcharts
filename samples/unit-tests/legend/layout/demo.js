@@ -86,7 +86,8 @@ QUnit.test('Legend layout', function (assert) {
             chart.series[0].legendItem.group.translateY -
                 chart.series[1].legendItem.group.translateY
         ) > 12,
-        'The overlapping items should have sufficient distance with useHTML (#12055)'
+        'The overlapping items should have sufficient distance with useHTML ' +
+        '(#12055)'
     );
 
     chart.legend.update({
@@ -100,7 +101,8 @@ QUnit.test('Legend layout', function (assert) {
             chart.series[0].legendItem.group.translateY -
                 chart.series[1].legendItem.group.translateY
         ) > 30,
-        'The overlapping items should have sufficient distance when an item margin is applied'
+        'The overlapping items should have sufficient distance when an item ' +
+        'margin is applied'
     );
 });
 

@@ -224,7 +224,8 @@ function merge<T>(): T {
             }
 
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (isObject(value, true) &&
+            if (
+                isObject(value, true) &&
                 !isClass(value) &&
                 !isDOMElement(value)
             ) {
@@ -1845,7 +1846,8 @@ function addEvent<T>(
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // Without H a dependency loop occurs
+    if (
+        (H as any).Point && // Without H a dependency loop occurs
         el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
@@ -2019,7 +2021,8 @@ function fireEvent<T>(
     /* eslint-enable valid-jsdoc */
     eventArguments = eventArguments || {};
 
-    if (doc.createEvent &&
+    if (
+        doc.createEvent &&
         (
             (el as any).dispatchEvent ||
             (

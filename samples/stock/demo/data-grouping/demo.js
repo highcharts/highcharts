@@ -15,7 +15,8 @@
                 load: function () {
                     if (!window.TestController) {
                         this.setTitle(null, {
-                            text: 'Built chart in ' + (new Date() - start) + 'ms'
+                            text:
+                                'Built chart in ' + (new Date() - start) + 'ms'
                         });
                     }
                 }
@@ -64,7 +65,9 @@
         },
 
         subtitle: {
-            text: 'Built chart in ...', // placeholder text to reserve space for dynamic subtitle
+            text:
+                'Built chart in ...', // placeholder text to reserve space
+            // for dynamic subtitle
             align: 'left'
         },
 

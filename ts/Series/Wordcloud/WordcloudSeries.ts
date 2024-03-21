@@ -246,7 +246,8 @@ class WordcloudSeries extends ColumnSeries {
                 attr = extend(
                     series.pointAttribs(
                         point,
-                        (point.selected && 'select' as any)
+                        (point.selected && 'select' as any
+                        )
                     ),
                     {
                         align: 'center',

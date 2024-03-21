@@ -5,7 +5,8 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    const year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
+    const year = new Date(data[data.length - 1][0]).getFullYear(); // Get
+    // year of last data point
 
     // Create the chart
     Highcharts.stockChart('container', {

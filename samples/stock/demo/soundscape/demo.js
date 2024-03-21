@@ -97,7 +97,8 @@ const chart = Highcharts.stockChart('container', {
                     }
                 }
             },
-            cropThreshold: 0 // We play all uncropped points, so make sure they get cropped
+            cropThreshold: 0 // We play all uncropped points, so make sure
+            // they get cropped
         }
     },
     xAxis: {

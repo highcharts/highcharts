@@ -186,7 +186,11 @@ Highcharts.chart('container', {
     },
     accessibility: {
         typeDescription:
-      'Sunburst chart with three levels to display the feelings wheel of happiness. The first level shows the word happy. The next level displays close feelings to the word happy such as content and optimistic, where the third level displays more general happiness feelings, such as free, joyful, successful.'
+      'Sunburst chart with three levels to display the feelings wheel of ' +
+      'happiness. The first level shows the word happy. The next level ' +
+      'displays close feelings to the word happy such as content and ' +
+      'optimistic, where the third level displays more general happiness ' +
+      'feelings, such as free, joyful, successful.'
     },
     series: [
         {

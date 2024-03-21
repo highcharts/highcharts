@@ -185,6 +185,9 @@ function onChartAfterIsInsiderPlot(
     }
 }
 
+/**
+ *
+ */
 function onPointerAfterGetHoverData(
     this: Pointer,
     eventArgs: Pointer.EventArgsObject

@@ -39,7 +39,9 @@ Dashboards.board('container', {
     components: [{
         type: 'CustomHTML',
         renderTo: 'dashboard-col-0',
-        id: 'custom-html-div' // id of the element which already exists in the DOM
+        id:
+            'custom-html-div' // id of the element which already exists in
+            // the DOM
     }, {
         type: 'HTML',
         renderTo: 'dashboard-col-1',

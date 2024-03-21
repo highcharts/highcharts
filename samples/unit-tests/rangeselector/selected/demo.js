@@ -110,7 +110,8 @@ QUnit.test(
                         chart.redraw();
 
                         assert.strictEqual(
-                            chart.rangeSelector.buttonOptions[// eslint-disable-line no-underscore-dangle
+                            // eslint-disable-next-line no-underscore-dangle
+                            chart.rangeSelector.buttonOptions[
                                 chart.rangeSelector.selected
                             ]._range,
                             chart.xAxis[0].max - chart.xAxis[0].min,
@@ -160,7 +161,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Chart should be initialised when xAxis.min and rangeselector.selected are defined. (#602)',
+    'Chart should be initialised when xAxis.min and rangeselector.selected ' +
+    'are defined. (#602)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             rangeSelector: {

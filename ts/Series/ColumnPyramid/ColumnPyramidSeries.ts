@@ -139,7 +139,6 @@ class ColumnPyramidSeries extends ColumnSeries {
             let barX = (point.plotX as any) + pointXOffset,
                 stackTotal: number,
                 stackHeight: number,
-                topPointY: number,
                 topXwidth: number,
                 bottomXwidth: number,
                 invBarPos: number,
@@ -184,7 +183,7 @@ class ColumnPyramidSeries extends ColumnSeries {
             }
 
             // Get the highest point (if stack, extract from total)
-            topPointY = yAxis.toPixels((stackTotal), true);
+            const topPointY = yAxis.toPixels((stackTotal), true);
 
             // Calculate height of stack (in pixels)
             stackHeight =

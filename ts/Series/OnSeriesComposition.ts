@@ -169,7 +169,8 @@ namespace OnSeriesComposition {
                         point.plotY = leftPoint[onKey];
 
                         // Interpolate between points, #666
-                        if (leftPoint.x < (point.x as any) &&
+                        if (
+                            leftPoint.x < (point.x as any) &&
                             !step
                         ) {
                             rightPoint = (onData as any)[i + 1];
@@ -292,13 +293,15 @@ namespace OnSeriesComposition {
             // to calculate position anyway, because series.invertGroups is not
             // defined
             if (typeof point.plotY === 'undefined' || inverted) {
-                if ((point.plotX as any) >= 0 &&
+                if (
+                    (point.plotX as any) >= 0 &&
                     (point.plotX as any) <= xAxis.len
                 ) {
                     // We're inside xAxis range
                     if (inverted) {
                         point.plotY = xAxis.translate(
-                            (point.x as any),
+                            (
+                                point.x as any),
                             0 as any,
                             1 as any,
                             0 as any,

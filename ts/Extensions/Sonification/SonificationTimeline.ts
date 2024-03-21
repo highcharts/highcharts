@@ -481,11 +481,12 @@ class SonificationTimeline {
         });
 
         if (closestEvent) {
-            this.play((e): boolean => !!(closestEvent &&
+            this.play(
+                (e): boolean => !!(closestEvent &&
                 e.time < closestEvent.time + 1 &&
                 e.time > closestEvent.time - 1 &&
                 e.relatedPoint === closestEvent.relatedPoint
-            ), false, false, onEnd);
+                ), false, false, onEnd);
             this.playingChannels = this.playingChannels || this.channels;
             this.isPaused = true;
             this.isPlaying = false;
@@ -556,8 +557,10 @@ class SonificationTimeline {
                 return; // If not, don't play - avoid cancelling current play
             }
 
-            this.play((e): boolean => e.time >= fromTime && e.time <= toTime,
-                false, false, onEnd);
+            this.play(
+                (e): boolean => e.time >= fromTime && e.time <= toTime,
+                false, false, onEnd
+            );
             this.playingChannels = this.playingChannels || this.channels;
             this.isPaused = true;
             this.isPlaying = false;
@@ -578,7 +581,8 @@ class SonificationTimeline {
         channels.forEach((c): void => {
             const events = c.events.filter((e, ix, arr): boolean => !!(
                     e.relatedPoint && e.time <= curTime &&
-                    (!filter || filter(e, ix, arr)))),
+                    (!filter || filter(e, ix, arr)))
+                ),
                 closestEvent = events[events.length - 1];
             if (closestEvent) {
                 const closestTime = closestEvent.time,
@@ -633,7 +637,9 @@ class SonificationTimeline {
 
     getMIDIData(): Uint8Array {
         return toMIDI(this.channels.filter(
-            (c): boolean => c.type === 'instrument'));
+            (c): boolean => c.type === 'instrument'
+        )
+        );
     }
 
 

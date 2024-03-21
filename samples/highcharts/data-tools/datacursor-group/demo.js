@@ -5,7 +5,9 @@ const container3 = document.querySelector('#container3');
 const table1 = new Highcharts.DataTable({
     columns: {
         Rank: [1, 2, 3, 4, 5, 6],
-        City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
+        City: [
+            'Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'
+        ],
         Population: [5259764, 4976157, 2568927, 2192229, 1402393, 453558]
     }
 });

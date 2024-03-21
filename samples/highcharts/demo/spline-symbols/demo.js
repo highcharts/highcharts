@@ -12,8 +12,10 @@ Highcharts.chart('container', {
             'target="_blank">Wikipedia.com</a>'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
         accessibility: {
             description: 'Months of the year'
         }
@@ -50,7 +52,8 @@ Highcharts.chart('container', {
                 symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
             },
             accessibility: {
-                description: 'Sunny symbol, this is the warmest point in the chart.'
+                description: 'Sunny symbol, this is the warmest point in the ' +
+                    'chart.'
             }
         }, 22.8, 17.5, 12.1, 7.6]
 
@@ -65,7 +68,8 @@ Highcharts.chart('container', {
                 symbol: 'url(https://www.highcharts.com/samples/graphics/snow.png)'
             },
             accessibility: {
-                description: 'Snowy symbol, this is the coldest point in the chart.'
+                description: 'Snowy symbol, this is the coldest point in the ' +
+                    'chart.'
             }
         }, 1.6, 3.3, 5.9, 10.5, 13.5, 14.5, 14.4, 11.5, 8.7, 4.7, 2.6]
     }]

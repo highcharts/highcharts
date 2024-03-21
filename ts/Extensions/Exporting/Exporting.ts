@@ -857,7 +857,8 @@ namespace Exporting {
                             }
                         }, void 0, innerMenu);
 
-                        AST.setElementHTML(element, item.text ||
+                        AST.setElementHTML(
+                            element, item.text ||
                             (chart.options.lang as any)[item.textKey as any]
                         );
 

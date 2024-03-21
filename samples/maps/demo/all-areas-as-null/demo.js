@@ -16,7 +16,8 @@
         },
 
         subtitle: {
-            text: 'Demo of drawing all areas in the map, only highlighting partial data',
+            text: 'Demo of drawing all areas in the map, only highlighting ' +
+                'partial data',
             align: 'left'
         },
 

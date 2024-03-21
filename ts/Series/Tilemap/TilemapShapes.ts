@@ -235,8 +235,8 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                         )),
                         -yAxis.len,
                         2 * yAxis.len
-                    ),
-                    pointPadding = pick(point.pointPadding, seriesPointPadding),
+                    );
+                const pointPadding = point.pointPadding ?? seriesPointPadding,
                     // We calculate the point padding of the midpoints to
                     // preserve the angles of the shape.
                     midPointPadding = pointPadding *
@@ -490,18 +490,20 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
             series.generatePoints();
 
             for (const point of series.points) {
-                let x = clamp(
-                        Math.round(
-                            xAxis.len -
-                            xAxis.translate(
-                                point.x,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                0 as any
-                            )
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
+                const x = clamp(
+                    Math.round(
+                        xAxis.len -
+                        xAxis.translate(
+                            point.x,
+                            0 as any,
+                            1 as any,
+                            0 as any,
+                            0 as any
+                        )
+                    ), -xAxis.len, 2 * xAxis.len
+                );
+                let pointPadding = seriesPointPadding,
+                    hasPerPointPadding = false,
                     y = clamp(
                         Math.round(yAxis.translate(
                             point.y,
@@ -512,9 +514,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                         )),
                         -yAxis.len,
                         2 * yAxis.len
-                    ),
-                    pointPadding = seriesPointPadding,
-                    hasPerPointPadding = false;
+                    );
 
                 // If there is point padding defined on a single point, add it
                 if (typeof point.pointPadding !== 'undefined') {

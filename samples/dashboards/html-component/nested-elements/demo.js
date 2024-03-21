@@ -20,7 +20,8 @@ Dashboards.board('container', {
                 }
             }, {
                 tagName: 'p',
-                textContent: 'This is a paragraph between two images. Both are in the same cell.'
+                textContent: 'This is a paragraph between two images. Both ' +
+                    'are in the same cell.'
             }, {
                 tagName: 'img',
                 attributes: {

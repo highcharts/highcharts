@@ -119,7 +119,8 @@ QUnit.test(
                 'Tooltip should show up (#17565).'
             );
         }
-        // Empty shared tooltip visible, when text is not defined in flag point, #6332
+        // Empty shared tooltip visible, when text is not defined in flag
+        // point, #6332
         chart.tooltip.update({ split: true });
 
         chart.tooltip.refresh(chart.series[2].points[0]);

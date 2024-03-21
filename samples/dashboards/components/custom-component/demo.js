@@ -3,8 +3,23 @@ const { ComponentRegistry, Component } = Dashboards;
 class YouTubeComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
+
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
+        this.options.editableOptions = [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }];
+
         return this;
     }
 
@@ -88,19 +103,6 @@ Dashboards.board('container', {
     }, {
         renderTo: 'yt-highsoft',
         type: 'YouTube',
-        videoId: '115hdz9NsrY',
-        editableOptions: [{
-            name: 'videoId',
-            propertyPath: ['videoId'],
-            type: 'input'
-        }, {
-            name: 'title',
-            propertyPath: ['title'],
-            type: 'input'
-        }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }]
+        videoId: '115hdz9NsrY'
     }]
 });
