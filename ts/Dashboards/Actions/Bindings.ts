@@ -77,11 +77,13 @@ namespace Bindings {
 
         if (typeof idOrElement === 'string') {
             if (document.querySelectorAll('#' + idOrElement).length > 1) {
-                console.warn(
-                    'A few cells have the same id: `' + idOrElement +
-                    '`. The id should be unique per each cell.'
+                error(
+                    'Multiple cells have identical ID ' +
+                    '("' + idOrElement + '"), potentially leading to ' +
+                    'unexpected behaviour. Ensure that each cell has a ' +
+                    'unique ID on the page.'
                 );
-            } 
+            }
 
             container = parentElement ?
                 parentElement.querySelector('#' + idOrElement) :
