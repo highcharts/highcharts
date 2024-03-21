@@ -306,6 +306,7 @@ async function updateComponents(powerPlantInfo) {
 
 // Documentation for PAHO MQTT client:
 // https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
+// https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
 
 // MQTT handle
 let mqtt;
@@ -322,18 +323,21 @@ const password = 'public';
 // Connection status
 let connectFlag;
 let msgCount;
+let nConnectedUnits;
 
 
 // Connection status UI
 const connectBar = {
     el: null,
     offColor: '', // Populated from CSS
-    onColor: 'hsla(202.19deg, 100%, 37.65%, 1)'
+    onColor: 'hsla(202.19deg, 100%, 37.65%, 1)',
+    errColor: 'red'
 };
 
 // Initialize the application
 window.onload = () => {
     msgCount = 0;
+    nConnectedUnits = 0;
     connectFlag = false;
     const el = document.getElementById('connect_bar');
     connectBar.offColor = el.style.backgroundColor; // From CSS
@@ -342,20 +346,43 @@ window.onload = () => {
 
 
 function setConnectionStatus(connected) {
+    const connBtn = document.getElementById('connect_toggle');
+
     setStatus(connected ? 'Connected' : 'Disconnected');
     const el = connectBar.el;
     el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
+    connBtn.disabled = false;
+    connBtn.innerHTML = connected ? 'Disconnect' : 'Connect';
 }
 
 
-async function onConnectionLost(responseObject) {
+async function onConnectionLost(resp) {
+    nConnectedUnits = 0;
+    connectFlag = false;
     setConnectionStatus(false);
-    console.log(responseObject);
+    if (resp.errorCode !== 0) {
+        setError(resp.errorMessage);
+    }
 }
 
 
-function onFailure(message) {
-    setStatus('Failed: ' + message);
+function onFailure(resp) {
+    nConnectedUnits = 0;
+    connectFlag = false;
+    setConnectionStatus(false);
+    setError(resp.errorMessage);
+}
+
+
+function updateUnitVisibility(visible, nUnits = 0) {
+    const powUnits = document.getElementsByClassName('el-aggr');
+
+    for (let i = 0; i < powUnits.length; i++) {
+        const el = powUnits[i];
+        const unitVisible = visible && i < nUnits;
+
+        el.style.display = unitVisible ? 'flex' : 'none';
+    }
 }
 
 
@@ -363,9 +390,13 @@ async function onMessageArrived(mqttPacketRaw) {
     const mqttData = JSON.parse(mqttPacketRaw.payloadString);
 
     const powerPlantInfo = {
+        // Power plant name
         name: mqttData.name,
+        // Packet timestamp
         time: mqttData.tst_iso,
+        // Number of power generator units (aggregat)
         nAggs: mqttData.aggs.length,
+        // Measurement data
         aggs: mqttData.aggs
     };
 
@@ -374,22 +405,24 @@ async function onMessageArrived(mqttPacketRaw) {
         await connectBoard(powerPlantInfo);
     }
 
+    if (nConnectedUnits !== powerPlantInfo.nAggs) {
+        // Refresh Dashboard
+        updateUnitVisibility(true, powerPlantInfo.nAggs);
+    }
+    msgCount++;
+    nConnectedUnits = powerPlantInfo.nAggs;
+
     updateBoard(powerPlantInfo);
 
     setStatus(`Data from <b>${powerPlantInfo.name}</b>.`);
-    msgCount++;
-}
-
-
-function onConnected(recon, url) {
-    console.log(' in onConnected ' + recon);
 }
 
 
 async function onConnect() {
-    // Once a connection has been made, make a subscription and send a message.
-    setStatus('Connected to ' + host + ' on port ' + port);
+    // Connection successful
     connectFlag = true;
+
+    setStatus('Connected to ' + host + ' on port ' + port);
     setConnectionStatus(true);
 
     // Subscribe to the default topic
@@ -397,24 +430,22 @@ async function onConnect() {
 }
 
 
-function disconnect() {
-    if (connectFlag) {
-        mqtt.disconnect();
-        connectFlag = false;
-    }
-}
-
-
 function MQTTconnect() {
+    // Disable connect button while connecting/disconnecting
     const connBtn = document.getElementById('connect_toggle');
+    connBtn.disabled = true;
 
     if (connectFlag) {
         // Already connect, so disconnect
         setStatus('disconnecting...');
-        disconnect();
-        connBtn.innerHTML = 'Connect';
 
-        return false;
+        mqtt.disconnect();
+        connectFlag = false;
+
+        // Hide components
+        updateUnitVisibility(false);
+
+        return;
     }
 
     setStatus('connecting...');
@@ -427,22 +458,17 @@ function MQTTconnect() {
     // Register callbacks
     mqtt.onConnectionLost = onConnectionLost;
     mqtt.onMessageArrived = onMessageArrived;
-    mqtt.onConnected = onConnected;
 
     // Connect to broker
     mqtt.connect({
         useSSL: true,
-        timeout: 3,
+        timeout: 5,
         cleanSession: true,
         onSuccess: onConnect,
         onFailure: onFailure,
         userName: userName,
         password: password
     });
-
-    connBtn.innerHTML = 'Disconnect';
-
-    return false;
 }
 
 
@@ -456,11 +482,18 @@ function subscribe() {
             qos: mqttQos
         });
     } else {
-        setStatus('Not connected, subscription not possible');
+        setError('Not connected, subscription not possible');
     }
 }
 
 
 function setStatus(msg) {
     document.getElementById('status').innerHTML = msg;
+}
+
+
+function setError(msg) {
+    connectBar.el.style.backgroundColor = connectBar.errColor;
+
+    document.getElementById('status').innerHTML = 'Error: ' + msg;
 }
