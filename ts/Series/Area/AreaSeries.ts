@@ -382,7 +382,8 @@ class AreaSeries extends LineSeries {
                             translatedThreshold :
                             yAxis.getThreshold(top),
                         isNull: isNull,
-                        isCliff: true
+                        isCliff: true,
+                        hiddenCliff: cliffHidden
                     } as any);
                     bottomPoints.push({ // @todo create real point object
                         plotX: plotX,

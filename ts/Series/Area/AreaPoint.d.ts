@@ -27,6 +27,7 @@ import type LinePoint from '../Line/LinePoint';
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
         isCliff?: AreaPoint['isCliff'];
+        hiddenCliff?: AreaPoint['hiddenCliff'];
     }
 }
 
