@@ -101,13 +101,7 @@ function createChartComponent(connId, unitIndex, title) {
                 animation: true
             },
             xAxis: {
-                type: 'datetime',
-                labels: {
-                    format: '{value:%H:%M}',
-                    accessibility: {
-                        description: 'Hours, minutes'
-                    }
-                }
+                type: 'datetime'
             },
             yAxis: {
                 title: {
@@ -170,7 +164,7 @@ async function setupDashboard(powerPlantInfo) {
             components: []
         };
 
-        for (let i = 0; i < powerPlantInfo.genCount; i++) {
+        for (let i = 0; i < powerPlantInfo.nAggs; i++) {
             // Power generator index (1...n)
             const unitIndex = i + 1;
 
@@ -207,48 +201,43 @@ async function setupDashboard(powerPlantInfo) {
 }
 
 
-async function updateBoard(mqttData) {
-    const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
-    const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
+async function updateBoard(powerPlantInfo) {
+    const dataPool = board.dataPool;
+    for (let i = 0; i < powerPlantInfo.nAggs; i++) {
+        const puId = i + 1;
+        const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
-    if (dataTable1.getRowCount() === 0) {
-        // Get history
-        const hist = mqttData.aggs[1].P_hist; // TBD: make modular
-        const d = new Date(hist.start);
-        let time = Number(d.valueOf());
+        if (dataTable.getRowCount() === 0) {
+            // Get power generation history history
+            const hist = powerPlantInfo.aggs[i].P_hist;
+            let time = new Date(hist.start).valueOf();
 
-        const step = hist.res * 1000; // P_hist resolution: seconds
-        const rowData1 = [];
-        const rowData2 = [];
-        const histLen = hist.values.length;
+            const step = hist.res * 1000; // Resolution: seconds
+            const rowData = [];
+            const histLen = hist.values.length;
 
-        for (let i = 0; i < histLen; i++) {
-            const p1 = 0; // TBD: grab data
-            const p2 = hist.values[i];
+            for (let j = 0; j < histLen; j++) {
+                const power = hist.values[j];
 
-            // Add row with historical data (reversed)
-            rowData1.push([time, p1]);
-            rowData2.push([time, p2]);
+                // Add row with historical data (reversed)
+                rowData.push([time, power]);
 
-            // Next measurement
-            time += step;
+                // Next measurement
+                time += step;
+            }
+            // Add the rows to the data table
+            await dataTable.setRows(rowData);
+        } else {
+            // Add single measurement
+            const time = new Date(powerPlantInfo.time).valueOf();
+            const power = powerPlantInfo.aggs[i].P_gen;
+
+            // Add row with latest data
+            await dataTable.setRow([time, power]);
         }
-        // Add the rows to the data table
-        await dataTable1.setRows(rowData1);
-        await dataTable2.setRows(rowData2);
-    } else {
-        const d = new Date(mqttData.tst_iso);
-        const time = d.valueOf();
-
-        const p1 = mqttData.aggs[0].P_gen;
-        const p2 = mqttData.aggs[1].P_gen;
-
-        // Add row with latest data
-        await dataTable1.setRow([time, p1]);
-        await dataTable2.setRow([time, p2]);
     }
     // Refresh all components
-    await updateComponents();
+    await updateComponents(powerPlantInfo);
 }
 
 
@@ -259,7 +248,7 @@ async function connectBoard(powerPlantInfo) {
     }
 
     const dataPool = board.dataPool;
-    for (let i = 0; i < powerPlantInfo.genCount; i++) {
+    for (let i = 0; i < powerPlantInfo.nAggs; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
@@ -267,59 +256,56 @@ async function connectBoard(powerPlantInfo) {
         await dataTable.deleteRows();
     }
 
-    await updateComponents();
+    await updateComponents(powerPlantInfo);
 }
 
 
-async function updateComponents() {
-    // Update charts and datagrids
-    for (let i = 0; i < board.mountedComponents.length; i++) {
-        const comp = board.mountedComponents[i].component;
-        if (comp.type !== 'KPI') {
-            await comp.initConnector();
-        }
-
-        if (comp.type === 'Highcharts') {
-            await comp.update({
-                connector: {
-                    columnAssignment: [{
-                        seriesId: 'power',
-                        data: ['time', 'power']
-                    }]
-                }
-            });
-        }
+async function updateComponents(powerPlantInfo) {
+    function getComponent(board, id) {
+        return board.mountedComponents.map(c => c.component)
+            .find(c => c.options.renderTo === id);
     }
 
     // Update the KPI components
-    const dataTable1 = await board.dataPool.getConnectorTable('mqtt-data-1');
-    const dataTable2 = await board.dataPool.getConnectorTable('mqtt-data-2');
-    const rowCount = await dataTable1.getRowCount();
-    let data1, data2;
+    for (let i = 0; i < powerPlantInfo.nAggs; i++) {
+        const puId = i + 1;
+        const connId = 'mqtt-data-' + puId;
 
-    if (rowCount > 0) {
-        data1 = dataTable1.getCellAsNumber('power', rowCount - 1);
-        data2 = dataTable2.getCellAsNumber('power', rowCount - 1);
-    } else {
-        data1 = 0;
-        data2 = 0;
+        // Get data
+        const dataTable = await board.dataPool.getConnectorTable(connId);
+        const rowCount = await dataTable.getRowCount();
+
+        // KPI
+        const kpiComp = getComponent(board, 'kpi-agg-' + puId);
+        await kpiComp.update({
+            value: rowCount > 0 ?
+                dataTable.getCellAsNumber('power', rowCount - 1) : 0
+        });
+
+        // Chart
+        const chartComp = getComponent(board, 'chart-agg-' + puId);
+        await chartComp.update({
+            connector: {
+                id: connId
+            }
+        });
+
+        // Datagrid
+        const gridComp = getComponent(board, 'data-grid-' + puId);
+        await gridComp.update({
+            connector: {
+                id: connId
+            }
+        });
     }
-
-    // TBD: calculate indexes
-    const kpiAgg1 = board.mountedComponents[0].component;
-    await kpiAgg1.update({
-        value: data1
-    });
-
-    const kpiAgg2 = board.mountedComponents[3].component;
-    await kpiAgg2.update({
-        value: data2
-    });
 }
 
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
+
+// Documentation for PAHO MQTT client:
+// https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
 
 // MQTT handle
 let mqtt;
@@ -333,24 +319,25 @@ const mqttQos = 0;
 const userName = 'public';
 const password = 'public';
 
-// Connection bar
+// Connection status
+let connectFlag;
+let msgCount;
+
+
+// Connection status UI
 const connectBar = {
     el: null,
-    offColor: '',
-    onColor: 'green'
+    offColor: '', // Populated from CSS
+    onColor: 'hsla(202.19deg, 100%, 37.65%, 1)'
 };
 
-let msgCount;
-let connectFlag;
-
-// Contains id's of UI elements
-let uiId;
-
+// Initialize the application
 window.onload = () => {
     msgCount = 0;
     connectFlag = false;
-    connectBar.el = document.getElementById('connect_bar');
-    connectBar.offColor = connectBar.el.style.backgroundColor;
+    const el = document.getElementById('connect_bar');
+    connectBar.offColor = el.style.backgroundColor; // From CSS
+    connectBar.el = el;
 };
 
 
@@ -361,8 +348,9 @@ function setConnectionStatus(connected) {
 }
 
 
-async function onConnectionLost() {
+async function onConnectionLost(responseObject) {
     setConnectionStatus(false);
+    console.log(responseObject);
 }
 
 
@@ -374,21 +362,22 @@ function onFailure(message) {
 async function onMessageArrived(mqttPacketRaw) {
     const mqttData = JSON.parse(mqttPacketRaw.payloadString);
 
-    const powerPlantStatus = {
+    const powerPlantInfo = {
         name: mqttData.name,
-        timestamp: mqttData.tst_iso,
-        genCount: mqttData.aggs.length,
-        data: mqttData.aggs
+        time: mqttData.tst_iso,
+        nAggs: mqttData.aggs.length,
+        aggs: mqttData.aggs
     };
 
     if (msgCount === 0) {
         // Connect the Dashboard
-        await connectBoard(powerPlantStatus);
-        setStatus(`Data from <b>${powerPlantStatus.name}</b>.`); // Connected: ${powerPlantStatus.timestamp}`);
+        await connectBoard(powerPlantInfo);
     }
-    msgCount += 1;
 
-    updateBoard(mqttData);
+    updateBoard(powerPlantInfo);
+
+    setStatus(`Data from <b>${powerPlantInfo.name}</b>.`);
+    msgCount++;
 }
 
 
