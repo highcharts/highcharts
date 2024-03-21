@@ -163,7 +163,7 @@ The `value` can be customized by:
     ```
 
 ## Sync with other components
-The KPI Component allows users to sync the component with other components in dashboards. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
+The KPI Component allows users to sync the component with other components in Dashboards. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 ## API options
 For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options).
