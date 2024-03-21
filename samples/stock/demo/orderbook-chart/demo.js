@@ -46,57 +46,9 @@ Highcharts.chart('container', {
         marginTop: 70,
         events: {
             load() {
-                this.titles = [];
                 setInterval(() => {
                     updateData(this);
                 }, 200);
-            },
-            render() {
-                // Create and align titles
-                if (this.titles.length) {
-                    this.titles.forEach(title => {
-                        title.destroy();
-                    });
-                    this.titles.length = 0;
-                }
-
-                const { plotLeft, plotTop, plotWidth, renderer } = this;
-
-                this.titles.push(
-                    renderer.text(
-                        'Bids', plotLeft, plotTop - 5
-                    )
-                        .attr({ fill: '#ffffff' })
-                        .css({
-                            fontWeight: 700,
-                            fontSize: 18
-                        })
-                        .add()
-                );
-
-                this.titles.push(
-                    renderer.text(
-                        'Asks', plotWidth - 35, plotTop - 5
-                    )
-                        .attr({ fill: '#ffffff' })
-                        .css({
-                            fontWeight: 700,
-                            fontSize: 18
-                        })
-                        .add()
-                );
-
-                this.titles.push(
-                    renderer.text(
-                        'Price ($)', plotWidth / 2 - plotLeft, plotTop - 5
-                    )
-                        .attr({ fill: '#ffffff' })
-                        .css({
-                            fontWeight: 700,
-                            fontSize: 18
-                        })
-                        .add()
-                );
             }
         }
     },
@@ -130,9 +82,29 @@ Highcharts.chart('container', {
     }],
 
     yAxis: {
-        visible: false,
+        visible: true,
+        opposite: true,
+        gridLineWidth: 0,
+        tickAmount: 3,
+        title: {
+            text: ''
+        },
         min: -1200000,
-        max: 1200000
+        max: 1200000,
+        labels: {
+            enabled: true,
+            format: `
+                {#if isFirst}Bids{/if}
+                {#if (eq pos 0)}Price ($){/if}
+                {#if isLast}Asks{/if}
+            `,
+            style: {
+                color: '#ffffff',
+                fontSize: 16,
+                fontWeight: 700
+            },
+            y: 10
+        }
     },
 
     legend: {
