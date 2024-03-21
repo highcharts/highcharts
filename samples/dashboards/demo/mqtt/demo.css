@@ -2,7 +2,7 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-/* Custom HTML */
+/* Application specific styling */
 
 div#page_container {
     background-color: #f0f0f0;
@@ -95,28 +95,22 @@ div#connect_bar button {
     background-color: var(--highcharts-background-color);
 }
 
-/* *
- *
- *  KPI
- *
- * */
-.el-aggr,
-.el-chart,
-.el-kpi,
-#data-grid-1,
-#data-grid-2 {
+.el-aggr {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     flex: 1;
 }
 
-.el-aggr {
-    display: flex;
-    flex-direction: column;
+/* Test: hide power generators that are not in use */
+.el-aggr:nth-of-type(3),
+.el-aggr:nth-of-type(4) {
+    display: none;
 }
 
 .el-kpi {
     flex-grow: 1;
-    max-height: 150px;
+    max-height: 200px;
 }
 
 .el-kpi .highcharts-dashboards-component-kpi-value {
@@ -124,7 +118,7 @@ div#connect_bar button {
 }
 
 .el-chart {
-    max-height: 250px;
+    max-height: 200px;
 }
 
 .el-aggr .highcharts-dashboards-component {
