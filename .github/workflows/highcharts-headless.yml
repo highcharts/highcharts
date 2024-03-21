@@ -8,6 +8,13 @@ on:
         required: false
         default: false
         type: boolean
+  workflow_dispatch:
+    inputs:
+      testTimezones:
+        description: 'Whether timezone tests should run'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test_unit_tests:

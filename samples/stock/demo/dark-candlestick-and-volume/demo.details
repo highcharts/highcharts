@@ -3,6 +3,7 @@ name: 'Dark themed candlestick and volume'
 authors:
   - Askel Eirik Johansson
 js_wrap: b
+new_until: 2024-05-27
 tags:
   - Highcharts Stock demo
 categories:
