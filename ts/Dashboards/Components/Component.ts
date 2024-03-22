@@ -146,6 +146,13 @@ abstract class Component {
     /** @internal */
     public static Sync = Sync;
     /**
+     * Predefined sync config for component.
+     */
+    public static predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+        defaultSyncOptions: {},
+        defaultSyncPairs: {}
+    };
+    /**
      * Default options of the component.
      */
     public static defaultOptions: Partial<Component.Options> = {
@@ -181,10 +188,6 @@ abstract class Component {
      * @internal
      */
     public cell: Cell;
-    /**
-     * Default sync Handlers.
-     */
-    public static predefinedSyncConfig: Sync.PredefinedSyncConfig;
     /**
      * The connector handlers for the component.
      */
