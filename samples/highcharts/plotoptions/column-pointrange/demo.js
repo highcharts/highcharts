@@ -5,10 +5,7 @@ Highcharts.chart('container', {
 
     xAxis: {
         type: 'datetime',
-        tickInterval: 24 * 3600 * 1000,
-        labels: {
-            padding: 0
-        }
+        tickInterval: 24 * 3600 * 1000
     },
 
     title: {

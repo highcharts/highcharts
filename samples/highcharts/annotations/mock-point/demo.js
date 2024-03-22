@@ -19,10 +19,7 @@ Highcharts.chart('container', {
 
     xAxis: {
         tickInterval: 0.5,
-        gridLineWidth: 1,
-        labels: {
-            padding: 0
-        }
+        gridLineWidth: 1
     },
 
     annotations: [{

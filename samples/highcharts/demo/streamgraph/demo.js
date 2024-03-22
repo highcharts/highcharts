@@ -78,8 +78,7 @@ Highcharts.chart('container', {
         labels: {
             align: 'left',
             reserveSpace: false,
-            rotation: 270,
-            padding: 0
+            rotation: 270
         },
         lineWidth: 0,
         margin: 20,

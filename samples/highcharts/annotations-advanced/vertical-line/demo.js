@@ -13,10 +13,7 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        tickInterval: 0.5,
-        labels: {
-            padding: 0
-        }
+        tickInterval: 0.5
     },
 
     annotations: [{

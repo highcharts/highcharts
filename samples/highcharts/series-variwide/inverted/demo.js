@@ -18,9 +18,6 @@ Highcharts.chart('container', {
         type: 'category',
         title: {
             text: 'Column widths are proportional to GDP'
-        },
-        labels: {
-            padding: 0
         }
     },
 

@@ -51,9 +51,6 @@
                     shape: 'rect',
                     borderRadius: 0
                 }
-            },
-            labels: {
-                padding: 0
             }
         },
         yAxis: {
