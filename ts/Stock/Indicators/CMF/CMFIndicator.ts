@@ -175,7 +175,8 @@ class CMFIndicator extends SMAIndicator {
             series.xData as number[],
             series.yData,
             (this.volumeSeries.yData as any),
-            (params.period as any)
+            (params.period as any
+            )
         );
     }
 

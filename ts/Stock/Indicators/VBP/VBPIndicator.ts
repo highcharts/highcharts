@@ -476,10 +476,14 @@ class VBPIndicator extends SMAIndicator {
             maxVolume = arrayMax(volumeDataArray);
             primalBarWidth = chart.plotWidth / 2;
             chartPlotTop = chart.plotTop;
-            barHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
-            oldBarHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
+            barHeight = abs(
+                yAxis.toPixels(yAxisMin) -
+                yAxis.toPixels(yAxisMin + indicator.rangeStep)
+            );
+            oldBarHeight = abs(
+                yAxis.toPixels(yAxisMin) -
+                yAxis.toPixels(yAxisMin + indicator.rangeStep)
+            );
 
             if (pointPadding) {
                 barHeightP = abs(barHeight * (1 - 2 * pointPadding));
@@ -525,7 +529,8 @@ class VBPIndicator extends SMAIndicator {
                     chart,
                     yAxis,
                     indicator.zoneStarts,
-                    (zoneLinesOptions.styles as any)
+                    (zoneLinesOptions.styles as any
+                    )
                 );
             }
         }

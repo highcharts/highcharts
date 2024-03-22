@@ -10,7 +10,8 @@ Highcharts.chart('container', {
     },
     accessibility: {
         typeDescription:
-      'The organizational chart displays hierarchically the different departments of the United Nations statistics division.'
+      'The organizational chart displays hierarchically the different ' +
+      'departments of the United Nations statistics division.'
     },
     series: [
         {
@@ -87,7 +88,10 @@ Highcharts.chart('container', {
                     layout: 'hanging',
                     color: '#41c0a4',
                     info:
-            'Planning and coordination of the overall Division’s work program and operation, <br/>including program management finance/budget management, <br/>human resources management, and general office administration'
+            'Planning and coordination of the overall Division’s work ' +
+            'program and operation, <br/>including program management ' +
+            'finance/budget management, <br/>human resources management, and ' +
+            'general office administration'
                 },
                 {
                     id: 'SPDS',
@@ -97,7 +101,10 @@ Highcharts.chart('container', {
                     layout: 'hanging',
                     color: '#41c0a4',
                     info:
-            'Methodological work on MDG indicators, databases; <br/>coordination of inter-agency groups for MDG global indicators, <br/>responsible for MDG global monitoring. <br/>Coordination of global gender statistics program'
+            'Methodological work on MDG indicators, databases; <br/>' +
+            'coordination of inter-agency groups for MDG global indicators, ' +
+            '<br/>responsible for MDG global monitoring. <br/>Coordination ' +
+            'of global gender statistics program'
                 },
                 {
                     id: 'CDS',
@@ -106,7 +113,8 @@ Highcharts.chart('container', {
                     layout: 'hanging',
                     color: '#41c0a4',
                     info:
-            'Management and implementation of the Technical <br/>Co-operation and Statistical Capacity Building Program'
+            'Management and implementation of the Technical <br/>' +
+            'Co-operation and Statistical Capacity Building Program'
                 },
                 {
                     id: 'OTMS',
@@ -115,7 +123,9 @@ Highcharts.chart('container', {
                     layout: 'hanging',
                     color: '#41c0a4',
                     info:
-            'Application of information technologies for the collection, <br>processing and dissemination of international statistics<br> and metadata by all branches of the Statistics Division'
+            'Application of information technologies for the collection, <br>' +
+            'processing and dissemination of international statistics<br> ' +
+            'and metadata by all branches of the Statistics Division'
                 },
                 {
                     id: 'ESB',
@@ -206,7 +216,8 @@ Highcharts.chart('container', {
                     name: 'Stats of Trade',
                     layout: 'hanging',
                     color: '#ef6b3a',
-                    info: 'Statistics of International Trade in Services Section'
+                    info: 'Statistics of International Trade in Services ' +
+                        'Section'
                 },
                 {
                     id: 'SSB',

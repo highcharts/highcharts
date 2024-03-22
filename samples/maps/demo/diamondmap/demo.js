@@ -28,7 +28,9 @@ Highcharts.chart('container', {
         point: {
             valueDescriptionFormat: '{point.name}. {point.desc}'
         },
-        typeDescription: 'Idea map, laid out as tiles with the main idea in the centre. Steps related to the main idea are shown as additional tiles circling the centre tile.'
+        typeDescription: 'Idea map, laid out as tiles with the main idea in ' +
+            'the centre. Steps related to the main idea are shown as ' +
+            'additional tiles circling the centre tile.'
     },
 
     xAxis: {
@@ -75,32 +77,58 @@ Highcharts.chart('container', {
         name: 'Main idea',
         pointPadding: 10,
         data: [
-            [5, 3, 'Main idea',
-                'The main idea tile outlines the overall theme of the idea map.']
+            [
+                5, 3, 'Main idea',
+                'The main idea tile outlines the overall theme of the idea ' +
+                'map.'
+            ]
         ],
         color: '#7eb'
     }, {
         name: 'Steps',
         colorByPoint: true, // Pick new color for each point from colors array
         data: [
-            [3, 3, 'Step 1',
-                'First step towards the main idea. Describe the starting point of the situation.'],
-            [4, 3, 'Step 2',
-                'Describe where to move next in a short term time perspective.'],
-            [5, 4, 'Step 3',
-                'This can be a larger milestone, after the initial steps have been taken.'],
-            [6, 3, 'Step 4',
-                'Evaluate progress and readjust the course of the project.'],
-            [7, 3, 'Step 5',
-                'At this point, major progress should have been made, and we should be well on our way to implementing the main idea.'],
-            [6, 2, 'Step 6',
-                'Second evaluation and readjustment step. Implement final changes.'],
-            [5, 2, 'Step 7',
-                'Testing and final verification step.'],
-            [4, 2, 'Step 8',
-                'Iterate after final testing and finalize implementation of the idea.']
+            [
+                3, 3, 'Step 1',
+                'First step towards the main idea. Describe the starting ' +
+                'point of the situation.'
+            ],
+            [
+                4, 3, 'Step 2',
+                'Describe where to move next in a short term time ' +
+                'perspective.'
+            ],
+            [
+                5, 4, 'Step 3',
+                'This can be a larger milestone, after the initial steps ' +
+                'have been taken.'
+            ],
+            [
+                6, 3, 'Step 4',
+                'Evaluate progress and readjust the course of the project.'
+            ],
+            [
+                7, 3, 'Step 5',
+                'At this point, major progress should have been made, and we ' +
+                'should be well on our way to implementing the main idea.'
+            ],
+            [
+                6, 2, 'Step 6',
+                'Second evaluation and readjustment step. Implement final ' +
+                'changes.'
+            ],
+            [
+                5, 2, 'Step 7',
+                'Testing and final verification step.'
+            ],
+            [
+                4, 2, 'Step 8',
+                'Iterate after final testing and finalize implementation of ' +
+                'the idea.'
+            ]
         ]
     }]
 }, function (chart) {
-    chart.tooltip.refresh(chart.series[0].points[0]); // Show tooltip of the first point on load
+    chart.tooltip.refresh(chart.series[0].points[0]); // Show tooltip of the
+    // first point on load
 });

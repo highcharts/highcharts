@@ -1,5 +1,6 @@
 const csvData = document.getElementById('csv').innerText;
 
+/* eslint-disable max-len */
 Dashboards.board(
     'container',
     {

@@ -5,7 +5,9 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
             },
             subtitle: {
                 text:
-                    'The on-screen chart is 600x400.<br/>The exported chart is 800x400<br/>(sourceWidth and sourceHeight multiplied by scale)',
+                    'The on-screen chart is 600x400.<br/>The exported chart ' +
+                    'is 800x400<br/>(sourceWidth and sourceHeight multiplied ' +
+                    'by scale)',
                 floating: true,
                 align: 'left',
                 x: 60,
@@ -82,7 +84,8 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
 
                 img.src = url + result;
                 img.onload = function () {
-                    // Since the default scale is 2 and the sourceWidth is 400, we
+                    // Since the default scale is 2 and the sourceWidth is
+                    // 400, we
                     // expect the exported width to be 800px.
                     assert.strictEqual(
                         this.width,

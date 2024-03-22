@@ -13,7 +13,7 @@ If legacy browsers are a requirement, see also the [old jQuery based demo](https
 
 ### Node.js
 
-If you're running a Node.js environment, the recommended approach would be to use the export server as a Node.js module instead of posting content to Highsoft's online server. For details, see the chapter [Using as a Node.js Module](https://github.com/highcharts/node-export-server/blob/master/README.md#using-as-a-nodejs-module) in the project repo.
+If you're running a Node.js environment, the recommended approach would be to use the export server as a Node.js module instead of posting content to Highsoft's online server. For details, see the article [Using as a Node.js Module](https://github.com/highcharts/node-export-server/blob/master/README.md#using-as-a-nodejs-module) in the project repo.
 
 ### PHP
 

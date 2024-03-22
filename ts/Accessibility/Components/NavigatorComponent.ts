@@ -122,8 +122,10 @@ class NavigatorComponent extends AccessibilityComponent {
                             click: handle
                         }, 'input', {
                             type: 'range',
-                            'aria-label': format(handleFormatStr,
-                                { handleIx: n, chart }, chart)
+                            'aria-label': format(
+                                handleFormatStr,
+                                { handleIx: n, chart }, chart
+                            )
                         }
                     );
 
@@ -311,7 +313,8 @@ class NavigatorComponent extends AccessibilityComponent {
             clearTimeout(this.updateNavigatorThrottleTimer);
         }
         this.updateNavigatorThrottleTimer = setTimeout(
-            performUpdate.bind(this, beforeAnnounce), 20);
+            performUpdate.bind(this, beforeAnnounce), 20
+        );
     }
 }
 

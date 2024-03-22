@@ -179,13 +179,15 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     result = checkLabelsVisibility(chart, 'hide');
     assert.ok(
         result,
-        'All data labels should be hidden when chart is inverted and yAxis is reversed (#12370).'
+        'All data labels should be hidden when chart is inverted and yAxis ' +
+        'is reversed (#12370).'
     );
 
     result = checkLabelsVisibility(chart, 'show');
     assert.ok(
         result,
-        'All data labels should be visible when chart is inverted and yAxis is reversed (#12370).'
+        'All data labels should be visible when chart is inverted and yAxis ' +
+        'is reversed (#12370).'
     );
 
     chart.yAxis[0].update({

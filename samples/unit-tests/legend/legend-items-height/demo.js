@@ -34,7 +34,8 @@ QUnit.test(
         assert.equal(
             initialHeight,
             updatedHeight,
-            'Legend items should have same spacing regardless of empty name (#16398)'
+            'Legend items should have same spacing regardless of empty name ' +
+            '(#16398)'
         );
     }
 );

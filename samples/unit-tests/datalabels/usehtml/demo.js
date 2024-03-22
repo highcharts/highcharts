@@ -131,7 +131,8 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
     assert.strictEqual(
         label.nodeName,
         'SPAN',
-        'Created dataLabel should be rendered as HTML element, not SVG (#10765).'
+        'Created dataLabel should be rendered as HTML element, not SVG ' +
+        '(#10765).'
     );
 
     assert.strictEqual(
@@ -163,8 +164,10 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
         'Rotated data label box should be placed higher that unrotated, #20685.'
     );
 
-    const htmlLabel = chart.renderer.label('Label', 0, 0, undefined,
-            undefined, undefined, true).add(),
+    const htmlLabel = chart.renderer.label(
+            'Label', 0, 0, undefined,
+            undefined, undefined, true
+        ).add(),
         standardLabel = chart.renderer.label('Label', 0, 0).add();
 
     [-90, -60, -30, 0, 30, 60, 90].forEach(rotation => {

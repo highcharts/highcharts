@@ -11,14 +11,16 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            valueDescriptionFormat: '{xDescription}, forecasted {point.value}% growth.'
+            valueDescriptionFormat: '{xDescription}, forecasted ' +
+                '{point.value}% growth.'
         }
     },
 
     lang: {
         accessibility: {
             chartTypes: {
-                defaultSingle: 'Map with fixed circle areas laid out in the shape of Africa. The map shows {numPoints} countries.'
+                defaultSingle: 'Map with fixed circle areas laid out in the ' +
+                    'shape of Africa. The map shows {numPoints} countries.'
             }
         }
     },
@@ -63,7 +65,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '',
-        pointFormat: 'The real GDP growth of <b>{point.name}</b> is <b>{point.value}</b> %'
+        pointFormat: 'The real GDP growth of <b>{point.name}</b> is <b>' +
+            '{point.value}</b> %'
     },
 
     plotOptions: {

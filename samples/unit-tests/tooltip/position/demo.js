@@ -41,7 +41,8 @@ QUnit.test(
         assert.strictEqual(
             chart.tooltip.now.anchorY,
             Math.round(chart.series[0].points[0].plotY) + chart.plotTop,
-            'Tooltip points to the middle of the top side of fist column (#7242)'
+            'Tooltip points to the middle of the top side of fist column ' +
+            '(#7242)'
         );
 
         chart.series[0].setData([-2, -3, -5, -2, -5, -2]);
@@ -51,7 +52,8 @@ QUnit.test(
         assert.strictEqual(
             chart.tooltip.now.anchorY,
             Math.round(chart.series[0].points[5].plotY) + chart.plotTop,
-            'Tooltip points to the middle of the top side of last column (#7242)'
+            'Tooltip points to the middle of the top side of last column ' +
+            '(#7242)'
         );
 
         // Add one point
@@ -141,7 +143,8 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
     tooltipYPos = chart.tooltip.label.translateY;
     assert.ok(
         tooltipYPos < columnYPos && tooltipYPos > lineYPos,
-        'Tooltip of second series should be over second series, but under first series'
+        'Tooltip of second series should be over second series, but under ' +
+        'first series'
     );
 
     chart = Highcharts.chart('container', {
@@ -185,7 +188,8 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         chart.tooltip.now.anchorY,
         Math.round(tooltipYPos),
         1.1,
-        'Tooltip position should be correct when bar chart xAxis has top and height set with percent values (#12589).'
+        'Tooltip position should be correct when bar chart xAxis has top and ' +
+        'height set with percent values (#12589).'
     );
 
     chart.update({
@@ -211,7 +215,8 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         chart.tooltip.now.anchorY,
         Math.round(tooltipYPos),
         1.1,
-        'Tooltip position should be correct when bar chart xAxis has top and height set with numeric values (#12589).'
+        'Tooltip position should be correct when bar chart xAxis has top and ' +
+        'height set with numeric values (#12589).'
     );
 });
 
@@ -309,7 +314,8 @@ QUnit.test('Tooltip position with inverted multiple axes', assert => {
         chart.tooltip.now.anchorX,
         chart.series[0].yAxis.width + chart.plotLeft - point1.plotY,
         0.5,
-        'Tooltip position on inverted chart with multiple axes should appear at point (#14771).'
+        'Tooltip position on inverted chart with multiple axes should appear ' +
+        'at point (#14771).'
     );
 });
 

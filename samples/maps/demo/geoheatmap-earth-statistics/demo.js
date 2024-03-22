@@ -156,7 +156,8 @@
         },
 
         tooltip: {
-            headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon}° Lat: {point.point.lat}°</span><br/>',
+            headerFormat: '<span style="font-size: 11px">Lon: ' +
+                '{point.point.lon}° Lat: {point.point.lat}°</span><br/>',
             pointFormat: 'Value: {point.value:.2f}'
         },
 
@@ -198,7 +199,10 @@
     });
 
     // Show the Font Awesome spinner
-    chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
+    chart.showLoading(
+        '<i class="icon-spinner icon-spin icon-3x"></i><br/><i>' +
+        'Loading data...</i>'
+    );
 
     async function getDataset(type) {
         const dataset = datasets.find(el => el.type === type);
@@ -225,7 +229,10 @@
 
     datasetSelect.addEventListener('change', function () {
         // Show the Font Awesome spinner
-        chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
+        chart.showLoading(
+            '<i class="icon-spinner icon-spin icon-3x"></i>' +
+            '<br/><i>Loading data...</i>'
+        );
         setTimeout(function () {
             getDataset(datasetSelect.value);
         }, 0);

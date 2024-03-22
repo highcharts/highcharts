@@ -123,10 +123,12 @@ QUnit.module('Format', () => {
         // Markup in format
         assert.strictEqual(
             format(
-                '{value:<span style="font-size: 12px; font-weight: bold">%a</span> %b %e}',
+                '{value:<span style="font-size: 12px; font-weight: bold">' +
+                '%a</span> %b %e}',
                 { value: Date.UTC(2023, 5, 5, 12) }
             ),
-            '<span style="font-size: 12px; font-weight: bold">Mon</span> Jun  5',
+            '<span style="font-size: 12px; font-weight: bold">Mon</span> Jun ' +
+            ' 5',
             'HTML inside format should be preserved'
         );
 

@@ -1,6 +1,9 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
-@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+
+body {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+}
 
 #container {
     padding: 10px;
@@ -114,6 +117,16 @@ h1#title {
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+.highcharts-dashboards-component-kpi-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.highcharts-dashboards-component-kpi {
+    min-height: 100px;
+    text-align: center;
 }
 
 @media (max-width: 992px) {

@@ -43,7 +43,8 @@ QUnit.test('All zero values', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].shapeArgs.y < 145, // 145 value of negative point
+        chart.series[0].points[0].shapeArgs.y < 145, // 145 value of
+        // negative point
         true,
         'Zero values are draw as positive columns (#10646)'
     );
@@ -63,7 +64,8 @@ QUnit.test('All zero values', function (assert) {
     assert.strictEqual(
         Math.round(chart.series[0].points[0].shapeArgs.y),
         0,
-        'Zero values should only be drawn as positive when there is room for it (#14876)'
+        'Zero values should only be drawn as positive when there is room for ' +
+        'it (#14876)'
     );
 
     assert.deepEqual(

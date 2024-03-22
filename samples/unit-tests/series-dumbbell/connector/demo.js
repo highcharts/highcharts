@@ -87,5 +87,8 @@ QUnit.test('Dumbbell connectors', function (assert) {
         }
     });
 
-    assertDestruction('#15560: All point graphics should be destroyed when markers are disabled');
+    assertDestruction(
+        '#15560: All point graphics should be destroyed when ' +
+        'markers are disabled'
+    );
 });

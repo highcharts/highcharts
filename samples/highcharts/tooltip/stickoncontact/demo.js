@@ -6,7 +6,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Once the pointer is over it, it won\'t move to reveal underlying points'
+        text: 'Once the pointer is over it, it won\'t move to reveal ' +
+            'underlying points'
     },
 
     tooltip: {
