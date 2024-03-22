@@ -82,19 +82,8 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
-function onUnregister(/*/ e: PluginHandler.Event */): void {
-    /// const { Sync } = e; (DD)
-
-    // Object
-    //     .keys(HighchartsSyncHandlers)
-    //     .forEach((handler): void => {
-    //         if (
-    //             Sync.defaultHandlers[handler] ===
-    //             HighchartsSyncHandlers[handler]
-    //         ) {
-    //             delete Sync.defaultHandlers[handler];
-    //         }
-    //     });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onUnregister(e: PluginHandler.Event): void {
 
 }
 
