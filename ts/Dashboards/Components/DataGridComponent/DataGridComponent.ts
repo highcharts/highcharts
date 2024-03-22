@@ -332,7 +332,6 @@ class DataGridComponent extends Component {
         }
         await super.update(options);
         if (this.dataGrid) {
-            /// this.filterAndAssignSyncOptions(DataGridSyncHandlers); (DD)
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }
         this.emit({ type: 'afterUpdate' });

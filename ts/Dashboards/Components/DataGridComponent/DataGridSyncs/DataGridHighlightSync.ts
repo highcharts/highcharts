@@ -45,7 +45,7 @@ const syncPair: Sync.SyncPair = {
         const component = this as DataGridComponent;
 
         const { dataGrid, board } = component;
-        const highlightOptions = this.sync.syncConfig?.highlight;
+        const highlightOptions = this.sync.syncConfig.highlight;
 
         if (!board || !dataGrid || !highlightOptions?.enabled) {
             return;
@@ -102,7 +102,7 @@ const syncPair: Sync.SyncPair = {
         const component = this as DataGridComponent;
 
         const { board } = component;
-        const highlightOptions = component.sync.syncConfig?.highlight;
+        const highlightOptions = component.sync.syncConfig.highlight;
 
         if (!highlightOptions?.enabled) {
             return;

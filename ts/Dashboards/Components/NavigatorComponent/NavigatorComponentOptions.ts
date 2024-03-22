@@ -62,7 +62,7 @@ export interface Options extends Component.Options {
     chartOptions: HighchartsOptions;
 
     /**
-     * Column assignments have impact on navigator and range. Only the first
+     * Column assignment have impact on navigator and range. Only the first
      * assignment is used and usually matches against the `y` values.
      *
      * If crossfilter sync is enabled, the column assignment will show the
@@ -71,11 +71,16 @@ export interface Options extends Component.Options {
      * @example
      * ``` JavaScript
      * {
-     *     columnAssignments: {
+     *     columnAssignment: {
      *         'My Column': 'y'
      *     }
      * }
      * ```
+     */
+    columnAssignment?: Record<string, string | null>;
+
+    /**
+     * @deprecated
      */
     columnAssignments?: Record<string, string | null>;
 

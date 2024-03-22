@@ -374,15 +374,6 @@ class KPIComponent extends Component {
     }
 
     /**
-     * Internal method for handling option updates.
-     *
-     * @private
-     */
-    private setOptions(): void {
-        /// this.filterAndAssignSyncOptions(KPISyncHandlers);
-    }
-
-    /**
      * Handles updating via options.
      *
      * @param options
@@ -393,7 +384,7 @@ class KPIComponent extends Component {
         shouldRerender: boolean = true
     ): Promise<void> {
         await super.update(options);
-        this.setOptions();
+
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }

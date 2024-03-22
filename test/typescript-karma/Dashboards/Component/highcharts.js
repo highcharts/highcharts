@@ -799,7 +799,7 @@ skip('Crossfilter with string values', async function (assert) {
             connector: {
                 id: 'data'
             },
-            columnAssignments: {
+            columnAssignment: {
                 Revenue: 'y'
             },
             sync: {
@@ -819,7 +819,7 @@ skip('Crossfilter with string values', async function (assert) {
             connector: {
                 id: 'data'
             },
-            columnAssignments: {
+            columnAssignment: {
                 Category: 'y'
             },
             sync: {

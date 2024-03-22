@@ -60,6 +60,10 @@ class Sync {
     ) {
         this.component = component;
         this.predefinedSyncConfig = predefinedSyncConfig;
+        this.syncConfig = Sync.prepareSyncConfig(
+            predefinedSyncConfig,
+            component.options.sync
+        );
         this.registeredSyncHandlers = {};
         this.registeredSyncEmitters = {};
         this.isSyncing = false;
@@ -106,7 +110,7 @@ class Sync {
     /**
      * The emitters and handlers to use for each event
      */
-    public syncConfig?: Sync.OptionsRecord;
+    public syncConfig: Sync.OptionsRecord;
 
     /**
      * Whether the component is currently syncing.
@@ -228,6 +232,7 @@ class Sync {
      */
     public start(): void {
         const { component } = this;
+
         this.syncConfig = Sync.prepareSyncConfig(
             this.predefinedSyncConfig,
             component.options.sync

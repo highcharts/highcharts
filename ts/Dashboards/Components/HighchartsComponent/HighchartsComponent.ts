@@ -378,7 +378,6 @@ class HighchartsComponent extends Component {
 
     /**
      * Updates chart's series when the data table is changed.
-     *
      * @private
      */
     public updateSeries(): void {
@@ -436,7 +435,9 @@ class HighchartsComponent extends Component {
     }
 
     /**
-     * PoC (DD)
+     * Updates the series based on the connector from each connector handler.
+     * @param connectorHandler The connector handler.
+     * @private
      */
     private updateSeriesFromConnector(
         connectorHandler: ComponentConnectorHandler

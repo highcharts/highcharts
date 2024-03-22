@@ -102,7 +102,7 @@ const syncPair: Sync.SyncPair = {
 
         const { chart, board } = component;
         const highlightOptions =
-            this.sync.syncConfig?.highlight as HighchartsHighlightSyncOptions;
+            this.sync.syncConfig.highlight as HighchartsHighlightSyncOptions;
 
         if (!highlightOptions.enabled) {
             return;
@@ -230,7 +230,7 @@ const syncPair: Sync.SyncPair = {
 
         const handleCursor = (e: DataCursor.Event): void => {
             const highlightOptions = this.sync
-                .syncConfig?.highlight as HighchartsHighlightSyncOptions;
+                .syncConfig.highlight as HighchartsHighlightSyncOptions;
 
             if (!highlightOptions.enabled) {
                 return;
@@ -288,7 +288,7 @@ const syncPair: Sync.SyncPair = {
 
         const handleCursorOut = (e: DataCursor.Event): void => {
             const highlightOptions = this.sync
-                .syncConfig?.highlight as HighchartsHighlightSyncOptions;
+                .syncConfig.highlight as HighchartsHighlightSyncOptions;
 
             if (
                 !chart || !chart.series.length ||

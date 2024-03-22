@@ -32,7 +32,6 @@ import type {
 } from './NavigatorSyncs/NavigatorCrossfilterSync';
 import type { Options } from './NavigatorComponentOptions';
 import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
-import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
@@ -129,6 +128,7 @@ class NavigatorComponent extends Component {
         options: Options
     ) {
         super(cell, options);
+        this.type = 'Navigator';
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
 
@@ -143,9 +143,7 @@ class NavigatorComponent extends Component {
         this.chartContainer.classList
             .add(Globals.classNamePrefix + 'navigator');
 
-        /// this.filterAndAssignSyncOptions(NavigatorSyncHandler);
-
-        if (this.sync.syncConfig?.crossfilter?.enabled) {
+        if (this.sync.syncConfig.crossfilter?.enabled) {
             this.chart.update(
                 merge(
                     { navigator: { xAxis: { labels: { format: '{value}' } } } },
@@ -250,19 +248,20 @@ class NavigatorComponent extends Component {
 
 
     /**
-     * Returns the first column of columnAssignments to use for navigator data.
+     * Returns the first column of columnAssignment to use for navigator data.
      * @private
      *
      * @return
      * Navigator column assignment.
      */
     public getColumnAssignment(): [string, string] {
-        const columnAssignments = (this.options.columnAssignments || {});
+        const columnAssignment = this.options.columnAssignment ??
+            this.options.columnAssignments ?? {};
 
         let columnsAssignment: (string|null);
 
-        for (const column of Object.keys(columnAssignments)) {
-            columnsAssignment = columnAssignments[column];
+        for (const column of Object.keys(columnAssignment)) {
+            columnsAssignment = columnAssignment[column];
 
             if (columnsAssignment !== null) {
                 return [column, columnsAssignment];
@@ -379,7 +378,7 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart;
-        const connector = this.connectorHandlers?.[0]?.connector;
+        const connector = this.connectorHandlers[0]?.connector;
 
         if (connector) {
             const table = connector.table,
@@ -391,7 +390,7 @@ class NavigatorComponent extends Component {
                 Array<[number|string, number|null]>
             );
 
-            if (this.sync.syncConfig?.crossfilter?.enabled) {
+            if (this.sync.syncConfig.crossfilter?.enabled) {
                 data = this.generateCrossfilterData();
             } else {
                 data = columnValues.slice() as Array<string|number|null>;
@@ -413,7 +412,7 @@ class NavigatorComponent extends Component {
      */
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
-            this.sync.syncConfig?.crossfilter as CrossfilterSyncOptions;
+            this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
         const table = this.connectorHandlers?.[0]?.connector?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
@@ -544,13 +543,9 @@ class NavigatorComponent extends Component {
 
         await super.update(options, false);
 
-        if (options.sync) {
-            /// this.filterAndAssignSyncOptions(NavigatorSyncHandler);
-        }
-
         if (options.chartOptions) {
             chart.update(
-                merge(this.sync.syncConfig?.crossfilter?.enabled ? (
+                merge(this.sync.syncConfig.crossfilter?.enabled ? (
                     { navigator: { xAxis: { labels: { format: '{value}' } } } }
                 ) : {}, options.chartOptions),
                 false
@@ -564,10 +559,7 @@ class NavigatorComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        sidebar: SidebarPopup
-    ): Partial<Options> {
+    public getOptionsOnDrop(): Partial<Options> {
         return {};
     }
 }
