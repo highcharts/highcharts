@@ -214,7 +214,7 @@ let chartTwo = {
     series: []
 };
 
-fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/iot-devices.csv').then(function (response) {
+fetch('https://www.highcharts.com/samples/data/iot-devices.csv').then(function (response) {
     return response.text();
 }).then(function (result) {
     const lines = result.split('\n');
