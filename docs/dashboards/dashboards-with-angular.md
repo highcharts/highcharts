@@ -58,5 +58,8 @@ There are two ways to do it:
     - `options` - the options object for the dashboard
     - `isAsync` - whether the dashboard should be rendered asynchronously or not- useful when using external data resources
 
-See how it works in the [live example](https://stackblitz.com/edit/angular-pc4xsk)
 
+## Demos
+See how it works in the demos like below:
+- [live example](https://stackblitz.com/edit/angular-pc4xsk)
+- [custom layout live example](https://stackblitz.com/edit/dashboards-angular-custom-layout)

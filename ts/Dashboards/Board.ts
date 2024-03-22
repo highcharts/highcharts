@@ -327,7 +327,7 @@ class Board implements Serializable<Board, Board.JSON> {
     protected init(async?: boolean): (Board|Promise<Board>) {
         const options = this.options;
 
-        let componentPromises = (options.components) ?
+        const componentPromises = (options.components) ?
             this.setComponents(options.components) : [];
 
         // Init events.
