@@ -1558,12 +1558,17 @@ class SVGElement implements SVGElementLike {
                         // The descender is the distance from the baseline to
                         // the bottom of the text
                         descender = h - b,
+                        lineCleanerRegex = new RegExp(
+                            '(<tspan>|' +
+                            '<tspan(?!\\sclass="highcharts-br")[^>]*>|' +
+                            '<\\/tspan>)',
+                            'g'
+                        ),
                         lines = tp
                             .innerHTML
-                            .replace(/(^<tspan>|<\/tspan>$)/gm, '')
+                            .replace(lineCleanerRegex, '')
                             .split(
-                                '<tspan class="highcharts-br" dy="19" x="0">' +
-                                '​</tspan>'
+                                /<tspan class="highcharts-br"[^>]*>/
                             ),
                         numOfLines = lines.length;
 
@@ -1608,7 +1613,6 @@ class SVGElement implements SVGElementLike {
                             const srcCharIndex = (
                                     i +
                                     lineCharIndex +
-                                    lineIndex +
                                     lineIndex
                                 ),
                                 [lower, upper] = appendTopAndBottom(
@@ -1623,15 +1627,17 @@ class SVGElement implements SVGElementLike {
                                 if (lineIndex === 0) {
                                     polygon.unshift(upper);
                                 }
-                                if (lineIndex === numOfLines - 1) {
+                                if (lineIndex === numOfLines) {
                                     polygon.push(lower);
                                 }
                             }
                         }
 
-                        i += line.length - 1;
+                        i += lineLen - 1;
 
-                        const srcCharIndex = i + lineIndex + lineIndex,
+                        const srcCharIndex = i + lineIndex;
+
+                        const
                             charPos = tp.getEndPositionOfChar(srcCharIndex),
                             [lower, upper] = appendTopAndBottom(
                                 srcCharIndex,
