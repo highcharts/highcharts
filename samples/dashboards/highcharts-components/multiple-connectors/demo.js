@@ -55,6 +55,9 @@ Dashboards.board('container', {
                 }
             }]
         }],
+        sync: {
+            highlight: true
+        },
         chartOptions: {
             xAxis: {
                 type: 'category'
@@ -91,6 +94,9 @@ Dashboards.board('container', {
         },
         connector: {
             id: 'csv-1'
+        },
+        sync: {
+            highlight: true
         }
     }, {
         renderTo: 'dashboard-col-2',
@@ -100,6 +106,9 @@ Dashboards.board('container', {
         },
         connector: {
             id: 'csv-2'
+        },
+        sync: {
+            highlight: true
         }
     }]
 });

@@ -28,6 +28,7 @@ import type {
 } from '../../../../Data/Modifiers/RangeModifierOptions';
 import type HighchartsComponent from '../HighchartsComponent.js';
 import type DataTable from '../../../../Data/DataTable';
+import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
 import DataCursor from '../../../../Data/DataCursor.js';
@@ -44,7 +45,7 @@ import DataCursor from '../../../../Data/DataCursor.js';
  *
  * @param {DataTable} table
  * The table to get the offset from.
-     *
+ *
  * @param {RangeModifierOptions} modifierOptions
  * The modifier options to use
  *
@@ -104,55 +105,81 @@ const syncPair: Sync.SyncPair = {
         const highlightOptions =
             this.sync.syncConfig.highlight as HighchartsHighlightSyncOptions;
 
-        if (!highlightOptions.enabled) {
+        if (!highlightOptions.enabled || !chart) {
             return;
         }
 
         const { dataCursor: cursor } = board;
-        const table = component.connectorHandlers?.[0]?.connector?.table;
-        if (chart?.series && table) {
-            chart.series.forEach((series): void => {
-                series.update({
-                    point: {
-                        events: {
-                            // Emit table cursor
-                            mouseOver: function (): void {
-                                let offset = 0;
-                                const modifier = table.getModifier();
-                                if (modifier?.options.type === 'Range') {
-                                    offset = getModifiedTableOffset(
-                                        table,
-                                        modifier.options as RangeModifierOptions
-                                    );
-                                }
-                                cursor.emitCursor(table, {
-                                    type: 'position',
-                                    row: offset + this.index,
-                                    column: series.name,
-                                    state: 'point.mouseOver'
-                                });
-                            },
-                            mouseOut: function (): void {
-                                let offset = 0;
-                                const modifier = table.getModifier();
-                                if (modifier?.options.type === 'Range') {
-                                    offset = getModifiedTableOffset(
-                                        table,
-                                        modifier.options as RangeModifierOptions
-                                    );
-                                }
-                                cursor.emitCursor(table, {
-                                    type: 'position',
-                                    row: offset + this.index,
-                                    column: series.name,
-                                    state: 'point.mouseOut'
-                                });
+        for (let i = 0, iEnd = chart.series?.length ?? 0; i < iEnd; ++i) {
+            const series = chart.series[i];
+            const seriesId = series.options.id ?? '';
+            const connectorHandler: HighchartsComponent.HCConnectorHandler =
+                component.seriesFromConnector[seriesId];
+            const table = connectorHandler?.connector?.table;
+            let columnName: string | undefined;
+
+            if (!table) {
+                continue;
+            }
+
+            const colAssignment = connectorHandler.columnAssignment?.find(
+                (s): boolean => s.seriesId === seriesId
+            );
+            // TODO: Better way to recognize the column name.
+            if (colAssignment) {
+                const { data } = colAssignment;
+                if (typeof data === 'string') {
+                    columnName = data;
+                } else if (Array.isArray(data)) {
+                    columnName = data[1];
+                } else {
+                    columnName = data.y ?? data.value;
+                }
+            }
+            if (!columnName) {
+                columnName = series.name;
+            }
+
+            series.update({
+                point: {
+                    events: {
+                        // Emit table cursor
+                        mouseOver: function (): void {
+                            let offset = 0;
+                            const modifier = table.getModifier();
+                            if (modifier?.options.type === 'Range') {
+                                offset = getModifiedTableOffset(
+                                    table,
+                                    modifier.options as RangeModifierOptions
+                                );
                             }
+                            cursor.emitCursor(table, {
+                                type: 'position',
+                                row: offset + this.index,
+                                column: columnName,
+                                state: 'point.mouseOver'
+                            });
+                        },
+                        mouseOut: function (): void {
+                            let offset = 0;
+                            const modifier = table.getModifier();
+                            if (modifier?.options.type === 'Range') {
+                                offset = getModifiedTableOffset(
+                                    table,
+                                    modifier.options as RangeModifierOptions
+                                );
+                            }
+                            cursor.emitCursor(table, {
+                                type: 'position',
+                                row: offset + this.index,
+                                column: columnName,
+                                state: 'point.mouseOut'
+                            });
                         }
                     }
-                }, false);
-                chart.redraw();
-            });
+                }
+            }, false);
+            chart.redraw();
         }
 
         // Return function that handles cleanup
@@ -183,15 +210,10 @@ const syncPair: Sync.SyncPair = {
         const getHoveredPoint = (
             e: DataCursor.Event
         ): Point | undefined => {
-            const table = this.connectorHandlers?.[0]?.connector?.table;
-
-            if (!table) {
-                return;
-            }
+            const table = e.table;
+            const modifier = table.getModifier();
 
             let offset = 0;
-
-            const modifier = table.getModifier();
 
             if (modifier && modifier.options.type === 'Range') {
                 offset = getModifiedTableOffset(
@@ -202,20 +224,20 @@ const syncPair: Sync.SyncPair = {
             if (chart && chart.series?.length) {
                 const cursor = e.cursor;
                 if (cursor.type === 'position') {
-                    let [series] = chart.series;
+                    let series;
+                    const seriesIds =
+                        Object.keys(component.seriesFromConnector);
+                    for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
+                        const seriesId = seriesIds[i];
+                        const seriesTable = component
+                            .seriesFromConnector[seriesId]?.connector?.table;
 
-                    // #20133 - Highcharts dashboards don't sync
-                    // tooltips when charts have multiple series
-                    if (chart.series.length > 1 && cursor.column) {
-                        const relatedSeries = chart.series.filter(
-                            (series): boolean => (
-                                series.name === cursor.column
-                            )
-                        );
-
-                        if (relatedSeries.length > 0) {
-                            [series] = relatedSeries;
+                        if (seriesTable !== table) {
+                            continue;
                         }
+
+                        series = chart.get(seriesId) as Series;
+                        break;
                     }
 
                     if (series?.visible && cursor.row !== void 0) {
@@ -371,39 +393,55 @@ const syncPair: Sync.SyncPair = {
 
         const registerCursorListeners = (): void => {
             const { dataCursor: cursor } = board;
+            const { connectorHandlers } = this;
+            if (!cursor) {
+                return;
+            }
 
-            if (cursor) {
-                const table = this.connectorHandlers?.[0]?.connector?.table;
-                if (table) {
-                    cursor.addListener(
-                        table.id, 'point.mouseOver', handleCursor
-                    );
-                    cursor.addListener(
-                        table.id, 'dataGrid.hoverRow', handleCursor
-                    );
-                    cursor.addListener(
-                        table.id, 'point.mouseOut', handleCursorOut
-                    );
-                    cursor.addListener(
-                        table.id, 'dataGrid.hoverOut', handleCursorOut
-                    );
+            for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
+                const table = connectorHandlers[i]?.connector?.table;
+                if (!table) {
+                    continue;
                 }
+
+                cursor.addListener(
+                    table.id, 'point.mouseOver', handleCursor
+                );
+                cursor.addListener(
+                    table.id, 'dataGrid.hoverRow', handleCursor
+                );
+                cursor.addListener(
+                    table.id, 'point.mouseOut', handleCursorOut
+                );
+                cursor.addListener(
+                    table.id, 'dataGrid.hoverOut', handleCursorOut
+                );
             }
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = this.connectorHandlers?.[0]?.connector?.table;
-            if (table) {
-                board.dataCursor.removeListener(
+            const { dataCursor: cursor } = board;
+            const { connectorHandlers } = this;
+            if (!cursor) {
+                return;
+            }
+
+            for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
+                const table = connectorHandlers[i]?.connector?.table;
+                if (!table) {
+                    continue;
+                }
+
+                cursor.removeListener(
                     table.id, 'point.mouseOver', handleCursor
                 );
-                board.dataCursor.removeListener(
+                cursor.removeListener(
                     table.id, 'dataGrid.hoverRow', handleCursor
                 );
-                board.dataCursor.removeListener(
+                cursor.removeListener(
                     table.id, 'point.mouseOut', handleCursorOut
                 );
-                board.dataCursor.removeListener(
+                cursor.removeListener(
                     table.id, 'dataGrid.hoverOut', handleCursorOut
                 );
             }

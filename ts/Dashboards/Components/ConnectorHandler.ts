@@ -28,7 +28,7 @@ import Globals from '../Globals.js';
  * connector.
  * @internal
  */
-class ComponentConnectorHandler {
+class ConnectorHandler {
     /* *
      *
      *  Properties
@@ -38,7 +38,7 @@ class ComponentConnectorHandler {
     /**
      * Connector options for the component.
      */
-    public options: ComponentConnectorHandler.ConnectorOptions;
+    public options: ConnectorHandler.ConnectorOptions;
     /**
      * Connector that allows you to load data via URL or from a local source.
      */
@@ -96,7 +96,7 @@ class ComponentConnectorHandler {
      */
     constructor(
         component: Component,
-        options: ComponentConnectorHandler.ConnectorOptions
+        options: ConnectorHandler.ConnectorOptions
     ) {
         this.component = component;
         this.options = options;
@@ -259,7 +259,7 @@ class ComponentConnectorHandler {
     }
 
     public updateOptions(
-        newOptions: ComponentConnectorHandler.ConnectorOptions
+        newOptions: ConnectorHandler.ConnectorOptions
     ): void {
         this.options = newOptions;
     }
@@ -277,7 +277,7 @@ class ComponentConnectorHandler {
  *
  * */
 
-namespace ComponentConnectorHandler {
+namespace ConnectorHandler {
     /**
      * Contains information to connect the component to a connector in the data
      * pool of the dashboard.
@@ -304,4 +304,4 @@ namespace ComponentConnectorHandler {
     }
 }
 
-export default ComponentConnectorHandler;
+export default ConnectorHandler;

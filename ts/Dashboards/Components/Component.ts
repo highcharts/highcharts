@@ -36,7 +36,7 @@ import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 
 import CallbackRegistry from '../CallbackRegistry.js';
-import ComponentConnectorHandler from './ComponentConnectorHandler.js';
+import ConnectorHandler from './ConnectorHandler.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataTable from '../../Data/DataTable.js';
 import EditableOptions from './EditableOptions.js';
@@ -188,7 +188,7 @@ abstract class Component {
     /**
      * The connector handlers for the component.
      */
-    public connectorHandlers: ComponentConnectorHandler[] = [];
+    public connectorHandlers: ConnectorHandler[] = [];
     /**
      * @internal
      * The board the component belongs to
@@ -317,7 +317,7 @@ abstract class Component {
 
             for (const connectorOptions of connectorOptionsArray) {
                 this.connectorHandlers.push(
-                    new ComponentConnectorHandler(this, connectorOptions)
+                    new ConnectorHandler(this, connectorOptions)
                 );
             }
         }
@@ -583,7 +583,7 @@ abstract class Component {
         fireEvent(this, 'update', eventObject);
 
         this.options = merge(this.options, newOptions);
-        const connectorOptions: ComponentConnectorHandler.ConnectorOptions[] = (
+        const connectorOptions: ConnectorHandler.ConnectorOptions[] = (
             this.options.connector ? (
                 isArray(this.options.connector) ? this.options.connector :
                     [this.options.connector]
@@ -615,7 +615,7 @@ abstract class Component {
 
             for (const options of connectorOptions) {
                 this.connectorHandlers.push(
-                    new ComponentConnectorHandler(this, options)
+                    new ConnectorHandler(this, options)
                 );
             }
             await this.initConnectors();
@@ -916,7 +916,7 @@ interface Component {
 
 namespace Component {
 
-    type ConnectorOptions = ComponentConnectorHandler.ConnectorOptions;
+    type ConnectorOptions = ConnectorHandler.ConnectorOptions;
 
     /* *
     *

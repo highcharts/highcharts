@@ -63,10 +63,14 @@ const syncPair: Sync.SyncPair = {
                     // TODO: investigate this type?
                     const axis = e.target as unknown as Axis;
 
+                    const seriesFromConnectorArray = Object.keys(
+                        component.seriesFromConnector
+                    );
+
                     // Prefer a series that's in a related table,
                     // but allow for other data
-                    const series = component.seriesFromConnector.length > 0 ?
-                        chart.get(component.seriesFromConnector[0]) as Series :
+                    const series = seriesFromConnectorArray.length > 0 ?
+                        chart.get(seriesFromConnectorArray[0]) as Series :
                         axis.series[0];
 
                     if (series) {
@@ -86,7 +90,7 @@ const syncPair: Sync.SyncPair = {
                         };
 
                         if (
-                            component.seriesFromConnector.length > 0 &&
+                            seriesFromConnectorArray.length > 0 &&
                             axis.coll === 'xAxis' &&
                             visiblePoints.length
                         ) {

@@ -49,7 +49,7 @@ import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
-import ComponentConnectorHandler from '../../Components/ComponentConnectorHandler';
+import ConnectorHandler from '../../Components/ConnectorHandler';
 const {
     createElement,
     diffObjects,
@@ -186,9 +186,9 @@ class HighchartsComponent extends Component {
     public chartConstructor: ConstructorType;
 
     /**
-     * List of series IDs created from the connector using `columnAssignment`.
+     * An object of series IDs and their connector handlers.
      */
-    public seriesFromConnector: string[] = [];
+    public seriesFromConnector: Record<string, ConnectorHandler> = {};
 
     /* *
      *
@@ -381,7 +381,9 @@ class HighchartsComponent extends Component {
      * @private
      */
     public updateSeries(): void {
-        const { chart, connectorHandlers } = this;
+        const { chart } = this;
+        const connectorHandlers: HighchartsComponent.HCConnectorHandler[] =
+            this.connectorHandlers;
         if (!chart) {
             return;
         }
@@ -396,12 +398,11 @@ class HighchartsComponent extends Component {
                     connectorHandler.presentationTable.getColumnNames(),
                     connectorHandler.presentationTable
                 );
-
-                (connectorHandler as HighchartsComponent.HCConnectorHandler)
-                    .defaultColumnAssignment = columnAssignment;
             }
 
             if (columnAssignment) {
+                connectorHandler.columnAssignment = columnAssignment;
+
                 for (const { seriesId } of columnAssignment) {
                     if (seriesId) {
                         newSeriesIds.push(seriesId);
@@ -410,10 +411,12 @@ class HighchartsComponent extends Component {
             }
         }
 
+        const seriesArray = Object.keys(this.seriesFromConnector);
+
         // Remove series that were added in the previous update and are not
         // present in the new columnAssignment.
-        for (let i = 0, iEnd = this.seriesFromConnector.length; i < iEnd; ++i) {
-            const oldSeriesId = this.seriesFromConnector[i];
+        for (let i = 0, iEnd = seriesArray.length; i < iEnd; ++i) {
+            const oldSeriesId = seriesArray[i];
             if (newSeriesIds.some(
                 (newSeriesId): boolean => newSeriesId === oldSeriesId
             )) {
@@ -425,7 +428,7 @@ class HighchartsComponent extends Component {
                 series.destroy();
             }
         }
-        this.seriesFromConnector.length = 0;
+        this.seriesFromConnector = {};
 
         for (const connectorHandler of connectorHandlers) {
             this.updateSeriesFromConnector(connectorHandler);
@@ -440,7 +443,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeriesFromConnector(
-        connectorHandler: ComponentConnectorHandler
+        connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
         const chart = this.chart;
         if (
@@ -455,12 +458,7 @@ class HighchartsComponent extends Component {
         const modifierOptions =
             connectorHandler.presentationTable.getModifier()?.options;
 
-        this.emit({ type: 'afterPresentationModifier', table: table });
-
-        const connectorOptions = connectorHandler.options as ConnectorOptions;
-        const columnAssignment = connectorOptions.columnAssignment ??
-            (connectorHandler as HighchartsComponent.HCConnectorHandler)
-                .defaultColumnAssignment ?? [];
+        const columnAssignment = connectorHandler.columnAssignment ?? [];
 
         // Create the series or update the existing ones.
         for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
@@ -536,7 +534,7 @@ class HighchartsComponent extends Component {
                 series.update(seriesOptions, false);
             }
 
-            this.seriesFromConnector.push(assignment.seriesId);
+            this.seriesFromConnector[assignment.seriesId] = connectorHandler;
         }
     }
 
@@ -846,8 +844,8 @@ namespace HighchartsComponent {
     }>;
 
     /** @private */
-    export interface HCConnectorHandler extends ComponentConnectorHandler {
-        defaultColumnAssignment?: ColumnAssignmentOptions[];
+    export interface HCConnectorHandler extends ConnectorHandler {
+        columnAssignment?: ColumnAssignmentOptions[];
     }
 
     /** @private */
