@@ -1,4 +1,4 @@
-QUnit.test('Touch event test on popup', function (assert) {
+QUnit.test('Dragging annotation', function (assert) {
     const data = [];
     for (let i = 0; i < 300; i++) {
         if (i > 100 && i < 200) {
@@ -62,7 +62,6 @@ QUnit.test('Touch event test on popup', function (assert) {
     const testController = new TestController(chart);
     const diff = 25;
     const start = chart.plotLeft + originalPlotX;
-    testController.click(start, 200, void 0, true);
     testController.pan([start, 200], [diff + start, 200], void 0, true);
     const newPlotX = annotation.points[0].plotX;
     assert.close(
