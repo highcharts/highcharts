@@ -1,48 +1,178 @@
-(async () => {
+Highcharts.setOptions({
+    lang: {
+        rangeSelectorZoom: ''
+    }
+});
 
-    const data = await fetch(
-        'https://demo-live-data.highcharts.com/aapl-c.json'
-    ).then(response => response.json());
+Highcharts.stockChart('container', {
 
-    // Create the chart
-    Highcharts.stockChart('container', {
+    chart: {
+        backgroundColor: '#000000'
+    },
 
-        rangeSelector: {
-            selected: 1
+    title: {
+        text: 'BTCETH',
+        align: 'left',
+        y: 30,
+        style: {
+            color: '#b0abab',
+            fontSize: '2em'
+        }
+    },
+
+    xAxis: {
+        lineWidth: 0,
+        labels: {
+            style: {
+                color: '#b0abab'
+            }
         },
+        crosshair: {
+            width: 0
+        }
+    },
 
-        title: {
-            text: 'AAPL Stock Price'
+    scrollbar: {
+        barBorderRadius: 8,
+        barBackgroundColor: '#5f5959',
+        height: 8,
+        margin: 0,
+        trackBorderColor: '#5f5959',
+        trackBorderRadius: 8
+    },
+
+    exporting: {
+        buttons: {
+            contextButton: {
+                symbolStroke: '#d9d7d7',
+                theme: {
+                    fill: '#000000'
+                }
+            }
+        }
+    },
+
+    yAxis: {
+        gridLineWidth: 0,
+        range: 20,
+        offset: 30,
+        labels: {
+            style: {
+                color: '#b0abab'
+            }
         },
+        accessibility: {
+            description: 'price in Ethereum'
+        }
+    },
 
-        navigator: {
-            series: {
-                accessibility: {
-                    exposeAsGroupOnly: true
+    navigator: {
+        xAxis: {
+            gridLineWidth: 0,
+            labels: {
+                style: {
+                    color: '#ffffff',
+                    opacity: 1,
+                    textOutline: '#000000'
                 }
             }
         },
+        outlineWidth: 0,
+        maskFill: 'rgba(181, 145, 143, 0.2)'
+    },
 
-        series: [{
-            name: 'AAPL Stock Price',
-            data: data,
-            type: 'area',
-            threshold: null,
-            tooltip: {
-                valueDecimals: 2
+    rangeSelector: {
+        buttonPosition: {
+            align: 'right',
+            x: -30,
+            y: -40
+        },
+        buttonSpacing: 10,
+        buttonTheme: {
+            fill: 'none',
+            stroke: 'none',
+            'stroke-width': 0,
+            r: 8,
+            style: {
+                color: '#d9d7d7',
+                fontWeight: 'bold',
+                fontSize: '1em'
             },
-            fillColor: {
-                linearGradient: {
-                    x1: 0,
-                    y1: 0,
-                    x2: 0,
-                    y2: 1
+            states: {
+                select: {
+                    fill: '#f23644',
+                    style: {
+                        color: '#ffffff'
+                    }
                 },
+                hover: {
+                    style: {
+                        color: '#000000'
+                    }
+                }
+            }
+        },
+        inputEnabled: false
+    },
+
+    plotOptions: {
+        series: {
+            fillColor: {
+                linearGradient: [0, 0, 0, 450],
                 stops: [
-                    [0, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    [0, '#5c0d13'],
+                    [1, '#000000']
                 ]
             }
+        }
+    },
+
+    data: {
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac5bcf/samples/data/btc-eth.csv'
+    },
+
+    tooltip: {
+        shape: 'rect',
+        shadow: false,
+        borderWidth: 0.5,
+        borderColor: '#ffffff',
+        backgroundColor: '#212020',
+        style: {
+            color: '#ffffff'
+        }
+    },
+
+    series: [{
+        type: 'area',
+        color: '#f23644',
+        tooltip: {
+            valueDecimals: 4,
+            pointFormat: '{point.y}'
+        }
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 700
+            },
+            chartOptions: {
+                title: {
+                    align: 'center',
+                    verticalAlign: 'top'
+                },
+                scrollbar: {
+                    enabled: false
+                },
+                rangeSelector: {
+                    buttonSpacing: 20,
+                    buttonPosition: {
+                        align: 'center',
+                        x: 0,
+                        y: 0
+                    }
+                }
+            }
         }]
-    });
-})();
+    }
+});
