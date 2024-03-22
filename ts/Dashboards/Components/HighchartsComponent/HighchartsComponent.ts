@@ -31,7 +31,8 @@ import type {
     Options as ChartOptions,
     Highcharts as H,
     Series,
-    SeriesOptions
+    SeriesOptions,
+    Point
 } from '../../Plugins/HighchartsTypes';
 import type {
     ColumnAssignmentOptions,
@@ -44,6 +45,7 @@ import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../Component.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
+import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
@@ -321,23 +323,70 @@ class HighchartsComponent extends Component {
      * @private
      * */
     private setupConnectorUpdate(): void {
-        // TODO: Implement this, skipping for now as it's connected with sync.
-        // const { connectorHandler, chart } = this;
+        const { connectorHandlers, chart } = this;
 
-        // if (connectorHandler && chart && this.options.allowConnectorUpdate) {
-        //     chart.series.forEach((series): void => {
-        //         series.points.forEach((point): void => {
-        //             addEvent(point, 'drag', (): void => {
-        //                 if (connectorHandler.connector) {
-        //                     this.onChartUpdate(
-        //                         point,
-        //                         connectorHandler.connector
-        //                     );
-        //                 }
-        //             });
-        //         });
-        //     });
-        // }
+        if (!chart || !this.options.allowConnectorUpdate) {
+            return;
+        }
+
+        const seriesLength = chart.series.length;
+        for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; i++) {
+            const connectorHandler = connectorHandlers[i];
+
+            for (let j = 0; j < seriesLength; j++) {
+                const series = chart.series[j];
+                series.update({
+                    point: {
+                        events: {
+                            update: (e: any): void => {
+                                this.onChartUpdate(e.target, connectorHandler);
+                            }
+                        }
+                    }
+                }, false);
+            }
+        }
+    }
+
+    /**
+     * Update the store, when the point is being dragged.
+     * @param point Dragged point.
+     * @param connectorHandler Connector handler with data to update.
+     */
+    private onChartUpdate(
+        point: Point,
+        connectorHandler: HighchartsComponent.HCConnectorHandler
+    ): void {
+        const table = connectorHandler.connector?.table;
+        const columnAssignment = connectorHandler.columnAssignment;
+        const seriesId = point.series.options.id;
+        const converter = new DataConverter();
+        const valueToSet = converter.asNumber(point.y);
+
+        if (!table) {
+            return;
+        }
+
+        let columnName: string | undefined;
+        if (columnAssignment && seriesId) {
+            const data = columnAssignment.find(
+                (s): boolean => s.seriesId === seriesId
+            )?.data;
+
+            if (isString(data)) {
+                columnName = data;
+            } else if (Array.isArray(data)) {
+                columnName = data[1];
+            } else if (data) {
+                columnName = data.y ?? data.value;
+            }
+        }
+
+        if (!columnName) {
+            columnName = seriesId ?? point.series.name;
+        }
+
+        table.setCell(columnName, point.index, valueToSet);
     }
 
     /**
