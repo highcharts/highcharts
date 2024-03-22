@@ -61,10 +61,10 @@ QUnit.test(
 
 QUnit.test('directTouch', function (assert) {
     var treemapSeries = Highcharts.Series.types.treemap;
-    assert.strictEqual(
+    // Tooltip touch follow requires directTouch to be disabled #19403.
+    assert.notOk(
         treemapSeries.prototype.directTouch,
-        true,
-        'directTouch should default to true.'
+        'directTouch should default to false.'
     );
 });
 
@@ -111,6 +111,14 @@ QUnit.test('getListOfParents', function (assert) {
             exists: [0]
         },
         'should add point under parent when it exists.'
+    );
+});
+
+QUnit.test('kdAxisArray', function (assert) {
+    var treemapSeries = Highcharts.Series.types.treemap;
+    assert.ok(
+        treemapSeries.prototype.kdAxisArray,
+        'kdAxisArray should be defined for tooltip touch follow to work as expected, recommend: ["plotX", "plotY"].'
     );
 });
 

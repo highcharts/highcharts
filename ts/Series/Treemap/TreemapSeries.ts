@@ -30,6 +30,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+import type PointerEvent from '../../Core/PointerEvent';
 import type {
     TreemapSeriesLayoutAlgorithmValue,
     TreemapSeriesOptions
@@ -61,6 +62,7 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
+import Point from '../../Core/Series/Point';
 const {
     addEvent,
     correctFloat,
@@ -1190,6 +1192,22 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    public searchPoint(
+        e: PointerEvent,
+        compareX?: boolean
+    ): Point | undefined {
+        const series = this,
+            xAxis = series.xAxis,
+            yAxis = series.yAxis,
+            inverted = series.chart.inverted;
+        return this.searchKDTree({
+            plotX: inverted ?
+                xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
+            plotY: inverted ?
+                yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
+        }, compareX, e);
+    }
+
     /**
      * Sets a new root node for the series.
      *
@@ -1497,12 +1515,12 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     };
 }
 extend(TreemapSeries.prototype, {
-    buildKDTree: noop,
+    buildKDTree: ScatterSeries.prototype.buildKDTree,
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     colorKey: 'colorValue', // Point color option key
-    directTouch: true,
     getExtremesFromAll: true,
     getSymbol: noop,
+    kdAxisArray: ['plotX', 'plotY'],
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],
