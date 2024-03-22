@@ -2,19 +2,19 @@
 <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
-<script src="https://code.highcharts.com/modules/datagrouping.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
+  <link rel="shortcut icon" href="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">
 <div id="page_container">
 
 	<!-- Application control -->
 	<div id="connect_bar">
 		<h1>Sognekraft</h1>
 		<span id="status">Disconnected</span>
-		<button id="connect_toggle" type="button" onclick="MQTTconnect()">Connect</button>
+		<button id="connect_toggle" type="button" onclick="mqttConnect()">Connect</button>
 	</div>
 
 	<!-- Dashboards container -->

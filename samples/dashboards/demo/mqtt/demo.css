@@ -102,15 +102,8 @@ div#connect_bar button {
     flex: 1;
 }
 
-/* Test: hide power generators that are not in use */
-.el-aggr:nth-of-type(3),
-.el-aggr:nth-of-type(4) {
-    display: none;
-}
-
 .el-kpi {
-    flex-grow: 1;
-    max-height: 200px;
+    max-height: 220px;
 }
 
 .el-kpi .highcharts-dashboards-component-kpi-value {
@@ -118,7 +111,7 @@ div#connect_bar button {
 }
 
 .el-chart {
-    max-height: 200px;
+    max-height: 300px;
 }
 
 .el-aggr .highcharts-dashboards-component {
@@ -130,38 +123,6 @@ div#connect_bar button {
 .el-aggr .highcharts-dashboards-component-title {
     white-space: nowrap;
     font-size: 16px;
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-value {
-    margin: 0.5em 0;
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-content {
-    background: none;
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
-    fill: var(--color-axis);
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
-    fill: none;
-    stroke: none;
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
-    font-size: 16px;
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
-    fill: var(--highcharts-neutral-color-5);
-    fill-opacity: 1;
-    stroke: var(--highcharts-neutral-color-20);
-}
-
-.el-aggr .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
-    fill: var(--color-gauge);
-    stroke: none;
 }
 
 .el-aggr .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
