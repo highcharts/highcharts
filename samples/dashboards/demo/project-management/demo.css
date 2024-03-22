@@ -1,5 +1,9 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+body {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+}
+
 :root,
 .highcharts-light {
     /* Colors for data series and points */
