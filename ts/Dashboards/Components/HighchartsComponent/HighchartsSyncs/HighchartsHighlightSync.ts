@@ -26,7 +26,7 @@ import type {
     RangeModifierOptions,
     RangeModifierRangeOptions
 } from '../../../../Data/Modifiers/RangeModifierOptions';
-import type HighchartsComponent from '../HighchartsComponent.js';
+import type HCComponent from '../HighchartsComponent.js';
 import type DataTable from '../../../../Data/DataTable';
 import type { Series } from '../../../Plugins/HighchartsTypes';
 
@@ -99,7 +99,7 @@ const syncPair: Sync.SyncPair = {
         if (this.type !== 'Highcharts') {
             return;
         }
-        const component = this as HighchartsComponent;
+        const component = this as HCComponent;
 
         const { chart, board } = component;
         const highlightOptions =
@@ -113,7 +113,7 @@ const syncPair: Sync.SyncPair = {
         for (let i = 0, iEnd = chart.series?.length ?? 0; i < iEnd; ++i) {
             const series = chart.series[i];
             const seriesId = series.options.id ?? '';
-            const connectorHandler: HighchartsComponent.HCConnectorHandler =
+            const connectorHandler: HCComponent.HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
             const table = connectorHandler?.connector?.table;
             let columnName: string | undefined;
@@ -203,7 +203,7 @@ const syncPair: Sync.SyncPair = {
         if (this.type !== 'Highcharts') {
             return;
         }
-        const component = this as HighchartsComponent;
+        const component = this as HCComponent;
 
         const { chart, board } = component;
 
@@ -225,19 +225,49 @@ const syncPair: Sync.SyncPair = {
                 const cursor = e.cursor;
                 if (cursor.type === 'position') {
                     let series;
+
                     const seriesIds =
                         Object.keys(component.seriesFromConnector);
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
-                        const seriesTable = component
-                            .seriesFromConnector[seriesId]?.connector?.table;
+                        const connectorHandler: HCComponent.HCConnectorHandler =
+                                component.seriesFromConnector[seriesId];
 
-                        if (seriesTable !== table) {
+                        if (connectorHandler?.connector?.table !== table) {
                             continue;
                         }
 
+                        const colAssignment = connectorHandler.columnAssignment;
+
                         series = chart.get(seriesId) as Series;
-                        break;
+                        if (!colAssignment) {
+                            break;
+                        }
+
+                        const { data } = colAssignment.find(
+                            (s): boolean => s.seriesId === seriesId
+                        ) ?? {};
+                        if (!data || !cursor.column) {
+                            break;
+                        }
+
+                        if (typeof data === 'string') {
+                            if (data === cursor.column) {
+                                break;
+                            }
+                        } else if (Array.isArray(data)) {
+                            if (data.includes(cursor.column)) {
+                                break;
+                            }
+                        } else {
+                            if (
+                                Object.keys(data)
+                                    .map((key): string => data[key])
+                                    .includes(cursor.column)
+                            ) {
+                                break;
+                            }
+                        }
                     }
 
                     if (series?.visible && cursor.row !== void 0) {

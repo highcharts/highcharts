@@ -57,12 +57,11 @@ const syncPair: Sync.SyncPair = {
             const table = this.connectorHandlers?.[0]?.connector?.table;
             if (table) {
                 const row = e.row;
-                const cell = row.querySelector(`.highcharts-datagrid-cell[data-original-data="${row.dataset.rowXIndex}"]`);
 
                 cursor.emitCursor(table, {
                     type: 'position',
                     row: parseInt(row.dataset.rowIndex, 10),
-                    column: cell ? cell.dataset.columnName : void 0,
+                    column: e.columnName,
                     state: 'dataGrid.hoverRow'
                 });
             }
