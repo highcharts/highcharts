@@ -21,11 +21,12 @@
  * */
 
 
+import type ConnectorHandler from '../ConnectorHandler.js';
 import type Component from '../Component';
-import type {
-    ComponentConnectorOptions
-} from '../../Components/ComponentOptions';
 import type Sync from '../Sync/Sync';
+import type {
+    HighchartsHighlightSyncOptions
+} from './HighchartsSyncs/HighchartsHighlightSync.js';
 import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
@@ -71,7 +72,7 @@ export interface Options extends Component.Options {
     /**
      * Connector options for the component.
      */
-    connector?: ConnectorOptions;
+    connector?: ConnectorOptions | ConnectorOptions[];
 
     /**
      * Type of the component.
@@ -129,7 +130,7 @@ export interface Options extends Component.Options {
 /**
  * Highcharts component connector options.
  */
-export interface ConnectorOptions extends ComponentConnectorOptions {
+export interface ConnectorOptions extends ConnectorHandler.ConnectorOptions {
     /**
      * It allows to assign the data from the connector to specific series in the
      * chart in different ways using series IDs and column names.
@@ -244,7 +245,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|Sync.HighlightSyncOptions;
+    highlight?: boolean|HighchartsHighlightSyncOptions;
     /**
      * Visibility sync is available for Highcharts and DataGrid components.
      * Synchronizes the visibility of data from a hidden/shown series.

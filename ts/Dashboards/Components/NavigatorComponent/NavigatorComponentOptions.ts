@@ -23,7 +23,12 @@
 
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
-import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
+import type {
+    Options as HighchartsOptions
+} from '../../Plugins/HighchartsTypes';
+import {
+    CrossfilterSyncOptions
+} from './NavigatorSyncs/NavigatorCrossfilterSync';
 
 
 /* *
@@ -57,7 +62,7 @@ export interface Options extends Component.Options {
     chartOptions: HighchartsOptions;
 
     /**
-     * Column assignments have impact on navigator and range. Only the first
+     * Column assignment have impact on navigator and range. Only the first
      * assignment is used and usually matches against the `y` values.
      *
      * If crossfilter sync is enabled, the column assignment will show the
@@ -66,11 +71,16 @@ export interface Options extends Component.Options {
      * @example
      * ``` JavaScript
      * {
-     *     columnAssignments: {
+     *     columnAssignment: {
      *         'My Column': 'y'
      *     }
      * }
      * ```
+     */
+    columnAssignment?: Record<string, string | null>;
+
+    /**
+     * @deprecated
      */
     columnAssignments?: Record<string, string | null>;
 
@@ -124,7 +134,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    crossfilter?: boolean|Sync.CrossfilterSyncOptions;
+    crossfilter?: boolean|CrossfilterSyncOptions;
     /**
      * Extremes sync is available for Highcharts, KPI, DataGrid and
      * Navigator components. Sets a common range of displayed data. For the
