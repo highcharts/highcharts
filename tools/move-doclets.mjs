@@ -3,7 +3,7 @@
  *
  *  Moving doclets to interfaces.
  *
- *  Copyright (c) Highsoft AS. All rights reserved.
+ *  (c) Highsoft AS
  *
  *  Authors:
  *  - Sophie Bremer
@@ -21,8 +21,9 @@
 import FS from 'node:fs';
 import FSLib from './gulptasks/lib/fs.js';
 import Path from 'node:path';
+import TreeLib from './lib/tree.js';
 import TS from 'typescript';
-import TSLib from './gulptasks/lib/ts.js';
+import TSLib from './lib/ts.js';
 import Yargs from 'yargs';
 
 
@@ -516,7 +517,7 @@ function extractDocletsTree(
     const tree = [];
 
     /** @type {TS.Node} */
-    let previousNode;
+    let previousNode = source.getFirstToken();
 
     for (const node of TSLib.getNodesChildren(source)) {
         process(node, previousNode, undefined, tree);
@@ -1039,6 +1040,7 @@ function mergeImports(
 
 /**
  * @param {Record<string,*>} tree
+ * @todo do not merge; turn around and put plotOptions doclet to the file end
  */
 function mergeInterfaceOverwrite(
     tree
@@ -1102,6 +1104,126 @@ function mergeInterfaceOverwrite(
 
 
 /**
+ * @param {string} path
+ * @param {boolean} logJSON
+ */
+async function moveSeriesDoclets(
+    path,
+    logJSON
+) {
+    const files = FSLib.getFilePaths(path, true);
+
+    /** @type {TS.SourceFile} */
+    let source;
+    /** @type {string} */
+    let sourcePath;
+    /** @type {TS.SourceFile} */
+    let target;
+    /** @type {Record<string,*>} */
+    let tree;
+
+    for (const file of files) {
+
+        // if (file.endsWith('.d.ts')) {
+        //     console.log(JSON.stringify(
+        //         TSLib.getSourceInfo(file),
+        //         (key, value) => (key === 'node' ? '[TS.Node]' : value),
+        //         '  '
+        //     ));
+        //     continue;
+        // }
+
+        if (!file.endsWith('Options.d.ts')) {
+            continue;
+        }
+
+        sourcePath = findPairedSource(file);
+
+        if (!sourcePath) {
+            continue;
+        }
+
+        verbose && console.info('');
+        console.info('Reading', sourcePath);
+
+        source = TS.createSourceFile(
+            sourcePath,
+            await FS.promises.readFile(sourcePath, 'utf8'),
+            TS.ScriptTarget.Latest,
+            true
+        );
+
+        tree = extractDocletsTree(source);
+
+        if (!tree) {
+            continue;
+        }
+
+        if (logJSON) {
+            writeJSON(Path.join('tmp', 'move-doclets.json'), tree);
+        }
+
+        verbose && console.info('');
+        console.info('Writing', file);
+
+        target = TS.createSourceFile(
+            file,
+            await FS.promises.readFile(file, 'utf8'),
+            TS.ScriptTarget.Latest,
+            true
+        );
+
+        writeDocletsTree(target, tree);
+
+        verbose && console.info('');
+        console.info('Cleaning', source.fileName);
+
+        removeDoclets(source);
+    }
+
+}
+
+
+/**
+ * @param {Array<Record<string,string>>} doclet
+ * @param {string} tag
+ */
+function removeTag(
+    doclet,
+    tag
+) {
+    /** @type {Array<number>} */
+    const indexes = [];
+
+    for (let i = 0, iEnd = doclet.length; i < iEnd; ++i) {
+        if (doclet[i].tag === tag) {
+            indexes.push(i);
+        }
+    }
+
+    for (const index of indexes.reverse()) {
+        doclet.splice(index, 1);
+    }
+
+}
+
+
+/**
+ * @param {TS.SourceFile} source
+ * @return {string}
+ */
+function removeDoclets(
+    source
+) {
+    FS.writeFileSync(
+        source.fileName, 
+        source.getFullText().replace(/\n[ \t]*\/\*\*.*?\*\//gsu, ''),
+        'utf8'
+    );
+}
+
+
+/**
  * @param {TS.SourceFile} target
  * @param {Record<string,*>} tree
  */
@@ -1130,6 +1252,7 @@ function writeDocletsTree(
      * @param {TS.Node} parent
      */
     const connectOptions = (branch, node, parent) => {
+
         if (!isRegistered(branch, node)) {
             if (TS.isInterfaceDeclaration(node)) {
                 if (getInterfaceName(branch) === node.name.text) {
@@ -1296,117 +1419,6 @@ function writeDocletsTree(
 
     }
 
-}
-
-
-/**
- * @param {string} path
- * @param {boolean} logJSON
- */
-async function moveSeriesDoclets(
-    path,
-    logJSON
-) {
-    const files = FSLib.getFilePaths(path, true);
-
-    /** @type {TS.SourceFile} */
-    let source;
-    /** @type {string} */
-    let sourcePath;
-    /** @type {TS.SourceFile} */
-    let target;
-    /** @type {Record<string,*>} */
-    let tree;
-
-    for (const file of files) {
-
-        if (!file.endsWith('Options.d.ts')) {
-            continue;
-        }
-
-        sourcePath = findPairedSource(file);
-
-        if (!sourcePath) {
-            continue;
-        }
-
-        verbose && console.info('');
-        console.info('Reading', sourcePath);
-
-        source = TS.createSourceFile(
-            sourcePath,
-            await FS.promises.readFile(sourcePath, 'utf8'),
-            TS.ScriptTarget.Latest,
-            true
-        );
-
-        tree = extractDocletsTree(source);
-
-        if (!tree) {
-            continue;
-        }
-
-        if (logJSON) {
-            writeJSON(Path.join('tmp', 'move-doclets.json'), tree);
-        }
-
-        verbose && console.info('');
-        console.info('Writing', file);
-
-        target = TS.createSourceFile(
-            file,
-            await FS.promises.readFile(file, 'utf8'),
-            TS.ScriptTarget.Latest,
-            true
-        );
-
-        writeDocletsTree(target, tree);
-
-        verbose && console.info('');
-        console.info('Cleaning', source.fileName);
-
-        removeDoclets(source);
-    }
-
-}
-
-
-/**
- * @param {Array<Record<string,string>>} doclet
- * @param {string} tag
- */
-function removeTag(
-    doclet,
-    tag
-) {
-    /** @type {Array<number>} */
-    const indexes = [];
-
-    for (let i = 0, iEnd = doclet.length; i < iEnd; ++i) {
-        if (doclet[i].tag === tag) {
-            indexes.push(i);
-        }
-    }
-
-    for (const index of indexes.reverse()) {
-        doclet.splice(index, 1);
-    }
-
-}
-
-
-/**
- * @param {TS.SourceFile} source
- * @return {string}
- */
-function removeDoclets(
-    source
-) {
-    FS.writeFileSync(
-        source.fileName, 
-        source.getFullText().replace(/\n[ \t]*\/\*\*.*?\*\//gsu, ''),
-        'utf8'
-    );
 }
 
 
