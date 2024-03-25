@@ -4,85 +4,141 @@ QUnit.test('Testing textPath labels', function (assert) {
             600,
             400
         ),
-        makeTextPath = (pathArr, textStr) => {
-            const text = ren
-                .text(textStr)
-                .setTextPath(ren.path(pathArr), { enabled: true })
-                .add();
-            return text;
-        },
+        makeTextPathPolygon = (pathArr, textStr) => (ren
+            .text(textStr)
+            .setTextPath(ren.path(pathArr), { enabled: true })
+            .add()
+            .getBBox()
+            .polygon
+        ),
+        straightPath = ['M', 100, 100, 'L', 200, 100],
         curvedPath = [
             ['M', 120, 100, 'C', 440, 200, 100, 420, 220, 170],
             ['L', 500, 200]
         ],
-        curvedTextPolygon = [
-            [
-                28.475000381469727,
-                18
-            ],
-            [
-                28.475000381469727,
-                -1
-            ],
-            [
-                23.575000762939453,
-                -1
-            ],
-            [
-                23.575000762939453,
-                -20
-            ],
-            [
-                5.7750000953674325,
-                -20
-            ],
-            [
-                -23.575000762939453,
-                -20
-            ],
-            [
-                -23.575000762939453,
-                -1
-            ],
-            [
-                -28.475000381469727,
-                -1
-            ],
-            [
-                -28.475000381469727,
-                18
-            ],
-            [
-                28.475000381469727,
-                18
-            ]
-        ];
-
-    assert.deepEqual(
-        curvedTextPolygon,
-        makeTextPath(
+        straightTextPolygon = makeTextPathPolygon(
+            straightPath,
+            'testing textpath'
+        ),
+        linebreakedTextPolygon = makeTextPathPolygon(
+            straightPath,
+            'testing<br>textpath'
+        ),
+        curvedTextPolygon = makeTextPathPolygon(
+            curvedPath,
+            'testing textpath'
+        ),
+        curvedLinebreakedPolygon = makeTextPathPolygon(
             curvedPath,
             'testing<br>textpath'
-        ).getBBox().polygon,
-        'Text labels with newlines have befitting polygons'
+        );
+
+    // Straight text, no curves or linebreaks
+    assert.deepEqual(
+        straightTextPolygon,
+        makeTextPathPolygon(
+            straightPath,
+            'testing <span style="color: red;">textpath</span>'
+        ),
+        'Nested spans should not impact straight textpath polygons'
+    );
+    assert.deepEqual(
+        straightTextPolygon,
+        makeTextPathPolygon(
+            straightPath,
+            '<span>testing textpath</span>'
+        ),
+        'Span-wrapping straight textpath labels should not impact their polygon'
+    );
+    assert.deepEqual(
+        straightTextPolygon,
+        makeTextPathPolygon(
+            straightPath,
+            '<span>testing <span style="color: red;">textpath</span></span>'
+        ),
+        'Span-wrapping straight textpath labels with nested spans' +
+        'should not impact their polygon'
     );
 
+    // Curved text polygon
     assert.deepEqual(
         curvedTextPolygon,
-        makeTextPath(
+        makeTextPathPolygon(
             curvedPath,
-            'testing<br><span>text</span>path'
-        ).getBBox().polygon,
-        'Text labels with newlines and nested spans have befitting polygons'
+            'testing <span style="color: red;">textpath</span>'
+        ),
+        'Nested spans should not impact curved textpath polygons'
     );
-
     assert.deepEqual(
         curvedTextPolygon,
-        makeTextPath(
+        makeTextPathPolygon(
+            curvedPath,
+            '<span>testing textpath</span>'
+        ),
+        'Span-wrapping curved textpath labels should not impact their polygon'
+    );
+    assert.deepEqual(
+        curvedTextPolygon,
+        makeTextPathPolygon(
+            curvedPath,
+            '<span>testing <span style="color: red;">textpath</span></span>'
+        ),
+        'Span-wrapping curved textpath labels with nested spans' +
+        'should not impact their polygon'
+    );
+
+    // Linebreaked text
+    assert.deepEqual(
+        linebreakedTextPolygon,
+        makeTextPathPolygon(
+            straightPath,
+            '<span style="color: red;">testing<br><span>text</span>path</span>'
+        ),
+        'Span-wrapping straight textpath labels' +
+        'should not impact straight linebreaked polygon'
+    );
+    assert.deepEqual(
+        linebreakedTextPolygon,
+        makeTextPathPolygon(
+            straightPath,
+            'testing<br><span>text</span>path'
+        ),
+        'Nested spans should not impact linebreaked polygon'
+    );
+    assert.deepEqual(
+        linebreakedTextPolygon,
+        makeTextPathPolygon(
+            straightPath,
+            '<span>testing<br><span>text</span>path</span>'
+        ),
+        'Span-wrapping textpath labels with nested spans' +
+        'should not impact straight linebreaked polygon'
+    );
+
+    // Curved linebreaked text
+    assert.deepEqual(
+        curvedLinebreakedPolygon,
+        makeTextPathPolygon(
             curvedPath,
             '<span style="color: red;">testing<br><span>text</span>path</span>'
-        ).getBBox().polygon,
-        'Span-wrapped text labels with newlines and ' +
-        'nested spans have befitting polygons'
+        ),
+        'Span-wrapping text labels should not impact curved linebreaked polygon'
+    );
+    assert.deepEqual(
+        curvedLinebreakedPolygon,
+        makeTextPathPolygon(
+            curvedPath,
+            'testing<br><span>text</span>path'
+        ),
+        'Nested spans should not impact curved linebreaked polygon'
+    );
+    assert.deepEqual(
+        curvedLinebreakedPolygon,
+        makeTextPathPolygon(
+            curvedPath,
+            '<span>testing<br><span>text</span>path</span>'
+        ),
+        'Span-wrapping textpath labels with nested spans' +
+        'should not impact curved linebreaked polygon'
     );
 });
