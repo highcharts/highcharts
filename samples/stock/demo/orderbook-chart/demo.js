@@ -54,7 +54,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Orderbook live chart',
+        text: 'Order book live chart',
         style: {
             color: '#ffffff'
         }
@@ -75,10 +75,16 @@ Highcharts.chart('container', {
 
     xAxis: [{
         reversed: true,
-        visible: false
+        visible: false,
+        title: {
+            text: 'Market depth / price'
+        }
     }, {
         opposite: true,
-        visible: false
+        visible: false,
+        title: {
+            text: 'Market depth / price'
+        }
     }],
 
     yAxis: {
@@ -87,7 +93,10 @@ Highcharts.chart('container', {
         gridLineWidth: 0,
         tickAmount: 3,
         title: {
-            text: ''
+            text: 'Amount of orders',
+            style: {
+                visibility: 'hidden'
+            }
         },
         min: -1200000,
         max: 1200000,
@@ -148,7 +157,7 @@ Highcharts.chart('container', {
                 fontSize: 13,
                 textOutline: 0
             },
-            format: '{point.price}'
+            format: '{point.price:,.1f}'
         }],
         name: 'Bids',
         color: '#42b3f0',
@@ -167,7 +176,7 @@ Highcharts.chart('container', {
                 fontSize: 13,
                 textOutline: 0
             },
-            format: '{point.price}'
+            format: '{point.price:,.1f}'
         }],
         name: 'Asks',
         color: '#d76769',
