@@ -133,6 +133,31 @@ function resolveJSON(js) {
         }
     }
     codeblocks.push(js);
+
+    // Add some files that are referenced by variables in the demos, so we're
+    // not able to parse the static file name.
+    if (js.indexOf('fetch') !== -1) {
+        [
+            'aapl-c.json',
+            'goog-c.json',
+            'msft-c.json'
+        ].forEach(filename => {
+                const data = fs.readFileSync(
+                    path.join(
+                        __dirname,
+                        '..',
+                        'samples/data',
+                        filename
+                    ),
+                    'utf8'
+                );
+                codeblocks.push(`window.JSONSources[
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/${filename}'
+                ] = ${data};`);
+            }
+        );
+    }
+
     return codeblocks.join('\n');
 }
 
@@ -298,7 +323,8 @@ module.exports = function (config) {
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
             'samples/highcharts/blog/gdp-growth-annual/demo.js',
             'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/website/xmas-2021/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
