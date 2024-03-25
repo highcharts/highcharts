@@ -35,6 +35,11 @@ import type Sync from '../Sync/Sync';
  */
 export interface Options extends Component.Options {
     /**
+     * Connector options
+     */
+    connector?: Component.ConnectorOptions;
+
+    /**
      * The style class to add to the rendered data grid container.
      */
     dataGridClassName?: string;

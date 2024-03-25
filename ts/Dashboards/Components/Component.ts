@@ -911,7 +911,7 @@ interface Component {
 
 namespace Component {
 
-    type ConnectorOptions = ConnectorHandler.ConnectorOptions;
+    export type ConnectorOptions = ConnectorHandler.ConnectorOptions;
 
     /* *
     *

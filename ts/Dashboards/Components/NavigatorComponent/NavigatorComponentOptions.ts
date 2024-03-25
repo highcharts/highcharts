@@ -85,6 +85,11 @@ export interface Options extends Component.Options {
     columnAssignments?: Record<string, string | null>;
 
     /**
+     * Connector options
+     */
+    connector?: Component.ConnectorOptions;
+
+    /**
      * Defines which elements should be synced.
      * ```
      * Example:
