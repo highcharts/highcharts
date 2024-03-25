@@ -47,7 +47,9 @@ Highcharts.chart('container', {
         events: {
             load() {
                 setInterval(() => {
-                    updateData(this);
+                    if (this.series) {
+                        updateData(this);
+                    }
                 }, 200);
             }
         }
