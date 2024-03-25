@@ -19,7 +19,7 @@ function dropComponent(elementName) {
 }
 
 
-describe('JSON serialization test', () => {
+describe('JSON serialization - gui enabled', () => {
     beforeEach(() => {
         cy.visit('dashboards/cypress/dashboard-layout');
     });
@@ -275,6 +275,19 @@ describe('JSON serialization test', () => {
                 3,
                 'New component should be added.'
             );
+        });
+    });
+});
+
+describe('JSON serialization - custom layout', () => {
+    beforeEach(() => {
+        cy.visit('dashboards/gui/custom-layout');
+    });
+
+    it('Should not have gui object when custom layout is used.', () => {
+        cy.board().then((board) => {
+            const json = board.getOptions();
+            expect(json.gui).to.be.undefined
         });
     });
 });
