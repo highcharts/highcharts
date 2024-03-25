@@ -607,10 +607,6 @@ abstract class Component {
         }
 
         if (connectorsHaveChanged) {
-            fireEvent(this, 'setConnectors', {
-                connectorHandlers: this.connectorHandlers
-            });
-
             for (const connectorHandler of this.connectorHandlers) {
                 connectorHandler.destroy();
             }
@@ -622,10 +618,6 @@ abstract class Component {
                 );
             }
             await this.initConnectors();
-
-            fireEvent(this, 'afterSetConnectors', {
-                connectorHandlers: this.connectorHandlers
-            });
         }
 
         if (shouldRerender || eventObject.shouldForceRerender) {
