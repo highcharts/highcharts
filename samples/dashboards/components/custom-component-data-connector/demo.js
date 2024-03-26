@@ -66,8 +66,7 @@ Dashboards.board('container', {
                 }]
             }
             ]
-        }
-        ]
+        }]
     },
     components: [{
         type: 'TotalRevenueHTML',

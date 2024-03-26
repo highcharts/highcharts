@@ -386,7 +386,7 @@ Dashboards.board('container', {
 
 ## Custom Component with data from the Connector
 
-The example below shows how to program a custom component that fetches data from the Connector processes and displays it on the Dashboard.
+The example below shows how to program a custom component that fetches data from the Connector, processes and displays it on the Dashboard.
 
 The custom component is created by extending the `HTMLComponent` class and it creates a component that displays the total revenue from the data fetched from the Connector.
 
