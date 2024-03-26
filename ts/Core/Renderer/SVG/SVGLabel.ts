@@ -273,6 +273,7 @@ class SVGLabel extends SVGElement {
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
+
         const {
                 padding,
                 height = 0,
@@ -283,7 +284,7 @@ class SVGLabel extends SVGElement {
             paddingLeft = pick(this.paddingLeft, padding),
             rotation = rot ?? (this.rotation || 0);
 
-        let bBox = {
+        let bBox: BBoxObject = {
             width,
             height,
             x: translateX + this.bBox.x - paddingLeft,

@@ -524,6 +524,21 @@ class TreegraphSeries extends TreemapSeries {
 
             // Render link labels.
             seriesProto.drawDataLabels.call(this, this.links);
+
+            // Check links for overlap
+            if (!this.options.dataLabels[0].allowOverlap) {
+                const linkLabels = [];
+
+                for (const link of this.links) {
+                    if (link.dataLabel) {
+                        linkLabels.push(link.dataLabel);
+                    }
+                }
+
+                this.chart.hideOverlappingLabels(linkLabels);
+            }
+
+            seriesProto.drawDataLabels.call(this, this.links);
         }
     }
 
