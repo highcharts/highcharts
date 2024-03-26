@@ -486,9 +486,7 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public translate(): void {
-        if (!this.processedXData) {
-            this.processData();
-        }
+
         this.generatePoints();
 
         this.deferLayout();

@@ -864,9 +864,6 @@ class SunburstSeries extends TreemapSeries {
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
-        if (!series.processedXData) { // Hidden series
-            series.processData();
-        }
         series.generatePoints();
 
         fireEvent(series, 'afterTranslate');

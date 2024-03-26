@@ -248,7 +248,7 @@ class SankeySeries extends ColumnSeries {
      *         Returns true if the series has points at all.
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.table.rowCount;
     }
 
     /**
@@ -330,10 +330,6 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-
-        if (!this.processedXData) {
-            this.processData();
-        }
 
         this.generatePoints();
 

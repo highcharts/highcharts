@@ -2,7 +2,6 @@
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
@@ -566,7 +565,7 @@ test('Data columnAssignment', async function (assert) {
 
     assert.ok(
         // @ts-ignore
-        mountedComponents[3].component.chart.series[2].processedYData[0].length > 0,
+        mountedComponents[3].component.chart.series[2].table.modified.rowCount > 0,
         'OHLC point is an array of open/low/high/close'
     );
 
@@ -735,14 +734,14 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
 
     assert.deepEqual(
         // @ts-ignore
-        mountedComponents[0].component.chart.series[0].yData,
+        mountedComponents[0].component.chart.series[0].getColumn('y'),
         [30, 20, 50],
         'Each server instance should be rendered as a column.'
     );
 
     assert.deepEqual(
         // @ts-ignore
-        mountedComponents[0].component.chart.series[1].yData,
+        mountedComponents[0].component.chart.series[1].getColumn('y'),
         [1500, 500, 400],
         'Each server instance should be rendered as a column.'
     );
@@ -845,17 +844,17 @@ test('Crossfilter with string values', async function (assert) {
     const dataGrid = dashboard.mountedComponents[2].component;
 
     assert.ok(
-        numbersNavigator.chart.series[0].yData.length === 7,
+        numbersNavigator.chart.series[0].table.rowCount === 7,
         'Numbers navigator should have 7 points.'
     );
 
     assert.ok(
-        stringsNavigator.chart.series[0].yData.length === 3,
+        stringsNavigator.chart.series[0].table.rowCount === 3,
         'Strings navigator should have 3 points.'
     );
 
     const countPoints = (series) => (
-        series.yData.filter(data => data !== null).length
+        series.getColumn('y').filter(data => data !== null).length
     );
 
     const done = assert.async();

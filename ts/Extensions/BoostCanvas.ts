@@ -35,6 +35,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type { TypedArray } from '../Core/Series/SeriesOptions';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -476,8 +477,8 @@ namespace BoostCanvas {
                     activeBoostSettings.timeSeriesProcessing || false,
                 timeSetup: activeBoostSettings.timeSetup || false
             },
-            xData = series.processedXData,
-            yData = series.processedYData,
+            xData = series.getColumn('x', true),
+            yData = series.getColumn('y', true),
             rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
             xExtremes = xAxis.getExtremes(),
             xMin = xExtremes.min,
@@ -504,7 +505,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any> = (
+            sdata: Array<any>|TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)
@@ -690,10 +691,13 @@ namespace BoostCanvas {
                 };
             },
             xDataFull: Array<number> = (
-                this.xData ||
+                (this.getColumn('x').length ? this.getColumn('x') : void 0) ||
                 (this.options as any).xData ||
-                this.processedXData ||
-                false
+                (
+                    this.getColumn('x', true).length ?
+                        this.getColumn('x', true) :
+                        false
+                )
             ),
             //
             addKDPoint = function (
@@ -757,7 +761,7 @@ namespace BoostCanvas {
                     }
                 } else {
                     x = d;
-                    y = yData[i] as any;
+                    y = yData[i];
 
                     if (sdata[i + 1]) {
                         nx = sdata[i + 1];

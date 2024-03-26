@@ -30,6 +30,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
+    isArray,
     uniqueKey
 } = U;
 
@@ -213,7 +214,9 @@ class DataTable implements DataEvent.Emitter {
         }
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            thisColumns[columnNames[i]].length = rowCount;
+            if (isArray(thisColumns[columnNames[i]])) { // Not on typed array
+                thisColumns[columnNames[i]].length = rowCount;
+            }
         }
 
         this.rowCount = rowCount;
@@ -244,7 +247,7 @@ class DataTable implements DataEvent.Emitter {
 
     public readonly autoId: boolean;
 
-    private columns: Record<string, DataTable.Column>;
+    protected columns: Record<string, DataTable.Column>;
 
     public readonly id: string;
 
@@ -252,7 +255,9 @@ class DataTable implements DataEvent.Emitter {
 
     private modifier?: DataModifier;
 
-    private rowCount: number;
+    // @note Made this public because we're using it for quick checks in
+    // Highcharts
+    public rowCount: number;
 
     private versionTag: string;
 
@@ -1517,7 +1522,7 @@ class DataTable implements DataEvent.Emitter {
      * Row values to set.
      *
      * @param {number} [rowIndex]
-     * Index of the first row to set. Leave `undefind` to add as new rows.
+     * Index of the first row to set. Leave `undefined` to add as new rows.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.

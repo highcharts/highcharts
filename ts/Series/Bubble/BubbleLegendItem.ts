@@ -584,7 +584,7 @@ class BubbleLegendItem {
         series.forEach(function (s: BubbleSeries): void {
             // Find the min and max Z, like in bubble series
             if (s.isBubble && !s.ignoreSeries) {
-                zData = s.zData.filter(isNumber);
+                zData = s.getColumn('z').filter(isNumber);
 
                 if (zData.length) {
                     minZ = pick(s.options.zMin, Math.min(

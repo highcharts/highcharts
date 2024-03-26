@@ -47,6 +47,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -747,8 +748,8 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.xData;
-                        if (xData && xData.length) {
+                        xData = series.getColumn('x');
+                        if (xData.length) {
                             xData = axis.logarithmic ?
                                 xData.filter((x): boolean => x > 0) :
                                 xData;
@@ -1284,11 +1285,12 @@ class Axis {
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[] =>
+                    axis.series.map((s): number[]|TypedArray => {
+                        const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
-                        (s.xIncrement ? s.xData?.slice(0, 2) : s.xData) || []
-                    )
+                        return s.xIncrement ? xData.slice(0, 2) : xData;
+                    })
                 ) || 0;
 
                 minRange = Math.min(
@@ -1367,10 +1369,11 @@ class Axis {
         } else {
             const singleXs: number[] = [];
             this.series.forEach(function (series): void {
-                const seriesClosest = series.closestPointRange;
+                const seriesClosest = series.closestPointRange,
+                    xData = series.getColumn('x');
 
-                if (series.xData?.length === 1) {
-                    singleXs.push(series.xData[0]);
+                if (xData.length === 1) {
+                    singleXs.push(xData[0]);
                 } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
@@ -1481,7 +1484,7 @@ class Axis {
                     // names array will be too short (#5857).
                     axis.max = Math.max(
                         (
-                            axis.max as any), (series.xData as any).length - 1
+                            axis.max as any), series.table.rowCount - 1
                     );
 
                     series.processData();
@@ -1501,7 +1504,7 @@ class Axis {
                         x = axis.nameToX(point);
                         if (typeof x !== 'undefined' && x !== point.x) {
                             point.x = x;
-                            (series.xData as any)[i] = x;
+                            series.table.setCell('x', i, x);
                         }
                     }
                 });

@@ -23,7 +23,9 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 
 
 /* *

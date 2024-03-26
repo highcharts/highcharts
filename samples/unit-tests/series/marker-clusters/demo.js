@@ -583,7 +583,7 @@ QUnit.test('Grid algorithm tests.', function (assert) {
             series.markerClusterInfo.noise.length,
             clusteredPointsLen
         ],
-        [4, 4, series.xData.length],
+        [4, 4, series.table.rowCount],
         'Cluster and noise amount should be correct.'
     );
 
@@ -677,10 +677,12 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
 
     clusters = series.markerClusterInfo.clusters;
 
-    for (i = 0; i < series.xData.length; i++) {
+    const xData = series.getColumn('x'),
+        yData = series.getColumn('y');
+    for (i = 0; i < xData.length; i++) {
         pointClusterDistance = [];
-        pointX = series.xData[i];
-        pointY = series.yData[i];
+        pointX = xData[i];
+        pointY = yData[i];
 
         for (var j = 0; j < clusters.length; j++) {
             distance = Math.sqrt(
@@ -758,8 +760,8 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
 
     groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
-        series.xData,
-        series.yData,
+        series.getColumn('x'),
+        series.getColumn('y'),
         [],
         { processedDistance: maxDistance }
     );
@@ -767,8 +769,8 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
 
     groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
-        series.xData,
-        series.yData,
+        series.getColumn('x'),
+        series.getColumn('y'),
         [],
         { processedDistance: maxDistance }
     );
@@ -783,18 +785,20 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     yAxis.setExtremes(530, 700, false);
     chart.redraw();
 
+    const xData = series.getColumn('x'),
+        yData = series.getColumn('y');
     groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );
 
     groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );
@@ -812,16 +816,16 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
 
     groupedPointsKM = series.markerClusterAlgorithms.kmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );
 
     groupedPointsOKM = series.markerClusterAlgorithms.optimizedKmeans.call(
         series,
-        series.xData,
-        series.yData,
+        xData,
+        yData,
         [],
         { processedDistance: maxDistance }
     );

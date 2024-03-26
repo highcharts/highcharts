@@ -40,7 +40,8 @@ import type {
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
-    SeriesZonesOptions
+    SeriesZonesOptions,
+    TypedArray
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -58,6 +59,7 @@ const {
     animObject,
     setAnimation
 } = A;
+import DataTable from '../../Data/DataTable.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
@@ -98,7 +100,6 @@ const {
     objectEach,
     pick,
     removeEvent,
-    splat,
     syncTimeout
 } = U;
 
@@ -130,10 +131,27 @@ declare module './PointLike' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
+        keysAffectYAxis?: Array<string>;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
         toYData?(point: Point): Array<number>;
     }
+}
+
+export type DataColumn = Array<number|null>|TypedArray;
+
+export interface DataColumns extends DataTable.ColumnCollection{
+    // [key: string]: DataColumn|undefined;
+    // x?: Array<number>|TypedArray;
+}
+
+export interface DataTableLightModified extends DataTable {
+    /// columns: DataColumns;
+    // rowCount: number;
+}
+
+export interface DataTableLight extends DataTable {
+    /// modified?: DataTableLightModified;
 }
 
 interface KDNode {
@@ -338,10 +356,6 @@ class Series {
 
     public pointValKey?: string;
 
-    public processedXData!: Array<number>;
-
-    public processedYData!: (Array<(number|null)>|Array<Array<(number|null)>>);
-
     public selected?: boolean;
 
     public sharedClipKey?: string;
@@ -354,6 +368,8 @@ class Series {
 
     public symbolIndex?: number;
 
+    public table!: DataTable;
+
     public tooltipOptions!: TooltipOptions;
 
     public tracker?: SVGElement;
@@ -364,16 +380,9 @@ class Series {
 
     public xAxis!: AxisType;
 
-    public xData?: Array<number>;
-
     public xIncrement?: (number|null);
 
     public yAxis!: AxisType;
-
-    public yData?: (
-        Array<(number|null)>|
-        Array<Array<(number|null)>>
-    );
 
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
@@ -393,6 +402,9 @@ class Series {
     ): void {
 
         fireEvent(this, 'init', { options: userOptions });
+
+        // Create the data table
+        this.table ??= new DataTable();
 
         const series = this,
             chartSeries = chart.series;
@@ -489,13 +501,6 @@ class Series {
 
         series.getColor();
         series.getSymbol();
-
-        // Initialize the parallel data arrays
-        series.parallelArrays.forEach(function (key: string): void {
-            if (!(series as any)[key + 'Data']) {
-                (series as any)[key + 'Data'] = [];
-            }
-        });
 
         // Mark cartesian
         if (series.isCartesian) {
@@ -615,42 +620,6 @@ class Series {
     }
 
     /**
-     * For simple series types like line and column, the data values are
-     * held in arrays like xData and yData for quick lookup to find extremes
-     * and more. For multidimensional series like bubble and map, this can
-     * be extended with arrays like zData and valueData by adding to the
-     * `series.parallelArrays` array.
-     *
-     * @private
-     * @function Highcharts.Series#updateParallelArrays
-     */
-    public updateParallelArrays(
-        point: Point,
-        i: (number|string),
-        iArgs?: Array<any>
-    ): void {
-        const series = point.series,
-            fn = isNumber(i) ?
-                // Insert the value in the given position
-                function (key: string): void {
-                    const val = key === 'y' && series.toYData ?
-                        series.toYData(point) :
-                        (point as any)[key];
-                    (series as any)[key + 'Data'][i] = val;
-                } :
-                // Apply the method specified in i with the following
-                // arguments as arguments
-                function (key: string): void {
-                    (Array.prototype as any)[i].apply(
-                        (series as any)[key + 'Data'],
-                        iArgs
-                    );
-                };
-
-        series.parallelArrays.forEach(fn);
-    }
-
-    /**
      * Define hasData functions for series. These return true if there
      * are data points on this series within the plot area.
      *
@@ -664,9 +633,8 @@ class Series {
             typeof this.dataMin !== 'undefined'
         ) || ( // #3703
             this.visible &&
-            (this.yData as any) &&
-            (this.yData as any).length > 0) // #9758
-        );
+            this.table.getRowCount() > 0 // #9758
+        ));
     }
 
     /**
@@ -1019,6 +987,38 @@ class Series {
     }
 
     /**
+     * Shorthand to get one of the series' data columns from `Series.table`.
+     *
+     * @private
+     * @function Highcharts.Series#getColumn
+     */
+    public getColumn(
+        columnName: string,
+        modified?: boolean
+    ): Array<number> {
+        return (
+            (modified ? this.table.modified : this.table)
+                .getColumn(columnName, true) as Array<number>
+        ) || [];
+    }
+
+    /**
+     * Shorthand to get the series' data columns from `Series.table`.
+     *
+     * @private
+     * @function Highcharts.Series#getColumns
+     * /
+    public getColumns(
+        columnNames: Array<string>,
+        modified?: boolean
+    ): Record<string, Array<number>> {
+        // Transitional code for legacy parallel arrays
+        return (modified ? this.table.modified : this.table)
+            .getColumns(columnNames, true) as Record<string, Array<number>>;
+    }
+    */
+
+    /**
      * Finds the index of an existing point that matches the given point
      * options.
      *
@@ -1086,7 +1086,7 @@ class Series {
 
         // Search for the same X in the existing data set
         if (typeof pointIndex === 'undefined' && isNumber(x)) {
-            pointIndex = (this.xData as any).indexOf(x as any, fromIndex);
+            pointIndex = this.getColumn('x').indexOf(x as any, fromIndex);
         }
 
         // Reduce pointIndex if data is cropped
@@ -1253,12 +1253,12 @@ class Series {
             this.addPoint(point, false, null as any, null as any, false);
         }, this);
 
+        const xData = this.getColumn('x');
         if (
             this.xIncrement === null &&
-            this.xData &&
-            this.xData.length
+            xData.length
         ) {
-            this.xIncrement = arrayMax(this.xData);
+            this.xIncrement = arrayMax(xData);
             this.autoIncrement();
         }
 
@@ -1313,7 +1313,7 @@ class Series {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>,
+        data: Array<(PointOptions|PointShortOptions)>|undefined,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
@@ -1326,13 +1326,13 @@ class Series {
             dataSorting = options.dataSorting,
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
-            xData = this.xData,
-            yData = this.yData,
-            pointArrayMap = series.pointArrayMap,
-            valueCount = pointArrayMap && pointArrayMap.length,
+            table = this.table,
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
+            pointValKey = series.pointValKey || 'y',
+            pointArrayMap = series.pointArrayMap || [],
+            valueCount = pointArrayMap.length,
             keys = options.keys;
         let i,
-            pt,
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
@@ -1359,8 +1359,8 @@ class Series {
             data = this.sortData(data);
         }
 
-        // First try to run Point.update which is cheaper, allows animation,
-        // and keeps references to points.
+        // First try to run Point.update which is cheaper, allows animation, and
+        // keeps references to points.
         if (
             chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
@@ -1383,42 +1383,57 @@ class Series {
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-            // Update parallel arrays
-            this.parallelArrays.forEach(function (key): void {
-                (series as any)[key + 'Data'].length = 0;
-            });
+            // Clear data table
+            table.deleteRows(0, table.rowCount);
 
-            // In turbo mode, only one- or twodimensional arrays of numbers
-            // are allowed. The first value is tested, and we assume that
-            // all the rest are defined the same way. Although the 'for'
-            // loops are similar, they are repeated inside each if-else
-            // conditional for max performance.
+            // In turbo mode, only one- or twodimensional arrays of numbers are
+            // allowed. The first value is tested, and we assume that all the
+            // rest are defined the same way. Although the 'for' loops are
+            // similar, they are repeated inside each if-else conditional for
+            // max performance.
             if (turboThreshold && dataLength > turboThreshold) {
 
                 firstPoint = series.getFirstValidPoint(data);
 
-                if (isNumber(firstPoint)) { // Assume all points are numbers
-                    for (i = 0; i < dataLength; i++) {
-                        (xData as any)[i] = this.autoIncrement();
-                        (yData as any)[i] = data[i];
+                // Assume all points are numbers
+                if (isNumber(firstPoint)) {
+                    const x: Array<number> = [],
+                        valueData: Array<number|null> = [];
+                    for (const value of data) {
+                        x.push(this.autoIncrement());
+                        valueData.push(value as number|null);
                     }
+                    table.setColumns({
+                        x,
+                        [pointValKey]: valueData
+                    });
 
                 // Assume all points are arrays when first point is
                 } else if (isArray(firstPoint)) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-                        if (firstPoint.length === valueCount) {
-                            for (i = 0; i < dataLength; i++) {
-                                (xData as any)[i] = this.autoIncrement();
-                                (yData as any)[i] = data[i];
+
+                        // When autoX is 1, the x is skipped: [low, high]. When
+                        // autoX is 0, the x is included: [x, low, high]
+                        const autoX = firstPoint.length === valueCount ?
+                                1 : 0,
+                            colArray = new Array(dataColumnKeys.length)
+                                .fill(0).map((): Array<number> => []);
+                        for (const pt of data as number[][]) {
+                            if (autoX) {
+                                colArray[0].push(this.autoIncrement());
                             }
-                        } else {
-                            for (i = 0; i < dataLength; i++) {
-                                pt = data[i];
-                                (xData as any)[i] = (pt as any)[0];
-                                (yData as any)[i] =
-                                    (pt as any).slice(1, valueCount + 1);
+                            for (let j = autoX; j <= valueCount; j++) {
+                                colArray[j]?.push(pt[j - autoX]);
                             }
                         }
+
+                        table.setColumns(dataColumnKeys.reduce(
+                            (columns, columnName, i):
+                            DataTable.ColumnCollection => {
+                                columns[columnName] = colArray[i];
+                                return columns;
+                            }, {} as DataTable.ColumnCollection));
+
                     } else { // [x, y]
                         if (keys) {
                             indexOfX = keys.indexOf('x');
@@ -1432,18 +1447,24 @@ class Series {
                             indexOfY = 0;
                         }
 
+                        const xData: Array<number> = [],
+                            valueData: Array<number|null> = [];
+
                         if (indexOfX === indexOfY) {
-                            for (i = 0; i < dataLength; i++) {
-                                (xData as any)[i] = this.autoIncrement();
-                                (yData as any)[i] = (data[i] as any)[indexOfY];
+                            for (const pt of data) {
+                                xData.push(this.autoIncrement());
+                                valueData.push((pt as any)[indexOfY]);
                             }
                         } else {
-                            for (i = 0; i < dataLength; i++) {
-                                pt = data[i];
-                                (xData as any)[i] = (pt as any)[indexOfX];
-                                (yData as any)[i] = (pt as any)[indexOfY];
+                            for (const pt of data) {
+                                xData.push((pt as any)[indexOfX]);
+                                valueData.push((pt as any)[indexOfY]);
                             }
                         }
+                        table.setColumns({
+                            x: xData,
+                            [pointValKey]: valueData
+                        });
                     }
                 } else {
                     // Highcharts expects configs to be numbers or arrays in
@@ -1451,19 +1472,29 @@ class Series {
                     error(12, false, chart);
                 }
             } else {
+                const columns = dataColumnKeys.reduce(
+                    (columns, columnName):
+                    DataTable.ColumnCollection => {
+                        columns[columnName] = [];
+                        return columns;
+                    }, {} as DataTable.ColumnCollection);
                 for (i = 0; i < dataLength; i++) {
-                    pt = { series: series };
-                    series.pointClass.prototype.applyOptions.apply(
-                        pt,
+                    const pt = series.pointClass.prototype.applyOptions.apply(
+                        { series },
                         [data[i]]
                     );
-                    series.updateParallelArrays(pt as any, i);
+                    for (const key of dataColumnKeys) {
+                        columns[key][i] = (pt as any)[key];
+                    }
                 }
+
+                table.setColumns(columns);
             }
 
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
-            if (yData && isString(yData[0])) {
+            const yData = this.getColumn('y');
+            if (isString(yData[0])) {
                 error(14, true, chart);
             }
 
@@ -1592,28 +1623,25 @@ class Series {
         forceExtremesFromAll?: boolean
     ): Series.ProcessedDataObject {
         const series = this,
-            xAxis = series.xAxis,
-            options = series.options,
+            { table, isCartesian, options, xAxis } = series,
             cropThreshold = options.cropThreshold,
             getExtremesFromAll =
                 forceExtremesFromAll ||
                 series.getExtremesFromAll ||
                 options.getExtremesFromAll, // #4599
             logarithmic = xAxis?.logarithmic,
-            isCartesian = series.isCartesian;
+            dataLength = table.rowCount;
+
         let croppedData: Series.CropDataObject,
             cropped,
             cropStart = 0,
             xExtremes,
             min,
             max,
-            // Copied during slice operation:
-            processedXData: Array<number> = series.xData as any,
-            processedYData: (
-                Array<(number|null)>|Array<Array<(number|null)>>
-            ) = (series.yData as any),
+            processedXData: Array<number>|TypedArray = series.getColumn('x'),
+            processedYData = series.getColumn('y'),
+            modified: DataTable|undefined,
             updatingNames = false;
-        const dataLength = (processedXData as any).length;
 
         if (xAxis) {
             // Corrected for log axis (#3053)
@@ -1643,21 +1671,28 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
+                modified = new DataTable();
+
             // Only crop if it's actually spilling out
             } else if (
-                series.yData && (
+                // Don't understand why this condition is needed
+                series.getColumn(series.pointValKey || 'y').length && (
                     (processedXData as any)[0] < (min as any) ||
                     (processedXData as any)[dataLength - 1] > (max as any)
                 )
             ) {
                 croppedData = this.cropData(
-                    series.xData as any,
-                    series.yData as any,
+                    series.getColumn('x'),
+                    series.getColumn('y'),
                     min as any,
-                    max as any
+                    max as any,
+                    void 0,
+                    table
                 );
+
                 processedXData = croppedData.xData;
-                processedYData = croppedData.yData;
+                processedYData = croppedData.yData as any;
+                modified = croppedData.modified;
                 cropStart = croppedData.start;
                 cropped = true;
             }
@@ -1686,6 +1721,7 @@ class Series {
         return {
             xData: processedXData,
             yData: processedYData,
+            modified,
             cropped: cropped,
             cropStart: cropStart,
             closestPointRange: closestPointRange
@@ -1703,7 +1739,8 @@ class Series {
      */
     public processData(force?: boolean): (boolean|undefined) {
         const series = this,
-            xAxis = series.xAxis;
+            xAxis = series.xAxis,
+            table = series.table;
 
         // If the series data or axes haven't changed, don't go through
         // this. Return false to pass the message on to override methods
@@ -1721,10 +1758,9 @@ class Series {
         const processedData = series.getProcessedData();
 
         // Record the properties
+        table.modified = processedData.modified || table;
         series.cropped = processedData.cropped; // Undefined or true
         series.cropStart = processedData.cropStart;
-        series.processedXData = processedData.xData;
-        series.processedYData = processedData.yData;
         series.closestPointRange = (
             series.basePointRange = processedData.closestPointRange
         );
@@ -1741,11 +1777,21 @@ class Series {
      * @function Highcharts.Series#cropData
      */
     public cropData(
-        xData: Array<number>,
-        yData: (Array<(number|null)>|Array<Array<(number|null)>>),
+        xData: Array<number>|TypedArray,
+        yData: (
+            Array<(number|null)>|
+            Array<Array<(number|null)>>|
+            TypedArray
+        ),
         min: number,
-        max: number
+        max: number,
+        cropShoulder?: number,
+        table?: DataTableLight
     ): Series.CropDataObject {
+        if (table) {
+            xData = table.getColumn('x', true) as Array<number> || [];
+        }
+
         const dataLength = xData.length;
         let i,
             j,
@@ -1768,11 +1814,22 @@ class Series {
             }
         }
 
+        const dataColumnKeys = ['x', ...(this.pointArrayMap || ['y'])],
+            columns: DataTable.ColumnCollection = {};
+        if (table) {
+            for (const key of dataColumnKeys) {
+                const column = table.getColumn(key, true);
+                if (column) {
+                    columns[key] = column.slice(start, end);
+                }
+            }
+        }
         return {
             xData: xData.slice(start, end),
-            yData: yData.slice(start, end),
+            yData: yData?.slice(start, end),
             start,
-            end
+            end,
+            modified: new DataTable({ columns })
         };
     }
 
@@ -1787,10 +1844,10 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            processedXData = series.processedXData,
-            processedYData = series.processedYData,
+            table = series.table.modified || series.table,
+            xData = series.getColumn('x', true),
             PointClass = series.pointClass,
-            processedDataLength = (processedXData as any).length,
+            processedDataLength = table.rowCount,
             cropStart = series.cropStart || 0,
             hasGroupedData = series.hasGroupedData,
             keys = options.keys,
@@ -1800,18 +1857,22 @@ class Series {
                 options.dataGrouping.groupAll ?
                     cropStart :
                     0
-            );
+            ),
+            pointArrayMap = series.pointArrayMap || ['y'],
+            // Create a configuration object out of a data row
+            dataColumnKeys = ['x', ...pointArrayMap];
         let dataLength,
             cursor,
             point,
-            i,
-            data = series.data;
+            i: number,
+            data = series.data,
+            pOptions: PointShortOptions|PointOptions;
 
 
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
 
-            arr.length = (dataOptions as any).length;
+            arr.length = dataOptions?.length || 0;
             data = series.data = arr;
         }
 
@@ -1824,30 +1885,32 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
+                pOptions = dataOptions ?
+                    dataOptions[cursor] :
+                    table.getRow(i, pointArrayMap) as Array<number>;
+
                 // #970:
                 if (
                     !point &&
-                    typeof (dataOptions as any)[cursor] !== 'undefined'
+                    pOptions !== void 0
                 ) {
                     data[cursor] = point = new PointClass(
                         series,
-                        (dataOptions as any)[cursor],
-                        (processedXData as any)[i]
+                        pOptions,
+                        xData[i]
                     );
                 }
             } else {
                 // Splat the y data in case of ohlc data array
                 point = new PointClass(
                     series,
-                    [(processedXData as any)[i]].concat(
-                        splat((processedYData as any)[i])
-                    )
+                    table.getRow(i, dataColumnKeys) as Array<number> || []
                 );
 
                 point.dataGroup = (series.groupMap as any)[
                     groupCropStartIndex + i
                 ];
-                if ((point.dataGroup as any).options) {
+                if (point.dataGroup?.options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
                     // Collision of props and options (#9770)
@@ -1940,7 +2003,7 @@ class Series {
      * The data to inspect. Defaults to the current data within the visible
      * range.
      */
-    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
+    public getXExtremes(xData: Array<number>|TypedArray): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -1960,32 +2023,43 @@ class Series {
      * Force getting extremes of a total series data range.
      */
     public getExtremes(
-        yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
+        yData?: (
+            Array<(number|null)>|
+            Array<Array<(number|null)>>|
+            TypedArray
+        ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
-        const xAxis = this.xAxis,
-            yAxis = this.yAxis,
-            xData = this.processedXData || this.xData,
-            activeYData = [],
+        const { xAxis, yAxis } = this,
+            table = forceExtremesFromAll && this.cropped ?
+                this.table :
+                this.table.modified,
+            rowCount = table.rowCount,
+            customData = yData || this.stackedYData,
+            yAxisData = customData ?
+                [customData] :
+                (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
+                    (key): DataTable.Column => table.getColumn(key, true) || []
+                ) || [],
+            xData = this.getColumn('x'),
+            activeYData: number[] = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting && !this.is('column') ?
                 1 : 0,
             // #2117, need to compensate for log X axis
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
-        let xExtremes,
-            validValue,
-            withinRange,
-            x,
-            y: (number|Array<(number|null)>|null),
-            i,
-            j,
-            xMin = 0,
-            xMax = 0,
-            activeCounter = 0;
+            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
+            doAll = forceExtremesFromAll ||
+                this.getExtremesFromAll ||
+                this.options.getExtremesFromAll ||
+                this.cropped ||
+                !xAxis; // For colorAxis support
 
-        yData = yData || this.stackedYData || this.processedYData || [];
-        const yDataLength = yData.length;
+        let xExtremes,
+            x,
+            i,
+            xMin = 0,
+            xMax = 0;
 
         if (xAxis) {
             xExtremes = xAxis.getExtremes();
@@ -1993,43 +2067,30 @@ class Series {
             xMax = xExtremes.max;
         }
 
-        for (i = 0; i < yDataLength; i++) {
+        for (i = 0; i < rowCount; i++) {
 
-            x = (xData as any)[i];
-            y = yData[i];
+            x = xData[i];
 
-            // For points within the visible range, including the first
-            // point outside the visible range (#7061), consider y extremes.
-            validValue = ((
-                isNumber(y) ||
-                isArray(y)
-            ) && (
-                (isNumber(y) ? y > 0 : y.length) ||
-                !positiveValuesOnly
-            ));
-            withinRange = (
-                forceExtremesFromAll ||
-                this.getExtremesFromAll ||
-                this.options.getExtremesFromAll ||
-                this.cropped ||
-                !xAxis || // For colorAxis support
+            // Check if it is within the selected x axis range
+            if (
+                doAll ||
                 (
-                    ((xData as any)[i + shoulder] || x) >= xMin &&
-                    ((xData as any)[i - shoulder] || x) <= xMax
+                    (xData[i + shoulder] || x) >= xMin &&
+                    (xData[i - shoulder] || x) <= xMax
                 )
-            );
+            ) {
+                for (const values of yAxisData) {
+                    const val = values[i];
 
-            if (validValue && withinRange) {
-
-                j = (y as any).length;
-                if (j) { // Array, like ohlc or range data
-                    while (j--) {
-                        if (isNumber((y as any)[j])) { // #7380, #11513
-                            activeYData[activeCounter++] = (y as any)[j];
-                        }
+                    // For points within the visible range, including the
+                    // first point outside the visible range (#7061),
+                    // consider y extremes.
+                    if (
+                        isNumber(val) &&
+                        (val > 0 || !positiveValuesOnly)
+                    ) {
+                        activeYData.push(val);
                     }
-                } else {
-                    activeYData[activeCounter++] = y;
                 }
             }
         }
@@ -2113,10 +2174,9 @@ class Series {
      * @emits Highcharts.Series#events:translate
      */
     public translate(): void {
-        if (!this.processedXData) { // Hidden series
-            this.processData();
-        }
+
         this.generatePoints();
+
         const series = this,
             options = series.options,
             stacking = options.stacking,
@@ -3903,12 +3963,11 @@ class Series {
     ): void {
         const series = this,
             seriesOptions = series.options,
-            data = series.data,
-            chart = series.chart,
-            xAxis = series.xAxis,
+            { chart, data, table, xAxis } = series,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            xData = series.xData as any;
+            xData = series.getColumn('x'),
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
         let isInTheMiddle,
             i: number;
 
@@ -3931,15 +3990,27 @@ class Series {
             }
         }
 
-        // Insert undefined item
-        series.updateParallelArrays(point, 'splice', [i, 0, 0]);
-        // Update it
-        series.updateParallelArrays(point, i);
+        if (isInTheMiddle) {
+            // @todo The DataTable currently doesn't have an `insertRow` method
+            // or other capabilites of splicing the rows (except `deleteRow`).
+            // If we get that, we can probably combine this with the below.
+            const columns = table.getColumns(dataColumnKeys);
+            objectEach(columns, (column, key): void => {
+                column.splice(i, 0, point[key]);
+            });
+            table.setColumns(columns);
+        } else {
+            const row: DataTable.RowObject = {};
+            for (const key of dataColumnKeys) {
+                row[key] = point[key];
+            }
+            table.setRow(row);
+        }
 
         if (names && point.name) {
             names[x as any] = point.name;
         }
-        (dataOptions as any).splice(i, 0, options);
+        dataOptions?.splice(i, 0, options);
 
         if (
             isInTheMiddle ||
@@ -3962,9 +4033,8 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point, 'shift');
-
-                (dataOptions as any).shift();
+                series.table.deleteRows(0);
+                dataOptions?.shift();
             }
         }
 
@@ -4026,16 +4096,11 @@ class Series {
                     points.splice(i, 1);
                 }
                 data.splice(i, 1);
-                (series.options.data as any).splice(i, 1);
-                series.updateParallelArrays(
-                    point || { series: series },
-                    'splice',
-                    [i, 1]
-                );
+                series.options.data?.splice(i, 1);
 
-                if (point) {
-                    point.destroy();
-                }
+                series.table.deleteRows(i);
+
+                point?.destroy();
 
                 // Redraw
                 series.isDirty = true;
@@ -4215,6 +4280,7 @@ class Series {
                 // GeoHeatMap interpolation
                 'isDirtyCanvas',
                 'points',
+                'table',
 
                 'processedData', // #17057
 
@@ -4257,6 +4323,8 @@ class Series {
                 }
                 this.setData(options.data as any, false);
             }
+        } else {
+            this.table.modified = this.table;
         }
 
         // Do the merge, with some forced options
@@ -4265,14 +4333,15 @@ class Series {
             {
                 // When oldOptions.index is null it should't be cleared.
                 // Otherwise navigator series will have wrong indexes (#10193).
-                index: oldOptions.index === void 0 ?
+                index: typeof oldOptions.index === 'undefined' ?
                     series.index : oldOptions.index,
-                pointStart:
+                pointStart: pick(
                     // When updating from blank (#7933)
-                    plotOptions?.series?.pointStart ??
-                    oldOptions.pointStart ??
+                    plotOptions?.series?.pointStart,
+                    oldOptions.pointStart,
                     // When updating after addPoint
-                    series.xData?.[0]
+                    series.getColumn('x')[0]
+                )
             },
             !keepPoints && { data: series.options.data },
             options,
@@ -4919,9 +4988,16 @@ namespace Series {
 
     export interface CropDataObject {
         end: number;
+        modified?: DataTable;
         start: number;
-        xData: Array<number>;
-        yData: (Array<(number|null)>|Array<Array<(number|null)>>);
+        /* @deprecated */
+        xData: Array<number>|TypedArray;
+        /* @deprecated */
+        yData: (
+            Array<(number|null)>|
+            Array<Array<(number|null)>>|
+            TypedArray
+        );
     }
 
     export interface PlotBoxTransform extends SVGAttributes {
@@ -4932,11 +5008,16 @@ namespace Series {
     }
 
     export interface ProcessedDataObject {
-        xData: Array<number>;
-        yData: (Array<(number|null)>|Array<Array<(number|null)>>);
+        xData: Array<number>|TypedArray;
+        yData: (
+            Array<(number|null)>|
+            Array<Array<(number|null)>>|
+            TypedArray
+        );
         cropped: (boolean|undefined);
         cropStart: number;
         closestPointRange: (number|undefined);
+        modified?: DataTableLightModified;
     }
 
     export interface ZoneObject extends SeriesZonesOptions {

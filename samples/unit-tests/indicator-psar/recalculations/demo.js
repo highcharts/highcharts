@@ -101,7 +101,7 @@ QUnit.test('Test PSAR calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [
             9.35,
             9.35,
@@ -161,7 +161,7 @@ QUnit.test('Test PSAR calculations on data updates.', function (assert) {
     chart.series[0].points[chart.series[0].points.length - 1].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[1].getColumn('y'),
         [
             9.35,
             9.35,

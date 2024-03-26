@@ -96,7 +96,6 @@ function onAxisFoundExtremes(
 
     const axisLength = this.len,
         { coll, isXAxis, min } = this,
-        dataKey = isXAxis ? 'xData' : 'yData',
         range = (this.max || 0) - (min || 0);
 
     let pxMin = 0,
@@ -117,7 +116,7 @@ function onAxisFoundExtremes(
 
             hasActiveSeries = true;
 
-            const data = (series as any)[dataKey];
+            const data = series.getColumn(isXAxis ? 'x' : 'y');
 
             if (isXAxis) {
                 (series.onPoint || (series as any)).getRadii(0, 0, series);
@@ -550,8 +549,9 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public getRadii(): void {
-        const zData = this.zData,
-            yData = this.yData,
+        const columns = this.table.getColumns(['y', 'z'], true),
+            zData = columns.z as Array<number|undefined>,
+            yData = columns.y as Array<number|undefined>,
             radii = [] as Array<(number|null)>;
 
         let len: number,
@@ -673,7 +673,7 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!this.table.rowCount;
     }
 
     /**
@@ -779,7 +779,7 @@ class BubbleSeries extends ScatterSeries {
     public getZExtremes(): BubbleZExtremes|undefined {
 
         const options = this.options,
-            zData = (this.zData || []).filter(isNumber);
+            zData = this.getColumn('z').filter(isNumber);
 
         if (zData.length) {
             const zMin = pick(options.zMin, clamp(
@@ -818,6 +818,7 @@ extend(BubbleSeries.prototype, {
     applyZones: noop,
     bubblePadding: true,
     isBubble: true,
+    keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],

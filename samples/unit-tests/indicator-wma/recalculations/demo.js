@@ -70,7 +70,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        Highcharts.correctFloat(chart.series[1].yData[1]),
+        Highcharts.correctFloat(chart.series[1].getColumn('y')[1]),
         Highcharts.correctFloat(
             83 * (5 / 15) +
                 81 * (4 / 15) +
@@ -90,7 +90,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[0].points[5].remove();
 
     assert.deepEqual(
-        Highcharts.correctFloat(chart.series[1].yData[0]),
+        Highcharts.correctFloat(chart.series[1].getColumn('y')[0]),
         Highcharts.correctFloat(
             81 * (5 / 15) + 79 * (4 / 15) + 79 * (3 / 15) + 77 * (2 / 15) + 0
         ),

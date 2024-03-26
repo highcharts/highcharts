@@ -30,7 +30,7 @@ QUnit.test('Highcharts', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'Chart constructor, renderTo string option'
     );
@@ -47,7 +47,7 @@ QUnit.test('Highcharts', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'Chart constructor, renderTo DOM option'
     );
@@ -85,7 +85,7 @@ QUnit.test('Highcharts', function (assert) {
         .highcharts();
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'jQuery plugin constructor'
     );
@@ -114,7 +114,7 @@ QUnit.test('Highcharts Stock', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'StockChart constructor, renderTo string option'
     );
@@ -132,7 +132,7 @@ QUnit.test('Highcharts Stock', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'StockChart constructor, renderTo DOM option'
     );
@@ -172,7 +172,7 @@ QUnit.test('Highcharts Stock', function (assert) {
         .highcharts();
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'jQuery plugin constructor'
     );
@@ -302,7 +302,7 @@ QUnit.test('Lower case constructors, no new', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'chart constructor'
     );
@@ -319,7 +319,7 @@ QUnit.test('Lower case constructors, no new', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'stockChart constructor'
     );
@@ -362,7 +362,7 @@ QUnit.test('renderTo as first argument', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'String renderTo, new Chart'
     );
@@ -376,7 +376,7 @@ QUnit.test('renderTo as first argument', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'String renderTo'
     );
@@ -390,7 +390,7 @@ QUnit.test('renderTo as first argument', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'DOM renderTo'
     );
@@ -404,7 +404,7 @@ QUnit.test('renderTo as first argument', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].yData.join(','),
+        chart.series[0].getColumn('y').join(','),
         '1,2,3,4',
         'stockChart constructor, string renderTo'
     );

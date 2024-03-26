@@ -22,13 +22,13 @@ QUnit.test('Data sorting ', function (assert) {
         series = chart.series[0];
 
     assert.strictEqual(
-        series.xData[0],
+        series.getColumn('x')[0],
         2,
         'Series should be correctly sorted.'
     );
 
     assert.strictEqual(
-        chart.series[1].xData[0],
+        chart.series[1].getColumn('x')[0],
         2,
         `Navigator series data should be correctly set and sorted on initial
         load, #20318`
@@ -44,7 +44,7 @@ QUnit.test('Data sorting ', function (assert) {
     });
 
     assert.strictEqual(
-        series.xData[0],
+        series.getColumn('x')[0],
         0,
         `Series data should be set and sorted correctly after chart update
         with dataSorting and dataGrouping enabled, #19715.`
@@ -175,7 +175,7 @@ QUnit.test('Data sorting with sortKey', function (assert) {
         },
         function (chart) {
             assert.deepEqual(
-                chart.series[0].xData,
+                chart.series[0].getColumn('x'),
                 [0, 2, 1],
                 'Data should be sorted by y value.'
             );
@@ -192,7 +192,7 @@ QUnit.test('Data sorting with sortKey', function (assert) {
             });
 
             assert.deepEqual(
-                chart.series[0].xData,
+                chart.series[0].getColumn('x'),
                 [1, 0, 2],
                 'Data should be sorted by custom.myValue value.'
             );
