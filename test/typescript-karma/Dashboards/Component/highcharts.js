@@ -2,7 +2,6 @@
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
@@ -10,7 +9,7 @@ Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
-const { test, skip } = QUnit;
+const { test } = QUnit;
 
 const registeredEvents = [];
 const eventTypes = [
@@ -19,7 +18,8 @@ const eventTypes = [
     'render',
     'afterRender',
     'tableChanged',
-    'setConnector',
+    'setConnectors',
+    'afterSetConnectors',
     'update',
     'afterUpdate'
 ];
@@ -139,8 +139,7 @@ test('Board without data connectors and HighchartsComponent update', async funct
     emptyArray(registeredEvents);
 });
 
-// TODO(DD): Update it and unskip
-skip('Board with data connectors and HighchartsComponent update', async function (assert) {
+test('Board with data connectors and HighchartsComponent update', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -154,6 +153,13 @@ skip('Board with data connectors and HighchartsComponent update', async function
                     type: 'CSV',
                     options: {
                         csv: '1,2,3',
+                        firstRowAsNames: false
+                    }
+                }, {
+                    id: 'connector-2',
+                    type: 'CSV',
+                    options: {
+                        csv: '4,5,6',
                         firstRowAsNames: false
                     }
                 }
@@ -196,6 +202,9 @@ skip('Board with data connectors and HighchartsComponent update', async function
     emptyArray(registeredEvents);
     registerEvents(componentWithConnector);
     await componentWithConnector.update({
+        connector: {
+            id: 'connector-2'
+        },
         chartOptions: {
             title: {
                 text: 'Hello World',
@@ -208,7 +217,8 @@ skip('Board with data connectors and HighchartsComponent update', async function
         registeredEvents,
         [
             'update',
-            'setConnector',
+            'setConnectors',
+            'afterSetConnectors',
             'afterUpdate',
             'render',
             'afterRender',
@@ -750,8 +760,7 @@ test('JSON data with columnNames and columnAssignment.', async function (assert)
 
 });
 
-// TODO(DD): Update it and unskip
-skip('Crossfilter with string values', async function (assert) {
+test('Crossfilter with string values', async function (assert) {
     assert.timeout(1000);
 
     const parentElement = document.getElementById('container');
@@ -862,8 +871,10 @@ skip('Crossfilter with string values', async function (assert) {
 
     const done = assert.async();
     dataGrid.on('tableChanged', e => {
+        const table = e.connector.table;
+
         // Assert only on the last event
-        if (e.modifier.options.ranges.length > 1) {
+        if (table?.modifier?.options?.ranges?.length > 1) {
 
             assert.equal(
                 countPoints(stringsNavigator.chart.series[0]),
@@ -878,7 +889,7 @@ skip('Crossfilter with string values', async function (assert) {
             );
 
             assert.equal(
-                e.modified.rowCount,
+                table.modified.rowCount,
                 1,
                 'DataGrid should have 2 rows after extremes changed.'
             );

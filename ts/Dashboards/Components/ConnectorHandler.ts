@@ -170,7 +170,7 @@ class ConnectorHandler {
                         this.setupTableListeners(e.modified);
                         this.component.emit({
                             type: 'tableChanged',
-                            targetConnector: connector
+                            connector: connector
                         });
                     }
                 }
@@ -297,7 +297,9 @@ namespace ConnectorHandler {
         id: string;
 
         /**
-         * TODO(DD): Add to documentation, change it to option.
+         * The modifier to apply to the data table before presenting it. This
+         * can be changed to be an open, documented option in the future.
+         *
          * @internal
          */
         presentationModifier?: DataModifier;
