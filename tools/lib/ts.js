@@ -240,6 +240,7 @@ function getChildInfos(
             _child = (
                 getImportInfo(node, includeNodes) ||
                 getInterfaceInfo(node, includeNodes) ||
+                getObjectInfo(node, includeNodes) ||
                 getPropertyInfo(node, includeNodes)
             );
         }
@@ -343,10 +344,6 @@ function getDocletInfosBetween(
 
         _doclets.push(_doclet);
 
-    }
-
-    if (_doclets.length) {
-        console.log(TS.SyntaxKind[startNode.kind], TS.SyntaxKind[endNode.kind]);
     }
 
     return _doclets;
@@ -497,24 +494,24 @@ function getInterfaceInfo(
     }
 
     /** @type {InterfaceInfo} */
-    const _interface = {
+    const _info = {
         kind: 'Interface'
     };
 
-    _interface.name = node.name.getText();
+    _info.name = node.name.getText();
 
     if (node.heritageClauses) {
         for (const clause of node.heritageClauses) {
             if (clause.token === TS.SyntaxKind.ExtendsKeyword) {
-                _interface.extends = clause.types.map(t => t.getText());
+                _info.extends = clause.types.map(t => t.getText());
             } else {
-                _interface.implements = clause.types.map(t => t.getText());
+                _info.implements = clause.types.map(t => t.getText());
             }
         }
     }
 
     if (node.members) {
-        const _properties = _interface.properties = [];
+        const _properties = _info.properties = [];
         for (const member of getChildInfos(node.members, includeNodes)) {
             if (
                 member.kind === 'Doclet' ||
@@ -526,17 +523,17 @@ function getInterfaceInfo(
     }
 
     if (node.typeParameters) {
-        const _parameter = _interface.parameter = [];
+        const _parameter = _info.parameter = [];
         for (const param of node.typeParameters) {
             _parameter.push(param.getText());
         }
     }
 
     if (includeNodes) {
-        _interface.node = node;
+        _info.node = node;
     }
 
-    return _interface;
+    return _info;
 }
 
 
@@ -596,6 +593,63 @@ function getNodesLastChild(
 
 
 /**
+ * Retrieves object information from the current node.
+ *
+ * @param {TS.Node} node
+ * Node that might be an object literal.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include TypeScript nodes in the information.
+ *
+ * @return {ObjectInfo}
+ * Object information or `undefined`.
+ */
+function getObjectInfo(
+    node,
+    includeNodes
+) {
+    /** @type {string|undefined} */
+    let _type;
+
+    if (TS.isAsExpression(node)) {
+        _type = node.type.getText();
+        node = node.expression;
+    }
+
+    if (!TS.isObjectLiteralExpression(node)) {
+        return void 0;
+    }
+
+    /** @type {ObjectInfo} */
+    const _info = {
+        kind: 'Object'
+    };
+
+    if (node.properties) {
+        const _properties = _info.properties = [];
+        for (const property of getChildInfos(node.properties, includeNodes)) {
+            if (
+                property.kind === 'Doclet' ||
+                property.kind === 'Property'
+            ) {
+                _properties.push(property);
+            }
+        }
+    }
+
+    if (_type) {
+        _info.type = _type;
+    }
+
+    if (includeNodes) {
+        _info.node = node;
+    }
+
+    return _info;
+}
+
+
+/**
  * Retrieves property information from the current node.
  *
  * @param {TS.Node} node
@@ -621,25 +675,25 @@ function getPropertyInfo(
     }
 
     /** @type {PropertyInfo} */
-    const _property = {
+    const _info = {
         kind: 'Property'
     };
 
-    _property.name = node.name.getText();
+    _info.name = node.name.getText();
 
     if (node.type) {
-        _property.type = node.type.getText();
+        _info.type = node.type.getText();
     }
 
     if (node.initializer) {
-        _property.value = node.initializer.getText();
+        _info.value = node.initializer.getText();
     }
 
     if (includeNode) {
-        _property.node = node;
+        _info.node = node;
     }
 
-    return _property;
+    return _info;
 }
 
 
@@ -672,21 +726,18 @@ function getSourceInfo(
     );
 
     /** @type {SourceInfo} */
-    const _source = {
+    const _info = {
         kind: 'Source',
         path: filePath
     };
 
-    _source.code = getChildInfos(
-        getNodesChildren(sourceFile),
-        includeNodes
-    );
+    _info.code = getChildInfos(getNodesChildren(sourceFile), includeNodes);
 
     if (includeNodes) {
-        _source.node = sourceFile;
+        _info.node = sourceFile;
     }
 
-    return _source;
+    return _info;
 }
 
 
@@ -719,34 +770,31 @@ function getVariableInfos(
     }
 
     /** @type {VariableInfo} */
-    const _variable = {
+    const _info = {
         kind: 'Variable',
         name: node.name.getText()
     };
 
     if (node.initializer) {
-        const _values = getChildInfos(
-            getNodesChildren(node.initializer),
-            includeNodes
-        );
+        const _values = getChildInfos([node.initializer], includeNodes);
 
         if (_values.length === 1) {
-            _variable.value = _values[0];
+            _info.value = _values[0];
         } else {
-            _variable.value = node.initializer.getText();
+            _info.value = node.initializer.getText();
         }
 
     }
 
     if (node.type) {
-        _variable.type = node.type.getText();
+        _info.type = node.type.getText();
     }
 
     if (includeNodes) {
-        _variable.node = node;
+        _info.node = node;
     }
 
-    return [_variable];
+    return [_info];
 }
 
 
@@ -811,6 +859,8 @@ function toJSONString(
         jsonTree,
         (_key, value) => (
             (
+                value &&
+                typeof value === 'object' &&
                 typeof value.kind === 'number' &&
                 typeof value.getText === 'function'
             ) ?
@@ -884,7 +934,16 @@ module.exports = {
 
 
 /**
- * @typedef {DocletInfo|ImportInfo|InterfaceInfo|PropertyInfo|VariableInfo} NodeInfo
+ * @typedef {DocletInfo|ImportInfo|InterfaceInfo|ObjectInfo|PropertyInfo|VariableInfo} NodeInfo
+ */
+
+
+/**
+ * @typedef ObjectInfo
+ * @property {'Object'} kind
+ * @property {TS.Node} [node]
+ * @property {Array<Propery>} properties
+ * @property {string} [type]
  */
 
 
