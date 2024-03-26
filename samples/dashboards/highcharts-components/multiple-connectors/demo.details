@@ -1,0 +1,6 @@
+---
+ name: Multiple Connectors in Highcharts Component
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

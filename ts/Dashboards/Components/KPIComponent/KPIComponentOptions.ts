@@ -40,6 +40,11 @@ export interface Options extends Component.Options {
     columnName: string;
 
     /**
+     * Connector options
+     */
+    connector?: Component.ConnectorOptions;
+
+    /**
      * A full set of chart options applied into KPI chart that is displayed
      * below the value.
      *

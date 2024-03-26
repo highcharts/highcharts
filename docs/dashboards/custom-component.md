@@ -293,10 +293,6 @@ class ThresholdComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
         this.type = 'Threshold';
-        this.sync = new Component.Sync(
-            this,
-            this.syncHandlers
-        );
         return this;
     }
 

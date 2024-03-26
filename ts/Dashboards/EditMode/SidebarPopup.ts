@@ -356,13 +356,6 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
-                                const mountedComponent =
-                                    newCell.mountedComponent;
-                                // Skip init connector when is not defined by
-                                // options f.e HTML component.
-                                if (mountedComponent.options?.connector?.id) {
-                                    mountedComponent.initConnector();
-                                }
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();

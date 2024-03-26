@@ -58,7 +58,8 @@ const NavigatorComponentDefaults: Globals.DeepPartial<Options> = {
             outlineWidth: 0,
             series: {
                 animation: false,
-                lineWidth: 0
+                lineWidth: 0,
+                colorIndex: 0
             },
             xAxis: {
                 endOnTick: true,

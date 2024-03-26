@@ -28,7 +28,7 @@ Dashboard.board('container', {
       connector: {
         id: 'Range Selection'
       },
-      columnAssignments: {
+      columnAssignment: {
         'TXC': 'y'
       },
       sync: {
@@ -80,7 +80,7 @@ Dashboard.board('container', {
       connector: {
         id: 'Economy'
       },
-      columnAssignments: {
+      columnAssignment: {
         'Agriculture': 'y'
       },
       sync: {
@@ -93,7 +93,7 @@ Dashboard.board('container', {
       connector: {
         id: 'Economy'
       },
-      columnAssignments: {
+      columnAssignment: {
         'Industry': 'y'
       },
       sync: {

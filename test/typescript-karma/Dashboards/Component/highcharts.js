@@ -2,7 +2,6 @@
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
@@ -19,7 +18,8 @@ const eventTypes = [
     'render',
     'afterRender',
     'tableChanged',
-    'setConnector',
+    'setConnectors',
+    'afterSetConnectors',
     'update',
     'afterUpdate'
 ];
@@ -155,6 +155,13 @@ test('Board with data connectors and HighchartsComponent update', async function
                         csv: '1,2,3',
                         firstRowAsNames: false
                     }
+                }, {
+                    id: 'connector-2',
+                    type: 'CSV',
+                    options: {
+                        csv: '4,5,6',
+                        firstRowAsNames: false
+                    }
                 }
             ]
         },
@@ -195,6 +202,9 @@ test('Board with data connectors and HighchartsComponent update', async function
     emptyArray(registeredEvents);
     registerEvents(componentWithConnector);
     await componentWithConnector.update({
+        connector: {
+            id: 'connector-2'
+        },
         chartOptions: {
             title: {
                 text: 'Hello World',
@@ -207,7 +217,8 @@ test('Board with data connectors and HighchartsComponent update', async function
         registeredEvents,
         [
             'update',
-            'setConnector',
+            'setConnectors',
+            'afterSetConnectors',
             'afterUpdate',
             'render',
             'afterRender',
@@ -797,7 +808,7 @@ test('Crossfilter with string values', async function (assert) {
             connector: {
                 id: 'data'
             },
-            columnAssignments: {
+            columnAssignment: {
                 Revenue: 'y'
             },
             sync: {
@@ -817,7 +828,7 @@ test('Crossfilter with string values', async function (assert) {
             connector: {
                 id: 'data'
             },
-            columnAssignments: {
+            columnAssignment: {
                 Category: 'y'
             },
             sync: {
@@ -860,8 +871,10 @@ test('Crossfilter with string values', async function (assert) {
 
     const done = assert.async();
     dataGrid.on('tableChanged', e => {
+        const table = e.connector.table;
+
         // Assert only on the last event
-        if (e.modifier.options.ranges.length > 1) {
+        if (table?.modifier?.options?.ranges?.length > 1) {
 
             assert.equal(
                 countPoints(stringsNavigator.chart.series[0]),
@@ -876,7 +889,7 @@ test('Crossfilter with string values', async function (assert) {
             );
 
             assert.equal(
-                e.modified.rowCount,
+                table.modified.rowCount,
                 1,
                 'DataGrid should have 2 rows after extremes changed.'
             );

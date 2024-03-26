@@ -705,12 +705,14 @@ class DataGrid {
      */
     private handleMouseOver(e: MouseEvent): void {
         const target = e.target as HTMLElement;
-
         if (target && target.classList.contains(Globals.classNames.cell)) {
             const row = target.parentElement as HTMLElement;
             this.toggleRowHighlight(row);
             this.hoveredRow = row;
-            fireEvent(this.container, 'dataGridHover', { row });
+            fireEvent(this.container, 'dataGridHover', {
+                row,
+                columnName: target.dataset?.columnName
+            });
         } else if (this.hoveredRow) {
             this.toggleRowHighlight();
             this.hoveredRow = void 0;

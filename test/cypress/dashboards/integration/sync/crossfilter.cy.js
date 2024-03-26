@@ -48,8 +48,9 @@ describe('Crossfilter with affectNavigator option', () => {
                 'The middle navigator should have less than 30 points with non null y-value.'
             );
 
+            console.log(board.mountedComponents[0].component.connectorHandlers[0].tableEvents);
             assert.ok(
-                board.mountedComponents[0].component.tableEvents.length < 9,
+                board.mountedComponents[0].component.connectorHandlers[0].tableEvents.length < 6,
                 'The table events array shoud be cleared after the table is modified.'
             )
         });

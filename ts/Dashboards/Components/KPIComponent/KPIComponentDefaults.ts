@@ -25,7 +25,6 @@ import type Globals from '../../Globals';
 import type Options from './KPIComponentOptions';
 
 import Component from '../Component.js';
-import KPISyncHandlers from './KPISyncHandlers.js';
 
 
 /* *
@@ -41,7 +40,6 @@ const KPIComponentDefaults: Globals.DeepPartial<Options> = {
         `${Component.defaultOptions.className}-kpi`
     ].join(' '),
     minFontSize: 20,
-    syncHandlers: KPISyncHandlers,
     thresholdColors: ['#f45b5b', '#90ed7d'],
     editableOptions:
         (Component.defaultOptions.editableOptions || []).concat(

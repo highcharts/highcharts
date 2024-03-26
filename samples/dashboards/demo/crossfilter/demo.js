@@ -48,7 +48,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Agriculture: 'y'
         },
         sync: {
@@ -66,7 +66,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Industry: 'y'
         },
         sync: {
@@ -84,7 +84,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Services: 'y'
         },
         sync: {
