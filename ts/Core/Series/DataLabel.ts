@@ -33,6 +33,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
+import Color from '../Color/Color.js';
 import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
@@ -641,12 +642,19 @@ namespace DataLabel {
                                 }
 
                                 point.contrastColor = renderer.getContrast(
-                                    labelBgColor !== 'auto' && labelBgColor ||
+                                    (
+                                        labelBgColor !== 'auto' &&
+                                        labelBgColor !== 'contrast' &&
+                                        labelBgColor
+                                    ) ||
                                     (point.color || series.color) as any
                                 );
 
                                 style.color = (
-                                    labelBgColor || // #20007
+                                    (
+                                        labelBgColor &&
+                                        labelBgColor !== 'contrast'
+                                    ) || // #20007
                                     (
                                         !defined(distance) &&
                                         labelOptions.inside
@@ -665,7 +673,7 @@ namespace DataLabel {
                         }
 
                         attr = {
-                            r: labelOptions.borderRadius || 0,
+                            r: labelOptions.borderRadius ?? 3,
                             rotation,
                             padding: labelOptions.padding,
                             zIndex: 1
@@ -674,7 +682,14 @@ namespace DataLabel {
                         if (!chart.styledMode) {
                             attr.fill = backgroundColor === 'auto' ?
                                 point.color :
-                                backgroundColor;
+                                (
+                                    backgroundColor === 'contrast' &&
+                                    isString(style.color)
+                                ) ?
+                                    new Color(
+                                        renderer.getContrast(style.color)
+                                    ).setOpacity(0.6).get() :
+                                    backgroundColor;
                             attr.stroke = borderColor === 'auto' ?
                                 point.color :
                                 borderColor;
