@@ -16,6 +16,7 @@
  *
  * */
 
+import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type GlobalsLike from './GlobalsLike';
 
 /* *
@@ -141,6 +142,7 @@ declare global {
     }
 
     interface GlobalOptions {
+        buttonTheme: ButtonThemeObject;
         /** @deprecated */
         canvasToolsURL?: string;
         /** @deprecated */

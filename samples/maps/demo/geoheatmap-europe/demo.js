@@ -22,7 +22,9 @@
 
         colorAxis: {
             min: 0,
-            max: 15
+            max: 15,
+            minColor: 'rgba(0, 34, 255, 0.1)',
+            maxColor: 'rgba(0, 34, 255, 1)'
         },
 
         series: [{

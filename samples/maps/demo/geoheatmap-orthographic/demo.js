@@ -75,9 +75,10 @@
             name: 'GeoHeatMap',
             type: 'geoheatmap',
             borderWidth: 1,
+            borderColor: 'rgba(196, 196, 196, 0.2)',
             colsize: 10,
             rowsize: 10,
-            data: data
+            data
         }]
     });
 })();
