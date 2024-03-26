@@ -2,7 +2,7 @@ DataGrid
 ===
 
 The DataGrid is a versatile tool registered together with the Highcharts Dashboards package for visualizing and editing tabular data.
-It can be a part of a dashboard or used as a standalone component.  
+It can be a part of a dashboard or used as a standalone component, but requires a Dashboards license.  
 By incorporating this component, users can effectively interact with data in a structured and editable table format.
 
 
