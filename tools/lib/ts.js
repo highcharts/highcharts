@@ -238,6 +238,7 @@ function getChildInfos(
             _child = _children.shift();
         } else {
             _child = (
+                getClassInfo(node, includeNodes) ||
                 getImportInfo(node, includeNodes) ||
                 getInterfaceInfo(node, includeNodes) ||
                 getObjectInfo(node, includeNodes) ||
@@ -272,6 +273,71 @@ function getChildInfos(
     }
 
     return _infos;
+}
+
+
+/**
+ * Retrieves class info from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a class.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {ClassInfo|undefined}
+ * Class information or `undefined`.
+ */
+function getClassInfo(
+    node,
+    includeNodes
+) {
+
+    if (!TS.isClassDeclaration(node)) {
+        return void 0;
+    }
+
+    /** @type {ClassInfo} */
+    const _info = {
+        kind: 'Class'
+    };
+
+    _info.name = ((node.name && node.name.getText()) || 'default');
+
+    if (node.heritageClauses) {
+        for (const clause of node.heritageClauses) {
+            if (clause.token === TS.SyntaxKind.ExtendsKeyword) {
+                _info.extends = clause.types.map(t => t.getText());
+            } else {
+                _info.implements = clause.types.map(t => t.getText());
+            }
+        }
+    }
+
+    if (node.members) {
+        const _properties = _info.properties = [];
+        for (const member of getChildInfos(node.members, includeNodes)) {
+            if (
+                member.kind === 'Doclet' ||
+                member.kind === 'Property'
+            ) {
+                _properties.push(member);
+            }
+        }
+    }
+
+    if (node.typeParameters) {
+        const _parameter = _info.parameter = [];
+        for (const param of node.typeParameters) {
+            _parameter.push(param.getText());
+        }
+    }
+
+    if (includeNodes) {
+        _info.node = node;
+    }
+
+    return _info;
 }
 
 
@@ -430,16 +496,16 @@ function getImportInfo(
     }
 
     /** @type {ImportInfo} */
-    const _import = {
+    const _info = {
         kind: 'Import'
     };
 
-    _import.from = node.moduleSpecifier
+    _info.from = node.moduleSpecifier
         .getText()
         .replace(/^(['"])(.*)\1$/u, '$2');
 
     if (node.importClause) {
-        const _imports = _import.imports = {};
+        const _imports = _info.imports = {};
 
         /** @type {string} */
         let propertyName;
@@ -465,10 +531,10 @@ function getImportInfo(
     }
 
     if (includeNode) {
-        _import.node = node;
+        _info.node = node;
     }
 
-    return _import;
+    return _info;
 }
 
 
@@ -599,7 +665,7 @@ function getNodesLastChild(
  * Node that might be an object literal.
  *
  * @param {boolean} includeNodes
- * Whether to include TypeScript nodes in the information.
+ * Whether to include the TypeScript nodes in the information.
  *
  * @return {ObjectInfo}
  * Object information or `undefined`.
@@ -904,6 +970,17 @@ module.exports = {
 
 
 /**
+ * @typedef ClassInfo
+ * @property {DocletInfo} [doclet]
+ * @property {string} extends
+ * @property {Array<string>} implements
+ * @property {'Class'} kind
+ * @property {string} name
+ * @property {TS.ClassDeclaration} [node]
+ * @property {Array<PropertyInfo>} properties
+ */
+
+/**
  * @typedef DocletInfo
  * @property {'Doclet'} kind
  * @property {TS.JSDoc} [node]
@@ -925,9 +1002,9 @@ module.exports = {
  * @typedef InterfaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<string>} extends
- * @property {Array<string>} implements
  * @property {'Interface'} kind
  * @property {TS.InterfaceDeclaration} [node]
+ * @property {string} name
  * @property {Array<string>} parameter
  * @property {Array<Propery>} properties
  */
