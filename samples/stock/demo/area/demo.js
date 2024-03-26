@@ -1,19 +1,33 @@
+// Configuring the style of the chart.s
 Highcharts.setOptions({
     lang: {
         rangeSelectorZoom: ''
-    }
-});
-
-Highcharts.stockChart('container', {
+    },
 
     chart: {
-        backgroundColor: '#000000'
+        backgroundColor: '#000000',
+        zooming: {
+            resetButton: {
+                theme: {
+                    fill: '#f23644',
+                    stroke: 'none',
+                    style: {
+                        color: '#ffffff'
+                    },
+                    r: 8,
+                    states: {
+                        hover: {
+                            style: {
+                                color: '#000000'
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
 
     title: {
-        text: 'BTCETH',
-        align: 'left',
-        y: 30,
         style: {
             color: '#b0abab',
             fontSize: '2em'
@@ -21,24 +35,32 @@ Highcharts.stockChart('container', {
     },
 
     xAxis: {
-        lineWidth: 0,
         labels: {
             style: {
                 color: '#b0abab'
             }
-        },
-        crosshair: {
-            width: 0
         }
     },
 
-    scrollbar: {
-        barBorderRadius: 8,
-        barBackgroundColor: '#5f5959',
-        height: 8,
-        margin: 0,
-        trackBorderColor: '#5f5959',
-        trackBorderRadius: 8
+    yAxis: {
+        labels: {
+            style: {
+                color: '#b0abab'
+            }
+        }
+    },
+
+    navigator: {
+        xAxis: {
+            labels: {
+                style: {
+                    color: '#ffffff',
+                    opacity: 1,
+                    textOutline: '#000000'
+                }
+            }
+        },
+        maskFill: 'rgba(181, 145, 143, 0.2)'
     },
 
     exporting: {
@@ -52,42 +74,12 @@ Highcharts.stockChart('container', {
         }
     },
 
-    yAxis: {
-        gridLineWidth: 0,
-        range: 20,
-        offset: 30,
-        labels: {
-            style: {
-                color: '#b0abab'
-            }
-        },
-        accessibility: {
-            description: 'price in Ethereum'
-        }
-    },
-
-    navigator: {
-        xAxis: {
-            gridLineWidth: 0,
-            labels: {
-                style: {
-                    color: '#ffffff',
-                    opacity: 1,
-                    textOutline: '#000000'
-                }
-            }
-        },
-        outlineWidth: 0,
-        maskFill: 'rgba(181, 145, 143, 0.2)'
+    scrollbar: {
+        barBackgroundColor: '#5f5959',
+        trackBorderColor: '#5f5959'
     },
 
     rangeSelector: {
-        buttonPosition: {
-            align: 'right',
-            x: -30,
-            y: -40
-        },
-        buttonSpacing: 10,
         buttonTheme: {
             fill: 'none',
             stroke: 'none',
@@ -111,12 +103,12 @@ Highcharts.stockChart('container', {
                     }
                 }
             }
-        },
-        inputEnabled: false
+        }
     },
 
     plotOptions: {
         series: {
+            color: '#f23644',
             fillColor: {
                 linearGradient: [0, 0, 0, 450],
                 stops: [
@@ -127,6 +119,63 @@ Highcharts.stockChart('container', {
         }
     },
 
+    tooltip: {
+        backgroundColor: '#212020',
+        style: {
+            color: '#ffffff'
+        }
+    }
+});
+
+// Configuring the chart.
+Highcharts.stockChart('container', {
+
+    title: {
+        text: 'BTCETH',
+        align: 'left',
+        y: 30
+    },
+
+    xAxis: {
+        lineWidth: 0,
+        crosshair: {
+            width: 0
+        }
+    },
+
+    scrollbar: {
+        barBorderRadius: 8,
+        height: 8,
+        margin: 0,
+        trackBorderRadius: 8
+    },
+
+    yAxis: {
+        gridLineWidth: 0,
+        range: 20,
+        offset: 30,
+        accessibility: {
+            description: 'price in Ethereum'
+        }
+    },
+
+    navigator: {
+        xAxis: {
+            gridLineWidth: 0
+        },
+        outlineWidth: 0
+    },
+
+    rangeSelector: {
+        buttonPosition: {
+            align: 'right',
+            x: -30,
+            y: -40
+        },
+        buttonSpacing: 10,
+        inputEnabled: false
+    },
+
     data: {
         csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac5bcf/samples/data/btc-eth.csv'
     },
@@ -134,17 +183,11 @@ Highcharts.stockChart('container', {
     tooltip: {
         shape: 'rect',
         shadow: false,
-        borderWidth: 0.5,
-        borderColor: '#ffffff',
-        backgroundColor: '#212020',
-        style: {
-            color: '#ffffff'
-        }
+        borderWidth: 0
     },
 
     series: [{
         type: 'area',
-        color: '#f23644',
         tooltip: {
             valueDecimals: 4,
             pointFormat: '{point.y}'
