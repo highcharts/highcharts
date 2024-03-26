@@ -242,7 +242,8 @@ function getChildInfos(
                 getImportInfo(node, includeNodes) ||
                 getInterfaceInfo(node, includeNodes) ||
                 getObjectInfo(node, includeNodes) ||
-                getPropertyInfo(node, includeNodes)
+                getPropertyInfo(node, includeNodes) ||
+                getFunctionInfo(node, includeNodes)
             );
         }
 
@@ -304,6 +305,15 @@ function getClassInfo(
 
     _info.name = ((node.name && node.name.getText()) || 'default');
 
+    if (node.typeParameters) {
+        const _generics = _info.generics = [];
+        for (const parameter of getChildInfos(node.typeParameters)) {
+            if (parameter.kind === 'Variable') {
+                _generics.push(parameter);
+            }
+        }
+    }
+
     if (node.heritageClauses) {
         for (const clause of node.heritageClauses) {
             if (clause.token === TS.SyntaxKind.ExtendsKeyword) {
@@ -319,17 +329,11 @@ function getClassInfo(
         for (const member of getChildInfos(node.members, includeNodes)) {
             if (
                 member.kind === 'Doclet' ||
+                member.kind === 'Function' ||
                 member.kind === 'Property'
             ) {
                 _properties.push(member);
             }
-        }
-    }
-
-    if (node.typeParameters) {
-        const _parameter = _info.parameter = [];
-        for (const param of node.typeParameters) {
-            _parameter.push(param.getText());
         }
     }
 
@@ -385,8 +389,12 @@ function getDocletInfosBetween(
                     _tags.description = _tags.description || [];
                     _tags.description.push(
                         node.comment instanceof Array ?
-                            node.comment.map(c => c.text) :
                             node.comment
+                                .map(c => c.text)
+                                .join('\n')
+                                .trim() :
+                            node.comment
+                                .trim()
                     );
                 }
                 if (node.tags) {
@@ -475,6 +483,68 @@ function getDocletsBetween(
 
 
 /**
+ * Retrieves function information from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a function.
+ *
+ * @param {boolean} includeNode
+ * Whether to include the TypeScript node in the information.
+ *
+ * @return {ImportInfo|undefined}
+ * Function information or `undefined`.
+ */
+function getFunctionInfo(
+    node,
+    includeNode
+) {
+
+    if (
+        !TS.isConstructorDeclaration(node) &&
+        !TS.isFunctionDeclaration(node) &&
+        !TS.isMethodDeclaration(node)
+    ) {
+        return void 0;
+    }
+
+    /** @type {FunctionInfo} */
+    const _info = {
+        kind: 'Function'
+    };
+
+    _info.name = ((node.name && node.name.getText()) || '');
+
+    if (node.typeParameters) {
+        const _generics = _info.generics = [];
+        for (const parameter of getChildInfos(node.typeParameters)) {
+            if (parameter.kind === 'Variable') {
+                _generics.push(parameter);
+            }
+        }
+    }
+
+    if (node.parameters) {
+        const _parameters = _info.parameters = [];
+        for (const parameter of getChildInfos(node.parameters, includeNode)) {
+            if (parameter.kind === 'Variable') {
+                _parameters.push(parameter);
+            }
+        }
+    }
+
+    if (node.type) {
+        _info.return = node.type.getText();
+    }
+
+    if (includeNode) {
+        _info.node = node;
+    }
+
+    return _info;
+}
+
+
+/**
  * Retrieves import information from the given node.
  *
  * @param {TS.Node} node
@@ -484,7 +554,7 @@ function getDocletsBetween(
  * Whether to include the TypeScript node in the information.
  *
  * @return {ImportInfo|undefined}
- * Import or `undefined`.
+ * Import information or `undefined`.
  */
 function getImportInfo(
     node,
@@ -566,6 +636,15 @@ function getInterfaceInfo(
 
     _info.name = node.name.getText();
 
+    if (node.typeParameters) {
+        const _generics = _info.generics = [];
+        for (const parameter of getChildInfos(node.typeParameters)) {
+            if (parameter.kind === 'Variable') {
+                _generics.push(parameter);
+            }
+        }
+    }
+
     if (node.heritageClauses) {
         for (const clause of node.heritageClauses) {
             if (clause.token === TS.SyntaxKind.ExtendsKeyword) {
@@ -581,17 +660,11 @@ function getInterfaceInfo(
         for (const member of getChildInfos(node.members, includeNodes)) {
             if (
                 member.kind === 'Doclet' ||
+                member.kind === 'Interface' ||
                 member.kind === 'Property'
             ) {
                 _properties.push(member);
             }
-        }
-    }
-
-    if (node.typeParameters) {
-        const _parameter = _info.parameter = [];
-        for (const param of node.typeParameters) {
-            _parameter.push(param.getText());
         }
     }
 
@@ -831,7 +904,11 @@ function getVariableInfos(
         return getChildInfos(getNodesChildren(node), includeNodes);
     }
 
-    if (!TS.isVariableDeclaration(node)) {
+    if (
+        !TS.isParameter(node) &&
+        !TS.isTypeParameterDeclaration(node) &&
+        !TS.isVariableDeclaration(node)
+    ) {
         return [];
     }
 
@@ -841,7 +918,10 @@ function getVariableInfos(
         name: node.name.getText()
     };
 
-    if (node.initializer) {
+    if (
+        !TS.isTypeParameterDeclaration(node) &&
+        node.initializer
+    ) {
         const _values = getChildInfos([node.initializer], includeNodes);
 
         if (_values.length === 1) {
@@ -973,6 +1053,7 @@ module.exports = {
  * @typedef ClassInfo
  * @property {DocletInfo} [doclet]
  * @property {string} extends
+ * @property {Array<VariableInfo>} generics
  * @property {Array<string>} implements
  * @property {'Class'} kind
  * @property {string} name
@@ -985,6 +1066,17 @@ module.exports = {
  * @property {'Doclet'} kind
  * @property {TS.JSDoc} [node]
  * @property {Record<string, Array<string>>} tags
+ */
+
+
+/**
+ * @typedef FunctionInfo
+ * @property {DocletInfo} [doclet]
+ * @property {Array<VariableInfo>} generics
+ * @property {'Function'} kind
+ * @property {string} name
+ * @property {Array<VariableInfo>} [parameters]
+ * @property {string} [return]
  */
 
 
@@ -1002,10 +1094,10 @@ module.exports = {
  * @typedef InterfaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<string>} extends
+ * @property {Array<VariableInfo>} generics
  * @property {'Interface'} kind
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
- * @property {Array<string>} parameter
  * @property {Array<Propery>} properties
  */
 
