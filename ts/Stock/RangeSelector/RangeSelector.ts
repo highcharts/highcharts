@@ -241,9 +241,7 @@ class RangeSelector {
             ), // #1568
             baseXAxisOptions: AxisOptions,
             range = rangeOptions._range,
-            rangeMin,
-            minSetting: (number|null|undefined),
-            rangeSetting: (number|undefined),
+            rangeMin: (number|undefined),
             ctx: Axis,
             ytdExtremes,
             addOffsetMin = true;
@@ -365,16 +363,24 @@ class RangeSelector {
         // Update the chart
         if (!baseAxis) {
             // Axis not yet instantiated. Temporarily set min and range
-            // options and remove them on chart load (#4317).
+            // options and axes once defined and remove them on
+            // chart load (#4317 & #20529).
             baseXAxisOptions = splat(chart.options.xAxis)[0];
-            rangeSetting = baseXAxisOptions.range;
-            baseXAxisOptions.range = range;
-            minSetting = baseXAxisOptions.min;
-            baseXAxisOptions.min = rangeMin;
+            const axisRangeUpdateEvent = addEvent(
+                chart,
+                'afterGetAxes',
+                function (): void {
+                    const xAxis = chart.xAxis[0];
+                    xAxis.range = xAxis.options.range = range;
+                    xAxis.min = xAxis.options.min = rangeMin;
+                }
+            );
             addEvent(chart, 'load', function resetMinAndRange(): void {
+                const xAxis = chart.xAxis[0];
                 chart.setFixedRange(rangeOptions._range);
-                baseXAxisOptions.range = rangeSetting;
-                baseXAxisOptions.min = minSetting;
+                xAxis.options.range = baseXAxisOptions.range;
+                xAxis.options.min = baseXAxisOptions.min;
+                axisRangeUpdateEvent(); // Remove event
             });
         } else {
             // Existing axis object. Set extremes after render time.
