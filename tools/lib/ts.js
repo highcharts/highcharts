@@ -244,7 +244,7 @@ function getChildInfos(
             );
         }
 
-        _doclets = getDocletInfosBetween(previousNode, node);
+        _doclets = getDocletInfosBetween(previousNode, node, includeNodes);
 
         if (!_child) {
             _infos.push(..._doclets);
@@ -283,18 +283,24 @@ function getChildInfos(
  * @param {TS.Node} endNode
  * Node that comes after doclets.
  *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
  * @return {Array<DocletInfo>}
  * Retrieved doclet informations.
  */
 function getDocletInfosBetween(
     startNode,
-    endNode
+    endNode,
+    includeNodes
 ) {
     /** @type {Array<DocletInfo>} */
     const _doclets = [];
 
     /** @type {DocletInfo} */
     let _doclet;
+    /** @type {string} */
+    let _tagName;
     /** @type {Record<string,Array<string>>} */
     let _tags;
 
@@ -318,19 +324,20 @@ function getDocletInfosBetween(
                 }
                 if (node.tags) {
                     for (const tag of node.tags) {
-                        _tags[tag.tagName.getText()].push(
-                            tag.comment instanceof Array ?
-                                tag.comment.map(c => c.text) :
-                                tag.comment
+                        _tagName = tag.tagName.getText();
+                        _tags[_tagName] = _tags[_tagName] || [];
+                        _tags[_tagName].push(
+                            tag.getText()
+                                .substring(_tagName.length + 1)
+                                .split(/\n *\*?/gu)
+                                .join('\n')
+                                .trim()
                         );
                     }
+                    if (includeNodes) {
+                        _doclet.node = node;
+                    }
                 }
-            } else {
-                _tags[node.tagName.getText()].push(
-                    node.comment instanceof Array ?
-                        node.comment.map(c => c.text) :
-                        node.comment
-                );
             }
         }
 
@@ -783,6 +790,38 @@ function isNativeType(
 }
 
 
+/**
+ * Converts any tree to a JSON string, while converting TypeScript nodes to raw
+ * code.
+ *
+ * @param {unknown} jsonTree
+ * Tree to convert.
+ *
+ * @param {string} [indent]
+ * Indent option.
+ *
+ * @return {string}
+ * Converted JSON string.
+ */
+function toJSONString(
+    jsonTree,
+    indent
+) {
+    return JSON.stringify(
+        jsonTree,
+        (_key, value) => (
+            (
+                typeof value.kind === 'number' &&
+                typeof value.getText === 'function'
+            ) ?
+                value.getText() :
+                value
+        ),
+        indent
+    );
+}
+
+
 /* *
  *
  *  Default Export
@@ -802,7 +841,8 @@ module.exports = {
     getNodesLastChild,
     getSourceInfo,
     isCapitalCase,
-    isNativeType
+    isNativeType,
+    toJSONString
 };
 
 
@@ -816,16 +856,8 @@ module.exports = {
 /**
  * @typedef DocletInfo
  * @property {'Doclet'} kind
+ * @property {TS.JSDoc} [node]
  * @property {Record<string, Array<string>>} tags
- */
-
-
-/**
- * @typedef DocletTagInfo
- * @property {'DocletTag'} kind
- * @property {TS.Node} [node]
- * @property {string} name
- * @property {string} text
  */
 
 
