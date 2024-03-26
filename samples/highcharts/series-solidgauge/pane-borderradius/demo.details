@@ -1,0 +1,6 @@
+---
+ name: Pane with Border Radius
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

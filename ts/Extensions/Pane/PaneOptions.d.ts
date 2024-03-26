@@ -31,6 +31,7 @@ declare module '../../Core/Options'{
 export interface PaneBackgroundOptions {
     backgroundColor?: ColorType;
     borderColor?: ColorType;
+    borderRadius?: number|string;
     borderWidth?: number;
     className?: string;
     from?: number;
