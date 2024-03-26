@@ -202,14 +202,18 @@ function extractTypes(
  * @param {Array<TS.Node>} nodes
  * Child nodes to extract from.
  *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
  * @return {Array<NodeInfo>}
  * Retrieved child informations.
  */
 function getChildInfos(
-    nodes
+    nodes,
+    includeNodes
 ) {
     /** @type {Array<NodeInfo>} */
-    const _children = [];
+    const _infos = [];
 
     /** @type {DocletInfo} */
     let _doclet;
@@ -217,39 +221,56 @@ function getChildInfos(
     let _doclets;
     /** @type {NodeInfo} */
     let _child;
+    /** @type {Array<NodeInfo>} */
+    let _children;
     /** @type {TS.Node} */
-    let previousNode = (nodes[0] && nodes[0].parent);
+    let previousNode = nodes[0];
 
     for (const node of nodes) {
 
-        _child = (
-            getImportInfo(node) ||
-            getInterfaceInfo(node) ||
-            getPropertyInfo(node)
-        );
+        if (node.kind === TS.SyntaxKind.EndOfFileToken) {
+            break;
+        }
+
+        _children = getVariableInfos(node, includeNodes);
+
+        if (_children.length) {
+            _child = _children.shift();
+        } else {
+            _child = (
+                getImportInfo(node, includeNodes) ||
+                getInterfaceInfo(node, includeNodes) ||
+                getPropertyInfo(node, includeNodes)
+            );
+        }
 
         _doclets = getDocletInfosBetween(previousNode, node);
 
         if (!_child) {
-            _children.push(..._doclets);
+            _infos.push(..._doclets);
             continue;
         }
 
         if (_doclets.length) {
             _doclet = _doclets[_doclets.length - 1];
-            if (_doclet.tags.every(tag => tag.name !== 'apioption')) {
+            if (!_doclet.tags.apioption) {
                 _child.doclet = _doclets.pop();
             }
-            _children.push(..._doclets);
+            _infos.push(..._doclets);
         }
 
-        _children.push(_child);
+        _infos.push(_child);
+
+        if (_children.length) {
+            _infos.push(..._children);
+            _children.length = 0;
+        }
 
         previousNode = node;
 
     }
 
-    return _children;
+    return _infos;
 }
 
 
@@ -272,12 +293,53 @@ function getDocletInfosBetween(
     /** @type {Array<DocletInfo>} */
     const _doclets = [];
 
+    /** @type {DocletInfo} */
+    let _doclet;
+    /** @type {Record<string,Array<string>>} */
+    let _tags;
+
     for (const doclet of getDocletsBetween(startNode, endNode)) {
-        _doclets.push({
+
+        _doclet = {
             kind: 'Doclet',
-            node: endNode,
-            tags: getDocletTagInfos(doclet)
-        });
+            tags: {}
+        };
+        _tags = _doclet.tags;
+
+        for (const node of doclet) {
+            if (TS.isJSDoc(node)) {
+                if (node.comment) {
+                    _tags.description = _tags.description || [];
+                    _tags.description.push(
+                        node.comment instanceof Array ?
+                            node.comment.map(c => c.text) :
+                            node.comment
+                    );
+                }
+                if (node.tags) {
+                    for (const tag of node.tags) {
+                        _tags[tag.tagName.getText()].push(
+                            tag.comment instanceof Array ?
+                                tag.comment.map(c => c.text) :
+                                tag.comment
+                        );
+                    }
+                }
+            } else {
+                _tags[node.tagName.getText()].push(
+                    node.comment instanceof Array ?
+                        node.comment.map(c => c.text) :
+                        node.comment
+                );
+            }
+        }
+
+        _doclets.push(_doclet);
+
+    }
+
+    if (_doclets.length) {
+        console.log(TS.SyntaxKind[startNode.kind], TS.SyntaxKind[endNode.kind]);
     }
 
     return _doclets;
@@ -305,7 +367,11 @@ function getDocletsBetween(
     /** @type {Array<ReturnType<TS.getJSDocCommentsAndTags>>} */
     const doclets = [];
     const end = endNode.getStart();
-    const start = startNode.getEnd();
+    const start = (
+        startNode === endNode ?
+            startNode.getFullStart() :
+            startNode.getEnd()
+    );
 
     /** @type {ReturnType<TS.getJSDocCommentsAndTags>} */
     let parts;
@@ -339,58 +405,20 @@ function getDocletsBetween(
 
 
 /**
- * Retrieve all doclet tags.
- *
- * @param {Array<TS.JSDoc|TS.JSDocTag>} nodes
- * Doclet nodes to extract from.
- *
- * @return {Array<DocletTagInfo>}
- * Retrieved doclet tags.
- */
-function getDocletTagInfos(
-    nodes
-) {
-    /** @type {Array<DocletTagInfo>} */
-    const _tags = [];
-
-    for (const node of nodes) {
-        if (TS.isJSDoc(node)) {
-            if (node.comment) {
-                _tags.push({
-                    kind: 'DocletTag',
-                    name: 'description',
-                    node,
-                    text: node.comment
-                });
-            }
-            if (node.tags) {
-                _tags.push(...getDocletTagInfos(node.tags));
-            }
-        } else {
-            _tags.push({
-                kind: 'DocletTag',
-                name: node.tagName.getText(),
-                node,
-                text: (node.comment && node.comment.getText())
-            });
-        }
-    }
-
-    return _tags;
-}
-
-
-/**
  * Retrieves import information from the given node.
  *
  * @param {TS.Node} node
  * Node that might be an import.
  *
+ * @param {boolean} includeNode
+ * Whether to include the TypeScript node in the information.
+ *
  * @return {ImportInfo|undefined}
  * Import or `undefined`.
  */
 function getImportInfo(
-    node
+    node,
+    includeNode
 ) {
 
     if (!TS.isImportDeclaration(node)) {
@@ -399,8 +427,7 @@ function getImportInfo(
 
     /** @type {ImportInfo} */
     const _import = {
-        kind: 'Import',
-        node
+        kind: 'Import'
     };
 
     _import.from = node.moduleSpecifier
@@ -433,6 +460,10 @@ function getImportInfo(
 
     }
 
+    if (includeNode) {
+        _import.node = node;
+    }
+
     return _import;
 }
 
@@ -443,11 +474,15 @@ function getImportInfo(
  * @param {TS.Node} node
  * Node that might be an interface.
  *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
  * @return {InterfaceInfo|undefined}
  * Interface or `undefined`.
  */
 function getInterfaceInfo(
-    node
+    node,
+    includeNodes
 ) {
 
     if (!TS.isInterfaceDeclaration(node)) {
@@ -456,8 +491,7 @@ function getInterfaceInfo(
 
     /** @type {InterfaceInfo} */
     const _interface = {
-        kind: 'Interface',
-        node
+        kind: 'Interface'
     };
 
     _interface.name = node.name.getText();
@@ -474,8 +508,13 @@ function getInterfaceInfo(
 
     if (node.members) {
         const _properties = _interface.properties = [];
-        for (const member of node.members) {
-            _properties.push(getPropertyInfo(member));
+        for (const member of getChildInfos(node.members, includeNodes)) {
+            if (
+                member.kind === 'Doclet' ||
+                member.kind === 'Property'
+            ) {
+                _properties.push(member);
+            }
         }
     }
 
@@ -484,6 +523,10 @@ function getInterfaceInfo(
         for (const param of node.typeParameters) {
             _parameter.push(param.getText());
         }
+    }
+
+    if (includeNodes) {
+        _interface.node = node;
     }
 
     return _interface;
@@ -551,11 +594,15 @@ function getNodesLastChild(
  * @param {TS.Node} node
  * Node that might be a property.
  *
+ * @param {boolean} includeNode
+ * Whether to include the TypeScript node in the information.
+ *
  * @return {PropertyInfo|undefined}
- * Property or `undefined`.
+ * Property information or `undefined`.
  */
 function getPropertyInfo(
-    node
+    node,
+    includeNode
 ) {
 
     if (
@@ -568,8 +615,7 @@ function getPropertyInfo(
 
     /** @type {PropertyInfo} */
     const _property = {
-        kind: 'Property',
-        node
+        kind: 'Property'
     };
 
     _property.name = node.name.getText();
@@ -582,6 +628,10 @@ function getPropertyInfo(
         _property.value = node.initializer.getText();
     }
 
+    if (includeNode) {
+        _property.node = node;
+    }
+
     return _property;
 }
 
@@ -592,11 +642,15 @@ function getPropertyInfo(
  * @param {string} filePath
  * Path to source file.
  *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
  * @return {SourceInfo|undefined}
- * SourceInfo or `undefined`.
+ * Source information or `undefined`.
  */
 function getSourceInfo(
-    filePath
+    filePath,
+    includeNodes
 ) {
 
     if (!FS.existsSync(filePath)) {
@@ -613,13 +667,79 @@ function getSourceInfo(
     /** @type {SourceInfo} */
     const _source = {
         kind: 'Source',
-        node: sourceFile,
         path: filePath
     };
 
-    _source.code = getChildInfos(getNodesChildren(sourceFile));
+    _source.code = getChildInfos(
+        getNodesChildren(sourceFile),
+        includeNodes
+    );
+
+    if (includeNodes) {
+        _source.node = sourceFile;
+    }
 
     return _source;
+}
+
+
+/**
+ * Retrieves variable informations from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a variable or assignment.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {Array<VariableInfo>}
+ * Variable informations.
+ */
+function getVariableInfos(
+    node,
+    includeNodes
+) {
+
+    if (
+        TS.isVariableDeclarationList(node) ||
+        TS.isVariableStatement(node)
+    ) {
+        return getChildInfos(getNodesChildren(node), includeNodes);
+    }
+
+    if (!TS.isVariableDeclaration(node)) {
+        return [];
+    }
+
+    /** @type {VariableInfo} */
+    const _variable = {
+        kind: 'Variable',
+        name: node.name.getText()
+    };
+
+    if (node.initializer) {
+        const _values = getChildInfos(
+            getNodesChildren(node.initializer),
+            includeNodes
+        );
+
+        if (_values.length === 1) {
+            _variable.value = _values[0];
+        } else {
+            _variable.value = node.initializer.getText();
+        }
+
+    }
+
+    if (node.type) {
+        _variable.type = node.type.getText();
+    }
+
+    if (includeNodes) {
+        _variable.node = node;
+    }
+
+    return [_variable];
 }
 
 
@@ -696,15 +816,14 @@ module.exports = {
 /**
  * @typedef DocletInfo
  * @property {'Doclet'} kind
- * @property {TS.Node} node
- * @property {Array<DocletTagInfo} tags
+ * @property {Record<string, Array<string>>} tags
  */
 
 
 /**
  * @typedef DocletTagInfo
  * @property {'DocletTag'} kind
- * @property {TS.Node} node
+ * @property {TS.Node} [node]
  * @property {string} name
  * @property {string} text
  */
@@ -715,7 +834,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Record<string,string>} imports
  * @property {'Import'} kind
- * @property {TS.ImportDeclaration} node
+ * @property {TS.ImportDeclaration} [node]
  * @property {string} from
  */
 
@@ -726,14 +845,14 @@ module.exports = {
  * @property {Array<string>} extends
  * @property {Array<string>} implements
  * @property {'Interface'} kind
- * @property {TS.InterfaceDeclaration} node
+ * @property {TS.InterfaceDeclaration} [node]
  * @property {Array<string>} parameter
  * @property {Array<Propery>} properties
  */
 
 
 /**
- * @typedef {DocletInfo|ImportInfo|InterfaceInfo|PropertyInfo} NodeInfo
+ * @typedef {DocletInfo|ImportInfo|InterfaceInfo|PropertyInfo|VariableInfo} NodeInfo
  */
 
 
@@ -742,7 +861,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {'Property'} kind
  * @property {string} name
- * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} node
+ * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
  * @property {string} [type]
  * @property {string} [value]
  */
@@ -751,9 +870,19 @@ module.exports = {
 /**
  * @typedef SourceInfo
  * @property {'Source'} kind
- * @property {TS.SourceNode} node
+ * @property {TS.SourceFile} [node]
  * @property {string} path
  * @property {Array<NodeInfo>} code
+ */
+
+
+/**
+ * @typedef VariableInfo
+ * @property {`Variable`} kind
+ * @property {string} name
+ * @property {TS.VariableDeclaration} [node]
+ * @property {string} [type]
+ * @property {bigint|boolean|null|number|string|ObjectInfo} [value]
  */
 
 
