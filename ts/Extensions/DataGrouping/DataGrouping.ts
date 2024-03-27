@@ -131,6 +131,12 @@ function onTooltipHeaderFormatter(
             );
         }
 
+        if (xDateFormat?.includes('{')) {
+            xDateFormat = format(xDateFormat, {
+                lang: chart.options.lang
+            });
+        }
+
         const groupStart = pick(
                 series.groupMap?.[point.index].groupStart,
                 labelConfig.key
