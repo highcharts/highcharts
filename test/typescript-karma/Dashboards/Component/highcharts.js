@@ -792,7 +792,7 @@ test('Crossfilter with string values', async function (assert) {
             }]
         },
         components: [{
-            cell: 'top-left',
+            renderTo: 'top-left',
             type: 'Navigator',
             connector: {
                 id: 'data'
@@ -812,7 +812,7 @@ test('Crossfilter with string values', async function (assert) {
                 }
             }
         }, {
-            cell: 'top-middle',
+            renderTo: 'top-middle',
             type: 'Navigator',
             connector: {
                 id: 'data'
@@ -832,7 +832,7 @@ test('Crossfilter with string values', async function (assert) {
                 }
             }
         }, {
-            cell: 'bottom',
+            renderTo: 'bottom',
             type: 'DataGrid',
             connector: {
                 id: 'data'
