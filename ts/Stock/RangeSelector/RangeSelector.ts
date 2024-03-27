@@ -1390,7 +1390,8 @@ class RangeSelector {
             }, void 0, dropdown);
 
             buttons[i] = renderer
-                .button(rangeOptions.text ?? '',
+                .button(
+                    rangeOptions.text ?? '',
                     0,
                     0,
                     (e: (Event|AnyRecord)): void => {
