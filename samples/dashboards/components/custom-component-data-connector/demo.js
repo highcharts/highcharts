@@ -58,7 +58,7 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'cell-id'
+                    id: 'cell-id-0'
                 }, {
                     id: 'cell-id-1'
                 }, {
@@ -70,7 +70,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'TotalRevenueHTML',
-        renderTo: 'cell-id',
+        renderTo: 'cell-id-0',
         connector: {
             id: 'data'
         }

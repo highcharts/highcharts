@@ -384,19 +384,17 @@ Dashboards.board('container', {
 ```
 
 
-## Custom Component with data from the Connector
+## Custom Component with data from the DataConnector
 
-The example below shows how to program a custom component that fetches data from the Connector, processes and displays it on the Dashboard.
+The example below shows how to develop a custom component that fetches data from the DataConnector, processes and displays it on the dashboard.
 
-The custom component is created by extending the `HTMLComponent` class and it creates a component that displays the total revenue from the data fetched from the Connector.
+The custom component is created by extending the `HTMLComponent` class and it displays the total revenue.
 
 <iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector' allow="fullscreen"></iframe>
 
-The data connector is registered on the `load` that is why we need to execute and await the `super.load()` method first to make sure that the connector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
+The DataConnector is registered on the `load` that is why we need to execute and await the `super.load()` method first to make sure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
 
-When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue from the data fetched from the Connector. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the Dashboard.
-
-Later on the component can be used in the Dashboard by referencing the name it was registered with, in this case, `TotalRevenueHTML`.
+When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue from the data fetched from the DataConnector. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the dashboard.
 
 ```js
 const { ComponentRegistry } = Dashboards,
@@ -435,4 +433,18 @@ class TotalRevenueHTML extends HTMLComponent {
 }
 
 ComponentRegistry.registerComponent('TotalRevenueHTML', TotalRevenueHTML);
+```
+
+Later on the component can be used in the dashboard by referencing the name it was registered with, in this case, `TotalRevenueHTML`.
+
+```js
+...
+components: [{
+    type: 'TotalRevenueHTML',
+    renderTo: 'cell-id-0',
+    connector: {
+        id: 'data'
+    }
+},
+...
 ```
