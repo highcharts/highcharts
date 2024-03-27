@@ -1,0 +1,14 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+.highcharts-figure {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cell {
+    height: 220px;
+}
+
+.highcharts-tooltip {
+    font-size: 20px;
+}
