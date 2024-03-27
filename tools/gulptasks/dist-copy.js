@@ -246,7 +246,7 @@ function distCopy() {
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'code', 'i18n');
-                FsLib.copyAllFiles('i18n', directory, true, filePath => filePath.endsWith('.json') && !filePath.includes('lang.json'));
+                FsLib.copyAllFiles('i18n', directory, true, filePath => filePath.endsWith('.json'));
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'gfx');

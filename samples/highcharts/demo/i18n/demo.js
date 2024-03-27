@@ -60,20 +60,9 @@ function renderChart() {
 
 renderChart();
 
-// Save the default language options
-const defaultLangOptions =
-    JSON.parse(JSON.stringify(Highcharts.defaultOptions.lang));
-
-document.querySelector('select#lang-select').addEventListener('change', async function (e) {
-    const lang = e.target.value;
-
-    if (lang === 'default') {
-        Highcharts.setOptions({
-            lang: defaultLangOptions
-        });
-
-        document.querySelector('#container').removeAttribute('lang');
-    } else {
+document.querySelector('select#lang-select')
+    .addEventListener('change', async function (e) {
+        const lang = e.target.value === 'default' ? 'lang' : e.target.value;
         const src = `https://code.highcharts.com/i18n/${lang}.json`;
 
         const langOptions = await fetch(src)
@@ -84,9 +73,7 @@ document.querySelector('select#lang-select').addEventListener('change', async fu
         });
 
         document.querySelector('#container').setAttribute('lang', lang);
-    }
 
-    // As the lang object is global we need to fully re-render the chart
-    renderChart();
-
-});
+        // As the lang object is global we need to fully re-render the chart
+        renderChart();
+    });
