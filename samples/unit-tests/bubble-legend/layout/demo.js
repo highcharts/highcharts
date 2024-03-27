@@ -175,4 +175,14 @@ QUnit.test('Bubble legend with maps', function (assert) {
         0,
         'Grid lines and ticks should not be rendered (#11448).'
     );
+
+    const legendBoxBeforeRedraw = chart.legend.contentGroup.getBBox();
+
+    chart.redraw();
+
+    assert.ok(
+        chart.legend.contentGroup.getBBox().y === legendBoxBeforeRedraw.y,
+        `Vertical position of legend shouldn't be changd after chart redraw
+        (#20710).`
+    );
 });
