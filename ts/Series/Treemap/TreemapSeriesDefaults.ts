@@ -90,7 +90,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since 10.0.0
      * @product   highcharts
      * @extends   navigation.breadcrumbs
-     * @optionparent plotOptions.treemap.breadcrumbs
+     * @apioption plotOptions.treemap.breadcrumbs
      */
 
     /**
