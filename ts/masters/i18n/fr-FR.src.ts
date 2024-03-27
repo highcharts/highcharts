@@ -32,6 +32,7 @@ const languageOptions = {
         "ytdTitle": "Voir depuis le début de l'année"
     },
     "viewFullscreen": "Voir en plein écran",
+    "weekFrom": "Semaine à partir de",
     "exitFullscreen": "Quitter le plein écran",
     "printChart": "Imprimer le graphique",
     "downloadPNG": "Télécharger l'image PNG",

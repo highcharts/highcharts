@@ -132,6 +132,8 @@ const defaultOptions: DefaultOptions = {
      * ```
      */
     lang: {
+        weekFrom: 'Week from',
+
         /**
          * The default chart title.
          *
@@ -2387,7 +2389,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%A, %e %b %Y',
             /** @internal */
-            week: 'Week from %A, %e %b %Y',
+            week: '{lang.weekFrom} %A, %e %b %Y',
             /** @internal */
             month: '%B %Y',
             /** @internal */

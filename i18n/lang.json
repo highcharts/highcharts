@@ -14,6 +14,7 @@
         "ytdText": "YTD",
         "ytdTitle": "View year to date"
     },
+    "weekFrom": "Week from",
     "viewFullscreen": "View in full screen",
     "exitFullscreen": "Exit from full screen",
     "printChart": "Print chart",

@@ -32,6 +32,7 @@ const languageOptions = {
         "ytdTitle": "Vis år til dato"
     },
     "viewFullscreen": "Vis i fullskjerm",
+    "weekFrom": "Uke fra",
     "exitFullscreen": "Avslutt fullskjerm",
     "printChart": "Skriv ut diagram",
     "downloadPNG": "Last ned PNG",
