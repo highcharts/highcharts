@@ -305,6 +305,17 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 }
 
 
+function uiSetComponentVisibility(visible, nUnits = 0) {
+    const powUnits = document.getElementsByClassName('el-aggr');
+
+    for (let i = 0; i < powUnits.length; i++) {
+        const el = powUnits[i];
+        const unitVisible = visible && i < nUnits;
+
+        el.style.display = unitVisible ? 'flex' : 'none';
+    }
+}
+
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 
@@ -391,7 +402,10 @@ function connectToggle() {
  *  MQTT API
  */
 function mqttConnect() {
-    setStatus('connecting...');
+    if (connectFlag) {
+        uiShowError('Already connected');
+        return;
+    }
 
     const cname = 'orderform-' + Math.floor(Math.random() * 10000);
 
@@ -417,28 +431,30 @@ function mqttConnect() {
 
 function mqttSubscribe() {
     if (connectFlag) {
-        // Unsubscribe any existing topics
-        mqtt.unsubscribe('/#');
-
         // Subscribe to new topic
         mqtt.subscribe(mqttTopic, {
             qos: mqttQos
         });
     } else {
-        setError('Not connected, subscription not possible');
+        uiShowError('Not connected, subscription not possible');
     }
 }
 
 
 function mqttDisconnect() {
-    // Already connect, so disconnect
-    setStatus('disconnecting...');
+    if (!connectFlag) {
+        uiShowError('Already disconnected');
+        return;
+    }
+    // Unsubscribe any existing topics
+    mqtt.unsubscribe('/#');
 
+    // Disconnect
+    uiShowStatus('disconnecting...');
     mqtt.disconnect();
-    connectFlag = false;
 
-    // Hide components
-    updateComponentVisibility(false);
+    // Hide Dashboard components
+    uiSetComponentVisibility(false);
 }
 
 
@@ -448,9 +464,10 @@ function mqttDisconnect() {
 async function onConnectionLost(resp) {
     nConnectedUnits = 0;
     connectFlag = false;
-    setConnectionStatus(false);
+    uiSetConnectStatus(false);
+
     if (resp.errorCode !== 0) {
-        setError(resp.errorMessage);
+        uiShowError(resp.errorMessage);
     }
 }
 
@@ -458,8 +475,9 @@ async function onConnectionLost(resp) {
 function onFailure(resp) {
     nConnectedUnits = 0;
     connectFlag = false;
-    setConnectionStatus(false);
-    setError(resp.errorMessage);
+    uiSetConnectStatus(false);
+
+    uiShowError(resp.errorMessage);
 }
 
 
@@ -484,7 +502,7 @@ async function onMessageArrived(mqttPacketRaw) {
 
     // Number of generators changed?
     if (nConnectedUnits !== powerPlantInfo.nAggs) {
-        updateComponentVisibility(true, powerPlantInfo.nAggs);
+        uiSetComponentVisibility(true, powerPlantInfo.nAggs);
     }
     nConnectedUnits = powerPlantInfo.nAggs;
 
@@ -493,7 +511,7 @@ async function onMessageArrived(mqttPacketRaw) {
     dashboardUpdate(powerPlantInfo);
 
     // Update header
-    setStatus(`<b>${powerPlantInfo.name}</b>`);
+    uiShowStatus(`<b>${powerPlantInfo.name}</b>`);
 }
 
 
@@ -501,8 +519,8 @@ async function onConnect() {
     // Connection successful
     connectFlag = true;
 
-    setStatus('Connected to ' + host + ' on port ' + port);
-    setConnectionStatus(true);
+    uiShowStatus('Connected to ' + host + ' on port ' + port);
+    uiSetConnectStatus(true);
 
     // Subscribe to the default topic
     mqttSubscribe();
@@ -511,33 +529,24 @@ async function onConnect() {
 /*
  *  Custom UI (not Dashboard)
  */
-function updateComponentVisibility(visible, nUnits = 0) {
-    const powUnits = document.getElementsByClassName('el-aggr');
 
-    for (let i = 0; i < powUnits.length; i++) {
-        const el = powUnits[i];
-        const unitVisible = visible && i < nUnits;
+function uiSetConnectStatus(connected) {
+    uiShowStatus(connected ? 'Connected' : 'Disconnected');
 
-        el.style.display = unitVisible ? 'flex' : 'none';
-    }
-}
-
-function setConnectionStatus(connected) {
+    const el = connectBar.el;
     const connBtn = document.getElementById('connect_toggle');
 
-    setStatus(connected ? 'Connected' : 'Disconnected');
-    const el = connectBar.el;
     el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
     connBtn.disabled = false;
     connBtn.innerHTML = connected ? 'Disconnect' : 'Connect';
 }
 
-function setStatus(msg) {
+function uiShowStatus(msg) {
     document.getElementById('status').innerHTML = msg;
 }
 
 
-function setError(msg) {
+function uiShowError(msg) {
     connectBar.el.style.backgroundColor = connectBar.errColor;
 
     document.getElementById('status').innerHTML = 'Error: ' + msg;
