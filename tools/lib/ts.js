@@ -221,8 +221,6 @@ function getChildInfos(
     let _doclets;
     /** @type {NodeInfo} */
     let _child;
-    /** @type {Array<NodeInfo>} */
-    let _children;
     /** @type {TS.Node} */
     let previousNode = nodes[0];
 
@@ -232,20 +230,26 @@ function getChildInfos(
             break;
         }
 
-        _children = getVariableInfos(node, includeNodes);
-
-        if (_children.length) {
-            _child = _children.shift();
-        } else {
-            _child = (
-                getClassInfo(node, includeNodes) ||
-                getImportInfo(node, includeNodes) ||
-                getInterfaceInfo(node, includeNodes) ||
-                getObjectInfo(node, includeNodes) ||
-                getPropertyInfo(node, includeNodes) ||
-                getFunctionInfo(node, includeNodes)
-            );
+        if (
+            TS.isVariableDeclarationList(node) ||
+            TS.isVariableStatement(node)
+        ) {
+            _infos.push(...getChildInfos(getNodesChildren(node), includeNodes));
+            continue;
         }
+
+        _child = (
+            getVariableInfo(node, includeNodes) ||
+            getPropertyInfo(node, includeNodes) ||
+            getObjectInfo(node, includeNodes) ||
+            getInterfaceInfo(node, includeNodes) ||
+            getImportInfo(node, includeNodes) ||
+            getFunctionInfo(node, includeNodes) ||
+            getExportInfo(node, includeNodes) ||
+            getClassInfo(node, includeNodes)
+        );
+
+        // Retrieve leading doclets
 
         _doclets = getDocletInfosBetween(previousNode, node, includeNodes);
 
@@ -254,20 +258,23 @@ function getChildInfos(
             continue;
         }
 
+        // Deal with floating doclets before child doclet
+
         if (_doclets.length) {
             _doclet = _doclets[_doclets.length - 1];
-            if (!_doclet.tags.apioption) {
+            if (
+                _child.kind !== 'Export' &&
+                _child.kind !== 'Import' &&
+                !_doclet.tags.apioption
+            ) {
                 _child.doclet = _doclets.pop();
             }
             _infos.push(..._doclets);
         }
 
-        _infos.push(_child);
+        // Finally add child
 
-        if (_children.length) {
-            _infos.push(..._children);
-            _children.length = 0;
-        }
+        _infos.push(_child);
 
         previousNode = node;
 
@@ -483,20 +490,51 @@ function getDocletsBetween(
 
 
 /**
- * Retrieves function information from the given node.
+ * Retrieves export information from the given node.
  *
  * @param {TS.Node} node
- * Node that might be a function.
+ * Node that might be an export.
  *
- * @param {boolean} includeNode
- * Whether to include the TypeScript node in the information.
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {NodeInfo|undefined}
+ * Export information or `undefined`.
+ */
+function getExportInfo(
+    node,
+    includeNodes
+) {
+
+    if (
+        !TS.isExportAssignment(node) &&
+        !TS.isExportDeclaration(node) &&
+        !TS.isExportSpecifier(node)
+    ) {
+        return void 0;
+    }
+
+    // debug(node, 4);
+
+    return void 0;
+}
+
+
+/**
+ * Retrieves import information from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be an import.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
  *
  * @return {ImportInfo|undefined}
- * Function information or `undefined`.
+ * Import information or `undefined`.
  */
 function getFunctionInfo(
     node,
-    includeNode
+    includeNodes
 ) {
 
     if (
@@ -512,7 +550,11 @@ function getFunctionInfo(
         kind: 'Function'
     };
 
-    _info.name = ((node.name && node.name.getText()) || '');
+    _info.name = (
+        TS.isConstructorDeclaration(node) ?
+            'constructor' :
+            ((node.name && node.name.getText()) || '')
+    );
 
     if (node.typeParameters) {
         const _generics = _info.generics = [];
@@ -525,7 +567,7 @@ function getFunctionInfo(
 
     if (node.parameters) {
         const _parameters = _info.parameters = [];
-        for (const parameter of getChildInfos(node.parameters, includeNode)) {
+        for (const parameter of getChildInfos(node.parameters, includeNodes)) {
             if (parameter.kind === 'Variable') {
                 _parameters.push(parameter);
             }
@@ -536,7 +578,7 @@ function getFunctionInfo(
         _info.return = node.type.getText();
     }
 
-    if (includeNode) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -845,18 +887,13 @@ function getPropertyInfo(
  * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {SourceInfo|undefined}
- * Source information or `undefined`.
+ * @return {SourceInfo}
+ * Source information or exception.
  */
 function getSourceInfo(
     filePath,
     includeNodes
 ) {
-
-    if (!FS.existsSync(filePath)) {
-        return void 0;
-    }
-
     const sourceFile = TS.createSourceFile(
         filePath,
         FS.readFileSync(filePath, 'utf8'),
@@ -881,66 +918,72 @@ function getSourceInfo(
 
 
 /**
- * Retrieves variable informations from the given node.
+ * Retrieves variable information from the given node.
  *
  * @param {TS.Node} node
  * Node that might be a variable or assignment.
  *
  * @param {boolean} includeNodes
- * Whether to include the TypeScript nodes in the information.
+ * Whether to include the TypeScript node in the information.
  *
- * @return {Array<VariableInfo>}
- * Variable informations.
+ * @return {VariableInfo|undefined}
+ * Variable information or `undefined`.
  */
-function getVariableInfos(
+function getVariableInfo(
     node,
     includeNodes
 ) {
-
-    if (
-        TS.isVariableDeclarationList(node) ||
-        TS.isVariableStatement(node)
-    ) {
-        return getChildInfos(getNodesChildren(node), includeNodes);
-    }
 
     if (
         !TS.isParameter(node) &&
         !TS.isTypeParameterDeclaration(node) &&
         !TS.isVariableDeclaration(node)
     ) {
-        return [];
+        return void 0;
     }
 
     /** @type {VariableInfo} */
     const _info = {
-        kind: 'Variable',
-        name: node.name.getText()
+        kind: 'Variable'
     };
+    /** @type {string} */
+    let _name;
+    /** @type {TS.Node} */
+    let _value;
 
-    if (
-        !TS.isTypeParameterDeclaration(node) &&
-        node.initializer
-    ) {
-        const _values = getChildInfos([node.initializer], includeNodes);
-
-        if (_values.length === 1) {
-            _info.value = _values[0];
-        } else {
-            _info.value = node.initializer.getText();
+    if (TS.isTypeParameterDeclaration(node)) {
+        _name = node.name.getText();
+        if (node.expression) {
+            _value = node.expression;
         }
-
+    } else if (TS.isObjectBindingPattern(node.name)) {
+        _name = node.initializer.getText();
+        debug(node.name, 4);
+    } else {
+        _name = node.name.getText();
+        _value = node.initializer;
     }
+
+    _info.name = _name;
 
     if (node.type) {
         _info.type = node.type.getText();
+    }
+
+    if (_value) {
+        const _values = getChildInfos([_value], includeNodes);
+        if (_values.length === 1) {
+            _info.value = _values[0];
+        } else {
+            _info.value = _value.getText();
+        }
     }
 
     if (includeNodes) {
         _info.node = node;
     }
 
-    return [_info];
+    return _info;
 }
 
 
@@ -1050,9 +1093,14 @@ module.exports = {
 
 
 /**
+ * @typedef {'declare'|'export'|'private'|'protected'} InfoFlag
+ */
+
+/**
  * @typedef ClassInfo
  * @property {DocletInfo} [doclet]
  * @property {string} extends
+ * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} generics
  * @property {Array<string>} implements
  * @property {'Class'} kind
@@ -1065,17 +1113,19 @@ module.exports = {
  * @typedef DocletInfo
  * @property {'Doclet'} kind
  * @property {TS.JSDoc} [node]
- * @property {Record<string, Array<string>>} tags
+ * @property {Record<string,Array<string>>} tags
  */
 
 
 /**
  * @typedef FunctionInfo
  * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} generics
  * @property {'Function'} kind
  * @property {string} name
  * @property {Array<VariableInfo>} [parameters]
+ * @property {'?'} [suffix]
  * @property {string} [return]
  */
 
@@ -1094,6 +1144,7 @@ module.exports = {
  * @typedef InterfaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<string>} extends
+ * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} generics
  * @property {'Interface'} kind
  * @property {TS.InterfaceDeclaration} [node]
@@ -1119,6 +1170,7 @@ module.exports = {
 /**
  * @typedef PropertyInfo
  * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
  * @property {'Property'} kind
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
@@ -1138,6 +1190,8 @@ module.exports = {
 
 /**
  * @typedef VariableInfo
+ * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
  * @property {`Variable`} kind
  * @property {string} name
  * @property {TS.VariableDeclaration} [node]
