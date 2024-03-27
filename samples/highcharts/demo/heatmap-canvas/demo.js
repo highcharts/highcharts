@@ -80,7 +80,8 @@ Highcharts.chart('container', {
         tooltip: {
             headerFormat: 'Temperature<br/>',
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-        }
+        },
+        turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
     }]
 
 });
