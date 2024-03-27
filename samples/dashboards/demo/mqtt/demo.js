@@ -1,6 +1,6 @@
 let board = null;
 const powerUnit = 'kWh';
-
+const logEnabled = true;
 
 // Launches the Dashboards application
 async function dashboardCreate(powerPlantInfo) {
@@ -12,7 +12,7 @@ async function dashboardCreate(powerPlantInfo) {
             connectors: pu.connectors
         },
         components: pu.components
-    });
+    }, true);
 
     function createPowerGeneratorUnit() {
         const powerGenUnits = {
@@ -46,7 +46,7 @@ async function dashboardCreate(powerPlantInfo) {
                 createChartComponent(connId, pgIdx, title, maxPowr)
             );
             powerGenUnits.components.push(
-                createDatagridComponent(connId, pgIdx, title)
+                createDatagridComponent(connId, pgIdx)
             );
         }
         return powerGenUnits;
@@ -147,6 +147,7 @@ async function dashboardCreate(powerPlantInfo) {
                 },
                 yAxis: {
                     max: maxPowr,
+                    min: 0,
                     title: {
                         text: powerUnit
                     }
@@ -167,7 +168,7 @@ async function dashboardCreate(powerPlantInfo) {
         };
     }
 
-    function createDatagridComponent(connId, pgIdx, title) {
+    function createDatagridComponent(connId, pgIdx) {
         return {
             type: 'DataGrid',
             renderTo: 'data-grid-' + pgIdx,
@@ -190,7 +191,7 @@ async function dashboardCreate(powerPlantInfo) {
                         }
                     },
                     power: {
-                        headerFormat: title
+                        headerFormat: 'Generated power'
                     }
                 }
             }
@@ -270,10 +271,18 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             .find(c => c.options.renderTo === id);
     }
 
-    // Update the KPI components
+    // Update dashboard components
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
+        const aggInfo = powerPlantInfo.aggs[i];
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
+        const maxPower = aggInfo.P_max;
+        const name = `Generator "${aggInfo.name}"`;
+        const chartOptions = {
+            yAxis: {
+                max: maxPower
+            }
+        };
 
         // Get data
         const dataTable = await board.dataPool.getConnectorTable(connId);
@@ -283,7 +292,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         const kpiComp = getComponent(board, 'kpi-agg-' + pgIdx);
         await kpiComp.update({
             value: rowCount > 0 ?
-                dataTable.getCellAsNumber('power', rowCount - 1) : 0
+                dataTable.getCellAsNumber('power', rowCount - 1) : 0,
+            chartOptions: chartOptions,
+            title: name
         });
 
         // Chart
@@ -291,7 +302,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         await chartComp.update({
             connector: {
                 id: connId
-            }
+            },
+            chartOptions: chartOptions,
+            title: name
         });
 
         // Datagrid
@@ -299,7 +312,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         await gridComp.update({
             connector: {
                 id: connId
-            }
+            },
+            title: name
         });
     }
 }
@@ -338,23 +352,23 @@ function uiSetComponentVisibility(visible, nUnits = 0) {
 //  - SMKR/dale|thue|horpedal
 //  - FJL/berge|bjaastad|hatlestad|jordal|lidal|romoyri
 
-// For test
-const kraftverk = 'SOG/aaroy_II';
 
 // MQTT handle
-let mqtt;
+let mqtt = null;
 
 // Connection parameters
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
 const reconnectTimeout = 10000;
-// const mqttTopic = 'prod/' + kraftverk + '/overview'; // public/test/overview';
-const mqttTopic = 'public/test/overview';
+let mqttActiveTopic = 'prod/SOG/aaroy_II/overview';
+// const mqttTopic = 'public/test/overview';
 const mqttQos = 0;
 
 // NB! Replace with public before publishing on the web !!!!!
-const userName = 'public';
-const password = 'public';
+// const userName = 'public';
+// const password = 'public';
+const userName = 'highsoft';
+const password = 'Qs0URPjxnWlcuYBmFWNK';
 
 // Connection status
 let connectFlag;
@@ -370,6 +384,30 @@ const connectBar = {
     errColor: 'red'
 };
 
+// Overview of power plants (TBD: create dynamically)
+const plantLookup = {
+    'Årøy II': {
+        topic: 'prod/SOG/aaroy_II/overview'
+    },
+    'Årøy I': {
+        topic: 'prod/SOG/aaroy_I/overview'
+    },
+    Mundalselvi: {
+        topic: 'prod/SOG/mundalselvi/overview'
+    },
+    Dyrnesli: {
+        topic: 'prod/VAD/dyrnesli/overview'
+    },
+    Dale: {
+        topic: 'prod/SMKR/dale/overview'
+    },
+    Thue: {
+        topic: 'prod/SMKR/thue/overview'
+    },
+    Nydalselva: {
+        topic: 'prod/NYD/nydalselva/overview'
+    }
+};
 
 /*
  *  Application interface
@@ -380,17 +418,51 @@ window.onload = () => {
     nConnectedUnits = 0;
     connectFlag = false;
 
+    mqttInit();
+
     const el = document.getElementById('connect_bar');
     connectBar.offColor = el.style.backgroundColor; // From CSS
     connectBar.el = el;
+
+    // Populate dropdown menu
+    const dropdownDiv = document.getElementById('dropDownButton');
+    for (const key of Object.keys(plantLookup)) {
+        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
+    }
+
+    // Customer click handler (dropdown button for selection power stations)
+    window.onclick = function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            // Close the dropdown menu if the user clicks outside of it
+            const dropdowns = document.getElementsByClassName('dropdown-content');
+
+            for (let i = 0; i < dropdowns.length; i++) {
+                const openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+
+            // Handle dropdown items
+            if (event.target.matches('.dropdown-select')) {
+                const name = event.target.innerText;
+                if (name in plantLookup) {
+                    onStationClicked(name);
+                }
+            }
+        }
+    };
 };
 
-
-function connectToggle() {
+/*
+ *  Application user interface
+ */
+function onConnectClicked() {
     // Disable connect button while connecting/disconnecting
     const connBtn = document.getElementById('connect_toggle');
     connBtn.disabled = true;
 
+    // Connect or disconnect to the MQTT server
     if (connectFlag) {
         mqttDisconnect();
     } else {
@@ -398,15 +470,23 @@ function connectToggle() {
     }
 }
 
+
+function onStationSelectClicked() {
+    // Reveals the dropdown list of power stations
+    document.getElementById('dropDownButton').classList.toggle('show');
+}
+
+
+function onStationClicked(station) {
+    // Change topic to currently selected power station
+    mqttResubscribe(plantLookup[station].topic);
+}
+
+
 /*
  *  MQTT API
  */
-function mqttConnect() {
-    if (connectFlag) {
-        uiShowError('Already connected');
-        return;
-    }
-
+function mqttInit() {
     const cname = 'orderform-' + Math.floor(Math.random() * 10000);
 
     // eslint-disable-next-line no-undef
@@ -415,6 +495,14 @@ function mqttConnect() {
     // Register callbacks
     mqtt.onConnectionLost = onConnectionLost;
     mqtt.onMessageArrived = onMessageArrived;
+}
+
+
+function mqttConnect() {
+    if (connectFlag) {
+        uiShowError('Already connected');
+        return;
+    }
 
     // Connect to broker
     mqtt.connect({
@@ -429,14 +517,47 @@ function mqttConnect() {
 }
 
 
-function mqttSubscribe() {
+function mqttSubscribe(topic) {
     if (connectFlag) {
         // Subscribe to new topic
-        mqtt.subscribe(mqttTopic, {
+        mqtt.subscribe(topic, {
             qos: mqttQos
         });
+        console.log('Subscribed: ' + topic);
     } else {
-        uiShowError('Not connected, subscription not possible');
+        uiShowError('Not connected, operation not possible');
+    }
+}
+
+
+function mqttResubscribe(newTopic) {
+    if (connectFlag) {
+        // Unsubscribe any existing topics
+        const unsubscribeOptions = {
+            onSuccess: () => {
+                console.log('Unsubscribed: ' + mqttActiveTopic);
+                mqttSubscribe(newTopic);
+                mqttActiveTopic = newTopic;
+            },
+            onFailure: () => {
+                uiShowError('Unsubscribe failed');
+            },
+            timeout: 10
+        };
+        mqtt.unsubscribe('/#', unsubscribeOptions);
+    } else {
+        uiShowError('Not connected, operation not possible');
+    }
+}
+
+
+function mqttUnubscribe() {
+    if (connectFlag) {
+        // Unsubscribe any existing topics
+        console.log('Unsubscribe: ' + mqttActiveTopic);
+        mqtt.unsubscribe(mqttActiveTopic);
+    } else {
+        uiShowError('Not connected, operation not possible');
     }
 }
 
@@ -455,6 +576,17 @@ function mqttDisconnect() {
 
     // Hide Dashboard components
     uiSetComponentVisibility(false);
+}
+
+
+function mqttLog(msg) {
+    if (logEnabled) {
+        console.log('Topic:     ' + msg.destinationName);
+        console.log('QoS:       ' + msg.qos);
+        console.log('Retained:  ' + msg.retained);
+        // Read Only, set if message might be a duplicate sent from broker
+        console.log('Duplicate: ' + msg.duplicate);
+    }
 }
 
 
@@ -481,8 +613,16 @@ function onFailure(resp) {
 }
 
 
-async function onMessageArrived(mqttPacketRaw) {
-    const mqttData = JSON.parse(mqttPacketRaw.payloadString);
+async function onMessageArrived(mqttPacket) {
+    mqttLog(mqttPacket);
+
+    if (mqttActiveTopic !== mqttPacket.destinationName) {
+        console.log('Topic ignored: ' + mqttPacket.destinationName);
+        return;
+    }
+
+    // Process incoming active topic
+    const mqttData = JSON.parse(mqttPacket.payloadString);
 
     const powerPlantInfo = {
         // Power plant name
@@ -499,9 +639,8 @@ async function onMessageArrived(mqttPacketRaw) {
         // Connect the Dashboard
         await dashboardConnect(powerPlantInfo);
     }
-
-    // Number of generators changed?
     if (nConnectedUnits !== powerPlantInfo.nAggs) {
+        // A power generator has been added or removed
         uiSetComponentVisibility(true, powerPlantInfo.nAggs);
     }
     nConnectedUnits = powerPlantInfo.nAggs;
@@ -519,11 +658,11 @@ async function onConnect() {
     // Connection successful
     connectFlag = true;
 
-    uiShowStatus('Connected to ' + host + ' on port ' + port);
+    console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
 
     // Subscribe to the default topic
-    mqttSubscribe();
+    mqttSubscribe(mqttActiveTopic);
 }
 
 /*
@@ -535,19 +674,22 @@ function uiSetConnectStatus(connected) {
 
     const el = connectBar.el;
     const connBtn = document.getElementById('connect_toggle');
+    const dropDown = document.getElementById('dropdown-container');
 
     el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
     connBtn.disabled = false;
     connBtn.innerHTML = connected ? 'Disconnect' : 'Connect';
+    dropDown.style.visibility = connected ? 'visible' : 'hidden';
 }
 
+
 function uiShowStatus(msg) {
-    document.getElementById('status').innerHTML = msg;
+    document.getElementById('connect_status').innerHTML = msg;
 }
 
 
 function uiShowError(msg) {
     connectBar.el.style.backgroundColor = connectBar.errColor;
 
-    document.getElementById('status').innerHTML = 'Error: ' + msg;
+    document.getElementById('connect_status').innerHTML = 'Error: ' + msg;
 }
