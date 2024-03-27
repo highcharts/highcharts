@@ -394,7 +394,7 @@ The custom component is created by extending the `HTMLComponent` class and it di
 
 The DataConnector is registered on the `load` that is why we need to execute and await the `super.load()` method first to make sure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
 
-When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue from the data fetched from the DataConnector. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the dashboard.
+When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the dashboard.
 
 ```js
 const { ComponentRegistry } = Dashboards,
