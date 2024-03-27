@@ -121,7 +121,8 @@ namespace Bindings {
 
         if (
             board.mountedComponents.filter(
-                el => el.options.renderTo === options.renderTo
+                (el): boolean => (
+                    (el.options.renderTo || el.options.cell) === renderTo)
             ).length > 0
         ) {
             error(
