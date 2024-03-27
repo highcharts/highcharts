@@ -2,7 +2,7 @@
 
 .highcharts-figure {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 1em auto;
 }
 
 .cell {
@@ -11,4 +11,18 @@
 
 .highcharts-tooltip {
     font-size: 20px;
+}
+
+.highcharts-area {
+    fill-opacity: 0.3;
+}
+
+#dashboard-cell-1 .highcharts-color-0 {
+    fill: var(--highcharts-color-1);
+    stroke: var(--highcharts-color-1);
+}
+
+#dashboard-cell-2 .highcharts-color-0 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
 }

@@ -1,10 +1,10 @@
-const chartOptions = {
+Highcharts.setOptions({
     chart: {
+        type: 'area',
         spacingTop: 20,
         spacingBottom: 20
     },
     title: {
-        text: 'add',
         align: 'left',
         margin: 0,
         x: 30
@@ -42,10 +42,11 @@ const chartOptions = {
         backgroundColor: 'none',
         pointFormat: '{point.y}',
         headerFormat: '',
-        shadow: false
-        //valueDecimals: dataset.valueDecimals
+        shadow: false,
+        valueDecimals: 0
     }
-};
+});
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -80,7 +81,19 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        chartOptions
+        chartOptions: {
+            title: {
+                text: 'Speed'
+            },
+            tooltip: {
+                valueDecimals: 1,
+                valueSuffix: ' km/h'
+            },
+            series: [{
+                type: 'line',
+                id: 'Speed'
+            }]
+        }
     }, {
         connector: {
             id: 'activity-data',
@@ -94,7 +107,14 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        chartOptions
+        chartOptions: {
+            title: {
+                text: 'Elevation'
+            },
+            tooltip: {
+                valueSuffix: ' m'
+            }
+        }
     }, {
         sync: {
             highlight: true
@@ -108,6 +128,13 @@ Dashboards.board('container', {
         },
         renderTo: 'dashboard-cell-2',
         type: 'Highcharts',
-        chartOptions
+        chartOptions: {
+            title: {
+                text: 'Heart rate'
+            },
+            tooltip: {
+                valueSuffix: ' bpm'
+            }
+        }
     }]
 }, true);
