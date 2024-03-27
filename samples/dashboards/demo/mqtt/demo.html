@@ -7,18 +7,27 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
-  <link rel="shortcut icon" href="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">
+<link rel="shortcut icon"
+	href="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">
 <div id="page_container">
-
-	<!-- Application control -->
-	<div id="connect_bar">
-		<h1>Sognekraft</h1>
-		<span id="status">Disconnected</span>
-		<button id="connect_toggle" type="button" onclick="connectToggle()">Connect</button>
-	</div>
 
 	<!-- Dashboards container -->
 	<div id="container">
+		<div class="row">
+			<div class="cell" id="connect_bar">
+				<h1>Sognekraft</h1>
+				<span id="connect_status">Disconnected</span>
+				<div id="dropdown-container">
+					<button title="Click to select power station" onclick="onStationSelectClicked()" class="dropbtn">Power station</button>
+					<div id="dropDownButton" class="dropdown-content">
+						<!-- Populated dynamically : e.g 
+						<a class="dropdown-select" href="#">Årøy II</a>
+						-->
+					</div>
+				</div>
+				<button id="connect_toggle" type="button" onclick="onConnectClicked()">Connect</button>
+			</div>
+		</div>
 		<div class="row">
 			<div class="el-aggr">
 				<div class="cell el-kpi" id="kpi-agg-1"></div>
@@ -29,16 +38,6 @@
 				<div class="cell el-kpi" id="kpi-agg-2"></div>
 				<div class="cell el-chart" id="chart-agg-2"></div>
 				<div class="cell" id="data-grid-2"></div>
-			</div>
-			<div class="el-aggr">
-				<div class="cell el-kpi" id="kpi-agg-3"></div>
-				<div class="cell el-chart" id="chart-agg-3"></div>
-				<div class="cell" id="data-grid-3"></div>
-			</div>
-			<div class="el-aggr">
-				<div class="cell el-kpi" id="kpi-agg-4"></div>
-				<div class="cell el-chart" id="chart-agg-4"></div>
-				<div class="cell" id="data-grid-4"></div>
 			</div>
 		</div>
 	</div>
