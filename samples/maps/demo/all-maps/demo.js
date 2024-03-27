@@ -196,6 +196,8 @@ function resetDrilldown(chart) {
                     mapKey
                 }
             });
+
+            // Update credits in afterDrilldown. The chart is not ready yet.
         }
     };
 
@@ -209,6 +211,7 @@ function resetDrilldown(chart) {
             fillInfo(mapName, mapKey);
             input.value = mapName;
         }
+        this.credits.update();
     };
 
     const data = mapData.objects.default.geometries.map((g, value) => ({
@@ -230,7 +233,10 @@ function resetDrilldown(chart) {
         chart: {
             events: {
                 drilldown,
-                afterDrillUp
+                afterDrillUp,
+                afterDrilldown: function () {
+                    this.credits.update();
+                }
             }
         },
 
@@ -369,6 +375,7 @@ function resetDrilldown(chart) {
             }
         });
         chart.hideLoading();
+        chart.credits.update();
     }
 
     // Change map on input change
