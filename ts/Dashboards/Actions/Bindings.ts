@@ -119,6 +119,19 @@ namespace Bindings {
             return;
         }
 
+        if (
+            board.mountedComponents.filter(
+                el => el.options.renderTo === options.renderTo
+            ).length > 0
+        ) {
+            error(
+                'The component is misconfigured and is unable initialize it. ' +
+                'A different component has been already initilized in the`' +
+                renderTo + '` cell.'
+            );
+            return;
+        }
+
         cell = cell || Bindings.getCell(renderTo, board.container);
 
         const componentContainer =
