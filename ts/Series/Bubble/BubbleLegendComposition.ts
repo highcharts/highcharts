@@ -33,6 +33,7 @@ const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    objectEach,
     pushUnique,
     wrap
 } = U;
@@ -85,6 +86,24 @@ function chartDrawChartBox(
 
         // Calculate margins after first rendering the bubble legend
         if (!bubbleLegendOptions.placed) {
+            chart.getMargins();
+
+            chart.axes.forEach(function (axis): void {
+                if (axis.visible) { // #11448
+                    axis.render();
+                }
+
+                if (!bubbleLegendOptions.placed) {
+                    axis.setScale();
+                    axis.updateNames();
+                    // Disable axis animation on init
+                    objectEach(axis.ticks, function (tick): void {
+                        tick.isNew = true;
+                        tick.isNewLabel = true;
+                    });
+                }
+            });
+
             chart.getMargins();
         }
 
