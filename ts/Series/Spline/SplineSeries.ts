@@ -98,15 +98,17 @@ class SplineSeries extends LineSeries {
         i: number
     ): SVGPath.CurveTo {
         let prev = i - 1,
-            next = i + 1,
-            hidden = false;
-        // If point is fake point due to hidden cliff then calculate values
-        // based on different points (skip fake point)
+            next = i + 1;
+
+        // If point is fake point due to hidden cliff then create a path to skip
+        // this point, but point is needed to preserve nice animation (#16925)
         if (point.hiddenCliff) {
-            point = points[i + 1];
-            next++;
-            hidden = true;
-        } else if ((point as any).leftCliffHidden && i > 1) {
+            const x = pick(points[prev].plotX, 0),
+                y = pick(points[prev].plotY, 0);
+            return ['C', x, y, x, y, x, y];
+        }
+
+        if ((point as any).leftCliffHidden && i > 1) {
             prev--;
         } else if ((point as any).rightCliffHidden && i < points.length - 2) {
             next++;
@@ -267,19 +269,6 @@ class SplineSeries extends LineSeries {
 
         // Reset for updating series later
         lastPoint.rightContX = lastPoint.rightContY = void 0;
-
-        if (hidden) {
-            return [
-                'C',
-                pick(lastPoint.plotX, 0),
-                pick(lastPoint.plotY, 0),
-                pick(lastPoint.plotX, 0),
-                pick(lastPoint.plotY, 0),
-                pick(lastPoint.plotX, 0),
-                pick(lastPoint.plotY, 0)
-            ];
-        }
-
         return ret;
     }
 
