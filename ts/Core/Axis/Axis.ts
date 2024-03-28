@@ -2924,7 +2924,7 @@ class Axis {
             rotationOption = labelOptions.rotation,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.8em
-            lineHeight = this.labelMetrics().h * 0.8,
+            lineHeight = correctFloat(this.labelMetrics().h * 0.8),
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
