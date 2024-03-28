@@ -18,7 +18,8 @@
 				<h1>Sognekraft</h1>
 				<span id="connect_status">Disconnected</span>
 				<div id="dropdown-container">
-					<button title="Click to select power station" onclick="onStationSelectClicked()" class="dropbtn">Power station</button>
+					<button title="Click to select power station" onclick="onStationSelectClicked()"
+						class="dropbtn">Power station&#9662;</button>
 					<div id="dropDownButton" class="dropdown-content">
 						<!-- Populated dynamically : e.g 
 						<a class="dropdown-select" href="#">Årøy II</a>
@@ -42,8 +43,25 @@
 		</div>
 	</div>
 
-	<p class="highcharts-description">
-		Click <b>Connect</b> to start collecting and displaying data from one of Sognekraft's hydroelectric power
-		plants. The charts, KPIs and tables display the generated power in units of kWh (kilowatt hours).
-	</p>
+	<div class="highcharts-description">
+		<p>
+			This application displays key data from a selection of power generation plants in the area of Sogn, Norway.
+			The charts, KPIs and tables display the generated power in units of MW (Megawatts).
+		</p>
+		<p>
+			How to use:
+		<ul>
+			<li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
+			<li>When connecting succeeds a selection of power plants becomes available in the <b>Power Station</b>
+				dropdown.
+			</li>
+			<li>Select any of the power stations to start displaying data. The reporting interval is determine by the
+				server but will normally be every five minutes.
+			</li>
+			<li>The application only displays one power station simultaneously the a new station can be selected without
+				disconnecting from the server.
+			</li>
+		</ul>
+		</p>
+	</div>
 </div>

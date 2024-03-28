@@ -68,7 +68,7 @@ div#connect_bar button {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f1f1f1;
+    background-color: #def;
     min-width: 160px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -92,7 +92,14 @@ div#connect_bar button {
     display: block;
 }
 
-/* Dashboards */
+div.highcharts-description {
+    margin: auto;
+    padding: 20px;
+}
+
+/*
+* Dashboards styles
+*/
 
 .el-aggr {
     --color-axis-labels: #a7a4b0;
