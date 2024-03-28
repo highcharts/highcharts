@@ -4,7 +4,7 @@ QUnit.test('Updating series stacked property', assert => {
             type: 'area',
             width: 600,
             height: 350,
-            animation: true
+            animation: false
         },
         xAxis: {
             categories: [
@@ -16,7 +16,10 @@ QUnit.test('Updating series stacked property', assert => {
                 'Plums',
                 'Strawberries',
                 'Raspberries'
-            ]
+            ],
+            labels: {
+                padding: 1
+            }
         },
         series: [
             {

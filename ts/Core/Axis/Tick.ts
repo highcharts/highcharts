@@ -322,7 +322,7 @@ class Tick {
                     if (
                         (label as any).getBBox().width <
                         axis.getSlotWidth(tick as any) - 2 *
-                            labelOptions.padding
+                            (labelOptions.padding || 0)
                     ) {
                         return;
                     }

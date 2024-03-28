@@ -16,7 +16,10 @@ Highcharts.chart('container', {
         ]
     },
     yAxis: {
-        tickInterval: 10
+        tickInterval: 10,
+        labels: {
+            paddding: 0
+        }
     },
     plotOptions: {
         series: {

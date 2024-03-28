@@ -374,6 +374,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         },
         xAxis: {
             labels: {
+                padding: 1,
                 autoRotation: [-45]
             }
         }

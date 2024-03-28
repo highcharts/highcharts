@@ -12,11 +12,6 @@ Highcharts.chart('container', {
         text: 'One point per day'
     },
 
-    plotOptions: {
-        series: {
-        }
-    },
-
     series: [{
         data: [{
             x: Date.UTC(2012, 0, 1),
