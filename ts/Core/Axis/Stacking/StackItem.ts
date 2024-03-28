@@ -118,6 +118,10 @@ class StackItem {
         this.points = {};
         this.hasValidPoints = false;
 
+        // This will keep all points' extremes (including hidden), needed for
+        // provide best possible animation of points (#16925)
+        this.allPoints = {};
+
         // Save the stack option on the series configuration object,
         // and whether to treat it as percent
         this.stack = stackOption;
@@ -160,6 +164,7 @@ class StackItem {
     public options: StackLabelOptions;
     public padding?: number;
     public points: Record<string, Array<number>>;
+    public allPoints: Record<string, Array<number>>;
     public rightCliff: number;
     public rotation?: number;
     public shadow?: SVGElement;
