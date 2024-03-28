@@ -1,9 +1,10 @@
 let board = null;
-const powerUnit = 'kWh';
-const logEnabled = true;
+let maxConnectedUnits;
 
 // Launches the Dashboards application
-async function dashboardCreate(powerPlantInfo) {
+async function dashboardCreate() {
+    const powerUnit = 'MW';
+
     // Create configuration for power generator units
     const pu = createPowerGeneratorUnit();
 
@@ -20,30 +21,24 @@ async function dashboardCreate(powerPlantInfo) {
             components: []
         };
 
-        for (let i = 0; i < powerPlantInfo.nAggs; i++) {
-            const aggInfo = powerPlantInfo.aggs[i];
-
+        for (let i = 0; i < maxConnectedUnits; i++) {
             // Power generator index (1...n)
             const pgIdx = i + 1;
 
             // Data connector ID
             const connId = 'mqtt-data-' + pgIdx;
 
-            // Name of power generator unit
-            const title = `Generator "${aggInfo.name}"`;
-
-            // Get maximum generated power
-            const maxPowr = aggInfo.P_max;
-
             // Data connectors
-            powerGenUnits.connectors.push(createDataConnector(connId));
+            powerGenUnits.connectors.push(
+                createDataConnector(connId)
+            );
 
             // Dash components
-            powerGenUnits.components.push(createKpiComponent(
-                pgIdx, title, maxPowr
-            ));
             powerGenUnits.components.push(
-                createChartComponent(connId, pgIdx, title, maxPowr)
+                createKpiComponent(pgIdx)
+            );
+            powerGenUnits.components.push(
+                createChartComponent(connId, pgIdx)
             );
             powerGenUnits.components.push(
                 createDatagridComponent(connId, pgIdx)
@@ -71,11 +66,11 @@ async function dashboardCreate(powerPlantInfo) {
         };
     }
 
-    function createKpiComponent(pgIdx, title, maxPowr) {
+    function createKpiComponent(pgIdx) {
         return {
             type: 'KPI',
             renderTo: 'kpi-agg-' + pgIdx,
-            title: title,
+            title: '',
             chartOptions: {
                 chart: {
                     type: 'solidgauge',
@@ -92,6 +87,9 @@ async function dashboardCreate(powerPlantInfo) {
                         shape: 'arc'
                     }
                 },
+                series: [{
+                    name: 'Generated power'
+                }],
                 accessibility: {
                     typeDescription: 'Gauge chart with 1 data point.'
                 },
@@ -107,27 +105,24 @@ async function dashboardCreate(powerPlantInfo) {
                     tickAmount: 2,
                     visible: true,
                     min: 0,
-                    max: maxPowr,
+                    max: 10, // Update later
                     title: {
-                        text: 'Power (kWh)',
+                        text: 'Generated power (MW)',
                         y: -60
-                    },
-                    accessibility: {
-                        description: title
                     }
                 }
             }
         };
     }
 
-    function createChartComponent(connId, pgIdx, title, maxPowr) {
+    function createChartComponent(connId, pgIdx) {
         return {
             type: 'Highcharts',
             renderTo: 'chart-agg-' + pgIdx,
             connector: {
                 id: connId,
                 columnAssignment: [{
-                    seriesId: title,
+                    seriesId: 'Generated power',
                     data: ['time', 'power']
                 }]
             },
@@ -146,7 +141,7 @@ async function dashboardCreate(powerPlantInfo) {
                     type: 'datetime'
                 },
                 yAxis: {
-                    max: maxPowr,
+                    max: 10, // Populated later
                     min: 0,
                     title: {
                         text: powerUnit
@@ -239,7 +234,6 @@ async function dashboardUpdate(powerPlantInfo) {
 
         // Add all rows to the data table
         await dataTable.setRows(rowData);
-
     }
     // Refresh all Dashboards components
     await dashboardsComponentUpdate(powerPlantInfo);
@@ -249,7 +243,7 @@ async function dashboardUpdate(powerPlantInfo) {
 async function dashboardConnect(powerPlantInfo) {
     // Launch  Dashboard
     if (board === null) {
-        board = await dashboardCreate(powerPlantInfo);
+        board = await dashboardCreate();
     }
 
     const dataPool = board.dataPool;
@@ -319,11 +313,24 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 }
 
 
-function uiSetComponentVisibility(visible, nUnits = 0) {
-    const powUnits = document.getElementsByClassName('el-aggr');
+async function dashboardReset() {
+    const dataPool = board.dataPool;
+    for (let i = 0; i < maxConnectedUnits; i++) {
+        const puId = i + 1;
+        const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
-    for (let i = 0; i < powUnits.length; i++) {
-        const el = powUnits[i];
+        // Clear the data
+        await dataTable.deleteRows();
+        await dataTable.modified.deleteRows();
+    }
+}
+
+
+function uiSetComponentVisibility(visible, nUnits = 0) {
+    const powUnitCells = document.getElementsByClassName('el-aggr');
+
+    for (let i = 0; i < powUnitCells.length; i++) {
+        const el = powUnitCells[i];
         const unitVisible = visible && i < nUnits;
 
         el.style.display = unitVisible ? 'flex' : 'none';
@@ -359,22 +366,20 @@ let mqtt = null;
 // Connection parameters
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
-const reconnectTimeout = 10000;
-let mqttActiveTopic = 'prod/SOG/aaroy_II/overview';
-// const mqttTopic = 'public/test/overview';
+let mqttActiveTopic = '/#';
 const mqttQos = 0;
 
 // NB! Replace with public before publishing on the web !!!!!
-// const userName = 'public';
-// const password = 'public';
 const userName = 'highsoft';
 const password = 'Qs0URPjxnWlcuYBmFWNK';
+
+// Log functionality
+const logEnabled = true;
 
 // Connection status
 let connectFlag;
 let msgCount;
 let nConnectedUnits;
-
 
 // Connection status UI
 const connectBar = {
@@ -386,11 +391,11 @@ const connectBar = {
 
 // Overview of power plants (TBD: create dynamically)
 const plantLookup = {
-    'Årøy II': {
-        topic: 'prod/SOG/aaroy_II/overview'
-    },
     'Årøy I': {
         topic: 'prod/SOG/aaroy_I/overview'
+    },
+    'Årøy II': {
+        topic: 'prod/SOG/aaroy_II/overview'
     },
     Mundalselvi: {
         topic: 'prod/SOG/mundalselvi/overview'
@@ -417,7 +422,9 @@ window.onload = () => {
     msgCount = 0;
     nConnectedUnits = 0;
     connectFlag = false;
+    maxConnectedUnits = document.getElementsByClassName('el-aggr').length;
 
+    // Initialize data transport
     mqttInit();
 
     const el = document.getElementById('connect_bar');
@@ -430,7 +437,7 @@ window.onload = () => {
         dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
     }
 
-    // Customer click handler (dropdown button for selection power stations)
+    // Custom click handler (dropdown button for selecting power stations)
     window.onclick = function (event) {
         if (!event.target.matches('.dropbtn')) {
             // Close the dropdown menu if the user clicks outside of it
@@ -477,9 +484,11 @@ function onStationSelectClicked() {
 }
 
 
-function onStationClicked(station) {
+async function onStationClicked(station) {
+    nConnectedUnits = 0;
+
     // Change topic to currently selected power station
-    mqttResubscribe(plantLookup[station].topic);
+    await mqttResubscribe(plantLookup[station].topic);
 }
 
 
@@ -530,11 +539,11 @@ function mqttSubscribe(topic) {
 }
 
 
-function mqttResubscribe(newTopic) {
+async function mqttResubscribe(newTopic) {
     if (connectFlag) {
         // Unsubscribe any existing topics
         const unsubscribeOptions = {
-            onSuccess: () => {
+            onSuccess: async () => {
                 console.log('Unsubscribed: ' + mqttActiveTopic);
                 mqttSubscribe(newTopic);
                 mqttActiveTopic = newTopic;
@@ -642,6 +651,9 @@ async function onMessageArrived(mqttPacket) {
     if (nConnectedUnits !== powerPlantInfo.nAggs) {
         // A power generator has been added or removed
         uiSetComponentVisibility(true, powerPlantInfo.nAggs);
+
+        // Reset the entire dashboard
+        await dashboardReset();
     }
     nConnectedUnits = powerPlantInfo.nAggs;
 
@@ -657,12 +669,10 @@ async function onMessageArrived(mqttPacket) {
 async function onConnect() {
     // Connection successful
     connectFlag = true;
+    nConnectedUnits = 0;
 
     console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
-
-    // Subscribe to the default topic
-    mqttSubscribe(mqttActiveTopic);
 }
 
 /*
