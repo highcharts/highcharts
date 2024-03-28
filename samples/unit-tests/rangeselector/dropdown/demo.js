@@ -11,16 +11,6 @@ QUnit.test('RangeSelector.dropdown', assert => {
         ]
     });
 
-    const isSelectInsideChart = () => {
-        const select = chart.rangeSelector.dropdown.getBoundingClientRect();
-        const container = chart.container.getBoundingClientRect();
-
-        return select.left >= container.left &&
-            select.left + select.width <= container.right &&
-            select.top >= container.top &&
-            select.top + select.height <= container.bottom;
-    };
-
     assert.strictEqual(
         chart.rangeSelector.options.dropdown,
         'responsive',
@@ -43,9 +33,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
         '800px + responsive: All the buttons should be visible'
     );
-    assert.notOk(
-        isSelectInsideChart(),
-        'Select should be outside chart'
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
     );
 
     chart.update({
@@ -58,9 +54,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
         '800px + never: All the buttons should be visible'
     );
-    assert.notOk(
-        isSelectInsideChart(),
-        'Select should be outside chart'
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
     );
 
     chart.update({
@@ -69,17 +71,19 @@ QUnit.test('RangeSelector.dropdown', assert => {
         }
     });
 
-    assert.strictEqual(
-        chart.rangeSelector.buttons.filter(
-            b => b.visibility !==
-            'hidden'
-        ).length,
-        1,
-        '800px + always: Only 1 button should be visible'
-    );
     assert.ok(
-        isSelectInsideChart(),
-        'Select should be inside chart'
+        chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
+        '800px + always: Every button should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
     );
 
     chart.update({
@@ -88,17 +92,19 @@ QUnit.test('RangeSelector.dropdown', assert => {
         }
     });
 
-    assert.strictEqual(
-        chart.rangeSelector.buttons.filter(
-            b => b.visibility !==
-            'hidden'
-        ).length,
-        1,
-        '400px + always: Only 1 button should be visible'
-    );
     assert.ok(
-        isSelectInsideChart(),
-        'Select should be inside chart'
+        chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
+        '400px + always: Every button should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
     );
 
     chart.update({
@@ -107,17 +113,19 @@ QUnit.test('RangeSelector.dropdown', assert => {
         }
     });
 
-    assert.strictEqual(
-        chart.rangeSelector.buttons.filter(
-            b => b.visibility !==
-            'hidden'
-        ).length,
-        1,
-        '400px + resonsive: Only 1 button should be visible'
-    );
     assert.ok(
-        isSelectInsideChart(),
-        'Select should be inside chart'
+        chart.rangeSelector.buttons.every(b => b.visibility === 'hidden'),
+        '400px + resonsive: Every button should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be visible'
+    );
+    assert.notStrictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be visible'
     );
 
     chart.update({
@@ -130,9 +138,15 @@ QUnit.test('RangeSelector.dropdown', assert => {
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
         '400px + never: All the buttons be visible'
     );
-    assert.notOk(
-        isSelectInsideChart(),
-        'Select should be outside chart'
+    assert.strictEqual(
+        chart.rangeSelector.dropdown.style.visibility,
+        'hidden',
+        'Dropdown select should be hidden'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.dropdownLabel.visibility,
+        'hidden',
+        'Dropdown label should be hidden'
     );
 
     chart.update({
