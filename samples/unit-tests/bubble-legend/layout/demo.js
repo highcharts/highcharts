@@ -150,6 +150,7 @@ QUnit.test('Negative values (#9678)', function (assert) {
 
 QUnit.test('Bubble legend with maps', function (assert) {
     var chart = Highcharts.mapChart('container', {
+        colorAxis: {},
         legend: {
             bubbleLegend: {
                 enabled: true
