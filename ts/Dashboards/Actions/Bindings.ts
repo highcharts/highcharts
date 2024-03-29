@@ -126,7 +126,7 @@ namespace Bindings {
             ).length > 0
         ) {
             error(
-                'The component is misconfigured and is unable initialize it. ' +
+                'The component is misconfigured and is unable to initialize it. ' +
                 'A different component has been already initilized in the`' +
                 renderTo + '` cell.'
             );
