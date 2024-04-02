@@ -53,7 +53,6 @@ class AccordionMenu {
     constructor(iconsURLPrefix: string, closeSidebar: Function) {
         this.iconsURLPrefix = iconsURLPrefix;
         this.closeSidebar = closeSidebar;
-        console.log('test');
     }
 
     /* *
