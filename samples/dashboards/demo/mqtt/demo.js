@@ -6,7 +6,7 @@ async function dashboardCreate() {
     const powerUnit = 'MW';
 
     // Create configuration for power generator units
-    const pu = createPowerGeneratorUnit();
+    const pu = await createPowerGeneratorUnit();
 
     return await Dashboards.board('container', {
         dataPool: {
@@ -15,11 +15,32 @@ async function dashboardCreate() {
         components: pu.components
     }, true);
 
-    function createPowerGeneratorUnit() {
+    function createInfoComponent() {
+        return {
+            type: 'HTML',
+            renderTo: 'el-info',
+            title: 'TBD',
+            html: `
+                <p>Test</p>
+            `
+        };
+    }
+
+    async function createPowerGeneratorUnit() {
         const powerGenUnits = {
             connectors: [],
             components: []
         };
+
+        // Information on power station level
+        powerGenUnits.components.push(
+            createInfoComponent()
+        );
+
+        // Map on power station level
+        powerGenUnits.components.push(
+            createMapComponent()
+        );
 
         for (let i = 0; i < maxConnectedUnits; i++) {
             // Power generator index (1...n)
@@ -66,6 +87,40 @@ async function dashboardCreate() {
         };
     }
 
+    function createMapComponent() {
+        return {
+            type: 'Highcharts',
+            renderTo: 'el-map',
+            chartConstructor: 'mapChart',
+            chartOptions: {
+                title: {
+                    text: ''
+                },
+                legend: {
+                    enabled: false
+                },
+                mapNavigation: {
+                    enabled: true,
+                    buttonOptions: {
+                        alignTo: 'spacingBox'
+                    }
+                },
+                mapView: {
+                    center: [7.06, 61.14],
+                    zoom: 9
+                },
+                series: [{
+                    type: 'tiledwebmap',
+                    provider: {
+                        type: 'OpenStreetMap',
+                        theme: 'Standard'
+                    },
+                    showInLegend: false
+                }]
+            }
+        };
+    }
+
     function createKpiComponent(pgIdx) {
         return {
             type: 'KPI',
@@ -100,7 +155,9 @@ async function dashboardCreate() {
                     minorTicks: false,
                     tickWidth: 2,
                     tickAmount: 2,
+                    visible: true,
                     min: 0,
+                    max: 0, // Populated on update
                     title: {
                         text: 'Generated power (MW)',
                         y: -60
@@ -140,6 +197,7 @@ async function dashboardCreate() {
                 },
                 yAxis: {
                     min: 0,
+                    max: 0, // Populated on update
                     title: {
                         text: powerUnit
                     }
@@ -262,13 +320,25 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             .find(c => c.options.renderTo === id);
     }
 
+    let stationName = powerPlantInfo.name;
+
+    // Information
+    const infoComp = getComponent(board, 'el-info');
+    await infoComp.update({
+        title: stationName,
+        html: '<h3>Oppdatert</h3>' + stationName
+    });
+    /*
+    const el = document.getElementById('el-info');
+    el.innerHTML = `<h1>${stationName}</h1>`;
+    */
+
     // Update dashboard components
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
         const aggInfo = powerPlantInfo.aggs[i];
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
         const maxPower = aggInfo.P_max;
-        let name = powerPlantInfo.name;
         const chartOptions = {
             yAxis: {
                 max: maxPower
@@ -277,7 +347,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
         // Add generator name only if the plant has multiple generators
         if (powerPlantInfo.nAggs > 1) {
-            name += ` "${aggInfo.name}"`;
+            stationName += ` "${aggInfo.name}"`;
         }
 
         // Get data
@@ -290,7 +360,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             value: rowCount > 0 ?
                 dataTable.getCellAsNumber('power', rowCount - 1) : 0,
             chartOptions: chartOptions,
-            title: name
+            title: stationName
         });
 
         // Chart
@@ -300,7 +370,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 id: connId
             },
             chartOptions: chartOptions,
-            title: name
+            title: stationName
         });
 
         // Datagrid
@@ -309,7 +379,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             connector: {
                 id: connId
             },
-            title: name
+            title: stationName
         });
     }
 }
@@ -337,7 +407,14 @@ function uiSetComponentVisibility(visible, nUnits = 0) {
 
         el.style.display = unitVisible ? 'flex' : 'none';
     }
+
+    let el = document.getElementById('el-info');
+    el.style.display = visible ? 'flex' : 'none';
+
+    el = document.getElementById('el-map');
+    el.style.display = visible ? 'flex' : 'none';
 }
+
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
@@ -403,6 +480,12 @@ const plantLookup = {
     },
     Dyrnesli: {
         topic: 'prod/VAD/dyrnesli/overview'
+    },
+    Leikanger: {
+        topic: 'prod/LEIK/leikanger/overview'
+    },
+    Fosseteigen: {
+        topic: 'prod/KUV/fosseteigen/overview'
     },
     Dale: {
         topic: 'prod/SMKR/dale/overview'
@@ -681,8 +764,6 @@ async function onConnect() {
  *  Custom UI (not Dashboard)
  */
 function uiSetConnectStatus(connected) {
-    // uiShowStatus(connected ? 'Connected' : 'Disconnected');
-
     let el = document.getElementById('connect_bar');
     el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
 
