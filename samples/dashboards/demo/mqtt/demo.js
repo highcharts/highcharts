@@ -18,11 +18,7 @@ async function dashboardCreate() {
     function createInfoComponent() {
         return {
             type: 'HTML',
-            renderTo: 'el-info',
-            title: 'TBD',
-            html: `
-                <p>Test</p>
-            `
+            renderTo: 'el-info'
         };
     }
 
@@ -326,12 +322,36 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     const infoComp = getComponent(board, 'el-info');
     await infoComp.update({
         title: stationName,
-        html: '<h3>Oppdatert</h3>' + stationName
+        html: '<h3>Oppdatert</h3>' + stationName // Does not work
     });
-    /*
-    const el = document.getElementById('el-info');
-    el.innerHTML = `<h1>${stationName}</h1>`;
-    */
+    // eslint-disable-next-line max-len
+    const el = document.querySelector('div#el-info .highcharts-dashboards-component-content');
+    el.innerHTML = `<p>Number of intakes: ${powerPlantInfo.nIntakes}</p>
+        <p>Number of reservoirs: ${powerPlantInfo.nReservoirs}</p>`;
+
+    // Map
+    const mapComp = getComponent(board, 'el-map');
+    const location = powerPlantInfo.location;
+    if (location !== null) {
+        await mapComp.update({
+            title: stationName,
+            chartOptions: {
+                mapView: {
+                    center: [location.lon, location.lat],
+                    zoom: 10
+                }
+            }
+        });
+    } else {
+        await mapComp.update({
+            chartOptions: {
+                mapView: {
+                    center: [7.06, 61.14],
+                    zoom: 9
+                }
+            }
+        });
+    }
 
     // Update dashboard components
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
@@ -710,18 +730,12 @@ async function onMessageArrived(mqttPacket) {
     }
 
     // Process incoming active topic
-    const mqttData = JSON.parse(mqttPacket.payloadString);
-
-    const powerPlantInfo = {
-        // Power plant name
-        name: mqttData.name,
-        // Packet timestamp
-        time: mqttData.tst_iso,
-        // Number of power generator units ("aggregat")
-        nAggs: mqttData.aggs.length,
-        // Measurement data
-        aggs: mqttData.aggs
-    };
+    const powerPlantInfo = JSON.parse(mqttPacket.payloadString);
+    powerPlantInfo.nAggs = powerPlantInfo.aggs.length;
+    powerPlantInfo.nIntakes = powerPlantInfo.intakes.length;
+    powerPlantInfo.nReservoirs = powerPlantInfo.reservoirs.length;
+    powerPlantInfo.time = powerPlantInfo.aggs.tst_iso;
+    console.dir(powerPlantInfo);
 
     if (msgCount === 0) {
         // Connect and create the Dashboard when the first packet arrives
