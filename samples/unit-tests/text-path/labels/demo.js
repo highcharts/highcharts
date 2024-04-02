@@ -18,6 +18,11 @@ QUnit.test('Testing textPath labels', function (assert) {
         ],
         testPolygon = (path, textContent, polygonName) => {
             const polygon = makeTextPathPolygon(path, textContent);
+            assert.strictEqual(
+                polygon !== undefined,
+                true,
+                'There should be a ' + polygonName + ' polygon'
+            );
 
             assert.deepEqual(
                 polygon,
