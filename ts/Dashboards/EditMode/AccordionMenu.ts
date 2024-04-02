@@ -53,6 +53,7 @@ class AccordionMenu {
     constructor(iconsURLPrefix: string, closeSidebar: Function) {
         this.iconsURLPrefix = iconsURLPrefix;
         this.closeSidebar = closeSidebar;
+        console.log('test');
     }
 
     /* *
@@ -123,15 +124,16 @@ class AccordionMenu {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.confirmButton,
                 className: EditGlobals.classNames.popupConfirmBtn,
-                callback: (): void => {
+                callback: async (): Promise<void> => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.Options>;
 
-                    component.update(
+                    await component.update(
                         merge(changedOptions, {
                             chartOptions: this.chartOptionsJSON
                         })
                     );
+
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
                     menu.closeSidebar();
