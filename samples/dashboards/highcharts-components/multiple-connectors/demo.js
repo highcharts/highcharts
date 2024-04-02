@@ -62,6 +62,11 @@ Dashboards.board('container', {
             xAxis: {
                 type: 'category'
             },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             series: [{
                 type: 'column',
                 name: '2020',
