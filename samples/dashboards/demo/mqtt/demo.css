@@ -24,21 +24,62 @@ div#connect_bar {
 }
 
 div#connect_bar h1 {
-    padding-left: 20px;
+    padding: 0 20px;
 }
 
 div#connect_bar #connect_status {
     font-weight: bold;
-    color: white;
+    color: #dadae2;
+    font-size: 24px;
 }
 
-div#connect_bar button {
-    margin: 0 10px 0 0;
-    background-color: #3498db;
+div#connect_bar label span {
+    margin-right: 5px;
     color: white;
     padding: 16px;
     font-size: 16px;
     border: none;
+}
+
+div#connect_bar button:hover {
+    background-color: #41c6c1;
+    cursor: pointer;
+}
+
+/* From: https://www.educative.io/answers/how-to-create-a-toggle-switch-with-css */
+#connect_toggle {
+    display: none;
+}
+
+label {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    margin-left: 32px;
+}
+
+label::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+#connect_toggle:checked + label {
+    background-color: #2196f3;
+}
+
+#connect_toggle:checked + label::before {
+    transform: translateX(20px);
 }
 
 /* Dropdown Button (from w3schools.com) */
@@ -54,7 +95,7 @@ div#connect_bar button {
 /* Dropdown button on hover & focus */
 .dropbtn:hover,
 .dropbtn:focus {
-    background-color: #2980b9;
+    background-color: #def;
 }
 
 /* The container <div> - needed to position the dropdown content */
@@ -181,9 +222,12 @@ div.highcharts-description {
     border-radius: 10px;
 }
 
-.el-aggr .highcharts-dashboards-component-title {
+.highcharts-dashboards-component-title {
     white-space: nowrap;
     font-size: 16px;
+    letter-spacing: 1.5px;
+    color: rgb(42, 165, 71);
+    text-align: center;
 }
 
 .el-aggr .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
