@@ -60,6 +60,7 @@ jobs:
         with:
           repository: highcharts/highcharts-utils
           path: utils
+          fetch-depth: 1
 
       - name: Install Highcharts Utils
         run: |
