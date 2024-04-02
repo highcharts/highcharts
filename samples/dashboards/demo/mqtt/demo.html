@@ -16,21 +16,22 @@
 		<div class="row">
 			<div class="cell" id="connect_bar">
 				<h1>Sognekraft</h1>
-          <div>
-            <input id="connect_toggle" type="checkbox" onclick="onConnectClicked()"></input>
-            <label for="connect_toggle"></label>
-          </div>
+				<div id="connect_switch">
+					<input id="connect_toggle" type="checkbox" onclick="onConnectClicked()"></input>
+					<label for="connect_toggle"></label>
+				</div>
 				<div id="dropdown-container">
-            <button title="Click to select power station" onclick="onStationSelectClicked()" class="dropbtn">Power
-              station&#9662;</button>
-					<div id="dropDownButton" class="dropdown-content">
+					<button title="Click to select power station" onclick="onStationSelectClicked()"
+						class="dropdown-button">Power
+						station&#9662;</button>
+					<div id="dropdownContent" class="dropdown-content">
 						<!-- Populated dynamically : e.g 
 						<a class="dropdown-select" href="#">Årøy II</a>
 						-->
 					</div>
 				</div>
-          <span id="connect_status"></span>
-          <h1>Highcharts</h1>
+				<span id="connect_status"></span>
+				<h1>Highcharts</h1>
 			</div>
 		</div>
 		<div class="row">

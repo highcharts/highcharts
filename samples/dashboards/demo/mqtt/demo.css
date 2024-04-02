@@ -47,11 +47,11 @@ div#connect_bar button:hover {
 }
 
 /* From: https://www.educative.io/answers/how-to-create-a-toggle-switch-with-css */
-#connect_toggle {
+#connect_switch #connect_toggle {
     display: none;
 }
 
-label {
+#connect_switch label {
     display: inline-block;
     width: 40px;
     height: 20px;
@@ -62,7 +62,7 @@ label {
     margin-left: 32px;
 }
 
-label::before {
+#connect_switch label::before {
     content: "";
     position: absolute;
     top: 2px;
@@ -74,16 +74,16 @@ label::before {
     transition: transform 0.3s;
 }
 
-#connect_toggle:checked + label {
+#connect_switch #connect_toggle:checked + label {
     background-color: #2196f3;
 }
 
-#connect_toggle:checked + label::before {
+#connect_switch #connect_toggle:checked + label::before {
     transform: translateX(20px);
 }
 
 /* Dropdown Button (from w3schools.com) */
-.dropbtn {
+.dropdown-button {
     background-color: #3498db;
     color: white;
     padding: 16px;
@@ -93,8 +93,8 @@ label::before {
 }
 
 /* Dropdown button on hover & focus */
-.dropbtn:hover,
-.dropbtn:focus {
+.dropdown-button:hover,
+.dropdown-button:focus {
     background-color: #def;
 }
 

@@ -432,14 +432,14 @@ window.onload = () => {
     connectBar.offColor = el.style.backgroundColor; // From CSS
 
     // Populate dropdown menu
-    const dropdownDiv = document.getElementById('dropDownButton');
+    const dropdownDiv = document.getElementById('dropdownContent');
     for (const key of Object.keys(plantLookup)) {
         dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
     }
 
     // Custom click handler (dropdown button for selecting power stations)
     window.onclick = function (event) {
-        if (!event.target.matches('.dropbtn')) {
+        if (!event.target.matches('.dropdown-button')) {
             // Close the dropdown menu if the user clicks outside of it
             const dropdowns = document.getElementsByClassName('dropdown-content');
 
@@ -476,7 +476,7 @@ function onConnectClicked() {
 
 function onStationSelectClicked() {
     // Reveals the dropdown list of power stations
-    document.getElementById('dropDownButton').classList.toggle('show');
+    document.getElementById('dropdownContent').classList.toggle('show');
 }
 
 
