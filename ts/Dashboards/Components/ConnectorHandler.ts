@@ -26,7 +26,6 @@ import Globals from '../Globals.js';
 /**
  * A class that handles the connection between the component and the data
  * connector.
- * @internal
  */
 class ConnectorHandler {
     /* *
@@ -287,6 +286,8 @@ namespace ConnectorHandler {
         /**
          * Whether to allow the transfer of data changes back to the connector
          * source.
+         *
+         * @internal
          */
         allowSave?: boolean;
 

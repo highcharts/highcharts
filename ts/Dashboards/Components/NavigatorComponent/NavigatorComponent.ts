@@ -28,10 +28,12 @@ import type {
 } from '../../Plugins/HighchartsTypes';
 import type Cell from '../../Layout/Cell';
 import type {
-    CrossfilterSyncOptions
-} from './NavigatorSyncs/NavigatorCrossfilterSync';
-import type { Options } from './NavigatorComponentOptions';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
+    CrossfilterSyncOptions,
+    Options
+} from './NavigatorComponentOptions';
+import type {
+    RangeModifierOptions, RangeModifierRangeOptions
+} from '../../../Data/Modifiers/RangeModifierOptions';
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';

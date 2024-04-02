@@ -25,9 +25,6 @@ import type ConnectorHandler from '../ConnectorHandler.js';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 import type {
-    HighchartsHighlightSyncOptions
-} from './HighchartsSyncs/HighchartsHighlightSync.js';
-import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
 
@@ -257,6 +254,48 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      * @default false
      */
     visibility?: boolean|Sync.OptionsEntry;
+}
+
+/**
+ * Highcharts component highlight sync options.
+ *
+ * Example:
+ * ```
+ * {
+ *     enabled: true,
+ *     highlightPoint: true,
+ *     showTooltip: false,
+ *     showCrosshair: true
+ * }
+ * ```
+ */
+export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
+    /**
+     * Whether the marker should be synced. When hovering over a point in
+     * other component in the same group, the 'hover' state is enabled at
+     * the corresponding point in this component.
+     *
+     * @default true
+     */
+    highlightPoint?: boolean;
+    /**
+     * Whether the tooltip should be synced. When hovering over a point in
+     * other component in the same group, in this component the tooltip
+     * should be also shown.
+     *
+     * @default true
+     */
+    showTooltip?: boolean;
+    /**
+     * Whether the crosshair should be synced. When hovering over a point in
+     * other component in the same group, in this component the crosshair
+     * should be also shown.
+     *
+     * Works only for axes that have crosshair enabled.
+     *
+     * @default true
+     */
+    showCrosshair?: boolean;
 }
 
 
