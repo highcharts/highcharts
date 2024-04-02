@@ -90,9 +90,6 @@ async function dashboardCreate() {
                 series: [{
                     name: 'Generated power'
                 }],
-                accessibility: {
-                    typeDescription: 'Gauge chart with 1 data point.'
-                },
                 yAxis: {
                     labels: {
                         distance: '75%',
@@ -103,13 +100,14 @@ async function dashboardCreate() {
                     minorTicks: false,
                     tickWidth: 2,
                     tickAmount: 2,
-                    visible: true,
                     min: 0,
-                    max: 10, // Update later
                     title: {
                         text: 'Generated power (MW)',
                         y: -60
                     }
+                },
+                tooltip: {
+                    valueSuffix: ' ' + powerUnit
                 }
             }
         };
@@ -141,7 +139,6 @@ async function dashboardCreate() {
                     type: 'datetime'
                 },
                 yAxis: {
-                    max: 10, // Populated later
                     min: 0,
                     title: {
                         text: powerUnit
@@ -157,7 +154,7 @@ async function dashboardCreate() {
                     text: ''
                 },
                 tooltip: {
-                    valueSuffix: powerUnit
+                    valueSuffix: ' ' + powerUnit
                 }
             }
         };
@@ -186,7 +183,7 @@ async function dashboardCreate() {
                         }
                     },
                     power: {
-                        headerFormat: 'Generated power'
+                        headerFormat: 'Generated power (MW)'
                     }
                 }
             }
@@ -271,12 +268,17 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
         const maxPower = aggInfo.P_max;
-        const name = `Generator "${aggInfo.name}"`;
+        let name = powerPlantInfo.name;
         const chartOptions = {
             yAxis: {
                 max: maxPower
             }
         };
+
+        // Add generator name only if the plant has multiple generators
+        if (powerPlantInfo.nAggs > 1) {
+            name += ` "${aggInfo.name}"`;
+        }
 
         // Get data
         const dataTable = await board.dataPool.getConnectorTable(connId);
@@ -366,7 +368,7 @@ let mqtt = null;
 // Connection parameters
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
-let mqttActiveTopic = '/#';
+let mqttActiveTopic = null;
 const mqttQos = 0;
 
 // NB! Replace with public before publishing on the web !!!!!
@@ -383,13 +385,12 @@ let nConnectedUnits;
 
 // Connection status UI
 const connectBar = {
-    el: null,
     offColor: '', // Populated from CSS
     onColor: 'hsla(202.19deg, 100%, 37.65%, 1)',
     errColor: 'red'
 };
 
-// Overview of power plants (TBD: create dynamically)
+// Overview of power plants, as MQTT topics (TBD: create dynamically)
 const plantLookup = {
     'Årøy I': {
         topic: 'prod/SOG/aaroy_I/overview'
@@ -429,7 +430,6 @@ window.onload = () => {
 
     const el = document.getElementById('connect_bar');
     connectBar.offColor = el.style.backgroundColor; // From CSS
-    connectBar.el = el;
 
     // Populate dropdown menu
     const dropdownDiv = document.getElementById('dropDownButton');
@@ -465,11 +465,7 @@ window.onload = () => {
  *  Application user interface
  */
 function onConnectClicked() {
-    // Disable connect button while connecting/disconnecting
-    const connBtn = document.getElementById('connect_toggle');
-    connBtn.disabled = true;
-
-    // Connect or disconnect to the MQTT server
+    // Connect to (or disconnect from) the MQTT server
     if (connectFlag) {
         mqttDisconnect();
     } else {
@@ -580,7 +576,7 @@ function mqttDisconnect() {
     mqtt.unsubscribe('/#');
 
     // Disconnect
-    uiShowStatus('disconnecting...');
+    uiShowStatus('');
     mqtt.disconnect();
 
     // Hide Dashboard components
@@ -638,24 +634,25 @@ async function onMessageArrived(mqttPacket) {
         name: mqttData.name,
         // Packet timestamp
         time: mqttData.tst_iso,
-        // Number of power generator units (aggregat)
+        // Number of power generator units ("aggregat")
         nAggs: mqttData.aggs.length,
         // Measurement data
         aggs: mqttData.aggs
     };
 
     if (msgCount === 0) {
-        // Connect the Dashboard
+        // Connect and create the Dashboard when the first packet arrives
         await dashboardConnect(powerPlantInfo);
     }
+
+    // Has a power generator has been added or removed?
     if (nConnectedUnits !== powerPlantInfo.nAggs) {
-        // A power generator has been added or removed
+        nConnectedUnits = powerPlantInfo.nAggs;
         uiSetComponentVisibility(true, powerPlantInfo.nAggs);
 
         // Reset the entire dashboard
         await dashboardReset();
     }
-    nConnectedUnits = powerPlantInfo.nAggs;
 
     // Update Dashboard
     msgCount++;
@@ -673,23 +670,27 @@ async function onConnect() {
 
     console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
+
+    // Subscribe if a topic exists
+    if (mqttActiveTopic !== null) {
+        mqttSubscribe(mqttActiveTopic);
+    }
 }
 
 /*
  *  Custom UI (not Dashboard)
  */
-
 function uiSetConnectStatus(connected) {
-    uiShowStatus(connected ? 'Connected' : 'Disconnected');
+    // uiShowStatus(connected ? 'Connected' : 'Disconnected');
 
-    const el = connectBar.el;
-    const connBtn = document.getElementById('connect_toggle');
-    const dropDown = document.getElementById('dropdown-container');
-
+    let el = document.getElementById('connect_bar');
     el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
-    connBtn.disabled = false;
-    connBtn.innerHTML = connected ? 'Disconnect' : 'Connect';
-    dropDown.style.visibility = connected ? 'visible' : 'hidden';
+
+    el = document.getElementById('dropdown-container');
+    el.style.visibility = connected ? 'visible' : 'hidden';
+
+    el = document.getElementById('connect_toggle');
+    el.checked = connected;
 }
 
 
@@ -699,7 +700,8 @@ function uiShowStatus(msg) {
 
 
 function uiShowError(msg) {
-    connectBar.el.style.backgroundColor = connectBar.errColor;
+    const el = document.getElementById('connect_bar');
 
+    el.style.backgroundColor = connectBar.errColor;
     document.getElementById('connect_status').innerHTML = 'Error: ' + msg;
 }
