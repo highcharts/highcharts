@@ -32,6 +32,10 @@ const languageOptions = {
         "ytdTitle": "Voir depuis le début de l'année"
     },
     "viewFullscreen": "Voir en plein écran",
+    "stockOpen": "Ouverture",
+    "stockHigh": "Haut",
+    "stockLow": "Bas",
+    "stockClose": "Clôture",
     "weekFrom": "Semaine à partir de",
     "exitFullscreen": "Quitter le plein écran",
     "printChart": "Imprimer le graphique",

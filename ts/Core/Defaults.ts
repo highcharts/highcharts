@@ -132,6 +132,11 @@ const defaultOptions: DefaultOptions = {
      * ```
      */
     lang: {
+        stockOpen: 'Open',
+        stockHigh: 'High',
+        stockLow: 'Low',
+        stockClose: 'Close',
+
         weekFrom: 'Week from',
 
         /**

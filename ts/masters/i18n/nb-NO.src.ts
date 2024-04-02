@@ -31,6 +31,10 @@ const languageOptions = {
         "ytdText": "YTD",
         "ytdTitle": "Vis år til dato"
     },
+    "stockOpen": "Åpning",
+    "stockHigh": "Høy",
+    "stockLow": "Lav",
+    "stockClose": "Slutt",
     "viewFullscreen": "Vis i fullskjerm",
     "weekFrom": "Uke fra",
     "exitFullscreen": "Avslutt fullskjerm",

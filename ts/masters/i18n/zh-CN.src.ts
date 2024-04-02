@@ -32,6 +32,10 @@ const languageOptions = {
         "ytdTitle": "查看年初至今"
     },
     "weekFrom": "从星期一开始的一周",
+    "stockOpen": "开盘",
+    "stockHigh": "最高",
+    "stockLow": "最低",
+    "stockClose": "收盘",
     "viewFullscreen": "全屏查看",
     "exitFullscreen": "退出全屏",
     "printChart": "打印图表",

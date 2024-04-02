@@ -993,7 +993,8 @@ class Point {
 
         return format(pointFormat, {
             point: this,
-            series: this.series
+            series: this.series,
+            lang: this.series.chart.options.lang
         }, series.chart);
     }
 
