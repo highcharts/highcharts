@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 .highcharts-description {
@@ -57,6 +57,24 @@ body {
     border-radius: 5px;
     margin: 10px 15px 10px 10px;
     float: left;
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-dashboards-wrapper,
+    .cloud-monitoring-data-controls {
+        background-color: var(--highcharts-neutral-color-10);
+    }
+
+    .cloud-monitoring-data-controls {
+        color: #fff;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    #instances-table .highcharts-datagrid-column-header,
+    #instances-table .highcharts-datagrid-row {
+        background-color: var(--highcharts-neutral-color-0);
+    }
 }
 
 /* https://awsicons.dev/ */
@@ -142,20 +160,68 @@ body {
     display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-    .highcharts-dashboards-wrapper,
-    .cloud-monitoring-data-controls {
-        background-color: var(--highcharts-neutral-color-10);
+#instances-table {
+    height: 400px;
+}
+
+#cpu,
+#memory {
+    height: 200px;
+}
+
+#health,
+#disk {
+    height: 195px;
+}
+
+#disk-opt,
+#network-opt {
+    height: 300px;
+}
+
+#cpu-utilization,
+#disk-usage {
+    height: 400px;
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    #instance,
+    #zone,
+    #ami,
+    #os,
+    #cpu,
+    #memory,
+    #health,
+    #disk {
+        flex: 1 1 50%;
     }
 
-    .cloud-monitoring-data-controls {
-        color: #fff;
+    #instances-table,
+    #disk-usage,
+    #cpu-utilization,
+    #kpi-wrapper {
+        flex: 1 1 100%;
+    }
+
+    #instances-table,
+    #cpu-utilization {
+        height: 300px;
     }
 }
 
-@media (prefers-color-scheme: light) {
-    #instances-table .highcharts-datagrid-column-header,
-    #instances-table .highcharts-datagrid-row {
-        background-color: var(--highcharts-neutral-color-0);
+/* SMALL */
+@media (max-width: 576px) {
+    #instance,
+    #zone,
+    #ami,
+    #os,
+    #disk-opt,
+    #network-opt,
+    #cpu,
+    #memory,
+    #health,
+    #disk {
+        flex: 1 1 100%;
     }
 }

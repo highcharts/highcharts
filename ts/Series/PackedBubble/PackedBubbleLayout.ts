@@ -264,8 +264,8 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         let distanceXY: Record<string, number>,
             distanceR: number;
 
-        // parentNodeLimit should be used together
-        // with seriesInteraction: false
+        // `parentNodeLimit` should be used together with seriesInteraction:
+        // false
         if (
             layout.options.splitSeries &&
             !node.isParentNode &&

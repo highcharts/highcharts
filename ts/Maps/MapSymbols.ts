@@ -35,6 +35,9 @@ let symbols: SymbolTypeRegistry;
  *
  * */
 
+/**
+ *
+ */
 function bottomButton(
     x: number,
     y: number,
@@ -50,6 +53,9 @@ function bottomButton(
     return symbols.roundedRect(x, y, w, h, options);
 }
 
+/**
+ *
+ */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
@@ -60,6 +66,9 @@ function compose(
 
 }
 
+/**
+ *
+ */
 function topButton(
     x: number,
     y: number,

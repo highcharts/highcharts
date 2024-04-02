@@ -61,7 +61,8 @@ QUnit.test('Pie slice updating(#4104)', function (assert) {
         'Visible data label text string'
     );
 
-    // @todo Create an extensive unit test for PieSeries.updateTotals to replace this
+    // @todo Create an extensive unit test for PieSeries.updateTotals to
+    // replace this
     assert.strictEqual(
         chart.series[0].points[5].isNull,
         true,

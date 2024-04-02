@@ -51,7 +51,8 @@
         function updateCount(diff) {
             chart.puzzle.remaining += diff;
             chart.puzzleCount.attr({
-                text: (chart.puzzle.total - chart.puzzle.remaining) + ' / ' + chart.puzzle.total
+                text: (chart.puzzle.total - chart.puzzle.remaining) +
+                    ' / ' + chart.puzzle.total
             });
         }
         updateCount(0);

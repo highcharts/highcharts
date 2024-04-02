@@ -4,7 +4,8 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Rounding error in Highcharts 3.0.8 caused too many decimals for Oranges'
+            text: 'Rounding error in Highcharts 3.0.8 caused too many ' +
+                'decimals for Oranges'
         },
         xAxis: {
             categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']

@@ -66,7 +66,8 @@ QUnit.test('Destroy in own callback', function (assert) {
     );
 });
 
-// Highcharts 4.0.4, Issue #3600: No-data-to-display module broken with chart creation in callback
+// Highcharts 4.0.4, Issue #3600: No-data-to-display module broken with
+// chart creation in callback
 QUnit.test('Destroy in own callback and recreate (#3600)', function (assert) {
     let newChart;
 

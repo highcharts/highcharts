@@ -325,4 +325,4 @@ export default StochasticIndicator;
  * @apioption series.stochastic
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

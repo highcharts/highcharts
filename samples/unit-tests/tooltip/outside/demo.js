@@ -104,7 +104,8 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
     assert.strictEqual(
         Math.round(tooltipAbsolute),
         Math.round(pointX),
-        'Tooltip position should appear at point with sets margin for chart and container'
+        'Tooltip position should appear at point with sets margin for chart ' +
+        'and container'
     );
 
     assert.strictEqual(
@@ -117,7 +118,8 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
     assert.strictEqual(
         chart.tooltip.container.parentNode,
         null,
-        'When hiding the tooltip, the container should be removed from DOM (#18490)'
+        'When hiding the tooltip, the container should be removed from DOM ' +
+        '(#18490)'
     );
 
 });

@@ -448,7 +448,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             // Tab-press with dropdown focused does not propagate to chart
             // automatically, so we manually catch and handle it when relevant.
-            this.removeDropdownKeydownHandler = addEvent(dropdown, 'keydown',
+            this.removeDropdownKeydownHandler = addEvent(
+                dropdown, 'keydown',
                 (e: KeyboardEvent): void => {
                     const isTab = (e.which || e.keyCode) === this.keyCodes.tab,
                         a11y = chart.accessibility;

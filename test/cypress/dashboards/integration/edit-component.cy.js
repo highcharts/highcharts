@@ -27,6 +27,10 @@ describe('Editable component options', () => {
         });
     });
 
+    it('Sidebar should not be visible after update.', function() {
+        cy.get('.highcharts-dashboards-edit-sidebar').should('not.be.visible');
+    });
+
     it('Chart options should be updated via edit mode GUI', function() {
         const newChartOptions = {
             chart: {

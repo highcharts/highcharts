@@ -5,7 +5,9 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        categories: ['Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil']
+        categories: [
+            'Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil'
+        ]
     },
     yAxis: {
         title: {

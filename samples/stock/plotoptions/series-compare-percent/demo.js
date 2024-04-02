@@ -11,7 +11,8 @@
                 text: 'Series compare by <em>percent</em>'
             },
             subtitle: {
-                text: 'Compare the values of the series against the first value in the visible range'
+                text: 'Compare the values of the series against the first ' +
+                    'value in the visible range'
             },
 
             rangeSelector: {
@@ -33,7 +34,9 @@
             },
 
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                pointFormat: '<span style="color:{series.color}">' +
+                    '{series.name}</span>: <b>{point.y}</b> ' +
+                    '({point.change}%)<br/>',
                 changeDecimals: 2,
                 valueDecimals: 2
             },

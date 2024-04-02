@@ -19,7 +19,10 @@
         lang: {
             accessibility: {
                 axis: {
-                    yAxisDescriptionPlural: 'The chart has 7 Y axes across the chart displaying Training date, Miles for training run, Training time, Shoe brand, Running pace per mile, Short or long, and After 2004.'
+                    yAxisDescriptionPlural: 'The chart has 7 Y axes across ' +
+                        'the chart displaying Training date, Miles for ' +
+                        'training run, Training time, Shoe brand, Running ' +
+                        'pace per mile, Short or long, and After 2004.'
                 }
             }
         },

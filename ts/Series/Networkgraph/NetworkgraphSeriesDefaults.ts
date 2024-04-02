@@ -631,4 +631,4 @@ export default NetworkgraphSeriesDefaults;
  * @apioption series.networkgraph.nodes.dataLabels
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

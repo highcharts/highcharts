@@ -130,11 +130,15 @@ QUnit.test('Proxy region', function (assert) {
             'There is an after proxy region' + msgAdd
         );
         assert.strictEqual(
-            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-before').length, 1,
+            chart.container.querySelectorAll(
+                '.highcharts-a11y-proxy-container-before'
+            ).length, 1,
             'The is only one before proxy region' + msgAdd
         );
         assert.strictEqual(
-            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-after').length, 1,
+            chart.container.querySelectorAll(
+                '.highcharts-a11y-proxy-container-after'
+            ).length, 1,
             'The is only one after proxy region' + msgAdd
         );
     }

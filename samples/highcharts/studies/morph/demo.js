@@ -16,10 +16,12 @@
 
     // Morph an SVG element into a different type of element
     Highcharts.SVGElement.prototype.morph = function () {
-        // Return the point that is closest to an imaginary point directly above the
+        // Return the point that is closest to an imaginary point directly
+        // above the
         // shape. To avoid rotation when morphing.
         const alignToTopPoint = (points, bBox) => {
-            // Find the point that is closest to an imaginary point directly above
+            // Find the point that is closest to an imaginary point directly
+            // above
             // the bBox.
             const topPoint = {
                 x: bBox.x + bBox.width / 2,

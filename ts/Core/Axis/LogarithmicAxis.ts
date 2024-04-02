@@ -120,7 +120,7 @@ namespace LogarithmicAxis {
         const axis = this as Composition;
         const log = axis.logarithmic;
 
-        // extend logarithmic axis
+        // Extend logarithmic axis
         if (log) {
             axis.lin2val = function (num: number): number {
                 return log.lin2log(num);

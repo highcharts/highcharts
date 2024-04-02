@@ -62,7 +62,7 @@ class BarSeries extends ColumnSeries {
      * @optionparent plotOptions.bar
      */
     public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        // nothing here yet
+        // Nothing here yet
     });
 
     /* *
@@ -201,4 +201,4 @@ export default BarSeries;
  * @apioption series.bar.states.select
  */
 
-''; // gets doclets above into transpiled
+''; // Gets doclets above into transpiled

@@ -5,11 +5,15 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'backgroundColor, borderColor, borderRadius, borderWidth, padding and shadow'
+        text: 'backgroundColor, borderColor, borderRadius, borderWidth, ' +
+            'padding and shadow'
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
 
     plotOptions: {

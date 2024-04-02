@@ -1,12 +1,16 @@
-// Define custom series type for displaying low/med/high values using boxplot as a base
+// Define custom series type for displaying low/med/high values using
+// boxplot as a base
 Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high'],
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: ' +
-            'Low <b>{point.low} NOK</b> - Median <b>{point.median} NOK</b> - High <b>{point.high} NOK</b><br/>'
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}: ' +
+            'Low <b>{point.low} NOK</b> - Median <b>{point.median} NOK</b> - ' +
+            'High <b>{point.high} NOK</b><br/>'
     }
 }, {
-    // Change point shape to a line with three crossing lines for low/median/high
+    // Change point shape to a line with three crossing lines for
+    // low/median/high
     // Stroke width is hardcoded to 1 for simplicity
     drawPoints: function () {
         const series = this;
@@ -71,12 +75,17 @@ const chart = Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormat: '{#unless isNull}{category}, low {low}, median {median}, high {high}{/unless}'
+            descriptionFormat: '{#unless isNull}{category}, low {low}, ' +
+                'median {median}, high {high}{/unless}'
         },
         series: {
-            descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
+            descriptionFormat: '{series.name}, series {seriesNumber} of ' +
+                '{chart.series.length} with {series.points.length} data points.'
         },
-        typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
+        typeDescription: 'Low, median, high. Each data point has a low, ' +
+            'median and high value, depicted vertically as small ticks.' //
+            // Describe the chart type to screen reader users, since this is
+            // not a traditional boxplot chart
     },
     xAxis: [{
         accessibility: {

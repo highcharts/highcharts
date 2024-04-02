@@ -104,7 +104,7 @@ class ErrorBarSeries extends BoxPlotSeries {
     }
 
     public toYData(point: ErrorBarPoint): Array<number> {
-        // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
         return [point.low, point.high];
     }
 
@@ -131,9 +131,8 @@ interface ErrorBarSeries extends BoxPlotSeries {
 }
 
 extend(ErrorBarSeries.prototype, {
-    // pointClass: ErrorBarPoint, // just a declaration
-    pointArrayMap: ['low', 'high'], // array point configs are mapped to this
-    pointValKey: 'high', // defines the top of the tracker
+    pointArrayMap: ['low', 'high'], // Array point configs are mapped to this
+    pointValKey: 'high', // Defines the top of the tracker
     doQuartiles: false
 });
 

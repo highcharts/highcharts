@@ -30,7 +30,8 @@
             accessibility: {
                 point: {
                     valueDescriptionFormat:
-                        'Origin: {point.options.from}, Destination: {point.options.to}.'
+                        'Origin: {point.options.from}, Destination: ' +
+                        '{point.options.to}.'
                 },
                 description:
                     'This is a map using coordinates directly.'

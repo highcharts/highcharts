@@ -1,0 +1,13 @@
+---
+name: Stock chart design CSS
+authors:
+  - Pawel Lysy
+requiresManualTesting: false
+js_wrap: b
+new_until: 2024-06-13
+tags:
+  - Highcharts Stock demo
+categories:
+    - Designs
+use_png_thumbnail: true
+...

@@ -153,7 +153,10 @@ Highcharts.chart('container', {
             ['509 Cultural Center / the luggage store', 50000],
             ['826 Valencia', 50000],
             ['Acción Latina', 50000],
-            ['American Indian Community Cultural Center for the Arts SF (AICCCA-SF)', 50000],
+            [
+                'American Indian Community Cultural Center for the Arts SF ' +
+                '(AICCCA-SF)', 50000
+            ],
             ['Cutting Ball Theatre Company', 50000],
             ['EXIT Theater', 50000],
             ['New Conservatory Theatre Center', 50000],

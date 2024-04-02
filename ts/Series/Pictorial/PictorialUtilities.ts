@@ -24,6 +24,9 @@ const {
     defined
 } = U;
 
+/**
+ *
+ */
 function rescalePatternFill(
     element: SVGElement,
     stackHeight: number,
@@ -78,6 +81,9 @@ function rescalePatternFill(
     }
 }
 
+/**
+ *
+ */
 function getStackMetrics(
     yAxis: Axis,
     shape?: PictorialPathOptions
@@ -99,12 +105,15 @@ function getStackMetrics(
     };
 }
 
+/**
+ *
+ */
 function invertShadowGroup(
     shadowGroup: SVGElement,
     yAxis: Axis
 ): void {
 
-    let inverted = yAxis.chart.inverted;
+    const inverted = yAxis.chart.inverted;
 
     if (inverted) {
         shadowGroup.attr({

@@ -86,7 +86,9 @@ QUnit.test('i18nFormat', function (assert) {
         'Indexing non-array 2'
     );
     assert.strictEqual(
-        Highcharts.i18nFormat('Test {substitute.arr[3]}', { substitute: { arr: [0, 1, 2, 3] } }),
+        Highcharts.i18nFormat(
+            'Test {substitute.arr[3]}', { substitute: { arr: [0, 1, 2, 3] } }
+        ),
         'Test 3',
         'Indexing nested array'
     );
@@ -96,7 +98,9 @@ QUnit.test('i18nFormat', function (assert) {
         'Simple array each'
     );
     assert.strictEqual(
-        Highcharts.i18nFormat('Test {#each(nested.arr)}', { nested: { arr: [0, 1, 2, 3, 4, 5] } }),
+        Highcharts.i18nFormat(
+            'Test {#each(nested.arr)}', { nested: { arr: [0, 1, 2, 3, 4, 5] } }
+        ),
         'Test 012345',
         'Simple nested array each'
     );
@@ -153,10 +157,13 @@ QUnit.test('i18nFormat', function (assert) {
     assert.strictEqual(
         Highcharts.i18nFormat(
             'Parens: [{#each(arr, -1), }{arr[-1]}]. ' +
-            'Block handler: [{#each arr}{this}{#unless @last}, {/unless}{/each}].',
-            { arr: [0, 1, 2, 3, 4, 5] }),
+            'Block handler: [{#each arr}{this}{#unless @last}, ' +
+            '{/unless}{/each}].',
+            { arr: [0, 1, 2, 3, 4, 5] }
+        ),
         'Parens: [0, 1, 2, 3, 4, 5]. Block handler: [0, 1, 2, 3, 4, 5].',
-        'Parenthesis-based #each function should live side by side with block handler syntax'
+        'Parenthesis-based #each function should live side by side with ' +
+        'block handler syntax'
     );
     assert.strictEqual(
         Highcharts.i18nFormat('Items: {#plural(num, many, one)}.', { num: 1 }),
@@ -200,7 +207,10 @@ QUnit.test('i18nFormat', function (assert) {
         'Plural conditional 7'
     );
     assert.strictEqual(
-        Highcharts.i18nFormat('Items: {#plural(nested.deep.arr.length, two, one)}.', { nested: { deep: { arr: [0] } } }),
+        Highcharts.i18nFormat(
+            'Items: {#plural(nested.deep.arr.length, two, ' +
+            'one)}.', { nested: { deep: { arr: [0] } } }
+        ),
         'Items: one.',
         'Plural nested'
     );

@@ -118,7 +118,8 @@ QUnit.test('Credits', function (assert) {
     assert.strictEqual(
         chart.credits.element.textContent,
         'PrecedenceMapTextFullPrecedenceTestPrecedenceMapText',
-        'Setting map credits default options as well as inline, inline takes precedence'
+        'Setting map credits default options as well as inline, inline takes ' +
+        'precedence'
     );
 
     // Reset

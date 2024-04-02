@@ -40,7 +40,9 @@
             name: 'Population density',
             cursor: 'pointer',
             tooltip: {
-                pointFormat: '{point.name}: {point.value}/km²<br><span style="color:gray;font-size:11px">Click to view Wikipedia article</span>'
+                pointFormat: '{point.name}: {point.value}/km²<br><span ' +
+                    'style="color:gray;font-size:11px">Click to view ' +
+                    'Wikipedia article</span>'
             }
         }]
     });
