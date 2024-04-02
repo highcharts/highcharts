@@ -65,7 +65,7 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^4.0.1",
-    "cloudflare": "^2.9.1",
+    "cloudflare": "^3.0.0",
     "colors": "^1.4.0",
     "cypress": "^13.2.0",
     "cypress-visual-regression": "^3.0.0",
