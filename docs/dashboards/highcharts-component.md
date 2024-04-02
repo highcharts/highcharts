@@ -179,7 +179,7 @@ columnAssignment: [{
 
 ### Multiple connectors
 
-Highcharts Component supports also more than one data source. This can be achieved by setting the `connector` option to an array of objects rather than a single object.
+The Highcharts Component also supports more than one data source. That means the connector option should then be configured as an array of objects rather than a single object.
 
 Code sample:
 ```js

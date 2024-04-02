@@ -170,9 +170,8 @@ Dashboards.board('container', {
                     }
 
                     return this.on('sliderValueChanged', e => {
-                        const table = this.connectorHandlers[0] &&
-                            this.connectorHandlers[0].connector &&
-                            this.connectorHandlers[0].connector.table;
+                        const connector = this.getFirstConnector();
+                        const table = connector && connector.table;
 
                         if (table) {
                             // Emit cursor event when slider value changes

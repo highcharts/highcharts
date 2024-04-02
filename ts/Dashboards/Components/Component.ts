@@ -401,6 +401,15 @@ abstract class Component {
     }
 
 
+    /**
+     * Returns the first connector of the component if it exists.
+     * @internal
+     */
+    public getFirstConnector(): Component.ConnectorTypes | undefined {
+        return this.connectorHandlers[0]?.connector;
+    }
+
+
     /* *
      *
      *  Functions
