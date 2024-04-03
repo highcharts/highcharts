@@ -426,7 +426,10 @@ class RangeSelector {
             ),
             langOptions = chart.options.lang,
             buttonOptions = (
-                options.buttons || rangeSelector.defaultButtons.slice()
+                options.buttons || this.defaultButtons.map(
+                    // Deep copy to avoid modifying the class property
+                    (opt): RangeSelectorButtonOptions => ({ ...opt })
+                )
             ),
             selectedOption = options.selected,
             blurInputs = function (): void {
