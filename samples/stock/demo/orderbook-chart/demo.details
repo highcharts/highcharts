@@ -1,5 +1,5 @@
 ---
-name: Depth chart
+name: Order book chart
 authors:
   - Kamil Musialowski
 js_wrap: b

@@ -63,7 +63,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        headerFormat: 'Price: <b>$ {point.point.price}</b></br>',
+        headerFormat: 'Price: <b>${point.point.price:,.1f}</b></br>',
         pointFormat: '{series.name}: <b>{(abs point.y):,.0f}</b>',
         shape: 'rect',
         positioner(labelWidth, _, point) {
