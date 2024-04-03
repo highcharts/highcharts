@@ -1131,7 +1131,66 @@ text.highcharts-drilldown-data-label,
     stroke: var(--highcharts-neutral-color-80);
 }
 
+/* Advanced annotations module */
+.highcharts-fibonacci-background-0,
+.highcharts-pitchfork-inner,
+.highcharts-measure-background {
+    fill: rgba(130, 170, 255, 0.4);
+}
+
+.highcharts-fibonacci-background-1 {
+    fill: rgba(139, 191, 216, 0.4);
+}
+
+.highcharts-fibonacci-background-2 {
+    fill: rgba(150, 216, 192, 0.4);
+}
+
+.highcharts-fibonacci-background-3,
+.highcharts-pitchfork-outer {
+    fill: rgba(156, 229, 161, 0.4);
+}
+
+.highcharts-fibonacci-background-4 {
+    fill: rgba(162, 241, 130, 0.4);
+}
+
+.highcharts-fibonacci-background-5 {
+    fill: rgba(169, 255, 101, 0.4);
+}
+
+.highcharts-fibonacci-stroke {
+    stroke: var(--highcharts-neutral-color-40);
+}
+
+.highcharts-annotations-crooked-line,
+.highcharts-tunnel-line,
+.highcharts-infinity-line,
+.highcharts-timecycles,
+.highcharts-fibonacci-timezones,
+.highcharts-pitchfork-lines,
+.highcharts-vertical-line,
+.highcharts-measure-crosshairs-x,
+.highcharts-measure-crosshairs-y {
+    stroke: rgba(0, 0, 0, 0.75);
+    fill: none;
+}
+
+.highcharts-measure-crosshairs-x,
+.highcharts-measure-crosshairs-y {
+    stroke-dasharray: 1, 3;
+}
+
+.highcharts-tunnel-background {
+    fill: rgba(130, 170, 255, 0.4);
+}
+
+.highcharts-annotation-shapes {
+    cursor: move;
+}
+
 /* Annotations module */
+
 .highcharts-annotation-label-box {
     stroke-width: 1px;
     stroke: var(--highcharts-neutral-color-100);
