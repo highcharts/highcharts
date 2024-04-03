@@ -27,6 +27,9 @@ import type {
     RangeModifierRangeOptions
 } from '../../../../Data/Modifiers/RangeModifierOptions';
 import type HCComponent from '../HighchartsComponent.js';
+import type {
+    HighchartsHighlightSyncOptions
+} from '../HighchartsComponentOptions';
 import type DataTable from '../../../../Data/DataTable';
 import type { Series } from '../../../Plugins/HighchartsTypes';
 
@@ -179,8 +182,8 @@ const syncPair: Sync.SyncPair = {
                     }
                 }
             }, false);
-            chart.redraw();
         }
+        chart.redraw();
 
         // Return function that handles cleanup
         return function (): void {
@@ -272,7 +275,7 @@ const syncPair: Sync.SyncPair = {
 
                     if (series?.visible && cursor.row !== void 0) {
                         const point = series.data[cursor.row - offset];
-                        if (point?.graphic) {
+                        if (point?.visible) {
                             return point;
                         }
                     }
@@ -483,55 +486,6 @@ const syncPair: Sync.SyncPair = {
         }
     }
 };
-
-
-/* *
-*
-*  Declarations
-*
-* */
-
-/**
- * Highcharts component highlight sync options.
- *
- * Example:
- * ```
- * {
- *     enabled: true,
- *     highlightPoint: true,
- *     showTooltip: false,
- *     showCrosshair: true
- * }
- * ```
- */
-export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
-    /**
-     * Whether the marker should be synced. When hovering over a point in
-     * other component in the same group, the 'hover' state is enabled at
-     * the corresponding point in this component.
-     *
-     * @default true
-     */
-    highlightPoint?: boolean;
-    /**
-     * Whether the tooltip should be synced. When hovering over a point in
-     * other component in the same group, in this component the tooltip
-     * should be also shown.
-     *
-     * @default true
-     */
-    showTooltip?: boolean;
-    /**
-     * Whether the crosshair should be synced. When hovering over a point in
-     * other component in the same group, in this component the crosshair
-     * should be also shown.
-     *
-     * Works only for axes that have crosshair enabled.
-     *
-     * @default true
-     */
-    showCrosshair?: boolean;
-}
 
 
 /* *

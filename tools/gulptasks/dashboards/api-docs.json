@@ -10,6 +10,7 @@
         "../../../ts/Dashboards/Board.ts",
         "../../../ts/Dashboards/Components/Component.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
+        "../../../ts/Dashboards/Components/ConnectorHandler.ts",
         "../../../ts/Dashboards/Components/EditableOptions.ts",
         "../../../ts/Dashboards/Components/HTMLComponent/HTMLComponent.ts",
         "../../../ts/Dashboards/Components/HTMLComponent/HTMLComponentOptions.ts",

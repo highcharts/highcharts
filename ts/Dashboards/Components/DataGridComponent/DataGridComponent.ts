@@ -222,7 +222,7 @@ class DataGridComponent extends Component {
         this.emit({ type: 'load' });
         await super.load();
 
-        const connector = this.connectorHandlers?.[0]?.connector;
+        const connector = this.getFirstConnector();
 
         if (
             connector &&
@@ -292,7 +292,7 @@ class DataGridComponent extends Component {
             this.dataGrid = this.constructDataGrid();
         }
 
-        const connector = this.connectorHandlers?.[0]?.connector;
+        const connector = this.getFirstConnector();
 
         if (
             connector &&
@@ -322,7 +322,7 @@ class DataGridComponent extends Component {
             options.connector[0] : options.connector;
         if (
             this.connectorHandlers[0] &&
-            connectorOptions?.id !== this.connectorHandlers?.[0].connectorId
+            connectorOptions?.id !== this.connectorHandlers[0]?.connectorId
         ) {
             const connectorListeners = this.connectorListeners;
             for (let i = 0, iEnd = connectorListeners.length; i < iEnd; ++i) {
@@ -341,7 +341,7 @@ class DataGridComponent extends Component {
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridNamespace) {
             const DataGrid = DataGridComponent.DataGridNamespace.DataGrid;
-            const connector = this.connectorHandlers?.[0]?.connector;
+            const connector = this.getFirstConnector();
 
             const columnOptions = connector ?
                 this.getColumnOptions(
@@ -370,7 +370,7 @@ class DataGridComponent extends Component {
 
     private setupConnectorUpdate(): void {
         const { dataGrid } = this;
-        const connector = this.connectorHandlers?.[0]?.connector;
+        const connector = this.getFirstConnector();
 
         if (connector && dataGrid) {
             dataGrid.on('cellClick', (e: any): void => {
@@ -391,7 +391,7 @@ class DataGridComponent extends Component {
      * @internal
      */
     private filterColumns(): DataTable|undefined {
-        const table = this.connectorHandlers?.[0]?.connector?.table.modified,
+        const table = this.getFirstConnector()?.table.modified,
             visibleColumns = this.options.visibleColumns;
 
         if (table) {

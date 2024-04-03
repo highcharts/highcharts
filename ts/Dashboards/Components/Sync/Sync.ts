@@ -347,9 +347,18 @@ namespace Sync {
         handler?: HandlerConfig;
     }
 
-    /** @internal */
+    /**
+     * The configuration used to determine the default sync options, handlers
+     * and emitters for a component.
+     */
     export interface PredefinedSyncConfig {
+        /**
+         * The default sync pairs (emitters and handlers) for the component.
+         */
         defaultSyncPairs: Record<string, SyncPair>;
+        /**
+         * The default sync options for the component.
+         */
         defaultSyncOptions: Record<string, OptionsEntry>;
     }
 

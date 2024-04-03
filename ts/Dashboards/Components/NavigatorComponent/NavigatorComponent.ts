@@ -28,10 +28,12 @@ import type {
 } from '../../Plugins/HighchartsTypes';
 import type Cell from '../../Layout/Cell';
 import type {
-    CrossfilterSyncOptions
-} from './NavigatorSyncs/NavigatorCrossfilterSync';
-import type { Options } from './NavigatorComponentOptions';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
+    CrossfilterSyncOptions,
+    Options
+} from './NavigatorComponentOptions';
+import type {
+    RangeModifierOptions, RangeModifierRangeOptions
+} from '../../../Data/Modifiers/RangeModifierOptions';
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
@@ -268,9 +270,10 @@ class NavigatorComponent extends Component {
             }
         }
 
-        if (this.connectorHandlers?.[0]?.connector) {
-            const columns =
-                this.connectorHandlers[0].connector.table.getColumnNames();
+        const connector = this.getFirstConnector();
+
+        if (connector) {
+            const columns = connector.table.getColumnNames();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -378,7 +381,7 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart;
-        const connector = this.connectorHandlers[0]?.connector;
+        const connector = this.getFirstConnector();
 
         if (connector) {
             const table = connector.table,
@@ -413,7 +416,7 @@ class NavigatorComponent extends Component {
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
             this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
-        const table = this.connectorHandlers?.[0]?.connector?.table;
+        const table = this.getFirstConnector()?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];

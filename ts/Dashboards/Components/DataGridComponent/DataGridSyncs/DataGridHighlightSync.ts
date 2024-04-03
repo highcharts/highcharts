@@ -54,7 +54,7 @@ const syncPair: Sync.SyncPair = {
         const { dataCursor: cursor } = board;
 
         const onDataGridHover = (e: any): void => {
-            const table = this.connectorHandlers?.[0]?.connector?.table;
+            const table = this.getFirstConnector()?.table;
             if (table) {
                 const row = e.row;
 
@@ -68,7 +68,7 @@ const syncPair: Sync.SyncPair = {
         };
 
         const onDataGridMouseOut = (): void => {
-            const table = this.connectorHandlers?.[0]?.connector?.table;
+            const table = this.getFirstConnector()?.table;
             if (table) {
                 cursor.emitCursor(table, {
                     type: 'position',

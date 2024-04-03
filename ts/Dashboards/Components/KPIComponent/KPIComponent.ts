@@ -418,8 +418,10 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        if (this.connectorHandlers?.[0]?.connector && this.options.columnName) {
-            const table = this.connectorHandlers[0].connector.table.modified,
+        const connector = this.getFirstConnector();
+
+        if (connector && this.options.columnName) {
+            const table = connector.table.modified,
                 column = table.getColumn(this.options.columnName),
                 length = column?.length || 0;
 
