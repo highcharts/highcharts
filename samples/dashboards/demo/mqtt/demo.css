@@ -16,8 +16,32 @@
     --color-navigation-text: #20202b;
     --color-text: #000;
     --color-text-border: #fff;
-    --color-tooltip-background: #5352be;
-    --color-tooltip-text: #fff;
+    --color-tooltip-background: #b7eeb2;
+}
+
+.el-aggr,
+#el-info {
+    --color-axis-labels: #a7a4b0;
+    --color-background: #fff;
+    --color-gauge: #4caffe;
+    --color-hover: #5352be;
+    --color-active: #336;
+    --color-hover-text: #fff;
+    --color-pane: #eee;
+    --color-pane-line: #ccc;
+    --color-text: #2f2b38;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+
+    .el-aggr {
+        --color-axis-labels: #838394;
+        --color-background: #0d0d0d;
+        --color-pane: #20202c;
+        --color-pane-line: #838394;
+        --color-text: #dadae2;
+    }
 }
 
 /* Application specific styling */
@@ -160,38 +184,6 @@ div.highcharts-description {
 * Dashboards styles
 */
 
-.el-aggr {
-    --color-axis-labels: #a7a4b0;
-    --color-background: #fff;
-    --color-gauge: #4caffe;
-    --color-hover: #5352be;
-    --color-active: #336;
-    --color-hover-text: #fff;
-    --color-pane: #eee;
-    --color-pane-line: #ccc;
-    --color-text: #2f2b38;
-}
-
-#container.highcharts-dark .el-aggr {
-    --color-axis-labels: #838394;
-    --color-background: #0d0d0d;
-    --color-pane: #20202c;
-    --color-pane-line: #838394;
-    --color-text: #dadae2;
-}
-
-@media (prefers-color-scheme: dark) {
-    /* dark mode */
-
-    .el-aggr {
-        --color-axis-labels: #838394;
-        --color-background: #0d0d0d;
-        --color-pane: #20202c;
-        --color-pane-line: #838394;
-        --color-text: #dadae2;
-    }
-}
-
 #container {
     padding: 10px;
     background-color: var(--highcharts-neutral-color-5);
@@ -215,7 +207,6 @@ div.highcharts-description {
     background-color: var(--highcharts-background-color);
 }
 
-#el-info,
 .el-aggr {
     display: flex;
     flex-direction: column;
@@ -225,7 +216,11 @@ div.highcharts-description {
 
 #el-info,
 #el-map {
-    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-height: 320px;
+    flex: 1;
 }
 
 .el-kpi {
@@ -252,12 +247,17 @@ div#info-container {
         text-align: center;
         font-size: 10px;
     }
+
+    & p {
+        text-align: center;
+        font-size: 10px;
+    }
 }
 
 table.intake {
     margin-top: 10px;
     font-size: 12px;
-    background-color: #ccc;
+    background-color: #def;
     width: 100%;
 
     & caption {
@@ -267,6 +267,10 @@ table.intake {
 
     & th {
         text-align: left;
+    }
+
+    & th:nth-of-type(1) {
+        width: 25%;
     }
 
     & td {

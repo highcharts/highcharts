@@ -1,10 +1,34 @@
 let board = null;
 let maxConnectedUnits;
 
+// Map view when the location is unknown
 const defaultMapView = {
     // Sogndal-ish
-    center: [7.06, 61.14],
+    center: [7.08, 61.22],
     zoom: 9
+};
+
+// Map marker for power generator facility
+const stationMarker = {
+    symbol: 'circle',
+    radius: 10,
+    fillColor: 'green',
+    lineColor: '#ffffff',
+    lineWidth: 2
+};
+
+// Map marker for water reservoir
+const reservoirMarker = {
+    symbol: 'mapmarker',
+    radius: 10,
+    fillColor: 'blue'
+};
+
+// Map marker for water intake
+const intakeMarker = {
+    symbol: 'triangle-down',
+    radius: 6,
+    fillColor: 'red'
 };
 
 // Launches the Dashboards application
@@ -12,7 +36,7 @@ async function dashboardCreate() {
     const powerUnit = 'MW';
 
     // Create configuration for power generator units
-    const pu = await createPowerGeneratorUnit();
+    const pu = createPowerGeneratorUnit();
 
     return await Dashboards.board('container', {
         dataPool: {
@@ -28,7 +52,7 @@ async function dashboardCreate() {
         };
     }
 
-    async function createPowerGeneratorUnit() {
+    function createPowerGeneratorUnit() {
         const powerGenUnits = {
             connectors: [],
             components: []
@@ -98,6 +122,9 @@ async function dashboardCreate() {
                 title: {
                     text: ''
                 },
+                chart: {
+                    styledMode: false
+                },
                 legend: {
                     enabled: false
                 },
@@ -117,8 +144,8 @@ async function dashboardCreate() {
                     showInLegend: false
                 }, {
                     type: 'mappoint',
-                    name: 'aggr',
-                    color: '#DE3163',
+                    name: 'stations',
+                    color: 'blue',
                     dataLabels: {
                         align: 'left',
                         crop: false,
@@ -132,9 +159,14 @@ async function dashboardCreate() {
                     marker: {
                         symbol: 'square'
                     },
-                    data: [{
-                        name: 'test'
-                    }]
+                    tooltip: {
+                        footerFormat: '',
+                        headerFormat: '',
+                        pointFormat: (
+                            '<b>{point.name}</b>'
+                        )
+                    },
+                    data: []
                 }]
             }
         };
@@ -339,31 +371,99 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             .find(c => c.options.renderTo === id);
     }
 
+    function getFormattedValue(obj) {
+        if (obj === null) {
+            return '-';
+        }
+
+        if (typeof obj === 'object') {
+            return JSON.stringify(obj).replaceAll(/["{}]/g, '');
+        }
+        // Assume float
+        return obj.toFixed(2);
+    }
+
     function createIntakeTable(powerPlantInfo) {
         let html = '<table class="intake"><caption>Intakes</caption>' +
-            '<tr><th>Name</th><th>Q min</th><th>Q act</th></tr>';
+            '<tr><th>Name</th><th>Q min</th><th>Q act</th>' +
+            '<th>Elevation</th><th>Location</th></tr>';
 
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
             const item = powerPlantInfo.intakes[i];
-            html += `<tr><td>${item.name}</td><td>${item.q_min_set}</td>
-                    <td>${item.q_min_act}</td></tr>`;
+            const qMinSet = getFormattedValue(item.q_min_set);
+            const qMinAct = getFormattedValue(item.q_min_act);
+            const elevation = getFormattedValue(item.h);
+            const location = getFormattedValue(item.location);
+
+            html += `<tr><td>${item.name}</td>
+                <td>${qMinSet}</td>
+                <td>${qMinAct}</td>
+                <td>${elevation}</td>
+                <td>${location}</td>
+            </tr>`;
         }
         html += '</table>';
 
         return html;
     }
 
+    async function addIntakeMarkers(mapComp, powerPlantInfo) {
+        for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
+            const item = powerPlantInfo.intakes[i];
+            if (item.location === null) {
+                continue;
+            }
+            // Add reservoir to map
+            await mapComp.addPoint({
+                name: item.name,
+                lon: item.location.lon,
+                lat: item.location.lat,
+                marker: intakeMarker
+            });
+        }
+    }
+
     function createReservoirTable(powerPlantInfo) {
         let html = '<table class="intake"><caption>Reservoirs</caption>' +
-            '<tr><th>Name</th><th>Volume</th></tr>';
+            '<tr><th>Name</th><th>Volume</th><th>Drain</th>' +
+            '<th>Energy</th><th>Elevation</th><th>Location</th></tr>';
 
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
-            html += `<tr><td>${item.name}</td><td>${item.volume}</td></tr>`;
+
+            const volume = getFormattedValue(item.volume);
+            const drain = getFormattedValue(item.drain);
+            const energy = getFormattedValue(item.energy);
+            const elevation = getFormattedValue(item.h);
+            const location = getFormattedValue(item.location);
+
+            html += `<tr><td>${item.name}</td>
+                <td>${volume}</td>
+                <td>${drain}</td>
+                <td>${energy}</td>
+                <td>${elevation}</td>
+                <td>${location}</td>
+            </tr>`;
         }
         html += '</table>';
 
         return html;
+    }
+
+    async function addReservoirMarkers(mapComp, powerPlantInfo) {
+        for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
+            const item = powerPlantInfo.reservoirs[i];
+            if (item.location === null) {
+                continue;
+            }
+            // Add reservoir to map
+            await mapComp.addPoint({
+                name: item.name,
+                lon: item.location.lon,
+                lat: item.location.lat,
+                marker: reservoirMarker
+            });
+        }
     }
 
     const stationName = powerPlantInfo.name;
@@ -381,12 +481,13 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     });
 
     const intakeHtml = powerPlantInfo.nIntakes === 0 ?
-        '' : createIntakeTable(powerPlantInfo);
+        '<p>No intakes</p>' : createIntakeTable(powerPlantInfo);
     const reservoirHtml = powerPlantInfo.nReservoirs === 0 ?
-        '' : createReservoirTable(powerPlantInfo);
+        '<p>No reservoirs</p>' : createReservoirTable(powerPlantInfo);
 
-    // eslint-disable-next-line max-len
-    const el = document.querySelector('div#el-info .highcharts-dashboards-component-content');
+    const el = document.querySelector(
+        'div#el-info .highcharts-dashboards-component-content'
+    );
     el.innerHTML = `<div id="info-container">
     <h3>${posInfo}</h6>
     ${intakeHtml}
@@ -396,50 +497,53 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
     // Map
     const mapComp = getComponent(board, 'el-map');
-    const mapPoints = mapComp.chart.series[1].data;
-    let markers;
+    const mapPoints = mapComp.chart.series[1];
+
+    while (mapPoints.data.length > 0) {
+        await mapPoints.data[0].remove();
+    }
 
     if (location !== null) {
-        markers = [{
+        // Power station marker
+        await mapPoints.addPoint({
             name: stationName,
             lon: location.lon,
             lat: location.lat,
-            marker: {
-                symbol: 'mapmarker',
-                radius: 10,
-                fillColor: '#2caffe',
-                lineColor: '#ffffff',
-                lineWidth: 2
-            }
-        }];
+            marker: stationMarker
+        });
+
+        // Add reservoir markers if present
+        await addReservoirMarkers(mapPoints, powerPlantInfo);
+
+        // Add intake markers if present
+        await addIntakeMarkers(mapPoints, powerPlantInfo);
+
         // Update station name, map center and zoom
         await mapComp.update({
             title: stationName,
             chartOptions: {
                 mapView: {
-                    center: [location.lon, location.lat],
-                    zoom: 10
+                    center: [location.lon, location.lat + 0.1],
+                    zoom: 9
                 }
             }
         });
     } else {
-        markers = [{
+        await mapPoints.addPoint({
             name: '?',
             lon: defaultMapView.center[0],
             lat: defaultMapView.center[1],
             marker: {
                 symbol: 'square'
             }
-        }];
+        });
+
         await mapComp.update({
             title: stationName,
             chartOptions: {
                 mapView: defaultMapView
             }
         });
-    }
-    for (let i = 0; i < markers.length; i++) {
-        mapPoints[i].update(markers[i]);
     }
 
     // Update dashboard components
