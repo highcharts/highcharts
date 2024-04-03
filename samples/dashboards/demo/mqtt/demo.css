@@ -238,6 +238,45 @@ div.highcharts-description {
 
 /* *
  *
+ *  Information panel (Custom HTML)
+ *
+ * */
+
+div#info-container {
+    padding: 5px;
+    margin: 0;
+
+    & h3 {
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        font-size: 10px;
+    }
+}
+
+table.intake {
+    margin-top: 10px;
+    font-size: 12px;
+    background-color: #ccc;
+    width: 100%;
+
+    & caption {
+        color: blue;
+        font-size: 13px;
+    }
+
+    & th {
+        text-align: left;
+    }
+
+    & td {
+        padding: 2px;
+        background-color: #f0f0f0;
+    }
+}
+
+/* *
+ *
  *  Map
  *
  * */
@@ -368,6 +407,8 @@ div.highcharts-description {
     letter-spacing: 1.5px;
     color: rgb(42, 165, 71);
     text-align: center;
+    margin: 5px 0;
+    padding: 0;
 }
 
 .el-aggr .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
