@@ -29,6 +29,7 @@ const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
+    crisp,
     extend,
     merge,
     pick
@@ -262,8 +263,7 @@ class BoxPlotSeries extends ColumnSeries {
                 let d: SVGPath;
 
                 // The stem
-                crispCorr = (point.stem.strokeWidth() % 2) / 2;
-                crispX = left + halfWidth + crispCorr;
+                crispX = crisp(point.plotX || 0, point.stem.strokeWidth());
                 d = [
                     // Stem up
                     ['M', crispX, q3Plot],

@@ -80,6 +80,7 @@ const {
     arrayMin,
     clamp,
     correctFloat,
+    crisp,
     defined,
     destroyObjectProperties,
     diffObjects,
@@ -2814,8 +2815,7 @@ class Series {
             attribs.y = pos[1] - radius;
 
             if (seriesOptions.crisp) {
-                // Math.floor for #1843:
-                attribs.x = Math.floor(attribs.x);
+                attribs.x = crisp(attribs.x);
             }
         }
 

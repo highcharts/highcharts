@@ -894,19 +894,17 @@ class SVGRenderer implements SVGRendererLike {
         width: number,
         roundingFunction: ('round'|'floor'|'ceil') = 'round'
     ): SVGPath {
-        const start = points[0];
-        const end = points[1];
+        const [start, end] = points,
+            crisp = width % 2 / 2;
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            // Subtract due to #1129. Now bottom and left axis gridlines behave
-            // the same.
             start[1] = end[1] =
-                Math[roundingFunction](start[1]) - (width % 2 / 2);
+                Math[roundingFunction](start[1] - crisp) + crisp;
         }
         if (defined(start[2]) && start[2] === end[2]) {
             start[2] = end[2] =
-                Math[roundingFunction](start[2]) + (width % 2 / 2);
+                Math[roundingFunction](start[2] - crisp) + crisp;
         }
         return points;
     }

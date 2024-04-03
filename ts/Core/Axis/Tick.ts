@@ -825,7 +825,7 @@ class Tick {
             reverseCrisp = (
                 (horiz && x === axisEnd) ||
                 (!horiz && y === axisStart)
-            ) ? -1 : 1, // #1480, #1687
+            ) ?  1 : 1, // #1480, #1687
             pxPos = horiz ? x : y;
 
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`

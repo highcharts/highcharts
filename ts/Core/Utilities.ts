@@ -268,6 +268,18 @@ function clamp(value: number, min: number, max: number): number {
     return value > min ? value < max ? value : max : min;
 }
 
+/**
+ * Utility for crisping a line position to the nearest full pixel depening on
+ * the line width
+ * @param {number} value The raw pixel position
+ * @param {number} lineWidth The line width
+ * @return {number} The pixel position to use for a crisp display
+ */
+const crisp = (value: number, lineWidth: number = 0): number => {
+    const mod = lineWidth % 2 / 2;
+    return Math.round(value - mod) + mod;
+};
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * Return the deep difference between two objects. It can either return the new
@@ -2290,6 +2302,7 @@ const Utilities = {
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
+    crisp,
     css,
     defined,
     destroyObjectProperties,

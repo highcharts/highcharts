@@ -41,6 +41,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    crisp,
     defined,
     extend,
     fireEvent,
@@ -332,8 +333,8 @@ class ColumnSeries extends Series {
     public crispCol(
         x: number,
         y: number,
-        w: number,
-        h: number
+        width: number,
+        height: number
     ): BBoxObject {
         const borderWidth = this.borderWidth,
             xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
@@ -343,28 +344,28 @@ class ColumnSeries extends Series {
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
         if (this.options.crisp) {
-            right = Math.round(x + w) + xCrisp;
-            x = Math.round(x) + xCrisp;
-            w = right - x;
+            right = crisp(x + width, borderWidth);
+            x = crisp(x, borderWidth);
+            width = right - x;
         }
 
         // Vertical
-        const bottom = Math.round(y + h) + yCrisp,
+        const bottom = crisp(y + height, borderWidth),
             fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-        y = Math.round(y) + yCrisp;
-        h = bottom - y;
+        y = crisp(y, borderWidth);
+        height = bottom - y;
 
         // Top edges are exceptions
-        if (fromTop && h) { // #5146
-            y -= 1;
-            h += 1;
+        if (fromTop && height) { // #5146
+            //y -= 1;
+            //h += 1;
         }
 
         return {
-            x: x,
-            y: y,
-            width: w,
-            height: h
+            x,
+            y,
+            width,
+            height
         };
     }
 

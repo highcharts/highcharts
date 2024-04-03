@@ -900,10 +900,14 @@ class Axis {
             }
             const value = sign * (val - localMin) * localA;
 
-            returnValue = (!axis.isRadial ? correctFloat(value) : value) +
+            returnValue = value +
                 cvsOffset +
                 (sign * minPixelPadding) +
                 (isNumber(pointPlacement) ? localA * pointPlacement : 0);
+
+            if (!axis.isRadial) {
+                returnValue = correctFloat(returnValue);
+            }
         }
 
         return returnValue;
@@ -1033,9 +1037,8 @@ class Axis {
             // to fail the isNumber test (#7709).
             translatedValue = clamp(translatedValue, -1e5, 1e5);
 
-
-            x1 = x2 = Math.round(translatedValue + transB);
-            y1 = y2 = Math.round(cHeight - translatedValue - transB);
+            x1 = x2 = translatedValue + transB;
+            y1 = y2 = cHeight - translatedValue - transB;
             if (!isNumber(translatedValue)) { // No min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
