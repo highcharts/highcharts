@@ -64,8 +64,7 @@ Dashboards.board('container', {
                 }, {
                     id: 'cell-id-2'
                 }]
-            }
-            ]
+            }]
         }]
     },
     components: [{
@@ -79,12 +78,10 @@ Dashboards.board('container', {
         renderTo: 'cell-id-1',
         connector: {
             id: 'data',
-            columnAssignment: [
-                {
-                    seriesId: 'mySeriesId',
-                    data: ['Product Name', 'Revenue']
-                }
-            ]
+            columnAssignment: [{
+                seriesId: 'mySeriesId',
+                data: ['Product Name', 'Revenue']
+            }]
         },
         sync: {
             highlight: true
@@ -101,13 +98,11 @@ Dashboards.board('container', {
             xAxis: {
                 type: 'category'
             },
-            series: [
-                {
-                    animation: false,
-                    id: 'mySeriesId',
-                    type: 'column'
-                }
-            ]
+            series: [{
+                animation: false,
+                id: 'mySeriesId',
+                type: 'column'
+            }]
         }
     }, {
         type: 'DataGrid',
@@ -129,6 +124,5 @@ Dashboards.board('container', {
                 }
             }
         }
-    }
-    ]
+    }]
 });
