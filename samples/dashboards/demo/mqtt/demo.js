@@ -1,6 +1,12 @@
 let board = null;
 let maxConnectedUnits;
 
+const defaultMapView = {
+    // Sogndal-ish
+    center: [7.06, 61.14],
+    zoom: 9
+};
+
 // Launches the Dashboards application
 async function dashboardCreate() {
     const powerUnit = 'MW';
@@ -101,10 +107,7 @@ async function dashboardCreate() {
                         alignTo: 'spacingBox'
                     }
                 },
-                mapView: {
-                    center: [7.06, 61.14],
-                    zoom: 9
-                },
+                mapView: defaultMapView,
                 series: [{
                     type: 'tiledwebmap',
                     provider: {
@@ -112,6 +115,26 @@ async function dashboardCreate() {
                         theme: 'Standard'
                     },
                     showInLegend: false
+                }, {
+                    type: 'mappoint',
+                    name: 'aggr',
+                    color: '#DE3163',
+                    dataLabels: {
+                        align: 'left',
+                        crop: false,
+                        enabled: true,
+                        format: '{point.name}',
+                        padding: 0,
+                        verticalAlign: 'top',
+                        x: -2,
+                        y: 5
+                    },
+                    marker: {
+                        symbol: 'square'
+                    },
+                    data: [{
+                        name: 'test'
+                    }]
                 }]
             }
         };
@@ -316,7 +339,39 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             .find(c => c.options.renderTo === id);
     }
 
-    let stationName = powerPlantInfo.name;
+    function createIntakeTable(powerPlantInfo) {
+        let html = '<table class="intake"><caption>Intakes</caption>' +
+            '<tr><th>Name</th><th>Q min</th><th>Q act</th></tr>';
+
+        for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
+            const item = powerPlantInfo.intakes[i];
+            html += `<tr><td>${item.name}</td><td>${item.q_min_set}</td>
+                    <td>${item.q_min_act}</td></tr>`;
+        }
+        html += '</table>';
+
+        return html;
+    }
+
+    function createReservoirTable(powerPlantInfo) {
+        let html = '<table class="intake"><caption>Reservoirs</caption>' +
+            '<tr><th>Name</th><th>Volume</th></tr>';
+
+        for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
+            const item = powerPlantInfo.reservoirs[i];
+            html += `<tr><td>${item.name}</td><td>${item.volume}</td></tr>`;
+        }
+        html += '</table>';
+
+        return html;
+    }
+
+    const stationName = powerPlantInfo.name;
+    const location = powerPlantInfo.location;
+    let posInfo = 'Location unavailable';
+    if (location !== null) {
+        posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
+    }
 
     // Information
     const infoComp = getComponent(board, 'el-info');
@@ -324,15 +379,40 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         title: stationName,
         html: '<h3>Oppdatert</h3>' + stationName // Does not work
     });
+
+    const intakeHtml = powerPlantInfo.nIntakes === 0 ?
+        '' : createIntakeTable(powerPlantInfo);
+    const reservoirHtml = powerPlantInfo.nReservoirs === 0 ?
+        '' : createReservoirTable(powerPlantInfo);
+
     // eslint-disable-next-line max-len
     const el = document.querySelector('div#el-info .highcharts-dashboards-component-content');
-    el.innerHTML = `<p>Number of intakes: ${powerPlantInfo.nIntakes}</p>
-        <p>Number of reservoirs: ${powerPlantInfo.nReservoirs}</p>`;
+    el.innerHTML = `<div id="info-container">
+    <h3>${posInfo}</h6>
+    ${intakeHtml}
+    ${reservoirHtml}
+    </div>
+    `;
 
     // Map
     const mapComp = getComponent(board, 'el-map');
-    const location = powerPlantInfo.location;
+    const mapPoints = mapComp.chart.series[1].data;
+    let markers;
+
     if (location !== null) {
+        markers = [{
+            name: stationName,
+            lon: location.lon,
+            lat: location.lat,
+            marker: {
+                symbol: 'mapmarker',
+                radius: 10,
+                fillColor: '#2caffe',
+                lineColor: '#ffffff',
+                lineWidth: 2
+            }
+        }];
+        // Update station name, map center and zoom
         await mapComp.update({
             title: stationName,
             chartOptions: {
@@ -343,14 +423,23 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             }
         });
     } else {
+        markers = [{
+            name: '?',
+            lon: defaultMapView.center[0],
+            lat: defaultMapView.center[1],
+            marker: {
+                symbol: 'square'
+            }
+        }];
         await mapComp.update({
+            title: stationName,
             chartOptions: {
-                mapView: {
-                    center: [7.06, 61.14],
-                    zoom: 9
-                }
+                mapView: defaultMapView
             }
         });
+    }
+    for (let i = 0; i < markers.length; i++) {
+        mapPoints[i].update(markers[i]);
     }
 
     // Update dashboard components
@@ -366,8 +455,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         };
 
         // Add generator name only if the plant has multiple generators
+        let aggName = stationName;
         if (powerPlantInfo.nAggs > 1) {
-            stationName += ` "${aggInfo.name}"`;
+            aggName += ` "${aggInfo.name}"`;
         }
 
         // Get data
@@ -380,7 +470,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             value: rowCount > 0 ?
                 dataTable.getCellAsNumber('power', rowCount - 1) : 0,
             chartOptions: chartOptions,
-            title: stationName
+            title: aggName
         });
 
         // Chart
@@ -390,7 +480,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 id: connId
             },
             chartOptions: chartOptions,
-            title: stationName
+            title: aggName
         });
 
         // Datagrid
@@ -399,7 +489,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             connector: {
                 id: connId
             },
-            title: stationName
+            title: aggName
         });
     }
 }
