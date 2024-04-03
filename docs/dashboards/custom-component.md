@@ -425,7 +425,7 @@ class TotalRevenueHTML extends HTMLComponent {
     }
 
     getTotalRevenue() {
-        const connector = this.connectorHandlers[0].connector;
+        const connector = this.getFirstConnector();
         const table = connector.table.modified;
 
         return table.columns.Revenue.reduce((acc, cur) => acc + cur);
