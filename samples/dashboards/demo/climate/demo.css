@@ -278,7 +278,8 @@
     background-color: var(--color-background);
 }
 
-#selection-grid .highcharts-datagrid-column-header {
+#selection-grid .highcharts-datagrid-column-header,
+.highcharts-datagrid-cell {
     font-size: 12px;
 }
 
