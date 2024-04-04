@@ -1,7 +1,7 @@
 import type PositionObject from '../Core/Renderer/PositionObject';
 import TreegraphSeries from '../Series/Treegraph/TreegraphSeries';
 import Chart from '../Core/Chart/Chart';
-import GeometryUtilities from '../Core/Geometry/GeometryUtilities';
+import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const { deg2rad } = H;
