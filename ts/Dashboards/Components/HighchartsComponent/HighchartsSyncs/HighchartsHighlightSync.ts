@@ -92,6 +92,7 @@ function getModifiedTableOffset(
  * */
 
 const defaultOptions: HighchartsHighlightSyncOptions = {
+    affectedSeriesId: null,
     highlightPoint: true,
     showTooltip: true,
     showCrosshair: true
@@ -213,7 +214,9 @@ const syncPair: Sync.SyncPair = {
         const getHoveredPoint = (
             e: DataCursor.Event
         ): Point | undefined => {
-            const table = e.table;
+            const { table, cursor } = e;
+            const highlightOptions = this.sync
+                .syncConfig.highlight as HighchartsHighlightSyncOptions;
             const modifier = table.getModifier();
 
             let offset = 0;
@@ -224,13 +227,18 @@ const syncPair: Sync.SyncPair = {
                 );
             }
 
-            if (chart && chart.series?.length) {
-                const cursor = e.cursor;
-                if (cursor.type === 'position') {
-                    let series;
+            if (chart && chart.series?.length && cursor.type === 'position') {
+                let series: Series | undefined;
 
-                    const seriesIds =
-                        Object.keys(component.seriesFromConnector);
+                if (highlightOptions.affectedSeriesId) {
+                    series = chart.get(
+                        highlightOptions.affectedSeriesId
+                    ) as Series;
+                } else {
+                    const seriesIds = Object.keys(
+                        component.seriesFromConnector
+                    );
+
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
@@ -272,12 +280,12 @@ const syncPair: Sync.SyncPair = {
                             }
                         }
                     }
+                }
 
-                    if (series?.visible && cursor.row !== void 0) {
-                        const point = series.data[cursor.row - offset];
-                        if (point?.visible) {
-                            return point;
-                        }
+                if (series?.visible && cursor.row !== void 0) {
+                    const point = series.data[cursor.row - offset];
+                    if (point?.visible) {
+                        return point;
                     }
                 }
             }

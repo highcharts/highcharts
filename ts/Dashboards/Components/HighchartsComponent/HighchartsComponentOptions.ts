@@ -271,6 +271,14 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
  */
 export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
     /**
+     * ID of the series that should be affected by the highlight. If not
+     * defined, the appropriate series will be found according to the column
+     * assignment.
+     *
+     * @default null
+     */
+    affectedSeriesId?: string|null;
+    /**
      * Whether the marker should be synced. When hovering over a point in
      * other component in the same group, the 'hover' state is enabled at
      * the corresponding point in this component.
