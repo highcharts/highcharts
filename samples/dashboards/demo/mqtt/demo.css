@@ -2,6 +2,26 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
+.el-kpi {
+    --color-axis-labels: #a7a4b0;
+    --color-background: #fff;
+    --color-gauge: #4caffe;
+    --color-hover: #5352be;
+    --color-active: #336;
+    --color-hover-text: #fff;
+    --color-pane: #eee;
+    --color-pane-line: #ccc;
+    --color-text: #2f2b38;
+}
+
+#container.highcharts-dark .el-kpi {
+    --color-axis-labels: #838394;
+    --color-background: #0d0d0d;
+    --color-pane: #20202c;
+    --color-pane-line: #838394;
+    --color-text: #dadae2;
+}
+
 #el-map {
     --color-background: #3c7496;
     --color-map: #dddbef;
@@ -48,6 +68,82 @@
         --color-table-bg: #ccc;
         --color-table-td: #333;
     }
+
+    .el-kpi {
+        --color-axis-labels: #838394;
+        --color-background: #0d0d0d;
+        --color-pane: #20202c;
+        --color-pane-line: #838394;
+        --color-text: #dadae2;
+    }
+}
+
+/* *
+ *
+ *  KPI
+ *
+ * */
+
+.el-kpi .highcharts-dashboards-component-title {
+    white-space: nowrap;
+}
+
+.el-kpi #kpi-data .highcharts-dashboards-component-kpi-value {
+    margin: 0.5em 0;
+}
+
+.el-kpi .highcharts-dashboards-component-kpi-content {
+    background: none;
+}
+
+.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
+    fill: var(--color-axis);
+}
+
+.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
+    fill: none;
+    stroke: none;
+}
+
+.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
+    font-size: 28px;
+}
+
+.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
+    fill: var(--highcharts-neutral-color-5);
+    fill-opacity: 1;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+    fill: var(--color-gauge);
+    stroke: none;
+}
+
+.el-kpi .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
+    background-color: var(--color-active);
+    color: var(--color-hover-text);
+}
+
+.el-kpi .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
+}
+
+.el-kpi .highcharts-dashboards-cell-state-active text {
+    fill: var(--color-hover-text);
+}
+
+.el-kpi .highcharts-dashboards-cell-state-hover:hover text {
+    fill: var(--color-hover-text);
+}
+
+.el-kpi .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
+}
+
+.el-kpi .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
 }
 
 /* Application specific styling */
@@ -73,20 +169,20 @@ div#connect_bar {
 
 div#connect_bar h1 {
     padding: 0 5%;
-    font-size: 20px;
+    font-size: 2.5vw;
 }
 
 div#connect_bar #connect_status {
     font-weight: bold;
     color: #dadae2;
-    font-size: 14px;
+    font-size: 0.8vw;
 }
 
 div#connect_bar label span {
     margin-right: 5px;
     color: white;
     padding: 16px;
-    font-size: 16px;
+    font-size: 14px;
     border: none;
 }
 
@@ -135,8 +231,8 @@ div#connect_bar button:hover {
 .dropdown-button {
     background-color: #3498db;
     color: white;
-    padding: 16px;
-    font-size: 16px;
+    padding: 10px;
+    font-size: 1.5vw;
     border: none;
     cursor: pointer;
 }
@@ -190,6 +286,11 @@ div.highcharts-description {
 /*
 * Dashboards styles
 */
+.highcharts-dashboards-component {
+    background-color: var(--highcharts-neutral-color-0);
+    color: var(--highcharts-neutral-color-100);
+    border-radius: 10px;
+}
 
 #container {
     padding: 10px;
@@ -215,8 +316,6 @@ div.highcharts-description {
 }
 
 .el-aggr {
-    display: flex;
-    flex-direction: column;
     min-width: 0;
     flex: 1;
 }
@@ -230,8 +329,15 @@ div.highcharts-description {
     flex: 1;
 }
 
-.el-kpi {
-    max-height: 220px;
+.el-kpi,
+.data-grid {
+    flex: 1 1 25%;
+    max-height: 300px;
+}
+
+.el-chart {
+    flex: 1 1 50%;
+    max-height: 300px;
 }
 
 .el-kpi .highcharts-dashboards-component-kpi-value {
@@ -264,13 +370,14 @@ div#info-container {
 
 #el-info table.intake {
     margin-top: 10px;
-    font-size: 11px;
+    font-size: 12px;
     background-color: var(--color-table-bg);
     width: 100%;
 
     & caption {
         color: var(--color-sk);
         font-size: 13px;
+        font-weight: bold;
     }
 
     & th {
@@ -279,7 +386,7 @@ div#info-container {
         color: var(--color-text);
         padding: 5px;
 
-        & span {
+        & span.unit {
             display: block;
             font-size: 10px;
             font-weight: normal;
@@ -302,15 +409,23 @@ div#info-container {
     }
 }
 
+#el-info h3.intake {
+    padding: 10px;
+    color: var(--color-sk);
+    font-size: 13px;
+}
+
+span.unit {
+    font-size: 10px;
+    font-weight: bold;
+    color: green;
+}
+
 /* *
  *
  *  Map
  *
  * */
-
-#el-map .highcharts-dashboards-component {
-    border-radius: 10px;
-}
 
 #el-map .highcharts-dashboards-component-content {
     background: var(--color-background);
@@ -400,10 +515,6 @@ div#info-container {
     color: var(--color-tooltip-text);
 }
 
-#el-map text.highcharts-title {
-    fill: var(--color-title-text);
-}
-
 #el-map .highcharts-tooltip-box {
     fill: var(--color-tooltip-background);
     fill-opacity: 1;
@@ -420,12 +531,6 @@ div#info-container {
 
 .el-chart {
     max-height: 300px;
-}
-
-.el-aggr .highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
-    color: var(--highcharts-neutral-color-100);
-    border-radius: 10px;
 }
 
 .highcharts-dashboards-component-title {
@@ -464,10 +569,6 @@ div#info-container {
     fill: var(--color-hover-text);
 }
 
-.el-aggr .highcharts-title {
-    font-size: 0.8em;
-}
-
 @media (max-width: 992px) {
     .row {
         flex-direction: column;
@@ -475,6 +576,12 @@ div#info-container {
 }
 
 @media (max-width: 576px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .el-info,
+    .el-map,
     .el-aggr {
         flex: unset;
         width: 100%;

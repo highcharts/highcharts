@@ -19,7 +19,7 @@
 			<div class="cell" id="connect_bar">
 				<h1>Sognekraft</h1>
 				<div id="connect_switch">
-					<input id="connect_toggle" type="checkbox" onclick="onConnectClicked()"></input>
+						<input id="connect_toggle" type="checkbox" accesskey="k" onclick="onConnectClicked()"></input>
 					<label for="connect_toggle"></label>
 				</div>
 				<div id="dropdown-container">
@@ -35,18 +35,16 @@
 				<h1>Highcharts</h1>
 			</div>
 		</div>
-		<div class="row">
-			<div class="el-aggr">
+			<div class="row el-aggr">
 				<div class="cell el-kpi" id="kpi-agg-1"></div>
 				<div class="cell el-chart" id="chart-agg-1"></div>
-				<div class="cell" id="data-grid-1"></div>
+				<div class="cell data-grid" id="data-grid-1"></div>
 			</div>
-			<div class="el-aggr">
+			<div class="row el-aggr">
 				<div class="cell el-kpi" id="kpi-agg-2"></div>
 				<div class="cell el-chart" id="chart-agg-2"></div>
-				<div class="cell" id="data-grid-2"></div>
+				<div class="cell data-grid" id="data-grid-2"></div>
 			</div>
-		</div>
 		<div class="row">
 			<div class="cell" id="el-info"></div>
 			<div class="cell" id="el-map"></div>

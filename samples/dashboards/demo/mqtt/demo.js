@@ -36,7 +36,7 @@ const lang = {
     },
     Volume: {
         nn: 'Volum',
-        unit: 'm3'
+        unit: 'mill. m3'
     },
     Intakes: {
         nn: 'Inntak'
@@ -54,6 +54,14 @@ const lang = {
     },
     Level: {
         nn: 'Nivå',
+        unit: 'moh'
+    },
+    'Highest regulated level': {
+        nn: 'Høgaste regulerte vasstand',
+        unit: 'moh'
+    },
+    'Lowest regulated level': {
+        nn: 'Lågaste regulerte vasstand',
         unit: 'moh'
     },
     Energy: {
@@ -74,7 +82,7 @@ const lang = {
     },
 
     // Translator function
-    tr: function (str, unit = false) {
+    tr: function (str, unit = false, delimBeg = ' (', delimEnd = ')') {
         const item = str in this ? this[str] : null;
         if (item === null) {
             // No translation exists, return original
@@ -87,7 +95,8 @@ const lang = {
         }
 
         if (unit) {
-            ret += `<span>${item.unit}</span>`;
+            ret += `<span class="unit">
+                ${delimBeg}${item.unit}${delimEnd}</span>`;
         }
         return ret;
     }
@@ -97,7 +106,7 @@ const lang = {
 const defaultMapView = {
     // Sogndal-ish
     center: [7.08, 61.22],
-    zoom: 9
+    zoom: 7
 };
 
 // Map marker for power generator facility
@@ -258,7 +267,7 @@ async function dashboardCreate() {
                             '<b>{point.name}</b>'
                         )
                     },
-                    data: []
+                    data: [] // Populated on update
                 }]
             }
         };
@@ -271,26 +280,27 @@ async function dashboardCreate() {
             title: '',
             chartOptions: {
                 chart: {
+                    spacing: [8, 8, 8, 8],
                     type: 'solidgauge',
                     styledMode: false
                 },
                 pane: {
-                    center: ['50%', '85%'],
-                    size: '140%',
-                    startAngle: -90,
-                    endAngle: 90,
                     background: {
-                        innerRadius: '60%',
-                        outerRadius: '100%',
+                        innerRadius: '90%',
+                        outerRadius: '120%',
                         shape: 'arc'
-                    }
+                    },
+                    center: ['50%', '70%'],
+                    endAngle: 90,
+                    startAngle: -90
                 },
-                series: [{
-                    name: lang.tr('Generated power')
-                }],
                 yAxis: {
+                    title: {
+                        text: lang.tr('Generated power', true),
+                        y: -80
+                    },
                     labels: {
-                        distance: '75%',
+                        distance: '105%',
                         y: 5,
                         align: 'auto'
                     },
@@ -300,12 +310,14 @@ async function dashboardCreate() {
                     tickAmount: 2,
                     visible: true,
                     min: 0,
-                    max: 0, // Populated on update
-                    title: {
-                        text: lang.tr('Generated power') + ' (MW)',
-                        y: -60
-                    }
+                    max: 0 // Populated at update
                 },
+                series: [{
+                    name: lang.tr('Generated power'),
+                    enableMouseTracking: true,
+                    innerRadius: '90%',
+                    radius: '120%'
+                }],
                 tooltip: {
                     valueSuffix: ' ' + powerUnit
                 }
@@ -342,7 +354,7 @@ async function dashboardCreate() {
                     min: 0,
                     max: 0, // Populated on update
                     title: {
-                        text: powerUnit
+                        text: lang.tr('Generated power', true)
                     }
                 },
                 credits: {
@@ -476,6 +488,10 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     }
 
     function getIntakeHtml(powerPlantInfo) {
+        if (powerPlantInfo.nIntakes === 0) {
+            return '<h3 class="intake">Ingen inntak</h3>';
+        }
+
         const loc = lang.tr('Location', true);
         const intake = lang.tr('Intakes');
         const qMin = lang.tr('Required minimal flow', true);
@@ -523,8 +539,12 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     }
 
     function getReservoirHtml(powerPlantInfo) {
-        const loc = lang.tr('Location', true);
+        if (powerPlantInfo.nReservoirs === 0) {
+            return '<h3 class="intake">Ingen tilkytta vassmagasin</h3>';
+        }
+
         const res = lang.tr('Reservoirs');
+        const loc = lang.tr('Location', true);
         const vol = lang.tr('Volume', true);
         const drain = lang.tr('Drain', true);
         const energy = lang.tr('Energy', true);
@@ -542,7 +562,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
 
-            const volume = getFormattedValue(item.volume);
+            const volume = getFormattedValue(item.volume / 1000000);
             const drain = getFormattedValue(item.drain);
             const energy = getFormattedValue(item.energy);
             const netFlow = getFormattedValue(item.net_flow, true);
@@ -845,8 +865,10 @@ window.onload = () => {
 
     // Populate dropdown menu
     const dropdownDiv = document.getElementById('dropdownContent');
+    let keyId = 1; // Keyboard shortcut ALT + x
     for (const key of Object.keys(plantLookup)) {
-        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
+        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#" accessKey="${keyId}">${key}</a>`;
+        keyId += 1;
     }
 
     // Custom click handler (dropdown button for selecting power stations)
