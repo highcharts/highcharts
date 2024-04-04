@@ -535,7 +535,7 @@ function onAfterRender(this: Axis): void {
                     // Negate distance if top or left axis
                     // Subtract 1px to draw the line at the end of the tick
                     tickLength = (axis.tickSize('tick') || [1])[0],
-                    distance = (tickLength - 1) * ((
+                    distance = tickLength * ((
                         axis.side === GridAxisSide.top ||
                         axis.side === GridAxisSide.left
                     ) ? -1 : 1);

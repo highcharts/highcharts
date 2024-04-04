@@ -45,6 +45,7 @@ const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
+    crisp,
     erase,
     extend,
     fireEvent,
@@ -1612,7 +1613,7 @@ class Point {
         const pos = this.pos();
 
         return pos ? this.series.chart.renderer.symbols.circle(
-            Math.floor(pos[0]) - size,
+            crisp(pos[0]) - size,
             pos[1] - size,
             size * 2,
             size * 2
