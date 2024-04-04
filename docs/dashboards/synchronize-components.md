@@ -130,6 +130,7 @@ Highlight sync can have additional options:
 sync: {
     highlight: {
         enabled: true,
+        affectedSeriesId: 'series-1',
         highlightPoint: true,
         showTooltip: false,
         showCrosshair: true
@@ -139,6 +140,9 @@ sync: {
 
 Demo:
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
+
+Affected series ID demo:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/highcharts-highlight-affected-series allow="fullscreen"></iframe>
 
 
 ## Custom synchronization

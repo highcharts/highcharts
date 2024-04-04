@@ -275,6 +275,10 @@ export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
      * defined, the appropriate series will be found according to the column
      * assignment.
      *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/highcharts-highlight-affected-series | Affected Series ID Option }
+     *
      * @default null
      */
     affectedSeriesId?: string|null;
