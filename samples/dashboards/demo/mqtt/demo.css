@@ -35,7 +35,8 @@
 @media (prefers-color-scheme: dark) {
     /* dark mode */
 
-    .el-aggr {
+    .el-aggr,
+    #el-info {
         --color-axis-labels: #838394;
         --color-background: #0d0d0d;
         --color-pane: #20202c;
