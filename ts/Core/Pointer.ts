@@ -1887,10 +1887,12 @@ class Pointer {
                     (e: PointerEvent): void => {
                         if (
                             (e.target as Element)?.hasPointerCapture(
-                                e.pointerId)
+                                e.pointerId
+                            )
                         ) {
                             (e.target as Element)?.releasePointerCapture(
-                                e.pointerId);
+                                e.pointerId
+                            );
                         }
                     }
                 ),
@@ -1898,7 +1900,7 @@ class Pointer {
                     container,
                     'pointermove',
                     (e: PointerEvent): void => {
-                        chart.pointer.getPointFromEvent(e)?.onMouseOver(e);
+                        chart.pointer?.getPointFromEvent(e)?.onMouseOver(e);
                     }
                 )
             );
@@ -1927,7 +1929,9 @@ class Pointer {
             }
             // Mostly for styled mode
             container.className = container.className.replace(
-                ' highcharts-no-touch-action', '');
+                ' highcharts-no-touch-action',
+                ''
+            );
 
             pointer.hasPointerCapture = false;
         }
