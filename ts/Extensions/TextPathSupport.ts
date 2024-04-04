@@ -8,7 +8,7 @@ const { deg2rad } = H;
 const { addEvent } = U;
 const { pointInPolygon } = GeometryUtilities;
 
-function hideOverlappingPolygons(chart: Chart): void {
+function hideOverlappingPolygons(this: Chart): void {
     const isPolygonOverlap = (
         box1Poly: [number, number][],
         box2Poly: [number, number][]
@@ -21,15 +21,15 @@ function hideOverlappingPolygons(chart: Chart): void {
         return false;
     };
 
-    for (const serie of chart.series) {
+    for (const serie of this.series) {
         if (
             serie &&
             serie.is('treegraph') &&
             (serie as TreegraphSeries).links
         ) {
             const links = (serie as TreegraphSeries).links;
-
-            for (const link of links) {
+            for (let i = 0; i < links.length; i++) {
+                const link = links[i];
                 if (link.dataLabel?.text?.textPath) {
                     const tp = link.dataLabel.element.querySelector('textPath');
 
@@ -141,11 +141,13 @@ function hideOverlappingPolygons(chart: Chart): void {
                 for (const link2 of links) {
                     if (
                         link1 !== link2 &&
+                        link1.dataLabel?.visibility !== 'hidden' &&
+                        link2.dataLabel?.visibility !== 'hidden' &&
                         link1.dataLabel?.bBox &&
                         link2.dataLabel?.bBox &&
                         isPolygonOverlap(
-                            link1.dataLabel.bBox,
-                            link2.dataLabel.bBox
+                            link1.dataLabel.bBox.polygon,
+                            link2.dataLabel.bBox.polygon
                         )
                     ) {
                         link1.dataLabel.hide();
