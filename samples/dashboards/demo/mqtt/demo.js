@@ -1,11 +1,12 @@
 let board = null;
 let maxConnectedUnits;
 
+//
 // Language support
-
+//
 const lang = {
     // Selected language
-    current: 'en',
+    current: 'nn',
 
     // Translations
     Name: {
@@ -16,7 +17,7 @@ const lang = {
         unit: 'moh'
     },
     'Power station': {
-        nn: 'Kraftstasjon'
+        nn: 'Kraftverk'
     },
     'Measure time': {
         nn: 'Måletidspunkt',
@@ -27,7 +28,11 @@ const lang = {
         unit: 'MW'
     },
     Location: {
-        nn: 'Koordinatar'
+        nn: 'Plassering',
+        unit: 'lat/lon'
+    },
+    'Location unknown': {
+        nn: 'Ukjend plassering'
     },
     Volume: {
         nn: 'Volum',
@@ -40,7 +45,8 @@ const lang = {
         nn: 'Vassmagasin'
     },
     Drain: {
-        nn: 'Avlaup'
+        nn: 'Avlaup',
+        unit: 'm3/sek'
     },
     Inflow: {
         nn: 'Tilsig',
@@ -68,9 +74,22 @@ const lang = {
     },
 
     // Translator function
-    tr: function (str) {
-        const trans = str in this && this.current !== 'en';
-        return trans ? this[str][this.current] : str;
+    tr: function (str, unit = false) {
+        const item = str in this ? this[str] : null;
+        if (item === null) {
+            // No translation exists, return original
+            return str;
+        }
+
+        let ret = str;
+        if (this.current !== 'en') {
+            ret = this[str][this.current];
+        }
+
+        if (unit) {
+            ret += `<span>${item.unit}</span>`;
+        }
+        return ret;
     }
 };
 
@@ -450,23 +469,23 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
 
         if (typeof obj === 'object') {
-            return JSON.stringify(obj).replaceAll(/["{}]/g, '');
+            return JSON.stringify(obj).replaceAll(/[":{}a-z]/g, '');
         }
         // Assume float
         return obj.toFixed(2);
     }
 
-    function createIntakeTable(powerPlantInfo) {
-        const loc = lang.tr('Location');
+    function getIntakeHtml(powerPlantInfo) {
+        const loc = lang.tr('Location', true);
         const intake = lang.tr('Intakes');
-        const qMin = lang.tr('Required minimal flow');
-        const qAct = lang.tr('Measured minimal flow');
+        const qMin = lang.tr('Required minimal flow', true);
+        const qAct = lang.tr('Measured minimal flow', true);
         const name = lang.tr('Name');
-        const elevation = lang.tr('Elevation');
+        const elevation = lang.tr('Elevation', true);
 
         let html = `<table class="intake"><caption>${intake}</caption>
-            <tr><th>${name}</th><th>${qMin} l/sec</th><th>${qAct} l/sec</th>
-            <th>${elevation}</th><th>${loc}</th></tr>`;
+            <tr><th>${name}</th><th>${loc}</th><th>${qMin}</th><th>${qAct}</th>
+            <th>${elevation}</th></tr>`;
 
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
             const item = powerPlantInfo.intakes[i];
@@ -476,10 +495,10 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             const location = getFormattedValue(item.location);
 
             html += `<tr><td>${item.name}</td>
+                <td>${location}</td>
                 <td>${qMinSet}</td>
                 <td>${qMinAct}</td>
                 <td>${elevation}</td>
-                <td>${location}</td>
             </tr>`;
         }
         html += '</table>';
@@ -503,18 +522,22 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
     }
 
-    function createReservoirTable(powerPlantInfo) {
-        const loc = lang.tr('Location');
+    function getReservoirHtml(powerPlantInfo) {
+        const loc = lang.tr('Location', true);
         const res = lang.tr('Reservoirs');
-        const vol = lang.tr('Volume');
-        const drain = lang.tr('Drain');
-        const energy = lang.tr('Energy');
+        const vol = lang.tr('Volume', true);
+        const drain = lang.tr('Drain', true);
+        const energy = lang.tr('Energy', true);
         const name = lang.tr('Name');
-        const elevation = lang.tr('Elevation');
+        const level = lang.tr('Level', true);
+        const hrv = lang.tr('Highest regulated level', true);
+        const lrv = lang.tr('Lowest regulated level', true);
+        const netFlow = lang.tr('Net flow', true);
 
         let html = `<table class="intake"><caption>${res}</caption>
-            <tr><th>${name}</th><th>${vol}</th><th>${drain}</th>
-            <th>${energy}</th><th>${elevation}</th><th>${loc}</th></tr>`;
+            <tr><th>${name}</th><th>${loc}</th><th>${vol}</th><th>${drain}</th>
+            <th>${netFlow}</th><th>${energy}</th><th>${level}</th>
+            <th>${hrv}</th><th>${lrv}</th></tr>`;
 
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
@@ -522,15 +545,21 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             const volume = getFormattedValue(item.volume);
             const drain = getFormattedValue(item.drain);
             const energy = getFormattedValue(item.energy);
-            const elevation = getFormattedValue(item.h);
+            const netFlow = getFormattedValue(item.net_flow, true);
+            const level = getFormattedValue(item.h, true);
+            const hrv = getFormattedValue(item.HRV, true);
+            const lrv = getFormattedValue(item.LRV, true);
             const location = getFormattedValue(item.location);
 
             html += `<tr><td>${item.name}</td>
+                <td>${location}</td>
                 <td>${volume}</td>
                 <td>${drain}</td>
+                <td>${netFlow}</td>
                 <td>${energy}</td>
-                <td>${elevation}</td>
-                <td>${location}</td>
+                <td>${level}</td>
+                <td>${hrv}</td>
+                <td>${lrv}</td>
             </tr>`;
         }
         html += '</table>';
@@ -556,7 +585,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
     const stationName = powerPlantInfo.name;
     const location = powerPlantInfo.location;
-    let posInfo = lang.tr('Location unavailable');
+    let posInfo = lang.tr('Location unknown');
     if (location !== null) {
         posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
     }
@@ -568,16 +597,14 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         html: '<h3>Oppdatert</h3>' + stationName // Does not work
     });
 
-    const intakeHtml = powerPlantInfo.nIntakes === 0 ?
-        lang.tr('Intakes') + ' -' : createIntakeTable(powerPlantInfo);
-    const reservoirHtml = powerPlantInfo.nReservoirs === 0 ?
-        lang.tr('Reservoirs') + ' -' : createReservoirTable(powerPlantInfo);
+    const intakeHtml = getIntakeHtml(powerPlantInfo);
+    const reservoirHtml = getReservoirHtml(powerPlantInfo);
 
     const el = document.querySelector(
         'div#el-info .highcharts-dashboards-component-content'
     );
     el.innerHTML = `<div id="info-container">
-    <h3>${posInfo}</h6>
+    <h3>${posInfo}</h3>
     ${intakeHtml}
     ${reservoirHtml}
     </div>

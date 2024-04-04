@@ -21,6 +21,7 @@
 
 .el-aggr,
 #el-info {
+    --color-sk: rgb(0, 112, 192);
     --color-axis-labels: #a7a4b0;
     --color-background: #fff;
     --color-gauge: #4caffe;
@@ -30,6 +31,8 @@
     --color-pane: #eee;
     --color-pane-line: #ccc;
     --color-text: #2f2b38;
+    --color-table-bg: #fff;
+    --color-table-td: #f0f0f8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +45,8 @@
         --color-pane: #20202c;
         --color-pane-line: #838394;
         --color-text: #dadae2;
+        --color-table-bg: #ccc;
+        --color-table-td: #333;
     }
 }
 
@@ -67,13 +72,14 @@ div#connect_bar {
 }
 
 div#connect_bar h1 {
-    padding: 0 20px;
+    padding: 0 5%;
+    font-size: 20px;
 }
 
 div#connect_bar #connect_status {
     font-weight: bold;
     color: #dadae2;
-    font-size: 24px;
+    font-size: 14px;
 }
 
 div#connect_bar label span {
@@ -153,7 +159,7 @@ div#connect_bar button:hover {
     display: none;
     position: absolute;
     background-color: #def;
-    min-width: 160px;
+    min-width: 50px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
@@ -220,7 +226,7 @@ div.highcharts-description {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    max-height: 320px;
+    max-height: 400px;
     flex: 1;
 }
 
@@ -241,6 +247,7 @@ div.highcharts-description {
 div#info-container {
     padding: 5px;
     margin: 0;
+    overflow: auto;
 
     & h3 {
         padding: 0;
@@ -255,28 +262,43 @@ div#info-container {
     }
 }
 
-table.intake {
+#el-info table.intake {
     margin-top: 10px;
-    font-size: 12px;
-    background-color: #def;
+    font-size: 11px;
+    background-color: var(--color-table-bg);
     width: 100%;
 
     & caption {
-        color: blue;
+        color: var(--color-sk);
         font-size: 13px;
     }
 
     & th {
         text-align: left;
+        background-color: var(--color-table-td);
+        color: var(--color-text);
+        padding: 5px;
+
+        & span {
+            display: block;
+            font-size: 10px;
+            font-weight: normal;
+            color: green;
+        }
     }
 
     & th:nth-of-type(1) {
-        width: 25%;
+        width: 20%;
+    }
+
+    & th:nth-of-type(2) {
+        width: 20%;
     }
 
     & td {
-        padding: 2px;
-        background-color: #f0f0f0;
+        padding: 3px;
+        background-color: var(--color-table-td);
+        color: var(--color-text);
     }
 }
 
