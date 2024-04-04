@@ -22,25 +22,46 @@ function hideOverlappingPolygons(this: Chart): void {
     };
 
     for (const serie of this.series) {
-        if (
-            serie &&
-            serie.is('treegraph') &&
-            (serie as TreegraphSeries).links
-        ) {
-            const links = (serie as TreegraphSeries).links,
+
+        const textPathCandidates = [];
+        let foundPotential;
+
+        // Gather links which may have textPaths
+        if (serie.is('treegraph') && (serie as TreegraphSeries).links) {
+            foundPotential = textPathCandidates.push(
+                ...(serie as TreegraphSeries).links
+            );
+        }
+
+        // Gather points which may have textPaths
+        if (serie.is('arcdiagram') || serie.is('sunburst')) {
+            foundPotential = textPathCandidates.push(
+                ...serie.points
+            );
+        }
+
+        if (foundPotential) {
+            const length = textPathCandidates.length,
+                // It is necessary to store the polygons seperately
+                // because storing them on the labels (or their bbox)
+                // causes all labels to get the same polygon
                 polygons:[[number, number][], number][] = [];
 
-            for (let i = 0; i < links.length; i++) {
-                const link = links[i];
-                if (link.dataLabel?.text?.textPath) {
-                    const tp = link.dataLabel.element.querySelector('textPath');
+            for (let i = 0; i < length; i++) {
+                const linkOrPoint = textPathCandidates[i];
+
+                if (linkOrPoint.dataLabel?.text?.textPath) {
+                    const tp = linkOrPoint
+                        .dataLabel
+                        .element
+                        .querySelector('textPath');
 
                     if (tp) {
                         const polygon: [number, number][] = [],
                             { b, h } = serie
                                 .chart
                                 .renderer
-                                .fontMetrics(link.dataLabel.element),
+                                .fontMetrics(linkOrPoint.dataLabel.element),
                             descender = h - b,
                             lineCleanerRegex = new RegExp(
                                 '(<tspan>|' +
@@ -142,20 +163,20 @@ function hideOverlappingPolygons(this: Chart): void {
             const polygonListLength = polygons.length;
 
             for (let i = 0; i < polygonListLength; i++) {
-                const link1 = links[polygons[i][1]];
+                const linkOrPoint1 = textPathCandidates[polygons[i][1]];
 
                 for (let j = 0; j < polygonListLength; j++) {
-                    const link2 = links[polygons[j][1]];
+                    const linkOrPoint2 = textPathCandidates[polygons[j][1]];
 
                     if (
                         i !== j &&
-                        link1.dataLabel &&
-                        link2.dataLabel &&
-                        link1.dataLabel.visibility !== 'hidden' &&
-                        link2.dataLabel.visibility !== 'hidden' &&
+                        linkOrPoint1.dataLabel &&
+                        linkOrPoint2.dataLabel &&
+                        linkOrPoint1.dataLabel.visibility !== 'hidden' &&
+                        linkOrPoint2.dataLabel.visibility !== 'hidden' &&
                         isPolygonOverlap(polygons[i][0], polygons[j][0])
                     ) {
-                        link1.dataLabel.hide();
+                        linkOrPoint1.dataLabel.hide();
                     }
                 }
             }
