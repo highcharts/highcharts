@@ -12,5 +12,5 @@ import Highcharts from '../../Core/Globals.js';
 import TextPathSupport from '../../Extensions/TextPathSupport.js';
 const G: AnyRecord = Highcharts;
 G.TextPathSupport = TextPathSupport;
-G.TextPathSupport.compose(G.Chart);
+G.TextPathSupport.compose(G.chart);
 export default Highcharts;
