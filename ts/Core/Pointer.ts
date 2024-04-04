@@ -35,7 +35,8 @@ const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
-    composed
+    composed,
+    isTouchDevice
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
@@ -130,6 +131,8 @@ class Pointer {
 
     public hasPinched?: boolean;
 
+    public hasPointerCapture?: boolean;
+
     public hasZoom?: boolean;
 
     public initiated?: boolean;
@@ -141,6 +144,8 @@ class Pointer {
     public options: Options;
 
     public pinchDown?: Array<PointerEvent>;
+
+    public pointerCaptureEventsToUnbind: Array<Function> = [];
 
     public res?: boolean;
 
@@ -1839,6 +1844,92 @@ class Pointer {
                 this.onDocumentTouchEnd.bind(this),
                 { passive: false }
             );
+        }
+
+        this.setPointerCapture();
+        addEvent(this.chart, 'redraw', this.setPointerCapture.bind(this));
+    }
+
+    /**
+     * Sets, or removes on update, pointer events using pointer capture for
+     * tooltip.followTouchMove if any series has findNearestPointBy that
+     * includes the y dimension.
+     * @private
+     * @function Highcharts.Pointer#setPointerCapture
+    */
+    public setPointerCapture(): void {
+        // Only for touch
+        if (!isTouchDevice) {
+            return;
+        }
+
+        const pointer = this,
+            events = pointer.pointerCaptureEventsToUnbind,
+            chart = pointer.chart,
+            container = chart.container,
+            followTouchMove = pick(
+                chart.options.tooltip?.followTouchMove,
+                true
+            ),
+            shouldHave = followTouchMove && chart.series.some(
+                (series): boolean => (series.options.findNearestPointBy as any)
+                    .indexOf('y') > -1
+            );
+
+        if (!pointer.hasPointerCapture && shouldHave) {
+            // Add
+
+            // Bind
+            events.push(
+                addEvent(
+                    container,
+                    'pointerdown',
+                    (e: PointerEvent): void => {
+                        if (
+                            (e.target as Element)?.hasPointerCapture(
+                                e.pointerId)
+                        ) {
+                            (e.target as Element)?.releasePointerCapture(
+                                e.pointerId);
+                        }
+                    }
+                ),
+                addEvent(
+                    container,
+                    'pointermove',
+                    (e: PointerEvent): void => {
+                        chart.pointer.getPointFromEvent(e)?.onMouseOver(e);
+                    }
+                )
+            );
+
+            if (!chart.styledMode) {
+                css(container, { 'touch-action': 'none' });
+            }
+            // Mostly for styled mode
+            container.className += ' highcharts-no-touch-action';
+
+            pointer.hasPointerCapture = true;
+        } else if (pointer.hasPointerCapture && !shouldHave) {
+            // Remove
+
+            // Unbind
+            events.forEach((e: Function): void => e());
+            events.length = 0;
+
+            if (!chart.styledMode) {
+                css(container, {
+                    'touch-action': pick(
+                        chart.options.chart.style?.['touch-action'],
+                        'manipulation'
+                    )
+                });
+            }
+            // Mostly for styled mode
+            container.className = container.className.replace(
+                ' highcharts-no-touch-action', '');
+
+            pointer.hasPointerCapture = false;
         }
     }
 
