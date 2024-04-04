@@ -27,7 +27,9 @@ function hideOverlappingPolygons(this: Chart): void {
             serie.is('treegraph') &&
             (serie as TreegraphSeries).links
         ) {
-            const links = (serie as TreegraphSeries).links;
+            const links = (serie as TreegraphSeries).links,
+                polygons:[[number, number][], number][] = [];
+
             for (let i = 0; i < links.length; i++) {
                 const link = links[i];
                 if (link.dataLabel?.text?.textPath) {
@@ -132,23 +134,26 @@ function hideOverlappingPolygons(this: Chart): void {
 
                         // Close it
                         polygon.push(polygon[0].slice() as [number, number]);
-                        link.dataLabel.bBox.polygon = polygon;
+                        polygons.push([polygon, i]);
                     }
                 }
             }
 
-            for (const link1 of links) {
-                for (const link2 of links) {
+            const polygonListLength = polygons.length;
+
+            for (let i = 0; i < polygonListLength; i++) {
+                const link1 = links[polygons[i][1]];
+
+                for (let j = 0; j < polygonListLength; j++) {
+                    const link2 = links[polygons[j][1]];
+
                     if (
-                        link1 !== link2 &&
-                        link1.dataLabel?.visibility !== 'hidden' &&
-                        link2.dataLabel?.visibility !== 'hidden' &&
-                        link1.dataLabel?.bBox &&
-                        link2.dataLabel?.bBox &&
-                        isPolygonOverlap(
-                            link1.dataLabel.bBox.polygon,
-                            link2.dataLabel.bBox.polygon
-                        )
+                        i !== j &&
+                        link1.dataLabel &&
+                        link2.dataLabel &&
+                        link1.dataLabel.visibility !== 'hidden' &&
+                        link2.dataLabel.visibility !== 'hidden' &&
+                        isPolygonOverlap(polygons[i][0], polygons[j][0])
                     ) {
                         link1.dataLabel.hide();
                     }
