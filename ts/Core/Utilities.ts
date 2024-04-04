@@ -271,13 +271,22 @@ function clamp(value: number, min: number, max: number): number {
 /**
  * Utility for crisping a line position to the nearest full pixel depening on
  * the line width
- * @param {number} value The raw pixel position
- * @param {number} lineWidth The line width
- * @return {number} The pixel position to use for a crisp display
+ * @param {number} value       The raw pixel position
+ * @param {number} lineWidth   The line width
+ * @param {boolean} [inverted] Whether the containing group is inverted.
+ *                             Crisping round numbers on the y-scale need to go
+ *                             to the other side because the coordinate system
+ *                             is flipped (scaleY is -1)
+ * @return {number}            The pixel position to use for a crisp display
  */
-const crisp = (value: number, lineWidth: number = 0): number => {
-    const mod = lineWidth % 2 / 2;
-    return Math.round(value - mod) + mod;
+const crisp = (
+    value: number,
+    lineWidth: number = 0,
+    inverted?: boolean
+): number => {
+    const mod = lineWidth % 2 / 2,
+        inverter = inverted ? -1 : 1;
+    return (Math.round(value * inverter - mod) + mod) * inverter;
 };
 
 // eslint-disable-next-line valid-jsdoc

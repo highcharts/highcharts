@@ -337,6 +337,7 @@ class ColumnSeries extends Series {
         height: number
     ): BBoxObject {
         const borderWidth = this.borderWidth,
+            inverted = this.chart.inverted,
             xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
         let right;
@@ -350,9 +351,9 @@ class ColumnSeries extends Series {
         }
 
         // Vertical
-        const bottom = crisp(y + height, borderWidth),
+        const bottom = crisp(y + height, borderWidth, inverted),
             fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-        y = crisp(y, borderWidth);
+        y = crisp(y, borderWidth, inverted);
         height = bottom - y;
 
         // Top edges are exceptions
