@@ -1,6 +1,79 @@
 let board = null;
 let maxConnectedUnits;
 
+// Language support
+
+const lang = {
+    // Selected language
+    current: 'en',
+
+    // Translations
+    Name: {
+        nn: 'Namn'
+    },
+    Elevation: {
+        nn: 'Høgde',
+        unit: 'moh'
+    },
+    'Power station': {
+        nn: 'Kraftstasjon'
+    },
+    'Measure time': {
+        nn: 'Måletidspunkt',
+        unit: 'UTC'
+    },
+    'Generated power': {
+        nn: 'Effekt',
+        unit: 'MW'
+    },
+    Location: {
+        nn: 'Koordinatar'
+    },
+    Volume: {
+        nn: 'Volum',
+        unit: 'm3'
+    },
+    Intakes: {
+        nn: 'Inntak'
+    },
+    Reservoirs: {
+        nn: 'Vassmagasin'
+    },
+    Drain: {
+        nn: 'Avlaup'
+    },
+    Inflow: {
+        nn: 'Tilsig',
+        unit: 'm3/sek'
+    },
+    Level: {
+        nn: 'Nivå',
+        unit: 'moh'
+    },
+    Energy: {
+        nn: 'Energi',
+        unit: 'MWh'
+    },
+    'Net flow': {
+        nn: 'Netto endring',
+        unit: 'm3/sek'
+    },
+    'Required minimal flow': {
+        nn: 'Minstevassføring krav',
+        unit: 'm3/sek'
+    },
+    'Measured minimal flow': {
+        nn: 'Minstevassføring målt',
+        unit: 'm3/sek'
+    },
+
+    // Translator function
+    tr: function (str) {
+        const trans = str in this && this.current !== 'en';
+        return trans ? this[str][this.current] : str;
+    }
+};
+
 // Map view when the location is unknown
 const defaultMapView = {
     // Sogndal-ish
@@ -194,7 +267,7 @@ async function dashboardCreate() {
                     }
                 },
                 series: [{
-                    name: 'Generated power'
+                    name: lang.tr('Generated power')
                 }],
                 yAxis: {
                     labels: {
@@ -210,7 +283,7 @@ async function dashboardCreate() {
                     min: 0,
                     max: 0, // Populated on update
                     title: {
-                        text: 'Generated power (MW)',
+                        text: lang.tr('Generated power') + ' (MW)',
                         y: -60
                     }
                 },
@@ -228,7 +301,7 @@ async function dashboardCreate() {
             connector: {
                 id: connId,
                 columnAssignment: [{
-                    seriesId: 'Generated power',
+                    seriesId: lang.tr('Generated power'),
                     data: ['time', 'power']
                 }]
             },
@@ -285,14 +358,14 @@ async function dashboardCreate() {
                 editable: false,
                 columns: {
                     time: {
-                        headerFormat: 'Measured (UTC)',
+                        headerFormat: lang.tr('Measure time') + ' (UTC)',
                         cellFormatter: function () {
                             // eslint-disable-next-line max-len
                             return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
                         }
                     },
                     power: {
-                        headerFormat: 'Generated power (MW)'
+                        headerFormat: lang.tr('Generated power') + ' (MW)'
                     }
                 }
             }
@@ -384,9 +457,16 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     }
 
     function createIntakeTable(powerPlantInfo) {
-        let html = '<table class="intake"><caption>Intakes</caption>' +
-            '<tr><th>Name</th><th>Q min</th><th>Q act</th>' +
-            '<th>Elevation</th><th>Location</th></tr>';
+        const loc = lang.tr('Location');
+        const intake = lang.tr('Intakes');
+        const qMin = lang.tr('Required minimal flow');
+        const qAct = lang.tr('Measured minimal flow');
+        const name = lang.tr('Name');
+        const elevation = lang.tr('Elevation');
+
+        let html = `<table class="intake"><caption>${intake}</caption>
+            <tr><th>${name}</th><th>${qMin} l/sec</th><th>${qAct} l/sec</th>
+            <th>${elevation}</th><th>${loc}</th></tr>`;
 
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
             const item = powerPlantInfo.intakes[i];
@@ -424,9 +504,17 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     }
 
     function createReservoirTable(powerPlantInfo) {
-        let html = '<table class="intake"><caption>Reservoirs</caption>' +
-            '<tr><th>Name</th><th>Volume</th><th>Drain</th>' +
-            '<th>Energy</th><th>Elevation</th><th>Location</th></tr>';
+        const loc = lang.tr('Location');
+        const res = lang.tr('Reservoirs');
+        const vol = lang.tr('Volume');
+        const drain = lang.tr('Drain');
+        const energy = lang.tr('Energy');
+        const name = lang.tr('Name');
+        const elevation = lang.tr('Elevation');
+
+        let html = `<table class="intake"><caption>${res}</caption>
+            <tr><th>${name}</th><th>${vol}</th><th>${drain}</th>
+            <th>${energy}</th><th>${elevation}</th><th>${loc}</th></tr>`;
 
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
@@ -468,7 +556,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
     const stationName = powerPlantInfo.name;
     const location = powerPlantInfo.location;
-    let posInfo = 'Location unavailable';
+    let posInfo = lang.tr('Location unavailable');
     if (location !== null) {
         posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
     }
@@ -481,9 +569,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     });
 
     const intakeHtml = powerPlantInfo.nIntakes === 0 ?
-        '<p>No intakes</p>' : createIntakeTable(powerPlantInfo);
+        lang.tr('Intakes') + ' -' : createIntakeTable(powerPlantInfo);
     const reservoirHtml = powerPlantInfo.nReservoirs === 0 ?
-        '<p>No reservoirs</p>' : createReservoirTable(powerPlantInfo);
+        lang.tr('Reservoirs') + ' -' : createReservoirTable(powerPlantInfo);
 
     const el = document.querySelector(
         'div#el-info .highcharts-dashboards-component-content'
