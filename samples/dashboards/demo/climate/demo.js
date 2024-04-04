@@ -574,7 +574,8 @@ async function setupBoard() {
                 xAxis: {
                     type: 'datetime',
                     dateTimeLabelFormats: {
-                        month: '%e. %b'
+                        week: '%Y-%m-%e',
+                        month: '%Y-%m'
                     },
                     accessibility: {
                         description: 'Years'
