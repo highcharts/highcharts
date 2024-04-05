@@ -244,8 +244,7 @@ const syncPair: Sync.SyncPair = {
                         error(
                             'No series with ID \'' + seriesId + '\' found in ' +
                             'the chart. Affected series will be selected ' +
-                            'according to the column assignment.',
-                            false
+                            'according to the column assignment.'
                         );
                     }
                 }
