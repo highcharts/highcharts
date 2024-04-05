@@ -56,6 +56,17 @@ async function setupDashboard() {
         },
         components: [
             {
+                renderTo: 'elections-selector-wrapper',
+                type: 'CustomHTML',
+                html: `
+                <select name="elections" id="election-year">
+                    <option value="2020">2020 - Biden vs Trump</option>
+                    <option value="2016">2016 - Clinton vs Trump</option>
+                    <option value="2012">2012 - Obama vs Romney</option>
+                    <option value="2008">2008 - Obama vs McCain</option>
+                </select>`
+            },
+            {
                 renderTo: 'html-control',
                 type: 'CustomHTML',
                 id: 'html-control-div'
