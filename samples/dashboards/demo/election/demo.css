@@ -409,6 +409,10 @@
  *
  * */
 
+#election-chart h2 {
+    text-indent: -9999px;
+}
+
 #election-chart .highcharts-title {
     fill: var(--color-title);
     letter-spacing: 1.5px;
@@ -436,20 +440,21 @@
     stroke: none;
 }
 
-/* Readable inside and outside column */
-#election-chart .highcharts-data-label text {
-    fill: #fff;
-    stroke: #000;
-    paint-order: stroke;
-    stroke-width: 2px;
+#election-chart .highcharts-yaxis-grid .highcharts-grid-line,
+#election-chart .highcharts-axis-line {
+    stroke-width: 0px;
 }
 
-#election-chart .highcharts-tooltip text {
-    fill: var(--color-tooltip-text);
+#election-chart .highcharts-title .title-bck-wrapper {
+    padding: 10px 5px;
+    color: #fff;
+    border-radius: 5px;
+    background-color: #2F2E38;
+    margin-right: 5px;
 }
 
 #election-chart .highcharts-tooltip-box {
-    fill: var(--color-tooltip-background);
+    fill: var(--highcharts-neutral-color-10);
     fill-opacity: 1;
     stroke: none;
 }

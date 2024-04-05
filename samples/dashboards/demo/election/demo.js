@@ -186,11 +186,14 @@ async function setupDashboard() {
                 },
                 chartOptions: {
                     title: {
-                        text: 'National'
+                        text: '<span class="title-bck-wrapper">Historic</span>National',
+                        align: 'left',
+                        useHTML: true
                     },
                     chart: {
                         styledMode: true,
-                        type: 'column'
+                        type: 'column',
+                        spacingTop: 20
                     },
                     credits: {
                         enabled: true,
@@ -198,7 +201,10 @@ async function setupDashboard() {
                         text: 'National Archives'
                     },
                     legend: {
-                        enabled: true
+                        enabled: true,
+                        floating: true,
+                        verticalAlign: 'top',
+                        align: 'right'
                     },
                     tooltip: {
                         enabled: true,
@@ -206,21 +212,12 @@ async function setupDashboard() {
                     },
                     plotOptions: {
                         column: {
-                            dataLabels: [
-                                {
-                                    align: 'center',
-                                    verticalAlign: 'bottom',
-                                    inside: true,
-                                    enabled: true,
-                                    rotation: -90,
-                                    y: -5, // Pixels up from bottom
-                                    format: '{point.candidate}'
-                                }, {
-                                    enabled: true,
-                                    inside: false,
-                                    format: '{point.y:.1f}'
-                                }
-                            ]
+                            pointPadding: 0,
+                            dataLabels: [{
+                                enabled: true,
+                                inside: false,
+                                format: '{point.y:.1f}'
+                            }]
                         }
                     },
                     xAxis: {
@@ -233,6 +230,7 @@ async function setupDashboard() {
                         }
                     },
                     yAxis: {
+                        showLastLabel: false,
                         title: {
                             text: 'Percent of votes'
                         },
