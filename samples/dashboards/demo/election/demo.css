@@ -9,13 +9,15 @@
  * */
 :root {
     /* Democrat */
-    --highcharts-color-0: #0200d0;
+    --highcharts-color-0: #4D8ADB;
+    --highcharts-color-0-light: #D7E3F3;
 
     /* Republican */
-    --highcharts-color-1: #c40401;
+    --highcharts-color-1: #BE2F24;
+    --highcharts-color-0-light: #F5D3D1;
 
     /* Others */
-    --highcharts-color-2: #c0c0c0;
+    /* --highcharts-color-2: #c0c0c0; */
     --color-background: var(--highcharts-neutral-color-3);
     --color-link: #339;
 
@@ -58,12 +60,6 @@
 @media (prefers-color-scheme: dark) {
     /* dark mode */
     :root {
-        /* Democrat */
-        --highcharts-color-0: #4a83f0;
-
-        /* Republican */
-        --highcharts-color-1: #dc4747;
-
         /* Others */
         --color-link: #cca;
     }
