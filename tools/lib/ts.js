@@ -245,6 +245,7 @@ function getChildInfos(
             getInterfaceInfo(node, includeNodes) ||
             getImportInfo(node, includeNodes) ||
             getFunctionInfo(node, includeNodes) ||
+            getDeconstructInfos(node, includeNodes) ||
             getExportInfo(node, includeNodes) ||
             getClassInfo(node, includeNodes)
         );
@@ -342,6 +343,60 @@ function getClassInfo(
                 _properties.push(member);
             }
         }
+    }
+
+    if (includeNodes) {
+        _info.node = node;
+    }
+
+    return _info;
+}
+
+
+/**
+ * Retrieves deconstruct information from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a deconstruct.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript node in the information.
+ *
+ * @return {DeconstructInfo|undefined}
+ * Deconstruct information or `undefined`.
+ */
+function getDeconstructInfos(
+    node,
+    includeNodes
+) {
+
+    if (
+        !TS.isParameter(node) &&
+        !TS.isVariableDeclaration(node)
+    ) {
+        return void 0;
+    }
+
+    if (
+        !TS.isArrayBindingPattern(node.name) &&
+        !TS.isObjectBindingPattern(node.name)
+    ) {
+        return void 0;
+    }
+
+    /** @type {DeconstructInfo} */
+    const _info = {
+        kind: 'Deconstruct',
+        deconstructs: {}
+    };
+
+    if (node.initializer) {
+        _info.from = node.initializer.getText();
+    }
+
+    for (const element of node.name.elements) {
+        _info.deconstructs[(element.propertyName || element.name).text] =
+            element.name.text;
     }
 
     if (includeNodes) {
@@ -935,47 +990,36 @@ function getVariableInfo(
 ) {
 
     if (
-        !TS.isParameter(node) &&
-        !TS.isTypeParameterDeclaration(node) &&
-        !TS.isVariableDeclaration(node)
+        (
+            !TS.isTypeParameterDeclaration(node) &&
+            !TS.isParameter(node) &&
+            !TS.isVariableDeclaration(node)
+        ) ||
+        TS.isArrayBindingPattern(node.name) ||
+        TS.isObjectBindingPattern(node.name)
     ) {
         return void 0;
     }
 
     /** @type {VariableInfo} */
     const _info = {
-        kind: 'Variable'
+        kind: 'Variable',
+        name: node.name.getText()
     };
-    /** @type {string} */
-    let _name;
-    /** @type {TS.Node} */
-    let _value;
 
     if (TS.isTypeParameterDeclaration(node)) {
-        _name = node.name.getText();
-        if (node.expression) {
-            _value = node.expression;
+        if (node.constraint) {
+            _info.type = node.constraint.getText();
         }
-    } else if (TS.isObjectBindingPattern(node.name)) {
-        _name = node.initializer.getText();
-        debug(node.name, 4);
+        if (node.default) {
+            _info.value = node.default.getText();
+        }
     } else {
-        _name = node.name.getText();
-        _value = node.initializer;
-    }
-
-    _info.name = _name;
-
-    if (node.type) {
-        _info.type = node.type.getText();
-    }
-
-    if (_value) {
-        const _values = getChildInfos([_value], includeNodes);
-        if (_values.length === 1) {
-            _info.value = _values[0];
-        } else {
-            _info.value = _value.getText();
+        if (node.type) {
+            _info.type = node.type.getText();
+        }
+        if (node.initializer) {
+            _info.value = node.initializer.getText();
         }
     }
 
@@ -1108,6 +1152,19 @@ module.exports = {
  * @property {TS.ClassDeclaration} [node]
  * @property {Array<PropertyInfo>} properties
  */
+
+
+/**
+ * @typedef DeconstructInfo
+ * @property {Record<string,string>} deconstructs
+ * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
+ * @property {`Deconstruct`} kind
+ * @property {string} [from]
+ * @property {TS.VariableDeclaration} [node]
+ * @property {string} [type]
+ */
+
 
 /**
  * @typedef DocletInfo
