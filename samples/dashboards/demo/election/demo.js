@@ -26,7 +26,7 @@ const mapUrl = 'https://code.highcharts.com/mapdata/countries/us/us-all.topo.jso
 const elVoteUrl = 'https://www.highcharts.com/samples/data/us-1976-2020-president.csv';
 const elCollegeUrl = 'https://www.highcharts.com/samples/data/us-electorial_votes.csv';
 
-const commonTitle = 'U.S. presidential election';
+const commonTitle = 'U.S. Presidential Election';
 const electionYears = ['2020', '2016', '2012', '2008'];
 
 // Election data loaded from CSV and converted to JSON
@@ -58,19 +58,19 @@ async function setupDashboard() {
             {
                 renderTo: 'html-result',
                 type: 'CustomHTML',
-                id: 'html-result-div'
+                id: 'html-result-div',
+                title: 'Electoral College Results'
             },
             {
                 renderTo: 'html-control',
                 type: 'CustomHTML',
-                id: 'html-control-div',
-                title: 'U.S. presidential election'
+                id: 'html-control-div'
             },
             {
                 renderTo: 'election-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
-                title: '', // Populated by election year
+                title: 'Popular Vote Results', // Populated by election year
                 chartOptions: {
                     chart: {
                         type: 'map',
@@ -607,13 +607,7 @@ function getComponent(board, id) {
 }
 
 
-async function updateResultComponent(component, electionTable, year) {
-    await component.update({
-        title: {
-            text: commonTitle + ' ' + year
-        }
-    });
-
+async function updateResultComponent(electionTable, year) {
     // Candidate names
     const candDem = electionData[year].candDem;
     const candRep = electionData[year].candRep;
@@ -679,11 +673,6 @@ function updateControlComponent(year) {
 
 
 async function updateMapComponent(component, electionTable, year) {
-    component.update({
-        title: {
-            text: commonTitle + ' ' + year
-        }
-    });
     const chart = component.chart;
 
     // Update all U.S. states with new election results
@@ -720,7 +709,7 @@ async function updateGridComponent(component, year) {
 
     await component.update({
         title: {
-            text: commonTitle + ' ' + year
+            text: year + ' ' + commonTitle
         },
         connector: {
             id: 'votes' + year
@@ -767,7 +756,6 @@ async function onStateClicked(board, state) {
 // Update board after changing data set (state or election year)
 async function onYearClicked(board, year) {
     // Dashboards components
-    const resultComponent = getComponent(board, 'html-result');
     const mapComponent = getComponent(board, 'election-map');
     const gridComponent = getComponent(board, 'election-grid');
 
@@ -775,7 +763,7 @@ async function onYearClicked(board, year) {
     const electionTable = await getElectionTable(board, year);
 
     // Update result component (HTML)
-    updateResultComponent(resultComponent, electionTable, year);
+    updateResultComponent(electionTable, year);
 
     // Update control component (HTML), works directly on DOM
     updateControlComponent(year);
