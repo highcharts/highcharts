@@ -270,7 +270,7 @@ async function dashboardCreate() {
                         shared: true,
                         useHTML: true,
                         headerFormat: '<table>',
-                        pointFormat: '{point.custom.test}',
+                        pointFormat: '{point.info}',
                         footerFormat: '</table>'
                     },
                     data: [] // Populated on update
@@ -587,19 +587,20 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             if (item.location === null) {
                 continue;
             }
+            const qMinAct = getFormattedValue(item.q_min_act);
+            const qMinSet = getFormattedValue(item.q_min_set);
+
             // Add reservoir to map
             await mapComp.addPoint({
                 name: item.name,
                 lon: item.location.lon,
                 lat: item.location.lat,
                 marker: intakeMarker,
-                custom: {
-                    test: `
+                info: `
                     <caption>Inntak</caption>
-                    <tr><td>${item.location.lon}</td>
-                    <td>${item.location.lat}</td></tr>
+                    <tr><td>${qMinAct}</td>
+                    <td>${qMinSet}</td></tr>
                     `
-                }
             });
         }
     }
@@ -616,13 +617,12 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 lon: item.location.lon,
                 lat: item.location.lat,
                 marker: reservoirMarker,
-                custom: {
-                    test: `
-                        <caption>Vassmagasin</caption>
-                        <tr><td>${item.location.lon}</td>
-                        <td>${item.location.lat}</td></tr>
-                        `
-                }
+                info:
+                `
+                    <caption>Vassmagasin</caption>
+                    <tr><td>kjem snart</td>
+                    <td>*</td></tr>
+                `
             });
         }
     }
@@ -668,7 +668,13 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             name: stationName,
             lon: location.lon,
             lat: location.lat,
-            marker: stationMarker
+            marker: stationMarker,
+            info:
+            `
+                <caption>Kraftverk</caption>
+                <tr><td>kjem snart</td>
+                <td>*</td></tr>
+            `
         });
 
         // Add reservoir markers if present
