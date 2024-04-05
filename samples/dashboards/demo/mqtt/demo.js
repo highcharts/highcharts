@@ -44,6 +44,12 @@ const lang = {
     Reservoirs: {
         nn: 'Vassmagasin'
     },
+    'No connected reservoirs': {
+        nn: 'Ingen tilknyta vassmagasin'
+    },
+    'No intakes': {
+        nn: 'Ingen inntak'
+    },
     Drain: {
         nn: 'Avlaup',
         unit: 'm3/sek'
@@ -261,11 +267,11 @@ async function dashboardCreate() {
                         symbol: 'square'
                     },
                     tooltip: {
-                        footerFormat: '',
-                        headerFormat: '',
-                        pointFormat: (
-                            '<b>{point.name}</b>'
-                        )
+                        shared: true,
+                        useHTML: true,
+                        headerFormat: '<table>',
+                        pointFormat: '{point.custom.test}',
+                        footerFormat: '</table>'
                     },
                     data: [] // Populated on update
                 }]
@@ -489,7 +495,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
     function getIntakeHtml(powerPlantInfo) {
         if (powerPlantInfo.nIntakes === 0) {
-            return '<h3 class="intake">Ingen inntak</h3>';
+            const str = lang.tr('No intakes');
+
+            return `<h3 class="intake">${str}</h3>`;
         }
 
         const loc = lang.tr('Location', true);
@@ -522,25 +530,11 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         return html;
     }
 
-    async function addIntakeMarkers(mapComp, powerPlantInfo) {
-        for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
-            const item = powerPlantInfo.intakes[i];
-            if (item.location === null) {
-                continue;
-            }
-            // Add reservoir to map
-            await mapComp.addPoint({
-                name: item.name,
-                lon: item.location.lon,
-                lat: item.location.lat,
-                marker: intakeMarker
-            });
-        }
-    }
-
     function getReservoirHtml(powerPlantInfo) {
         if (powerPlantInfo.nReservoirs === 0) {
-            return '<h3 class="intake">Ingen tilkytta vassmagasin</h3>';
+            const str = lang.tr('No connected reservoirs');
+
+            return `<h3 class="intake">${str}</h3>`;
         }
 
         const res = lang.tr('Reservoirs');
@@ -587,6 +581,29 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         return html;
     }
 
+    async function addIntakeMarkers(mapComp, powerPlantInfo) {
+        for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
+            const item = powerPlantInfo.intakes[i];
+            if (item.location === null) {
+                continue;
+            }
+            // Add reservoir to map
+            await mapComp.addPoint({
+                name: item.name,
+                lon: item.location.lon,
+                lat: item.location.lat,
+                marker: intakeMarker,
+                custom: {
+                    test: `
+                    <caption>Inntak</caption>
+                    <tr><td>${item.location.lon}</td>
+                    <td>${item.location.lat}</td></tr>
+                    `
+                }
+            });
+        }
+    }
+
     async function addReservoirMarkers(mapComp, powerPlantInfo) {
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
@@ -598,7 +615,14 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 name: item.name,
                 lon: item.location.lon,
                 lat: item.location.lat,
-                marker: reservoirMarker
+                marker: reservoirMarker,
+                custom: {
+                    test: `
+                        <caption>Vassmagasin</caption>
+                        <tr><td>${item.location.lon}</td>
+                        <td>${item.location.lat}</td></tr>
+                        `
+                }
             });
         }
     }
