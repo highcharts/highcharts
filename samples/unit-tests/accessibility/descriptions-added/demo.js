@@ -172,7 +172,7 @@ QUnit.test('Describing series which is grouped', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].group.element.ariaLabel.length,
+        chart.series[0].group.element.getAttribute('aria-label'),
         'Group element has ariaLabel.'
     );
 });
