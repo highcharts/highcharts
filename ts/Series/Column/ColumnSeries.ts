@@ -489,16 +489,12 @@ class ColumnSeries extends Series {
             seriesPointWidth = metrics.width,
             seriesXOffset = series.pointXOffset = metrics.offset,
             dataMin = series.dataMin,
-            dataMax = series.dataMax;
-        // Postprocessed for border width
-        let seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            dataMax = series.dataMax,
             translatedThreshold = series.translatedThreshold =
                 yAxis.getThreshold(threshold as any);
-
-        if (chart.inverted) {
-            translatedThreshold -= 0.5; // #3355
-        }
+        // Postprocessed for border width
+        let seriesBarW = series.barW =
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth);
 
         // When the pointPadding is 0, we want the columns to be packed
         // tightly, so we allow individual columns to have individual sizes.
