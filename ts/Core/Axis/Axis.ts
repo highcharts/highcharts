@@ -3565,7 +3565,7 @@ class Axis {
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        if (coll !== 'colorAxis') {
+        if (coll !== 'colorAxis' && clipOffset) {
             const tickSize = this.tickSize('tick');
 
             axisOffset[side] = Math.max(
@@ -3582,10 +3582,9 @@ class Axis {
             // the plot area and axis lines
             const clip = !axis.axisLine || options.offset ?
                 0 :
-                // #4308, #4371:
-                Math.floor(axis.axisLine.strokeWidth() / 2) * 2;
-            (clipOffset as any)[invertedSide] =
-                Math.max((clipOffset as any)[invertedSide], clip);
+                // #4308, #4371
+                axis.axisLine.strokeWidth() / 2;
+            clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
         }
 
         fireEvent(this, 'afterGetOffset');

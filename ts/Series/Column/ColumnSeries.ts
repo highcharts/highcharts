@@ -144,8 +144,9 @@ class ColumnSeries extends Series {
         const series = this,
             yAxis = this.yAxis,
             yAxisPos = yAxis.pos,
+            reversed = yAxis.reversed,
             options = series.options,
-            inverted = this.chart.inverted,
+            { clipOffset, inverted } = this.chart,
             attr: SVGAttributes = {},
             translateProp: 'translateX'|'translateY' = inverted ?
                 'translateX' :
@@ -153,16 +154,27 @@ class ColumnSeries extends Series {
         let translateStart: number,
             translatedThreshold;
 
-        if (init) {
+        if (init && clipOffset) {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
                 yAxis.toPixels(options.threshold as any),
                 yAxisPos,
                 yAxisPos + yAxis.len
             );
+
             if (inverted) {
+                // Make sure the columns don't cover the axis line during
+                // entrance animation
+                translatedThreshold += reversed ?
+                    -Math.floor(clipOffset[0]) :
+                    Math.ceil(clipOffset[2]);
                 attr.translateX = translatedThreshold - yAxis.len;
             } else {
+                // Make sure the columns don't cover the axis line during
+                // entrance animation
+                translatedThreshold += reversed ?
+                    Math.ceil(clipOffset[0]) :
+                    -Math.floor(clipOffset[2]);
                 attr.translateY = translatedThreshold;
             }
 
