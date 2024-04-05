@@ -273,7 +273,7 @@ export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
     /**
      * ID of the series that should be affected by the highlight. If not
      * defined, the appropriate series will be found according to the column
-     * assignment.
+     * assignment. This option only makes sense with `tooltip.shared: false`.
      *
      * Try it:
      *

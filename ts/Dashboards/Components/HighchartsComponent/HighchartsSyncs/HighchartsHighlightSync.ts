@@ -35,6 +35,8 @@ import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
 import DataCursor from '../../../../Data/DataCursor.js';
+import U from '../../../Utilities.js';
+const { error } = U;
 
 /* *
 *
@@ -229,12 +231,26 @@ const syncPair: Sync.SyncPair = {
 
             if (chart && chart.series?.length && cursor.type === 'position') {
                 let series: Series | undefined;
+                const seriesId = highlightOptions.affectedSeriesId;
 
                 if (highlightOptions.affectedSeriesId) {
-                    series = chart.get(
+                    const foundSeries = chart.get(
                         highlightOptions.affectedSeriesId
                     ) as Series;
-                } else {
+
+                    if (foundSeries?.points) {
+                        series = foundSeries;
+                    } else {
+                        error(
+                            'No series with ID \'' + seriesId + '\' found in ' +
+                            'the chart. Affected series will be selected ' +
+                            'according to the column assignment.',
+                            false
+                        );
+                    }
+                }
+
+                if (!series) {
                     const seriesIds = Object.keys(
                         component.seriesFromConnector
                     );
