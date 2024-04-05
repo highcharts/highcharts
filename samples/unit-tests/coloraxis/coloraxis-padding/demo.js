@@ -128,14 +128,14 @@ QUnit.test('Color axis width, height and padding', function (assert) {
         colorAxisBox.width,
         symbolWidth,
         1.01,
-        'Color axis width should be set (#).'
+        'Color axis width should be set based on legend.symbolWidth (#20451).'
     );
 
     assert.close(
         colorAxisBox.height,
         symbolHeight,
         1.01,
-        'Color axis height should be set (#).'
+        'Color axis height should be set based on legend.symbolHeight (#20451).'
     );
 });
 
