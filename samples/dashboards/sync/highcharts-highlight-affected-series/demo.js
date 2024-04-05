@@ -77,11 +77,11 @@ const board = Dashboards.board('container', {
  * Custom code
  **/
 
-const optionsCbx = document.querySelectorAll('.option');
+const radioButtons = document.querySelectorAll('.option');
 
-optionsCbx.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        const value = checkbox.dataset.value;
+radioButtons.forEach(radio => {
+    radio.addEventListener('change', () => {
+        const value = radio.dataset.value;
 
         board.mountedComponents[0].component.update({
             sync: {
