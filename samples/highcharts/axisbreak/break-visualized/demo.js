@@ -116,9 +116,6 @@ Highcharts.chart('container', {
         events: {
             pointBreak: pointBreakColumn,
             pointOutsideOfBreak: pointOutsideOfBreak
-        },
-        labels: {
-            padding: 2
         }
     },
     series: [{

@@ -5,10 +5,6 @@ Highcharts.chart('container', {
         styledMode: true
     },
 
-    xAxis: {
-        type: 'datetime'
-    },
-
     series: [
         {
             showInLegend: true,

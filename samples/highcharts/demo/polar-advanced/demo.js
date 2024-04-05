@@ -7,7 +7,7 @@ const
     monthExtremes = { min: 0, max: 26 },
     weekExtremes = { min: 1, max: 5 },
     paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
-    noLabelProp = { labels: { enabled: false, padding: 0 } },
+    noLabelProp = { labels: { enabled: false } },
     specialSeriesProps = {
         showInLegend: false,
         groupPadding: 0,

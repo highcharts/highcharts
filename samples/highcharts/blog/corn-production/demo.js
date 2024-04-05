@@ -42,10 +42,7 @@ const chart = Highcharts.chart('production', {
             '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000',
             '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008',
             '2009', '2010', '2011', '2012', '2013', '2014'
-        ],
-        labels: {
-            padding: 0
-        }
+        ]
     },
     yAxis: {
         min: 0,
@@ -58,9 +55,6 @@ const chart = Highcharts.chart('production', {
                 fontWeight: 'bold',
                 color: 'gray'
             }
-        },
-        labels: {
-            padding: 5
         }
     },
     legend: {

@@ -78,9 +78,6 @@ Highcharts.chart('container', {
         events: {
             pointBreak: pointBreak,
             pointInBreak: pointInBreak
-        },
-        labels: {
-            padding: 2
         }
     },
     plotOptions: {
