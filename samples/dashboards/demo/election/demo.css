@@ -17,7 +17,6 @@
     --highcharts-color-1-light: #F5D3D1;
 
     /* Others */
-    /* --highcharts-color-2: #c0c0c0; */
     --color-background: var(--highcharts-neutral-color-3);
     --color-link: #339;
 
@@ -62,6 +61,10 @@
     :root {
         /* Others */
         --color-link: #cca;
+    }
+
+    #container {
+        background: #2F2E38;
     }
 
     #election-chart {
