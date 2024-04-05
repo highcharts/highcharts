@@ -14,7 +14,7 @@
 
     /* Republican */
     --highcharts-color-1: #BE2F24;
-    --highcharts-color-0-light: #F5D3D1;
+    --highcharts-color-1-light: #F5D3D1;
 
     /* Others */
     /* --highcharts-color-2: #c0c0c0; */
@@ -110,8 +110,9 @@
     margin: 0;
     padding: 10px 0;
     fill: var(--color-title);
-    font-size: 1em;
-    text-align: center;
+    font-weight: 500;
+    font-size: 1.2em;
+    text-align: left;
 }
 
 .highcharts-dashboards-component-content {
@@ -442,12 +443,8 @@
  *
  * */
 
-#election-grid .highcharts-dashboards-component {
-    background-color: var(--color-background);
-}
-
-#election-grid .highcharts-datagrid-column-header {
-    font-size: 12px;
+#election-grid .highcharts-datagrid-container {
+    border: none;
 }
 
 #election-grid .highcharts-datagrid-row.hovered {
@@ -459,6 +456,45 @@
 /* Styling of first row (national results) */
 #election-grid .highcharts-datagrid-row[data-row-index="0"] {
     font-weight: bold;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+#election-grid .highcharts-datagrid-column-headers {
+    background-color: #ACABBA;
+    border-bottom: 1px solid #000;
+}
+
+#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(2),
+#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(4) {
+    background-color: var(--highcharts-color-0);
+    color: #fff;
+}
+
+#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(3),
+#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(5) {
+    background-color: var(--highcharts-color-1);
+    color: #fff;
+}
+
+#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(2),
+#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(4) {
+    background-color: var(--highcharts-color-0-light);
+}
+
+#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(3),
+#election-grid .highcharts-datagrid-row[data-row-index="0"] .highcharts-datagrid-cell:nth-child(5) {
+    background-color: var(--highcharts-color-1-light);
+}
+
+.highcharts-datagrid-row:nth-child(even) {
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+#election-grid .highcharts-datagrid-row.hovered,
+#election-grid .highcharts-datagrid-row.hovered .highcharts-datagrid-cell {
+    background-color: var(--highcharts-neutral-color-10);
+    color: #000;
 }
 
 /* Capitalize state names (first column) */
