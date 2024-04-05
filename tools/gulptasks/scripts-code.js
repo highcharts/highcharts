@@ -90,7 +90,7 @@ function scriptsCode() {
 
             logLib.success('Processed code sources');
 
-            fsLib.getFilePaths('code/es-modules/masters', true).forEach(filePath => {
+            fsLib.getFilePaths('code/es-modules', true).forEach(filePath => {
                 const content = fs.readFileSync(filePath).toString();
 
                 if (content) {
