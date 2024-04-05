@@ -68,7 +68,15 @@ Highcharts.setOptions({
             contextButton: {
                 symbolStroke: '#d9d7d7',
                 theme: {
-                    fill: '#000000'
+                    fill: '#000000',
+                    states: {
+                        hover: {
+                            fill: '#000000'
+                        },
+                        select: {
+                            fill: '#f23644'
+                        }
+                    }
                 }
             }
         }
@@ -108,6 +116,7 @@ Highcharts.setOptions({
 
     plotOptions: {
         series: {
+            threshold: null,
             color: '#f23644',
             fillColor: {
                 linearGradient: [0, 0, 0, 450],
@@ -139,7 +148,9 @@ Highcharts.stockChart('container', {
     xAxis: {
         lineWidth: 0,
         crosshair: {
-            width: 0
+            width: 1,
+            color: '#616161',
+            zIndex: 3
         }
     },
 
@@ -152,7 +163,6 @@ Highcharts.stockChart('container', {
 
     yAxis: {
         gridLineWidth: 0,
-        range: 20,
         offset: 30,
         accessibility: {
             description: 'price in Ethereum'
@@ -173,7 +183,8 @@ Highcharts.stockChart('container', {
             y: -40
         },
         buttonSpacing: 10,
-        inputEnabled: false
+        inputEnabled: false,
+        selected: 1
     },
 
     data: {
