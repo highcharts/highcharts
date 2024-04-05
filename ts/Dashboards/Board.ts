@@ -327,7 +327,7 @@ class Board implements Serializable<Board, Board.JSON> {
     protected init(async?: boolean): (Board|Promise<Board>) {
         const options = this.options;
 
-        let componentPromises = (options.components) ?
+        const componentPromises = (options.components) ?
             this.setComponents(options.components) : [];
 
         // Init events.
@@ -637,31 +637,36 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public getOptions(): Globals.DeepPartial<Board.Options> {
         const board = this,
-            layouts = [],
-            components = [];
-
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            layouts.push(board.layouts[i].getOptions());
-        }
+            options: Globals.DeepPartial<Board.Options> = {
+                ...this.options,
+                components: []
+            };
 
         for (let i = 0, iEnd = board.mountedComponents.length; i < iEnd; ++i) {
             if (
                 board.mountedComponents[i].cell &&
                 board.mountedComponents[i].cell.mountedComponent
             ) {
-                components.push(
+                options.components?.push(
                     board.mountedComponents[i].component.getOptions()
                 );
             }
         }
 
-        return {
-            ...this.options,
-            gui: {
-                layouts
-            },
-            components: components
-        };
+        if (this.guiEnabled) {
+            options.gui = {
+                layouts: []
+            };
+            for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+                options.gui.layouts?.push(
+                    board.layouts[i].getOptions() as Layout.Options
+                );
+            }
+        } else {
+            delete options.gui;
+        }
+
+        return options;
     }
 }
 

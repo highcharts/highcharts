@@ -3636,7 +3636,7 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted, resetZoomButton } = this;
+            { inverted } = this;
 
         let hasZoomed = false,
             displayButton: boolean|undefined;
@@ -3678,16 +3678,22 @@ class Chart {
             }
 
             let newMin = axis.toValue(minPx, true) +
-                    minPointOffset * pointRangeDirection,
+                // Don't apply offset for selection (#20784)
+                    (selection ? 0 : minPointOffset * pointRangeDirection),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        (minPointOffset * pointRangeDirection) ||
-                        // Polar zoom tests failed when this was not commented:
-                        // (axis.isXAxis && axis.pointRangePadding) ||
-                        0
+                        selection ? // Don't apply offset for selection (#20784)
+                            0 :
+                            (
+                                (minPointOffset * pointRangeDirection) ||
+                                // Polar zoom tests failed when this was not
+                                // commented:
+                                // (axis.isXAxis && axis.pointRangePadding) ||
+                                0
+                            )
                     ),
                 allExtremes = axis.allExtremes;
 
@@ -3858,10 +3864,10 @@ class Chart {
             } else {
 
                 // Show or hide the Reset zoom button
-                if (displayButton && !resetZoomButton) {
+                if (displayButton && !this.resetZoomButton) {
                     this.showResetZoom();
-                } else if (!displayButton && resetZoomButton) {
-                    this.resetZoomButton = resetZoomButton.destroy();
+                } else if (!displayButton && this.resetZoomButton) {
+                    this.resetZoomButton = this.resetZoomButton.destroy();
                 }
 
                 this.redraw(

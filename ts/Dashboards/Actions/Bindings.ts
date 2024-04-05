@@ -69,12 +69,28 @@ namespace Bindings {
      * */
 
     function getGUIElement(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (GUIElement|undefined) {
-        const container = typeof idOrElement === 'string' ?
-            document.getElementById(idOrElement) : idOrElement;
-
+        let container;
         let guiElement;
+
+        if (typeof idOrElement === 'string') {
+            if (document.querySelectorAll('#' + idOrElement).length > 1) {
+                error(
+                    'Multiple cells have identical ID ' +
+                    '("' + idOrElement + '"), potentially leading to ' +
+                    'unexpected behaviour. Ensure that each cell has a ' +
+                    'unique ID on the page.'
+                );
+            }
+
+            container = parentElement ?
+                parentElement.querySelector('#' + idOrElement) :
+                document.getElementById(idOrElement);
+        } else {
+            container = idOrElement;
+        }
 
         if (container !== null) {
             fireEvent(container, 'bindedGUIElement', {}, function (
@@ -103,7 +119,21 @@ namespace Bindings {
             return;
         }
 
-        cell = cell || Bindings.getCell(renderTo);
+        if (
+            board.mountedComponents.filter(
+                (el): boolean => (
+                    (el.options.renderTo || el.options.cell) === renderTo)
+            ).length > 0
+        ) {
+            error(
+                'The component is misconfigured and is unable to initialize ' +
+                'it. A different component has already been declared in the`' +
+                renderTo + '` cell.'
+            );
+            return;
+        }
+
+        cell = cell || Bindings.getCell(renderTo, board.container);
 
         const componentContainer =
             cell?.container || document.querySelector('#' + renderTo);
@@ -161,7 +191,6 @@ namespace Bindings {
             cell.mountedComponent = component;
         }
 
-
         board.mountedComponents.push({
             options: options,
             component: component,
@@ -205,7 +234,7 @@ namespace Bindings {
     export function componentFromJSON(
         json: Component.JSON
     ): (Component|undefined) {
-        let componentClass = ComponentRegistry.types[
+        const componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry
         ];
 
@@ -227,9 +256,10 @@ namespace Bindings {
     }
 
     export function getCell(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (Cell|undefined) {
-        const cell = getGUIElement(idOrElement);
+        const cell = getGUIElement(idOrElement, parentElement);
 
         if (!(cell && cell.getType() === 'cell')) {
             return;
@@ -239,9 +269,10 @@ namespace Bindings {
     }
 
     export function getRow(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (Row|undefined) {
-        const row = getGUIElement(idOrElement);
+        const row = getGUIElement(idOrElement, parentElement);
 
         if (!(row && row.getType() === 'row')) {
             return;
@@ -251,9 +282,10 @@ namespace Bindings {
     }
 
     export function getLayout(
-        idOrElement: string
+        idOrElement: string,
+        parentElement?: HTMLElement
     ): (Layout|undefined) {
-        const layout = getGUIElement(idOrElement);
+        const layout = getGUIElement(idOrElement, parentElement);
 
         if (!(layout && layout.getType() === 'layout')) {
             return;
