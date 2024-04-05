@@ -279,17 +279,38 @@
 }
 
 #html-control-div #election-description {
-    border: 1px dotted #ccc;
-    border-radius: 5px;
     text-align: left;
     font-size: 0.9em;
     padding: 5px;
     margin: 10px 20px;
+    border-left: 1px solid black;
+}
+
+#html-control-div #election-description-container {
+    display: flex;
+}
+
+#html-control-div #election-description-container h1 {
+    padding-right: 40px;
+    width: calc(40% - 40px);
+}
+
+#html-control-div #election-description {
+    padding-left: 40px;
+    width: calc(60% - 40px);
 }
 
 #html-control-div a {
     color: var(--color-link);
 }
+
+/* #html-control .highcharts-dashboards-component-content {
+    background-color: var(--highcharts-neutral-color-10);
+}
+
+#html-result .highcharts-dashboards-component-content {
+    background-color: var(--highcharts-neutral-color-5);
+} */
 
 /* *
  *

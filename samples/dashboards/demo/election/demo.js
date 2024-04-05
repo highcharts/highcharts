@@ -56,15 +56,15 @@ async function setupDashboard() {
         },
         components: [
             {
+                renderTo: 'html-control',
+                type: 'CustomHTML',
+                id: 'html-control-div'
+            },
+            {
                 renderTo: 'html-result',
                 type: 'CustomHTML',
                 id: 'html-result-div',
                 title: 'Electoral College Results'
-            },
-            {
-                renderTo: 'html-control',
-                type: 'CustomHTML',
-                id: 'html-control-div'
             },
             {
                 renderTo: 'election-map',
@@ -659,16 +659,20 @@ async function updateResultComponent(electionTable, year) {
 function updateControlComponent(year) {
     // Data element containing election info.
     const el = document.querySelector('elections year#ei_' + year);
+    const title = document.querySelector('#election-description-container > h1');
+    const descContainer = document.getElementById('election-description');
 
-    // Brief text about the election
+    // update title with year
+    title.innerHTML = year + ' ' + commonTitle;
+
+    // // Brief text about the election
     const brief = el.querySelector('descr').innerHTML;
 
-    // Wikipedia link
+    // // Wikipedia link
     const wikiUrl = el.querySelector('wiki').innerHTML;
 
-    // Update custom HTML component
-    const domEl = document.getElementById('election-description');
-    domEl.innerHTML = `${brief}<a href="${wikiUrl}" target="_blank">Wikipedia</a>.`;
+    // // Update custom HTML component
+    descContainer.innerHTML = `${brief}<a href="${wikiUrl}" target="_blank">Wikipedia</a>.`;
 }
 
 
