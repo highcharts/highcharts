@@ -54,8 +54,8 @@ QUnit.test(
             yAxis = chart.yAxis[0];
 
         assert.strictEqual(
-            10,
             parseInt(points[0].graphic.attr('height'), 10),
+            10,
             'First point has proper height'
         );
 

@@ -871,6 +871,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         if (box.height <= minPointLength && !point.isNull) {
             box.height = minPointLength;
             box.y -= halfMinPointLength;
+            point.yBottom = box.y + box.height;
             point.plotY = box.y;
             if (pointY < 0) {
                 point.minPointLengthOffset = -halfMinPointLength;
