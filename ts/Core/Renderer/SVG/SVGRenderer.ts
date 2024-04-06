@@ -895,16 +895,16 @@ class SVGRenderer implements SVGRendererLike {
         roundingFunction: ('round'|'floor'|'ceil') = 'round'
     ): SVGPath {
         const [start, end] = points,
-            crisp = width % 2 / 2;
+            mod = width % 2 / 2;
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
             start[1] = end[1] =
-                Math[roundingFunction](start[1] - crisp) + crisp;
+                Math[roundingFunction](start[1] - mod) + mod;
         }
         if (defined(start[2]) && start[2] === end[2]) {
             start[2] = end[2] =
-                Math[roundingFunction](start[2] - crisp) + crisp;
+                Math[roundingFunction](start[2] - mod) + mod;
         }
         return points;
     }

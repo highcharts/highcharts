@@ -55,6 +55,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    crisp,
     fireEvent,
     isArray,
     isNumber,
@@ -1597,7 +1598,7 @@ class MapViewInset extends MapView {
                 });
             }
 
-            const crisp = Math.round(this.border.strokeWidth()) % 2 / 2,
+            const strokeWidth = this.border.strokeWidth(),
                 field = (
                     options.relativeTo === 'mapBoundingBox' &&
                     mapView.getMapBBox()
@@ -1619,8 +1620,8 @@ class MapViewInset extends MapView {
                                 field.y
                             );
                         }
-                        x = Math.floor(x) + crisp;
-                        y = Math.floor(y) + crisp;
+                        x = crisp(x, strokeWidth);
+                        y = crisp(y, strokeWidth);
                         d.push(i === 0 ? ['M', x, y] : ['L', x, y]);
                         return d;
                     }, d)
