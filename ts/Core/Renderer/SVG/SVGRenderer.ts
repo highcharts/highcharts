@@ -62,6 +62,7 @@ const {
     addEvent,
     attr,
     createElement,
+    crisp,
     css,
     defined,
     destroyObjectProperties,
@@ -882,29 +883,21 @@ class SVGRenderer implements SVGRendererLike {
      * @param {number} width
      *        The width of the line.
      *
-     * @param {string} [roundingFunction=round]
-     *        The rounding function name on the `Math` object, can be one of
-     *        `round`, `floor` or `ceil`.
-     *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      */
     public crispLine(
         points: SVGPath,
-        width: number,
-        roundingFunction: ('round'|'floor'|'ceil') = 'round'
+        width: number
     ): SVGPath {
-        const [start, end] = points,
-            mod = width % 2 / 2;
+        const [start, end] = points;
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            start[1] = end[1] =
-                Math[roundingFunction](start[1] - mod) + mod;
+            start[1] = end[1] = crisp(start[1], width);
         }
         if (defined(start[2]) && start[2] === end[2]) {
-            start[2] = end[2] =
-                Math[roundingFunction](start[2] - mod) + mod;
+            start[2] = end[2] = crisp(start[2], width);
         }
         return points;
     }
