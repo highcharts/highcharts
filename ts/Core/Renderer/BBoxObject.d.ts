@@ -28,7 +28,6 @@ export interface BBoxObject extends PositionObject, SizeObject {
     width: number;
     x: number;
     y: number;
-    polygon?: [number, number][]
 }
 
 /* *

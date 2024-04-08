@@ -109,8 +109,7 @@ function chartHideOverlappingLabels(
                     label.parentGroup?.translateY || 0
                 ) + padding,
                 width: (label.width || 0) - 2 * padding,
-                height: (label.height || 0) - 2 * padding,
-                polygon: bBox.polygon
+                height: (label.height || 0) - 2 * padding
             };
         }
     }
