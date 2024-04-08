@@ -500,7 +500,7 @@ const configs: {
 
                             if (series?.visible && cursor.row !== void 0) {
                                 const point = series.data[cursor.row - offset];
-                                if (point?.graphic) {
+                                if (point?.visible) {
                                     return point;
                                 }
                             }
