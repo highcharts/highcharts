@@ -371,11 +371,13 @@ div.highcharts-description {
  *  Information panel (Custom HTML)
  *
  * */
+#el-info .highcharts-dashboards-component-content {
+    overflow-y: auto;
+}
 
 div#info-container {
     padding: 5px;
     margin: 0;
-    overflow: auto;
 
     & h3 {
         padding: 0;
@@ -386,7 +388,7 @@ div#info-container {
 
     & p {
         text-align: center;
-        font-size: 10px;
+        font-size: 13px;
     }
 }
 
@@ -398,7 +400,6 @@ div#info-container {
 
 #el-info table.intake {
     margin-top: 10px;
-    font-size: 12px;
     background-color: var(--color-table-bg);
     width: 100%;
 

@@ -150,12 +150,17 @@ async function dashboardCreate() {
             connectors: pu.connectors
         },
         components: pu.components
-    }, true);
+    });
 
     function createInfoComponent() {
         return {
             type: 'HTML',
-            renderTo: 'el-info'
+            renderTo: 'el-info',
+            chartOptions: {
+                chart: {
+                    styledMode: false
+                }
+            }
         };
     }
 
