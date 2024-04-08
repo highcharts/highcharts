@@ -8,6 +8,7 @@ const { addEvent } = U;
 const { pointInPolygon } = GeometryUtilities;
 
 function hideOverlappingPolygons(this: Chart): void {
+
     const isPolygonOverlap = (
         box1Poly: [number, number][],
         box2Poly: [number, number][]
@@ -151,7 +152,7 @@ function hideOverlappingPolygons(this: Chart): void {
             }
 
             for (const [label1Polygon, label1Index] of polygonMap) {
-                const linkOrPoint1 = textPathCandidates[label1Index]
+                const linkOrPointText1 = textPathCandidates[label1Index]
                     .dataLabel
                     ?.text;
 
@@ -160,18 +161,18 @@ function hideOverlappingPolygons(this: Chart): void {
                         continue;
                     }
 
-                    const linkOrPoint2 = textPathCandidates[label2Index]
+                    const linkOrPointText2 = textPathCandidates[label2Index]
                         .dataLabel
                         ?.text;
 
                     if (
-                        linkOrPoint1 &&
-                        linkOrPoint2 &&
-                        linkOrPoint1.visibility !== 'hidden' &&
-                        linkOrPoint2.visibility !== 'hidden' &&
+                        linkOrPointText1 &&
+                        linkOrPointText2 &&
+                        linkOrPointText1.visibility !== 'hidden' &&
+                        linkOrPointText2.visibility !== 'hidden' &&
                         isPolygonOverlap(label1Polygon, label2Polygon)
                     ) {
-                        linkOrPoint1.hide();
+                        linkOrPointText1.hide();
                     }
                 }
             }

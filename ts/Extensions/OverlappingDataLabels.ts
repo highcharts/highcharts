@@ -24,10 +24,6 @@ import type Point from '../Core/Series/Point';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../Core/Chart/Chart.js';
-import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
-const { pointInPolygon } = GeometryUtilities;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 
 const {
@@ -87,18 +83,7 @@ function chartHideOverlappingLabels(
             box2.x + box2.width <= box1.x ||
             box2.y >= box1.y + box1.height ||
             box2.y + box2.height <= box1.y
-        ),
-        isPolygonOverlap = (
-            box1Poly: [number, number][],
-            box2Poly: [number, number][]
-        ): boolean => {
-            for (const p of box1Poly) {
-                if (pointInPolygon({ x: p[0], y: p[1] }, box2Poly)) {
-                    return true;
-                }
-            }
-            return false;
-        };
+        );
 
     /**
      * Get the box with its position inside the chart, as opposed to getBBox
@@ -157,8 +142,6 @@ function chartHideOverlappingLabels(
         label1 = labels[i];
         box1 = label1 && label1.absoluteBox;
 
-        const box1Poly = box1?.polygon;
-
         for (let j = i + 1; j < len; ++j) {
             label2 = labels[j];
             box2 = label2 && label2.absoluteBox;
@@ -173,28 +156,14 @@ function chartHideOverlappingLabels(
                 label1.visibility !== 'hidden' &&
                 label2.visibility !== 'hidden'
             ) {
-                const box2Poly = box2.polygon;
-
-                if (
-                    isIntersectRect(box1, box2) || (
-                        box1Poly &&
-                        box2Poly &&
-                        box1Poly !== box2Poly &&
-                        isPolygonOverlap(box1Poly, box2Poly)
-                    )
-                ) {
+                if (isIntersectRect(box1, box2)) {
                     const overlappingLabel = (
-                            label1.labelrank < label2.labelrank ?
-                                label1 :
-                                label2
-                        ),
-                        labelText = overlappingLabel.text;
+                        label1.labelrank < label2.labelrank ?
+                            label1 :
+                            label2
+                    );
 
                     overlappingLabel.newOpacity = 0;
-
-                    if (labelText?.element.querySelector('textPath')) {
-                        labelText.hide();
-                    }
                 }
             }
         }
