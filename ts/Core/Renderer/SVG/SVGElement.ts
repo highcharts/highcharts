@@ -417,6 +417,7 @@ class SVGElement implements SVGElementLike {
 
         let x,
             y,
+            animateX = true,
             alignTo: (string|undefined),
             alignFactor,
             vAlignFactor;
@@ -461,6 +462,9 @@ class SVGElement implements SVGElementLike {
             alignFactor = 2;
         }
         if (alignFactor) {
+            animateX = x !== this.xAlign;
+            this.xAlign = x;
+
             x += ((box as any).width - ((alignOptions as any).width || 0)) /
                 alignFactor;
         }
@@ -481,6 +485,14 @@ class SVGElement implements SVGElementLike {
 
         // Animate only if already placed
         if (redraw) {
+
+            // Right- and center-aligned labels should not animate when we're
+            // only changing the text
+            if (!animateX) {
+                this.attr({
+                    [alignByTranslate ? 'translateX' : 'x']: x
+                });
+            }
             this[this.placed ? 'animate' : 'attr'](attribs);
             this.placed = true;
         }
