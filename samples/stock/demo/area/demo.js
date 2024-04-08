@@ -1,4 +1,4 @@
-// Configuring the style of the chart.s
+// Configuring the style of the chart
 Highcharts.setOptions({
     lang: {
         rangeSelectorZoom: ''
@@ -51,6 +51,15 @@ Highcharts.setOptions({
     },
 
     navigator: {
+        series: {
+            fillColor: {
+                linearGradient: [0, 0, 0, 40],
+                stops: [
+                    [0, '#5c0d13'],
+                    [1, '#000000']
+                ]
+            }
+        },
         xAxis: {
             labels: {
                 style: {
@@ -60,7 +69,10 @@ Highcharts.setOptions({
                 }
             }
         },
-        maskFill: 'rgba(181, 145, 143, 0.2)'
+        maskFill: 'rgba(181, 145, 143, 0.2)',
+        handles: {
+            backgroundColor: '#5f5959'
+        }
     },
 
     exporting: {
@@ -115,7 +127,7 @@ Highcharts.setOptions({
     },
 
     plotOptions: {
-        series: {
+        area: {
             threshold: null,
             color: '#f23644',
             fillColor: {
@@ -127,6 +139,7 @@ Highcharts.setOptions({
             }
         }
     },
+
 
     tooltip: {
         backgroundColor: '#212020',
@@ -146,6 +159,7 @@ Highcharts.stockChart('container', {
     },
 
     xAxis: {
+        tickLength: 0,
         lineWidth: 0,
         crosshair: {
             width: 1,
@@ -155,10 +169,10 @@ Highcharts.stockChart('container', {
     },
 
     scrollbar: {
-        barBorderRadius: 8,
+        barBorderRadius: 4,
         height: 8,
         margin: 0,
-        trackBorderRadius: 8
+        trackBorderRadius: 4
     },
 
     yAxis: {
@@ -173,7 +187,10 @@ Highcharts.stockChart('container', {
         xAxis: {
             gridLineWidth: 0
         },
-        outlineWidth: 0
+        outlineWidth: 0,
+        handles: {
+            lineWidth: 0
+        }
     },
 
     rangeSelector: {
