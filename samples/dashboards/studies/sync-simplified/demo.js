@@ -5,7 +5,6 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 beforeParse: function (data) {
-                    console.log(data);
                     return [
                         data.xData,
                         data.datasets[0].data,
