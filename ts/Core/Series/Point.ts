@@ -1613,7 +1613,7 @@ class Point {
         const pos = this.pos();
 
         return pos ? this.series.chart.renderer.symbols.circle(
-            crisp(pos[0]) - size,
+            crisp(pos[0], 1) - size,
             pos[1] - size,
             size * 2,
             size * 2

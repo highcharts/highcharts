@@ -1399,8 +1399,8 @@ class SVGRenderer implements SVGRendererLike {
             if (typeof x === 'number') {
                 path = (symbolFn as any).call(
                     this.symbols,
-                    Math.round(x || 0),
-                    Math.round(y || 0),
+                    x || 0,
+                    y || 0,
                     width || 0,
                     height || 0,
                     options
