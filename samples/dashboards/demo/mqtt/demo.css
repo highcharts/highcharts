@@ -12,8 +12,8 @@
     --color-background: #fff;
     --color-component-title: rgb(42, 165, 71);
     --color-sk: rgb(0, 112, 192);
-    --color-tooltip-background: #f0f0f0;
-    --color-tooltip-text: #000;
+    --color-tooltip-background: #b7eeb2;
+    --color-tooltip-text: #33f;
     --chart-row-height: 300px;
     --info-row-height: 450px;
 }
@@ -118,20 +118,9 @@
     padding: 0;
 }
 
-.highcharts-tooltip {
-    fill: none;
-    filter: none;
-    stroke: none;
-}
-
-.highcharts-tooltip text {
-    fill: var(--color-tooltip-text);
-}
-
 .highcharts-tooltip-box {
     fill: var(--color-tooltip-background);
     fill-opacity: 1;
-    stroke: none;
 }
 
 /* *
@@ -306,6 +295,15 @@ div.highcharts-description {
     stroke: none;
 }
 
+/* *
+ *
+ *  Data grid
+ *
+ * */
+.data-grid {
+    font-size: 14px;
+}
+
 /*
 * Dashboards styles
 */
@@ -390,6 +388,12 @@ div#info-container {
         text-align: center;
         font-size: 10px;
     }
+}
+
+#el-info span.pw-descr {
+    margin: 5px;
+    display: block;
+    text-align: justify;
 }
 
 #el-info table.intake {

@@ -434,7 +434,7 @@ async function dashboardUpdate(powerPlantInfo) {
         for (let j = 0; j < histLen; j++) {
             const power = hist.values[j];
 
-            // Add row with historical data (reversed)
+            // Add row with historical data
             rowData.push([time, power]);
 
             // Next measurement
@@ -500,15 +500,22 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             return `<h3 class="intake">${str}</h3>`;
         }
 
-        const loc = lang.tr('Location', true);
+        // Description
+        let html = '';
+        if (powerPlantInfo.description !== '') {
+            html = `<span class="pw-descr">
+            ${powerPlantInfo.description}</span>`;
+
+        }
+        // const loc = lang.tr('Location', true);
         const intake = lang.tr('Intakes');
         const qMin = lang.tr('Required minimal flow', true);
         const qAct = lang.tr('Measured minimal flow', true);
         const name = lang.tr('Name');
         const elevation = lang.tr('Elevation', true);
 
-        let html = `<table class="intake"><caption>${intake}</caption>
-            <tr><th>${name}</th><th>${loc}</th><th>${qMin}</th><th>${qAct}</th>
+        html += `<table class="intake"><caption>${intake}</caption>
+            <tr><th>${name}</th><th>${qMin}</th><th>${qAct}</th>
             <th>${elevation}</th></tr>`;
 
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
@@ -516,10 +523,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             const qMinSet = getFormattedValue(item.q_min_set);
             const qMinAct = getFormattedValue(item.q_min_act);
             const elevation = getFormattedValue(item.h);
-            const location = getFormattedValue(item.location);
+            // const location = getFormattedValue(item.location);
 
             html += `<tr><td>${item.name}</td>
-                <td>${location}</td>
                 <td>${qMinSet}</td>
                 <td>${qMinAct}</td>
                 <td>${elevation}</td>
@@ -538,7 +544,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
 
         const res = lang.tr('Reservoirs');
-        const loc = lang.tr('Location', true);
+        // const loc = lang.tr('Location', true);
         const vol = lang.tr('Volume', true);
         const drain = lang.tr('Drain', true);
         const energy = lang.tr('Energy', true);
@@ -549,7 +555,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         const netFlow = lang.tr('Net flow', true);
 
         let html = `<table class="intake"><caption>${res}</caption>
-            <tr><th>${name}</th><th>${loc}</th><th>${vol}</th><th>${drain}</th>
+            <tr><th>${name}</th><th>${vol}</th><th>${drain}</th>
             <th>${netFlow}</th><th>${energy}</th><th>${level}</th>
             <th>${hrv}</th><th>${lrv}</th></tr>`;
 
@@ -563,10 +569,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             const level = getFormattedValue(item.h, true);
             const hrv = getFormattedValue(item.HRV, true);
             const lrv = getFormattedValue(item.LRV, true);
-            const location = getFormattedValue(item.location);
+            // const location = getFormattedValue(item.location);
 
             html += `<tr><td>${item.name}</td>
-                <td>${location}</td>
                 <td>${volume}</td>
                 <td>${drain}</td>
                 <td>${netFlow}</td>
@@ -618,7 +623,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 lat: item.location.lat,
                 marker: reservoirMarker,
                 info:
-                `
+                    `
                     <caption>Vassmagasin</caption>
                     <tr><td>kjem snart</td>
                     <td>*</td></tr>
@@ -637,8 +642,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     // Information
     const infoComp = getComponent(board, 'el-info');
     await infoComp.update({
-        title: stationName,
-        html: '<h3>Oppdatert</h3>' + stationName // Does not work
+        title: stationName
+        // html: '<h3>Oppdatert</h3>' + stationName // Does not work
     });
 
     const intakeHtml = getIntakeHtml(powerPlantInfo);
@@ -658,6 +663,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     const mapComp = getComponent(board, 'el-map');
     const mapPoints = mapComp.chart.series[1];
 
+    // Erase existing points
     while (mapPoints.data.length > 0) {
         await mapPoints.data[0].remove();
     }
@@ -670,7 +676,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             lat: location.lat,
             marker: stationMarker,
             info:
-            `
+                `
                 <caption>Kraftverk</caption>
                 <tr><td>kjem snart</td>
                 <td>*</td></tr>
@@ -688,7 +694,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             title: stationName,
             chartOptions: {
                 mapView: {
-                    center: [location.lon, location.lat + 0.1],
+                    center: [location.lon, location.lat],
                     zoom: 9
                 }
             }
@@ -702,7 +708,6 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 symbol: 'square'
             }
         });
-
         await mapComp.update({
             title: stationName,
             chartOptions: {
@@ -1095,7 +1100,7 @@ async function onMessageArrived(mqttPacket) {
     powerPlantInfo.nAggs = powerPlantInfo.aggs.length;
     powerPlantInfo.nIntakes = powerPlantInfo.intakes.length;
     powerPlantInfo.nReservoirs = powerPlantInfo.reservoirs.length;
-    powerPlantInfo.time = powerPlantInfo.aggs.tst_iso;
+
     console.dir(powerPlantInfo);
 
     if (msgCount === 0) {
