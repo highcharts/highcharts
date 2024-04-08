@@ -402,7 +402,7 @@
         );
     });
 
-    QUnit.skip('Switch from grouped to non-grouped', function (assert) {
+    QUnit.test('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {
                 width: 600,
@@ -480,7 +480,7 @@
                 '.highcharts-series-0 ' +
                 'path'
             ).length,
-            32,
+            33,
             'Daily columns, monthlies should be removed (#7547) (Timezone: ' +
             'UTC ' +
             Math.round(new Date().getTimezoneOffset() / -60) +
