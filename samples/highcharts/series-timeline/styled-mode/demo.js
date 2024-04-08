@@ -1,8 +1,11 @@
 Highcharts.chart('container', {
     chart: {
-        width: 600,
         height: 400,
         styledMode: true
+    },
+
+    xAxis: {
+        type: 'datetime'
     },
 
     series: [
