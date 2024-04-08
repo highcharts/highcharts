@@ -932,8 +932,17 @@ function getPropertyInfo(
         _info.type = node.type.getText();
     }
 
-    if (node.initializer) {
-        _info.value = node.initializer.getText();
+    if (
+        !TS.isPropertySignature(node) &&
+        node.initializer
+    ) {
+        const expression = getChildInfos([node.initializer]);
+
+        if (expression.length) {
+            _info.value = expression[0];
+        } else {
+            _info.value = node.initializer.getText();
+        }
     }
 
     if (includeNode) {
@@ -1030,7 +1039,13 @@ function getVariableInfo(
             _info.type = node.type.getText();
         }
         if (node.initializer) {
-            _info.value = node.initializer.getText();
+            const expression = getChildInfos([node.initializer]);
+
+            if (expression.length) {
+                _info.value = expression[0];
+            } else {
+                _info.value = node.initializer.getText();
+            }
         }
     }
 
@@ -1243,7 +1258,7 @@ module.exports = {
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
  * @property {string} [type]
- * @property {string} [value]
+ * @property {bigint|boolean|null|number|string|ObjectInfo} [value]
  */
 
 
