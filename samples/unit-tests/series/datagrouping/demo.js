@@ -4,7 +4,7 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    QUnit.skip('General dataGrouping options', function (assert) {
+    QUnit.test('General dataGrouping options', function (assert) {
         let calledWithNaN = false;
 
         var chart = Highcharts.stockChart('container', {
@@ -22,7 +22,7 @@
             },
 
             xAxis: {
-                min: 1
+                min: 1.1
             },
 
             series: [
