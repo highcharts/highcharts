@@ -17,11 +17,48 @@
     --highcharts-color-1-light: #F5D3D1;
 
     /* Others */
+    --container-background: var(--highcharts-neutral-color-10);
     --color-background: var(--highcharts-neutral-color-3);
     --color-link: #339;
 
+    /* components backgrounds */
+    --color-title: #000;
+    --component-background: var(--highcharts-neutral-color-0);
+    --component-background-optional: var(--highcharts-neutral-color-5);
+
     /* Dimensions for result and control HTML */
     --comp-min-height: 160px;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+    :root {
+        /* Others */
+        --color-link: #cca;
+        --container-background: #2F2E38;
+
+        /* components backgrounds */
+        --component-background: #E3E3E8;
+        --component-background-optional: #474554;
+
+        --color-title: #c8c7d1;
+    }
+
+    #container {
+        background: var(--container-background);
+    }
+
+    #election-chart {
+        --color-axis: #ccc;
+        --color-axis-labels: #ccc;
+        --color-title: #dadae2;
+        --color-text: #dadae2;
+    }
+    
+    #elections-selector-wrapper select {
+        color: #fff;
+        background-color: var(--component-background-optional);
+    }
 }
 
 #election-map {
@@ -56,25 +93,6 @@
     --color-hover-text: #e7e7ec;
 }
 
-@media (prefers-color-scheme: dark) {
-    /* dark mode */
-    :root {
-        /* Others */
-        --color-link: #cca;
-    }
-
-    #container {
-        background: #2F2E38;
-    }
-
-    #election-chart {
-        --color-axis: #ccc;
-        --color-axis-labels: #ccc;
-        --color-title: #dadae2;
-        --color-text: #dadae2;
-    }
-}
-
 /* *
  *
  *  HTML layout
@@ -83,7 +101,7 @@
 
 #container {
     padding: 10px;
-    background-color: var(--highcharts-neutral-color-10);
+    background-color: var(--container-background);
 }
 
 .row {
@@ -113,6 +131,7 @@
     margin: 0;
     padding: 10px 0;
     fill: var(--color-title);
+    color: var(--color-title);
     font-weight: 500;
     font-size: 1.2em;
     text-align: left;
@@ -257,14 +276,6 @@
     justify-content: left;
 }
 
-#info-dem1 {
-    color: var(--highcharts-color-0);
-}
-
-#info-rep1 {
-    color: var(--highcharts-color-1);
-}
-
 #info-dem1,
 #info-rep1 {
     font-weight: bold;
@@ -291,7 +302,7 @@
 }
 
 #elections-selector-wrapper select {
-    background-color: var(--highcharts-neutral-color-5);
+    background-color: var(--component-background-optional);
     padding: 10px;
     border: none;
 }
@@ -324,7 +335,7 @@
 
 #html-control .highcharts-dashboards-component-content,
 #html-result .highcharts-dashboards-component-content {
-    background-color: var(--highcharts-neutral-color-5);
+    background-color: var(--component-background-optional);
 }
 
 /* *
@@ -333,8 +344,9 @@
  *
  * */
 
-#election-map .highcharts-background {
-    fill: var(--color-background);
+#election-map .highcharts-background,
+.highcharts-background {
+    fill: var(--component-background);
 }
 
 #election-map text.highcharts-credits {
@@ -429,7 +441,7 @@
 }
 
 #election-chart .highcharts-title {
-    fill: var(--color-title);
+    color: #000;
     letter-spacing: 1.5px;
     font-size: 1.2em;
     text-transform: capitalize;
@@ -506,6 +518,15 @@
     border-bottom: 1px solid #000;
 }
 
+#election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header,
+.highcharts-datagrid-cell {
+    color: #000;
+}
+
+.highcharts-datagrid-cell {
+    border-color: #cccccc;
+}
+
 #election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(2),
 #election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(4) {
     background-color: var(--highcharts-color-0);
@@ -528,13 +549,17 @@
     background-color: var(--highcharts-color-1-light);
 }
 
+.highcharts-datagrid-row {
+    background-color: #ffffff;
+}
+
 .highcharts-datagrid-row:nth-child(even) {
-    background-color: var(--highcharts-neutral-color-5);
+    background-color: #f2f2f2;
 }
 
 #election-grid .highcharts-datagrid-row.hovered,
 #election-grid .highcharts-datagrid-row.hovered .highcharts-datagrid-cell {
-    background-color: var(--highcharts-neutral-color-10);
+    background-color: #e6e6e6;
     color: #000;
 }
 
@@ -559,6 +584,17 @@
 .highcharts-dark #election-map .highcharts-series-1 .highcharts-data-label text {
     paint-order: stroke;
     stroke-width: 2px;
+}
+
+.highcharts-map-series .highcharts-point,
+.highcharts-column-series path.highcharts-point,
+.highcharts-bar-series path.highcharts-point {
+    stroke: #fff;
+}
+
+.highcharts-data-label text,
+text.highcharts-data-label {
+    fill: #000;
 }
 
 /* Dashboards layout */
