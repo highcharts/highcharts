@@ -1,6 +1,13 @@
-/*
- * Copyright (C) Highsoft AS
- */
+/* *
+ *
+ *  Handles old option structure.
+ *
+ *  Copyright (C) Highsoft AS
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *
+ * */
 
 
 /* eslint-disable no-unused-expressions, no-use-before-define */

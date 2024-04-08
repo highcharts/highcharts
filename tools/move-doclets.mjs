@@ -21,7 +21,6 @@
 import FS from 'node:fs';
 import FSLib from './gulptasks/lib/fs.js';
 import Path from 'node:path';
-import TreeLib from './lib/tree.js';
 import TS from 'typescript';
 import TSLib from './lib/ts.js';
 import Yargs from 'yargs';
@@ -768,8 +767,15 @@ function getComment(
         return docletPart.class.getText() + extractComment(docletPart.comment);
     }
 
-    if (TS.isJSDocTypeTag(docletPart)) {
-        return docletPart.typeExpression.getText() + extractComment(docletPart.comment);
+    if (TS.isJSDocParameterTag(docletPart)) {
+        return docletPart.typeExpression?.getText() + docletPart.tagName.getText() + extractComment(docletPart.comment);
+    }
+
+    if (
+        TS.isJSDocReturnTag(docletPart) ||
+        TS.isJSDocTypeTag(docletPart)
+    ) {
+        return docletPart.typeExpression?.getText() + extractComment(docletPart.comment);
     }
 
     return extractComment(docletPart.comment);

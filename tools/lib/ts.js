@@ -1,6 +1,14 @@
-/*
- * (c) Highsoft AS
- */
+/* *
+ *
+ *  Handles TypeScript API and provides a simplified AST for doclet-relevant
+ *  source nodes.
+ *
+ *  (c) Highsoft AS
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *
+ * */
 
 
 /* eslint-disable no-console, no-underscore-dangle, no-unused-expressions, no-use-before-define */
@@ -434,6 +442,8 @@ function getDocletInfosBetween(
     let _doclet;
     /** @type {string} */
     let _tagName;
+    /** @type {string} */
+    let _tagText;
     /** @type {Record<string,Array<string>>} */
     let _tags;
 
@@ -462,14 +472,15 @@ function getDocletInfosBetween(
                 if (node.tags) {
                     for (const tag of node.tags) {
                         _tagName = tag.tagName.getText();
+                        _tagText = tag.getText()
+                            .substring(_tagName.length + 1)
+                            .split(/\n *\*?/gu)
+                            .join('\n')
+                            .trim();
                         _tags[_tagName] = _tags[_tagName] || [];
-                        _tags[_tagName].push(
-                            tag.getText()
-                                .substring(_tagName.length + 1)
-                                .split(/\n *\*?/gu)
-                                .join('\n')
-                                .trim()
-                        );
+                        if (_tagText) {
+                            _tags[_tagName].push(_tagText);
+                        }
                     }
                     if (includeNodes) {
                         _doclet.node = node;
