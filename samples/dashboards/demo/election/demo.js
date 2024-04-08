@@ -188,13 +188,82 @@ async function setupDashboard() {
                         description: 'The map is displaying ' + commonTitle + ', ' + defaultYear
                     }
                 }
-            },
-            {
-                renderTo: 'election-chart',
+            }, {
+                renderTo: 'election-chart-national',
                 type: 'Highcharts',
                 title: {
                     text: 'Historical ' + commonTitle + 's'
                 },
+                chartOptions: {
+                    title: {
+                        text: '<span class="title-bck-wrapper">' + defaultYear + '</span>National',
+                        align: 'left',
+                        useHTML: true
+                    },
+                    chart: {
+                        styledMode: true,
+                        type: 'bar',
+                        spacingTop: 20
+                    },
+                    credits: {
+                        enabled: true,
+                        href: 'https://www.archives.gov/electoral-college/allocation',
+                        text: 'National Archives'
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        format: '{point.candidate}: {point.electors} electors'
+                    },
+                    plotOptions: {
+                        bar: {
+                            pointPadding: 0,
+                            groupPadding: 0.2,
+                            grouping: false,
+                            dataLabels: {
+                                align: 'left',
+                                useHTML: true,
+                                enabled: true,
+                                inside: true,
+                                format: '{point.y:.1f}% Total Votes'
+                            }
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        categories: [electionData[defaultYear].candDem, electionData[defaultYear].candRep],
+                        labels: {
+                            useHTML: true,
+                            accessibility: {
+                                description: 'Election year'
+                            }
+                        }
+                    },
+                    yAxis: {
+                        enabled: false,
+                        labels: {
+                            enabled: false
+                        },
+                        title: false,
+                        accessibility: {
+                            description: 'Percent of votes'
+                        }
+                    },
+                    series: getHistoricalElectionSeries('US', defaultYear),
+                    lang: {
+                        accessibility: {
+                            chartContainerLabel: commonTitle + ' results.'
+                        }
+                    },
+                    accessibility: {
+                        description: 'The chart displays national election results.'
+                    }
+                }
+            }, {
+                renderTo: 'election-chart',
+                type: 'Highcharts',
                 chartOptions: {
                     title: {
                         text: '<span class="title-bck-wrapper">Historic</span>National',
@@ -573,34 +642,38 @@ function resetMap(mapChart) {
     }
 }
 
-function getHistoricalElectionSeries(state = 'US') {
+function getHistoricalElectionSeries(state = 'US', year) {
     const series = [
         {
             name: 'Democrat',
             data: []
         }, {
             name: 'Republican',
+            pointStart: year ? 1 : 0,
             data: []
         }
     ];
 
-    Object.values(electionData).reverse().forEach(item => {
-        const row = item.data.find(c => c[5] === state);
+    for (const [key] of Object.entries(electionData).reverse()) {
+        if (year && key !== year) {
+            continue;
+        }
+        const row = electionData[key].data.find(c => c[5] === state);
 
         // Percentage, Democrat
         series[0].data.push({
-            candidate: item.candDem,
+            candidate: electionData[key].candDem,
             y: Number(row[3]),
             electors: row[1]
         });
 
         // Percentage, Republicans
         series[1].data.push({
-            candidate: item.candRep,
+            candidate: electionData[key].candRep,
             y: Number(row[4]),
             electors: row[2]
         });
-    });
+    }
 
     return series;
 }
@@ -623,8 +696,6 @@ async function updateResultComponent(electionTable, year) {
 
     // Candidate percentages/electors
     const row = electionTable.getRowIndexBy('postal-code', 'US');
-    const demPercent = electionTable.getCellAsNumber('demPercent', row);
-    const repPercent = electionTable.getCellAsNumber('repPercent', row);
     const demColVotes = electionTable.getCellAsNumber('demColVotes', row);
     const repColVotes = electionTable.getCellAsNumber('repColVotes', row);
     const totalColVotes = demColVotes + repColVotes;
@@ -662,6 +733,9 @@ async function updateResultComponent(electionTable, year) {
     const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBC: is this safe?
     el = document.getElementById('info-to-win');
     el.innerHTML = neededVotes + ' to win';
+
+    // national chart
+
 }
 
 
@@ -740,6 +814,17 @@ async function updateGridComponent(component, year) {
     });
 }
 
+function updateBarComponent(component, year) {
+    const updatedSeries = getHistoricalElectionSeries('US', year);
+
+    component.chart.update({
+        title: {
+            text: '<span class="title-bck-wrapper">' + year + '</span>National'
+        },
+        series: updatedSeries
+    });
+}
+
 //
 // Callbacks (event handlers)
 //
@@ -748,19 +833,36 @@ async function onStateClicked(board, state) {
     const electionTable = await getElectionTable(board, electionYears[0]);
     const row = electionTable.getRowIndexBy('postal-code', state);
     const stateName = electionTable.getCell('state', row);
+    const stateTitle = stateName.charAt(0).toUpperCase() + stateName.slice(1);
+    const yearSelector = document.getElementById('election-year');
 
     // Update chart title
     const comp = getComponent(board, 'election-chart');
+    const compbar = getComponent(board, 'election-chart-national');
 
     // Election data for current state
     const stateSeries = getHistoricalElectionSeries(state);
+    const yearStateSeries = getHistoricalElectionSeries(
+        state, yearSelector.value
+    );
 
     await comp.update({
         chartOptions: {
             title: {
-                text: state === 'US' ? 'National' : stateName
+                text: '<span class="title-bck-wrapper">Historic</span>' +
+                    (state === 'US' ? 'National' : stateTitle)
             },
             series: stateSeries
+        }
+    });
+
+    await compbar.update({
+        chartOptions: {
+            title: {
+                text: '<span class="title-bck-wrapper">' + yearSelector.value +
+                    '</span>' + (state === 'US' ? 'National' : stateTitle)
+            },
+            series: yearStateSeries
         }
     });
 }
@@ -771,6 +873,7 @@ async function onYearClicked(board, year) {
     // Dashboards components
     const mapComponent = getComponent(board, 'election-map');
     const gridComponent = getComponent(board, 'election-grid');
+    const barComponent = getComponent(board, 'election-chart-national');
 
     // Get election data
     const electionTable = await getElectionTable(board, year);
@@ -787,6 +890,9 @@ async function onYearClicked(board, year) {
 
     // Update data grid component (Dashboards datagrid)
     updateGridComponent(gridComponent, year);
+
+    // Update national bar chart
+    updateBarComponent(barComponent, year);
 }
 
 

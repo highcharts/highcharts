@@ -110,9 +110,15 @@
     flex-direction: row;
 }
 
-.cell {
+.cell, 
+.col-wrapper {
     flex: 1;
     min-width: 20px;
+}
+
+.col-wrapper {
+    display: flex;
+    flex-direction: column;
 }
 
 .cell > .highcharts-dashboards-component {
@@ -436,13 +442,13 @@
  *
  * */
 
-#election-chart h2 {
+#election-chart-national h2 {
     text-indent: -9999px;
 }
 
-#election-chart .highcharts-title {
+#election-chart .highcharts-title,
+#election-chart-national .highcharts-title {
     color: #000;
-    letter-spacing: 1.5px;
     font-size: 1.2em;
     text-transform: capitalize;
 }
@@ -468,11 +474,13 @@
 }
 
 #election-chart .highcharts-yaxis-grid .highcharts-grid-line,
-#election-chart .highcharts-axis-line {
+#election-chart-national .highcharts-yaxis-grid .highcharts-grid-line,
+#election-chart .highcharts-axis-line 
+#election-chart-national .highcharts-axis-line {
     stroke-width: 0px;
 }
 
-#election-chart .highcharts-title .title-bck-wrapper {
+.highcharts-title .title-bck-wrapper {
     padding: 10px 5px;
     color: #fff;
     border-radius: 5px;
@@ -488,6 +496,21 @@
 
 .highcharts-legend-item > text {
     fill: var(--color-text);
+}
+
+#election-chart-national .highcharts-axis-line {
+    stroke-width: 0px;
+}
+
+#election-chart-national .highcharts-data-label {
+    color: #fff;
+    font-size: 1em;
+}
+
+#election-chart-national .highcharts-axis-labels {
+    color: #000;
+    font-size: 1.3em;
+    font-weight: bold;
 }
 
 /* *
