@@ -52,7 +52,12 @@ const MAP_PROPERTY_TYPES = {
 };
 
 const MAP_TYPE_IMPORTS = {
+    'ColorType': 'ts/Core/Color/ColorType',
     'DataLabelOptions': 'ts/Core/Series/DataLabelOptions',
+    'PointEventsOptions': 'ts/Core/Series/PointOptions',
+    'PointMarkerOptions': 'ts/Core/Series/PointOptions',
+    'PointOptions': 'ts/Core/Series/PointOptions',
+    'PointShortOptions': 'ts/Core/Series/PointOptions',
     'TooltipOptions': 'ts/Core/TooltipOptions'
 };
 
@@ -293,7 +298,7 @@ function decorateType(
                         TS.isPropertySignature(child) &&
                         child.name.text === name
                     ) {
-                        return child.type?.getText();
+                        return (child.type & child.type.getText());
                     }
                 }
             }
@@ -543,7 +548,7 @@ function generateDynamicCode(
     const doclet = branch.doclet;
 
     if (doclet) {
-        if (doclet.tags.optionparent) {
+        if (branch.children) {
             return (
                 TSLib.toDocletString(doclet) +
                 'interface ' + getInterfaceName(branch) + '{\n' +
@@ -580,6 +585,7 @@ function generateImportCode(
     imports,
     importPath
 ) {
+    const importKeyword = importPath.endsWith('.js') ? 'import' : 'import type';
     const dtsPath = importPath.replace(/(?:\.js)?$/u, '.d.ts');
     const tsPath = importPath.replace(/(?:\.js)?$/u, '.ts');
     const moduleCode = FS.readFileSync(
@@ -625,7 +631,11 @@ function generateImportCode(
             `./${relativePath}`
     );
 
-    return `import ${defaultImport}${namedImports} from '${relativePath}';`
+    return (
+        importKeyword + ' ' +
+        defaultImport + namedImports + ' ' +
+        `from '${relativePath}';`
+    );
 }
 
 
@@ -698,9 +708,14 @@ function getMemberType(
         .replace(/[{}]/gu, '')
         .replace(/\*/gu, (
             (doclet && TSLib.getTagText(doclet, 'declare')) ||
-            getInterfaceName(branch) ||
-            '*'
-        ));
+            (
+                branch.name === 'data' ?
+                    getInterfaceName(branch)
+                        .replace('SeriesDataOptions', 'PointOptions') : 
+                    getInterfaceName(branch) || '*'
+            )
+        ))
+        .replace(/,(\S)/gu, ', $1');
 }
 
 
@@ -801,13 +816,23 @@ function mergeImports(
             /** @type {Record<string,Array<string>>} */
             let allTypes;
 
-            for (const path in branchImports) {
+            for (const path of Object.keys(branchImports)) {
 
                 branchTypes = branchImports[path];
                 allTypes = imports[path] = imports[path] || [];
 
                 for (const branchType of branchTypes) {
+                    if (MAP_TYPE_IMPORTS[branchType]) {
+                        const mappedTypes =
+                            imports[MAP_TYPE_IMPORTS[branchType]] =
+                                imports[MAP_TYPE_IMPORTS[branchType]] || [];
+                        if (!mappedTypes.includes(branchType)) {
+                            mappedTypes.push(branchType);
+                        }
+                        continue;
+                    }
                     if (!allTypes.includes(branchType)) {
+                        console.log(path, branchType);
                         allTypes.push(branchType);
                     }
                 }
@@ -849,6 +874,7 @@ function mergeImports(
                             path
                         )
                     ]);
+                    delete imports[path];
                 }
             }
         }
@@ -896,17 +922,11 @@ function mergeInterfaceOverwrite(
         // Check, if new branch is known
         if (visitedBranches[interfaceName]) {
             if (branch.doclet) {
-                newBranch.doclet = (
-                    newBranch.doclet ||
-                    TSLib.newDocletInfo()
+                newBranch.doclet = TSLib.mergeDocletInfos(
+                    newBranch.doclet,
+                    branch.doclet
                 );
-                const newTags = newBranch.doclet.tags;
-                const tags = branch.doclet.tags;
-                for (const tag of Object.keys(tags)) {
-                    newTags[tag] = newTags[tag] || [];
-                    newTags[tag].push(...tags[tag]);
-                }
-                if (TSLib.getTagText(newBranch.doclet, 'optionparent')) {
+                if (newBranch.doclet.tags.optionparent) {
                     TSLib.removeTag(newBranch.doclet, 'apioption');
                     TSLib.addTag(
                         newBranch.doclet,
@@ -1121,16 +1141,6 @@ function writeDocletsTree(
                         branch.type = getMemberType(branch);
                         delete branch.children;
 
-                        if (doclet.tags.optionparent) {
-                            TSLib.removeTag(branch.doclet, 'optionparent');
-                        } else {
-                            TSLib.addTag(
-                                doclet,
-                                'optionparent',
-                                branch.fullName
-                            );
-                        }
-
                         changes.push([
                             node.getEnd() + 1,
                             TS.SyntaxKind.Unknown,
@@ -1149,20 +1159,6 @@ function writeDocletsTree(
             }
 
             if (!isRegistered(branch)) {
-                branch.doclet = (
-                    branch.doclet ||
-                    {
-                        kind: 'Doclet',
-                        tags: {}
-                    }
-                );
-                if (!branch.doclet.tags.apioption) {
-                    TSLib.addTag(
-                        branch.doclet,
-                        'apioption',
-                        branch.fullName
-                    );
-                }
                 changes.push([
                     target.getEnd(),
                     TS.SyntaxKind.InterfaceDeclaration,
@@ -1208,6 +1204,10 @@ function writeDocletsTree(
         const replacements = [];
 
         for (const change of changes) {
+            if (change[2].doclet) {
+                TSLib.removeTag(change[2].doclet, 'apioption');
+                TSLib.removeTag(change[2].doclet, 'optionparent');
+            }
             switch (change[1]) {
                 case TS.SyntaxKind.InterfaceDeclaration:
                     if (change[2].doclet) {
@@ -1241,7 +1241,7 @@ function writeDocletsTree(
 
         let targetCode = mergeImports(target, tree);
 
-        if (!targetCode.includes('\n(\'\');')) {
+        if (targetCode.endsWith('*/\n')) {
             targetCode += '\n(\'\');\n';
         }
 

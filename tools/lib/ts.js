@@ -1147,6 +1147,47 @@ function isNativeType(
 
 
 /**
+ * Merge multiple DocletInfo objects into the first.
+ *
+ * @param {DocletInfo|undefined} targetDoclet
+ * Doclet information to add to.
+ *
+ * @param {Array<DocletInfo>} sourceDoclets
+ * Doclet informations to add.
+ *
+ * @return {DocletInfo}
+ * First DocletObject as reference.
+ */
+function mergeDocletInfos(
+    targetDoclet,
+    ...sourceDoclets
+) {
+    targetDoclet = targetDoclet || newDocletInfo();
+
+    const targetTags = targetDoclet.tags;
+
+    /** @type {Record<string,Array<string>>} */
+    let sourceTags;
+    /** @type {Array<string>} */
+    let targetTag;
+
+    for (const sourceDoclet of sourceDoclets) {
+        sourceTags = sourceDoclet.tags;
+        for (const tag of Object.keys(sourceTags)) {
+            targetTag = targetTags[tag] = targetTags[tag] || [];
+            for (const value of sourceTags[tag]) {
+                if (!targetTag.includes(value)) {
+                    targetTag.push(value);
+                }
+            }
+        }
+    }
+
+    return targetDoclet;
+}
+
+
+/**
  * Creates a new DocletInfo object.
  *
  * @param {DocletInfo} [template]
@@ -1227,7 +1268,11 @@ function toDocletString(
 ) {
 
     if (typeof indent === 'number') {
-        indent = '\n' + ''.padEnd(indent, ' ');
+        indent = ''.padEnd(indent, ' ');
+    }
+
+    if (indent[0] !== '\n') {
+        indent = '\n' + indent;
     }
 
     const tags = doclet.tags;
@@ -1267,10 +1312,12 @@ function toDocletString(
             line = line.trimEnd();
             if (line.length > 80) {
                 const br = line.substring(0, 80).lastIndexOf(' ');
-                return (
-                    line.substring(0, br) +
-                    indent + ' * ' + line.substring(br)
-                );
+                if (br >= 40) {
+                    return (
+                        line.substring(0, br) +
+                        indent + ' * ' + line.substring(br)
+                    );
+                }
             }
             return line;
         })
@@ -1336,6 +1383,7 @@ module.exports = {
     getTagText,
     isCapitalCase,
     isNativeType,
+    mergeDocletInfos,
     newDocletInfo,
     removeTag,
     toDocletString,
