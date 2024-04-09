@@ -58,7 +58,9 @@ console.time('line');
 Highcharts.stockChart('container', {
 
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {

@@ -49,7 +49,9 @@ const data3 = [
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Sound pressure level'
