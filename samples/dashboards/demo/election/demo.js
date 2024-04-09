@@ -94,7 +94,8 @@ async function setupDashboard() {
                                 onStateClicked(board, 'US');
                                 resetMap(this);
                             }
-                        }
+                        },
+                        spacing: [0, 30, 30, 30]
                     },
                     title: {
                         text: ''
@@ -203,7 +204,7 @@ async function setupDashboard() {
                     chart: {
                         styledMode: true,
                         type: 'bar',
-                        spacingTop: 20
+                        spacing: [40, 20, 40, 20]
                     },
                     credits: {
                         enabled: true,
@@ -273,7 +274,7 @@ async function setupDashboard() {
                     chart: {
                         styledMode: true,
                         type: 'column',
-                        spacingTop: 20
+                        spacing: [40, 20, 40, 20]
                     },
                     credits: {
                         enabled: true,
@@ -642,7 +643,7 @@ function resetMap(mapChart) {
     }
 }
 
-function getHistoricalElectionSeries(state = 'US', year) {
+function getHistoricalElectionSeries(state, year) {
     const series = [
         {
             name: 'Democrat',
@@ -658,7 +659,7 @@ function getHistoricalElectionSeries(state = 'US', year) {
         if (year && key !== year) {
             continue;
         }
-        const row = electionData[key].data.find(c => c[5] === state);
+        const row = electionData[key].data.find(c => c[5] === (state || 'US'));
 
         // Percentage, Democrat
         series[0].data.push({
@@ -818,6 +819,9 @@ function updateBarComponent(component, year) {
     const updatedSeries = getHistoricalElectionSeries('US', year);
 
     component.chart.update({
+        xAxis: {
+            categories: [electionData[year].candDem, electionData[year].candRep]
+        },
         title: {
             text: '<span class="title-bck-wrapper">' + year + '</span>National'
         },
