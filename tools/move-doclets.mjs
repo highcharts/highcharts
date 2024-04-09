@@ -168,19 +168,6 @@ function addImport(
 
 }
 
-/**
- * @param {Array<Record<string,*>>} doclet
- * @param {string} tag
- * @param {string} text
- */
-function addTag(
-    doclet,
-    tag,
-    text
-) {
-    doclet.push({ tag, text });
-}
-
 
 /**
  * @param {Record<string,*>} branch
@@ -194,45 +181,25 @@ function decorateDoclet(
     previousNode,
     tree
 ) {
-    const doclets = TSLib.getDocletsBetween(previousNode, node)
+    const doclets = TSLib.getDocletInfosBetween(previousNode, node)
 
     if (doclets.length) {
-        const transfer = (jsdoc, branch) => {
-            let doclet = branch.doclet = [];
-
-            for (const item of jsdoc) {
-                if (TS.isJSDoc(item)) {
-                    if (item.comment) {
-                        addTag(doclet, 'description', getComment(item));
-                    }
-                    if (item.tags) {
-                        for (const tag of item.tags) {
-                            addTag(doclet, tag.tagName.text, getComment(tag));
-                        }
-                    }
-                } else {
-                    addTag(doclet, item.tagName.text, getComment(item));
-                }
-            }
-        };
-
         /** @type {Record<string,*>} */
         let anonymousBranch = {};
 
-        // Now add the anonymous doclets before the last one
+        // Add all doclets
         for (const doclet of doclets) {
-            anonymousBranch = {};
-            transfer(doclet, anonymousBranch);
+            anonymousBranch = { doclet };
             decorateName(anonymousBranch, node);
             decorateType(anonymousBranch, node);
             tree.push(anonymousBranch);
         }
 
-        // Add last doclet to branch, if custom option path is missing
+        // Now move last doclet to branch, if custom option path is missing
         if (
-            !tree[tree.length - 1]
-                .doclet
-                .some(part => part.tag === 'apioption')
+            tree[tree.length - 1].doclet &&
+            !tree[tree.length - 1].doclet.apioption &&
+            !tree[tree.length - 1].doclet.optionparent
         ) {
             branch.doclet = tree.pop().doclet;
         }
@@ -256,8 +223,8 @@ function decorateName(
 
     if (branch.doclet) {
         optionName = (
-            getTagText(branch.doclet, 'apioption') ||
-            getTagText(branch.doclet, 'optionparent')
+            TSLib.getTagText(branch.doclet, 'apioption') ||
+            TSLib.getTagText(branch.doclet, 'optionparent')
         );
         if (optionName) {
             branch.name = optionName.split('.').pop();
@@ -359,7 +326,8 @@ function decorateType(
         !optionType &&
         branch.doclet
     ) {
-        optionType = getTagText(branch.doclet, 'type')?.replace(/[{}]/g, '');
+        optionType =
+            TSLib.getTagText(branch.doclet, 'type')?.replace(/[{}]/g, '');
     }
 
     if (
@@ -575,12 +543,9 @@ function generateDynamicCode(
     const doclet = branch.doclet;
 
     if (doclet) {
-        if (
-            doclet.children?.length ||
-            doclet.some(part => part.tag === 'optionparent')
-        ) {
+        if (doclet.tags.optionparent) {
             return (
-                generateInterfaceComment(branch) +
+                TSLib.toDocletString(doclet) +
                 'interface ' + getInterfaceName(branch) + '{\n' +
                 (branch.children || [])
                     .map(subBranch => generateDynamicCode(subBranch))
@@ -589,15 +554,16 @@ function generateDynamicCode(
             );
         } else {
             return (
-                '\n    ' + generatePropertyComment(branch) +
-                getPropertyName(branch) + '?: ' + getMemberType(branch) + ';\n'
+                TSLib.toDocletString(doclet, '\n    ') +
+                '    ' + getPropertyName(branch) + '?: ' +
+                getMemberType(branch) + ';\n'
             );
         }
     }
 
     return (
-        '\n    ' + getPropertyName(branch) + '?: '
-        + getMemberType(branch) + ';\n'
+        '\n    ' + getPropertyName(branch) + '?: ' +
+        getMemberType(branch) + ';\n'
     );
 
 }
@@ -665,125 +631,6 @@ function generateImportCode(
 
 /**
  * @param {Record<string,*>} branch
- * @return {string}
- */
-function generateInterfaceComment(
-    branch
-) {
-    const doclet = branch.doclet;
-
-    let result = '/**';
-
-    if (doclet) {
-        /** @type {string} */
-        let text;
-
-        for (const part of doclet) {
-            text = part.text.split('\n').join('\n * ');
-            if (
-                result.length === 3 &&
-                part.tag === 'description'
-            ) {
-                result += `\n * ${text}`;
-            } else {
-                result += `\n *\n * @${part.tag} ${text}`;
-            }
-        }
-    } else {
-        result += '\n * @todo write doclet';
-    }
-
-    result = result.split(/\n/gu).map(l => {
-        l = l.trimEnd();
-        if (l.length > 80) {
-            const br = l.substring(0, 80).lastIndexOf(' ');
-            return l.substring(0, br) + '\n * ' + l.substring(br);
-        }
-        return l;
-    }).join('\n');
-
-    return `${result}\n */\n`;
-}
-
-
-/**
- * @param {Record<string,*>} branch
- * @return {string}
- */
-function generatePropertyComment(
-    branch
-) {
-    const doclet = branch.doclet;
-
-    let result = '/**';
-
-    if (doclet) {
-        /** @type {string} */
-        let text;
-
-        for (const part of doclet) {
-            text = part.text.split('\n').join('\n     * ');
-            if (
-                result.length === 3 &&
-                part.tag === 'description'
-            ) {
-                result += `\n     * ${text}\n     *`;
-            } else {
-                result += `\n     * @${part.tag} ${text}`;
-            }
-        }
-    } else {
-        result += '\n     * @todo write doclet';
-    }
-
-    result = result.split(/\n/gu).map(l => {
-        l = l.trimEnd();
-        if (l.length > 80) {
-            const br = l.substring(0, 80).lastIndexOf(' ');
-            return l.substring(0, br) + '\n     * ' + l.substring(br);
-        }
-        return l;
-    }).join('\n');
-
-    return `${result}\n     */\n    `;
-}
-
-
-/**
- * @param {TS.JSDoc|TS.JSDocTag} docletPart
- * @return {string}
- */
-function getComment(
-    docletPart
-) {
-    /** @param {typeof docletPart.comment} comment */
-    const extractComment = comment => (
-        typeof comment === 'string' ?
-            comment :
-            comment?.map(getComment).join('\n\n') || ''
-    );
-
-    if (TS.isJSDocAugmentsTag(docletPart)) {
-        return docletPart.class.getText() + extractComment(docletPart.comment);
-    }
-
-    if (TS.isJSDocParameterTag(docletPart)) {
-        return docletPart.typeExpression?.getText() + docletPart.tagName.getText() + extractComment(docletPart.comment);
-    }
-
-    if (
-        TS.isJSDocReturnTag(docletPart) ||
-        TS.isJSDocTypeTag(docletPart)
-    ) {
-        return docletPart.typeExpression?.getText() + extractComment(docletPart.comment);
-    }
-
-    return extractComment(docletPart.comment);
-}
-
-
-/**
- * @param {Record<string,*>} branch
  * @param {boolean} [ofParent]
  * @return {string|undefined}
  */
@@ -822,8 +669,8 @@ function getInterfaceName(
 
     if (doclet) {
         const fullName = (
-            getTagText(doclet, 'apioption') ||
-            getTagText(doclet, 'optionparent')
+            TSLib.getTagText(doclet, 'apioption') ||
+            TSLib.getTagText(doclet, 'optionparent')
         );
 
         if (fullName) {
@@ -845,12 +692,12 @@ function getMemberType(
 
     return (
         branch.type ||
-        (doclet && getTagText(doclet, 'type')) ||
+        (doclet && TSLib.getTagText(doclet, 'type')) ||
         '*'
     )
         .replace(/[{}]/gu, '')
         .replace(/\*/gu, (
-            (doclet && getTagText(doclet, 'declare')) ||
+            (doclet && TSLib.getTagText(doclet, 'declare')) ||
             getInterfaceName(branch) ||
             '*'
         ));
@@ -869,22 +716,6 @@ function getPropertyName(
         branch.fullName?.split('.').pop() ||
         ''
     );
-}
-
-
-/**
- * @param {Array<Record<string,string>>} doclet
- * @param {string} tag
- */
-function getTagText(
-    doclet,
-    tag
-) {
-    for (const part of doclet) {
-        if (part.tag === tag) {
-            return part.text;
-        }
-    }
 }
 
 
@@ -1062,18 +893,26 @@ function mergeInterfaceOverwrite(
         /** @type {Record<string,*>} */
         const newBranch = visitedBranches[interfaceName] || {};
 
+        // Check, if new branch is known
         if (visitedBranches[interfaceName]) {
             if (branch.doclet) {
-                newBranch.doclet = newBranch.doclet || [];
-                newBranch.doclet.push(...branch.doclet);
-                if (getTagText(newBranch.doclet, 'optionparent')) {
-                    addTag(
+                newBranch.doclet = (
+                    newBranch.doclet ||
+                    TSLib.newDocletInfo()
+                );
+                const newTags = newBranch.doclet.tags;
+                const tags = branch.doclet.tags;
+                for (const tag of Object.keys(tags)) {
+                    newTags[tag] = newTags[tag] || [];
+                    newTags[tag].push(...tags[tag]);
+                }
+                if (TSLib.getTagText(newBranch.doclet, 'optionparent')) {
+                    TSLib.removeTag(newBranch.doclet, 'apioption');
+                    TSLib.addTag(
                         newBranch.doclet,
                         'optionparent',
-                        getTagText(newBranch.doclet, 'optionparent')
+                        TSLib.removeTag(newBranch.doclet, 'optionparent')[0]
                     );
-                    removeTag(newBranch.doclet, 'apioption');
-                    removeTag(newBranch.doclet, 'optionparent');
                 }
             }
             newBranch.isMerged = true;
@@ -1130,15 +969,6 @@ async function moveSeriesDoclets(
 
     for (const file of files) {
 
-        // if (file.endsWith('.d.ts')) {
-        //     console.log(JSON.stringify(
-        //         TSLib.getSourceInfo(file),
-        //         (key, value) => (key === 'node' ? '[TS.Node]' : value),
-        //         '  '
-        //     ));
-        //     continue;
-        // }
-
         if (!file.endsWith('Options.d.ts')) {
             continue;
         }
@@ -1185,30 +1015,6 @@ async function moveSeriesDoclets(
         console.info('Cleaning', source.fileName);
 
         removeDoclets(source);
-    }
-
-}
-
-
-/**
- * @param {Array<Record<string,string>>} doclet
- * @param {string} tag
- */
-function removeTag(
-    doclet,
-    tag
-) {
-    /** @type {Array<number>} */
-    const indexes = [];
-
-    for (let i = 0, iEnd = doclet.length; i < iEnd; ++i) {
-        if (doclet[i].tag === tag) {
-            indexes.push(i);
-        }
-    }
-
-    for (const index of indexes.reverse()) {
-        doclet.splice(index, 1);
     }
 
 }
@@ -1272,7 +1078,7 @@ function writeDocletsTree(
                     getPropertyName(branch) === node.name.text &&
                     getInterfaceName(branch, true) === parent.name.text
                 ) {
-                    changes.push([node.getStart(), node.kind, branch]);
+                    changes.push([node.getStart() - 4, node.kind, branch]);
                 }
             }
         }
@@ -1310,15 +1116,19 @@ function writeDocletsTree(
 
                     if (branch.children) {
                         const children = branch.children;
-                        const doclet = (branch.doclet || []).slice();
+                        const doclet = TSLib.newDocletInfo(branch.doclet);
 
                         branch.type = getMemberType(branch);
                         delete branch.children;
 
-                        if (getTagText(doclet, 'optionparent')) {
-                            removeTag(branch.doclet, 'optionparent');
+                        if (doclet.tags.optionparent) {
+                            TSLib.removeTag(branch.doclet, 'optionparent');
                         } else {
-                            addTag(doclet, 'optionparent', branch.fullName);
+                            TSLib.addTag(
+                                doclet,
+                                'optionparent',
+                                branch.fullName
+                            );
                         }
 
                         changes.push([
@@ -1339,9 +1149,19 @@ function writeDocletsTree(
             }
 
             if (!isRegistered(branch)) {
-                branch.doclet = branch.doclet || [];
-                if (!getTagText(branch.doclet, 'apioption')) {
-                    addTag(branch.doclet, 'apioption', branch.fullName)
+                branch.doclet = (
+                    branch.doclet ||
+                    {
+                        kind: 'Doclet',
+                        tags: {}
+                    }
+                );
+                if (!branch.doclet.tags.apioption) {
+                    TSLib.addTag(
+                        branch.doclet,
+                        'apioption',
+                        branch.fullName
+                    );
                 }
                 changes.push([
                     target.getEnd(),
@@ -1390,18 +1210,22 @@ function writeDocletsTree(
         for (const change of changes) {
             switch (change[1]) {
                 case TS.SyntaxKind.InterfaceDeclaration:
-                    replacements.push([
-                        change[0],
-                        change[0],
-                        generateInterfaceComment(change[2])
-                    ]);
+                    if (change[2].doclet) {
+                        replacements.push([
+                            change[0],
+                            change[0],
+                            TSLib.toDocletString(change[2].doclet)
+                        ]);
+                    }
                     break;
                 case TS.SyntaxKind.PropertySignature:
-                    replacements.push([
-                        change[0],
-                        change[0],
-                        generatePropertyComment(change[2])
-                    ]);
+                    if (change[2].doclet) {
+                        replacements.push([
+                            change[0],
+                            change[0],
+                            TSLib.toDocletString(change[2].doclet, 4)
+                        ]);
+                    }
                     break;
                 default:
                     replacements.push([

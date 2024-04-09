@@ -57,6 +57,36 @@ const TYPE_SPLIT = /\W+/gsu;
  *
  * */
 
+/**
+ * Adds a tag to a DocletInfo object.
+ *
+ * @param {DocletInfo} doclet
+ * Doclet information to modify.
+ *
+ * @param {string} tag
+ * Tag to add to.
+ *
+ * @param {string|undefined} [text]
+ * Text to add.
+ *
+ * @return {DocletInfo}
+ * DocletInfo object as reference.
+ */
+function addTag(
+    doclet,
+    tag,
+    text
+) {
+    const tags = doclet.tags;
+
+    tags[tag] = tags[tag] || [];
+
+    if (text) {
+        tags[tag].push(text);
+    }
+
+}
+
 
 /**
  * Shifts ranges in the source code with replacements.
@@ -442,24 +472,17 @@ function getDocletInfosBetween(
     let _doclet;
     /** @type {string} */
     let _tagName;
-    /** @type {string} */
-    let _tagText;
-    /** @type {Record<string,Array<string>>} */
-    let _tags;
 
     for (const doclet of getDocletsBetween(startNode, endNode)) {
 
-        _doclet = {
-            kind: 'Doclet',
-            tags: {}
-        };
-        _tags = _doclet.tags;
+        _doclet = newDocletInfo();
 
         for (const node of doclet) {
             if (TS.isJSDoc(node)) {
                 if (node.comment) {
-                    _tags.description = _tags.description || [];
-                    _tags.description.push(
+                    addTag(
+                        _doclet,
+                        'description',
                         node.comment instanceof Array ?
                             node.comment
                                 .map(c => c.text)
@@ -472,15 +495,15 @@ function getDocletInfosBetween(
                 if (node.tags) {
                     for (const tag of node.tags) {
                         _tagName = tag.tagName.getText();
-                        _tagText = tag.getText()
-                            .substring(_tagName.length + 1)
-                            .split(/\n *\*?/gu)
-                            .join('\n')
-                            .trim();
-                        _tags[_tagName] = _tags[_tagName] || [];
-                        if (_tagText) {
-                            _tags[_tagName].push(_tagText);
-                        }
+                        addTag(
+                            _doclet,
+                            _tagName,
+                            tag.getText()
+                                .substring(_tagName.length + 1)
+                                .split(/\n *\*?/gu)
+                                .join('\n')
+                                .trim()
+                        );
                     }
                     if (includeNodes) {
                         _doclet.node = node;
@@ -993,6 +1016,32 @@ function getSourceInfo(
 
 
 /**
+ * Retrieves the last text of the specified tag from a DocletInfo object.
+ *
+ * @param {DocletInfo} doclet
+ * Doclet information to retrieve from.
+ *
+ * @param {string} tag
+ * Tag to retrieve.
+ *
+ * @return {string|undefined}
+ * Retrieved text or `undefined`.
+ */
+function getTagText(
+    doclet,
+    tag
+) {
+    const tagText = doclet.tags[tag];
+
+    if (tagText && tagText.length) {
+        return tagText[tagText.length - 1];
+    }
+
+    return void 0;
+}
+
+
+/**
  * Retrieves variable information from the given node.
  *
  * @param {TS.Node} node
@@ -1098,6 +1147,140 @@ function isNativeType(
 
 
 /**
+ * Creates a new DocletInfo object.
+ *
+ * @param {DocletInfo} [template]
+ * Doclet information to apply.
+ *
+ * @return {DocletInfo}
+ * The new doclet information.
+ */
+function newDocletInfo(
+    template
+) {
+    /** @type {DocletInfo} */
+    const doclet = {
+        kind: 'Doclet',
+        tags: {}
+    };
+
+    if (template) {
+        const newTags = doclet.tags;
+        const tags = template.tags;
+
+        for (const tag of Object.keys(tags)) {
+            newTags[tag] = tags[tag].slice();
+        }
+    }
+
+    return doclet;
+}
+
+
+/**
+ * Removes a tag from a DocletInfo object.
+ *
+ * @param {DocletInfo} doclet
+ * Doclet information to modify.
+ *
+ * @param {string} tag
+ * Tag to remove.
+ *
+ * @return {Array<string>}
+ * Removed tag text.
+ */
+function removeTag(
+    doclet,
+    tag
+) {
+    const tags = doclet.tags;
+
+    if (tags) {
+        const text = tags[tag];
+
+        delete tags[tag];
+
+        return text;
+    }
+
+    return [];
+}
+
+
+/**
+ * Compiles doclet information into a code string.
+ *
+ * @see changeSourceCode
+ *
+ * @param {DocletInfo} doclet
+ * Doclet information to compile.
+ *
+ * @param {number|string} indent
+ * Indent styling.
+ *
+ * @return {string}
+ * Doclet string.
+ */
+function toDocletString(
+    doclet,
+    indent = 0
+) {
+
+    if (typeof indent === 'number') {
+        indent = '\n' + ''.padEnd(indent, ' ');
+    }
+
+    const tags = doclet.tags;
+
+    let compiled = indent + '/**';
+
+    if (
+        tags.description &&
+        tags.description.length === 1
+    ) {
+        compiled += (
+            indent + ' * ' +
+            tags.description[0]
+                .trim()
+                .split('\n')
+                .join(indent + ' * ')
+        );
+        delete tags.description;
+    }
+
+    for (const tag of Object.keys(tags)) {
+        for (const text of tags[tag]) {
+            compiled += (
+                indent + ' *' +
+                indent + ' * @' + tag + ' ' +
+                text
+                    .trim()
+                    .split('\n')
+                    .join(indent + ' * ')
+            );
+        }
+    }
+
+    compiled = compiled
+        .split('\n')
+        .map(line => {
+            line = line.trimEnd();
+            if (line.length > 80) {
+                const br = line.substring(0, 80).lastIndexOf(' ');
+                return (
+                    line.substring(0, br) +
+                    indent + ' * ' + line.substring(br)
+                );
+            }
+            return line;
+        })
+        .join('\n');
+
+    return compiled + indent + ' */\n';
+}
+
+
+/**
  * Converts any tree to a JSON string, while converting TypeScript nodes to raw
  * code.
  *
@@ -1139,18 +1322,23 @@ function toJSONString(
 
 
 module.exports = {
+    addTag,
     changeSourceCode,
     changeSourceFile,
     debug,
     extractTypes,
     getChildInfos,
-    getDocletsBetween,
+    getDocletInfosBetween,
     getNodesChildren,
     getNodesFirstChild,
     getNodesLastChild,
     getSourceInfo,
+    getTagText,
     isCapitalCase,
     isNativeType,
+    newDocletInfo,
+    removeTag,
+    toDocletString,
     toJSONString
 };
 
