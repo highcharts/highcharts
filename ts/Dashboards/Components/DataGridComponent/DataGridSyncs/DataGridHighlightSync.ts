@@ -22,6 +22,7 @@
 
 import type Sync from '../../Sync/Sync';
 import type DataGridComponent from '../DataGridComponent.js';
+import type { DataGridHighlightSyncOptions } from '../DataGridComponentOptions';
 
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
@@ -101,7 +102,8 @@ const syncPair: Sync.SyncPair = {
         const component = this as DataGridComponent;
 
         const { board } = component;
-        const highlightOptions = component.sync.syncConfig.highlight;
+        const highlightOptions =
+            component.sync.syncConfig.highlight as DataGridHighlightSyncOptions;
 
         if (!highlightOptions?.enabled) {
             return;
@@ -109,21 +111,30 @@ const syncPair: Sync.SyncPair = {
 
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
-            if (cursor.type === 'position') {
-                const { row } = cursor;
-                const { dataGrid } = component;
-
-                if (row !== void 0 && dataGrid) {
-                    const highlightedDataRow = dataGrid.container
-                        .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
-
-                    if (highlightedDataRow) {
-                        dataGrid.toggleRowHighlight(highlightedDataRow);
-                        dataGrid.hoveredRow = highlightedDataRow;
-                    }
-                }
+            if (cursor.type !== 'position') {
+                return;
             }
 
+            const { row } = cursor;
+            const { dataGrid } = component;
+
+            if (row === void 0 || !dataGrid) {
+                return;
+            }
+
+            if (highlightOptions.autoScroll) {
+                dataGrid.scrollToRow(row);
+            }
+
+            setTimeout((): void => {
+                const highlightedDataRow = dataGrid.container
+                    .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
+
+                if (highlightedDataRow) {
+                    dataGrid.toggleRowHighlight(highlightedDataRow);
+                    dataGrid.hoveredRow = highlightedDataRow;
+                }
+            }, 5);
         };
 
         const handleCursorOut = (): void => {
@@ -131,7 +142,6 @@ const syncPair: Sync.SyncPair = {
             if (dataGrid) {
                 dataGrid.toggleRowHighlight(void 0);
             }
-
         };
 
         const registerCursorListeners = (): void => {
