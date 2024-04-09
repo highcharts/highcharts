@@ -36,7 +36,9 @@ const { addEvent, removeEvent } = U;
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: DataGridHighlightSyncOptions = {
+    autoScroll: false
+};
 
 const syncPair: Sync.SyncPair = {
     emitter: function (this: Component): (() => void) | void {
