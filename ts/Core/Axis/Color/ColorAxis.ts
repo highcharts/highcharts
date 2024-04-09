@@ -351,7 +351,13 @@ class ColorAxis extends Axis implements AxisLike {
 
             legend.render();
             this.chart.getMargins(true);
-            axis.isDirty = true; // Flag to fire drawChartBox
+
+            // If not drilling down/up
+            if (!this.chart.series.some((series): boolean | undefined =>
+                series.isDrilling
+            )) {
+                axis.isDirty = true; // Flag to fire drawChartBox
+            }
 
             // First time only
             if (!axis.added) {
