@@ -24,7 +24,6 @@ import type SankeyPoint from './SankeyPoint';
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    pushUnique,
     relativeLength
 } = U;
 
@@ -331,8 +330,8 @@ namespace SankeyColumnComposition {
                     return {
                         relativeTop: offset + (
                             defined(directionOffset) ?
-                                // directionOffset is a percent
-                                // of the node height
+                                // `directionOffset` is a percent of the node
+                                // height
                                 relativeLength(directionOffset, height) :
                                 relativeLength(
                                     optionOffset,

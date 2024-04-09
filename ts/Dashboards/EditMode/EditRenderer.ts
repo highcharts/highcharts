@@ -367,10 +367,8 @@ function renderSelectElement(
         selectOption
     );
 
-    let icon: HTMLElement|undefined;
-
     if (option.iconURL) {
-        icon = createElement(
+        createElement(
             'img',
             {
                 src: iconURL
@@ -746,13 +744,11 @@ function renderButton(
     parentElement: HTMLElement,
     options: ButtonOptions
 ): HTMLElement|undefined {
-    let button;
-
     if (!parentElement) {
         return;
     }
 
-    button = createElement(
+    const button = createElement(
         'button',
         {
             className: (

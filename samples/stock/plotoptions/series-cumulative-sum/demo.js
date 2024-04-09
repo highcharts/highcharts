@@ -8,7 +8,8 @@ Highcharts.stockChart('container', {
     },
 
     subtitle: {
-        text: 'Displays the sum of all the previous values and the current value (only within visible range)'
+        text: 'Displays the sum of all the previous values and the current ' +
+            'value (only within visible range)'
     },
 
     plotOptions: {
@@ -24,7 +25,8 @@ Highcharts.stockChart('container', {
     },
 
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y}</b> ({point.cumulativeSum})<br/>',
         changeDecimals: 2,
         valueDecimals: 2
     },

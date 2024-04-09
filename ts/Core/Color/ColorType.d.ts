@@ -24,7 +24,7 @@ import type GradientColor from './GradientColor';
  * */
 
 export interface ColorLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export type ColorType = ColorTypeRegistry[keyof ColorTypeRegistry];

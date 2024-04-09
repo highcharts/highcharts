@@ -25,13 +25,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
-const {
-    attr,
-    pushUnique
-} = U;
+const { attr } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -262,8 +257,10 @@ class MenuComponent extends AccessibilityComponent {
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach((item): void => {
                 if (item) {
-                    if (item.tagName === 'LI' &&
-                        !(item.children && item.children.length)) {
+                    if (
+                        item.tagName === 'LI' &&
+                        !(item.children && item.children.length)
+                    ) {
                         item.setAttribute('tabindex', -1);
                     } else {
                         item.setAttribute('aria-hidden', 'true');
@@ -501,10 +498,9 @@ namespace MenuComponent {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = Chart.prototype as ChartComposition;
-
+        if (!chartProto.hideExportMenu) {
             chartProto.hideExportMenu = chartHideExportMenu;
             chartProto.highlightExportItem = chartHighlightExportItem;
             chartProto.highlightLastExportItem = chartHighlightLastExportItem;

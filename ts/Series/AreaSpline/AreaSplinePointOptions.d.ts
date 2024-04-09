@@ -23,7 +23,7 @@ import type SplinePointOptions from '../Spline/SplinePointOptions';
  * */
 
 export interface AreaSplinePointOptions extends SplinePointOptions {
-    // nothing to add for know
+    // Nothing to add for know
 }
 
 /* *

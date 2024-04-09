@@ -144,7 +144,7 @@ class SMAIndicator extends LineSeries {
         compareToMain: false,
 
         /**
-         * Paramters used in calculation of regression series' points.
+         * Parameters used in calculation of regression series' points.
          */
         params: {
 
@@ -409,7 +409,7 @@ class SMAIndicator extends LineSeries {
         // for example when using Axis.setDataGrouping(). See #16670
         const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
             indicator.linkedParent.yData && // #18176, #18177 indicators should
-            indicator.linkedParent.yData.length ? // work with empty dataset
+            indicator.linkedParent.yData.length ? // Work with empty dataset
             (
                 indicator.getValues(
                     indicator.linkedParent,
@@ -546,7 +546,7 @@ extend(SMAIndicator.prototype, {
     },
     hasDerivedData: true,
     nameComponents: ['period'],
-    nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
+    nameSuffixes: [], // E.g. Zig Zag uses extra '%'' in the legend name
     useCommonDataGrouping: true
 });
 
@@ -589,4 +589,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-(''); // adds doclet above to the transpiled file
+(''); // Adds doclet above to the transpiled file

@@ -73,7 +73,7 @@ namespace ColumnDataLabel {
             // Data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                (point as AreaRangePoint).below, // Fange series
+                (point as AreaRangePoint).below, // Range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, yLen)
             ),
@@ -150,11 +150,13 @@ namespace ColumnDataLabel {
     }
 
     /** @private */
-    export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
+    export function compose(
+        ColumnSeriesClass: typeof ColumnSeries
+    ): void {
 
         DataLabel.compose(Series);
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'ColumnDataLabel')) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

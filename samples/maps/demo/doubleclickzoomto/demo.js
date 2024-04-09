@@ -18,7 +18,8 @@
             },
 
             title: {
-                text: 'Zoom in on country by double click'
+                text: 'Zoom in on country by double click',
+                align: 'left'
             },
 
             mapNavigation: {

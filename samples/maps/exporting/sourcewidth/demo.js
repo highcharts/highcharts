@@ -21,7 +21,9 @@
         },
 
         subtitle: {
-            text: 'The on-screen chart is 800x500.<br/>The exported chart is 800x400<br/>(sourceWidth and sourceHeight<br/>multiplied by scale)',
+            text: 'The on-screen chart is 800x500.<br/>The exported chart is ' +
+                '800x400<br/>(sourceWidth and sourceHeight<br/>multiplied by ' +
+                'scale)',
             floating: true,
             align: 'left',
             y: 300

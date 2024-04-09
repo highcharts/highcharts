@@ -10,7 +10,8 @@ $(function () {
             data: [
                 { y: -1 },
                 { y: -1 },
-                { isSum: true }]
+                { isSum: true }
+            ]
         }]
     });
 });

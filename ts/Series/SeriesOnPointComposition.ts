@@ -24,7 +24,7 @@ const { composed } = H;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
+const { bubble } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
@@ -112,7 +112,7 @@ namespace SeriesOnPointComposition {
         ChartClass: typeof Chart
     ): (typeof SeriesComposition&T) {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'SeriesOnPoint')) {
             const {
                 chartGetZData,
                 seriesAfterInit,
@@ -379,7 +379,7 @@ namespace SeriesOnPointComposition {
                 });
 
                 // And also toggle series that are on toggled points. Redraw is
-                // not needed because it's fired later after showOrhide event
+                // not needed because it's fired later after showOrHide event
                 series && series.setVisible(!series.visible, false);
             });
         }
@@ -547,4 +547,4 @@ export default SeriesOnPointComposition;
  * @apioption  plotOptions.series.onPoint.position.y
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file

@@ -3,8 +3,10 @@ Math.easeOutQuint = function (pos) {
 };
 
 Highcharts.theme = {
-    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    colors: [
+        '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+    ],
     chart: {
         style: {
             fontFamily: 'IBM Plex Sans, sans-serif'
@@ -67,7 +69,8 @@ Highcharts.theme = {
 Highcharts.setOptions(Highcharts.theme);
 
 
-const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
+const data = [
+    3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2,
     3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3,
     3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3,
@@ -76,7 +79,8 @@ const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     2.7, 3, 2.9, 2.9, 2.5, 2.8, 3.3, 2.7, 3, 2.9, 3, 3, 2.5, 2.9, 2.5, 3.6,
     3.2, 2.7, 3, 2.5, 2.8, 3.2, 3, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2,
     2.8, 3, 2.8, 3, 2.8, 3.8, 2.8, 2.8, 2.6, 3, 3.4, 3.1, 3, 3.1, 3.1, 3.1, 2.7,
-    3.2, 3.3, 3, 2.5, 3, 3.4, 3];
+    3.2, 3.3, 3, 2.5, 3, 3.4, 3
+];
 
 const randomIntFromInterval = function (min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -219,7 +223,11 @@ const flip = function (chart, boxNum, pos, delay) {
 let wordChart;
 
 const words = function () {
-    const text = 'Twas, Twas, Twas, Twas the night, night, night, night, night, before, before, before, before, Christmas, Christmas, Christmas, Christmas, Christmas, Christmas, not a creature was stirring, when all through the house not a creature was stirring, not even a mouse.',
+    const text = 'Twas, Twas, Twas, Twas the night, night, night, night, ' +
+        'night, before, before, before, before, Christmas, Christmas, ' +
+        'Christmas, Christmas, Christmas, Christmas, not a creature was ' +
+        'stirring, when all through the house not a creature was stirring, ' +
+        'not even a mouse.',
         lines = text.split(/[,\. ]+/gu),
         data = lines.reduce((arr, word) => {
             let obj = Highcharts.find(arr, obj => obj.name === word);
@@ -258,7 +266,9 @@ const words = function () {
         legend: {
             enabled: false
         },
-        colors: ['#E04B44', '#51BFA7', '#6699A1', '#00786F', '#E04B44', '#A3EDBA'],
+        colors: [
+            '#E04B44', '#51BFA7', '#6699A1', '#00786F', '#E04B44', '#A3EDBA'
+        ],
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat: '<h5>{chartTitle}</h5>' +
@@ -337,10 +347,22 @@ const bell = function () {
                         color: '#8BD6F3'
                     });
 
-                    const bell = document.querySelector('#bell-chart  .highcharts-bellcurve-series');
-                    const hammer = document.querySelector('#bell-chart .highcharts-series-4');
-                    const bellLine = document.querySelector('#bell-chart .highcharts-series-5');
-                    const bow = document.querySelector('#bell-chart .highcharts-series-6.highcharts-markers');
+                    const bell = document.querySelector(
+                        '#bell-chart  ' +
+                        '.highcharts-bellcurve-series'
+                    );
+                    const hammer = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-4'
+                    );
+                    const bellLine = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-5'
+                    );
+                    const bow = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-6.highcharts-markers'
+                    );
 
                     let transY = '-40px';
                     if (!big) {
@@ -350,9 +372,11 @@ const bell = function () {
                     bell.style.transformOrigin = 'center';
                     bellLine.style.transformOrigin = 'center';
 
-                    bell.style.transform = 'rotate(10deg) translateY(' + transY + ')';
+                    bell.style.transform =
+                        'rotate(10deg) translateY(' + transY + ')';
                     bellLine.style.transform = 'rotate(10deg) translateY(0px)';
-                    bow.style.transform = 'rotate(10deg) translate(10px, -10px)';
+                    bow.style.transform = 'rotate(10deg) translate(10px, ' +
+                        '-10px)';
                     hammer.style.transform = 'translate(9px, -3px)';
 
                     let count = 0;
@@ -363,14 +387,20 @@ const bell = function () {
                         hammer.style.transition = 'all 1s';
 
                         if (count % 2 === 0) {
-                            bell.style.transform = 'rotate(-10deg) translateY(' + transY + ')';
-                            bow.style.transform = 'rotate(-10deg) translate(-20px, 20px)';
-                            bellLine.style.transform = 'rotate(-10deg) translateY(0px)';
+                            bell.style.transform =
+                                'rotate(-10deg) translateY(' + transY + ')';
+                            bow.style.transform = 'rotate(-10deg) ' +
+                                'translate(-20px, 20px)';
+                            bellLine.style.transform = 'rotate(-10deg) ' +
+                                'translateY(0px)';
                             hammer.style.transform = 'translate(-10px, -7px)';
                         } else {
-                            bell.style.transform = 'rotate(10deg) translateY(' + transY + ')';
-                            bellLine.style.transform = 'rotate(10deg) translateY(0px)';
-                            bow.style.transform = 'rotate(10deg) translate(10px, -10px)';
+                            bell.style.transform =
+                                'rotate(10deg) translateY(' + transY + ')';
+                            bellLine.style.transform = 'rotate(10deg) ' +
+                                'translateY(0px)';
+                            bow.style.transform = 'rotate(10deg) ' +
+                                'translate(10px, -10px)';
                             hammer.style.transform = 'translate(9px, -3px)';
 
                         }
@@ -641,7 +671,10 @@ const tree = function () {
                         [0, 0]
                     ];
 
-                    const topTree = document.querySelector('#tree-chart .highcharts-series-2');
+                    const topTree = document.querySelector(
+                        '#tree-chart ' +
+                        '.highcharts-series-2'
+                    );
 
                     chart.series[0].update({
                         color: '#E05283'
@@ -892,7 +925,8 @@ const snowglobe = function () {
                         const chart = this.series[0].chart,
                             width = chart.plotWidth;
                         this.nodes.forEach(function (node) {
-                            // If initial positions were set previously, use that
+                            // If initial positions were set previously, use
+                            // that
                             // positions. Otherwise use random position:
                             node.plotX = node.plotX === undefined ?
                                 Math.random() * width : node.plotX;
@@ -915,7 +949,8 @@ const snowglobe = function () {
                                 height = chart.plotHeight;
 
                             this.nodes.forEach(function (node) {
-                                // If initial positions were set previously, use that
+                                // If initial positions were set previously,
+                                // use that
                                 // positions. Otherwise use random position:
                                 node.plotX = node.plotX === undefined ?
                                     Math.random() * width : node.plotX;
@@ -1260,8 +1295,10 @@ const candycane = function () {
             enabled: false
         },
         xAxis: [{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ],
             visible: false,
             gridLineColor: '#fff',
             labels: {
@@ -1479,7 +1516,11 @@ const presents = function () {
                 }
             }
         },
-        colors: ['#00786F', '#00786F', '#00786F', 'url(#bluestripe)', 'url(#bluestripe)', 'url(#bluestripe)', 'url(#stars)', 'url(#stars)', 'url(#stars)', 'url(#redstripe2)'],
+        colors: [
+            '#00786F', '#00786F', '#00786F', 'url(#bluestripe)',
+            'url(#bluestripe)', 'url(#bluestripe)', 'url(#stars)',
+            'url(#stars)', 'url(#stars)', 'url(#redstripe2)'
+        ],
         title: {
             text: '',
             y: 30
@@ -1986,7 +2027,8 @@ const wreath = function () {
             max: 20
         },
         yAxis1,
-        yAxis2],
+        yAxis2
+        ],
 
         series: [
             // 0 left side
@@ -2151,14 +2193,18 @@ const flake = function () {
             events: {
                 load: function () {
                     const chart = this;
-                    const seriesGroup = document.querySelector('#flake-chart .highcharts-series-group');
+                    const seriesGroup = document.querySelector(
+                        '#flake-chart ' +
+                        '.highcharts-series-group'
+                    );
                     seriesGroup.style.transformOrigin = 'center';
                     seriesGroup.style.transform = 'translateY(-200px)';
 
                     const fall = function () {
                         setTimeout(function () {
                             seriesGroup.style.transition = 'all ease-out 3s';
-                            seriesGroup.style.transform = 'translateY(0px) rotate(720deg)';
+                            seriesGroup.style.transform = 'translateY(0px) ' +
+                                'rotate(720deg)';
                         }, 200);
 
                         setTimeout(function () {
@@ -2183,7 +2229,8 @@ const flake = function () {
                                     }
                                 }
                             });
-                            seriesGroup.style.transform = 'translateY(300px) rotate(1180deg)';
+                            seriesGroup.style.transform = 'translateY(300px) ' +
+                                'rotate(1180deg)';
                         }, 5000);
 
                         setTimeout(function () {
@@ -3522,7 +3569,9 @@ const ball = function () {
                                     chart.series[2].points[0].setState('hover');
                                     noseCount = 1;
                                 } else {
-                                    chart.series[2].points[0].setState('normal');
+                                    chart.series[2].points[0].setState(
+                                        'normal'
+                                    );
                                     noseCount = 0;
                                 }
                             }, 1000);
@@ -3719,7 +3768,8 @@ const ball = function () {
                         xAxis: 3,
                         yAxis: 3,
                         color: '#fff',
-                        data: [[9, 81, 63],
+                        data: [
+                            [9, 81, 63],
                             [98, 5, 89],
                             [51, 50, 73],
                             [41, 22, 14],
@@ -3820,7 +3870,8 @@ candycane();
 ball();
 words();
 
-document.getElementById('open').addEventListener('click',
+document.getElementById('open').addEventListener(
+    'click',
     function () {
 
         [].forEach.call(

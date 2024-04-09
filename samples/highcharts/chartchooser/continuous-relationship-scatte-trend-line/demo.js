@@ -55,7 +55,8 @@ Highcharts.chart('container', {
     },
     series: [{
         name: null,
-        data: [[57, 4736],
+        data: [
+            [57, 4736],
             [65, 1123],
             [73.3, 834],
             [67.7, 449],
@@ -74,7 +75,8 @@ Highcharts.chart('container', {
             [81.5, 125],
             [60.6, 93],
             [51.8, 453],
-            [39, 1289]]
+            [39, 1289]
+        ]
     }, {
         type: 'line',
         name: 'Regression Line',

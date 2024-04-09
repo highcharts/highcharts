@@ -4,10 +4,14 @@ Highcharts.chart('container', {
         styledMode: true
     },
     title: {
-        text: 'Mobile vendor market share, 2021'
+        text: 'Mobile vendor market share, 2021',
+        align: 'left'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
     series: [{
         type: 'pie',

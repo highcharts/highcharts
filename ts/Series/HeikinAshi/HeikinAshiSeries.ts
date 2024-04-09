@@ -73,7 +73,7 @@ function onHeikinAshiSeriesAfterTranslate(
         heikiashiData = series.heikiashiData,
         cropStart = series.cropStart || 0;
 
-    // Reset the proccesed data.
+    // Reset the processed data.
     series.processedYData.length = 0;
 
     // Modify points.
@@ -139,12 +139,11 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public static compose(
         SeriesClass: typeof Series,
-        AxisClass: typeof Axis,
-        ..._args: Array<never>
+        AxisClass: typeof Axis
     ): void {
         CandlestickSeries.compose(SeriesClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'HeikinAshi')) {
             addEvent(AxisClass, 'postProcessData', onAxisPostProcessData);
 
             addEvent(

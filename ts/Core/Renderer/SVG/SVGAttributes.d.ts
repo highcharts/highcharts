@@ -126,6 +126,7 @@ export interface SVGAttributes {
     x?: number;
     x1?: number;
     x2?: number;
+    xmlns?: string;
     y?: number;
     y1?: number;
     y2?: number;

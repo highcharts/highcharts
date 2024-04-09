@@ -12,7 +12,8 @@
         rate,
         index;
 
-    startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
+    startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year
+    // before last data point
 
     const startPeriod = Date.UTC(
         startDate.getFullYear(),

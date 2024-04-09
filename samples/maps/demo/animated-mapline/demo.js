@@ -181,7 +181,9 @@
                 type: 'mappoint',
                 color: '#333',
                 dataLabels: {
-                    format: '<b>{point.name}</b><br><span style="font-weight: normal; opacity: 0.5">{point.custom.arrival}</span>',
+                    format: '<b>{point.name}</b><br><span ' +
+                        'style="font-weight: normal; opacity: 0.5">' +
+                        '{point.custom.arrival}</span>',
                     align: 'left',
                     verticalAlign: 'middle'
                 },

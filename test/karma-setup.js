@@ -114,7 +114,7 @@ function handleDefaultOptionsFunctions(save) {
             } else if (save && typeof value === 'function') {
                 defaultOptionsFunctions[path + '.' + key] = value;
 
-            } else if ( // restore
+            } else if ( // restore
                 !save &&
                 typeof value === 'function'
             ) {
@@ -130,32 +130,6 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
-/*
-// Override Highcharts and jQuery ajax functions to load from local
-function ajax(proceed, attr) {
-    var success = attr.success;
-    attr.error = function (e) {
-        throw new Error('Failed to load: ' + attr.url);
-    };
-    if (attr.url && window.JSONSources[attr.url]) {
-        success.call(attr, window.JSONSources[attr.url]);
-    } else {
-        console.log('@ajax: Loading over network', attr.url);
-        attr.success = function (data) {
-            window.JSONSources[attr.url] = data;
-            success.call(this, data);
-        };
-        return proceed.call(this, attr);
-    }
-}
-Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
-Highcharts.wrap(Highcharts, 'ajax', ajax);
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-*/
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
@@ -373,6 +347,9 @@ if (window.QUnit) {
             containerStyle.top = '8';
             containerStyle.zIndex = '9999';
 
+            // Save prototypes
+            replaceProtos();
+
             // Reset randomizer
             Math.randomCursor = 0;
 
@@ -402,6 +379,9 @@ if (window.QUnit) {
                 currentTests.indexOf(test.test.testName),
                 1
             );
+
+            // Restore prototypes
+            replaceProtos();
 
             var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
             if (defaultOptions !== Highcharts.defaultOptionsRaw) {
@@ -473,7 +453,6 @@ if (window.QUnit) {
                 addedEvents.pop()();
             }
             Highcharts.addEvent = origAddEvent;
-
 
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
@@ -760,6 +739,70 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 resolve(diff);
             })
     });
+}
+
+function replaceProtos() {
+    if (Highcharts.protoReplacements) {
+        var snaps = Highcharts.protoReplacements,
+            iKeys = Object.keys(snaps),
+            jKeys,
+            source,
+            target;
+
+        if (VERBOSE) {
+            console.log('- restore protos: ' + Object.keys(snaps).join(', '));
+        }
+
+        for (let i = 0, iEnd = iKeys.length, iKey; i < iEnd; ++i) {
+            iKey = iKeys[i];
+            source = snaps[iKey];
+            target = Highcharts[iKey].prototype;
+            jKeys = Object.keys(source);
+            for (let j = 0, jEnd = jKeys.length, jKey; j < jEnd; ++j) {
+                jKey = jKeys[j];
+                target[jKey] = source[jKey];
+                delete source[jKey];
+            }
+        }
+
+        delete Highcharts.protoReplacements;
+    } else {
+        var snaps = {},
+            iKeys = Object.keys(Highcharts),
+            jKeys,
+            source,
+            target;
+
+        for (let i = 0, iEnd = iKeys.length, iKey; i < iEnd; ++i) {
+            iKey = iKeys[i];
+            if (
+                typeof Highcharts[iKey] === 'function' &&
+                Highcharts[iKey].prototype // skip arrow functions
+            ) {
+                source = Highcharts[iKey].prototype;
+                target = {};
+                jKeys = Object.keys(source);
+                for (let j = 0, jEnd = jKeys.length, jKey; j < jEnd; ++j) {
+                    jKey = jKeys[j];
+                    if (
+                        typeof source[jKey] !== 'object' &&
+                        source[jKey]
+                    ) {
+                        target[jKey] = source[jKey];
+                    }
+                }
+                if (Object.keys(target).length) {
+                    snaps[iKey] = target;
+                }
+            }
+        }
+
+        if (VERBOSE) {
+            console.log('Protect protos: ' + Object.keys(snaps).join(', '));
+        }
+
+        Highcharts.protoReplacements = snaps;
+    }
 }
 
 // De-randomize Math.random in tests

@@ -79,10 +79,10 @@ class CMFIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unused index, do not inherit (#15362)
+            index: void 0, // Unused index, do not inherit (#15362)
             /**
              * The id of another series to use its data as volume data for the
-             * indiator calculation.
+             * indicator calculation.
              */
             volumeSeriesID: 'volume'
         }
@@ -175,7 +175,8 @@ class CMFIndicator extends SMAIndicator {
             series.xData as number[],
             series.yData,
             (this.volumeSeries.yData as any),
-            (params.period as any)
+            (params.period as any
+            )
         );
     }
 
@@ -371,4 +372,4 @@ export default CMFIndicator;
  * @apioption series.cmf
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

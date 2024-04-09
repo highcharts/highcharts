@@ -211,9 +211,8 @@ namespace Globals {
         deg2rad = Math.PI * 2 / 360,
         hasBidiBug = (
             isFirefox &&
-            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // Issue #38
         ),
-        hasTouch = !!win.TouchEvent,
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',
@@ -322,4 +321,4 @@ export default Globals as unknown as GlobalsLike;
  * @type {Highcharts.Options}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

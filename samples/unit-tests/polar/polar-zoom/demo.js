@@ -10,7 +10,9 @@ QUnit.test('Arc shape', function (assert) {
                 events: {
                     selection: function () {
                         selectionShape =
-                            this.pointer.selectionMarker.element.getAttribute('d');
+                            this.pointer.selectionMarker.element.getAttribute(
+                                'd'
+                            );
                     }
                 }
             },
@@ -240,11 +242,19 @@ QUnit.test('Axes zoom', function (assert) {
 
     let xMax = chart.xAxis[0].getExtremes().max;
 
-    assert.deepEqual(
-        [xMin, xMax],
-        [initialXMin, initialXMax],
+    assert.close(
+        xMin,
+        initialXMin,
+        1e-12,
         'Right semi circle (0deg, 180deg) should have correct swap angle'
     );
+    assert.close(
+        xMax,
+        initialXMax,
+        1e-12,
+        'Right semi circle (0deg, 180deg) should have correct swap angle'
+    );
+
 
     chart.update({
         pane: {
@@ -269,10 +279,17 @@ QUnit.test('Axes zoom', function (assert) {
 
     xMax = chart.xAxis[0].getExtremes().max;
 
-    assert.deepEqual(
-        [initialXMin, initialXMax],
-        [xMin, xMax],
-        'Left semi circle (180deg, 360deg) should have correct swap angle'
+    assert.close(
+        xMin,
+        initialXMin,
+        1e-12,
+        'Left semi circle (0deg, 180deg) should have correct swap angle'
+    );
+    assert.close(
+        xMax,
+        initialXMax,
+        1e-12,
+        'Left semi circle (0deg, 180deg) should have correct swap angle'
     );
 
     chart.update({

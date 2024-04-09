@@ -42,8 +42,10 @@ namespace BrandLightTheme {
      * */
 
     export const options: DeepPartial<DefaultOptions> = {
-        colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+        colors: [
+            '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+        ],
         chart: {
             backgroundColor: '#f0f0f0',
             style: {
@@ -162,7 +164,7 @@ namespace BrandLightTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#fff',

@@ -10,17 +10,28 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
+        "brackets",
         "highcharts",
         "@typescript-eslint"
     ],
     "rules": {
+        "brackets/array-bracket-newline": 2,
+        "brackets/call-parens-newline": 2,
+        "brackets/conditional-parens-newline": 2,
+        "brackets/func-parens-newline": 2,
+        "brackets/object-curly-newline": 2,
         "camelcase": [
             2,
             {
                 "properties": "always"
             }
         ],
-        "capitalized-comments": ["warn", "always", { "ignoreConsecutiveComments": true }],
+        "capitalized-comments": [
+            "error",
+            "always", {
+                "ignoreConsecutiveComments": true
+            }
+        ],
         "class-methods-use-this": 0,
         "comma-dangle": [
             2,
@@ -55,12 +66,15 @@
         "no-useless-return": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": 0,
-        "prefer-const": 1, // @todo
+        "prefer-const": [2, {
+            "destructuring": "all"
+        }], // @todo
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
         "require-unicode-regexp": 0, // incompatible with ES2017- targets
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "semi": 0,
+        "spaced-comment": ["error", "always", { "markers": ["/"] }],
         "valid-jsdoc": 0,
         "@typescript-eslint/array-type": 0,
         "@typescript-eslint/ban-types": 0, // @todo
@@ -93,7 +107,7 @@
         "@typescript-eslint/no-unsafe-call": 0, // @todo
         "@typescript-eslint/no-unsafe-member-access": 0, // @todo
         "@typescript-eslint/no-unsafe-return": 0, // @todo
-        "@typescript-eslint/no-unused-vars": 0, // @todo
+        "@typescript-eslint/no-unused-vars": ["error", { "vars": "all", "args": "after-used" }],
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
         "@typescript-eslint/prefer-as-const": 1, // @todo

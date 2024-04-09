@@ -28,6 +28,7 @@ import type Options from '../Options';
 import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
+import { Palette } from '../Color/Palettes.js';
 import U from '../Utilities.js';
 const {
     isArray,
@@ -80,7 +81,7 @@ class GanttChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -149,6 +150,7 @@ class GanttChart extends Chart {
                 // Defaults
                 {
                     grid: {
+                        borderColor: Palette.neutralColor20,
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -172,6 +174,7 @@ class GanttChart extends Chart {
             // Defaults
             {
                 grid: {
+                    borderColor: Palette.neutralColor20,
                     enabled: true
                 },
 
@@ -232,7 +235,7 @@ namespace GanttChart {
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.

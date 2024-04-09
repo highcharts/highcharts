@@ -212,7 +212,7 @@ class MathModifier extends DataModifier {
                 cell[0] === '='
             ) {
                 try {
-                    // use cache while formula string is repetitive
+                    // Use cache while formula string is repetitive
                     cacheFormula = (
                         cacheString === cell ?
                             cacheFormula :
@@ -221,7 +221,7 @@ class MathModifier extends DataModifier {
                                 alternativeSeparators
                             )
                     );
-                    // process parsed formula string
+                    // Process parsed formula string
                     column[i] =
                         FormulaProcessor.processFormula(cacheFormula, table);
                 } catch {

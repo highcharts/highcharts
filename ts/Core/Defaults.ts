@@ -414,7 +414,7 @@ const defaultOptions: DefaultOptions = {
      * );
      * ```
      *
-     * Since v6.0.5, the time options were moved from the `global` obect to the
+     * Since v6.0.5, the time options were moved from the `global` object to the
      * `time` object, and time options can be set on each individual chart.
      *
      * @sample {highcharts|highstock}
@@ -1183,7 +1183,7 @@ const defaultOptions: DefaultOptions = {
         labelFormatter: function (
             this: Legend.Item
         ): string {
-            /** eslint-enable valid-jsdoc */
+            // eslint-enable valid-jsdoc
             return this.name as any;
         },
 
@@ -1478,7 +1478,7 @@ const defaultOptions: DefaultOptions = {
          * are inherited from `style` unless overridden here.
          *
          * @see In styled mode, the hovered legend items can be styled with
-         *      the `.highcharts-legend-item:hover` pesudo-class.
+         *      the `.highcharts-legend-item:hover` pseudo-class.
          *
          * @sample {highcharts} highcharts/legend/itemhoverstyle/
          *         Red on hover
@@ -1553,13 +1553,13 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            width: '13px', // for IE precision
+            width: '13px', // For IE precision
             /**
              * @ignore
              */
             height: '13px'
         },
-        // itemWidth: undefined,
+        /// itemWidth: undefined,
 
         /**
          * When this is true, the legend symbol width will be the same as
@@ -1722,7 +1722,7 @@ const defaultOptions: DefaultOptions = {
          */
         verticalAlign: 'bottom',
 
-        // width: undefined,
+        // Width: undefined,
 
         /**
          * The x offset of the legend relative to its horizontal alignment
@@ -2858,10 +2858,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartAddSeriesCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {Highcharts.ChartAddSeriesEventObject} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -2893,10 +2893,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartClickCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {Highcharts.PointerEventObject} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -2939,10 +2939,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartLoadCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -2953,10 +2953,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartRedrawCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -2966,10 +2966,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartRenderCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -2980,7 +2980,7 @@ export default DefaultOptions;
  * @callback Highcharts.ChartSelectionCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {Highcharts.SelectEventObject} event
  *        Event informations
@@ -2989,4 +2989,4 @@ export default DefaultOptions;
  *         Return false to prevent the default action, usually zoom.
  */
 
-(''); // detach doclets above
+(''); // Detach doclets above

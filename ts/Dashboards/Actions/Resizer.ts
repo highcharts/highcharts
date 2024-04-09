@@ -16,6 +16,7 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Cell from '../Layout/Cell.js';
 import type Serializable from '../Serializable';
@@ -29,8 +30,7 @@ const {
     addEvent,
     createElement,
     fireEvent,
-    removeEvent,
-    pick
+    removeEvent
 } = U;
 
 import EditMode from '../EditMode/EditMode';
@@ -289,32 +289,23 @@ class Resizer {
         const currentCell = this.currentCell;
 
         if (currentCell) {
-            const currentRwdMode = this.editMode.rwdMode,
-                cellOffsets = GUIElement.getOffsets(currentCell),
+            const cellOffsets = GUIElement.getOffsets(currentCell),
                 rowLevelInfo = currentCell.row.getRowLevelInfo(cellOffsets.top),
                 rowLevelCells =
                     (rowLevelInfo && rowLevelInfo.rowLevel.cells) || [];
 
-            let cellContainer, cell, optionsWidth;
+            let cellContainer, cell;
 
             for (let i = 0, iEnd = rowLevelCells.length; i < iEnd; ++i) {
                 cell = rowLevelCells[i];
                 cellContainer = cell.container;
-                optionsWidth = pick(
-                    ((cell.options.responsive || {})[currentRwdMode] || {})
-                        .width,
-                    cell.options.width
-                );
 
                 // Do not convert width on the current cell and next siblings.
                 if (cell === currentCell) {
                     break;
                 }
 
-                if (
-                    cellContainer &&
-                    (!optionsWidth || optionsWidth === 'auto')
-                ) {
+                if (cellContainer) {
                     cellContainer.style.flex =
                         '0 0 ' + cellContainer.offsetWidth + 'px';
                     this.tempSiblingsWidth.push(cell);
@@ -377,9 +368,7 @@ class Resizer {
             resizer.startX = e.clientX;
         };
 
-        resizer.mouseDownSnapY = mouseDownSnapY = function (
-            e: PointerEvent
-        ): void {
+        resizer.mouseDownSnapY = mouseDownSnapY = function (): void {
             resizer.isActive = true;
             resizer.currentDimension = 'y';
             resizer.editMode.hideToolbars(['row', 'cell']);
@@ -395,9 +384,7 @@ class Resizer {
             }
         };
 
-        resizer.mouseUpSnap = mouseUpSnap = function (
-            e: PointerEvent
-        ): void {
+        resizer.mouseUpSnap = mouseUpSnap = function (): void {
             if (resizer.isActive) {
                 resizer.isActive = false;
                 resizer.currentDimension = void 0;
@@ -420,14 +407,12 @@ class Resizer {
         addEvent(document, 'mouseup', mouseUpSnap);
 
         // Touch events
-        // if (hasTouch) {
-        //     addEvent(snapX, 'touchstart', mouseDownSnapX);
-        //     addEvent(snapY, 'touchstart', mouseDownSnapY);
+        // addEvent(snapX, 'touchstart', mouseDownSnapX);
+        // addEvent(snapY, 'touchstart', mouseDownSnapY);
 
-        //     if (!rowContainer.hcEvents.mousemove) {
-        //         addEvent(rowContainer, 'touchmove', mouseMoveSnap);
-        //         addEvent(rowContainer, 'touchend', mouseUpSnap);
-        //     }
+        // if (!rowContainer.hcEvents.mousemove) {
+        //     addEvent(rowContainer, 'touchmove', mouseMoveSnap);
+        //     addEvent(rowContainer, 'touchend', mouseUpSnap);
         // }
 
         const runReflow = (): void => {
@@ -455,8 +440,6 @@ class Resizer {
         const currentCell = this.currentCell as Resizer.ResizedCell;
         const cellContainer = currentCell && currentCell.container;
         const currentDimension = this.currentDimension;
-        const sidebar = this.editMode.sidebar;
-        const currentRwdMode = sidebar && sidebar.editMode.rwdMode;
 
         if (
             currentCell &&
@@ -477,7 +460,6 @@ class Resizer {
                     '%';
 
                 currentCell.setSize(newWidth);
-                currentCell.updateSize(newWidth, currentRwdMode);
                 this.startX = e.clientX;
             }
 

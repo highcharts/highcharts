@@ -100,7 +100,8 @@ namespace ColorMapComposition {
 
     export const seriesMembers = {
         colorKey: 'value',
-        axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+        axisTypes: ['xAxis', 'yAxis', 'colorAxis'] as
+            Array<'xAxis'|'yAxis'|'colorAxis'>,
         parallelArrays: ['x', 'y', 'value'],
         pointArrayMap: ['value'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -156,13 +157,13 @@ namespace ColorMapComposition {
             this.value !== null &&
             this.value !== Infinity &&
             this.value !== -Infinity &&
-            // undefined is allowed, but NaN is not (#17279)
+            // Undefined is allowed, but NaN is not (#17279)
             (this.value === void 0 || !isNaN(this.value))
         );
     }
 
     /**
-     * Get the color attibutes to apply on the graphic
+     * Get the color attributes to apply on the graphic
      * @private
      * @function Highcharts.colorMapSeriesMixin.colorAttribs
      * @param {Highcharts.Point} point

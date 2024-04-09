@@ -37,12 +37,11 @@ export interface GlobalsLike {
     readonly SVG_NS: string;
     chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
-    readonly composed: Array<string>;
+    readonly composed: Array<unknown>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;
     readonly hasBidiBug: boolean;
-    readonly hasTouch: boolean;
     readonly isChrome: boolean;
     readonly isFirefox: boolean;
     readonly isMS: boolean;

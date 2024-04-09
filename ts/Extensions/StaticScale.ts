@@ -20,15 +20,12 @@ import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -63,10 +60,9 @@ function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.adjustHeight) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
 
         chartProto.adjustHeight = chartAdjustHeight;
@@ -120,7 +116,7 @@ function chartAdjustHeight(
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale as any);
 
-                let diff = height - chart.plotHeight;
+                const diff = height - chart.plotHeight;
 
                 if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
@@ -184,4 +180,4 @@ export default StaticScale;
  * @apioption yAxis.staticScale
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

@@ -89,7 +89,8 @@ QUnit.test(
     }
 );
 
-QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
+QUnit.test(
+    'Price indicator labels rendering and visibility, #14879, #17790.',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             stockTools: {

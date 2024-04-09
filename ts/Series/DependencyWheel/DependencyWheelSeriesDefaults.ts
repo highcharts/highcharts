@@ -34,7 +34,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  *         Dependency wheel
  *
  * @extends      plotOptions.sankey
- * @exclude      dataSorting, nodeAlignment
+ * @exclude      dataSorting, nodeAlignment, nodeDistance
  * @since        7.1.0
  * @product      highcharts
  * @requires     modules/dependency-wheel
@@ -197,7 +197,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  * @apioption series.dependencywheel.nodes.dataLabels
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

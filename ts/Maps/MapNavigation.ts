@@ -113,7 +113,7 @@ class MapNavigation {
         MapPointer.compose(PointerClass);
         MapSymbols.compose(SVGRendererClass);
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Map.Navigation')) {
             // Extend the Chart.render method to add zooming and panning
             addEvent(MapChartClass, 'beforeRender', function (
                 this: MapChart
@@ -205,7 +205,7 @@ class MapNavigation {
             if (!mapNav.navButtonsGroup) {
                 mapNav.navButtonsGroup = chart.renderer.g()
                     .attr({
-                        zIndex: 4 // #4955, // #8392
+                        zIndex: 7 // #4955, #8392, #20476
                     })
                     .add();
             }

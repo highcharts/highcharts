@@ -231,7 +231,7 @@ class BBIndicator extends SMAIndicator {
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-middle line, 2-top line, 3-bottom line
             BB: Array<Array<number>> = [];
-            // middle line, top line and bottom line
+            // Middle line, top line and bottom line
         let ML: number,
             TL: number,
             BL: number,
@@ -350,4 +350,4 @@ export default BBIndicator;
  * @apioption series.bb
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

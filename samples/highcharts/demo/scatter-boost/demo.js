@@ -36,7 +36,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{chartLongdesc}</div>' +
+                '<div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
         }
     },
 
@@ -58,7 +60,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with 1 million points'
+        text: 'Scatter chart with 1 million points',
+        align: 'left'
     },
 
     legend: {

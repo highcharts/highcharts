@@ -16,16 +16,13 @@
  *
  * */
 
-import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type JSON from './JSON';
 
 import G from '../Core/Globals.js';
-const { doc, win } = G;
+const { win } = G;
 import U from '../Core/Utilities.js';
 const {
-    createElement,
     discardElement,
-    merge,
     objectEach
 } = U;
 
@@ -69,7 +66,7 @@ export interface AjaxSuccessCallbackFunction {
  *        The Ajax settings to use.
  *
  * @return {false|undefined}
- *         Returns false, if error occured.
+ *         Returns false, if error occurred.
  */
 function ajax(
     settings: AjaxSettingsObject
@@ -88,7 +85,7 @@ function ajax(
      * @param {XMLHttpRequest} xhr
      * Internal request object.
      * @param {string|Error} err
-     * Occured error.
+     * Occurred error.
      */
     function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
         if (settings.error) {
@@ -192,13 +189,16 @@ function getJSON(
  * Additional attributes for the post request
  */
 
+/**
+ *
+ */
 function post(
     url: string,
     data: Record<string, any>,
     fetchOptions?: RequestInit
 ): Promise<void> {
     const formData = new win.FormData();
-    // add the data
+    // Add the data
     objectEach(data, function (val: string, name: string): void {
         formData.append(name, val);
     });
@@ -278,4 +278,4 @@ export default HttpUtilities;
  * @type {string}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

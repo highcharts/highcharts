@@ -239,12 +239,12 @@ class Scrollbar {
             mouseMoveHandler = this.mouseMoveHandler.bind(this),
             mouseUpHandler = this.mouseUpHandler.bind(this);
 
-        // Mouse events
         const _events: Array<[
             any,
             string,
             (e: PointerEvent) => void
         ]> = [
+            // Mouse events
             [
                 buttons[buttonsOrder[0]].element,
                 'click',
@@ -258,17 +258,12 @@ class Scrollbar {
             [track, 'click', this.trackClick.bind(this)],
             [bar, 'mousedown', mouseDownHandler],
             [bar.ownerDocument, 'mousemove', mouseMoveHandler],
-            [bar.ownerDocument, 'mouseup', mouseUpHandler]
+            [bar.ownerDocument, 'mouseup', mouseUpHandler],
+            // Touch events
+            [bar, 'touchstart', mouseDownHandler],
+            [bar.ownerDocument, 'touchmove', mouseMoveHandler],
+            [bar.ownerDocument, 'touchend', mouseUpHandler]
         ];
-
-        // Touch events
-        if (H.hasTouch) {
-            _events.push(
-                [bar, 'touchstart', mouseDownHandler],
-                [bar.ownerDocument, 'touchmove', mouseMoveHandler],
-                [bar.ownerDocument, 'touchend', mouseUpHandler]
-            );
-        }
 
         // Add them all
         _events.forEach(function (args): void {
@@ -328,7 +323,7 @@ class Scrollbar {
             minWidthDifference =
                 (options.minWidth as any) > (scroller.calculatedWidth as any) ?
                     options.minWidth :
-                    0; // minWidth distorts translation
+                    0; // `minWidth` distorts translation
 
         return {
             chartX:
@@ -478,7 +473,7 @@ class Scrollbar {
 
         scroller.chart = chart;
 
-        // backward compatibility
+        // Backward compatibility
         scroller.size = pick(
             scroller.options.size,
             scroller.options.height as any
@@ -493,7 +488,7 @@ class Scrollbar {
 
     private mouseDownHandler(e: PointerEvent): void {
         const scroller = this,
-            normalizedEvent = scroller.chart.pointer.normalize(e),
+            normalizedEvent = scroller.chart.pointer?.normalize(e) || e,
             mousePosition = scroller.cursorToScrollbarPosition(
                 normalizedEvent
             );
@@ -511,7 +506,7 @@ class Scrollbar {
      */
     private mouseMoveHandler(e: PointerEvent): void {
         const scroller = this,
-            normalizedEvent = scroller.chart.pointer.normalize(e),
+            normalizedEvent = scroller.chart.pointer?.normalize(e) || e,
             options = scroller.options,
             direction: ('chartY'|'chartX') = options.vertical ?
                 'chartY' : 'chartX',
@@ -588,7 +583,7 @@ class Scrollbar {
      * @param {number} width
      *        width of the scrollbar
      * @param {number} height
-     *        height of the scorllbar
+     *        height of the scrollbar
      */
     public position(x: number, y: number, width: number, height: number): void {
         const scroller = this,
@@ -603,7 +598,7 @@ class Scrollbar {
         scroller.group.show();
         scroller.x = x;
         scroller.y = y + this.trackBorderWidth;
-        scroller.width = width; // width with buttons
+        scroller.width = width; // Width with buttons
         scroller.height = height;
         scroller.xOffset = xOffset;
         scroller.yOffset = yOffset;
@@ -613,13 +608,13 @@ class Scrollbar {
             scroller.width = scroller.yOffset = width = yOffset = scroller.size;
             scroller.xOffset = xOffset = 0;
             scroller.yOffset = yOffset = buttonsEnabled ? scroller.size : 0;
-            // width without buttons
+            // Width without buttons
             scroller.barWidth = height - (buttonsEnabled ? width * 2 : 0);
             scroller.x = x = x + margin;
         } else {
             scroller.height = height = scroller.size;
             scroller.xOffset = xOffset = buttonsEnabled ? scroller.size : 0;
-            // width without buttons
+            // Width without buttons
             scroller.barWidth = width - (buttonsEnabled ? height * 2 : 0);
             scroller.y = scroller.y + margin;
         }
@@ -672,7 +667,7 @@ class Scrollbar {
                 .attr({
                     zIndex: options.zIndex
                 })
-                .hide() // initially hide the scrollbar #15863
+                .hide() // Initially hide the scrollbar #15863
                 .add();
 
         // Draw the scrollbar group
@@ -867,7 +862,7 @@ class Scrollbar {
 
     public trackClick(e: PointerEvent): void {
         const scroller = this;
-        const normalizedEvent = scroller.chart.pointer.normalize(e),
+        const normalizedEvent = scroller.chart.pointer?.normalize(e) || e,
             range = scroller.to - scroller.from,
             top = scroller.y + scroller.scrollbarTop,
             left = scroller.x + scroller.scrollbarLeft;

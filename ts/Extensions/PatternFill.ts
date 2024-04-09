@@ -35,8 +35,6 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
@@ -47,7 +45,6 @@ const {
     extend,
     merge,
     pick,
-    pushUnique,
     removeEvent,
     wrap
 } = U;
@@ -132,13 +129,14 @@ function compose(
     SeriesClass: typeof Series,
     SVGRendererClass: typeof SVGRenderer
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
+    const PointClass = SeriesClass.prototype.pointClass,
+        pointProto = PointClass.prototype;
 
-    if (pushUnique(composed, compose)) {
+    if (!pointProto.calculatePatternDimensions) {
         addEvent(ChartClass, 'endResize', onChartEndResize);
         addEvent(ChartClass, 'redraw', onChartRedraw);
 
-        extend(PointClass.prototype, {
+        extend(pointProto, {
             calculatePatternDimensions: pointCalculatePatternDimensions
         });
         addEvent(PointClass, 'afterInit', onPointAfterInit);
@@ -779,8 +777,9 @@ function wrapSeriesGetColor(
 ): void {
     const oldColor = this.options.color;
 
-    // Temporarely remove color options to get defaults
-    if (oldColor &&
+    // Temporarily remove color options to get defaults
+    if (
+        oldColor &&
         (oldColor as PatternObject).pattern &&
         !(oldColor as PatternObject).pattern.color
     ) {
@@ -798,7 +797,7 @@ function wrapSeriesGetColor(
 }
 
 /**
- * Scale patterns inversly to the series it's used in.
+ * Scale patterns inversely to the series it's used in.
  * Maintains a visual (1,1) scale regardless of size.
  * @private
  */
@@ -838,7 +837,7 @@ function onPatternScaleCorrection(
             !!point.group?.scaleY;
         })
             // Map up pattern id's and their scales.
-            .map(function (p: Point): [string, PositionObject] {
+            .map(function (p: Point): PositionObject & { id: string } {
                 const point: MapPoint = (p as MapPoint);
                 // Parse the id from the graphic element of the point.
                 const id = (
@@ -850,32 +849,33 @@ function onPatternScaleCorrection(
                     .replace('url(#', '')
                     .replace(')', '');
 
-                return [
+                return {
                     id,
-                    {
-                        x: point.group?.scaleX || 1,
-                        y: point.group?.scaleY || 1
-                    }
-                ];
+                    x: point.group?.scaleX || 1,
+                    y: point.group?.scaleY || 1
+                };
             })
             // Filter out colors and other non-patterns, as well as duplicates.
             .filter(function (
-                [id, _]: [string, PositionObject],
+                pointInfo: PositionObject & { id: string },
                 index: number,
-                arr: [string, PositionObject][]
+                arr: (PositionObject & { id: string })[]
             ): boolean {
-                return id !== '' &&
-                id.indexOf('highcharts-pattern-') !== -1 &&
+                return pointInfo.id !== '' &&
+                pointInfo.id.indexOf('highcharts-pattern-') !== -1 &&
                 !arr.some(function (
-                    [otherID, _]: [string, PositionObject],
+                    otherInfo: PositionObject & { id: string },
                     otherIndex: number
                 ): boolean {
-                    return otherID === id && otherIndex < index;
+                    return otherInfo.id === pointInfo.id && otherIndex < index;
                 });
             })
-            .forEach(function ([id, scale]: [string, PositionObject]): void {
-                patterns[id].scaleX = 1 / scale.x;
-                patterns[id].scaleY = 1 / scale.y;
+            .forEach(function (
+                pointInfo: PositionObject & { id: string }
+            ): void {
+                const id = pointInfo.id;
+                patterns[id].scaleX = 1 / pointInfo.x;
+                patterns[id].scaleY = 1 / pointInfo.y;
                 patterns[id].updateTransform('patternTransform');
             });
     }

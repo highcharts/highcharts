@@ -51,7 +51,22 @@ QUnit.test('Map drilldown with disabled animation', async assert => {
         }
     });
     chart.series[0].options.custom.startPos = chart.series[0].group.getBBox();
+
+    assert.strictEqual(
+        chart.mapView.projection.options.name,
+        'EqualEarth',
+        `Recommended map projection should be based on first big, world map,
+        should be EqualEarth.`
+    );
+
     chart.series[0].points[0].doDrilldown();
+
+    assert.strictEqual(
+        chart.mapView.projection.options.name,
+        'LambertConformalConic',
+        `Recommended map projection should be based on drilled into series,
+        africa map, should be LambertConformalConic.`
+    );
 
     assert.ok(
         true,
@@ -61,6 +76,9 @@ QUnit.test('Map drilldown with disabled animation', async assert => {
 
     // Drill up to prevent default animation breaking lolex.
     chart.drillUp();
+
+    delete africa.objects.default['hc-decoded-geojson'];
+    delete world.objects.default['hc-decoded-geojson'];
 });
 
 QUnit.test('Map drilldown with zooming animation', async assert => {
@@ -77,6 +95,11 @@ QUnit.test('Map drilldown with zooming animation', async assert => {
         const chart = Highcharts.mapChart('container', {
                 chart: {
                     width: 200
+                },
+                mapView: {
+                    projection: {
+                        name: 'EqualEarth'
+                    }
                 },
                 series: [{
                     mapData: world,
@@ -132,6 +155,9 @@ QUnit.test('Map drilldown with zooming animation', async assert => {
         }, duration * 3);
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
+
+        delete africa.objects.default['hc-decoded-geojson'];
+        delete world.objects.default['hc-decoded-geojson'];
         TestUtilities.lolexUninstall(clock);
     }
 });
@@ -214,6 +240,9 @@ QUnit.test('Map drilldown with disabled zooming animation', async assert => {
         }, duration / 2);
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
+
+        delete africa.objects.default['hc-decoded-geojson'];
+        delete world.objects.default['hc-decoded-geojson'];
         TestUtilities.lolexUninstall(clock);
     }
 });

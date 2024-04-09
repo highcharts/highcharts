@@ -1,0 +1,14 @@
+---
+name: Cinema seat plan
+authors:
+  - Kacper Madej
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - General
+alt_text: >-
+  Highcharts non geographical map JavaScript example visualizes
+  cinema seat plan with selectable seats.
+new_until: 2024-03-31
+...

@@ -47,13 +47,22 @@ jobs:
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm i
 
       - name: Create visual test base images
         uses: cypress-io/github-action@v6
         with:
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
           config-file: test/cypress/dashboards/visual.config.mjs
@@ -78,9 +87,6 @@ jobs:
         with:
           runTests: false
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
-
       - name: Build Highcharts
         run: npx gulp scripts
       - name: Build Dashboards
@@ -89,11 +95,47 @@ jobs:
       - name: Run visual test
         uses: cypress-io/github-action@v6
         with:
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
           config-file: test/cypress/dashboards/visual.config.mjs
           install: false
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFile } = require('node:fs/promises')
+
+            const jsonFile = await readFile('./tmp/dashboards-visual-results.json')
+              .catch(() => null);
+            const commentTitle = 'Dashboard visual diffs';
+
+            // Only exists if there are diffs
+            if (jsonFile) {
+              const tests = JSON.parse(jsonFile).map(testObj => {
+                return `\n* ${testObj.actual}`;
+              }).join('');
+
+              await createOrUpdateComment(
+                github,
+                context,
+                commentTitle,
+                'Visual differences found in: ' +
+                 tests +
+                 `\n\n See artifacts in [the run summary](https://github.com/highcharts/highcharts/actions/runs/${context.runId}) for screenshots`
+                );
+            } else {
+              await createOrUpdateComment(
+                github,
+                context,
+                commentTitle,
+                'No differences found'
+              );
+            }
+
 
       - name: Store artifacts
         uses: actions/upload-artifact@v3
@@ -101,6 +143,8 @@ jobs:
         with:
           name: post-tests
           path: |
+            tmp/dashboards-visual-results.json
             cypress/screenshots
             cypress/snapshots
+            test/cypress/dashboards/cypress/snapshots/base
 

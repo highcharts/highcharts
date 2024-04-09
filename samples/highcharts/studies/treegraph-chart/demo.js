@@ -12,7 +12,9 @@ Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text: 'Dwarfs participating in the Quest to the Lonely Mountain marked in darker color. <br> Dwarf kings marked with golden border.',
+        text: 'Dwarfs participating in the Quest to the Lonely Mountain ' +
+            'marked in darker color. <br> Dwarf kings marked with golden ' +
+            'border.',
         align: 'left'
     },
     plotOptions: {

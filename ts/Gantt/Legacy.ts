@@ -74,7 +74,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
         }
     }
 
-    // Ensure we always have at least one value, even in very spaceous charts
+    // Ensure we always have at least one value, even in very spacious charts
     distances.push(80);
 
     return max(
@@ -152,8 +152,10 @@ function warnLegacy(chart: Chart): void {
             (chart.options.connectors = chart.options.connectors || {}),
             (chart.options as any).pathfinder
         );
-        error('WARNING: Pathfinder options have been renamed. ' +
-            'Use "chart.connectors" or "series.connectors" instead.');
+        error(
+            'WARNING: Pathfinder options have been renamed. ' +
+            'Use "chart.connectors" or "series.connectors" instead.'
+        );
     }
 }
 

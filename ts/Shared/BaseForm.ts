@@ -106,7 +106,7 @@ abstract class BaseForm {
 
         // Create close popup button.
         const closeButton = createElement(
-            'div',
+            'button',
             { className },
             void 0,
             this.container
@@ -126,7 +126,7 @@ abstract class BaseForm {
             );
         });
 
-        // close popup when press ESC
+        // Close popup when press ESC
         addEvent(
             document,
             'keydown', function (event: KeyboardEvent):void {
@@ -168,7 +168,7 @@ abstract class BaseForm {
         if (popupDiv.className.indexOf(toolbarClass) >= 0) {
             popupDiv.classList.remove(toolbarClass);
 
-            // reset toolbar inline styles
+            // Reset toolbar inline styles
             popupDiv.removeAttribute('style');
         }
 

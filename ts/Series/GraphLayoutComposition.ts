@@ -98,7 +98,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'GraphLayout')) {
         addEvent(ChartClass, 'afterPrint', onChartAfterPrint);
         addEvent(ChartClass, 'beforePrint', onChartBeforePrint);
         addEvent(ChartClass, 'predraw', onChartPredraw);
@@ -116,7 +116,7 @@ function onChartAfterPrint(
 ): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach((layout): void => {
-            // return to default simulation
+            // Return to default simulation
             layout.updateSimulation();
         });
         this.redraw();

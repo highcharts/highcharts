@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2024 Torstein Honsi
  *
- *  Extenstion for 3d axes
+ *  Extension for 3d axes
  *
  *  License: www.highcharts.com/license
  *
@@ -45,7 +45,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Axis.Tick3D')) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

@@ -517,12 +517,23 @@ const Options: DeepPartial<A11yOptions> = {
         /**
          * Theme to apply to the chart when Windows High Contrast Mode is
          * detected. By default, a high contrast theme matching the high
-         * contrast system system colors is used.
+         * contrast system colors is used.
          *
          * @type      {*}
          * @since     7.1.3
          * @apioption accessibility.highContrastTheme
          */
+
+        /**
+         * Controls how [highContrastTheme](#accessibility.highContrastTheme)
+         * is applied.
+         *
+         * The default option is `auto`, which applies the high contrast theme
+         * the user's system has a high contrast theme active.
+         *
+         * @since 11.4.0
+         */
+        highContrastMode: 'auto',
 
         /**
          * A text description of the chart.

@@ -21,14 +21,11 @@ import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
-import H from '../Globals.js';
-const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     getMagnitude,
     normalizeTickInterval,
-    pushUnique,
     timeUnits
 } = U;
 
@@ -66,7 +63,7 @@ declare module '../Series/SeriesOptions' {
 
 declare module './TimeTicksInfoObject' {
     interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -106,7 +103,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (pushUnique(composed, compose)) {
+        if (!AxisClass.keepProps.includes('dateTime')) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;
@@ -128,7 +125,7 @@ namespace DateTimeAxis{
      * @private
      * @function Highcharts.Axis#getTimeTicks
      * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-     * The interval in axis values (ms) and thecount.
+     * The interval in axis values (ms) and the count.
      * @param {number} min
      * The minimum in axis values.
      * @param {number} max
@@ -206,9 +203,9 @@ namespace DateTimeAxis{
         ): Time.TimeNormalizedObject {
             const units = (
                 unitsOption || [[
-                    // unit name
+                    // Unit name
                     'millisecond',
-                    // allowed multiples
+                    // Allowed multiples
                     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
                 ], [
                     'second',
@@ -234,12 +231,12 @@ namespace DateTimeAxis{
                 ]] as Required<AxisOptions>['units']
             );
 
-            let unit = units[units.length - 1], // default unit is years
+            let unit = units[units.length - 1], // Default unit is years
                 interval = timeUnits[unit[0]],
                 multiples = unit[1],
                 i;
 
-            // loop through the units to find the one that best fits the
+            // Loop through the units to find the one that best fits the
             // tickInterval
             for (i = 0; i < units.length; i++) {
                 unit = units[i];
@@ -248,7 +245,7 @@ namespace DateTimeAxis{
 
 
                 if (units[i + 1]) {
-                    // lessThan is in the middle between the highest multiple
+                    // `lessThan` is in the middle between the highest multiple
                     // and the next unit.
                     const lessThan = (
                         interval *
@@ -256,19 +253,19 @@ namespace DateTimeAxis{
                         timeUnits[units[i + 1][0]]
                     ) / 2;
 
-                    // break and keep the current unit
+                    // Break and keep the current unit
                     if (tickInterval <= lessThan) {
                         break;
                     }
                 }
             }
 
-            // prevent 2.5 years intervals, though 25, 250 etc. are allowed
+            // Prevent 2.5 years intervals, though 25, 250 etc. are allowed
             if (interval === timeUnits.year && tickInterval < 5 * interval) {
                 multiples = [1, 2, 5];
             }
 
-            // get the count
+            // Get the count
             const count = normalizeTickInterval(
                 tickInterval / interval,
                 multiples as any,

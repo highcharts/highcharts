@@ -1,5 +1,3 @@
-const { DataTable } = Dashboards;
-
 const columns = {
     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
     weight: [100, 40, 0.5, 200],
@@ -9,7 +7,7 @@ const columns = {
 
 // eslint-disable-next-line
 const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataTable({ columns }),
+    dataTable: new DataGrid.DataTable({ columns }),
     columns: {
         product: {
             cellFormat: '{text} No. 1',

@@ -1,3 +1,12 @@
+const navigatorOptions = {
+    xAxis: {
+        labels: {
+            format: '{value}%'
+        },
+        tickInterval: 10
+    }
+};
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -34,7 +43,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'top-left',
+        renderTo: 'top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -51,10 +60,11 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Agriculture'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
-        cell: 'top-middle',
+        renderTo: 'top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -71,10 +81,11 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Industry'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
-        cell: 'top-right',
+        renderTo: 'top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
@@ -91,10 +102,11 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Services'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
-        cell: 'bottom',
+        renderTo: 'bottom',
         type: 'DataGrid',
         connector: {
             id: 'Economy'

@@ -24,13 +24,10 @@ import type Time from '../Core/Time';
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
 const { format } = F;
-import H from '../Core/Globals.js';
-const { composed } = H;
 import U from '../Core/Utilities.js';
 const {
     getNestedProperty,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -41,7 +38,7 @@ const {
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike extends A11yI18nComposition.ChartComposition {
-        // nothing to add
+        // Nothing to add
     }
 }
 
@@ -91,17 +88,16 @@ namespace A11yI18nComposition {
     export function compose(
         ChartClass: typeof Chart
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (pushUnique(composed, compose)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.langFormat) {
             chartProto.langFormat = langFormat;
         }
 
     }
 
     /**
-     * i18n utility function.  Format a single array or plural statement in a
+     * I18n utility function.  Format a single array or plural statement in a
      * format string.  If the statement is not an array or plural statement,
      * returns the statement within brackets.  Invalid array statements return
      * an empty string.

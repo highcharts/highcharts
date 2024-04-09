@@ -89,6 +89,7 @@ export interface ChartOptions {
     alignThresholds?: boolean;
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
+    axisLayoutRuns?: number;
     backgroundColor?: ColorType;
     borderColor?: ColorType;
     borderRadius?: number;
@@ -109,8 +110,7 @@ export interface ChartOptions {
     marginRight?: number;
     marginTop?: number;
     numberFormatter?: NumberFormatterCallbackFunction;
-    axisLayoutRuns?: number;
-    panKey?: string;
+    panKey?: 'ctrl'|'shift';
     panning?: ChartPanningOptions;
     pinchType?: string;
     plotBackgroundColor?: ColorType;

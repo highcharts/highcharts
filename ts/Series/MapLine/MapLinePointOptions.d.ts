@@ -23,7 +23,7 @@ import type MapPointOptions from '../Map/MapPointOptions';
  * */
 
 export interface MapLinePointOptions extends MapPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export default MapLinePointOptions;

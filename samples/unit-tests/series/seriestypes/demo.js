@@ -35,7 +35,8 @@ Object.keys(Highcharts.Series.types).forEach(function (type) {
 
                 assert.ok(
                     true,
-                    'No errors in console after updating series with empty data.'
+                    'No errors in console after updating series with empty ' +
+                    'data.'
                 );
             }
         );

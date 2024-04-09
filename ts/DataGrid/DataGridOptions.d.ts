@@ -82,6 +82,11 @@ export interface DataGridOptions {
      * @default true
      */
     resizableColumns?: boolean;
+
+    /**
+     * Events attached to the row : `click`.
+     */
+    events?: DataGridEvents
 }
 
 /**
@@ -91,6 +96,10 @@ export interface ColumnHeaderOptions {
 
     /**
      * Switch to turn the column header on (`true`) or off (`false`).
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/options/disable-column-headers/ | Column headers disabled}
      *
      * @default true
      */
@@ -168,6 +177,27 @@ export interface CellFormatterCallback {
  */
 export interface CellValue {
     value: DataTable.CellType
+}
+
+/**
+ * Contains events for row
+ */
+export interface DataGridEvents {
+    row?: DataGridRowEvents
+}
+
+/**
+ * Declare events for row
+ */
+export interface DataGridRowEvents {
+    click?: DataGridClickCallbackFunction
+}
+
+/**
+ * Click callback function
+ */
+export interface DataGridClickCallbackFunction {
+    (this: HTMLElement, event: MouseEvent): void;
 }
 
 /* *

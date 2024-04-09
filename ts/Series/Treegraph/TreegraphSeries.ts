@@ -39,9 +39,10 @@ const { prototype: { symbols } } = SVGRenderer;
 import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
-const { getLevelOptions } = TU;
+const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
+    arrayMax,
     extend,
     merge,
     pick,
@@ -143,7 +144,11 @@ class TreegraphSeries extends TreemapSeries {
         const chart = this.chart,
             series = this,
             plotSizeX = chart.plotSizeX as number,
-            plotSizeY = chart.plotSizeY as number;
+            plotSizeY = chart.plotSizeY as number,
+            columnCount = arrayMax(
+                this.points.map((p): number => p.node.xPosition)
+            );
+
         let minX = Infinity,
             maxX = -Infinity,
             minY = Infinity,
@@ -166,6 +171,10 @@ class TreegraphSeries extends TreemapSeries {
                     level.marker,
                     point.options.marker
                 ),
+                nodeWidth = markerOptions.width ?? getNodeWidth(
+                    this,
+                    columnCount
+                ),
                 radius = relativeLength(
                     markerOptions.radius || 0,
                     Math.min(plotSizeX, plotSizeY)
@@ -174,9 +183,10 @@ class TreegraphSeries extends TreemapSeries {
                 nodeSizeY = (symbol === 'circle' || !markerOptions.height) ?
                     radius * 2 :
                     relativeLength(markerOptions.height, plotSizeY),
-                nodeSizeX = symbol === 'circle' || !markerOptions.width ?
+                nodeSizeX = symbol === 'circle' || !nodeWidth ?
                     radius * 2 :
-                    relativeLength(markerOptions.width, plotSizeX);
+                    relativeLength(nodeWidth, plotSizeX);
+
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
@@ -220,7 +230,7 @@ class TreegraphSeries extends TreemapSeries {
     private getLinks(): TreegraphLink[] {
         const series = this;
         const links = [] as TreegraphLink[];
-        this.data.forEach((point, index): void => {
+        this.data.forEach((point): void => {
             const levelOptions =
                 (series.mapOptionsToLevel as any)[point.node.level || 0] || {};
             if (point.node.parent) {
@@ -373,7 +383,8 @@ class TreegraphSeries extends TreemapSeries {
 
                 y1 = Math.floor(
                     (fromNode.shapeArgs.y || 0) +
-                    (fromNode.shapeArgs.height || 0) / 2) + crisp,
+                    (fromNode.shapeArgs.height || 0) / 2
+                ) + crisp,
 
                 y2 = Math.floor(
                     (toNode.shapeArgs.y || 0) +
@@ -786,7 +797,7 @@ export default TreegraphSeries;
  * points can be given in the following ways:
  *
  * 1. The array of arrays, with `keys` property, which defines how the fields in
- *     array should be interpretated
+ *     array should be interpreted
  *    ```js
  *       keys: ['id', 'parent'],
  *       data: [
@@ -835,4 +846,4 @@ export default TreegraphSeries;
  * @apioption series.treegraph.data.collapsed
  */
 
-''; // gets doclets above into transpiled version
+''; // Gets doclets above into transpiled version

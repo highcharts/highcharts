@@ -23,7 +23,7 @@ import type {
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
+import type { MapDataType } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
@@ -35,6 +35,9 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type {
+    SeriesTypeOptions
+} from '../../Core/Series/SeriesType';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject, stop } = A;
@@ -49,11 +52,10 @@ import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    // indirect dependency to keep product size low
+    // Indirect dependency to keep product size low
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -89,7 +91,7 @@ declare module '../../Core/Series/SeriesLike' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
-        mapData?: (Array<MapPointOptions>|GeoJSON|TopoJSON);
+        mapData?: MapDataType;
     }
     interface SeriesStateHoverOptions
     {
@@ -269,7 +271,7 @@ class MapSeries extends ScatterSeries {
             // Individual point actions.
             this.points.forEach((point): void => {
 
-                const { graphic, shapeArgs } = point;
+                const { graphic } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -319,8 +321,20 @@ class MapSeries extends ScatterSeries {
                         );
                     }
 
-                    graphic.animate = function (params,
-                        options, complete): SVGElement {
+                    // If the map point is not visible and is not null (e.g.
+                    // hidden by data classes), then the point should be
+                    // visible, but without value
+                    graphic.attr({
+                        visibility: (
+                            point.visible ||
+                            (!point.visible && !point.isNull)
+                        ) ? 'inherit' : 'hidden'
+                    });
+
+                    graphic.animate = function (
+                        params,
+                        options, complete
+                    ): SVGElement {
 
                         const animateIn = (
                                 isNumber(params['stroke-width']) &&
@@ -469,7 +483,7 @@ class MapSeries extends ScatterSeries {
                                 typeof renderer.globalAnimation !== 'boolean' &&
                                 renderer.globalAnimation.complete
                             ) {
-                                // fire complete only from this place
+                                // Fire complete only from this place
                                 renderer.globalAnimation.complete({
                                     applyDrilldown: true
                                 });
@@ -511,7 +525,7 @@ class MapSeries extends ScatterSeries {
 
                 if (point.path || point.geometry) {
 
-                    // @todo Try to puth these two conversions in
+                    // @todo Try to put these two conversions in
                     // MapPoint.applyOptions
                     if (typeof point.path === 'string') {
                         point.path = splitPath(point.path);
@@ -977,15 +991,43 @@ class MapSeries extends ScatterSeries {
                     };
                 }
 
-                if (point.projectedPath && !point.projectedPath.length) {
-                    point.setVisible(false);
-                } else if (!point.visible) {
-                    point.setVisible(true);
+                if (!point.hiddenInDataClass) { // #20441
+                    if (point.projectedPath && !point.projectedPath.length) {
+                        point.setVisible(false);
+                    } else if (!point.visible) {
+                        point.setVisible(true);
+                    }
                 }
             });
         }
 
         fireEvent(series, 'afterTranslate');
+    }
+
+    public update(
+        options: SeriesTypeOptions
+    ): void {
+        // Calculate and set the recommended map view after every series update
+        // if new mapData is set
+        if (options.mapData) {
+            this.chart.mapView?.recommendMapView(
+                this.chart,
+                [
+                    this.chart.options.chart.map,
+                    ...(this.chart.options.series || []).map(
+                        (s, i): (MapDataType|undefined) => {
+                            if (i === this._i) {
+                                return options.mapData;
+                            }
+                            return s.mapData;
+                        }
+                    )
+                ],
+                true
+            );
+        }
+
+        super.update.apply(this, arguments);
     }
 
 }

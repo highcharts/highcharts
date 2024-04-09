@@ -298,9 +298,10 @@ class CSVConverter extends DataConverter {
                 }
             }
 
-            if (dataTypes.length &&
+            if (
+                dataTypes.length &&
                 dataTypes[0].length &&
-                dataTypes[0][1] === 'date' && // format is a string date
+                dataTypes[0][1] === 'date' && // Format is a string date
                 !converter.options.dateFormat
             ) {
                 converter.deduceDateFormat(
@@ -359,16 +360,12 @@ class CSVConverter extends DataConverter {
 
         let i = 0,
             c = '',
-            cl = '',
-            cn = '',
             token: (number|string) = '',
             actualColumn = 0,
             column = 0;
 
         const read = (j: number): void => {
             c = columnStr[j];
-            cl = columnStr[j - 1];
-            cn = columnStr[j + 1];
         };
 
         const pushType = (type: string): void => {

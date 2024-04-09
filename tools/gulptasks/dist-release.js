@@ -165,7 +165,7 @@ function copyFiles() {
     }];
 
     const files = {
-        'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
+        // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
         'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
         'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
         'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
