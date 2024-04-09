@@ -1,8 +1,9 @@
 ---
 name: Flags marking events
 authors:
-  - Torstein Hønsi
+  - Mateusz Bernacik
 js_wrap: b
+new_until: 2024-07-09
 tags:
   - Highcharts Stock demo
 categories:

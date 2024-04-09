@@ -2,59 +2,61 @@
 
     // Load the dataset
     const data = await fetch(
-        'https://www.highcharts.com/samples/data/usdeur.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1485682/samples/data/btc-ohlc-historical.json'
     ).then(response => response.json());
 
     // Create the chart
     Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 0
-        },
-
         title: {
-            text: 'USD to EUR exchange rate'
+            text: 'Bitcoin Historical Price and Halvings'
         },
 
-        tooltip: {
-            style: {
-                width: '200px'
-            },
-            valueDecimals: 4,
-            shared: true
+        xAxis: {
+            overscroll: 2678400000 // 31 days
         },
 
         yAxis: {
-            title: {
-                text: 'Exchange rate'
+            labels: {
+                align: 'left'
             }
         },
 
         series: [{
-            name: 'USD to EUR',
+            name: 'Bitcoin Price',
             data: data,
-            id: 'dataseries'
+            id: 'dataseries',
+            type: 'candlestick'
 
-        // the event marker flags
+            // the event marker flags
         }, {
             type: 'flags',
             accessibility: {
                 exposeAsGroupOnly: true,
-                description: 'Flagged events.'
+                description: 'Bitcoin Halving Events'
             },
-            data: [{
-                x: Date.UTC(2021, 11, 2),
-                title: 'A',
-                text: 'Some event with a description'
-            }, {
-                x: Date.UTC(2021, 11, 15),
-                title: 'B',
-                text: 'Some event with a description'
-            }, {
-                x: Date.UTC(2021, 11, 22),
-                title: 'C',
-                text: 'Some event with a description'
-            }],
+            data: [
+                {
+                    x: Date.UTC(2012, 10, 28),
+                    title: '1st',
+                    text: '1st Halving'
+                },
+                {
+                    x: Date.UTC(2016, 6, 9),
+                    title: '2nd',
+                    text: '2nd Halving'
+                },
+                {
+                    x: Date.UTC(2020, 4, 11),
+                    title: '3rd',
+                    text: '3rd Halving'
+                },
+                {
+                    x: Date.UTC(2024, 3, 19),
+                    title: '4th',
+                    text: '4th Halving'
+                }
+            ],
             onSeries: 'dataseries',
             shape: 'circlepin',
             width: 16
