@@ -93,6 +93,31 @@ function wrapLon(lon: number): number {
     return lon;
 }
 
+/**
+ * Calculate the haversine of an angle.
+ * @private
+ */
+function hav(radians: number): number {
+    return (1 - Math.cos(radians)) / 2;
+}
+
+/**
+* Calculate the haversine of an angle from two coordinates.
+* @private
+*/
+function havFromCoords(point1: LonLatArray, point2: LonLatArray): number {
+    const cos = Math.cos,
+        lat1 = point1[1] * deg2rad,
+        lon1 = point1[0] * deg2rad,
+        lat2 = point2[1] * deg2rad,
+        lon2 = point2[0] * deg2rad,
+        deltaLat = lat2 - lat1,
+        deltaLon = lon2 - lon1,
+        havFromCoords = hav(deltaLat) + cos(lat1) * cos(lat2) * hav(deltaLon);
+
+    return havFromCoords;
+}
+
 /* *
  *
  *  Class
@@ -127,55 +152,20 @@ class Projection {
     }
 
     /**
-     * Calculate the haversine of an angle.
+     * Calculate the distance in meters between two given coordinates.
      * @private
      */
-    public static hav(
-        radians: number
-    ): number {
-        return (1 - Math.cos(radians)) / 2;
-    }
-
-    /**
-     * Calculate the haversine of an angle from two coordinates.
-     * @private
-     */
-    public static havFromCoords(
-        point1: LonLatArray,
-        point2: LonLatArray
-    ): number {
-        const cos = Math.cos,
-            hav = Projection.hav,
-
-            lat1 = point1[1] * deg2rad,
-            lon1 = point1[0] * deg2rad,
-            lat2 = point2[1] * deg2rad,
-            lon2 = point2[0] * deg2rad,
-
-            deltaLat = lat2 - lat1,
-            deltaLon = lon2 - lon1,
-
-            havFromCoords = hav(deltaLat) +
-                cos(lat1) * cos(lat2) * hav(deltaLon);
-
-        return havFromCoords;
-    }
-
-    /**
-     * Calculate the angular distance in radians between two given coordinates.
-     * @private
-     */
-    public static angularDistance(
+    public static distance(
         point1: LonLatArray,
         point2: LonLatArray
     ): number {
         const { atan2, sqrt } = Math,
-            havFromCoords = Projection.havFromCoords,
 
             hav = havFromCoords(point1, point2),
-            angularDistance = 2 * atan2(sqrt(hav), sqrt(1 - hav));
+            angularDistance = 2 * atan2(sqrt(hav), sqrt(1 - hav)),
+            distance = angularDistance * 6371e3;
 
-        return angularDistance;
+        return distance;
     }
 
     /**
@@ -189,7 +179,7 @@ class Projection {
         stepDistance: number = 500000
     ): LonLatArray[] {
         const { atan2, cos, sin, sqrt } = Math,
-            angularDistance = Projection.angularDistance,
+            distance = Projection.distance,
 
             lat1 = point1[1] * deg2rad,
             lon1 = point1[0] * deg2rad,
@@ -202,10 +192,10 @@ class Projection {
             sinLat1 = sin(lat1),
             sinLat2 = sin(lat2),
 
-            angDistance = angularDistance(point1, point2),
+            pointDistance = distance(point1, point2),
+            angDistance = pointDistance / 6371e3,
             sinAng = sin(angDistance),
-            distance = angDistance * 6371e3, // In meters
-            jumps = Math.round(distance / stepDistance),
+            jumps = Math.round(pointDistance / stepDistance),
 
             lineString: LonLatArray[] = [];
 
