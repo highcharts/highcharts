@@ -31,6 +31,8 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../Animation/AnimationOptions';
 
+import TextPath from '../../Extensions/TextPathSupport.js';
+const { drawTextPath } = TextPath;
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
@@ -760,28 +762,7 @@ namespace DataLabel {
                                 );
                             }
 
-                            const textPathOptions =
-                                (labelOptions as any)[
-                                    point.formatPrefix + 'TextPath'
-                                ] || labelOptions.textPath;
-
-                            if (textPathOptions && !labelOptions.useHTML) {
-                                dataLabel.setTextPath(
-                                    point.getDataLabelPath?.(dataLabel) ||
-                                        point.graphic,
-                                    textPathOptions
-                                );
-
-                                if (
-                                    point.dataLabelPath &&
-                                    !textPathOptions.enabled
-                                ) {
-                                    // Clean the DOM
-                                    point.dataLabelPath = (
-                                        point.dataLabelPath.destroy()
-                                    );
-                                }
-                            }
+                            drawTextPath(dataLabel, labelOptions, point);
 
                             if (!dataLabel.added) {
                                 dataLabel.add(dataLabelsGroup);

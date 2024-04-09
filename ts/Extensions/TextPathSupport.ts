@@ -2,12 +2,131 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import Chart from '../Core/Chart/Chart';
 import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement';
+import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import DataLabelOptions from '../Core/Series/DataLabelOptions';
+import Point from '../Core/Series/Point';
 const { deg2rad } = H;
-const { addEvent } = U;
+const { addEvent, merge, uniqueKey, defined, extend } = U;
 const { pointInPolygon } = GeometryUtilities;
+
+/**
+ * Set a text path for a `text` or `label` element, allowing the text to
+ * flow along a path.
+ *
+ * In order to unset the path for an existing element, call `setTextPath`
+ * with `{ enabled: false }` as the second argument.
+ *
+ * @sample highcharts/members/renderer-textpath/ Text path demonstrated
+ *
+ * @function Highcharts.SVGElement#setTextPath
+ *
+ * @param {Highcharts.SVGElement|undefined} path
+ *        Path to follow. If undefined, it allows changing options for the
+ *        existing path.
+ *
+ * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
+ *        Options.
+ *
+ * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
+ */
+function setTextPath(
+    element: SVGElement,
+    path: SVGElement|undefined,
+    textPathOptions: AnyRecord
+): void {
+
+    // Defaults
+    textPathOptions = merge(true, {
+        enabled: true,
+        attributes: {
+            dy: -5,
+            startOffset: '50%',
+            textAnchor: 'middle'
+        }
+    }, textPathOptions);
+
+    const url = element.renderer.url,
+        textWrapper = element.text || element,
+        textPath = textWrapper.textPath,
+        { attributes, enabled } = textPathOptions;
+
+    path = path || (textPath && textPath.path);
+
+    // Remove previously added event
+    if (textPath) {
+        textPath.undo();
+    }
+
+    if (path && enabled) {
+        const undo = addEvent(textWrapper, 'afterModifyTree', (
+            e: AnyRecord
+        ): void => {
+
+            if (path && enabled) {
+
+                // Set ID for the path
+                let textPathId = path.attr('id');
+                if (!textPathId) {
+                    path.attr('id', textPathId = uniqueKey());
+                }
+
+                // Set attributes for the <text>
+                const textAttribs: SVGAttributes = {
+                    // `dx`/`dy` options must by set on <text> (parent), the
+                    // rest should be set on <textPath>
+                    x: 0,
+                    y: 0
+                };
+
+                if (defined(attributes.dx)) {
+                    textAttribs.dx = attributes.dx;
+                    delete attributes.dx;
+                }
+                if (defined(attributes.dy)) {
+                    textAttribs.dy = attributes.dy;
+                    delete attributes.dy;
+                }
+                textWrapper.attr(textAttribs);
+
+
+                // Handle label properties
+                element.attr({ transform: '' });
+                if (element.box) {
+                    element.box = element.box.destroy();
+                }
+
+                // Wrap the nodes in a textPath
+                const children = e.nodes.slice(0);
+                e.nodes.length = 0;
+                e.nodes[0] = {
+                    tagName: 'textPath',
+                    attributes: extend(attributes, {
+                        'text-anchor': attributes.textAnchor,
+                        href: `${url}#${textPathId}`
+                    }),
+                    children
+                };
+            }
+        });
+
+        // Set the reference
+        textWrapper.textPath = { path, undo };
+
+    } else {
+        textWrapper.attr({ dx: 0, dy: 0 });
+        delete textWrapper.textPath;
+    }
+
+    if (element.added) {
+
+        // Rebuild text after added
+        textWrapper.textCache = '';
+        element.renderer.buildText(textWrapper);
+    }
+}
 
 function getPolygon(
     label: SVGElement,
@@ -190,13 +309,50 @@ function hideOverlappingPolygons(this: Chart): void {
         }
     }
 }
+function drawTextPath(
+    dataLabel: SVGElement,
+    labelOptions: DataLabelOptions,
+    point: Point
+): void {
+    const textPathOptions =
+        (labelOptions as any)[
+            point.formatPrefix + 'TextPath'
+        ] || labelOptions.textPath;
 
-function compose(ChartClass: typeof Chart): void {
-    addEvent(ChartClass, 'render', hideOverlappingPolygons);
+    if (textPathOptions && !labelOptions.useHTML) {
+        setTextPath(
+            dataLabel,
+            point.getDataLabelPath?.(dataLabel) ||
+                point.graphic,
+            textPathOptions
+        );
+
+        if (
+            point.dataLabelPath &&
+            !textPathOptions.enabled
+        ) {
+            // Clean the DOM
+            point.dataLabelPath = (
+                point.dataLabelPath.destroy()
+            );
+        }
+    }
 }
+
+function compose(
+    ChartClass: typeof Chart,
+    SVGElementClass: typeof SVGElement
+): void {
+    addEvent(ChartClass, 'render', hideOverlappingPolygons);
+    extend(SVGElementClass.prototype, {
+        drawTextPath: drawTextPath
+    });
+}
+
 const TextPathSupport = {
     getPolygon, // In order to test polygons
-    compose
+    compose,
+    drawTextPath
 };
 
 export default TextPathSupport;
