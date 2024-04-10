@@ -260,7 +260,6 @@ function drawTextPath(
 
 const TextPathSupport = {
     getPolygon,
-    setTextPath,
     drawTextPath
 };
 
