@@ -35,7 +35,7 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
-import TextPathSupport from '../../../Extensions/TextPathSupport.js';
+import TextPathSupport from '../../../Extensions/TextPath.js';
 const { getPolygon } = TextPathSupport;
 
 import A from '../../Animation/AnimationUtilities.js';

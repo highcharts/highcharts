@@ -259,7 +259,7 @@ function drawTextPath(
 }
 
 const TextPathSupport = {
-    getPolygon, // In order to test polygons
+    getPolygon,
     setTextPath,
     drawTextPath
 };
