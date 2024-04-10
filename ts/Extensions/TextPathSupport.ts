@@ -1,6 +1,4 @@
 import type PositionObject from '../Core/Renderer/PositionObject';
-import Chart from '../Core/Chart/Chart';
-import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
@@ -10,7 +8,17 @@ import DataLabelOptions from '../Core/Series/DataLabelOptions';
 import Point from '../Core/Series/Point';
 const { deg2rad } = H;
 const { addEvent, merge, uniqueKey, defined, extend } = U;
-const { pointInPolygon } = GeometryUtilities;
+
+declare module '../Core/Renderer/SVG/SVGElement' {
+    interface SVGElement {
+        setTextPath(
+            element: SVGElement,
+            path: SVGElement | undefined,
+            textPathOptions:
+            AnyRecord
+        ): void
+    }
+}
 
 /**
  * Set a text path for a `text` or `label` element, allowing the text to
@@ -33,7 +41,7 @@ const { pointInPolygon } = GeometryUtilities;
  * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
  */
 function setTextPath(
-    element: SVGElement,
+    this: SVGElement,
     path: SVGElement|undefined,
     textPathOptions: AnyRecord
 ): void {
@@ -48,8 +56,8 @@ function setTextPath(
         }
     }, textPathOptions);
 
-    const url = element.renderer.url,
-        textWrapper = element.text || element,
+    const url = this.renderer.url,
+        textWrapper = this.text || this,
         textPath = textWrapper.textPath,
         { attributes, enabled } = textPathOptions;
 
@@ -93,9 +101,9 @@ function setTextPath(
 
 
                 // Handle label properties
-                element.attr({ transform: '' });
-                if (element.box) {
-                    element.box = element.box.destroy();
+                this.attr({ transform: '' });
+                if (this.box) {
+                    this.box = this.box.destroy();
                 }
 
                 // Wrap the nodes in a textPath
@@ -120,11 +128,11 @@ function setTextPath(
         delete textWrapper.textPath;
     }
 
-    if (element.added) {
+    if (this.added) {
 
         // Rebuild text after added
         textWrapper.textCache = '';
-        element.renderer.buildText(textWrapper);
+        this.renderer.buildText(textWrapper);
     }
 }
 
@@ -232,83 +240,6 @@ function getPolygon(
     return polygon;
 }
 
-function hideOverlappingPolygons(this: Chart): void {
-
-    const isPolygonOverlap = (
-        box1Poly: [number, number][],
-        box2Poly: [number, number][]
-    ): boolean => {
-        for (const p of box1Poly) {
-            if (pointInPolygon({ x: p[0], y: p[1] }, box2Poly)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    for (const serie of this.series) {
-        if (serie.visible && serie.hasDataLabels?.()) {
-
-            const textPathCandidates = [...serie.points];
-
-            // Links could have textPath labels
-            if ('links' in serie) {
-                textPathCandidates.push(...(serie as any).links);
-            }
-
-            const length = textPathCandidates.length,
-                // It is necessary to store the polygons seperately
-                // because storing them on the labels (or their bbox)
-                // causes all labels to get the same polygon
-                polygonMap:[[number, number][], number][] = [];
-
-            for (
-                let linkOrPointIndex = 0;
-                linkOrPointIndex < length;
-                linkOrPointIndex++
-            ) {
-                const label = textPathCandidates[linkOrPointIndex].dataLabel;
-
-                if (label && !label.options?.allowOverlap) {
-                    const tp = label.text?.element.querySelector('textPath');
-
-                    if (tp) {
-                        polygonMap.push([
-                            getPolygon(label, tp, serie.chart.renderer),
-                            linkOrPointIndex
-                        ]);
-                    }
-                }
-            }
-
-            for (const [label1Polygon, label1Index] of polygonMap) {
-                const linkOrPointText1 = textPathCandidates[label1Index]
-                    .dataLabel
-                    ?.text;
-
-                for (const [label2Polygon, label2Index] of polygonMap) {
-                    if (label1Index === label2Index) {
-                        continue;
-                    }
-
-                    const linkOrPointText2 = textPathCandidates[label2Index]
-                        .dataLabel
-                        ?.text;
-
-                    if (
-                        linkOrPointText1 &&
-                        linkOrPointText2 &&
-                        linkOrPointText1.visibility !== 'hidden' &&
-                        linkOrPointText2.visibility !== 'hidden' &&
-                        isPolygonOverlap(label1Polygon, label2Polygon)
-                    ) {
-                        linkOrPointText1.hide();
-                    }
-                }
-            }
-        }
-    }
-}
 function drawTextPath(
     dataLabel: SVGElement,
     labelOptions: DataLabelOptions,
@@ -320,7 +251,7 @@ function drawTextPath(
         ] || labelOptions.textPath;
 
     if (textPathOptions && !labelOptions.useHTML) {
-        setTextPath(
+        dataLabel.setTextPath(
             dataLabel,
             point.getDataLabelPath?.(dataLabel) ||
                 point.graphic,
@@ -339,19 +270,9 @@ function drawTextPath(
     }
 }
 
-function compose(
-    ChartClass: typeof Chart,
-    SVGElementClass: typeof SVGElement
-): void {
-    addEvent(ChartClass, 'render', hideOverlappingPolygons);
-    extend(SVGElementClass.prototype, {
-        drawTextPath: drawTextPath
-    });
-}
-
 const TextPathSupport = {
     getPolygon, // In order to test polygons
-    compose,
+    setTextPath,
     drawTextPath
 };
 
