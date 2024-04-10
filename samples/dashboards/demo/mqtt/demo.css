@@ -414,13 +414,6 @@ div#info-container {
         background-color: var(--color-table-td);
         color: var(--color-header);
         padding: 5px;
-
-        & span.unit {
-            display: block;
-            font-size: 10px;
-            font-weight: normal;
-            color: var(--color-unit);
-        }
     }
 
     & th:nth-of-type(1) {
@@ -429,6 +422,12 @@ div#info-container {
 
     & th:nth-of-type(2) {
         width: 20%;
+    }
+
+    & tr.unit th {
+        font-size: 11px;
+        color: var(--color-unit);
+        font-weight: normal;
     }
 
     & td {
@@ -442,12 +441,6 @@ div#info-container {
     padding: 10px;
     color: var(--color-sk);
     font-size: 13px;
-}
-
-span.unit {
-    font-size: 10px;
-    font-weight: bold;
-    color: green;
 }
 
 /* *
@@ -542,30 +535,23 @@ span.unit {
     transform: translate(2px, -1px);
 }
 
-.el-aggr .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
-    background-color: var(--color-active);
-    color: var(--color-hover-text);
+#el-map .map-tooltip caption {
+    font-size: 13px;
+    font-weight: bold;
+    padding-bottom: 5px;
 }
 
-.el-aggr .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component {
-    background-color: var(--color-hover);
-    color: var(--color-hover-text);
+#el-map .map-tooltip td,
+#el-map .map-tooltip th {
+    background-color: var(--color-tooltip-background);
+    text-align: left;
+    padding: 3px;
 }
 
-.el-aggr .highcharts-dashboards-cell-state-active text {
-    fill: var(--color-hover-text);
-}
-
-.el-aggr .highcharts-dashboards-cell-state-hover:hover text {
-    fill: var(--color-hover-text);
-}
-
-.el-aggr .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
-    fill: var(--color-hover-text);
-}
-
-.el-aggr .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text {
-    fill: var(--color-hover-text);
+#el-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
 }
 
 @media (max-width: 992px) {

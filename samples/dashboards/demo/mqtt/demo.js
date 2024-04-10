@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 let board = null;
 let maxConnectedUnits;
 
@@ -8,13 +9,9 @@ const lang = {
     // Selected language
     current: 'nn',
 
-    // Translations
+    // Translations, fixed strings
     Name: {
         nn: 'Namn'
-    },
-    Elevation: {
-        nn: 'Høgde',
-        unit: 'moh'
     },
     'Power station': {
         nn: 'Kraftverk'
@@ -23,26 +20,8 @@ const lang = {
         nn: 'Måletidspunkt',
         unit: 'UTC'
     },
-    'Generated power': {
-        nn: 'Effekt',
-        unit: 'MW'
-    },
-    Location: {
-        nn: 'Plassering',
-        unit: 'lat/lon'
-    },
     'Location unknown': {
         nn: 'Ukjend plassering'
-    },
-    Volume: {
-        nn: 'Volum',
-        unit: 'mill. m3'
-    },
-    Intakes: {
-        nn: 'Inntak'
-    },
-    Reservoirs: {
-        nn: 'Vassmagasin'
     },
     'No connected reservoirs': {
         nn: 'Ingen tilknyta vassmagasin'
@@ -50,45 +29,89 @@ const lang = {
     'No intakes': {
         nn: 'Ingen inntak'
     },
-    Drain: {
+
+    // Power generation parameters
+    P_gen: {
+        nn: 'Effekt',
+        en: 'Generated power',
+        unit: 'MW'
+    },
+    q_turb: {
+        nn: 'Vassforbruk',
+        en: 'Water usage',
+        unit: 'm3/sek'
+    },
+    h: {
+        nn: 'Høgde',
+        en: 'Elevation',
+        unit: 'moh'
+    },
+    location: {
+        nn: 'Plassering',
+        en: 'Location',
+        unit: 'lat/lon'
+    },
+    volume: {
+        nn: 'Volum',
+        en: 'Volume',
+        unit: 'mill. m3'
+    },
+    intakes: {
+        nn: 'Inntak',
+        en: 'Intakes'
+    },
+    reservoirs: {
+        nn: 'Vassmagasin',
+        en: 'Reservoirs'
+    },
+    drain: {
         nn: 'Avlaup',
+        en: 'Drain',
         unit: 'm3/sek'
     },
-    Inflow: {
+    inflow: {
         nn: 'Tilsig',
+        en: 'Inflow',
         unit: 'm3/sek'
     },
-    Level: {
+    level: {
         nn: 'Nivå',
+        en: 'level',
         unit: 'moh'
     },
-    'Highest regulated level': {
+    HRV: {
         nn: 'Høgaste regulerte vasstand',
+        en: 'Highest regulated level',
         unit: 'moh'
     },
-    'Lowest regulated level': {
+    LRV: {
         nn: 'Lågaste regulerte vasstand',
+        en: 'Lowest regulated level',
         unit: 'moh'
     },
-    Energy: {
+    energy: {
         nn: 'Energi',
+        en: 'Energy',
         unit: 'MWh'
     },
-    'Net flow': {
+    net_flow: {
         nn: 'Netto endring',
+        en: 'Net flow',
         unit: 'm3/sek'
     },
-    'Required minimal flow': {
+    q_min_set: {
         nn: 'Minstevassføring krav',
+        en: 'Required minimal flow',
         unit: 'm3/sek'
     },
-    'Measured minimal flow': {
+    q_min_act: {
         nn: 'Minstevassføring målt',
+        en: 'Measured minimal flow',
         unit: 'm3/sek'
     },
 
     // Translator function
-    tr: function (str, unit = false, delimBeg = ' (', delimEnd = ')') {
+    tr: function (str) {
         const item = str in this ? this[str] : null;
         if (item === null) {
             // No translation exists, return original
@@ -96,15 +119,21 @@ const lang = {
         }
 
         let ret = str;
-        if (this.current !== 'en') {
+        if (this.current in this[str]) {
             ret = this[str][this.current];
         }
 
-        if (unit) {
-            ret += `<span class="unit">
-                ${delimBeg}${item.unit}${delimEnd}</span>`;
-        }
         return ret;
+    },
+
+    // Get measurement unit (if applicable)
+    unit: function (id) {
+        if (id in this) {
+            if ('unit' in this[id]) {
+                return this[id].unit;
+            }
+        }
+        return '';
     }
 };
 
@@ -252,8 +281,7 @@ async function dashboardCreate() {
                     provider: {
                         type: 'OpenStreetMap',
                         theme: 'Standard'
-                    },
-                    showInLegend: false
+                    }
                 }, {
                     type: 'mappoint',
                     name: 'stations',
@@ -272,14 +300,29 @@ async function dashboardCreate() {
                         symbol: 'square'
                     },
                     tooltip: {
-                        shared: true,
-                        useHTML: true,
-                        headerFormat: '<table>',
-                        pointFormat: '{point.info}',
-                        footerFormat: '</table>'
+                        headerFormat: '',
+                        footerFormat: '',
+                        pointFormatter: function () {
+                            let rows = '';
+                            this.info.forEach(item => {
+                                rows += `<tr>
+                                    <td>${item.name}</td>
+                                    <td>${item.value} ${item.unit}</td>
+                                </tr>`;
+                            });
+
+                            return `<table class="map-tooltip">
+                            <caption>${this.name}</caption>
+                            ${rows}
+                            </table>`;
+                        }
                     },
                     data: [] // Populated on update
-                }]
+                }],
+                tooltip: {
+                    shape: 'rect',
+                    useHTML: true
+                }
             }
         };
     }
@@ -355,7 +398,6 @@ async function dashboardCreate() {
             chartOptions: {
                 chart: {
                     type: 'spline',
-                    styledMode: true,
                     animation: true
                 },
                 xAxis: {
@@ -486,16 +528,51 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             .find(c => c.options.renderTo === id);
     }
 
-    function getFormattedValue(obj) {
-        if (obj === null) {
-            return '-';
-        }
+    function getInfoRecord(item, fields) {
+        const ret = [];
+        fields.forEach(field => {
+            ret.push({
+                name: lang.tr(field),
+                value: item !== null && item[field] !== null ?
+                    item[field] : '-',
+                unit: lang.unit(field)
+            });
+        });
+        return ret;
+    }
 
-        if (typeof obj === 'object') {
-            return JSON.stringify(obj).replaceAll(/[":{}a-z]/g, '');
-        }
-        // Assume float
-        return obj.toFixed(2);
+    function getHeaderFields(fields) {
+        const cols = getInfoRecord(null, fields);
+        let colHtml = '';
+
+        cols.forEach(col => {
+            const name = lang.tr(col.name);
+            colHtml += `<th>${name}</th>`;
+        });
+
+        return colHtml;
+    }
+
+    function getUnitFields(fields) {
+        const cols = getInfoRecord(null, fields);
+        let colHtml = '';
+
+        cols.forEach(col => {
+            colHtml += `<th>${col.unit}</th>`;
+        });
+
+        return colHtml;
+    }
+
+    function getDataFields(item, fields) {
+        const cols = getInfoRecord(item, fields);
+        let colHtml = '';
+
+        cols.forEach(col => {
+            colHtml += `<td>${col.value}</td>`;
+        });
+
+        return colHtml;
     }
 
     function getIntakeHtml(powerPlantInfo) {
@@ -512,29 +589,23 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             ${powerPlantInfo.description}</span>`;
 
         }
-        // const loc = lang.tr('Location', true);
-        const intake = lang.tr('Intakes');
-        const qMin = lang.tr('Required minimal flow', true);
-        const qAct = lang.tr('Measured minimal flow', true);
+        const intake = lang.tr('intakes');
         const name = lang.tr('Name');
-        const elevation = lang.tr('Elevation', true);
+
+        // Fields to display
+        const fields = ['q_min_set', 'q_min_act'];
+        let colHtml = getHeaderFields(fields);
+        const colHtmlUnit = getUnitFields(fields);
 
         html += `<table class="intake"><caption>${intake}</caption>
-            <tr><th>${name}</th><th>${qMin}</th><th>${qAct}</th>
-            <th>${elevation}</th></tr>`;
+            <tr><th>${name}</th>${colHtml}</tr>
+            <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
             const item = powerPlantInfo.intakes[i];
-            const qMinSet = getFormattedValue(item.q_min_set);
-            const qMinAct = getFormattedValue(item.q_min_act);
-            const elevation = getFormattedValue(item.h);
-            // const location = getFormattedValue(item.location);
 
-            html += `<tr><td>${item.name}</td>
-                <td>${qMinSet}</td>
-                <td>${qMinAct}</td>
-                <td>${elevation}</td>
-            </tr>`;
+            colHtml = getDataFields(item, fields);
+            html += `<tr><td>${item.name}</td>${colHtml}</tr>`;
         }
         html += '</table>';
 
@@ -548,43 +619,25 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             return `<h3 class="intake">${str}</h3>`;
         }
 
-        const res = lang.tr('Reservoirs');
-        // const loc = lang.tr('Location', true);
-        const vol = lang.tr('Volume', true);
-        const drain = lang.tr('Drain', true);
-        const energy = lang.tr('Energy', true);
+        // Fields to display in table
+        const fields = [
+            'volume', 'drain', 'energy',
+            'h', 'LRV', 'HRV', 'net_flow'
+        ];
+        let colHtml = getHeaderFields(fields);
+        const colHtmlUnit = getUnitFields(fields);
         const name = lang.tr('Name');
-        const level = lang.tr('Level', true);
-        const hrv = lang.tr('Highest regulated level', true);
-        const lrv = lang.tr('Lowest regulated level', true);
-        const netFlow = lang.tr('Net flow', true);
+        const res = lang.tr('reservoirs');
 
         let html = `<table class="intake"><caption>${res}</caption>
-            <tr><th>${name}</th><th>${vol}</th><th>${drain}</th>
-            <th>${netFlow}</th><th>${energy}</th><th>${level}</th>
-            <th>${hrv}</th><th>${lrv}</th></tr>`;
+            <tr><th>${name}</th>${colHtml}</tr>
+            <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
+            colHtml = getDataFields(item, fields);
 
-            const volume = getFormattedValue(item.volume / 1000000);
-            const drain = getFormattedValue(item.drain);
-            const energy = getFormattedValue(item.energy);
-            const netFlow = getFormattedValue(item.net_flow, true);
-            const level = getFormattedValue(item.h, true);
-            const hrv = getFormattedValue(item.HRV, true);
-            const lrv = getFormattedValue(item.LRV, true);
-            // const location = getFormattedValue(item.location);
-
-            html += `<tr><td>${item.name}</td>
-                <td>${volume}</td>
-                <td>${drain}</td>
-                <td>${netFlow}</td>
-                <td>${energy}</td>
-                <td>${level}</td>
-                <td>${hrv}</td>
-                <td>${lrv}</td>
-            </tr>`;
+            html += `<tr><td>${item.name}</td>${colHtml}</tr>`;
         }
         html += '</table>';
 
@@ -592,13 +645,14 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     }
 
     async function addIntakeMarkers(mapComp, powerPlantInfo) {
+        // Fields to display in tooltip
+        const fields = ['q_min_set', 'q_min_act'];
+
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
             const item = powerPlantInfo.intakes[i];
             if (item.location === null) {
                 continue;
             }
-            const qMinAct = getFormattedValue(item.q_min_act);
-            const qMinSet = getFormattedValue(item.q_min_set);
 
             // Add reservoir to map
             await mapComp.addPoint({
@@ -606,33 +660,28 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 lon: item.location.lon,
                 lat: item.location.lat,
                 marker: intakeMarker,
-                info: `
-                    <caption>Inntak</caption>
-                    <tr><td>${qMinAct}</td>
-                    <td>${qMinSet}</td></tr>
-                    `
+                info: getInfoRecord(item, fields)
             });
         }
     }
 
     async function addReservoirMarkers(mapComp, powerPlantInfo) {
+        // Fields to display in tooltip
+        const fields = ['h', 'volume', 'drain'];
+
         for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
             const item = powerPlantInfo.reservoirs[i];
             if (item.location === null) {
                 continue;
             }
+
             // Add reservoir to map
             await mapComp.addPoint({
                 name: item.name,
                 lon: item.location.lon,
                 lat: item.location.lat,
                 marker: reservoirMarker,
-                info:
-                    `
-                    <caption>Vassmagasin</caption>
-                    <tr><td>kjem snart</td>
-                    <td>*</td></tr>
-                `
+                info: getInfoRecord(item, fields)
             });
         }
     }
@@ -673,19 +722,18 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         await mapPoints.data[0].remove();
     }
 
+    let mapView;
     if (location !== null) {
+        const fields = ['q_turb', 'P_gen'];
+        const item = powerPlantInfo.aggs[0];
+
         // Power station marker
         await mapPoints.addPoint({
             name: stationName,
             lon: location.lon,
             lat: location.lat,
             marker: stationMarker,
-            info:
-                `
-                <caption>Kraftverk</caption>
-                <tr><td>kjem snart</td>
-                <td>*</td></tr>
-            `
+            info: getInfoRecord(item, fields)
         });
 
         // Add reservoir markers if present
@@ -694,16 +742,11 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         // Add intake markers if present
         await addIntakeMarkers(mapPoints, powerPlantInfo);
 
-        // Update station name, map center and zoom
-        await mapComp.update({
-            title: stationName,
-            chartOptions: {
-                mapView: {
-                    center: [location.lon, location.lat],
-                    zoom: 9
-                }
-            }
-        });
+        // Update map center and zoom
+        mapView = {
+            center: [location.lon, location.lat],
+            zoom: 9
+        };
     } else {
         await mapPoints.addPoint({
             name: '?',
@@ -713,13 +756,14 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
                 symbol: 'square'
             }
         });
-        await mapComp.update({
-            title: stationName,
-            chartOptions: {
-                mapView: defaultMapView
-            }
-        });
+        mapView = defaultMapView;
     }
+
+    // Adjust map view to new location
+    await mapComp.chart.mapView.setView(
+        mapView.center,
+        mapView.zoom
+    );
 
     // Update dashboard components
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
@@ -876,15 +920,17 @@ const plantLookup = {
     Fosseteigen: {
         topic: 'prod/KUV/fosseteigen/overview'
     },
+    Nydalselva: {
+        topic: 'prod/NYD/nydalselva/overview'
+    }
+    /*
     Dale: {
         topic: 'prod/SMKR/dale/overview'
     },
     Thue: {
         topic: 'prod/SMKR/thue/overview'
     },
-    Nydalselva: {
-        topic: 'prod/NYD/nydalselva/overview'
-    }
+    */
 };
 
 /*
