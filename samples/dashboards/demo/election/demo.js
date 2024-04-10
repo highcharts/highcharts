@@ -64,19 +64,16 @@ async function setupDashboard() {
                 <option value="2012">2012 - Obama vs Romney</option>
                 <option value="2008">2008 - Obama vs McCain</option>
             </select>`
-        },
-        {
+        }, {
             renderTo: 'html-control',
             type: 'CustomHTML',
             id: 'html-control-div'
-        },
-        {
+        }, {
             renderTo: 'html-result',
             type: 'CustomHTML',
             id: 'html-result-div',
             title: 'Electoral College Results'
-        },
-        {
+        }, {
             renderTo: 'election-map',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
@@ -129,48 +126,45 @@ async function setupDashboard() {
                         allowPointSelect: true
                     }
                 },
-                series: [
-                    {
-                        name: 'US Map',
-                        type: 'map'
-                    },
-                    {
-                        name: 'State election result',
-                        data: [],
-                        joinBy: 'postal-code',
-                        dataLabels: {
-                            enabled: true,
-                            color: 'white',
-                            format: '{point.postal-code}',
-                            style: {
-                                textTransform: 'uppercase'
-                            }
-                        },
-                        point: {
-                            events: {
-                                click: function (e) {
-                                    const sel = e.point['postal-code'];
-                                    if (sel !== selectedState) {
-                                        selectedState = sel;
-                                    } else {
-                                        // Back to national view if clicking on already selected state.
-                                        selectedState = 'US';
-                                    }
-                                    onStateClicked(board, selectedState);
-                                }
-                            }
+                series: [{
+                    name: 'US Map',
+                    type: 'map'
+                }, {
+                    name: 'State election result',
+                    data: [],
+                    joinBy: 'postal-code',
+                    dataLabels: {
+                        enabled: true,
+                        color: 'white',
+                        format: '{point.postal-code}',
+                        style: {
+                            textTransform: 'uppercase'
                         }
-                    }, {
-                        name: 'Separators',
-                        type: 'mapline',
-                        nullColor: 'silver',
-                        showInLegend: false,
-                        enableMouseTracking: false,
-                        accessibility: {
-                            enabled: false
+                    },
+                    point: {
+                        events: {
+                            click: function (e) {
+                                const sel = e.point['postal-code'];
+                                if (sel !== selectedState) {
+                                    selectedState = sel;
+                                } else {
+                                    // Back to national view if clicking on already selected state.
+                                    selectedState = 'US';
+                                }
+                                onStateClicked(board, selectedState);
+                            }
                         }
                     }
-                ],
+                }, {
+                    name: 'Separators',
+                    type: 'mapline',
+                    nullColor: 'silver',
+                    showInLegend: false,
+                    enableMouseTracking: false,
+                    accessibility: {
+                        enabled: false
+                    }
+                }],
                 tooltip: {
                     useHTML: true,
                     headerFormat: '<table class="map-tooltip"><caption>{point.key}</caption><tr><th>Party</th><th>Electors</th><th>Votes</th></tr>',
@@ -642,16 +636,14 @@ function resetMap(mapChart) {
 }
 
 function getHistoricalElectionSeries(state, year) {
-    const series = [
-        {
-            name: 'Democrat',
-            data: []
-        }, {
-            name: 'Republican',
-            pointStart: year ? 1 : 0,
-            data: []
-        }
-    ];
+    const series = [{
+        name: 'Democrat',
+        data: []
+    }, {
+        name: 'Republican',
+        pointStart: year ? 1 : 0,
+        data: []
+    }];
 
     for (const [key] of Object.entries(electionData).reverse()) {
         if (year && key !== year) {
