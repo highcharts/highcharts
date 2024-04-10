@@ -34,7 +34,6 @@ function setTextPath(
     path: SVGElement|undefined,
     textPathOptions: AnyRecord
 ): void {
-
     // Defaults
     textPathOptions = merge(true, {
         enabled: true,

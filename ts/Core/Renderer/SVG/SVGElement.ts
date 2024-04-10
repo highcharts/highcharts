@@ -35,6 +35,8 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
+import TextPathSupport from '../../../Extensions/TextPathSupport.js';
+const { getPolygon } = TextPathSupport;
 
 import A from '../../Animation/AnimationUtilities.js';
 const {
@@ -1546,6 +1548,11 @@ class SVGElement implements SVGElementLike {
             // Adjust for rotated text
             if (rotation) {
                 bBox = this.getRotatedBox(bBox, rotation);
+            } else {
+                const tp = this.element.querySelector('textPath');
+                if (tp) {
+                    bBox.polygon = getPolygon(this, tp, this.renderer);
+                }
             }
         }
 
@@ -1645,7 +1652,13 @@ class SVGElement implements SVGElementLike {
             x,
             y,
             width: boxWidth,
-            height: boxHeight
+            height: boxHeight,
+            polygon: [
+                [aX, aY],
+                [bX, bY],
+                [cX, cY],
+                [dX, dY]
+            ]
         };
     }
 
