@@ -547,30 +547,39 @@ function generateDynamicCode(
 ) {
     const doclet = branch.doclet;
 
-    if (doclet) {
-        if (branch.children) {
-            return (
-                TSLib.toDocletString(doclet) +
-                'interface ' + getInterfaceName(branch) + '{\n' +
+    let code = '';
+
+    if (
+        doclet &&
+        Object.keys(doclet.tags).length
+    ) {
+        code += (
+            branch.children ?
+                TSLib.toDocletString(doclet) :
+                TSLib.toDocletString(doclet, 4)
+        );
+    }
+
+    code += (
+        branch.children ?
+            (
+                'interface ' + getInterfaceName(branch) + ' {\n' +
                 (branch.children || [])
                     .map(subBranch => generateDynamicCode(subBranch))
                     .join('') +
-                '}\n'
-            );
-        } else {
-            return (
-                TSLib.toDocletString(doclet, '\n    ') +
+                '\n}\n'
+            ) :
+            (
                 '    ' + getPropertyName(branch) + '?: ' +
                 getMemberType(branch) + ';\n'
-            );
-        }
-    }
-
-    return (
-        '\n    ' + getPropertyName(branch) + '?: ' +
-        getMemberType(branch) + ';\n'
+            )
     );
 
+    if (code[0] !== '\n') {
+        code = '\n' + code;
+    }
+
+    return code;
 }
 
 
@@ -1049,7 +1058,9 @@ function removeDoclets(
 ) {
     FS.writeFileSync(
         source.fileName, 
-        source.getFullText().replace(/\n[ \t]*\/\*\*.*?\*\//gsu, ''),
+        source.getFullText()
+            .replace(/\s*\/\*\*.*?\*\//gsu, '')
+            .replace(/\s*(\(?)''\1;[^\n]*\n/gsu, '\n\n'),
         'utf8'
     );
 }
