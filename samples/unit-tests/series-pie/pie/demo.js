@@ -89,7 +89,7 @@ QUnit.test(
             series: [
                 {
                     data: [10, 10, 10]
-                    //data: [-10, -10, -10]
+                    // data: [-10, -10, -10]
                 }
             ]
         });
@@ -102,7 +102,7 @@ QUnit.test(
             'Graphic should be removed'
         );
 
-        //Issue #13101
+        // Issue #13101
         chart.series[0].points[0].select(false, false);
 
         // Issue #5526
@@ -253,7 +253,7 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
 
     const point = chart.series[0].points[0];
 
-    Highcharts.fireEvent(point.legendItem.element, 'click');
+    Highcharts.fireEvent(point.legendItem.label.element, 'click');
     assert.strictEqual(
         point.graphic.attr('visibility'),
         'hidden',
@@ -264,7 +264,7 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
         'Point graphic should be inside plot'
     );
 
-    Highcharts.fireEvent(point.legendItem.element, 'click');
+    Highcharts.fireEvent(point.legendItem.label.element, 'click');
     assert.notStrictEqual(
         point.graphic.attr('visibility'),
         'hidden',
@@ -321,7 +321,9 @@ QUnit.test(
     }
 );
 
-QUnit.test('Pie chart initialized through the stockChart constructor and splitted tooltip, (#14773).',
+QUnit.test(
+    'Pie chart initialized through the stockChart constructor and ' +
+    'splitted tooltip, (#14773).',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             series: [{

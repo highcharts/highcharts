@@ -1,14 +1,14 @@
 function getRandomData() {
-    var data = [];
+    const data = [];
 
-    for (var i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
         data.push(Math.random() * 14);
     }
 
     return data;
 }
 
-var chart = Highcharts.chart({
+const chart = Highcharts.chart({
     chart: {
         renderTo: 'container',
         type: 'column',

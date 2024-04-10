@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for series and points.
  *
@@ -23,6 +23,7 @@ import type Accessibility from '../../Accessibility';
 import type Chart from '../../../Core/Chart/Chart';
 import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
 import type Point from '../../../Core/Series/Point';
+import type Tooltip from '../../../Core/Tooltip';
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -33,7 +34,6 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesDescriber from './SeriesDescriber.js';
 const { describeSeries } = SeriesDescriber;
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
-import Tooltip from '../../../Core/Tooltip.js';
 
 
 /* *
@@ -113,15 +113,21 @@ class SeriesComponent extends AccessibilityComponent {
     public hideTooltipFromATWhenShown(): void {
         const component = this;
 
-        this.addEvent(Tooltip, 'refresh', function (): void {
-            if (
-                this.chart === component.chart &&
-                this.label &&
-                this.label.element
-            ) {
-                this.label.element.setAttribute('aria-hidden', true);
-            }
-        });
+        if (this.chart.tooltip) {
+            this.addEvent(
+                this.chart.tooltip.constructor as unknown as Tooltip,
+                'refresh',
+                function (): void {
+                    if (
+                        this.chart === component.chart &&
+                        this.label &&
+                        this.label.element
+                    ) {
+                        this.label.element.setAttribute('aria-hidden', true);
+                    }
+                }
+            );
+        }
     }
 
 
@@ -155,7 +161,7 @@ class SeriesComponent extends AccessibilityComponent {
         ): void {
             const shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&
-                series.visible;
+                series.visible && series.data.length !== 0;
 
             if (shouldDescribeSeries) {
                 describeSeries(series);

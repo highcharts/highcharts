@@ -1,4 +1,4 @@
-var data = [
+const data = [
     111,
     107,
     100,
@@ -79,9 +79,9 @@ var data = [
     106
 ];
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     title: {
-        text: "Bell curve"
+        text: 'Bell curve'
     },
 
     subtitle: {
@@ -100,8 +100,8 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "Bell curve",
-            type: "bellcurve",
+            name: 'Bell curve',
+            type: 'bellcurve',
             baseSeries: 1,
             zIndex: -1
         },

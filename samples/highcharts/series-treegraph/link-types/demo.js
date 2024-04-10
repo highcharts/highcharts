@@ -18,7 +18,10 @@ Highcharts.chart('container', {
                 ['C', 'B', 'default'],
                 ['E', 'B'],
                 ['D', 'A']
-            ]
+            ],
+            dataLabels: {
+                format: '{point.id}'
+            }
         }
     ]
 });

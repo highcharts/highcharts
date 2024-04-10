@@ -6,11 +6,11 @@ module.exports = {
             'getting-started/installation',
             'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
-            'getting-started/install-from-bower',
+            'getting-started/installation-with-amd-commonjs',
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
-            'getting-started/how-to-create-custom-highcharts-files',
+            'getting-started/how-to-create-custom-highcharts-packages',
             'getting-started/optional-dependencies'
         ],
         'Chart concepts': [
@@ -25,12 +25,14 @@ module.exports = {
             'chart-concepts/plot-bands-and-plot-lines',
             'chart-concepts/zooming',
             'chart-concepts/labels-and-string-formatting',
+            'chart-concepts/templating',
             'chart-concepts/drilldown',
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
             'chart-concepts/security'
         ],
         'Stock': [
+            'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
@@ -47,7 +49,8 @@ module.exports = {
             'stock/range-selector',
             'stock/axis-resizer',
             'stock/technical-indicator-series',
-            'stock/custom-technical-indicators'
+            'stock/custom-technical-indicators',
+            'stock/standalone-navigator'
         ],
         'Maps': [
             'maps/getting-started',
@@ -61,9 +64,12 @@ module.exports = {
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
+            'maps/tiledwebmap',
+            'maps/flowmap-series',
             'maps/mapbubble-series',
             'maps/marker-clusters',
-            'maps/tilemap-series'
+            'maps/tilemap-series',
+            'maps/geoheatmap-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
@@ -71,6 +77,36 @@ module.exports = {
             'gantt/gantt-task-dependencies',
             'gantt/gantt-axis-grid',
             'gantt/gantt-task-config'
+        ],
+        'Dashboards': [
+            'dashboards/installation',
+            'dashboards/your-first-dashboard',
+            'dashboards/dashboards-with-angular',
+            'dashboards/dashboards-with-react',
+            'dashboards/dashboards-with-vue',
+            'dashboards/layout-description',
+            'dashboards/style-by-css',
+            'dashboards/edit-mode',
+            'dashboards/types-of-components',
+            'dashboards/datagrid-component',
+            'dashboards/kpi-component',
+            'dashboards/highcharts-component',
+            'dashboards/html-component',
+            'dashboards/navigator-component',
+            'dashboards/synchronize-components',
+            'dashboards/light-dark-theme',
+            'dashboards/data-handling',
+            'dashboards/data-pool-and-connectors',
+            'dashboards/data-table',
+            'dashboards/data-modifiers',
+            'dashboards/mathmodifier-module',
+            'dashboards/custom-component',
+            'dashboards/installation-with-es-modules',
+            'dashboards/get-options',
+            'dashboards/frequently-asked-questions',
+        ],
+        'DataGrid': [
+            'datagrid/general',
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -103,6 +139,7 @@ module.exports = {
             'chart-and-series-types/packed-bubble',
             'chart-and-series-types/parallel-coordinates-chart',
             'chart-and-series-types/pareto-chart',
+            'chart-and-series-types/pictorial',
             'chart-and-series-types/pie-chart',
             'chart-and-series-types/polar-chart',
             'chart-and-series-types/radial-bar-chart',
@@ -113,7 +150,7 @@ module.exports = {
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
             'chart-and-series-types/timeline-series',
-            // 'chart-and-series-types/treegraph-chart',
+            'chart-and-series-types/treegraph-chart',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
             'chart-and-series-types/variwide-chart',
@@ -126,6 +163,7 @@ module.exports = {
 
         ],
         'Advanced chart features': [
+            'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
             'advanced-chart-features/annotations-and-fibonacci-retracements',
             'advanced-chart-features/boost-module',
@@ -171,10 +209,20 @@ module.exports = {
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
             'accessibility/accessible-dynamic-data',
-            'accessibility/sonification',
             'accessibility/patterns-and-contrast',
             'accessibility/tables',
             'accessibility/compliance'
+        ],
+        'Audio charts': [
+            'sonification/getting-started',
+            'sonification/mapping',
+            'sonification/advanced-mapping',
+            'sonification/instruments',
+            'sonification/speech',
+            'sonification/conditional-tracks',
+            'sonification/notifications',
+            'sonification/context-cues',
+            'sonification/navigation'
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'

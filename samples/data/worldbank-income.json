@@ -1,0 +1,273 @@
+[
+  {
+    "page": 1,
+    "pages": 1,
+    "per_page": 20,
+    "total": 20,
+    "sourceid": "2",
+    "sourcename": "World Development Indicators",
+    "lastupdated": "2022-09-16"
+  },
+  [
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2021",
+      "value": 3.01390015203684,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2020",
+      "value": 0.104765269726428,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2019",
+      "value": 3.82359506554897,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2018",
+      "value": 3.1140588051592,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2017",
+      "value": 2.96303550623374,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2016",
+      "value": 2.36329312458223,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2015",
+      "value": -0.174958386556341,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2014",
+      "value": 4.34362891232793,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2013",
+      "value": 3.24902351596322,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2012",
+      "value": -4.10673312379164,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2011",
+      "value": 0.606540017703665,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2010",
+      "value": 6.77210865062072,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2009",
+      "value": 3.5428858106368,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2008",
+      "value": 5.40501396398783,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2007",
+      "value": 6.17051792165948,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2006",
+      "value": 5.96012200741995,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2005",
+      "value": 6.49051449283149,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2004",
+      "value": 6.01073303501067,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2003",
+      "value": 4.96919123438531,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "XM", "value": "Low income" },
+      "countryiso3code": "",
+      "date": "2002",
+      "value": 4.37905646060264,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    }
+  ]
+]

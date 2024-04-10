@@ -157,11 +157,11 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ABandsPoint> = void 0 as any;
+    public data!: Array<ABandsPoint>;
 
-    public options: ABandsOptions = void 0 as any;
+    public options!: ABandsOptions;
 
-    public points: Array<ABandsPoint> = void 0 as any;
+    public points!: Array<ABandsPoint>;
 
     /* *
      *
@@ -174,7 +174,7 @@ class ABandsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ABandsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             factor: number = (params.factor as any),
             index: number = (params.index as any),
             xVal: Array<number> = (series.xData as any),
@@ -187,8 +187,12 @@ class ABandsIndicator extends SMAIndicator {
             // ABANDS array structure:
             // 0-date, 1-top line, 2-middle line, 3-bottom line
             ABANDS: Array<Array<(number|null|undefined)>> = [],
-            // middle line, top line and bottom line
-            ML: number,
+            low = 2,
+            high = 1,
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [];
+            // Middle line, top line and bottom line
+        let ML: number,
             TL: number,
             BL: number,
             date: number,
@@ -196,10 +200,6 @@ class ABandsIndicator extends SMAIndicator {
             pointSMA: IndicatorValuesObject<TLinkedSeries>,
             ubSMA: IndicatorValuesObject<TLinkedSeries>,
             lbSMA: IndicatorValuesObject<TLinkedSeries>,
-            low = 2,
-            high = 1,
-            xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
             slicedX: (Array<number>|undefined),
             slicedY: (Array<number|null|undefined>|undefined),
             i: (number|undefined);
@@ -329,4 +329,4 @@ export default ABandsIndicator;
  * @apioption series.abands
  */
 
-''; // to include the above in jsdoc
+''; // To include the above in jsdoc

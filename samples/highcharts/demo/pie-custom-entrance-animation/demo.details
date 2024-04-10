@@ -1,0 +1,13 @@
+---
+name: Pie chart with custom entrance animation
+authors:
+  - Hubert Kozik
+js_wrap: b
+alt_text: >-
+  Highcharts basic pie chart presents a custom entrance animation with sample
+  data of the Departamental Strength of the Company.
+tags:
+  - Highcharts demo
+categories:
+  - Pie charts
+...

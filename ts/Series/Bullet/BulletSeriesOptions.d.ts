@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,8 @@ export interface BulletSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default BulletSeriesOptions;

@@ -33,7 +33,10 @@ Highcharts.chart('container', {
         ],
         dataLabels: {
             enabled: true,
-            format: '{point.label}'
+            format: '{point.label}',
+            style: {
+                textOutline: '3px contrast'
+            }
         },
 
         // Circular options

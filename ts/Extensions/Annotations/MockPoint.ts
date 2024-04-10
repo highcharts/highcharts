@@ -18,7 +18,7 @@ import type {
     AnnotationPointType
 } from './AnnotationSeries';
 import type Axis from '../../Core/Axis/Axis';
-import type Controllable from './Controllables/Controllable';
+import type ControlTarget from './ControlTarget';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
@@ -143,7 +143,7 @@ class MockPoint {
 
         let x = point.plotX || 0,
             y = point.plotY || 0,
-            plotBox: (Series.PlotBoxObject|undefined);
+            plotBox: (Series.PlotBoxTransform|undefined);
 
         if (chart.inverted) {
             if (point.mock) {
@@ -198,7 +198,7 @@ class MockPoint {
 
     public constructor(
         chart: AnnotationChart,
-        target: (Controllable|null),
+        target: (ControlTarget|null),
         options: (MockPointOptions|Function)
     ) {
         /**
@@ -278,10 +278,10 @@ class MockPoint {
     public isInside?: boolean;
     public negative?: boolean;
     public options: (MockPointOptions|Function);
-    public plotX: number = void 0 as any;
-    public plotY: number = void 0 as any;
+    public plotX!: number;
+    public plotY!: number;
     public series: MockSeries;
-    public target: (Controllable|null);
+    public target: (ControlTarget|null);
     public ttBelow?: boolean;
     public visible?: boolean;
     public x?: number;
@@ -365,7 +365,8 @@ class MockPoint {
             e = {
                 x: plotX,
                 y: plotY,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options: {}
             };
 
         if (xAxis) {
@@ -670,4 +671,4 @@ export default MockPoint;
  * @type {boolean|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

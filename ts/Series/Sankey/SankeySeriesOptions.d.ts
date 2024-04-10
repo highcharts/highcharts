@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type FormatUtilities from '../../Core/FormatUtilities';
+import type Templating from '../../Core/Templating';
 import type NodesComposition from '../NodesComposition';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
@@ -53,19 +53,21 @@ export interface SankeySeriesNodeOptions {
     offset?: (number|string);
 }
 
-
 export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
     curveFactor?: number;
     dataLabels?: SankeyDataLabelOptions;
     height?: number;
     inactiveOtherPoints?: boolean;
     levels?: Array<SankeySeriesLevelOptions>;
+    linkColorMode?: ('from'|'gradient'|'to');
     linkOpacity?: number;
     mass?: undefined;
     minLinkWidth?: number;
+    nodeAlignment?: ('top'|'center'|'bottom')
     nodePadding?: number;
+    nodeDistance?: number|string;
     nodes?: Array<SankeySeriesNodeOptions>;
-    nodeWidth?: number;
+    nodeWidth?: number|string;
     states?: SeriesStatesOptions<SankeySeries>;
     tooltip?: SankeySeriesTooltipOptions;
     width?: number;
@@ -73,7 +75,13 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
     nodeFormat?: string;
-    nodeFormatter?: FormatUtilities.FormatterCallback<SankeyPoint>;
+    nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SankeySeriesOptions;

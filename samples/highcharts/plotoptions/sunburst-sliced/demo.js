@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     id: '0.0',
     parent: '',
     name: 'The World'
@@ -356,7 +356,7 @@ var data = [{
     value: 1367254
 },
 
-/***********/
+/** *********/
 
 /* America */
 {
@@ -657,7 +657,7 @@ var data = [{
     name: 'Montserrat',
     value: 5177
 },
-/***********/
+/** *********/
 
 /* Asia */
 {
@@ -950,7 +950,7 @@ var data = [{
     name: 'Turkmenistan',
     value: 5758075
 },
-/***********/
+/** *********/
 
 /* Europe */
 {
@@ -1229,7 +1229,7 @@ var data = [{
     name: 'Liechtenstein',
     value: 37922
 },
-/***********/
+/** *********/
 
 /* Oceania */
 {
@@ -1431,7 +1431,8 @@ Highcharts.chart('container', {
 
     }],
     tooltip: {
-        headerFormat: "",
-        pointFormat: 'The population of <b>{point.name}</b> is <b>{point.value}</b>'
+        headerFormat: '',
+        pointFormat: 'The population of <b>{point.name}</b> is <b>' +
+            '{point.value}</b>'
     }
 });

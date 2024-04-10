@@ -8,7 +8,7 @@ const chart = Highcharts.chart('container', {
         data: []
     }],
     lang: {
-        noData: "Nichts zu anzeigen"
+        noData: 'Nichts zu anzeigen'
     },
     noData: {
         style: {
@@ -20,7 +20,8 @@ const chart = Highcharts.chart('container', {
 });
 
 document.getElementById('add').addEventListener('click', () => {
-    chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return random integer between 1 and 10.
+    chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return
+    // random integer between 1 and 10.
 });
 
 document.getElementById('remove').addEventListener('click', () => {
@@ -32,6 +33,6 @@ document.getElementById('remove').addEventListener('click', () => {
 document.getElementById('showCustom').addEventListener('click', () => {
     if (!chart.hasData()) {
         chart.hideNoData();
-        chart.showNoData("Your custom error message");
+        chart.showNoData('Your custom error message');
     }
 });

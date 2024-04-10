@@ -2,7 +2,7 @@ let itemChart;
 let chartToChange;
 let seriesNum;
 const imagePath = 'https://cdn.rawgit.com/highcharts/highcharts/4b2b993a59d2358c85dbef61bfcd9e02547ce83a/samples/graphics/xmas-card-2020/';
-//let imagePath = '../../../graphics/xmas-card-2020/';
+// let imagePath = '../../../graphics/xmas-card-2020/';
 let direction = 'forward';
 
 const msgColors = [
@@ -68,7 +68,7 @@ const sdInstruments = [{
 
 // Utility function that highlights a point
 function highlightPoint(event, point) {
-    var chart = point.series.chart,
+    const chart = point.series.chart,
         hasVisibleSeries = chart.series.some(function (series) {
             return series.visible;
         });
@@ -95,7 +95,8 @@ itemChart = Highcharts.chart('container', {
             load: function () {
                 itemChart = this;
                 chartToChange = itemChart.series.findIndex(
-                    series => series.options.type === 'item');
+                    series => series.options.type === 'item'
+                );
 
                 $('#item1').attr('value', chartToChange);
                 $('#item2').attr('value', chartToChange + 1);
@@ -190,30 +191,30 @@ itemChart = Highcharts.chart('container', {
         enabled: false
     },
     xAxis: [{
-        //0
+        // 0
         visible: false
     },
-    {    ///1
+    {    // /1
         startOnTick: false,
         min: 0,
         max: 6,
         visible: false
 
     },
-    {    ///2
+    {    // /2
         startOnTick: false,
         visible: true,
         min: 0,
         max: 12
     },
-    { //3
+    { // 3
         startOnTick: false,
         visible: true,
         min: 0,
         max: 12
 
     },
-    {    ///4
+    {    // /4
         startOnTick: true,
         visible: true,
         min: -1,
@@ -226,14 +227,14 @@ itemChart = Highcharts.chart('container', {
         }],
         gridLineColor: 'transparent'
     },
-    {    ///5
+    {    // /5
         startOnTick: false,
         visible: false,
         min: -1,
         max: 12
 
     },
-    {    ///6
+    {    // /6
         startOnTick: false,
         visible: false,
         min: 0,
@@ -241,49 +242,49 @@ itemChart = Highcharts.chart('container', {
 
     }],
     yAxis: [
-        { //0
+        { // 0
             min: 0,
             max: 1,
             visible: false
         },
-        { //1
-            min: -8, //-8
+        { // 1
+            min: -8, // -8
             max: 1,
             reversed: false,
             visible: false
         },
-        { //2
+        { // 2
             min: 0,
             max: 2.5,
             visible: false
 
         },
-        { //3
+        { // 3
             min: 0,
             max: 14,
             visible: false
 
         },
-        { //4
+        { // 4
             min: 0,
             max: 2.5,
             visible: false
 
         },
-        { //5
+        { // 5
             min: 0,
             max: 2.5,
             visible: false
 
         },
-        { //6
+        { // 6
             min: 0,
             max: 2.5,
             visible: false
 
         }],
     series: [{
-        //0 xAxis 2, yAxis 2
+        // 0 xAxis 2, yAxis 2
         xAxis: 0,
         yAxis: 0,
         id: 'sd',
@@ -301,8 +302,8 @@ itemChart = Highcharts.chart('container', {
         ]
     },
     {
-        ///1 -card bottom xAxis 4, yAxis 4
-        type: 'area', //regular
+        // /1 -card bottom xAxis 4, yAxis 4
+        type: 'area', // regular
         color: '#fff',
         fillOpacity: 1,
         zIndex: 30,
@@ -318,7 +319,7 @@ itemChart = Highcharts.chart('container', {
         ],
         zones: [
             {
-                //beige
+                // beige
                 value: 11.5,
                 color: '#D9DCD6'
             }
@@ -332,7 +333,7 @@ itemChart = Highcharts.chart('container', {
         }
     },
     {
-        ///2 -card bottom corner xAxis 4, yAxis 4
+        // /2 -card bottom corner xAxis 4, yAxis 4
         type: 'area',
         color: {
             linearGradient: {
@@ -353,7 +354,7 @@ itemChart = Highcharts.chart('container', {
         zoneAxis: 'y',
         zones: [
             {
-                //beige
+                // beige
                 value: 0.13,
                 color: '#D9DCD6'
             }
@@ -365,7 +366,7 @@ itemChart = Highcharts.chart('container', {
         }
     },
     {
-        ///3- card bottom shadow xAxis 4, yAxis 4
+        // /3- card bottom shadow xAxis 4, yAxis 4
         type: 'line',
         color: '#868f7d',
         fillOpacity: 1,
@@ -387,8 +388,8 @@ itemChart = Highcharts.chart('container', {
         }
     },
     {
-        ///4 - white hills shadow xAxis 2, yAxis 3
-        type: 'areaspline', //regular
+        // /4 - white hills shadow xAxis 2, yAxis 3
+        type: 'areaspline', // regular
         color: '#333',
         fillOpacity: 0.3,
         shadow: false,
@@ -401,11 +402,12 @@ itemChart = Highcharts.chart('container', {
             { x: 3.7, y: 2 },
             { x: 8, y: 1.2 },
             { x: 9.78, y: 2 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
-    {    //5 Santa xAxis 6, yAxis 6
+    {    // 5 Santa xAxis 6, yAxis 6
         type: 'scatter',
         marker: {
             enabled: true,
@@ -419,8 +421,8 @@ itemChart = Highcharts.chart('container', {
         data: [{ x: 1.14, y: 0.43 }]
     },
     {
-        ///6- white hills xAxis 2, yAxis 3
-        type: 'areaspline', //regular
+        // /6- white hills xAxis 2, yAxis 3
+        type: 'areaspline', // regular
         color: '#fff',
         fillOpacity: 1,
         zIndex: 2,
@@ -433,13 +435,14 @@ itemChart = Highcharts.chart('container', {
             { x: 4.17, y: 1.92 },
             { x: 8, y: 1.2 },
             { x: 10, y: 1.86 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
     {
-        ///7 - white hills front xAxis 2, yAxis 3
-        type: 'areaspline', //regular
+        // /7 - white hills front xAxis 2, yAxis 3
+        type: 'areaspline', // regular
         color: '#f7f7f7',
         zIndex: 2,
         marker: {
@@ -457,12 +460,13 @@ itemChart = Highcharts.chart('container', {
             { x: 4.5, y: 1.3 },
             { x: 8.13, y: 0.76 },
             { x: 9.9, y: 1.78 },
-            { x: 11, y: 0 }],
+            { x: 11, y: 0 }
+        ],
         xAxis: 2,
         yAxis: 3
     },
     {
-        //8 road xAxis 2, yAxis 2
+        // 8 road xAxis 2, yAxis 2
         type: 'spline',
         zIndex: 2,
         xAxis: 2,
@@ -601,7 +605,7 @@ itemChart = Highcharts.chart('container', {
         ]
     },
     {
-        //9 message xAxis 3, yAxis 2
+        // 9 message xAxis 3, yAxis 2
         xAxis: 5,
         yAxis: 5,
         shadow: true,
@@ -721,7 +725,7 @@ itemChart = Highcharts.chart('container', {
                 }
             }]
     },
-    { //10
+    { // 10
         type: 'item',
         name: 'Christmas Tree',
         zIndex: 6,
@@ -788,7 +792,7 @@ itemChart = Highcharts.chart('container', {
                 y: 1,
                 color: Highcharts.getOptions().colors[4]
             },
-            //10
+            // 10
             {
                 name: 'green star 1',
                 y: 1,
@@ -797,7 +801,7 @@ itemChart = Highcharts.chart('container', {
                     radius: 20
                 }
             },
-            //11
+            // 11
             {
                 name: 'sun disk',
                 y: 1,
@@ -1155,11 +1159,11 @@ const soundChart = Highcharts.chart('soundContainer', {
                 events: {
                     click: function () {
                         // Sonify all points at this x value
-                        var targetX = this.x,
+                        const targetX = this.x,
                             chart = this.series.chart;
                         chart.series.forEach(function (series) {
                             // Map instruments to the options for this series
-                            var instruments = series.options.id === 'sd' ?
+                            const instruments = series.options.id === 'sd' ?
                                 sdInstruments : nyInstruments;
                             // See if we have a point with the targetX
                             series.points.some(function (point) {
@@ -1539,8 +1543,10 @@ document.getElementById('speed').onchange = function () {
 // Add sonification button handlers
 document.getElementById('play').onclick = function () {
     openCard();
-    if (!soundChart.sonification.timeline ||
-        soundChart.sonification.timeline.atStart()) {
+    if (
+        !soundChart.sonification.timeline ||
+        soundChart.sonification.timeline.atStart()
+    ) {
         soundChart.sonify({
             duration: 5000 / document.getElementById('speed').value,
             order: 'simultaneous',

@@ -61,7 +61,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
             (inputPosition.align === buttonPosition.align ||
                 (buttonGroupX + buttonGroupWidth > inputGroupX &&
                     inputGroupX + inputGroupWidth > buttonGroupX)) &&
-                inputGroup.translateY > buttonGroup.translateY, // check if input group is lower
+                inputGroup.translateY > buttonGroup.translateY, // check if
+            // input group is lower
             true,
             'rangeSelector'
         );
@@ -147,7 +148,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
             40 -
             selectorGroupBBox.x <=
             1,
-        'rangeSelector buttons should be right aligned correctly when exporting enabled (#13014).'
+        'rangeSelector buttons should be right aligned correctly when ' +
+        'exporting enabled (#13014).'
     );
 });
 
@@ -211,7 +213,8 @@ QUnit.test('Aligning after updates.', function (assert) {
         (inputPosition.align === buttonPosition.align ||
             (buttonGroupX + buttonGroupWidth > inputGroupX &&
                 inputGroupX + inputGroupWidth > buttonGroupX)) &&
-            inputGroup.translateY > buttonGroup.translateY, // check if input group is lower
+            inputGroup.translateY > buttonGroup.translateY, // check if
+        // input group is lower
         true,
         'rangeSelector'
     );
@@ -246,7 +249,8 @@ QUnit.test('Aligning after updates.', function (assert) {
         (inputPosition.align === buttonPosition.align ||
             (buttonGroupX + buttonGroupWidth > inputGroupX &&
                 inputGroupX + inputGroupWidth > buttonGroupX)) &&
-            inputGroup.translateY > buttonGroup.translateY, // check if input group is lower
+            inputGroup.translateY > buttonGroup.translateY, // check if
+        // input group is lower
         true,
         'rangeSelector'
     );
@@ -411,7 +415,8 @@ QUnit.test('button width', function (assert) {
         (inputPosition.align === buttonPosition.align ||
             (buttonGroupX + buttonGroupWidth > inputGroupX &&
                 inputGroupX + inputGroupWidth > buttonGroupX)) &&
-            inputGroup.translateY > buttonGroup.translateY, // check if input group is lower
+            inputGroup.translateY > buttonGroup.translateY, // check if
+        // input group is lower
         true,
         'rangeSelector'
     );
@@ -439,8 +444,8 @@ QUnit.test('Rangeselector update', function (assert) {
 
     assert.close(
         chart.yAxis[0].axisGroup.getBBox().height,
-        240,
-        2,
+        234,
+        3,
         'Range selector should have enough space'
     );
 });

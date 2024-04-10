@@ -68,7 +68,7 @@ QUnit.test('Updating series stacked property', assert => {
 
     // Issue #13572
     assert.ok(
-        chart.series[0].areaPath.slice(-1)[0].includes("Z"),
+        chart.series[0].areaPath.slice(-1)[0].includes('Z'),
         'The last index of the path array contains the closure'
     );
 
@@ -88,6 +88,7 @@ QUnit.test('Updating series stacked property', assert => {
 
     assert.ok(
         true,
-        '#15534: Updating from data containing nulls to no data should not throw'
+        '#15534: Updating from data containing nulls to no data should not ' +
+        'throw'
     );
 });

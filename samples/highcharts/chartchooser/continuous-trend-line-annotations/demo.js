@@ -1,10 +1,12 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "spline",
-        zoomType: "xy"
+        type: 'spline',
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
-        text: "NASA Budget as a % of Fed Budget"
+        text: 'NASA Budget as a % of Fed Budget'
     },
     subtitle: {
         text:
@@ -13,85 +15,85 @@ Highcharts.chart("container", {
     xAxis: {
         crosshair: true,
         title: {
-            text: "Year"
+            text: 'Year'
         },
         plotLines: [
             {
                 useHTML: true,
-                color: "#f15c80",
-                dashStyle: "dot",
+                color: '#f15c80',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1957,
                 label: {
                     y: 15,
-                    text: "USSR: Sputnik 1"
+                    text: 'USSR: Sputnik 1'
                 },
                 zIndex: 3
             },
             {
-                color: "#f15c80",
-                dashStyle: "dot",
+                color: '#f15c80',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1961,
                 label: {
-                    //y:15,
-                    text: "USSR: First human spaceflight"
+                    // y:15,
+                    text: 'USSR: First human spaceflight'
                 }
             },
             {
-                color: "#f15c80",
-                dashStyle: "dot",
+                color: '#f15c80',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1970,
                 label: {
-                    text: "USSR: First lunar rover"
+                    text: 'USSR: First lunar rover'
                 }
             },
             {
-                color: "#f15c80",
-                dashStyle: "dot",
+                color: '#f15c80',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1961,
                 label: {
-                    //y:15,
-                    text: "USSR: First human spaceflight"
+                    // y:15,
+                    text: 'USSR: First human spaceflight'
                 }
             },
             {
-                color: "#7cb5ec",
-                dashStyle: "dot",
+                color: '#7cb5ec',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1973,
                 label: {
-                    text: "US: First Jupiter flyby"
+                    text: 'US: First Jupiter flyby'
                 }
             },
             {
-                color: "#f15c80",
-                dashStyle: "dot",
+                color: '#f15c80',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1986,
                 label: {
-                    text: "USSR: First space station Mir"
+                    text: 'USSR: First space station Mir'
                 }
             },
             {
-                color: "#7cb5ec",
-                dashStyle: "dot",
+                color: '#7cb5ec',
+                dashStyle: 'dot',
                 width: 2,
                 value: 1989,
                 label: {
-                    text: "US: First Neptune flyby"
+                    text: 'US: First Neptune flyby'
                 }
             }
         ]
     },
     yAxis: {
         labels: {
-            format: "{value}%"
+            format: '{value}%'
         },
         title: {
-            text: "% of Fed Budget"
+            text: '% of Fed Budget'
         }
     },
     plotOptions: {
@@ -105,11 +107,11 @@ Highcharts.chart("container", {
 
     annotations: [
         {
-            draggable: "",
+            draggable: '',
             labelOptions: {
-                backgroundColor: "rgba(255,255,255,0.5)",
-                verticalAlign: "top",
-                borderColor: "#7cb5ec",
+                backgroundColor: 'rgba(255,255,255,0.5)',
+                verticalAlign: 'top',
+                borderColor: '#7cb5ec',
                 y: 15
             },
             labels: [
@@ -120,7 +122,7 @@ Highcharts.chart("container", {
                         x: 1969,
                         y: 2.31
                     },
-                    text: "US: Moon landing"
+                    text: 'US: Moon landing'
                 },
                 {
                     point: {
@@ -129,7 +131,7 @@ Highcharts.chart("container", {
                         x: 1986,
                         y: 0.75
                     },
-                    text: "US: Space shuttle challenger disaster"
+                    text: 'US: Space shuttle challenger disaster'
                 }
             ]
         }
@@ -139,7 +141,7 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "% of Fed Budget",
+            name: '% of Fed Budget',
             data: [
                 0,
                 0,
@@ -210,7 +212,7 @@ Highcharts.chart("container", {
                 0.48
             ],
             tooltip: {
-                valueSuffix: " %"
+                valueSuffix: ' %'
             }
         }
     ]

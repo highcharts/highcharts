@@ -5,7 +5,7 @@ The offline-exporting module allows for image export of charts without sending d
 
 *   Want to avoid having users send your chart configs to Highsoft's servers
 *   Want to save the cost of setting up your own server
-*   Don't require the export to work with old browsers like IE8
+*   Don't require the export to work with old browsers
 
 [View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-demo/).
 

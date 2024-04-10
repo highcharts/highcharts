@@ -1,5 +1,5 @@
 function getGradientColors() {
-    return ["#7cb5ec", "#434348"].map(function (color) {
+    return ['#7cb5ec', '#434348'].map(function (color) {
         return {
             radialGradient: {
                 cx: 0.4,
@@ -15,16 +15,16 @@ function getGradientColors() {
 }
 
 function getRandomData() {
-    var data = [];
+    const data = [];
 
-    for (var i = 0; i < Math.random() * 20; i++) {
+    for (let i = 0; i < Math.random() * 20; i++) {
         data.push([Math.random() * 10, Math.random() * 10]);
     }
 
     return data;
 }
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
 
     chart: {
         type: 'bubble',

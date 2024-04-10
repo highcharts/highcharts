@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2021 Paweł Fus
+ *  (c) 2009-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -31,7 +31,7 @@ import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { getOptions } = D;
 import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
 const {
@@ -264,14 +264,14 @@ function attractToPoint(
     e: PointerEvent,
     chart: Chart
 ): NavigationBindingsAttractionObject | void {
-    const coords = chart.pointer.getCoordinates(e);
+    const coords = chart.pointer?.getCoordinates(e);
 
     let coordsX: (Pointer.AxisCoordinateObject|undefined),
         coordsY: (Pointer.AxisCoordinateObject|undefined),
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined);
 
-    if (chart.navigationBindings) {
+    if (chart.navigationBindings && coords) {
         coordsX = getAssignedAxis(coords.xAxis);
         coordsY = getAssignedAxis(coords.yAxis);
     }
@@ -287,12 +287,11 @@ function attractToPoint(
     // Search by 'x' but only in yAxis' series.
     coordsY.axis.series.forEach((series): void => {
         if (series.points) {
-            series.points.forEach((point): void => {
-                if (point && distX > Math.abs((point.x as any) - x)) {
-                    distX = Math.abs((point.x as any) - x);
-                    closestPoint = point;
-                }
-            });
+            const point = series.searchPoint(e, true);
+            if (point && distX > Math.abs(point.x - x)) {
+                distX = Math.abs(point.x - x);
+                closestPoint = point;
+            }
         }
     });
 
@@ -302,8 +301,8 @@ function attractToPoint(
             y: closestPoint.y,
             below: y < closestPoint.y,
             series: closestPoint.series,
-            xAxis: closestPoint.series.xAxis.options.index || 0,
-            yAxis: closestPoint.series.yAxis.options.index || 0
+            xAxis: closestPoint.series.xAxis.index || 0,
+            yAxis: closestPoint.series.yAxis.index || 0
         };
     }
 }
@@ -506,7 +505,7 @@ function updateHeight(
  * @function bindingsUtils.updateNthPoint
  *
  * @param {number} startIndex
- *        Index from each point should udpated
+ *        Index from which point should update
  *
  * @return {Function}
  *         Callback to be used in steps array

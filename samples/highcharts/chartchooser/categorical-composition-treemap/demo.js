@@ -1,16 +1,22 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     accessibility: {
         screenReaderSection: {
             beforeChartFormat:
-        "<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>"
+        '<{headingTagName}>{chartTitle}</{headingTagName}><div>' +
+        '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+        '{chartLongdesc}</div>'
         },
         description:
-      "Tree map detailing the areas of Canadian regions and provinces. The treemap chart makes it clear that Canada is composed of four main regions: Northern Canada, Atlantic Canada, Central Canada, and Western Canada. Each region is composed of many provinces and territories."
+      'Tree map detailing the areas of Canadian regions and provinces. The ' +
+      'treemap chart makes it clear that Canada is composed of four main ' +
+      'regions: Northern Canada, Atlantic Canada, Central Canada, and ' +
+      'Western Canada. Each region is composed of many provinces and ' +
+      'territories.'
     },
     series: [
         {
-            type: "treemap",
-            layoutAlgorithm: "squarified",
+            type: 'treemap',
+            layoutAlgorithm: 'squarified',
             allowDrillToNode: true,
             dataLabels: {
                 enabled: false
@@ -29,106 +35,106 @@ Highcharts.chart("container", {
             ],
             data: [
                 {
-                    id: "Northern Canada",
-                    name: "Northern Canada",
+                    id: 'Northern Canada',
+                    name: 'Northern Canada',
                     value: 3921739,
-                    color: "#87E8D2"
+                    color: '#87E8D2'
                 },
                 {
-                    id: "Yukon",
-                    name: "Yukon",
+                    id: 'Yukon',
+                    name: 'Yukon',
                     value: 482443,
-                    parent: "Northern Canada"
+                    parent: 'Northern Canada'
                 },
                 {
-                    id: "Northwest Territories",
-                    name: "Northwest Territories",
+                    id: 'Northwest Territories',
+                    name: 'Northwest Territories',
                     value: 1346106,
-                    parent: "Northern Canada"
+                    parent: 'Northern Canada'
                 },
                 {
-                    id: "Nunavut",
-                    name: "Nunavut",
+                    id: 'Nunavut',
+                    name: 'Nunavut',
                     value: 2093190,
-                    parent: "Northern Canada"
+                    parent: 'Northern Canada'
                 },
                 {
-                    id: "Western Canada",
-                    name: "Western Canada",
+                    id: 'Western Canada',
+                    name: 'Western Canada',
                     value: 2905416,
-                    color: "#e987cf"
+                    color: '#e987cf'
                 },
                 {
-                    id: "British Columbia",
-                    name: "British Columbia",
+                    id: 'British Columbia',
+                    name: 'British Columbia',
                     value: 944735,
-                    parent: "Western Canada"
+                    parent: 'Western Canada'
                 },
                 {
-                    id: "Alberta",
-                    name: "Alberta",
+                    id: 'Alberta',
+                    name: 'Alberta',
                     value: 661848,
-                    parent: "Western Canada"
+                    parent: 'Western Canada'
                 },
                 {
-                    id: "Saskatchewan",
-                    name: "Saskatchewan",
+                    id: 'Saskatchewan',
+                    name: 'Saskatchewan',
                     value: 651900,
-                    parent: "Western Canada"
+                    parent: 'Western Canada'
                 },
                 {
-                    id: "Central Canada",
-                    name: "Central Canada",
+                    id: 'Central Canada',
+                    name: 'Central Canada',
                     value: 2618451,
-                    color: "#adadad"
+                    color: '#adadad'
                 },
                 {
-                    id: "Ontario",
-                    name: "Ontario",
+                    id: 'Ontario',
+                    name: 'Ontario',
                     value: 1076000,
-                    parent: "Central Canada"
+                    parent: 'Central Canada'
                 },
                 {
-                    id: "Quebec",
-                    name: "Quebec",
+                    id: 'Quebec',
+                    name: 'Quebec',
                     value: 1667000,
-                    parent: "Central Canada"
+                    parent: 'Central Canada'
                 },
                 {
-                    id: "Atlantic Canada",
-                    name: "Atlantic Canada",
+                    id: 'Atlantic Canada',
+                    name: 'Atlantic Canada',
                     value: 539064,
-                    color: "#86CDE7"
+                    color: '#86CDE7'
                 },
                 {
-                    id: "New Brunswick",
-                    name: "New Brunswick",
+                    id: 'New Brunswick',
+                    name: 'New Brunswick',
                     value: 72908,
-                    parent: "Atlantic Canada"
+                    parent: 'Atlantic Canada'
                 },
                 {
-                    id: "Prince Edward Island",
-                    name: "Prince Edward Island",
+                    id: 'Prince Edward Island',
+                    name: 'Prince Edward Island',
                     value: 5660,
-                    parent: "Atlantic Canada"
+                    parent: 'Atlantic Canada'
                 },
                 {
-                    id: "Nova Scotia",
-                    name: "Nova Scotia",
+                    id: 'Nova Scotia',
+                    name: 'Nova Scotia',
                     value: 55283,
-                    parent: "Atlantic Canada"
+                    parent: 'Atlantic Canada'
                 },
                 {
-                    id: "Newfoundland and Labrador",
-                    name: "Newfoundland and Labrador",
+                    id: 'Newfoundland and Labrador',
+                    name: 'Newfoundland and Labrador',
                     value: 405212,
-                    parent: "Atlantic Canada"
+                    parent: 'Atlantic Canada'
                 }
             ]
         }
     ],
     title: {
-        text: "Canadian provinces and territories by area"
+        text: 'Canadian provinces and territories by area'
     },
     subtitle: {
         useHTMl: true,
@@ -138,6 +144,6 @@ Highcharts.chart("container", {
     tooltip: {
         useHTML: true,
         pointFormat:
-      "The area of <b>{point.name}</b> is <b>{point.value}km<sup>2</sup></b>"
+      'The area of <b>{point.name}</b> is <b>{point.value}km<sup>2</sup></b>'
     }
 });

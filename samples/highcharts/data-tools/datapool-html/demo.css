@@ -1,0 +1,65 @@
+:root {
+    --color-background: #fff;
+    --color-tbody-background: #eee;
+    --color-text: #000;
+    --color-thead-background: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #111;
+        --color-tbody-background: #222;
+        --color-text: #eee;
+        --color-thead-background: #333;
+    }
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    display: grid;
+    grid-gap: 1em 0.5em;
+    grid-template-columns: 0fr 1fr;
+    text-align: center;
+}
+
+fieldset,
+p {
+    max-width: 30em;
+}
+
+fieldset textarea {
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: scroll;
+}
+
+table {
+    min-width: 50%;
+}
+
+table td,
+table th {
+    line-height: 1.5em;
+    padding: 0.25em 0.5em;
+    vertical-align: top;
+    white-space: pre-wrap;
+}
+
+table thead th {
+    background-color: var(--color-thead-background);
+}
+
+table tbody td {
+    background-color: var(--color-tbody-background);
+}
+
+@media (max-width: 600px) {
+    form {
+        flex-direction: column;
+    }
+}

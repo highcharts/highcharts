@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -89,12 +89,14 @@ export interface ChartOptions {
     alignThresholds?: boolean;
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
+    axisLayoutRuns?: number;
     backgroundColor?: ColorType;
     borderColor?: ColorType;
     borderRadius?: number;
     borderWidth?: number;
     className?: string;
     colorCount?: number;
+    defaultSeriesType?: string;
     allowMutatingData?: boolean;
     events?: ChartEventsOptions;
     height?: (null|number|string);
@@ -108,7 +110,7 @@ export interface ChartOptions {
     marginRight?: number;
     marginTop?: number;
     numberFormatter?: NumberFormatterCallbackFunction;
-    panKey?: string;
+    panKey?: 'ctrl'|'shift';
     panning?: ChartPanningOptions;
     pinchType?: string;
     plotBackgroundColor?: ColorType;
@@ -121,6 +123,7 @@ export interface ChartOptions {
     resetZoomButton?: ChartResetZoomButtonOptions;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
     selectionMarkerFill?: ColorType;
+    seriesGroupShadow?: (boolean|Partial<ShadowOptionsObject>);
     showAxes?: boolean;
     spacing?: Array<number>;
     spacingBottom?: number;

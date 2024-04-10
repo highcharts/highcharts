@@ -1,7 +1,15 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json'
+    ).then(response => response.json());
+
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
         title: {
             text: 'Scrollbar on Y axis'
@@ -21,4 +29,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             pointInterval: data.pointInterval
         }]
     });
-});
+})();

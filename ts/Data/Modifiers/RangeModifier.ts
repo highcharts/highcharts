@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,8 +21,12 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-import type JSON from '../../Core/JSON';
+
+import type DataEvent from '../DataEvent';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -29,11 +35,13 @@ const {
     merge
 } = U;
 
+
 /* *
  *
  *  Class
  *
  * */
+
 
 /**
  * Filters out table rows with a specific value range.
@@ -42,20 +50,22 @@ const {
  */
 class RangeModifier extends DataModifier {
 
+
     /* *
      *
      *  Static Properties
      *
      * */
 
+
     /**
      * Default options for the range modifier.
      */
-    public static readonly defaultOptions: RangeModifier.Options = {
-        modifier: 'Range',
-        strict: false,
+    public static readonly defaultOptions: RangeModifierOptions = {
+        type: 'Range',
         ranges: []
     };
+
 
     /* *
      *
@@ -63,17 +73,21 @@ class RangeModifier extends DataModifier {
      *
      * */
 
+
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {RangeModifier.Options} [options]
+     * @param {Partial<RangeModifier.Options>} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<RangeModifier.Options>) {
+    public constructor(
+        options?: Partial<RangeModifierOptions>
+    ) {
         super();
 
         this.options = merge(RangeModifier.defaultOptions, options);
     }
+
 
     /* *
      *
@@ -81,10 +95,12 @@ class RangeModifier extends DataModifier {
      *
      * */
 
+
     /**
      * Options of the range modifier.
      */
-    public readonly options: Readonly<RangeModifier.Options>;
+    public readonly options: RangeModifierOptions;
+
 
     /* *
      *
@@ -92,13 +108,14 @@ class RangeModifier extends DataModifier {
      *
      * */
 
+
     /**
      * Replaces table rows with filtered rows.
      *
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -106,26 +123,28 @@ class RangeModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         const {
+            additive,
             ranges,
             strict
         } = modifier.options;
 
         if (ranges.length) {
-            const columns = table.getColumns(),
-                rows: Array<DataTable.Row> = [],
-                modified = table.modified;
+            const modified = table.modified;
+
+            let columns = table.getColumns(),
+                rows: Array<DataTable.Row> = [];
 
             for (
                 let i = 0,
                     iEnd = ranges.length,
-                    range: RangeModifier.RangeOptions,
+                    range: RangeModifierRangeOptions,
                     rangeColumn: DataTable.Column;
                 i < iEnd;
                 ++i
@@ -137,6 +156,13 @@ class RangeModifier extends DataModifier {
                     typeof range.minValue !== typeof range.maxValue
                 ) {
                     continue;
+                }
+
+                if (i > 0 && !additive) {
+                    modified.deleteRows();
+                    modified.setRows(rows);
+                    columns = modified.getColumns();
+                    rows = [];
                 }
 
                 rangeColumn = (columns[range.column] || []);
@@ -171,7 +197,11 @@ class RangeModifier extends DataModifier {
                         cell >= range.minValue &&
                         cell <= range.maxValue
                     ) {
-                        row = table.getRow(j);
+                        row = (
+                            additive ?
+                                table.getRow(j) :
+                                modified.getRow(j)
+                        );
 
                         if (row) {
                             rows.push(row);
@@ -189,73 +219,31 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
-}
-
-/* *
- *
- *  Namespace
- *
- * */
-
-/**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
- */
-namespace RangeModifier {
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options extends DataModifier.Options {
-        /**
-         * Value ranges to include in the result.
-         */
-        ranges: Array<RangeOptions>;
-        /**
-         * If set to true, it will also compare the value type.
-         */
-        strict: boolean;
-    }
-
-    /**
-     * Options to configure a range.
-     */
-    export interface RangeOptions extends JSON.Object {
-        /**
-         * Column containing the filtered values. This can be an index or a
-         * name.
-         */
-        column: string;
-        /**
-         * Maximum including value (`<=` operator).
-         */
-        maxValue: (boolean|number|string);
-        /**
-         * Minimum including value (`>=` operator).
-         */
-        minValue: (boolean|number|string);
-    }
 
 }
 
+
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
-DataModifier.addModifier(RangeModifier);
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Range: typeof RangeModifier;
     }
 }
 
+DataModifier.registerType('Range', RangeModifier);
+
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 
 export default RangeModifier;

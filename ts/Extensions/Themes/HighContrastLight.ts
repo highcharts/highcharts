@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Øystein Moseng
  *
@@ -22,11 +22,10 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 
 /* *
  *
@@ -42,7 +41,7 @@ namespace HighContrastLightTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
+    export const options: DeepPartial<DefaultOptions> = {
         colors: [
             '#265FB5',
             '#222',
@@ -55,6 +54,11 @@ namespace HighContrastLightTheme {
             '#1A704C',
             '#B02FDD'
         ],
+        credits: {
+            style: {
+                color: '#767676'
+            }
+        },
         navigator: {
             series: {
                 color: '#5f98cf',

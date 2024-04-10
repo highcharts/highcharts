@@ -15,19 +15,19 @@ import PPOIndicator from './PPOIndicator';
 import type EMAPoint from '../EMA/EMAPoint';
 
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
 declare class PPOPoint extends EMAPoint {
     public series: PPOIndicator;
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default PPOPoint;

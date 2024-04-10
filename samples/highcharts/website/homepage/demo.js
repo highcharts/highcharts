@@ -1,6 +1,6 @@
 let demoChart;
 
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const baseColor = 'rgba(72,72,72,.2)';
 const networklinkColor = '#000';
@@ -11,7 +11,7 @@ let currentTimeout;
 
 const colors = Highcharts.getOptions().colors;
 
-//HERO CHART
+// HERO CHART
 Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
@@ -40,7 +40,7 @@ const fakeData = [
     { x: Date.UTC(1916, 7, 1), y: 20 },
     { x: Date.UTC(1920, 7, 1), y: 20 },
 
-    ///1924
+    // /1924
     { x: -1449014400000, y: 20 },
     { x: -1322784000000, y: 20 },
     { x: -1196553600000, y: 20 },
@@ -58,9 +58,9 @@ const fakeData = [
     { x: 318211200000, y: 20 },
     { x: 444441600000, y: 20 },
     { x: 570672000000, y: 20 },
-    //1992
+    // 1992
     { x: 696902400000, y: 20 },
-    //1994
+    // 1994
     { x: 773072624000, y: 20 },
     { x: 899303024000, y: 20 },
     { x: 1025533424000, y: 20 },
@@ -71,96 +71,98 @@ const fakeData = [
 ];
 
 const streamSeries = [{
-    name: "Finland",
+    name: 'Finland',
     data:
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4, 3,
-        6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5]
+    [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4,
+        3, 6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5
+    ]
 }, {
-    name: "Austria",
+    name: 'Austria',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4,
         2, 4, 0, 0, 8, 8, 11,
         6, 12, 11, 5, 6, 7, 1, 10, 21, 9, 17, 17, 23, 16, 17
     ]
 }, {
-    name: "Sweden",
+    name: 'Sweden',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5,
         3, 7, 0, 0, 10, 4,
         10, 7, 7, 8, 4, 2, 4, 8, 6, 4, 3, 3, 7, 14, 11, 15
     ]
 }, {
-    name: "Norway",
+    name: 'Norway',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17,
         15, 10, 15, 0, 0, 10,
         16, 4, 6, 15, 14, 12, 7, 10, 9, 5, 20, 26, 25, 25, 19, 23, 26
     ]
 }, {
-    name: "U.S.",
+    name: 'U.S.',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 6,
         12, 4, 0, 0, 9, 11,
         7, 10, 7, 7, 8, 10, 12, 8, 6, 11, 13, 13, 34, 25, 37, 28
     ]
 }, {
-    name: "East Germany",
+    name: 'East Germany',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 5, 14, 19, 23, 24, 25, 0, 0, 0, 0, 0, 0, 0
     ]
 }, {
-    name: "West Germany",
+    name: 'West Germany',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 7, 5, 10, 5, 4, 8, 0, 0, 0, 0, 0, 0, 0
     ]
 }, {
-    name: "Germany",
+    name: 'Germany',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 6, 0, 0, 0, 7, 2,
         8, 9, 0, 0, 0, 0, 0, 0, 26, 24, 29, 36, 29, 30, 19
     ]
 }, {
-    name: "Netherlands",
+    name: 'Netherlands',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0,
         2, 2, 9, 9, 6, 4, 0, 7, 4, 4, 11, 8, 9, 8, 24
     ]
 }, {
-    name: "Italy",
+    name: 'Italy',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 1, 2, 3,
         1, 4, 4, 5, 4, 2, 2, 5, 14, 20, 10, 13, 11, 5, 8
     ]
 }, {
-    name: "Canada",
+    name: 'Canada',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 7, 1, 0, 0, 3, 2, 3,
         4, 3, 3, 1, 3, 2, 4, 5, 7, 13, 15, 17, 24, 26, 25
     ]
 }, {
-    name: "Switzerland",
+    name: 'Switzerland',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
         1, 1, 3, 0, 0, 10, 2, 6,
         2, 0, 6, 10, 5, 5, 5, 15, 3, 9, 7, 11, 14, 9, 11
     ]
 }, {
-    name: "Great Britain",
+    name: 'Great Britain',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
         1, 0, 3, 0, 0, 2, 1, 0,
         0, 1, 0, 0, 1, 1, 1, 0, 0, 2, 1, 2, 1, 1, 4
     ]
 }, {
-    name: "France",
+    name: 'France',
     data: [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
         1, 1, 1, 0, 0, 5, 1, 0,
@@ -938,7 +940,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), 1.10],
             [Date.UTC(2020, 2, 1), 4.70],
             [Date.UTC(2020, 3, 1), -2.50],
-            [Date.UTC(2020, 4, 1), -6.90]]
+            [Date.UTC(2020, 4, 1), -6.90]
+        ]
     },
     {
         type: 'spline',
@@ -1166,7 +1169,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -2.20],
             [Date.UTC(2020, 2, 1), -2.60],
             [Date.UTC(2020, 3, 1), -8.10],
-            [Date.UTC(2020, 4, 1), -14.10]]
+            [Date.UTC(2020, 4, 1), -14.10]
+        ]
     },
     {
         type: 'spline',
@@ -1394,7 +1398,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -8.00],
             [Date.UTC(2020, 2, 1), -7.60],
             [Date.UTC(2020, 3, 1), -12.30],
-            [Date.UTC(2020, 4, 1), -24.30]]
+            [Date.UTC(2020, 4, 1), -24.30]
+        ]
     },
     {
         type: 'spline',
@@ -1622,7 +1627,8 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), -1.50],
             [Date.UTC(2020, 2, 1), -1.90],
             [Date.UTC(2020, 3, 1), -7.90],
-            [Date.UTC(2020, 4, 1), -9.70]]
+            [Date.UTC(2020, 4, 1), -9.70]
+        ]
     },
     {
         type: 'spline',
@@ -1850,10 +1856,11 @@ const splineSeries = [
             [Date.UTC(2020, 1, 1), 4.60],
             [Date.UTC(2020, 2, 1), 2.90],
             [Date.UTC(2020, 3, 1), -2.60],
-            [Date.UTC(2020, 4, 1), -7.10]]
+            [Date.UTC(2020, 4, 1), -7.10]
+        ]
     }];
 
-//for the last chart in the animation (science)
+// for the last chart in the animation (science)
 const dataSource = [93, 93, 96, 100, 101, 102, 102];
 const xiData = [];
 const range = 20;
@@ -1882,7 +1889,7 @@ const N = dataSource.length;
 const kernelChart = [];
 const kernel = [];
 
-//Create the density estimate
+// Create the density estimate
 for (let i = 0; i < xiData.length; i++) {
     let temp = 0;
     kernel.push([]);
@@ -1903,7 +1910,7 @@ for (let rr = 0; rr < 20; ++rr) {
 
 gData = tempArray.concat(gData);
 
-//Create the kernels
+// Create the kernels
 for (let i = 0; i < dataSource.length; i++) {
     kernelChart.push([]);
     kernelChart[i].push(new Array(kernel.length));
@@ -2001,12 +2008,12 @@ const kernelSeries = [
 
     }];
 
-//homepage chart animation chart
-/****************************************/
-///Section 4 Network graph
+// homepage chart animation chart
+/** **************************************/
+// /Section 4 Network graph
 
 function section4() {
-    ///show everything immediately for accessibility
+    // /show everything immediately for accessibility
     if (reduced) {
         $('.highcharts-spline-series').fadeIn(100);
         $('.highcharts-scatter-series').fadeIn(100);
@@ -2035,7 +2042,7 @@ function section4() {
                     lineWidth: 1,
                     xAxis: 5,
                     yAxis: 4,
-                    dashStyle: "shortdot",
+                    dashStyle: 'shortdot',
                     color: Highcharts.getOptions().colors[5],
                     pointStart: xiData[0],
                     label: {
@@ -2067,10 +2074,10 @@ function section4() {
 
     clearTimeout(currentTimeout);
 
-    ///shows the networkgraph, sets up the splines,
-    //shows new title and tab
+    // /shows the networkgraph, sets up the splines,
+    // shows new title and tab
     const p1 = function () {
-        ///don't show network graph for accessibility
+        // /don't show network graph for accessibility
         if (!reduced) {
             $('.highcharts-networkgraph-series').fadeIn();
             $('.highcharts-spline-series').hide();
@@ -2100,7 +2107,7 @@ function section4() {
                         lineWidth: 1,
                         xAxis: 5,
                         yAxis: 4,
-                        dashStyle: "shortdot",
+                        dashStyle: 'shortdot',
                         color: Highcharts.getOptions().colors[5],
                         pointStart: xiData[0],
                         label: {
@@ -2117,9 +2124,9 @@ function section4() {
     };
     currentTimeout = window.setTimeout(p1, 100);
 
-    //moves the node on the network graph
+    // moves the node on the network graph
     const p2 = function () {
-        ///don't show for accessibility
+        // /don't show for accessibility
         if (!reduced) {
             demoChart.series[3].nodes[0].update({
                 plotX: demoChart.chartWidth / 2 + 100,
@@ -2129,9 +2136,9 @@ function section4() {
     };
     currentTimeout = window.setTimeout(p2, 500);
 
-    //shows the splines
+    // shows the splines
     const p25 = function () {
-        ///don't show the splines now for accessibility
+        // /don't show the splines now for accessibility
         if (!reduced) {
             $('.highcharts-spline-series').fadeIn(100);
             $('.highcharts-scatter-series').fadeIn(100);
@@ -2141,9 +2148,9 @@ function section4() {
     };
     currentTimeout = window.setTimeout(p25, 1000);
 
-    //moves the node again
+    // moves the node again
     const p3 = function () {
-        ///only do the network stuff for the full animation
+        // /only do the network stuff for the full animation
         if (!reduced) {
             demoChart.update({
                 chart: {
@@ -2170,15 +2177,15 @@ function section4() {
     };
     currentTimeout = window.setTimeout(p31, 4500);
 
-    ///consolidates all the nodes, hides most everything else,
-    //shows the title and content
+    // /consolidates all the nodes, hides most everything else,
+    // shows the title and content
     const p4 = function () {
         // $('.highcharts-label').fadeOut();
         // $('.highcharts-streamgraph-series').fadeOut();
         // $('.highcharts-spline-series').fadeOut();
         // $('.highcharts-scatter-series').fadeOut();
         // $('.highcharts-legend').fadeOut();
-        ///only manipulate the nodes for the full animation
+        // /only manipulate the nodes for the full animation
         if (!reduced) {
             // demoChart.series[3].nodes[0].update({
             //     plotX: demoChart.chartWidth / 2,
@@ -2203,16 +2210,16 @@ function section4() {
     };
     currentTimeout = window.setTimeout(p4, 5000);
 }
-/****************************************/
-////Section 3 Streamgraph
+/** **************************************/
+// //Section 3 Streamgraph
 
 function section3() {
 
-    //sets up new title, sets the plot options for
-    //the streamgraph
+    // sets up new title, sets the plot options for
+    // the streamgraph
     const s1 = function () {
-        ///set the axes first and turn off animation for the series
-        ///for accessibility
+        // /set the axes first and turn off animation for the series
+        // /for accessibility
         if (!reduced) {
             demoChart.update({
                 plotOptions: {
@@ -2234,14 +2241,16 @@ function section3() {
     currentTimeout = window.setTimeout(s1, 0);
 
     const s11 = function () {
-        ///show everything immediatley for accessibility
+        // /show everything immediatley for accessibility
         if (reduced) {
             let yearMax = 1860;
             if (demoChart.chartWidth < 500) {
                 yearMax = 1920;
             }
-            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                , Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1)
+            );
 
             demoChart.series[5].update({
                 animation: false
@@ -2277,7 +2286,7 @@ function section3() {
     };
     currentTimeout = window.setTimeout(s11, 300);
 
-    //sets animation duration to 1000, shows streamgraph
+    // sets animation duration to 1000, shows streamgraph
     const s2 = function () {
         if (!reduced) {
             $('.highcharts-streamgraph-series').fadeIn(1000);
@@ -2295,18 +2304,20 @@ function section3() {
     currentTimeout = window.setTimeout(s2, 200);
 
 
-    //shows the xAxis, sets the xAxis extremes for the
-    //streamgraph, shows the labels, sets streamgraph
-    //opacity to 1
+    // shows the xAxis, sets the xAxis extremes for the
+    // streamgraph, shows the labels, sets streamgraph
+    // opacity to 1
     const s4 = function () {
         let yearMax = 1860;
         if (demoChart.chartWidth < 500) {
             yearMax = 1920;
         }
-        ///adjust the axes for full animation
+        // /adjust the axes for full animation
         if (!reduced) {
-            demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                , Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(yearMax, 7, 1)
+                , Date.UTC(2016, 11, 1)
+            );
 
             $('.highcharts-axis-labels').fadeIn(100);
             $('.highcharts-pie-series').hide();
@@ -2337,10 +2348,10 @@ function section3() {
     };
     currentTimeout = window.setTimeout(s41, 3000);
 
-    //sets the fill opacity to 0, hides the annotations,
-    //sets the xAxis extremes
+    // sets the fill opacity to 0, hides the annotations,
+    // sets the xAxis extremes
     const s5 = function () {
-        ///set the axis for the fourth section now for accessibility
+        // /set the axis for the fourth section now for accessibility
         if (reduced) {
             $('.highcharts-streamgraph-series').fadeOut(500);
             demoChart.xAxis[5].setExtremes(78, 107);
@@ -2366,14 +2377,14 @@ function section3() {
     currentTimeout = window.setTimeout(s5, 5500);
 
     const s51 = function () {
-        ///go to section 4 now for accessibility
+        // /go to section 4 now for accessibility
         if (reduced) {
             section4();
         }
     };
     currentTimeout = window.setTimeout(s51, 6000);
 
-    //hides the xAxis
+    // hides the xAxis
     const s6 = function () {
         if (!reduced) {
             demoChart.update({
@@ -2387,14 +2398,16 @@ function section3() {
                 }
             });
 
-            demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
-                Date.UTC(2016, 11, 1));
+            demoChart.xAxis[4].setExtremes(
+                Date.UTC(1970, 7, 1),
+                Date.UTC(2016, 11, 1)
+            );
         }
     };
     currentTimeout = window.setTimeout(s6, 6700);
 
-    //turns off series labels, fades the titles,
-    //goes to section 4
+    // turns off series labels, fades the titles,
+    // goes to section 4
     const s7 = function () {
         if (!reduced) {
             section4();
@@ -2402,11 +2415,11 @@ function section3() {
     };
     currentTimeout = window.setTimeout(s7, 7000);
 }
-/****************************************/
-////Section 2 Splines and candlestick
+/** **************************************/
+// //Section 2 Splines and candlestick
 
 function section2() {
-    ///show everything immediately for accessibility
+    // /show everything immediately for accessibility
     if (reduced) {
         demoChart.series[19].update({
             animation: false
@@ -2421,7 +2434,7 @@ function section2() {
         $('.highcharts-candlestick-series').fadeIn(100);
     }
 
-    ///update animation duration to 1000, hide the item series
+    // /update animation duration to 1000, hide the item series
     const f1 = function () {
         demoChart.update({
             chart: {
@@ -2433,42 +2446,51 @@ function section2() {
         demoChart.series[0].update({
             opacity: 0
         });
-        ///set up the finance stuff for section 2 for accessibility
+        // /set up the finance stuff for section 2 for accessibility
         if (reduced) {
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
             demoChart.update({
                 tooltip: {
                     enabled: true
                 }
             });
             demoChart.tooltip.refresh(
-                [demoChart.series[2].points[22]]);
+                [demoChart.series[2].points[22]]
+            );
             $('.highcharts-tooltip').hide();
             $('.highcharts-tooltip').fadeIn(1000);
         }
     };
     currentTimeout = setTimeout(f1, 500);
 
-    //set axes extremes for splines and candlestick,
-    //show new title
+    // set axes extremes for splines and candlestick,
+    // show new title
     const f2 = function () {
         if (!reduced) {
             $('.highcharts-networkgraph-series').hide();
 
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
 
             $('.highcharts-candlestick-series').show();
         }
     };
     currentTimeout = setTimeout(f2, 1500);
 
-    ///show candlestick tooltip
+    // /show candlestick tooltip
     const f3 = function () {
         if (!reduced) {
             demoChart.update({
@@ -2477,14 +2499,15 @@ function section2() {
                 }
             });
             demoChart.tooltip.refresh(
-                [demoChart.series[2].points[22]]);
+                [demoChart.series[2].points[22]]
+            );
             $('.highcharts-tooltip').hide();
             $('.highcharts-tooltip').fadeIn(1000);
         }
     };
     currentTimeout = setTimeout(f3, 2500);
 
-    //hide the tooltip and candlestick, remove all the splines
+    // hide the tooltip and candlestick, remove all the splines
     const f4 = function () {
         $('.highcharts-candlestick-series').hide();
         $('.highcharts-tooltip').hide();
@@ -2526,19 +2549,19 @@ function section2() {
     };
     currentTimeout = setTimeout(f4, 5000);
 
-    //go to section 3
+    // go to section 3
     const f5 = function () {
         section3();
     };
     currentTimeout = setTimeout(f5, 5500);
 
 }
-/****************************************/
-////Section 1 Pie and item
+/** **************************************/
+// //Section 1 Pie and item
 
 function section1() {
 
-    ///show immediately for accessibility
+    // /show immediately for accessibility
     if (reduced) {
         $('.highcharts-series-0').show();
         $('.highcharts-series-4').hide();
@@ -2579,9 +2602,9 @@ function section1() {
             }
         });
     }
-    ///swap graphs
+    // /swap graphs
     const s12 = function () {
-        ///show for regular animation
+        // /show for regular animation
         if (!reduced) {
             demoChart.series[0].update({
                 data: [
@@ -2622,7 +2645,7 @@ function section1() {
             $('.highcharts-series-0').fadeIn();
             $('.highcharts-series-4').fadeOut(100);
         }
-        //make an arch
+        // make an arch
         demoChart.update({
             plotOptions: {
                 item: {
@@ -2634,11 +2657,11 @@ function section1() {
         });
     };
     currentTimeout = setTimeout(s12, 1500);
-    ///expand the arch
+    // /expand the arch
     const s14 =  function () {
-        ///don't show the splines now for accessibility
-        ///otherwise, they will animate when added
-        ///do not make the item chart really big
+        // /don't show the splines now for accessibility
+        // /otherwise, they will animate when added
+        // /do not make the item chart really big
         if (!reduced) {
             $('.highcharts-spline-series').show();
             demoChart.series[0].update({
@@ -2650,7 +2673,7 @@ function section1() {
         let count = 0;
         const addSeries = setInterval(function () {
             demoChart.addSeries(splineSeries[count]);
-            ///show the spline after they are added for accessibility
+            // /show the spline after they are added for accessibility
             if (reduced) {
                 $('.highcharts-spline-series').hide();
             }
@@ -2659,16 +2682,20 @@ function section1() {
                 clearInterval(addSeries);
             }
         }, 0);
-        ///set the axes now so they're ready for section 2 without animation
+        // /set the axes now so they're ready for section 2 without animation
         if (reduced) {
-            demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                Date.UTC(2010, 9, 1));
-            demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                Date.UTC(2020, 1, 13));
+            demoChart.xAxis[1].setExtremes(
+                Date.UTC(2002, 7, 1),
+                Date.UTC(2010, 9, 1)
+            );
+            demoChart.xAxis[0].setExtremes(
+                Date.UTC(2019, 11, 9),
+                Date.UTC(2020, 1, 13)
+            );
         }
     };
     currentTimeout = setTimeout(s14, 4000);
-    ///set current tab, go to section 2
+    // /set current tab, go to section 2
     const s17 = function () {
         section2();
     };
@@ -2766,7 +2793,8 @@ const heroChart = {
         dateString = dateString.substr(0, 16);
         const string =
         '<div id="tooltipGrid">' +
-            '<div class="date" ><img src="/samples/graphics/homepage/apple.svg">' +
+            '<div class="date" ><img ' +
+            'src="/samples/graphics/homepage/apple.svg">' +
             dateString + '</div>' +
             '<div class="infoGrid">' +
                 '<div class="label">Open</div><div class="data">' +
@@ -2783,14 +2811,14 @@ const heroChart = {
     }
 },
     xAxis: [
-    ///0
+    // /0
         {
             visible: false,
             type: 'datetime',
             min: Date.UTC(2002, 11, 8),
             max: Date.UTC(2010, 11, 20)
         },
-        ///1
+        // /1
         {
             type: 'datetime',
             min: Date.UTC(2002, 11, 8),
@@ -2803,7 +2831,7 @@ const heroChart = {
                 }
             }
         },
-        ///2
+        // /2
         {
             visible: false,
             type: 'linear',
@@ -2816,7 +2844,7 @@ const heroChart = {
                 }
             }
         },
-        ///3
+        // /3
         {
             type: 'datetime',
             min: Date.UTC(1990, 1, 1),
@@ -2829,7 +2857,7 @@ const heroChart = {
                 }
             }
         },
-        ///4
+        // /4
         {
             type: 'datetime',
             visible: false,
@@ -3193,7 +3221,7 @@ const heroChart = {
                 }
             ]
         },
-        ///5
+        // /5
         {
             visible: false,
             min: 60,
@@ -3207,7 +3235,7 @@ const heroChart = {
         }
     ],
     yAxis: [
-    ///0
+    // /0
         {
             visible: false,
             min: 250,
@@ -3227,7 +3255,7 @@ const heroChart = {
                 }
             }
         },
-        ///1
+        // /1
         {
             visible: false,
             gridLineColor: 'transparent',
@@ -3241,7 +3269,7 @@ const heroChart = {
             startOnTick: true,
             endOnTick: true
         },
-        ///2
+        // /2
         {
             visible: false,
             min: 0,
@@ -3252,7 +3280,7 @@ const heroChart = {
                 }
             }
         },
-        ///3
+        // /3
         {
             visible: false,
             min: -50,
@@ -3263,7 +3291,7 @@ const heroChart = {
                 }
             }
         },
-        ////4
+        // //4
         {
             visible: false,
             max: 0.33,
@@ -3297,7 +3325,7 @@ const heroChart = {
                     }
                 },
                 yAxis: [
-                ///0
+                // /0
                     {
                         visible: false,
                         min: 250,
@@ -3318,7 +3346,7 @@ const heroChart = {
                         }
 
                     },
-                    ///1
+                    // /1
                     {
                         visible: false,
                         gridLineColor: 'transparent',
@@ -3332,7 +3360,7 @@ const heroChart = {
                         startOnTick: true,
                         endOnTick: true
                     },
-                    ///2
+                    // /2
                     {
                         visible: false,
                         min: 0,
@@ -3343,7 +3371,7 @@ const heroChart = {
                             }
                         }
                     },
-                    ///3
+                    // /3
                     {
                         visible: false,
                         min: -50,
@@ -3354,7 +3382,7 @@ const heroChart = {
                             }
                         }
                     },
-                    ////4
+                    // //4
                     {
                         visible: false,
                         max: 0.23,
@@ -3382,7 +3410,7 @@ const heroChart = {
         y: -10,
         width: 500,
         style: {
-            fontSize: "16px"
+            fontSize: '16px'
         },
         labelFormat: '{label} <span style="opacity: 0.4">{y}</span>'
     },
@@ -3422,7 +3450,7 @@ const heroChart = {
         }
     }],
     plotOptions: {
-    ///ITEM
+    // /ITEM
         item: {
             size: '80%',
             name: 'Item Chart',
@@ -3457,7 +3485,7 @@ const heroChart = {
             center: ['65.5%', '60%'],
             size: '80%'
         },
-        ///Streamgraph
+        // /Streamgraph
         streamgraph: {
             fillOpacity: 1,
             lineColor: streamLine,
@@ -3481,7 +3509,7 @@ const heroChart = {
                 enabled: false
             }
         },
-        ///line
+        // /line
         line: {
 
             color: baseColor,
@@ -3507,7 +3535,7 @@ const heroChart = {
                 enabled: false
             }
         },
-        ///Spline
+        // /Spline
         spline: {
             dataGrouping: {
                 enabled: false,
@@ -3540,7 +3568,7 @@ const heroChart = {
                 }
             }
         },
-        ///Candlestick
+        // /Candlestick
         candlestick: {
             color: Highcharts.getOptions().colors[2],
             upColor: Highcharts.getOptions().colors[4],
@@ -3565,7 +3593,7 @@ const heroChart = {
                 enabled: false
             }
         },
-        //Area spline
+        // Area spline
         areaspline: {
             stacking: 'normal',
             fillOpacity: 0.1,
@@ -3579,7 +3607,7 @@ const heroChart = {
             },
             showInLegend: false
         },
-        ///Network
+        // /Network
         networkgraph: {
 
             showInLegend: false,
@@ -3594,14 +3622,14 @@ const heroChart = {
             },
             turboThreshold: 0
         },
-        /////scatter
+        // ///scatter
         scatter: {
             marker: {
                 enabled: true,
                 radius: 5,
                 fillColor: Highcharts.getOptions().colors[4]
             },
-            dashStyle: "shortdot",
+            dashStyle: 'shortdot',
             color: Highcharts.getOptions().colors[4],
             pointStart: xiData[0],
             xAxis: 5,
@@ -3616,7 +3644,7 @@ const heroChart = {
         }
     },
     series: [
-    ////0
+    // //0
         {
             type: 'item',
             zIndex: 2,
@@ -3674,7 +3702,7 @@ const heroChart = {
                 }
             }
         },
-        ///1
+        // /1
         {
             type: 'line',
             lineWidth: 0,
@@ -3700,7 +3728,8 @@ const heroChart = {
             },
             dashStyle: 'solid',
             name: 'Import air passenger fares',
-            data: [[Date.UTC(2002, 4, 1), 4.80],
+            data: [
+                [Date.UTC(2002, 4, 1), 4.80],
                 [Date.UTC(2002, 5, 1), 4.30],
                 [Date.UTC(2002, 6, 1), 5.60],
                 [Date.UTC(2002, 7, 1), 7.60],
@@ -3919,7 +3948,7 @@ const heroChart = {
                 [Date.UTC(2020, 4, 1), -16.20]
             ]
         },
-        //2
+        // 2
         {
             type: 'candlestick',
             name: 'AAPL Stock Price',
@@ -4009,7 +4038,7 @@ const heroChart = {
                 lineWidth: 1
             }
         },
-        ///3
+        // /3
         {
             type: 'networkgraph',
             zindex: 1,
@@ -4036,7 +4065,8 @@ const heroChart = {
             },
 
             // data:[],
-            data: [['0', '1'],
+            data: [
+                ['0', '1'],
                 ['1', '2'],
                 ['1', '3'],
                 ['1', '4'],
@@ -4362,7 +4392,7 @@ const heroChart = {
                 }
             ]
         },
-        //4
+        // 4
         {
             type: 'pie',
             showInLegend: false,
@@ -4409,7 +4439,7 @@ const heroChart = {
                 enabled: false
             }
         },
-        ///5 - 17
+        // /5 - 17
         {
             type: 'streamgraph',
             name: streamSeries[0].name,
@@ -4488,7 +4518,7 @@ const heroChart = {
             data: streamDataArrays[13],
             color: Highcharts.color(colors[0]).brighten(0.1).get()
         },
-        //18 - 26
+        // 18 - 26
         kernelSeries[0],
         kernelSeries[1],
         kernelSeries[2],

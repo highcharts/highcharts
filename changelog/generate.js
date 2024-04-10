@@ -1,12 +1,13 @@
 /* eslint-env node, es6 */
-/* eslint func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
+/* eslint func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0
+consistent-return: 0 */
 
 /**
  * This node script copies commit messages since the last release and
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String  The tag to start from, defaults to latest commit.
+ * --since String  The tag to start from, defaults to latest annotated tag.
  * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
  * --review        Create a review page with edit links and a list of all PRs
@@ -43,8 +44,16 @@ const getFile = url => new Promise((resolve, reject) => {
     'use strict';
 
     var fs = require('fs'),
-        path = require('path'),
-        tree = require('../tree.json');
+        path = require('path');
+
+    if (!fs.existsSync('./tree.json')) {
+        console.error('File tree.json doesn\'t exist in your repository, run ' +
+        'npx gulp jsdoc-options and try to generate changelog again.');
+        return false;
+    }
+
+    // eslint-disable-next-line node/no-missing-require
+    var tree = require('../tree.json');
 
     /**
      * Return a list of options so that we can auto-link option references in
@@ -80,9 +89,10 @@ const getFile = url => new Promise((resolve, reject) => {
     async function getLog(callback) {
         var log = await prLog(
             params.since,
-            params.fromCache
+            params.fromCache,
+            params.branches,
+            params.highchartsDashboards
         ).catch(e => console.error(e));
-
         callback(log);
     }
 
@@ -137,19 +147,19 @@ const getFile = url => new Promise((resolve, reject) => {
             // objects
             if (replacements.length > 1) {
                 replacements = replacements.filter(
-                    longKey => longKey.lastIndexOf(shortKey) === longKey.length - shortKey.length
+                    longKey => longKey.startsWith(shortKey)
                 );
 
                 // Check if it is a member on the root series options
                 if (
                     replacements.length > 1 &&
-                    replacements.indexOf(`plotOptions.series.${shortKey}`) !== -1
+                    replacements.includes(`plotOptions.series.${shortKey}`)
                 ) {
                     replacements = replacements.filter(longKey => {
                         // Remove series-specific members so that we may isolate
                         // it to plotOptions.series.shortKey
                         const m = longKey.match(
-                            new RegExp('plotOptions\.([a-zA-Z\.]+)\.' + shortKey)
+                            new RegExp('plotOptions\\.([a-zA-Z\\.]+)\\.' + shortKey)
                         );
                         return !m || m[1] === 'series';
                     });
@@ -182,23 +192,31 @@ const getFile = url => new Promise((resolve, reject) => {
                 Highcharts: 'highcharts',
                 'Highcharts Stock': 'highstock',
                 'Highcharts Maps': 'highmaps',
-                'Highcharts Gantt': 'gantt'
+                'Highcharts Gantt': 'gantt',
+                'Highcharts Dashboards': 'dashboards'
             }[name];
 
+        log = log || [];
         log = washPRLog(name, log);
 
-        const upgradeNotes = log
-            .filter(change => typeof change.upgradeNote === 'string')
-            .map(change => addLinks(`- ${change.upgradeNote}`, apiFolder))
-            .join('\n');
+        const upgradeNotes = [];
+        log
+            .filter(change => Array.isArray(change.upgradeNotes))
+            .forEach(change => {
+                change.upgradeNotes.forEach(note => {
+                    upgradeNotes.push(addLinks(`- ${note}`, apiFolder));
+                });
+            });
 
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
-        if (name !== 'Highcharts') {
-            outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
-        } else if (log.length === 0) {
-            outputString += '- No changes for the basic Highcharts package.';
+        if (name !== 'Highcharts Dashboards') {
+            if (name !== 'Highcharts') {
+                outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
+            } else if (log.length === 0) {
+                outputString += '- No changes for the basic Highcharts package.';
+            }
         }
 
         log.forEach((change, i) => {
@@ -209,8 +227,13 @@ const getFile = url => new Promise((resolve, reject) => {
             // Start fixes
             if (i === log.startFixes) {
 
-                if (upgradeNotes) {
-                    outputString += `\n## Upgrade notes\n${upgradeNotes}\n`;
+                if (upgradeNotes.length) {
+                    outputString += [
+                        '',
+                        '## Upgrade notes',
+                        ...upgradeNotes,
+                        ''
+                    ].join('\n');
                 }
 
                 outputString += '\n## Bug fixes\n';
@@ -248,12 +271,26 @@ const getFile = url => new Promise((resolve, reject) => {
     function saveReview(md) {
 
         const filename = path.join(__dirname, 'review.html');
+        const html = `<html>
+        <head>
+            <title>Changelog Review</title>
+            <style>
+            * {
+                font-family: sans-serif
+            }
+            code {
+                font-family: monospace;
+                color: green;
+            }
+            </style>
+        </head>
+        <body>
+        ${marked.parse(md)}
+        </body>
+        </html>`;
 
-        fs.writeFileSync(
-            filename,
-            marked.parse(md),
-            'utf8'
-        );
+
+        fs.writeFileSync(filename, html, 'utf8');
 
         console.log(`Review: ${filename}`);
     }
@@ -269,44 +306,74 @@ const getFile = url => new Promise((resolve, reject) => {
         const d = new Date();
         const review = [];
 
-        // Load the current products and versions, and create one log each
-        getFile('https://code.highcharts.com/products.js')
-            .then(products => {
-                var name;
-
-                if (products) {
-                    products = products.replace('var products = ', '');
-                    products = JSON.parse(products);
+        if (params.highchartsDashboards && params.release) {
+            const version = params.release;
+            if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
+                throw new Error('No valid `--release x.x.x` provided.');
+            }
+            const dashboardsName = 'Highcharts Dashboards';
+            const dashboardsProduct = {
+                'Highcharts Dashboards': {
+                    nr: version,
+                    date: d.getFullYear() + '-' +
+                pad(d.getMonth() + 1, 2) + '-' +
+                pad(d.getDate(), 2)
                 }
+            };
 
-                for (name in products) {
 
-                    if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
-                        const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
+            review.push(buildMarkdown(
+                dashboardsName,
+                version,
+                dashboardsProduct[dashboardsName].date,
+                log,
+                void 0,
+                optionKeys
+            ));
+            if (params.review) {
+                saveReview(review.join('\n\n___\n'));
+            }
+        } else {
+            // Load the current products and versions, and create one log each
+            getFile('https://code.highcharts.com/products.js')
+                .then(products => {
+                    let name;
+                    const version = params.buildMetadata ?
+                        `${pack.version}+build.${getLatestGitSha()}` :
+                        pack.version;
 
-                        products[name].nr = version;
-                        products[name].date =
-                            d.getFullYear() + '-' +
-                            pad(d.getMonth() + 1, 2) + '-' +
-                            pad(d.getDate(), 2);
+                    if (products) {
+                        products = products.replace('var products = ', '');
+                        products = JSON.parse(products);
 
-                        review.push(buildMarkdown(
-                            name,
-                            version,
-                            products[name].date,
-                            log,
-                            products,
-                            optionKeys
-                        ));
+                        for (name in products) {
+
+                            if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
+
+                                products[name].date =
+                                    d.getFullYear() + '-' +
+                                    pad(d.getMonth() + 1, 2) + '-' +
+                                    pad(d.getDate(), 2);
+
+                                review.push(buildMarkdown(
+                                    name,
+                                    products[name].nr || version,
+                                    products[name].date,
+                                    log,
+                                    products,
+                                    optionKeys
+                                ));
+                            }
+                        }
                     }
-                }
 
-                if (params.review) {
-                    saveReview(review.join('\n\n___\n'));
-                }
-            })
-            .catch(err => {
-                throw err;
-            });
+                    if (params.review) {
+                        saveReview(review.join('\n\n___\n'));
+                    }
+                })
+                .catch(err => {
+                    throw err;
+                });
+        }
     });
 }());

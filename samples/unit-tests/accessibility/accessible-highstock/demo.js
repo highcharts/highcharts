@@ -22,6 +22,12 @@ QUnit.test('Basic stock chart', function (assert) {
             .element.textContent.length,
         'There be screen reader region'
     );
+
+    assert.strictEqual(
+        chart.accessibility.components.navigator.maxHandleProxy.value,
+        '100',
+        'Navigator handle should have proxy and correct value'
+    );
 });
 
 QUnit.test('Stock chart with forced markers', function (assert) {

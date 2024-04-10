@@ -1,0 +1,65 @@
+name: Highcharts Browserstack tests
+
+on:
+  workflow_call:
+    inputs:
+      testTimezones:
+        description: 'Whether Browserstack tests should run'
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      BROWSERSTACK_USER:
+        required: true
+      BROWSERSTACK_KEY:
+        required: true
+
+jobs:
+  test_bs:
+    runs-on: ubuntu-latest
+    environment: browserstack
+    name: Browserstack
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: 'BrowserStack Env Setup'
+        uses: 'browserstack/github-actions/setup-env@master'
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USER }}
+          access-key: ${{ secrets.BROWSERSTACK_KEY }}
+      - name: 'BrowserStackLocal Setup'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: start
+          local-identifier: 'karma-highcharts'
+
+      - name: Run BrowserStack karma (Safari)
+        run: npx gulp test --single-run --splitbrowsers Mac.Safari
+
+      - name: Run mac timezone tests
+        if: ${{ inputs.testTimezones}}
+        run: |
+          ./.github/scripts/test_timezones.sh -b=Mac.Safari
+
+      - name: Run windows timezone tests
+        if: ${{ inputs.testTimezones}}
+        run: |
+          ./.github/scripts/test_timezones.sh -b=Win.Chrome
+
+      - name: 'BrowserStackLocal Stop'
+        uses: 'browserstack/github-actions/setup-local@master'
+        with:
+          local-testing: stop

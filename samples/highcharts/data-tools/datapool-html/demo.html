@@ -1,0 +1,36 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data-tools.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<fieldset>
+    <legend><h4>DataPool.setConnectorOptions()</h4></legend>
+    <label for="set-connector-id">ID:</label>
+    <input type="text" id="set-connector-id" value="My Connector" />
+    <label for="set-connector-type">Type:</label>
+    <select type="text" id="set-connector-type">
+        <option>CSV</option>
+        <option>GoogleSheets</option>
+    </select>
+    <label for="set-connector-options">Options:</label>
+    <textarea id="set-connector-options" rows="4"></textarea>
+    <span></span>
+    <button type="button" id="set-connector-button">Set Connector Options</label>
+</fieldset>
+
+<p>
+    This demo shows the loading-on-demand nature of the DataPool.
+    Use the form fields above to configure connectors for the pool.
+    Select one connector below to load a table from.
+    Load a connector multiple times to see the difference to the first loading.
+</p>
+
+<fieldset>
+    <legend><h4>DataPool.getConnectorTable()</h4></legend>
+    <label for="get-connector-select">ID:</label>
+    <select id="get-connector-select"></select>
+    <span></span>
+    <button type="button" id="get-connector-button">Load Connector Table</label>
+</fieldset>
+
+<div id="log"></div>
+<div id="container"></div>

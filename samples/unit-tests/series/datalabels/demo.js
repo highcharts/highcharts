@@ -67,7 +67,9 @@ QUnit.test('Bottom -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
+        chart.series[0].points[0].dataLabel.element.getAttribute(
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.close(
@@ -109,7 +111,9 @@ QUnit.test('Top -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
+        chart.series[0].points[0].dataLabel.element.getAttribute(
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -195,7 +199,9 @@ QUnit.test('Bottom 90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
+        chart.series[0].points[0].dataLabel.element.getAttribute(
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -232,7 +238,9 @@ QUnit.test('Top 90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
+        chart.series[0].points[0].dataLabel.element.getAttribute(
+            'visibility'
+        ) !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -487,5 +495,28 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
         ),
         [null, null, null],
         'Data labels should be visible'
+    );
+
+    chart.series[0].update({
+        type: 'line',
+        marker: {
+            enabled: false
+        }
+    });
+
+    chart.series[0].points[0].onMouseOver();
+    chart.series[0].points[0].onMouseOut();
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.element.getAttribute('opacity'),
+        null,
+        `Hovering over points without markers should not set labels opacity,
+        #17957.`
+    );
+    assert.deepEqual(
+        chart.series[0].points.map(p =>
+            p.dataLabel.element.getAttribute('visibility')
+        ),
+        [null, null, null],
+        'Hovering over points without markers should not hide labels, #17957.'
     );
 });

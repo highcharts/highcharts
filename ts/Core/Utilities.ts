@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
  *
  * */
 
+import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type {
@@ -24,6 +25,7 @@ import type {
 } from './Renderer/DOMElementType';
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
@@ -99,10 +101,10 @@ function error(
         if (stop) {
             throw new Error(message);
         }
-        // else ...
+        // Else ...
         if (
             win.console &&
-            error.messages.indexOf(message) === -1 // prevent console flooting
+            error.messages.indexOf(message) === -1 // Prevent console flooting
         ) {
             console.warn(message); // eslint-disable-line no-console
         }
@@ -222,7 +224,8 @@ function merge<T>(): T {
             }
 
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (isObject(value, true) &&
+            if (
+                isObject(value, true) &&
                 !isClass(value) &&
                 !isDOMElement(value)
             ) {
@@ -267,46 +270,106 @@ function clamp(value: number, min: number, max: number): number {
 
 // eslint-disable-next-line valid-jsdoc
 /**
- * Remove settings that have not changed, to avoid unnecessary rendering or
- * computing (#9197).
+ * Return the deep difference between two objects. It can either return the new
+ * properties, or optionally return the old values of new properties.
  * @private
  */
-function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
-    newer: TNew,
-    older: TOld
-): TNew & TOld {
-    const result: AnyRecord = {};
+function diffObjects(
+    newer: AnyRecord,
+    older: AnyRecord,
+    keepOlder?: boolean,
+    collectionsWithUpdate?: string[]
+): AnyRecord {
+    const ret = {};
 
-    objectEach(newer, function (_val: unknown, key: (number|string)): void {
-        let ob;
+    /**
+     * Recurse over a set of options and its current values, and store the
+     * current values in the ret object.
+     */
+    function diff(
+        newer: AnyRecord,
+        older: AnyRecord,
+        ret: AnyRecord,
+        depth: number
+    ): void {
+        const keeper = keepOlder ? older : newer;
 
-        // Dive into objects (except DOM nodes)
-        if (
-            isObject(newer[key], true) &&
-            !newer.nodeType && // #10044
-            older[key]
-        ) {
-            ob = cleanRecursively(
-                newer[key],
+        objectEach(newer, function (newerVal, key): void {
+            if (
+                !depth &&
+                collectionsWithUpdate &&
+                collectionsWithUpdate.indexOf(key) > -1 &&
                 older[key]
-            );
-            if (Object.keys(ob).length) {
-                result[key] = ob;
+            ) {
+                newerVal = splat(newerVal);
+
+                ret[key] = [];
+
+                // Iterate over collections like series, xAxis or yAxis and map
+                // the items by index.
+                for (
+                    let i = 0;
+                    i < Math.max(newerVal.length, older[key].length);
+                    i++
+                ) {
+
+                    // Item exists in current data (#6347)
+                    if (older[key][i]) {
+                        // If the item is missing from the new data, we need to
+                        // save the whole config structure. Like when
+                        // responsively updating from a dual axis layout to a
+                        // single axis and back (#13544).
+                        if (newerVal[i] === void 0) {
+                            ret[key][i] = older[key][i];
+
+                        // Otherwise, proceed
+                        } else {
+                            ret[key][i] = {};
+                            diff(
+                                newerVal[i],
+                                older[key][i],
+                                ret[key][i],
+                                depth + 1
+                            );
+                        }
+                    }
+                }
+            } else if (
+                isObject(newerVal, true) &&
+                !newerVal.nodeType // #10044
+            ) {
+                ret[key] = isArray(newerVal) ? [] : {};
+                diff(newerVal, older[key] || {}, ret[key], depth + 1);
+                // Delete empty nested objects
+                if (
+                    Object.keys(ret[key]).length === 0 &&
+                    // Except colorAxis which is a special case where the empty
+                    // object means it is enabled. Which is unfortunate and we
+                    // should try to find a better way.
+                    !(key === 'colorAxis' && depth === 0)
+                ) {
+                    delete ret[key];
+                }
+
+            } else if (
+                newer[key] !== older[key] ||
+                // If the newer key is explicitly undefined, keep it (#10525)
+                (key in newer && !(key in older))
+            ) {
+
+                if (key !== '__proto__' && key !== 'constructor') {
+                    ret[key] = keeper[key];
+                }
+
             }
+        });
+    }
 
-        // Arrays, primitives and DOM nodes are copied directly
-        } else if (
-            isObject(newer[key]) ||
-            newer[key] !== older[key] ||
-            // If the newer key is explicitly undefined, keep it (#10525)
-            (key in newer && !(key in older))
-        ) {
-            result[key] = newer[key];
-        }
-    });
+    diff(newer, older, ret, 0);
 
-    return result;
+    return ret;
 }
+
 
 /**
  * Shortcut for parseInt
@@ -412,7 +475,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): obj is Utilities.Class<any> {
+function isClass<T>(obj: (object|undefined)): obj is Class<T> {
     const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -460,6 +523,80 @@ function erase(arr: Array<unknown>, item: unknown): void {
             break;
         }
     }
+}
+
+/**
+ * Insert a series or an axis in a collection with other items, either the
+ * chart series or yAxis series or axis collections, in the correct order
+ * according to the index option and whether it is internal. Used internally
+ * when adding series and axes.
+ *
+ * @private
+ * @function Highcharts.Chart#insertItem
+ * @param  {Highcharts.Series|Highcharts.Axis} item
+ *         The item to insert
+ * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis>} collection
+ *         A collection of items, like `chart.series` or `xAxis.series`.
+ * @return {number} The index of the series in the collection.
+ */
+function insertItem(
+    item: Series|AxisType,
+    collection: Array<Series|AxisType>
+): number {
+    const indexOption = (item as Series).options.index,
+        length = collection.length;
+    let i: number|undefined;
+
+    for (
+        // Internal item (navigator) should always be pushed to the end
+        i = item.options.isInternal ? length : 0;
+        i < length + 1;
+        i++
+    ) {
+        if (
+            // No index option, reached the end of the collection,
+            // equivalent to pushing
+            !collection[i] ||
+
+            // Handle index option, the element to insert has lower index
+            (
+                isNumber(indexOption) &&
+                indexOption < pick(
+                    (collection[i] as Series).options.index,
+                    (collection[i] as Series)._i
+                )
+            ) ||
+
+            // Insert the new item before other internal items
+            // (navigator)
+            collection[i].options.isInternal
+        ) {
+            collection.splice(i, 0, item);
+            break;
+        }
+    }
+    return i;
+}
+
+/**
+ * Adds an item to an array, if it is not present in the array.
+ *
+ * @function Highcharts.pushUnique
+ *
+ * @param {Array<unknown>} array
+ * The array to add the item to.
+ *
+ * @param {unknown} item
+ * The item to add.
+ *
+ * @return {boolean}
+ * Returns true, if the item was not present and has been added.
+ */
+function pushUnique(
+    array: Array<unknown>,
+    item: unknown
+): boolean {
+    return array.indexOf(item) < 0 && !!array.push(item);
 }
 
 /**
@@ -710,11 +847,6 @@ function css(
     el: DOMElementType,
     styles: CSSObject
 ): void {
-    if (H.isMS && !H.svg) { // #2686
-        if (styles && defined(styles.opacity)) {
-            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
-        }
-    }
     extend(el.style, styles as any);
 }
 
@@ -769,6 +901,7 @@ function createElement(
 /**
  * Extend a prototyped class by new members.
  *
+ * @deprecated
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -782,10 +915,10 @@ function createElement(
  *         A new prototype.
  */
 function extendClass <T, TReturn = T>(
-    parent: Utilities.Class<T>,
+    parent: Class<T>,
     members: any
-): Utilities.Class<TReturn> {
-    const obj: Utilities.Class<TReturn> = (function (): void {}) as any;
+): Class<TReturn> {
+    const obj: Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -848,6 +981,40 @@ function relativeLength(
 }
 
 /**
+ * Replaces text in a string with a given replacement in a loop to catch nested
+ * matches after previous replacements.
+ *
+ * @function Highcharts.replaceNested
+ *
+ * @param {string} text
+ * Text to search and modify.
+ *
+ * @param {...Array<(RegExp|string)>} replacements
+ * One or multiple tuples with search pattern (`[0]: (string|RegExp)`) and
+ * replacement (`[1]: string`) for matching text.
+ *
+ * @return {string}
+ * Text with replacements.
+ */
+function replaceNested(
+    text: string,
+    ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
+): string {
+    let previous: string,
+        replacement: [(string|RegExp), string];
+
+    do {
+        previous = text;
+
+        for (replacement of replacements) {
+            text = text.replace(replacement[0], replacement[1]);
+        }
+    } while (text !== previous);
+
+    return text;
+}
+
+/**
  * Wrap a method with extended functionality, preserving the original function.
  *
  * @function Highcharts.wrap
@@ -864,26 +1031,28 @@ function relativeLength(
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
  */
-function wrap(
-    obj: any,
-    method: string,
-    func: Utilities.WrapProceedFunction
+function wrap<T, K extends FunctionNamesOf<T>>(
+    obj: T,
+    method: K,
+    func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
 ): void {
-    const proceed = obj[method];
+    const proceed = obj[method] as T[K]&ArrowFunction;
 
-    obj[method] = function (): any {
-        const args = Array.prototype.slice.call(arguments),
-            outerArgs = arguments,
-            ctx = this;
+    obj[method] = function (this: T): ReturnType<typeof func> {
+        const outerArgs = arguments,
+            scope = this;
 
-        ctx.proceed = function (): void {
-            proceed.apply(ctx, arguments.length ? arguments : outerArgs);
-        };
-        args.unshift(proceed);
-        const ret = func.apply(this, args);
-        ctx.proceed = null;
-        return ret;
-    };
+        return func.apply(this, [
+            function (): ReturnType<typeof proceed> {
+                return proceed.apply(
+                    scope,
+                    arguments.length ? arguments : outerArgs
+                );
+            }
+        ].concat(
+            [].slice.call(arguments)
+        ) as Parameters<typeof func>);
+    } as T[K];
 }
 
 /**
@@ -940,11 +1109,11 @@ function normalizeTickInterval(
     let i,
         retInterval = interval;
 
-    // round to a tenfold of 1, 2, 2.5 or 5
+    // Round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, getMagnitude(interval));
     const normalized = interval / magnitude;
 
-    // multiples for a linear scale
+    // Multiples for a linear scale
     if (!multiples) {
         multiples = hasTickAmount ?
             // Finer grained ticks when the tick amount is hard set, including
@@ -955,7 +1124,7 @@ function normalizeTickInterval(
             [1, 2, 2.5, 5, 10];
 
 
-        // the allowDecimals option
+        // The allowDecimals option
         if (allowDecimals === false) {
             if (magnitude === 1) {
                 multiples = multiples.filter(function (num: number): boolean {
@@ -967,10 +1136,10 @@ function normalizeTickInterval(
         }
     }
 
-    // normalize the interval to the nearest multiple
+    // Normalize the interval to the nearest multiple
     for (i = 0; i < multiples.length; i++) {
         retInterval = multiples[i];
-        // only allow tick amounts smaller than natural
+        // Only allow tick amounts smaller than natural
         if (
             (
                 hasTickAmount &&
@@ -1028,7 +1197,7 @@ function stableSort<T>(
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        (arr[i] as any).safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // Stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1038,7 +1207,7 @@ function stableSort<T>(
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete (arr[i] as any).safeI; // stable sort index
+        delete (arr[i] as any).safeI; // Stable sort index
     }
 }
 
@@ -1105,16 +1274,22 @@ function arrayMax(data: Array<any>): number {
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj: any, except?: any): void {
+function destroyObjectProperties(
+    obj: any,
+    except?: any,
+    destructablesOnly?: boolean
+): void {
     objectEach(obj, function (val, n): void {
         // If the object is non-null and destroy is defined
-        if (val && val !== except && val.destroy) {
+        if (val !== except && val?.destroy) {
             // Invoke the destroy
             val.destroy();
         }
 
-        // Delete the property from the object.
-        delete obj[n];
+        // Delete the property from the object
+        if (val?.destroy || !destructablesOnly) {
+            delete obj[n];
+        }
     });
 }
 
@@ -1190,6 +1365,48 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Find the closest distance between two values of a two-dimensional array
+ * @private
+ * @function Highcharts.getClosestDistance
+ *
+ * @param {Array<Array<number>>} arrays
+ *          An array of arrays of numbers
+ *
+ * @return {number | undefined}
+ *          The closest distance between values
+ */
+function getClosestDistance(
+    arrays: number[][],
+    onError?: Function
+): (number|undefined) {
+    const allowNegative = !onError;
+    let closest: number | undefined,
+        loopLength: number,
+        distance: number,
+        i: number;
+
+    arrays.forEach((xData): void => {
+        if (xData.length > 1) {
+            loopLength = xData.length - 1;
+            for (i = loopLength; i > 0; i--) {
+                distance = xData[i] - xData[i - 1];
+                if (distance < 0 && !allowNegative) {
+                    onError?.();
+                    // Only one call
+                    onError = void 0;
+                } else if (distance && (
+                    typeof closest === 'undefined' || distance < closest
+                )) {
+                    closest = distance;
+                }
+            }
+        }
+    });
+
+    return closest;
+}
+
+/**
  * Returns the value of a property path on a given object.
  *
  * @private
@@ -1216,7 +1433,15 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof pathElement === 'undefined' ||
             pathElement === '__proto__'
         ) {
-            return; // undefined
+            return; // Undefined
+        }
+
+        if (pathElement === 'this') {
+            let thisProp;
+            if (isObject(parent)) {
+                thisProp = (parent as Record<string, unknown>)['@this'];
+            }
+            return thisProp ?? parent;
         }
 
         const child = (parent as Record<string, unknown>)[
@@ -1230,7 +1455,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof child.nodeType === 'number' ||
             child as unknown === win
         ) {
-            return; // undefined
+            return; // Undefined
         }
 
         // Else, proceed
@@ -1273,11 +1498,6 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (
-        (H as any).getStyle || // oldie getStyle
-        getStyle
-    );
-
     let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
@@ -1303,8 +1523,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (customGetStyle(el, 'padding-left', true) || 0) -
-                (customGetStyle(el, 'padding-right', true) || 0)
+                (getStyle(el, 'padding-left', true) || 0) -
+                (getStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1314,15 +1534,10 @@ function getStyle(
             0, // #8377
             (
                 Math.min(el.offsetHeight, el.scrollHeight) -
-                (customGetStyle(el, 'padding-top', true) || 0) -
-                (customGetStyle(el, 'padding-bottom', true) || 0)
+                (getStyle(el, 'padding-top', true) || 0) -
+                (getStyle(el, 'padding-bottom', true) || 0)
             )
         );
-    }
-
-    if (!win.getComputedStyle) {
-        // SVG not supported, forgot to load oldie.js?
-        error(27, true);
     }
 
     // Otherwise, get the computed style
@@ -1561,7 +1776,7 @@ function objectEach<TObject, TContext>(
  *        The array to test
  *
  * @param {Function} fn
- *        The function to run on each item. Return truty to pass the test.
+ *        The function to run on each item. Return truthy to pass the test.
  *        Receives arguments `currentValue`, `index` and `array`.
  *
  * @param {*} ctx
@@ -1591,24 +1806,27 @@ objectEach({
  *
  * @function Highcharts.addEvent<T>
  *
- * @param {Highcharts.Class<T>|T} el
- *        The element or object to add a listener to. It can be a
- *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
+ * @param  {Highcharts.Class<T>|T} el
+ *         The element or object to add a listener to. It can be a
+ *         {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
- * @param {string} type
- *        The event type.
+ * @param  {string} type
+ *         The event type.
  *
- * @param {Highcharts.EventCallbackFunction<T>|Function} fn
- *        The function callback to execute when the event is fired.
+ * @param  {Highcharts.EventCallbackFunction<T>|Function} fn
+ *         The function callback to execute when the event is fired.
  *
- * @param {Highcharts.EventOptionsObject} [options]
- *        Options for adding the event.
+ * @param  {Highcharts.EventOptionsObject} [options]
+ *         Options for adding the event.
+ *
+ * @sample highcharts/members/addevent
+ *         Use a general `render` event to draw shapes on a chart
  *
  * @return {Function}
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type: string,
     fn: (EventCallback<T>|Function),
     options: Utilities.EventOptions = {}
@@ -1628,7 +1846,8 @@ function addEvent<T>(
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // without H a dependency loop occurs
+    if (
+        (H as any).Point && // Without H a dependency loop occurs
         el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
@@ -1639,9 +1858,7 @@ function addEvent<T>(
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
-    const addEventListener = (
-        (el as any).addEventListener || H.addEventListenerPolyfill
-    );
+    const addEventListener = (el as any).addEventListener;
     if (addEventListener) {
         addEventListener.call(
             el,
@@ -1697,7 +1914,7 @@ function addEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
@@ -1710,9 +1927,7 @@ function removeEvent<T>(
         type: string,
         fn: (EventCallback<T>|Function)
     ): void {
-        const removeEventListener = (
-            (el as any).removeEventListener || H.removeEventListenerPolyfill
-        );
+        const removeEventListener = (el as any).removeEventListener;
 
         if (removeEventListener) {
             removeEventListener.call(el, type, fn, false);
@@ -1727,7 +1942,7 @@ function removeEvent<T>(
             len;
 
         if (!(el as any).nodeName) {
-            return; // break on non-DOM events
+            return; // Break on non-DOM events
         }
 
         if (type) {
@@ -1804,12 +2019,10 @@ function fireEvent<T>(
     defaultFunction?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
-    let e,
-        i;
-
     eventArguments = eventArguments || {};
 
-    if (doc.createEvent &&
+    if (
+        doc.createEvent &&
         (
             (el as any).dispatchEvent ||
             (
@@ -1819,7 +2032,7 @@ function fireEvent<T>(
             )
         )
     ) {
-        e = doc.createEvent('Events');
+        const e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
         eventArguments = extend(e, eventArguments);
@@ -1846,8 +2059,7 @@ function fireEvent<T>(
                 // the zoom-out button in Chrome.
                 target: el,
                 // If the type is not set, we're running a custom event
-                // (#2297). If it is set, we're running a browser event,
-                // and setting it will cause en error in IE8 (#2465).
+                // (#2297). If it is set, we're running a browser event.
                 type: type
             });
         }
@@ -1986,7 +2198,7 @@ if ((win as any).jQuery) {
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.
@@ -1997,7 +2209,7 @@ if ((win as any).jQuery) {
     (win as any).jQuery.fn.highcharts = function (): any {
         const args = [].slice.call(arguments) as any;
 
-        if (this[0]) { // this[0] is the renderTo div
+        if (this[0]) { // `this[0]` is the renderTo div
 
             // Create the chart
             if (args[0]) {
@@ -2023,9 +2235,6 @@ if ((win as any).jQuery) {
 
 namespace Utilities {
     export type RelativeSize = (number|string);
-    export interface Class<T = any> extends Function {
-        new(...args: Array<any>): T;
-    }
     export interface ErrorMessageEventObject {
         chart?: Chart;
         code: number;
@@ -2060,8 +2269,8 @@ namespace Utilities {
         top: number;
         width: number;
     }
-    export interface WrapProceedFunction {
-        (...args: Array<any>): any;
+    export interface WrapProceedFunction<T extends ArrowFunction> {
+        (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
     }
 }
 
@@ -2078,13 +2287,13 @@ const Utilities = {
     arrayMin,
     attr,
     clamp,
-    cleanRecursively,
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
     css,
     defined,
     destroyObjectProperties,
+    diffObjects,
     discardElement,
     erase,
     error,
@@ -2092,10 +2301,12 @@ const Utilities = {
     extendClass,
     find,
     fireEvent,
+    getClosestDistance,
     getMagnitude,
     getNestedProperty,
     getStyle,
     inArray,
+    insertItem,
     isArray,
     isClass,
     isDOMElement,
@@ -2111,8 +2322,10 @@ const Utilities = {
     pad,
     pick,
     pInt,
+    pushUnique,
     relativeLength,
     removeEvent,
+    replaceNested,
     splat,
     stableSort,
     syncTimeout,
@@ -2138,7 +2351,7 @@ export default Utilities;
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
- * A callback function to exectute when the animation finishes.
+ * A callback function to execute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
  *//**
@@ -2178,7 +2391,7 @@ export default Utilities;
  * @interface Highcharts.Class<T>
  * @extends Function
  *//**
- * Class costructor.
+ * Class constructor.
  * @function Highcharts.Class<T>#new
  * @param {...Array<*>} args
  *        Constructor arguments.
@@ -2355,7 +2568,7 @@ export default Utilities;
  */
 
 /**
- * Formats data as a string. Usually the data is accessible throught the `this`
+ * Formats data as a string. Usually the data is accessible through the `this`
  * keyword.
  *
  * @callback Highcharts.FormatterCallbackFunction<T>
@@ -2469,4 +2682,4 @@ export default Utilities;
  * @namespace Highcharts
  */
 
-''; // detach doclets above
+''; // Detach doclets above

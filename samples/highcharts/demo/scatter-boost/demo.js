@@ -1,11 +1,19 @@
 // Prepare the data
-var data = [],
-    n = 1000000,
-    i;
-for (i = 0; i < n; i += 1) {
+
+const data = [],
+    n = 1000000;
+
+// Generate and position the datapoints in a tangent wave pattern
+for (let i = 0; i < n; i += 1) {
+    const theta = Math.random() * 2 * Math.PI;
+    const radius = Math.pow(Math.random(), 2) * 100;
+
+    const waveDeviation = (Math.random() - 0.5) * 70;
+    const waveValue = Math.tan(theta) * waveDeviation;
+
     data.push([
-        Math.pow(Math.random(), 2) * 100,
-        Math.pow(Math.random(), 2) * 100
+        50 + (radius + waveValue) * Math.cos(theta),
+        50 + (radius + waveValue) * Math.sin(theta)
     ]);
 }
 
@@ -17,7 +25,9 @@ console.time('scatter');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         height: '100%'
     },
 
@@ -28,7 +38,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>' +
+                '{chartTitle}</{headingTagName}><div>{chartLongdesc}</div>' +
+                '<div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
         }
     },
 
@@ -50,7 +62,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with 1 million points'
+        text: 'Scatter chart with 1 million points',
+        align: 'left'
     },
 
     legend: {

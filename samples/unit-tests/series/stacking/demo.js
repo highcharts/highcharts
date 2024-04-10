@@ -150,12 +150,10 @@ QUnit.test('Date objects as X values, column', function (assert) {
         ]
     });
 
-    assert.ok(
-        parseInt(
-            chart.series[0].points[0].graphic.element.getAttribute('width'),
-            10
-        ) > 10,
-        'Column created'
+    assert.greaterThan(
+        chart.series[0].points[0].graphic.width,
+        10,
+        'Column should be created'
     );
 });
 
@@ -244,7 +242,8 @@ QUnit.test('Date objects as X values, column', function (assert) {
         chart.redraw();
 
         // Check that stacks have been removed.
-        // Note: the size of the stacks is now 10, while we would ideally have 5.
+        // Note: the size of the stacks is now 10, while we would ideally
+        // have 5.
         // It seems like the initial 5 are not removed at all.
         assert.strictEqual(
             sizeof(chart.yAxis[0].stacking.stacks[chart.series[0].stackKey]) <
@@ -254,8 +253,8 @@ QUnit.test('Date objects as X values, column', function (assert) {
         );
     });
 
-    // Highcharts 3.0.10, Issue #2813
-    // stack's labels lives their own lives when you dynamically change type of stack normal <=> percent
+    // Highcharts 3.0.10, Issue #2813. Stack's labels lives their own lives when
+    // you dynamically change type of stack normal <=> percent
     QUnit.test('stacklabels update #2813', function (assert) {
         var chart = Highcharts.chart('container', {
                 chart: {
@@ -294,7 +293,8 @@ QUnit.test('Date objects as X values, column', function (assert) {
                 tooltip: {
                     enabled: false,
                     pointFormat:
-                        '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+                        '<span style="color:{series.color}">' +
+                        '{series.name}</span>: <b>{point.y}</b><br/>',
                     shared: false
                 },
                 plotOptions: {

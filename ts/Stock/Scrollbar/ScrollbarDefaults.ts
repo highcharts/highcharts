@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,8 +18,6 @@
 
 import type ScrollbarOptions from './ScrollbarOptions';
 
-import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
@@ -31,7 +29,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 /**
  *
  * The scrollbar is a means of panning over the X axis of a stock chart.
- * Scrollbars can  also be applied to other types of axes.
+ * Scrollbars can also be applied to other types of axes.
  *
  * Another approach to scrollable charts is the [chart.scrollablePlotArea](
  * https://api.highcharts.com/highcharts/chart.scrollablePlotArea) option that
@@ -53,17 +51,16 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const ScrollbarDefaults: ScrollbarOptions = {
 
     /**
-     * The height of the scrollbar. The height also applies to the width
-     * of the scroll arrows so that they are always squares. Defaults to
-     * 20 for touch devices and 14 for mouse devices.
+     * The height of the scrollbar. If `buttonsEnabled` is true , the height
+     * also applies to the width of the scroll arrows so that they are always
+     * squares.
      *
-     * @sample stock/scrollbar/height/
-     *         A 30px scrollbar
+     * @sample stock/scrollbar/style/
+     *         Non-default height
      *
      * @type    {number}
-     * @default 20/14
      */
-    height: isTouchDevice ? 20 : 14,
+    height: 10,
 
     /**
      * The border rounding radius of the bar.
@@ -71,7 +68,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      */
-    barBorderRadius: 0,
+    barBorderRadius: 5,
 
     /**
      * The corner radius of the scrollbar buttons.
@@ -80,6 +77,13 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *         Scrollbar styling
      */
     buttonBorderRadius: 0,
+
+    /**
+     * Enable or disable the buttons at the end of the scrollbar.
+     *
+     * @since 11.0.0
+     */
+    buttonsEnabled: false,
 
     /**
      * Enable or disable the scrollbar.
@@ -107,9 +111,12 @@ const ScrollbarDefaults: ScrollbarOptions = {
 
     /**
      * The margin between the scrollbar and its axis when the scrollbar is
-     * applied directly to an axis.
+     * applied directly to an axis, or the navigator in case that is enabled.
+     * Defaults to 10 for axis, 0 for navigator.
+     *
+     * @type {number|undefined}
      */
-    margin: 10,
+    margin: void 0,
 
     /**
      * The minimum width of the scrollbar.
@@ -153,7 +160,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      */
-    barBorderWidth: 1,
+    barBorderWidth: 0,
 
     /**
      * The color of the scrollbar's border.
@@ -205,7 +212,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    rifleColor: Palette.neutralColor80,
+    rifleColor: 'none',
 
     /**
      * The color of the track background.
@@ -215,7 +222,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    trackBackgroundColor: Palette.neutralColor5,
+    trackBackgroundColor: 'rgba(255, 255, 255, 0.001)', // #18922
 
     /**
      * The color of the border of the scrollbar track.
@@ -225,18 +232,15 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    trackBorderColor: Palette.neutralColor5,
+    trackBorderColor: Palette.neutralColor20,
 
     /**
      * The corner radius of the border of the scrollbar track.
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
-     *
-     * @type      {number}
-     * @default   0
-     * @apioption scrollbar.trackBorderRadius
      */
+    trackBorderRadius: 5,
 
     /**
      * The width of the border of the scrollbar track.

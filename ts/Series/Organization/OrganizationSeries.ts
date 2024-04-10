@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,14 +34,13 @@ import OrganizationSeriesDefaults from './OrganizationSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PathUtilities from '../PathUtilities.js';
 const {
-    seriesTypes: {
-        sankey: SankeySeries
-    }
-} = SeriesRegistry;
+    sankey: SankeySeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     css,
     extend,
+    isNumber,
     merge,
     pick
 } = U;
@@ -75,29 +74,21 @@ class OrganizationSeries extends SankeySeries {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /* *
-     *
      *  Properties
      *
      * */
 
-    public data: Array<OrganizationPoint> = void 0 as any;
+    public data!: Array<OrganizationPoint>;
 
-    public options: OrganizationSeriesOptions = void 0 as any;
+    public options!: OrganizationSeriesOptions;
 
-    public points: Array<OrganizationPoint> = void 0 as any;
+    public points!: Array<OrganizationPoint>;
 
     /* *
      *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     public alignDataLabel(
         point: OrganizationPoint,
@@ -106,13 +97,15 @@ class OrganizationSeries extends SankeySeries {
     ): void {
         // Align the data label to the point graphic
         const shapeArgs = point.shapeArgs;
+
         if (options.useHTML && shapeArgs) {
+            const padjust = (
+                (this.options.borderWidth as any) +
+                2 * (this.options.dataLabels as any).padding
+            );
+
             let width = shapeArgs.width || 0,
-                height = shapeArgs.height || 0,
-                padjust = (
-                    (this.options.borderWidth as any) +
-                    2 * (this.options.dataLabels as any).padding
-                );
+                height = shapeArgs.height || 0;
 
             if (this.chart.inverted) {
                 width = height;
@@ -229,7 +222,7 @@ class OrganizationSeries extends SankeySeries {
 
             delete attribs.fill;
         } else {
-            if (borderRadius) {
+            if (isNumber(borderRadius)) {
                 attribs.r = borderRadius;
             }
         }
@@ -237,19 +230,24 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public translateLink(point: OrganizationPoint): void {
-        let fromNode = point.fromNode,
+        const chart = this.chart,
+            options = this.options,
+            fromNode = point.fromNode,
             toNode = point.toNode,
-            linkWidth = pick(
-                this.options.linkLineWidth,
-                this.options.link.lineWidth
-            ),
+            linkWidth = pick(options.linkLineWidth, options.link.lineWidth),
             crisp = (Math.round(linkWidth) % 2) / 2,
-            factor = pick((this as any).options.link.offset, 0.5),
+            factor = pick((options.link as any).offset, 0.5),
             type = pick(
                 point.options.link && point.options.link.type,
-                this.options.link.type
+                options.link.type
             );
         if (fromNode.shapeArgs && toNode.shapeArgs) {
+            const hangingIndent: number = options.hangingIndent as any,
+                hangingRight = options.hangingSide === 'right',
+                toOffset = toNode.options.offset,
+                percentOffset =
+                    /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
+                inverted = chart.inverted;
 
             let x1 = Math.floor(
                     (fromNode.shapeArgs.x || 0) +
@@ -264,12 +262,7 @@ class OrganizationSeries extends SankeySeries {
                     (toNode.shapeArgs.y || 0) +
                     (toNode.shapeArgs.height || 0) / 2
                 ) + crisp,
-                xMiddle,
-                hangingIndent: number = this.options.hangingIndent as any,
-                toOffset = toNode.options.offset,
-                percentOffset =
-                    /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
-                inverted = this.chart.inverted;
+                xMiddle;
 
             if (inverted) {
                 x1 -= (fromNode.shapeArgs.width || 0);
@@ -301,16 +294,21 @@ class OrganizationSeries extends SankeySeries {
             }
 
             if (toNode.hangsFrom === fromNode) {
-                if (this.chart.inverted) {
-                    y1 = Math.floor(
-                        (fromNode.shapeArgs.y || 0) +
-                        (fromNode.shapeArgs.height || 0) -
+                if (chart.inverted) {
+                    y1 = !hangingRight ?
+                        Math.floor(
+                            (fromNode.shapeArgs.y || 0) +
+                            (fromNode.shapeArgs.height || 0) -
+                            hangingIndent / 2
+                        ) + crisp :
+                        Math.floor(
+                            (fromNode.shapeArgs.y || 0) +
                         hangingIndent / 2
-                    ) + crisp;
-                    y2 = (
+                        ) + crisp;
+                    y2 = !hangingRight ? (
                         (toNode.shapeArgs.y || 0) +
                         (toNode.shapeArgs.height || 0)
-                    );
+                    ) : (toNode.shapeArgs.y || 0) + hangingIndent / 2;
                 } else {
                     y1 = Math.floor(
                         (fromNode.shapeArgs.y || 0) +
@@ -344,14 +342,14 @@ class OrganizationSeries extends SankeySeries {
                 };
             } else {
                 point.shapeArgs = {
-                    d: PathUtilities.curvedPath(
+                    d: PathUtilities.applyRadius(
                         [
                             ['M', x1, y1],
                             ['L', xMiddle, y1],
                             ['L', xMiddle, y2],
                             ['L', x2, y2]
                         ],
-                        pick(this.options.linkRadius, this.options.link.radius)
+                        pick(options.linkRadius, options.link.radius)
                     )
                 };
             }
@@ -370,21 +368,38 @@ class OrganizationSeries extends SankeySeries {
         node: OrganizationPoint,
         column: SankeyColumnComposition.ArrayComposition<OrganizationPoint>
     ): void {
-        SankeySeries.prototype.translateNode.call(this, node, column);
-        let parentNode = node.hangsFrom,
-            indent = this.options.hangingIndent || 0,
-            sign = this.chart.inverted ? -1 : 1,
+        super.translateNode(node, column);
+
+        const chart = this.chart,
+            options = this.options,
+            sum = node.getSum(),
+            translationFactor = this.translationFactor,
+            nodeHeight = Math.max(
+                Math.round(sum * translationFactor),
+                options.minLinkWidth || 0
+            ),
+            hangingRight = options.hangingSide === 'right',
+            indent = options.hangingIndent || 0,
+            indentLogic = options.hangingIndentTranslation,
+            minLength = options.minNodeLength || 10,
+            nodeWidth = Math.round(this.nodeWidth),
             shapeArgs = (node.shapeArgs as any),
-            indentLogic = this.options.hangingIndentTranslation,
-            minLength = this.options.minNodeLength || 10;
+            sign = chart.inverted ? -1 : 1;
+
+        let parentNode = node.hangsFrom;
 
         if (parentNode) {
             if (indentLogic === 'cumulative') {
                 // Move to the right:
                 shapeArgs.height -= indent;
-                shapeArgs.y -= sign * indent;
+
+                // If hanging right, first indent is handled by shrinking.
+                if (chart.inverted && !hangingRight) {
+                    shapeArgs.y -= sign * indent;
+                }
                 while (parentNode) {
-                    shapeArgs.y += sign * indent;
+                    // Hanging right is the same direction as non-inverted.
+                    shapeArgs.y += (hangingRight ? 1 : sign) * indent;
                     parentNode = parentNode.hangsFrom;
                 }
             } else if (indentLogic === 'shrink') {
@@ -394,23 +409,52 @@ class OrganizationSeries extends SankeySeries {
                     shapeArgs.height > indent + minLength
                 ) {
                     shapeArgs.height -= indent;
+
+                    // Fixes nodes not dropping in non-inverted charts.
+                    // Hanging right is the same as non-inverted.
+                    if (!chart.inverted || hangingRight) {
+                        shapeArgs.y += indent;
+                    }
                     parentNode = parentNode.hangsFrom;
                 }
             } else {
-                // indentLogic === "inherit"
+                // Option indentLogic === "inherit"
                 // Do nothing (v9.3.2 and prev versions):
                 shapeArgs.height -= indent;
-                if (!this.chart.inverted) {
+                if (!chart.inverted || hangingRight) {
                     shapeArgs.y += indent;
                 }
             }
         }
-        node.nodeHeight = this.chart.inverted ?
+        node.nodeHeight = chart.inverted ?
             shapeArgs.width :
             shapeArgs.height;
+
+        // Calculate shape args correctly to align nodes to center (#19946)
+        if (node.shapeArgs && !node.hangsFrom) {
+            node.shapeArgs = merge(node.shapeArgs, {
+                x: (node.shapeArgs.x || 0) + (nodeWidth / 2) -
+                    ((node.shapeArgs.width || 0) / 2),
+                y: (node.shapeArgs.y || 0) + (nodeHeight / 2) -
+                    ((node.shapeArgs.height || 0) / 2)
+            });
+        }
     }
 
-    /* eslint-enable valid-jsdoc */
+    public drawDataLabels(): void {
+        const dlOptions = this.options.dataLabels;
+
+        if (dlOptions.linkTextPath && dlOptions.linkTextPath.enabled) {
+            for (const link of this.points) {
+                link.options.dataLabels = merge(
+                    link.options.dataLabels,
+                    { useHTML: false }
+                );
+            }
+        }
+
+        super.drawDataLabels();
+    }
 
 }
 
@@ -470,4 +514,4 @@ export default OrganizationSeries;
  * @typedef {"inherit"|"cumulative"|"shrink"} Highcharts.OrganizationHangingIndentTranslationValue
  */
 
-''; // detach doclets above
+''; // Detach doclets above

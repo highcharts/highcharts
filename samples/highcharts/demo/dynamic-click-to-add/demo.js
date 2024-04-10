@@ -1,3 +1,30 @@
+// Plugin to add a pulsating marker on add point
+Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
+    const point = e.point,
+        series = e.target;
+
+    if (!series.pulse) {
+        series.pulse = series.chart.renderer.circle()
+            .add(series.markerGroup);
+    }
+    setTimeout(() => {
+        series.pulse
+            .attr({
+                x: series.xAxis.toPixels(point.x, true),
+                y: series.yAxis.toPixels(point.y, true),
+                r: series.options.marker.radius,
+                opacity: 1,
+                fill: series.color
+            })
+            .animate({
+                r: 20,
+                opacity: 0
+            }, {
+                duration: 1000
+            });
+    }, 1);
+});
+
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
@@ -5,7 +32,7 @@ Highcharts.chart('container', {
         events: {
             click: function (e) {
                 // find the clicked values and the series
-                var x = Math.round(e.xAxis[0].value),
+                const x = Math.round(e.xAxis[0].value),
                     y = Math.round(e.yAxis[0].value),
                     series = this.series[0];
 
@@ -16,10 +43,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'User supplied data'
+        text: 'User supplied data',
+        align: 'left'
     },
     subtitle: {
-        text: 'Click the plot area to add a point. Click a point to remove it.'
+        text: 'Click the plot area to add a point. Click a point to remove it.',
+        align: 'left'
     },
     accessibility: {
         announceNewData: {
@@ -53,7 +82,8 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            lineWidth: 1,
+            stickyTracking: false,
+            lineWidth: 3,
             point: {
                 events: {
                     click: function () {
@@ -66,6 +96,11 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        data: [[20, 20], [80, 80]]
+        data: [[20, 20], [80, 80]],
+        color: Highcharts.getOptions().colors[3],
+        marker: {
+            lineWidth: 2,
+            radius: 6
+        }
     }]
 });

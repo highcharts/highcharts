@@ -1,0 +1,39 @@
+#outer-container {
+    min-width: 300px;
+    max-width: 600px;
+    margin: 1em auto;
+}
+
+#outer-container .button-group {
+    padding-right: 2em;
+    padding-bottom: 4px;
+}
+
+#outer-container button {
+    padding: 1em;
+    border: 0;
+    border-radius: 2px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#container {
+    height: 400px;
+    box-shadow: 1px 2px 5px rgba(0 0 0 / 0.2);
+    margin: 1rem 0;
+    padding-right: 1%;
+}
+
+.range-container {
+    position: relative;
+    padding-top: 2em;
+}
+
+input#range {
+    width: 100%;
+}
+
+label[for="range"] {
+    top: 0;
+    position: absolute;
+}

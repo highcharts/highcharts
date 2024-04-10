@@ -25,16 +25,17 @@ Highcharts.chart('container', {
             inactiveColor: '#CCC',
             style: {
                 fontWeight: 'bold',
-                color: '#333',
-                fontSize: '12px'
+                color: '#333'
             }
         }
     },
 
     series: [{
         data: (function () {
-            var names = 'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
-                'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
+            const names = 'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,' +
+                'Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
+                'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,' +
+                'Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
                 arr = [];
 
             Highcharts.each(names.split(','), function (name) {

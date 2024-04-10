@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,8 +31,19 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
-export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
 
+declare module '../Sankey/SankeySeriesOptions' {
+    interface SankeySeriesOptions {
+        /** @requires OrganizationSeries */
+        linkColor?: OrganizationSeriesOptions['linkColor'];
+        /** @requires OrganizationSeries */
+        linkLineWidth?: OrganizationSeriesOptions['linkLineWidth'];
+        /** @requires OrganizationSeries */
+        link?: OrganizationSeriesOptions['link'];
+    }
+}
+
+export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
@@ -66,9 +77,10 @@ export interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions {
 }
 
 export interface OrganizationSeriesOptions extends SankeySeriesOptions {
-    dataLabels?: OrganizationDataLabelOptions;
+    dataLabels: OrganizationDataLabelOptions;
     hangingIndent?: number;
     hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
+    hangingSide?: 'left' | 'right';
     levels?: Array<OrganizationSeriesLevelOptions>;
     link: OrganizationLinkOptions;
     linkColor?: ColorString;
@@ -79,15 +91,10 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     states?: SeriesStatesOptions<OrganizationSeries>;
 }
 
-declare module '../Sankey/SankeySeriesOptions' {
-    interface SankeySeriesOptions {
-        /** @requires OrganizationSeries */
-        linkColor?: OrganizationSeriesOptions['linkColor'];
-        /** @requires OrganizationSeries */
-        linkLineWidth?: OrganizationSeriesOptions['linkLineWidth'];
-        /** @requires OrganizationSeries */
-        link?: OrganizationSeriesOptions['link'];
-    }
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default OrganizationSeriesOptions;

@@ -1,5 +1,5 @@
 QUnit.test(
-    "#6574 - subtitle shouldn't be rendered outside the container",
+    '#6574 - subtitle shouldn\'t be rendered outside the container',
     function (assert) {
         var chart = Highcharts.chart('container', {
                 subtitle: {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,6 @@ import type BulletTargetOptions from './BulletTargetOptions';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 
-
 /* *
  *
  *  Declarations
@@ -33,7 +32,8 @@ export interface BulletPointOptions extends ColumnPointOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default BulletPointOptions;

@@ -36,11 +36,6 @@
             mapData,
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             tooltip: {
                 valueSuffix: '/km²'
             }
@@ -52,7 +47,8 @@
 
         chart.setTitle(null, {
             text: '<b>MapView</b><br>' +
-                'center: [' + mapView.center.map(Math.round).join(', ') + ']<br>' +
+                'center: [' + mapView.center.map(Math.round).join(', ') +
+                ']<br>' +
                 'zoom: ' + mapView.zoom.toFixed(2),
             align: 'left',
             floating: true,

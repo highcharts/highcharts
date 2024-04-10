@@ -1,0 +1,2 @@
+# Fan chart
+In a fan chart, the observed past data shows as a line series to be joined with a series of estimated ranges growing around the main forecast values. The fan chart is achieved by combining a [line series](https://www.highcharts.com/docs/chart-and-series-types/line-chart) and multiple [arearange series](https://api.highcharts.com/highcharts/series.arearange). Fan charts are used mainly in finance for forecasts.

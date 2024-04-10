@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,6 +9,8 @@
  * */
 
 'use strict';
+
+/* eslint @typescript-eslint/no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 
 /* *
  *
@@ -24,28 +26,21 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import OHLCPoint from './OHLCPoint.js';
 import OHLCSeriesDefaults from './OHLCSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        hlc: HLCSeries
-    }
-} = SeriesRegistry;
+    hlc: HLCSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge
+    merge,
+    pushUnique
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<{}> = [];
 
 /* *
  *
@@ -90,7 +85,7 @@ function onSeriesInit(
     ) {
         extend(series, {
             pointValKey: OHLCSeries.prototype.pointValKey,
-            // keys: ohlcProto.keys, // @todo potentially nonsense
+            // Keys: ohlcProto.keys, // @todo potentially nonsense
             pointArrayMap: OHLCSeries.prototype.pointArrayMap,
             toYData: OHLCSeries.prototype.toYData
         });
@@ -136,9 +131,7 @@ class OHLCSeries extends HLCSeries {
         ..._args: Array<never>
     ): void {
 
-        if (composedMembers.indexOf(SeriesClass) === -1) {
-            composedMembers.push(SeriesClass);
-
+        if (pushUnique(composed, 'OHLCSeries')) {
             addEvent(SeriesClass, 'afterSetOptions', onSeriesAfterSetOptions);
             addEvent(SeriesClass, 'init', onSeriesInit);
         }
@@ -151,11 +144,11 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    public data: Array<OHLCPoint> = void 0 as any;
+    public data!: Array<OHLCPoint>;
 
-    public options: OHLCSeriesOptions = void 0 as any;
+    public options!: OHLCSeriesOptions;
 
-    public points: Array<OHLCPoint> = void 0 as any;
+    public points!: Array<OHLCPoint>;
 
     /* *
      *
@@ -171,7 +164,7 @@ class OHLCSeries extends HLCSeries {
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
         let plotOpen = point.plotOpen;
-        // crisp vector coordinates
+        // Crisp vector coordinates
 
         if (point.open !== null) {
             plotOpen = Math.round(point.plotOpen) + crispCorr;
@@ -210,7 +203,7 @@ class OHLCSeries extends HLCSeries {
     }
 
     public toYData(point: OHLCPoint): Array<number> {
-        // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     }
 

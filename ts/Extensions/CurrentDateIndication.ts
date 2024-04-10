@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -25,7 +25,7 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../Core/FormatUtilities';
+import type Templating from '../Core/Templating';
 import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
 import type {
     PlotLineLabelOptions,
@@ -33,12 +33,15 @@ import type {
 } from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
 
 import Axis from '../Core/Axis/Axis.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -50,45 +53,40 @@ const {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
-        currentDateIndicator?: (boolean|Highcharts.CurrentDateIndicatorOptions);
+        currentDateIndicator?: (boolean|CurrentDateIndicatorOptions);
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface CurrentDateIndicatorLabelFormatterCallbackFunction {
-            (value: number, format: string): string;
-        }
-        interface CurrentDateIndicatorLabelOptions {
-            align?: AlignValue;
-            format?: string;
-            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
-            rotation?: number;
-            style?: CSSObject;
-            text?: string;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface CurrentDateIndicatorOptions {
-            acrossPanes?: boolean;
-            className?: string;
-            color?: ColorString;
-            dashStyle?: DashStyleValue;
-            events?: any;
-            id?: string;
-            label?: CurrentDateIndicatorLabelOptions;
-            width?: number;
-            zIndex?: number;
-        }
-    }
+interface CurrentDateIndicatorLabelOptions {
+    align?: AlignValue;
+    format?: string;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    rotation?: number;
+    style?: CSSObject;
+    text?: string;
+    textAlign?: AlignValue;
+    useHTML?: boolean;
+    verticalAlign?: VerticalAlignValue;
+    x?: number;
+    y?: number;
 }
+interface CurrentDateIndicatorOptions {
+    acrossPanes?: boolean;
+    className?: string;
+    color?: ColorString;
+    dashStyle?: DashStyleValue;
+    events?: any;
+    id?: string;
+    label?: CurrentDateIndicatorLabelOptions;
+    width?: number;
+    zIndex?: number;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 /**
  * Show an indicator on the axis for the current date and time. Can be a
@@ -108,7 +106,7 @@ declare global {
  * @product   gantt
  * @apioption xAxis.currentDateIndicator
  */
-const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
+const defaultOptions: CurrentDateIndicatorOptions = {
     color: Palette.highlightColor20,
     width: 2,
     /**
@@ -138,14 +136,43 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
          */
         style: {
             /** @internal */
-            fontSize: '10px'
+            fontSize: '0.7em'
         }
     }
 };
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-addEvent(Axis, 'afterSetOptions', function (): void {
+/**
+ * @private
+ */
+function compose(
+    AxisClass: typeof Axis,
+    PlotLineOrBandClass: typeof PlotLineOrBand
+): void {
+
+    if (pushUnique(composed, 'CurrentDateIndication')) {
+        addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
+
+        addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
+
+        wrap(
+            PlotLineOrBandClass.prototype,
+            'getLabelText',
+            wrapPlotLineOrBandGetLabelText
+        );
+    }
+
+}
+
+/**
+ * @private
+ */
+function onAxisAfterSetOptions(this: Axis): void {
     const options = this.options,
         cdiOptions = options.currentDateIndicator;
 
@@ -165,19 +192,24 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
         options.plotLines.push(plotLineOptions);
     }
+}
 
-});
-
-addEvent(PlotLineOrBand, 'render', function (): void {
+/**
+ * @private
+ */
+function onPlotLineOrBandRender(this: PlotLineOrBand): void {
     // If the label already exists, update its text
     if (this.label) {
         this.label.attr({
             text: this.getLabelText((this.options as any).label)
         });
     }
-});
+}
 
-wrap(PlotLineOrBand.prototype, 'getLabelText', function (
+/**
+ * @private
+ */
+function wrapPlotLineOrBandGetLabelText(
     this: PlotLineOrBand,
     defaultMethod: Function,
     defaultLabelOptions: (PlotBandLabelOptions|PlotLineLabelOptions)
@@ -197,4 +229,16 @@ wrap(PlotLineOrBand.prototype, 'getLabelText', function (
             .call(this, (options as any).value, (options as any).label.format);
     }
     return defaultMethod.call(this, defaultLabelOptions);
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const CurrentDateIndication = {
+    compose
+};
+
+export default CurrentDateIndication;

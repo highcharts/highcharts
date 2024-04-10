@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -89,7 +89,7 @@ export interface CSSObject {
     position?: 'absolute'|'fixed'|'relative';
     right?: string;
     rotation?: number;
-    stroke?: ColorString;
+    stroke?: ColorType;
     'stroke-width'?: (number|string);
     strokeWidth?: CSSObject['stroke-width'];
     'text-align'?: AlignValue;

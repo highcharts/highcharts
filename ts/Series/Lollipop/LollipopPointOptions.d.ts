@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,9 @@
  *
  * */
 
-import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *
  *
@@ -22,7 +24,13 @@ import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
  *
  * */
 
-export interface LollipopPointOptions extends DumbbellPointOptions {
+export interface LollipopPointOptions extends ScatterPointOptions {
+    connectorColor?: ColorType;
+    connectorWidth?: number;
+    dashStyle?: DashStyleValue;
+    /** @deprecated */
+    lowColor?: ColorType;
+    pointWidth: number;
 }
 
 /* *

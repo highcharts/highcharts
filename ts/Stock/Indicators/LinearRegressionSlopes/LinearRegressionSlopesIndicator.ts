@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2021 Kamil Kulig
+ *  (c) 2010-2024 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,6 @@
 
 import type {
     LinearRegressionOptions,
-    LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
@@ -70,7 +69,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionslope
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
+    public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
     );
 
@@ -80,9 +79,9 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionSlopesPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionSlopesPoint> = void 0 as any;
+    public data!: Array<LinearRegressionSlopesPoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionSlopesPoint>;
 
     /* *
      *
@@ -157,4 +156,4 @@ export default LinearRegressionSlopesIndicator;
  * @apioption series.linearregressionslope
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

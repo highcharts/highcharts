@@ -1,5 +1,5 @@
 QUnit.test('pointArrayMap', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype;
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype;
     assert.deepEqual(
         wordcloudPrototype.pointArrayMap,
         ['weight'],
@@ -8,7 +8,7 @@ QUnit.test('pointArrayMap', function (assert) {
 });
 
 QUnit.test('hasData', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         hasData = wordcloudPrototype.hasData;
     assert.strictEqual(
         hasData.call(),
@@ -45,12 +45,13 @@ QUnit.test('hasData', function (assert) {
             points: ['Point']
         }),
         true,
-        'should return true if series.visible is true, and series.points has length > 0'
+        'should return true if series.visible is true, and series.points has ' +
+        'length > 0'
     );
 });
 
 QUnit.test('extendPlayingField', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         extendPlayingField = wordcloudPrototype.utils.extendPlayingField,
         field = {
             width: 20,
@@ -95,7 +96,7 @@ QUnit.test('extendPlayingField', function (assert) {
 });
 
 QUnit.test('getRotation', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         getRotation = wordcloudPrototype.utils.getRotation;
     assert.strictEqual(
         getRotation(undefined, 0, -60, 60),
@@ -135,7 +136,8 @@ QUnit.test('getRotation', function (assert) {
     assert.strictEqual(
         getRotation(3, 0, -60, 60),
         -60,
-        'should return -60 which is the 1st of 3 orientations between -60 to 60.'
+        'should return -60 which is the 1st of 3 orientations between -60 to ' +
+        '60.'
     );
     assert.strictEqual(
         getRotation(3, 1, -60, 60),
@@ -155,7 +157,7 @@ QUnit.test('getRotation', function (assert) {
 });
 
 QUnit.test('deriveFontSize', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         deriveFontSize = wordcloudPrototype.deriveFontSize;
 
     assert.strictEqual(
@@ -209,7 +211,8 @@ QUnit.test('deriveFontSize', function (assert) {
     assert.strictEqual(
         deriveFontSize(0.1, 10, 5),
         5,
-        'should return the minFontSize if the result of relativeWeight times maxFontSize is lower.'
+        'should return the minFontSize if the result of relativeWeight times ' +
+        'maxFontSize is lower.'
     );
 });
 
@@ -220,7 +223,7 @@ QUnit.test('deriveFontSize', function (assert) {
  */
 QUnit.test('isPolygonsColliding', function (assert) {
     console.clear(); // eslint-disable-line
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
         polygonA = [
             [10, 10],
@@ -289,7 +292,7 @@ QUnit.test('isPolygonsColliding', function (assert) {
 });
 
 QUnit.test('rotate2DToOrigin', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         rotate2DToOrigin = wordcloudPrototype.utils.rotate2DToOrigin;
 
     assert.deepEqual(
@@ -312,7 +315,7 @@ QUnit.test('rotate2DToOrigin', function (assert) {
 });
 
 QUnit.test('rotate2DToPoint', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         rotate2DToPoint = wordcloudPrototype.utils.rotate2DToPoint;
 
     assert.deepEqual(

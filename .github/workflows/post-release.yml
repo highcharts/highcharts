@@ -1,0 +1,74 @@
+name: Post-release
+
+on:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
+    inputs:
+      dryrun:
+        description: 'Whether to update the nightly branch on highcharts-dist'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+jobs:
+  generate_release_reference_images:
+    runs-on: ubuntu-latest
+    env:
+      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+      BROWSER_COUNT: 2
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - run: echo ${{github.ref_name}}
+
+      - run: npm i
+      - run: npx gulp scripts
+
+      - run: |
+          npx karma start test/karma-conf.js \
+            --tests highcharts/*/* \
+            --reference --browsercount $BROWSERCOUNT \
+            --no-fail-on-empty-test-suite
+          npx karma start test/karma-conf.js \
+            --tests stock/*/* \
+            --reference --browsercount $BROWSERCOUNT \
+            --no-fail-on-empty-test-suite
+          npx karma start test/karma-conf.js \
+            --tests maps/*/* \
+            --reference --browsercount $BROWSERCOUNT \
+            --no-fail-on-empty-test-suite
+          npx karma start test/karma-conf.js \
+            --tests gantt/*/* \
+            --reference --browsercount $BROWSERCOUNT \
+            --no-fail-on-empty-test-suite
+
+      - run: mkdir -p tmp/latest
+
+      - name: Delete existing references
+        if: ${{ github.event_name == 'push' || inputs.dryrun == false }}
+        run: |
+          aws s3 sync \
+            tmp/latest \
+            s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest \
+            --delete
+
+      - name: Upload test results
+        if: ${{ github.event_name == 'push' || inputs.dryrun == false }}
+        run: |
+          npx gulp dist-testresults \
+            --tag ${{github.ref_name}} \
+            --bucket ${{ secrets.VISUAL_TESTS_S3_BUCKET }}
+
+

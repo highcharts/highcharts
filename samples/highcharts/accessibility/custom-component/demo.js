@@ -6,14 +6,19 @@
 */
 
 // Create a basic chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
-            148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+            148.5, 216.4, 194.1, 95.6, 54.4
+        ]
     }]
 });
 
@@ -30,7 +35,7 @@ chart.myNamespace.myButton = chart.renderer.button(
 
 // Create the custom accessibility component for the chart. This class inherits
 // from the AccessibilityComponent class.
-var CustomComponent = function (chart) {
+const CustomComponent = function (chart) {
     this.initBase(chart);
 };
 CustomComponent.prototype = new Highcharts.AccessibilityComponent();
@@ -39,7 +44,7 @@ Highcharts.extend(CustomComponent.prototype, {
     // Perform tasks to be done when the chart is updated
     onChartUpdate: function () {
         // Get our button if it exists, and set attributes on it
-        var namespace = this.chart.myNamespace || {};
+        const namespace = this.chart.myNamespace || {};
         if (namespace.myButton) {
             namespace.myButton.attr({
                 role: 'button',
@@ -53,7 +58,7 @@ Highcharts.extend(CustomComponent.prototype, {
 
     // Define keyboard navigation for this component
     getKeyboardNavigation: function () {
-        var keys = this.keyCodes,
+        const keys = this.keyCodes,
             chart = this.chart,
             namespace = chart.myNamespace || {},
             component = this;
@@ -78,7 +83,7 @@ Highcharts.extend(CustomComponent.prototype, {
                     keys.space, keys.enter
                 ], function () {
                     // Fake a click event on the button element
-                    var buttonElement = namespace.myButton &&
+                    const buttonElement = namespace.myButton &&
                             namespace.myButton.element;
                     if (buttonElement) {
                         component.fakeClickEvent(buttonElement);
@@ -89,7 +94,7 @@ Highcharts.extend(CustomComponent.prototype, {
 
             // Focus button initially
             init: function () {
-                var buttonElement = namespace.myButton &&
+                const buttonElement = namespace.myButton &&
                         namespace.myButton.element;
                 if (buttonElement && buttonElement.focus) {
                     buttonElement.focus();

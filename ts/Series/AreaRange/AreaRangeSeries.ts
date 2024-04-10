@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,12 +16,15 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type PointMarkerOptions from '../../Core/Series/PointOptions';
+import { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -37,6 +40,7 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+
 const {
     addEvent,
     defined,
@@ -111,7 +115,6 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      * @apioption plotOptions.arearange.shadow
      */
 
-
     /**
      * Pixel width of the arearange graph line.
      *
@@ -121,6 +124,9 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      */
     lineWidth: 1,
 
+    /**
+     * @type {number|null}
+     */
     threshold: null,
 
     tooltip: {
@@ -229,12 +235,12 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
-    public data: Array<AreaRangePoint> = void 0 as any;
-    public options: AreaRangeSeriesOptions = void 0 as any;
-    public points: Array<AreaRangePoint> = void 0 as any;
-    public lowerStateMarkerGraphic?: SVGElement = void 0;
+    public data!: Array<AreaRangePoint>;
+    public options!: AreaRangeSeriesOptions;
+    public points!: Array<AreaRangePoint>;
+    public lowerStateMarkerGraphic?: SVGElement;
     public upperStateMarkerGraphic?: SVGElement;
-    public xAxis: RadialAxis.AxisComposition = void 0 as any;
+    public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
      *
@@ -256,7 +262,7 @@ class AreaRangeSeries extends AreaSeries {
     public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
         const chart = this.chart,
-            xy = this.xAxis.postTranslate(
+            xy = (this.xAxis as RadialAxis.AxisComposition).postTranslate(
                 point.rectPlotX || 0,
                 this.yAxis.len - (point.plotHigh || 0)
             );
@@ -319,7 +325,7 @@ class AreaRangeSeries extends AreaSeries {
                 polarPlotY: (point as any).polarPlotY,
                 rectPlotX: point.rectPlotX,
                 yBottom: point.yBottom,
-                // plotHighX is for polar charts
+                // `plotHighX` is for polar charts
                 plotX: pick(point.plotHighX, point.plotX),
                 plotY: point.plotHigh,
                 isNull: point.isNull
@@ -349,7 +355,7 @@ class AreaRangeSeries extends AreaSeries {
                 left: 'right',
                 center: 'center',
                 right: 'left'
-            }[step] as any; // swap for reading in getGraphPath
+            }[step] as any; // Swap for reading in getGraphPath
         }
         const higherPath = getGraphPath.call(this, highPoints);
         const higherAreaPath = getGraphPath.call(this, highAreaPoints);
@@ -431,7 +437,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             // Draw upper labels
-            if (upperDataLabelOptions.enabled || this._hasPointLabels) {
+            if (upperDataLabelOptions.enabled || this.hasDataLabels?.()) {
                 // Set preliminary values for plotY and dataLabel
                 // and draw the upper labels
                 i = length;
@@ -493,7 +499,7 @@ class AreaRangeSeries extends AreaSeries {
             }
 
             // Draw lower labels
-            if (lowerDataLabelOptions.enabled || this._hasPointLabels) {
+            if (lowerDataLabelOptions.enabled || this.hasDataLabels?.()) {
                 i = length;
                 while (i--) {
                     point = data[i];
@@ -554,6 +560,41 @@ class AreaRangeSeries extends AreaSeries {
         columnProto.alignDataLabel.apply(this, arguments);
     }
 
+    public modifyMarkerSettings(): {
+        marker?: PointMarkerOptions;
+        symbol?: keyof SymbolTypeRegistry;
+    } {
+        const series = this,
+            originalMarkerSettings = {
+                marker: series.options.marker,
+                symbol: series.symbol
+            };
+
+        if (series.options.lowMarker) {
+            const {
+                options: { marker, lowMarker }
+            } = series;
+
+            series.options.marker = merge(marker, lowMarker);
+
+            if (lowMarker.symbol) {
+                series.symbol = lowMarker.symbol;
+            }
+        }
+
+        return originalMarkerSettings;
+    }
+
+    public restoreMarkerSettings(originalSettings: {
+        marker?: PointMarkerOptions;
+        symbol?: keyof SymbolTypeRegistry;
+    }): void {
+        const series = this;
+
+        series.options.marker = originalSettings.marker;
+        series.symbol = originalSettings.symbol;
+    }
+
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;
@@ -561,13 +602,29 @@ class AreaRangeSeries extends AreaSeries {
         let i: number,
             point: AreaRangePoint;
 
+        const originalSettings = series.modifyMarkerSettings();
+
         // Draw bottom points
         areaProto.drawPoints.apply(series, arguments);
+
+        // Restore previous state
+        series.restoreMarkerSettings(originalSettings);
 
         // Prepare drawing top points
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
+
+            /**
+             * Array for multiple SVG graphics representing the point in the
+             * chart. Only used in cases where the point can not be represented
+             * by a single graphic.
+             *
+             * @see Highcharts.Point#graphic
+             *
+             * @name Highcharts.Point#graphics
+             * @type {Array<Highcharts.SVGElement>|undefined}
+             */
             point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top
@@ -581,9 +638,10 @@ class AreaRangeSeries extends AreaSeries {
                 y: point.y
             };
 
-            if (point.graphic) {
+            if (point.graphic || point.graphics[0]) {
                 point.graphics[0] = point.graphic;
             }
+
             point.graphic = point.graphics[1];
             point.plotY = point.plotHigh;
             if (defined(point.plotHighX)) {
@@ -615,7 +673,8 @@ class AreaRangeSeries extends AreaSeries {
         while (i < pointLength) {
             point = series.points[i];
             point.graphics = point.graphics || [];
-            if (point.graphic) {
+
+            if (point.graphic || point.graphics[1]) {
                 point.graphics[1] = point.graphic;
             }
             point.graphic = point.graphics[0];
@@ -627,6 +686,20 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    public hasMarkerChanged(
+        options: DeepPartial<AreaRangeSeriesOptions>,
+        oldOptions: DeepPartial<AreaRangeSeriesOptions>
+    ): boolean | undefined {
+        const lowMarker = options.lowMarker,
+            oldMarker = oldOptions.lowMarker || {};
+
+        return (lowMarker && (
+            lowMarker.enabled === false ||
+            oldMarker.symbol !== lowMarker.symbol || // #10870, #15946
+            oldMarker.height !== lowMarker.height || // #16274
+            oldMarker.width !== lowMarker.width // #16274
+        )) || super.hasMarkerChanged(options, oldOptions);
+    }
 }
 
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
@@ -660,19 +733,35 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
                 }
             }
         });
-
-        // Postprocess plotHigh
-        if (this.chart.polar) {
-            this.points.forEach((point): void => {
-                this.highToXY(point);
-                point.tooltipPos = [
-                    ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
-                    ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
-                ];
-            });
-        }
     }
 }, { order: 0 });
+
+addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
+    this.points.forEach((point): void => {
+        // Postprocessing after the PolarComposition's afterTranslate
+        if (this.chart.polar) {
+            this.highToXY(point);
+            point.plotLow = point.plotY;
+            point.tooltipPos = [
+                ((point.plotHighX || 0) + (point.plotLowX || 0)) / 2,
+                ((point.plotHigh || 0) + (point.plotLow || 0)) / 2
+            ];
+
+        // Put the tooltip in the middle of the range
+        } else {
+            const tooltipPos = point.pos(false, point.plotLow),
+                posHigh = point.pos(false, point.plotHigh);
+
+            if (tooltipPos && posHigh) {
+                tooltipPos[0] = (tooltipPos[0] + posHigh[0]) / 2;
+                tooltipPos[1] = (tooltipPos[1] + posHigh[1]) / 2;
+            }
+            point.tooltipPos = tooltipPos;
+        }
+
+
+    });
+}, { order: 3 });
 
 /* *
  *
@@ -823,6 +912,30 @@ export default AreaRangeSeries;
  */
 
 /**
+ * Options for the lower markers of the arearange-like series. When `lowMarker`
+ * is not defined, options inherit form the marker.
+ *
+ * @see [marker](#series.arearange.marker)
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.lowMarker
+ */
+
+/**
+ *
+ * @sample {highcharts} highcharts/series-arearange/lowmarker/
+ *         Area range chart with `lowMarker` option
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker.symbol
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.lowMarker.symbol
+ */
+
+/**
  * The high or maximum value for each data point.
  *
  * @type      {number}
@@ -838,4 +951,4 @@ export default AreaRangeSeries;
  * @apioption series.arearange.data.low
  */
 
-''; // adds doclets above to tranpiled file
+''; // Adds doclets above to transpiled file

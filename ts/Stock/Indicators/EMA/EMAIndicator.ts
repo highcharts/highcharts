@@ -92,11 +92,11 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<EMAPoint> = void 0 as any;
+    public data!: Array<EMAPoint>;
 
-    public options: EMAOptions = void 0 as any;
+    public options!: EMAOptions;
 
-    public points: Array<EMAPoint> = void 0 as any;
+    public points!: Array<EMAPoint>;
 
     /* *
      *
@@ -131,16 +131,15 @@ class EMAIndicator extends SMAIndicator {
         index: number,
         SMA: number
     ): [number, number] {
-        let x: number = xVal[i - 1],
+        const x: number = xVal[i - 1],
             yValue: number = index < 0 ?
                 yVal[i - 1] :
                 (yVal as any)[i - 1][index],
-            y: number;
-
-        y = typeof calEMA === 'undefined' ?
-            SMA : correctFloat((yValue * EMApercent) +
-            (calEMA * (1 - EMApercent)));
-
+            y: number = typeof calEMA === 'undefined' ?
+                SMA : correctFloat(
+                    (yValue * EMApercent) +
+                (calEMA * (1 - EMApercent))
+                );
         return [x, y];
     }
 
@@ -148,20 +147,21 @@ class EMAIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: EMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,
             EMApercent = 2 / (period + 1),
-            sum = 0,
             EMA: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            index = -1,
-            SMA = 0,
-            calEMA: (number|undefined),
+            yData: Array<number> = [];
+
+        let calEMA: (number|undefined),
             EMAPoint: [number, number],
-            i: number;
+            i: number,
+            index = -1,
+            sum = 0,
+            SMA = 0;
 
         // Check period, if bigger than points length, skip
         if (yValLen < period) {
@@ -180,7 +180,7 @@ class EMAIndicator extends SMAIndicator {
             yVal
         );
 
-        // first point
+        // First point
         SMA = sum / period;
 
         // Calculate value one-by-one for each period in visible data
@@ -258,4 +258,4 @@ export default EMAIndicator;
  * @apioption series.ema
  */
 
-''; // adds doclet above to the transpiled file
+''; // Adds doclet above to the transpiled file

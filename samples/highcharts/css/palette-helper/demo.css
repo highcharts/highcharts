@@ -1,0 +1,30 @@
+body {
+    transition: background-color 250ms, color 250ms;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+pre {
+    border: 1px solid silver;
+    border-radius: 0.25rem;
+    color: green;
+    padding: 1rem;
+}
+
+#neutral-preview,
+#highlight-preview {
+    display: inline-block;
+    width: 49%;
+    vertical-align: top;
+}
+
+#neutral-preview div,
+#highlight-preview div {
+    display: inline-block;
+    width: 50%;
+    height: 3em;
+    box-sizing: border-box;
+    padding: 3px;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    transition: background-color 250ms;
+}

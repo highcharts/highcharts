@@ -1,41 +1,41 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     title: {
         text: null
     },
 
     xAxis: {
         categories: [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday'
         ]
     },
 
     yAxis: {
         title: {
-            text: "Price"
+            text: 'Price'
         },
-        type: "logarithmic",
+        type: 'logarithmic',
         labels: {
-            format: "${text}"
+            format: '${text}'
         },
         plotBands: [
             {
-                color: "rgba(255, 87, 51 ,0.4)",
+                color: 'rgba(255, 87, 51 ,0.4)',
                 label: {
-                    text: "$5 up (50%)"
+                    text: '$5 up (50%)'
                 },
                 from: 5, // Start of the plot band
                 to: 10 // End of the plot band
             },
             {
-                color: "rgba(255, 195, 0,0.4)",
+                color: 'rgba(255, 195, 0,0.4)',
                 label: {
-                    text: "$5 up (25%)"
+                    text: '$5 up (25%)'
                 },
                 from: 20, // Start of the plot band
                 to: 25 // End of the plot band
@@ -44,13 +44,13 @@ Highcharts.chart("container", {
     },
 
     tooltip: {
-        valuePrefix: "$"
+        valuePrefix: '$'
     },
 
     series: [
         {
             data: [5, 10, 15, 20, 25, 30, 15],
-            name: "Price"
+            name: 'Price'
         }
     ]
 });

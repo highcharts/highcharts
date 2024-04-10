@@ -1,0 +1,10 @@
+---
+name: Migration Flowmap
+author:
+  - Kacper Madej
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

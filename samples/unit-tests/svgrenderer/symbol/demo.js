@@ -199,10 +199,12 @@ QUnit.test('Square/rect', assert => {
 
 QUnit.test('Image', assert => {
     const renderer = new Highcharts.Renderer(
-        document.getElementById('container'),
-        400,
-        300
-    );
+            document.getElementById('container'),
+            400,
+            300
+        ),
+        // eslint-disable-next-line max-len
+        symbol = 'url(data:image/svg+xml;base64,PHN2ZyBpZD0ibWFsZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTkyIDUxMiI+PHBhdGggZD0iTTk2IDBjMzUuMzQ2IDAgNjQgMjguNjU0IDY0IDY0cy0yOC42NTQgNjQtNjQgNjQtNjQtMjguNjU0LTY0LTY0UzYwLjY1NCAwIDk2IDBtNDggMTQ0aC0xMS4zNmMtMjIuNzExIDEwLjQ0My00OS41OSAxMC44OTQtNzMuMjggMEg0OGMtMjYuNTEgMC00OCAyMS40OS00OCA0OHYxMzZjMCAxMy4yNTUgMTAuNzQ1IDI0IDI0IDI0aDE2djEzNmMwIDEzLjI1NSAxMC43NDUgMjQgMjQgMjRoNjRjMTMuMjU1IDAgMjQtMTAuNzQ1IDI0LTI0VjM1MmgxNmMxMy4yNTUgMCAyNC0xMC43NDUgMjQtMjRWMTkyYzAtMjYuNTEtMjEuNDktNDgtNDgtNDh6IiBmaWxsPSIjMkQ1RkYzIi8+PC9zdmc+)';
 
     renderer.image(
         'https://www.highcharts.com/samples/graphics/sun.png',
@@ -214,5 +216,86 @@ QUnit.test('Image', assert => {
     assert.ok(
         true,
         'No errors after adding an image without optional parameters, #11756.'
+    );
+
+
+    const clock = TestUtilities.lolexInstall();
+
+    const symbol1 = renderer.symbol(
+        symbol,
+        50,
+        50,
+        void 0,
+        void 0, {
+            backgroundSize: 'within'
+        }
+    ).attr({
+        width: 50,
+        height: 50
+    }).add();
+
+    try {
+        setTimeout(() => {
+            const symbol2 = renderer.symbol(
+                symbol,
+                200,
+                50,
+                void 0,
+                void 0, {
+                    backgroundSize: 'within'
+                }
+            ).attr({
+                height: 50,
+                width: 50
+            })
+                .add();
+
+            const {
+                    width: width1,
+                    height: height1
+                } = symbol1.element.getBBox(),
+                {
+                    width: width2,
+                    height: height2
+                } = symbol2.element.getBBox();
+
+            assert.equal(
+                width1,
+                width2,
+                'Width of image-symbol should not be changed after redraw, ' +
+                '#17315.'
+            );
+
+            assert.equal(
+                height1,
+                height2,
+                'Height of image-symbol should not be changed after redraw, ' +
+                '#17315.'
+            );
+        }, 100);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } catch (error) {
+        TestUtilities.lolexUninstall(clock);
+        throw error;
+    }
+
+    symbol1.imgwidth = 56;
+    symbol1.imgheight = 150;
+    symbol1.attr({
+        width: 0,
+        height: 0
+    });
+
+    assert.equal(
+        symbol1.translateX,
+        -symbol1.imgwidth / 2,
+        'Symbol should be correctly centered in X (#18790)'
+    );
+
+    assert.equal(
+        symbol1.translateY,
+        -symbol1.imgheight / 2,
+        'Symbol should be correctly centered in Y (#18790)'
     );
 });

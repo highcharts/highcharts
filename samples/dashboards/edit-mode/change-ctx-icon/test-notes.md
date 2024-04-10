@@ -1,0 +1,1 @@
+1. Verify that the context button icon is changed.

@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 body {
     margin: 0;
@@ -21,7 +21,7 @@ body {
 }
 
 .chart-container .transparent {
-    opacity: 100%;
+    opacity: 1;
     stroke-width: 1;
     stroke: white;
     color: white;
@@ -77,11 +77,11 @@ body {
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .chart-container .highcharts-series-inactive {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 50ms;
 }
 
@@ -144,11 +144,11 @@ body {
 }
 
 #stock .highcharts-range-selector-group {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #stock .highcharts-range-selector-group.fade-in {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 1s;
     transform: translate(-20px, 30px);
 }
@@ -156,14 +156,14 @@ body {
 #stock .highcharts-title {
     font-weight: 700;
     font-size: 1.1em;
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
 #stock .highcharts-subtitle {
     font-weight: 400;
     font-size: 0.9em;
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
@@ -217,7 +217,7 @@ body {
 #stock .green {
     fill: #8bf2b6;
     stroke: transparent;
-    opacity: 0%;
+    opacity: 0;
     transform: translate(150px, 70px) scale(0.1);
     transition: transform 2s;
 }
@@ -236,11 +236,11 @@ body {
 #stock .column .highcharts-point {
     fill: #8bf2b6;
     stroke: transparent;
-    opacity: 100%;
+    opacity: 1;
 }
 
 #stock .column .highcharts-pointshow {
-    opacity: 100%;
+    opacity: 1;
 }
 
 #stock .green-line .highcharts-point:nth-of-type(3) {
@@ -266,13 +266,13 @@ body {
 
 #stock .green-line.hide .highcharts-point,
 #stock .green-line.hide .highcharts-graph {
-    opacity: 0%;
+    opacity: 0;
     transition: none;
 }
 
 #stock .purple-line.hide .highcharts-point,
 #stock .purple-line.hide .highcharts-graph {
-    opacity: 0%;
+    opacity: 0;
     transition: none;
 }
 
@@ -282,13 +282,13 @@ body {
     transform: translate(40px, 45px) scale(0.1);
     transform-origin: center;
     transition: transform 2s;
-    opacity: 0%;
+    opacity: 0;
 }
 
 /* line */
 
 #stock .purple-line.fade-out .highcharts-graph {
-    opacity: 0%;
+    opacity: 0;
     transition: 1s;
 }
 
@@ -330,7 +330,7 @@ body {
 /* line */
 
 #stock .green-line.fade-out .highcharts-graph {
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 1s;
 }
 
@@ -348,11 +348,11 @@ body {
 }
 
 #stock .stick {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #stock .stick.fade-in {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 1s;
 }
 
@@ -374,12 +374,12 @@ body {
 
 #stock .stock-top.hide,
 #stock .stock-bottom.hide {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #stock .stock-top.fade-out,
 #stock .stock-bottom.fade-out {
-    opacity: 0%;
+    opacity: 0;
     transition: 300ms;
 }
 
@@ -393,7 +393,7 @@ body {
 #stock .particle-4,
 #stock .particle-5,
 #stock .particle-6 {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #stock .particle-1.move,
@@ -402,7 +402,7 @@ body {
 #stock .particle-4.move,
 #stock .particle-5.move,
 #stock .particle-6.move {
-    opacity: 100%;
+    opacity: 1;
 }
 
 #stock .particle-1.move {
@@ -435,7 +435,7 @@ body {
 #stock .particle-4.static,
 #stock .particle-5.static,
 #stock .particle-6.static {
-    opacity: 100%;
+    opacity: 1;
     transition: none;
 }
 
@@ -445,7 +445,7 @@ body {
 #stock .particle-4.static.fade,
 #stock .particle-5.static.fade,
 #stock .particle-6.static.fade {
-    opacity: 0%;
+    opacity: 0;
     transition: opacity 500ms;
 }
 
@@ -489,7 +489,7 @@ body {
     #stock .highcharts-subtitle {
         font-weight: 400;
         font-size: 0.9em;
-        opacity: 0%;
+        opacity: 0;
         transition: opacity 1s;
     }
 
@@ -527,7 +527,7 @@ body {
     #stock .green {
         fill: #8bf2b6;
         stroke: transparent;
-        opacity: 0%;
+        opacity: 0;
         transform: translate(150px, 70px) scale(0.1);
         transition: transform 2s;
     }
@@ -538,7 +538,7 @@ body {
         transform: translate(40px, 45px) scale(0.1);
         transform-origin: center;
         transition: transform 2s;
-        opacity: 0%;
+        opacity: 0;
     }
 
     #stock .highcharts-title {

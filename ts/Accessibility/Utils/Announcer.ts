@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Create announcer to speak messages to screen readers and other AT.
  *
@@ -102,7 +102,7 @@ class Announcer {
         this.clearAnnouncementRegionTimer = setTimeout((): void => {
             this.announceRegion.innerHTML = AST.emptyHTML;
             delete this.clearAnnouncementRegionTimer;
-        }, 1000);
+        }, 3000);
     }
 
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
@@ -113,7 +113,8 @@ class Announcer {
 
         attr(div, {
             'aria-hidden': false,
-            'aria-live': type
+            'aria-live': type,
+            'aria-atomic': true
         });
 
         if (this.chart.styledMode) {

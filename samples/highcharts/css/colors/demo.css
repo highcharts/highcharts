@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 #container {
     height: 400px;
@@ -7,94 +7,37 @@
     margin: 0 auto;
 }
 
-/* Since we're redefining colors after highcharts.css, we need to be specific
-because otherwise some properties would be overwritten. Note that the preferred
-and much simpler way to change the color scheme is to set the colors array in
-the highcharts.scss SASS file and build it to CSS. */
-.highcharts-point.highcharts-color-0,
-.highcharts-legend-item.highcharts-color-0 .highcharts-point,
-.highcharts-tooltip .highcharts-color-0 {
-    fill: #b3597c;
-}
+:root {
+    /* Colors for data series and points */
+    --highcharts-color-0: #b3597c;
+    --highcharts-color-1: #c4688c;
+    --highcharts-color-2: #78a8d1;
+    --highcharts-color-3: #7991d2;
+    --highcharts-color-4: #7d7bd4;
+    --highcharts-color-5: #977dd5;
+    --highcharts-color-6: #b3597c;
+    --highcharts-color-7: #b27fd6;
 
-.highcharts-tooltip.highcharts-color-0,
-.highcharts-data-label-connector.highcharts-color-0 {
-    stroke: #b3597c;
-}
+    /* UI colors */
+    --highcharts-background-color: #333;
 
-.highcharts-point.highcharts-color-1,
-.highcharts-legend-item.highcharts-color-1 .highcharts-point,
-.highcharts-tooltip .highcharts-color-1 {
-    fill: #c4688c;
-}
+    /*
+        Neutral color variations
+        https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
 
-.highcharts-tooltip.highcharts-color-1,
-.highcharts-data-label-connector.highcharts-color-1 {
-    stroke: #c4688c;
-}
-
-.highcharts-point.highcharts-color-2,
-.highcharts-legend-item.highcharts-color-2 .highcharts-point,
-.highcharts-tooltip .highcharts-color-2 {
-    fill: #78a8d1;
-}
-
-.highcharts-tooltip.highcharts-color-2,
-.highcharts-data-label-connector.highcharts-color-2 {
-    stroke: #78a8d1;
-}
-
-.highcharts-point.highcharts-color-3,
-.highcharts-legend-item.highcharts-color-3 .highcharts-point,
-.highcharts-tooltip .highcharts-color-3 {
-    fill: #7991d2;
-}
-
-.highcharts-tooltip.highcharts-color-3,
-.highcharts-data-label-connector.highcharts-color-3 {
-    stroke: #7991d2;
-}
-
-.highcharts-point.highcharts-color-4,
-.highcharts-legend-item.highcharts-color-4 .highcharts-point,
-.highcharts-tooltip .highcharts-color-4 {
-    fill: #7d7bd4;
-}
-
-.highcharts-tooltip.highcharts-color-4,
-.highcharts-data-label-connector.highcharts-color-4 {
-    stroke: #7d7bd4;
-}
-
-.highcharts-point.highcharts-color-5,
-.highcharts-legend-item.highcharts-color-5 .highcharts-point,
-.highcharts-tooltip .highcharts-color-5 {
-    fill: #977dd5;
-}
-
-.highcharts-tooltip.highcharts-color-5,
-.highcharts-data-label-connector.highcharts-color-5 {
-    stroke: #977dd5;
-}
-
-.highcharts-point.highcharts-color-6,
-.highcharts-legend-item.highcharts-color-6 .highcharts-point,
-.highcharts-tooltip .highcharts-color-6 {
-    fill: #b3597c;
-}
-
-.highcharts-tooltip.highcharts-color-6,
-.highcharts-data-label-connector.highcharts-color-6 {
-    stroke: #b3597c;
-}
-
-.highcharts-point.highcharts-color-7,
-.highcharts-legend-item.highcharts-color-7 .highcharts-point,
-.highcharts-tooltip .highcharts-color-7 {
-    fill: #b27fd6;
-}
-
-.highcharts-tooltip.highcharts-color-7,
-.highcharts-data-label-connector.highcharts-color-7 {
-    stroke: #b27fd6;
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
 }

@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -76,7 +76,7 @@ class Toolbar {
         this.chart = chart;
         this.options = options;
         this.lang = langOptions;
-        // set url for icons.
+        // Set url for icons.
         this.iconsURL = this.getIconsURL();
         this.guiEnabled = options.enabled;
         this.visible = pick(options.visible, true);
@@ -103,23 +103,23 @@ class Toolbar {
      *
      * */
 
-    public arrowDown: HTMLDOMElement = void 0 as any;
-    public arrowUp: HTMLDOMElement = void 0 as any;
-    public arrowWrapper: HTMLDOMElement = void 0 as any;
+    public arrowDown!: HTMLDOMElement;
+    public arrowUp!: HTMLDOMElement;
+    public arrowWrapper!: HTMLDOMElement;
     public chart: Chart;
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
     public lang: (Record<string, string>|undefined);
-    public listWrapper: HTMLDOMElement = void 0 as any;
+    public listWrapper!: HTMLDOMElement;
     public options: StockToolsGuiOptions;
     public placed: boolean;
     public prevOffsetWidth: (number|undefined);
-    public showhideBtn: HTMLDOMElement = void 0 as any;
-    public submenu: HTMLDOMElement = void 0 as any;
-    public toolbar: HTMLDOMElement = void 0 as any;
+    public showhideBtn!: HTMLDOMElement;
+    public submenu!: HTMLDOMElement;
+    public toolbar!: HTMLDOMElement;
     public visible: boolean;
-    public wrapper: HTMLDOMElement = void 0 as any;
+    public wrapper!: HTMLDOMElement;
 
     /* *
      *
@@ -141,7 +141,7 @@ class Toolbar {
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes;
 
-        // create buttons
+        // Create buttons
         buttons.forEach((btnName: string): void => {
 
             const button = this.addButton(toolbar, defs, btnName, lang);
@@ -158,7 +158,7 @@ class Toolbar {
             );
 
             if (isArray((defs as any)[btnName].items)) {
-                // create submenu buttons
+                // Create submenu buttons
                 this.addSubmenu(button, (defs as any)[btnName]);
             }
         });
@@ -186,15 +186,15 @@ class Toolbar {
             wrapper = this.wrapper,
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
-            // create submenu container
+            // Create submenu container
             submenuWrapper = this.submenu = createElement('ul', {
                 className: 'highcharts-submenu-wrapper'
             }, void 0, buttonWrapper);
 
-        // create submenu buttons and select the first one
+        // Create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
 
-        // show / hide submenu
+        // Show / hide submenu
         this.eventsToUnbind.push(
             addEvent(submenuArrow, 'click', (e: Event): void => {
 
@@ -202,7 +202,7 @@ class Toolbar {
                 // Erase active class on all other buttons
                 this.eraseActiveButtons(allButtons, buttonWrapper);
 
-                // hide menu
+                // Hide menu
                 if (
                     buttonWrapper.className
                         .indexOf('highcharts-current') >= 0
@@ -212,27 +212,27 @@ class Toolbar {
                     buttonWrapper.classList.remove('highcharts-current');
                     (submenuWrapper as any).style.display = 'none';
                 } else {
-                    // show menu
+                    // Show menu
                     // to calculate height of element
                     (submenuWrapper as any).style.display = 'block';
 
                     let topMargin = (submenuWrapper as any).offsetHeight -
                             buttonWrapper.offsetHeight - 3;
 
-                    // calculate position of submenu in the box
+                    // Calculate position of submenu in the box
                     // if submenu is inside, reset top margin
                     if (
-                        // cut on the bottom
+                        // Cut on the bottom
                         !((submenuWrapper as any).offsetHeight +
                             buttonWrapper.offsetTop >
                         wrapper.offsetHeight &&
-                        // cut on the top
+                        // Cut on the top
                         buttonWrapper.offsetTop > topMargin)
                     ) {
                         topMargin = 0;
                     }
 
-                    // apply calculated styles
+                    // Apply calculated styles
                     css((submenuWrapper as any), {
                         top: -topMargin + 'px',
                         left: buttonWidth + 3 + 'px'
@@ -271,9 +271,9 @@ class Toolbar {
 
         let submenuBtn: (Record<string, HTMLDOMElement>|undefined);
 
-        // add items to submenu
+        // Add items to submenu
         items.forEach((btnName): void => {
-            // add buttons to submenu
+            // Add buttons to submenu
             submenuBtn = this.addButton(
                 submenuWrapper,
                 button,
@@ -293,13 +293,13 @@ class Toolbar {
             ));
         });
 
-        // select first submenu item
+        // Select first submenu item
         const firstSubmenuItem =
             submenuWrapper.querySelectorAll<HTMLDOMElement>(
                 'li > .highcharts-menu-item-btn'
             )[0];
 
-        // replace current symbol, in main button, with submenu's button style
+        // Replace current symbol, in main button, with submenu's button style
         this.switchSymbol(firstSubmenuItem, false);
     }
 
@@ -319,7 +319,7 @@ class Toolbar {
                 submenuItems =
                     btn.querySelectorAll('.highcharts-submenu-wrapper');
 
-                // hide submenu
+                // Hide submenu
                 if (submenuItems.length > 0) {
                     submenuItems[0].style.display = 'none';
                 }
@@ -328,7 +328,7 @@ class Toolbar {
     }
 
     /**
-     * Create single button. Consist of HTML elements `li`, `span`, and (if
+     * Create single button. Consist of HTML elements `li`, `button`, and (if
      * exists) submenu container.
      *
      * @private
@@ -363,22 +363,23 @@ class Toolbar {
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '';
 
-        // main button wrapper
+        // Main button wrapper
         const buttonWrapper = createElement('li', {
             className: pick(classMapping[btnName], '') + ' ' + userClassName,
             title: lang[btnName] || btnName
         }, void 0, target);
 
-        // single button
-        const mainButton = createElement('span', {
+        // Single button
+        const elementType = (btnOptions.elementType || 'button') as string;
+        const mainButton = createElement(elementType, {
             className: 'highcharts-menu-item-btn'
         }, void 0, buttonWrapper);
 
-        // submenu
+        // Submenu
         if (items && items.length) {
 
-            // arrow is a hook to show / hide submenu
-            const submenuArrow = createElement('span', {
+            // Arrow is a hook to show / hide submenu
+            const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
                     'highcharts-arrow-right'
             }, void 0, buttonWrapper);
@@ -409,7 +410,7 @@ class Toolbar {
     public addNavigation(): void {
         const wrapper = this.wrapper;
 
-        // arrow wrapper
+        // Arrow wrapper
         this.arrowWrapper = createElement('div', {
             className: 'highcharts-arrow-wrapper'
         });
@@ -430,7 +431,7 @@ class Toolbar {
 
         wrapper.insertBefore(this.arrowWrapper, wrapper.childNodes[0]);
 
-        // attach scroll events
+        // Attach scroll events
         this.scrollButtons();
     }
 
@@ -480,7 +481,7 @@ class Toolbar {
         let listWrapper,
             toolbar;
 
-        // create main container
+        // Create main container
         const wrapper = this.wrapper = createElement('div', {
             className: 'highcharts-stocktools-wrapper ' +
                 guiOptions.className + ' ' + bindingsClassName
@@ -499,16 +500,16 @@ class Toolbar {
             );
         });
         addEvent(wrapper, 'mouseover', (e: MouseEvent): void =>
-            chart.pointer.onContainerMouseLeave(e)
+            chart.pointer?.onContainerMouseLeave(e)
         );
 
-        // toolbar
+        // Toolbar
         this.toolbar = toolbar = createElement('ul', {
             className: 'highcharts-stocktools-toolbar ' +
                     guiOptions.toolbarClassName
         });
 
-        // add container for list of buttons
+        // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {
             className: 'highcharts-menu-wrapper'
         });
@@ -518,7 +519,7 @@ class Toolbar {
 
         this.showHideToolbar();
 
-        // add navigation which allows user to scroll down / top GUI buttons
+        // Add navigation which allows user to scroll down / top GUI buttons
         this.addNavigation();
     }
     /**
@@ -526,7 +527,7 @@ class Toolbar {
      * @private
      */
     public showHideNavigatorion(): void {
-        // arrows
+        // Arrows
         // 50px space for arrows
         if (
             this.visible &&
@@ -534,10 +535,10 @@ class Toolbar {
         ) {
             this.arrowWrapper.style.display = 'block';
         } else {
-            // reset margin if whole toolbar is visible
+            // Reset margin if whole toolbar is visible
             this.toolbar.style.marginTop = '0px';
 
-            // hide arrows
+            // Hide arrows
             this.arrowWrapper.style.display = 'none';
         }
     }
@@ -561,7 +562,7 @@ class Toolbar {
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
         if (!visible) {
-            // hide
+            // Hide
             if (submenu) {
                 submenu.style.display = 'none';
             }
@@ -607,26 +608,26 @@ class Toolbar {
     ): void {
         const buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.className,
-            // main button in first level og GUI
+            // Main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
-        // if the button is disabled, don't do anything
+        // If the button is disabled, don't do anything
         if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
             return;
         }
-        // set class
+        // Set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
             mainNavButton.classList.add(buttonWrapperClass.trim());
         }
 
-        // set icon
+        // Set icon
         mainNavButton
             .querySelectorAll<HTMLElement>('.highcharts-menu-item-btn')[0]
             .style.backgroundImage =
             button.style.backgroundImage;
 
-        // set active class
+        // Set active class
         if (redraw) {
             this.toggleButtonActiveClass(mainNavButton);
         }

@@ -1,124 +1,124 @@
 const data = [
     {
-        id: "0",
-        parent: "",
-        name: " ",
-        color: "#FFFFFF"
+        id: '0',
+        parent: '',
+        name: ' ',
+        color: '#FFFFFF'
     },
     {
-        id: "R",
-        parent: "0",
-        name: "Rural",
-        color: "#FFFFFF"
+        id: 'R',
+        parent: '0',
+        name: 'Rural',
+        color: '#FFFFFF'
     },
     {
-        id: "U",
-        parent: "0",
-        name: "Urban"
+        id: 'U',
+        parent: '0',
+        name: 'Urban'
     },
     {
-        id: "RV",
-        name: "Vehicles",
-        parent: "R"
+        id: 'RV',
+        name: 'Vehicles',
+        parent: 'R'
     },
     {
-        id: "RO",
-        name: "Others",
-        parent: "R",
-        color: "#FFFFFF"
+        id: 'RO',
+        name: 'Others',
+        parent: 'R',
+        color: '#FFFFFF'
     },
     {
-        id: "UV",
-        name: "Vehicles",
-        parent: "U"
+        id: 'UV',
+        name: 'Vehicles',
+        parent: 'U'
     },
     {
-        id: "UO",
-        name: "Others",
-        parent: "U"
+        id: 'UO',
+        name: 'Others',
+        parent: 'U'
     },
     {
-        name: "Cars and minivans",
-        parent: "RV",
+        name: 'Cars and minivans',
+        parent: 'RV',
         value: 6767
     },
     {
-        name: "Pickups",
-        parent: "RV",
+        name: 'Pickups',
+        parent: 'RV',
         value: 2965
     },
     {
-        name: "SUVs",
-        parent: "RV",
+        name: 'SUVs',
+        parent: 'RV',
         value: 2973
     },
     {
-        name: "Large trucks",
-        parent: "RV",
+        name: 'Large trucks',
+        parent: 'RV',
         value: 501
     },
     {
-        name: "Motorcycles",
-        parent: "RV",
+        name: 'Motorcycles',
+        parent: 'RV',
         value: 1986
     },
     {
-        name: "Pedestrians",
-        parent: "RO",
+        name: 'Pedestrians',
+        parent: 'RO',
         value: 1141
     },
     {
-        name: "Bicyclists",
-        parent: "RO",
+        name: 'Bicyclists',
+        parent: 'RO',
         value: 187
     },
     {
-        name: "Cars and minivans",
-        parent: "UV",
+        name: 'Cars and minivans',
+        parent: 'UV',
         value: 6727
     },
     {
-        name: "Pickups",
-        parent: "UV",
+        name: 'Pickups',
+        parent: 'UV',
         value: 1367
     },
     {
-        name: "SUVs",
-        parent: "UV",
+        name: 'SUVs',
+        parent: 'UV',
         value: 2114
     },
     {
-        name: "Large trucks",
-        parent: "UV",
+        name: 'Large trucks',
+        parent: 'UV',
         value: 173
     },
     {
-        name: "Motorcycles",
-        parent: "UV",
+        name: 'Motorcycles',
+        parent: 'UV',
         value: 3025
     },
     {
-        name: "Pedestrians",
-        parent: "UO",
+        name: 'Pedestrians',
+        parent: 'UO',
         value: 4642
     },
     {
-        name: "Bicyclists",
-        parent: "UO",
+        name: 'Bicyclists',
+        parent: 'UO',
         value: 554
     }
 ];
 
 Highcharts.setOptions({
-    colors: ["#B0B0B0", "#FFFFFF"]
+    colors: ['#B0B0B0', '#FFFFFF']
 });
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        height: "100%"
+        height: '100%'
     },
 
     title: {
-        text: "Urban vs rural road fatalities in 2017"
+        text: 'Urban vs rural road fatalities in 2017'
     },
     subtitle: {
         text:
@@ -126,22 +126,22 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            type: "sunburst",
+            type: 'sunburst',
             data: data,
             allowDrillToNode: true,
-            cursor: "pointer",
+            cursor: 'pointer',
             borderWidth: 3,
-            borderColor: "#000000",
+            borderColor: '#000000',
             dataLabels: {
-                format: "{point.name}",
+                format: '{point.name}',
                 filter: {
-                    property: "innerArcLength",
-                    operator: ">",
+                    property: 'innerArcLength',
+                    operator: '>',
                     value: 16
                 },
                 style: {
                     textOutline: false,
-                    color: "#000000"
+                    color: '#000000'
                 }
             },
             levels: [
@@ -150,8 +150,8 @@ Highcharts.chart("container", {
                     levelIsConstant: false,
                     dataLabels: {
                         filter: {
-                            property: "outerArcLength",
-                            operator: ">",
+                            property: 'outerArcLength',
+                            operator: '>',
                             value: 64
                         }
                     }
@@ -163,14 +163,14 @@ Highcharts.chart("container", {
                 {
                     level: 3,
                     colorVariation: {
-                        key: "brightness",
+                        key: 'brightness',
                         to: -0.5
                     }
                 },
                 {
                     level: 4,
                     colorVariation: {
-                        key: "brightness",
+                        key: 'brightness',
                         to: 0.5
                     }
                 }
@@ -178,7 +178,8 @@ Highcharts.chart("container", {
         }
     ],
     tooltip: {
-        headerFormat: "",
-        pointFormat: "The population of <b>{point.name}</b> is <b>{point.value}</b>"
+        headerFormat: '',
+        pointFormat: 'The population of <b>{point.name}</b> is <b>' +
+            '{point.value}</b>'
     }
 });

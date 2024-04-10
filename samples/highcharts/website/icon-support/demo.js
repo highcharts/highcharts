@@ -22,13 +22,15 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
+const big = window.matchMedia('(min-width: 500px)').matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const imgPath = 'https://www.highcharts.com/samples/graphics/';
 
 Highcharts.theme = {
-    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    colors: [
+        '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+    ],
     chart: {
         style: {
             fontFamily: 'IBM Plex Sans, sans-serif'
@@ -114,8 +116,10 @@ const support = {
                     if (big) {
                         head.style.transform = 'rotate(15deg) ';
                         face.style.transform = 'rotate(15deg)';
-                        p1.style.transform = 'translate(0px,0px) rotate(360deg)';
-                        p6.style.transform = 'translate(20px,4px) rotate(-45deg)';
+                        p1.style.transform = 'translate(0px,0px) ' +
+                            'rotate(360deg)';
+                        p6.style.transform = 'translate(20px,4px) ' +
+                            'rotate(-45deg)';
                         p5.style.transform = 'translate(0px,0px) rotate(0deg)';
                         p3.style.transform = 'translate(0px,0px) rotate(8deg)';
 
@@ -123,10 +127,14 @@ const support = {
 
                         head.style.transform = 'rotate(15deg) scale(1.2)';
                         face.style.transform = 'rotate(15deg) scale(.5)';
-                        p1.style.transform = 'translate(-30px,10px) rotate(360deg) scale(.5)';
-                        p6.style.transform = 'translate(20px,15px) rotate(-45deg) scale(.5)';
-                        p5.style.transform = 'translate(-65px,0px) rotate(0deg) scale(.5)';
-                        p3.style.transform = 'translate(65px,0px) rotate(8deg) scale(.5)';
+                        p1.style.transform = 'translate(-30px,10px) ' +
+                            'rotate(360deg) scale(.5)';
+                        p6.style.transform = 'translate(20px,15px) ' +
+                            'rotate(-45deg) scale(.5)';
+                        p5.style.transform = 'translate(-65px,0px) ' +
+                            'rotate(0deg) scale(.5)';
+                        p3.style.transform = 'translate(65px,0px) ' +
+                            'rotate(8deg) scale(.5)';
                     }
                 }, 1000);
 
@@ -156,19 +164,27 @@ const support = {
 
                             head.style.transform = 'rotate(315deg)';
                             face.style.transform = 'rotate(315deg)';
-                            p1.style.transform = 'translate(-20px,4px) rotate(320deg)';
-                            p6.style.transform = 'translate(40px,4px) rotate(0deg)';
-                            p5.style.transform = 'translate(0px,0px) rotate(-30deg)';
-                            p3.style.transform = 'translate(0px,0px) rotate(50deg)';
+                            p1.style.transform = 'translate(-20px,4px) ' +
+                                'rotate(320deg)';
+                            p6.style.transform = 'translate(40px,4px) ' +
+                                'rotate(0deg)';
+                            p5.style.transform = 'translate(0px,0px) ' +
+                                'rotate(-30deg)';
+                            p3.style.transform = 'translate(0px,0px) ' +
+                                'rotate(50deg)';
 
                         } else {
 
                             head.style.transform = 'rotate(315deg) scale(1.2)';
                             face.style.transform = 'rotate(315deg) scale(.5)';
-                            p1.style.transform = 'translate(-20px,32px) rotate(320deg) scale(.5)';
-                            p6.style.transform = 'translate(20px,26px) rotate(0deg) scale(.5)';
-                            p5.style.transform = 'translate(-55px,30px) rotate(-30deg) scale(.5)';
-                            p3.style.transform = 'translate(55px,20px) rotate(50deg) scale(.5)';
+                            p1.style.transform = 'translate(-20px,32px) ' +
+                                'rotate(320deg) scale(.5)';
+                            p6.style.transform = 'translate(20px,26px) ' +
+                                'rotate(0deg) scale(.5)';
+                            p5.style.transform = 'translate(-55px,30px) ' +
+                                'rotate(-30deg) scale(.5)';
+                            p3.style.transform = 'translate(55px,20px) ' +
+                                'rotate(50deg) scale(.5)';
 
                         }
                     }, 5000);
@@ -188,21 +204,21 @@ const support = {
         text: ''
     },
     xAxis: [
-    //0 - bottom, top map area
+    // 0 - bottom, top map area
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        //1 - left map area
+        // 1 - left map area
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        ///2 - right map area
+        // /2 - right map area
         {
             min: 0,
             max: 20,
@@ -211,7 +227,7 @@ const support = {
             reversed: true
         },
 
-        ///3 - for particle group 2
+        // /3 - for particle group 2
         {
             min: 0,
             max: 20,
@@ -219,7 +235,7 @@ const support = {
             tickInterval: 1
         }],
     yAxis: [
-    //0
+    // 0
         {
             min: -2,
             max: 18,
@@ -229,7 +245,7 @@ const support = {
             startOnTick: false,
             endOnTick: false
         },
-        ///1 - for the top map area
+        // /1 - for the top map area
         {
             min: -2,
             max: 18,
@@ -290,7 +306,7 @@ const support = {
 
     },
     series: [
-        //0 - bottom line
+        // 0 - bottom line
         {
             type: 'line',
             className: 'green',
@@ -301,7 +317,7 @@ const support = {
             zIndex: 21
 
         },
-        //1 - line
+        // 1 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -312,7 +328,7 @@ const support = {
             ],
             zIndex: 21
         },
-        //2 - line
+        // 2 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -323,7 +339,7 @@ const support = {
             ],
             zIndex: 21
         },
-        //3 - line
+        // 3 - line
         {
             type: 'line',
             className: 'green',
@@ -335,7 +351,7 @@ const support = {
             zIndex: 21
 
         },
-        //4 - line
+        // 4 - line
         {
             type: 'line',
             className: 'green',
@@ -347,7 +363,7 @@ const support = {
             zIndex: 21
 
         },
-        //5 - line
+        // 5 - line
         {
             type: 'line',
             className: 'green',
@@ -358,7 +374,7 @@ const support = {
             ],
             zIndex: 11
         },
-        //6 - line
+        // 6 - line
         {
             type: 'line',
             className: 'green',
@@ -370,7 +386,7 @@ const support = {
             zIndex: 11
 
         },
-        //7 - line
+        // 7 - line
         {
             type: 'line',
             className: 'green',
@@ -382,7 +398,7 @@ const support = {
             zIndex: 11
         },
 
-        //8 - line
+        // 8 - line
         {
             type: 'line',
             className: 'green',
@@ -394,7 +410,7 @@ const support = {
             zIndex: 11
         },
 
-        //9 - line
+        // 9 - line
         {
             type: 'line',
             className: 'green',
@@ -457,7 +473,7 @@ const support = {
             zIndex: 10,
             visible: true
         },
-        //14 particles
+        // 14 particles
         {
             type: 'scatter',
             name: 'particles',
@@ -493,7 +509,7 @@ const support = {
         },
 
 
-        //14 - particles
+        // 14 - particles
 
         {
             type: 'scatter',

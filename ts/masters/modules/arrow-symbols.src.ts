@@ -5,9 +5,13 @@
  *
  * Arrow Symbols
  *
- * (c) 2017-2021 Lars A. V. Cabrera
+ * (c) 2017-2024 Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/ArrowSymbols.js';
+import Highcharts from '../../Core/Globals.js';
+import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
+const G: AnyRecord = Highcharts;
+ArrowSymbols.compose(G.SVGRenderer);
+export default Highcharts;

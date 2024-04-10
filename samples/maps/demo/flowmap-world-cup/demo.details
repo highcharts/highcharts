@@ -1,0 +1,10 @@
+---
+name: Flowmap Flight Routes
+author:
+  - Kamil Musialowski
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

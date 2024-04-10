@@ -1,15 +1,16 @@
 const colors = [{
     pattern: {
         ...Highcharts.patterns[1],
-        color: "#1493ff"
+        color: '#1493ff'
     }
 }, {
     pattern: {
         ...Highcharts.patterns[5],
-        color: "#71BF45"
+        color: '#71BF45'
     }
 },
-'#FFA500'];
+'#FFA500'
+];
 Highcharts.chart('container', {
     chart: {
         type: 'pie'

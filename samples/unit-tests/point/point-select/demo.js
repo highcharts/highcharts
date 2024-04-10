@@ -57,14 +57,16 @@ QUnit.test('Point select and staging', assert => {
     assert.deepEqual(
         selectedPoints,
         ['To', 'Tre'],
-        'After accumulating the third point, there should be two points selected'
+        'After accumulating the third point, there should be two points ' +
+        'selected'
     );
 
     chart.series[0].points[1].select(false, true);
     assert.deepEqual(
         selectedPoints,
         ['Tre'],
-        'After unselecting/accumulating the second point, there should be one point selected'
+        'After unselecting/accumulating the second point, there should be ' +
+        'one point selected'
     );
 
     chart.series[0].points[2].select(false);

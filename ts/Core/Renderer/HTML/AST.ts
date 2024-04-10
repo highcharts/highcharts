@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -62,7 +62,7 @@ const emptyHTML = trustedTypesPolicy ?
     '';
 
 
-// In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
+// IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
         return Boolean(new DOMParser().parseFromString(
@@ -104,14 +104,18 @@ class AST {
      * potentially harmful content from the chart configuration before adding to
      * the DOM.
      *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedAttributes)
+     *
      * @example
      * // Allow a custom, trusted attribute
      * Highcharts.AST.allowedAttributes.push('data-value');
      *
      * @name Highcharts.AST.allowedAttributes
-     * @static
+     * @type {Array<string>}
      */
     public static allowedAttributes = [
+        'alt',
         'aria-controls',
         'aria-describedby',
         'aria-expanded',
@@ -135,6 +139,9 @@ class AST {
         'dy',
         'disabled',
         'fill',
+        'filterUnits',
+        'flood-color',
+        'flood-opacity',
         'height',
         'href',
         'id',
@@ -178,6 +185,7 @@ class AST {
         'x',
         'x1',
         'x2',
+        'xlink:href',
         'y',
         'y1',
         'y2',
@@ -189,12 +197,15 @@ class AST {
      * `src`. Attribute values will only be allowed if they start with one of
      * these strings.
      *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedReferences)
+     *
      * @example
      * // Allow tel:
      * Highcharts.AST.allowedReferences.push('tel:');
      *
-     * @name Highcharts.AST.allowedReferences
-     * @static
+     * @name    Highcharts.AST.allowedReferences
+     * @type    {Array<string>}
      */
     public static allowedReferences = [
         'https://',
@@ -210,12 +221,15 @@ class AST {
      * The list of allowed SVG or HTML tags, used for sanitizing potentially
      * harmful content from the chart configuration before adding to the DOM.
      *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedTags)
+     *
      * @example
      * // Allow a custom, trusted tag
      * Highcharts.AST.allowedTags.push('blink'); // ;)
      *
-     * @name Highcharts.AST.allowedTags
-     * @static
+     * @name    Highcharts.AST.allowedTags
+     * @type    {Array<string>}
      */
     public static allowedTags = [
         'a',
@@ -234,6 +248,7 @@ class AST {
         'dt',
         'em',
         'feComponentTransfer',
+        'feDropShadow',
         'feFuncA',
         'feFuncB',
         'feFuncG',
@@ -273,6 +288,7 @@ class AST {
         'text',
         'textPath',
         'thead',
+        'title',
         'tbody',
         'tspan',
         'td',
@@ -288,7 +304,7 @@ class AST {
     /**
      * Allow all custom SVG and HTML attributes, references and tags (together
      * with potentially harmful ones) to be added to the DOM from the chart
-     * configuration. In other words, disable the the allow-listing which is the
+     * configuration. In other words, disable the allow-listing which is the
      * primary functionality of the AST.
      *
      * WARNING: Setting this property to `true` while allowing untrusted user
@@ -353,6 +369,11 @@ class AST {
                     'Invalid attribute in config': `${key}`
                 });
                 delete attributes[key];
+            }
+
+            // #17753, < is not allowed in SVG attributes
+            if (isString(val) && attributes[key]) {
+                attributes[key] = val.replace(/</g, '&lt;') as any;
             }
         });
         return attributes;
@@ -690,4 +711,4 @@ export default AST;
  * @type {string|undefined}
  */
 
-(''); // keeps doclets above in file
+(''); // Keeps doclets above in file

@@ -1,0 +1,6 @@
+---
+ name: Error bars with data labels
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -50,6 +50,7 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
      * be represented as `point.y`, which is later used to set dataLabel
      * position and [compare](#plotOptions.series.compare).
      *
+     * @declare    Highcharts.OptionsPointValKeyValue
      * @default    close
      * @validvalue ["open", "high", "low", "close"]
      * @product    highstock
@@ -165,7 +166,7 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  * @apioption series.ohlc.data.open
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled
 
 /* *
  *

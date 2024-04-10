@@ -10,7 +10,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'The <em>zMin</em> and <em>zMax</em> options are set to 0 and 100, bubbles should not become near the <em>maxSize</em>'
+        text: 'The <em>zMin</em> and <em>zMax</em> options are set to 0 and ' +
+            '100, bubbles should not become near the <em>maxSize</em>'
     },
 
     xAxis: {

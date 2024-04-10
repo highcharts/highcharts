@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,7 +25,6 @@ const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import PieSeriesDefaults from './PieSeriesDefaults.js';
@@ -38,8 +37,7 @@ const {
     extend,
     fireEvent,
     merge,
-    pick,
-    relativeLength
+    pick
 } = U;
 
 /* *
@@ -84,7 +82,7 @@ class PieSeries extends Series {
      *
      * */
 
-    public static defaultOptions: PieSeriesOptions = merge(
+    public static defaultOptions = merge(
         Series.defaultOptions,
         PieSeriesDefaults
     );
@@ -95,19 +93,15 @@ class PieSeries extends Series {
      *
      * */
 
-    public center: Array<number> = void 0 as any;
+    public center!: Array<number>;
 
-    public data: Array<PiePoint> = void 0 as any;
+    public data!: Array<PiePoint>;
 
     public endAngleRad?: number;
 
-    public maxLabelDistance: number = void 0 as any;
+    public options!: PieSeriesOptions;
 
-    public options: PieSeriesOptions = void 0 as any;
-
-    public points: Array<PiePoint> = void 0 as any;
-
-    public shadowGroup?: SVGElement;
+    public points!: Array<PiePoint>;
 
     public startAngleRad?: number;
 
@@ -136,16 +130,18 @@ class PieSeries extends Series {
                     args = point.shapeArgs;
 
                 if (graphic && args) {
-                // start values
+                // Start values
                     graphic.attr({
-                    // animate from inner radius (#779)
-                        r: pick(point.startR,
-                            (series.center && series.center[3] / 2)),
+                    // Animate from inner radius (#779)
+                        r: pick(
+                            point.startR,
+                            (series.center && series.center[3] / 2
+                            )),
                         start: startAngleRad,
                         end: startAngleRad
                     });
 
-                    // animate
+                    // Animate
                     graphic.animate({
                         r: args.r,
                         start: args.start,
@@ -244,34 +240,35 @@ class PieSeries extends Series {
     }
 
     /**
-     * Utility for getting the x value from a given y, used for
-     * anticollision logic in data labels. Added point for using specific
-     * points' label distance.
+     * Utility for getting the x value from a given y, used for anticollision
+     * logic in data labels.
      * @private
      */
     public getX(
         y: number,
         left: boolean,
-        point: PiePoint
+        point: PiePoint,
+        dataLabel: SVGElement
     ): number {
         const center = this.center,
             // Variable pie has individual radius
             radius = this.radii ?
                 this.radii[point.index as any] || 0 :
-                center[2] / 2;
+                center[2] / 2,
+            labelPosition = dataLabel.dataLabelPosition,
+            distance = labelPosition?.distance || 0;
 
         const angle = Math.asin(
-            clamp((y - center[1]) / (radius + point.labelDistance), -1, 1)
+            clamp((y - center[1]) / (radius + distance), -1, 1)
         );
         const x = center[0] +
-        (left ? -1 : 1) *
-        (Math.cos(angle) * (radius + point.labelDistance)) +
-        (
-            (point.labelDistance as any) > 0 ?
-                (left ? -1 : 1) * (this.options.dataLabels as any).padding :
-                0
-        );
-
+            (left ? -1 : 1) *
+            (Math.cos(angle) * (radius + distance)) +
+            (
+                distance > 0 ?
+                    (left ? -1 : 1) * (dataLabel.padding || 0) :
+                    0
+            );
         return x;
     }
 
@@ -290,9 +287,7 @@ class PieSeries extends Series {
      */
     public redrawPoints(): void {
         const series = this,
-            chart = series.chart,
-            renderer = chart.renderer,
-            shadow = series.options.shadow;
+            chart = series.chart;
         let groupTranslation,
             graphic,
             pointAttr: SVGAttributes,
@@ -300,20 +295,17 @@ class PieSeries extends Series {
 
         this.drawEmpty();
 
-        if (shadow && !series.shadowGroup && !chart.styledMode) {
-            series.shadowGroup = renderer
-                .g('shadow')
-                .attr({ zIndex: -1 })
-                .add(series.group);
+        // Apply the drop-shadow to the group because otherwise each element
+        // would cast a shadow on others
+        if (series.group && !chart.styledMode) {
+            series.group.shadow(series.options.shadow);
         }
 
-        // draw the slices
+        // Draw the slices
         series.points.forEach(function (point): void {
             const animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
-                let shadowGroup: (SVGElement|undefined);
-
                 shapeArgs = point.shapeArgs;
 
 
@@ -322,18 +314,6 @@ class PieSeries extends Series {
                 groupTranslation = point.getTranslate();
 
                 if (!chart.styledMode) {
-                // Put the shadow behind all points
-                    shadowGroup = point.shadowGroup;
-
-                    if (shadow && !shadowGroup) {
-                        shadowGroup = point.shadowGroup = renderer
-                            .g('shadow')
-                            .add(series.shadowGroup);
-                    }
-
-                    if (shadowGroup) {
-                        shadowGroup.attr(groupTranslation);
-                    }
                     pointAttr = series.pointAttribs(
                         point,
                         (point.selected && 'select') as any
@@ -360,16 +340,16 @@ class PieSeries extends Series {
                     if (!chart.styledMode) {
                         graphic
                             .attr(pointAttr)
-                            .attr({ 'stroke-linejoin': 'round' })
-                            .shadow(shadow, shadowGroup);
+                            .attr({ 'stroke-linejoin': 'round' });
                     }
 
                     point.delayedRendering = false;
                 }
 
-                graphic.attr({
-                    visibility: point.visible ? 'inherit' : 'hidden'
-                });
+                graphic
+                    .attr({
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    });
 
                 graphic.addClass(point.getClassName(), true);
 
@@ -406,11 +386,9 @@ class PieSeries extends Series {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // issue #172
+            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
-            connectorOffset =
-                (slicedOffset as any) + (options.borderWidth || 0),
             radians = getStartAndEndRadians(
                 options.startAngle,
                 options.endAngle
@@ -419,14 +397,12 @@ class PieSeries extends Series {
             endAngleRad = series.endAngleRad = radians.end,
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
             points = series.points,
-            labelDistance = (options.dataLabels as any).distance,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
             len = points.length;
-        let finalConnectorOffset,
-            start,
+        let start,
             end,
             angle,
-            // the x component of the radius vector for a given point
+            // The x component of the radius vector for a given point
             radiusX,
             radiusY,
             i,
@@ -437,6 +413,14 @@ class PieSeries extends Series {
         // given. If positions are passed as a parameter, we're in a
         // recursive loop for adjusting space for data labels.
         if (!positions) {
+            /**
+             * The series center position, read only. This applies only to
+             * circular chart types like pie and sunburst. It is an array of
+             * `[centerX, centerY, diameter, innerDiameter]`.
+             *
+             * @name Highcharts.Series#center
+             * @type {Array<number>}
+             */
             series.center = positions = series.getCenter();
         }
 
@@ -445,7 +429,7 @@ class PieSeries extends Series {
 
             point = points[i];
 
-            // set start and end angle
+            // Set start and end angle
             start = startAngleRad + (cumulative * circ);
             if (
                 point.isValid() &&
@@ -455,7 +439,7 @@ class PieSeries extends Series {
             }
             end = startAngleRad + (cumulative * circ);
 
-            // set the shape
+            // Set the shape
             const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
@@ -466,28 +450,6 @@ class PieSeries extends Series {
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
-
-            // Used for distance calculation for specific point.
-            point.labelDistance = pick(
-                (
-                    point.options.dataLabels &&
-                    point.options.dataLabels.distance
-                ),
-                labelDistance
-            );
-
-            // Compute point.labelDistance if it's defined as percentage
-            // of slice radius (#8854)
-            point.labelDistance = relativeLength(
-                point.labelDistance,
-                shapeArgs.r
-            );
-
-            // Saved for later dataLabels distance calculation.
-            series.maxLabelDistance = Math.max(
-                series.maxLabelDistance || 0,
-                point.labelDistance
-            );
 
             // The angle must stay within -90 and 270 (#2645)
             angle = (end + start) / 2;
@@ -507,7 +469,7 @@ class PieSeries extends Series {
                 )
             };
 
-            // set the anchor point for tooltips
+            // Set the anchor point for tooltips
             radiusX = Math.cos(angle) * positions[2] / 2;
             radiusY = Math.sin(angle) * positions[2] / 2;
             point.tooltipPos = [
@@ -519,49 +481,6 @@ class PieSeries extends Series {
                 1 :
                 0;
             point.angle = angle;
-
-            // Set the anchor point for data labels. Use point.labelDistance
-            // instead of labelDistance // #1174
-            // finalConnectorOffset - not override connectorOffset value.
-
-            finalConnectorOffset = Math.min(
-                connectorOffset,
-                point.labelDistance / 5
-            ); // #1678
-
-            point.labelPosition = {
-                natural: {
-                // initial position of the data label - it's utilized for
-                // finding the final position for the label
-                    x: positions[0] + radiusX + Math.cos(angle) *
-                    point.labelDistance,
-                    y: positions[1] + radiusY + Math.sin(angle) *
-                    point.labelDistance
-                },
-                'final': {
-                // used for generating connector path -
-                // initialized later in drawDataLabels function
-                // x: undefined,
-                // y: undefined
-                },
-                // left - pie on the left side of the data label
-                // right - pie on the right side of the data label
-                // center - data label overlaps the pie
-                alignment: point.labelDistance < 0 ?
-                    'center' : point.half ? 'right' : 'left',
-                connectorPosition: {
-                    breakAt: { // used in connectorShapes.fixedOffset
-                        x: positions[0] + radiusX + Math.cos(angle) *
-                        finalConnectorOffset,
-                        y: positions[1] + radiusY + Math.sin(angle) *
-                        finalConnectorOffset
-                    },
-                    touchingSliceAt: { // middle of the arc
-                        x: positions[0] + radiusX,
-                        y: positions[1] + radiusY
-                    }
-                }
-            };
         }
         fireEvent(series, 'afterTranslate');
     }
@@ -613,38 +532,23 @@ class PieSeries extends Series {
 
 interface PieSeries {
     drawGraph: undefined;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointClass: typeof PiePoint;
 }
 extend(PieSeries.prototype, {
-
     axisTypes: [],
-
     directTouch: true,
-
     drawGraph: void 0,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
-
     drawTracker: ColumnSeries.prototype.drawTracker,
-
     getCenter: CU.getCenter,
-
     getSymbol: noop,
-
+    invertible: false,
     isCartesian: false,
-
     noSharedTooltip: true,
-
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-
     pointClass: PiePoint,
-
     requireSorting: false,
-
     searchPoint: noop as any,
-
     trackerGroups: ['group', 'dataLabelsGroup']
 });
 

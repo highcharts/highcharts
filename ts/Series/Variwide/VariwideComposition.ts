@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,10 +24,13 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Tick from '../../Core/Axis/Tick';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -56,14 +59,6 @@ declare module '../../Core/Axis/TickLike' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<Function> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -76,19 +71,13 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
+    if (pushUnique(composed, 'Variwide')) {
+        const tickProto = TickClass.prototype;
 
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
-    }
-
-    if (composedMembers.indexOf(TickClass) === -1) {
-        composedMembers.push(TickClass);
 
         addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
-
-        const tickProto = TickClass.prototype;
 
         tickProto.postTranslate = tickPostTranslate;
 
@@ -128,17 +117,13 @@ function onAxisAfterRender(
         this.chart.labelCollectors.push(
             function (): Array<SVGElement> {
                 return axis.tickPositions
-                    .filter(function (pos: number): boolean {
-                        return axis.ticks[pos].label as any;
-                    })
-                    .map(function (
-                        pos: number,
-                        i: number
-                    ): SVGElement {
+                    .filter((pos: number): boolean => !!axis.ticks[pos].label)
+                    .map((pos, i): SVGElement => {
                         const label: SVGElement =
                             axis.ticks[pos].label as any;
 
                         label.labelrank = (axis.zData as any)[i];
+
                         return label;
                     });
             }
@@ -195,13 +180,15 @@ function tickPostTranslate(
 function wrapTickGetLabelPosition(
     this: Tick,
     proceed: Function,
-    x: number,
-    y: number,
-    label: SVGElement,
+    _x: number,
+    _y: number,
+    _label: SVGElement,
     horiz: boolean,
-    labelOptions: DataLabelOptions,
-    tickmarkOffset: number,
-    index: number
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    _labelOptions: DataLabelOptions,
+    _tickmarkOffset: number,
+    _index: number
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';

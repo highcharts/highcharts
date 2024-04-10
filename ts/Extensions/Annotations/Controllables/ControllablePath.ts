@@ -68,8 +68,6 @@ interface MarkerSetterFunction {
  *
  * */
 
-const composedClasses: Array<Function> = [];
-
 const markerEndSetter = createMarkerSetter('marker-end');
 
 const markerStartSetter = createMarkerSetter('marker-start');
@@ -102,7 +100,7 @@ function onChartAfterGetContainer(
 ): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    // objectEach(this.options.defs, function (def): void {
+    ///  objectEach(this.options.defs, function (def): void {
     //     const attributes = def.attributes;
     //     if (
     //         def.tagName === 'marker' &&
@@ -212,20 +210,14 @@ class ControllablePath extends Controllable {
         ChartClass: typeof Chart,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const svgRendererProto = SVGRendererClass.prototype;
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (!svgRendererProto.addMarker) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
-        }
-
-        if (composedClasses.indexOf(SVGRendererClass) === -1) {
-            composedClasses.push(SVGRendererClass);
-
-            const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.addMarker = svgRendererAddMarker;
         }
+
     }
 
     /* *
@@ -387,8 +379,8 @@ class ControllablePath extends Controllable {
         const setMarker = function (
             markerType: ('markerEnd'|'markerStart')
         ): void {
-            let markerId = itemOptions[markerType],
-                def,
+            const markerId = itemOptions[markerType];
+            let def,
                 predefinedMarker,
                 key,
                 marker;

@@ -1,8 +1,8 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
- *  Extenstion for 3d axes
+ *  Extension for 3d axes
  *
  *  License: www.highcharts.com/license
  *
@@ -22,10 +22,13 @@ import type Axis from './Axis';
 import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
+import type RadialAxis from './RadialAxis';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 
 import Axis3DDefaults from './Axis3DDefaults.js';
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import H from '../Globals.js';
 const { deg2rad } = H;
 import Math3D from '../Math3D.js';
@@ -85,17 +88,9 @@ declare module '../Series/PointLike' {
  * Axis instance with 3D support.
  * @private
  */
-export declare class Axis3DComposition extends Axis {
+export declare class Axis3DComposition extends RadialAxis.AxisComposition {
     axis3D: Axis3DAdditions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
 
 /* *
  *
@@ -207,7 +202,7 @@ function wrapAxisGetPlotBandPath(
                     fromStartSeg,
                     fromEndSeg,
                     toEndSeg,
-                    // lineTo instead of moveTo
+                    // `lineTo` instead of `moveTo`
                     ['L', toStartSeg[1], toStartSeg[2]],
                     ['Z']
                 );
@@ -321,9 +316,7 @@ function wrapAxisGetSlotWidth(
     tick: Tick
 ): number {
     const axis = this,
-        chart = axis.chart,
-        ticks = axis.ticks,
-        gridGroup = axis.gridGroup;
+        { chart, gridGroup, tickPositions, ticks } = axis;
 
     if (
         axis.categories &&
@@ -347,9 +340,9 @@ function wrapAxisGetSlotWidth(
                     pick(options3d.viewDistance, 0)
                 )
             },
-            tickId = tick.pos,
-            prevTick = ticks[tickId - 1],
-            nextTick = ticks[tickId + 1];
+            index = tickPositions.indexOf(tick.pos),
+            prevTick = ticks[tickPositions[index - 1]],
+            nextTick = ticks[tickPositions[index + 1]];
 
         let labelPos,
             prevLabelPos,
@@ -357,12 +350,7 @@ function wrapAxisGetSlotWidth(
 
         // Check whether the tick is not the first one and previous tick
         // exists, then calculate position of previous label.
-        if (
-            tickId !== 0 &&
-            prevTick &&
-            prevTick.label &&
-            prevTick.label.xy
-        ) {
+        if (prevTick?.label?.xy) {
             prevLabelPos = perspective3D({ // #8621
                 x: prevTick.label.xy.x,
                 y: prevTick.label.xy.y,
@@ -443,12 +431,12 @@ class Axis3DAdditions {
         AxisClass: typeof Axis,
         TickClass: typeof Tick
     ): void {
+
         Tick3D.compose(TickClass);
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
+        if (!AxisClass.keepProps.includes('axis3D')) {
+            merge(true, defaultOptions.xAxis, Axis3DDefaults);
 
-            merge(true, AxisClass.defaultOptions, Axis3DDefaults);
             AxisClass.keepProps.push('axis3D');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -632,7 +620,7 @@ class Axis3DAdditions {
                 vecY = { x: vecX.z * sin, y: cos, z: -vecX.x * sin };
             }
         } else if (positionMode === 'ortho') {
-            // Labels will be rotated to be ortogonal to the axis
+            // Labels will be rotated to be orthogonal to the axis
             if (!axis.horiz) { // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
             } else { // X and Z Axis
@@ -658,7 +646,7 @@ class Axis3DAdditions {
                     x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z
                 };
             }
-        } else { // positionMode  == 'offset'
+        } else { // Position mode  == 'offset'
             // Labels will be skewd to maintain vertical / horizontal offsets
             // from axis
             if (!axis.horiz) { // Y Axis

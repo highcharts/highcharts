@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type ColumnPyramidSeries from './ColumnPyramidSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -29,7 +30,7 @@ export interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

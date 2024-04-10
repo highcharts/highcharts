@@ -25,9 +25,7 @@ import type StochasticPoint from './StochasticPoint';
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -130,9 +128,9 @@ class StochasticIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<StochasticPoint> = void 0 as any;
-    public options: StochasticOptions = void 0 as any;
-    public points: Array<StochasticPoint> = void 0 as any;
+    public data!: Array<StochasticPoint>;
+    public options!: StochasticOptions;
+    public points!: Array<StochasticPoint>;
 
     /* *
      *
@@ -141,7 +139,7 @@ class StochasticIndicator extends SMAIndicator {
      * */
 
     public init(): void {
-        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
+        super.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge({
@@ -157,7 +155,7 @@ class StochasticIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let periodK: number = (params.periods as any)[0],
+        const periodK: number = (params.periods as any)[0],
             periodD: number = (params.periods as any)[1],
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
@@ -166,19 +164,17 @@ class StochasticIndicator extends SMAIndicator {
             SO: Array<Array<(number|null)>> = [],
             xData: Array<number> = [],
             yData: Array<Array<(number|null)>> = [],
-            slicedY: Array<Array<number>>,
             close = 3,
             low = 2,
-            high = 1,
+            high = 1;
+
+        let slicedY: Array<Array<number>>,
             CL: number,
             HL: number,
             LL: number,
             K: number,
             D: number|null = null,
-            points: (
-                IndicatorValuesObject<LineSeries>|
-                undefined
-            ),
+            points: (IndicatorValuesObject<LineSeries>|undefined),
             extremes: [number, number],
             i: number;
 
@@ -192,6 +188,10 @@ class StochasticIndicator extends SMAIndicator {
             return;
         }
 
+        // If the value of initial points is constant, wait until it changes
+        // to calculate correct Stochastic values
+        let constantValues = true,
+            j = 0;
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list
         // with (+1)
@@ -205,23 +205,45 @@ class StochasticIndicator extends SMAIndicator {
             HL = extremes[1] - LL;
             K = CL / HL * 100;
 
-            xData.push(xVal[i]);
-            yData.push([K, null]);
+            if (isNaN(K) && constantValues) {
+                j++;
+                continue;
+            } else if (constantValues && !isNaN(K)) {
+                constantValues = false;
+            }
+
+            const length = xData.push(xVal[i]);
+
+            // If N-period previous values are constant which results in NaN %K,
+            // we need to use previous %K value if it is a number,
+            // otherwise we should use null
+            if (isNaN(K)) {
+                yData.push([
+                    yData[length - 2] &&
+                        typeof yData[length - 2][0] === 'number' ?
+                        yData[length - 2][0] : null,
+                    null
+                ]);
+            } else {
+                yData.push([K, null]);
+            }
 
             // Calculate smoothed %D, which is SMA of %K
-            if (i >= (periodK - 1) + (periodD - 1)) {
-                points = SeriesRegistry.seriesTypes.sma.prototype.getValues
-                    .call(this, ({
+            if (i >= j + (periodK - 1) + (periodD - 1)) {
+                points = super.getValues(
+                    ({
                         xData: xData.slice(-periodD),
                         yData: yData.slice(-periodD)
-                    } as any), {
+                    } as any),
+                    {
                         period: periodD
-                    });
+                    }
+                );
                 D = (points as any).yData[0];
             }
 
             SO.push([xVal[i], K, D]);
-            yData[yData.length - 1][1] = D;
+            yData[length - 1][1] = D;
         }
 
         return {
@@ -230,6 +252,7 @@ class StochasticIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
 /* *
@@ -302,4 +325,4 @@ export default StochasticIndicator;
  * @apioption series.stochastic
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

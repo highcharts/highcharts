@@ -30,6 +30,6 @@ QUnit.test('Non-grouped column is centered (#4799)', function (assert) {
     assert.ok(
         Math.abs(bBox.x + bBox.width / 2 - chart.xAxis[0].toPixels(0, true)) <
             1,
-        "Last series' column is centered"
+        'Last series\' column is centered'
     );
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,10 +16,11 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type Point from '../Core/Series/Point';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
@@ -51,6 +52,16 @@ declare module '../Core/Series/PointLike' {
 
 namespace ColorMapComposition {
 
+    // These properties can be set as both attributes and CSS properties
+    interface ColorAttribsType {
+        dashstyle?: DashStyleValue;
+        fill?: ColorType;
+        stroke?: ColorType;
+        'stroke-linecap'?: 'butt'|'round'|'square';
+        'stroke-linejoin'?: 'butt'|'round'|'square';
+        'stroke-width'?: number;
+    }
+
     /* *
      *
      *  Declarations
@@ -66,13 +77,13 @@ namespace ColorMapComposition {
     }
 
     export declare class SeriesComposition extends ScatterSeries {
-        colorProp?: string;
+        colorProp?: 'fill'|'stroke';
         data: Array<PointComposition>;
         parallelArrays: Array<string>;
         pointArrayMap: Array<string>;
         points: Array<PointComposition>;
         trackerGroups: Array<string>;
-        colorAttribs(point: PointComposition): SVGAttributes;
+        colorAttribs(point: PointComposition): ColorAttribsType;
     }
 
     /* *
@@ -80,8 +91,6 @@ namespace ColorMapComposition {
      *  Constants
      *
      * */
-
-    const composedClasses: Array<Function> = [];
 
     export const pointMembers = {
         dataLabelOnNull: true,
@@ -91,7 +100,8 @@ namespace ColorMapComposition {
 
     export const seriesMembers = {
         colorKey: 'value',
-        axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+        axisTypes: ['xAxis', 'yAxis', 'colorAxis'] as
+            Array<'xAxis'|'yAxis'|'colorAxis'>,
         parallelArrays: ['x', 'y', 'value'],
         pointArrayMap: ['value'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -113,11 +123,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
-            addEvent(PointClass, 'afterSetState', onPointAfterSetState);
-        }
+        addEvent(PointClass, 'afterSetState', onPointAfterSetState);
 
         return SeriesClass as (T&typeof SeriesComposition);
     }
@@ -151,13 +157,13 @@ namespace ColorMapComposition {
             this.value !== null &&
             this.value !== Infinity &&
             this.value !== -Infinity &&
-            // undefined is allowed, but NaN is not (#17279)
+            // Undefined is allowed, but NaN is not (#17279)
             (this.value === void 0 || !isNaN(this.value))
         );
     }
 
     /**
-     * Get the color attibutes to apply on the graphic
+     * Get the color attributes to apply on the graphic
      * @private
      * @function Highcharts.colorMapSeriesMixin.colorAttribs
      * @param {Highcharts.Point} point
@@ -167,14 +173,14 @@ namespace ColorMapComposition {
     function seriesColorAttribs(
         this: SeriesComposition,
         point: PointComposition
-    ): SVGAttributes {
-        const ret: SVGAttributes = {};
+    ): ColorAttribsType {
+        const ret: ColorAttribsType = {};
 
         if (
             defined(point.color) &&
             (!point.state || point.state === 'normal') // #15746
         ) {
-            (ret as any)[this.colorProp || 'fill'] = point.color;
+            ret[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }

@@ -1,0 +1,10 @@
+---
+name: Geo heatmap, orthographic
+authors:
+  - Piotr Madej, Magdalena Gut
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

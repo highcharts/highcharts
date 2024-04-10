@@ -2,6 +2,12 @@
  * Copyright (C) Highsoft AS
  */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 const gulp = require('gulp');
 
 /* *
@@ -22,9 +28,9 @@ const gulp = require('gulp');
  * @todo add --help command to inform about usage.
  *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
-function task() {
+async function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
@@ -32,40 +38,41 @@ function task() {
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
-    return new Promise((resolve, reject) => {
-
-        const BuildScripts = buildTool.getBuildScripts({
-            debug: (argv.d || argv.debug || false),
-            files: (
-                (argv.file) ?
-                    argv.file.split(',') :
-                    null
-            ),
-            type: (argv.type || null)
-        });
-
-        logLib.message('Generating code...');
-
-        processLib.isRunning('scripts-js', true);
-
-        BuildScripts
-            .fnFirstBuild()
-            .then(() => fsLib.copyAllFiles(
-                'js/',
-                'code/es-modules/',
-                true,
-                sourcePath => sourcePath.endsWith('.d.ts')
-            ))
-            .then(() => logLib.success('Created code'))
-            .then(function (output) {
-                processLib.isRunning('scripts-js', false);
-                resolve(output);
-            })
-            .catch(function (error) {
-                processLib.isRunning('scripts-js', false);
-                reject(error);
-            });
+    const BuildScripts = buildTool.getBuildScripts({
+        debug: (argv.d || argv.debug || false),
+        files: (
+            (argv.file) ?
+                argv.file.split(',') :
+                null
+        ),
+        type: (argv.type || null)
     });
+
+    logLib.message('Generating code...');
+
+    processLib.isRunning('scripts-js', true);
+
+    try {
+        // assemble JS files
+        await BuildScripts.fnFirstBuild();
+
+        // deleting invalid masters DTS
+        fsLib
+            .getFilePaths('js/masters/', true)
+            .forEach(path => path.endsWith('.d.ts') && fsLib.deleteFile(path));
+
+        // copy valid native DTS
+        fsLib.copyAllFiles(
+            'js/',
+            'code/es-modules/',
+            true
+        );
+
+        logLib.success('Created code');
+    } finally {
+        processLib.isRunning('scripts-js', false);
+    }
+
 }
 
-gulp.task('scripts-js', task);
+gulp.task('scripts-js', scriptsJS);

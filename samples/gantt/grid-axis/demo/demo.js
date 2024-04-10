@@ -30,7 +30,10 @@ Highcharts.chart('container', {
         grid: {
             enabled: true
         },
-        categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
+        categories: [
+            'M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F',
+            'S', 'S'
+        ],
         min: 0,
         max: 12
     }, {
@@ -43,7 +46,7 @@ Highcharts.chart('container', {
         labels: {
             format: '{value:%E}',
             style: {
-                fontSize: '1.5em'
+                fontSize: '1.2em'
             }
         },
         linkedTo: 0
@@ -57,7 +60,7 @@ Highcharts.chart('container', {
         labels: {
             format: '{value:Week %W}',
             style: {
-                fontSize: '1.5em'
+                fontSize: '1.2em'
             }
         },
         linkedTo: 0
@@ -81,7 +84,7 @@ Highcharts.chart('container', {
         labels: {
             format: '{value:%E}',
             style: {
-                fontSize: '2em'
+                fontSize: '1.6em'
             }
         },
         min: Date.UTC(2014, 10, 19),

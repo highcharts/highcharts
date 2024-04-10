@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highcharts Stock
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -32,8 +32,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
-    merge,
-    extend
+    merge
 } = U;
 
 /* *
@@ -44,10 +43,16 @@ const {
 
 // Utils:
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateDirection(
     previousDirection: number, low: number, high: number, PSAR: number
 ): number {
@@ -69,6 +74,9 @@ function calculateDirection(
  * inc - increment for acceleration factor
  * maxAcc - maximum acceleration factor
  * initAcc - initial acceleration factor
+ */
+/**
+ *
  */
 function getAccelerationFactor(
     dir: number,
@@ -92,6 +100,9 @@ function getAccelerationFactor(
     return initAcc;
 }
 
+/**
+ *
+ */
 function getExtremePoint(
     high: number,
     low: number,
@@ -104,10 +115,16 @@ function getExtremePoint(
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
 
+/**
+ *
+ */
 function getEPMinusPSAR(EP: number, PSAR: number): number {
     return EP - PSAR;
 }
 
+/**
+ *
+ */
 function getAccelerationFactorMultiply(
     accelerationFactor: number,
     EPMinusSAR: number
@@ -126,6 +143,9 @@ function getAccelerationFactorMultiply(
  * sHigh - second previous high
  * pHigh - previous high
  * pEP - previous extreme point
+ */
+/**
+ *
  */
 function getPSAR(
     pdir: number,
@@ -203,7 +223,7 @@ class PSARIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value
@@ -247,9 +267,10 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PSARPoint> = void 0 as any;
-    public points: Array<PSARPoint> = void 0 as any;
-    public options: PSAROptions = void 0 as any;
+    public data!: Array<PSARPoint>;
+    public nameComponents: Array<string>|undefined = void 0;
+    public points!: Array<PSARPoint>;
+    public options!: PSAROptions;
 
     /* *
      *
@@ -261,14 +282,8 @@ class PSARIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let xVal: Array<number> = (series.xData as any),
+        const xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
-            // Extreme point is the lowest low for falling and highest high
-            // for rising psar - and we are starting with falling
-            extremePoint: number = yVal[0][1],
-            accelerationFactor: number = (
-                params.initialAccelerationFactor as any
-            ),
             maxAccelerationFactor: number = (
                 params.maxAccelerationFactor as any
             ),
@@ -277,21 +292,27 @@ class PSARIndicator extends SMAIndicator {
             initialAccelerationFactor: number = (
                 params.initialAccelerationFactor as any
             ),
-            PSAR: number = yVal[0][2],
             decimals: number = (params.decimals as any),
             index: number = (params.index as any),
             PSARArr: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            previousDirection = 1,
+            yData: Array<number> = [];
+        let accelerationFactor: number = (
+                params.initialAccelerationFactor as any
+            ),
             direction: number,
+            // Extreme point is the lowest low for falling and highest high
+            // for rising psar - and we are starting with falling
+            extremePoint: number = yVal[0][1],
             EPMinusPSAR: number,
             accelerationFactorMultiply: number,
             newDirection: number,
+            previousDirection = 1,
             prevLow: number,
             prevPrevLow: number,
             prevHigh: number,
             prevPrevHigh: number,
+            PSAR: number = yVal[0][2],
             newExtremePoint: number,
             high: number,
             low: number,
@@ -402,12 +423,8 @@ class PSARIndicator extends SMAIndicator {
 
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
 }
-
-extend(PSARIndicator.prototype, {
-    nameComponents: void 0
-});
 
 /* *
  *
@@ -450,4 +467,4 @@ export default PSARIndicator;
  * @apioption series.psar
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

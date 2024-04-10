@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -74,6 +74,7 @@ export interface AccessibilityOptions {
     customComponents?: AnyRecord;
     description?: string;
     enabled: boolean;
+    highContrastMode: boolean | 'auto';
     highContrastTheme: AnyRecord;
     keyboardNavigation: AccessibilityKeyboardNavigationOptions;
     landmarkVerbosity: string;
@@ -88,6 +89,7 @@ export interface AccessibilityPointOptions {
     dateFormat?: string;
     dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     describeNull: boolean;
+    descriptionFormat?: string;
     descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     valueDecimals?: number;
     valueDescriptionFormat: string;
@@ -128,6 +130,10 @@ export interface ExportingAccessibilityOptions {
     enabled: boolean;
 }
 
+export interface NavigatorAccessibilityOptions {
+    enabled: boolean;
+}
+
 export interface FocusBorderStyleObject {
     borderRadius?: number;
     color?: ColorType;
@@ -162,6 +168,7 @@ export interface SeriesAccessibilityKeyboardNavigationOptions {
 
 export interface SeriesAccessibilityOptions {
     description?: string;
+    descriptionFormat?: string;
     enabled?: boolean;
     exposeAsGroupOnly?: boolean;
     keyboardNavigation?: (
@@ -211,6 +218,13 @@ declare module '../../Extensions/Exporting/ExportingOptions' {
         accessibility?: ExportingAccessibilityOptions;
     }
 }
+
+declare module '../../Stock/Navigator/NavigatorOptions' {
+    interface NavigatorOptions {
+        accessibility?: NavigatorAccessibilityOptions;
+    }
+}
+
 
 /* *
  *

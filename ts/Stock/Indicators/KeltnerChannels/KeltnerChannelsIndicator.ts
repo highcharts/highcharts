@@ -155,9 +155,9 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<KeltnerChannelsPoint> = void 0 as any;
-    public options: KeltnerChannelsOptions = void 0 as any;
-    public points: Array<KeltnerChannelsPoint> = void 0 as any;
+    public data!: Array<KeltnerChannelsPoint>;
+    public options!: KeltnerChannelsOptions;
+    public points!: Array<KeltnerChannelsPoint>;
 
     /* *
      *
@@ -186,7 +186,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period = (params.period as any),
+        const period = (params.period as any),
             periodATR: number = (params.periodATR as any),
             multiplierATR: number = (params.multiplierATR as any),
             index: number = (params.index as any),
@@ -195,30 +195,31 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             // Keltner Channels array structure:
             // 0-date, 1-top line, 2-middle line, 3-bottom line
             KC: Array<Array<number>> = [],
-            // middle line, top line and bottom lineI
-            ML: number,
-            TL: number,
-            BL: number,
-            date: number,
             seriesEMA: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
-            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(
+                series,
                 {
                     period: period,
                     index: index
                 }),
             seriesATR: (
                 IndicatorValuesObject<TLinkedSeries>|undefined
-            ) =
-            SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(
+                series,
                 {
                     period: periodATR
                 }),
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [];
+            // Middle line, top line and bottom lineI
+        let ML: number,
+            TL: number,
+            BL: number,
+            date: number,
             pointEMA: Array<number>,
             pointATR: Array<number>,
-            xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
             i: number;
 
         if (yValLen < period) {
@@ -311,4 +312,4 @@ export default KeltnerChannelsIndicator;
  * @apioption    series.keltnerchannels
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

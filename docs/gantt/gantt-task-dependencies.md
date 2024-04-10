@@ -5,7 +5,7 @@ Visualizing the work breakdown structure of a project involves also describing t
 
 _Code example of defining dependencies_
 
-<iframe src="https://jsfiddle.net/q4p2zhm0/embedded/result,js/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/gantt/gantt/one-milestone-point" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
 
 Customize dependency connectors
 -------------------------------
@@ -16,10 +16,10 @@ The pathfinder property is also available on data series, see [`series.pathfinde
 
 _See code example for configuring dependencies_
 
-<iframe src="https://jsfiddle.net/t4h8L1xr/embedded/result,js/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/gantt/gantt/tweaking-dependencies" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
 
 A single dependency is composed by setting the [`dependency`](https://api.highcharts.com/gantt/series.gantt.data.dependency) property on a data point (task) to an object. This object has defined pathfinder options allowing for configuration of a singular dependency
 
 _See example below, where the color and endmarker are defined on the successor task_
 
-<iframe src="https://jsfiddle.net/kvp67ec2/embedded/result,js/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/gantt/gantt/tweaking-single-dependency" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>

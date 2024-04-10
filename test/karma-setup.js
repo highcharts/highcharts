@@ -2,6 +2,7 @@
 /* eslint-disable */
 /* global __karma__, Highcharts, Promise, QUnit */
 
+
 /**
  * This file runs in the browser as setup for the karma tests.
  */
@@ -113,7 +114,7 @@ function handleDefaultOptionsFunctions(save) {
             } else if (save && typeof value === 'function') {
                 defaultOptionsFunctions[path + '.' + key] = value;
 
-            } else if ( // restore
+            } else if ( // restore
                 !save &&
                 typeof value === 'function'
             ) {
@@ -129,44 +130,18 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
-/*
-// Override Highcharts and jQuery ajax functions to load from local
-function ajax(proceed, attr) {
-    var success = attr.success;
-    attr.error = function (e) {
-        throw new Error('Failed to load: ' + attr.url);
-    };
-    if (attr.url && window.JSONSources[attr.url]) {
-        success.call(attr, window.JSONSources[attr.url]);
-    } else {
-        console.log('@ajax: Loading over network', attr.url);
-        attr.success = function (data) {
-            window.JSONSources[attr.url] = data;
-            success.call(this, data);
-        };
-        return proceed.call(this, attr);
-    }
-}
-Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
-Highcharts.wrap(Highcharts, 'ajax', ajax);
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-*/
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
 var send = XMLHttpRequest.prototype.send;
 XMLHttpRequest.prototype.open = function (type, url) {
-	this.requestURL = url;
+    this.requestURL = url;
     return open.apply(this, arguments);
 }
 
 XMLHttpRequest.prototype.send = function () {
     var localData = this.requestURL && window.JSONSources[this.requestURL];
-	if (localData) {
+    if (localData) {
         Object.defineProperty(this, 'readyState', {
             get: function () { return 4; }
         });
@@ -183,7 +158,7 @@ XMLHttpRequest.prototype.send = function () {
     }
 }
 
-// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+// Hijack fetch to run local sources.
 if (window.Promise) {
     window.fetch = function (url) {
         return new Promise(function (resolve, reject) {
@@ -192,7 +167,14 @@ if (window.Promise) {
                 // Fake the return
                 resolve({
                     ok: true,
+                    status: 200,
+                    statusText: 'OK',
+                    type: 'basic',
+                    url: url,
                     json: function () {
+                        return localData;
+                    },
+                    text: function () {
                         return localData;
                     }
                 });
@@ -262,7 +244,7 @@ if (window.QUnit) {
         !Number.prototype._toString
     ) {
         Number.prototype._toString = Number.prototype.toString;
-        Number.prototype.toString = function(radix) {
+        Number.prototype.toString = function (radix) {
             if (radix) {
                 return Number.prototype._toString.apply(this, arguments);
             } else {
@@ -305,6 +287,50 @@ if (window.QUnit) {
         });
     };
 
+    /*
+     * Less than comparison
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.lessThan = function (number, expected, message) {
+        var result = (
+            typeof number === 'number' &&
+            typeof expected === 'number' &&
+            number < expected
+        ) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
+    /*
+     * Greater than comparison
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.greaterThan = function (number, expected, message) {
+        var result = (
+            typeof number === 'number' &&
+            typeof expected === 'number' &&
+            number > expected
+        ) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
     QUnit.module('Highcharts', {
         beforeEach: function (test) {
             if (VERBOSE) {
@@ -320,6 +346,9 @@ if (window.QUnit) {
             containerStyle.left = '8';
             containerStyle.top = '8';
             containerStyle.zIndex = '9999';
+
+            // Save prototypes
+            replaceProtos();
 
             // Reset randomizer
             Math.randomCursor = 0;
@@ -350,6 +379,9 @@ if (window.QUnit) {
                 currentTests.indexOf(test.test.testName),
                 1
             );
+
+            // Restore prototypes
+            replaceProtos();
 
             var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
             if (defaultOptions !== Highcharts.defaultOptionsRaw) {
@@ -422,7 +454,6 @@ if (window.QUnit) {
             }
             Highcharts.addEvent = origAddEvent;
 
-
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
@@ -454,23 +485,22 @@ Highcharts.prepareShot = function (chart) {
         chart.series[0]
     ) {
         var points = chart.series[0].nodes || // Network graphs, sankey etc
-            chart.series[0].points;
+                chart.series[0].points || [],
+            i = points.length;
 
-        if (points) {
-            for (var i = 0; i < points.length; i++) {
-                if (
-                    points[i] &&
-                    !points[i].isNull &&
-                    !( // Map point with no extent, like Aruba
-                        points[i].shapeArgs &&
-                        points[i].shapeArgs.d &&
-                        points[i].shapeArgs.d.length === 0
-                    ) &&
-                    typeof points[i].onMouseOver === 'function'
-                ) {
-                    points[i].onMouseOver();
-                    break;
-                }
+        while (i--) {
+            if (
+                points[i] &&
+                !points[i].isNull &&
+                !( // Map point with no extent, like Aruba
+                    points[i].shapeArgs &&
+                    points[i].shapeArgs.d &&
+                    points[i].shapeArgs.d.length === 0
+                ) &&
+                typeof points[i].onMouseOver === 'function'
+            ) {
+                points[i].onMouseOver();
+                break;
             }
         }
     }
@@ -513,24 +543,35 @@ function getSVG(chart) {
             );
 
         if (chart.styledMode) {
-            svg = svg.replace(
-                '</defs>',
-                '<style>' +
-                '* {' +
-                '   fill: rgba(0, 0, 0, 0.1);' +
-                '   stroke: black;' +
-                '   stroke-width: 1px;' +
-                '}' +
-                'text, tspan {' +
-                '    fill: blue;' +
-                '    stroke: none;' +
-                '}' +
-                '</style>' +
-                '</defs>'
-            );
+            var highchartsCSS = document.getElementById('highcharts.css');
+            if (highchartsCSS) {
+                svg = svg
+                    // Get the typography styling right
+                    .replace(
+                        ' class="highcharts-root" ',
+                        ' class="highcharts-root highcharts-container" ' +
+                            'style="width:auto; height:auto" '
+                    )
+
+                    // Insert highcharts.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + highchartsCSS.innerText + '</style></defs>'
+                );
+            }
+
+            var demoCSS = document.getElementById('demo.css');
+            if (demoCSS) {
+                svg = svg
+                    // Insert demo.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + demoCSS.innerText + '</style></defs>'
+                );
+            }
         }
 
-    // Renderer samples
+        // Renderer samples
     } else {
         if (document.getElementsByTagName('svg').length) {
             svg = document.getElementsByTagName('svg')[0].outerHTML;
@@ -572,7 +613,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 function xhrLoad(url, callback) {
     var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             callback(xhr);
         }
@@ -697,12 +738,71 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-            ['catch'](function (error) { // to avoid IE8 failure
-                console.log(error && error.message);
-                resolve(error && error.message); // skip and continue processing
-            });
-
     });
+}
+
+function replaceProtos() {
+    if (Highcharts.protoReplacements) {
+        var snaps = Highcharts.protoReplacements,
+            iKeys = Object.keys(snaps),
+            jKeys,
+            source,
+            target;
+
+        if (VERBOSE) {
+            console.log('- restore protos: ' + Object.keys(snaps).join(', '));
+        }
+
+        for (let i = 0, iEnd = iKeys.length, iKey; i < iEnd; ++i) {
+            iKey = iKeys[i];
+            source = snaps[iKey];
+            target = Highcharts[iKey].prototype;
+            jKeys = Object.keys(source);
+            for (let j = 0, jEnd = jKeys.length, jKey; j < jEnd; ++j) {
+                jKey = jKeys[j];
+                target[jKey] = source[jKey];
+                delete source[jKey];
+            }
+        }
+
+        delete Highcharts.protoReplacements;
+    } else {
+        var snaps = {},
+            iKeys = Object.keys(Highcharts),
+            jKeys,
+            source,
+            target;
+
+        for (let i = 0, iEnd = iKeys.length, iKey; i < iEnd; ++i) {
+            iKey = iKeys[i];
+            if (
+                typeof Highcharts[iKey] === 'function' &&
+                Highcharts[iKey].prototype // skip arrow functions
+            ) {
+                source = Highcharts[iKey].prototype;
+                target = {};
+                jKeys = Object.keys(source);
+                for (let j = 0, jEnd = jKeys.length, jKey; j < jEnd; ++j) {
+                    jKey = jKeys[j];
+                    if (
+                        typeof source[jKey] !== 'object' &&
+                        source[jKey]
+                    ) {
+                        target[jKey] = source[jKey];
+                    }
+                }
+                if (Object.keys(target).length) {
+                    snaps[iKey] = target;
+                }
+            }
+        }
+
+        if (VERBOSE) {
+            console.log('Protect protos: ' + Object.keys(snaps).join(', '));
+        }
+
+        Highcharts.protoReplacements = snaps;
+    }
 }
 
 // De-randomize Math.random in tests

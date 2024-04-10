@@ -1,9 +1,9 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "spline"
+        type: 'spline'
     },
     title: {
-        text: "Operating Systems Trends"
+        text: 'Operating Systems Trends'
     },
     subtitle: {
         text:
@@ -19,11 +19,11 @@ Highcharts.chart("container", {
 
     tooltip: {
         split: true,
-        xDateFormat: "%B %Y",
+        xDateFormat: '%B %Y',
         crosshairs: true
     },
 
     data: {
-        csvURL: "https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e340a13/samples/data/operating-systems-trends.csv"
+        csvURL: 'https://www.highcharts.com/samples/data/operating-systems-trends.csv'
     }
 });

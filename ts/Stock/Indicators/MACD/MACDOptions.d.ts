@@ -11,6 +11,8 @@
  *  Imports
  *
  * */
+
+import type ColorString from '../../../Core/Color/ColorString';
 import type MACDIndicator from './MACDIndicator';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
@@ -21,7 +23,6 @@ import type {
     SeriesStatesOptions,
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
-import ColorString from '../../../Core/Color/ColorString';
 
 /* *
 *
@@ -63,9 +64,10 @@ export interface MACDLineStyleOptions extends CSSObject {
     lineColor?: ColorString
 }
 
-export interface MACDZonesOptions {
-    startIndex?: number;
-    zones?: MACDLineOptions['zones'];
-}
+/* *
+*
+*  Default Export
+*
+* */
 
 export default MACDOptions;

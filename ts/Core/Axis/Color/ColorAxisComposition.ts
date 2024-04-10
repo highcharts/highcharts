@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -93,19 +93,11 @@ namespace ColorAxisComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedClasses: Array<Function> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
 
-    let ColorAxisClass: typeof ColorAxis;
+    let ColorAxisConstructor: typeof ColorAxis;
 
     /* *
      *
@@ -113,25 +105,22 @@ namespace ColorAxisComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
     export function compose(
-        ColorAxisType: typeof ColorAxis,
+        ColorAxisClass: typeof ColorAxis,
         ChartClass: typeof Chart,
         FxClass: typeof Fx,
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
-        if (!ColorAxisClass) {
-            ColorAxisClass = ColorAxisType;
-        }
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
+        const chartProto = ChartClass.prototype,
+            fxProto = FxClass.prototype,
+            seriesProto = SeriesClass.prototype;
 
-            const chartProto = ChartClass.prototype;
+        if (!chartProto.collectionsWithUpdate.includes('colorAxis')) {
+            ColorAxisConstructor = ColorAxisClass;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
             chartProto.collectionsWithInit.colorAxis = [
@@ -141,17 +130,9 @@ namespace ColorAxisComposition {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             wrapChartCreateAxis(ChartClass);
-        }
-        if (composedClasses.indexOf(FxClass) === -1) {
-            composedClasses.push(FxClass);
-
-            const fxProto = FxClass.prototype;
 
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
-        }
-        if (composedClasses.indexOf(LegendClass) === -1) {
-            composedClasses.push(LegendClass);
 
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
             addEvent(
@@ -160,27 +141,30 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
-        }
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
 
             extend(
-                SeriesClass.prototype,
+                seriesProto,
                 {
                     optionalAxis: 'colorAxis',
                     translateColors: seriesTranslateColors
                 }
             );
             extend(
-                SeriesClass.prototype.pointClass.prototype,
+                seriesProto.pointClass.prototype,
                 {
                     setVisible: pointSetVisible
                 }
             );
 
-            addEvent(SeriesClass, 'afterTranslate', onSeriesAfterTranslate);
+            addEvent(
+                SeriesClass,
+                'afterTranslate',
+                onSeriesAfterTranslate,
+                { order: 1 }
+            );
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
         }
+
     }
 
     /**
@@ -190,16 +174,20 @@ namespace ColorAxisComposition {
     function onChartAfterGetAxes(
         this: Chart
     ): void {
-        const options = this.options;
+        const { userOptions } = this;
 
         this.colorAxis = [];
 
-        if (options.colorAxis) {
-            options.colorAxis = splat(options.colorAxis);
-            options.colorAxis.forEach((axisOptions, i): void => {
-                axisOptions.index = i;
-                new ColorAxisClass(this, axisOptions); // eslint-disable-line no-new
-            });
+        // If a `colorAxis` config is present in the user options (not in a
+        // theme), instanciate it.
+        if (userOptions.colorAxis) {
+            userOptions.colorAxis = splat(userOptions.colorAxis);
+            userOptions.colorAxis.map((axisOptions): ColorAxis => (
+                new ColorAxisConstructor(
+                    this,
+                    axisOptions as Partial<ColorAxis.Options>
+                )
+            ));
         }
     }
 
@@ -278,7 +266,7 @@ namespace ColorAxisComposition {
         }
     ): void {
         if (e.visible && e.item.legendColor) {
-            (e.item.legendSymbol as any).attr({
+            (e.item.legendItem as any).symbol.attr({
                 fill: e.item.legendColor
             });
         }
@@ -288,14 +276,13 @@ namespace ColorAxisComposition {
      * Updates in the legend need to be reflected in the color axis. (#6888)
      * @private
      */
-    function onLegendAfterUpdate(this: Legend): void {
-        const colorAxes = this.chart.colorAxis;
-
-        if (colorAxes) {
-            colorAxes.forEach(function (colorAxis): void {
-                colorAxis.update({}, arguments[2]);
-            });
-        }
+    function onLegendAfterUpdate(
+        this: Legend,
+        e: { redraw: boolean|undefined }
+    ): void {
+        this.chart.colorAxis?.forEach((colorAxis): void => {
+            colorAxis.update({}, e.redraw);
+        });
     }
 
     /**
@@ -352,7 +339,7 @@ namespace ColorAxisComposition {
                 (point as any)[key][method]();
             }
         });
-        this.series.buildKDTree(); // rebuild kdtree #13195
+        this.series.buildKDTree(); // Rebuild kdtree #13195
     }
 
     /**
@@ -381,7 +368,11 @@ namespace ColorAxisComposition {
             if (color && point.color !== color) {
                 point.color = color;
 
-                if (series.options.legendType === 'point' && point.legendItem) {
+                if (
+                    series.options.legendType === 'point' &&
+                    point.legendItem &&
+                    point.legendItem.label
+                ) {
                     series.chart.legend.colorizeItem(point, point.visible);
                 }
             }
@@ -400,29 +391,37 @@ namespace ColorAxisComposition {
             type: string,
             options: Chart.CreateAxisOptionsObject
         ): (Axis|ColorAxis) {
+            const chart = this;
+
             if (type !== 'colorAxis') {
-                return superCreateAxis.apply(this, arguments);
+                return superCreateAxis.apply(chart, arguments);
             }
 
-            const axis = new ColorAxisClass(this, merge(options.axis, {
-                index: (this as AnyRecord)[type].length,
-                isX: false
-            }));
+            const axis = new ColorAxisConstructor(
+                chart,
+                merge(
+                    options.axis as Partial<ColorAxis.Options>,
+                    {
+                        index: (chart as AnyRecord)[type].length,
+                        isX: false
+                    }
+                )
+            );
 
-            this.isDirtyLegend = true;
+            chart.isDirtyLegend = true;
 
             // Clear before 'bindAxes' (#11924)
-            this.axes.forEach(function (axis): void {
+            chart.axes.forEach((axis): void => {
                 axis.series = [];
             });
 
-            this.series.forEach(function (series): void {
+            chart.series.forEach((series): void => {
                 series.bindAxes();
                 series.isDirtyData = true;
             });
 
             if (pick(options.redraw, true)) {
-                this.redraw(options.animation);
+                chart.redraw(options.animation);
             }
 
             return axis;

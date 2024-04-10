@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -19,10 +19,10 @@ import type Annotation from './Annotation';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type {
     ControllableLabelOptions,
-    ControllableOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
-import type { ControlPointOptionsObject } from './ControlPointOptions';
+import type ControlPointOptions from './ControlPointOptions';
+import type ControlTargetOptions from './ControlTargetOptions';
 import type EventCallback from '../../Core/EventCallback';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
@@ -41,11 +41,13 @@ export interface AnnotationEventsOptions {
     add?: EventCallback<Annotation>;
     click?: EventCallback<Annotation>;
     remove?: EventCallback<Annotation>;
+    touchstart?: EventCallback<Annotation>;
+    touchend?: EventCallback<Annotation>;
 }
 
-export interface AnnotationOptions extends ControllableOptions { // @todo AnnotationOptions.d.ts
+export interface AnnotationOptions extends ControlTargetOptions {
     animation: Partial<AnimationOptions>;
-    controlPointOptions: ControlPointOptionsObject;
+    controlPointOptions: ControlPointOptions;
     crop: boolean;
     draggable: AnnotationDraggableValue;
     events: AnnotationEventsOptions;
@@ -54,8 +56,6 @@ export interface AnnotationOptions extends ControllableOptions { // @todo Annota
     labelOptions?: ControllableLabelOptions;
     labels?: Array<ControllableLabelOptions>;
     langKey?: string;
-    point?: MockPointOptions;
-    points?: Array<MockPointOptions>;
     shapeOptions: ControllableShapeOptions;
     shapes?: Array<ControllableShapeOptions>;
     type?: string;
@@ -78,7 +78,7 @@ export interface AnnotationTypePointsOptions {
     controlPoint?: number;
     x?: number;
     xAxis?: number;
-    y?: number;
+    y?: (number|null);
     yAxis?: number;
 }
 

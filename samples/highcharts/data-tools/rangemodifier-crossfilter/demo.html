@@ -1,0 +1,76 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data-tools.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<form id="filter">
+    <fieldset>
+        <legend>City Filter</legend>
+        <label for="filter-city-min">Minimum:</label>
+        <input type="text" id="filter-city-min" placeholder="Aa" value="Aa" />
+        <label for="filter-city-max">Maximum:</label>
+        <input type="text" id="filter-city-max" placegolder="Zz" value="Zz" />
+    </fieldset>
+    <fieldset>
+        <legend>Elevation Filter</legend>
+        <label for="filter-elevation-min">Minimum:</label>
+        <input type="text" id="filter-elevation-min" placeholder="1" value="1" />
+        <label for="filter-elevation-max">Maximum:</label>
+        <input type="text" id="filter-elevation-max" placegolder="3490" value="3490" />
+    </fieldset>
+    <fieldset>
+        <legend>Longitude Filter</legend>
+        <label for="filter-lon-min">West:</label>
+        <input type="text" id="filter-lon-min" placeholder="-180" value="-180" />
+        <label for="filter-lon-max">East:</label>
+        <input type="text" id="filter-lon-max" placegolder="+180" value="+180" />
+    </fieldset>
+</form>
+
+<div id="container"></div>
+
+<noscript>City;Elevation;Latitude;Longitude
+Auckland;98;-36.84;174.74
+Bangkok;1;13.75;100.49
+Beijing;63;39.91;116.4
+Buenos Aires;10;-34.60;-58.38
+Cairo;22;30.04;31.24
+Caracas;909;10.48;-66.90
+Casablanca;75;33.53;-7.58
+Chongqing;244;29.56;106.55
+Dakar;37;14.69;-17.45
+Delhi;225;28.61;77.23
+Dhaka;3;23.76;90.39
+Dublin;8;53.35;-6.26
+Grytviken;17;-54.28;-36.51
+Helsinki;25;60.17;24.94
+Honolulu;6;21.31;-157.86
+Instanbul;268;41.01;28.96
+Jakarta;3;-6.16;106.83
+Johannesburg;1753;-26.20;28.05
+Karachi;10;24.86;67.01
+Kathmandu;1298;27.72;85.32
+Kinshasa;240;-4.33;15.32
+Lagos;41;6.46;3.38
+Lhasa;3490;29.65;91.17
+Lima;107;-12.06;-77.04
+London;14;51.51;-0.13
+Los Angeles;93;34.05;-118.25
+Madrid;667;40.42;-3.70
+Manila;7;14.60;120.98
+Mexico City;2216;19.43;-99.13
+Mumbai;14;19.08;72.88
+New York;10;40.71;-74.01
+Odesa;40;46.49;30.74
+Osaka;12;34.69;135.5
+Port aux Français;16;-49.35;70.22
+Port Moresby;39;-9.48;147.15
+Reykjavík;12;64.15;-21.94
+São Paulo;760;-23.55;-46.63
+Shanghai;122;31.23;121.47
+Singapore;11;1.28;103.83
+Sydney;35;-33.87;151.21
+Tokyo;17;35.69;139.69
+Ulaanbaatar;1350;47.92;106.92
+Vancouver;76;49.26;-123.11
+Xining;2275;36.62;101.78
+</noscript>

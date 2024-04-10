@@ -1,7 +1,7 @@
 QUnit.test(
-    'The connector line in waterfall in case of a null value (#8024)',
+    'The connector line in waterfall in case of a null value (#18636)',
     function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
                 series: [
                     {
                         type: 'waterfall',
@@ -9,22 +9,18 @@ QUnit.test(
                     }
                 ]
             }),
-            splittedPath = chart.series[0].graph.d.split(' '),
-            startPoint = [splittedPath[4], splittedPath[5]],
-            endPoint = [splittedPath[7], splittedPath[8]];
+            series = chart.series[0];
 
-        // Test: the eqality of path's x coordinate of points next to each other
         assert.strictEqual(
-            startPoint[0],
-            endPoint[0],
-            'The x coordinates are equal.'
+            series.graph.pathArray.length, 4,
+            'Connector lines should display correctly with false connectNulls'
         );
 
-        // Test: the eqality of path's y coordinate of points next to each other
+        series.update({ connectNulls: true });
+
         assert.strictEqual(
-            startPoint[1],
-            endPoint[1],
-            'The y coordinates are equal.'
+            series.graph.pathArray.length, 6,
+            'Connector lines should display correctly with true connectNulls'
         );
     }
 );

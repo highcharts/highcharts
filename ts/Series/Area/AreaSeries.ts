@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,9 +24,6 @@ import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -106,8 +103,8 @@ class AreaSeries extends LineSeries {
          */
 
         /**
-         * Fill color or gradient for the area. When `null`, the series' `color`
-         * is used with the series' `fillOpacity`.
+         * Fill color or gradient for the area. When `undefined`, the series'
+         * `color` is used with the series' `fillOpacity`.
          *
          * In styled mode, the fill color can be set with the `.highcharts-area`
          * class name.
@@ -116,7 +113,7 @@ class AreaSeries extends LineSeries {
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
          *
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-default/
-         *         Null by default
+         *         Undefined by default
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
          *         Gradient
          *
@@ -215,7 +212,10 @@ class AreaSeries extends LineSeries {
          * @since   2.0
          * @product highcharts highstock
          */
-        threshold: 0
+        threshold: 0,
+
+        legendSymbol: 'areaMarker'
+
     });
 
     /* *
@@ -226,11 +226,11 @@ class AreaSeries extends LineSeries {
 
     public areaPath?: SVGPath;
 
-    public data: Array<AreaPoint> = void 0 as any;
+    public data!: Array<AreaPoint>;
 
-    public options: AreaSeriesOptions = void 0 as any;
+    public options!: AreaSeriesOptions;
 
-    public points: Array<AreaPoint> = void 0 as any;
+    public points!: Array<AreaPoint>;
 
     /* *
      *
@@ -255,64 +255,62 @@ class AreaSeries extends LineSeries {
         super.drawGraph.apply(this);
 
         // Define local variables
-        const series = this,
-            areaPath = this.areaPath,
-            options = this.options,
-            zones = this.zones,
-            props = [[
-                'area',
-                'highcharts-area',
-                this.color as any,
-                options.fillColor as any
-            ]]; // area name, main color, fill color
+        const { areaPath, options } = this;
 
-        zones.forEach(function (
-            zone: SeriesZonesOptions,
-            i: number
-        ): void {
-            props.push([
-                'zone-area-' + i,
-                'highcharts-area highcharts-zone-area-' + i + ' ' +
-                zone.className,
-                zone.color || series.color,
-                zone.fillColor || options.fillColor
-            ]);
-        });
+        [this, ...this.zones].forEach((owner, i): void => {
+            const attribs: SVGAttributes = {},
+                fillColor = owner.fillColor || options.fillColor;
 
-        props.forEach(function (prop: Array<string>): void {
-            const areaKey = prop[0],
-                attribs: SVGAttributes = {};
-
-            let area = (series as any)[areaKey];
+            let area = owner.area;
 
             const verb = area ? 'animate' : 'attr';
 
             // Create or update the area
-            if (area) { // update
-                area.endX = series.preventGraphAnimation ?
+            if (area) { // Update
+                area.endX = this.preventGraphAnimation ?
                     null :
                     areaPath.xMap;
                 area.animate({ d: areaPath });
 
-            } else { // create
+            } else { // Create
 
                 attribs.zIndex = 0; // #1069
 
-                area = (series as any)[areaKey] = series.chart.renderer
+                /**
+                 * SVG element of area-based charts. Can be used for styling
+                 * purposes. If zones are configured, this element will be
+                 * hidden and replaced by multiple zone areas, accessible
+                 * via `series.zones[i].area`.
+                 *
+                 * @name Highcharts.Series#area
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
+                area = owner.area = this.chart.renderer
                     .path(areaPath)
-                    .addClass(prop[1])
-                    .add(series.group);
+                    .addClass(
+                        'highcharts-area' +
+                        (i ? ` highcharts-zone-area-${i - 1} ` : ' ') +
+                        ((i && (owner as SeriesZonesOptions).className) || '')
+                    )
+                    .add(this.group);
                 area.isArea = true;
             }
 
-            if (!series.chart.styledMode) {
-                attribs.fill = pick(
-                    prop[3],
-                    color(prop[2])
-                        .setOpacity(pick(options.fillOpacity, 0.75))
-                        .get()
-                );
+            if (!this.chart.styledMode) {
+                // If there is fillColor defined for the area, set it.
+                // Otherwise, we set it to the zone/series color and add
+                // fill-opacity (#18939).
+                attribs.fill = fillColor || owner.color || this.color;
+                attribs['fill-opacity'] = fillColor ?
+                    1 : (options.fillOpacity ?? 0.75);
+
+                // Allow clicking through the area if sticky tracking is true
+                // (#18744)
+                area.css({
+                    pointerEvents: this.stickyTracking ? 'none' : 'auto'
+                });
             }
+
             area[verb](attribs);
 
             area.startX = areaPath.xMap;
@@ -505,7 +503,7 @@ class AreaSeries extends LineSeries {
                 stackX: StackItem,
                 x: string
             ): void {
-                // nulled after switching between
+                // Nulled after switching between
                 // grouping and not (#1651, #2336)
                 if (stackX.total !== null) {
                     keys.push(x);
@@ -556,7 +554,7 @@ class AreaSeries extends LineSeries {
 
                                     // If there are missing points in the next
                                     // stack in any of the series below this
-                                    // one, we need to substract the missing
+                                    // one, we need to subtract the missing
                                     // values and add a hiatus to the left or
                                     // right.
                                     } else if (visibleSeries[i]) {
@@ -629,12 +627,10 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-    singleStacks: false,
-    drawLegendSymbol: LegendSymbol.drawRectangle
+    singleStacks: false
 });
 
 /* *
@@ -757,4 +753,4 @@ export default AreaSeries;
  * @apioption series.area.fillOpacity
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled

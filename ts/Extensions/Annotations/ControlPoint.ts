@@ -13,8 +13,8 @@
  * */
 
 import type AnnotationChart from './AnnotationChart';
-import type Controllable from './Controllables/Controllable';
-import type { ControlPointOptionsObject } from './ControlPointOptions';
+import type ControlPointOptions from './ControlPointOptions';
+import type ControlTarget from './ControlTarget';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import EventEmitter from './EventEmitter.js';
@@ -32,7 +32,7 @@ const {
 
 declare module './MockPointOptions' {
     interface MockPointOptions {
-        controlPoint?: ControlPointOptionsObject;
+        controlPoint?: ControlPointOptions;
     }
 }
 
@@ -75,8 +75,8 @@ class ControlPoint extends EventEmitter {
 
     public constructor(
         chart: AnnotationChart,
-        target: Controllable,
-        options: ControlPointOptionsObject,
+        target: ControlTarget,
+        options: ControlPointOptions,
         index?: number
     ) {
         super();
@@ -95,12 +95,12 @@ class ControlPoint extends EventEmitter {
 
     public chart: AnnotationChart;
 
-    public graphic: SVGElement = void 0 as any;
+    public graphic!: SVGElement;
 
     public index: number;
 
     /**
-     * List of events for `anntation.options.events` that should not be
+     * List of events for `annotation.options.events` that should not be
      * added to `annotation.graphic` but to the `annotation`.
      * @private
      * @name Highcharts.AnnotationControlPoint#nonDOMEvents
@@ -108,9 +108,9 @@ class ControlPoint extends EventEmitter {
      */
     public nonDOMEvents = ['drag'];
 
-    public options: ControlPointOptionsObject;
+    public options: ControlPointOptions;
 
-    public target: Controllable;
+    public target: ControlTarget;
 
     /* *
      *
@@ -165,7 +165,7 @@ class ControlPoint extends EventEmitter {
             .css(options.style);
 
         this.setVisibility(options.visible);
-        // npm test -- --tests "highcharts/annotations-advanced/*"
+        // `npm test -- --tests "highcharts/annotations-advanced/*"`
         this.addEvents();
     }
 
@@ -192,7 +192,7 @@ class ControlPoint extends EventEmitter {
      * New options for the control point.
      */
     public update(
-        userOptions: Partial<ControlPointOptionsObject>
+        userOptions: Partial<ControlPointOptions>
     ): void {
         const chart = this.chart,
             target = this.target,
@@ -222,7 +222,7 @@ export default ControlPoint;
  * */
 
 /**
- * Callback to modify annotation's possitioner controls.
+ * Callback to modify annotation's positioner controls.
  *
  * @callback Highcharts.AnnotationControlPointPositionerFunction
  * @param {Highcharts.AnnotationControlPoint} this
@@ -230,4 +230,4 @@ export default ControlPoint;
  * @return {Highcharts.PositionObject}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

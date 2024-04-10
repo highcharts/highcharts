@@ -216,12 +216,14 @@ QUnit.test('Set min/max size', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].marker.radius,
         15,
-        'Bubble size is minSize for lowest value, despite maxSize being computed smaller'
+        'Bubble size is minSize for lowest value, despite maxSize being ' +
+        'computed smaller'
     );
     assert.strictEqual(
         chart.series[0].points[5].marker.radius,
         15,
-        'Bubble size is minSize for highest value, despite maxSize being computed smaller'
+        'Bubble size is minSize for highest value, despite maxSize being ' +
+        'computed smaller'
     );
 
     // Reset options after the above tests
@@ -239,7 +241,7 @@ QUnit.test('Set min/max size', function (assert) {
     assert.notStrictEqual(
         initialWidth,
         chart.series[0].points[5].graphic.attr('width'),
-        `After adding a new big point, other points should adjust size.`
+        'After adding a new big point, other points should adjust size.'
     );
 
     chart.series[0].remove(false);

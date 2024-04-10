@@ -38,6 +38,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'map.'],
@@ -59,6 +60,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'modules', 'broken-axis.'],
@@ -83,6 +85,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
@@ -116,6 +119,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
@@ -167,7 +171,6 @@ const VENDOR_DIRECTORY = 'vendor';
 const VENDOR_FILTER = [
     'canvg',
     'jspdf',
-    'rgbcolor',
     'svg2pdf'
 ].map(
     filePath => Path.join(VENDOR_DIRECTORY, filePath + '.')
@@ -180,8 +183,10 @@ const VENDOR_FILTER = [
  * */
 
 /**
+ * Distribution copy
+ *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 function distCopy() {
 
@@ -225,7 +230,9 @@ function distCopy() {
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
-                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true);
+                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid']
+                    .some(name => fileName.includes(`${name}.css`)));
+
                 FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
                 LogLib.success('Created', directory);
 
@@ -239,7 +246,7 @@ function distCopy() {
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
-                FsLib.copyAllFiles(GFX_DIRECTORY, directory, true);
+                FsLib.copyAllFiles(GFX_DIRECTORY, directory, true, fileName => !(fileName.includes('dashboards-icons')));
                 LogLib.success('Created', directory);
 
                 directory = Path.join(TARGET_DIRECTORY, product, 'graphics');

@@ -11,8 +11,6 @@ const path = require('path');
  *
  * */
 
-const LINT_FOLDER = path.join('test', 'typescript-lint');
-
 const TEST_FOLDER = path.join('test', 'typescript-dts');
 
 /* *
@@ -24,40 +22,57 @@ const TEST_FOLDER = path.join('test', 'typescript-dts');
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
  *
+ * @param  {object} argv
+ *         Command line arguments
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
-
+function lintDTS(argv) {
     const fsLib = require('./lib/fs');
     const processLib = require('./lib/process');
     const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        logLib.message('Linting ...');
+        logLib.message(`Linting TypeScript declarations (.d.ts) for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);
 
-        const promises = [];
+        let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
 
-        promises.push(
-            processLib
-                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --localTs ../../node_modules/typescript/lib')
-        );
+        directories = directories.filter(folder => {
+            if (argv.dashboards) {
+                return folder.includes('dashboards');
+            }
+            return !folder.includes('dashboards');
+        });
 
-        promises.push(
-            ...fsLib
-                .getDirectoryPaths(TEST_FOLDER, false)
-                .map(folder => processLib.exec('npx tsc -p ' + folder))
-        );
+        let promiseChain = Promise.resolve();
 
-        Promise
-            .all(promises)
+        directories.forEach(folder => {
+            promiseChain = promiseChain.then(
+                () => processLib.exec('npx tsc -p ' + folder)
+            );
+        });
+
+        promiseChain
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
-            .catch(reject);
+            .catch(error => {
+                if (argv.dashboards) {
+                    logLib.failure('Linting failed, make sure you have built the Highcharts declarations first using "npx gulp dist"');
+                }
+
+                reject(error);
+            });
     });
 }
 
-require('./jsdoc-dts');
+lintDTS.description = 'Test TypeScript declarations in the code folder using tsconfig.json';
+lintDTS.flags = {
+    '--dashboards': 'Test only dashboards TypeScript declarations'
+};
+gulp.task('lint-dts', () => lintDTS(require('yargs').argv));
 
-gulp.task('lint-dts', task);
+module.exports = {
+    lintDTS
+};

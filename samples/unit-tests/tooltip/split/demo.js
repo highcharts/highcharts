@@ -59,15 +59,6 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     el = chart.tooltip.tt.element;
     value = window.getComputedStyle(el);
 
-    assert.notEqual(
-        document
-            .getElementsByClassName('highcharts-label-box')[4]
-            .getAttribute('class')
-            .indexOf('highcharts-shadow'),
-        -1,
-        'Shadow should be applied'
-    );
-
     chart.update({
         tooltip: {
             style: {
@@ -172,7 +163,7 @@ QUnit.test('Split tooltip with empty formats (#8105)', function (assert) {
 });
 
 QUnit.test('Split tooltip with useHTML and outside', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             width: 600
         },
@@ -206,6 +197,72 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         chart.series[0].tt.text.element.tagName,
         'SPAN',
         '#7238: The label is a span'
+    );
+
+    chart.update({
+        tooltip: {
+            useHTML: false,
+            distance: 0
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'scatter'
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    const point = chart.series[0].points[0],
+        pointBox = point.graphic.getBBox(),
+        tooltipClient = chart.tooltip.container.getBoundingClientRect();
+
+    assert.close(
+        chart.xAxis[0].toPixels(point.x),
+        tooltipClient.x + (tooltipClient.width / 2) - pointBox.width,
+        2,
+        `Tooltip with outside and split properties set to true should be
+        rendered properly - x position (#17720).`
+    );
+
+    assert.close(
+        chart.yAxis[0].toPixels(point.y),
+        tooltipClient.y + tooltipClient.height - 2 -
+            pointBox.height - (pointBox.height / 2),
+        4,
+        `Tooltip with outside and split properties set to true should be
+        rendered properly - y position (#17720).`
+    );
+    chart.update({
+        tooltip: {
+            shadow: false
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    const tooltipClientRect = chart.tooltip.container.getBoundingClientRect();
+
+    chart.update({
+        tooltip: {
+            shadow: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    assert.close(
+        tooltipClientRect.width,
+        chart.tooltip.container.getBoundingClientRect().width,
+        1,
+        `Tooltip's shadow offsetX should be evaluated in container width
+        to avoid cutting it off (#19314).`
+    );
+
+    assert.close(
+        tooltipClientRect.height,
+        chart.tooltip.container.getBoundingClientRect().height,
+        1,
+        `Tooltip's shadow offsetY should be evaluated in container height
+        to avoid cutting it off (#19314).`
     );
 });
 
@@ -340,7 +397,7 @@ QUnit.test(
         chart.series[0].points[0].onMouseOver();
 
         assert.strictEqual(
-            chart.series[0].tt.box.stroke,
+            chart.series[0].tt.box.attr('stroke'),
             firstPointColor,
             'Label stroke should be the same as the first point color.'
         );
@@ -348,7 +405,7 @@ QUnit.test(
         chart.series[0].points[1].onMouseOver();
 
         assert.strictEqual(
-            chart.series[0].tt.box.stroke,
+            chart.series[0].tt.box.attr('stroke'),
             secondPointColor,
             'Label stroke should be the same as the second point color.'
         );
@@ -410,7 +467,8 @@ QUnit.test('positioning', assert => {
     // Test tooltip position when point is inside plot area
     assert.ok(
         isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip anchorY aligned within yAxis when point is inside plot area'
+        'Should have Series 2 tooltip anchorY aligned within yAxis when ' +
+        'point is inside plot area'
     );
 });
 
@@ -467,7 +525,8 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
         assert.strictEqual(
             chart.series[0].tt,
             undefined,
-            'When a point is outside the plot height, its tooltip should not show'
+            'When a point is outside the plot height, its tooltip should not ' +
+            'show'
         );
     } finally {
         container.style.width = originalContainerWidth;

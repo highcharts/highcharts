@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,14 +21,11 @@ import type GlobalOptions from './Options';
 
 import U from './Utilities.js';
 const {
+    diffObjects,
     extend,
     find,
-    isArray,
-    isObject,
     merge,
-    objectEach,
     pick,
-    splat,
     uniqueKey
 } = U;
 
@@ -112,19 +109,9 @@ namespace Responsive {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedClasses: Array<Function> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -132,228 +119,135 @@ namespace Responsive {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof Composition) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
-            extend(ChartClass.prototype, Additions.prototype as Composition);
+        if (!chartProto.matchResponsiveRule) {
+            extend(chartProto, {
+                matchResponsiveRule,
+                setResponsive
+            });
         }
 
         return ChartClass as (T&typeof Composition);
     }
 
-    /* *
+    /**
+     * Handle a single responsiveness rule.
      *
-     *  Class
+     * @private
+     * @function Highcharts.Chart#matchResponsiveRule
+     * @param {Highcharts.ResponsiveRulesOptions} rule
+     * @param {Array<string>} matches
+     */
+    function matchResponsiveRule(
+        this: Composition,
+        rule: RuleOptions,
+        matches: Array<string>
+    ): void {
+
+        const condition = rule.condition,
+            fn = condition.callback || function (this: Chart): boolean {
+                return (
+                    this.chartWidth <= pick(
+                        condition.maxWidth,
+                        Number.MAX_VALUE
+                    ) &&
+                    this.chartHeight <= pick(
+                        condition.maxHeight,
+                        Number.MAX_VALUE
+                    ) &&
+                    this.chartWidth >= pick(condition.minWidth, 0) &&
+                    this.chartHeight >= pick(condition.minHeight, 0)
+                );
+            };
+
+        if (fn.call(this)) {
+            matches.push(rule._id as any);
+        }
+    }
+
+    /**
+     * Update the chart based on the current chart/document size and options
+     * for responsiveness.
      *
-     * */
+     * @private
+     * @function Highcharts.Chart#setResponsive
+     * @param  {boolean} [redraw=true]
+     * @param  {boolean} [reset=false]
+     * Reset by un-applying all rules. Chart.update resets all rules before
+     * applying updated options.
+     */
+    function setResponsive(
+        this: Composition,
+        redraw?: boolean,
+        reset?: boolean
+    ): void {
+        const options = this.options.responsive,
+            currentResponsive = this.currentResponsive;
 
-    class Additions {
+        let ruleIds = [] as Array<string>,
+            undoOptions;
 
-        /* *
-         *
-         *  Functions
-         *
-         * */
+        if (!reset && options && options.rules) {
+            options.rules.forEach((rule): void => {
+                if (typeof rule._id === 'undefined') {
+                    rule._id = uniqueKey();
+                }
 
-        /**
-         * Get the current values for a given set of options. Used before we
-         * update the chart with a new responsiveness rule.
-         *
-         * @todo Restore axis options (by id?). The matching of items in
-         * collections bears resemblance to the oneToOne matching in
-         * Chart.update. Probably we can refactor out that matching and reuse it
-         * in both functions.
-         *
-         * @private
-         * @function Highcharts.Chart#currentOptions
-         */
-        public currentOptions(
-            this: Composition,
-            options: GlobalOptions
-        ): Partial<GlobalOptions> {
-
-            const chart = this,
-                ret = {};
-
-            /**
-             * Recurse over a set of options and its current values,
-             * and store the current values in the ret object.
-             */
-            function getCurrent(
-                options: AnyRecord,
-                curr: AnyRecord,
-                ret: AnyRecord,
-                depth: number
-            ): void {
-                let i;
-
-                objectEach(options, function (val, key): void {
-                    if (
-                        !depth &&
-                        chart.collectionsWithUpdate.indexOf(key) > -1 &&
-                        curr[key]
-                    ) {
-                        val = splat(val);
-
-                        ret[key] = [];
-
-                        // Iterate over collections like series, xAxis or yAxis
-                        // and map the items by index.
-                        for (
-                            i = 0;
-                            i < Math.max(val.length, curr[key].length);
-                            i++
-                        ) {
-
-                            // Item exists in current data (#6347)
-                            if (curr[key][i]) {
-                                // If the item is missing from the new data, we
-                                // need to save the whole config structure. Like
-                                // when responsively updating from a dual axis
-                                // layout to a single axis and back (#13544).
-                                if (val[i] === void 0) {
-                                    ret[key][i] = curr[key][i];
-
-                                // Otherwise, proceed
-                                } else {
-                                    ret[key][i] = {};
-                                    getCurrent(
-                                        val[i],
-                                        curr[key][i],
-                                        ret[key][i],
-                                        depth + 1
-                                    );
-                                }
-                            }
-                        }
-                    } else if (isObject(val)) {
-                        ret[key] = isArray(val) ? [] : {};
-                        getCurrent(val, curr[key] || {}, ret[key], depth + 1);
-                    } else if (typeof curr[key] === 'undefined') { // #10286
-                        ret[key] = null;
-                    } else {
-                        ret[key] = curr[key];
-                    }
-                });
-            }
-
-            getCurrent(options, this.options, ret, 0);
-
-            return ret;
+                this.matchResponsiveRule(rule, ruleIds/* , redraw */);
+            }, this);
         }
 
-        /**
-         * Handle a single responsiveness rule.
-         *
-         * @private
-         * @function Highcharts.Chart#matchResponsiveRule
-         * @param {Highcharts.ResponsiveRulesOptions} rule
-         * @param {Array<string>} matches
-         */
-        public matchResponsiveRule(
-            this: Composition,
-            rule: RuleOptions,
-            matches: Array<string>
-        ): void {
+        // Merge matching rules
+        const mergedOptions = merge(
+            ...ruleIds
+                .map((ruleId): (RuleOptions|undefined) => find(
+                    (options || {}).rules || [],
+                    (rule): boolean => (rule._id === ruleId)
+                ))
+                .map((rule): (GlobalOptions|undefined) => (
+                    rule && rule.chartOptions
+                ))
+        );
 
-            const condition = rule.condition,
-                fn = condition.callback || function (this: Chart): boolean {
-                    return (
-                        this.chartWidth <= pick(
-                            condition.maxWidth,
-                            Number.MAX_VALUE
-                        ) &&
-                        this.chartHeight <= pick(
-                            condition.maxHeight,
-                            Number.MAX_VALUE
-                        ) &&
-                        this.chartWidth >= pick(condition.minWidth, 0) &&
-                        this.chartHeight >= pick(condition.minHeight, 0)
-                    );
+        mergedOptions.isResponsiveOptions = true;
+
+        // Stringified key for the rules that currently apply.
+        ruleIds = ((ruleIds.toString() as any) || void 0);
+        const currentRuleIds = (
+            currentResponsive && currentResponsive.ruleIds
+        );
+
+        // Changes in what rules apply
+        if ((ruleIds as any) !== currentRuleIds) {
+
+            // Undo previous rules. Before we apply a new set of rules, we
+            // need to roll back completely to base options (#6291).
+            if (currentResponsive) {
+                this.update(currentResponsive.undoOptions, redraw, true);
+            }
+
+            if (ruleIds) {
+                // Get undo-options for matching rules. The `undoOptions``
+                // hold the current values before they are changed by the
+                // `mergedOptions`.
+                undoOptions = diffObjects(
+                    mergedOptions,
+                    this.options,
+                    true,
+                    this.collectionsWithUpdate
+                );
+                undoOptions.isResponsiveOptions = true;
+                this.currentResponsive = {
+                    ruleIds: ruleIds as any,
+                    mergedOptions: mergedOptions,
+                    undoOptions: undoOptions
                 };
 
-            if (fn.call(this)) {
-                matches.push(rule._id as any);
-            }
-        }
+                this.update(mergedOptions, redraw, true);
 
-        /**
-         * Update the chart based on the current chart/document size and options
-         * for responsiveness.
-         *
-         * @private
-         * @function Highcharts.Chart#setResponsive
-         * @param  {boolean} [redraw=true]
-         * @param  {boolean} [reset=false]
-         * Reset by un-applying all rules. Chart.update resets all rules before
-         * applying updated options.
-         */
-        public setResponsive(
-            this: Composition,
-            redraw?: boolean,
-            reset?: boolean
-        ): void {
-            const options = this.options.responsive,
-                currentResponsive = this.currentResponsive;
-
-            let ruleIds = [] as Array<string>,
-                undoOptions;
-
-            if (!reset && options && options.rules) {
-                options.rules.forEach((rule): void => {
-                    if (typeof rule._id === 'undefined') {
-                        rule._id = uniqueKey();
-                    }
-
-                    this.matchResponsiveRule(rule, ruleIds/* , redraw */);
-                }, this);
-            }
-
-            // Merge matching rules
-            const mergedOptions = merge(
-                ...ruleIds
-                    .map((ruleId): (RuleOptions|undefined) => find(
-                        (options || {}).rules || [],
-                        (rule): boolean => (rule._id === ruleId)
-                    ))
-                    .map((rule): (GlobalOptions|undefined) => (
-                        rule && rule.chartOptions
-                    ))
-            );
-
-            mergedOptions.isResponsiveOptions = true;
-
-            // Stringified key for the rules that currently apply.
-            ruleIds = ((ruleIds.toString() as any) || void 0);
-            const currentRuleIds = (
-                currentResponsive && currentResponsive.ruleIds
-            );
-
-            // Changes in what rules apply
-            if ((ruleIds as any) !== currentRuleIds) {
-
-                // Undo previous rules. Before we apply a new set of rules, we
-                // need to roll back completely to base options (#6291).
-                if (currentResponsive) {
-                    this.update(currentResponsive.undoOptions, redraw, true);
-                }
-
-                if (ruleIds) {
-                    // Get undo-options for matching rules
-                    undoOptions = this.currentOptions(mergedOptions);
-                    undoOptions.isResponsiveOptions = true;
-                    this.currentResponsive = {
-                        ruleIds: ruleIds as any,
-                        mergedOptions: mergedOptions,
-                        undoOptions: undoOptions
-                    };
-
-                    this.update(mergedOptions, redraw, true);
-
-                } else {
-                    this.currentResponsive = void 0;
-                }
+            } else {
+                this.currentResponsive = void 0;
             }
         }
     }
@@ -387,7 +281,7 @@ export default Responsive;
  * Return `true` if it applies.
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file
 
 /* *
  *
@@ -437,7 +331,7 @@ export default Responsive;
  * [xAxis](#xAxis), [yAxis](#yAxis) or [series](#series). For these
  * collections, an `id` option is used to map the new option set to
  * an existing object. If an existing object of the same id is not found,
- * the item of the same indexupdated. So for example, setting `chartOptions`
+ * the item of the same index updated. So for example, setting `chartOptions`
  * with two series items without an `id`, will cause the existing chart's
  * two series to be updated with respective options.
  *
@@ -511,4 +405,4 @@ export default Responsive;
  * @apioption responsive.rules.condition.minWidth
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

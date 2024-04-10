@@ -132,11 +132,12 @@ QUnit.test('X-Range', function (assert) {
 
     var point = chart.series[0].points[0],
         clipRect = point.graphic.partialClipRect;
-    assert.strictEqual(
+    assert.close(
         Math.floor(
             chart.xAxis[0].toValue(clipRect.attr('width') - clipRect.attr('x'))
         ),
         (point.x2 - point.x) * point.partialFill,
+        1,
         'Clip rect ends at correct position after zoom (#7617).'
     );
 
@@ -173,7 +174,7 @@ QUnit.test('X-Range', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.getBBox().width,
+        Math.round(chart.series[0].points[0].graphic.getBBox().width),
         10,
         'Correct width for minPointLength on a reversed xAxis (#8933).'
     );
@@ -290,7 +291,9 @@ QUnit.test('X-Range', function (assert) {
     assert.ok(result, 'Drag handles should be in correct positions (#12872).');
 
     assert.strictEqual(
-        document.querySelector('.highcharts-drag-handle').attributes.cursor.value,
+        document.querySelector(
+            '.highcharts-drag-handle'
+        ).attributes.cursor.value,
         'grab',
         '#16470: DragHandle cursor should use general options.'
     );
@@ -330,9 +333,9 @@ QUnit.test('Partial fill reversed', assert => {
 
     assert.close(
         chart.series[0].points[0].graphic.rect.attr('x') +
-            chart.series[0].points[0].graphic.rect.attr('width'),
+        chart.series[0].points[0].graphic.rect.attr('width'),
         chart.series[0].points[0].graphic.partialClipRect.attr('x') +
-            chart.series[0].points[0].graphic.partialClipRect.attr('width'),
+        chart.series[0].points[0].graphic.partialClipRect.attr('width'),
         1,
         'Partial fill should be aligned left'
     );
@@ -636,7 +639,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     var pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -656,7 +659,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -676,7 +679,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -699,7 +702,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -725,7 +728,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -745,7 +748,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -768,7 +771,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -791,11 +794,150 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
         2.001,
         'Inverted chart, no reversed xAxis, reversed yAxis'
     );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        xAxis: {
+            reversed: false
+        }
+    });
+
+    chart.xAxis[0].setExtremes(4.8, 10);
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    const chartContainer = chart.container.getBoundingClientRect();
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        chart.plotLeft + chartContainer.left,
+        2,
+        'Tooltip on plotLeft when only far right part of the point is visible'
+    );
+
+    chart.update({
+        xAxis: {
+            left: '75%',
+            width: '25%'
+        },
+        yAxis: {
+            top: '75%',
+            height: '25%'
+        }
+    });
+
+    const point = chart.series[0].points[0];
+
+    assert.strictEqual(
+        point.tooltipPos[0],
+        chart.xAxis[0].left - chart.plotLeft,
+        'Tooltip position should be correct on the resized x-axis. (#19343)'
+    );
+
+    assert.ok(
+        point.tooltipPos[1] > chart.yAxis[0].top - chart.plotTop,
+        `Tooltip y position should be greater than the top boundery of the
+        resized y-axis. (#19343)`
+    );
+});
+
+QUnit.test('XRange series tooltip correct formatting (#19362)', assert => {
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        title: {
+            text: 'X-range standard'
+        },
+        yAxis: {
+            title: {
+                text: ''
+            },
+            categories: ['Prototyping', 'Development', 'Testing'],
+            reversed: true
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                x: 1,
+                x2: 2,
+                name: 'Start prototype',
+                y: 0
+            }, {
+                x: 2,
+                x2: 5,
+                name: 'Develop',
+                y: 1
+            }, {
+                x: 6,
+                x2: 8,
+                name: 'Run acceptance tests',
+                y: 2
+            }]
+        }]
+    });
+
+    // Open the tooltip for the first point
+    chart.tooltip.refresh(chart.series[0].points[0]);
+    // Get the tooltip text
+    let tooltipText = chart.tooltip.label.text.textStr;
+
+    assert.ok(
+        tooltipText.includes('1 - 2'),
+        'Tooltip for number axis is correctly formatted.'
+    );
+
+    chart.update({
+        title: {
+            text: 'X-range datatime'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        yAxis: {
+            title: {
+                text: ''
+            },
+            categories: ['Prototyping', 'Development', 'Testing'],
+            reversed: true
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                x: Date.UTC(2023, 10, 21),
+                x2: Date.UTC(2023, 11, 2),
+                y: 0
+            }, {
+                x: Date.UTC(2023, 11, 2),
+                x2: Date.UTC(2023, 11, 5),
+                name: 'Develop',
+                y: 1
+            }, {
+                x: Date.UTC(2023, 11, 10),
+                x2: Date.UTC(2023, 11, 23),
+                name: 'Run acceptance tests',
+                y: 2
+            }]
+        }]
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[1]);
+
+    tooltipText = chart.tooltip.label.text.textStr;
+
+    assert.ok(
+        tooltipText.includes('Saturday,  2 Dec 2023 - Tuesday,  5 Dec 2023'),
+        'Tooltip for datetime axis is correctly formatted.'
+    );
+
 });

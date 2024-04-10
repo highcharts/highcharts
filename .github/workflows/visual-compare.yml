@@ -1,0 +1,162 @@
+name: Highcharts Visual Comparison
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'samples/**'
+      - 'ts/**'
+      - 'css/**'
+      - '.github/workflows/visual-compare.yml'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  file_size_comparison:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Check TypeScript version
+        run: npx tsc -v
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - name: Write file sizes at master
+        run: npx gulp write-file-sizes --filename master.json
+
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          clean: false
+          fetch-depth: 0
+
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Check TypeScript version
+        run: npx tsc -v
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - name: File size comparison
+        run: |
+          npx gulp write-file-sizes --filename ${{github.event.pull_request.number}}.json
+          npx gulp compare-size-and-comment \
+          --master ./tmp/filesizes/master.json \
+          --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json \
+          --pr ${{github.event.pull_request.number}} \
+          --user highsoft-bot
+        env:
+          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
+
+
+  visual_compare:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount 2 --no-fail-on-empty-test-suite
+
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          clean: false
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
+
+      - name: Save test results where both an reference.svg and candidate.svg exists
+        run: |
+          mkdir -p ./tmp/visual-test-results
+          find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ./tmp/visual-test-results
+        if: ${{ always() }}
+
+      - name: Comment on PR and upload visual test images if any produced
+        run: |
+          npx gulp update-pr-testresults \
+          --fail-silently \
+          --user highsoft-bot \
+          --pr ${{github.event.pull_request.number}}
+        if: ${{ always() }}
+        env:
+          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
+          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: visual-test-results
+          path: tmp/visual-test-results
+

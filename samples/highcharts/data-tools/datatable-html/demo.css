@@ -1,0 +1,66 @@
+:root {
+    --color-background: #fff;
+    --color-foreground: #000;
+    --color-tbody-background: #eee;
+    --color-thead-background: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #111;
+        --color-foreground: #eee;
+        --color-tbody-background: #222;
+        --color-thead-background: #333;
+    }
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+}
+
+form {
+    display: flex;
+    justify-content: stretch;
+}
+
+fieldset {
+    flex-grow: 1;
+    text-align: center;
+    border: 1px solid silver;
+}
+
+fieldset:last-child {
+    flex-grow: 0;
+}
+
+input[type="text"] {
+    vertical-align: top;
+    width: 50%;
+}
+
+table {
+    min-width: 50%;
+}
+
+table td,
+table th {
+    line-height: 1.5em;
+    padding: 0.25em 0.5em;
+    vertical-align: top;
+    white-space: pre-wrap;
+}
+
+table thead th {
+    background-color: var(--color-thead-background);
+}
+
+table tbody td {
+    background-color: var(--color-tbody-background);
+}
+
+@media (max-width: 800px) {
+    form {
+        flex-direction: column;
+    }
+}

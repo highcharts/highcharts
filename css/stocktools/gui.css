@@ -1,0 +1,296 @@
+/* Colors for buttons. */
+.chart:-webkit-full-screen {
+    width: 100%;
+    height: 100%;
+}
+
+.chart:-moz-full-screen {
+    width: 100%;
+    height: 100%;
+}
+
+.chart:-ms-fullscreen {
+    width: 100%;
+    height: 100%;
+}
+
+.chart:fullscreen {
+    width: 100%;
+    height: 100%;
+}
+
+.chart {
+    width: 100%;
+    float: left;
+    height: 400px;
+    position: relative;
+}
+
+.highcharts-draw-mode { cursor: crosshair; }
+
+.highcharts-bindings-wrapper * {
+    box-sizing: content-box;
+}
+
+.highcharts-bindings-wrapper {
+    display: block;
+    width: 40px;
+    height: 100%;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+}
+
+.highcharts-button {
+    fill: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-stocktools-popup {
+    width: 100%;
+}
+
+.highcharts-menu-wrapper {
+    float: left;
+    width: 40px;
+    height: calc(100% - 50px);
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 10px;
+}
+
+.highcharts-bindings-wrapper .highcharts-submenu-wrapper {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    background: #ffffff;
+    width: 40px;
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-wrapper {
+    text-align: center;
+    width: 40px;
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-size: 1.5em;
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-wrapper > div {
+    cursor: pointer;
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-down {
+    background-size: cover;
+
+    /* Safari */
+    -webkit-transform: rotate(90deg);
+
+    /* Firefox */
+    -moz-transform: rotate(90deg);
+
+    /* IE */
+    -ms-transform: rotate(90deg);
+
+    /* Opera */
+    -o-transform: rotate(90deg);
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-up {
+    background-size: cover;
+    outline: none;
+    display: inline-block;
+    width: 25px;
+    cursor: pointer;
+    -webkit-user-select: none;
+
+    /* Chrome/Safari */
+    -moz-user-select: none;
+
+    /* Firefox */
+    -ms-user-select: none;
+
+    /* IE10+ */
+
+    /* Rules below not implemented in browsers yet */
+    -o-user-select: none;
+    user-select: none;
+
+    /* Safari */
+    -webkit-transform: rotate(-90deg);
+
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+
+    /* IE */
+    -ms-transform: rotate(-90deg);
+
+    /* Opera */
+    -o-transform: rotate(-90deg);
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-right {
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: contain;
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-left.highcharts-arrow-right {
+    /* Safari */
+    -webkit-transform: rotate(0deg);
+
+    /* Firefox */
+    -moz-transform: rotate(0deg);
+
+    /* IE */
+    -ms-transform: rotate(0deg);
+
+    /* Opera */
+    -o-transform: rotate(0deg);
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-left {
+    /* Safari */
+    -webkit-transform: rotate(180deg);
+
+    /* Firefox */
+    -moz-transform: rotate(180deg);
+
+    /* IE */
+    -ms-transform: rotate(180deg);
+
+    /* Opera */
+    -o-transform: rotate(180deg);
+}
+
+.highcharts-bindings-wrapper ul {
+    width: 40px;
+
+    /* 30px spacing for arrows to scroll */
+    margin: 0;
+    padding: 0;
+    float: left;
+    transition: margin 250ms;
+}
+
+.highcharts-bindings-wrapper > ul {
+    width: 40px;
+    position: relative;
+}
+
+.highcharts-bindings-wrapper .highcharts-stocktools-toolbar li {
+    list-style: none;
+    margin-bottom: 3px;
+    padding: 0;
+    clear: both;
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    position: relative;
+    background-color: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn {
+    cursor: default;
+}
+
+.highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn > .highcharts-menu-item-btn {
+    opacity: 0.5;
+}
+
+.highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn.highcharts-active {
+    background: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-bindings-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn .highcharts-menu-item-btn:hover {
+    background-color: transparent;
+}
+
+.highcharts-bindings-wrapper li > button.highcharts-menu-item-btn {
+    display: block;
+    border: none;
+    float: left;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 32px 32px;
+}
+
+.highcharts-submenu-wrapper li > button.highcharts-menu-item-btn {
+    width: 40px;
+}
+
+.highcharts-bindings-wrapper li > button.highcharts-submenu-item-arrow {
+    float: left;
+    background-repeat: no-repeat;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    background-color: transparent;
+    width: 10px;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.highcharts-bindings-wrapper li.highcharts-separator {
+    height: 15px;
+    background-color: transparent;
+    width: 36px;
+    pointer-events: none;
+}
+
+.highcharts-bindings-wrapper li.highcharts-separator > button.highcharts-menu-item-btn {
+    width: 100%;
+}
+
+.highcharts-bindings-wrapper li.highcharts-active > button.highcharts-menu-item-btn,
+.highcharts-bindings-wrapper li > button.highcharts-menu-item-btn:hover,
+.highcharts-bindings-wrapper .highcharts-arrow-wrapper > div:hover,
+.highcharts-bindings-wrapper li.highcharts-active,
+.highcharts-toggle-toolbar:hover {
+    background-color: var(--highcharts-neutral-color-10);
+    transition: background-color 100ms;
+}
+
+.highcharts-toggle-toolbar {
+    position: absolute;
+    cursor: pointer;
+    width: 10px;
+    height: 10px;
+    background-color: var(--highcharts-neutral-color-3);
+    background-size: cover;
+}
+
+.highcharts-hide {
+    display: none;
+}
+
+.highcharts-bindings-wrapper li:hover,
+.highcharts-submenu-item-arrow:hover {
+    background-color: var(--highcharts-button-hover-color);
+}
+
+.highcharts-bindings-wrapper .highcharts-arrow-down,
+.highcharts-bindings-wrapper .highcharts-arrow-up {
+    width: 50%;
+    height: 20px;
+    float: left;
+}
+
+li.highcharts-disabled-btn:hover,
+.highcharts-disabled-btn .highcharts-submenu-item-arrow:hover {
+    background-color: var(--highcharts-neutral-color-3);
+}

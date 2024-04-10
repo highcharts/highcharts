@@ -6,6 +6,7 @@
 
 import type AnnotationOptions from './AnnotationOptions';
 import type { AnnotationPoint } from './AnnotationSeries';
+import type ControlPointOptions from './ControlPointOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
@@ -19,7 +20,7 @@ const { defined } = U;
 
 /**
  * A basic type of an annotation. It allows to add custom labels
- * or shapes. The items  can be tied to points, axis coordinates
+ * or shapes. The items can be tied to points, axis coordinates
  * or chart pixel coordinates.
  *
  * @sample highcharts/annotations/basic/
@@ -38,7 +39,8 @@ const { defined } = U;
  * @requires     modules/annotations
  * @optionparent annotations
  */
-const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
+
+const AnnotationDefaults: AnnotationOptions = {
 
     /**
      * Sets an ID for an annotation. Can be user later when
@@ -159,7 +161,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
         borderColor: Palette.neutralColor100,
 
         /**
-         * The border radius in pixels for the annotaiton's label.
+         * The border radius in pixels for the annotation's label.
          *
          * @sample highcharts/annotations/label-presentation/
          *         Set labels graphic options
@@ -314,7 +316,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
          */
         style: {
             /** @ignore */
-            fontSize: '11px',
+            fontSize: '0.7em',
             /** @ignore */
             fontWeight: 'normal',
             /** @ignore */
@@ -534,7 +536,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
 
         /**
          * The type of the shape.
-         * Avaliable options are circle, rect and ellipse.
+         * Available options are circle, rect and ellipse.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -651,7 +653,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
 
         width: 10
 
-    },
+    } as ControlPointOptions,
 
     /**
      * Event callback when annotation is added to the chart.
@@ -663,7 +665,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
 
     /**
      * Event callback when annotation is updated (e.g. drag and
-     * droppped or resized by control points).
+     * dropped or resized by control points).
      *
      * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
      * @since     7.1.0
@@ -676,6 +678,13 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
      * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
      * @since     7.1.0
      * @apioption annotations.events.click
+     */
+
+    /**
+     * Fires when the annotation is dragged.
+     *
+     * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
+     * @apioption annotations.events.drag
      */
 
     /**
@@ -698,7 +707,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
      */
     zIndex: 6
 
-};
+} as AnnotationOptions; // Type options are expected but not set
 
 /* *
  *

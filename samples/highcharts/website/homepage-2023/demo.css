@@ -1,0 +1,53 @@
+body {
+    margin: 0 !important;
+
+    /* background: linear-gradient(180deg, #201836 0%, #46465C 100%); */
+    background-color: transparent !important;
+}
+
+.hero-container {
+    background: transparent;
+    width: 1;
+    height: 450px;
+}
+
+/* .container {
+    height: 400px;
+    width: 1400px;
+    position: absolute;
+    top: 400px;
+} */
+
+/* .fake {
+    position: relative;
+    padding-bottom: 10px;
+    width: 1400px;
+    height: 800px;
+    background-repeat: no-repeat;
+    background-image:url('http://192.168.1.176:3030/page-bg.png');
+    background-size: cover;
+} */
+
+.highcharts-arcdiagram-series .highcharts-link {
+    opacity: 0;
+    transition: all 2s;
+}
+
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: visible !important;
+    width: 1;
+    opacity: 1;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+#hero {
+    width: 1;
+    overflow: visible !important;
+}

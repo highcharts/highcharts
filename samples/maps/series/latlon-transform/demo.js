@@ -1,9 +1,5 @@
-var chart,
-    transform,
-    position;
-
 // Initialize the chart
-chart = Highcharts.mapChart('container', {
+const chart = Highcharts.mapChart('container', {
     title: {
         text: 'Highmaps legacy lat/lon demo'
     },
@@ -27,7 +23,10 @@ chart = Highcharts.mapChart('container', {
     }, {
         name: 'Separators',
         type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/gb/gb-all'], 'mapline'),
+        data: Highcharts.geojson(
+            Highcharts.maps['countries/gb/gb-all'],
+            'mapline'
+        ),
         color: '#707070',
         showInLegend: false,
         enableMouseTracking: false
@@ -55,9 +54,16 @@ chart = Highcharts.mapChart('container', {
 /** Add point relative to Shetland, outside Shetland zone in map. **/
 
 // Transform definition is grabbed from map, under the "hc-transform" object.
-// To get the mainland transform defintion, use the "default" definition instead of "gb-all-shetland".
-transform = Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland'];
-position = chart.transformFromLatLon({ lat: 58.78, lon: -1.26 }, transform);
+// To get the mainland transform defintion, use the "default" definition
+// instead of "gb-all-shetland".
+const transform = Highcharts.maps[
+    'countries/gb/gb-all']['hc-transform']['gb-all-shetland'];
+
+const position = chart.transformFromLatLon({
+    lat: 58.78,
+    lon: -1.26
+}, transform);
+
 chart.series[2].addPoint({
     name: 'Manually transformed point<br>(relative to Shetland)',
     x: position.x,

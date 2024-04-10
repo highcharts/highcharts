@@ -1,53 +1,53 @@
 const country = {
-    Norway: "no",
-    "United States": "us",
-    Germany: "de",
-    Canada: "ca",
-    Austria: "at"
+    Norway: 'no',
+    'United States': 'us',
+    Germany: 'de',
+    Canada: 'ca',
+    Austria: 'at'
 };
 
-Highcharts.chart("container", {
-    colors: ["#FFD700", "#C0C0C0", "#CD7F32"],
+Highcharts.chart('container', {
+    colors: ['#FFD700', '#C0C0C0', '#CD7F32'],
     country: {
-        Norway: "no",
-        "United States": "us",
-        Germany: "de",
-        Canada: "ca",
-        Austria: "at"
+        Norway: 'no',
+        'United States': 'us',
+        Germany: 'de',
+        Canada: 'ca',
+        Austria: 'at'
     },
     chart: {
-        type: "column",
+        type: 'column',
         inverted: true,
         polar: true
     },
     accessibility: {
         keyboardNavigation: {
             seriesNavigation: {
-                mode: "serialize"
+                mode: 'serialize'
             }
         }
     },
     title: {
-        text: "Winter Olympic medals per existing country (TOP 5)"
+        text: 'Winter Olympic medals per existing country (TOP 5)'
     },
     tooltip: {
         outside: true
     },
     pane: {
-        size: "85%",
-        innerSize: "20%",
+        size: '85%',
+        innerSize: '20%',
         endAngle: 270
     },
     xAxis: {
         tickInterval: 1,
         labels: {
-            align: "right",
+            align: 'right',
             useHTML: true,
             allowOverlap: true,
             step: 1,
             y: 3,
             style: {
-                fontSize: "13px"
+                fontSize: '13px'
             },
             formatter: function () {
                 return `${
@@ -58,15 +58,15 @@ Highcharts.chart("container", {
             }
         },
         lineWidth: 0,
-        categories: ["Norway", "United States", "Germany", "Canada", "Austria"],
+        categories: ['Norway', 'United States', 'Germany', 'Canada', 'Austria'],
         accessibility: {
-            description: "Countries"
+            description: 'Countries'
         }
     },
     yAxis: {
         crosshair: {
             enabled: true,
-            color: "#333"
+            color: '#333'
         },
         lineWidth: 0,
         tickInterval: 25,
@@ -74,12 +74,12 @@ Highcharts.chart("container", {
         endOnTick: true,
         showLastLabel: true,
         accessibility: {
-            description: "Number of medals"
+            description: 'Number of medals'
         }
     },
     plotOptions: {
         column: {
-            stacking: "normal",
+            stacking: 'normal',
             borderWidth: 0,
             pointPadding: 0,
             groupPadding: 0.15
@@ -87,15 +87,15 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "Gold medals",
+            name: 'Gold medals',
             data: [132, 105, 92, 73, 64]
         },
         {
-            name: "Silver medals",
+            name: 'Silver medals',
             data: [125, 110, 86, 64, 81]
         },
         {
-            name: "Bronze medals",
+            name: 'Bronze medals',
             data: [111, 90, 60, 62, 87]
         }
     ]

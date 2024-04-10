@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,14 +20,13 @@ import type {
 } from '../../../Core/Renderer/AlignObject';
 import type { AnnotationPoint } from '../AnnotationSeries';
 import type ColorType from '../../../Core/Color/ColorType';
-import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type ControlTargetOptions from '../ControlTargetOptions';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type {
     DataLabelOverflowValue
 } from '../../../Core/Series/DataLabelOptions';
-import type FormatUtilities from '../../../Core/FormatUtilities';
-import type MockPointOptions from '../MockPointOptions';
+import type Templating from '../../../Core/Templating';
 import type {
     ShadowOptionsObject
 } from '../../../Core/Renderer/ShadowOptionsObject';
@@ -52,7 +51,7 @@ export interface ControllableLabelOptions extends ControllableOptions {
     dashStyle?: DashStyleValue;
     distance?: number;
     format?: string;
-    formatter: FormatUtilities.FormatterCallback<AnnotationPoint>;
+    formatter: Templating.FormatterCallback<AnnotationPoint>;
     includeInDataExport: boolean;
     overflow: DataLabelOverflowValue;
     padding?: number;
@@ -68,21 +67,15 @@ export interface ControllableLabelOptions extends ControllableOptions {
     yAxis?: number|string;
 }
 
-export interface ControllableOptions {
+export interface ControllableOptions extends ControlTargetOptions {
     className?: string;
-    controlPointOptions?: ControlPointOptionsObject;
-    controlPoints?: Array<ControlPointOptionsObject>;
     id?: (number|string);
     markerEnd?: string;
     markerStart?: string;
-    point?: (string|MockPointOptions);
-    points?: Array<(string|MockPointOptions)>;
     r?: number;
     rx?: number;
     ry?: number;
     type?: string;
-    x?: number;
-    y?: number;
 }
 
 export interface ControllableShapeOptions extends ControllableOptions {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -56,6 +56,14 @@ const exporting: ExportingOptions = {
      * @since     4.1.8
      * @apioption exporting.allowHTML
      */
+
+    /**
+     * Allows the end user to sort the data table by clicking on column headers.
+     *
+     * @since 10.3.3
+     * @apioption exporting.allowTableSorting
+     */
+    allowTableSorting: true,
 
     /**
      * Additional chart options to be merged into the chart before exporting to
@@ -140,14 +148,32 @@ const exporting: ExportingOptions = {
      */
 
     /**
-     * An object containing additional key value data for the POST form that
-     * sends the SVG to the export server. For example, a `target` can be set to
-     * make sure the generated image is received in another frame, or a custom
-     * `enctype` or `encoding` can be set.
+     * Highcharts v11.2.0 and older. An object containing additional key value
+     * data for the POST form that sends the SVG to the export server. For
+     * example, a `target` can be set to make sure the generated image is
+     * received in another frame, or a custom `enctype` or `encoding` can be
+     * set.
      *
+     * With Highcharts v11.3.0, the `fetch` API replaced the old HTML form. To
+     * modify the request, now use [fetchOptions](#exporting.fetchOptions)
+     * instead.
+     *
+     * @deprecated
      * @type      {Highcharts.HTMLAttributes}
      * @since     3.0.8
      * @apioption exporting.formAttributes
+     */
+
+    /**
+     * Options for the fetch request used when sending the SVG to the export
+     * server.
+     *
+     * See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
+     * for more information
+     *
+     * @type {Object}
+     * @since 11.3.0
+     * @apioption exporting.fetchOptions
      */
 
     /**
@@ -674,7 +700,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        symbolX: 12.5,
+        symbolX: 14.5,
 
         /**
          * The y position of the center of the symbol inside the button.
@@ -684,7 +710,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        symbolY: 10.5,
+        symbolY: 13.5,
 
         /**
          * Alignment for the buttons.
@@ -712,7 +738,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        height: 22,
+        height: 28,
 
         /**
          * A text string to add to the individual button.
@@ -739,7 +765,7 @@ const navigation: NavigationOptions = {
          *
          * @type      boolean
          * @default   false
-         * @since     next
+         * @since 10.3.0
          * @apioption navigation.buttonOptions.useHTML
          */
 
@@ -776,7 +802,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        width: 24,
+        width: 28,
 
         /**
          * Fill color for the symbol within the button.
@@ -861,16 +887,18 @@ const navigation: NavigationOptions = {
      *         Light gray menu background
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
+     * @default {"background": "#ffffff", "borderRadius": "3px", "padding": "0.5em"}
      * @since   2.0
      */
     menuStyle: {
         /** @ignore-option */
-        border: `1px solid ${Palette.neutralColor40}`,
+        border: 'none',
+        /** @ignore-option */
+        borderRadius: '3px',
         /** @ignore-option */
         background: Palette.backgroundColor,
         /** @ignore-option */
-        padding: '5px 0'
+        padding: '0.5em'
     },
 
     /**
@@ -886,18 +914,20 @@ const navigation: NavigationOptions = {
      *         Add a grey stripe to the left
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
+     * @default {"padding": "0.5em", "color": "#333333", "background": "none", "borderRadius": "3px", "fontSize": "0.8em", "transition": "background 250ms, color 250ms"}
      * @since   2.0
      */
     menuItemStyle: {
         /** @ignore-option */
-        padding: '0.5em 1em',
+        background: 'none',
+        /** @ignore-option */
+        borderRadius: '3px',
         /** @ignore-option */
         color: Palette.neutralColor80,
         /** @ignore-option */
-        background: 'none',
+        padding: '0.5em',
         /** @ignore-option */
-        fontSize: isTouchDevice ? '14px' : '11px',
+        fontSize: isTouchDevice ? '0.9em' : '0.8em',
         /** @ignore-option */
         transition: 'background 250ms, color 250ms'
     },
@@ -914,14 +944,12 @@ const navigation: NavigationOptions = {
      *         Bold text on hover
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"background": "#335cad", "color": "#ffffff"}
+     * @default {"background": "#f2f2f2" }
      * @since   2.0
      */
     menuItemHoverStyle: {
         /** @ignore-option */
-        background: Palette.highlightColor80,
-        /** @ignore-option */
-        color: Palette.backgroundColor
+        background: Palette.neutralColor5
     }
 
 };

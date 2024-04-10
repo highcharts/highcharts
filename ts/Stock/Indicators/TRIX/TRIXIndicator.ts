@@ -15,15 +15,11 @@
  * */
 
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import type {
-    TRIXOptions
-} from './TRIXOptions';
+import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    tema: TEMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -80,9 +76,9 @@ class TRIXIndicator extends TEMAIndicator {
      *
      * */
 
-    public data: Array<TRIXPoint> = void 0 as any;
-    public options: TRIXOptions = void 0 as any;
-    public points: Array<TRIXPoint> = void 0 as any;
+    public data!: Array<TRIXPoint>;
+    public options!: TRIXOptions;
+    public points!: Array<TRIXPoint>;
 
     /* *
      *
@@ -162,4 +158,4 @@ export default TRIXIndicator;
  * @apioption series.trix
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

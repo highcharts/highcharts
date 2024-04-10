@@ -1,13 +1,15 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "scatter",
-        zoomType: "xy"
+        type: 'scatter',
+        zooming: {
+            type: 'xy'
+        }
     },
     accessibility: {
-        description: ""
+        description: ''
     },
     title: {
-        text: "Olympics 2012 by height and weight"
+        text: 'Olympics 2012 by height and weight'
     },
     subtitle: {
         text:
@@ -15,10 +17,10 @@ Highcharts.chart("container", {
     },
     xAxis: {
         title: {
-            text: "Height"
+            text: 'Height'
         },
         labels: {
-            format: "{value} cm"
+            format: '{value} cm'
         },
         startOnTick: true,
         endOnTick: true,
@@ -26,10 +28,10 @@ Highcharts.chart("container", {
     },
     yAxis: {
         title: {
-            text: "Weight"
+            text: 'Weight'
         },
         labels: {
-            format: "{value} kg"
+            format: '{value} kg'
         }
     },
     legend: {
@@ -39,16 +41,16 @@ Highcharts.chart("container", {
         scatter: {
             dataLabels: {
                 enabled: true,
-                color: "#ffffff",
+                color: '#ffffff',
                 formatter: function () {
-                    if (typeof this.point.clusterPointsAmount === "undefined") {
-                        return "";
+                    if (typeof this.point.clusterPointsAmount === 'undefined') {
+                        return '';
                     }
                     return this.point.clusterPointsAmount;
 
                 },
                 style: {
-                    fontSize: "10px",
+                    fontSize: '10px',
                     textOutline: false
                 }
             },
@@ -67,7 +69,7 @@ Highcharts.chart("container", {
                     duration: 450
                 },
                 layoutAlgorithm: {
-                    type: "grid",
+                    type: 'grid',
                     gridSize: 70
                 },
                 zones: [
@@ -76,7 +78,7 @@ Highcharts.chart("container", {
                         to: 4,
                         marker: {
                             radius: 13,
-                            fillColor: "#7695aa"
+                            fillColor: '#7695aa'
                         }
                     },
                     {
@@ -84,7 +86,7 @@ Highcharts.chart("container", {
                         to: 9,
                         marker: {
                             radius: 15,
-                            fillColor: "#5DADE2"
+                            fillColor: '#5DADE2'
                         }
                     },
                     {
@@ -92,7 +94,7 @@ Highcharts.chart("container", {
                         to: 20,
                         marker: {
                             radius: 17,
-                            fillColor: "#2E86C1 "
+                            fillColor: '#2E86C1 '
                         }
                     },
                     {
@@ -100,7 +102,7 @@ Highcharts.chart("container", {
                         to: 100,
                         marker: {
                             radius: 21,
-                            fillColor: "#1B4F72"
+                            fillColor: '#1B4F72'
                         }
                     }
                 ]
@@ -109,1015 +111,1016 @@ Highcharts.chart("container", {
     },
     tooltip: {
         formatter: function () {
-            if (typeof this.point.clusterPointsAmount === "undefined") {
+            if (typeof this.point.clusterPointsAmount === 'undefined') {
                 return (
                     this.point.country +
-            "<br/>" +
-            "Height: " +
+            '<br/>' +
+            'Height: ' +
             this.x +
-            "cm <br/> Weight: " +
+            'cm <br/> Weight: ' +
             this.y +
-            "kg"
+            'kg'
                 );
             }
-            return "There are <b>" + this.point.clusterPointsAmount + "</b> points";
+            return 'There are <b>' + this.point.clusterPointsAmount +
+                '</b> points';
 
         }
     },
     series: [
         {
-            name: "Weight and height by country",
+            name: 'Weight and height by country',
             data: [
                 {
                     x: 172,
                     y: 60.3,
-                    country: "Afghanistan"
+                    country: 'Afghanistan'
                 },
                 {
                     x: 177.2,
                     y: 78.3,
-                    country: "Albania"
+                    country: 'Albania'
                 },
                 {
                     x: 173.9,
                     y: 66.8,
-                    country: "Algeria"
+                    country: 'Algeria'
                 },
                 {
                     x: 173.2,
                     y: 81.4,
-                    country: "American Samoa"
+                    country: 'American Samoa'
                 },
                 {
                     x: 172,
                     y: 67.3,
-                    country: "Andorra"
+                    country: 'Andorra'
                 },
                 {
                     x: 174.7,
                     y: 69.2,
-                    country: "Angola"
+                    country: 'Angola'
                 },
                 {
                     x: 176.7,
                     y: 71.7,
-                    country: "Antigua and Barbuda"
+                    country: 'Antigua and Barbuda'
                 },
                 {
                     x: 179.9,
                     y: 77.8,
-                    country: "Argentina"
+                    country: 'Argentina'
                 },
                 {
                     x: 175,
                     y: 78.1,
-                    country: "Armenia"
+                    country: 'Armenia'
                 },
                 {
                     x: 172.5,
                     y: 76.8,
-                    country: "Aruba"
+                    country: 'Aruba'
                 },
                 {
                     x: 179.1,
                     y: 75.5,
-                    country: "Australia"
+                    country: 'Australia'
                 },
                 {
                     x: 177.2,
                     y: 70.8,
-                    country: "Austria"
+                    country: 'Austria'
                 },
                 {
                     x: 173.5,
                     y: 75.4,
-                    country: "Azerbaijan"
+                    country: 'Azerbaijan'
                 },
                 {
                     x: 179,
                     y: 73.7,
-                    country: "Bahamas"
+                    country: 'Bahamas'
                 },
                 {
                     x: 167,
                     y: 53.4,
-                    country: "Bahrain"
+                    country: 'Bahrain'
                 },
                 {
                     x: 166.8,
                     y: 64.5,
-                    country: "Bangladesh"
+                    country: 'Bangladesh'
                 },
                 {
                     x: 183.5,
                     y: 74.2,
-                    country: "Barbados"
+                    country: 'Barbados'
                 },
                 {
                     x: 177,
                     y: 74.6,
-                    country: "Belarus"
+                    country: 'Belarus'
                 },
                 {
                     x: 177.8,
                     y: 71,
-                    country: "Belgium"
+                    country: 'Belgium'
                 },
                 {
                     x: 164,
                     y: 66.7,
-                    country: "Belize"
+                    country: 'Belize'
                 },
                 {
                     x: 174.6,
                     y: 69,
-                    country: "Benin"
+                    country: 'Benin'
                 },
                 {
                     x: 175.2,
                     y: 67.7,
-                    country: "Bermuda"
+                    country: 'Bermuda'
                 },
                 {
                     x: 155,
                     y: 60,
-                    country: "Bhutan"
+                    country: 'Bhutan'
                 },
                 {
                     x: 178,
                     y: 80,
-                    country: "Bolivia"
+                    country: 'Bolivia'
                 },
                 {
                     x: 182.5,
                     y: 81,
-                    country: "Bosnia and Herzegovina"
+                    country: 'Bosnia and Herzegovina'
                 },
                 {
                     x: 179,
                     y: 60,
-                    country: "Botswana"
+                    country: 'Botswana'
                 },
                 {
                     x: 178.5,
                     y: 74.6,
-                    country: "Brazil"
+                    country: 'Brazil'
                 },
                 {
                     x: 168,
                     y: 59,
-                    country: "Brunei Darussalam"
+                    country: 'Brunei Darussalam'
                 },
                 {
                     x: 177.2,
                     y: 73.3,
-                    country: "Bulgaria"
+                    country: 'Bulgaria'
                 },
                 {
                     x: 173.4,
                     y: 67.4,
-                    country: "Burkina Faso"
+                    country: 'Burkina Faso'
                 },
                 {
                     x: 173.5,
                     y: 64.4,
-                    country: "Burundi"
+                    country: 'Burundi'
                 },
                 {
                     x: 172.5,
                     y: 65.7,
-                    country: "Ivory Cost"
+                    country: 'Ivory Cost'
                 },
                 {
                     x: 169.5,
                     y: 57.8,
-                    country: "Cambodia"
+                    country: 'Cambodia'
                 },
                 {
                     x: 167.4,
                     y: 67.8,
-                    country: "Cameroon"
+                    country: 'Cameroon'
                 },
                 {
                     x: 175.8,
                     y: 72.4,
-                    country: "Canada"
+                    country: 'Canada'
                 },
                 {
                     x: 176.3,
                     y: 75.3,
-                    country: "Cape Verde"
+                    country: 'Cape Verde'
                 },
                 {
                     x: 183,
                     y: 78.8,
-                    country: "Cayman Islands"
+                    country: 'Cayman Islands'
                 },
                 {
                     x: 171.3,
                     y: 67.3,
-                    country: "Chad"
+                    country: 'Chad'
                 },
                 {
                     x: 171.8,
                     y: 71.5,
-                    country: "Chile"
+                    country: 'Chile'
                 },
                 {
                     x: 170.3,
                     y: 63.4,
-                    country: "Colombia"
+                    country: 'Colombia'
                 },
                 {
                     x: 165.3,
                     y: 56.7,
-                    country: "Comoros"
+                    country: 'Comoros'
                 },
                 {
                     x: 173.9,
                     y: 71.8,
-                    country: "Congo"
+                    country: 'Congo'
                 },
                 {
                     x: 164.3,
                     y: 72.9,
-                    country: "Cook Islands"
+                    country: 'Cook Islands'
                 },
                 {
                     x: 175,
                     y: 67.8,
-                    country: "Costa Rica"
+                    country: 'Costa Rica'
                 },
                 {
                     x: 185.1,
                     y: 84,
-                    country: "Croatia"
+                    country: 'Croatia'
                 },
                 {
                     x: 177.3,
                     y: 73,
-                    country: "Cyprus"
+                    country: 'Cyprus'
                 },
                 {
                     x: 180.7,
                     y: 76.3,
-                    country: "Czech Republic"
+                    country: 'Czech Republic'
                 },
                 {
                     x: 162.9,
                     y: 57.7,
-                    country: "Democratic People Republic of Korea"
+                    country: 'Democratic People Republic of Korea'
                 },
                 {
                     x: 177.8,
                     y: 78,
-                    country: "Democratic Republic of the Congo"
+                    country: 'Democratic Republic of the Congo'
                 },
                 {
                     x: 159.5,
                     y: 53,
-                    country: "Democratic Republic of Timor-Leste"
+                    country: 'Democratic Republic of Timor-Leste'
                 },
                 {
                     x: 180.9,
                     y: 75.9,
-                    country: "Denmark"
+                    country: 'Denmark'
                 },
                 {
                     x: 169,
                     y: 59,
-                    country: "Dominica"
+                    country: 'Dominica'
                 },
                 {
                     x: 175.6,
                     y: 66.2,
-                    country: "Dominican Republic"
+                    country: 'Dominican Republic'
                 },
                 {
                     x: 171.6,
                     y: 63.6,
-                    country: "Ecuador"
+                    country: 'Ecuador'
                 },
                 {
                     x: 174.7,
                     y: 75.9,
-                    country: "Egypt"
+                    country: 'Egypt'
                 },
                 {
                     x: 169.8,
                     y: 65.5,
-                    country: "El Salvador"
+                    country: 'El Salvador'
                 },
                 {
                     x: 176,
                     y: 68,
-                    country: "Equatorial Guinea"
+                    country: 'Equatorial Guinea'
                 },
                 {
                     x: 173.4,
                     y: 59.5,
-                    country: "Eritrea"
+                    country: 'Eritrea'
                 },
                 {
                     x: 183.3,
                     y: 85.8,
-                    country: "Estonia"
+                    country: 'Estonia'
                 },
                 {
                     x: 170,
                     y: 54.1,
-                    country: "Ethiopia"
+                    country: 'Ethiopia'
                 },
                 {
                     x: 165.5,
                     y: 69,
-                    country: "Federated States of Micronesia"
+                    country: 'Federated States of Micronesia'
                 },
                 {
                     x: 175,
                     y: 79.4,
-                    country: "Fiji"
+                    country: 'Fiji'
                 },
                 {
                     x: 175.6,
                     y: 70,
-                    country: "Finland"
+                    country: 'Finland'
                 },
                 {
                     x: 177.5,
                     y: 68,
-                    country: "Former Yugoslav Republic of Macedonia"
+                    country: 'Former Yugoslav Republic of Macedonia'
                 },
                 {
                     x: 178,
                     y: 72,
-                    country: "France"
+                    country: 'France'
                 },
                 {
                     x: 172.7,
                     y: 72.6,
-                    country: "Gabon"
+                    country: 'Gabon'
                 },
                 {
                     x: 155,
                     y: 68,
-                    country: "Gambia"
+                    country: 'Gambia'
                 },
                 {
                     x: 177.2,
                     y: 77.7,
-                    country: "Georgia"
+                    country: 'Georgia'
                 },
                 {
                     x: 179.6,
                     y: 76,
-                    country: "Germany"
+                    country: 'Germany'
                 },
                 {
                     x: 168.8,
                     y: 69.8,
-                    country: "Ghana"
+                    country: 'Ghana'
                 },
                 {
                     x: 178.9,
                     y: 74.5,
-                    country: "Great Britain"
+                    country: 'Great Britain'
                 },
                 {
                     x: 179.7,
                     y: 76.6,
-                    country: "Greece"
+                    country: 'Greece'
                 },
                 {
                     x: 177.8,
                     y: 62.3,
-                    country: "Grenada"
+                    country: 'Grenada'
                 },
                 {
                     x: 176.1,
                     y: 85.6,
-                    country: "Guam"
+                    country: 'Guam'
                 },
                 {
                     x: 172.1,
                     y: 73.9,
-                    country: "Guatemala"
+                    country: 'Guatemala'
                 },
                 {
                     x: 169.5,
                     y: 79.8,
-                    country: "Guinea"
+                    country: 'Guinea'
                 },
                 {
                     x: 168.2,
                     y: 67,
-                    country: "Guinea-Bissau"
+                    country: 'Guinea-Bissau'
                 },
                 {
                     x: 172.7,
                     y: 63.8,
-                    country: "Guyana"
+                    country: 'Guyana'
                 },
                 {
                     x: 160,
                     y: 52,
-                    country: "Haiti"
+                    country: 'Haiti'
                 },
                 {
                     x: 168.6,
                     y: 69.8,
-                    country: "Honduras"
+                    country: 'Honduras'
                 },
                 {
                     x: 170.2,
                     y: 64.4,
-                    country: "Hong Kong, China"
+                    country: 'Hong Kong, China'
                 },
                 {
                     x: 181.2,
                     y: 78.7,
-                    country: "Hungary"
+                    country: 'Hungary'
                 },
                 {
                     x: 190.9,
                     y: 94.9,
-                    country: "Iceland"
+                    country: 'Iceland'
                 },
                 {
                     x: 177,
                     y: 72.8,
-                    country: "Independent Olympic Athletes"
+                    country: 'Independent Olympic Athletes'
                 },
                 {
                     x: 170,
                     y: 66.7,
-                    country: "India"
+                    country: 'India'
                 },
                 {
                     x: 165.6,
                     y: 62.8,
-                    country: "Indonesia"
+                    country: 'Indonesia'
                 },
                 {
                     x: 171.3,
                     y: 75.2,
-                    country: "Iraq"
+                    country: 'Iraq'
                 },
                 {
                     x: 175.4,
                     y: 67.4,
-                    country: "Ireland"
+                    country: 'Ireland'
                 },
                 {
                     x: 178.7,
                     y: 82.5,
-                    country: "Islamic Republic of Iran"
+                    country: 'Islamic Republic of Iran'
                 },
                 {
                     x: 174.7,
                     y: 71.8,
-                    country: "Israel"
+                    country: 'Israel'
                 },
                 {
                     x: 177.9,
                     y: 72.8,
-                    country: "Italy"
+                    country: 'Italy'
                 },
                 {
                     x: 175,
                     y: 71.1,
-                    country: "Jamaica"
+                    country: 'Jamaica'
                 },
                 {
                     x: 169.3,
                     y: 64.2,
-                    country: "Japan"
+                    country: 'Japan'
                 },
                 {
                     x: 173,
                     y: 64.8,
-                    country: "Jordan"
+                    country: 'Jordan'
                 },
                 {
                     x: 177.1,
                     y: 74,
-                    country: "Kazakhstan"
+                    country: 'Kazakhstan'
                 },
                 {
                     x: 169.2,
                     y: 58.2,
-                    country: "Kenya"
+                    country: 'Kenya'
                 },
                 {
                     x: 164.3,
                     y: 76,
-                    country: "Kiribati"
+                    country: 'Kiribati'
                 },
                 {
                     x: 179.3,
                     y: 79.1,
-                    country: "Kuwait"
+                    country: 'Kuwait'
                 },
                 {
                     x: 175.5,
                     y: 73.2,
-                    country: "Kyrgyzstan"
+                    country: 'Kyrgyzstan'
                 },
                 {
                     x: 166,
                     y: 58.3,
-                    country: "Lao People Democratic Republic"
+                    country: 'Lao People Democratic Republic'
                 },
                 {
                     x: 181.4,
                     y: 77.9,
-                    country: "Latvia"
+                    country: 'Latvia'
                 },
                 {
                     x: 174.2,
                     y: 69.1,
-                    country: "Lebanon"
+                    country: 'Lebanon'
                 },
                 {
                     x: 169.5,
                     y: 58.5,
-                    country: "Lesotho"
+                    country: 'Lesotho'
                 },
                 {
                     x: 173.3,
                     y: 71,
-                    country: "Liberia"
+                    country: 'Liberia'
                 },
                 {
                     x: 172.5,
                     y: 62.5,
-                    country: "Libya"
+                    country: 'Libya'
                 },
                 {
                     x: 174.7,
                     y: 67.3,
-                    country: "Liechtenstein"
+                    country: 'Liechtenstein'
                 },
                 {
                     x: 183.8,
                     y: 80.8,
-                    country: "Lithuania"
+                    country: 'Lithuania'
                 },
                 {
                     x: 177,
                     y: 67.3,
-                    country: "Luxembourg"
+                    country: 'Luxembourg'
                 },
                 {
                     x: 169.4,
                     y: 64.6,
-                    country: "Madagascar"
+                    country: 'Madagascar'
                 },
                 {
                     x: 171.3,
                     y: 71.3,
-                    country: "Malawi"
+                    country: 'Malawi'
                 },
                 {
                     x: 168.8,
                     y: 62.7,
-                    country: "Malaysia"
+                    country: 'Malaysia'
                 },
                 {
                     x: 164.6,
                     y: 54.2,
-                    country: "Maldives"
+                    country: 'Maldives'
                 },
                 {
                     x: 168,
                     y: 77,
-                    country: "Mali"
+                    country: 'Mali'
                 },
                 {
                     x: 173.2,
                     y: 72,
-                    country: "Malta"
+                    country: 'Malta'
                 },
                 {
                     x: 173.2,
                     y: 74.5,
-                    country: "Marshall Islands"
+                    country: 'Marshall Islands'
                 },
                 {
                     x: 165,
                     y: 55.5,
-                    country: "Mauritania"
+                    country: 'Mauritania'
                 },
                 {
                     x: 171,
                     y: 63.8,
-                    country: "Mauritius"
+                    country: 'Mauritius'
                 },
                 {
                     x: 171.9,
                     y: 67.9,
-                    country: "Mexico"
+                    country: 'Mexico'
                 },
                 {
                     x: 180.3,
                     y: 73.2,
-                    country: "Monaco"
+                    country: 'Monaco'
                 },
                 {
                     x: 169.6,
                     y: 67.2,
-                    country: "Mongolia"
+                    country: 'Mongolia'
                 },
                 {
                     x: 183.3,
                     y: 82.6,
-                    country: "Montenegro"
+                    country: 'Montenegro'
                 },
                 {
                     x: 175.2,
                     y: 66.8,
-                    country: "Morocco"
+                    country: 'Morocco'
                 },
                 {
                     x: 172.2,
                     y: 65.6,
-                    country: "Mozambique"
+                    country: 'Mozambique'
                 },
                 {
                     x: 167.7,
                     y: 61,
-                    country: "Myanmar"
+                    country: 'Myanmar'
                 },
                 {
                     x: 169.9,
                     y: 57.4,
-                    country: "Namibia"
+                    country: 'Namibia'
                 },
                 {
                     x: 172,
                     y: 106.5,
-                    country: "Nauru"
+                    country: 'Nauru'
                 },
                 {
                     x: 164,
                     y: 62,
-                    country: "Nepal"
+                    country: 'Nepal'
                 },
                 {
                     x: 180.4,
                     y: 73.7,
-                    country: "Netherlands"
+                    country: 'Netherlands'
                 },
                 {
                     x: 177.6,
                     y: 73.6,
-                    country: "New Zealand"
+                    country: 'New Zealand'
                 },
                 {
                     x: 174,
                     y: 58.2,
-                    country: "Nicaragua"
+                    country: 'Nicaragua'
                 },
                 {
                     x: 172.8,
                     y: 64.6,
-                    country: "Niger"
+                    country: 'Niger'
                 },
                 {
                     x: 180.8,
                     y: 66.7,
-                    country: "Nigeria"
+                    country: 'Nigeria'
                 },
                 {
                     x: 178.2,
                     y: 86.5,
-                    country: "Norway"
+                    country: 'Norway'
                 },
                 {
                     x: 168.2,
                     y: 65.5,
-                    country: "Oman"
+                    country: 'Oman'
                 },
                 {
                     x: 163.4,
                     y: 57.4,
-                    country: "Palau"
+                    country: 'Palau'
                 },
                 {
                     x: 171.2,
                     y: 63,
-                    country: "Palestine"
+                    country: 'Palestine'
                 },
                 {
                     x: 175.3,
                     y: 73.2,
-                    country: "Panama"
+                    country: 'Panama'
                 },
                 {
                     x: 166.7,
                     y: 66,
-                    country: "Papua New Guinea"
+                    country: 'Papua New Guinea'
                 },
                 {
                     x: 174,
                     y: 68,
-                    country: "Paraguay"
+                    country: 'Paraguay'
                 },
                 {
                     x: 176.6,
                     y: 71.3,
-                    country: "People Republic of China"
+                    country: 'People Republic of China'
                 },
                 {
                     x: 170,
                     y: 62.9,
-                    country: "Peru"
+                    country: 'Peru'
                 },
                 {
                     x: 168.7,
                     y: 71.1,
-                    country: "Philippines"
+                    country: 'Philippines'
                 },
                 {
                     x: 180.5,
                     y: 76.4,
-                    country: "Poland"
+                    country: 'Poland'
                 },
                 {
                     x: 174.4,
                     y: 69,
-                    country: "Portugal"
+                    country: 'Portugal'
                 },
                 {
                     x: 179.7,
                     y: 75.1,
-                    country: "Puerto Rico"
+                    country: 'Puerto Rico'
                 },
                 {
                     x: 170.8,
                     y: 63.7,
-                    country: "Qatar"
+                    country: 'Qatar'
                 },
                 {
                     x: 173.7,
                     y: 69,
-                    country: "Republic of Korea"
+                    country: 'Republic of Korea'
                 },
                 {
                     x: 176.7,
                     y: 73.2,
-                    country: "Republic of Moldova"
+                    country: 'Republic of Moldova'
                 },
                 {
                     x: 176.8,
                     y: 75.4,
-                    country: "Romania"
+                    country: 'Romania'
                 },
                 {
                     x: 179,
                     y: 74.4,
-                    country: "Russian Federation"
+                    country: 'Russian Federation'
                 },
                 {
                     x: 164.2,
                     y: 59,
-                    country: "Rwanda"
+                    country: 'Rwanda'
                 },
                 {
                     x: 172,
                     y: 70.4,
-                    country: "Saint Kitts and Nevis"
+                    country: 'Saint Kitts and Nevis'
                 },
                 {
                     x: 170.5,
                     y: 64.5,
-                    country: "Saint Lucia"
+                    country: 'Saint Lucia'
                 },
                 {
                     x: 178,
                     y: 78.8,
-                    country: "Samoa"
+                    country: 'Samoa'
                 },
                 {
                     x: 169,
                     y: 69.3,
-                    country: "San Marino"
+                    country: 'San Marino'
                 },
                 {
                     x: 173.5,
                     y: 64.5,
-                    country: "Sao Tome and Principe"
+                    country: 'Sao Tome and Principe'
                 },
                 {
                     x: 180.5,
                     y: 74.1,
-                    country: "Senegal"
+                    country: 'Senegal'
                 },
                 {
                     x: 186,
                     y: 82.7,
-                    country: "Serbia"
+                    country: 'Serbia'
                 },
                 {
                     x: 172.6,
                     y: 71.8,
-                    country: "Seychelles"
+                    country: 'Seychelles'
                 },
                 {
                     x: 176,
                     y: 64,
-                    country: "Sierra Leone"
+                    country: 'Sierra Leone'
                 },
                 {
                     x: 166.9,
                     y: 63,
-                    country: "Singapore"
+                    country: 'Singapore'
                 },
                 {
                     x: 177.6,
                     y: 71.7,
-                    country: "Slovakia"
+                    country: 'Slovakia'
                 },
                 {
                     x: 176.8,
                     y: 71.4,
-                    country: "Slovenia"
+                    country: 'Slovenia'
                 },
                 {
                     x: 175,
                     y: 69,
-                    country: "South Africa"
+                    country: 'South Africa'
                 },
                 {
                     x: 177.4,
                     y: 73.3,
-                    country: "Spain"
+                    country: 'Spain'
                 },
                 {
                     x: 171,
                     y: 61.4,
-                    country: "Sri Lanka"
+                    country: 'Sri Lanka'
                 },
                 {
                     x: 180.5,
                     y: 73.5,
-                    country: "St Vincent and the Grenadines"
+                    country: 'St Vincent and the Grenadines'
                 },
                 {
                     x: 175.8,
                     y: 61.7,
-                    country: "Sudan"
+                    country: 'Sudan'
                 },
                 {
                     x: 168.2,
                     y: 65,
-                    country: "Suriname"
+                    country: 'Suriname'
                 },
                 {
                     x: 175.3,
                     y: 72.7,
-                    country: "Swaziland"
+                    country: 'Swaziland'
                 },
                 {
                     x: 177.9,
                     y: 73,
-                    country: "Sweden"
+                    country: 'Sweden'
                 },
                 {
                     x: 179.3,
                     y: 73.9,
-                    country: "Switzerland"
+                    country: 'Switzerland'
                 },
                 {
                     x: 178.2,
                     y: 80.9,
-                    country: "Syrian Arab Republic"
+                    country: 'Syrian Arab Republic'
                 },
                 {
                     x: 170.2,
                     y: 69.9,
-                    country: "Taipei (Chinese Taipei)"
+                    country: 'Taipei (Chinese Taipei)'
                 },
                 {
                     x: 175.1,
                     y: 79,
-                    country: "Tajikistan"
+                    country: 'Tajikistan'
                 },
                 {
                     x: 167.9,
                     y: 65.8,
-                    country: "Thailand"
+                    country: 'Thailand'
                 },
                 {
                     x: 173.6,
                     y: 68.8,
-                    country: "Togo"
+                    country: 'Togo'
                 },
                 {
                     x: 183,
                     y: 79,
-                    country: "Tonga"
+                    country: 'Tonga'
                 },
                 {
                     x: 174.1,
                     y: 77.5,
-                    country: "Trinidad and Tobago"
+                    country: 'Trinidad and Tobago'
                 },
                 {
                     x: 183.4,
                     y: 81.6,
-                    country: "Tunisia"
+                    country: 'Tunisia'
                 },
                 {
                     x: 174.8,
                     y: 71,
-                    country: "Turkey"
+                    country: 'Turkey'
                 },
                 {
                     x: 174.7,
                     y: 72.6,
-                    country: "Turkmenistan"
+                    country: 'Turkmenistan'
                 },
                 {
                     x: 158,
                     y: 68,
-                    country: "Tuvalu"
+                    country: 'Tuvalu'
                 },
                 {
                     x: 170.2,
                     y: 58.8,
-                    country: "Uganda"
+                    country: 'Uganda'
                 },
                 {
                     x: 177.1,
                     y: 73.6,
-                    country: "Ukraine"
+                    country: 'Ukraine'
                 },
                 {
                     x: 174.7,
                     y: 69.9,
-                    country: "United Arab Emirates"
+                    country: 'United Arab Emirates'
                 },
                 {
                     x: 171.3,
                     y: 56.2,
-                    country: "United Republic of Tanzania"
+                    country: 'United Republic of Tanzania'
                 },
                 {
                     x: 179,
                     y: 75.9,
-                    country: "United States of America"
+                    country: 'United States of America'
                 },
                 {
                     x: 179.6,
                     y: 74.6,
-                    country: "Uruguay"
+                    country: 'Uruguay'
                 },
                 {
                     x: 175.3,
                     y: 76.1,
-                    country: "Uzbekistan"
+                    country: 'Uzbekistan'
                 },
                 {
                     x: 172,
                     y: 73,
-                    country: "Vanuatu"
+                    country: 'Vanuatu'
                 },
                 {
                     x: 170.7,
                     y: 69.7,
-                    country: "Venezuela"
+                    country: 'Venezuela'
                 },
                 {
                     x: 163.3,
                     y: 57.3,
-                    country: "Vietnam"
+                    country: 'Vietnam'
                 },
                 {
                     x: 179.6,
                     y: 73.4,
-                    country: "Virgin Islands, US"
+                    country: 'Virgin Islands, US'
                 },
                 {
                     x: 170.2,
                     y: 58,
-                    country: "Yemen"
+                    country: 'Yemen'
                 },
                 {
                     x: 176,
                     y: 75.2,
-                    country: "Zambia"
+                    country: 'Zambia'
                 },
                 {
                     x: 174.5,
                     y: 69,
-                    country: "Zimbabwe"
+                    country: 'Zimbabwe'
                 },
                 {
                     x: 176.9,
                     y: 72.8,
-                    country: "Average",
-                    color: "red",
+                    country: 'Average',
+                    color: 'red',
                     zIndex: 9
                 }
             ]

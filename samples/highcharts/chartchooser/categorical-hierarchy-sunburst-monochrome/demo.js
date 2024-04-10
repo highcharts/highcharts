@@ -1,172 +1,172 @@
 const data = [
     {
-        id: "Happy",
-        parent: "",
-        name: "Happy",
-        color: "#FFFFFF"
+        id: 'Happy',
+        parent: '',
+        name: 'Happy',
+        color: '#FFFFFF'
     },
     {
-        id: "Playful",
-        parent: "Happy",
-        name: "Playful"
+        id: 'Playful',
+        parent: 'Happy',
+        name: 'Playful'
     },
     {
-        id: "Content",
-        parent: "Happy",
-        name: "Content"
+        id: 'Content',
+        parent: 'Happy',
+        name: 'Content'
     },
     {
-        id: "Interested",
-        parent: "Happy",
-        name: "Interested"
+        id: 'Interested',
+        parent: 'Happy',
+        name: 'Interested'
     },
     {
-        id: "Proud",
-        parent: "Happy",
-        name: "Proud"
+        id: 'Proud',
+        parent: 'Happy',
+        name: 'Proud'
     },
     {
-        id: "Accepted",
-        parent: "Happy",
-        name: "Accepted"
+        id: 'Accepted',
+        parent: 'Happy',
+        name: 'Accepted'
     },
     {
-        id: "Powerful",
-        parent: "Happy",
-        name: "Powerful"
+        id: 'Powerful',
+        parent: 'Happy',
+        name: 'Powerful'
     },
     {
-        id: "Peaceful",
-        parent: "Happy",
-        name: "Peaceful"
+        id: 'Peaceful',
+        parent: 'Happy',
+        name: 'Peaceful'
     },
     {
-        id: "Trusting",
-        parent: "Happy",
-        name: "Trusting"
+        id: 'Trusting',
+        parent: 'Happy',
+        name: 'Trusting'
     },
     {
-        id: "Optimistic",
-        parent: "Happy",
-        name: "Optimistic"
+        id: 'Optimistic',
+        parent: 'Happy',
+        name: 'Optimistic'
     },
 
     /* Level 3 */
     {
-        id: "Aroused",
-        parent: "Playful",
-        name: "Aroused",
+        id: 'Aroused',
+        parent: 'Playful',
+        name: 'Aroused',
         value: 1
     },
     {
-        id: "Checky",
-        parent: "Playful",
-        name: "Checky",
-        value: 1
-    },
-
-    {
-        id: "Free",
-        parent: "Content",
-        name: "Free",
-        value: 1
-    },
-    {
-        id: "Joyful",
-        parent: "Content",
-        name: "Joyful",
+        id: 'Checky',
+        parent: 'Playful',
+        name: 'Checky',
         value: 1
     },
 
     {
-        parent: "Interested",
-        name: "Curious",
+        id: 'Free',
+        parent: 'Content',
+        name: 'Free',
         value: 1
     },
     {
-        parent: "Interested",
-        name: "Inquisitive",
-        value: 1
-    },
-
-    {
-        parent: "Proud",
-        name: "Successful",
-        value: 1
-    },
-    {
-        parent: "Proud",
-        name: "Confident",
+        id: 'Joyful',
+        parent: 'Content',
+        name: 'Joyful',
         value: 1
     },
 
     {
-        parent: "Accepted",
-        name: "Respected",
+        parent: 'Interested',
+        name: 'Curious',
         value: 1
     },
     {
-        parent: "Accepted",
-        name: "Valued",
-        value: 1
-    },
-
-    {
-        parent: "Powerful",
-        name: "Courageous",
-        value: 1
-    },
-    {
-        parent: "Powerful",
-        name: "Creative",
+        parent: 'Interested',
+        name: 'Inquisitive',
         value: 1
     },
 
     {
-        parent: "Peaceful",
-        name: "Loving",
+        parent: 'Proud',
+        name: 'Successful',
         value: 1
     },
     {
-        parent: "Peaceful",
-        name: "Thankful",
-        value: 1
-    },
-
-    {
-        parent: "Trusting",
-        name: "Sensitive",
-        value: 1
-    },
-    {
-        parent: "Trusting",
-        name: "Intimate",
+        parent: 'Proud',
+        name: 'Confident',
         value: 1
     },
 
     {
-        parent: "Optimistic",
-        name: "Hopeful",
+        parent: 'Accepted',
+        name: 'Respected',
         value: 1
     },
     {
-        parent: "Optimistic",
-        name: "Inspired",
+        parent: 'Accepted',
+        name: 'Valued',
+        value: 1
+    },
+
+    {
+        parent: 'Powerful',
+        name: 'Courageous',
+        value: 1
+    },
+    {
+        parent: 'Powerful',
+        name: 'Creative',
+        value: 1
+    },
+
+    {
+        parent: 'Peaceful',
+        name: 'Loving',
+        value: 1
+    },
+    {
+        parent: 'Peaceful',
+        name: 'Thankful',
+        value: 1
+    },
+
+    {
+        parent: 'Trusting',
+        name: 'Sensitive',
+        value: 1
+    },
+    {
+        parent: 'Trusting',
+        name: 'Intimate',
+        value: 1
+    },
+
+    {
+        parent: 'Optimistic',
+        name: 'Hopeful',
+        value: 1
+    },
+    {
+        parent: 'Optimistic',
+        name: 'Inspired',
         value: 1
     }
 ];
 
 Highcharts.setOptions({
-    colors: ["#B0B0B0", "#FFFFFF"]
+    colors: ['#B0B0B0', '#FFFFFF']
 });
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        height: "100%"
+        height: '100%'
     },
 
     title: {
-        text: "The Feelings Wheel"
+        text: 'The Feelings Wheel'
     },
     subtitle: {
         text:
@@ -174,28 +174,32 @@ Highcharts.chart("container", {
     },
     accessibility: {
         typeDescription:
-      "Sunburst chart with three levels to display the feelings wheel of happiness. The first level shows the word happy. The next level displays close feelings to the word happy such as content and optimistic, where the third level displays more general happiness feelings, such as free, joyful, successful."
+      'Sunburst chart with three levels to display the feelings wheel of ' +
+      'happiness. The first level shows the word happy. The next level ' +
+      'displays close feelings to the word happy such as content and ' +
+      'optimistic, where the third level displays more general happiness ' +
+      'feelings, such as free, joyful, successful.'
     },
     series: [
         {
-            type: "sunburst",
+            type: 'sunburst',
             data: data,
             allowDrillToNode: true,
-            cursor: "pointer",
+            cursor: 'pointer',
             borderWidth: 3,
-            borderColor: "#000000",
+            borderColor: '#000000',
             dataLabels: {
-                format: "{point.name}",
+                format: '{point.name}',
                 filter: {
-                    property: "innerArcLength",
-                    operator: ">",
+                    property: 'innerArcLength',
+                    operator: '>',
                     value: 8
                 },
                 style: {
                     textOutline: false,
-                    color: "#000000"
+                    color: '#000000'
                 },
-                rotationMode: "circular"
+                rotationMode: 'circular'
             },
             levels: [
                 {
@@ -203,8 +207,8 @@ Highcharts.chart("container", {
                     levelIsConstant: false,
                     dataLabels: {
                         filter: {
-                            property: "outerArcLength",
-                            operator: ">",
+                            property: 'outerArcLength',
+                            operator: '>',
                             value: 64
                         }
                     }
@@ -216,14 +220,14 @@ Highcharts.chart("container", {
                 {
                     level: 3,
                     colorVariation: {
-                        key: "brightness",
+                        key: 'brightness',
                         to: -0.5
                     }
                 },
                 {
                     level: 4,
                     colorVariation: {
-                        key: "brightness",
+                        key: 'brightness',
                         to: 0.5
                     }
                 }
@@ -231,7 +235,7 @@ Highcharts.chart("container", {
         }
     ],
     tooltip: {
-        headerFormat: "",
-        pointFormat: "Feeling: <b>{point.options.name}</b>"
+        headerFormat: '',
+        pointFormat: 'Feeling: <b>{point.options.name}</b>'
     }
 });

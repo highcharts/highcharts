@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+    ).then(response => response.json());
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -43,4 +48,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             width: 16
         }]
     });
-});
+})();

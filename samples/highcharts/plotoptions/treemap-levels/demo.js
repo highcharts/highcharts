@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     series: [{
-        type: "treemap",
+        type: 'treemap',
         layoutAlgorithm: 'squarified',
         levels: [{
             level: 1,
@@ -19,20 +19,20 @@ Highcharts.chart('container', {
             layoutAlgorithm: 'stripes'
         }],
         data: [{
-            id: "id_1",
+            id: 'id_1',
             name: 'A'
         }, {
-            id: "id_2",
+            id: 'id_2',
             name: 'A1',
             value: 2,
             parent: 'id_1'
         }, {
-            id: "id_3",
+            id: 'id_3',
             name: 'A2',
             value: 2,
             parent: 'id_1'
         }, {
-            id: "id_4",
+            id: 'id_4',
             name: 'A3',
             value: 2,
             parent: 'id_1'

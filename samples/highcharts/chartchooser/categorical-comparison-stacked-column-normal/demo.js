@@ -13,7 +13,10 @@ Highcharts.chart('container', {
         text: 'Source: <a href="https://en.wikipedia.org/wiki/List_of_countries_by_electricity_production">Wikipedia</a>'
     },
     xAxis: {
-        categories: ['China', 'United States', 'Russia', 'India', 'Japan', 'Canada', 'Germany', 'France', 'South Korea', 'United Kingdom']
+        categories: [
+            'China', 'United States', 'Russia', 'India', 'Japan', 'Canada',
+            'Germany', 'France', 'South Korea', 'United Kingdom'
+        ]
     },
     yAxis: {
         labels: {
@@ -25,7 +28,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>' +
+            ': <b>{point.y}%</b><br/>',
         shared: true
     },
     series: [
@@ -34,7 +38,7 @@ Highcharts.chart('container', {
             data: [14.8, 7.4, 15.7, 12.4, 8, 59, 2.9, 8, 0.9, 1.6]
         },
         {
-            name: 'Ohter renewable',
+            name: 'Other renewable',
             data: [2.2, 4.8, 0.1, 5, 4.2, 3.3, 17.6, 3.6, 0.6, 40.3]
         },
         {

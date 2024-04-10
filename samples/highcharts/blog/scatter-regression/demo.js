@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'GDP per capita vs Self-reported Life Satisfaction, 2015'
@@ -24,7 +26,8 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         headerFormat: null,
-        pointFormat: '<b>Country</b>: {point.name}<br><b>GDP per capita</b>: {point.x} $<br/><b>Life satisfaction</b>: {point.y}'
+        pointFormat: '<b>Country</b>: {point.name}<br><b>GDP per capita</b>: ' +
+            '{point.x} $<br/><b>Life satisfaction</b>: {point.y}'
 
     },
     legend: {
@@ -35,7 +38,7 @@ Highcharts.chart('container', {
     series: [{
         type: 'line',
         name: 'Regression Line',
-        color: "#b6c1ff",
+        color: '#b6c1ff',
         data: [
             [750.5, 4.89E+00],
             [119749.43, 8.13E+00]
@@ -51,8 +54,8 @@ Highcharts.chart('container', {
         enableMouseTracking: false
     }, {
         keys: ['x', 'y', 'name'],
-        color: "#FFB6C1",
-        name: "Life Satisfaction",
+        color: '#FFB6C1',
+        name: 'Life Satisfaction',
         data: [
             [1747.98, 3.98, 'Afghanistan'],
             [11024.92, 4.61, 'Albania'],

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,9 @@
  * */
 
 export interface SVGPath extends globalThis.Array<SVGPath.Segment> {
-    // nothing here yet
+    isFlat?: boolean;
+    xBounds?: Array<number>;
+    yBounds?: Array<number>
 }
 
 /* *
@@ -31,8 +33,13 @@ export namespace SVGPath {
      *  Declarations
      *
      * */
-
-    export type Arc = [
+    type ArcParams = {
+        cx: number,
+        cy: number,
+        start: number,
+        end: number
+    };
+    type ArcArray = [
         'A'|'a',
         number,
         number,
@@ -42,6 +49,10 @@ export namespace SVGPath {
         number,
         number
     ];
+    export interface Arc extends ArcArray {
+        params?: ArcParams
+    }
+
     export type Close = ['Z'|'z'];
     export type CurveTo = [
         'C'|'c',

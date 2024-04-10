@@ -116,8 +116,8 @@ QUnit.test('Options importantance order static', function (assert) {
     // 4) user set -> tooltip
     assert.strictEqual(
         series.tooltipOptions.borderRadius,
-        chart.options.tooltip.userOptions.borderRadius,
-        '4) chart.options.tooltip.userOptions used'
+        chart.userOptions.tooltip.borderRadius,
+        '4) chart.userOptions.tooltip used'
     );
     assert.strictEqual(
         series.tooltipOptions.borderRadius,
@@ -205,12 +205,12 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
         plotOptions: {
             series: {
                 tooltip: {
-                    //headerFormat: '2' // 2)
+                    // headerFormat: '2' // 2)
                 }
             },
             line: {
                 tooltip: {
-                    //headerFormat: '3' // 3)
+                    // headerFormat: '3' // 3)
                 }
             }
         }
@@ -218,17 +218,17 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
 
     var chart = Highcharts.chart('container', {
         tooltip: {
-            //headerFormat: '4' // 4)
+            // headerFormat: '4' // 4)
         },
         plotOptions: {
             series: {
                 tooltip: {
-                    //headerFormat: '5' // 5)
+                    // headerFormat: '5' // 5)
                 }
             },
             line: {
                 tooltip: {
-                    //headerFormat: '6' // 6)
+                    // headerFormat: '6' // 6)
                 }
             }
         },
@@ -236,7 +236,7 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
             {
                 data: [1.1234, 2, 3],
                 tooltip: {
-                    //headerFormat: '7' // 7)
+                    // headerFormat: '7' // 7)
                 }
             }
         ]

@@ -7,19 +7,41 @@
     function drawChart(data) {
         return Highcharts.mapChart('container', {
             chart: {
-                map: topology,
-                borderWidth: 1
+                map: topology
             },
 
-            colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
-                'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
+            colors: [
+                'rgba(255,0,0,1)', 'rgba(255,0,0,1)', 'rgba(19,64,117,0.4)',
+                'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)',
+                'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'
+            ],
 
             title: {
-                text: 'Population density by country (/km²)'
+                text: 'Population density by country (/km²)',
+                align: 'left'
             },
 
             mapNavigation: {
-                enabled: true
+                enabled: true,
+                buttonOptions: {
+                    align: 'right'
+                }
+            },
+
+            mapView: {
+                fitToGeometry: {
+                    type: 'MultiPoint',
+                    coordinates: [
+                        // Alaska west
+                        [-164, 54],
+                        // Greenland north
+                        [-35, 84],
+                        // New Zealand east
+                        [179, -38],
+                        // Chile south
+                        [-68, -55]
+                    ]
+                }
             },
 
             legend: {
@@ -51,24 +73,31 @@
 
             colorAxis: {
                 dataClasses: [{
-                    to: 3
+                    to: 3,
+                    color: '#0000ee'
                 }, {
                     from: 3,
-                    to: 10
+                    to: 10,
+                    color: '#00eeee'
                 }, {
                     from: 10,
-                    to: 30
+                    to: 30,
+                    color: '#00ee00'
                 }, {
                     from: 30,
-                    to: 100
+                    to: 100,
+                    color: '#bbee00'
                 }, {
                     from: 100,
-                    to: 300
+                    to: 300,
+                    color: '#eeee00'
                 }, {
                     from: 300,
-                    to: 1000
+                    to: 1000,
+                    color: '#ee6600'
                 }, {
-                    from: 1000
+                    from: 1000,
+                    color: '#bb0000'
                 }]
             },
 
@@ -77,11 +106,6 @@
                 joinBy: ['iso-a2', 'code'],
                 animation: true,
                 name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 },
@@ -91,10 +115,10 @@
     }
 
     // Load the data from a Google Spreadsheet
-    // https://docs.google.com/spreadsheets/d/1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0/pubhtml
+    // https://docs.google.com/spreadsheets/d/1WBx3mRqiomXk_ks1a5sEAtJGvYukguhAkcCuRDrY1L0
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-        googleSpreadsheetKey: '1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA',
+        googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
 
         // Custom handler when the spreadsheet is parsed
         parsed: function (columns) {

@@ -3,24 +3,27 @@ QUnit.module('Styled mode for series types', function () {
 
     function checkStyledMode(chart, assert) {
         var container = chart.container;
-        var blacklist = [
+        var denylist = [
             'fill',
             'fill-opacity',
-            //'opacity', // To do: check this in HC7
+            // 'opacity', // To do: check this in HC7
             'stroke',
             'stroke-width',
             'style'
         ];
         if (
-            new RegExp(' (' + blacklist.join('|') + ')="', 'g').test(
+            new RegExp(' (' + denylist.join('|') + ')="', 'gu').test(
                 container.innerHTML
             )
         ) {
-            blacklist.forEach(function (attr) {
+            denylist.forEach(function (attr) {
                 container
                     .querySelectorAll('*[' + attr + ']')
                     .forEach(function (elem) {
-                        if (elem.className === 'highcharts-a11y-proxy-button') {
+                        if (
+                            elem.className ===
+                            'highcharts-a11y-proxy-element'
+                        ) {
                             return;
                         }
                         var key = [
@@ -30,7 +33,8 @@ QUnit.module('Styled mode for series types', function () {
                         ].join(',');
                         if (!notified[key]) {
                             console.log(
-                                '⚠️ Found presentational attribute in styled mode:',
+                                '⚠️ Found presentational attribute in styled ' +
+                                'mode:',
                                 attr,
                                 elem
                             );
@@ -47,7 +51,7 @@ QUnit.module('Styled mode for series types', function () {
         }
     }
 
-    Object.keys(Highcharts.seriesTypes).forEach(function (type) {
+    Object.keys(Highcharts.Series.types).forEach(function (type) {
         if (
             // Don't test indicator series (yet), they have more complex setup
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&

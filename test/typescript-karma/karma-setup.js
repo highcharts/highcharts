@@ -47,6 +47,39 @@ require.config({
     }
 });
 
+// Fetch
+
+if (window.Promise) {
+    window.fetch = function (url) {
+        let data = window.JSONSources['' + url];
+
+        if (typeof data === 'function') {
+            data = data();
+        }
+
+        if (typeof data !== 'undefined') {
+            return Promise.resolve({
+                ok: true,
+                status: 200,
+                statusText: 'OK',
+                type: 'basic',
+                url,
+                json: function () {
+                    return Promise.resolve(data);
+                },
+                text: function () {
+                    return Promise.resolve('' + data);
+                },
+            });
+        }
+
+        return Promise.reject(
+            'Sample error, URL "' + url +
+            '" missing in JSONSources (karma-fetch.js)'
+        );
+    };
+}
+
 // QUnit
 
 var currentTests = [];

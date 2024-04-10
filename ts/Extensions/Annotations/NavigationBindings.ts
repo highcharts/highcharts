@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsLike from './NavigationBindingsLike';
 import type NavigationBindingsOptions from './NavigationBindingsOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type {
     default as Popup,
@@ -31,18 +32,19 @@ import type {
 } from './Popup/Popup';
 
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const {
+    composed,
     doc,
     win
 } = H;
 import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
-const { getFieldType } = NBU;
+const { getAssignedAxis, getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -55,7 +57,8 @@ const {
     isObject,
     merge,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -82,14 +85,6 @@ interface NavigationBindingsButtonEventsObject {
     button: HTMLDOMElement;
     events: NavigationBindingsOptions;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
 
 /* *
  *
@@ -197,7 +192,7 @@ function onChartRender(
                 key
             ): void => {
 
-                // Get the HTML element coresponding to the className taken
+                // Get the HTML element corresponding to the className taken
                 // from StockToolsBindings.
                 const buttonNode = container.querySelectorAll('.' + key);
 
@@ -325,11 +320,39 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         eventArguments.activeAnnotation = true;
     }
 
+    // #18276, show popup on touchend, but not on touchmove
+    let touchStartX: number,
+        touchStartY: number;
+
+    /**
+     *
+     */
+    function saveCoords(this: Annotation, e: AnyRecord): void {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+
+    /**
+     *
+     */
+    function checkForTouchmove(this: Annotation, e: AnyRecord): void {
+        const hasMoved = touchStartX ? Math.sqrt(
+            Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +
+            Math.pow(touchStartY - e.changedTouches[0].clientY, 2)
+        ) >= 4 : false;
+
+        if (!hasMoved) {
+            selectAndShowPopup.call(this, e);
+        }
+    }
+
     merge(
         true,
         annotationType.prototype.defaultOptions.events,
         {
-            click: selectAndShowPopup
+            click: selectAndShowPopup,
+            touchstart: saveCoords,
+            touchend: checkForTouchmove
         }
     );
 }
@@ -407,9 +430,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(AnnotationClass) === -1) {
-            composedClasses.push(AnnotationClass);
-
+        if (pushUnique(composed, 'NavigationBindings')) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -421,18 +442,10 @@ class NavigationBindings {
             ): void => {
                 selectableAnnotation(annotationType);
             });
-        }
-
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
 
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(ChartClass, 'load', onChartLoad);
             addEvent(ChartClass, 'render', onChartRender);
-        }
-
-        if (composedClasses.indexOf(NavigationBindings) === -1) {
-            composedClasses.push(NavigationBindings);
 
             addEvent(
                 NavigationBindings,
@@ -444,10 +457,6 @@ class NavigationBindings {
                 'deselectButton',
                 onNavigationBindingsDeselectButton
             );
-        }
-
-        if (composedClasses.indexOf(setOptions) === -1) {
-            composedClasses.push(setOptions);
 
             setOptions(NavigationBindingDefaults);
         }
@@ -467,12 +476,15 @@ class NavigationBindings {
         this.chart = chart;
         this.options = options;
         this.eventsToUnbind = [];
-        this.container = this.chart.container
-            .querySelectorAll('.' + this.options.bindingsClassName);
+        this.container =
+            this.chart.container.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>;
 
         if (!this.container.length) {
-            this.container = doc
-                .querySelectorAll('.' + this.options.bindingsClassName);
+            this.container = doc.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>;
         }
     }
 
@@ -486,7 +498,7 @@ class NavigationBindings {
     public boundClassNames: Record<string, NavigationBindingsOptions> =
         void 0 as any;
     public chart: AnnotationChart;
-    public container: NodeListOf<HTMLDOMElement>;
+    public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);
@@ -494,7 +506,7 @@ class NavigationBindings {
     public options: NavigationOptions;
     public popup?: Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
-    public selectedButton: (NavigationBindingsOptions|null) = void 0 as any;
+    public selectedButton!: (NavigationBindingsOptions|null);
     public stepIndex?: number;
     public steps?: boolean;
 
@@ -504,8 +516,19 @@ class NavigationBindings {
      *
      * */
 
+    getCoords(e: PointerEvent): [
+        Pointer.AxisCoordinateObject|undefined,
+        Pointer.AxisCoordinateObject|undefined
+    ] {
+        const coords = this.chart.pointer?.getCoordinates(e);
+        return [
+            coords && getAssignedAxis(coords.xAxis),
+            coords && getAssignedAxis(coords.yAxis)
+        ];
+    }
+
     /**
-     * Initi all events conencted to NavigationBindings.
+     * Init all events connected to NavigationBindings.
      *
      * @private
      * @function Highcharts.NavigationBindings#initEvents
@@ -538,8 +561,8 @@ class NavigationBindings {
 
                         if (
                             bindings &&
-                            bindings.button.className
-                                .indexOf('highcharts-disabled-btn') === -1
+                            (!bindings.button.classList
+                                .contains('highcharts-disabled-btn'))
                         ) {
                             navigation.bindingsButtonClick(
                                 bindings.button,
@@ -611,7 +634,7 @@ class NavigationBindings {
     }
 
     /**
-     * Hook for click on a button, method selcts/unselects buttons,
+     * Hook for click on a button, method selects/unselects buttons,
      * then calls `bindings.init` callback.
      *
      * @private
@@ -862,7 +885,7 @@ class NavigationBindings {
             // If it's a number (not "format" options), parse it:
             if (
                 isNumber(parsedValue) &&
-                !value.match(/px/g) &&
+                !value.match(/px|em/g) &&
                 !field.match(/format/g)
             ) {
                 value = parsedValue as any;
@@ -873,18 +896,24 @@ class NavigationBindings {
                 let parent = config;
 
                 path.forEach((name, index): void => {
-                    const nextName = pick(path[index + 1], '');
 
-                    if (pathLength === index) {
-                        // Last index, put value:
-                        (parent as any)[name] = value;
-                    } else if (!(parent as any)[name]) {
-                        // Create middle property:
-                        (parent as any)[name] = nextName.match(/\d/g) ? [] : {};
-                        parent = (parent as any)[name];
-                    } else {
-                        // Jump into next property
-                        parent = (parent as any)[name];
+                    if (name !== '__proto__' && name !== 'constructor') {
+
+                        const nextName = pick(path[index + 1], '');
+
+                        if (pathLength === index) {
+                            // Last index, put value:
+                            (parent as any)[name] = value;
+                        } else if (!(parent as any)[name]) {
+                            // Create middle property:
+                            (parent as any)[name] = nextName.match(/\d/g) ?
+                                [] :
+                                {};
+                            parent = (parent as any)[name];
+                        } else {
+                            // Jump into next property
+                            parent = (parent as any)[name];
+                        }
                     }
                 });
             }
@@ -969,15 +998,15 @@ class NavigationBindings {
 
             if (
                 parentEditables &&
-                option &&
+                defined(option) &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (
                         parentEditables.indexOf &&
                         parentEditables.indexOf(key)
                     ) >= 0 ||
-                    parentEditables[key] || // nested array
-                    parentEditables === true // simple array
+                    parentEditables[key] || // Nested array
+                    parentEditables === true // Simple array
                 )
             ) {
                 // Roots:
@@ -1106,7 +1135,7 @@ class NavigationBindings {
             classNames: Array<[string, HTMLDOMElement]> = [],
             elemClassName: (string|null|undefined);
 
-        while (element) {
+        while (element && element.tagName) {
             elemClassName = attr(element, 'class');
             if (elemClassName) {
                 classNames = classNames.concat(
@@ -1208,6 +1237,7 @@ class NavigationBindings {
 interface NavigationBindings extends NavigationBindingsLike {
 }
 
+
 /* *
  *
  *  Default Export
@@ -1249,4 +1279,4 @@ export default NavigationBindings;
  * @type {Array<Function>|undefined}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

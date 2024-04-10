@@ -1,4 +1,10 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
+
     // Create the chart
     Highcharts.stockChart('container', {
 
@@ -11,7 +17,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
         },
 
         subtitle: {
-            text: 'Note: This sample is obsolete as of v9.0, when native browser date pickers were implemented',
+            text: 'Note: This sample is obsolete as of v9.0, when native ' +
+                'browser date pickers were implemented',
             style: {
                 color: 'red'
             }
@@ -33,14 +40,14 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
                 .datepicker();
         }, 0);
     });
-});
 
+    // Set the datepicker's date format
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        onSelect: function () {
+            this.onchange();
+            this.onblur();
+        }
+    });
 
-// Set the datepicker's date format
-$.datepicker.setDefaults({
-    dateFormat: 'yy-mm-dd',
-    onSelect: function () {
-        this.onchange();
-        this.onblur();
-    }
-});
+})();

@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     name: 'Brazil',
     y: 5
 }, {
@@ -58,7 +58,7 @@ Highcharts.chart('container', {
         center: [180, 480],
         data: data.slice(), // clone the data
         dataLabels: {
-            //connectorShape: 'fixedOffset' // default
+            // connectorShape: 'fixedOffset' // default
         }
     }],
     plotOptions: {

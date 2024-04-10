@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,6 +14,7 @@
  *
  * */
 
+import type { NonPlotOptions } from './SeriesOptions';
 import type Series from './Series';
 
 /* *
@@ -21,11 +22,6 @@ import type Series from './Series';
  *  Declarations
  *
  * */
-
-export type NonPlotOptions = (
-    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
-    'xAxis'|'yAxis'|'zIndex'
-);
 
 /**
  * All possible series types.

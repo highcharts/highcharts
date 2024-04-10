@@ -15,19 +15,19 @@ import MFIIndicator from './MFIIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
 declare class MFIPoint extends SMAPoint {
     public series: MFIIndicator;
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default MFIPoint;

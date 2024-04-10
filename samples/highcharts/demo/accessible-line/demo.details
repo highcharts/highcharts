@@ -1,10 +1,10 @@
 ---
-name: Accessible line chart
+name: Line styles
 authors:
-  - Torstein Hønsi
+  - Øystein Moseng
 js_wrap: b
 tags:
   - Highcharts demo
 categories:
-  - Accessible charts
+  - Accessibility
 ...

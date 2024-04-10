@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -36,5 +36,11 @@ export interface GanttPointOptions extends XRangePointOptions {
     parent?: string;
     start?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default GanttPointOptions;

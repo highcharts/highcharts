@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for chart info region and table.
  *
@@ -22,7 +22,6 @@
 
 import type Accessibility from '../Accessibility';
 import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
-import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -45,7 +44,7 @@ const {
     getChartTitle,
     unhideChartElementFromAT
 } = CU;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { doc } = H;
@@ -60,7 +59,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     attr,
-    pick
+    pick,
+    replaceNested
 } = U;
 
 
@@ -91,10 +91,14 @@ function getTypeDescForMapChart(
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
     return formatContext.mapTitle ?
-        chart.langFormat('accessibility.chartTypes.mapTypeDescription',
-            formatContext) :
-        chart.langFormat('accessibility.chartTypes.unknownMap',
-            formatContext);
+        chart.langFormat(
+            'accessibility.chartTypes.mapTypeDescription',
+            formatContext
+        ) :
+        chart.langFormat(
+            'accessibility.chartTypes.unknownMap',
+            formatContext
+        );
 }
 
 
@@ -105,8 +109,10 @@ function getTypeDescForCombinationChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
-    return chart.langFormat('accessibility.chartTypes.combinationChart',
-        formatContext);
+    return chart.langFormat(
+        'accessibility.chartTypes.combinationChart',
+        formatContext
+    );
 }
 
 
@@ -117,8 +123,10 @@ function getTypeDescForEmptyChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
-    return chart.langFormat('accessibility.chartTypes.emptyChart',
-        formatContext);
+    return chart.langFormat(
+        'accessibility.chartTypes.emptyChart',
+        formatContext
+    );
 }
 
 
@@ -131,7 +139,7 @@ function buildTypeDescriptionFromSeries(
     context: InfoRegionsComponent.TypeDescFormatContextObject
 ): string {
     const firstType = types[0],
-        typeExplaination = chart.langFormat(
+        typeExplanation = chart.langFormat(
             'accessibility.seriesTypeDescriptions.' + firstType,
             context
         ),
@@ -146,13 +154,13 @@ function buildTypeDescriptionFromSeries(
             'accessibility.chartTypes.default' + multi,
             context
         )
-    ) + (typeExplaination ? ' ' + typeExplaination : '');
+    ) + (typeExplanation ? ' ' + typeExplanation : '');
 }
 
 
 /**
- * Return simplified explaination of chart type. Some types will not be
- * familiar to most users, but in those cases we try to add an explaination
+ * Return simplified explanation of chart type. Some types will not be
+ * familiar to most users, but in those cases we try to add an explanation
  * of the type.
  *
  * @private
@@ -179,7 +187,7 @@ function getTypeDescription(
         return getTypeDescForEmptyChart(chart, formatContext);
     }
 
-    if (firstType === 'map') {
+    if (firstType === 'map' || firstType === 'tiledwebmap') {
         return getTypeDescForMapChart(chart, formatContext);
     }
 
@@ -195,7 +203,8 @@ function getTypeDescription(
  * @private
  */
 function stripEmptyHTMLTags(str: string): string {
-    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+    // Scan alert #[71]: Loop for nested patterns
+    return replaceNested(str, [/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '']);
 }
 
 
@@ -223,7 +232,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
     public dataTableButtonId?: string;
     public dataTableDiv?: HTMLDOMElement;
     public linkedDescriptionElement: (HTMLDOMElement|undefined);
@@ -260,14 +269,23 @@ class InfoRegionsComponent extends AccessibilityComponent {
         });
 
         this.addEvent(chart, 'afterViewData', function (
-            tableDiv: HTMLDOMElement
+            e: { element: HTMLDOMElement, wasHidden: boolean }
         ): void {
-            component.dataTableDiv = tableDiv;
+            if (e.wasHidden) {
+                component.dataTableDiv = e.element;
+                // Use a small delay to give browsers & AT time to
+                // register the new table.
+                setTimeout(function (): void {
+                    component.focusDataTable();
+                }, 300);
+            }
+        });
 
-            // Use small delay to give browsers & AT time to register new table
-            setTimeout(function (): void {
-                component.focusDataTable();
-            }, 300);
+        this.addEvent(chart, 'afterHideData', function (): void {
+            if (component.viewDataTableButton) {
+                component.viewDataTableButton
+                    .setAttribute('aria-expanded', 'false');
+            }
         });
 
         this.announcer = new Announcer(chart, 'assertive');
@@ -278,7 +296,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public initRegionsDefinitions(): void {
-        const component = this;
+        const component = this,
+            accessibilityOptions = this.chart.options.accessibility;
 
         this.screenReaderSections = {
             before: {
@@ -288,8 +307,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 ): string {
                     const formatter: (
                         ScreenReaderFormatterCallbackFunction<Chart>|undefined
-                    ) = chart.options.accessibility
-                        .screenReaderSection.beforeChartFormatter;
+                    ) = accessibilityOptions.screenReaderSection
+                        .beforeChartFormatter;
                     return formatter ? formatter(chart) :
                         (component.defaultBeforeChartFormatter as any)(chart);
                 },
@@ -318,8 +337,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 buildContent: function (
                     chart: Accessibility.ChartComposition
                 ): string {
-                    const formatter = chart.options.accessibility
-                        .screenReaderSection
+                    const formatter = accessibilityOptions.screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -333,7 +351,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     );
                 },
                 afterInserted: function (): void {
-                    if (component.chart.accessibility) {
+                    if (
+                        component.chart.accessibility &&
+                        accessibilityOptions.keyboardNavigation.enabled
+                    ) {
                         component.chart.accessibility
                             .keyboardNavigation.updateExitAnchor(); // #15986
                     }
@@ -468,7 +489,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
         sectionDiv.style.position = 'relative';
 
         if (labelText) {
-            sectionDiv.setAttribute('role',
+            sectionDiv.setAttribute(
+                'role',
                 chart.options.accessibility.landmarkVerbosity === 'all' ?
                     'region' : 'group'
             );
@@ -490,7 +512,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
         const axesDesc = this.getAxesDescription(),
             shouldHaveSonifyBtn = (
-                chart.sonify &&
+                (chart as any).sonify &&
                 chart.options.sonification &&
                 chart.options.sonification.enabled
             ),
@@ -555,7 +577,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
 
-        return stripHTMLTagsFromString(content);
+        return stripHTMLTagsFromString(content, this.chart.renderer.forExport);
     }
 
 
@@ -635,7 +657,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const subtitle = (
             this.chart.options.subtitle
         );
-        return stripHTMLTagsFromString(subtitle && subtitle.text || '');
+        return stripHTMLTagsFromString(
+            subtitle && subtitle.text || '',
+            this.chart.renderer.forExport
+        );
     }
 
 
@@ -643,6 +668,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public getEndOfChartMarkerText(): string {
+        const endMarkerId = `highcharts-end-of-chart-marker-${this.chart.index}`,
+            endMarker = getElement(endMarkerId);
+
+        if (endMarker) {
+            return endMarker.outerHTML;
+        }
+
         const chart = this.chart,
             markerText = chart.langFormat(
                 'accessibility.screenReaderSection.endOfChartMarker',
@@ -697,7 +729,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         sonifyButtonId: string
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
-        const chart = this.chart as ChartSonify.SonifyableChart;
+        const chart = this.chart;
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');
@@ -718,8 +750,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     el.removeAttribute('aria-label');
                 }
 
-                if (chart.sonify) {
-                    chart.sonify();
+                if ((chart as any).sonify) {
+                    (chart as any).sonify();
                 }
             }, 1000); // Delay to let screen reader speak the button press
         };

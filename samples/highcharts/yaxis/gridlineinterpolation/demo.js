@@ -8,18 +8,19 @@ Highcharts.chart('container', {
         text: 'Highcharts Polar Chart'
     },
     subtitle: {
-        text: 'Showing <em>circle</em> and <em>polygon</em> grid line interpolation'
+        text: 'Showing <em>circle</em> and <em>polygon</em> grid line ' +
+            'interpolation'
     },
 
     pane: [{
         startAngle: 0,
         endAngle: 360,
-        center: ["25%", "50%"],
+        center: ['25%', '50%'],
         size: '60%'
     }, {
         startAngle: 0,
         endAngle: 360,
-        center: ["75%", "50%"],
+        center: ['75%', '50%'],
         size: '60%'
     }],
 

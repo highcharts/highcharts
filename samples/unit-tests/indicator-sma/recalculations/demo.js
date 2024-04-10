@@ -40,7 +40,11 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                     type: 'sma',
                     linkedTo: 'main'
                 }
-            ]
+            ],
+            scrollbar: {
+                buttonsEnabled: true,
+                height: 14
+            }
         }),
         pointsValue = [],
         secondChart,
@@ -93,7 +97,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         chart.series[1].points[chart.series[1].points.length - 1].x,
         chart.series[0].points[chart.series[0].points.length - 1].x,
-        'Correct last point position after addPoint() with shift parameter (#8572)'
+        'Correct last point position after addPoint() with shift parameter ' +
+        '(#8572)'
     );
 
     secondSeries = chart.addSeries({
@@ -192,6 +197,22 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         xAxis: {
             minRange: 1
         },
+        scrollbar: {
+            buttonsEnabled: true,
+            height: 14
+        },
+        rangeSelector: {
+            buttons: [{
+                type: 'hour',
+                count: 1,
+                text: '1h',
+                dataGrouping: {
+                    units: [
+                        ['hour', [1]]
+                    ]
+                }
+            }]
+        },
         series: [
             {
                 id: 'aapl',
@@ -280,7 +301,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             216.27200000000002,
             216.19800000000004
         ],
-        'Correct points after update with cropped data - simulated draggable points (#9822)'
+        'Correct points after update with cropped data - simulated draggable ' +
+        'points (#9822)'
     );
 
     secondChart.series[0].addPoint(212.92, true, true);
@@ -288,7 +310,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.strictEqual(
         secondChart.series[1].points[0].x,
         secondChart.series[1].processedXData[0],
-        'Correct first point position after addPoint() with shift parameter and cropped data (#8572)'
+        'Correct first point position after addPoint() with shift parameter ' +
+        'and cropped data (#8572)'
     );
 
     assert.strictEqual(
@@ -296,7 +319,34 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         secondChart.series[1].processedXData[
             secondChart.series[1].processedXData.length - 1
         ],
-        'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
+        'Correct last point position after addPoint() with shift parameter ' +
+        'and cropped data (#8572)'
+    );
+
+    const lineSeriesPoints = secondChart.series[2].points;
+
+    secondChart.addSeries({
+        id: 'volume',
+        data: [
+            [lineSeriesPoints[0].x, 1500],
+            [lineSeriesPoints[1].x, 2000]
+        ]
+    });
+
+    secondChart.addSeries({
+        linkedTo: 'aapl',
+        type: 'obv',
+        params: {
+            volumeSeriesID: 'volume'
+        },
+        yAxis: 0
+    });
+
+    secondChart.rangeSelector.clickButton(0);
+
+    assert.ok(
+        true,
+        'No volumeSeriesID error when cliked rangeSelector button, #18643'
     );
 });
 
@@ -305,16 +355,20 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         navigator: {
             enabled: false
         },
-        series: [{
-            id: 'main',
-            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
+        scrollbar: {
+            buttonsEnabled: true,
+            height: 14
         },
-        {
+        series: [{
             type: 'sma',
+            id: 'sma',
             linkedTo: 'main',
             params: {
                 period: 4
             }
+        }, {
+            id: 'main',
+            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
         }]
     });
 
@@ -328,5 +382,33 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         chart.series[0].processedXData.length,
         `When an indicator is declared before the main series,
         indicator data should be procesed.`
+    );
+
+    chart.addSeries({
+        type: 'sma',
+        linkedTo: 'sma',
+        params: {
+            period: 4
+        }
+    });
+
+    chart.series[1].addPoint(16);
+
+    assert.strictEqual(
+        chart.series[2].points.length,
+        chart.series[0].points.length -
+            chart.series[2].options.params.period + 1,
+        `Indicator linked to another indicator should be recalculated after
+        adding a point to the main series #17190.`
+    );
+
+    chart.series[1].addPoint(5);
+    chart.series[1].addPoint(10);
+
+    assert.strictEqual(
+        chart.series[2].points.length,
+        6,
+        `After adding two points to the main series, indicator linked to another
+        indicator should also update its data #18689.`
     );
 });

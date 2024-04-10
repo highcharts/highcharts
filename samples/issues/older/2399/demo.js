@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         chart: {
-            type: "bar",
+            type: 'bar',
             height: 200
         },
 
@@ -18,7 +18,7 @@ $(function () {
         }],
 
         xAxis: [{
-            categories: ["AB", "CD", "EF"]
+            categories: ['AB', 'CD', 'EF']
         }, {
             type: 'category'
         }]

@@ -8,7 +8,8 @@ Math.easeOutQuint = function (pos) {
 
 
 const editor = function () {
-    Highcharts.chart('editor',
+    Highcharts.chart(
+        'editor',
         {
             chart: {
                 animation: {
@@ -16,7 +17,7 @@ const editor = function () {
                     duration: 4000,
                     easing: 'easeOutQuint'
                 },
-                styledMode: (true),
+                styledMode: true,
                 alignTicks: false,
                 margin: 0,
                 spacing: 0,
@@ -153,7 +154,7 @@ const editor = function () {
                 }
             },
             series: [
-                //0 bottom
+                // 0 bottom
                 {
                     type: 'arearange',
                     className: 'bottom',
@@ -170,7 +171,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //1 water
+                // 1 water
                 {
                     type: 'arearange',
                     className: 'water',
@@ -187,7 +188,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //2 water cover
+                // 2 water cover
                 {
                     type: 'arearange',
                     className: 'bottom',
@@ -204,7 +205,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //3 bottom menu line
+                // 3 bottom menu line
                 {
                     type: 'line',
                     className: 'menu',
@@ -220,7 +221,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //4 middle menu line
+                // 4 middle menu line
                 {
                     type: 'line',
                     className: 'menu',
@@ -236,7 +237,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //5 top menu line
+                // 5 top menu line
                 {
                     type: 'line',
                     className: 'menu',
@@ -252,7 +253,7 @@ const editor = function () {
                         }
                     ]
                 },
-                //6 scatter
+                // 6 scatter
                 {
                     type: 'scatter',
                     data: [{
@@ -260,7 +261,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-3" 
+                                return `<div id="particle-3"
                                 class="particle"></div>`;
                             }
                         }
@@ -270,7 +271,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-2" 
+                                return `<div id="particle-2"
                                 class="particle"></div>`;
                             }
                         }
@@ -280,7 +281,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-6" 
+                                return `<div id="particle-6"
                                 class="particle"></div>`;
                             }
                         }
@@ -290,13 +291,13 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-5" 
+                                return `<div id="particle-5"
                                 class="particle"></div>`;
                             }
                         }
                     }]
                 },
-                //7 columns
+                // 7 columns
                 {
                     type: 'column',
                     colorByPoint: 'true',

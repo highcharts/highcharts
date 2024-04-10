@@ -1,0 +1,10 @@
+.highcharts-figure {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#slider {
+    width: 100%;
+    margin-top: 20px;
+    display: block;
+}

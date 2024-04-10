@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,13 +13,15 @@
  *  Imports
  *
  * */
+
 import ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
+
 interface WaterfallPointOptions extends ColumnPointOptions {
     isSum?: boolean;
     y?: any;
@@ -27,7 +29,8 @@ interface WaterfallPointOptions extends ColumnPointOptions {
 
 /* *
  *
- * Export
+ *  Export
  *
  * */
+
 export default WaterfallPointOptions;

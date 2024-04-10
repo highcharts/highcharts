@@ -1,14 +1,14 @@
 /* eslint-disable default-case */
-var dirDist50 = "rgba(20, 20, 20, .4)",
-    dirDist10 = "rgba(120, 120, 120, .4)",
-    dirDistLess10 = "rgba(200, 200, 200, .4)";
+const dirDist50 = 'rgba(20, 20, 20, .4)',
+    dirDist10 = 'rgba(120, 120, 120, .4)',
+    dirDistLess10 = 'rgba(200, 200, 200, .4)';
 
 Highcharts.chart('container', {
 
     chart: {
         type: 'networkgraph',
         marginTop: 80
-    //backgroundColor:"#F8F8F8"
+    // backgroundColor:"#F8F8F8"
     },
 
     title: {
@@ -16,22 +16,22 @@ Highcharts.chart('container', {
     },
     tooltip: {
         formatter: function () {
-            var info = "";
+            let info = '';
             switch (this.color) {
             case dirDist50:
                 console.log(dirDist50);
-                info = "is an aiport <b>more than 50</b> direct distinations";
+                info = 'is an aiport <b>more than 50</b> direct distinations';
                 break;
             case dirDist10:
                 console.log(dirDist10);
-                info = "is an aiport <b>more than 10</b> direct distinations";
+                info = 'is an aiport <b>more than 10</b> direct distinations';
                 break;
             case dirDistLess10:
                 console.log(dirDistLess10);
-                info = "is an aiport <b>less than 10</b> direct distinations";
+                info = 'is an aiport <b>less than 10</b> direct distinations';
                 break;
             }
-            return "<b>" + this.key + "</b>: " + info;
+            return '<b>' + this.key + '</b>: ' + info;
         }
     },
     plotOptions: {
@@ -54,7 +54,7 @@ Highcharts.chart('container', {
             linkFormat: '',
             allowOverlap: true,
             style: {
-                color: "black",
+                color: 'black',
                 textOutline: false
             }
         },

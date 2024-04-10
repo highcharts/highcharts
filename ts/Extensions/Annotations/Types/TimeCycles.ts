@@ -107,25 +107,25 @@ class TimeCycles extends CrookedLine {
 
     public init(
         annotation: Annotation,
-        options: TimeCyclesOptions,
+        userOptions: TimeCyclesOptions,
         index?: number
     ): void {
-        if (defined(options.yAxis)) {
-            (options.points as MockPointOptions[]).forEach(
+        if (defined(userOptions.yAxis)) {
+            (userOptions.points as MockPointOptions[]).forEach(
                 (point): void => {
-                    point.yAxis = options.yAxis;
+                    point.yAxis = userOptions.yAxis;
                 }
             );
         }
 
-        if (defined(options.xAxis)) {
-            (options.points as MockPointOptions[]).forEach(
+        if (defined(userOptions.xAxis)) {
+            (userOptions.points as MockPointOptions[]).forEach(
                 (point): void => {
-                    point.xAxis = options.xAxis;
+                    point.xAxis = userOptions.xAxis;
                 }
             );
         }
-        super.init.call(this, annotation, options, index);
+        super.init(annotation, userOptions, index);
     }
 
     public setPath(): void {
@@ -249,8 +249,25 @@ interface TimeCycles {
 
 TimeCycles.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
+    /**
+     * The TimeCycles Annotation
+     *
+     * @sample highcharts/annotations-advanced/time-cycles/
+     *         Time Cycles annotation
+     *
+     * @extends      annotations.crookedLine
+     * @product      highstock
+     * @exclude      labelOptions
+     * @optionparent annotations.timeCycles
+     */
     {
         typeOptions: {
+            /**
+             * @exclude   y
+             * @product   highstock
+             * @apioption annotations.timeCycles.typeOptions.points
+             */
+
             controlPointOptions: [{
                 positioner: function (
                     this: ControlPoint,
@@ -260,8 +277,8 @@ TimeCycles.prototype.defaultOptions = merge(
                         position = target.anchor(point).absolutePosition;
 
                     return {
-                        x: position.x - this.graphic.width / 2,
-                        y: target.y - this.graphic.height
+                        x: position.x - (this.graphic.width || 0) / 2,
+                        y: target.y - (this.graphic.height || 0)
                     };
                 },
                 events: {
@@ -286,8 +303,8 @@ TimeCycles.prototype.defaultOptions = merge(
                         position = target.anchor(point).absolutePosition;
 
                     return {
-                        x: position.x - this.graphic.width / 2,
-                        y: target.y - this.graphic.height
+                        x: position.x - (this.graphic.width || 0) / 2,
+                        y: target.y - (this.graphic.height || 0)
                     };
                 },
                 events: {
@@ -345,28 +362,3 @@ Annotation.types.timeCycles = TimeCycles;
  * */
 
 export default TimeCycles;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * The TimeCycles Annotation
- * @sample highcharts/annotations-advanced/time-cycles/
- *     Time Cycles annotation
- *
- * @extends   annotations.crookedLine
- * @product   highstock
- * @exclude  labelOptions
- * @apioption annotations.timeCycles
- */
-
-/**
- * @exclude   y
- * @product   highstock
- * @apioption annotations.timeCycles.typeOptions.points
- */
-
-(''); // keeps doclets above in transpiled file

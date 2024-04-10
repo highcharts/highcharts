@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,14 +20,10 @@ import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 
 import Axis from '../Core/Axis/Axis.js';
 import Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
-
 const {
-    prototype: {
-        tooltipFormatter: pointTooltipFormatter
-    }
-} = Point;
-
+    tooltipFormatter: pointTooltipFormatter
+} = Point.prototype;
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -136,19 +132,9 @@ namespace DataModifyComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedClasses: Array<Function> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Extends the series, axis and point classes with
@@ -170,11 +156,11 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
+        const axisProto = AxisClass.prototype as AxisComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!seriesProto.setCompare) {
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
 
@@ -183,20 +169,10 @@ namespace DataModifyComposition {
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
         }
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
-            const axisProto = AxisClass.prototype as AxisComposition;
-
+        if (!axisProto.setCompare) {
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;
-        }
-
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
-            const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.tooltipFormatter = tooltipFormatter;
         }
@@ -395,7 +371,7 @@ namespace DataModifyComposition {
         const series = this;
 
         if (
-            series.xAxis && // not pies
+            series.xAxis && // Not pies
             series.processedYData &&
             series.dataModify
         ) {
@@ -414,7 +390,7 @@ namespace DataModifyComposition {
                 );
             }
 
-            // find the first value for comparison
+            // Find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
                 const compareValue = processedYData[i] && keyIndex > -1 ?
                     (processedYData[i] as any)[keyIndex] : processedYData[i];
@@ -649,7 +625,7 @@ namespace DataModifyComposition {
                             (compareBase === 100 ? 0 : 100);
                     }
 
-                    // record for tooltip etc.
+                    // Record for tooltip etc.
                     if (typeof index !== 'undefined') {
                         const point = this.series.points[index];
 
@@ -782,6 +758,8 @@ export default DataModifyComposition;
  * Adds the `cumulativeSum` field to each point object that can be accessed
  * e.g. in the [tooltip.pointFormat](https://api.highcharts.com/highstock/tooltip.pointFormat).
  *
+ * With `dataGrouping` enabled, default grouping approximation is set to `sum`.
+ *
  * @see [Axis.setCumulative()](/class-reference/Highcharts.Axis#setCumulative)
  * @see [Series.setCumulative()](/class-reference/Highcharts.Series#setCumulative)
  *
@@ -795,4 +773,4 @@ export default DataModifyComposition;
  * @apioption plotOptions.series.cumulative
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file

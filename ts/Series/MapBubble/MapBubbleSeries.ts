@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -262,18 +262,20 @@ class MapBubbleSeries extends BubbleSeries {
      *
      * */
 
-    public data: Array<MapBubblePoint> = void 0 as any;
+    public data!: Array<MapBubblePoint>;
 
-    public options: MapBubbleSeriesOptions = void 0 as any;
+    public options!: MapBubbleSeriesOptions;
 
-    public points: Array<MapBubblePoint> = void 0 as any;
+    public points!: Array<MapBubblePoint>;
+
+    public clearBounds = mapProto.clearBounds;
 
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
     ): (Point|undefined) {
         return this.searchKDTree({
-            clientX: e.chartX - this.chart.plotLeft,
+            plotX: e.chartX - this.chart.plotLeft,
             plotY: e.chartY - this.chart.plotTop
         }, compareX, e);
     }
@@ -282,6 +284,26 @@ class MapBubbleSeries extends BubbleSeries {
         mapPointProto.translate.call(this);
         this.getRadii();
         this.translateBubble();
+    }
+
+    updateParallelArrays(
+        point: Point,
+        i: (number|string),
+        iArgs?: Array<any>
+    ): void {
+        super.updateParallelArrays.call(
+            this,
+            point,
+            i,
+            iArgs
+        );
+
+        const processedXData = this.processedXData,
+            xData = this.xData;
+
+        if (processedXData && xData) {
+            processedXData.length = xData.length;
+        }
     }
 }
 
@@ -320,6 +342,8 @@ extend(MapBubbleSeries.prototype, {
     processData: mapProto.processData,
 
     projectPoint: mapPointProto.projectPoint,
+
+    kdAxisArray: ['plotX', 'plotY'],
 
     setData: mapProto.setData,
 
@@ -420,7 +444,9 @@ export default MapBubbleSeries;
 
 /**
  * @excluding enabled, enabledThreshold, height, radius, width
+ * @sample {highmaps} maps/plotoptions/mapbubble-symbol
+ *         Map bubble with mapmarker symbol
  * @apioption series.mapbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

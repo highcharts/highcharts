@@ -12,7 +12,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: ' Electricity production in countries, grouped by continent'
+        text: ' Electricity production in countries, grouped by continent',
+        align: 'left'
     },
 
     xAxis: {
@@ -38,7 +39,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '<b>{point.key}</b><br>',
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
+        pointFormat: '<span style="color:{series.color}">\u25CF</span> ' +
+            '{series.name}: {point.y} / {point.stackTotal}'
     },
 
     plotOptions: {

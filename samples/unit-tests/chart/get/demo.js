@@ -81,7 +81,7 @@ QUnit.test('Chart.get', function (assert) {
     chart.redraw(false);
 });
 
-/*QUnit.test('Chart.get between redraws (#6147)', function (assert) {
+/* QUnit.test('Chart.get between redraws (#6147)', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{
             name: 'test',

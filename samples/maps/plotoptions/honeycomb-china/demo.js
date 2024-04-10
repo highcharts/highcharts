@@ -33,7 +33,9 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: null,
-        pointFormat: '- The province of <b>{point.province}</b><br/>- <b>{point.capital}</b> is the captal<br/>- Chinese abbreviation <b>{point.abbreviation}</b><br/>- <b>{point.region}</b> region '
+        pointFormat: '- The province of <b>{point.province}</b><br/>- <b>' +
+            '{point.capital}</b> is the captal<br/>- Chinese abbreviation <b>' +
+            '{point.abbreviation}</b><br/>- <b>{point.region}</b> region '
     },
 
     plotOptions: {
@@ -225,7 +227,7 @@ Highcharts.chart('container', {
             x: 1,
             y: 2,
             abbreviation: '陕(秦)',
-            capital: "Xi'an",
+            capital: 'Xi\'an',
             province: 'Shaanxi',
             region: 'Northwest China'
         }, {

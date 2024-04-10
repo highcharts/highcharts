@@ -1,4 +1,8 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json', function (data) {
+(async () => {
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json'
+    ).then(response => response.json());
 
     // Make codes uppercase to match the map data
     data.forEach(function (p) {
@@ -65,4 +69,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         }]
     });
-});
+})();

@@ -1,0 +1,160 @@
+name: Highcharts headless tests
+
+on:
+  workflow_call:
+    inputs:
+      testTimezones:
+        description: 'Whether timezone tests should run'
+        required: false
+        default: false
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      testTimezones:
+        description: 'Whether timezone tests should run'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  test_unit_tests:
+    name: Node unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Run unit tests
+        run: npx ts-node test/ts-node-unit-tests/index.ts
+
+  test_cypress:
+    name: Cypress tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+          browser: chrome
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm i
+
+      - name: Run Cypress test
+        uses: cypress-io/github-action@v6
+        with:
+          start: node utils/server --localOnly
+          wait-on: 'http://localhost:3031/highcharts.js'
+          browser: chrome
+          config-file: test/cypress/highcharts/config.mjs
+          install: false
+
+  ### HEADLESS LINUX ###
+  test_headless:
+    name: Test with headless browsers
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      ### SETUP ###
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+      # browser-actions/setup-chrome installs chrome at a separate location
+      # which setup-chromedriver does not pick up, so doing it manually
+      - name: Update Chrome
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo apt update
+          sudo apt --only-upgrade install google-chrome-stable
+      - name: Chrome info
+        run: |
+          set CHROME_BIN $(which chrome || which google-chrome || which chromium)
+          echo $CHROME_BIN
+          $CHROME_BIN --version
+
+      - uses: nanasess/setup-chromedriver@v2
+      - uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: latest-esr
+      - uses: browser-actions/setup-geckodriver@latest
+      - name: Setup Display
+        run: |
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+      - name: Install Dependencies
+        run: npm i
+      ### TASKS ###
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Run Tests (Chrome)
+        run: |
+          export DISPLAY=:99
+          npx gulp test --single-run --splitbrowsers ChromeHeadless
+      - name: Output logged errors
+        run: cat ./test/console.log
+      - name: Check Firefox
+        run: |
+          firefox --version
+          whereis firefox
+      - name: Run Tests (Firefox)
+        run: |
+          export DISPLAY=:99
+          npx gulp test --single-run --splitbrowsers Firefox --force
+      - name: Output logged errors
+        run: cat ./test/console.log
+      - name: Run timezone tests
+        if: ${{ inputs.testTimezones }}
+        run: |
+          ./.github/scripts/test_timezones.sh -b=ChromeHeadless
+
+  # ### HEADLESS MACOS ###
+  # test_macos:
+  #   name: Test with MacOS
+  #   timeout-minutes: 10
+  #   runs-on: macos-latest
+  #   steps:
+  #     ### SETUP ###
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 'lts/*'
+  #         cache: 'npm'
+  #     - name: Install Dependencies
+  #       run: npm i
+  #     ### TASKS ###
+  #     - name: Build Highcharts
+  #       run: npx gulp scripts
+  #     - name: Run Tests (Safari)
+  #       run: npx gulp test --single-run --splitbrowsers Safari

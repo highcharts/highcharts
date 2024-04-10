@@ -22,8 +22,8 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let chart;
 
@@ -34,8 +34,10 @@ const ganttChart = function () {
     http://api.highcharts.com/gantt.
 */
 
-    var today = new Date(),
-        day = 1000 * 60 * 60 * 24,
+    let today = new Date(),
+        isAddingTask = false;
+
+    const day = 1000 * 60 * 60 * 24,
         each = Highcharts.each,
         reduce = Highcharts.reduce,
         btnShowDialog = document.getElementById('btnShowDialog'),
@@ -48,8 +50,8 @@ const ganttChart = function () {
         inputName = document.getElementById('inputName'),
         selectDepartment = document.getElementById('selectDepartment'),
         selectDependency = document.getElementById('selectDependency'),
-        chkMilestone = document.getElementById('chkMilestone'),
-        isAddingTask = false;
+        chkMilestone = document.getElementById('chkMilestone');
+
 
     // Set to 00:00:00:000 today
     today.setUTCHours(0);
@@ -58,10 +60,11 @@ const ganttChart = function () {
     today.setUTCMilliseconds(0);
     today = today.getTime();
 
-    // Update disabled status of the remove button, depending on whether or not we
+    // Update disabled status of the remove button, depending on whether or
+    // not we
     // have any selected points.
     function updateRemoveButtonStatus() {
-        var chart = this.series.chart;
+        const chart = this.series.chart;
         // Run in a timeout to allow the select to update
         setTimeout(function () {
             btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
@@ -85,8 +88,12 @@ const ganttChart = function () {
                     const chart = this;
 
                     const buttonGroup = document.getElementById('button-group');
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -108,8 +115,12 @@ const ganttChart = function () {
 
                 },
                 redraw: function () {
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
@@ -117,7 +128,7 @@ const ganttChart = function () {
 
                 }
             },
-            styledMode: (true)
+            styledMode: true
         },
         lang: {
             accessibility: {
@@ -133,7 +144,10 @@ const ganttChart = function () {
                 enabled: true
             },
             screenReaderSection: {
-                beforeChartFormat: "<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>"
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>' +
+                    '{typeDescription}</p><p>{chartSubtitle}</p><p>' +
+                    'Interactive Gantt diagram showing tasks and milestones ' +
+                    'across three departments, Tech, Marketing, and Sales.</p>'
             },
             point: {
                 descriptionFormatter: function (point) {
@@ -439,7 +453,7 @@ const ganttChart = function () {
     }
 
     btnRemoveTask.onclick = function () {
-        var points = chart.getSelectedPoints();
+        const points = chart.getSelectedPoints();
         each(points, function (point) {
             point.remove();
         });
@@ -454,7 +468,7 @@ const ganttChart = function () {
     btnShowDialog.onclick = function () {
         // Update dependency list
 
-        var depInnerHTML = '<option value=""></option>';
+        let depInnerHTML = '<option value=""></option>';
         each(chart.series[0].points, function (point) {
             depInnerHTML += '<option value="' + point.id + '">' + point.name +
         ' </option>';
@@ -466,7 +480,7 @@ const ganttChart = function () {
         addTaskDialog.classList.add('show');
 
         // Show dialog by removing "hidden" class
-        //addTaskDialog.className = 'overlay';
+        // addTaskDialog.className = 'overlay';
         isAddingTask = true;
 
         addTaskDialog.focus();
@@ -474,21 +488,23 @@ const ganttChart = function () {
 
     btnAddTask.onclick = function () {
         // Get values from dialog
-        var series = chart.series[0],
+        const series = chart.series[0],
             name = inputName.value,
-            undef,
             dependency = chart.get(
                 selectDependency.options[selectDependency.selectedIndex].value
             ),
             y = parseInt(
                 selectDepartment.options[selectDepartment.selectedIndex].value,
                 10
-            ),
+            );
+
+        let undef,
             maxEnd = reduce(series.points, function (acc, point) {
                 return point.y === y && point.end ?
                     Math.max(acc, point.end) : acc;
-            }, 0),
-            milestone = chkMilestone.checked || undef;
+            }, 0);
+
+        const milestone = chkMilestone.checked || undef;
 
         // Empty category
         if (maxEnd === 0) {
@@ -514,7 +530,7 @@ const ganttChart = function () {
     btnCloseAddTask.onclick = hideDialog;
 
 };
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 const gantt = {
     chart: {
         // width: 500,
@@ -523,7 +539,7 @@ const gantt = {
             duration: 1000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         plotBackgroundImage: 'gantt.png',
@@ -537,15 +553,23 @@ const gantt = {
                 const rcount = startSeries;
                 const flag = document.querySelector('.flag');
                 const flagpole = document.querySelector('.pole');
-                const particle2 = document.getElementsByClassName('particle-2')[1];
-                const particle3 = document.getElementsByClassName('particle-3')[1];
-                const particle5 = document.getElementsByClassName('particle-5')[1];
-                const particle6 = document.getElementsByClassName('particle-6')[1];
+                const particle2 = document.getElementsByClassName(
+                    'particle-2'
+                )[1];
+                const particle3 = document.getElementsByClassName(
+                    'particle-3'
+                )[1];
+                const particle5 = document.getElementsByClassName(
+                    'particle-5'
+                )[1];
+                const particle6 = document.getElementsByClassName(
+                    'particle-6'
+                )[1];
                 const cover = document.querySelector('.cover');
 
-                ///if reduced motion....
+                // /if reduced motion....
                 if (reduced) {
-                    ///immediately creates the steps
+                    // /immediately creates the steps
                     for (let ii = rcount; ii <= endSeries; ++ii) {
                         const series = chart.series[ii];
                         const low = series.data[0].low;
@@ -565,35 +589,35 @@ const gantt = {
                             ]
                         });
                     }
-                    ///immediately creates the pole
+                    // /immediately creates the pole
                     pole.update({
                         data: [
                             { x: 10, low: 6, high: 14 },
                             { x: 11, low: 6, high: 14 }
                         ]
                     });
-                    ///grows/shows the flag
+                    // /grows/shows the flag
                     setTimeout(function () {
                         chart.xAxis[1].setExtremes(0, 20);
                     }, 500);
                     setTimeout(function () {
                         flag.classList.add('show');
                     }, 1500);
-                    ///grows particles
+                    // /grows particles
                     setTimeout(function () {
                         particle2.classList.add('grow');
                         particle3.classList.add('grow');
                         particle5.classList.add('grow');
                         particle6.classList.add('grow');
                     }, 1000);
-                    ///makes the gantt chart
+                    // /makes the gantt chart
                     setTimeout(function () {
                         ganttChart();
                     }, 4000);
                 }
 
                 if (!reduced) {
-                    ///build the staircase
+                    // /build the staircase
                     const stairs = setInterval(function () {
                         if (count <= endSeries) {
                             const series = chart.series[count];
@@ -619,7 +643,7 @@ const gantt = {
                         }
                     }, 500);
                     setTimeout(function () {
-                        ///raise the flagpole
+                        // /raise the flagpole
                         chart.update({
                             animation: {
                                 duration: 500,
@@ -634,15 +658,15 @@ const gantt = {
                         });
                     }, 2500);
                     setTimeout(function () {
-                        ///get read to unfurl the flag
+                        // /get read to unfurl the flag
                         chart.xAxis[1].setExtremes(0, 20);
                     }, 3000);
                     setTimeout(function () {
-                        ///fade in the flag
+                        // /fade in the flag
                         flag.classList.add('show');
                     }, 3300);
                     setTimeout(function () {
-                        ///grow the particles
+                        // /grow the particles
                         particle2.classList.add('grow');
                         particle3.classList.add('grow');
                         particle5.classList.add('grow');
@@ -650,20 +674,20 @@ const gantt = {
                     }, 3500);
 
                     setTimeout(function () {
-                        ///moves the dark blue  bottom up to the top
+                        // /moves the dark blue  bottom up to the top
                         chart.series[8].update({
                             data: [
                                 { x: 0, low: 12, high: 18 },
                                 { x: 20, low: 12, high: 18 }
                             ]
                         });
-                        ///hides the green lines
+                        // /hides the green lines
                         [].forEach.call(
                             document.querySelectorAll('.green'),
                             element => element.classList.add('hide')
 
                         );
-                        //hides the steps
+                        // hides the steps
                         [].forEach.call(
                             document.querySelectorAll('.step-p'),
                             element => element.classList.add('hide')
@@ -674,14 +698,14 @@ const gantt = {
                             element => element.classList.add('hide')
 
                         );
-                        ///hides flag, pole and the 'flag cover
+                        // /hides flag, pole and the 'flag cover
                         flag.classList.add('hide');
                         flagpole.classList.add('hide');
                         cover.classList.add('hide');
                     }, 5000);
 
                     setTimeout(function () {
-                        ///builds the gantt chart
+                        // /builds the gantt chart
                         ganttChart();
                     }, 6500);
                 }
@@ -697,7 +721,7 @@ const gantt = {
         enabled: false
     },
     xAxis: [
-    //0 -
+    // 0 -
         {
             min: 0,
             max: 20,
@@ -705,7 +729,7 @@ const gantt = {
             tickInterval: 1,
             visible: false
         },
-        //1 - for flag cover
+        // 1 - for flag cover
         {
             min: -280,
             max: 250,
@@ -777,7 +801,7 @@ const gantt = {
 
     },
     series: [
-        //0 - bottom line
+        // 0 - bottom line
         {
             type: 'line',
             className: 'transparent',
@@ -788,7 +812,7 @@ const gantt = {
             zIndex: 10
 
         },
-        //1 - line
+        // 1 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -799,7 +823,7 @@ const gantt = {
             ],
             zIndex: 10
         },
-        //2 - line
+        // 2 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -810,7 +834,7 @@ const gantt = {
             ],
             zIndex: 10
         },
-        //3 - line
+        // 3 - line
         {
             type: 'line',
             className: 'green',
@@ -822,7 +846,7 @@ const gantt = {
             zIndex: 10
 
         },
-        //4 - line
+        // 4 - line
         {
             type: 'line',
             className: 'green',
@@ -834,7 +858,7 @@ const gantt = {
             zIndex: 10
 
         },
-        //5 - line
+        // 5 - line
         {
             type: 'line',
             className: 'green',
@@ -845,7 +869,7 @@ const gantt = {
             ],
             zIndex: 10
         },
-        //6 - line
+        // 6 - line
         {
             type: 'line',
             className: 'green',
@@ -857,7 +881,7 @@ const gantt = {
             zIndex: 10
 
         },
-        //7 - line
+        // 7 - line
         {
             type: 'line',
             className: 'green',
@@ -892,7 +916,7 @@ const gantt = {
             zIndex: 15,
             visible: true
         },
-        //10 - step 2
+        // 10 - step 2
         {
             type: 'arearange',
             name: 'step2',
@@ -906,7 +930,7 @@ const gantt = {
             zIndex: 15,
             visible: true
         },
-        //11 - step 3
+        // 11 - step 3
         {
             type: 'arearange',
             name: 'step3',
@@ -920,7 +944,7 @@ const gantt = {
             zIndex: 15,
             visible: true
         },
-        //12 - step 4
+        // 12 - step 4
         {
             type: 'arearange',
             name: 'step4',
@@ -934,7 +958,7 @@ const gantt = {
             zIndex: 15,
             visible: true
         },
-        //13 - pole
+        // 13 - pole
         {
             type: 'arearange',
             name: 'pole',
@@ -948,7 +972,7 @@ const gantt = {
             zIndex: 5,
             visible: true
         },
-        //14 - flag
+        // 14 - flag
         {
             type: 'arearange',
             name: 'flag',
@@ -963,7 +987,7 @@ const gantt = {
             visible: true,
             xAxis: 1
         },
-        //15 - flag cover
+        // 15 - flag cover
         {
             type: 'arearange',
             name: 'flag-cover',
@@ -981,7 +1005,7 @@ const gantt = {
             visible: true,
             xAxis: 1
         },
-        //16 - particle 2
+        // 16 - particle 2
         {
             type: 'scatter',
             name: 'particle-2',
@@ -1076,4 +1100,4 @@ const gantt = {
 
 
 Highcharts.chart('gantt', gantt);
-//ganttChart();
+// ganttChart();

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2021 Highsoft AS
+ *  (c) 2014-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -30,5 +30,11 @@ export interface TreemapPointOptions extends ScatterPointOptions {
     value?: (number|null);
     width?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TreemapPointOptions;

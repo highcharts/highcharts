@@ -39,7 +39,7 @@ class CrookedLine extends Annotation {
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
 
@@ -213,16 +213,16 @@ CrookedLine.prototype.defaultOptions = merge(
                     xy = MockPoint.pointToPixels(target.points[this.index]);
 
                 return {
-                    x: xy.x - graphic.width / 2,
-                    y: xy.y - graphic.height / 2
+                    x: xy.x - (graphic.width || 0) / 2,
+                    y: xy.y - (graphic.height || 0) / 2
                 };
             },
 
             events: {
                 drag: function (
-                    this: Annotation,
+                    this: CrookedLine,
                     e: AnnotationEventObject,
-                    target: Controllable
+                    target: CrookedLine
                 ): void {
                     if (
                         target.chart.isInsidePlot(
@@ -233,7 +233,8 @@ CrookedLine.prototype.defaultOptions = merge(
                             }
                         )
                     ) {
-                        const translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e),
+                            typeOptions = target.options.typeOptions as any;
 
                         target.translatePoint(
                             translation.x,
@@ -242,10 +243,10 @@ CrookedLine.prototype.defaultOptions = merge(
                         );
 
                         // Update options:
-                        (target.options as any).typeOptions
-                            .points[this.index].x = target.points[this.index].x;
-                        (target.options as any).typeOptions
-                            .points[this.index].y = target.points[this.index].y;
+                        typeOptions.points[this.index].x =
+                            target.points[this.index].x;
+                        typeOptions.points[this.index].y =
+                            target.points[this.index].y;
 
                         target.redraw(false);
                     }

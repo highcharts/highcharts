@@ -1,5 +1,5 @@
 QUnit.test('Check last point visible (#5254)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'heatmap'
         },
@@ -34,9 +34,11 @@ QUnit.test('Check last point visible (#5254)', function (assert) {
         ]
     });
 
-    var point = chart.series[0].points[0];
-    var leftX = point.dataLabel.translateX;
-    var bottomY = point.dataLabel.translateY;
+    const series = chart.series[0],
+        point = series.points[0],
+        leftX = point.dataLabel.translateX,
+        bottomY = point.dataLabel.translateY;
+
     assert.strictEqual(typeof leftX, 'number', 'All well so far');
 
     assert.ok(
@@ -44,7 +46,7 @@ QUnit.test('Check last point visible (#5254)', function (assert) {
         '#15922: useHTML dataLabel should be visible'
     );
     assert.strictEqual(
-        point.graphic.stroke,
+        point.graphic.attr('stroke'),
         'red',
         '#15922: Point borderColor should work'
     );
@@ -61,7 +63,6 @@ QUnit.test('Check last point visible (#5254)', function (assert) {
         }
     });
 
-    point = chart.series[0].points[0];
     assert.ok(
         point.dataLabel.translateX > leftX,
         'align:right gives a higher X position than align:left'
@@ -70,5 +71,19 @@ QUnit.test('Check last point visible (#5254)', function (assert) {
     assert.ok(
         point.dataLabel.translateY < bottomY,
         'verticalAlign:top gives a smaller Y position than verticalAlign:bottom'
+    );
+
+    point.update({
+        value: null
+    });
+
+    point.update({
+        value: 5
+    });
+
+    assert.strictEqual(
+        point.color,
+        series.color,
+        '#17970: Ex-null point shouldn’t have a null color after update.'
     );
 });

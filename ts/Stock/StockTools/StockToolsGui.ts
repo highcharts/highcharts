@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2021 Sebastian Bochan
+ *  (c) 2009-2024 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -28,8 +28,8 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import O from '../../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../../Core/Defaults.js';
+const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';
@@ -54,25 +54,14 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
     }
-}
-
-declare module '../../Core/Options'{
     interface Options {
         stockTools?: StockToolsOptions;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
 
 /* *
  *
@@ -110,10 +99,9 @@ function compose(
     ChartClass: typeof Chart,
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (!chartProto.setStockTools) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
@@ -122,11 +110,7 @@ function compose(
         addEvent(ChartClass, 'redraw', onChartRedraw);
         addEvent(ChartClass, 'render', onChartRender);
 
-        ChartClass.prototype.setStockTools = chartSetStockTools;
-    }
-
-    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
-        composedClasses.push(NavigationBindingsClass);
+        chartProto.setStockTools = chartSetStockTools;
 
         addEvent(
             NavigationBindingsClass,
@@ -138,10 +122,6 @@ function compose(
             'selectButton',
             onNavigationBindingsSelectButton
         );
-    }
-
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
 
         setOptions(StockToolsDefaults);
     }
@@ -265,8 +245,8 @@ function onChartRender(
         button
     ) {
         if (
-            this.navigationBindings.constructor.prototype.utils
-                .isPriceIndicatorEnabled(this.series)
+            this.navigationBindings.utils
+                ?.isPriceIndicatorEnabled?.(this.series)
         ) {
             button.firstChild.style['background-image'] =
             'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
@@ -313,7 +293,7 @@ function onNavigationBindingsSelectButton(
     if (gui && gui.guiEnabled) {
         let button = event.button;
 
-        // Unslect other active buttons
+        // Unselect other active buttons
         gui.unselectAllButtons(event.button);
 
         // If clicked on a submenu, select state for it's parent

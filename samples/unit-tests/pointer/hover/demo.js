@@ -1,5 +1,6 @@
 QUnit.test(
-    "Tooltip isn't displayed when on column, when yAxis.max is lower than column's value. (#4511)",
+    'Tooltip isn\'t displayed when on column, when yAxis.max is lower than ' +
+    'column\'s value. (#4511)',
     function (assert) {
         var chart = $('#container')
             .highcharts({
@@ -154,7 +155,7 @@ QUnit.test('Testing hovering over panes.', function (assert) {
     assert.strictEqual(
         chart.hoverPoint,
         chart.series[0].points[2],
-        "The other pane's point should be ignored" // #11148
+        'The other pane\'s point should be ignored' // #11148
     );
 
     chart.tooltip.hide(0);

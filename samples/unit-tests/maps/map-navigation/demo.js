@@ -1,18 +1,19 @@
 QUnit.test(
     'Zoom in/out with padding, panning in both directions.',
-    assert => {
+    async assert => {
+        const world = await fetch(
+            'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
+        ).then(response => response.json());
+
         const chart = Highcharts.mapChart('container', {
             chart: {
                 plotBorderWidth: 1,
+                map: world,
 
                 // Square plot area
                 width: 400,
                 height: 400,
                 margin: 40
-            },
-
-            mapNavigation: {
-                enabled: false
             },
 
             colorAxis: {
@@ -24,20 +25,7 @@ QUnit.test(
             },
 
             // The map series
-            series: [
-                {
-                    data: [
-                        {
-                            value: 1,
-                            path: 'M,0,0,L,100,0,L,100,100,L,0,100,z'
-                        },
-                        {
-                            value: 2,
-                            path: 'M,200,200,L,300,200,L,300,300,L,200,300,z'
-                        }
-                    ]
-                }
-            ]
+            series: [{}]
         });
 
         const plotLeft = chart.plotLeft,
@@ -51,7 +39,8 @@ QUnit.test(
 
         assert.ok(
             !chart.resetZoomButton,
-            'Reset zoom button should not appear while panning and chart is not zoomed.'
+            'Reset zoom button should not appear while panning and chart is ' +
+            'not zoomed.'
         );
 
         const zoomBefore = chart.mapView.zoom;
@@ -64,30 +53,29 @@ QUnit.test(
         );
 
         chart.mapZoom(2);
-        assert.strictEqual(
+        assert.close(
             chart.mapView.zoom,
             zoomBefore,
+            1e-14,
             'The chart should be zoomed out to original state'
         );
 
         chart.mapZoom(0.2);
 
         const [lon, lat] = chart.mapView.center;
-
+        // #17238
         controller.pan(
             [plotLeft + 50, plotTop + 50],
             [plotLeft + 100, plotTop + 100]
         );
 
-        assert.notEqual(
-            chart.mapView.center[0],
-            lon,
+        assert.ok(
+            chart.mapView.center[0] < lon,
             'The chart should pan horizontally'
         );
 
-        assert.notEqual(
-            chart.mapView.center[1],
-            lat,
+        assert.ok(
+            chart.mapView.center[1] > lat,
             'The chart should pan vertically'
         );
 
@@ -106,16 +94,6 @@ QUnit.test(
             'Chart should be maximally zoomed out (to minZoom), #17082.'
         );
         // #17082 end
-
-        chart.series[0].remove(false);
-
-        chart.update({
-            chart: {
-                map: 'countries/gb/gb-all'
-            }
-        }, false);
-
-        chart.addSeries({}, false);
 
         chart.addSeries({
             type: 'mappoint',
@@ -137,6 +115,24 @@ QUnit.test(
             pointPositionAfterZoom,
             'The map point should update its position on zooming, #16534.'
         );
+
+        // Zoom out and try to pan in a way that would cause the center to
+        // be outside of the +/-90 range for lat when using EqualEarth.
+        chart.mapZoom(3);
+        chart.mapZoom(0.75);
+
+        controller.pan(
+            [plotLeft + chart.chartWidth / 2 - 20, plotTop + 10],
+            [plotLeft + chart.chartWidth / 2, plotTop + chart.plotHeight - 20]
+        );
+
+        assert.ok(
+            !/NaN/.test(
+                chart.series[0].group.element.childNodes[0]
+                    .getAttribute('transform')
+            ),
+            'The map should not flip when drag causes invalid center, #19190.'
+        );
     }
 );
 
@@ -152,6 +148,10 @@ QUnit.test('Map navigation button alignment', assert => {
             buttonOptions: {
                 verticalAlign: 'bottom'
             }
+        },
+
+        tooltip: {
+            animation: false
         },
 
         series: [
@@ -192,7 +192,8 @@ QUnit.test('Map navigation button alignment', assert => {
             chart.mapNavigation.navButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
-        'The buttons should initially be bottom-aligned to the plot box (#12776)'
+        'The buttons should initially be bottom-aligned to the plot box ' +
+        '(#12776)'
     );
 
     chart.setSize(undefined, 380);
@@ -202,7 +203,17 @@ QUnit.test('Map navigation button alignment', assert => {
             chart.mapNavigation.navButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
-        'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
+        'The buttons should be bottom-aligned to the plot box after redraw ' +
+        '(#12776)'
+    );
+
+    chart.tooltip.refresh(chart.series[0].data[0]);
+
+    assert.ok(
+        chart.mapNavigation.navButtonsGroup.zIndex <
+        chart.tooltip.label.element.getAttribute('data-z-index'),
+        'Map navigation group zIndex should be lower than tooltip zIndex ' +
+        '(#20476)'
     );
 });
 
@@ -271,6 +282,7 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
 
         mapView: {
             maxZoom: 30,
+            zoom: -1,
             projection: {
                 name: 'Orthographic',
                 rotation: [0, -90]
@@ -310,6 +322,13 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
                     type: 'Point',
                     coordinates: [0, 80]
                 }
+            }, {
+                name: 'B',
+                id: 'B',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [90, 0]
+                }
             }],
             color: '#313f77'
         }]
@@ -317,11 +336,22 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
 
     const controller = new TestController(chart),
         point = chart.get('A'),
-        oldPlotY = point.plotY;
+        oldPlotX = point.plotX;
     let oldRotation = chart.mapView.projection.options.rotation;
 
+    controller.pan([350, 150], [200, 150], void 0);
+    assert.ok(
+        true,
+        `No errors about NaN values when paning with mouse outside the
+        container (#18542).`
+    );
+    controller.pan([200, 150], [350, 150], void 0);
+
+    // Zoom needed to pan initially.
+    chart.mapView.zoomBy(1);
+
     // Test event properties
-    controller.click(350, 300, void 0, true);
+    controller.click(350, 300, void 0);
     // No idea why Safari fails this, possibly related to test controller. It
     // works in practice.
     assert.close(
@@ -338,22 +368,16 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         'Latitude should be available on event'
     );
 
-    // Zoom needed to pan initially.
-    chart.mapView.zoomBy(1);
+    const beforeZoom = chart.mapView.zoom;
 
-    controller.pan([305, 50], [350, 150]);
+    controller.pan([305, 50], [350, 150], void 0);
 
     // eslint-disable-next-line
     if (!/14\.1\.[0-9] Safari/.test(navigator.userAgent)) {
         assert.ok(
-            (point.plotY > oldPlotY),
+            (
+                point.plotX > oldPlotX),
             'Panning should be activated (#16722).'
-        );
-
-        assert.deepEqual(
-            chart.mapView.projection.options.rotation,
-            oldRotation,
-            'Rotation should not be activated (#16722).'
         );
     }
 
@@ -373,4 +397,31 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         'Rotation should be activated (#16722).'
     );
 
+    assert.strictEqual(
+        chart.get('B').dataLabel.attr('visibility'),
+        'hidden',
+        'Data labels behind the horizon on an Ortho map should be hidden ' +
+        '(#17907)'
+    );
+    assert.notStrictEqual(
+        chart.get('A').dataLabel.attr('visibility'),
+        'hidden',
+        'Data labels on the near side should not be hidden'
+    );
+    assert.strictEqual(
+        chart.get('B').graphic.attr('visibility'),
+        'hidden',
+        'Point graphics behind the horizon on an Ortho map should be hidden'
+    );
+    assert.notStrictEqual(
+        chart.get('A').graphic.attr('visibility'),
+        'hidden',
+        'Point graphics on the near side should not be hidden'
+    );
+
+    assert.strictEqual(
+        beforeZoom,
+        chart.mapView.zoom,
+        'Map shouldn\'t be zoomed out after panning (#18542).'
+    );
 });

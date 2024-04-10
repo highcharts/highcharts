@@ -1,6 +1,6 @@
 function breakEffect(axis, point, path, color) {
-    var renderer = axis.chart.renderer,
-        brkLine = point.brkLine;
+    const renderer = axis.chart.renderer;
+    let brkLine = point.brkLine;
 
     if (!brkLine) {
         point.brkLine = brkLine = renderer.path(path)
@@ -16,7 +16,7 @@ function breakEffect(axis, point, path, color) {
     }
 }
 function pointBreak(item) {
-    var point = item.point,
+    const point = item.point,
         brk = item.brk,
         axis = this,
         sA = point.shapeArgs,
@@ -30,7 +30,7 @@ function pointBreak(item) {
 }
 
 function pointInBreak(item) {
-    var point = item.point,
+    const point = item.point,
         brk = item.brk,
         axis = this,
         sA = point.shapeArgs,
@@ -38,7 +38,12 @@ function pointInBreak(item) {
         y = axis.toPixels(brk.to) - axis.top + 1,
         h = axis.toPixels(brk.from) - axis.toPixels(brk.to),
         w = sA.width - 1,
-        path = ['M', x, y + h, 'L', x + (w / 2), y + (h / 2), 'L', x + w, y + h, 'Z'];
+        path = [
+            'M', x, y + h,
+            'L', x + (w / 2), y + (h / 2),
+            'L', x + w, y + h,
+            'Z'
+        ];
 
     breakEffect(this, point, path, point.color || point.series.color);
 }
@@ -52,7 +57,10 @@ Highcharts.chart('container', {
         text: 'Chart with a more elaborate break effect'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
     yAxis: {
         title: false,

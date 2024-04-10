@@ -1,4 +1,4 @@
-@import "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css";
+@import url("https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css");
 
 #resizer {
     border: 1px solid silver;

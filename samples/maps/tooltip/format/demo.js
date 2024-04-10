@@ -27,21 +27,19 @@
 
 
             tooltip: {
-                headerFormat: '<span style="font-size:10px">{series.name}</span><br/>',
-                pointFormat: '{point.name}: <b>{point.value:.1f} individuals/km²</b><br/>',
-                footerFormat: '<span style="font-size:10px">Source: Wikipedia</span><br/>'
+                headerFormat: '<span style="font-size:10px">' +
+                    '{series.name}</span><br/>',
+                pointFormat: '{point.name}: <b>{point.value:.1f} ' +
+                    'individuals/km²</b><br/>',
+                footerFormat: '<span style="font-size:10px">Source: ' +
+                    'Wikipedia</span><br/>'
             },
 
             series: [{
                 data: data,
                 mapData: topology,
                 joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                }
+                name: 'Population density'
             }]
         });
     });

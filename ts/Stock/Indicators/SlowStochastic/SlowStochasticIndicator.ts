@@ -24,9 +24,7 @@ import type SlowStochasticPoint from './SlowStochasticPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    sma: {
-        prototype: smaProto
-    },
+    sma: SMAIndicator,
     stochastic: StochasticIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
@@ -92,9 +90,9 @@ class SlowStochasticIndicator extends StochasticIndicator {
      *
      * */
 
-    public data: Array<SlowStochasticPoint> = void 0 as any;
-    public options: SlowStochasticOptions = void 0 as any;
-    public points: Array<SlowStochasticPoint> = void 0 as any;
+    public data!: Array<SlowStochasticPoint>;
+    public options!: SlowStochasticOptions;
+    public points!: Array<SlowStochasticPoint>;
 
     /* *
      *
@@ -118,8 +116,6 @@ class SlowStochasticIndicator extends StochasticIndicator {
                 yData: [] as Array<Array<number>>
             };
 
-        let i = 0;
-
         if (!fastValues) {
             return;
         }
@@ -130,7 +126,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
         // Get SMA(%D)
         const smoothedValues: (
             undefined|IndicatorValuesObject<LineSeries>
-        ) = smaProto.getValues.call(
+        ) = SMAIndicator.prototype.getValues.call(
             this,
             ({
                 xData: slowValues.xData,
@@ -146,10 +142,8 @@ class SlowStochasticIndicator extends StochasticIndicator {
             return;
         }
 
-        const xDataLen = slowValues.xData.length;
-
         // Format data
-        for (; i < xDataLen; i++) {
+        for (let i = 0, xDataLen = slowValues.xData.length; i < xDataLen; i++) {
 
             slowValues.yData[i] = [
                 fastYData[i][1],
@@ -223,4 +217,4 @@ export default SlowStochasticIndicator;
  * @apioption series.slowstochastic
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

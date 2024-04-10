@@ -10,8 +10,6 @@
  *
  * */
 
-/* global MSBlobBuilder */
-
 'use strict';
 
 /* *
@@ -30,20 +28,18 @@ import type Options from '../../Core/Options';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import DownloadURL from '../DownloadURL.js';
 const { downloadURL } = DownloadURL;
 import Exporting from '../Exporting/Exporting.js';
 import H from '../../Core/Globals.js';
 const {
-    win,
-    doc
+    doc,
+    win
 } = H;
 import HU from '../../Core/HttpUtilities.js';
-const {
-    ajax
-} = HU;
+const { ajax } = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -51,17 +47,18 @@ const {
     error,
     extend,
     fireEvent,
-    pick,
     merge
 } = U;
 
 AST.allowedAttributes.push(
     'data-z-index',
     'fill-opacity',
+    'filter',
     'rx',
     'ry',
     'stroke-dasharray',
     'stroke-linejoin',
+    'stroke-opacity',
     'text-anchor',
     'transform',
     'version',
@@ -97,14 +94,6 @@ declare module '../../Core/Chart/ChartLike' {
         ): void;
     }
 }
-
-/* *
- *
- * Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
 
 /* *
  *
@@ -165,12 +154,9 @@ namespace OfflineExporting {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (typeof Composition&T) {
+        const chartProto = ChartClass.prototype as Composition;
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
-            const chartProto = ChartClass.prototype as Composition;
-
+        if (!chartProto.exportChartLocal) {
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
             chartProto.exportChartLocal = exportChartLocal;
 
@@ -181,7 +167,6 @@ namespace OfflineExporting {
         return ChartClass as (typeof Composition&T);
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
      * Get data URL to an image of an SVG and call download on it options
      * object:
@@ -348,31 +333,36 @@ namespace OfflineExporting {
                 // chart container.
                 setStylePropertyFromParents = function (
                     el: DOMElementType,
-                    propName: string
+                    propName: 'fontFamily'|'fontSize'
                 ): void {
                     let curParent = el;
 
                     while (curParent && curParent !== dummySVGContainer) {
-                        if (curParent.style[propName as any]) {
-                            el.style[propName as any] =
-                                curParent.style[propName as any];
+                        if (curParent.style[propName]) {
+                            let value = curParent.style[propName];
+                            if (propName === 'fontSize' && /em$/.test(value)) {
+                                value = Math.round(
+                                    parseFloat(value) * 16
+                                ) + 'px';
+                            }
+                            el.style[propName] = value;
                             break;
                         }
                         curParent = curParent.parentNode as any;
                     }
                 };
-            let titleElements;
+            let titleElements,
+                outlineElements;
 
             // Workaround for the text styling. Making sure it does pick up
             // settings for parent elements.
             [].forEach.call(textElements, function (el: SVGDOMElement): void {
                 // Workaround for the text styling. making sure it does pick up
                 // the root element
-                ['font-family', 'font-size'].forEach(function (
-                    property: string
-                ): void {
-                    setStylePropertyFromParents(el, property);
-                });
+                (['fontFamily', 'fontSize'] as ['fontFamily', 'fontSize'])
+                    .forEach((property): void => {
+                        setStylePropertyFromParents(el, property);
+                    });
 
                 el.style.fontFamily = pdfFont && pdfFont.normal ?
                     // Custom PDF font
@@ -391,6 +381,13 @@ namespace OfflineExporting {
                 ): void {
                     el.removeChild(titleElement);
                 });
+
+                // Remove all .highcharts-text-outline elements, #17170
+                outlineElements =
+                    el.getElementsByClassName('highcharts-text-outline');
+                while (outlineElements.length > 0) {
+                    el.removeChild(outlineElements[0]);
+                }
             });
 
             const svgNode = dummySVGContainer.querySelector('svg');
@@ -399,6 +396,7 @@ namespace OfflineExporting {
                     svgToPdf(
                         svgNode,
                         0,
+                        scale,
                         (pdfData: string): void => {
                             try {
                                 downloadURL(pdfData, filename);
@@ -420,8 +418,8 @@ namespace OfflineExporting {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             try {
-                if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
-                    blob = new MSBlobBuilder();
+                if (typeof win.MSBlobBuilder !== 'undefined') {
+                    blob = new win.MSBlobBuilder();
                     blob.append(svg);
                     svgurl = blob.getBlob('image/svg+xml') as any;
                 } else {
@@ -619,11 +617,11 @@ namespace OfflineExporting {
                 );
             };
 
-        // If we are on IE and in styled mode, add a whitelist to the renderer
+        // If we are on IE and in styled mode, add an allowlist to the renderer
         // for inline styles that we want to pass through. There are so many
-        // styles by default in IE that we don't want to blacklist them all.
-        if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
-            Exporting.inlineWhitelist.push(
+        // styles by default in IE that we don't want to denylist them all.
+        if (H.isMS && chart.styledMode && !Exporting.inlineAllowlist.length) {
+            Exporting.inlineAllowlist.push(
                 /^blockSize/,
                 /^border/,
                 /^caretColor/,
@@ -980,7 +978,7 @@ namespace OfflineExporting {
 
         try {
             // Safari requires data URI since it doesn't allow navigation to
-            // blob URLs. ForeignObjects also dont work well in Blobs in Chrome
+            // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
             // (#14780).
             if (!webKit && svg.indexOf('<foreignObject') === -1) {
                 return domurl.createObjectURL(new win.Blob([svg], {
@@ -1000,10 +998,13 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
+        scale: number,
         callback: Function
     ): void {
-        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
-            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+        const width = (Number(svgElement.getAttribute('width')) + 2 * margin) *
+            scale,
+            height = (Number(svgElement.getAttribute('height')) + 2 * margin) *
+                scale,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',

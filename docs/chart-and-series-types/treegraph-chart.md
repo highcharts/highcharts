@@ -1,6 +1,6 @@
-EXPERIMANTAL: Treegraph chart (not released yet)
+Treegraph chart
 ===
-A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are: 
+A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data structure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are:
 
 * genealogy trees
 * directories in computer science
@@ -10,7 +10,6 @@ Our tree representation is an oriented rooted tree. This means that the directio
 
 In order to use this series type, you need to load the `modules/treemap.js` and `modules/treegraph.js` modules.
 
-< --// TODO change back the path of the demo -->
 <iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treegraph-chart allow="fullscreen"></iframe>
 
 ### Data structure
@@ -27,13 +26,13 @@ The following is an example of how the tree is built in Highcharts:
         name: 'I am a child',
         parent: 'id-1'
     }, {
-        name: 'I am a younger child',
+        name: 'I am a smaller child',
         parent: 'id-1'
     }]
 
 ### Algorithms
 
-Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
+Algorithms decide the positioning of the points. Currently there is one algorithm available, which is the [Walker](https://link.springer.com/chapter/10.1007/3-540-36151-0_32) algorithm for calculating the nodes position in the tree graph.
 
 API options
 -----------
@@ -55,12 +54,12 @@ In contrast to treemap series, the connections between the nodes are represented
             name: 'I am a child',
             parent: 'id-1'
         }, {
-            name: 'I am a younger child',
+            name: 'I am a smaller child',
             parent: 'id-1'
         }]
     }]
 
-To change the configuraiton of a specific link, you have to specify the link object in the point configuration, like this:
+To change the configuration of a specific link, you have to specify the link object in the point configuration, like this:
 
     data: [{
         name: 'parent',
@@ -77,7 +76,7 @@ To change the configuraiton of a specific link, you have to specify the link obj
 This setting will take effect on the link that goes **to** the given node.
 
 ### Collapse Feature
-The nodes' default behavior on click is to toggle the collapsed/expanded state. When clicking any node (which has children) the visibility of all child nodes and links will be changed to hidden. This allows hiding any sub-trees and makes the data easier to read. When clicking on the same node again, all nodes and links will be visible again. You can test this feature on any demo, since this is a default behavior.
+The nodes' default behavior on click is to toggle the collapsed/expanded state. When clicking any node (which has children) the visibility of all child nodes and links will be hidden. This allows hiding any sub-trees and makes the data easier to read. When clicking on the same node again, all nodes and links will be visible again. You can test this feature on any demo, since this is a default behavior.
 
 ### Options
 
@@ -86,8 +85,8 @@ For an overview over the options for the treegraph, see the [API](https://api.h
 
 ### More demos
 
-*   [Phylogenetic Treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-phylogenetic)
+*   [Phylogenetic Treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-chart)
 *   [Treegraph chart with different link types](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-types)
 *   [Treegraph chart with text path on dataLabels for links](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-text-path)
 *   [Treegraph chart with different node level for nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/node-level)
-*   [Treegraph chart with reversed order of nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/reversed)
+*   [Inverted treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-inverted)

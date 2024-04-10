@@ -17,7 +17,8 @@
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: ' +
+                '{point.lon}'
         },
         plotOptions: {
             mappoint: {
@@ -110,203 +111,203 @@
             name: 'Cities',
             color: Highcharts.getOptions().colors[1],
             data: [{
-                name: "York",
+                name: 'York',
                 lat: 53.958332,
                 lon: -1.080278
             }, {
-                name: "Worcester",
+                name: 'Worcester',
                 lat: 52.192001,
                 lon: -2.22
             }, {
-                name: "Winchester",
+                name: 'Winchester',
                 lat: 51.063202,
                 lon: -1.308
             }, {
-                name: "Wells",
+                name: 'Wells',
                 lat: 51.209,
                 lon: -2.647
             }, {
-                name: "Wakefield",
+                name: 'Wakefield',
                 lat: 53.68,
                 lon: -1.49
             }, {
-                name: "Truro",
+                name: 'Truro',
                 lat: 50.259998,
                 lon: -5.051
             }, {
-                name: "Sunderland",
+                name: 'Sunderland',
                 lat: 54.906101,
                 lon: -1.38113
             }, {
-                name: "Sheffield",
+                name: 'Sheffield',
                 lat: 53.383331,
                 lon: -1.466667
             }, {
-                name: "Salford",
+                name: 'Salford',
                 lat: 53.483002,
                 lon: -2.2931
             }, {
-                name: "St.Davids",
+                name: 'St.Davids',
                 lat: 51.882,
                 lon: -5.269
             }, {
-                name: "St.Albans",
+                name: 'St.Albans',
                 lat: 51.755001,
                 lon: -0.336
             }, {
-                name: "Ripon",
+                name: 'Ripon',
                 lat: 54.138,
                 lon: -1.524
             }, {
-                name: "Portsmouth",
+                name: 'Portsmouth',
                 lat: 50.805832,
                 lon: -1.087222
             }, {
-                name: "Perth",
+                name: 'Perth',
                 lat: 56.396999,
                 lon: -3.437
             }, {
-                name: "Nottingham",
+                name: 'Nottingham',
                 lat: 52.950001,
                 lon: -1.15
             }, {
-                name: "Newry",
+                name: 'Newry',
                 lat: 54.175999,
                 lon: -6.349
             }, {
-                name: "Newcastle",
+                name: 'Newcastle',
                 lat: 54.966667,
                 lon: -1.6
             }, {
-                name: "Liverpool",
+                name: 'Liverpool',
                 lat: 53.400002,
                 lon: -2.983333
             }, {
-                name: "Lincoln",
+                name: 'Lincoln',
                 lat: 53.234444,
                 lon: -0.538611
             }, {
-                name: "Lichfield",
+                name: 'Lichfield',
                 lat: 52.683498,
                 lon: -1.82653
             }, {
-                name: "Leicester",
+                name: 'Leicester',
                 lat: 52.633331,
                 lon: -1.133333
             }, {
-                name: "Lancaster",
+                name: 'Lancaster',
                 lat: 54.047001,
                 lon: -2.801
             }, {
-                name: "Hereford",
+                name: 'Hereford',
                 lat: 52.056499,
                 lon: -2.716
             }, {
-                name: "Gloucester",
+                name: 'Gloucester',
                 lat: 51.864445,
                 lon: -2.244444
             }, {
-                name: "Glasgow",
+                name: 'Glasgow',
                 lat: 55.860916,
                 lon: -4.251433
             }, {
-                name: "Exeter",
+                name: 'Exeter',
                 lat: 50.716667,
                 lon: -3.533333
             }, {
-                name: "Ely",
+                name: 'Ely',
                 lat: 52.398056,
                 lon: 0.262222
             }, {
-                name: "Durham",
+                name: 'Durham',
                 lat: 54.7761,
                 lon: -1.5733
             }, {
-                name: "Dundee",
+                name: 'Dundee',
                 lat: 56.462002,
                 lon: -2.9707
             }, {
-                name: "Derry",
+                name: 'Derry',
                 lat: 54.9958,
                 lon: -7.3074
             }, {
-                name: "Derby",
+                name: 'Derby',
                 lat: 52.916668,
                 lon: -1.466667
             }, {
-                name: "Coventry",
+                name: 'Coventry',
                 lat: 52.408054,
                 lon: -1.510556
             }, {
-                name: "Chichester",
+                name: 'Chichester',
                 lat: 50.836498,
                 lon: -0.7792
             }, {
-                name: "Chester",
+                name: 'Chester',
                 lat: 53.189999,
                 lon: -2.89
             }, {
-                name: "Chelmsford",
+                name: 'Chelmsford',
                 lat: 51.736099,
                 lon: 0.4798
             }, {
-                name: "Carlisle",
+                name: 'Carlisle',
                 lat: 54.890999,
                 lon: -2.944
             }, {
-                name: "Canterbury",
+                name: 'Canterbury',
                 lat: 51.279999,
                 lon: 1.08
             }, {
-                name: "Cambridge",
+                name: 'Cambridge',
                 lat: 52.205276,
                 lon: 0.119167
             }, {
-                name: "Brighton &amp; Hove",
+                name: 'Brighton &amp; Hove',
                 lat: 50.827778,
                 lon: -0.152778
             }, {
-                name: "Bradford",
+                name: 'Bradford',
                 lat: 53.799999,
                 lon: -1.75
             }, {
-                name: "Bath",
+                name: 'Bath',
                 lat: 51.380001,
                 lon: -2.36
             }, {
-                name: "Peterborough",
+                name: 'Peterborough',
                 lat: 52.573921,
                 lon: -0.25083
             }, {
-                name: "Elgin",
+                name: 'Elgin',
                 lat: 57.653484,
                 lon: -3.335724
             }, {
-                name: "Stoke-on-Trent",
+                name: 'Stoke-on-Trent',
                 lat: 53.002666,
                 lon: -2.179404
             }, {
-                name: "Solihull",
+                name: 'Solihull',
                 lat: 52.412811,
                 lon: -1.778197
             }, {
-                name: "Cardiff",
+                name: 'Cardiff',
                 lat: 51.481583,
                 lon: -3.17909
             }, {
-                name: "Eastbourne",
+                name: 'Eastbourne',
                 lat: 50.768036,
                 lon: 0.290472
             }, {
-                name: "Oxford",
+                name: 'Oxford',
                 lat: 51.752022,
                 lon: -1.257677
             }, {
-                name: "London",
+                name: 'London',
                 lat: 51.509865,
                 lon: -0.118092
             }, {
-                name: "Swindon",
+                name: 'Swindon',
                 lat: 51.568535,
                 lon: -1.772232
             }]

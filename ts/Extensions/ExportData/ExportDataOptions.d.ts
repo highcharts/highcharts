@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,16 +21,18 @@ declare module '../Exporting/ExportingOptions' {
         csv?: ExportingCsvOptions;
         showTable?: boolean;
         tableCaption?: (boolean|string);
+        showExportInProgress?: boolean;
     }
 }
 
-declare module '../../Core/LangOptions' {
+declare module '../../Core/Options' {
     interface LangOptions {
         downloadCSV?: string;
         downloadXLS?: string;
         exportData?: ExportDataLangOptions;
         viewData?: string;
         hideData?: string;
+        exportInProgress?: string;
     }
 }
 
@@ -71,6 +73,7 @@ export interface ExportingOptions {
     tableCaption?: (boolean|string);
     useMultiLevelHeaders?: boolean;
     useRowspanHeaders?: boolean;
+    showExportInProgress?: boolean;
 }
 
 export interface LangOptions {
@@ -79,6 +82,7 @@ export interface LangOptions {
     exportData?: ExportDataLangOptions;
     viewData?: string;
     hideData?: string;
+    exportInProgress?: string;
 }
 
 /* *

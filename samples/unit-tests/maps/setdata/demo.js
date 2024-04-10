@@ -837,11 +837,6 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: 'hc-key',
                 name: 'Random data',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 dataLabels: {
                     enabled: true,
                     format: '{point.value}'
@@ -954,10 +949,13 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
-        'rgb(229,234,245)',
-        `The point's color should be correct.`
+        'rgb(229,232,255)',
+        'The point\'s color should be correct.'
     );
 
+    mapView.update({
+        zoom: mapView.minZoom
+    }, false);
     // Remove ru point from data
     const removedPoint = data.splice(148, 1)[0];
     series.setData(data);
@@ -973,7 +971,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
         series.options.nullColor,
-        `The ru null point's color should be correct.`
+        'The ru null point\'s color should be correct.'
     );
 
     // #17057
@@ -990,7 +988,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
-        'rgb(229,234,245)',
+        'rgb(229,232,255)',
         'The ru point should be added correctly (no nullColor), #17057.'
     );
 

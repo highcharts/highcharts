@@ -1,0 +1,10 @@
+---
+name: Map markers
+authors:
+  - Torstein Hønsi
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
 
 import type Point from './Series/Point';
 import type Pointer from './Pointer';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 
 /* *
  *
@@ -36,6 +37,12 @@ export interface PointerEvent extends globalThis.PointerEvent {
     touches?: Array<Touch>;
     xAxis?: Array<Pointer.AxisCoordinateObject>;
     yAxis?: Array<Pointer.AxisCoordinateObject>;
+}
+
+export interface GetSelectionMarkerAttrsEvent {
+    args: Record<string, number>;
+    attrs: SVGAttributes;
+    shapeType: 'arc'|'rect'|'path';
 }
 
 /* *

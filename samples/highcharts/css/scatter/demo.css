@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 #container {
     min-width: 310px;
@@ -7,14 +7,9 @@
     margin: 0 auto;
 }
 
-.highcharts-color-0 {
-    fill: rgb(223 83 83 / 75%);
-    stroke: rgb(223 83 83 / 75%);
-}
-
-.highcharts-color-1 {
-    fill: rgb(119 152 191 / 75%);
-    stroke: rgb(119 152 191 / 75%);
+:root {
+    --highcharts-color-0: rgb(223 83 83 / 75%);
+    --highcharts-color-1: rgb(119 152 191 / 75%);
 }
 
 .highcharts-point-hover {

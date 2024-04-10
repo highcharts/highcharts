@@ -18,17 +18,23 @@ import type {
 } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface ROCOptions extends SMAOptions {
     params?: ROCParamsOptions;
 }
 
 export interface ROCParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ROCOptions;

@@ -1,0 +1,13 @@
+.highcharts-figure {
+    min-width: 310px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.highcharts-description {
+    margin: 1em 0;
+}
+
+#container {
+    height: 500px;
+}

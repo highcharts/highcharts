@@ -75,7 +75,7 @@ QUnit.test('Stocktools GUI', function (assert) {
             while (!found && ++i < button.length) { // Find the button with text
                 if (button[i].innerHTML.indexOf(text) !== -1) {
                     found = true;
-                    button = button[i];
+                    button = button[i].childNodes[0];
                     button.click();
                 }
             }
@@ -98,10 +98,15 @@ QUnit.test('Stocktools GUI', function (assert) {
         .firstChild
         .data; // Periods textLabel of APO
 
-    assert.strictEqual(textLabel, 'Periods', 'APO should have Periods text-label.');
+    assert.strictEqual(
+        textLabel,
+        'Periods', 'APO should have Periods text-label.'
+    );
 });
 
-QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192',
+QUnit.test(
+    'Disabling and enabling stock tools buttons, when series are ' +
+    'invisible, #14192',
     function (assert) {
         var wasInitCalled = false;
 
@@ -147,7 +152,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         toolsContainer.style['z-index'] = 99999;
 
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be executed, when there is no series.'
         );
@@ -158,7 +164,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         });
 
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             true,
             'Init function should be executed, after series was added.'
         );
@@ -166,7 +173,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].setVisible(false);
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be called, when series are invisible.'
         );
@@ -174,7 +182,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].setVisible(true);
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             true,
             'Init function should not be called, when series are visible.'
         );
@@ -182,7 +191,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].remove();
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be called, after deleting the series.'
         );
@@ -212,7 +222,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         assert.equal(
             wasInitCalled,
             true,
-            'Init function should be always called for button with alwaysVisible property defined.'
+            'Init function should be always called for button with ' +
+            'alwaysVisible property defined.'
         );
 
         button.remove();

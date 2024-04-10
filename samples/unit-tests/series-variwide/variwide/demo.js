@@ -170,7 +170,7 @@ QUnit.test('#8635: Variwide zoom', assert => {
             xAxis: {
                 reversed: true
             }
-        }/*,
+        }/* ,
         {
             chart: {
                 inverted: true

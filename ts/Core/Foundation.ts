@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -83,7 +83,9 @@ namespace Foundation {
 
                     if (isFunction(event)) {
                         component.eventOptions[eventType] = event;
-                        addEvent(component, eventType, event);
+                        addEvent(component, eventType, event, {
+                            order: 0 // #14080 fire those events as firsts
+                        });
                     }
                 }
             }

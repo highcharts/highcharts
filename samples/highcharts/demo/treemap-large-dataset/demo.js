@@ -1,7 +1,10 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-mortality.json', function (data) {
+(async () => {
 
-    var points = [],
-        regionP,
+    const data = await fetch(
+        'https://www.highcharts.com/samples/data/world-mortality.json'
+    ).then(response => response.json());
+
+    let regionP,
         regionVal,
         regionI = 0,
         countryP,
@@ -10,7 +13,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         causeI,
         region,
         country,
-        cause,
+        cause;
+
+    const points = [],
         causeName = {
             'Communicable & other Group I': 'Communicable diseases',
             'Noncommunicable diseases': 'Non-communicable diseases',
@@ -89,11 +94,12 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             data: points
         }],
         subtitle: {
-            text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
+            text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.',
+            align: 'left'
         },
         title: {
-            text: 'Global Mortality Rate 2012, per 100 000 population'
+            text: 'Global Mortality Rate 2012, per 100 000 population',
+            align: 'left'
         }
     });
-
-});
+})();

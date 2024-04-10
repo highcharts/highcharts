@@ -42,7 +42,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
     assert.strictEqual(
         chart.series[0].points[3].connector.element.getAttribute('stroke'),
         'green',
-        "Added point's connector should have correct color."
+        'Added point\'s connector should have correct color.'
     );
 
     assert.strictEqual(
@@ -50,7 +50,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
             'stroke-width'
         ),
         '3',
-        "Added point's connector should have correct width."
+        'Added point\'s connector should have correct width.'
     );
 
     chart.addSeries({
@@ -79,7 +79,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
         });
     };
 
-    assertDestruction("All point's graphics should be removed.");
+    assertDestruction('All point\'s graphics should be removed.');
 
     chart.series[1].update({
         marker: {
@@ -87,5 +87,8 @@ QUnit.test('Dumbbell connectors', function (assert) {
         }
     });
 
-    assertDestruction('#15560: All point graphics should be destroyed when markers are disabled');
+    assertDestruction(
+        '#15560: All point graphics should be destroyed when ' +
+        'markers are disabled'
+    );
 });

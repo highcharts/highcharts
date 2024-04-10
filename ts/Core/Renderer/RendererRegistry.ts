@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -87,7 +87,7 @@ namespace RendererRegistry {
 
         if (!defaultRenderer || setAsDefault) {
             defaultRenderer = rendererType;
-            (H as AnyRecord).Renderer = rendererClass; // compatibility
+            (H as AnyRecord).Renderer = rendererClass; // Compatibility
         }
     }
 }

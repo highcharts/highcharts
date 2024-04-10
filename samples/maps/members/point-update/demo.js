@@ -31,11 +31,6 @@
                 name: 'Population density',
                 allowPointSelect: true,
                 cursor: 'pointer',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }
@@ -45,7 +40,7 @@
         // Set button text
         const point = chart.series[0].points.find(p => p.name === 'Greenland'),
             button = document.getElementById('update');
-        button.textContent = "Update population of " + point.name;
+        button.textContent = 'Update population of ' + point.name;
 
         // Activate the button
         button.disabled = false;

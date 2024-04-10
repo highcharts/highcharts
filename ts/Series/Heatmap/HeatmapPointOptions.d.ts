@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,6 +14,7 @@
  *
  * */
 
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
@@ -22,10 +23,21 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  *
  * */
 
+export interface HeatmapPointMarkerOptions extends PointMarkerOptions {
+    r?: number;
+}
+
 export interface HeatmapPointOptions extends ScatterPointOptions {
     borderWidth?: number;
+    marker?: HeatmapPointMarkerOptions;
     pointPadding?: number;
     value?: (number|null);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HeatmapPointOptions;

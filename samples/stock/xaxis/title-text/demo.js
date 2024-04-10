@@ -1,23 +1,30 @@
-Highcharts.stockChart('container', {
+(async () => {
 
-    xAxis: {
-        title: {
-            text: 'This is a Date/time axis'
-        }
-    },
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-    yAxis: {
-        title: {
-            text: 'USD to EUR'
-        }
-    },
+    Highcharts.stockChart('container', {
 
-    rangeSelector: {
-        selected: 1
-    },
+        xAxis: {
+            title: {
+                text: 'This is a Date/time axis'
+            }
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
-});
+        yAxis: {
+            title: {
+                text: 'USD to EUR'
+            }
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
+})();

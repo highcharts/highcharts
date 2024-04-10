@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json'
     ).then(response => response.json());
 
-    var data = [{
+    const data = [{
         code: 'DK',
         value: 2
     }, {
@@ -45,12 +45,7 @@
             data: data,
             mapData: topology,
             joinBy: ['iso-a2', 'code'],
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            }
+            name: 'Random data'
         }]
     });
 })();

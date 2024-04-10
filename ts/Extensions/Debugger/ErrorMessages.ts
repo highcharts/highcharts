@@ -14,8 +14,8 @@
 const errorMessages: Record<string, Record<string, string>> = {
     "10": {
         "title": "Can't plot zero or subzero values on a logarithmic axis",
-        "text": "<h1>Can't plot zero or subzero values on a logarithmic axis</h1><p>This error occurs in the following situations: </p><ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithimic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul><p>Note: As of Highcharts 5.0.8 it's possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to true, and add custom conversion functions. <a href=\"https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/yaxis/type-log-negative/\">View live demo</a>. It is also possible to use a similar workaround for colorAxis. <a href=\"https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/coloraxis/logarithmic-with-emulate-negative-values/\">View live demo</a>.</p>",
-        "enduser": "<h1>Can't plot zero or subzero values on a logarithmic axis</h1><p>This error occurs in the following situations:</p><ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithimic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul><p>As of Highcharts 5.0.8 it's possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to <code>true</code> and add custom conversion functions. <a href=\"http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/yaxis/type-log-negative/\">\">View Live Demo</a>. It is also possible to use a similar workaround for colorAxis. <a href=\"https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/coloraxis/logarithmic-with-emulate-negative-values/\">View live demo</a>.</p>"
+        "text": "<h1>Can't plot zero or subzero values on a logarithmic axis</h1><p>This error occurs in the following situations: </p><ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithmic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul><p>Note: As of Highcharts 5.0.8 it's possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to true, and add custom conversion functions. <a href=\"https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/yaxis/type-log-negative/\">View live demo</a>. It is also possible to use a similar workaround for colorAxis. <a href=\"https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/coloraxis/logarithmic-with-emulate-negative-values/\">View live demo</a>.</p>",
+        "enduser": "<h1>Can't plot zero or subzero values on a logarithmic axis</h1><p>This error occurs in the following situations:</p><ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithmic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul><p>As of Highcharts 5.0.8 it's possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to <code>true</code> and add custom conversion functions. <a href=\"http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/yaxis/type-log-negative/\">\">View Live Demo</a>. It is also possible to use a similar workaround for colorAxis. <a href=\"https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/coloraxis/logarithmic-with-emulate-negative-values/\">View live demo</a>.</p>"
     },
     "11": {
         "title": "Can't link axes of different type",
@@ -59,7 +59,7 @@ const errorMessages: Record<string, Record<string, string>> = {
     },
     "21": {
         "title": "Can't find Proj4js library",
-        "text": "<h1>Can't find Proj4js library</h1><p>Using latitude/longitude functionality in Highmaps requires the <a href=\"http://proj4js.org\">Proj4js</a> library to be loaded.</p>"
+        "text": "<h1>Can't find Proj4js library</h1><p>Using latitude/longitude functionality with pre-projected GeoJSON in Highcharts Maps requires the <a href=\"http://proj4js.org\">Proj4js</a> library to be loaded.</p><p>It is recommended to utilize TopoJSON for Highcharts v10 and above, as built-in projection support is included and no third-party library is required. For more information, see the <a href=\"https://www.highcharts.com/blog/tutorials/highcharts-now-prefers-topojson-maps/\">Highcharts now prefers topojson maps</a>.</p>"
     },
     "22": {
         "title": "Map does not support latitude/longitude",
@@ -80,10 +80,6 @@ const errorMessages: Record<string, Record<string, string>> = {
     "26": {
         "title": "WebGL not supported, and no fallback module included",
         "text": "<h1>WebGL not supported, and no fallback module included</h1><p>This happens when the browser doesn't support WebGL,<b>and</b> the canvas fallback module (<code>boost-canvas.js</code>) hasn't been included OR if the fallback module was included<b>after</b> the boost module.</p><p>If a fallback is required, make sure to include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.</p><p>Please note that the fallback module is not intended as a fully-featured one. Rather, it's a minimal implementation of the WebGL counterpart.</p>"
-    },
-    "27": {
-        "title": "This browser does not support SVG",
-        "text": "<h1>This browser does not support SVG</h1><p>This happens in old IE when the <code>oldie.js</code> module isn't loaded.</p><p>If compatibility with IE versions 6, 7 and 8 is required, add the module after loading <code>highcharts.js</code>. In a website context, it's a good idea to load it in a conditional comment to avoid traffic overhead and dead code in modern browsers: </p><pre>&lt;!--[if lt IE 9]&gt;\n    &lt;script src='https://code.highcharts.com/modules/oldie.js'&gt;&lt;/script&gt;\n&lt;![endif]--&gt;</pre>"
     },
     "28": {
         "title": "Fallback to export server disabled",
@@ -108,6 +104,10 @@ const errorMessages: Record<string, Record<string, string>> = {
     "33": {
         "title": "Invalid attribute or tagName",
         "text": "<h1>Invalid attribute or tagName</h1><p>This error occurs if HTML in the chart configuration contains unknown tag names or attributes. Unknown tag names or attributes are those not present in the _allow lists_.</p><p>To fix the error, consider</p><ul><li>Is your tag name or attribute spelled correctly? For example, <code>lineargradient</code></li></ul><p> would be blocked as it is a misspelling for <code>linearGradient</code>.</p><ul><li>Is it allowed in Highcharts? For example, <code>onclick</code> attributes are blocked as</li></ul><p> they pose a real security threat.</p><p>This error occurs because attributes and tag names are sanitized of potentially harmful content from the chart configuration before being added to the DOM. Consult the <a href=\"https://www.highcharts.com/docs/chart-concepts/security\">security documentation</a> for more information.</p>"
+    },
+    "34": {
+        "title": "Unknown time zone",
+        "text": "<h1>Unknown time zone</h1><p>This error occurs if the browser doesn't recognize the <a href=\"https://api.highcharts.com/highcharts/time.timezone\">timezone</a> option. Possible workarounds are to use a time zone definition that all browsers recognize, or create your own <a href=\"https://api.highcharts.com/highcharts/time.getTimezoneOffset\">getTimezoneOffset</a> callback.</p>"
     }
 };
 

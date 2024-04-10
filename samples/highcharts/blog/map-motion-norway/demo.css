@@ -1,0 +1,48 @@
+#container {
+    height: 400px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+#accidents-number,
+#svv-credits {
+    text-align: center;
+}
+
+#play-controls {
+    text-align: center;
+    width: 100%;
+    padding: 5px 0 1em;
+}
+
+#play-controls * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#play-pause-button {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+}
+
+#play-range {
+    margin: 2.5%;
+    width: 70%;
+}
+
+#play-output,
+#accidents-number,
+#svv-credits {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+}

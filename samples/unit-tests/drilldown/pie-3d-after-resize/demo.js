@@ -1,5 +1,5 @@
 QUnit.test(
-    "#6437 - drilldown after resize din't render points",
+    '#6437 - drilldown after resize din\'t render points',
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {

@@ -1,0 +1,23 @@
+#outer-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+#outer-container .container {
+    box-sizing: border-box;
+    width: calc(50% - 20px);
+    margin: 10px;
+    box-shadow: 1px 2px 5px #888;
+}
+
+@media screen and (max-width: 800px) {
+    #outer-container {
+        flex-direction: column;
+    }
+
+    #outer-container .container {
+        width: auto;
+    }
+}

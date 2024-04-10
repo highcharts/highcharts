@@ -1,0 +1,1 @@
+Test zooming both with mouse wheel and mousepad. In both cases the animation should feel smooth.Verify that the labels do not disconnect from the shapes. In order to test zoomBy click the button and ensure that the animation appears visually appealing and functions as expected.

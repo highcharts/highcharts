@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,8 +23,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
-import DO from '../../Core/DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -69,11 +69,11 @@ class CandlestickSeries extends OHLCSeries {
      *
      * */
 
-    public data: Array<CandlestickPoint> = void 0 as any;
+    public data!: Array<CandlestickPoint>;
 
-    public options: CandlestickSeriesOptions = void 0 as any;
+    public options!: CandlestickSeriesOptions;
 
-    public points: Array<CandlestickPoint> = void 0 as any;
+    public points!: Array<CandlestickPoint>;
 
     /* *
      *
@@ -186,8 +186,8 @@ class CandlestickSeries extends OHLCSeries {
                 bottomBox = Math.round(bottomBox) + crispCorr;
 
                 // Create the path. Due to a bug in Chrome 49, the path is
-                // first instanciated with no values, then the values
-                // pushed. For unknown reasons, instanciating the path array
+                // first instantiated with no values, then the values
+                // pushed. For unknown reasons, instantiating the path array
                 // with all the values would lead to a crash when updating
                 // frequently (#5193).
                 path = [];

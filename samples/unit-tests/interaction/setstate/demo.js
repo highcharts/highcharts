@@ -36,7 +36,8 @@ QUnit.test('stateMarkerGraphic', function (assert) {
     assert.strictEqual(
         series.stateMarkerGraphic.element.getAttribute('fill'),
         'blue',
-        'stateMarkerGraphic should have fill: "blue" when hovering second point.'
+        'stateMarkerGraphic should have fill: "blue" when hovering second ' +
+        'point.'
     );
 });
 
@@ -56,7 +57,7 @@ QUnit.test('Inactive state and legend', function (assert) {
         }),
         series = chart.series,
         legend = chart.legend,
-        legendItemBox = legend.allItems[0].legendItem.getBBox(),
+        legendItemBox = legend.allItems[0].legendItem.label.getBBox(),
         controller = new TestController(chart),
         xPosition =
             legend.group.translateX + legendItemBox.x + legendItemBox.width / 2,
@@ -133,6 +134,7 @@ QUnit.test('Keep state after the redraw call #13719', function (assert) {
     assert.strictEqual(
         series.group.attr('opacity'),
         0.2,
-        'The opacity should be set as default value for the inactive state #13719'
+        'The opacity should be set as default value for the inactive state ' +
+        '#13719'
     );
 });

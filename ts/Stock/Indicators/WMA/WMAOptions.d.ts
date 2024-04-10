@@ -31,7 +31,13 @@ export interface WMAOptions extends SMAOptions {
 }
 
 export interface WMAParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default WMAOptions;

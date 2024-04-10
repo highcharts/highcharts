@@ -6,12 +6,18 @@
  *
  * Exporting module
  *
- * (c) 2010-2021 Torstein Honsi
+ * (c) 2010-2024 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-const G: AnyRecord = Highcharts;
+import DownloadURL from '../../Extensions/DownloadURL.js';
 import ExportData from '../../Extensions/ExportData/ExportData.js';
-ExportData.compose(G.Chart);
+const G: AnyRecord = Highcharts;
+// Compatibility
+G.dataURLtoBlob = G.dataURLtoBlob || DownloadURL.dataURLtoBlob;
+G.downloadURL = G.downloadURL || DownloadURL.downloadURL;
+// Compose
+ExportData.compose(G.Chart, G.Series);
+export default Highcharts;

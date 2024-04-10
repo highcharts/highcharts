@@ -1,43 +1,43 @@
 // Prepare demo data
 const data = [
     {
-        "hc-key": "au-nt",
+        'hc-key': 'au-nt',
         value: 0
     },
     {
-        "hc-key": "au-wa",
+        'hc-key': 'au-wa',
         value: 1
     },
     {
-        "hc-key": "au-ct",
+        'hc-key': 'au-ct',
         value: 2
     },
     {
-        "hc-key": "au-sa",
+        'hc-key': 'au-sa',
         value: 3
     },
     {
-        "hc-key": "au-ql",
+        'hc-key': 'au-ql',
         value: 4
     },
     {
-        "hc-key": "au-2557",
+        'hc-key': 'au-2557',
         value: 5
     },
     {
-        "hc-key": "au-ts",
+        'hc-key': 'au-ts',
         value: 6
     },
     {
-        "hc-key": "au-jb",
+        'hc-key': 'au-jb',
         value: 7
     },
     {
-        "hc-key": "au-ns",
+        'hc-key': 'au-ns',
         value: 8
     },
     {
-        "hc-key": "au-vi",
+        'hc-key': 'au-vi',
         value: 9
     }
 ];
@@ -64,11 +64,6 @@ Highcharts.mapChart('map-container', {
         mapData: Highcharts.maps['countries/au/au-all'],
         joinBy: 'hc-key',
         name: 'Random data',
-        states: {
-            hover: {
-                color: '#a4edba'
-            }
-        },
         dataLabels: {
             enabled: true,
             format: '{point.name}'
@@ -114,13 +109,17 @@ Highcharts.mapChart('map-container', {
 // Add line chart
 Highcharts.chart('line-container', {
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
     series: [{
         id: 'Series1',
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-            135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        data: [
+            29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+            135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+        ],
         marker: {
             enabled: false
         }

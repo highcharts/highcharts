@@ -1,6 +1,6 @@
 /* *
  *
- *   (c) 2010-2021 Highsoft AS
+ *   (c) 2010-2024 Highsoft AS
  *
  *  Author: Nancy Dillon
  *
@@ -20,11 +20,11 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import D from '../../Core/DefaultOptions.js';
+
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { createElement } = U;
 
@@ -42,9 +42,11 @@ namespace BrandDarkTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
-        colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    export const options: DeepPartial<DefaultOptions> = {
+        colors: [
+            '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+        ],
 
         chart: {
             backgroundColor: {
@@ -97,11 +99,6 @@ namespace BrandDarkTheme {
             itemHoverStyle: {
                 fontWeight: '700',
                 color: '#fff'
-            }
-        },
-        labels: {
-            style: {
-                color: '#707073'
             }
         },
         plotOptions: {
@@ -215,11 +212,10 @@ namespace BrandDarkTheme {
                             }
                         }
                     }
-                },
-                verticalAlign: 'bottom'
+                }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#46465C',
@@ -295,7 +291,7 @@ namespace BrandDarkTheme {
     export function apply(): void {
         // Load the fonts
         createElement('link', {
-            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:200,300,400,600,700',
+            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;600;700',
             rel: 'stylesheet',
             type: 'text/css'
         }, null as any, document.getElementsByTagName('head')[0]);

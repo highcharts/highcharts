@@ -1,0 +1,14 @@
+---
+name: Donut chart race
+authors:
+  - author:Mustapha Mekhatria, Torstein Hønsi
+js_wrap: b
+alt_text: >-
+  Highcharts donut chart with race functionality showing changes in a data set
+  over time.
+tags:
+  - Highcharts demo
+categories:
+  - Pie charts:
+      priority: 3
+...

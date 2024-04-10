@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Kacper Madej
+ *  (c) 2010-2024 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -42,6 +42,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function populateAverage(
     xVal: Array<number>,
     yVal: (Array<number>|Array<Array<number>>),
@@ -59,13 +62,13 @@ function populateAverage(
         rocY: (number|null);
 
     if (index < 0) {
-        // y data given as an array of values
+        // Y data given as an array of values
         nDaysAgoY = (yVal[i - period] as any);
         rocY = nDaysAgoY ?
             ((yVal as any)[i] - nDaysAgoY) / nDaysAgoY * 100 :
             null;
     } else {
-        // y data given as an array of arrays and the index should be used
+        // Y data given as an array of arrays and the index should be used
         nDaysAgoY = (yVal as any)[i - period][index];
         rocY = nDaysAgoY ?
             ((yVal as any)[i][index] - nDaysAgoY) / nDaysAgoY * 100 :
@@ -133,11 +136,11 @@ class ROCIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ROCPoint> = void 0 as any;
+    public data!: Array<ROCPoint>;
 
-    public options: ROCOptions = void 0 as any;
+    public options!: ROCOptions;
 
-    public points: Array<ROCPoint> = void 0 as any;
+    public points!: Array<ROCPoint>;
 
     /* *
      *
@@ -149,14 +152,14 @@ class ROCIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             ROC: Array<Array<(number|null)>> = [],
             xData: Array<number> = [],
-            yData: Array<(number|null)> = [],
-            i: number,
+            yData: Array<(number|null)> = [];
+        let i: number,
             index = -1,
             ROCPoint: [number, (number|null)];
 
@@ -171,7 +174,7 @@ class ROCIndicator extends SMAIndicator {
             index = (params.index as any);
         }
 
-        // i = period <-- skip first N-points
+        // I = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
             ROCPoint = populateAverage(xVal, yVal, i, period, index);
@@ -255,4 +258,4 @@ export default ROCIndicator;
  * @apioption series.roc
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

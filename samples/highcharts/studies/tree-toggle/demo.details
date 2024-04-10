@@ -1,0 +1,7 @@
+---
+name: Tree type toggle
+authors:
+  - Jon Arild Nygård, Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+...

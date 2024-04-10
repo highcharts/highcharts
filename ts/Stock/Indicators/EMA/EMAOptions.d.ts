@@ -28,7 +28,13 @@ export interface EMAOptions extends SMAOptions {
 }
 
 export interface EMAParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default EMAOptions;

@@ -45,9 +45,7 @@ Highcharts.chart('container', {
             text: 'Frequency (%)'
         },
         labels: {
-            formatter: function () {
-                return this.value + '%';
-            }
+            format: '{value}%'
         },
         reversedStacks: false
     },

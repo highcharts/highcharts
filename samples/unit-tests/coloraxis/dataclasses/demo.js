@@ -112,7 +112,7 @@ QUnit.test('Data classes - interactions', function (assert) {
             y: chart.plotTop + point.plotY
         },
         legend = chart.legend,
-        legendItemBBox = legend.allItems[0].legendGroup.getBBox(true),
+        legendItemBBox = legend.allItems[0].legendItem.group.getBBox(true),
         legendItemX =
             legend.group.translateX +
             legendItemBBox.x +

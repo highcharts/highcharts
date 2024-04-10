@@ -1,5 +1,5 @@
 QUnit.test('addOverlapToRelations', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         addOverlapToSets = vennPrototype.utils.addOverlapToSets,
         data,
         set;
@@ -33,7 +33,8 @@ QUnit.test('addOverlapToRelations', function (assert) {
             B: 1,
             C: 2
         },
-        'should set the property overlapping on set A to include a map from id of overlapping set to the amount of overlap.'
+        'should set the property overlapping on set A to include a map from ' +
+        'id of overlapping set to the amount of overlap.'
     );
 
     set = Highcharts.find(data, isSetWithId('B'));
@@ -48,7 +49,8 @@ QUnit.test('addOverlapToRelations', function (assert) {
             A: 1,
             C: 3
         },
-        'should set the property overlapping on set B to include a map from id of overlapping set to the amount of overlap.'
+        'should set the property overlapping on set B to include a map from ' +
+        'id of overlapping set to the amount of overlap.'
     );
 
     set = Highcharts.find(data, isSetWithId('C'));
@@ -63,7 +65,8 @@ QUnit.test('addOverlapToRelations', function (assert) {
             A: 2,
             B: 3
         },
-        'should set the property overlapping on set C to include a map from id of overlapping set to the amount of overlap.'
+        'should set the property overlapping on set C to include a map from ' +
+        'id of overlapping set to the amount of overlap.'
     );
 
     assert.strictEqual(
@@ -75,12 +78,13 @@ QUnit.test('addOverlapToRelations', function (assert) {
             );
         }),
         false,
-        'should not set the properties totalOverlap or overlapping on a relation that is not a set.'
+        'should not set the properties totalOverlap or overlapping on a ' +
+        'relation that is not a set.'
     );
 });
 
 QUnit.test('getLabelWidth', assert => {
-    const { getLabelWidth } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { getLabelWidth } = Highcharts.Series.types.venn.prototype.utils;
 
     // Start with an internal circle, and no external circles.
     const internal = [{ x: 0, y: 0, r: 100 }];
@@ -89,7 +93,8 @@ QUnit.test('getLabelWidth', assert => {
     assert.strictEqual(
         Math.round(getLabelWidth({ x: 0, y: 0 }, internal, external)),
         200,
-        'Should return width of approximately 200 when distance to closest internal circle border is 100.'
+        'Should return width of approximately 200 when distance to closest ' +
+        'internal circle border is 100.'
     );
 
     // Add another internal circle that is completely overlapped by the other
@@ -99,7 +104,8 @@ QUnit.test('getLabelWidth', assert => {
     assert.strictEqual(
         Math.round(getLabelWidth({ x: 0, y: 0 }, internal, external)),
         100,
-        'Should return width of approximately 100 when distance to closest internal circle border is 50.'
+        'Should return width of approximately 100 when distance to closest ' +
+        'internal circle border is 50.'
     );
 
     // Add an external circle that overlaps on the right side of the smallest
@@ -109,24 +115,27 @@ QUnit.test('getLabelWidth', assert => {
     assert.strictEqual(
         Math.round(getLabelWidth({ x: -10, y: 0 }, internal, external)),
         80,
-        'Should return width of approximately 80 when distance to closest internal circle border is 40.'
+        'Should return width of approximately 80 when distance to closest ' +
+        'internal circle border is 40.'
     );
 
     assert.strictEqual(
         Math.round(getLabelWidth({ x: 10, y: 0 }, internal, external)),
         60,
-        'Should return width of approximately 60 when distance to closest external circle border is 30.'
+        'Should return width of approximately 60 when distance to closest ' +
+        'external circle border is 30.'
     );
 });
 
 QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
-    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+    var { prototype: vennPrototype } = Highcharts.Series.types.venn,
         { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
 
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(3, 4, 6.64),
         5.0003489085283945,
-        'should return a distance of 5.0003489085283945 when r1=3, r2=4 and overlap=6.64.'
+        'should return a distance of 5.0003489085283945 when r1=3, r2=4 and ' +
+        'overlap=6.64.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(
@@ -135,7 +144,8 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
             1
         ),
         0,
-        'should return a distance of 0 when r1=1.1283791670955126, r2=0.5641895835477563 and overlap=1. The circles completely overlap.'
+        'should return a distance of 0 when r1=1.1283791670955126, ' +
+        'r2=0.5641895835477563 and overlap=1. The circles completely overlap.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(
@@ -144,18 +154,21 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
             1000
         ),
         20.385535837223518,
-        'should return a distance of 20.385535837223518 when r1=r2=25.2313252202016 and overlap=1000.'
+        'should return a distance of 20.385535837223518 when ' +
+        'r1=r2=25.2313252202016 and overlap=1000.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(600, 300, 250000),
         387.2988213671704,
-        'should return a distance of 387.2988213671704 when r1=600, r2=300 and overlap=250000.'
+        'should return a distance of 387.2988213671704 when r1=600, r2=300 ' +
+        'and overlap=250000.'
     );
 
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(3, 4, 30),
         0,
-        'should return a distance of 0 when r1=3, r2=4, and overlap=30. Complete overlap.'
+        'should return a distance of 0 when r1=3, r2=4, and overlap=30. ' +
+        'Complete overlap.'
     );
 });
 
@@ -165,7 +178,7 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
  * of any unexpected changes.
  */
 QUnit.test('layoutGreedyVenn', assert => {
-    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
+    const { prototype: vennPrototype } = Highcharts.Series.types.venn;
     const { layoutGreedyVenn } = vennPrototype.utils;
 
     // Data from #9844
@@ -263,7 +276,7 @@ QUnit.test('layoutGreedyVenn', assert => {
 });
 
 QUnit.test('loss', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         loss = vennPrototype.utils.loss,
         map = {
             A: { x: 0, y: 0, r: 3 },
@@ -301,7 +314,8 @@ QUnit.test('loss', function (assert) {
             }
         ]),
         1.58641695078,
-        'should return a loss of 1.5876, since overlap between B and C equals 22.74.'
+        'should return a loss of 1.5876, since overlap between B and C ' +
+        'equals 22.74.'
     );
 
     assert.strictEqual(
@@ -325,13 +339,15 @@ QUnit.test('loss', function (assert) {
 });
 
 QUnit.test('processVennData', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennSeries = Highcharts.Series.types.venn,
+        vennPrototype = vennSeries.prototype,
         processVennData = vennPrototype.utils.processVennData,
+        defaultSplitter = vennSeries.splitter,
         data;
 
     // data is undefined.
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should return empty array when data is not an array.'
     );
@@ -339,7 +355,7 @@ QUnit.test('processVennData', function (assert) {
     // values in data should be objects.
     data = [2];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should ignore values in data that are not of type object.'
     );
@@ -360,7 +376,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['C'],
@@ -386,7 +402,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['B'],
@@ -417,10 +433,14 @@ QUnit.test('processVennData', function (assert) {
         {
             sets: ['B', 'A'],
             value: 2
+        },
+        {
+            sets: ['D,E'],
+            value: 2
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -433,9 +453,22 @@ QUnit.test('processVennData', function (assert) {
             {
                 sets: ['A', 'B'],
                 value: 2
+            },
+            {
+                sets: ['D,E'],
+                value: 2
+            },
+            {
+                sets: ['A', 'D,E'],
+                value: 0
+            },
+            {
+                sets: ['B', 'D,E'],
+                value: 0
             }
         ],
-        'should remove duplicate sets and just update existing values for the set.'
+        `should remove duplicate sets and just update existing values for the 
+        set; everything should work when commas inside strings.`
     );
 
     // add missing relations between sets as value = 0.
@@ -454,7 +487,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -496,7 +529,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -514,14 +547,14 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should remove relations that has invalid values in sets.'
     );
 });
 
 QUnit.test('sortByTotalOverlap', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         sortByTotalOverlap = vennPrototype.utils.sortByTotalOverlap;
 
     assert.deepEqual(
@@ -544,7 +577,7 @@ QUnit.test('sortByTotalOverlap', function (assert) {
 });
 
 QUnit.module('nelder-mead', () => {
-    const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
+    const vennUtils = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getCentroid', assert => {
         const { getCentroid } = vennUtils;
@@ -555,7 +588,8 @@ QUnit.module('nelder-mead', () => {
                 [193.3682232821517, 95]
             ]),
             [184.16021264966827, 97.375],
-            'Should calculate the center point between all the coordinates, except the last'
+            'Should calculate the center point between all the coordinates, ' +
+            'except the last'
         );
     });
 
@@ -574,7 +608,7 @@ QUnit.module('nelder-mead', () => {
 });
 
 QUnit.module('geometry', () => {
-    const { geometry } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { geometry } = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getCenterOfPoints', function (assert) {
         const { getCenterOfPoints } = geometry;
@@ -587,7 +621,8 @@ QUnit.module('geometry', () => {
                 { x: 0, y: 1 }
             ]),
             { x: -1, y: 2 },
-            'should return center (-1, 2) when points are [(-2, 1), (-2, 3), (0, 3), (0, 1).'
+            'should return center (-1, 2) when points are [(-2, 1), (-2, 3), ' +
+            '(0, 3), (0, 1).'
         );
     });
 
@@ -603,13 +638,14 @@ QUnit.module('geometry', () => {
         assert.strictEqual(
             getDistanceBetweenPoints({ x: -1, y: 1 }, { x: 3, y: 4 }),
             5,
-            'should return 2 when points have the coordinates (-1,1) and (3, 4).'
+            'should return 2 when points have the coordinates (-1,1) and (3, ' +
+            '4).'
         );
     });
 });
 
 QUnit.module('geometry-circles', () => {
-    const { geometryCircles } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { geometryCircles } = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getAreaOfCircle', assert => {
         const { getAreaOfCircle } = geometryCircles;
@@ -651,7 +687,8 @@ QUnit.module('geometry-circles', () => {
                 ['A', 3, 3, 0, 0, 1, 2.5, -1.6583123951777],
                 ['A', 3, 3, 0, 0, 1, 2.5, 1.6583123951777]
             ],
-            'should return a path representing the area of overlap between the two circles.'
+            'should return a path representing the area of overlap between ' +
+            'the two circles.'
         );
 
         assert.deepEqual(
@@ -682,7 +719,8 @@ QUnit.module('geometry-circles', () => {
                     1.89092145501881
                 ]
             ],
-            'should return a path representing the area of overlap between the two circles.'
+            'should return a path representing the area of overlap between ' +
+            'the two circles.'
         );
     });
 
@@ -710,7 +748,8 @@ QUnit.module('geometry-circles', () => {
                 { x: 2.5, y: 1.6583123951777 },
                 { x: 2.5, y: -1.6583123951777 }
             ],
-            'should return (2.5, 1.6583123951777) and (2.5, -1.6583123951777) when c1(0, 0, 3) and c2(5, 0, 3).'
+            'should return (2.5, 1.6583123951777) and (2.5, ' +
+            '-1.6583123951777) when c1(0, 0, 3) and c2(5, 0, 3).'
         );
     });
 
@@ -730,7 +769,8 @@ QUnit.module('geometry-circles', () => {
                 { x: -3, y: 0, indexes: [0, 2] },
                 { x: 0, y: 3, indexes: [0, 2] }
             ],
-            'should return a list of all the intersection points between the circles.'
+            'should return a list of all the intersection points between the ' +
+            'circles.'
         );
     });
 
@@ -759,7 +799,8 @@ QUnit.module('geometry-circles', () => {
                 { indexes: [0, 2], x: -1.64575131106459, y: -1.64575131106459 },
                 { indexes: [1, 2], x: 1.64575131106459, y: -1.64575131106459 }
             ],
-            'Should have an intersection polygon consisting of 3 points when 3 circles are overlapping'
+            'Should have an intersection polygon consisting of 3 points when ' +
+            '3 circles are overlapping'
         );
     });
 
@@ -769,7 +810,8 @@ QUnit.module('geometry-circles', () => {
         assert.strictEqual(
             getCircularSegmentArea(1, 1),
             Math.PI / 2,
-            'should return PI/2 when r=1 and h=1 and circle area is equal to PI.'
+            'should return PI/2 when r=1 and h=1 and circle area is equal to ' +
+            'PI.'
         );
 
         assert.strictEqual(
@@ -791,7 +833,8 @@ QUnit.module('geometry-circles', () => {
         assert.strictEqual(
             getOverlapBetweenCircles(8, 6, 1),
             113.09733552923257,
-            'should return 113.09733552923257 when r1=8, r2=6 and d=1. The circles completely overlaps.'
+            'should return 113.09733552923257 when r1=8, r2=6 and d=1. The ' +
+            'circles completely overlaps.'
         );
 
         assert.strictEqual(
@@ -801,19 +844,22 @@ QUnit.module('geometry-circles', () => {
                 0.7011044346618891
             ),
             19.68884261304518,
-            'should return 19.68884261304518 when r1=2.5231325220201604, r2=3.0901936161855166 and d=0.7011044346618891.'
+            'should return 19.68884261304518 when r1=2.5231325220201604, ' +
+            'r2=3.0901936161855166 and d=0.7011044346618891.'
         );
 
         assert.strictEqual(
             getOverlapBetweenCircles(2, 3, 6),
             0,
-            'should return 0 when r1=2, r2=3 and d=6. The circles does not overlap.'
+            'should return 0 when r1=2, r2=3 and d=6. The circles does not ' +
+            'overlap.'
         );
 
         assert.strictEqual(
             getOverlapBetweenCircles(1.9544100476116797, 1.9544100476116797, 0),
             12,
-            'should return the area of one of the circles when they have equal position and radius.'
+            'should return the area of one of the circles when they have ' +
+            'equal position and radius.'
         );
     });
 

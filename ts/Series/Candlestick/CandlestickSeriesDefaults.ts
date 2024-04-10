@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,11 +18,7 @@
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 
-import DO from '../../Core/DefaultOptions.js';
-const { defaultOptions } = DO;
 import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *
@@ -189,7 +185,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  * @apioption series.candlestick.data
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled
 
 /* *
  *

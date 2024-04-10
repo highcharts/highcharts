@@ -10,7 +10,11 @@
                 borderWidth: 1
             },
 
-            colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
+            colors: [
+                'rgba(19,64,117,0.1)',
+                'rgba(19,64,117,0.5)',
+                'rgba(19,64,117,1)'
+            ],
 
             title: {
                 text: 'Named data classes'
@@ -53,11 +57,6 @@
                 mapData: topology,
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }
@@ -67,10 +66,10 @@
 
 
     // Load the data from a Google Spreadsheet
-    // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA&output=html
+    // https://docs.google.com/spreadsheets/d/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-        googleSpreadsheetKey: '1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA',
+        googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
 
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {

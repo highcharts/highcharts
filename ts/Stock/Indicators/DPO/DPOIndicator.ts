@@ -53,7 +53,8 @@ function accumulatePoints(
     subtract?: boolean
 ): number {
     const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any)
+        (yVal[i] as any)[index], (yVal[i] as any
+    )
     );
 
     if (subtract) {
@@ -123,9 +124,9 @@ class DPOIndicator extends SMAIndicator {
      *
      * */
 
-    public options: DPOOptions = void 0 as any;
-    public data: Array<DPOPoint> = void 0 as any;
-    public points: Array<DPOPoint> = void 0 as any;
+    public options!: DPOOptions;
+    public data!: Array<DPOPoint>;
+    public points!: Array<DPOPoint>;
 
     /* *
      *
@@ -137,7 +138,7 @@ class DPOIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: DPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             index: number = (params.index as any),
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,
@@ -148,14 +149,14 @@ class DPOIndicator extends SMAIndicator {
             // 0- date, 1- Detrended Price Oscillator
             DPO: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            sum = 0,
-            oscillator: number,
+            yData: Array<number> = [];
+        let oscillator: number,
             periodIndex: number,
             rangeIndex: number,
             price: number,
             i: number,
-            j: number;
+            j: number,
+            sum = 0;
 
         if (xVal.length <= range) {
             return;
@@ -173,15 +174,16 @@ class DPOIndicator extends SMAIndicator {
             periodIndex = j + period - 1;
             rangeIndex = j + range - 1;
 
-            // adding the last period point
+            // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
             price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
+                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
+            )
             );
 
             oscillator = price - sum / period;
 
-            // substracting the first period point
+            // Subtracting the first period point
             sum = accumulatePoints(sum, yVal, j, index, true);
 
             DPO.push([xVal[rangeIndex], oscillator]);
@@ -254,4 +256,4 @@ export default DPOIndicator;
  * @apioption series.dpo
  */
 
-''; // to include the above in the js output'
+''; // To include the above in the js output'

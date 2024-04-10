@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 #container {
     min-width: 300px;
@@ -7,24 +7,12 @@
     margin: 1em auto;
 }
 
-.highcharts-color-0 {
-    fill: #666;
-}
-
-.highcharts-color-1 {
-    fill: #7cb5ec;
-}
-
-.highcharts-color-2 {
-    fill: #000;
-}
-
-.highcharts-color-3 {
-    fill: #90ed7d;
-}
-
-.highcharts-color-4 {
-    fill: #f7a35c;
+:root {
+    --highcharts-color-0: #666;
+    --highcharts-color-1: #7cb5ec;
+    --highcharts-color-2: #000;
+    --highcharts-color-3: #90ed7d;
+    --highcharts-color-4: #f7a35c;
 }
 
 .highcharts-sankey-series .highcharts-data-label text {

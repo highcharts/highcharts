@@ -1,17 +1,19 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "streamgraph",
+        type: 'streamgraph',
         marginBottom: 30,
-        zoomType: "x"
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         floating: true,
-        align: "left",
-        text: "JS Frameworks Trends"
+        align: 'left',
+        text: 'JS Frameworks Trends'
     },
     subtitle: {
         floating: true,
-        align: "left",
+        align: 'left',
         y: 30,
         text:
         'Source: <a href="https://trends.google.com/trends/" target="_blank">Google trends</a>'
@@ -21,7 +23,7 @@ Highcharts.chart("container", {
         maxPadding: 0,
         crosshair: true,
         labels: {
-            align: "left",
+            align: 'left',
             reserveSpace: false,
             rotation: 270
         },
@@ -46,7 +48,7 @@ Highcharts.chart("container", {
                 minFontSize: 5,
                 maxFontSize: 15,
                 style: {
-                    color: "rgba(255,255,255,0.75)"
+                    color: 'rgba(255,255,255,0.75)'
                 }
             }
         }
@@ -57,14 +59,14 @@ Highcharts.chart("container", {
     },
 
     data: {
-        csvURL:
-        "https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/js-frameworks-trends.csv"
+        csvURL: 'https://www.highcharts.com/samples/data/js-frameworks-trends.csv',
+        endColumn: 4
     },
 
     series: [
-        { color: "#4284F3" },
-        { color: "#33A852" },
-        { color: "#FABD03" },
-        { color: "#EA4435" }
+        { color: '#4284F3' },
+        { color: '#33A852' },
+        { color: '#FABD03' },
+        { color: '#EA4435' }
     ]
 });

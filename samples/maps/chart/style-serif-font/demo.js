@@ -45,12 +45,8 @@
                 dataLabels: {
                     enabled: true,
                     formatter: function () {
-                        return this.point.properties && this.point.properties['hc-a2'];
-                    }
-                },
-                states: {
-                    hover: {
-                        color: '#a4edba'
+                        return this.point.properties && this.point.properties[
+                            'hc-a2'];
                     }
                 },
                 tooltip: {

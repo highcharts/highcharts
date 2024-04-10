@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
 export interface DotPlotSeriesOptions extends ColumnSeriesOptions {
     itemPadding?: number;
     states?: SeriesStatesOptions<DotPlotSeries>;
@@ -30,7 +31,7 @@ export interface DotPlotSeriesOptions extends ColumnSeriesOptions {
 
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
 

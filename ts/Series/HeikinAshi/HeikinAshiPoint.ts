@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,12 @@ const {
         prototype: {
             pointClass: CandlestickPoint
         }
+    },
+    hlc: {
+        prototype: {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            pointClass: HLCPoint
+        }
     }
 } = SeriesRegistry.seriesTypes;
 
@@ -34,7 +40,6 @@ const {
  * */
 
 class HeikinAshiPoint extends CandlestickPoint {
-    // clone inheritence
 }
 
 /* *

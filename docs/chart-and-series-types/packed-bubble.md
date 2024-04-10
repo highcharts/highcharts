@@ -10,8 +10,7 @@ Packed Bubble chart are part of the [highcharts-more](https://code.highcharts.co
 
 The configuration of `packedbubble` differs little from other series types like scatter and bubble charts, and many other settings have defaults for responsiveness, tooltip, colors, legends, etc. A few lines of code are needed to get started with Packed Bubble.
 
-Here is an [example](https://jsfiddle.net/gvaartjes/0yrdsv2a/) of a packed bubble chart in its simplest form:
-
+Here is an [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/packed-bubble-basic) of a packed bubble chart in its simplest form:
 
     Highcharts.chart('container', {
         chart: {
@@ -69,9 +68,7 @@ Here is an example of how to set the data for a packed bubble with 3 series and 
 
 Notice in the code above, that the Tea data series is set with one dimensional array, except for the last point, which is set with values for volume, name and a color.
 
-<iframe width="100%" height="710" style="null" src=https://jsfiddle.net/gvaartjes/5rz3vcm7/embedded/result allow="fullscreen"></iframe>
-
-Here is an demo for a packed bubble chart with a more complex setup and larger dataset:
+<iframe width="100%" height="710" style="null" src=https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-simple-demo allow="fullscreen"></iframe>
 
 <iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble allow="fullscreen"></iframe>
 
@@ -98,7 +95,7 @@ Here is an example of setting min and max size for bubbles:
         }]
     });
 
-<iframe width="100%" height="500" style="null" src=https://jsfiddle.net/gvaartjes/vrzfwcdk/embedded/result allow="fullscreen"></iframe>
+<iframe width="100%" height="500" style="null" src=https://www.highcharts.com/samples/embed/highcharts/blog/packed-bubble-basic allow="fullscreen"></iframe>
 
 ----------------------------------------------
 

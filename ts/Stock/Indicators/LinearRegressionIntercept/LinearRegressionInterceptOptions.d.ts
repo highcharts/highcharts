@@ -12,7 +12,8 @@
  *
  * */
 
-import type LinearRegressionOptions from '../LinearRegression/LinearRegressionOptions';
+import type LinearRegressionOptions from
+    '../LinearRegression/LinearRegressionOptions';
 
 /* *
  *
@@ -20,8 +21,15 @@ import type LinearRegressionOptions from '../LinearRegression/LinearRegressionOp
  *
  * */
 
-export interface LinearRegressionInterceptOptions extends LinearRegressionOptions {
-    // for inheritance
+export interface LinearRegressionInterceptOptions
+    extends LinearRegressionOptions {
+    // For inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default LinearRegressionInterceptOptions;

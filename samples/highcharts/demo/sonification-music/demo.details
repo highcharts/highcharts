@@ -1,0 +1,12 @@
+---
+name: Musical chart
+authors:
+  - Øystein Moseng
+js_wrap: b
+requiresManualTesting: true
+use_png_thumbnail: true
+tags:
+  - Highcharts demo
+categories:
+  - Audio charts
+...

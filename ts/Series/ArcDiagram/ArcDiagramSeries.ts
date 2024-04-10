@@ -73,10 +73,11 @@ class ArcDiagramSeries extends SankeySeries {
      * @product      highcharts
      * @requires     modules/arc-diagram
      * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
-     *               dataSorting, dragDrop, getExtremesFromAll, nodePadding,
-     *               centerInCategory, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointStart, relativeXValue, softThreshold,
-     *               stack, stacking, step, xAxis, yAxis
+     *               dataSorting, dragDrop, getExtremesFromAll, nodeAlignment,
+     *               nodePadding, centerInCategory, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointStart,
+     *               relativeXValue, softThreshold, stack, stacking, step,
+     *               xAxis, yAxis
      * @optionparent plotOptions.arcdiagram
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
@@ -120,8 +121,11 @@ class ArcDiagramSeries extends SankeySeries {
         offset: '100%',
 
         /**
-         * The global link weight. If not set, width is calculated per link,
-         * depending on the weight value.
+         * The global link weight, in pixels. If not set, width is calculated
+         * per link, depending on the weight value.
+         *
+         * @sample highcharts/series-arcdiagram/link-weight
+         *         Link weight
          *
          * @type    {number}
          * @since 10.0.0
@@ -195,6 +199,7 @@ class ArcDiagramSeries extends SankeySeries {
         marker: {
             symbol: 'circle',
             fillOpacity: 1,
+            lineWidth: 0,
             states: {}
         }
     } as ArcDiagramSeriesOptions);
@@ -205,15 +210,15 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<ArcDiagramPoint> = void 0 as any;
+    public data!: Array<ArcDiagramPoint>;
 
-    public options: ArcDiagramSeriesOptions = void 0 as any;
+    public options!: ArcDiagramSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
-    public nodes: Array<ArcDiagramPoint> = void 0 as any;
+    public nodes!: Array<ArcDiagramPoint>;
 
-    public points: Array<ArcDiagramPoint> = void 0 as any;
+    public points!: Array<ArcDiagramPoint>;
 
     /* *
      *
@@ -229,7 +234,7 @@ class ArcDiagramSeries extends SankeySeries {
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
             chart = series.chart,
-            // column needs casting, to much methods required at the same time
+            // Column needs casting, to much methods required at the same time
             column = SankeyColumnComposition.compose([] as Array<ArcDiagramPoint>, series);
 
         column.sankeyColumn.maxLength = chart.inverted ?
@@ -270,7 +275,10 @@ class ArcDiagramSeries extends SankeySeries {
                 while (i--) {
                     radius = (column[i].getSum()) * factor * scale;
 
-                    let plotArea = Math.min(chart.plotHeight, chart.plotWidth);
+                    const plotArea = Math.min(
+                        chart.plotHeight,
+                        chart.plotWidth
+                    );
 
                     if (radius > plotArea) {
                         scale = Math.min(plotArea / radius, scale);
@@ -304,9 +312,7 @@ class ArcDiagramSeries extends SankeySeries {
             node: ArcDiagramPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const equalNodes = node.series.options.equalNodes;
-            let offset = column.sankeyColumn.additionalSpace || 0,
-                totalNodeOffset,
+            const equalNodes = node.series.options.equalNodes,
                 nodePadding = series.nodePadding,
                 maxRadius = Math.min(
                     chart.plotWidth,
@@ -314,6 +320,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (column.sankeyColumn.maxLength || 0) /
                         series.nodes.length - nodePadding
                 );
+            let offset = column.sankeyColumn.additionalSpace || 0,
+                totalNodeOffset;
 
             for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum() *
@@ -372,7 +380,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (point.weight || 0) *
                     translationFactor *
                     fromNode.scale,
-                    (series.options.minLinkWidth || 0)
+                    (series.options.minLinkWidth || 0
+                    )
                 )),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
@@ -402,8 +411,7 @@ class ArcDiagramSeries extends SankeySeries {
             toX = centeredLinks ? toNode.nodeX +
                 ((toNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(toNode, 'linksTo'),
-            bottom = nodeTop,
-            linkWidth = linkWeight;
+            bottom = nodeTop;
 
         if (fromX > toX) {
             [fromX, toX] = [toX, fromX];
@@ -412,7 +420,6 @@ class ArcDiagramSeries extends SankeySeries {
         if (seriesOptions.reversed) {
             [fromX, toX] = [toX, fromX];
             bottom = (chart.plotSizeY || 0) - bottom;
-            linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
@@ -631,13 +638,12 @@ class ArcDiagramSeries extends SankeySeries {
 
     public pointAttribs(
         point?: ArcDiagramPoint,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
-                this,
-                arguments
-            );
+            const { ...attrs } = Series.prototype.pointAttribs
+                .apply(this, arguments);
             return attrs;
         }
         return super.pointAttribs.apply(this, arguments);
@@ -783,4 +789,4 @@ export default ArcDiagramSeries;
  * @apioption series.arcdiagram.data
  */
 
-''; // adds doclets above to the transpiled file
+''; // Adds doclets above to the transpiled file

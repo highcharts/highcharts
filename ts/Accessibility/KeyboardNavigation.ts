@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Main keyboard navigation handling.
  *
@@ -35,12 +35,13 @@ import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     fireEvent
 } = U;
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-const { getElement } = HTMLUtilities;
+const { getElement, simulatedEventTarget } = HTMLUtilities;
 
 /* *
  *
@@ -83,17 +84,16 @@ class KeyboardNavigation {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public components: Accessibility.ComponentsObject = void 0 as any;
+    public chart!: Chart;
+    public components!: Accessibility.ComponentsObject;
     public currentModuleIx: number = NaN;
-    public eventProvider: EventProvider = void 0 as any;
-    public exitAnchor?: DOMElementType = void 0 as any;
+    public eventProvider!: EventProvider;
+    public exitAnchor?: DOMElementType;
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
     public modules: Array<KeyboardNavigationHandler> = [];
-    public pointerIsOverChart?: boolean;
-    public tabindexContainer: HTMLDOMElement = void 0 as any;
+    public tabindexContainer!: HTMLDOMElement;
     public tabbingInBackwards?: boolean;
 
     /* *
@@ -101,8 +101,6 @@ class KeyboardNavigation {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -126,14 +124,21 @@ class KeyboardNavigation {
 
         this.update();
 
-        ep.addEvent(this.tabindexContainer, 'keydown',
-            (e: KeyboardEvent): void => this.onKeydown(e));
+        ep.addEvent(
+            this.tabindexContainer, 'keydown',
+            (e: KeyboardEvent): void => this.onKeydown(e)
+        );
 
-        ep.addEvent(this.tabindexContainer, 'focus',
-            (e: FocusEvent): void => this.onFocus(e));
+        ep.addEvent(
+            this.tabindexContainer, 'focus',
+            (e: FocusEvent): void => this.onFocus(e)
+        );
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+            ep.addEvent(
+                doc, eventName,
+                (e): void => this.onMouseUp(e as MouseEvent)
+            )
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
@@ -141,14 +146,6 @@ class KeyboardNavigation {
                 this.isClickingChart = true;
             })
         );
-
-        ep.addEvent(chart.renderTo, 'mouseover', (): void => {
-            this.pointerIsOverChart = true;
-        });
-
-        ep.addEvent(chart.renderTo, 'mouseout', (): void => {
-            this.pointerIsOverChart = false;
-        });
     }
 
 
@@ -268,14 +265,18 @@ class KeyboardNavigation {
      * @param {global.FocusEvent} e Browser focus event.
      */
     private onFocus(e: FocusEvent): void {
-        const chart = this.chart;
-        const focusComesFromChart = (
-            e.relatedTarget &&
-            chart.container.contains(e.relatedTarget as any)
-        );
+        const chart = this.chart,
+            focusComesFromChart = (
+                e.relatedTarget &&
+                chart.container.contains(e.relatedTarget as any)
+            ),
+            a11yOptions = chart.options.accessibility,
+            keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
+            enabled = keyboardOptions && keyboardOptions.enabled;
 
         // Init keyboard nav if tabbing into chart
         if (
+            enabled &&
             !this.exiting &&
             !this.tabbingInBackwards &&
             !this.isClickingChart &&
@@ -288,6 +289,7 @@ class KeyboardNavigation {
             }
         }
 
+        this.keyboardReset = false;
         this.exiting = false;
     }
 
@@ -298,13 +300,19 @@ class KeyboardNavigation {
      * indicator.
      * @private
      */
-    private onMouseUp(): void {
+    private onMouseUp(e: MouseEvent): void {
         delete this.isClickingChart;
 
-        if (!this.keyboardReset) {
+        if (
+            !this.keyboardReset &&
+            e.relatedTarget !== simulatedEventTarget
+        ) {
             const chart = this.chart;
 
-            if (!this.pointerIsOverChart) {
+            if (
+                !e.target ||
+                !chart.container.contains(e.target as HTMLElement)
+            ) {
                 const curMod = this.modules &&
                         this.modules[this.currentModuleIx || 0];
                 if (curMod && curMod.terminate) {
@@ -339,6 +347,14 @@ class KeyboardNavigation {
             );
 
         let preventDefault;
+        const target = (e.target as HTMLElement|undefined);
+        if (
+            target &&
+            target.nodeName === 'INPUT' &&
+            !target.classList.contains('highcharts-a11y-proxy-element')
+        ) {
+            return;
+        }
 
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;
@@ -435,8 +451,20 @@ class KeyboardNavigation {
      * @private
      */
     private removeExitAnchor(): void {
-        if (this.exitAnchor && this.exitAnchor.parentNode) {
-            this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+        // Remove event from element and from eventRemovers array to prevent
+        // memory leak (#20329).
+        if (this.exitAnchor) {
+            const el = this.eventProvider.eventRemovers.find((el): boolean =>
+                el.element === this.exitAnchor
+            );
+            if (el && defined(el.remover)) {
+                this.eventProvider.removeEvent(el.remover);
+            }
+
+            if (this.exitAnchor.parentNode) {
+                this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+            }
+
             delete this.exitAnchor;
         }
     }
@@ -493,7 +521,8 @@ class KeyboardNavigation {
                             curModule &&
                             curModule.validate && !curModule.validate()
                         ) {
-                            // Invalid. Try moving backwards to find next valid.
+                            // Invalid.
+                            // Try moving backwards to find next valid.
                             keyboardNavigation.move(-1);
                         } else if (curModule) {
                             // We have a valid module, init it
@@ -558,19 +587,9 @@ namespace KeyboardNavigation {
 
     /* *
      *
-     *  Construction
-     *
-     * */
-
-    const composedItems: Array<(Document|Function)> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Composition function.
@@ -581,16 +600,10 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (composedItems.indexOf(ChartClass) === -1) {
-            composedItems.push(ChartClass);
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.dismissPopupContent) {
             chartProto.dismissPopupContent = chartDismissPopupContent;
-        }
-
-        if (composedItems.indexOf(doc) === -1) {
-            composedItems.push(doc);
 
             addEvent(doc, 'keydown', documentOnKeydown);
         }

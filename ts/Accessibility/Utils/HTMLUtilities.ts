@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -18,7 +18,6 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -31,6 +30,15 @@ const {
 } = H;
 import U from '../../Core/Utilities.js';
 const { css } = U;
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const simulatedEventTarget = win.EventTarget && new win.EventTarget() || 'none';
 
 
 /* *
@@ -188,10 +196,16 @@ function getElement(
 
 
 /**
- * Get a fake mouse event of a given type
+ * Get a fake mouse event of a given type. If relatedTarget is not given,
+ * it will point to simulatedEventTarget, as an indicator that the event
+ * is fake.
  * @private
  */
-function getFakeMouseEvent(type: string, position?: BBoxObject): MouseEvent {
+function getFakeMouseEvent(
+    type: string,
+    position?: { x: number, y: number },
+    relatedTarget?: EventTarget
+): MouseEvent {
     const pos = position || {
         x: 0,
         y: 0
@@ -202,6 +216,9 @@ function getFakeMouseEvent(type: string, position?: BBoxObject): MouseEvent {
             bubbles: true,
             cancelable: true,
             composed: true,
+            button: 0,
+            buttons: 1,
+            relatedTarget: relatedTarget || simulatedEventTarget,
             view: win,
             detail: type === 'click' ? 1 : 0,
             screenX: pos.x,
@@ -231,8 +248,8 @@ function getFakeMouseEvent(type: string, position?: BBoxObject): MouseEvent {
                 false,
                 false,
                 false,
-                0, // button
-                null // related target
+                0, // Button
+                null // Related target
             );
             return evt;
         }
@@ -341,9 +358,14 @@ function reverseChildNodes(node: DOMElementType): void {
  * text contains tags.
  * @private
  */
-function stripHTMLTagsFromString(str: string): string {
-    return typeof str === 'string' ?
-        str.replace(/<\/?[^>]+(>|$)/g, '') : str;
+function stripHTMLTagsFromString(
+    str: string,
+    isForExport: boolean = false
+): string {
+    return (typeof str === 'string') ?
+        (isForExport ?
+            str.replace(/<\/?[^>]+(>|$)/g, '') :
+            str.replace(/<\/?(?!\s)[^>]+(>|$)/g, '')) : str;
 }
 
 
@@ -386,6 +408,7 @@ const HTMLUtilities = {
     removeClass,
     removeElement,
     reverseChildNodes,
+    simulatedEventTarget,
     stripHTMLTagsFromString,
     visuallyHideElement
 };

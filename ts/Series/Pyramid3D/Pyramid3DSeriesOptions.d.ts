@@ -2,7 +2,7 @@
  *
  *  Highcharts pyramid3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
@@ -30,5 +30,11 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface Pyramid3DSeriesOptions extends Funnel3DSeriesOptions {
     states?: SeriesStatesOptions<Pyramid3DSeries>;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Pyramid3DSeriesOptions;

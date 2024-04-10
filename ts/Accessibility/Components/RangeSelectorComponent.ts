@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for the range selector.
  *
@@ -24,16 +24,16 @@ import type Accessibility from '../Accessibility';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../Utils/Announcer.js';
+import Chart from '../../Core/Chart/Chart.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT,
     getAxisRangeDescription
 } = ChartUtilities;
-import Announcer from '../Utils/Announcer.js';
-import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -47,10 +47,9 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
 
 /**
+ * Do we want date input navigation
  * @private
  */
 function shouldRunInputNavigation(
@@ -91,7 +90,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
      * */
 
 
-    public announcer: Announcer = void 0 as any;
+    public announcer!: Announcer;
 
     public removeDropdownKeydownHandler?: Function;
 
@@ -223,8 +222,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Set attrs for a range button
      * @private
-     * @param {Highcharts.SVGElement} button
      */
     public setRangeButtonAttrs(
         button: SVGElement
@@ -237,6 +236,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Set attrs for a date input
      * @private
      */
     public setRangeInputAttrs(
@@ -253,10 +253,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Handle arrow key nav
      * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @param {number} keyCode
-     * @return {number} Response code
      */
     public onButtonNavKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -287,6 +285,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Handle keyboard click
      * @private
      */
     public onButtonNavKbdClick(
@@ -328,11 +327,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Handle move between input elements with Tab key
      * @private
      */
     public onInputKbdMove(
         direction: number
-    ): void {
+    ): boolean {
         const chart = this.chart;
         const rangeSel = chart.rangeSelector;
         const newIx = chart.highlightedInputRangeIx = (
@@ -342,9 +342,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
         if (newIxOutOfRange) {
             if (chart.accessibility) {
+                // Ignore focus
+                chart.accessibility.keyboardNavigation.exiting = true;
                 chart.accessibility.keyboardNavigation.tabindexContainer
                     .focus();
-                chart.accessibility.keyboardNavigation.move(direction);
+
+                return chart.accessibility.keyboardNavigation.move(direction);
             }
         } else if (rangeSel) {
             const svgEl = rangeSel[newIx ? 'maxDateBox' : 'minDateBox'];
@@ -353,12 +356,13 @@ class RangeSelectorComponent extends AccessibilityComponent {
                 chart.setFocusToElement(svgEl, inputEl);
             }
         }
+        return true;
     }
 
 
     /**
+     * Init date input navigation
      * @private
-     * @param {number} direction
      */
     public onInputNavInit(
         direction: number
@@ -386,10 +390,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             const keydownHandler = (e: KeyboardEvent): void => {
                 const isTab = (e.which || e.keyCode) === this.keyCodes.tab;
-                if (isTab) {
+                if (
+                    isTab &&
+                    component.onInputKbdMove(e.shiftKey ? -1 : 1)
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
-                    component.onInputKbdMove(e.shiftKey ? -1 : 1);
                 }
             };
             const minRemover = addEvent(minInput, 'keydown', keydownHandler);
@@ -404,6 +410,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Terminate date input nav
      * @private
      */
     public onInputNavTerminate(): void {
@@ -426,6 +433,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Init range selector dropdown nav
      * @private
      */
     public initDropdownNav(): void {
@@ -440,7 +448,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             // Tab-press with dropdown focused does not propagate to chart
             // automatically, so we manually catch and handle it when relevant.
-            this.removeDropdownKeydownHandler = addEvent(dropdown, 'keydown',
+            this.removeDropdownKeydownHandler = addEvent(
+                dropdown, 'keydown',
                 (e: KeyboardEvent): void => {
                     const isTab = (e.which || e.keyCode) === this.keyCodes.tab,
                         a11y = chart.accessibility;
@@ -620,21 +629,9 @@ namespace RangeSelectorComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedClasses: Array<Function> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -686,30 +683,27 @@ namespace RangeSelectorComponent {
 
 
     /**
+     * Build compositions
      * @private
      */
     export function compose(
         ChartClass: typeof Chart,
         RangeSelectorClass: typeof RangeSelector
     ): void {
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.highlightRangeSelectorButton) {
             chartProto.highlightRangeSelectorButton = (
                 chartHighlightRangeSelectorButton
             );
-        }
-        if (composedClasses.indexOf(RangeSelectorClass) === -1) {
-            composedClasses.push(RangeSelectorClass);
 
             addEvent(
-                RangeSelector,
+                RangeSelectorClass,
                 'afterBtnClick',
                 rangeSelectorAfterBtnClick
             );
         }
+
     }
 
 

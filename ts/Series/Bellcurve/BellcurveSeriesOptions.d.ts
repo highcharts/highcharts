@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -30,8 +30,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, DerivedComposition.SeriesOptions {
     baseSeries?: (number|string);
     data?: undefined;
-    intervals?: number;
-    pointsInInterval?: number;
+    intervals: number;
+    pointsInInterval: number;
     states?: SeriesStatesOptions<BellcurveSeries>;
 }
 

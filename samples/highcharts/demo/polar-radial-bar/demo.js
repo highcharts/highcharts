@@ -6,12 +6,14 @@ Highcharts.chart('container', {
         polar: true
     },
     title: {
-        text: 'Winter Olympic medals per existing country (TOP 5)'
+        text: 'Winter Olympic medals per existing country (TOP 5)',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"' +
-            'target="_blank">Wikipedia</a>'
+            'target="_blank">Wikipedia</a>',
+        align: 'left'
     },
     tooltip: {
         outside: true
@@ -34,6 +36,7 @@ Highcharts.chart('container', {
             }
         },
         lineWidth: 0,
+        gridLineWidth: 0,
         categories: [
             'Norway <span class="f16"><span id="flag" class="flag no">' +
             '</span></span>',
@@ -48,22 +51,20 @@ Highcharts.chart('container', {
         ]
     },
     yAxis: {
-        crosshair: {
-            enabled: true,
-            color: '#333'
-        },
         lineWidth: 0,
         tickInterval: 25,
         reversedStacks: false,
         endOnTick: true,
-        showLastLabel: true
+        showLastLabel: true,
+        gridLineWidth: 0
     },
     plotOptions: {
         column: {
             stacking: 'normal',
             borderWidth: 0,
             pointPadding: 0,
-            groupPadding: 0.15
+            groupPadding: 0.15,
+            borderRadius: '50%'
         }
     },
     series: [{

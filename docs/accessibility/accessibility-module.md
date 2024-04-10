@@ -86,7 +86,7 @@ The Accessibility module adds several layers of functionality for making your ch
 - Low vision features
 - Voice input
 - Tactile export
-- Sonification
+- Sonification / Audio charts
 - Cognitive accessibility
 - Internationalization
 

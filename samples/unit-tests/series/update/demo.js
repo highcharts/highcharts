@@ -62,7 +62,7 @@ QUnit.test('Series.update', function (assert) {
 
     // Text content
     assert.strictEqual(
-        chart.series[0].legendItem.element.textContent,
+        chart.series[0].legendItem.label.element.textContent,
         'Series 1',
         'Text content enitial'
     );
@@ -71,7 +71,7 @@ QUnit.test('Series.update', function (assert) {
     });
     chart.name = !chart.name;
     assert.strictEqual(
-        chart.series[0].legendItem.element.textContent,
+        chart.series[0].legendItem.label.element.textContent,
         'First',
         'Text content should change'
     );
@@ -170,14 +170,14 @@ QUnit.test('Series.update', function (assert) {
 
     if (Object.setPrototypeOf) {
         assert.ok(
-            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            chart.series[0] instanceof Highcharts.Series.types.column,
             'The series should be an instance of the ColumnSeries'
         );
     }
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.element.nodeName,
-        'rect',
+        chart.series[0].points[0].graphic.symbolName,
+        'roundedRect',
         'Column point'
     );
 
@@ -193,11 +193,11 @@ QUnit.test('Series.update', function (assert) {
     );
     if (Object.setPrototypeOf) {
         assert.ok(
-            chart.series[0] instanceof Highcharts.seriesTypes.line,
+            chart.series[0] instanceof Highcharts.Series.types.line,
             'The series should be an instance of the LineSeries'
         );
         assert.notOk(
-            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            chart.series[0] instanceof Highcharts.Series.types.column,
             'The series should not be an instance of the ColumnSeries'
         );
     }
@@ -208,12 +208,14 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'spline', 'Spline type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.spline,
+        chart.series[0] instanceof Highcharts.Series.types.spline,
         'The series should be an instance of the SplineSeries'
     );
 
     assert.strictEqual(
-        chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
+        chart.series[0].graph.element.getAttribute(
+            'd'
+        ).indexOf('C') !== -1, // has curved path
         true,
         'Curved path'
     );
@@ -224,7 +226,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'area', 'Area type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.area,
+        chart.series[0] instanceof Highcharts.Series.types.area,
         'The series should be an instance of the AreaSeries'
     );
 
@@ -240,12 +242,14 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'areaspline', 'Areaspline type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.areaspline,
+        chart.series[0] instanceof Highcharts.Series.types.areaspline,
         'The series should be an instance of the AreaSpline'
     );
 
     assert.strictEqual(
-        chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
+        chart.series[0].graph.element.getAttribute(
+            'd'
+        ).indexOf('C') !== -1, // has curved path
         true,
         'Curved path'
     );
@@ -261,7 +265,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'scatter', 'Scatter type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.scatter,
+        chart.series[0] instanceof Highcharts.Series.types.scatter,
         'The series should be an instance of the ScatterSeries'
     );
 
@@ -277,7 +281,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'pie', 'Pie type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.pie,
+        chart.series[0] instanceof Highcharts.Series.types.pie,
         'The series should be an instance of the PieSeries'
     );
 
@@ -294,10 +298,20 @@ QUnit.test('Series.update', function (assert) {
         'Arced path'
     );
     assert.strictEqual(chart.series[0].points[8].sliced, true, 'Sliced slice');
+
+    // Animation #20183
+    chart.series[0].update({
+        animation: true
+    });
+
+    assert.strictEqual(
+        chart.series[0].options.animation, false, 'Series ' +
+        'animation on update should always be false even if set from options'
+    );
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -305,6 +319,13 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
             series: {
                 point: {
                     events: {
+                        click: function () {
+                            this.update({
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            });
+                        },
                         mouseOver: function () {
                             this.update({
                                 dataLabels: {
@@ -350,7 +371,7 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         chart.series[0].points[0].options.dataLabels &&
             chart.series[0].points[0].options.dataLabels.enabled,
         true,
-        'Data labels should be enabled'
+        'Data labels should be enabled.'
     );
 
     chart.series[0].onMouseOut();
@@ -358,7 +379,57 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         chart.series[0].points[0].options.dataLabels &&
             chart.series[0].points[0].options.dataLabels.enabled,
         true,
-        'Data labels should not be enabled'
+        'Data labels should not be enabled.'
+    );
+
+    chart.series[0].update({
+        point: {
+            events: {
+                mouseOver: void 0,
+                mouseOut: void 0
+            }
+        }
+    });
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.notEqual(
+        chart.series[0].points[0].options.dataLabels &&
+            chart.series[0].points[0].options.dataLabels.enabled,
+        true,
+        `Data labels should not be enabled, the function was not fired, because
+        existing events are removed (#20435).`
+    );
+
+    chart.series[0].points[0].firePointEvent('click');
+    assert.strictEqual(
+        chart.series[0].points[0].options.dataLabels &&
+            chart.series[0].points[0].options.dataLabels.enabled,
+        true,
+        `Data labels should be enabled, click callback function should be saved
+        after removing mouseOver and mouseOut events (#20435).`
+    );
+
+    chart.series[0].points[1].update({
+        events: {
+            mouseOver() {
+                this.update({
+                    dataLabels: {
+                        enabled: true
+                    }
+                });
+            }
+        }
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].points[1].options.dataLabels &&
+            chart.series[0].points[1].options.dataLabels.enabled,
+        true,
+        `Data labels should be enabled, the mouse over function should be fired,
+        because event was added directly on point (#20851).`
     );
 });
 
@@ -577,9 +648,7 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
     });
 
     assert.deepEqual(
-        s.points.map(function (p) {
-            return p.x;
-        }),
+        s.points.map(p => p.x),
         [100, 101, 102, 103],
         'Points should start from 100 (#7933)'
     );
@@ -592,7 +661,7 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
     s = chart.series[1];
 
     assert.deepEqual(
-        s.points.map(p => typeof p.legendItem),
+        s.points.map(p => typeof p.legendItem.label),
         ['object', 'object', 'object'],
         'Pie points should show in legend'
     );
@@ -663,7 +732,8 @@ QUnit.test(
 // Highcharts 4.1.10, Issue #4801:
 // setting 'visible' by series.update has no effect
 QUnit.test(
-    'Updating series.visible in series.update() should also update visibility. (#4801)',
+    'Updating series.visible in series.update() should also update ' +
+    'visibility. (#4801)',
     function (assert) {
         var chart = $('#container')
             .highcharts({
@@ -957,7 +1027,8 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].options.lineWidth,
             10,
-            'Series level option survived after plotOptions.series update (#9762)'
+            'Series level option survived after plotOptions.series update ' +
+            '(#9762)'
         );
     }
 );

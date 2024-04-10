@@ -1,0 +1,6 @@
+---
+ name: Wind rose from stacked column
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

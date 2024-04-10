@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     const csv = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-history.csv'
+        'https://www.highcharts.com/samples/data/world-population-history.csv'
     ).then(response => response.text());
 
     // Very simple and case-specific CSV string splitting
@@ -24,7 +24,7 @@
 
     // Parse the CSV into arrays, one array each country
     csvArr.slice(3).forEach(function (line) {
-        var row = CSVtoArray(line),
+        const row = CSVtoArray(line),
             data = row.slice(4);
 
         data.forEach(function (val, i) {
@@ -69,7 +69,8 @@
         }
     }
 
-    // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
+    // Add lower case codes to the data set for inclusion in the
+    // tooltip.pointFormat
     const mapData = Highcharts.geojson(topology);
     mapData.forEach(function (country) {
         country.id = country.properties['hc-key']; // for Chart.get()
@@ -81,7 +82,7 @@
 
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        const points = mapChart.getSelectedPoints();
+        const points = this.series.chart.getSelectedPoints();
         if (points.length) {
             if (points.length === 1) {
                 document.querySelector('#info #flag')
@@ -90,17 +91,19 @@
             } else {
                 document.querySelector('#info #flag')
                     .className = 'flag';
-                document.querySelector('#info h2').innerHTML = 'Comparing countries';
+                document.querySelector(
+                    '#info h2'
+                ).innerHTML = 'Comparing countries';
 
             }
             document.querySelector('#info .subheader')
-                .innerHTML = '<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>';
+                .innerHTML = '<h4>Historical population</h4><small><em>Shift ' +
+                    '+ Click on map to compare countries</em></small>';
 
             if (!countryChart) {
                 countryChart = Highcharts.chart('country-chart', {
                     chart: {
-                        height: 250,
-                        spacingLeft: 0
+                        height: 250
                     },
                     credits: {
                         enabled: false
@@ -163,7 +166,8 @@
     const mapChart = Highcharts.mapChart('container', {
 
         chart: {
-            map: topology
+            map: topology,
+            spacing: 1
         },
 
         title: {
@@ -181,6 +185,22 @@
             }
         },
 
+        mapView: {
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Alaska west
+                    [-164, 54],
+                    // Greenland north
+                    [-35, 84],
+                    // New Zealand east
+                    [179, -38],
+                    // Chile south
+                    [-68, -55]
+                ]
+            }
+        },
+
         colorAxis: {
             type: 'logarithmic',
             endOnTick: false,
@@ -189,7 +209,8 @@
         },
 
         tooltip: {
-            footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
+            footerFormat: '<span style="font-size: 10px">(Click for ' +
+                'details)</span>'
         },
 
         series: [{

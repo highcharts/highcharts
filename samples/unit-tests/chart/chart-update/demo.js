@@ -8,6 +8,12 @@
                 height: 300
             },
 
+            plotOptions: {
+                column: {
+                    cursor: 'default'
+                }
+            },
+
             series: [
                 {
                     data: [1, 3, 2, 4],
@@ -86,7 +92,7 @@
             }
         });
         assert.strictEqual(
-            chart.series[0].legendItem.styles.fill,
+            chart.series[0].legendItem.label.styles.color,
             'gray',
             'Text color is updated'
         );
@@ -148,7 +154,9 @@
             Highcharts.merge(getConfig(), {
                 chart: {
                     style: {
-                        fontFamily: 'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif'
+                        fontFamily:
+                            'ProximaNova, Arial, \'Helvetica Neue\', ' +
+                            'Helvetica, sans-serif'
                     }
                 },
                 title: {
@@ -325,14 +333,22 @@
         chart.update({
             plotOptions: {
                 column: {
+                    cursor: 'pointer',
                     colorByPoint: false
                 }
             }
         });
+
         assert.strictEqual(
             chart.series[0].points[0].graphic.attr('fill'),
             chart.series[0].points[1].graphic.attr('fill'),
             'Color by point was reset'
+        );
+
+        assert.strictEqual(
+            chart.series[1].group.element.style.cursor,
+            'pointer',
+            'Update should set correct cursor type for Column Series #17878'
         );
     });
 
@@ -419,7 +435,8 @@
             assert.strictEqual(
                 JSON.stringify(options, null, '  '),
                 cfg,
-                constructor + ': #15445: Options should not be mutated after chart creation'
+                constructor + ': #15445: Options should not be mutated after ' +
+                    'chart creation'
             );
 
             chart.update(options);
@@ -427,7 +444,8 @@
             assert.strictEqual(
                 JSON.stringify(options, null, '  '),
                 cfg,
-                constructor + ': Options should not be mutated after chart.update'
+                constructor + ': Options should not be mutated after ' +
+                    'chart.update'
             );
 
             chart.update({
@@ -439,7 +457,8 @@
             assert.strictEqual(
                 JSON.stringify(options, null, '  '),
                 cfg,
-                constructor + ': #14305: Options should not be mutated after actually changing something with chart.update'
+                constructor + ': #14305: Options should not be mutated after ' +
+                    'actually changing something with chart.update'
             );
         });
     });

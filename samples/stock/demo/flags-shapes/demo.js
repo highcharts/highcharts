@@ -1,6 +1,12 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+(async () => {
 
-    var year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
+    // Load the dataset
+    const data = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
+
+    const year = new Date(data[data.length - 1][0]).getFullYear(); // Get
+    // year of last data point
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -48,6 +54,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }],
             onSeries: 'dataseries',
             shape: 'squarepin',
+            borderRadius: 3,
             width: 16
         }, {
             type: 'flags',
@@ -87,4 +94,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         }]
     });
-});
+})();

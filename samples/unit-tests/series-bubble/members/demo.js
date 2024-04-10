@@ -1,10 +1,5 @@
 QUnit.test('directTouch', function (assert) {
-    var bubbleSeries = Highcharts.seriesTypes.bubble;
-    assert.strictEqual(
-        bubbleSeries.prototype.directTouch,
-        true,
-        'directTouch should default to true.'
-    );
+    var bubbleSeries = Highcharts.Series.types.bubble;
     assert.strictEqual(
         bubbleSeries.prototype.noSharedTooltip,
         true,

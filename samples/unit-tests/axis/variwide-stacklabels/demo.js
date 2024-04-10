@@ -16,7 +16,10 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
         },
         plotOptions: {
             series: {
-                stacking: 'normal'
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
             }
         },
         series: [
@@ -46,6 +49,13 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
     var series = chart.series,
         yAxis = chart.yAxis[0];
 
+    assert.close(
+        yAxis.stacking.stacks[series[0].stackKey][4].label.alignAttr.x,
+        series[0].points[4].dataLabel.alignAttr.x,
+        5,
+        'The stack labels should be x-positioned close to the data label.'
+    );
+
     chart.update({
         yAxis: {
             stackLabels: {
@@ -58,7 +68,7 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
         series[0].points[4].plotX >
             yAxis.stacking.stacks[series[0].stackKey][4].label.alignAttr.x,
         true,
-        "The stack label should be positioned before the 4th point's center."
+        'The stack label should be positioned before the 4th point\'s center.'
     );
 
     chart.update({
@@ -73,7 +83,7 @@ QUnit.test('#10962 - Stack labels in variwide series', function (assert) {
         series[0].points[4].plotX <
             yAxis.stacking.stacks[series[0].stackKey][4].label.alignAttr.x,
         true,
-        "The stack label should be positioned after the 4th point's center."
+        'The stack label should be positioned after the 4th point\'s center.'
     );
 
     chart.update({

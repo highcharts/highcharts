@@ -1,0 +1,10 @@
+---
+name: Flowmap
+author:
+  - Piotr Madej
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

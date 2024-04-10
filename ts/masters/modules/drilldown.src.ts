@@ -10,5 +10,18 @@
  *
  */
 'use strict';
-import '../../Extensions/Drilldown.js';
-import '../../Extensions/Breadcrumbs.js';
+import Highcharts from '../../Core/Globals.js';
+import Drilldown from '../../Extensions/Drilldown/Drilldown.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
+const G: AnyRecord = Highcharts;
+G.Breadcrumbs = G.Breadcrumbs || Breadcrumbs;
+Drilldown.compose(
+    G.Axis,
+    G.Chart,
+    G.defaultOptions,
+    G.Series,
+    G.seriesTypes,
+    G.SVGRenderer,
+    G.Tick
+);
+export default Highcharts;

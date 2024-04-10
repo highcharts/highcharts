@@ -32,5 +32,5 @@ Options related to polar charts
 Polar chart examples
 --------------------
 
-*   [A polar chart with different series types](https://jsfiddle.net/highcharts/z9nyR/)
-*   [A spider web](https://jsfiddle.net/highcharts/xEAxK/)
+*   [A polar chart with different series types](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/polar-chart)
+*   [A spider web](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/polar-spider)

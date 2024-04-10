@@ -30,4 +30,10 @@ export interface ADParamsOptions extends SMAParamsOptions {
     volumeSeriesID?: string;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ADOptions;

@@ -1,5 +1,5 @@
 Highcharts.SVGRenderer.prototype.symbols.download = function (x, y, w, h) {
-    var path = [
+    const path = [
         // Arrow stem
         'M', x + w * 0.5, y,
         'L', x + w * 0.5, y + h * 0.7,
@@ -24,11 +24,21 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [
+            29.9, 71.5,
+            106.4, 129.2,
+            144.0, 176.0,
+            135.6, 148.5,
+            216.4, 194.1,
+            95.6, 54.4
+        ]
     }],
 
     exporting: {

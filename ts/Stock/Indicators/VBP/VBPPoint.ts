@@ -14,11 +14,14 @@
  *
  * */
 
-import type SMAPointType from '../SMA/SMAPoint';
-
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const SMAPoint: typeof SMAPointType =
-    SeriesRegistry.seriesTypes.sma.prototype.pointClass;
+const {
+    sma: {
+        prototype: {
+            pointClass: SMAPoint
+        }
+    }
+} = SeriesRegistry.seriesTypes;
 import VBPIndicator from './VBPIndicator';
 
 /* *
@@ -35,7 +38,7 @@ class VBPPoint extends SMAPoint {
         if (this.negativeGraphic) {
             this.negativeGraphic = (this.negativeGraphic as any).destroy();
         }
-        return super.destroy.apply(this, arguments);
+        super.destroy.apply(this, arguments);
     }
 }
 

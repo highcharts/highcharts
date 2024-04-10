@@ -1,7 +1,7 @@
 QUnit.test(
-    "Heatmap point size shouldn't overflow plot area(#4530)",
+    'Heatmap point size shouldn\'t overflow plot area(#4530)',
     function (assert) {
-        var chart = new Highcharts.Chart({
+        const chart = new Highcharts.Chart({
             chart: {
                 type: 'heatmap',
                 renderTo: 'container',
@@ -16,11 +16,7 @@ QUnit.test(
                             Date.UTC(2012, 12, 2),
                             0,
                             93
-                        ] /*, [
-                Date.UTC(2012, 12, 3),
-                0,
-                1
-            ]*/
+                        ]
                     ],
                     colsize: 24 * 3600 * 1000,
                     rowsize: 24 * 3600 * 1000
@@ -42,32 +38,10 @@ QUnit.test(
             'Element height is acceptable'
         );
 
-        chart = new Highcharts.Chart({
+        chart.update({
             chart: {
-                type: 'heatmap',
-                renderTo: 'container',
-                width: 400,
-                height: 400,
                 inverted: true
-            },
-
-            series: [
-                {
-                    data: [
-                        [
-                            Date.UTC(2012, 12, 2),
-                            0,
-                            93
-                        ] /*, [
-                Date.UTC(2012, 12, 3),
-                0,
-                1
-            ]*/
-                    ],
-                    colsize: 24 * 3600 * 1000,
-                    rowsize: 24 * 3600 * 1000
-                }
-            ]
+            }
         });
 
         assert.strictEqual(
@@ -84,36 +58,8 @@ QUnit.test(
             'Element height is acceptable'
         );
 
-        chart = new Highcharts.Chart({
-            chart: {
-                type: 'heatmap',
-                renderTo: 'container',
-                width: 400,
-                height: 400,
-                inverted: true
-            },
-
-            xAxis: {
-                minRange: 1
-            },
-
-            series: [
-                {
-                    data: [
-                        [
-                            Date.UTC(2012, 12, 2),
-                            0,
-                            93
-                        ] /*, [
-                Date.UTC(2012, 12, 3),
-                0,
-                1
-            ]*/
-                    ],
-                    colsize: 24 * 3600 * 1000,
-                    rowsize: 24 * 3600 * 1000
-                }
-            ]
+        chart.xAxis[0].update({
+            minRange: 1
         });
 
         assert.strictEqual(
@@ -128,6 +74,62 @@ QUnit.test(
                 1200,
             true,
             'With minRange: Element height is acceptable'
+        );
+
+        chart.series[0].setData([
+            [0, 0, 1],
+            [0, 1, 1],
+            [1, 0, 1],
+            [1, 1, 1]
+        ], false);
+
+        chart.series[0].update({
+            colsize: void 0,
+            rowsize: void 0
+        });
+
+        const shapeArgsBefore = chart.series[0].points[0].shapeArgs,
+            pointPaddingValue = 10;
+
+        chart.series[0].update({
+            colsize: void 0,
+            rowsize: void 0,
+            pointPadding: pointPaddingValue
+        }, false);
+
+        chart.yAxis[0].update({
+            reversed: true,
+            categories: ['A', 'B']
+        });
+
+        assert.strictEqual(
+            shapeArgsBefore.width - (2 * pointPaddingValue),
+            chart.series[0].points[0].shapeArgs.width,
+            'Point padding should work with reversed yAxis, #18502.'
+        );
+
+        assert.close(
+            shapeArgsBefore.height - (2 * pointPaddingValue),
+            chart.series[0].points[0].shapeArgs.height,
+            1.1,
+            'Point padding should work with reversed yAxis, #18502.'
+        );
+
+        chart.xAxis[0].update({
+            reversed: true
+        }, true);
+
+        assert.strictEqual(
+            shapeArgsBefore.width - (2 * pointPaddingValue),
+            chart.series[0].points[0].shapeArgs.width,
+            'Point padding should work with reversed xAxis, #18502.'
+        );
+
+        assert.close(
+            shapeArgsBefore.height - (2 * pointPaddingValue),
+            chart.series[0].points[0].shapeArgs.height,
+            1,
+            'Point padding should work with reversed xAxis, #18502.'
         );
     }
 );
@@ -202,7 +204,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
             }]
         }),
         point = chart.series[0].points[0],
-        setState = Highcharts.seriesTypes.heatmap.prototype
+        setState = Highcharts.Series.types.heatmap.prototype
             .pointClass.prototype.setState;
 
     setState.call(point, '');
@@ -240,6 +242,20 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         point.series.options.borderRadius,
         `The point's border radius should be correct (value set in options)
         when the point is in a 'normal' state, #16165.`
+    );
+
+    chart.series[0].update({
+        borderRadius: 0,
+        marker: {
+            lineWidth: 40
+        }
+    });
+
+    setState.call(point, 'hover');
+    assert.strictEqual(
+        point.graphic.attr('stroke'),
+        chart.series[0].color,
+        'Point\'s stroke should be set on hover, #17856.'
     );
 });
 
@@ -281,7 +297,7 @@ QUnit.test(
                     Math.round(point0.graphic.getBBox().height),
                     Math.round(point1.graphic.getBBox().height),
                     2,
-                    `Hovering points should not change the cell size (#16921)`
+                    'Hovering points should not change the cell size (#16921)'
                 );
 
                 done();

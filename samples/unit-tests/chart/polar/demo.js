@@ -33,6 +33,9 @@ QUnit.test('Polar chart data', function (assert) {
 
     chart.series[0].update({
         type: 'spline',
+        dataLabels: {
+            enabled: true
+        },
         data: [
             { x: 45, y: 5 },
             { x: 90, y: 2 },
@@ -47,9 +50,32 @@ QUnit.test('Polar chart data', function (assert) {
         ),
         '#15489: Graph path should not contain any NaN values'
     );
+
+    assert.ok(
+        [...chart.series[0].dataLabelsGroup.element.childNodes].every(
+            dl => dl.getAttribute('visibility') !== 'hidden'
+        ),
+        '#18147: All data labels should be visible'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    }, false);
+    chart.series[0].update({
+        type: 'bar'
+    });
+
+    assert.ok(
+        true,
+        `#18444: A polar chart with type "bar" and data labels should not cause
+        JavaScript error.`
+    );
 });
 QUnit.test(
-    'Polar and categorized chart should not render extra alternate band.(#2248)',
+    'Polar and categorized chart should not render extra alternate ' +
+    'band.(#2248)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({
@@ -70,7 +96,7 @@ QUnit.test(
                         lineWidth: 0
                     },
                     yAxis: {
-                        //This is correct:
+                        // This is correct:
                         alternateGridColor: '#C0FFC0',
                         gridLineInterpolation: 'polygon',
                         title: {
@@ -131,7 +157,8 @@ QUnit.test('Paddings and extremes', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].max,
         10,
-        'Data max same as before, but padding is now gone because we have hard extremes (#5662).'
+        'Data max same as before, but padding is now gone because we have ' +
+        'hard extremes (#5662).'
     );
 
     // #7996
@@ -320,12 +347,23 @@ QUnit.test('Polar and clipping', assert => {
         chart: {
             polar: true
         },
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
+        yAxis: {
+            max: 3,
+            endOnTick: false
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [2, 4, 2],
+            clip: false
+        }]
     });
+
+    assert.strictEqual(
+        chart.series[1].group.element.getAttribute('clip-path'),
+        'none',
+        'Series.clip:false should be respected in polar chart'
+    );
 
     const oldLen = chart.container.querySelectorAll('defs clipPath').length;
 

@@ -1,5 +1,5 @@
 $(function () {
-    $("#container").highcharts({
+    $('#container').highcharts({
         chart: {
             type: 'column'
         },
@@ -19,10 +19,10 @@ $(function () {
         }, {
             data: [
                 [0, 1],
-                //[1, null],
-                //[10, null],
+                // [1, null],
+                // [10, null],
                 [20, 1]
-                //[30, null]
+                // [30, null]
             ]
         }]
     }).highcharts();

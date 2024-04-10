@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,11 +14,12 @@
  *
  * */
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type LinePointOptions from './LinePointOptions';
 import type LineSeries from './LineSeries';
 import type Point from '../../Core/Series/Point';
 import type PointOptions from '../../Core/Series/PointOptions';
-import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+import type Series from '../../Core/Series/Series';
 
 /* *
  *
@@ -38,10 +39,11 @@ declare module '../../Core/Series/PointLike' {
         low?: number;
         negative?: boolean;
         options: PointOptions;
+        stackBox?: BBoxObject;
         stackTotal?: number;
         stackY?: (number|null);
         yBottom?: number;
-        zone?: SeriesZonesOptions;
+        zone?: Series.ZoneObject;
     }
 }
 

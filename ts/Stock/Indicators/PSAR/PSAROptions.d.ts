@@ -28,11 +28,17 @@ export interface PSAROptions extends SMAOptions {
 }
 
 export interface PSARParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
     initialAccelerationFactor?: number;
     maxAccelerationFactor?: number;
     increment?: number;
     decimals?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default PSAROptions;

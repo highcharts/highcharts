@@ -26,6 +26,9 @@ ren.text('Visual test for bounding box with rotation', 10, 30)
                 align,
                 rotation
             })
+            .css({
+                fontSize: '12px'
+            })
             .add();
 
         const bBox = text.getBBox();

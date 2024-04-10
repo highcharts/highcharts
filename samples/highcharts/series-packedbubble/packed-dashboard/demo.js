@@ -46,12 +46,12 @@ Highcharts.chart('container', {
             value: 1
         },
         {
-            name: "Code-review meeting",
+            name: 'Code-review meeting',
             shortName: 'CR',
             value: 4
         },
         {
-            name: "Allow user to change nickname",
+            name: 'Allow user to change nickname',
             shortName: 'Nickname',
             value: 2
         }]

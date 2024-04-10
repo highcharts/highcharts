@@ -1,0 +1,197 @@
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/geoheatmap.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+
+<div id="container" style="height: 600px; min-width: 310px; max-width: 1200px; margin: 0 auto;"></div>
+
+<!-- <figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        This chart shows the Leaf Area Index In February 2017, plotted
+        by their latitude and longitude. It uses the Orthographic projection and
+        <code>geoheatmap</code> series type, which creates a grid of tiles that
+        correspond to the latitude and longitude of each data point.
+        The value of the geoheatmap is represented by the color of each tile.
+    </p>
+</figure> -->
+
+<script>
+
+    (async () => {
+
+    // Load the base world map
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    // Load the leaf area dataset
+    const response = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@af1d7a1727/samples/data/geoheatmap-leaf-dataset.json'
+        ),
+        data = await response.json();
+
+    const getGraticule = () => {
+        const data = [];
+
+        // Meridians
+        for (let x = -180; x <= 180; x += 15) {
+            data.push({
+                geometry: {
+                    type: 'LineString',
+                    coordinates: x % 90 === 0 ? [
+                        [x, -90],
+                        [x, 0],
+                        [x, 90]
+                    ] : [
+                        [x, -80],
+                        [x, 80]
+                    ]
+                }
+            });
+        }
+
+        // Latitudes
+        for (let y = -90; y <= 90; y += 10) {
+            const coordinates = [];
+            for (let x = -180; x <= 180; x += 5) {
+                coordinates.push([x, y]);
+            }
+            data.push({
+                geometry: {
+                    type: 'LineString',
+                    coordinates
+                },
+                lineWidth: y === 0 ? 2 : undefined
+            });
+        }
+
+        return data;
+    };
+
+
+    const chart = Highcharts.mapChart('container', {
+
+        chart: {
+            map: topology
+        },
+
+        title: {
+            text: 'GeoHeatmap Leaf Area Index In February 2017',
+            align: 'left',
+            style: {
+                textOutline: '2px white'
+            }
+        },
+
+        subtitle: {
+            text: 'Data source: <a style="color: #666" href="https://neo.gsfc.nasa.gov/view.php?datasetId=MOD15A2_M_LAI">NEO Nasa Earth Observations</a>',
+            align: 'left'
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        mapView: {
+            maxZoom: 30,
+            projection: {
+                name: 'Orthographic',
+                rotation: [-20, -20]
+            }
+        },
+
+        colorAxis: {
+            min: 0,
+            max: 7,
+            tickInterval: 7,
+            stops: [
+                [0, 'rgba(188,198,209,0.7)'],
+                [0.05, 'rgba(186,178,61, 0.7)'],
+                [0.1, 'rgba(77,223,115, 0.7)'],
+                [1, 'rgba(4,61,56, 0.7)']
+            ]
+        },
+
+        series: [{
+            name: 'Graticule',
+            id: 'graticule',
+            type: 'mapline',
+            data: getGraticule(),
+            nullColor: 'rgba(0, 0, 0, 0.05)',
+            accessibility: {
+                enabled: false
+            },
+            enableMouseTracking: false,
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            }
+        }, {
+            name: 'Orthographic',
+            nullColor: '#C8C8C833',
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            }
+        }, {
+            name: 'GeoHeatMap',
+            colsize: 1,
+            rowsize: 1,
+            data,
+            type: 'geoheatmap',
+            tooltip: {
+                pointFormat: 'Lat: {point.lat}, Lon: {point.lon}, Value: {point.value} ㎡/㎡<br/>'
+            }
+        }]
+    });
+
+    const renderSea = () => {
+        let verb = 'animate';
+        if (!chart.sea) {
+            chart.sea = chart.renderer
+                .circle()
+                .attr({
+                    fill: {
+                        radialGradient: {
+                            cx: 0.4,
+                            cy: 0.4,
+                            r: 1
+                        },
+                        stops: [
+                            [0, 'white'],
+                            [1, 'lightblue']
+                        ]
+                    },
+                    zIndex: -1
+                })
+                .add(chart.get('graticule').group);
+            verb = 'attr';
+        }
+
+        const bounds = chart.get('graticule').bounds,
+            p1 = chart.mapView.projectedUnitsToPixels({
+                x: bounds.x1,
+                y: bounds.y1
+            }),
+            p2 = chart.mapView.projectedUnitsToPixels({
+                x: bounds.x2,
+                y: bounds.y2
+            });
+        chart.sea[verb]({
+            cx: (p1.x + p2.x) / 2,
+            cy: (p1.y + p2.y) / 2,
+            r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
+        });
+    };
+    renderSea();
+    Highcharts.addEvent(chart, 'redraw', renderSea);
+
+})();
+</script>

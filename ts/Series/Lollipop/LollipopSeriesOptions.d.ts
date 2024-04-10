@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,8 +15,10 @@
  * */
 
 import type LollipopSeries from './LollipopSeries';
-import type DumbbellSeriesOptions from '../Dumbbell/DumbbellSeriesOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
 
 /* *
  *
@@ -24,8 +26,13 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface LollipopSeriesOptions extends DumbbellSeriesOptions {
-    lowColor?: undefined;
+export interface LollipopSeriesOptions extends ScatterSeriesOptions {
+    connectorColor?: ColorString;
+    connectorWidth?: number;
+    groupPadding?: number;
+    /** @deprecated */
+    lowColor?: ColorType;
+    pointPadding?: number;
     states?: SeriesStatesOptions<LollipopSeries>;
 }
 

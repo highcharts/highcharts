@@ -83,11 +83,9 @@ function populateAverage(
     period: number,
     prevATR: number
 ): Array<number> {
-    let x = xVal[i - 1],
+    const x = xVal[i - 1],
         TR = getTR(yVal[i - 1], yVal[i - 2]),
-        y;
-
-    y = (((prevATR * (period - 1)) + TR) / period);
+        y = (((prevATR * (period - 1)) + TR) / period);
 
     return [x, y];
 }
@@ -134,7 +132,7 @@ class ATRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0 // unused index, do not inherit (#15362)
+            index: void 0 // Unused index, do not inherit (#15362)
         }
     } as ATROptions);
 
@@ -144,9 +142,9 @@ class ATRIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<ATRPoint> = void 0 as any;
-    public points: Array<ATRPoint> = void 0 as any;
-    public options: ATROptions = void 0 as any;
+    public data!: Array<ATRPoint>;
+    public points!: Array<ATRPoint>;
+    public options!: ATROptions;
 
     /* *
      *
@@ -158,23 +156,22 @@ class ATRIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             xValue: number = (xVal as any)[0],
             yValue: Array<number> = yVal[0],
-            range = 1,
-            prevATR = 0,
-            TR = 0,
+            points: Array<[number, Array<number>]> = [[xValue, yValue]],
             ATR: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            point: (Array<number>|undefined),
+            yData: Array<number> = [];
+        let point: (Array<number>|undefined),
             i: (number|undefined),
-            points: Array<[number, Array<number>]>;
+            prevATR = 0,
+            range = 1,
+            TR = 0;
 
-        points = [[xValue, yValue]];
 
         if (
             (xVal.length <= period) ||
@@ -272,4 +269,4 @@ export default ATRIndicator;
  * @apioption series.atr
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

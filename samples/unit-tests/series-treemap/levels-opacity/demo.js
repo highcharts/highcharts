@@ -92,7 +92,7 @@ QUnit.test('Treemap opacity on levels (#4700)', function (assert) {
         series = chart.series[0],
         point = series.points[0],
         pointAttribs = function (point, state) {
-            return Highcharts.seriesTypes.treemap.prototype.pointAttribs.call(
+            return Highcharts.Series.types.treemap.prototype.pointAttribs.call(
                 series,
                 point,
                 state

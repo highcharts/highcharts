@@ -1,6 +1,6 @@
 QUnit.test('drawPoint', assert => {
     const { Renderer } = Highcharts;
-    const { pointClass } = Highcharts.seriesTypes.treemap.prototype;
+    const { pointClass } = Highcharts.Series.types.treemap.prototype;
     const { draw } = pointClass.prototype;
     const point = {
         draw,
@@ -39,7 +39,8 @@ QUnit.test('drawPoint', assert => {
     assert.strictEqual(
         'highcharts-updated',
         el.getAttribute('class'),
-        'should on update remove the previous class attribute, and set it to the last result of point.getClassName.'
+        'should on update remove the previous class attribute, and set it to ' +
+        'the last result of point.getClassName.'
     );
 
 });

@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     series: [{
-        type: "treemap",
+        type: 'treemap',
         data: [{
             name: 'A',
             value: 6

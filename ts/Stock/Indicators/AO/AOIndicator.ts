@@ -126,9 +126,9 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<AOPoint> = void 0 as any;
-    public options: AOOptions = void 0 as any;
-    public points: Array<AOPoint> = void 0 as any;
+    public data!: Array<AOPoint>;
+    public options!: AOOptions;
+    public points!: Array<AOPoint>;
 
     /* *
      *
@@ -137,14 +137,14 @@ class AOIndicator extends SMAIndicator {
      * */
 
     public drawGraph(this: AOIndicator): void {
-        let indicator = this,
+        const indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
             positiveColor = options.greaterBarColor,
             negativeColor = options.lowerBarColor,
-            firstPoint = points[0],
-            i;
+            firstPoint = points[0];
+        let i;
 
         if (!userColor && firstPoint) {
             firstPoint.color = positiveColor;
@@ -166,7 +166,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let shortPeriod = 5,
+        const shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =
@@ -176,17 +176,17 @@ class AOIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             high = 1,
-            low = 2,
-            shortSum = 0,
-            longSum = 0,
-            shortSMA: number, // Shorter Period SMA
+            low = 2;
+        let shortSMA: number, // Shorter Period SMA
             longSMA: number, // Longer Period SMA
             awesome: number,
             shortLastIndex: number,
             longLastIndex: number,
             price: number,
             i: number,
-            j: number;
+            j: number,
+            longSum = 0,
+            shortSum = 0;
 
         if (
             xVal.length <= longPeriod ||
@@ -254,7 +254,7 @@ class AOIndicator extends SMAIndicator {
 
 interface AOIndicator {
     nameBase: string;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
     pointClass: typeof AOPoint;
     crispCol: typeof columnProto.crispCol;
     drawPoints: typeof columnProto.drawPoints;
@@ -264,7 +264,7 @@ interface AOIndicator {
 
 extend(AOIndicator.prototype, {
     nameBase: 'AO',
-    nameComponents: (false as any),
+    nameComponents: void 0,
 
     // Columns support:
     markerAttribs: noop as any,
@@ -317,4 +317,4 @@ export default AOIndicator;
  * @apioption series.ao
  */
 
-''; // for including the above in the doclets
+''; // For including the above in the doclets

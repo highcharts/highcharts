@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -56,8 +56,11 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @optionparent plotOptions.timeline
  */
 const TimelineSeriesDefaults: TimelineSeriesOptions = {
+
     colorByPoint: true,
+
     stickyTracking: false,
+
     ignoreHiddenPoint: true,
 
     /**
@@ -72,7 +75,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
     tooltip: {
         headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 10px"> {point.key}</span><br/>',
+            '<span style="font-size: 0.8em"> {point.key}</span><br/>',
         pointFormat: '{point.description}'
     },
     states: {
@@ -137,11 +140,13 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
         /**
          * A pixel value defining the distance between the data label and
-         * the point. Negative numbers puts the label on top of the point.
+         * the point. Negative numbers puts the label on top of the point in a
+         * non-inverted chart. Defaults to 100 for horizontal and 20 for
+         * vertical timeline (`chart.inverted: true`).
          */
-        distance: 100,
+        distance: void 0,
 
-        // eslint-disable-next-line valid-jsdoc
+        // eslint-disable-next-line jsdoc/require-description
         /**
          * @type    {Highcharts.TimelineDataLabelsFormatterCallbackFunction}
          * @default function () {
@@ -151,7 +156,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          *       format = '<span style="color:' + this.point.color +
          *           '">● </span>';
          *   } else {
-         *       format = '<span>● </span>';
+         *       format = '<span class="highcharts-color-' +
+         *          this.point.colorIndex + '">● </span>';
          *   }
          *   format += '<span>' + (this.key || '') + '</span><br/>' +
          *       (this.point.label || '');
@@ -167,7 +173,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
                 format = '<span style="color:' + this.point.color +
                     '">● </span>';
             } else {
-                format = '<span>● </span>';
+                format = '<span class="highcharts-color-' +
+                    this.point.colorIndex + '">● </span>';
             }
             format += '<span class="highcharts-strong">' +
                 ((this as any).key || '') + '</span><br/>' +
@@ -181,7 +188,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '12px'
+            fontSize: '0.8em'
         },
 
         /**
@@ -207,7 +214,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
         height: 15
     },
     showInLegend: false,
-    colorKey: 'x'
+    colorKey: 'x',
+    legendSymbol: 'rectangle'
 };
 
 /**
@@ -283,7 +291,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
  * @apioption series.timeline.data.description
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file
 
 /* *
  *

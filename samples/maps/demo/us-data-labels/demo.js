@@ -33,11 +33,13 @@
     Highcharts.mapChart('container', {
 
         title: {
-            text: 'US unemployment rate in Dec. 2017'
+            text: 'US unemployment rate in Dec. 2017',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Small US map with data labels'
+            text: 'Small US map with data labels',
+            align: 'left'
         },
 
         mapNavigation: {
@@ -54,7 +56,14 @@
         colorAxis: {
             labels: {
                 format: '{value}%'
-            }
+            },
+            stops: [
+                [0.2, '#188e2a'], // Green
+                [0.5, '#fee401'], // Yellow
+                [1, '#df1309'] // Red
+            ],
+            min: 0,
+            max: 8
         },
 
         series: [{
@@ -62,16 +71,9 @@
             data,
             joinBy: 'ucName',
             name: 'Unemployment rate per 2017',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             dataLabels: {
                 enabled: true,
-                formatter: function () {
-                    return this.point.properties['hc-a2'];
-                },
+                format: '{point.properties.hc-a2}',
                 style: {
                     fontSize: '10px'
                 }
@@ -80,7 +82,7 @@
                 valueSuffix: '%'
             }
         }, {
-            // The connector lines
+        // The connector lines
             type: 'mapline',
             data: Highcharts.geojson(topology, 'mapline'),
             color: 'silver',

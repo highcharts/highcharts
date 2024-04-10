@@ -1,5 +1,5 @@
-var positioner = function (target) {
-    var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+const positioner = function (target) {
+    const xy = Highcharts.Annotation.MockPoint.pointToPixels(
         target.points[this.index]
     );
 
@@ -9,7 +9,7 @@ var positioner = function (target) {
     };
 };
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
 
     title: {
         text: 'Controlling elements by dragging'
@@ -17,7 +17,9 @@ var chart = Highcharts.chart('container', {
 
     chart: {
         // inverted: true,
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         events: {
             load: function () {
                 this.annotations.forEach(function (annotation) {
@@ -58,7 +60,8 @@ var chart = Highcharts.chart('container', {
                 positioner: positioner,
                 events: {
                     mousedown: function (e, target) {
-                        var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+                        const xy =
+                        Highcharts.Annotation.MockPoint.pointToPixels(
                             target.points[2]
                         );
 
@@ -67,7 +70,7 @@ var chart = Highcharts.chart('container', {
 
                     // ROTATE
                     drag: function (e, target) {
-                        var center = this.transformOrigin,
+                        const center = this.transformOrigin,
                             radians = this.mouseMoveToRadians(
                                 e,
                                 center.x,
@@ -89,7 +92,7 @@ var chart = Highcharts.chart('container', {
                 events: {
                     // SCALE
                     drag: function (e, target) {
-                        var chart = this.chart,
+                        const chart = this.chart,
                             bbox = target.graphic.getBBox(true),
                             center = {
                                 x: bbox.x + bbox.width / 2,
@@ -131,7 +134,7 @@ var chart = Highcharts.chart('container', {
                 // TRANSLATE Y
                 events: {
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translate(0, translation.y);
                         target.redraw(false);
@@ -143,7 +146,7 @@ var chart = Highcharts.chart('container', {
 
                     // TRANSLATE X
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translate(translation.x, 0);
                         target.redraw(false);
@@ -151,7 +154,7 @@ var chart = Highcharts.chart('container', {
                 }
             }, {
                 positioner: function (target) {
-                    var toPixels = Highcharts.Annotation.MockPoint
+                    const toPixels = Highcharts.Annotation.MockPoint
                             .pointToPixels,
                         xy1 = toPixels(target.points[0]),
                         xy2 = toPixels(target.points[1]);
@@ -163,7 +166,7 @@ var chart = Highcharts.chart('container', {
                 },
                 events: {
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translate(translation.x, translation.y);
                         target.redraw(false);
@@ -176,7 +179,7 @@ var chart = Highcharts.chart('container', {
             r: 10,
             controlPoints: [{
                 positioner: function (target) {
-                    var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+                    const xy = Highcharts.Annotation.MockPoint.pointToPixels(
                         target.points[0]
                     );
 
@@ -188,7 +191,7 @@ var chart = Highcharts.chart('container', {
                 events: {
                     // TRANSFORM RADIUS ACCORDING TO Y TRANSLATION
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e),
+                        const translation = this.mouseMoveToTranslation(e),
                             radiusTranslation = target.chart.inverted ?
                                 translation.x :
                                 translation.y;
@@ -318,7 +321,7 @@ var chart = Highcharts.chart('container', {
                         };
                     }
 
-                    var xy = Highcharts.Annotation.MockPoint.pointToPixels(
+                    const xy = Highcharts.Annotation.MockPoint.pointToPixels(
                         target.points[0]
                     );
 
@@ -331,7 +334,7 @@ var chart = Highcharts.chart('container', {
                 // TRANSLATE POINT/ANCHOR
                 events: {
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translatePoint(translation.x, translation.y);
                         target.redraw(false);
@@ -356,7 +359,7 @@ var chart = Highcharts.chart('container', {
                 // TRANSLATE POSITION WITHOUT CHANGING THE ANCHOR
                 events: {
                     drag: function (e, target) {
-                        var translation = this.mouseMoveToTranslation(e);
+                        const translation = this.mouseMoveToTranslation(e);
 
                         target.translate(translation.x, translation.y);
                         target.redraw(false);

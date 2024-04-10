@@ -1,31 +1,32 @@
-QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) {
-    var chart;
+QUnit.test(
+    'Pie in Highcharts Stock, StockChart constructor', function (assert) {
+        var chart;
 
-    chart = new Highcharts.StockChart({
-        chart: {
-            renderTo: 'container'
-        },
-        navigator: {
-            enabled: false
-        },
-        series: [
-            {
-                type: 'pie',
-                data: [
-                    {
-                        y: 36
-                    }
-                ]
-            }
-        ]
+        chart = new Highcharts.StockChart({
+            chart: {
+                renderTo: 'container'
+            },
+            navigator: {
+                enabled: false
+            },
+            series: [
+                {
+                    type: 'pie',
+                    data: [
+                        {
+                            y: 36
+                        }
+                    ]
+                }
+            ]
+        });
+
+        assert.strictEqual(
+            typeof chart.series[0].points[0].graphic,
+            'object',
+            'Has slice'
+        );
     });
-
-    assert.strictEqual(
-        typeof chart.series[0].points[0].graphic,
-        'object',
-        'Has slice'
-    );
-});
 
 QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     var chart, i;
@@ -53,7 +54,7 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     $('#container').highcharts('StockChart', {
         rangeSelector: {
             buttons: buttons
-            //allButtonsEnabled: true //or false - doesn't matter
+            // allButtonsEnabled: true //or false - doesn't matter
         },
         xAxis: {
             minRange: 1
@@ -187,13 +188,19 @@ QUnit.test('The stock chart in hidden div, #16901.', function (assert) {
         }]
     });
     assert.strictEqual(
-        getComputedStyle(document.querySelector('.highcharts-navigator')).visibility,
+        getComputedStyle(document.querySelector(
+            '.highcharts-navigator'
+        )
+        ).visibility,
         'hidden',
         'Navigator should be hidden.'
     );
 
     assert.strictEqual(
-        getComputedStyle(document.querySelector('.highcharts-button-box')).visibility,
+        getComputedStyle(document.querySelector(
+            '.highcharts-button-box'
+        )
+        ).visibility,
         'hidden',
         'Elements of range selector should be hidden.'
     );

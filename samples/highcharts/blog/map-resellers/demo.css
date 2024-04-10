@@ -1,0 +1,43 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+.modal {
+    gap: 0.4rem;
+    width: 400px;
+    padding: 1.3rem;
+    height: 150px;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    top: 20%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    left: 20%;
+    right: 20%;
+}
+
+.modal .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.closeModal {
+    padding: 0 10px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+}

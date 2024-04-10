@@ -1,0 +1,13 @@
+---
+name: Animated lines on a world map
+authors:
+  - Mustapha Mekhatria
+js_wrap: b
+requiresManualTesting: true
+use_png_thumbnail: true
+tags:
+  - Highcharts Maps demo
+categories:
+  - General:
+      priority: 8
+...

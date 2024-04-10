@@ -1,38 +1,45 @@
-Math.easeInSine = function (pos) {
-    return -Math.cos(pos * (Math.PI / 2)) + 1;
-};
+(async () => {
 
-Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
-};
-// Math.easeInQuint = function (pos) {
-//     return Math.pow(pos, 5);
-// },
+    Math.easeInSine = function (pos) {
+        return -Math.cos(pos * (Math.PI / 2)) + 1;
+    };
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
-    }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
-    }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
-    }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
-};
+    Math.easeOutQuint = function (pos) {
+        return (Math.pow((pos - 1), 5) + 1);
+    };
+    // Math.easeInQuint = function (pos) {
+    //     return Math.pow(pos, 5);
+    // },
 
-const big = window.matchMedia("(min-width: 500px)").matches;
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    Math.easeOutBounce = pos => {
+        if ((pos) < (1 / 2.75)) {
+            return (7.5625 * pos * pos);
+        }
+        if (pos < (2 / 2.75)) {
+            return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+        }
+        if (pos < (2.5 / 2.75)) {
+            return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+        }
+        return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    };
+
+    const big = window.matchMedia('(min-width: 500px)').matches;
+    const reduced = window.matchMedia(
+        '(prefers-reduced-motion: ' +
+        'reduce)'
+    ).matches;
 
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+    const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 
-// Create the chart
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
         dataLength = data.length,
         // set the allowed units for data grouping
@@ -42,11 +49,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         ], [
             'month',
             [1, 2, 3, 4, 6]
-        ]],
+        ]];
 
-        i = 0;
-
-    for (i; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -68,7 +73,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 duration: 2000,
                 easing: 'easeOutQuint'
             },
-            styledMode: (true),
+            styledMode: true,
             margin: 0,
             spacing: 0,
             alignTicks: false,
@@ -90,9 +95,17 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         visible: true
                     });
 
-                    const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
-                    const candlestick =  document.querySelector('#stock .stick');
-                    const column = document.querySelector('#stock .highcharts-column-series.column');
+                    const rangeSelectorGroup =  document.querySelector(
+                        '#stock .highcharts-range-selector-group'
+                    );
+                    const candlestick =  document.querySelector(
+                        '#stock ' +
+                        '.stick'
+                    );
+                    const column = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-column-series.column'
+                    );
                     candlestick.classList.add('fade-in');
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
@@ -100,8 +113,12 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 },
                 redraw: function () {
                     const candlestick =  document.querySelector('.stick');
-                    const rangeSelectorGroup =  document.querySelector('.highcharts-range-selector-group');
-                    const column = document.querySelector('.highcharts-column-series.column');
+                    const rangeSelectorGroup =  document.querySelector(
+                        '.highcharts-range-selector-group'
+                    );
+                    const column = document.querySelector(
+                        '.highcharts-column-series.column'
+                    );
                     column.classList.add('fade-in');
                     rangeSelectorGroup.classList.add('fade-in');
                     candlestick.classList.add('fade-in');
@@ -155,7 +172,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             y: 50
         },
         xAxis: [
-            //0
+            // 0
             {
                 min: Date.UTC(2021, 5, 2),
                 max: Date.UTC(2021, 8, 4),
@@ -164,7 +181,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         ],
         yAxis: [
-            ///0
+            // /0
             {
                 labels: {
                     align: 'right',
@@ -181,7 +198,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 visible: true,
                 zIndex: 300
             },
-            ///1
+            // /1
             {
                 labels: {
                     align: 'right',
@@ -196,7 +213,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 lineWidth: 2,
                 visible: false
             },
-            //0
+            // 0
             {
                 min: -2,
                 max: 18,
@@ -207,7 +224,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 endOnTick: false,
                 visible: false
             },
-            ///1 -
+            // /1 -
             {
                 min: -2,
                 max: 18,
@@ -249,7 +266,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         },
         series: [
-            //0 -- candlestick
+            // 0 -- candlestick
             {
                 type: 'candlestick',
                 name: 'AAPL',
@@ -262,7 +279,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 visible: true
 
             },
-            //1 --column
+            // 1 --column
             {
                 type: 'column',
                 className: 'column',
@@ -380,7 +397,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 duration: 2000,
                 easing: 'easeOutQuint'
             },
-            styledMode: (true),
+            styledMode: true,
             margin: 0,
             spacing: 0,
             alignTicks: false,
@@ -389,30 +406,68 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 load: function () {
                     const chart = this;
 
-                    const particle1 = document.querySelector('#stock .particle-1');
-                    const particle2 = document.querySelector('#stock .particle-2');
-                    const particle3 = document.querySelector('#stock .particle-3');
-                    const particle4 = document.querySelector('#stock .particle-4');
-                    const particle5 = document.querySelector('#stock .particle-5');
-                    const particle6 = document.querySelector('#stock .particle-6');
-                    const particles = [particle1, particle2, particle3,
-                        particle4, particle5, particle6];
-                    const greenLine = document.querySelector('#stock .highcharts-series-2.green-line');
-                    const greenArrow = document.getElementsByClassName('green-line')[1];
-                    const purpleLine = document.querySelector('#stock .highcharts-series-3.purple-line');
-                    const purpleArrow = document.getElementsByClassName('purple-line')[1];
-                    const bottomArea =  document.querySelector('#stock .stock-bottom');
-                    const topArea =  document.querySelector('#stock .stock-top');
-                    const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
+                    const particle1 = document.querySelector(
+                        '#stock ' +
+                        '.particle-1'
+                    );
+                    const particle2 = document.querySelector(
+                        '#stock ' +
+                        '.particle-2'
+                    );
+                    const particle3 = document.querySelector(
+                        '#stock ' +
+                        '.particle-3'
+                    );
+                    const particle4 = document.querySelector(
+                        '#stock ' +
+                        '.particle-4'
+                    );
+                    const particle5 = document.querySelector(
+                        '#stock ' +
+                        '.particle-5'
+                    );
+                    const particle6 = document.querySelector(
+                        '#stock ' +
+                        '.particle-6'
+                    );
+                    const particles = [
+                        particle1, particle2, particle3,
+                        particle4, particle5, particle6
+                    ];
+                    const greenLine = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-series-2.green-line'
+                    );
+                    const greenArrow = document.getElementsByClassName(
+                        'green-line'
+                    )[1];
+                    const purpleLine = document.querySelector(
+                        '#stock ' +
+                        '.highcharts-series-3.purple-line'
+                    );
+                    const purpleArrow = document.getElementsByClassName(
+                        'purple-line'
+                    )[1];
+                    const bottomArea =  document.querySelector(
+                        '#stock ' +
+                        '.stock-bottom'
+                    );
+                    const topArea =  document.querySelector(
+                        '#stock ' +
+                        '.stock-top'
+                    );
+                    const rangeSelectorGroup =  document.querySelector(
+                        '#stock .highcharts-range-selector-group'
+                    );
 
-                    ///for the arrow head sizes
-                    ///based on screen size
-                    let head = 40; //arrow head radius
+                    // /for the arrow head sizes
+                    // /based on screen size
+                    let head = 40; // arrow head radius
                     if (big) {
                         head = 70;
                     }
                     if (reduced) {
-                        ///show the lines and particles immediately
+                        // /show the lines and particles immediately
                         chart.series[2].update({
                             data: [{
                                 x: 0,
@@ -460,7 +515,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         purpleLine.classList.add('static');
 
                         setTimeout(function () {
-                            ///fade out the particles
+                            // /fade out the particles
                             particles.forEach(function (p) {
                                 p.classList.add('fade');
                             });
@@ -468,7 +523,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         }, 1000);
 
                         setTimeout(function () {
-                            ///hide everything else
+                            // /hide everything else
                             bottomArea.classList.add('hide');
                             topArea.classList.add('hide');
                             purpleLine.classList.add('hide');
@@ -478,20 +533,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         }, 2000);
 
                         setTimeout(function () {
-                            ///get the margins ready for the real chart
+                            // /get the margins ready for the real chart
                             let margins = [50, 10, 30, 10];
                             if (big) {
                                 margins = [80, 10, 30, 10];
                             }
-                            ///fade in range selector
+                            // /fade in range selector
                             rangeSelectorGroup.classList.add('fade-in');
-                            ///update margins
+                            // /update margins
                             chart.update({
                                 chart: {
                                     margin: margins
                                 }
                             });
-                            ///turn on the candlestick and the column
+                            // /turn on the candlestick and the column
                             chart.series[12].update({
                                 visible: true
                             });
@@ -518,7 +573,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         }, 3100);
 
                     } else {
-                        ///move all the particles individually
+                        // /move all the particles individually
                         setTimeout(function () {
                             particle1.classList.add('move');
                         }, 0);
@@ -544,7 +599,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         }, 800);
 
                         setTimeout(function () {
-                            //moves green lie
+                            // moves green lie
                             chart.series[2].data[2].update({
                                 x: 8.5,
                                 y: 6.67,
@@ -556,7 +611,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 x: 8.5,
                                 y: 6.67
                             });
-                            ///moves the purple line
+                            // /moves the purple line
                             chart.series[3].data[2].update({
                                 x: 10.52,
                                 y: 8.4,
@@ -576,8 +631,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
                         setTimeout(function () {
 
-                            ///moves green line
-                            //turns on the marker
+                            // /moves green line
+                            // turns on the marker
                             chart.series[2].data[2].update({
                                 x: 14.2,
                                 y: 12.14,
@@ -587,8 +642,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     radius: head
                                 }
                             });
-                            ///moves purple line
-                            //turns on the marker
+                            // /moves purple line
+                            // turns on the marker
                             chart.series[3].data[2].update({
                                 x: 14,
                                 y: 12.1,
@@ -601,7 +656,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         }, 2000);
 
                         setTimeout(function () {
-                            ///grows the arrow heads (which are line markers)
+                            // /grows the arrow heads (which are line markers)
                             greenArrow.classList.add('grow');
                             purpleArrow.classList.add('grow');
                         }, 3200);
@@ -619,12 +674,13 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             });
                             greenArrow.classList.add('hide');
                             purpleArrow.classList.add('hide');
-                            ///set the x extremes to slide to the right
+                            // /set the x extremes to slide to the right
                             chart.xAxis[1].setExtremes(0, 7);
                         }, 5200);
                         setTimeout(function () {
-                            ///hides all the earlier chart stuff and sets the yAxis extremes so
-                            ///the lines part vertically
+                            // /hides all the earlier chart stuff and sets
+                            // the yAxis extremes so
+                            // /the lines part vertically
                             chart.yAxis[2].setExtremes(10, 20);
                             chart.yAxis[3].setExtremes(10, 20);
 
@@ -701,14 +757,14 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             y: 50
         },
         xAxis: [
-            //0
+            // 0
             {
                 min: Date.UTC(2021, 5, 2),
                 max: Date.UTC(2021, 8, 4),
                 visible: false
 
             },
-            //1 -
+            // 1 -
             {
                 min: 0,
                 max: 20,
@@ -722,7 +778,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 ordinal: false
             },
 
-            ///2-
+            // /2-
             {
                 min: 0,
                 max: 20,
@@ -737,7 +793,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         ],
         yAxis: [
-            ///0
+            // /0
             {
                 labels: {
                     align: 'right',
@@ -757,7 +813,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 visible: false,
                 zIndex: 300
             },
-            ///1
+            // /1
             {
                 labels: {
                     align: 'right',
@@ -775,7 +831,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 lineWidth: 2,
                 visible: false
             },
-            //0
+            // 0
             {
                 min: -2,
                 max: 18,
@@ -786,7 +842,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 endOnTick: false,
                 visible: false
             },
-            ///1 -
+            // /1 -
             {
                 min: -2,
                 max: 18,
@@ -837,7 +893,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         },
         series: [
-        //0 - top area (11) y0
+            // 0 - top area (11) y0
             {
                 type: 'arearange',
                 className: 'stock-top',
@@ -854,7 +910,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }
 
             },
-            //1- bottom area (11) y1
+            // 1- bottom area (11) y1
             {
                 type: 'arearange',
                 className: 'stock-bottom',
@@ -871,7 +927,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }
 
             },
-            //2 - green line (21) y0
+            // 2 - green line (21) y0
             {
                 type: 'line',
                 lineColor: 'red',
@@ -900,7 +956,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 xAxis: 1,
                 yAxis: 2
             },
-            //3 - purple line (21) y1
+            // 3 - purple line (21) y1
             {
                 type: 'line',
                 name: 'purple line',
@@ -929,7 +985,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 xAxis: 1,
                 visible: true
             },
-            //4 - minus (21) hidden
+            // 4 - minus (21) hidden
             {
                 type: 'line',
                 name: 'minus',
@@ -947,7 +1003,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 yAxis: 2
 
             },
-            /// 5- plus V (21) hidden
+            // / 5- plus V (21) hidden
             {
                 type: 'line',
                 name: 'plusV',
@@ -969,7 +1025,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 yAxis: 2
 
             },
-            ///6- plus H (21) hidden
+            // /6- plus H (21) hidden
             {
                 type: 'line',
                 name: 'plusH',
@@ -992,7 +1048,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
             },
 
-            ///7- top arrow (21)
+            // /7- top arrow (21)
             {
                 type: 'arearange',
                 name: 'top arrow',
@@ -1019,7 +1075,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
             },
 
-            ///8- bottom arrow (21)
+            // /8- bottom arrow (21)
             {
                 type: 'arearange',
                 name: 'bottom arrow',
@@ -1048,7 +1104,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             },
 
 
-            //9 - particles (40)
+            // 9 - particles (40)
 
             {
                 type: 'scatter',
@@ -1130,7 +1186,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 yAxis: 2,
                 visible: true
             },
-            //10 - green line (21) y0
+            // 10 - green line (21) y0
             {
                 type: 'line',
                 lineColor: 'red',
@@ -1154,7 +1210,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 xAxis: 1,
                 yAxis: 2
             },
-            //11 - purple line (21) y1
+            // 11 - purple line (21) y1
             {
                 type: 'line',
                 name: 'purple line',
@@ -1174,7 +1230,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 yAxis: 3,
                 xAxis: 1
             },
-            //12 -- candlestick
+            // 12 -- candlestick
             {
                 type: 'candlestick',
                 name: 'AAPL',
@@ -1187,7 +1243,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 visible: false
 
             },
-            //13 --column
+            // 13 --column
             {
                 type: 'column',
                 className: 'column',
@@ -1301,4 +1357,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
     Highcharts.stockChart('stock', animated);
 
-});
+})();

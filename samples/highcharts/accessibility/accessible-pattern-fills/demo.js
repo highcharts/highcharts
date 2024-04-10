@@ -1,4 +1,4 @@
-var colors = Highcharts.getOptions().colors;
+const colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container-area', {
     chart: {
@@ -32,7 +32,8 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Area chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -66,8 +67,10 @@ Highcharts.chart('container-area', {
             }
         }
     }, {
-        data: [null, null, null, null, null,
-            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        data: [
+            null, null, null, null, null,
+            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4
+        ],
         color: '#e88',
         fillColor: {
             pattern: {
@@ -104,7 +107,8 @@ Highcharts.chart('container-col', {
 
     lang: {
         accessibility: {
-            chartContainerLabel: 'Column chart showing use of visual pattern fills.'
+            chartContainerLabel: 'Column chart showing use of visual pattern ' +
+                'fills.'
         }
     },
 
@@ -173,7 +177,7 @@ Highcharts.chart('container-col', {
 });
 
 function getColorPattern(i) {
-    var colors = Highcharts.getOptions().colors,
+    const colors = Highcharts.getOptions().colors,
         patternColors = [colors[2], colors[0], colors[3], colors[1], colors[4]],
         patterns = [
             'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
@@ -215,7 +219,8 @@ Highcharts.chart('container-pie', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Pie chart showing use of visual pattern fills.</p>'
+            beforeChartFormat: '<p>Pie chart showing use of visual pattern ' +
+                'fills.</p>'
         },
         landmarkVerbosity: 'one'
     },

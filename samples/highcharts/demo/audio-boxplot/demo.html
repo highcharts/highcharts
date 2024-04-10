@@ -1,0 +1,24 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<figure class="highcharts-figure">
+  <button id="sonify">Play chart</button>
+  <div id="container"></div>
+  <p class="highcharts-description">This chart demonstrates how playDelay can be used to easily arrange multiple tracks to play one after the other for each data point. Here we are using this technique to first speak the box plot name, and then play each data item for a box plot in sequence.</p>
+</figure>
+
+<pre id="csv">Class ID,Minimum,First quartile,Median,Third quartile,Maximum
+MATH101,40,65,75,85,100
+BIOL102,45,74,80,85,98
+CHEM103,50,64,78,82,96
+PHYS104,42,65,77,91,100
+PSYC105,48,70,81,89,94
+ECON106,46,67,79,92,97
+COMP107,43,77,83,95,99
+ENGL108,55,74,85,96,100
+HIST109,60,78,86,97,100
+STAT110,52,71,82,91,93
+</pre>

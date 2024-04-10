@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2021 Kamil Kulig
+ *  (c) 2010-2024 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,6 @@
 
 import type {
     LinearRegressionOptions,
-    LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
@@ -70,13 +69,15 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
-        LinearRegressionIndicator.defaultOptions, {
-            tooltip: { // add a degree symbol
+    public static defaultOptions: LinearRegressionOptions = merge(
+        LinearRegressionIndicator.defaultOptions,
+        {
+            tooltip: { // Add a degree symbol
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionOptions
+    );
 
     /* *
      *
@@ -84,9 +85,9 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    public data: Array<LinearRegressionAnglePoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionAnglePoint> = void 0 as any;
+    public data!: Array<LinearRegressionAnglePoint>;
+    public options!: LinearRegressionOptions;
+    public points!: Array<LinearRegressionAnglePoint>;
 
     /* *
      *
@@ -104,7 +105,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
     public slopeToAngle(
         slope: number
     ): number {
-        return Math.atan(slope) * (180 / Math.PI); // rad to deg
+        return Math.atan(slope) * (180 / Math.PI); // Rad to deg
     }
 
     public getEndPointY(
@@ -169,4 +170,4 @@ export default LinearRegressionAngleIndicator;
  * @apioption series.linearregressionangle
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

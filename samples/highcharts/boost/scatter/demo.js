@@ -1,8 +1,8 @@
 // Prepare the data
-var data = [],
-    n = 1000000,
-    i;
-for (i = 0; i < n; i += 1) {
+const data = [],
+    n = 1000000;
+
+for (let i = 0; i < n; i += 1) {
     data.push([
         Math.pow(Math.random(), 2) * 100,
         Math.pow(Math.random(), 2) * 100
@@ -17,7 +17,9 @@ console.time('scatter');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         height: '100%'
     },
 
@@ -44,7 +46,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text: 'Scatter chart with ' +
+            Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
 
     legend: {

@@ -26,9 +26,7 @@ import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -91,7 +89,7 @@ class PCIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             period: 20
         },
         lineWidth: 1,
@@ -136,9 +134,9 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PCPoint> = void 0 as any;
-    public options: PCOptions = void 0 as any;
-    public points: Array<PCPoint> = void 0 as any;
+    public data!: Array<PCPoint>;
+    public options!: PCOptions;
+    public points!: Array<PCPoint>;
 
     /* *
      *
@@ -150,21 +148,22 @@ class PCIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-top line, 2-middle line, 3-bottom line
             PC: Array<Array<number>> = [],
-            // middle line, top line and bottom line
-            ML: number,
-            TL: number,
-            BL: number,
-            date: number,
+            // Middle line, top line and bottom line
             low = 2,
             high = 1,
             xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
+            yData: Array<Array<number>> = [];
+
+        let ML: number,
+            TL: number,
+            BL: number,
+            date: number,
             slicedY: Array<Array<number>>,
             extremes: [number, number],
             i: number;
@@ -260,4 +259,4 @@ export default PCIndicator;
  * @apioption    series.pc
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

@@ -1,0 +1,9 @@
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#main-title {
+    color: #4b4b4b;
+}
+
+#description {
+    text-decoration: underline;
+}

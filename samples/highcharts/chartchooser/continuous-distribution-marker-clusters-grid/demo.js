@@ -4,7 +4,9 @@ const type = 'grid',
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     accessibility: {
         description: ''
@@ -39,14 +41,17 @@ Highcharts.chart('container', {
     },
 
     series: [
-    //Marker clusters
+        // Marker clusters
         {
             name: 'Weight and height by country',
             dataLabels: {
                 enabled: true,
-                color: "#ffffff",
+                color: '#ffffff',
                 formatter: function () {
-                    if (typeof (this.point.clusterPointsAmount) === "undefined") {
+                    if (
+                        typeof (this.point.clusterPointsAmount) ===
+                        'undefined'
+                    ) {
                         return '';
                     }
                     return this.point.clusterPointsAmount;
@@ -80,28 +85,28 @@ Highcharts.chart('container', {
                     to: 4,
                     marker: {
                         radius: 13,
-                        fillColor: "#7695aa"
+                        fillColor: '#7695aa'
                     }
                 }, {
                     from: 5,
                     to: 9,
                     marker: {
                         radius: 15,
-                        fillColor: "#5DADE2"
+                        fillColor: '#5DADE2'
                     }
                 }, {
                     from: 10,
                     to: 20,
                     marker: {
                         radius: 17,
-                        fillColor: "#2E86C1 "
+                        fillColor: '#2E86C1 '
                     }
                 }, {
                     from: 21,
                     to: 100,
                     marker: {
                         radius: 21,
-                        fillColor: "#1B4F72"
+                        fillColor: '#1B4F72'
                     }
                 }]
 
@@ -109,10 +114,16 @@ Highcharts.chart('container', {
 
             tooltip: {
                 formatter: function () {
-                    if (typeof (this.point.clusterPointsAmount) === "undefined") {
-                        return this.point.country + '<br/> Height: ' + this.x + 'cm <br/> Weight: ' + this.y + 'kg';
+                    if (
+                        typeof (this.point.clusterPointsAmount) ===
+                        'undefined'
+                    ) {
+                        return this.point.country +
+                            '<br/> Height: ' + this.x + 'cm <br/> Weight: ' +
+                            this.y + 'kg';
                     }
-                    return "There are <b>" + this.point.clusterPointsAmount + "</b> points";
+                    return 'There are <b>' + this.point.clusterPointsAmount +
+                        '</b> points';
                 }
             },
             data: [{
@@ -1104,18 +1115,21 @@ Highcharts.chart('container', {
                 x: 176.9,
                 y: 72.8,
                 country: 'Average',
-                color: "red",
+                color: 'red',
                 zIndex: 9
             }
             ]
         },
-        //Normal scatter chart
+        // Normal scatter chart
         {
             name: 'Weight and height by country',
             dataLabels: {
                 enabled: true,
                 formatter: function () {
-                    if (typeof (this.point.clusterPointsAmount) === "undefined") {
+                    if (
+                        typeof (this.point.clusterPointsAmount) ===
+                        'undefined'
+                    ) {
                         return '';
                     }
                     return this.point.clusterPointsAmount;
@@ -1138,10 +1152,15 @@ Highcharts.chart('container', {
             },
             tooltip: {
                 formatter: function () {
-                    if (typeof (this.point.clusterPointsAmount) === "undefined") {
-                        return this.point.country + '<br/> Height: ' + this.x + 'cm <br/> Weight: ' + this.y + 'kg';
+                    if (
+                        typeof (this.point.clusterPointsAmount) ===
+                        'undefined'
+                    ) {
+                        return this.point.country + '<br/> Height: ' + this.x +
+                            'cm <br/> Weight: ' + this.y + 'kg';
                     }
-                    return "There are <b>" + this.point.clusterPointsAmount + "</b> points";
+                    return 'There are <b>' + this.point.clusterPointsAmount +
+                        '</b> points';
                 }
             },
             data: [{
@@ -2133,7 +2152,7 @@ Highcharts.chart('container', {
                 x: 176.9,
                 y: 72.8,
                 country: 'Average',
-                color: "red",
+                color: 'red',
                 zIndex: 9
             }
             ]

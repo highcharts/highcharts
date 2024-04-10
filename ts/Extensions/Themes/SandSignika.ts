@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,9 +19,9 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -44,9 +44,11 @@ namespace SandSignikaTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
-        colors: ['#f45b5b', '#8085e9', '#8d4654', '#7798BF', '#aaeeee',
-            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+    export const options: DeepPartial<DefaultOptions> = {
+        colors: [
+            '#f45b5b', '#8085e9', '#8d4654', '#7798BF', '#aaeeee',
+            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
+        ],
         chart: {
             backgroundColor: null as any,
             style: {
@@ -67,11 +69,6 @@ namespace SandSignikaTheme {
         },
         tooltip: {
             borderWidth: 0
-        },
-        labels: {
-            style: {
-                color: '#6e6e70'
-            }
         },
         legend: {
             backgroundColor: '#E0E0E8',

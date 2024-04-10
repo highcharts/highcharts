@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type GeoJSONGeometryMultiPoint from '../../Maps/GeoJSON';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 
 /* *
  *
@@ -40,5 +40,11 @@ export interface MapPointOptions extends ScatterPointOptions {
     properties?: AnyRecord;
     value?: (number|null);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MapPointOptions;

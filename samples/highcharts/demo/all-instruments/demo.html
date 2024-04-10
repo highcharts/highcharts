@@ -1,0 +1,101 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<figure class="highcharts-figure">
+  <div id="controls">
+    <select id="preset"></select>
+    <button id="sonify">Play chart</button>
+  </div>
+  <div id="container"></div>
+  <p class="highcharts-description">Here we are demonstrating the available instrument presets in the sonification module. Select the instrument to use in the dropdown above. Custom instruments can also be used, but are not demonstrated here. The demo shows off both distinct notes for the column chart, and a more continuous sonification for the line. Some instruments are better suited to one or the other.</p>
+</figure>
+
+<pre id="csv">Date,Revenue,Profit Margin
+2017-01-01,1210,3
+2017-02-01,1255,
+2017-03-01,1340,
+2017-04-01,1275,
+2017-05-01,1395,
+2017-06-01,1265,
+2017-07-01,1440,
+2017-08-01,1378,
+2017-09-01,1505,
+2017-10-01,1421,
+2017-11-01,1460,
+2017-12-01,1517,
+2018-01-01,1590,7
+2018-02-01,1610,
+2018-03-01,1650,
+2018-04-01,1725,
+2018-05-01,1680,
+2018-06-01,1743,
+2018-07-01,1780,
+2018-08-01,1832,
+2018-09-01,1900,
+2018-10-01,1865,
+2018-11-01,2020,
+2018-12-01,2084,
+2019-01-01,2150,5
+2019-02-01,2095,
+2019-03-01,2250,
+2019-04-01,2205,
+2019-05-01,2360,
+2019-06-01,2425,
+2019-07-01,2385,
+2019-08-01,2540,
+2019-09-01,2600,
+2019-10-01,2675,
+2019-11-01,2730,
+2019-12-01,2790,
+2020-01-01,2750,9
+2020-02-01,2820,
+2020-03-01,2850,
+2020-04-01,2750,
+2020-05-01,2840,
+2020-06-01,3000,
+2020-07-01,2980,
+2020-08-01,3050,
+2020-09-01,3220,
+2020-10-01,3480,
+2020-11-01,3560,
+2020-12-01,3640,
+2021-01-01,3720,11
+2021-02-01,3800,
+2021-03-01,3890,
+2021-04-01,3980,
+2021-05-01,4250,
+2021-06-01,4120,
+2021-07-01,4000,
+2021-08-01,4280,
+2021-09-01,4370,
+2021-10-01,4440,
+2021-11-01,4530,
+2021-12-01,4620,
+2022-01-01,4910,18
+2022-02-01,4900,
+2022-03-01,4890,
+2022-04-01,4940,
+2022-05-01,5070,
+2022-06-01,5100,
+2022-07-01,5060,
+2022-08-01,5240,
+2022-09-01,5420,
+2022-10-01,5520,
+2022-11-01,5400,
+2022-12-01,5430,
+2023-01-01,5310,20
+2023-02-01,5200,
+2023-03-01,5190,
+2023-04-01,5180,
+2023-05-01,5210,
+2023-06-01,5160,
+2023-07-01,5060,
+2023-08-01,5240,
+2023-09-01,5120,
+2023-10-01,5220,
+2023-11-01,5300,
+2023-12-01,5330,
+2024-01-01,5320,18
+</pre>

@@ -65,10 +65,13 @@ QUnit.test('Treemap and updates', function (assert) {
     chart.series[0].setRootNode('id_1');
     chart.series[0].update({
         data: [{
-            name: "K",
+            name: 'K',
             value: 5
         }]
     });
 
-    assert.ok(true, '#10159: Updating data while traversed down should not throw');
+    assert.ok(
+        true, '#10159: Updating data while traversed down should not ' +
+        'throw'
+    );
 });

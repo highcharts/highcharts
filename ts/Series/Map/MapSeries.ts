@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,44 +21,41 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { MapDataType } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
-import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type {
+    SeriesTypeOptions
+} from '../../Core/Series/SeriesType';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+const { animObject, stop } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
-const {
-    splitPath
-} = MapChart;
+const { splitPath } = MapChart;
 import MapPoint from './MapPoint.js';
+import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
-import { Palette } from '../../Core/Color/Palettes.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    // indirect dependency to keep product size low
-    seriesTypes: {
-        column: ColumnSeries,
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+    // Indirect dependency to keep product size low
+    column: ColumnSeries,
+    scatter: ScatterSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -66,6 +63,7 @@ const {
     fireEvent,
     getNestedProperty,
     isArray,
+    defined,
     isNumber,
     isObject,
     merge,
@@ -79,6 +77,7 @@ const {
  *  Declarations
  *
  * */
+
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
@@ -92,7 +91,7 @@ declare module '../../Core/Series/SeriesLike' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
-        mapData?: (Array<MapPointOptions>|GeoJSON|TopoJSON);
+        mapData?: MapDataType;
     }
     interface SeriesStateHoverOptions
     {
@@ -122,285 +121,10 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
-    /**
-     * The map series is used for basic choropleth maps, where each map area has
-     * a color based on its value.
-     *
-     * @sample maps/demo/all-maps/
-     *         Choropleth map
-     *
-     * @extends      plotOptions.scatter
-     * @excluding    marker, cluster
-     * @product      highmaps
-     * @optionparent plotOptions.map
-     *
-     * @private
-     */
-    public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
-
-        /**
-         * Whether the MapView takes this series into account when computing the
-         * default zoom and center of the map.
-         *
-         * @sample maps/series/affectsmapview/
-         *         US map with world map backdrop
-         *
-         * @since 10.0.0
-         *
-         * @private
-         */
-        affectsMapView: true,
-
-        animation: false, // makes the complex shapes slow
-
-        dataLabels: {
-            crop: false,
-            formatter: function (): string { // #2945
-                const { numberFormatter } = this.series.chart;
-                const { value } = this.point as MapPoint;
-
-                return isNumber(value) ? numberFormatter(value, -1) : '';
-            },
-            inside: true, // for the color
-            overflow: false as any,
-            padding: 0,
-            verticalAlign: 'middle'
-        },
-
-        /**
-         * @ignore-option
-         *
-         * @private
-         */
-        marker: null as any,
-
-        /**
-         * The color to apply to null points.
-         *
-         * In styled mode, the null point fill is set in the
-         * `.highcharts-null-point` class.
-         *
-         * @sample maps/demo/all-areas-as-null/
-         *         Null color
-         *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         *
-         * @private
-         */
-        nullColor: Palette.neutralColor3,
-
-        /**
-         * Whether to allow pointer interaction like tooltips and mouse events
-         * on null points.
-         *
-         * @type      {boolean}
-         * @since     4.2.7
-         * @apioption plotOptions.map.nullInteraction
-         *
-         * @private
-         */
-
-        stickyTracking: false,
-
-        tooltip: {
-            followPointer: true,
-            pointFormat: '{point.name}: {point.value}<br/>'
-        },
-
-        /**
-         * @ignore-option
-         *
-         * @private
-         */
-        turboThreshold: 0,
-
-        /**
-         * Whether all areas of the map defined in `mapData` should be rendered.
-         * If `true`, areas which don't correspond to a data point, are rendered
-         * as `null` points. If `false`, those areas are skipped.
-         *
-         * @sample maps/plotoptions/series-allareas-false/
-         *         All areas set to false
-         *
-         * @type      {boolean}
-         * @default   true
-         * @product   highmaps
-         * @apioption plotOptions.series.allAreas
-         *
-         * @private
-         */
-        allAreas: true,
-
-        /**
-         * The border color of the map areas.
-         *
-         * In styled mode, the border stroke is given in the `.highcharts-point`
-         * class.
-         *
-         * @sample {highmaps} maps/plotoptions/series-border/
-         *         Borders demo
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default   #cccccc
-         * @product   highmaps
-         * @apioption plotOptions.series.borderColor
-         *
-         * @private
-         */
-        borderColor: Palette.neutralColor20,
-
-        /**
-         * The border width of each map area.
-         *
-         * In styled mode, the border stroke width is given in the
-         * `.highcharts-point` class.
-         *
-         * @sample maps/plotoptions/series-border/
-         *         Borders demo
-         *
-         * @type      {number}
-         * @default   1
-         * @product   highmaps
-         * @apioption plotOptions.series.borderWidth
-         *
-         * @private
-         */
-        borderWidth: 1,
-
-        /**
-         * @type      {string}
-         * @default   value
-         * @apioption plotOptions.map.colorKey
-         */
-
-        /**
-         * What property to join the `mapData` to the value data. For example,
-         * if joinBy is "code", the mapData items with a specific code is merged
-         * into the data with the same code. For maps loaded from GeoJSON, the
-         * keys may be held in each point's `properties` object.
-         *
-         * The joinBy option can also be an array of two values, where the first
-         * points to a key in the `mapData`, and the second points to another
-         * key in the `data`.
-         *
-         * When joinBy is `null`, the map items are joined by their position in
-         * the array, which performs much better in maps with many data points.
-         * This is the recommended option if you are printing more than a
-         * thousand data points and have a backend that can preprocess the data
-         * into a parallel array of the mapData.
-         *
-         * @sample maps/plotoptions/series-border/
-         *         Joined by "code"
-         * @sample maps/demo/geojson/
-         *         GeoJSON joined by an array
-         * @sample maps/series/joinby-null/
-         *         Simple data joined by null
-         *
-         * @type      {string|Array<string>}
-         * @default   hc-key
-         * @product   highmaps
-         * @apioption plotOptions.series.joinBy
-         *
-         * @private
-         */
-        joinBy: 'hc-key',
-
-        /**
-         * Define the z index of the series.
-         *
-         * @type      {number}
-         * @product   highmaps
-         * @apioption plotOptions.series.zIndex
-         */
-
-        /**
-         * @apioption plotOptions.series.states
-         *
-         * @private
-         */
-        states: {
-
-            /**
-             * @apioption plotOptions.series.states.hover
-             */
-            hover: {
-
-                /** @ignore-option */
-                halo: null as any,
-
-                /**
-                 * The color of the shape in this state.
-                 *
-                 * @sample maps/plotoptions/series-states-hover/
-                 *         Hover options
-                 *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 * @product   highmaps
-                 * @apioption plotOptions.series.states.hover.color
-                 */
-
-                /**
-                 * The border color of the point in this state.
-                 *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 * @product   highmaps
-                 * @apioption plotOptions.series.states.hover.borderColor
-                 */
-
-                /**
-                 * The border width of the point in this state
-                 *
-                 * @type      {number}
-                 * @product   highmaps
-                 * @apioption plotOptions.series.states.hover.borderWidth
-                 */
-
-                /**
-                 * The relative brightness of the point when hovered, relative
-                 * to the normal point color.
-                 *
-                 * @type      {number}
-                 * @product   highmaps
-                 * @default   0.2
-                 * @apioption plotOptions.series.states.hover.brightness
-                 */
-                brightness: 0.2
-            },
-
-            /**
-             * @apioption plotOptions.series.states.normal
-             */
-            normal: {
-
-                /**
-                 * @productdesc {highmaps}
-                 * The animation adds some latency in order to reduce the effect
-                 * of flickering when hovering in and out of for example an
-                 * uneven coastline.
-                 *
-                 * @sample {highmaps} maps/plotoptions/series-states-animation-false/
-                 *         No animation of fill color
-                 *
-                 * @apioption plotOptions.series.states.normal.animation
-                 */
-                animation: true
-            },
-
-            /**
-             * @apioption plotOptions.series.states.select
-             */
-            select: {
-
-                /**
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 * @default   ${palette.neutralColor20}
-                 * @product   highmaps
-                 * @apioption plotOptions.series.states.select.color
-                 */
-                color: Palette.neutralColor20
-            }
-        }
-    } as MapSeriesOptions);
+    public static defaultOptions = merge(
+        ScatterSeries.defaultOptions,
+        MapSeriesDefaults
+    );
 
     /* *
      *
@@ -412,13 +136,13 @@ class MapSeries extends ScatterSeries {
 
     public bounds?: MapBounds;
 
-    public chart: MapChart = void 0 as any;
+    public chart!: MapChart;
 
-    public data: Array<MapPoint> = void 0 as any;
+    public data!: Array<MapPoint>;
 
-    public group: SVGElement = void 0 as any;
+    public group!: SVGElement;
 
-    public joinBy: Array<string> = void 0 as any;
+    public joinBy!: Array<string>;
 
     public mapData?: unknown;
 
@@ -426,11 +150,11 @@ class MapSeries extends ScatterSeries {
 
     public mapTitle?: string;
 
-    public options: MapSeriesOptions = void 0 as any;
+    public options!: MapSeriesOptions;
 
-    public pointAttrToOptions: unknown;
+    public pointAttrToOptions?: Record<string, string>;
 
-    public points: Array<MapPoint> = void 0 as any;
+    public points!: Array<MapPoint>;
 
     public processedData: Array<(
         MapPointOptions|PointOptions|PointShortOptions
@@ -450,109 +174,35 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * The initial animation for the map series. By default, animation is
-     * disabled. Animation of map shapes is not at all supported in VML
-     * browsers.
+     * disabled.
      * @private
      */
     public animate(init?: boolean): void {
         const { chart, group } = this,
             animation = animObject(this.options.animation);
 
-        if (chart.renderer.isSVG) {
+        // Initialize the animation
+        if (init) {
 
-            // Initialize the animation
-            if (init) {
-
-                // Scale down the group and place it in the center
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.001, // #1499
-                    scaleY: 0.001
-                });
-
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1
-                }, animation);
-            }
-        }
-    }
-
-    /**
-     * Animate in the new series. Depends on the drilldown.js module.
-     * @private
-     */
-    public animateDrilldown(init?: boolean): void {
-        const chart = this.chart,
-            group = this.group;
-
-        if (chart.renderer.isSVG) {
-
-            // Initialize the animation
-            if (init) {
-                // Scale down the group and place it in the center. This is a
-                // regression from <= v9.2, when it animated from the old point.
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.1,
-                    scaleY: 0.1,
-                    opacity: 0.01
-                });
-
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1,
-                    opacity: 1
-                }, (this.chart.options.drilldown as any).animation);
-
-                if (chart.drilldown) {
-                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
-                }
-            }
-        }
-
-    }
-
-    /**
-     * When drilling up, pull out the individual point graphics from the lower
-     * series and animate them into the origin point in the upper series.
-     * @private
-     */
-    public animateDrillupFrom(): void {
-        const chart = this.chart;
-
-        if (chart.renderer.isSVG) {
-            this.group.animate({
+            // Scale down the group and place it in the center
+            group.attr({
                 translateX: chart.plotLeft + chart.plotWidth / 2,
                 translateY: chart.plotTop + chart.plotHeight / 2,
-                scaleX: 0.1,
-                scaleY: 0.1,
-                opacity: 0.01
+                scaleX: 0.001, // #1499
+                scaleY: 0.001
             });
-        }
-    }
 
-    /**
-     * When drilling up, keep the upper series invisible until the lower series
-     * has moved into place.
-     * @private
-     */
-    public animateDrillupTo(init?: boolean): void {
-        ColumnSeries.prototype.animateDrillupTo.call(this, init);
+        // Run the animation
+        } else {
+            group.animate({
+                translateX: chart.plotLeft,
+                translateY: chart.plotTop,
+                scaleX: 1,
+                scaleY: 1
+            }, animation);
+        }
     }
 
     public clearBounds(): void {
@@ -573,7 +223,6 @@ class MapSeries extends ScatterSeries {
         return Boolean(
             this.isDirtyData ||
             this.chart.isResizing ||
-            this.chart.renderer.isVML ||
             !this.hasRendered
         );
     }
@@ -584,8 +233,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawMapDataLabels(): void {
-
-        Series.prototype.drawDataLabels.call(this);
+        super.drawDataLabels();
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
@@ -611,11 +259,11 @@ class MapSeries extends ScatterSeries {
         if (!transformGroups[0]) {
             transformGroups[0] = renderer.g().add(group);
         }
-        mapView.insets.forEach((inset, i): void => {
+        for (let i = 0, iEnd = mapView.insets.length; i < iEnd; ++i) {
             if (!transformGroups[i + 1]) {
                 transformGroups.push(renderer.g().add(group));
             }
-        });
+        }
 
         // Draw the shapes again
         if (this.doFullTranslate()) {
@@ -623,7 +271,7 @@ class MapSeries extends ScatterSeries {
             // Individual point actions.
             this.points.forEach((point): void => {
 
-                const { graphic, shapeArgs } = point;
+                const { graphic } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -636,14 +284,6 @@ class MapSeries extends ScatterSeries {
                 // MapView.update
                 if (graphic && graphic.parentGroup !== point.group) {
                     graphic.add(point.group);
-                }
-
-                // Restore state color on update/redraw (#3529)
-                if (shapeArgs && chart.hasRendered && !chart.styledMode) {
-                    shapeArgs.fill = this.pointAttribs(
-                        point,
-                        point.state
-                    ).fill;
                 }
             });
 
@@ -677,16 +317,35 @@ class MapSeries extends ScatterSeries {
                             this.pointAttribs(
                                 point,
                                 point.selected && 'select' || void 0
-                            ) as any
+                            ) as CSSObject
                         );
                     }
 
-                    graphic.animate = function (params,
-                        options, complete): SVGElement {
+                    // If the map point is not visible and is not null (e.g.
+                    // hidden by data classes), then the point should be
+                    // visible, but without value
+                    graphic.attr({
+                        visibility: (
+                            point.visible ||
+                            (!point.visible && !point.isNull)
+                        ) ? 'inherit' : 'hidden'
+                    });
 
-                        let switchBack = false;
+                    graphic.animate = function (
+                        params,
+                        options, complete
+                    ): SVGElement {
+
+                        const animateIn = (
+                                isNumber(params['stroke-width']) &&
+                                !isNumber(graphic['stroke-width'])
+                            ),
+                            animateOut = (
+                                isNumber(graphic['stroke-width']) &&
+                                !isNumber(params['stroke-width'])
+                            );
                         // When strokeWidth is animating
-                        if (params['stroke-width']) {
+                        if (animateIn || animateOut) {
 
                             const strokeWidth = pick(
                                     series.getStrokeWidth(series.options),
@@ -700,25 +359,23 @@ class MapSeries extends ScatterSeries {
                                         1
                                     )
                                 );
-                            // For animating from inherit,
-                            // .attr() reads the property as the starting point
-                            if (graphic['stroke-width'] === 'inherit') {
+                            // For animating from undefined, .attr() reads the
+                            // property as the starting point
+                            if (animateIn) {
                                 graphic['stroke-width'] = inheritedStrokeWidth;
                             }
-                            // For animating to inherit
-                            if (params['stroke-width'] === ('inherit' as any)) {
+                            // For animating to undefined
+                            if (animateOut) {
                                 params['stroke-width'] = inheritedStrokeWidth;
-                                switchBack = true;
                             }
                         }
                         const ret = animate.call(
                             graphic, params, options,
-                            switchBack ? function (this: SVGElement): void {
-                                // Switch back to "inherit" for zooming
-                                // to work with the existing logic + complete
-                                graphic.attr({
-                                    'stroke-width': ('inherit' as any)
-                                });
+                            animateOut ? function (this: SVGElement): void {
+                                // Remove the attribute after finished animation
+                                graphic.element.removeAttribute('stroke-width');
+                                delete graphic['stroke-width'];
+
                                 // Proceed
                                 if (complete) {
                                     complete.apply(this, arguments);
@@ -752,9 +409,29 @@ class MapSeries extends ScatterSeries {
             transform properties, it should induce a single updateTransform and
             symbolAttr call.
             */
-            const scale = svgTransform.scaleX;
-            const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
-            if (renderer.globalAnimation && chart.hasRendered) {
+            const scale = svgTransform.scaleX,
+                flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+            const animatePoints = (scale: number): void => { // #18166
+                (series.points || []).forEach((point): void => {
+                    const graphic = point.graphic;
+                    let strokeWidth;
+
+                    if (
+                        graphic &&
+                        graphic['stroke-width'] &&
+                        (strokeWidth = this.getStrokeWidth(point.options))
+                    ) {
+                        graphic.attr({
+                            'stroke-width': strokeWidth / scale
+                        });
+                    }
+                });
+            };
+            if (
+                renderer.globalAnimation &&
+                chart.hasRendered &&
+                mapView.allowTransformAnimation
+            ) {
                 const startTranslateX = Number(
                     transformGroup.attr('translateX')
                 );
@@ -763,10 +440,7 @@ class MapSeries extends ScatterSeries {
                 );
                 const startScale = Number(transformGroup.attr('scaleX'));
 
-                const step: AnimationStepCallbackFunction = (
-                    now,
-                    fx
-                ): void => {
+                const step: AnimationStepCallbackFunction = (now, fx): void => {
                     const scaleStep = startScale +
                         (scale - startScale) * fx.pos;
                     transformGroup.attr({
@@ -781,36 +455,59 @@ class MapSeries extends ScatterSeries {
                             ) * fx.pos
                         ),
                         scaleX: scaleStep,
-                        scaleY: scaleStep * flipFactor
+                        scaleY: scaleStep * flipFactor,
+                        'stroke-width': strokeWidth / scaleStep
                     });
 
-                    transformGroup.element.setAttribute(
-                        'stroke-width',
-                        strokeWidth / scaleStep
-                    );
+                    animatePoints(scaleStep); // #18166
+
+                };
+
+                const animOptions = merge(animObject(renderer.globalAnimation)),
+                    userStep = animOptions.step;
+
+                animOptions.step = function (): void {
+                    if (userStep) {
+                        userStep.apply(this, arguments);
+                    }
+                    step.apply(this, arguments);
                 };
 
                 transformGroup
                     .attr({ animator: 0 })
-                    .animate({ animator: 1 }, { step });
+                    .animate(
+                        { animator: 1 },
+                        animOptions,
+                        function (this: MapSeries): void {
+                            if (
+                                typeof renderer.globalAnimation !== 'boolean' &&
+                                renderer.globalAnimation.complete
+                            ) {
+                                // Fire complete only from this place
+                                renderer.globalAnimation.complete({
+                                    applyDrilldown: true
+                                });
+                            }
+
+                            fireEvent(this, 'mapZoomComplete');
+                        }.bind(this)
+                    );
 
             // When dragging or first rendering, animation is off
             } else {
-                transformGroup.attr(svgTransform);
+                stop(transformGroup);
+                transformGroup.attr(merge(
+                    svgTransform,
+                    { 'stroke-width': strokeWidth / scale }
+                ));
 
-                // Set the stroke-width directly on the group element so the
-                // children inherit it. We need to use setAttribute directly,
-                // because the stroke-widthSetter method expects a stroke color
-                // also to be set.
-                transformGroup.element.setAttribute(
-                    'stroke-width',
-                    strokeWidth / scale
-                );
+                animatePoints(scale); // #18166
             }
         });
 
-        this.drawMapDataLabels();
-
+        if (!this.isDrilling) {
+            this.drawMapDataLabels();
+        }
     }
 
     /**
@@ -824,11 +521,11 @@ class MapSeries extends ScatterSeries {
                 allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
-            (this.points || []).forEach(function (point): void {
+            (this.points || []).forEach((point): void => {
 
                 if (point.path || point.geometry) {
 
-                    // @todo Try to puth these two conversions in
+                    // @todo Try to put these two conversions in
                     // MapPoint.applyOptions
                     if (typeof point.path === 'string') {
                         point.path = splitPath(point.path);
@@ -836,11 +533,10 @@ class MapSeries extends ScatterSeries {
                     // Legacy one-dimensional array
                     } else if (
                         isArray(point.path) &&
-                        point.path[0] as any === 'M'
+                        (point.path as unknown as SVGPath.MoveTo)[0] === 'M'
                     ) {
-                        point.path = SVGRenderer.prototype.pathToSegments(
-                            point.path as any
-                        );
+                        point.path = this.chart.renderer
+                            .pathToSegments(point.path);
                     }
 
                     // The first time a map point is used, analyze its box
@@ -901,13 +597,13 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     private getStrokeWidth(
-        options: MapSeries['options']|MapPoint['options']
-    ): number|undefined {
+        options: (MapSeriesOptions|MapPointOptions)
+    ): (number|undefined) {
         const pointAttrToOptions = this.pointAttrToOptions;
 
-        return (options as any)[
+        return (options as AnyRecord)[
             pointAttrToOptions &&
-            (pointAttrToOptions as any)['stroke-width'] || 'borderWidth'
+            pointAttrToOptions['stroke-width'] || 'borderWidth'
         ];
     }
 
@@ -934,7 +630,7 @@ class MapSeries extends ScatterSeries {
         const attr = styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
-                this, point as any, state
+                this, point as unknown as ColumnPoint, state
             );
 
         // Individual stroke width
@@ -943,12 +639,18 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                (this.options as any).states[state],
-                point.options.states &&
-                (point.options.states as any)[state] ||
-                {}
-            );
-            pointStrokeWidth = this.getStrokeWidth(stateOptions);
+                    this.options.states &&
+                    this.options.states[state] as MapSeriesOptions,
+                    point.options.states &&
+                    point.options.states[state] as MapPointOptions ||
+                    {}
+                ),
+                stateStrokeWidth = this.getStrokeWidth(stateOptions);
+
+            if (defined(stateStrokeWidth)) {
+                pointStrokeWidth = stateStrokeWidth;
+            }
+            attr.stroke = stateOptions.borderColor ?? point.color;
         }
 
         if (pointStrokeWidth && mapView) {
@@ -958,6 +660,7 @@ class MapSeries extends ScatterSeries {
         // In order for dash style to avoid being scaled, set the transformed
         // stroke width on the item
         const seriesStrokeWidth = this.getStrokeWidth(this.options);
+
         if (
             attr.dashstyle &&
             mapView &&
@@ -974,20 +677,16 @@ class MapSeries extends ScatterSeries {
             attr.fill = this.options.nullColor;
         }
 
-        (attr as any)['stroke-width'] = pick(
-            pointStrokeWidth,
-            // By default set the stroke-width on the group element and let all
-            // point graphics inherit. That way we don't have to iterate over
-            // all points to update the stroke-width on zooming.
-            'inherit'
-        );
+        if (defined(pointStrokeWidth)) {
+            attr['stroke-width'] = pointStrokeWidth;
+        } else {
+            delete attr['stroke-width'];
+        }
+        attr['stroke-linecap'] = attr['stroke-linejoin'] = this.options.linecap;
 
         return attr;
     }
 
-    /**
-     * @private
-     */
     public updateData(): boolean {
         // #16782
         if (this.processedData) {
@@ -1009,7 +708,7 @@ class MapSeries extends ScatterSeries {
     ): void {
 
         delete this.bounds;
-        super.setData.call(this, data, false, void 0, updatePoints);
+        super.setData(data, false, void 0, updatePoints);
 
         this.processData();
         this.generatePoints();
@@ -1027,35 +726,32 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public processData(): (boolean|undefined) {
-
         const options = this.options,
             data = options.data,
-            chartOptions = this.chart.options.chart,
+            chart = this.chart,
+            chartOptions = chart.options.chart,
             joinBy = this.joinBy,
             pointArrayMap = options.keys || this.pointArrayMap,
             dataUsed: Array<MapPointOptions> = [],
-            mapMap: AnyRecord = {};
-
-        let mapView = this.chart.mapView,
+            mapMap: AnyRecord = {},
+            mapView = this.chart.mapView,
             mapDataObject = mapView && (
                 // Get map either from series or global
                 isObject(options.mapData, true) ?
                     mapView.getGeoMap(options.mapData) : mapView.geoMap
             ),
-            mapTransforms = this.chart.mapTransforms,
-            mapPoint,
-            props,
-            i;
+            // Pick up transform definitions for chart
+            mapTransforms = chart.mapTransforms =
+                chartOptions.mapTransforms ||
+                mapDataObject && mapDataObject['hc-transform'] ||
+                chart.mapTransforms;
 
-        // Pick up transform definitions for chart
-        this.chart.mapTransforms = mapTransforms =
-            chartOptions.mapTransforms ||
-            mapDataObject && mapDataObject['hc-transform'] ||
-            mapTransforms;
+        let mapPoint,
+            props;
 
         // Cache cos/sin of transform rotation angle
         if (mapTransforms) {
-            objectEach(mapTransforms, function (transform: any): void {
+            objectEach(mapTransforms, (transform): void => {
                 if (transform.rotation) {
                     transform.cosAngle = Math.cos(transform.rotation);
                     transform.sinAngle = Math.sin(transform.rotation);
@@ -1070,7 +766,7 @@ class MapSeries extends ScatterSeries {
             mapDataObject && mapDataObject.type === 'FeatureCollection'
         ) {
             this.mapTitle = mapDataObject.title;
-            mapData = H.geojson(mapDataObject, this.type, this);
+            mapData = (H as AnyRecord).geojson(mapDataObject, this.type, this);
         }
 
         // Reset processedData
@@ -1080,14 +776,17 @@ class MapSeries extends ScatterSeries {
         // Pick up numeric values, add index. Convert Array point definitions to
         // objects using pointArrayMap.
         if (data) {
-            data.forEach(function (val, i): void {
-                let ix = 0;
+            let val: (MapPointOptions|PointOptions|PointShortOptions);
+
+            for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+                val = data[i];
 
                 if (isNumber(val)) {
                     processedData[i] = {
                         value: val
                     };
                 } else if (isArray(val)) {
+                    let ix = 0;
                     processedData[i] = {};
                     // Automatically copy first item to hc-key if there is
                     // an extra leading string
@@ -1096,7 +795,7 @@ class MapSeries extends ScatterSeries {
                         val.length > pointArrayMap.length &&
                         typeof val[0] === 'string'
                     ) {
-                        (processedData[i] as any)['hc-key'] = val[0];
+                        (processedData[i] as AnyRecord)['hc-key'] = val[0];
                         ++ix;
                     }
                     // Run through pointArrayMap and what's left of the
@@ -1111,43 +810,45 @@ class MapSeries extends ScatterSeries {
                                     processedData[i], val[ix], pointArrayMap[j]
                                 );
                             } else {
-                                (processedData[i] as any)[pointArrayMap[j]] =
-                                    val[ix];
+                                (processedData[i] as AnyRecord)[
+                                    pointArrayMap[j]
+                                ] = val[ix];
                             }
                         }
                     }
                 } else {
                     processedData[i] = data[i];
                 }
-                if (joinBy && joinBy[0] === '_i') {
-                    (processedData[i] as any)._i = i;
+                if (
+                    joinBy &&
+                    joinBy[0] === '_i'
+                ) {
+                    (processedData[i] as AnyRecord)._i = i;
                 }
-            });
+            }
         }
 
         if (mapData) {
             this.mapData = mapData;
             this.mapMap = {};
 
-            for (i = 0; i < mapData.length; i++) {
+            for (let i = 0; i < mapData.length; i++) {
                 mapPoint = mapData[i];
                 props = mapPoint.properties;
 
-                (mapPoint as any)._i = i;
+                (mapPoint as AnyRecord)._i = i;
                 // Copy the property over to root for faster access
                 if (joinBy[0] && props && props[joinBy[0]]) {
-                    (mapPoint as any)[joinBy[0]] = props[joinBy[0]];
+                    (mapPoint as AnyRecord)[joinBy[0]] = props[joinBy[0]];
                 }
-                mapMap[(mapPoint as any)[joinBy[0]]] = mapPoint;
+                mapMap[(mapPoint as AnyRecord)[joinBy[0]]] = mapPoint;
             }
             this.mapMap = mapMap;
 
             // Registered the point codes that actually hold data
             if (joinBy[1]) {
                 const joinKey = joinBy[1];
-                processedData.forEach(function (
-                    pointOptions: MapPointOptions
-                ): void {
+                processedData.forEach((pointOptions): void => {
                     const mapKey = getNestedProperty(
                         joinKey,
                         pointOptions
@@ -1155,21 +856,19 @@ class MapSeries extends ScatterSeries {
                     if (mapMap[mapKey]) {
                         dataUsed.push(mapMap[mapKey]);
                     }
-                } as any);
+                });
             }
 
             if (options.allAreas) {
                 // Register the point codes that actually hold data
                 if (joinBy[1]) {
                     const joinKey = joinBy[1];
-                    processedData.forEach(function (
-                        pointOptions: MapPointOptions
-                    ): void {
+                    processedData.forEach((pointOptions): void => {
                         dataUsed.push(getNestedProperty(
                             joinKey,
                             pointOptions
                         ) as MapPointOptions);
-                    } as any);
+                    });
                 }
 
                 // Add those map points that don't correspond to data, which
@@ -1179,17 +878,19 @@ class MapSeries extends ScatterSeries {
                     '|' +
                     dataUsed
                         .map(function (point): void {
-                            return point && (point as any)[joinBy[0]];
+                            return point && (point as AnyRecord)[joinBy[0]];
                         })
                         .join('|') +
                     '|'
                 );
 
-                mapData.forEach(function (mapPoint: any): void {
+                mapData.forEach((mapPoint): void => {
                     if (
                         !joinBy[0] ||
                         dataUsedString.indexOf(
-                            '|' + mapPoint[joinBy[0]] + '|'
+                            '|' +
+                            mapPoint[joinBy[0] as keyof typeof mapPoint] +
+                            '|'
                         ) === -1
                     ) {
                         processedData.push(merge(mapPoint, { value: null }));
@@ -1210,11 +911,11 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
-        let options = Series.prototype.setOptions.call(this, itemOptions),
-            joinBy = options.joinBy,
-            joinByNull = joinBy === null;
+        const options = super.setOptions(itemOptions);
 
-        if (joinByNull) {
+        let joinBy = options.joinBy;
+
+        if (options.joinBy === null) {
             joinBy = '_i';
         }
         joinBy = this.joinBy = splat(joinBy);
@@ -1245,7 +946,9 @@ class MapSeries extends ScatterSeries {
             if (
                 mapView &&
                 !mapView.userOptions.center &&
-                !isNumber(mapView.userOptions.zoom)
+                !isNumber(mapView.userOptions.zoom) &&
+                mapView.zoom === mapView.minZoom // #18542 don't zoom out if
+                // map is zoomed
             ) {
                 // Not only recalculate bounds but also fit view
                 mapView.fitToBounds(void 0, void 0, false); // #17012
@@ -1259,9 +962,7 @@ class MapSeries extends ScatterSeries {
         if (mapView) {
             const mainSvgTransform = mapView.getSVGTransform();
 
-            series.points.forEach(function (
-                point: (MapPoint&MapPoint.CacheObject)
-            ): void {
+            series.points.forEach((point: MapPoint): void => {
 
                 const svgTransform = (
                     isNumber(point.insetIndex) &&
@@ -1289,12 +990,46 @@ class MapSeries extends ScatterSeries {
                         d: MapPoint.getProjectedPath(point, projection)
                     };
                 }
+
+                if (!point.hiddenInDataClass) { // #20441
+                    if (point.projectedPath && !point.projectedPath.length) {
+                        point.setVisible(false);
+                    } else if (!point.visible) {
+                        point.setVisible(true);
+                    }
+                }
             });
         }
 
         fireEvent(series, 'afterTranslate');
     }
-    /* eslint-enable valid-jsdoc */
+
+    public update(
+        options: SeriesTypeOptions
+    ): void {
+        // Calculate and set the recommended map view after every series update
+        // if new mapData is set
+        if (options.mapData) {
+            this.chart.mapView?.recommendMapView(
+                this.chart,
+                [
+                    this.chart.options.chart.map,
+                    ...(this.chart.options.series || []).map(
+                        (s, i): (MapDataType|undefined) => {
+                            if (i === this._i) {
+                                return options.mapData;
+                            }
+                            return s.mapData;
+                        }
+                    )
+                ],
+                true
+            );
+        }
+
+        super.update.apply(this, arguments);
+    }
+
 }
 
 /* *
@@ -1304,15 +1039,12 @@ class MapSeries extends ScatterSeries {
  * */
 
 interface MapSeries extends ColorMapComposition.SeriesComposition {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     animate(init?: boolean): void;
-    animateDrilldown(init?: boolean): void;
-    animateDrillupTo(init?: boolean): void;
     doFullTranslate(): boolean;
     drawMapDataLabels(): void;
     drawPoints(): void;
@@ -1342,8 +1074,6 @@ extend(MapSeries.prototype, {
 
     // No graph for the map series
     drawGraph: noop,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 
@@ -1394,252 +1124,3 @@ SeriesRegistry.registerSeriesType('map', MapSeries);
  * */
 
 export default MapSeries;
-
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * An array of objects containing a `geometry` or `path` definition and
- * optionally additional properties to join in the `data` as per the `joinBy`
- * option. GeoJSON and TopoJSON structures can also be passed directly into
- * `mapData`.
- *
- * @sample maps/demo/category-map/
- *         Map data and joinBy
- * @sample maps/series/mapdata-multiple/
- *         Multiple map sources
- *
- * @type      {Array<Highcharts.SeriesMapDataOptions>|Highcharts.GeoJSON|Highcharts.TopoJSON}
- * @product   highmaps
- * @apioption series.mapData
- */
-
-/**
- * A `map` series. If the [type](#series.map.type) option is not specified, it
- * is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.map
- * @excluding dataParser, dataURL, marker
- * @product   highmaps
- * @apioption series.map
- */
-
-/**
- * An array of data points for the series. For the `map` series type, points can
- * be given in the following ways:
- *
- * 1. An array of numerical values. In this case, the numerical values will be
- *    interpreted as `value` options. Example:
- *    ```js
- *    data: [0, 5, 3, 5]
- *    ```
- *
- * 2. An array of arrays with 2 values. In this case, the values correspond to
- *    `[hc-key, value]`. Example:
- *    ```js
- *        data: [
- *            ['us-ny', 0],
- *            ['us-mi', 5],
- *            ['us-tx', 3],
- *            ['us-ak', 5]
- *        ]
- *    ```
- *
- * 3. An array of objects with named values. The following snippet shows only a
- *    few settings, see the complete options set below. If the total number of
- *    data points exceeds the series'
- *    [turboThreshold](#series.map.turboThreshold),
- *    this option is not available.
- *    ```js
- *        data: [{
- *            value: 6,
- *            name: "Point2",
- *            color: "#00FF00"
- *        }, {
- *            value: 6,
- *            name: "Point1",
- *            color: "#FF00FF"
- *        }]
- *    ```
- *
- * @type      {Array<number|Array<string,(number|null)>|null|*>}
- * @product   highmaps
- * @apioption series.map.data
- */
-
-/**
- * Individual color for the point. By default the color is either used
- * to denote the value, or pulled from the global `colors` array.
- *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- * @product   highmaps
- * @apioption series.map.data.color
- */
-
-/**
- * Individual data label for each point. The options are the same as
- * the ones for [plotOptions.series.dataLabels](
- * #plotOptions.series.dataLabels).
- *
- * @sample maps/series/data-datalabels/
- *         Disable data labels for individual areas
- *
- * @type      {Highcharts.DataLabelsOptions}
- * @product   highmaps
- * @apioption series.map.data.dataLabels
- */
-
-/**
- * The `id` of a series in the [drilldown.series](#drilldown.series)
- * array to use for a drilldown for this point.
- *
- * @sample maps/demo/map-drilldown/
- *         Basic drilldown
- *
- * @type      {string}
- * @product   highmaps
- * @apioption series.map.data.drilldown
- */
-
-/**
- * For map and mapline series types, the geometry of a point.
- *
- * To achieve a better separation between the structure and the data,
- * it is recommended to use `mapData` to define the geometry instead
- * of defining it on the data points themselves.
- *
- * The geometry object is compatible to that of a `feature` in geoJSON, so
- * features of geoJSON can be passed directly into the `data`, optionally
- * after first filtering and processing it.
- *
- * @sample maps/series/data-geometry/
- *         Geometry defined in data
- *
- * @type      {Object}
- * @since 9.3.0
- * @product   highmaps
- * @apioption series.map.data.geometry
- */
-
-/**
- * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
- * or `MultiPolygon`.
- *
- * @declare   Highcharts.MapGeometryTypeValue
- * @type      {string}
- * @since     9.3.0
- * @product   highmaps
- * @validvalue ["LineString", "Polygon", "MultiLineString", "MultiPolygon"]
- * @apioption series.map.data.geometry.type
- */
-
-/**
- * The geometry coordinates in terms of arrays of `[longitude, latitude]`, or
- * a two dimensional array of the same. The dimensionality must comply with the
- * `type`.
- *
- * @type      {Array<LonLatArray>|Array<Array<LonLatArray>>}
- * @since 9.3.0
- * @product   highmaps
- * @apioption series.map.data.geometry.coordinates
- */
-
-/**
- * An id for the point. This can be used after render time to get a
- * pointer to the point object through `chart.get()`.
- *
- * @sample maps/series/data-id/
- *         Highlight a point by id
- *
- * @type      {string}
- * @product   highmaps
- * @apioption series.map.data.id
- */
-
-/**
- * When data labels are laid out on a map, Highmaps runs a simplified
- * algorithm to detect collision. When two labels collide, the one with
- * the lowest rank is hidden. By default the rank is computed from the
- * area.
- *
- * @type      {number}
- * @product   highmaps
- * @apioption series.map.data.labelrank
- */
-
-/**
- * The relative mid point of an area, used to place the data label.
- * Ranges from 0 to 1\. When `mapData` is used, middleX can be defined
- * there.
- *
- * @type      {number}
- * @default   0.5
- * @product   highmaps
- * @apioption series.map.data.middleX
- */
-
-/**
- * The relative mid point of an area, used to place the data label.
- * Ranges from 0 to 1\. When `mapData` is used, middleY can be defined
- * there.
- *
- * @type      {number}
- * @default   0.5
- * @product   highmaps
- * @apioption series.map.data.middleY
- */
-
-/**
- * The name of the point as shown in the legend, tooltip, dataLabel
- * etc.
- *
- * @sample maps/series/data-datalabels/
- *         Point names
- *
- * @type      {string}
- * @product   highmaps
- * @apioption series.map.data.name
- */
-
-/**
- * For map and mapline series types, the SVG path for the shape. For
- * compatibily with old IE, not all SVG path definitions are supported,
- * but M, L and C operators are safe.
- *
- * To achieve a better separation between the structure and the data,
- * it is recommended to use `mapData` to define that paths instead
- * of defining them on the data points themselves.
- *
- * For providing true geographical shapes based on longitude and latitude, use
- * the `geometry` option instead.
- *
- * @sample maps/series/data-path/
- *         Paths defined in data
- *
- * @type      {string}
- * @product   highmaps
- * @apioption series.map.data.path
- */
-
-/**
- * The numeric value of the data point.
- *
- * @type      {number|null}
- * @product   highmaps
- * @apioption series.map.data.value
- */
-
-
-/**
- * Individual point events
- *
- * @extends   plotOptions.series.point.events
- * @product   highmaps
- * @apioption series.map.data.events
- */
-
-''; // adds doclets above to the transpiled file

@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -37,8 +37,8 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
-const { defaultOptions, setOptions } = D;
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
@@ -105,7 +105,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/LangOptions' {
+declare module '../../Core/Options' {
     interface LangOptions {
         contextButtonTitle?: string;
         exitFullscreen?: string;
@@ -116,9 +116,6 @@ declare module '../../Core/LangOptions' {
         printChart?: string;
         viewFullscreen?: string;
     }
-}
-
-declare module '../../Core/Options' {
     interface Options {
         exporting?: ExportingOptions;
         navigation?: NavigationOptions;
@@ -149,18 +146,6 @@ namespace Exporting {
 
     export declare interface ChartAdditions {
         update(options: ExportingOptions, redraw?: boolean): void;
-    }
-
-    export declare interface ChartComposition extends Chart {
-        new(
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
-        new(
-            renderTo: (string|globalThis.HTMLElement),
-            options: Partial<Options>,
-            callback?: Chart.CallbackFunction
-        ): this;
     }
 
     export declare class ChartComposition extends Chart {
@@ -258,19 +243,19 @@ namespace Exporting {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
-
     // These CSS properties are not inlined. Remember camelCase.
-    const inlineBlacklist: Array<RegExp> = [
+    const inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
-        /^font$/, // more specific props are set
+        /^font$/, // More specific props are set
         /[lL]ogical(Width|Height)$/,
+        /^parentRule$/,
+        /^(cssRules|ownerRules)$/, // #19516 read-only properties
         /perspective/,
         /TapHighlightColor/,
         /^transition/,
-        /^length$/ // #7700
-        // /^text (border|color|cursor|height|webkitBorder)/
+        /^length$/, // #7700
+        /^[0-9]+$/ // #17538
     ];
 
     // These ones are translated to attributes rather than styles
@@ -285,7 +270,7 @@ namespace Exporting {
         'y'
     ];
 
-    export const inlineWhitelist: Array<RegExp> = [];
+    export const inlineAllowlist: Array<RegExp> = [];
 
     const unstyledElements: Array<string> = [
         'clipPath',
@@ -306,8 +291,6 @@ namespace Exporting {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Add the export button to the chart, with options.
@@ -374,17 +357,17 @@ namespace Exporting {
                 this: SVGElement,
                 e: (Event|AnyRecord)
             ): void {
-                // consistent with onclick call (#3495)
+                // Consistent with onclick call (#3495)
                 if (e) {
                     e.stopPropagation();
                 }
                 chart.contextMenu(
                     button.menuClassName,
-                    menuItems as any,
-                    button.translateX,
-                    button.translateY,
-                    button.width,
-                    button.height,
+                    menuItems,
+                    button.translateX || 0,
+                    button.translateY || 0,
+                    button.width || 0,
+                    button.height || 0,
                     button
                 );
                 button.setState(2);
@@ -472,7 +455,7 @@ namespace Exporting {
             }), true, 'spacingBox');
 
         (chart.buttonOffset as any) += (
-            (button.width + btnOptions.buttonSpacing) *
+            ((button.width || 0) + (btnOptions as any).buttonSpacing) *
             (btnOptions.align === 'right' ? -1 : 1)
         );
 
@@ -481,7 +464,7 @@ namespace Exporting {
     }
 
     /**
-     * Clena up after printing a chart.
+     * Clean up after printing a chart.
      *
      * @function Highcharts#afterPrint
      *
@@ -507,10 +490,10 @@ namespace Exporting {
             resetParams
         } = chart.printReverseInfo;
 
-        // put the chart back in
+        // Put the chart back in
         chart.moveContainers(chart.renderTo);
 
-        // restore all body content
+        // Restore all body content
         [].forEach.call(childNodes, function (
             node: HTMLDOMElement,
             i: number
@@ -557,7 +540,7 @@ namespace Exporting {
             };
 
         chart.isPrinting = true;
-        chart.pointer.reset(null as any, 0);
+        chart.pointer?.reset(void 0, 0);
 
         fireEvent(chart, 'beforePrint');
 
@@ -573,7 +556,7 @@ namespace Exporting {
             chart.setSize(printMaxWidth, void 0, false);
         }
 
-        // hide all body content
+        // Hide all body content
         [].forEach.call(printReverseInfo.childNodes, function (
             node: HTMLDOMElement,
             i: number
@@ -584,7 +567,7 @@ namespace Exporting {
             }
         });
 
-        // pull out the chart
+        // Pull out the chart
         chart.moveContainers(body);
         // Storage details for undo action after printing
         chart.printReverseInfo = printReverseInfo;
@@ -648,11 +631,9 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.exportChart) {
             chartProto.afterPrint = afterPrint;
             chartProto.exportChart = exportChart;
             chartProto.inlineStyles = inlineStyles;
@@ -677,7 +658,7 @@ namespace Exporting {
             );
 
             if (G.isSafari) {
-                G.win.matchMedia('print').addListener(
+                win.matchMedia('print').addListener(
                     function (
                         this: MediaQueryList,
                         mqlEvent: MediaQueryListEvent
@@ -693,10 +674,6 @@ namespace Exporting {
                     }
                 );
             }
-        }
-
-        if (composedClasses.indexOf(setOptions) === -1) {
-            composedClasses.push(setOptions);
 
             defaultOptions.exporting = merge(
                 ExportingDefaults.exporting,
@@ -716,6 +693,7 @@ namespace Exporting {
                 defaultOptions.navigation
             );
         }
+
     }
 
     /**
@@ -753,14 +731,15 @@ namespace Exporting {
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
             cacheName = 'cache-' + className,
-            menuPadding = Math.max(width, height); // for mouse leave detection
+            // For mouse leave detection
+            menuPadding = Math.max(width, height);
         let innerMenu: HTMLDOMElement,
             menu: Exporting.DivElement = (chart as any)[cacheName];
 
-        // create the menu only the first time
+        // Create the menu only the first time
         if (!menu) {
 
-            // create a HTML element above the SVG
+            // Create a HTML element above the SVG
             chart.exportContextMenu = (chart as any)[cacheName] = menu =
                 createElement(
                     'div', {
@@ -770,15 +749,16 @@ namespace Exporting {
                         position: 'absolute',
                         zIndex: 1000,
                         padding: menuPadding + 'px',
-                        pointerEvents: 'auto'
+                        pointerEvents: 'auto',
+                        ...chart.renderer.style
                     },
-                    chart.fixedDiv || chart.container
+                    chart.scrollablePlotArea?.fixedDiv || chart.container
                 ) as Exporting.DivElement;
 
             innerMenu = createElement(
                 'ul',
                 { className: 'highcharts-menu' },
-                {
+                chart.styledMode ? {} : {
                     listStyle: 'none',
                     margin: 0,
                     padding: 0
@@ -795,7 +775,7 @@ namespace Exporting {
                 }, navOptions.menuStyle as any));
             }
 
-            // hide on mouse out
+            // Hide on mouse out
             menu.hideMenu = function (): void {
                 css(menu, { display: 'none' });
                 if (button) {
@@ -821,7 +801,7 @@ namespace Exporting {
                 // Hide it on clicking or touching outside the menu (#2258,
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e: PointerEvent): void {
-                    if (!chart.pointer.inClass(e.target as any, className)) {
+                    if (!chart.pointer?.inClass(e.target as any, className)) {
                         menu.hideMenu();
                     }
                 }),
@@ -833,7 +813,7 @@ namespace Exporting {
                 })
             );
 
-            // create the items
+            // Create the items
             items.forEach(function (
                 item: (string|Exporting.MenuObject)
             ): void {
@@ -871,14 +851,14 @@ namespace Exporting {
                                     e.stopPropagation();
                                 }
                                 menu.hideMenu();
-                                if ((item as any).onclick) {
-                                    (item as any).onclick
-                                        .apply(chart, arguments);
+                                if (typeof item !== 'string' && item.onclick) {
+                                    item.onclick.apply(chart, arguments);
                                 }
                             }
                         }, void 0, innerMenu);
 
-                        AST.setElementHTML(element, item.text ||
+                        AST.setElementHTML(
+                            element, item.text ||
                             (chart.options.lang as any)[item.textKey as any]
                         );
 
@@ -914,16 +894,16 @@ namespace Exporting {
 
         const menuStyle: CSSObject = { display: 'block' };
 
-        // if outside right, right align it
-        if (x + (chart.exportMenuWidth as any) > chartWidth) {
+        // If outside right, right align it
+        if (x + (chart.exportMenuWidth || 0) > chartWidth) {
             menuStyle.right = (chartWidth - x - width - menuPadding) + 'px';
         } else {
             menuStyle.left = (x - menuPadding) + 'px';
         }
-        // if outside bottom, bottom align it
+        // If outside bottom, bottom align it
         if (
-            y + height + (chart.exportMenuHeight as any) > chartHeight &&
-            button.alignOptions.verticalAlign !== 'top'
+            y + height + (chart.exportMenuHeight || 0) > chartHeight &&
+            button.alignOptions?.verticalAlign !== 'top'
         ) {
             menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
         } else {
@@ -1047,20 +1027,19 @@ namespace Exporting {
     ): void {
         const svg = this.getSVGForExport(exportingOptions, chartOptions);
 
-        // merge the options
+        // Merge the options
         exportingOptions = merge(this.options.exporting, exportingOptions);
 
-        // do the post
+        // Do the post
         HU.post(exportingOptions.url as any, {
             filename: exportingOptions.filename ?
                 exportingOptions.filename.replace(/\//g, '-') :
                 this.getFilename(),
             type: exportingOptions.type,
-            // IE8 fails to post undefined correctly, so use 0
-            width: exportingOptions.width || 0,
+            width: exportingOptions.width,
             scale: exportingOptions.scale,
             svg: svg
-        }, exportingOptions.formAttributes as any);
+        }, exportingOptions.fetchOptions);
     }
 
     /**
@@ -1109,13 +1088,13 @@ namespace Exporting {
         if (typeof s === 'string') {
             filename = s
                 .toLowerCase()
-                .replace(/<\/?[^>]+(>|$)/g, '') // strip HTML tags
+                .replace(/<\/?[^>]+(>|$)/g, '') // Strip HTML tags
                 .replace(/[\s_]+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '') // preserve only latin
-                .replace(/^[\-]+/g, '') // dashes in the start
-                .replace(/[\-]+/g, '-') // dashes in a row
+                .replace(/[^a-z0-9\-]/g, '') // Preserve only latin
+                .replace(/^[\-]+/g, '') // Dashes in the start
+                .replace(/[\-]+/g, '-') // Dashes in a row
                 .substr(0, 24)
-                .replace(/[\-]+$/g, ''); // dashes in the end;
+                .replace(/[\-]+$/g, ''); // Dashes in the end;
         }
 
         if (!filename || filename.length < 5) {
@@ -1148,13 +1127,13 @@ namespace Exporting {
      */
     function getSVG(
         this: ChartComposition,
-        chartOptions?: DeepPartial<Options>
+        chartOptions?: Partial<Options>
     ): string {
         const chart = this;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
             // Copy the options and add extra options
-            options = merge(chart.options, chartOptions);
+            options = merge<Options>(chart.options, chartOptions);
 
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(
@@ -1168,7 +1147,7 @@ namespace Exporting {
             chartOptions && chartOptions.time
         );
 
-        // create a sandbox where a new chart will be generated
+        // Create a sandbox where a new chart will be generated
         const sandbox = createElement('div', null as any, {
             position: 'absolute',
             top: '-9999em',
@@ -1176,7 +1155,7 @@ namespace Exporting {
             height: chart.chartHeight + 'px'
         }, doc.body);
 
-        // get the source size
+        // Get the source size
         const cssWidth: string = chart.renderTo.style.width as any,
             cssHeight: string = chart.renderTo.style.height as any,
             sourceWidth: number = (options.exporting as any).sourceWidth ||
@@ -1188,7 +1167,7 @@ namespace Exporting {
                 (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
                 400;
 
-        // override some options
+        // Override some options
         extend(options.chart, {
             animation: false,
             renderTo: sandbox,
@@ -1197,14 +1176,14 @@ namespace Exporting {
             width: sourceWidth,
             height: sourceHeight
         });
-        (options.exporting as any).enabled = false; // hide buttons in print
+        (options.exporting as any).enabled = false; // Hide buttons in print
         delete options.data; // #3004
 
         // prepare for replicating the chart
         options.series = [];
         chart.series.forEach(function (serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
-                animation: false, // turn off animation
+                animation: false, // Turn off animation
                 enableMouseTracking: false,
                 showCheckbox: false,
                 visible: serie.visible
@@ -1234,6 +1213,11 @@ namespace Exporting {
                 }));
             }
         });
+
+        // Make sure the `colorAxis` object of the `defaultOptions` isn't used
+        // in the chart copy's user options, because a color axis should only be
+        // added when the user actually applies it.
+        options.colorAxis = chart.userOptions.colorAxis;
 
         // Generate the chart copy
         const chartCopy = new (chart.constructor as typeof Chart)(
@@ -1284,7 +1268,7 @@ namespace Exporting {
 
         svg = chart.sanitizeSVG(svg, options);
 
-        // free up memory
+        // Free up memory
         options = null as any;
         chartCopy.destroy();
         discardElement(sandbox);
@@ -1356,8 +1340,8 @@ namespace Exporting {
     function inlineStyles(
         this: ChartComposition
     ): void {
-        const blacklist = inlineBlacklist,
-            whitelist = inlineWhitelist, // For IE
+        const denylist = inlineDenylist,
+            allowlist = inlineAllowlist, // For IE
             defaultStyles: Record<string, CSSObject> = {};
         let dummySVG: SVGElement;
 
@@ -1390,16 +1374,14 @@ namespace Exporting {
 
             let styles: CSSObject,
                 parentStyles: (CSSObject|SVGAttributes),
-                // cssText = '',
                 dummy: Element,
-                styleAttr,
-                blacklisted: (boolean|undefined),
-                whitelisted: (boolean|undefined),
+                denylisted: (boolean|undefined),
+                allowlisted: (boolean|undefined),
                 i: number;
 
             /**
-             * Check computed styles and whether they are in the white/blacklist
-             * for styles or atttributes.
+             * Check computed styles and whether they are in the allow/denylist
+             * for styles or attributes.
              * @private
              * @param {string} val
              *        Style value
@@ -1411,32 +1393,32 @@ namespace Exporting {
                 prop: string
             ): void {
 
-                // Check against whitelist & blacklist
-                blacklisted = whitelisted = false;
-                if (whitelist.length) {
-                    // Styled mode in IE has a whitelist instead.
-                    // Exclude all props not in this list.
-                    i = whitelist.length;
-                    while (i-- && !whitelisted) {
-                        whitelisted = whitelist[i].test(prop);
+                // Check against allowlist & denylist
+                denylisted = allowlisted = false;
+                if (allowlist.length) {
+                    // Styled mode in IE has a allowlist instead. Exclude all
+                    // props not in this list.
+                    i = allowlist.length;
+                    while (i-- && !allowlisted) {
+                        allowlisted = allowlist[i].test(prop);
                     }
-                    blacklisted = !whitelisted;
+                    denylisted = !allowlisted;
                 }
 
                 // Explicitly remove empty transforms
                 if (prop === 'transform' && val === 'none') {
-                    blacklisted = true;
+                    denylisted = true;
                 }
 
-                i = blacklist.length;
-                while (i-- && !blacklisted) {
-                    blacklisted = (
-                        blacklist[i].test(prop) ||
+                i = denylist.length;
+                while (i-- && !denylisted) {
+                    denylisted = (
+                        denylist[i].test(prop) ||
                         typeof val === 'function'
                     );
                 }
 
-                if (!blacklisted) {
+                if (!denylisted) {
                     // If parent node has the same style, it gets inherited, no
                     // need to inline it. Top-level props should be diffed
                     // against parent (#7687).
@@ -1456,7 +1438,7 @@ namespace Exporting {
                                 node.setAttribute(hyphenate(prop), val);
                             }
                         // Styles
-                        } else if (prop !== 'parentRule') {
+                        } else {
                             (filteredStyles as any)[prop] = val;
                         }
                     }
@@ -1477,7 +1459,7 @@ namespace Exporting {
                 // add these
                 if (!defaultStyles[node.nodeName]) {
                     /*
-                    if (!dummySVG) {
+                    If (!dummySVG) {
                         dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
                         dummySVG.setAttribute('version', '1.1');
                         doc.body.appendChild(dummySVG);
@@ -1489,10 +1471,21 @@ namespace Exporting {
                         node.nodeName
                     );
                     dummySVG.appendChild(dummy);
-                    // Copy, so we can remove the node
-                    defaultStyles[node.nodeName] = merge(
-                        win.getComputedStyle(dummy, null) as any
-                    );
+
+                    // Get the defaults into a standard object (simple merge
+                    // won't do)
+                    const s = win.getComputedStyle(dummy, null),
+                        defaults: Record<string, string> = {};
+                    for (const key in s) {
+                        if (
+                            typeof s[key] === 'string' &&
+                            !/^[0-9]+$/.test(key)
+                        ) {
+                            defaults[key] = s[key];
+                        }
+                    }
+                    defaultStyles[node.nodeName] = defaults;
+
                     // Remove default fill, otherwise text disappears when
                     // exported
                     if (node.nodeName === 'text') {
@@ -1516,15 +1509,6 @@ namespace Exporting {
                 }
 
                 // Apply styles
-                /*
-                if (cssText) {
-                    styleAttr = node.getAttribute('style');
-                    node.setAttribute(
-                        'style',
-                        (styleAttr ? styleAttr + ';' : '') + cssText
-                    );
-                }
-                */
                 css(node, filteredStyles);
 
                 // Set default stroke width (needed at least for IE)
@@ -1567,11 +1551,15 @@ namespace Exporting {
      *        Move target
      */
     function moveContainers(this: Chart, moveTo: HTMLDOMElement): void {
-        const chart = this;
+        const { scrollablePlotArea } = this;
         (
-            chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
-                [chart.fixedDiv, chart.scrollingContainer as any] :
-                [chart.container]
+            // When scrollablePlotArea is active (#9533)
+            scrollablePlotArea ?
+                [
+                    scrollablePlotArea.fixedDiv,
+                    scrollablePlotArea.scrollingContainer
+                ] :
+                [this.container]
 
         ).forEach(function (div: HTMLDOMElement): void {
             moveTo.appendChild(div);
@@ -1654,7 +1642,7 @@ namespace Exporting {
     ): void {
         const chart = this;
 
-        if (chart.isPrinting) { // block the button while in printing mode
+        if (chart.isPrinting) { // Block the button while in printing mode
             return;
         }
 
@@ -1671,7 +1659,7 @@ namespace Exporting {
             win.focus(); // #1510
             win.print();
 
-            // allow the browser to prepare before reverting
+            // Allow the browser to prepare before reverting
             if (!G.isSafari) {
                 setTimeout((): void => {
                     chart.afterPrint();
@@ -1719,7 +1707,7 @@ namespace Exporting {
 
     /**
      * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expando properties, browser bugs, VML problems and other.
+     * account for expand properties, browser bugs.
      * Returns a cleaned SVG.
      *
      * @private
@@ -1771,7 +1759,7 @@ namespace Exporting {
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
             .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
-            .replace(/\n/, ' ')
+            .replace(/\n+/g, ' ')
             // Batik doesn't support rgba fills and strokes (#3095)
             .replace(
                 /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
@@ -1779,13 +1767,8 @@ namespace Exporting {
             )
 
             // Replace HTML entities, issue #347
-            .replace(/&nbsp;/g, '\u00A0') // no-break space
-            .replace(/&shy;/g, '\u00AD'); // soft hyphen
-
-        // Further sanitize for oldIE
-        if (this.ieSanitizeSVG) {
-            svg = this.ieSanitizeSVG(svg);
-        }
+            .replace(/&nbsp;/g, '\u00A0') // No-break space
+            .replace(/&shy;/g, '\u00AD'); // Soft hyphen
 
         return svg;
     }
@@ -1813,10 +1796,10 @@ export default Exporting;
  * @callback Highcharts.ExportingAfterPrintCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -1826,10 +1809,10 @@ export default Exporting;
  * @callback Highcharts.ExportingBeforePrintCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -1877,7 +1860,7 @@ export default Exporting;
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file
 
 /* *
  *
@@ -1913,4 +1896,4 @@ export default Exporting;
  * @apioption chart.events.beforePrint
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

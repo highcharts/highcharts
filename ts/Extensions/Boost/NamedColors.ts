@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2021 Highsoft AS
+ *  (c) 2019-2024 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -80,6 +80,7 @@ const defaultHTMLColorMap: Record<string, ColorString> = {
     gold: '#ffd700',
     goldenrod: '#daa520',
     gray: '#808080',
+    grey: '#808080',
     green: '#008000',
     greenyellow: '#adff2f',
     honeydew: '#f0fff0',

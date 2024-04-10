@@ -47,7 +47,7 @@ QUnit.test('Stock chart with empty data initially (#4452)', function (assert) {
     });
     chart = $('#container').highcharts();
 
-    /*assert.strictEqual(
+    /* assert.strictEqual(
         typeof chart.rangeSelector.group,
         'object',
         'No range selector group initially'

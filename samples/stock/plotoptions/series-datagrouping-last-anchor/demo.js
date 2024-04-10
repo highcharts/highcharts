@@ -3,12 +3,12 @@ Highcharts.stockChart('container', {
         height: 600,
         events: {
             load: function () {
-                var chart = this,
+                const chart = this,
                     rawSeries = chart.series[0],
                     groupedSeries = chart.series[1];
 
                 setInterval(function () {
-                    var randomNumber = Math.random() * 5;
+                    const randomNumber = Math.random() * 5;
 
                     rawSeries.addPoint(randomNumber, false);
                     groupedSeries.addPoint(randomNumber);

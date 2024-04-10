@@ -198,7 +198,8 @@ QUnit.test('Network Graph', function (assert) {
 
     assert.ok(
         true,
-        'Clearing nodes and links in `series.update()` should not throw errors (#11176)'
+        'Clearing nodes and links in `series.update()` should not throw ' +
+        'errors (#11176)'
     );
 });
 

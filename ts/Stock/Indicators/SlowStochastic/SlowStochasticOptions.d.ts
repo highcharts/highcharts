@@ -29,7 +29,13 @@ export interface SlowStochasticOptions extends StochasticOptions, MultipleLinesC
 }
 
 export interface SlowStochasticParamsOptions extends StochasticParamsOptions {
-    // for inheritance
+    // For inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SlowStochasticOptions;

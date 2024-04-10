@@ -1,0 +1,45 @@
+#container {
+    min-width: 320px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.g1 {
+    stroke-dasharray: 12;
+    stroke-dashoffset: 100;
+    animation: dash 8s linear infinite;
+}
+
+.g2 {
+    stroke-dasharray: 11;
+    stroke-dashoffset: 100;
+    animation: dash 5s linear infinite;
+}
+
+.g3 {
+    stroke-dasharray: 10;
+    stroke-dashoffset: 100;
+    animation: dash 3.5s linear infinite;
+}
+
+.g4 {
+    stroke-dasharray: 9;
+    stroke-dashoffset: 100;
+    animation: dash 2s linear infinite;
+}
+
+.g5 {
+    stroke-dasharray: 8;
+    stroke-dashoffset: 100;
+    animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    from {
+        stroke-dashoffset: 100;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}

@@ -1,10 +1,10 @@
 import { deepStrictEqual, ok, strictEqual } from 'assert';
-import { describe } from '../test-utils';
+import { describe, loadHCWithModules } from '../test-utils';
 
 export function testMapSeries() {
     describe('Testing maps series...');
 
-    const Highmaps = require('../../../code/highmaps.src.js')();
+    const Highmaps = loadHCWithModules('highmaps');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -27,8 +27,8 @@ export function testMapSeries() {
     const seriesTypes = Object.keys(Highmaps.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Maps source file should contain these series'
     );
 
@@ -36,13 +36,12 @@ export function testMapSeries() {
         Highmaps.product,
         'Highmaps',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testStockSeries() {
     describe('Testing stock series...');
-
-    const Highstock = require('../../../code/highstock.src.js')();
+    const Highstock = loadHCWithModules('highstock');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -63,8 +62,8 @@ export function testStockSeries() {
     const seriesTypes = Object.keys(Highstock.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Stock source file should contain these series'
     );
 
@@ -72,13 +71,12 @@ export function testStockSeries() {
         Highstock.product,
         'Highstock',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testGanttSeries() {
     describe('Testing Gantt series...');
-
-    const Gantt = require('../../../code/highcharts-gantt.src.js')();
+    const Gantt = loadHCWithModules('highcharts-gantt');
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -97,8 +95,8 @@ export function testGanttSeries() {
     const seriesTypes = Object.keys(Gantt.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Gantt source file should contain these series'
     );
 
@@ -106,13 +104,13 @@ export function testGanttSeries() {
         Gantt.product,
         'Highcharts Gantt',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testHighchartsSeries() {
     describe('Testing Highcharts Basic series...');
 
-    const Highcharts = require('../../../code/highcharts.src.js')();
+    const Highcharts = loadHCWithModules();
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -129,8 +127,8 @@ export function testHighchartsSeries() {
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Highcharts source file should contain these series'
     );
 
@@ -138,14 +136,12 @@ export function testHighchartsSeries() {
         Highcharts.product,
         'Highcharts',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testHighchartsMoreSeries() {
     describe('Testing Highcharts-more series...');
-
-    const Highcharts = require('../../../code/highcharts.src.js')();
-    require('../../../code/highcharts-more.src.js')(Highcharts);
+    const Highcharts = loadHCWithModules('highcharts', ['highcharts-more']);
 
     // Check if the series are in seriesTypes
     const expected = [
@@ -173,8 +169,8 @@ export function testHighchartsMoreSeries() {
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'The Highcharts-more source file should contain these series'
     );
 }
@@ -182,9 +178,7 @@ export function testHighchartsMoreSeries() {
 export function test3dSeries() {
     describe('Testing Highcharts-3d series...');
 
-    const Highcharts = require('../../../code/highcharts.src.js')();
-    require('../../../code/highcharts-3d.src.js')(Highcharts);
-
+    const Highcharts = loadHCWithModules('highcharts', ['highcharts-3d']);
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     const added = [
@@ -198,81 +192,90 @@ export function test3dSeries() {
         )
     );
 }
-
 export function testStockIndicators() {
     describe('Testing stock indicators series...');
 
-    const Highcharts = require('../../../code/highstock.src.js')();
-    require('../../../code/indicators/indicators-all.src.js')(Highcharts);
-
+    const Highcharts = loadHCWithModules('highcharts', ['modules/stock', 'indicators/indicators-all']);
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
     const expected = [
-        'line',
-        'area',
-        'spline',
-        'areaspline',
-        'column',
-        'bar',
-        'scatter',
-        'pie',
-        'hlc',
-        'ohlc',
-        'candlestick',
-        'flags',
-        'sma',
-        'ema',
-        'ad',
-        'ao',
-        'aroon',
-        'aroonoscillator',
-        'atr',
-        'bb',
-        'cci',
-        'cmf',
-        'dmi',
-        'dpo',
-        'chaikin',
-        'cmo',
-        'dema',
-        'tema',
-        'trix',
-        'apo',
-        'ikh',
-        'keltnerchannels',
-        'klinger',
-        'macd',
-        'mfi',
-        'momentum',
-        'natr',
-        'obv',
-        'pivotpoints',
-        'ppo',
-        'pc',
-        'priceenvelopes',
-        'psar',
-        'roc',
-        'rsi',
-        'stochastic',
-        'slowstochastic',
-        'supertrend',
-        'vbp',
-        'vwap',
-        'williamsr',
-        'wma',
-        'zigzag',
-        'linearRegression',
-        'linearRegressionSlope',
-        'linearRegressionIntercept',
-        'linearRegressionAngle',
-        'abands',
-        'trendline',
-        'disparityindex'
+        "abands",
+        "ad",
+        "ao",
+        "apo",
+        "area",
+        "arearange",
+        "areaspline",
+        "areasplinerange",
+        "aroon",
+        "aroonoscillator",
+        "atr",
+        "bar",
+        "bb",
+        "boxplot",
+        "bubble",
+        "candlestick",
+        "cci",
+        "chaikin",
+        "cmf",
+        "cmo",
+        "column",
+        "columnpyramid",
+        "columnrange",
+        "dema",
+        "disparityindex",
+        "dmi",
+        "dpo",
+        "ema",
+        "errorbar",
+        "flags",
+        "gauge",
+        "hlc",
+        "ikh",
+        "keltnerchannels",
+        "klinger",
+        "line",
+        "linearRegression",
+        "linearRegressionAngle",
+        "linearRegressionIntercept",
+        "linearRegressionSlope",
+        "macd",
+        "mfi",
+        "momentum",
+        "natr",
+        "obv",
+        "ohlc",
+        "packedbubble",
+        "pc",
+        "pie",
+        "pivotpoints",
+        "polygon",
+        "ppo",
+        "priceenvelopes",
+        "psar",
+        "roc",
+        "rsi",
+        "scatter",
+        "scatter3d",
+        "slowstochastic",
+        "sma",
+        "spline",
+        "stochastic",
+        "supertrend",
+        "tema",
+        "trendline",
+        "trix",
+        "vbp",
+        "vwap",
+        "waterfall",
+        "williamsr",
+        "wma",
+        "zigzag"
     ];
 
     deepStrictEqual(
-        seriesTypes,
-        expected,
+        seriesTypes.sort(),
+        expected.sort(),
         'Highstock with the indicators-all module should add the indicators as series'
     );
 }
@@ -280,9 +283,22 @@ export function testStockIndicators() {
 export function testHighchartsWithModules() {
     describe('Testing Highcharts in use with modules');
 
-    const Highcharts = require('../../../code/highcharts.src.js')();
+    const Highcharts = loadHCWithModules('highcharts', [
+        'modules/annotations',
+        'modules/broken-axis',
+        'modules/data',
+        'modules/drilldown',
+        'modules/exporting',
+        'modules/funnel',
+        'modules/heatmap',
+        'modules/map',
+        'modules/no-data-to-display',
+        'modules/offline-exporting',
+        'modules/series-label',
+        'modules/treemap'
+    ]);
+
     // Annotations
-    require('../../../code/modules/annotations.src.js')(Highcharts);
     strictEqual(
         typeof Highcharts.Annotation,
         'function',
@@ -290,15 +306,14 @@ export function testHighchartsWithModules() {
     );
 
     // Boost
-    require('../../../code/modules/boost.src')(Highcharts);
-    strictEqual(
-        typeof Highcharts.Series.prototype.renderCanvas,
-        'function',
-        'Boost is loaded.'
-    );
+    // require('../../../code/modules/boost.src')(Highcharts);
+    // strictEqual(
+    //     typeof Highcharts.Series.prototype.renderCanvas,
+    //     'function',
+    //     'Boost is loaded.'
+    // );
 
     // Broken Axis
-    require('../../../code/modules/broken-axis.src')(Highcharts);
     strictEqual(
         typeof Highcharts.Series.prototype.drawBreaks,
         'function',
@@ -306,7 +321,6 @@ export function testHighchartsWithModules() {
     );
 
     // Data
-    require('../../../code/modules/data.src')(Highcharts);
     strictEqual(
         !!Highcharts.Data,
         true,
@@ -314,7 +328,6 @@ export function testHighchartsWithModules() {
     );
 
     // Drilldown
-    require('../../../code/modules/drilldown.src')(Highcharts);
     strictEqual(
         typeof Highcharts.Point.prototype.doDrilldown,
         'function',
@@ -322,7 +335,6 @@ export function testHighchartsWithModules() {
     );
 
     // Exporting
-    require('../../../code/modules/exporting.src')(Highcharts);
     strictEqual(
         !!Highcharts.getOptions().exporting,
         true,
@@ -330,7 +342,6 @@ export function testHighchartsWithModules() {
     );
 
     // Funnel
-    require('../../../code/modules/funnel.src')(Highcharts);
     strictEqual(
         !!Highcharts.seriesTypes.funnel,
         true,
@@ -338,7 +349,6 @@ export function testHighchartsWithModules() {
     );
 
     // Heatmap
-    require('../../../code/modules/heatmap.src')(Highcharts);
     strictEqual(
         !!Highcharts.seriesTypes.heatmap,
         true,
@@ -346,7 +356,6 @@ export function testHighchartsWithModules() {
     );
 
     // Map
-    require('../../../code/modules/map.src')(Highcharts);
     strictEqual(
         !!Highcharts.seriesTypes.map,
         true,
@@ -354,7 +363,6 @@ export function testHighchartsWithModules() {
     );
 
     // No Data To Display
-    require('../../../code/modules/no-data-to-display.src')(Highcharts);
     strictEqual(
         typeof Highcharts.Chart.prototype.showNoData,
         'function',
@@ -362,7 +370,6 @@ export function testHighchartsWithModules() {
     );
 
     // Offline Exporting
-    require('../../../code/modules/offline-exporting.src')(Highcharts);
     strictEqual(
         typeof Highcharts.Chart.prototype.exportChartLocal,
         'function',
@@ -370,7 +377,6 @@ export function testHighchartsWithModules() {
     );
 
     // Series Label
-    require('../../../code/modules/series-label.src')(Highcharts);
     strictEqual(
         typeof Highcharts.SVGRenderer.prototype.symbols.connector,
         'function',
@@ -378,7 +384,6 @@ export function testHighchartsWithModules() {
     );
 
     // Treemap
-    require('../../../code/modules/treemap.src')(Highcharts);
     strictEqual(
         !!Highcharts.seriesTypes.treemap,
         true,

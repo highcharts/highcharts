@@ -22,6 +22,14 @@ Highcharts.chart('container', {
         }
     }],
 
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+
     series: [{
         data: [[32, 45], [43, 56], [32, 42], [28, 56]]
     }, {

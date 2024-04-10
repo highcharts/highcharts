@@ -3,8 +3,10 @@ Math.easeOutQuint = function (pos) {
 };
 
 Highcharts.theme = {
-    colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+    colors: [
+        '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+        '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+    ],
     chart: {
         style: {
             fontFamily: 'IBM Plex Sans, sans-serif'
@@ -67,7 +69,8 @@ Highcharts.theme = {
 Highcharts.setOptions(Highcharts.theme);
 
 
-const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
+const data = [
+    3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2,
     3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3,
     3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3,
@@ -76,13 +79,14 @@ const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     2.7, 3, 2.9, 2.9, 2.5, 2.8, 3.3, 2.7, 3, 2.9, 3, 3, 2.5, 2.9, 2.5, 3.6,
     3.2, 2.7, 3, 2.5, 2.8, 3.2, 3, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2,
     2.8, 3, 2.8, 3, 2.8, 3.8, 2.8, 2.8, 2.6, 3, 3.4, 3.1, 3, 3.1, 3.1, 3.1, 2.7,
-    3.2, 3.3, 3, 2.5, 3, 3.4, 3];
+    3.2, 3.3, 3, 2.5, 3, 3.4, 3
+];
 
 const randomIntFromInterval = function (min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 
 const leftSide = {
@@ -219,7 +223,11 @@ const flip = function (chart, boxNum, pos, delay) {
 let wordChart;
 
 const words = function () {
-    const text = 'Twas, Twas, Twas, Twas the night, night, night, night, night, before, before, before, before, Christmas, Christmas, Christmas, Christmas, Christmas, Christmas, not a creature was stirring, when all through the house not a creature was stirring, not even a mouse.',
+    const text = 'Twas, Twas, Twas, Twas the night, night, night, night, ' +
+        'night, before, before, before, before, Christmas, Christmas, ' +
+        'Christmas, Christmas, Christmas, Christmas, not a creature was ' +
+        'stirring, when all through the house not a creature was stirring, ' +
+        'not even a mouse.',
         lines = text.split(/[,\. ]+/gu),
         data = lines.reduce((arr, word) => {
             let obj = Highcharts.find(arr, obj => obj.name === word);
@@ -258,7 +266,9 @@ const words = function () {
         legend: {
             enabled: false
         },
-        colors: ['#E04B44', '#51BFA7', '#6699A1', '#00786F', '#E04B44', '#A3EDBA'],
+        colors: [
+            '#E04B44', '#51BFA7', '#6699A1', '#00786F', '#E04B44', '#A3EDBA'
+        ],
         accessibility: {
             screenReaderSection: {
                 beforeChartFormat: '<h5>{chartTitle}</h5>' +
@@ -275,33 +285,33 @@ const words = function () {
             }
         },
         xAxis: [
-            //0
+            // 0
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //1
+            // 1
             xAxis1,
-            //2
+            // 2
             xAxis2
         ],
         yAxis: [
-            //0
+            // 0
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //1
+            // 1
             yAxis1,
-            //2
+            // 2
             yAxis2
         ],
         series: [
-            //0 - left side
+            // 0 - left side
             leftSide,
-            //1 -- right side
+            // 1 -- right side
             rightSide,
             {
                 type: 'wordcloud',
@@ -337,10 +347,22 @@ const bell = function () {
                         color: '#8BD6F3'
                     });
 
-                    const bell = document.querySelector('#bell-chart  .highcharts-bellcurve-series');
-                    const hammer = document.querySelector('#bell-chart .highcharts-series-4');
-                    const bellLine = document.querySelector('#bell-chart .highcharts-series-5');
-                    const bow = document.querySelector('#bell-chart .highcharts-series-6.highcharts-markers');
+                    const bell = document.querySelector(
+                        '#bell-chart  ' +
+                        '.highcharts-bellcurve-series'
+                    );
+                    const hammer = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-4'
+                    );
+                    const bellLine = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-5'
+                    );
+                    const bow = document.querySelector(
+                        '#bell-chart ' +
+                        '.highcharts-series-6.highcharts-markers'
+                    );
 
                     let transY = '-40px';
                     if (!big) {
@@ -350,9 +372,11 @@ const bell = function () {
                     bell.style.transformOrigin = 'center';
                     bellLine.style.transformOrigin = 'center';
 
-                    bell.style.transform = 'rotate(10deg) translateY(' + transY + ')';
+                    bell.style.transform =
+                        'rotate(10deg) translateY(' + transY + ')';
                     bellLine.style.transform = 'rotate(10deg) translateY(0px)';
-                    bow.style.transform = 'rotate(10deg) translate(10px, -10px)';
+                    bow.style.transform = 'rotate(10deg) translate(10px, ' +
+                        '-10px)';
                     hammer.style.transform = 'translate(9px, -3px)';
 
                     let count = 0;
@@ -363,14 +387,20 @@ const bell = function () {
                         hammer.style.transition = 'all 1s';
 
                         if (count % 2 === 0) {
-                            bell.style.transform = 'rotate(-10deg) translateY(' + transY + ')';
-                            bow.style.transform = 'rotate(-10deg) translate(-20px, 20px)';
-                            bellLine.style.transform = 'rotate(-10deg) translateY(0px)';
+                            bell.style.transform =
+                                'rotate(-10deg) translateY(' + transY + ')';
+                            bow.style.transform = 'rotate(-10deg) ' +
+                                'translate(-20px, 20px)';
+                            bellLine.style.transform = 'rotate(-10deg) ' +
+                                'translateY(0px)';
                             hammer.style.transform = 'translate(-10px, -7px)';
                         } else {
-                            bell.style.transform = 'rotate(10deg) translateY(' + transY + ')';
-                            bellLine.style.transform = 'rotate(10deg) translateY(0px)';
-                            bow.style.transform = 'rotate(10deg) translate(10px, -10px)';
+                            bell.style.transform =
+                                'rotate(10deg) translateY(' + transY + ')';
+                            bellLine.style.transform = 'rotate(10deg) ' +
+                                'translateY(0px)';
+                            bow.style.transform = 'rotate(10deg) ' +
+                                'translate(10px, -10px)';
                             hammer.style.transform = 'translate(9px, -3px)';
 
                         }
@@ -398,7 +428,7 @@ const bell = function () {
             }
         },
         xAxis: [
-            //0
+            // 0
             {
                 title: {
                     text: 'Data'
@@ -406,20 +436,20 @@ const bell = function () {
                 alignTicks: false,
                 visible: false
             },
-            //1
+            // 1
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //2
+            // 2
             {
                 min: 0,
                 max: 20,
                 visible: false,
                 reversed: true
             },
-            //3
+            // 3
             {
                 title: {
                     text: 'Bell curve'
@@ -430,19 +460,19 @@ const bell = function () {
                 min: 1,
                 max: 5
             },
-            //4
+            // 4
             {
                 min: 0,
                 max: 20
             },
-            //5
+            // 5
             {
                 min: 0,
                 max: 140,
                 reversed: true
             }],
         yAxis: [
-            //0
+            // 0
             {
                 title: { text: 'Data' },
                 visible: true,
@@ -451,19 +481,19 @@ const bell = function () {
                 offset: -30,
                 gridLineColor: '#fff'
             },
-            //1
+            // 1
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //2
+            // 2
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //3
+            // 3
             {
                 title: { text: 'Bell curve' },
                 opposite: true,
@@ -471,23 +501,23 @@ const bell = function () {
                 visible: true,
                 gridLineColor: '#fff'
             },
-            //4
+            // 4
             {
                 min: 0,
                 max: 20
             },
-            //5
+            // 5
             {
                 min: 0,
                 max: 20
             }],
 
         series: [
-            //0 - left side
+            // 0 - left side
             leftSide,
-            //1 -- right side
+            // 1 -- right side
             rightSide,
-            //2 bell curve
+            // 2 bell curve
             {
                 name: 'Bell curve',
                 visible: false,
@@ -512,7 +542,7 @@ const bell = function () {
                     enabled: true
                 }
             },
-            //3
+            // 3
             {
                 name: 'Data',
                 animation: false,
@@ -529,7 +559,7 @@ const bell = function () {
                     radius: 2
                 }
             },
-            //4 -- ringer thing
+            // 4 -- ringer thing
             {
                 type: 'pie',
                 animation: false,
@@ -549,7 +579,7 @@ const bell = function () {
                     enabled: false
                 }
             },
-            //5 --bell bottom
+            // 5 --bell bottom
             {
                 type: 'line',
                 zIndex: 100,
@@ -575,7 +605,7 @@ const bell = function () {
                     y: 5.46
                 }]
             },
-            //6 scatter bow
+            // 6 scatter bow
             {
                 type: 'scatter',
                 visible: false,
@@ -641,7 +671,10 @@ const tree = function () {
                         [0, 0]
                     ];
 
-                    const topTree = document.querySelector('#tree-chart .highcharts-series-2');
+                    const topTree = document.querySelector(
+                        '#tree-chart ' +
+                        '.highcharts-series-2'
+                    );
 
                     chart.series[0].update({
                         color: '#E05283'
@@ -684,7 +717,7 @@ const tree = function () {
             text: ''
         },
         xAxis: [
-            //0
+            // 0
             {
                 visible: true,
                 min: 0,
@@ -694,13 +727,13 @@ const tree = function () {
                     }
                 }
             },
-            //1
+            // 1
             xAxis1,
-            //2
+            // 2
             xAxis2
         ],
         yAxis: [
-            //0
+            // 0
             {
                 visible: true,
                 min: -20,
@@ -716,9 +749,9 @@ const tree = function () {
                     }
                 }
             },
-            //1
+            // 1
             yAxis1,
-            //2
+            // 2
             yAxis2
         ],
 
@@ -748,11 +781,11 @@ const tree = function () {
         },
 
         series: [
-            //0 - left side
+            // 0 - left side
             leftSide,
-            //1 -- right side
+            // 1 -- right side
             rightSide,
-            //2 tree
+            // 2 tree
             {
                 color: '#A3ECBA',
                 zIndex: 12,
@@ -771,7 +804,7 @@ const tree = function () {
                     [0, 0]
                 ]
             },
-            ///3
+            // /3
             {
                 zIndex: 11,
                 keys: ['x', 'low', 'high', 'color'],
@@ -796,7 +829,7 @@ const tree = function () {
 };
 
 
-///Snow Globe
+// /Snow Globe
 let snowglobeChart;
 
 const snowglobe = function () {
@@ -828,27 +861,27 @@ const snowglobe = function () {
             enabled: false
         },
         xAxis: [
-            //0
+            // 0
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //1
+            // 1
             xAxis1,
-            //2
+            // 2
             xAxis2
         ],
         yAxis: [
-            //0
+            // 0
             {
                 min: 0,
                 max: 20,
                 visible: false
             },
-            //1
+            // 1
             yAxis1,
-            //2
+            // 2
             yAxis2
         ],
         plotOptions: {
@@ -892,8 +925,9 @@ const snowglobe = function () {
                         const chart = this.series[0].chart,
                             width = chart.plotWidth;
                         this.nodes.forEach(function (node) {
-                            //If initial positions were set previously, use that
-                            //positions. Otherwise use random position:
+                            // If initial positions were set previously, use
+                            // that
+                            // positions. Otherwise use random position:
                             node.plotX = node.plotX === undefined ?
                                 Math.random() * width : node.plotX;
                             node.plotY = 500;
@@ -915,8 +949,9 @@ const snowglobe = function () {
                                 height = chart.plotHeight;
 
                             this.nodes.forEach(function (node) {
-                                //If initial positions were set previously, use that
-                                //positions. Otherwise use random position:
+                                // If initial positions were set previously,
+                                // use that
+                                // positions. Otherwise use random position:
                                 node.plotX = node.plotX === undefined ?
                                     Math.random() * width : node.plotX;
                                 node.plotY = 500;
@@ -944,11 +979,11 @@ const snowglobe = function () {
             }
         },
         series: [
-            //0 - left side
+            // 0 - left side
             leftSide,
-            //1 -- right side
+            // 1 -- right side
             rightSide,
-            //2 -- snowglobe (pie)
+            // 2 -- snowglobe (pie)
             {
                 type: 'pie',
                 name: 'snowglobe',
@@ -965,7 +1000,7 @@ const snowglobe = function () {
                 zIndex: 8,
                 visible: false
             },
-            //3 -- packed bubble
+            // 3 -- packed bubble
             {
                 type: 'packedbubble',
                 name: 'bubbles',
@@ -978,143 +1013,143 @@ const snowglobe = function () {
                     value: 20.7
                 },
                 {
-                    name: "Belgium",
+                    name: 'Belgium',
                     value: 97.2
                 },
                 {
-                    name: "Czech Republic",
+                    name: 'Czech Republic',
                     value: 111.7
                 },
                 {
-                    name: "Netherlands",
+                    name: 'Netherlands',
                     value: 158.1
                 },
                 {
-                    name: "Spain",
+                    name: 'Spain',
                     value: 241.6
                 },
                 {
-                    name: "Ukraine",
+                    name: 'Ukraine',
                     value: 249.1
                 },
                 {
-                    name: "Poland",
+                    name: 'Poland',
                     value: 298.1
                 },
                 {
-                    name: "France",
+                    name: 'France',
                     value: 323.7
                 },
                 {
-                    name: "Romania",
+                    name: 'Romania',
                     value: 78.3
                 },
                 {
-                    name: "United Kingdom",
+                    name: 'United Kingdom',
                     value: 415.4
                 }, {
-                    name: "Turkey",
+                    name: 'Turkey',
                     value: 353.2
                 }, {
-                    name: "Italy",
+                    name: 'Italy',
                     value: 337.6
                 },
                 {
-                    name: "Greece",
+                    name: 'Greece',
                     value: 71.1
                 },
                 {
-                    name: "Austria",
+                    name: 'Austria',
                     value: 69.8
                 },
                 {
-                    name: "Belarus",
+                    name: 'Belarus',
                     value: 67.7
                 },
                 {
-                    name: "Serbia",
+                    name: 'Serbia',
                     value: 59.3
                 },
                 {
-                    name: "Finland",
+                    name: 'Finland',
                     value: 54.8
                 },
                 {
-                    name: "Bulgaria",
+                    name: 'Bulgaria',
                     value: 51.2
                 },
                 {
-                    name: "Portugal",
+                    name: 'Portugal',
                     value: 48.3
                 },
                 {
-                    name: "Norway",
+                    name: 'Norway',
                     value: 44.4
                 },
                 {
-                    name: "Sweden",
+                    name: 'Sweden',
                     value: 44.3
                 },
                 {
-                    name: "Hungary",
+                    name: 'Hungary',
                     value: 43.7
                 },
                 {
-                    name: "Switzerland",
+                    name: 'Switzerland',
                     value: 40.2
                 },
                 {
-                    name: "Denmark",
+                    name: 'Denmark',
                     value: 40
                 },
                 {
-                    name: "Slovakia",
+                    name: 'Slovakia',
                     value: 34.7
                 },
                 {
-                    name: "Ireland",
+                    name: 'Ireland',
                     value: 34.6
                 },
                 {
-                    name: "Croatia",
+                    name: 'Croatia',
                     value: 20.7
                 },
                 {
-                    name: "Estonia",
+                    name: 'Estonia',
                     value: 19.4
                 },
                 {
-                    name: "Slovenia",
+                    name: 'Slovenia',
                     value: 16.7
                 },
                 {
-                    name: "Lithuania",
+                    name: 'Lithuania',
                     value: 12.3
                 },
                 {
-                    name: "Luxembourg",
+                    name: 'Luxembourg',
                     value: 10.4
                 },
                 {
-                    name: "Macedonia",
+                    name: 'Macedonia',
                     value: 9.5
                 },
                 {
-                    name: "Moldova",
+                    name: 'Moldova',
                     value: 7.8
                 },
                 {
-                    name: "Latvia",
+                    name: 'Latvia',
                     value: 7.5
                 },
                 {
-                    name: "Cyprus",
+                    name: 'Cyprus',
                     value: 7.2
                 }],
                 zIndex: 20,
                 visible: false
             },
-            //4 - house
+            // 4 - house
             {
                 type: 'area',
                 name: 'little red house inside a snowglobe',
@@ -1146,7 +1181,7 @@ const snowglobe = function () {
                 zIndex: 10,
                 visible: false
             },
-            //5 house
+            // 5 house
             {
                 type: 'arearange',
                 name: 'little red house inside a snowglobe',
@@ -1175,7 +1210,7 @@ const snowglobe = function () {
                 zIndex: 10,
                 visible: false
             },
-            //6 window
+            // 6 window
             {
                 type: 'scatter',
                 name: 'little red house inside a snowglobe',
@@ -1222,7 +1257,7 @@ const snowglobe = function () {
     });
 };
 
-//Candy Cane
+// Candy Cane
 let candycaneChart;
 const candycane = function () {
     candycaneChart = Highcharts.chart('cane-chart', {
@@ -1260,8 +1295,10 @@ const candycane = function () {
             enabled: false
         },
         xAxis: [{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            categories: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ],
             visible: false,
             gridLineColor: '#fff',
             labels: {
@@ -1270,9 +1307,9 @@ const candycane = function () {
                 }
             }
         },
-        //1
+        // 1
         xAxis1,
-        //2
+        // 2
         xAxis2
         ],
         yAxis: [{
@@ -1290,9 +1327,9 @@ const candycane = function () {
                 }
             }
         },
-        //1
+        // 1
         yAxis1,
-        //2
+        // 2
         yAxis2
         ],
 
@@ -1322,9 +1359,9 @@ const candycane = function () {
         },
 
         series: [
-            //0 - left side
+            // 0 - left side
             leftSide,
-            //1 -- right side
+            // 1 -- right side
             rightSide,
             // 2 - bottom of cane
             {
@@ -1400,7 +1437,7 @@ const candycane = function () {
                     }
                 ]
             },
-            //4 - back of the top of the cane
+            // 4 - back of the top of the cane
             {
                 type: 'pie',
                 name: 'candycane',
@@ -1420,7 +1457,7 @@ const candycane = function () {
                 center: ['59.3%', '48%']
 
             },
-            //5 top of cane
+            // 5 top of cane
             {
                 type: 'pie',
                 name: 'candycane',
@@ -1440,7 +1477,7 @@ const candycane = function () {
                 center: ['59.3%', '48%']
 
             },
-            //6 - cane cover
+            // 6 - cane cover
             {
                 type: 'pie',
                 zIndex: 4,
@@ -1479,7 +1516,11 @@ const presents = function () {
                 }
             }
         },
-        colors: ['#00786F', '#00786F', '#00786F', 'url(#bluestripe)', 'url(#bluestripe)', 'url(#bluestripe)', 'url(#stars)', 'url(#stars)', 'url(#stars)', 'url(#redstripe2)'],
+        colors: [
+            '#00786F', '#00786F', '#00786F', 'url(#bluestripe)',
+            'url(#bluestripe)', 'url(#bluestripe)', 'url(#stars)',
+            'url(#stars)', 'url(#stars)', 'url(#redstripe2)'
+        ],
         title: {
             text: '',
             y: 30
@@ -1491,20 +1532,20 @@ const presents = function () {
             enabled: false
         },
         xAxis: [
-            //0
+            // 0
             {
                 min: -2,
                 max: 18,
                 visible: true,
                 tickInterval: 1
             },
-            //1
+            // 1
             xAxis1,
-            //2
+            // 2
             xAxis2
         ],
         yAxis: [
-            //0
+            // 0
             {
                 min: 0,
                 max: 20,
@@ -1516,9 +1557,9 @@ const presents = function () {
                     }
                 }
             },
-            //1
+            // 1
             yAxis1,
-            //2
+            // 2
             yAxis2
         ],
         plotOptions: {
@@ -1542,11 +1583,11 @@ const presents = function () {
             enabled: true
         },
         series: [
-            //0 - left side
+            // 0 - left side
             leftSide,
-            //1 -- right side
+            // 1 -- right side
             rightSide,
-            //2
+            // 2
             {
                 type: 'arearange',
                 className: 'present',
@@ -1569,7 +1610,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //3
+            // 3
             {
                 type: 'arearange',
                 data: [
@@ -1591,11 +1632,11 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //4
+            // 4
             {
                 type: 'arearange',
                 data: [
-                    //third
+                    // third
                     {
                         x: 12,
                         low: 15,
@@ -1614,7 +1655,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //5
+            // 5
             {
                 type: 'arearange',
                 data: [
@@ -1636,7 +1677,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //6
+            // 6
             {
                 type: 'arearange',
                 data: [
@@ -1659,7 +1700,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //7
+            // 7
             {
                 type: 'arearange',
                 data: [
@@ -1682,7 +1723,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //8
+            // 8
             {
                 type: 'arearange',
                 data: [
@@ -1704,11 +1745,11 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //9
+            // 9
             {
                 type: 'arearange',
                 data: [
-                    ///second
+                    // /second
                     {
                         x: 6,
                         low: 1,
@@ -1727,7 +1768,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //10
+            // 10
             {
                 type: 'arearange',
                 data: [
@@ -1750,7 +1791,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //11
+            // 11
             {
                 type: 'scatter',
                 data: [
@@ -1811,7 +1852,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //12
+            // 12
             {
                 type: 'scatter',
                 color: 'blue',
@@ -1867,7 +1908,7 @@ const presents = function () {
                 ],
                 visible: false
             },
-            //13
+            // 13
             {
                 type: 'scatter',
                 color: '#8085EF',
@@ -1986,14 +2027,15 @@ const wreath = function () {
             max: 20
         },
         yAxis1,
-        yAxis2],
+        yAxis2
+        ],
 
         series: [
-            //0 left side
+            // 0 left side
             leftSide,
-            //1 right side
+            // 1 right side
             rightSide,
-            //2 - wreath
+            // 2 - wreath
             {
                 type: 'pie',
                 name: 'wreath',
@@ -2014,7 +2056,7 @@ const wreath = function () {
                 visible: false
 
             },
-            //3 - item red
+            // 3 - item red
             {
                 type: 'item',
                 name: 'red lights',
@@ -2037,7 +2079,7 @@ const wreath = function () {
                 zIndex: 11
 
             },
-            //4 - item blue
+            // 4 - item blue
             {
                 type: 'item',
                 name: 'blue lights',
@@ -2060,7 +2102,7 @@ const wreath = function () {
                 zIndex: 11
 
             },
-            //5 scatter bow
+            // 5 scatter bow
             {
                 type: 'scatter',
                 name: 'decorative bow',
@@ -2151,14 +2193,18 @@ const flake = function () {
             events: {
                 load: function () {
                     const chart = this;
-                    const seriesGroup = document.querySelector('#flake-chart .highcharts-series-group');
+                    const seriesGroup = document.querySelector(
+                        '#flake-chart ' +
+                        '.highcharts-series-group'
+                    );
                     seriesGroup.style.transformOrigin = 'center';
                     seriesGroup.style.transform = 'translateY(-200px)';
 
                     const fall = function () {
                         setTimeout(function () {
                             seriesGroup.style.transition = 'all ease-out 3s';
-                            seriesGroup.style.transform = 'translateY(0px) rotate(720deg)';
+                            seriesGroup.style.transform = 'translateY(0px) ' +
+                                'rotate(720deg)';
                         }, 200);
 
                         setTimeout(function () {
@@ -2183,7 +2229,8 @@ const flake = function () {
                                     }
                                 }
                             });
-                            seriesGroup.style.transform = 'translateY(300px) rotate(1180deg)';
+                            seriesGroup.style.transform = 'translateY(300px) ' +
+                                'rotate(1180deg)';
                         }, 5000);
 
                         setTimeout(function () {
@@ -2259,7 +2306,7 @@ const flake = function () {
             }
         },
         xAxis: [
-        //0
+        // 0
             {
                 min: -1,
                 max: 20,
@@ -2267,7 +2314,7 @@ const flake = function () {
             },
             xAxis1,
             xAxis2,
-            //3
+            // 3
             {
                 min: 0,
                 max: 21,
@@ -2275,7 +2322,7 @@ const flake = function () {
                 visible: false
             }],
         yAxis: [
-        //0
+        // 0
             {
                 min: 0,
                 max: 20,
@@ -2285,7 +2332,7 @@ const flake = function () {
             },
             yAxis1,
             yAxis2,
-            //3
+            // 3
             {
                 min: 0,
                 max: 20,
@@ -2293,7 +2340,7 @@ const flake = function () {
                 visible: false
             }],
         series: [
-            //2
+            // 2
             {
                 type: 'line',
                 data: [{
@@ -2306,7 +2353,7 @@ const flake = function () {
                 }]
 
             },
-            //3 vertical
+            // 3 vertical
             {
                 type: 'line',
                 xAxis: 3,
@@ -2321,7 +2368,7 @@ const flake = function () {
                 }
                 ]
             },
-            //4
+            // 4
             {
                 type: 'line',
                 zIndex: 2,
@@ -2336,8 +2383,8 @@ const flake = function () {
                     }
                 ]
             },
-            //smaller sections
-            //5 -- left
+            // smaller sections
+            // 5 -- left
             {
                 type: 'line',
                 visible: true,
@@ -2352,7 +2399,7 @@ const flake = function () {
                     }
                 ]
             },
-            //6
+            // 6
             {
                 type: 'line',
                 visible: true,
@@ -2371,7 +2418,7 @@ const flake = function () {
                     }
                 ]
             },
-            //7
+            // 7
             {
                 type: 'line',
                 visible: true,
@@ -2390,7 +2437,7 @@ const flake = function () {
                     }
                 ]
             },
-            //8
+            // 8
             {
                 type: 'line',
                 visible: true,
@@ -2413,7 +2460,7 @@ const flake = function () {
                     }
                 ]
             },
-            //9 - right
+            // 9 - right
             {
                 type: 'line',
                 data: [
@@ -2435,7 +2482,7 @@ const flake = function () {
                     }
                 ]
             },
-            //10
+            // 10
             {
                 type: 'line',
                 visible: true,
@@ -2454,7 +2501,7 @@ const flake = function () {
                     }
                 ]
             },
-            //11
+            // 11
             {
                 type: 'line',
                 visible: true,
@@ -3463,7 +3510,7 @@ const ball = function () {
     getStarData();
 
     Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/world-countries.topo.json',
+        'https://www.highcharts.com/samples/data/world-countries.topo.json',
         topology => {
 
             // Convert the topoJSON feature into geoJSON
@@ -3499,7 +3546,7 @@ const ball = function () {
                                 });
                             }
 
-                            //spin
+                            // spin
                             setTimeout(function () {
                                 setInterval(function () {
                                     chart.update({
@@ -3516,13 +3563,15 @@ const ball = function () {
 
 
                             let noseCount = 0;
-                            //nose
+                            // nose
                             setInterval(function () {
                                 if (noseCount === 0) {
                                     chart.series[2].points[0].setState('hover');
                                     noseCount = 1;
                                 } else {
-                                    chart.series[2].points[0].setState('normal');
+                                    chart.series[2].points[0].setState(
+                                        'normal'
+                                    );
                                     noseCount = 0;
                                 }
                             }, 1000);
@@ -3540,7 +3589,7 @@ const ball = function () {
                 },
 
                 xAxis: [
-                //0
+                // 0
                     {
                         min: 0,
                         max: 20,
@@ -3553,13 +3602,13 @@ const ball = function () {
                     },
                     xAxis1,
                     xAxis2,
-                    //3
+                    // 3
                     {
                         visible: false
                     }
                 ],
                 yAxis: [
-                    //0
+                    // 0
                     {
                         min: 0,
                         max: 20,
@@ -3572,7 +3621,7 @@ const ball = function () {
                     },
                     yAxis1,
                     yAxis2,
-                    //3
+                    // 3
                     {
                         visible: false
                     }],
@@ -3632,7 +3681,7 @@ const ball = function () {
 
                 },
                 series: [
-                    //0
+                    // 0
                     {
                         name: 'Graticule',
                         id: 'graticule',
@@ -3642,25 +3691,19 @@ const ball = function () {
                         data: getGraticule(),
                         nullColor: 'rgba(0, 0, 0, 0.05)'
                     },
-                    //1
+                    // 1
                     {
                         data,
                         joinBy: 'name',
                         color: '#78758C',
                         opacity: 1,
                         name: 'Earth',
-                        states: {
-                            hover: {
-                                color: '#a4edba',
-                                borderColor: '#333333'
-                            }
-                        },
                         dataLabels: {
                             enabled: false,
                             format: '{point.name}'
                         }
                     },
-                    //2 -- sled (scatter)
+                    // 2 -- sled (scatter)
                     {
                         type: 'scatter',
                         name: 'Santa & Rudolph',
@@ -3691,7 +3734,7 @@ const ball = function () {
                             }
                         }]
                     },
-                    //3 -- moon (pie)
+                    // 3 -- moon (pie)
                     {
                         type: 'pie',
                         name: 'The Moon',
@@ -3718,14 +3761,15 @@ const ball = function () {
                         ]
 
                     },
-                    //4 --stars
+                    // 4 --stars
                     {
                         type: 'bubble',
                         name: 'stars',
                         xAxis: 3,
                         yAxis: 3,
                         color: '#fff',
-                        data: [[9, 81, 63],
+                        data: [
+                            [9, 81, 63],
                             [98, 5, 89],
                             [51, 50, 73],
                             [41, 22, 14],
@@ -3741,7 +3785,7 @@ const ball = function () {
                             [44, 83, 22]
                         ]
                     },
-                    //5 --stars
+                    // 5 --stars
                     {
                         type: 'bubble',
                         color: '#fff',
@@ -3826,7 +3870,8 @@ candycane();
 ball();
 words();
 
-document.getElementById('open').addEventListener('click',
+document.getElementById('open').addEventListener(
+    'click',
     function () {
 
         [].forEach.call(

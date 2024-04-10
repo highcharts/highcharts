@@ -35,7 +35,7 @@ QUnit.test(
         assert.strictEqual(
             chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.element
                 .textContent,
-            '6. Nov',
+            '6 Nov',
             'Tick positions correct'
         );
 
@@ -43,7 +43,7 @@ QUnit.test(
             Object.keys(chart.xAxis[0].ticks).map(function (pos) {
                 return chart.xAxis[0].ticks[pos].label.element.textContent;
             }),
-            ['6. Nov', '01:00', '01:00', '02:00', '03:00', '04:00'],
+            ['6 Nov', '01:00', '01:00', '02:00', '03:00', '04:00'],
             'The same label should be repeated across DST change (#6797)'
         );
 

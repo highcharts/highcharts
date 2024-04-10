@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,9 +19,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type {
-    OrganizationDataLabelFormatterContext
-} from './OrganizationDataLabelOptions';
+import type { OrganizationDataLabelFormatterContext } from './OrganizationDataLabelOptions';
 import type OrganizationPoint from './OrganizationPoint';
 import type OrganizationSeriesOptions from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
@@ -86,7 +84,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
 
     /**
      * Link Styling options
-     * @since next
+     * @since 10.3.0
      * @product highcharts
      */
     link: {
@@ -97,7 +95,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
          *
          * @default 0.5
          * @type {number}
-         * @since next
+         * @since 10.3.0
          * @product highcharts
          * @apioption series.organization.link.offset
          */
@@ -269,11 +267,17 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '13px'
+            fontSize: '0.9em'
         },
 
-        useHTML: true
+        useHTML: true,
 
+        linkTextPath: {
+            attributes: {
+                startOffset: '95%',
+                textAnchor: 'end'
+            }
+        }
     },
     /**
      * The indentation in pixels of hanging nodes, nodes which parent has
@@ -309,6 +313,19 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @private
      */
     hangingIndentTranslation: 'inherit',
+    /**
+     * Whether links connecting hanging nodes should be drawn on the left
+     * or right side. Useful for RTL layouts.
+     * **Note:** Only effects inverted charts (vertical layout).
+     *
+     * @sample highcharts/series-organization/hanging-side
+     *         Nodes hanging from right side.
+     *
+     * @type {'left'|'right'}
+     * @since 11.3.0
+     * @default 'left'
+     */
+    hangingSide: 'left',
     /**
      *
      * The color of the links between nodes. This option is moved to
@@ -349,8 +366,8 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     minNodeLength: 10,
     /**
      * In a horizontal chart, the width of the nodes in pixels. Note that
-     * most organization charts are vertical, so the name of this option
-     * is counterintuitive.
+     * most organization charts are inverted (vertical), so the name of this
+     * option is counterintuitive.
      *
      * @see [minNodeLength](#plotOptions.organization.minNodeLength)
      *
@@ -425,6 +442,45 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  */
 
 /**
+ * The format string specifying what to show for *links* in the
+ * organization chart.
+ *
+ * Best to use with [`linkTextPath`](#series.organization.dataLabels.linkTextPath) enabled.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormat
+ * @since 11.0.0
+ */
+
+/**
+ * Callback to format data labels for _links_ in the
+ * organization chart. The `linkFormat` option takes
+ * precedence over the `linkFormatter`.
+ *
+ * @type      {OrganizationDataLabelsFormatterCallbackFunction}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormatter
+ * @since 11.0.0
+ */
+
+/**
+ * Options for a _link_ label text which should follow link
+ * connection.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type { DataLabelTextPathOptions }
+ * @product highcharts
+ * @apioption series.organization.dataLabels.linkTextPath
+ * @since 11.0.0
+ */
+
+/**
  * Layout for the node's children. If `hanging`, this node's children will hang
  * below their parent, allowing a tighter packing of nodes in the diagram.
  *
@@ -479,7 +535,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * @apioption series.organization.data
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file
 
 /* *
  *

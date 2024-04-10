@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     series: [{
-        type: "treemap",
+        type: 'treemap',
         layoutAlgorithm: 'squarified',
         data: [{
             name: 'A',

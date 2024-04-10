@@ -22,7 +22,7 @@ QUnit.test('Point type legend item', function (assert) {
     });
 
     assert.strictEqual(
-        chart.legend.allItems[0].legendSymbol.attr('fill'),
+        chart.legend.allItems[0].legendItem.symbol.attr('fill'),
         'rgb(255,0,0)',
         'shoud have correct color.'
     );

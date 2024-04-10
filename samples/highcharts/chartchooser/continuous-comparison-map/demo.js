@@ -19,7 +19,7 @@
             }
         },
         subtitle: {
-            text: 'Source <a hef="https://earthquake.usgs.gov/" target="_blank">USGS</a>'
+            text: 'Source <a href="https://earthquake.usgs.gov/" target="_blank">USGS</a>'
         },
 
         mapNavigation: {
@@ -34,8 +34,8 @@
             start: 1,
             min: 1,
             max: 40,
-            minColor: "#ffcccc",
-            maxColor: "#cc0000"
+            minColor: '#ffcccc',
+            maxColor: '#cc0000'
         },
 
         legend: {
@@ -43,14 +43,18 @@
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: ' +
+                '{point.lon}'
         },
         plotOptions: {
             mappoint: {
                 dataLabels: {
                     enabled: true,
                     formatter: function () {
-                        if (typeof (this.point.clusterPointsAmount) === "undefined") {
+                        if (
+                            typeof (this.point.clusterPointsAmount) ===
+                            'undefined'
+                        ) {
                             return '';
                         }
                         return this.point.clusterPointsAmount;
@@ -105,7 +109,7 @@
             type: 'mappoint',
             name: 'Earthquake',
             colorKey: 'clusterPointsAmount',
-            color: "#ffcccc",
+            color: '#ffcccc',
             data: [{
                 name: '6km NE of Port Orford, Oregon',
                 lat: 42.776,

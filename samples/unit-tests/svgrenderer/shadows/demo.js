@@ -1,70 +1,56 @@
 QUnit.test('Series shadows', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [
-                {
-                    shadow: {
-                        color: 'red',
-                        width: 10,
-                        offsetX: 40,
-                        offsetY: -20,
-                        opacity: 0.05
-                    },
-                    data: [29, 71, 106, 129, 144]
-                }
-            ]
-        }),
-        attributes = [
-            'stroke="blue"',
-            'stroke-opacity="0.2"',
-            'transform="translate(0, 20)'
-        ],
-        defaultAttributes = [
-            'stroke="#000000"',
-            'stroke-opacity="0.15"',
-            'transform="translate(1, 1)'
-        ];
+        series: [
+            {
+                shadow: {
+                    color: 'red',
+                    width: 10,
+                    offsetX: 40,
+                    offsetY: -20,
+                    opacity: 0.05
+                },
+                data: [29, 71, 106, 129, 144]
+            }
+        ]
+    });
 
     chart.series[0].update({
         shadow: {
             width: 20,
             offsetY: 20,
             color: 'blue',
-            opacity: 0.2,
+            opacity: 0.8,
             offsetX: 0
         }
     });
 
-    function checkAttributes(shadows, attributes) {
-        var res = true,
-            outerHTML = shadows[shadows.length - 1].outerHTML;
-
-        attributes.forEach(function (attr) {
-            if (outerHTML.indexOf(attr) === -1) {
-                res = false;
-            }
-        });
-
-        return res;
-    }
-
     assert.ok(
-        checkAttributes(chart.series[0].graph.shadows, attributes),
-        'Shadows should be updated (#12091).'
+        chart.series[0].graph.attr('filter').indexOf('blue') !== -1,
+        'Shadows should be updated (#12091)'
     );
 
-    assert.strictEqual(
-        chart.series[0].graph.shadows.length,
-        20,
-        'Shadows amount should be correct (#12091).'
+    assert.ok(
+        chart.series[0].graph.attr('filter').indexOf('-20-') !== -1,
+        'Shadows amount should be updated (#12091)'
+    );
+
+    assert.ok(
+        chart.series[0].graph.attr('filter').indexOf('userspaceonuse') !== -1,
+        `Shadow should have 'filterUnits: userSpaceOnUse' attribute
+        with line series (#19093)`
     );
 
     chart.series[0].update({
         shadow: true
     });
 
-    assert.ok(
-        checkAttributes(chart.series[0].graph.shadows, defaultAttributes),
-        'Shadows should be updated when old options defined as object and new as boolean (#12091).'
+    assert.strictEqual(
+        chart.series[0].graph.attr('filter'),
+        `url(#highcharts-drop-shadow-${
+            chart.index
+        }-filterunits-userspaceonuse)`,
+        'Shadows should be updated when old options defined as object and ' +
+        'new as boolean (#12091, #19093).'
     );
 
     chart = Highcharts.chart('container', {
@@ -79,44 +65,31 @@ QUnit.test('Series shadows', function (assert) {
         ]
     });
 
-    attributes = [
-        'stroke="red"',
-        'stroke-opacity="0.3"',
-        'transform="translate(10, 5)'
-    ];
-
     chart.series[0].update({
         shadow: {
             width: 20,
             offsetY: 10,
             color: 'red',
-            opacity: 0.3,
+            opacity: 0.9,
             offsetX: 5
         }
     });
 
     assert.ok(
-        checkAttributes(chart.series[0].graph.shadows, attributes),
-        'Shadows should be updated when old options defined as boolean and new as object (#12091).'
+        chart.series[0].graph.attr('filter').indexOf('red') !== -1,
+        'Shadows should be updated when old options defined as boolean and ' +
+        'new as object (#12091).'
     );
 
-    chart.update({
-        chart: {
-            inverted: false,
-            type: 'pie'
-        },
-        series: [{
-            shadow: true
-        }]
+    chart.series[0].update({
+        type: 'column'
     });
 
-    chart.series[0].update();
+    const firstColumn = chart.series[0].points[0];
 
     assert.ok(
-        checkAttributes(
-            [chart.series[0].shadowGroup.element],
-            defaultAttributes
-        ),
-        'Shadow group should not be hidden after series update (#17288).'
+        firstColumn.graphic.attr('filter').indexOf('userpacense') === -1,
+        `Shadow shouldn't have 'filterUnits: userSpaceOnUse' on other types
+        of series (#19093)`
     );
 });

@@ -1,0 +1,6 @@
+---
+ name: Highcharts global temperatures Column Range
+ authors:
+   - Joshua Kunst
+ js_wrap: b
+...

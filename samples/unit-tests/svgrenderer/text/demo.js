@@ -78,8 +78,8 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
             100
         )
         .css({
-            width: width + 'px',
-            color: '#003399'
+            fontSize: '12px',
+            width: width + 'px'
         })
         .add();
 
@@ -115,11 +115,13 @@ QUnit.test('Text word wrap with markup', function (assert) {
 
     var text = renderer
         .text(
-            'The quick <span style="color:brown">brown</span> fox jumps <em>over</em> the lazy dog',
+            'The quick <span style="color:brown">brown</span> fox jumps <em>' +
+            'over</em> the lazy dog',
             100,
             40
         )
         .css({
+            fontSize: '12px',
             width: width + 'px'
         })
         .add();
@@ -177,14 +179,16 @@ QUnit.module('whiteSpace: "nowrap"', hooks => {
         assert.strictEqual(
             text.element.innerHTML,
             'single_word',
-            'should not use tspan when whiteSpace equals "nowrap", and text equals "single_word".'
+            'should not use tspan when whiteSpace equals "nowrap", and text ' +
+            'equals "single_word".'
         );
 
         text.attr({ text: 'two words' });
         assert.strictEqual(
             text.element.innerHTML,
             'two words',
-            'should not use tspan when whiteSpace equals "nowrap", and text equals "two words".'
+            'should not use tspan when whiteSpace equals "nowrap", and text ' +
+            'equals "two words".'
         );
     });
 
@@ -243,7 +247,10 @@ QUnit.test('titleSetter', function (assert) {
             .add();
 
     assert.strictEqual(
-        text.element.getElementsByTagName('title')[0].textContent, // Ideally there should be a titleGetter. text.attr('title')
+        text.element.getElementsByTagName(
+            'title'
+        )[0].textContent, // Ideally there should be a
+        // titleGetter. text.attr('title')
         str.replace('<br>', ''),
         'Text element has a correct title. #5211'
     );
@@ -251,7 +258,10 @@ QUnit.test('titleSetter', function (assert) {
     // Update the title tag with a shorter text
     text.attr('title', newTitle);
     assert.strictEqual(
-        text.element.getElementsByTagName('title')[0].textContent, // Ideally there should be a titleGetter. text.attr('title')
+        text.element.getElementsByTagName(
+            'title'
+        )[0].textContent, // Ideally there should be a
+        // titleGetter. text.attr('title')
         newTitle,
         'Text element title has been updated. #5211'
     );
@@ -421,12 +431,14 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
         assert.strictEqual(
             lab.element.getAttribute('dy'),
             null,
-            "First line shouldn't have dy (#6144) - visually the red text fits in the green box."
+            'First line shouldn\'t have dy (#6144) - visually the red text ' +
+            'fits in the green box.'
         );
 
         const txt = renderer
             .text(
-                '<span><span>FirstLine</span><br/>SecondLine</span><br/>ThirdLine',
+                '<span><span>FirstLine</span><br/>SecondLine</span><br/>' +
+                'ThirdLine',
                 20,
                 100
             )
@@ -471,7 +483,7 @@ QUnit.test('HTML', function (assert) {
         assert.strictEqual(
             text.element.textContent,
             'a < b and c > d',
-            "Tags don't start with spaces (#7126)"
+            'Tags don\'t start with spaces (#7126)'
         );
 
         var html = renderer.text('useHTML', 100, 100, true).add();
@@ -507,7 +519,8 @@ QUnit.test('HTML', function (assert) {
         assert.strictEqual(
             text.element.style.width,
             '100px',
-            'The style width should be preserved after running .css with unrelated props (#8994)'
+            'The style width should be preserved after running .css with ' +
+            'unrelated props (#8994)'
         );
 
         text.css({
@@ -558,7 +571,8 @@ QUnit.test('HTML', function (assert) {
         text.css({ width: '600px' });
         assert.ok(
             text.getBBox().width < 500,
-            'When not overflowing, the bounding box should not extend to the CSS width (#16261)'
+            'When not overflowing, the bounding box should not extend to the ' +
+            'CSS width (#16261)'
         );
 
 
@@ -579,7 +593,8 @@ QUnit.test('HTML', function (assert) {
         assert.strictEqual(
             text.element.querySelector('tspan').getAttribute('x'),
             '10',
-            '#16062: tspan breaks should have correct x when exporting useHTML=true text with allowHTML=false'
+            '#16062: tspan breaks should have correct x when exporting ' +
+            'useHTML=true text with allowHTML=false'
         );
     } finally {
         renderer.destroy();
@@ -632,7 +647,8 @@ QUnit.test('Attributes', function (assert) {
 
         var text = renderer
             .text(
-                'The quick brown fox jumps <span class="red">over</span> the lazy dog',
+                'The quick brown fox jumps <span class="red">over</span> the ' +
+                'lazy dog',
                 20,
                 20
             )
@@ -646,7 +662,8 @@ QUnit.test('Attributes', function (assert) {
 
         text = renderer
             .text(
-                "The quick brown fox jumps <span class='red'>over</span> the lazy dog",
+                'The quick brown fox jumps <span class=\'red\'>over</span>' +
+                ' the lazy dog',
                 20,
                 20
             )
@@ -679,7 +696,7 @@ QUnit.test('Text height', function (assert) {
         });
 
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             parseInt(window.innerWidth / 50, 10),
             'Font size in vw'
         );
@@ -689,8 +706,8 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
-            24,
+            renderer.fontMetrics(label.element).f,
+            32,
             'Font size in em'
         );
 
@@ -699,7 +716,7 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             32,
             'Font size in rem'
         );
@@ -709,9 +726,9 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
-            24,
-            'Font size in %'
+            renderer.fontMetrics(label.element).f,
+            32,
+            'Font size in percent'
         );
 
         const textLabel = renderer.text('Firefox/IE clean', 10, 30).add();
@@ -766,13 +783,18 @@ QUnit.test('Adding new text style (#3501)', function (assert) {
 
         txt.attr({
             text:
-                'After running .css once, the new text does not respect box width'
+                'After running .css once, the new text does not respect box ' +
+                'width'
         });
 
         var rectWidth = rect.element.getBBox().width,
             textWidth = txt.element.getBBox().width;
 
-        assert.ok(rectWidth > textWidth, 'The text width is not respected');
+        assert.ok(
+            Math.floor(textWidth) <= Math.floor(rectWidth),
+            'The text should not be greater than the rect ' +
+                `(text: ${textWidth}, rect: ${rectWidth})`
+        );
     } finally {
         renderer.destroy();
     }

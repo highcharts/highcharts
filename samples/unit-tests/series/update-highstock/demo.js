@@ -33,7 +33,7 @@ QUnit.test('Series clip-path after updating axis. (#4526)', function (assert) {
 });
 
 QUnit.test(
-    "Navigator series' should keep its position in series array, " +
+    'Navigator series\' should keep its position in series array, ' +
         'even after series.update()',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
@@ -80,7 +80,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    "Navigator series' do not allow linkeTo (#6734).",
+    'Navigator series\' do not allow linkeTo (#6734).',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             series: [
@@ -155,7 +155,8 @@ QUnit.test('Series.update', function (assert) {
             high: config[2],
             low: config[3],
             close: config[4],
-            y: config[4] // let the closing value represent the data in single-value series
+            y: config[4] // let the closing value represent the data in
+            // single-value series
         })
     );
 
@@ -300,8 +301,8 @@ QUnit.test('Series.update', function (assert) {
             );
             assert.strictEqual(chart.series[0].area, undefined, 'No area');
             assert.strictEqual(
-                lastPoint().graphic.element.nodeName,
-                'rect',
+                lastPoint().graphic.symbolName,
+                'roundedRect',
                 'Has column'
             );
 

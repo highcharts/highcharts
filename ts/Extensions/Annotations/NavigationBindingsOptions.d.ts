@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -22,7 +22,7 @@ import type AnnotationOptions from './AnnotationOptions';
  *
  * */
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         navigation?: LangNavigationOptions;
     }
@@ -74,7 +74,7 @@ export interface NavigationOptions {
     iconsURL?: string;
 }
 
-interface PopupOptions {
+export interface PopupOptions {
     [key: string]: (string | IndicatorAliases | undefined);
     indicatorAliases?: IndicatorAliases;
 }

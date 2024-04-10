@@ -1,3 +1,6 @@
+parserOptions:
+    ecmaVersion: 2020
+
 env:
     browser: true
 
@@ -5,6 +8,8 @@ globals:
     $: true
     ADBE: true
     CallAnalyzer: true
+    Dashboards: true
+    DataGrid: true
     GOOGL: true
     Highcharts: true
     hs: true                    # Highslide
@@ -13,13 +18,22 @@ globals:
     MSFT: true
     ohlcdata: true
     QUnit: true
+    RGBColor: true
     temperatures: true          # pointinterval-pointstart demo
     TestController: true
     TestTemplate: true
     TestUtilities: true
     usdeur: true
 
+plugins:
+    [brackets]
+
 rules:
+    brackets/array-bracket-newline: 2
+    brackets/call-parens-newline: 2
+    brackets/conditional-parens-newline: 2
+    brackets/func-parens-newline: 2
+    brackets/object-curly-newline: 2
     consistent-return: 0
     eol-last: 0
     func-style: 0
@@ -28,24 +42,34 @@ rules:
     max-len: [
         "error",
         {
-            "ignoreComments": true,
-            "ignoreStrings": true
+            "ignorePattern": "(data:image/)",
+            "ignoreUrls": true
         }
     ]
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
+    no-loss-of-precision: 1
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
+    no-multi-str: 0
     no-undefined: 0
+    no-use-before-define: ["error", {"functions": false}]
     no-shadow: 0                # 10 violations as of 2015-10-31
     no-throw-literal: 0
     node/no-missing-require: 0
     object-curly-spacing: [2, "always"]
     object-shorthand: 0
-    quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
+    quotes: [2, "single"]
     prefer-rest-params: 0
     require-jsdoc: 0
+    require-unicode-regexp: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     spaced-comment: 1
     strict: 0
+    jsdoc/require-param: 0
+    jsdoc/require-param-description: 0
+    jsdoc/require-param-type: 0
     jsdoc/valid-jsdoc: 0
+    node/no-unsupported-features/es-syntax: 0
+    node/no-missing-import: 0
+

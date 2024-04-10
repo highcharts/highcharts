@@ -8,18 +8,18 @@ Highcharts.setOptions({
     ]
 });
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "bar"
+        type: 'bar'
     },
     title: {
-        text: "Honey Composition"
+        text: 'Honey Composition'
     },
     subtitle: {
         text: 'Source: <a href="https://en.wikipedia.org/wiki/Honey">Wikipedia</a>'
     },
     xAxis: {
-        categories: ["Honey composition"],
+        categories: ['Honey composition'],
         visible: false
     },
     yAxis: {
@@ -41,33 +41,33 @@ Highcharts.chart("container", {
     },
     plotOptions: {
         bar: {
-            stacking: "percent",
-            borderColor: "#000000",
+            stacking: 'percent',
+            borderColor: '#000000',
             dataLabels: {
                 enabled: true,
-                format: "{series.name}: {y}%",
-                color: "black",
+                format: '{series.name}: {y}%',
+                color: 'black',
                 y: -80
             }
         }
     },
     series: [
         {
-            name: "Fructose",
+            name: 'Fructose',
             data: [38.2]
         },
         {
-            name: "Glucose",
+            name: 'Glucose',
             data: [31.3]
         },
         {
-            name: "Water",
+            name: 'Water',
             data: [17.2]
         },
         {
-            name: "Maltose",
+            name: 'Maltose',
             data: [7.1]
         },
-        { name: "Other", data: [6.2] }
+        { name: 'Other', data: [6.2] }
     ]
 });

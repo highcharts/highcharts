@@ -56,6 +56,7 @@ Highcharts.chart('container', {
             pointFormat: 'Labor Costs: <b>€ {point.y}/h</b><br>' +
                 'GDP: <b>€ {point.z} million</b><br>'
         },
+        borderRadius: 3,
         colorByPoint: true
     }]
 

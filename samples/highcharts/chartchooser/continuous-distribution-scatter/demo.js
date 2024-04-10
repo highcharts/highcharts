@@ -1,25 +1,28 @@
 Highcharts.setOptions({
-    colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+    colors: [
+        '#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
+        '#FF9655', '#FFF263', '#6AF9C4'
+    ]
 });
 
 const discipline = [{
-    name: "Basketball",
-    data: "basketball"
+    name: 'Basketball',
+    data: 'basketball'
 },
 {
-    name: "Triathlon",
-    data: "triathlon"
+    name: 'Triathlon',
+    data: 'triathlon'
 },
 {
-    name: "Volleyball",
-    data: "volleyball"
+    name: 'Volleyball',
+    data: 'volleyball'
 }
 ];
 
 
 async function getData() {
     const response = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/olympic2012.json'
+        'https://www.highcharts.com/samples/data/olympic2012.json'
     );
     return response.json();
 }
@@ -46,14 +49,16 @@ getData().then(data => {
         c => Highcharts.color(c).setOpacity(0.5).get()
     );
 
-    Highcharts.chart("container", {
+    Highcharts.chart('container', {
         chart: {
-            type: "scatter",
-            zoomType: "xy"
+            type: 'scatter',
+            zooming: {
+                type: 'xy'
+            }
         },
         colors,
         title: {
-            text: "Olympics 2012 sport by height and weight"
+            text: 'Olympics 2012 sport by height and weight'
         },
         subtitle: {
             text:
@@ -61,10 +66,10 @@ getData().then(data => {
         },
         xAxis: {
             title: {
-                text: "Height"
+                text: 'Height'
             },
             labels: {
-                format: "{value} m"
+                format: '{value} m'
             },
             startOnTick: true,
             endOnTick: true,
@@ -72,10 +77,10 @@ getData().then(data => {
         },
         yAxis: {
             title: {
-                text: "Weight"
+                text: 'Weight'
             },
             labels: {
-                format: "{value} kg"
+                format: '{value} kg'
             }
         },
         legend: {
@@ -85,11 +90,11 @@ getData().then(data => {
             scatter: {
                 marker: {
                     radius: 2.5,
-                    symbol: "circle",
+                    symbol: 'circle',
                     states: {
                         hover: {
                             enabled: true,
-                            lineColor: "rgb(100,100,100)"
+                            lineColor: 'rgb(100,100,100)'
                         }
                     }
                 },
@@ -103,7 +108,7 @@ getData().then(data => {
             }
         },
         tooltip: {
-            pointFormat: "Height: {point.x} m <br/> Weight: {point.y} kg"
+            pointFormat: 'Height: {point.x} m <br/> Weight: {point.y} kg'
         },
         series: series
     });

@@ -1,4 +1,4 @@
-var data = [{
+const data = [{
     id: '0.0',
     parent: '',
     name: 'The World'
@@ -279,7 +279,8 @@ var data = [{
 {
     id: 'Af.4',
     parent: '1.3',
-    name: "Hong Kong Special Administrative Region of the People's Republic of China"
+    name: 'Hong Kong Special Administrative Region of the People\'s ' +
+        'Republic of China'
 },
 {
     parent: 'Af.4',
@@ -324,7 +325,8 @@ var data = [{
 {
     id: 'Af.7',
     parent: '1.3',
-    name: "Macao Special Administrative Region of the People's Republic of China"
+    name:
+        'Macao Special Administrative Region of the People\'s Republic of China'
 },
 {
     parent: 'Af.7',
@@ -334,7 +336,7 @@ var data = [{
 {
     id: 'Af.8',
     parent: '1.3',
-    name: "United Arab Emirates"
+    name: 'United Arab Emirates'
 },
 {
     parent: 'Af.8',
@@ -349,7 +351,7 @@ var data = [{
 {
     id: 'Af.9',
     parent: '1.3',
-    name: "China"
+    name: 'China'
 },
 {
     parent: 'Af.9',
@@ -384,7 +386,7 @@ var data = [{
 {
     id: 'Af.10',
     parent: '1.3',
-    name: "Malaysia"
+    name: 'Malaysia'
 },
 {
     parent: 'Af.10',
@@ -404,7 +406,7 @@ var data = [{
 {
     id: 'Af.11',
     parent: '1.3',
-    name: "India"
+    name: 'India'
 },
 {
     parent: 'Af.11',
@@ -439,7 +441,7 @@ var data = [{
 {
     id: 'Af.12',
     parent: '1.3',
-    name: "Japan"
+    name: 'Japan'
 },
 {
     parent: 'Af.12',
@@ -464,7 +466,7 @@ var data = [{
 {
     id: 'Af.13',
     parent: '1.3',
-    name: "Taiwan"
+    name: 'Taiwan'
 },
 {
     parent: 'Af.13',
@@ -479,7 +481,7 @@ var data = [{
 {
     id: 'Af.14',
     parent: '1.3',
-    name: "Saudi Arabia"
+    name: 'Saudi Arabia'
 },
 {
     parent: 'Af.14',
@@ -499,7 +501,7 @@ var data = [{
 {
     id: 'Af.15',
     parent: '1.3',
-    name: "Turkey"
+    name: 'Turkey'
 },
 {
     parent: 'Af.15',
@@ -803,7 +805,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Top 100 cities ranked by the number of international visitors - 2017'
+        text: 'Top 100 cities ranked by the number of international visitors ' +
+            '- 2017'
     },
     subtitle: {
         text: 'Euromonitor Rank - Source <a href="https://en.wikipedia.org/wiki/List_of_cities_by_international_visitors">Wikipedia</a>'
@@ -844,7 +847,17 @@ Highcharts.chart('container', {
         }]
     }],
     tooltip: {
-        headerFormat: "",
+        headerFormat: '',
         pointFormat: 'Arrivals to <b>{point.name}</b>: <b>{point.value}</b>'
     }
 });
+
+[...document.querySelectorAll('#button-row button')].forEach(button =>
+    button.addEventListener('click', e => {
+        Highcharts.charts[0].series[0].update({
+            dataLabels: {
+                rotationMode: e.target.innerText
+            }
+        });
+    })
+);

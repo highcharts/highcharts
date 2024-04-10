@@ -67,7 +67,7 @@ const defaultMarkers: Record<string, AST.Node> = {
         children: [{
             tagName: 'path',
             attributes: {
-                d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+                d: 'M 0 0 L 10 5 L 0 10 Z', // Triangle (used as an arrow)
                 'stroke-width': 0
             }
         }]
@@ -87,7 +87,7 @@ const defaultMarkers: Record<string, AST.Node> = {
         children: [{
             tagName: 'path',
             attributes: {
-                // reverse triangle (used as an arrow)
+                // Reverse triangle (used as an arrow)
                 d: 'M 0 5 L 10 0 L 10 10 Z',
                 'stroke-width': 0
             }

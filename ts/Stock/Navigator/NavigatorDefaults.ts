@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -112,7 +112,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * Whether the mask should be inside the range marking the zoomed
      * range, or outside. In Highcharts Stock 1.x it was always `false`.
      *
-     * @sample {highstock} stock/navigator/maskinside-false/
+     * @sample {highstock} stock/demo/maskinside-false/
      *         False, mask outside
      *
      * @since   2.0
@@ -228,7 +228,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #cccccc
      */
-    outlineColor: Palette.neutralColor20,
+    outlineColor: Palette.neutralColor40,
 
     /**
      * The width of the line marking the currently zoomed area in the
@@ -313,6 +313,13 @@ const NavigatorDefaults: NavigatorOptions = {
          * @ignore-option
          */
         compare: null as any,
+
+        /**
+         * @ignore-option
+         */
+        sonification: {
+            enabled: false
+        },
 
         /**
          * Unless data is explicitly defined, the data is borrowed from the
@@ -444,12 +451,26 @@ const NavigatorDefaults: NavigatorOptions = {
     xAxis: {
         /**
          * Additional range on the right side of the xAxis. Works similar to
-         * xAxis.maxPadding, but value is set in milliseconds.
+         * `xAxis.maxPadding`, but the value is set in terms of axis values,
+         * percentage or pixels.
+         *
+         * If it's a number, it is interpreted as axis values, which in a
+         * datetime axis equals milliseconds.
+         *
+         * If it's a percentage string, is interpreted as percentages of the
+         * axis length. An overscroll of 50% will make a 100px axis 50px longer.
+         *
+         * If it's a pixel string, it is interpreted as a fixed pixel value, but
+         * limited to 90% of the axis length.
+         *
+         * If it's undefined, the value is inherited from `xAxis.overscroll`.
+         *
          * Can be set for both, main xAxis and navigator's xAxis.
          *
+         * @type    {number | string | undefined}
          * @since   6.0.0
+         * @apioption navigator.xAxis.overscroll
          */
-        overscroll: 0,
 
         className: 'highcharts-navigator-xaxis',
 
@@ -472,7 +493,13 @@ const NavigatorDefaults: NavigatorOptions = {
              */
             style: {
                 /** @ignore */
-                color: Palette.neutralColor40
+                color: Palette.neutralColor100,
+                /** @ignore */
+                fontSize: '0.7em',
+                /** @ignore */
+                opacity: 0.6,
+                /** @ignore */
+                textOutline: '2px contrast'
             },
 
             x: 3,
@@ -569,4 +596,4 @@ export default NavigatorDefaults;
  * @apioption xAxis.maxRange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

@@ -8,16 +8,42 @@
  *
  * */
 
-import type { LonLatArray, MapViewOptions } from './MapViewOptions';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    LonLatArray,
+    MapViewOptions
+} from './MapViewOptions';
+import type MapPointOptions from '../Series/Map/MapPointOptions';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 export interface BaseGeometry {
-    arcs?: number[]|number[][]|number[][][];
+    arcs?: (number[]|number[][]|number[][][]);
     properties?: Record<string, string|number>;
 }
 
 export interface GeoJSONGeometryPoint extends BaseGeometry {
     type: 'Point';
     coordinates: LonLatArray;
+}
+
+export interface MapLonLatObject {
+    lat: number;
+    lon: number;
+}
+
+export interface MultiPoint extends BaseGeometry{
+    type: 'MultiPoint';
+    coordinates: LonLatArray[];
 }
 
 export interface LineString extends BaseGeometry{
@@ -42,20 +68,23 @@ export interface MultiPolygon extends BaseGeometry {
 
 export interface GeoJSONGeometryMultiPointRegistry {
     LineString: LineString;
+    MultiPoint: MultiPoint;
     Polygon: Polygon;
     MultiLineString: MultiLineString;
     MultiPolygon: MultiPolygon;
 }
 
-export type GeoJSONGeometryMultiPoint = GeoJSONGeometryMultiPointRegistry[
-    keyof GeoJSONGeometryMultiPointRegistry
-];
+export type GeoJSONGeometryMultiPoint =
+    GeoJSONGeometryMultiPointRegistry[keyof GeoJSONGeometryMultiPointRegistry];
 
-interface GeoJSONGeometryRegistry extends GeoJSONGeometryMultiPointRegistry {
+export interface GeoJSONGeometryRegistry
+    extends GeoJSONGeometryMultiPointRegistry {
+
     Point: GeoJSONGeometryPoint;
 }
 
-type GeoJSONGeometry = GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
+export type GeoJSONGeometry =
+    GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
 
 export interface GeoJSON {
     bbox: [number, number, number, number];
@@ -75,7 +104,8 @@ export interface GeoJSONFeature {
     properties?: Record<string, string|number>;
     type: 'Feature';
 }
-interface GeoJSONTransform {
+
+export interface GeoJSONTransform {
     crs?: string;
     hitZone?: AnyRecord;
     jsonmarginX?: number;
@@ -101,17 +131,27 @@ export interface TopoJSON {
     type: 'Topology';
 }
 
-interface TopoJSONObjects {
+export interface TopoJSONObjects {
     [key: string]: TopoJSONObject;
 }
-interface TopoJSONObject {
+
+export interface TopoJSONObject {
     geometries: GeoJSONGeometry[];
     'hc-decoded-geojson'?: GeoJSON;
     'hc-recommended-mapview'?: DeepPartial<MapViewOptions>;
 }
-interface TopoJSONTransform {
+
+export interface TopoJSONTransform {
     scale: [number, number];
     translate: [number, number];
 }
+
+export type MapDataType = Array<MapPointOptions>|GeoJSON|TopoJSON|string;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default GeoJSON;

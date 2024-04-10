@@ -8,12 +8,33 @@
 
 import * as Highcharts from "highcharts";
 
+test_legend();
 test_seriesArea();
 test_seriesBar();
 test_seriesColumn();
 test_seriesDependencyWheel();
 test_seriesLine();
 test_seriesPie();
+test_tooltip();
+test_yAxis();
+
+/**
+ * Tests legend options.
+ */
+function test_legend() {
+    Highcharts.chart('container', {
+        legend: {
+            enabled: true,
+            labelFormatter: function (): string {
+                const series = this as Highcharts.Series;
+                if (series.legendItem) {
+                    return JSON.stringify(series.legendItem as Record<string, SVGElement>);
+                }
+                return '';
+            }
+        }
+    });
+}
 
 /**
  * Tests Highcharts.seriesTypes.area in a common use case.
@@ -234,7 +255,10 @@ function test_seriesColumn() {
         series: [{
             type: 'column',
             name: 'Tokyo',
-            data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+            data: [
+            49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
+            95.6, 54.4
+        ],
         }, {
             type: 'column',
             name: 'New York',
@@ -464,4 +488,31 @@ function test_seriesPie() {
             }]
         }]
     });
+}
+
+/**
+ * Tests TooltipOptions in a common use cases.
+ */
+function test_tooltip() {
+    Highcharts.chart('container', {
+        tooltip: {
+            borderWidth: 10 // #18977
+        }
+    });
+}
+
+/**
+ * Tests YAxisLabelsOptions in a common use cases.
+ */
+function test_yAxis() {
+    Highcharts.chart('container', {
+        chart: {
+            polar: true
+        },
+        yAxis: {
+            labels: {
+                distance: "10%" // #18977
+            }
+        }
+    })
 }

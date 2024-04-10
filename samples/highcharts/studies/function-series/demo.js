@@ -1,9 +1,9 @@
+// FUNCTION SERIES DEFINITION
 (function (Highcharts) {
-    /// FUNCTION SERIES DEFINITION
     // create shortcuts
-    var defaultOptions = Highcharts.getOptions(),
+    const defaultOptions = Highcharts.getOptions(),
         defaultPlotOptions = defaultOptions.plotOptions,
-        seriesTypes = Highcharts.seriesTypes,
+        seriesTypes = Highcharts.Series.types,
         merge = Highcharts.merge,
         each = Highcharts.each;
 
@@ -14,23 +14,23 @@
     });
 
     seriesTypes.functionseries = Highcharts.extendClass(
-        Highcharts.seriesTypes.line,
+        Highcharts.Series.types.line,
         {
             type: 'functionseries',
 
             setData: function () {
-                var series = this,
+                const series = this,
                     dataFunction = series.options.dataFunction,
                     xAxis = series.xAxis,
                     points = xAxis.len,
                     min = xAxis.userMin || series.options.min,
                     max = xAxis.userMax || series.options.max,
-                    data = [],
-                    x,
-                    y,
-                    i;
+                    data = [];
 
-                for (i = 0; i < points; i += 1) {
+                let x,
+                    y;
+
+                for (let i = 0; i < points; i += 1) {
                     x = min + (i * ((max - min) / points));
                     y = dataFunction(x);
                     data.push([x, y]);
@@ -42,10 +42,10 @@
             },
             bindAxes: function () {
                 Highcharts.Series.prototype.bindAxes.apply(this, arguments);
-                var series = this,
+                const series = this,
                     xAxis = this.xAxis;
 
-                xAxis.setExtremes = function ()  {
+                xAxis.setExtremes = function () {
                     Highcharts.Axis.prototype.setExtremes
                         .apply(this, arguments);
                     series.setData([]);
@@ -66,18 +66,19 @@
 
     });
 }(Highcharts));
-/// END OF FUNCTION SERIES
+// END OF FUNCTION SERIES
 
-var scatterData = [],
-    i;
+const scatterData = [];
 
-for (i = 0; i < 100; i += 0.1) {
+for (let i = 0; i < 100; i += 0.1) {
     scatterData.push([i, Math.sin(i / 10) + Math.random() - 0.5]);
 }
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Measured vs Expected Data'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -20,16 +20,11 @@
 
 import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        xrange: {
-            prototype: {
-                pointClass: XRangePoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    xrange: { prototype: { pointClass: XRangePoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { pick } = U;
 
@@ -46,8 +41,6 @@ class GanttPoint extends XRangePoint {
      *  Static Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -72,8 +65,6 @@ class GanttPoint extends XRangePoint {
         );
     }
 
-    /* eslint-enable valid-jsdoc */
-
     /* *
      *
      *  Properties
@@ -88,9 +79,9 @@ class GanttPoint extends XRangePoint {
 
     public milestone?: boolean;
 
-    public options: GanttPointOptions = void 0 as any;
+    public options!: GanttPointOptions;
 
-    public series: GanttSeries = void 0 as any;
+    public series!: GanttSeries;
 
     public start?: number;
 
@@ -99,8 +90,6 @@ class GanttPoint extends XRangePoint {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Applies the options containing the x and y data and possible some
@@ -122,10 +111,8 @@ class GanttPoint extends XRangePoint {
         options: GanttPointOptions,
         x: number
     ): GanttPoint {
-        let point = this,
-            ganttPoint: GanttPoint;
+        const ganttPoint = super.applyOptions(options, x) as GanttPoint;
 
-        ganttPoint = super.applyOptions.call(point, options, x) as any;
         GanttPoint.setGanttPointAliases(ganttPoint);
 
         return ganttPoint;
@@ -145,10 +132,7 @@ class GanttPoint extends XRangePoint {
         );
     }
 
-    /* eslint-enable valid-jsdoc */
-
 }
-
 
 /* *
  *

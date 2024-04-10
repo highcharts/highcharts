@@ -1,0 +1,247 @@
+[
+  {
+    "page": 1,
+    "pages": 1,
+    "per_page": 20,
+    "total": 18,
+    "sourceid": "2",
+    "sourcename": "World Development Indicators",
+    "lastupdated": "2022-09-16"
+  },
+  [
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2020",
+      "value": -2.35110067344623,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2019",
+      "value": 3.911603419423,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2018",
+      "value": 1.18922812838034,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2017",
+      "value": 2.64700320195786,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2016",
+      "value": 2.26031420130452,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2015",
+      "value": 1.45131466009755,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2014",
+      "value": 2.72454336394854,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2013",
+      "value": 5.60074465808154,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2012",
+      "value": 12.752287088717,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2011",
+      "value": 0.426354784529209,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2010",
+      "value": 14.3624414692681,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2009",
+      "value": 21.3905283931066,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2008",
+      "value": 3.92498382161573,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2007",
+      "value": 13.8263195479763,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2006",
+      "value": 5.35740325126351,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2005",
+      "value": 11.2297148236429,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2004",
+      "value": 1.41411798058979,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "AF", "value": "Afghanistan" },
+      "countryiso3code": "AFG",
+      "date": "2003",
+      "value": 8.83227781263571,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    }
+  ]
+]

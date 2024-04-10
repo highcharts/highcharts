@@ -153,7 +153,7 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
         const t = new Highcharts.Time({ useUTC: false });
 
         assert.strictEqual(
-            t.dateFormat('%W', new Date("2015-04-12T01:00:00").getTime()),
+            t.dateFormat('%W', new Date('2015-04-12T01:00:00').getTime()),
             '14',
             'Week dateFormat for local timezone should return 14.'
         );

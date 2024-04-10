@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -34,15 +34,15 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
 /**
  * Attractive force.
  *
- * In Verlet integration, force is applied on a node immidatelly to it's
+ * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
  * @private
  * @param {Highcharts.Point} link
  *        Link that connects two nodes
  * @param {number} force
- *        Force calcualated in `repulsiveForceFunction`
- * @param {Highcharts.PositionObject} distance
+ *        Force calculated in `repulsiveForceFunction`
+ * @param {Highcharts.PositionObject} distanceXY
  *        Distance between two nodes e.g. `{x, y}`
  */
 function attractive(
@@ -72,7 +72,7 @@ function attractive(
 }
 
 /**
- * Attractive force funtion. Can be replaced by API's
+ * Attractive force function. Can be replaced by API's
  * `layoutAlgorithm.attractiveForce`
  *
  * @private
@@ -92,7 +92,7 @@ function attractiveForceFunction(
  * Barycenter force. Calculate and applys barycenter forces on the
  * nodes. Making them closer to the center of their barycenter point.
  *
- * In Verlet integration, force is applied on a node immidatelly to it's
+ * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
  * @private
@@ -100,15 +100,12 @@ function attractiveForceFunction(
 function barycenter(
     this: ReingoldFruchtermanLayout
 ): void {
-    let gravitationalConstant = this.options.gravitationalConstant,
-        xFactor = (this.barycenter as any).xFactor,
-        yFactor = (this.barycenter as any).yFactor;
-
-    // To consider:
-    xFactor = (xFactor - (this.box.left + this.box.width) / 2) *
-        (gravitationalConstant as any);
-    yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
-        (gravitationalConstant as any);
+    const gravitationalConstant = this.options.gravitationalConstant || 0,
+        xFactor = (
+            (this.barycenter as any).xFactor -
+            (this.box.left + this.box.width) / 2) * gravitationalConstant,
+        yFactor = ((this.barycenter as any).yFactor -
+            (this.box.top + this.box.height) / 2) * gravitationalConstant;
 
     this.nodes.forEach(function (node: Point): void {
         if (!(node as DragNodesPoint).fixedPosition) {
@@ -137,7 +134,7 @@ function getK(
 /**
  * Integration method.
  *
- * In Verlet integration, forces are applied on node immidatelly to it's
+ * In Verlet integration, forces are applied on node immediately to it's
  * `plotX` and `plotY` position.
  *
  * Verlet without velocity:
@@ -169,26 +166,26 @@ function integrate(
     layout: ReingoldFruchtermanLayout,
     node: NetworkgraphPoint
 ): void {
-    let friction = -(layout.options.friction as any),
+    const friction = -(layout.options.friction as any),
         maxSpeed = layout.options.maxSpeed,
         prevX = node.prevX,
         prevY = node.prevY,
-        // Apply friciton:
-        diffX = (
+        // Apply friction:
+        frictionX = (
             ((node.plotX as any) + (node.dispX as any) -
             (prevX as any)) * friction
         ),
-        diffY = (
+        frictionY = (
             ((node.plotY as any) + (node.dispY as any) -
             (prevY as any)) * friction
         ),
         abs = Math.abs,
-        signX = abs(diffX) / (diffX || 1), // need to deal with 0
-        signY = abs(diffY) / (diffY || 1);
+        signX = abs(frictionX) / (frictionX || 1), // Need to deal with 0
+        signY = abs(frictionY) / (frictionY || 1),
 
-    // Apply max speed:
-    diffX = signX * Math.min(maxSpeed as any, Math.abs(diffX));
-    diffY = signY * Math.min(maxSpeed as any, Math.abs(diffY));
+        // Apply max speed:
+        diffX = signX * Math.min(maxSpeed as any, Math.abs(frictionX)),
+        diffY = signY * Math.min(maxSpeed as any, Math.abs(frictionY));
 
     // Store for the next iteration:
     node.prevX = (node.plotX as any) + (node.dispX as any);
@@ -207,15 +204,15 @@ function integrate(
 /**
  * Repulsive force.
  *
- * In Verlet integration, force is applied on a node immidatelly to it's
+ * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
  * @private
  * @param {Highcharts.Point} node
  *        Node that should be translated by force.
  * @param {number} force
- *        Force calcualated in `repulsiveForceFunction`
- * @param {Highcharts.PositionObject} distance
+ *        Force calculated in `repulsiveForceFunction`
+ * @param {Highcharts.PositionObject} distanceXY
  *        Distance between two nodes e.g. `{x, y}`
  */
 function repulsive(
@@ -234,7 +231,7 @@ function repulsive(
 }
 
 /**
- * Repulsive force funtion. Can be replaced by API's
+ * Repulsive force function. Can be replaced by API's
  * `layoutAlgorithm.repulsiveForce`
  *
  * @private

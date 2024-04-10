@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,7 +20,6 @@ import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions';
 import type AreaSplinePoint from './AreaSplinePoint';
 
 import SplineSeries from '../Spline/SplineSeries.js';
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     area: AreaSeries,
@@ -66,9 +65,9 @@ class AreaSplineSeries extends SplineSeries {
      *
      * */
 
-    public data: Array<AreaSplinePoint> = void 0 as any;
-    public points: Array<AreaSplinePoint> = void 0 as any;
-    public options: AreaSplineSeriesOptions = void 0 as any;
+    public data!: Array<AreaSplinePoint>;
+    public points!: Array<AreaSplinePoint>;
+    public options!: AreaSplineSeriesOptions;
 }
 
 /* *
@@ -81,14 +80,12 @@ interface AreaSplineSeries extends SplineSeries {
     getGraphPath: typeof areaProto.getGraphPath,
     getStackPoints: typeof areaProto.getStackPoints;
     drawGraph: typeof areaProto.drawGraph;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
 }
 
 extend(AreaSplineSeries.prototype, {
     getGraphPath: areaProto.getGraphPath,
     getStackPoints: areaProto.getStackPoints,
-    drawGraph: areaProto.drawGraph,
-    drawLegendSymbol: LegendSymbol.drawRectangle
+    drawGraph: areaProto.drawGraph
 });
 
 /* *
@@ -249,4 +246,4 @@ export default AreaSplineSeries;
  * @apioption series.areaspline.fillOpacity
  */
 
-''; // adds doclets above into transpilat
+''; // Adds doclets above into transpiled

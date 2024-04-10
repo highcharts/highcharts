@@ -28,15 +28,19 @@ QUnit.module('XSS', function () {
                 )
                 .add();
             assert.strictEqual(
-                document.getElementById('container').innerHTML.indexOf('onclick'),
+                document.getElementById(
+                    'container'
+                ).innerHTML.indexOf('onclick'),
                 -1,
-                'There should be no translation of anchors to onclick like historically'
+                'There should be no translation of anchors to onclick like ' +
+                'historically'
             );
 
 
             text = ren
                 .text(
-                    `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`, // eslint-disable-line
+                    // eslint-disable-next-line
+                    `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`,
                     x,
                     y += lineHeight,
                     useHTML
@@ -52,12 +56,17 @@ QUnit.module('XSS', function () {
             // JavaScript directive
             text = ren
                 .text(
-                    'This is a link to <a href="javascript:alert(\'XSS\')">a simple JS directive</a>, <br>' +
+                    'This is a link to <a href="javascript:alert(\'XSS\')">a ' +
+                    'simple JS directive</a>, <br>' +
                     'an image <IMG SRC="javascript:alert(\'XSS\');">, <br>' +
-                    'an unquoted image <IMG SRC=javascript:alert(\'XSS\')>, <br>' +
-                    'a case insensitive attack vector <IMG SRC=JaVaScRiPt:alert(\'XSS\')>, <br>' +
-                    'HTML entities <IMG SRC=javascript:alert(&quot;XSS&quot;)>, <br>' +
-                    'grave accent obfuscation <IMG SRC=`javascript:alert("RSnake says, \'XSS\'")`>',
+                    'an unquoted image <IMG SRC=javascript:alert(\'XSS\')>, ' +
+                    '<br>' +
+                    'a case insensitive attack vector ' +
+                    '<IMG SRC=JaVaScRiPt:alert(\'XSS\')>, <br>' +
+                    'HTML entities <IMG ' +
+                    'SRC=javascript:alert(&quot;XSS&quot;)>, <br>' +
+                    'grave accent obfuscation <IMG SRC=`javascript:' +
+                    'alert("RSnake says, \'XSS\'")`>',
                     x,
                     y += lineHeight,
                     useHTML
@@ -77,14 +86,18 @@ QUnit.module('XSS', function () {
             text = ren
                 .text(
                     [
-                        '\<a onmouseover="alert(document.cookie)"\>xxs link\</a\>',
-                        '\<a onmouseover=alert(document.cookie)\>xxs link\</a\>',
+                        '\<a onmouseover="alert(document.cookie)"\>xxs ' +
+                        'link\</a\>',
+                        '\<a onmouseover=alert(document.cookie)\>xxs ' +
+                        'link\</a\>',
                         '<IMG """><SCRIPT>alert("XSS")<\/SCRIPT>"\>',
-                        '<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>',
+                        '<IMG SRC=javascript:alert(String.fromCharCode(88,83,' +
+                        '83))>',
                         '<IMG SRC=# onmouseover="alert(\'xxs\')">',
                         '<IMG SRC= onmouseover="alert(\'xxs\')">',
                         '<IMG onmouseover="alert(\'xxs\')">',
-                        '<IMG SRC=/ onerror="alert(String.fromCharCode(88,83,83))"></img>',
+                        '<IMG SRC=/ onerror="alert(String.fromCharCode(88,83,' +
+                        '83))"></img>',
                         '<<SCRIPT>alert("XSS");//\<<\/SCRIPT>',
                         '<SCRIPT SRC=http://xss.rocks/xss.js?< B >'
                     ].join(',<br>'),
@@ -102,7 +115,8 @@ QUnit.module('XSS', function () {
                     // Alerts as text content is allowed though
                     text.element.outerHTML.replace(/<tspan>alert/g, '')
                 ),
-                'Malformed HTML, alerts should be stripped out from JS directives'
+                'Malformed HTML, alerts should be stripped out from JS ' +
+                'directives'
             );
 
             assert.ok(
@@ -114,13 +128,30 @@ QUnit.module('XSS', function () {
             text = ren
                 .text(
                     [
-                        '<img src=x onerror="&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041">',
-                        '<IMG SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;>',
-                        '<IMG SRC=&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041>',
-                        '<IMG SRC=&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29>',
+                        '<img src=x ' +
+                        'onerror="&#0000106&#0000097&#0000118&#0000097' +
+                        '&#0000115&#0000099&#0000114&#0000105&#0000112' +
+                        '&#0000116&#0000058&#0000097&#0000108&#0000101' +
+                        '&#0000114&#0000116&#0000040&#0000039&#0000088' +
+                        '&#0000083&#0000083&#0000039&#0000041">',
+                        '<IMG ' +
+                        'SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;' +
+                        '&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;' +
+                        '&#39;&#88;&#83;&#83;&#39;&#41;>',
+                        '<IMG ' +
+                        'SRC=&#0000106&#0000097&#0000118&#0000097&#0000115' +
+                        '&#0000099&#0000114&#0000105&#0000112&#0000116' +
+                        '&#0000058&#0000097&#0000108&#0000101&#0000114' +
+                        '&#0000116&#0000040&#0000039&#0000088&#0000083' +
+                        '&#0000083&#0000039&#0000041>',
+                        '<IMG ' +
+                        'SRC=&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70' +
+                        '&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27' +
+                        '&#x58&#x53&#x53&#x27&#x29>',
                         // Embedded tab
                         '<IMG SRC="jav	ascript:alert(\'XSS\');">', // eslint-disable-line
-                        '<IMG SRC="jav&#x09;ascript:alert(\'XSS\');">', // Embedded encoded tab
+                        '<IMG SRC="jav&#x09;ascript:alert(\'XSS\');">', //
+                        // Embedded encoded tab
                         '<IMG SRC="jav&#x0A;ascript:alert(\'XSS\');">',
                         '<IMG SRC="jav&#x0D;ascript:alert(\'XSS\');">',
                         '<IMG SRC=" &#14;  javascript:alert(\'XSS\');">'
@@ -141,7 +172,8 @@ QUnit.module('XSS', function () {
             );
             assert.ok(
                 !/alert/i.test(text.element.outerHTML),
-                'Character tricks, alerts should be stripped out from JS directives'
+                'Character tricks, alerts should be stripped out from JS ' +
+                'directives'
             );
 
 
@@ -214,8 +246,10 @@ QUnit.module('XSS', function () {
                 text = ren.text(
                     [
                         '<customTag></customTag>',
-                        '<span id="elemWithCustomAttribute" customAttribute="testValue"></span>',
-                        '<a href="javascript:alert(\'XSS\')">a simple JS directive</a>'
+                        '<span id="elemWithCustomAttribute" ' +
+                            'customAttribute="testValue"></span>',
+                        '<a href="javascript:alert(\'XSS\')">' +
+                            'a simple JS directive</a>'
                     ].join(',<br>'),
                     x,
                     y += lineHeight,
@@ -237,7 +271,8 @@ QUnit.module('XSS', function () {
 
                 assert.ok(
                     /javascript/i.test(text.element.outerHTML),
-                    'AST disabled: custom JavaScript directive should be allowed, #15345'
+                    'AST disabled: custom JavaScript directive should be ' +
+                    'allowed, #15345'
                 );
 
                 Highcharts.AST.bypassHTMLFiltering = false;
@@ -263,7 +298,8 @@ QUnit.test('Script injection through AST options', assert => {
             xss: {
                 tagName: 'script',
                 href: 'https://code.example.com',
-                onerror: 'javascript:console.log(\'XSS\')' // eslint-disable-line
+                onerror:
+                    'javascript:console.log(\'XSS\')' // eslint-disable-line
             }
         }
     });

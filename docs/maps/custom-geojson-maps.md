@@ -1,7 +1,7 @@
 Custom GeoJSON maps
 ===================
 
-This article contains information on creating maps from data in common mapping formats, as well as modifying the [Highcharts Maps Map Collection](https://code.highcharts.com/mapdata "Highcharts Maps Map Collection"). For information on drawing your own maps and creating maps from SVG, see our article on [creating custom maps](https://www.highcharts.com/docs/maps/create-custom-maps-for-highmaps "Custom maps").
+This article contains information on creating maps from data in common mapping formats, as well as modifying the [Highcharts Maps Map Collection](https://code.highcharts.com/mapdata "Highcharts Maps Map Collection"). For information on drawing your own maps and creating maps from SVG, see our article on [creating custom maps](https://www.highcharts.com/docs/maps/create-custom-maps "Custom maps").
 
 We see that many users have map data in ESRI Shapefile format or other common mapping formats. These can easily be converted for use with Highcharts Maps using an editor with GeoJSON exporting capabilities, as Highcharts Maps supports the GeoJSON format natively. Most full-featured GIS editors will be able to perform this conversion. [QGIS](https://qgis.org "QGIS") is a free alternative that supports both Shapefile, KML, and a number of other formats. See [this demo](https://highcharts.com/maps/demo/geojson "GeoJSON demo") for an example of how to load polygonal data from a GeoJSON file, and [this demo](https://highcharts.com/maps/demo/mapline-mappoint "GeoJSON multiple types demo") for a more complex example with line and point data.
 
@@ -51,11 +51,11 @@ We will now go through the process of importing a Shapefile in QGIS and converti
 
 ![custom-geojson-maps-9.jpg](custom-geojson-maps-9.jpg)
 
-8. When you are satisfied with your map, you need to export it to GeoJSON format in order to use it with Highcharts Maps. To export your map, right click the layer you want to export in the table of contents, and select "Save As". Make sure to select to save in GeoJSON format. The resulting file can be used directly with Highcharts Maps. You will notice that QGIS by default includes a large amount of decimals in the GeoJSON coordinates. These can be stripped using a Regex or similar, for optimization. Try using [this jsFiddle tool](https://jsfiddle.net/highcharts/92oymdb7/ "jsFiddle tool") on the resulting file contents.
+8. When you are satisfied with your map, you need to export it to GeoJSON format in order to use it with Highcharts Maps. To export your map, right click the layer you want to export in the table of contents, and select "Save As". Make sure to select to save in GeoJSON format. The resulting file can be used directly with Highcharts Maps. You will notice that QGIS by default includes a large amount of decimals in the GeoJSON coordinates. These can be stripped using a Regex or similar, for optimization. Try using [this jsFiddle tool](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/general/geojson-optimization "jsFiddle tool") on the resulting file contents.
 
 ![custom-geojson-maps-10.jpg](custom-geojson-maps-10.jpg)
 
-9. To quickly test your map, paste your GeoJSON into [this boilerplate jsFiddle](https://jsfiddle.net/highcharts/xbzxfx2L "GeoJSON maps boilerplate"). The result should look something like this:
+9. To quickly test your map, paste your GeoJSON into [this boilerplate jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/general/geojson-test-map "GeoJSON maps boilerplate"). The result should look something like this:
 
 ![custom-geojson-maps-11.jpg](custom-geojson-maps-11.jpg)
 

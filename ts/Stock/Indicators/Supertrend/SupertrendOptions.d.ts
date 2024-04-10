@@ -21,7 +21,6 @@ import type {
     SMAParamsOptions
 } from '../SMA/SMAOptions';
 import type SupertrendPoint from './SupertrendPoint';
-import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 
 /* *
 *
@@ -70,5 +69,11 @@ export interface SupertrendGroupedPointsObject {
 export interface SupertrendLineObject {
     [index: string]: (AnyRecord|undefined);
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SupertrendOptions;

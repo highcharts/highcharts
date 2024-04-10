@@ -1,0 +1,37 @@
+#wrapper {
+    display: flex;
+    justify-content: stretch;
+}
+
+#container1,
+#container2 {
+    flex-grow: 1;
+    text-align: center;
+}
+
+table {
+    min-width: 100%;
+}
+
+table td,
+table th {
+    line-height: 1.5em;
+    padding: 0.25em 0.5em;
+    vertical-align: top;
+}
+
+table thead th {
+    background-color: #ddd;
+}
+
+table tbody td {
+    background-color: #eee;
+}
+
+tr.highlight td {
+    background-color: #def;
+}
+
+tr td.highlight {
+    background-color: #bdf;
+}

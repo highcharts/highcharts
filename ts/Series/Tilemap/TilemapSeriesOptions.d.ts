@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -33,5 +33,11 @@ export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
 }
 
 export type TilemapShapeValue = ('circle'|'diamond'|'hexagon'|'square');
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default TilemapSeriesOptions;

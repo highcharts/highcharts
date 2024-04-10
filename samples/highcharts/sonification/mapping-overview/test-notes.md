@@ -1,0 +1,1 @@
+1. Try the different mapping types and observe the behavior

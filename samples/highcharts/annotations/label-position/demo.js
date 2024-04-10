@@ -10,7 +10,10 @@ Highcharts.chart('container', {
 
     series: [{
         keys: ['y', 'id'],
-        data: [[29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'], [144.0, '4'], [176.0, '5']]
+        data: [
+            [29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'], [144.0, '4'],
+            [176.0, '5']
+        ]
     }],
 
     tooltip: {
@@ -19,15 +22,15 @@ Highcharts.chart('container', {
 
     annotations: [{
         labels: [{
-            //verticalAlign: 'top', top by default
+            // verticalAlign: 'top', top by default
             align: 'left',
             point: '0'
         }, {
-            //verticalAlign: 'top', top by default
+            // verticalAlign: 'top', top by default
             align: 'right',
             point: '1'
         }, {
-            //align: 'center', center by default
+            // align: 'center', center by default
             verticalAlign: 'top',
             point: '2'
         }, {

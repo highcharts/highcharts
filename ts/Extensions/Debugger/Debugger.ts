@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,15 +20,17 @@ import type Chart from '../../Core/Chart/Chart';
 import type GlobalsLike from '../../Core/GlobalsLike';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import D from '../../Core/Defaults.js';
+const { setOptions } = D;
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
-import D from '../../Core/DefaultOptions.js';
-const { setOptions } = D;
+const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     find,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -54,8 +56,6 @@ declare module '../../Core/Chart/ChartOptions'{
  *  Constants
  *
  * */
-
-const composedClasses: Array<(Function|GlobalsLike)> = [];
 
 const defaultOptions = {
     /**
@@ -89,20 +89,10 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (pushUnique(composed, 'Debugger')) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
-    }
-
-    if (composedClasses.indexOf(H) === -1) {
-        composedClasses.push(H);
 
         addEvent(H, 'displayError', onHighchartsDisplayError);
-    }
-
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
 
         setOptions(defaultOptions);
     }
@@ -174,7 +164,7 @@ function onHighchartsDisplayError(
         msg = msg
             .replace(
                 /<h1>(.*)<\/h1>/g,
-                '<br><span style="font-size: 24px">$1</span><br>'
+                '<br><span style="font-size: 2em">$1</span><br>'
             )
             .replace(/<p>/g, '')
             .replace(/<\/p>/g, '<br>');
@@ -204,6 +194,7 @@ function onHighchartsDisplayError(
             'debugger'
         ).css({
             color: '#ffffff',
+            fontSize: '0.8em',
             width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({

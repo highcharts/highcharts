@@ -14,12 +14,14 @@ Highcharts.chart('container', {
 
     yAxis: {
         tickPositioner: function () {
-            var positions = [],
-                tick = Math.floor(this.dataMin),
+            let tick = Math.floor(this.dataMin);
+            const positions = [],
                 increment = Math.ceil((this.dataMax - this.dataMin) / 6);
 
             if (this.dataMax !== null && this.dataMin !== null) {
-                for (tick; tick - increment <= this.dataMax; tick += increment) {
+                for (tick;
+                    tick - increment <= this.dataMax;
+                    tick += increment) {
                     positions.push(tick);
                 }
             }

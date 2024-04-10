@@ -1,4 +1,4 @@
-var minute = 1000 * 60,
+const minute = 1000 * 60,
     startTime = +new Date(),
     dateTimeLabelFormats = {
         day: '%H:%M',
@@ -23,13 +23,21 @@ var minute = 1000 * 60,
         accessibility: {
             announceNewData: {
                 enabled: true,
-                announcementFormatter: function (allSeries, newSeries, newPoint) {
-                    var describer = Highcharts.SeriesAccessibilityDescriber,
-                        getPointXDescription = describer.getPointXDescription,
-                        getPointValueDescription = describer.getPointValueDescription;
+                announcementFormatter: function (
+                    allSeries,
+                    newSeries,
+                    newPoint
+                ) {
+                    const describer =
+                        Highcharts.SeriesAccessibilityDescriber,
+                        getPointXDescription =
+                        describer.getPointXDescription,
+                        getPointValueDescription =
+                        describer.getPointValueDescription;
 
                     if (newPoint) {
-                        return 'Account balance updated. New data point: Time ' +
+                        return 'Account balance updated. New data point: ' +
+                            'Time ' +
                             getPointXDescription(newPoint) + ', ' +
                             getPointValueDescription(newPoint) + '.';
                     }
@@ -40,7 +48,9 @@ var minute = 1000 * 60,
         tooltip: {
             dateTimeLabelFormats: dateTimeLabelFormats,
             valuePrefix: '$',
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>- Checking: ${point.checking}<br/>- Savings: ${point.savings}'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}: <b>{point.y}</b><br/>- Checking: ' +
+                '${point.checking}<br/>- Savings: ${point.savings}'
         },
         xAxis: {
             type: 'datetime',
@@ -73,7 +83,7 @@ var minute = 1000 * 60,
 
 
 // Code for handling the pay bill form
-var balance = {
+const balance = {
         checking: 3000,
         savings: 9000
     },
@@ -83,16 +93,18 @@ var balance = {
 
 // Update balance when account is selected
 fromAccount.onchange = function () {
-    var accountID = fromAccount.options[fromAccount.selectedIndex].value;
+    const accountID = fromAccount.options[fromAccount.selectedIndex].value;
     accountBalance.innerHTML = balance[accountID];
 };
 
 // Add balance data when paying a bill
 document.getElementById('pay').onclick = function () {
-    var time = +new Date() - startTime + 10 * minute,
+    const time = +new Date() - startTime + 10 * minute,
         accountID = fromAccount.options[fromAccount.selectedIndex].value,
-        newBalance = Math.round(parseFloat(accountBalance.innerHTML) -
-            parseFloat(payAmount.value));
+        newBalance = Math.round(
+            parseFloat(accountBalance.innerHTML) -
+            parseFloat(payAmount.value)
+        );
 
     if (newBalance >= 0) {
         accountBalance.innerHTML = newBalance;
@@ -107,7 +119,7 @@ document.getElementById('pay').onclick = function () {
 };
 
 document.getElementById('distribution').onclick = function () {
-    var color1 = 'rgba(180, 60, 60, 0.6)',
+    const color1 = 'rgba(180, 60, 60, 0.6)',
         color2 = 'rgba(0, 100, 180, 0.6)',
         newData = [
             { name: 'Checking', y: balance.checking, color: color1 },
@@ -123,7 +135,8 @@ document.getElementById('distribution').onclick = function () {
             id: 'distribution',
             name: 'Balance distribution',
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span><b>${point.y}</b>'
+                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                    '<b>${point.y}</b>'
             },
             center: [90, 180],
             size: 100,

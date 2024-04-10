@@ -341,31 +341,35 @@ QUnit.test(
         assert.deepEqual(
             chart.series[0].xData,
             [5, 7, 9],
-            '#15117: pointStart/pointInterval should work with turboed 2d array data'
+            '#15117: pointStart/pointInterval should work with turboed 2d ' +
+            'array data'
         );
         assert.deepEqual(
             chart.series[0].yData,
             [1, 2, 3],
-            '#15117: pointStart/pointInterval should work with turboed 2d array data'
+            '#15117: pointStart/pointInterval should work with turboed 2d ' +
+            'array data'
         );
 
-        const map = Highcharts.seriesTypes.line.prototype.pointArrayMap;
-        Highcharts.seriesTypes.line.prototype.pointArrayMap = ['y'];
+        const map = Highcharts.Series.types.line.prototype.pointArrayMap;
+        Highcharts.Series.types.line.prototype.pointArrayMap = ['y'];
 
         chart.series[0].setData([[2], [4], [6]], true, false, false);
 
         assert.deepEqual(
             chart.series[0].xData,
             [5, 7, 9],
-            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+            '#15117: pointStart/pointInterval should work with turboed ' +
+            'pointArrayMap series'
         );
         assert.deepEqual(
             chart.series[0].yData,
             [[2], [4], [6]],
-            '#15117: pointStart/pointInterval should work with turboed pointArrayMap series'
+            '#15117: pointStart/pointInterval should work with turboed ' +
+            'pointArrayMap series'
         );
 
-        Highcharts.seriesTypes.line.prototype.pointArrayMap = map;
+        Highcharts.Series.types.line.prototype.pointArrayMap = map;
     }
 );
 
@@ -481,14 +485,14 @@ QUnit.test('Pie series point update', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].connector.attr('stroke'),
+        chart.series[0].points[0].dataLabel.connector.attr('stroke'),
         'yellow',
         'Initial connector color'
     );
 
     chart.series[0].points[0].update({ color: 'red' });
     assert.strictEqual(
-        chart.series[0].points[0].connector.attr('stroke'),
+        chart.series[0].points[0].dataLabel.connector.attr('stroke'),
         'red',
         'Connector color updated'
     );

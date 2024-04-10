@@ -1,0 +1,11 @@
+---
+name: Treegraph chart
+authors:
+  - Torstein Hønsi
+js_wrap: b
+use_png_thumbnail: true
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...

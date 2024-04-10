@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -204,7 +204,18 @@ const exporting: ExportingOptions = {
      * @since    6.0.4
      * @requires modules/export-data
      */
-    useRowspanHeaders: true
+    useRowspanHeaders: true,
+
+    /**
+     * Display a message when export is in progress.
+     * Uses [Chart.setLoading()](/class-reference/Highcharts.Chart#setLoading)
+     *
+     * The message can be altered by changing [](#lang.exporting.exportInProgress)
+     *
+     * @since 11.3.0
+     * @requires modules/export-data
+     */
+    showExportInProgress: true
 };
 
 /**
@@ -265,7 +276,14 @@ const lang: LangOptions = {
      * @since 8.2.0
      * @requires modules/export-data
      */
-    hideData: 'Hide data table'
+    hideData: 'Hide data table',
+    /**
+     * Text to show when export is in progress.
+     *
+     * @since 11.3.0
+     * @requires modules/export-data
+     */
+    exportInProgress: 'Exporting...'
 };
 
 /* *
@@ -310,4 +328,4 @@ export default ExportDataDefaults;
  * @apioption plotOptions.series.includeInDataExport
  */
 
-(''); // keep doclets above in JS file
+(''); // Keep doclets above in JS file

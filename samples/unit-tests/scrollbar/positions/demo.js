@@ -318,7 +318,7 @@ QUnit.test('Positioning the scrollbar (opposite), #16017.', function (assert) {
     );
     assert.close(
         chart.xAxis[0].left,
-        56,
+        52,
         3, // Firefox
         'When scrollbar on the left, the axis should have an additional margin.'
     );

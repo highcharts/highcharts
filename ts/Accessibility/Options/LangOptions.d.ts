@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -16,7 +16,7 @@
  *
  * */
 
-import type LangOptions from '../../Core/LangOptions';
+import type { LangOptions } from '../../Core/Options';
 
 /* *
  *
@@ -93,6 +93,7 @@ export interface LangAccessibilityOptions {
     exporting: LangAccessibilityExportingOptions;
     graphicContainerLabel: string;
     legend: LangAccessibilityLegendOptions;
+    navigator: LangAccessibilityNavigatorOptions;
     rangeSelector: LangAccessibilityRangeSelectorOptions;
     screenReaderSection: LangAccessibilityScreenReaderSectionOptions;
     series: LangAccessibilitySeriesOptions;
@@ -112,6 +113,12 @@ export interface LangAccessibilityRangeSelectorOptions {
     maxInputLabel: string;
     minInputLabel: string;
     clickButtonAnnouncement: string;
+}
+
+export interface LangAccessibilityNavigatorOptions {
+    handleLabel: string;
+    groupLabel: string;
+    changeAnnouncement: string;
 }
 
 export interface LangAccessibilityAnnotationOptions {
@@ -192,7 +199,7 @@ export interface LangAccessibilityZoomOptions {
     resetZoomButton: string;
 }
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         accessibility?: LangAccessibilityOptions;
     }

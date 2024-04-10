@@ -45,18 +45,20 @@ Highcharts.chart('container', {
     },
 
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
+        csvURL: 'https://www.highcharts.com/samples/data/analytics.csv',
         beforeParse: function (csv) {
             return csv.replace(/\n\n/g, '\n');
         }
     },
 
     title: {
-        text: 'Daily sessions at www.highcharts.com'
+        text: 'Daily sessions at www.highcharts.com',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: Google Analytics'
+        text: 'Source: Google Analytics',
+        align: 'left'
     },
 
     xAxis: {

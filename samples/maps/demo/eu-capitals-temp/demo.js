@@ -1,25 +1,11 @@
+// The demo uses https://api.met.no/ API. Every call downloads the JSON format
+// data, basing on specific capital city latitude and longitude values.
+
 (async () => {
 
     const topology = await fetch(
         'https://code.highcharts.com/mapdata/custom/europe.topo.json'
     ).then(response => response.json());
-
-    // The demo uses https://api.met.no/ API. Every AJAX
-    // call downloads the XML format data, basing on specific capital
-    // city latitude and longitude values.
-
-    function getJSON(url, cb) {
-        const request = new XMLHttpRequest();
-        request.open('GET', url, true);
-
-        request.onload = function () {
-            if (this.status < 400) {
-                return cb(JSON.parse(this.response));
-            }
-        };
-
-        request.send();
-    }
 
     // Data structure: [country_code, latitude, longitude, capital_city]
     const newData = [
@@ -72,64 +58,63 @@
         ['md', 47, 28.85, 'Chisinau'],
         ['cz', 50.08, 14.46, 'Prague']
     ];
-    // Get temperature for specific localization, and add it to the chart.
-    // It takes point as first argument, countries series as second
-    // and capitals series as third. Capitals series have to be the
-    // 'mappoint' series type, and it should be defined before in the
-    // series array.
-    function getTemp(point, countries, capitals) {
+    // Get temperature for specific localization, and add it to the chart. It
+    // takes point as first argument, countries series as second and capitals
+    // series as third. Capitals series have to be the 'mappoint' series type,
+    // and it should be defined before in the series array.
+    async function getTemp(point, countries, capitals) {
 
-        const url = 'https://api.met.no/weatherapi/locationforecast/2.0/?lat=' +
-        point[1] + '&lon=' + point[2];
+        const json = await fetch(
+            'https://api.met.no/weatherapi/locationforecast/2.0/?' +
+                `lat=${point[1]}&lon=${point[2]}`
+        ).then(response => response.json());
 
-        const callBack = json => {
+        const temp = json.properties.timeseries[0].data.instant.details
+                .air_temperature,
+            value = parseInt(temp, 10);
 
-            const temp = json.properties.timeseries[0].data.instant.details
-                .air_temperature;
-            const colorAxis = countries.chart.colorAxis[0];
-
-            const country = {
-                'hc-key': point[0],
-                value: parseInt(temp, 10) || null
-            };
-            const capital = {
-                name: point[3],
-                lat: point[1],
-                lon: point[2],
-                color: colorAxis.toColor(temp),
-                temp: parseInt(temp, 10) || 'No data'
-            };
-
-            countries.addPoint(country);
-            capitals.addPoint(capital);
-            return temp;
+        const country = {
+            'hc-key': point[0],
+            value
+        };
+        const capital = {
+            name: point[3],
+            lat: point[1],
+            lon: point[2],
+            colorKey: 'y',
+            y: Number.isInteger(value) ? value : null,
+            custom: {
+                label: Number.isInteger(value) ?
+                    `${value}℃` :
+                    '<span style="font-weight: normal; opacity: 0.5">N/A</span>'
+            }
         };
 
-        getJSON(url, callBack);
+        countries.addPoint(country);
+        capitals.addPoint(capital);
     }
 
     // Create the chart
     Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            animation: false,
             events: {
                 load: function () {
-                    var countries = this.series[0];
-                    var capitals = this.series[1];
-                    newData.forEach(function (elem) {
-                        getTemp(elem, countries, capitals);
-                    });
+                    const countries = this.series[0],
+                        capitals = this.series[1];
+                    newData.forEach(elem => getTemp(elem, countries, capitals));
                 }
             }
         },
 
         title: {
-            text: 'Current temperatures in capitals of Europe'
+            text: 'Current temperatures in capitals of Europe',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Data source: <a href="https://api.met.no/">https://api.met.no/</a>'
+            text: 'Data source: <a href="https://api.met.no/">https://api.met.no/</a>',
+            align: 'left'
         },
 
         mapNavigation: {
@@ -160,20 +145,14 @@
         },
 
         tooltip: {
-            headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
-            pointFormatter: function () {
-                var value = Number.isInteger(this.temp) ? this.temp + '°C' : 'No data';
-                return 'Temperature: <b>' + value + '</b>';
-            }
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{point.key}:<br/>',
+            pointFormat: 'Temperature: <b>{point.custom.label}</b>'
         },
 
         series: [{
+            allAreas: true,
             name: 'Temperatures',
-            states: {
-                hover: {
-                    color: '#BADA55'
-                }
-            },
             dataLabels: {
                 enabled: false
             },
@@ -193,10 +172,8 @@
             },
             dataLabels: {
                 crop: true,
-                formatter: function () {
-                    var value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
-                    return '<span>' + this.key + '</span><br/><span>' + value + '</span>';
-                }
+                format: '<span>{key}</span><br><span>' +
+                    '{point.custom.label}</span>'
             },
             accessibility: {
                 point: {

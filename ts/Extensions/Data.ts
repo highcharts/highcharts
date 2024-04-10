@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2021 Torstein Honsi
+ *  (c) 2012-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,12 +18,14 @@
  *
  * */
 
-import type DataConverter from '../Data/DataConverter';
+import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { getOptions } = D;
 import G from '../Core/Globals.js';
 const { doc } = G;
 import HU from '../Core/HttpUtilities.js';
@@ -32,8 +34,6 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import D from '../Core/DefaultOptions.js';
-const { getOptions } = D;
 const {
     addEvent,
     defined,
@@ -84,7 +84,7 @@ interface DataOptions {
     beforeParse?: DataBeforeParseCallbackFunction;
     columns?: Array<Array<DataValueType>>;
     columnsURL?: string;
-    columnTypes?: Array<string>;
+    columnTypes?: Array<'string'|'number'|'float'|'date'>;
     complete?: DataCompleteCallbackFunction;
     csv?: string;
     csvURL?: string;
@@ -175,6 +175,9 @@ function getFreeIndexes(
     return freeIndexValues;
 }
 
+/**
+ *
+ */
 function hasURLOption(options: DataOptions): boolean {
     return Boolean(
         options &&
@@ -287,7 +290,7 @@ class Data {
     public firstRowAsNames?: boolean;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>>;
-    public rowsToColumns = Data.rowsToColumns; // backwards compatibility
+    public rowsToColumns = Data.rowsToColumns; // Backwards compatibility
     public options: DataOptions;
     public valueCount?: DataValueCountObject;
 
@@ -569,7 +572,6 @@ class Data {
             endRow = options.endRow || Number.MAX_VALUE,
             itemDelimiter: string,
             lines,
-            // activeRowNo = 0,
             rowIt = 0;
 
         /*
@@ -577,7 +579,7 @@ class Data {
             it's stable and passes all the test.
 
             It's also not written with speed in mind, instead everything is
-            very seggregated, and there a several redundant loops.
+            very segregated, and there a several redundant loops.
             This is to make it easier to stabilize the code initially.
 
             We do a pre-pass on the first 4 rows to make some intelligent
@@ -599,7 +601,7 @@ class Data {
             General rules:
                 - Quoting is allowed, e.g: "Col 1",123,321
                 - Quoting is optional, e.g.: Col1,123,321
-                - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
+                - Double quoting is escaping, e.g. "Col ""Hello world""",123
                 - Spaces are considered part of the data: Col1 ,123
                 - New line is always the row delimiter
                 - Potential column delimiters are , ; \t
@@ -660,14 +662,18 @@ class Data {
                     return;
                 }
 
-                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
-                    token = parseFloat(token) as any;
-                    pushType('number');
-                } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//g, '-');
-                    pushType('date');
-                } else {
-                    pushType('string');
+                if (!options.columnTypes) {
+                    if (
+                        !isNaN(parseFloat(token)) && isFinite(token as any)
+                    ) {
+                        token = parseFloat(token) as any;
+                        pushType('number');
+                    } else if (!isNaN(Date.parse(token))) {
+                        token = token.replace(/\//g, '-');
+                        pushType('date');
+                    } else {
+                        pushType('string');
+                    }
                 }
 
                 if (columns.length < column + 1) {
@@ -675,7 +681,7 @@ class Data {
                 }
 
                 if (!noAdd) {
-                    // Don't push - if there's a varrying amount of columns
+                    // Don't push - if there's a varying amount of columns
                     // for each row, pushing will skew everything down n slots
                     columns[column][rowNumber] = token;
                 }
@@ -869,7 +875,6 @@ class Data {
                 calculatedFormat: string,
                 i = 0,
                 madeDeduction = false,
-                // candidates = {},
                 j;
 
             if (!limit || limit > data.length) {
@@ -921,7 +926,6 @@ class Data {
                                     } else {
                                         guessedFormat[j] = 'YYYY';
                                     }
-                                    // madeDeduction = true;
                                 } else if (
                                     (thing[j] as any) > 12 &&
                                     (thing[j] as any) <= 31
@@ -956,15 +960,17 @@ class Data {
 
                 // If the middle one is dd, and the last one is dd,
                 // the last should likely be year.
-                if (guessedFormat.length === 3 &&
+                if (
+                    guessedFormat.length === 3 &&
                     guessedFormat[1] === 'dd' &&
-                    guessedFormat[2] === 'dd') {
+                    guessedFormat[2] === 'dd'
+                ) {
                     guessedFormat[2] = 'YY';
                 }
 
                 calculatedFormat = guessedFormat.join('/');
 
-                // If the caculated format is not valid, we need to present an
+                // If the calculated format is not valid, we need to present an
                 // error.
 
                 if (
@@ -1029,23 +1035,25 @@ class Data {
                 }
             }
 
-            // //Make sure that there's header columns for everything
+            // Make sure that there's header columns for everything
             // columns.forEach(function (col) {
 
             // });
 
             deduceAxisTypes();
 
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
+            if (
+                (!options.columnTypes || options.columnTypes.length === 0) &&
                 dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
+                !options.dateFormat
+            ) {
                 options.dateFormat = deduceDateFormat(columns[0] as any);
             }
 
 
-            // lines.forEach(function (line, rowNo) {
+            /// lines.forEach(function (line, rowNo) {
             //    let trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',
@@ -1139,7 +1147,7 @@ class Data {
                 }
             });
 
-            this.dataFound(); // continue
+            this.dataFound(); // Continue
         }
         return columns;
     }
@@ -1372,7 +1380,7 @@ class Data {
             fetchSheet(function (
                 json: JSON.Object
             ): (boolean|undefined) {
-                // Prepare the data from the spreadsheat
+                // Prepare the data from the spreadsheet
                 const columns =
                     json.values as Array<Array<DataValueType>>;
 
@@ -1436,8 +1444,8 @@ class Data {
         if (typeof str === 'string') {
             str = str.replace(/^\s+|\s+$/g, '');
 
-            // Clear white space insdie the string, like thousands separators
-            if (inside && /^[0-9\s]+$/.test(str)) {
+            // Clear white space inside the string, like thousands separators
+            if (inside && /^-?[0-9\s]+$/.test(str)) {
                 str = str.replace(/\s/g, '');
             }
 
@@ -1486,11 +1494,14 @@ class Data {
             chartOptions = this.chartOptions,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
-            forceCategory = isXColumn && ((
-                chartOptions &&
-                chartOptions.xAxis &&
-                splat(chartOptions.xAxis)[0].type === 'category'
-            ) || columnType === 'string'),
+            forceCategory = (
+                isXColumn &&
+                (
+                    chartOptions &&
+                    chartOptions.xAxis &&
+                    splat(chartOptions.xAxis)[0].type === 'category'
+                )
+            ) || columnType === 'string',
             columnHasName = defined(column.name);
 
         let row = column.length,
@@ -1525,7 +1536,7 @@ class Data {
             ) {
                 column[row] = '' + trimVal;
 
-            } else if (+trimInsideVal === floatVal) { // is numeric
+            } else if (+trimInsideVal === floatVal) { // Is numeric
 
                 column[row] = floatVal;
 
@@ -1579,7 +1590,7 @@ class Data {
                         descending = diff;
                     }
 
-                } else { // string
+                } else { // String
                     column[row] = trimVal === '' ? null : trimVal;
                     if (
                         row !== 0 &&
@@ -1642,7 +1653,7 @@ class Data {
                         NaN
                 );
             },
-            alternative: 'mm/dd/YYYY' // different format with the same regex
+            alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
@@ -1673,7 +1684,7 @@ class Data {
 
                 return Date.UTC(year, (match[2] as any) - 1, +match[1]);
             },
-            alternative: 'mm/dd/YY' // different format with the same regex
+            alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
@@ -2184,8 +2195,6 @@ class SeriesBuilder {
             pointIsArray = builder.pointIsArray,
             point = pointIsArray ? [] as Array<T> : {} as Record<string, T>;
 
-        let columnIndexes;
-
         // Loop each reader and ask it to read its value.
         // Then, build an array or point based on the readers names.
         builder.readers.forEach((reader): void => {
@@ -2207,19 +2216,31 @@ class SeriesBuilder {
 
         // The name comes from the first column (excluding the x column)
         if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
-            columnIndexes = builder.getReferencedColumnIndexes();
+            const columnIndexes: number[] = [];
+
+            builder.readers.forEach(function (reader): void {
+                if (
+                    reader.configName === 'x' ||
+                    reader.configName === 'name' ||
+                    reader.configName === 'y'
+                ) {
+                    if (typeof reader.columnIndex !== 'undefined') {
+                        columnIndexes.push(reader.columnIndex);
+                    }
+                }
+            });
+
             if (columnIndexes.length >= 2) {
-                // remove the first one (x col)
+                // Remove the first one (x col)
                 columnIndexes.shift();
 
                 // Sort the remaining
                 columnIndexes.sort(function (a: number, b: number): number {
                     return a - b;
                 });
-
-                // Now use the lowest index as name column
-                this.name = (columns[columnIndexes.shift() as any] as any).name;
             }
+            // Now use the lowest index as name column
+            this.name = (columns[pick(columnIndexes.shift(), 0)] as any).name;
         }
 
         return point;
@@ -2275,7 +2296,7 @@ class SeriesBuilder {
     /**
      * Returns true if the builder has a reader for the given configName.
      *
-     * @function SeriesBuider#hasReader
+     * @function SeriesBuilder#hasReader
      */
     public hasReader(configName: string): (boolean|undefined) {
         let i, columnReader;
@@ -2326,7 +2347,7 @@ export default Data;
  */
 
 /**
- * Callback function that returns the correspondig Date object to a match.
+ * Callback function that returns the corresponding Date object to a match.
  *
  * @callback Highcharts.DataDateFormatCallbackFunction
  *
@@ -2369,7 +2390,7 @@ export default Data;
  */
 
 /**
- * Callback function to access the parsed columns, the two-dimentional
+ * Callback function to access the parsed columns, the two-dimensional
  * input data array directly, before they are interpreted into series
  * data and categories.
  *
@@ -2438,6 +2459,23 @@ export default Data;
  * @type      {Array<Array<Highcharts.DataValueType>>}
  * @since     4.0
  * @apioption data.columns
+ */
+
+/**
+ * An array option that specifies the data type for each column in the series
+ * loaded within the data module.
+ *
+ * Possible values: `"string"`, `"number"`, `"float"`, `"date"`.
+ *
+ * @sample {highcharts|highstock} highcharts/data/column-types/
+ *         X-axis categories based on CSV data
+ * @sample {highmaps} highcharts/data/column-types-map/
+ *         Map chart created with fips from CSV
+ *
+ * @type      {Array<'string'|'number'|'float'|'date'>}
+ * @since     @next
+ * @validvalue ["string", "number", "float", "date"]
+ * @apioption data.columnTypes
  */
 
 /**
@@ -2642,7 +2680,7 @@ export default Data;
  */
 
 /**
- * A callback function to access the parsed columns, the two-dimentional
+ * A callback function to access the parsed columns, the two-dimensional
  * input data array directly, before they are interpreted into series
  * data and categories. Return `false` to stop completion, or call
  * `this.complete()` to continue async.
@@ -2669,7 +2707,7 @@ export default Data;
  */
 
 /**
- * The same as the columns input option, but defining rows intead of
+ * The same as the columns input option, but defining rows instead of
  * columns.
  *
  * @see [data.columns](#data.columns)
@@ -2818,4 +2856,4 @@ export default Data;
  * @apioption data.enablePolling
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

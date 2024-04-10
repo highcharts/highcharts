@@ -9,12 +9,14 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'External trade in goods by country, Norway 2021'
+        text: 'External trade in goods by country, Norway 2021',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://www.ssb.no/en/statbank/table/08804/"' +
-            'target="_blank">SSB</a>'
+            'target="_blank">SSB</a>',
+        align: 'left'
     },
     plotOptions: {
         column: {
@@ -22,8 +24,11 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: ['Belgium', 'China', 'Denmark', 'Fiji', 'Germany', 'Netherlands', 'Russia',
-            'Sweden', 'Turkey', 'United States', 'Unspecified', 'Vietnam'],
+        categories: [
+            'Belgium', 'China', 'Denmark', 'Fiji', 'Germany', 'Netherlands',
+            'Russia', 'Sweden', 'Turkey', 'United States', 'Unspecified',
+            'Vietnam'
+        ],
         labels: {
             skew3d: true,
             style: {
@@ -42,7 +47,9 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Total imports',
-        data: [16076, 112688, 39452, 0, 94352,
-            30495, 21813, 95908, 11596, 53771, null, 8270]
+        data: [
+            16076, 112688, 39452, 0, 94352,
+            30495, 21813, 95908, 11596, 53771, null, 8270
+        ]
     }]
 });

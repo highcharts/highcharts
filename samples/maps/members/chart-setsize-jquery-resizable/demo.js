@@ -7,7 +7,7 @@
     Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
         // Initialize the chart
-        var chart = Highcharts.mapChart('container', {
+        const chart = Highcharts.mapChart('container', {
 
             chart: {
                 height: 500 // initial height
@@ -35,11 +35,6 @@
                 mapData: topology,
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }

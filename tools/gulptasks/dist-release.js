@@ -5,19 +5,19 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const log = require('./lib/log');
-const fs = require('fs');
-const libFS = require('./lib/fs');
+const fs = require('fs-extra');
+// const fs = require('fs');
+// const libFS = require('./lib/fs');
 const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
 const childProcess = require('child_process');
-const { getFilesInFolder } = require('highcharts-assembler/src/build.js');
-const { removeFile } = require('highcharts-assembler/src/utilities.js');
+const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
+const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
 const PRODUCT_NAME = 'Highcharts';
 const releaseRepo = 'highcharts-dist';
 const pathToDistRepo = '../' + releaseRepo + '/';
-
 
 /**
  * Asks user a question, and waits for input.
@@ -165,12 +165,24 @@ function copyFiles() {
     }];
 
     const files = {
-        'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
+        // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
         'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
         'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
         'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
         'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
     };
+
+    const filesToIgnore = [
+        '.DS_Store',
+        'package.json', // Is handled in `updateJSONFiles`
+        '.js.map'
+    ];
+
+    const pathsToIgnore = [
+        'dashboards',
+        'datagrid',
+        'es5'
+    ];
 
     // Copy all the files in the code folder
     folders.forEach(folder => {
@@ -180,8 +192,13 @@ function copyFiles() {
         } = folder;
         getFilesInFolder(from, true)
             .filter(path => (
-                !(path.startsWith('es-modules') && path.endsWith('.d.ts')) &&
-                path !== 'package.json'
+                (
+                    path.startsWith('es-modules/masters') ||
+                    !path.startsWith('es-modules') ||
+                    !path.endsWith('.d.ts')
+                ) &&
+                !pathsToIgnore.some(pattern => path.startsWith(pattern)) &&
+                !filesToIgnore.some(pattern => path.endsWith(pattern))
             ))
             .forEach(filename => {
                 mapFromTo[join(from, filename)] = join(to, filename);
@@ -194,7 +211,8 @@ function copyFiles() {
     // Copy all the files to release repository
     Object.keys(mapFromTo).forEach(from => {
         const to = mapFromTo[from];
-        libFS.copyAllFiles(from, to);
+        // libFS.copyAllFiles(from, to);
+        fs.copySync(from, to);
     });
     log.message('Files copied successfully!');
 }

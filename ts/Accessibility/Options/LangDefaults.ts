@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -35,6 +35,10 @@ const langOptions: DeepPartial<LangOptions> = {
      * features, see
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
+     * The lang options use [Format Strings](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#format-strings)
+     * with variables that are replaced at run time. These variables should be
+     * used when available, to avoid duplicating text that is defined elsewhere.
+     *
      * For more dynamic control over the accessibility functionality, see
      * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter),
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
@@ -48,13 +52,38 @@ const langOptions: DeepPartial<LangOptions> = {
 
         /**
          * @deprecated 10.2.1
+         * @type       {string}
          * @apioption  lang.accessibility.resetZoomButton
          */
 
+        /**
+         * Default title of the chart for assistive technology, for charts
+         * without a chart title.
+         */
         defaultChartTitle: 'Chart',
+
+        /**
+         * Accessible label for the chart container HTML element.
+         * `{title}` refers to the chart title.
+         */
         chartContainerLabel: '{title}. Highcharts interactive chart.',
+
+        /**
+         * Accessible label for the chart SVG element.
+         * `{chartTitle}` refers to the chart title.
+         */
         svgContainerLabel: 'Interactive chart',
+
+        /**
+         * Accessible label for the drill-up button.
+         * `{buttonText}` refers to the visual text on the button.
+         */
         drillUpButton: '{buttonText}',
+
+        /**
+         * Accessible label for the chart credits.
+         * `{creditsStr}` refers to the visual text in the credits.
+         */
         credits: 'Chart credits: {creditsStr}',
 
         /**
@@ -110,7 +139,9 @@ const langOptions: DeepPartial<LangOptions> = {
                 ),
                 descriptionMultiplePoints: (
                     '{annotationText}. Related to {annotationPoint}' +
-                    '{ Also related to, #each(additionalAnnotationPoints)}'
+                    '{#each additionalAnnotationPoints}' +
+                    ', also related to {this}' +
+                    '{/each}'
                 ),
                 descriptionNoPoints: '{annotationText}'
             },
@@ -139,8 +170,23 @@ const langOptions: DeepPartial<LangOptions> = {
          * @since 8.0.0
          */
         legend: {
+            /**
+             * Accessible label for the legend, for charts where there is no
+             * legend title defined.
+             */
             legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
+
+            /**
+             * Accessible label for the legend, for charts where there is a
+             * legend title defined. `{legendTitle}` refers to the visual text
+             * in the legend title.
+             */
             legendLabel: 'Chart legend: {legendTitle}',
+
+            /**
+             * Accessible label for individual legend items. `{itemName}` refers
+             * to the visual text in the legend for that item.
+             */
             legendItem: 'Show {itemName}'
         },
 
@@ -165,6 +211,39 @@ const langOptions: DeepPartial<LangOptions> = {
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
             clickButtonAnnouncement: 'Viewing {axisRangeDescription}'
+        },
+
+        /**
+         * Navigator language options for accessibility.
+         *
+         * @since 11.2.0
+         */
+        navigator: {
+            /**
+             * Label for the navigator handles.
+             *
+             * Receives `handleIx` and `chart` as context.
+             * `handleIx` refers to the index of the navigator handle.
+             */
+            handleLabel:
+                '{#eq handleIx 0}Start, percent{else}End, percent{/eq}',
+
+            /**
+             * Label for the navigator region.
+             *
+             * Receives `chart` as context.
+             */
+            groupLabel: 'Axis zoom',
+
+            /**
+             * Announcement for assistive technology when navigator values
+             * are changed.
+             *
+             * Receives `axisRangeDescription` and `chart` as context.
+             * `axisRangeDescription` corresponds to the range description
+             * defined in [lang.accessibility.axis](#lang.accessibility.axis)
+             */
+            changeAnnouncement: '{axisRangeDescription}'
         },
 
         /**
@@ -247,23 +326,32 @@ const langOptions: DeepPartial<LangOptions> = {
             mapTypeDescription: 'Map of {mapTitle} with {numSeries} data series.',
             unknownMap: 'Map of unspecified region with {numSeries} data series.',
             combinationChart: 'Combination chart with {numSeries} data series.',
-            defaultSingle: 'Chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            defaultSingle: 'Chart with {numPoints} data ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             defaultMultiple: 'Chart with {numSeries} data series.',
-            splineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            splineSingle: 'Line chart with {numPoints} data ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             splineMultiple: 'Line chart with {numSeries} lines.',
-            lineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            lineSingle: 'Line chart with {numPoints} data ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             lineMultiple: 'Line chart with {numSeries} lines.',
-            columnSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
+            columnSingle: 'Bar chart with {numPoints} ' +
+                '{#eq numPoints 1}bar{else}bars{/eq}.',
             columnMultiple: 'Bar chart with {numSeries} data series.',
-            barSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
+            barSingle: 'Bar chart with {numPoints} ' +
+                '{#eq numPoints 1}bar{else}bars{/eq}.',
             barMultiple: 'Bar chart with {numSeries} data series.',
-            pieSingle: 'Pie chart with {numPoints} {#plural(numPoints, slices, slice)}.',
+            pieSingle: 'Pie chart with {numPoints} ' +
+                '{#eq numPoints 1}slice{else}slices{/eq}.',
             pieMultiple: 'Pie chart with {numSeries} pies.',
-            scatterSingle: 'Scatter chart with {numPoints} {#plural(numPoints, points, point)}.',
+            scatterSingle: 'Scatter chart with {numPoints} ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             scatterMultiple: 'Scatter chart with {numSeries} data series.',
-            boxplotSingle: 'Boxplot with {numPoints} {#plural(numPoints, boxes, box)}.',
+            boxplotSingle: 'Boxplot with {numPoints} ' +
+                '{#eq numPoints 1}box{else}boxes{/eq}.',
             boxplotMultiple: 'Boxplot with {numSeries} data series.',
-            bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
+            bubbleSingle: 'Bubble chart with {numPoints} ' +
+                '{#eq numPoints 1}bubbles{else}bubble{/eq}.',
             bubbleMultiple: 'Bubble chart with {numSeries} data series.'
         }, /* eslint-enable max-len */
 
@@ -275,9 +363,9 @@ const langOptions: DeepPartial<LangOptions> = {
         axis: {
         /* eslint-disable max-len */
             xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}. {ranges[0]}',
-            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}.',
+            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.',
             yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}. {ranges[0]}',
-            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}.',
+            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.',
             timeRangeDays: 'Data range: {range} days.',
             timeRangeHours: 'Data range: {range} hours.',
             timeRangeMinutes: 'Data range: {range} minutes.',
@@ -325,42 +413,45 @@ const langOptions: DeepPartial<LangOptions> = {
              */
             summary: {
                 /* eslint-disable max-len */
-                'default': '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                defaultCombination: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                line: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                lineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                spline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                splineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                column: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                columnCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                bar: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                barCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                pie: '{series.name}, pie {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, slices, slice)}.',
-                pieCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Pie with {series.points.length} {#plural(series.points.length, slices, slice)}.',
-                scatter: '{series.name}, scatter plot {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, points, point)}.',
-                scatterCombination: '{series.name}, series {seriesNumber} of {chart.series.length}, scatter plot with {series.points.length} {#plural(series.points.length, points, point)}.',
-                boxplot: '{series.name}, boxplot {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, boxes, box)}.',
-                boxplotCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Boxplot with {series.points.length} {#plural(series.points.length, boxes, box)}.',
-                bubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.',
-                bubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.',
-                map: '{series.name}, map {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, areas, area)}.',
-                mapCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Map with {series.points.length} {#plural(series.points.length, areas, area)}.',
-                mapline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                maplineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                mapbubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.',
-                mapbubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.'
+                'default': '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                defaultCombination: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                line: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                lineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                spline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                splineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                column: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                columnCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                bar: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                barCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                pie: '{series.name}, pie {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}slice{else}slices{/eq}.',
+                pieCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Pie with {series.points.length} {#eq series.points.length 1}slice{else}slices{/eq}.',
+                scatter: '{series.name}, scatter plot {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}point{else}points{/eq}.',
+                scatterCombination: '{series.name}, series {seriesNumber} of {chart.series.length}, scatter plot with {series.points.length} {#eq series.points.length 1}point{else}points{/eq}.',
+                boxplot: '{series.name}, boxplot {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}box{else}boxes{/eq}.',
+                boxplotCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Boxplot with {series.points.length} {#eq series.points.length 1}box{else}boxes{/eq}.',
+                bubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.',
+                bubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.',
+                map: '{series.name}, map {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}area{else}areas{/eq}.',
+                mapCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Map with {series.points.length} {#eq series.points.length 1}area{else}areas{/eq}.',
+                mapline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                maplineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                mapbubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.',
+                mapbubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.'
             }, /* eslint-enable max-len */
 
             /**
              * User supplied description text. This is added in the point
              * comment description by default if present.
              *
+             * `{description}` refers to the value given in
+             * [point.accessibility.description](#series.line.data.accessibility.description).
+             *
              * @since 6.0.6
              */
             description: '{description}',
 
             /**
-             * xAxis description for series if there are multiple xAxes in
+             * X-axis description for series if there are multiple xAxes in
              * the chart.
              *
              * @since 6.0.6
@@ -368,7 +459,7 @@ const langOptions: DeepPartial<LangOptions> = {
             xAxisDescription: 'X axis, {name}',
 
             /**
-             * yAxis description for series if there are multiple yAxes in
+             * Y-axis description for series if there are multiple yAxes in
              * the chart.
              *
              * @since 6.0.6
@@ -388,7 +479,8 @@ const langOptions: DeepPartial<LangOptions> = {
              *
              * @since 8.0.1
              */
-            pointAnnotationsDescription: '{Annotation: #each(annotations). }'
+            pointAnnotationsDescription: '{#each annotations}' +
+                'Annotation: {this}{/each}'
         }
     }
 };

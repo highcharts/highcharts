@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,6 +35,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Error bars on a column series
  * @sample highcharts/series-errorbar/on-scatter/
  *         Error bars on a scatter series
+ * @sample highcharts/series-errorbar/datalabels/
+ *         Error bars with data labels
  *
  * @extends      plotOptions.boxplot
  * @excluding    boostBlending, boostThreshold
@@ -157,7 +159,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
  * @apioption series.errorbar.data
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file
 
 /* *
  *

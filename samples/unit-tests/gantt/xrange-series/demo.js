@@ -18,6 +18,8 @@
             },
             series: [
                 {
+                    colorByPoint: false,
+                    color: 'lime',
                     name: 'Project 1',
                     // pointPadding: 0,
                     // groupPadding: 0,
@@ -162,23 +164,15 @@
         points = chart.series[0].points;
         for (i = 0; i < points.length; i++) {
             point = points[i];
-            $graphic = $(point.graphic.element);
-            $graphOrig = $($graphic.find('.highcharts-partfill-original'));
-            $graphOver = $($graphic.find('.highcharts-partfill-overlay'));
-            graphOverBox = $graphOver[0].getBBox();
-            clipRectID = $graphOver.attr('clip-path').replace(/url\(|\)/g, '');
-            $clipRect = $(clipRectID + ' rect');
-            origX = parseFloat($graphOrig.attr('x'));
-            overX = parseFloat(graphOverBox.x);
-            origY = parseFloat($graphOrig.attr('y'));
-            overY = parseFloat(graphOverBox.y);
-            origWidth = parseFloat($graphOrig.attr('width'));
-            overWidth = parseFloat(graphOverBox.width);
-            clipWidth = parseFloat($clipRect.attr('width'));
-            origHeight = parseFloat($graphOrig.attr('height'));
-            overHeight = parseFloat(graphOverBox.height);
-            clipHeight = parseFloat($clipRect.attr('height'));
-            partialFill = point.partialFill;
+            const { rect, partRect } = point.graphic;
+            origX = rect.x;
+            overX = partRect.x;
+            origY = rect.y;
+            overY = partRect.y;
+            origWidth = rect.width;
+            overWidth = partRect.width;
+            origHeight = rect.height;
+            overHeight = partRect.height;
 
             // partShapeArgs
             assert.close(
@@ -207,21 +201,6 @@
                 origWidth,
                 error,
                 'point ' + i + ' partShapeArgs has correct rendered width'
-            );
-
-            // clipRectArgs
-            assert.close(
-                clipHeight,
-                origHeight,
-                error,
-                'point ' + i + ' clipRectArgs height is rendered correctly'
-            );
-
-            assert.close(
-                clipWidth,
-                origWidth * partialFill,
-                error,
-                'point ' + i + ' clipRectArgs has correct rendered width'
             );
         }
     });
@@ -253,7 +232,9 @@
     );
 
     /**
-     * Checks that the fill option in a series' partialFill options is applied
+     * Checks that the fill option in a series' partialFill options is applied,
+     * that the tooltip header displays a properly formatted date, and
+     * that updating a series color is working
      */
     QUnit.test('General', function (assert) {
         var chart,
@@ -278,7 +259,14 @@
         assert.notEqual(
             chart.tooltip.label.element.textContent.indexOf('Monday'),
             -1,
-            'The tooltip header should container formatted date (#9301)'
+            'The tooltip header should contain a formatted date (#9301)'
+        );
+
+        chart.series[0].update({ color: 'red' });
+        assert.strictEqual(
+            chart.series[0].points[0].color,
+            'red',
+            'The series color should have changed to red'
         );
     });
 }());

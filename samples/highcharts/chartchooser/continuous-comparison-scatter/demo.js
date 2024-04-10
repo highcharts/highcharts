@@ -1,11 +1,13 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "scatter",
-        zoomType: "xy"
+        type: 'scatter',
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         HTML: true,
-        text: "Consumer Price Index vs Wages Increase (Norway)"
+        text: 'Consumer Price Index vs Wages Increase (Norway)'
     },
     subtitle: {
         HTML: true,
@@ -16,21 +18,21 @@ Highcharts.chart("container", {
     xAxis: {
         title: {
             enabled: true,
-            text: "Consumer Price Index"
+            text: 'Consumer Price Index'
         },
         startOnTick: true,
         endOnTick: true,
         showLastLabel: true,
         labels: {
-            format: "{text}%"
+            format: '{text}%'
         }
     },
     yAxis: {
         title: {
-            text: "Salary Increase"
+            text: 'Salary Increase'
         },
         labels: {
-            format: "{text}%"
+            format: '{text}%'
         }
     },
 
@@ -41,7 +43,7 @@ Highcharts.chart("container", {
                 states: {
                     hover: {
                         enabled: true,
-                        lineColor: "rgb(100,100,100)"
+                        lineColor: 'rgb(100,100,100)'
                     }
                 }
             },
@@ -53,8 +55,8 @@ Highcharts.chart("container", {
                 }
             },
             tooltip: {
-                headerFormat: "<b>{series.name}</b><br>",
-                pointFormat: "CPI: {point.x}% <br/> Wage Inc: {point.y}%"
+                headerFormat: '<b>{series.name}</b><br>',
+                pointFormat: 'CPI: {point.x}% <br/> Wage Inc: {point.y}%'
             }
         }
     },
@@ -63,7 +65,7 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "2011-2020",
+            name: '2011-2020',
             data: [
                 [1.4, 0.4],
                 [2.4, 5.3],
@@ -78,7 +80,7 @@ Highcharts.chart("container", {
             ]
         },
         {
-            name: "2001-2010",
+            name: '2001-2010',
             visible: false,
             data: [
                 [2.2, 3.5],
@@ -94,7 +96,7 @@ Highcharts.chart("container", {
             ]
         },
         {
-            name: "1991-2000",
+            name: '1991-2000',
             visible: false,
             data: [
                 [2.3, 5.3],
@@ -110,7 +112,7 @@ Highcharts.chart("container", {
             ]
         },
         {
-            name: "1981-1990",
+            name: '1981-1990',
             data: [
                 [2.4, 4.1],
                 [2.5, 1.5],

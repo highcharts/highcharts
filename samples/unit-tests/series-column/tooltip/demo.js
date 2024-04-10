@@ -1,5 +1,6 @@
 QUnit.test(
-    'Shared tooltip should compare point.distX, not point.dist to find absolute closest point (#4645)',
+    'Shared tooltip should compare point.distX, not point.dist to find ' +
+    'absolute closest point (#4645)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({
@@ -44,7 +45,7 @@ QUnit.test(
             chart.plotLeft + point.plotX,
             chart.plotTop + chart.plotHeight - 15
         );
-        /*chart.pointer.onContainerMouseMove({
+        /* chart.pointer.onContainerMouseMove({
         pageX: x,
         pageY: y, // from the top
         target: point.graphic.element
@@ -65,9 +66,10 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Tooltip should stay inside plotArea even when columns are outside axis extremes.',
+    'Tooltip should stay inside plotArea even when columns are outside axis ' +
+    'extremes.',
     function (assert) {
-        var chart = new Highcharts.chart('container', {
+        var chart = new Highcharts.Chart('container', {
             chart: {
                 type: 'column',
                 marginTop: 150

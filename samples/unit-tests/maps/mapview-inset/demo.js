@@ -84,7 +84,19 @@ QUnit.test('MapView Inset', assert => {
             dataLabels: {
                 enabled: true,
                 pointFormat: '{point.name}'
-            }
+            },
+            name: 'MapSeries'
+        }, {
+            type: 'mapbubble',
+            joinBy: 'name',
+            data: [{
+                name: 'Mainland',
+                z: 1
+            }, {
+                name: 'Island',
+                z: 1
+            }],
+            name: 'MapBubbleSeries'
         }]
     });
 
@@ -138,17 +150,19 @@ QUnit.test('MapView Inset', assert => {
         'fromPointToLatLon: outside inset'
     );
 
-    chart.series[0].points.forEach(p => {
-        assert.ok(
-            (
-                p.plotX > chart.plotLeft &&
-                p.plotX < chart.plotLeft + chart.plotWidth &&
-                p.plotY > chart.plotTop &&
-                p.plotY < chart.plotTop + chart.plotHeight
-            ),
-            `Plot coordinates of ${p.name} should be within pane (currently \
-                [${p.plotX}, ${p.plotY}])`
-        );
+    chart.series.forEach(s => {
+        s.points.forEach(p => {
+            assert.ok(
+                (
+                    p.plotX > chart.plotLeft &&
+                    p.plotX < chart.plotLeft + chart.plotWidth &&
+                    p.plotY > chart.plotTop &&
+                    p.plotY < chart.plotTop + chart.plotHeight
+                ),
+                `Plot coordinates of ${s.name}/${p.name} should be within pane \
+                    (currently [${p.plotX}, ${p.plotY}])`
+            );
+        });
     });
 
 

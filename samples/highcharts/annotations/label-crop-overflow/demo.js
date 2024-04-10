@@ -41,8 +41,8 @@ Highcharts.chart('container', {
         }, {
             point: '2',
             format: 'Label is allowed to be placed outside the plot area'
-            //crop: false, by defult labels are not cropped
-            //overflow: 'none', by defualt labels are not justified
+            // crop: false, by defult labels are not cropped
+            // overflow: 'none', by defualt labels are not justified
         }],
         labelOptions: {
             point: '0'
@@ -64,7 +64,7 @@ Highcharts.chart('container', {
             }]
         }]
     }, {
-        //crop: true, // by default lines are cropped
+        // crop: true, // by default lines are cropped
         shapes: [{
             type: 'path',
             points: [{

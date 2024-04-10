@@ -16,9 +16,6 @@ QUnit.test('Drill to node by click events', function (assert) {
                             id: 'level-3',
                             parent: 'level-2',
                             value: 1
-                        },
-                        {
-                            value: 1
                         }
                     ]
                 }
@@ -40,6 +37,30 @@ QUnit.test('Drill to node by click events', function (assert) {
         level1 = findPointById('level-1'),
         level2 = findPointById('level-2'),
         level3 = findPointById('level-3');
+
+    click(level1);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'should have series.rootNode equal "" after clicking level1. (#18658)'
+    );
+
+    click(level2);
+    assert.strictEqual(
+        series.rootNode,
+        'level-2',
+        'should have rootNode equal "level-2" after clicking level2. (#18658)'
+    );
+
+    click(level2);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'should have rootNode equal "" after clicking level2 twice. (#18658)'
+    );
+
+    series.addPoint({ value: 1 }, false);
+    series.drillUp();
 
     assert.strictEqual(
         series.rootNode,

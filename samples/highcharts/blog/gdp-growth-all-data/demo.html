@@ -1,0 +1,1700 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<body onload="displayData()">
+
+    <select id="Country_Select" onchange="displayData()">
+        <option value="AL">Albania
+        <option value="AF">Afghanistan
+        <option value="AO">Angola
+        <option value="AM">Armenia
+        <option value="AZ">Azerbaijan
+        <option value="BD">Bangladesh
+        <option value="BJ">Benin
+        <option value="BO">Bolivia
+        <option value="BT">Botswana
+        <option value="BR">Brazil
+        <option value="BF">Burkina Faso
+        <option value="BU">Burundi
+        <option value="KH">Cambodia
+        <option value="CM">Cameroon
+        <option value="CV">Cape Verde
+        <option value="CF">Central African Republic
+        <option value="TD">Chad
+        <option value="CO">Colombia
+        <option value="KM">Comoros
+        <option value="CG">Congo
+        <option value="CD">Congo Democratic Republic
+        <option value="CI">Cote d'Ivoire
+        <option value="DR">Dominican Republic
+        <option value="EC">Ecuador
+        <option value="EG">Egypt
+        <option value="ES">El Salvador
+        <option value="EK">Equatorial Guinea
+        <option value="ER">Eritrea
+        <option value="ET">Ethiopia
+        <option value="GA">Gabon
+        <option value="GM">Gambia
+        <option value="GE">Georgia
+        <option value="GH">Ghana
+        <option value="GU">Guatemala
+        <option value="GN">Guinea
+        <option value="GY">Guyana
+        <option value="HT">Haiti
+        <option value="HN">Honduras
+        <option value="IA">India
+        <option value="ID">Indonesia
+        <option value="JM">Jamaica
+        <option value="JO">Jordan
+        <option value="KK">Kazakhstan
+        <option value="KE">Kenya
+        <option value="KY">Kyrgyz Republic
+        <option value="LA">Lao People's Democratic Republic
+        <option value="LS">Lesotho
+        <option value="LB">Liberia
+        <option value="MD">Madagascar
+        <option value="MW">Malawi
+        <option value="MV">Maldives
+        <option value="ML">Mali
+        <option value="MR">Mauritania
+        <option value="MX">Mexico
+        <option value="MB">Moldova
+        <option value="MA">Morocco
+        <option value="MZ">Mozambique
+        <option value="MM">Myanmar
+        <option value="NM">Namibia
+        <option value="NP">Nepal
+        <option value="NC">Nicaragua
+        <option value="NI">Niger
+        <option value="NG">Nigeria
+        <option value="PK">Pakistan
+        <option value="PG">Papua New Guinea
+        <option value="PY">Paraguay
+        <option value="PE">Peru
+        <option value="PH">Philippines
+        <option value="RO">Romania
+        <option value="RW">Rwanda
+        <option value="WS">Samoa
+        <option value="ST">Sao Tome and Principe
+        <option value="SN">Senegal
+        <option value="SL">Sierra Leone
+        <option value="ZA">South Africa
+        <option value="LK">Sri Lanka
+        <option value="SD">Sudan
+        <option value="SZ">Swaziland
+        <option value="TJ">Tajikistan
+        <option value="TZ">Tanzania
+        <option value="TH">Thailand
+        <option value="TL">Timor-Leste
+        <option value="TG">Togo
+        <option value="TT">Trinidad and Tobago
+        <option value="TN">Tunisia
+        <option value="TR">Turkey
+        <option value="TM">Turkmenistan
+        <option value="UG">Uganda
+        <option value="UA">Ukraine
+        <option value="UZ">Uzbekistan
+        <option value="VN">Vietnam
+        <option value="YE">Yemen
+        <option value="ZM">Zambia
+        <option value="ZW">Zimbabwe
+    </select>
+
+    <select id="Ind_Select" onchange="displayData()">
+        <option value="NY.GDP.PCAP.KD.ZG"> GDP per capita growth (annual %)
+        <option value="AG.AGR.TRAC.NO"> Agricultural machinery, tractors
+        <option value="AG.CON.FERT.PT.ZS"> Fertilizer consumption (% of fertilizer production)
+        <option value="AG.CON.FERT.ZS"> Fertilizer consumption (kilograms per hectare of arable land)
+        <option value="AG.LND.AGRI.K2"> Agricultural land (sq. km)
+        <option value="AG.LND.AGRI.ZS"> Agricultural land (% of land area)
+        <option value="AG.LND.ARBL.HA"> Arable land (hectares)
+        <option value="AG.LND.ARBL.HA.PC"> Arable land (hectares per person)
+        <option value="AG.LND.ARBL.ZS"> Arable land (% of land area)
+        <option value="AG.LND.CREL.HA"> Land under cereal production (hectares)
+        <option value="AG.LND.CROP.ZS"> Permanent cropland (% of land area)
+        <option value="AG.LND.EL5M.ZS"> Land area where elevation is below 5 meters (% of total land area)
+        <option value="AG.LND.FRST.K2"> Forest area (sq. km)
+        <option value="AG.LND.FRST.ZS"> Forest area (% of land area)
+        <option value="AG.LND.IRIG.AG.ZS"> Agricultural irrigated land (% of total agricultural land)
+        <option value="AG.LND.PRCP.MM"> Average precipitation in depth (mm per year)
+        <option value="AG.LND.TOTL.K2"> Land area (sq. km)
+        <option value="AG.LND.TRAC.ZS"> Agricultural machinery, tractors per 100 sq. km of arable land
+        <option value="AG.PRD.CREL.MT"> Cereal production (metric tons)
+        <option value="AG.PRD.CROP.XD"> Crop production index (2004-2006 = 100)
+        <option value="AG.PRD.FOOD.XD"> Food production index (2004-2006 = 100)
+        <option value="AG.PRD.LVSK.XD"> Livestock production index (2004-2006 = 100)
+        <option value="AG.SRF.TOTL.K2"> Surface area (sq. km)
+        <option value="AG.YLD.CREL.KG"> Cereal yield (kg per hectare)
+        <option value="BG.GSR.NFSV.GD.ZS"> Trade in services (% of GDP)
+        <option value="BM.GSR.CMCP.ZS"> Communications, computer, etc. (% of service imports, BoP)
+        <option value="BM.GSR.FCTY.CD"> Primary income payments (BoP, current US$)
+        <option value="BM.GSR.GNFS.CD"> Imports of goods and services (BoP, current US$)
+        <option value="BM.GSR.INSF.ZS"> Insurance and financial services (% of service imports, BoP)
+        <option value="BM.GSR.MRCH.CD"> Goods imports (BoP, current US$)
+        <option value="BM.GSR.NFSV.CD"> Service imports (BoP, current US$)
+        <option value="BM.GSR.ROYL.CD"> Charges for the use of intellectual property, payments (BoP, current US$)
+        <option value="BM.GSR.TOTL.CD"> Imports of goods, services and primary income (BoP, current US$)
+        <option value="BM.GSR.TRAN.ZS"> Transport services (% of service imports, BoP)
+        <option value="BM.GSR.TRVL.ZS"> Travel services (% of service imports, BoP)
+        <option value="BM.KLT.DINV.GD.ZS"> Foreign direct investment, net outflows (% of GDP)
+        <option value="BM.TRF.PRVT.CD"> Secondary income, other sectors, payments (BoP, current US$)
+        <option value="BM.TRF.PWKR.CD.DT"> Personal remittances, paid (current US$)
+        <option value="BN.CAB.XOKA.CD"> Current account balance (BoP, current US$)
+        <option value="BN.CAB.XOKA.GD.ZS"> Current account balance (% of GDP)
+        <option value="BN.FIN.TOTL.CD"> Net financial account (BoP, current US$)
+        <option value="BN.GSR.FCTY.CD"> Net primary income (BoP, current US$)
+        <option value="BN.GSR.GNFS.CD"> Net trade in goods and services (BoP, current US$)
+        <option value="BN.GSR.MRCH.CD"> Net trade in goods (BoP, current US$)
+        <option value="BN.KAC.EOMS.CD"> Net errors and omissions (BoP, current US$)
+        <option value="BN.KLT.DINV.CD"> Foreign direct investment, net (BoP, current US$)
+        <option value="BN.KLT.PTXL.CD"> Portfolio Investment, net (BoP, current US$)
+        <option value="BN.RES.INCL.CD"> Reserves and related items (BoP, current US$)
+        <option value="BN.TRF.CURR.CD"> Net secondary income (BoP, current US$)
+        <option value="BN.TRF.KOGT.CD"> Net capital account (BoP, current US$)
+        <option value="BX.GRT.EXTA.CD.WD"> Grants, excluding technical cooperation (BoP, current US$)
+        <option value="BX.GRT.TECH.CD.WD"> Technical cooperation grants (BoP, current US$)
+        <option value="BX.GSR.CCIS.CD"> ICT service exports (BoP, current US$)
+        <option value="BX.GSR.CCIS.ZS"> ICT service exports (% of service exports, BoP)
+        <option value="BX.GSR.CMCP.ZS"> Communications, computer, etc. (% of service exports, BoP)
+        <option value="BX.GSR.FCTY.CD"> Primary income receipts (BoP, current US$)
+        <option value="BX.GSR.GNFS.CD"> Exports of goods and services (BoP, current US$)
+        <option value="BX.GSR.INSF.ZS"> Insurance and financial services (% of service exports, BoP)
+        <option value="BX.GSR.MRCH.CD"> Goods exports (BoP, current US$)
+        <option value="BX.GSR.NFSV.CD"> Service exports (BoP, current US$)
+        <option value="BX.GSR.ROYL.CD"> Charges for the use of intellectual property, receipts (BoP, current US$)
+        <option value="BX.GSR.TOTL.CD"> Exports of goods, services and primary income (BoP, current US$)
+        <option value="BX.GSR.TRAN.ZS"> Transport services (% of service exports, BoP)
+        <option value="BX.GSR.TRVL.ZS"> Travel services (% of service exports, BoP)
+        <option value="BX.KLT.DINV.CD.WD"> Foreign direct investment, net inflows (BoP, current US$)
+        <option value="BX.KLT.DINV.WD.GD.ZS"> Foreign direct investment, net inflows (% of GDP)
+        <option value="BX.KLT.DREM.CD.DT"> Primary income on FDI, payments (current US$)
+        <option value="BX.PEF.TOTL.CD.WD"> Portfolio equity, net inflows (BoP, current US$)
+        <option value="BX.TRF.CURR.CD"> Secondary income receipts (BoP, current US$)
+        <option value="BX.TRF.PWKR.CD"> Personal transfers, receipts (BoP, current US$)
+        <option value="BX.TRF.PWKR.CD.DT"> Personal remittances, received (current US$)
+        <option value="BX.TRF.PWKR.DT.GD.ZS"> Personal remittances, received (% of GDP)
+        <option value="CM.MKT.INDX.ZG"> Global Equity Indices (annual % change)
+        <option value="CM.MKT.LCAP.CD"> Market capitalization of listed companies (current US$)
+        <option value="CM.MKT.LCAP.GD.ZS"> Market capitalization of listed companies (% of GDP)
+        <option value="CM.MKT.LDOM.NO"> Listed domestic companies, total
+        <option value="CM.MKT.TRAD.CD"> Stocks traded, total value (current US$)
+        <option value="CM.MKT.TRAD.GD.ZS"> Stocks traded, total value (% of GDP)
+        <option value="CM.MKT.TRNR"> Stocks traded, turnover ratio (%)
+        <option value="DC.DAC.AUSL.CD"> Net bilateral aid flows from DAC donors, Australia (current US$)
+        <option value="DC.DAC.AUTL.CD"> Net bilateral aid flows from DAC donors, Austria (current US$)
+        <option value="DC.DAC.BELL.CD"> Net bilateral aid flows from DAC donors, Belgium (current US$)
+        <option value="DC.DAC.CANL.CD"> Net bilateral aid flows from DAC donors, Canada (current US$)
+        <option value="DC.DAC.CECL.CD"> Net bilateral aid flows from DAC donors, European Union institutions (current
+            US$)
+        <option value="DC.DAC.CHEL.CD"> Net bilateral aid flows from DAC donors, Switzerland (current US$)
+        <option value="DC.DAC.CZEL.CD"> Net bilateral aid flows from DAC donors, Czech Republic (current US$)
+        <option value="DC.DAC.DEUL.CD"> Net bilateral aid flows from DAC donors, Germany (current US$)
+        <option value="DC.DAC.DNKL.CD"> Net bilateral aid flows from DAC donors, Denmark (current US$)
+        <option value="DC.DAC.ESPL.CD"> Net bilateral aid flows from DAC donors, Spain (current US$)
+        <option value="DC.DAC.FINL.CD"> Net bilateral aid flows from DAC donors, Finland (current US$)
+        <option value="DC.DAC.FRAL.CD"> Net bilateral aid flows from DAC donors, France (current US$)
+        <option value="DC.DAC.GBRL.CD"> Net bilateral aid flows from DAC donors, United Kingdom (current US$)
+        <option value="DC.DAC.GRCL.CD"> Net bilateral aid flows from DAC donors, Greece (current US$)
+        <option value="DC.DAC.IRLL.CD"> Net bilateral aid flows from DAC donors, Ireland (current US$)
+        <option value="DC.DAC.ISLL.CD"> Net bilateral aid flows from DAC donors, Iceland (current US$)
+        <option value="DC.DAC.ITAL.CD"> Net bilateral aid flows from DAC donors, Italy (current US$)
+        <option value="DC.DAC.JPNL.CD"> Net bilateral aid flows from DAC donors, Japan (current US$)
+        <option value="DC.DAC.LUXL.CD"> Net bilateral aid flows from DAC donors, Luxembourg (current US$)
+        <option value="DC.DAC.NLDL.CD"> Net bilateral aid flows from DAC donors, Netherlands (current US$)
+        <option value="DC.DAC.NORL.CD"> Net bilateral aid flows from DAC donors, Norway (current US$)
+        <option value="DC.DAC.NZLL.CD"> Net bilateral aid flows from DAC donors, New Zealand (current US$)
+        <option value="DC.DAC.POLL.CD"> Net bilateral aid flows from DAC donors, Poland (current US$)
+        <option value="DC.DAC.PRTL.CD"> Net bilateral aid flows from DAC donors, Portugal (current US$)
+        <option value="DC.DAC.SVKL.CD"> Net bilateral aid flows from DAC donors, Slovak Republic (current US$)
+        <option value="DC.DAC.SVNL.CD"> Net bilateral aid flows from DAC donors, Slovenia (current US$)
+        <option value="DC.DAC.SWEL.CD"> Net bilateral aid flows from DAC donors, Sweden (current US$)
+        <option value="DC.DAC.TOTL.CD"> Net bilateral aid flows from DAC donors, Total (current US$)
+        <option value="DC.DAC.USAL.CD"> Net bilateral aid flows from DAC donors, United States (current US$)
+        <option value="DT.AMT.BLAT.CD"> PPG, bilateral (AMT, current US$)
+        <option value="DT.AMT.BLTC.CD"> PPG, bilateral concessional (AMT, current US$)
+        <option value="DT.AMT.DIMF.CD"> IMF repurchases (AMT, current US$)
+        <option value="DT.AMT.DLTF.CD"> Principal repayments on external debt, long-term + IMF (AMT, current US$)
+        <option value="DT.AMT.DLXF.CD"> Principal repayments on external debt, long-term (AMT, current US$)
+        <option value="DT.AMT.DPNG.CD"> Principal repayments on external debt, private nonguaranteed (PNG) (AMT, current
+            US$)
+        <option value="DT.AMT.DPPG.CD"> Principal repayments on external debt, public and publicly guaranteed (PPG)
+            (AMT, current US$)
+        <option value="DT.AMT.MIBR.CD"> PPG, IBRD (AMT, current US$)
+        <option value="DT.AMT.MIDA.CD"> PPG, IDA (AMT, current US$)
+        <option value="DT.AMT.MLAT.CD"> PPG, multilateral (AMT, current US$)
+        <option value="DT.AMT.MLTC.CD"> PPG, multilateral concessional (AMT, current US$)
+        <option value="DT.AMT.OFFT.CD"> PPG, official creditors (AMT, current US$)
+        <option value="DT.AMT.PBND.CD"> PPG, bonds (AMT, current US$)
+        <option value="DT.AMT.PCBK.CD"> PPG, commercial banks (AMT, current US$)
+        <option value="DT.AMT.PNGB.CD"> PNG, bonds (AMT, current US$)
+        <option value="DT.AMT.PNGC.CD"> PNG, commercial banks and other creditors (AMT, current US$)
+        <option value="DT.AMT.PROP.CD"> PPG, other private creditors (AMT, current US$)
+        <option value="DT.AMT.PRVT.CD"> PPG, private creditors (AMT, current US$)
+        <option value="DT.AXA.DPPG.CD"> Principal arrears, public and publicly guaranteed (current US$)
+        <option value="DT.AXA.OFFT.CD"> Principal arrears, official creditors (current US$)
+        <option value="DT.AXA.PRVT.CD"> Principal arrears, private creditors (current US$)
+        <option value="DT.AXF.DPPG.CD"> Principal forgiven (current US$)
+        <option value="DT.AXR.DPPG.CD"> Principal rescheduled (current US$)
+        <option value="DT.AXR.OFFT.CD"> Principal rescheduled, official (current US$)
+        <option value="DT.AXR.PRVT.CD"> Principal rescheduled, private (current US$)
+        <option value="DT.COM.DPPG.CD"> Commitments, public and publicly guaranteed (COM, current US$)
+        <option value="DT.COM.MIBR.CD"> Commitments, IBRD (COM, current US$)
+        <option value="DT.COM.MIDA.CD"> Commitments, IDA (COM, current US$)
+        <option value="DT.COM.OFFT.CD"> Commitments, official creditors (COM, current US$)
+        <option value="DT.COM.PRVT.CD"> Commitments, private creditors (COM, current US$)
+        <option value="DT.CUR.DMAK.ZS"> Currency composition of PPG debt, Deutsche mark (%)
+        <option value="DT.CUR.EURO.ZS"> Currency composition of PPG debt, Euro (%)
+        <option value="DT.CUR.FFRC.ZS"> Currency composition of PPG debt, French franc (%)
+        <option value="DT.CUR.JYEN.ZS"> Currency composition of PPG debt, Japanese yen (%)
+        <option value="DT.CUR.MULC.ZS"> Currency composition of PPG debt, Multiple currencies (%)
+        <option value="DT.CUR.OTHC.ZS"> Currency composition of PPG debt, all other currencies (%)
+        <option value="DT.CUR.SDRW.ZS"> Currency composition of PPG debt, SDR (%)
+        <option value="DT.CUR.SWFR.ZS"> Currency composition of PPG debt, Swiss franc (%)
+        <option value="DT.CUR.UKPS.ZS"> Currency composition of PPG debt, Pound sterling (%)
+        <option value="DT.CUR.USDL.ZS"> Currency composition of PPG debt, U.S. dollars (%)
+        <option value="DT.DFR.DPPG.CD"> Debt forgiveness or reduction (current US$)
+        <option value="DT.DIS.BLAT.CD"> PPG, bilateral (DIS, current US$)
+        <option value="DT.DIS.BLTC.CD"> PPG, bilateral concessional (DIS, current US$)
+        <option value="DT.DIS.DIMF.CD"> IMF purchases (DIS, current US$)
+        <option value="DT.DIS.DLTF.CD"> Disbursements on external debt, long-term + IMF (DIS, current US$)
+        <option value="DT.DIS.DLXF.CD"> Disbursements on external debt, long-term (DIS, current US$)
+        <option value="DT.DIS.DPNG.CD"> Disbursements on external debt, private nonguaranteed (PNG) (DIS, current US$)
+        <option value="DT.DIS.DPPG.CD"> Disbursements on external debt, public and publicly guaranteed (PPG) (DIS,
+            current US$)
+        <option value="DT.DIS.IDAG.CD"> IDA grants (current US$)
+        <option value="DT.DIS.MIBR.CD"> PPG, IBRD (DIS, current US$)
+        <option value="DT.DIS.MIDA.CD"> PPG, IDA (DIS, current US$)
+        <option value="DT.DIS.MLAT.CD"> PPG, multilateral (DIS, current US$)
+        <option value="DT.DIS.MLTC.CD"> PPG, multilateral concessional (DIS, current US$)
+        <option value="DT.DIS.OFFT.CD"> PPG, official creditors (DIS, current US$)
+        <option value="DT.DIS.PBND.CD"> PPG, bonds (DIS, current US$)
+        <option value="DT.DIS.PCBK.CD"> PPG, commercial banks (DIS, current US$)
+        <option value="DT.DIS.PNGB.CD"> PNG, bonds (DIS, current US$)
+        <option value="DT.DIS.PNGC.CD"> PNG, commercial banks and other creditors (DIS, current US$)
+        <option value="DT.DIS.PROP.CD"> PPG, other private creditors (DIS, current US$)
+        <option value="DT.DIS.PRVT.CD"> PPG, private creditors (DIS, current US$)
+        <option value="DT.DOD.ALLC.CD"> External debt stocks, concessional (DOD, current US$)
+        <option value="DT.DOD.ALLC.ZS"> Concessional debt (% of total external debt)
+        <option value="DT.DOD.BLAT.CD"> PPG, bilateral (DOD, current US$)
+        <option value="DT.DOD.BLTC.CD"> PPG, bilateral concessional (DOD, current US$)
+        <option value="DT.DOD.DECT.CD"> External debt stocks, total (DOD, current US$)
+        <option value="DT.DOD.DECT.CD.CG"> Total change in external debt stocks (current US$)
+        <option value="DT.DOD.DECT.EX.ZS"> External debt stocks (% of exports of goods, services and primary income)
+        <option value="DT.DOD.DECT.GN.ZS"> External debt stocks (% of GNI)
+        <option value="DT.DOD.DIMF.CD"> Use of IMF credit (DOD, current US$)
+        <option value="DT.DOD.DLXF.CD"> External debt stocks, long-term (DOD, current US$)
+        <option value="DT.DOD.DPNG.CD"> External debt stocks, private nonguaranteed (PNG) (DOD, current US$)
+        <option value="DT.DOD.DPPG.CD"> External debt stocks, public and publicly guaranteed (PPG) (DOD, current US$)
+        <option value="DT.DOD.DSTC.CD"> External debt stocks, short-term (DOD, current US$)
+        <option value="DT.DOD.DSTC.IR.ZS"> Short-term debt (% of total reserves)
+        <option value="DT.DOD.DSTC.XP.ZS"> Short-term debt (% of exports of goods, services and primary income)
+        <option value="DT.DOD.DSTC.ZS"> Short-term debt (% of total external debt)
+        <option value="DT.DOD.MDRI.CD"> Debt forgiveness grants (current US$)
+        <option value="DT.DOD.MIBR.CD"> PPG, IBRD (DOD, current US$)
+        <option value="DT.DOD.MIDA.CD"> PPG, IDA (DOD, current US$)
+        <option value="DT.DOD.MLAT.CD"> PPG, multilateral (DOD, current US$)
+        <option value="DT.DOD.MLAT.ZS"> Multilateral debt (% of total external debt)
+        <option value="DT.DOD.MLTC.CD"> PPG, multilateral concessional (DOD, current US$)
+        <option value="DT.DOD.MWBG.CD"> IBRD loans and IDA credits (DOD, current US$)
+        <option value="DT.DOD.OFFT.CD"> PPG, official creditors (DOD, current US$)
+        <option value="DT.DOD.PBND.CD"> PPG, bonds (DOD, current US$)
+        <option value="DT.DOD.PCBK.CD"> PPG, commercial banks (DOD, current US$)
+        <option value="DT.DOD.PNGB.CD"> PNG, bonds (DOD, current US$)
+        <option value="DT.DOD.PNGC.CD"> PNG, commercial banks and other creditors (DOD, current US$)
+        <option value="DT.DOD.PROP.CD"> PPG, other private creditors (DOD, current US$)
+        <option value="DT.DOD.PRVS.CD"> External debt stocks, long-term private sector (DOD, current US$)
+        <option value="DT.DOD.PRVT.CD"> PPG, private creditors (DOD, current US$)
+        <option value="DT.DOD.PUBS.CD"> External debt stocks, long-term public sector (DOD, current US$)
+        <option value="DT.DOD.PVLX.CD"> Present value of external debt (current US$)
+        <option value="DT.DOD.PVLX.EX.ZS"> Present value of external debt (% of exports of goods, services and primary
+            income)
+        <option value="DT.DOD.PVLX.GN.ZS"> Present value of external debt (% of GNI)
+        <option value="DT.DOD.RSDL.CD"> Residual, debt stock-flow reconciliation (current US$)
+        <option value="DT.DOD.VTOT.CD"> External debt stocks, variable rate (DOD, current US$)
+        <option value="DT.DSB.DPPG.CD"> Debt buyback (current US$)
+        <option value="DT.DSF.DPPG.CD"> Debt stock reduction (current US$)
+        <option value="DT.DXR.DPPG.CD"> Debt stock rescheduled (current US$)
+        <option value="DT.GPA.DPPG"> Average grace period on new external debt commitments (years)
+        <option value="DT.GPA.OFFT"> Average grace period on new external debt commitments, official (years)
+        <option value="DT.GPA.PRVT"> Average grace period on new external debt commitments, private (years)
+        <option value="DT.GRE.DPPG"> Average grant element on new external debt commitments (%)
+        <option value="DT.GRE.OFFT"> Average grant element on new external debt commitments, official (%)
+        <option value="DT.GRE.PRVT"> Average grant element on new external debt commitments, private (%)
+        <option value="DT.INR.DPPG"> Average interest on new external debt commitments (%)
+        <option value="DT.INR.OFFT"> Average interest on new external debt commitments, official (%)
+        <option value="DT.INR.PRVT"> Average interest on new external debt commitments, private (%)
+        <option value="DT.INT.BLAT.CD"> PPG, bilateral (INT, current US$)
+        <option value="DT.INT.BLTC.CD"> PPG, bilateral concessional (INT, current US$)
+        <option value="DT.INT.DECT.CD"> Interest payments on external debt, total (INT, current US$)
+        <option value="DT.INT.DECT.EX.ZS"> Interest payments on external debt (% of exports of goods, services and
+            primary income)
+        <option value="DT.INT.DECT.GN.ZS"> Interest payments on external debt (% of GNI)
+        <option value="DT.INT.DIMF.CD"> IMF charges (INT, current US$)
+        <option value="DT.INT.DLXF.CD"> Interest payments on external debt, long-term (INT, current US$)
+        <option value="DT.INT.DPNG.CD"> Interest payments on external debt, private nonguaranteed (PNG) (INT, current
+            US$)
+        <option value="DT.INT.DPPG.CD"> Interest payments on external debt, public and publicly guaranteed (PPG) (INT,
+            current US$)
+        <option value="DT.INT.DSTC.CD"> Interest payments on external debt, short-term (INT, current US$)
+        <option value="DT.INT.MIBR.CD"> PPG, IBRD (INT, current US$)
+        <option value="DT.INT.MIDA.CD"> PPG, IDA (INT, current US$)
+        <option value="DT.INT.MLAT.CD"> PPG, multilateral (INT, current US$)
+        <option value="DT.INT.MLTC.CD"> PPG, multilateral concessional (INT, current US$)
+        <option value="DT.INT.OFFT.CD"> PPG, official creditors (INT, current US$)
+        <option value="DT.INT.PBND.CD"> PPG, bonds (INT, current US$)
+        <option value="DT.INT.PCBK.CD"> PPG, commercial banks (INT, current US$)
+        <option value="DT.INT.PNGB.CD"> PNG, bonds (INT, current US$)
+        <option value="DT.INT.PNGC.CD"> PNG, commercial banks and other creditors (INT, current US$)
+        <option value="DT.INT.PROP.CD"> PPG, other private creditors (INT, current US$)
+        <option value="DT.INT.PRVT.CD"> PPG, private creditors (INT, current US$)
+        <option value="DT.IXA.DPPG.CD"> Interest arrears, public and publicly guaranteed (current US$)
+        <option value="DT.IXA.DPPG.CD.CG"> Net change in interest arrears (current US$)
+        <option value="DT.IXA.OFFT.CD"> Interest arrears, official creditors (current US$)
+        <option value="DT.IXA.PRVT.CD"> Interest arrears, private creditors (current US$)
+        <option value="DT.IXF.DPPG.CD"> Interest forgiven (current US$)
+        <option value="DT.IXR.DPPG.CD"> Interest rescheduled (capitalized) (current US$)
+        <option value="DT.IXR.OFFT.CD"> Interest rescheduled, official (current US$)
+        <option value="DT.IXR.PRVT.CD"> Interest rescheduled, private (current US$)
+        <option value="DT.MAT.DPPG"> Average maturity on new external debt commitments (years)
+        <option value="DT.MAT.OFFT"> Average maturity on new external debt commitments, official (years)
+        <option value="DT.MAT.PRVT"> Average maturity on new external debt commitments, private (years)
+        <option value="DT.NFL.BLAT.CD"> Net financial flows, bilateral (NFL, current US$)
+        <option value="DT.NFL.BLTC.CD"> PPG, bilateral concessional (NFL, current US$)
+        <option value="DT.NFL.BOND.CD"> Portfolio investment, bonds (PPG + PNG) (NFL, current US$)
+        <option value="DT.NFL.DECT.CD"> Net flows on external debt, total (NFL, current US$)
+        <option value="DT.NFL.DLXF.CD"> Net flows on external debt, long-term (NFL, current US$)
+        <option value="DT.NFL.DPNG.CD"> Net flows on external debt, private nonguaranteed (PNG) (NFL, current US$)
+        <option value="DT.NFL.DPPG.CD"> Net flows on external debt, public and publicly guaranteed (PPG) (NFL, current
+            US$)
+        <option value="DT.NFL.DSTC.CD"> Net flows on external debt, short-term (NFL, current US$)
+        <option value="DT.NFL.IAEA.CD"> Net official flows from UN agencies, IAEA (current US$)
+        <option value="DT.NFL.IFAD.CD"> Net official flows from UN agencies, IFAD (current US$)
+        <option value="DT.NFL.IMFC.CD"> Net financial flows, IMF concessional (NFL, current US$)
+        <option value="DT.NFL.IMFN.CD"> Net financial flows, IMF nonconcessional (NFL, current US$)
+        <option value="DT.NFL.MIBR.CD"> Net financial flows, IBRD (NFL, current US$)
+        <option value="DT.NFL.MIDA.CD"> Net financial flows, IDA (NFL, current US$)
+        <option value="DT.NFL.MLAT.CD"> Net financial flows, multilateral (NFL, current US$)
+        <option value="DT.NFL.MLTC.CD"> PPG, multilateral concessional (NFL, current US$)
+        <option value="DT.NFL.MOTH.CD"> Net financial flows, others (NFL, current US$)
+        <option value="DT.NFL.NEBR.CD"> EBRD, private nonguaranteed (NFL, current US$)
+        <option value="DT.NFL.NIFC.CD"> IFC, private nonguaranteed (NFL, current US$)
+        <option value="DT.NFL.OFFT.CD"> PPG, official creditors (NFL, current US$)
+        <option value="DT.NFL.PBND.CD"> PPG, bonds (NFL, current US$)
+        <option value="DT.NFL.PCBK.CD"> PPG, commercial banks (NFL, current US$)
+        <option value="DT.NFL.PCBO.CD"> Commercial banks and other lending (PPG + PNG) (NFL, current US$)
+        <option value="DT.NFL.PNGB.CD"> PNG, bonds (NFL, current US$)
+        <option value="DT.NFL.PNGC.CD"> PNG, commercial banks and other creditors (NFL, current US$)
+        <option value="DT.NFL.PROP.CD"> PPG, other private creditors (NFL, current US$)
+        <option value="DT.NFL.PRVT.CD"> PPG, private creditors (NFL, current US$)
+        <option value="DT.NFL.RDBC.CD"> Net financial flows, RDB concessional (NFL, current US$)
+        <option value="DT.NFL.RDBN.CD"> Net financial flows, RDB nonconcessional (NFL, current US$)
+        <option value="DT.NFL.UNAI.CD"> Net official flows from UN agencies, UNAIDS (current US$)
+        <option value="DT.NFL.UNCF.CD"> Net official flows from UN agencies, UNICEF (current US$)
+        <option value="DT.NFL.UNCR.CD"> Net official flows from UN agencies, UNHCR (current US$)
+        <option value="DT.NFL.UNDP.CD"> Net official flows from UN agencies, UNDP (current US$)
+        <option value="DT.NFL.UNEC.CD"> Net official flows from UN agencies, UNECE (current US$)
+        <option value="DT.NFL.UNFP.CD"> Net official flows from UN agencies, UNFPA (current US$)
+        <option value="DT.NFL.UNPB.CD"> Net official flows from UN agencies, UNPBF (current US$)
+        <option value="DT.NFL.UNRW.CD"> Net official flows from UN agencies, UNRWA (current US$)
+        <option value="DT.NFL.UNTA.CD"> Net official flows from UN agencies, UNTA (current US$)
+        <option value="DT.NFL.WFPG.CD"> Net official flows from UN agencies, WFP (current US$)
+        <option value="DT.NFL.WHOL.CD"> Net official flows from UN agencies, WHO (current US$)
+        <option value="DT.NTR.BLAT.CD"> PPG, bilateral (NTR, current US$)
+        <option value="DT.NTR.BLTC.CD"> PPG, bilateral concessional (NTR, current US$)
+        <option value="DT.NTR.DECT.CD"> Net transfers on external debt, total (NTR, current US$)
+        <option value="DT.NTR.DLXF.CD"> Net transfers on external debt, long-term (NTR, current US$)
+        <option value="DT.NTR.DPNG.CD"> Net transfers on external debt, private nonguaranteed (PNG) (NTR, current US$)
+        <option value="DT.NTR.DPPG.CD"> Net transfers on external debt, public and publicly guaranteed (PPG) (NTR,
+            current US$)
+        <option value="DT.NTR.MIBR.CD"> PPG, IBRD (NTR, current US$)
+        <option value="DT.NTR.MIDA.CD"> PPG, IDA (NTR, current US$)
+        <option value="DT.NTR.MLAT.CD"> PPG, multilateral (NTR, current US$)
+        <option value="DT.NTR.MLTC.CD"> PPG, multilateral concessional (NTR, current US$)
+        <option value="DT.NTR.OFFT.CD"> PPG, official creditors (NTR, current US$)
+        <option value="DT.NTR.PBND.CD"> PPG, bonds (NTR, current US$)
+        <option value="DT.NTR.PCBK.CD"> PPG, commercial banks (NTR, current US$)
+        <option value="DT.NTR.PNGB.CD"> PNG, bonds (NTR, current US$)
+        <option value="DT.NTR.PNGC.CD"> PNG, commercial banks and other creditors (NTR, current US$)
+        <option value="DT.NTR.PROP.CD"> PPG, other private creditors (NTR, current US$)
+        <option value="DT.NTR.PRVT.CD"> PPG, private creditors (NTR, current US$)
+        <option value="DT.ODA.ALLD.CD"> Net official development assistance and official aid received (current US$)
+        <option value="DT.ODA.ALLD.KD"> Net official development assistance and official aid received (constant 2012US$)
+        <option value="DT.ODA.OATL.CD"> Net official aid received (current US$)
+        <option value="DT.ODA.OATL.KD"> Net official aid received (constant 2012 US$)
+        <option value="DT.ODA.ODAT.CD"> Net official development assistance received (current US$)
+        <option value="DT.ODA.ODAT.GI.ZS"> Net ODA received (% of gross capital formation)
+        <option value="DT.ODA.ODAT.GN.ZS"> Net ODA received (% of GNI)
+        <option value="DT.ODA.ODAT.KD"> Net official development assistance received (constant 2012 US$)
+        <option value="DT.ODA.ODAT.MP.ZS"> Net ODA received (% of imports of goods, services and primary income)
+        <option value="DT.ODA.ODAT.PC.ZS"> Net ODA received per capita (current US$)
+        <option value="DT.ODA.ODAT.XP.ZS"> Net ODA received (% of central government expense)
+        <option value="DT.TDS.BLAT.CD"> PPG, bilateral (TDS, current US$)
+        <option value="DT.TDS.BLTC.CD"> PPG, bilateral concessional (TDS, current US$)
+        <option value="DT.TDS.DECT.CD"> Debt service on external debt, total (TDS, current US$)
+        <option value="DT.TDS.DECT.EX.ZS"> Total debt service (% of exports of goods, services and primary income)
+        <option value="DT.TDS.DECT.GN.ZS"> Total debt service (% of GNI)
+        <option value="DT.TDS.DIMF.CD"> IMF repurchases and charges (TDS, current US$)
+        <option value="DT.TDS.DLXF.CD"> Debt service on external debt, long-term (TDS, current US$)
+        <option value="DT.TDS.DPNG.CD"> Debt service on external debt, private nonguaranteed (PNG) (TDS, current US$)
+        <option value="DT.TDS.DPPF.XP.ZS"> Debt service (PPG and IMF only, % of exports of goods, services and primary
+            income)
+        <option value="DT.TDS.DPPG.CD"> Debt service on external debt, public and publicly guaranteed (PPG) (TDS,
+            current US$)
+        <option value="DT.TDS.DPPG.GN.ZS"> Public and publicly guaranteed debt service (% of GNI)
+        <option value="DT.TDS.DPPG.XP.ZS"> Public and publicly guaranteed debt service (% of exports of goods, services
+            and primary income)
+        <option value="DT.TDS.MIBR.CD"> PPG, IBRD (TDS, current US$)
+        <option value="DT.TDS.MIDA.CD"> PPG, IDA (TDS, current US$)
+        <option value="DT.TDS.MLAT.CD"> Multilateral debt service (TDS, current US$)
+        <option value="DT.TDS.MLAT.PG.ZS"> Multilateral debt service (% of public and publicly guaranteed debt service)
+        <option value="DT.TDS.MLTC.CD"> PPG, multilateral concessional (TDS, current US$)
+        <option value="DT.TDS.OFFT.CD"> PPG, official creditors (TDS, current US$)
+        <option value="DT.TDS.PBND.CD"> PPG, bonds (TDS, current US$)
+        <option value="DT.TDS.PCBK.CD"> PPG, commercial banks (TDS, current US$)
+        <option value="DT.TDS.PNGB.CD"> PNG, bonds (TDS, current US$)
+        <option value="DT.TDS.PNGC.CD"> PNG, commercial banks and other creditors (TDS, current US$)
+        <option value="DT.TDS.PROP.CD"> PPG, other private creditors (TDS, current US$)
+        <option value="DT.TDS.PRVT.CD"> PPG, private creditors (TDS, current US$)
+        <option value="DT.TXR.DPPG.CD"> Total amount of debt rescheduled (current US$)
+        <option value="DT.UND.DPPG.CD"> Undisbursed external debt, total (UND, current US$)
+        <option value="DT.UND.OFFT.CD"> Undisbursed external debt, official creditors (UND, current US$)
+        <option value="DT.UND.PRVT.CD"> Undisbursed external debt, private creditors (UND, current US$)
+        <option value="EA.PRD.AGRI.KD"> Agriculture value added per worker (constant 2005 US$)
+        <option value="EG.ELC.ACCS.RU.ZS"> Access to electricity, rural (% of rural population)
+        <option value="EG.ELC.ACCS.UR.ZS"> Access to electricity, urban (% of urban population)
+        <option value="EG.ELC.ACCS.ZS"> Access to electricity (% of population)
+        <option value="EG.ELC.COAL.ZS"> Electricity production from coal sources (% of total)
+        <option value="EG.ELC.FOSL.ZS"> Electricity production from oil, gas and coal sources (% of total)
+        <option value="EG.ELC.HYRO.ZS"> Electricity production from hydroelectric sources (% of total)
+        <option value="EG.ELC.LOSS.ZS"> Electric power transmission and distribution losses (% of output)
+        <option value="EG.ELC.NGAS.ZS"> Electricity production from natural gas sources (% of total)
+        <option value="EG.ELC.NUCL.ZS"> Electricity production from nuclear sources (% of total)
+        <option value="EG.ELC.PETR.ZS"> Electricity production from oil sources (% of total)
+        <option value="EG.ELC.RNWX.KH"> Electricity production from renewable sources, excluding hydroelectric (kWh)
+        <option value="EG.ELC.RNWX.ZS"> Electricity production from renewable sources, excluding hydroelectric (% of
+            total)
+        <option value="EG.GDP.PUSE.KO.PP"> GDP per unit of energy use (PPP $ per kg of oil equivalent)
+        <option value="EG.GDP.PUSE.KO.PP.KD"> GDP per unit of energy use (constant 2011 PPP $ per kg of oil equivalent)
+        <option value="EG.IMP.CONS.ZS"> Energy imports, net (% of energy use)
+        <option value="EG.NSF.ACCS.RU.ZS"> Access to non-solid fuel, rural (% of rural population)
+        <option value="EG.NSF.ACCS.UR.ZS"> Access to non-solid fuel, urban (% of urban population)
+        <option value="EG.NSF.ACCS.ZS"> Access to non-solid fuel (% of population)
+        <option value="EG.USE.COMM.CL.ZS"> Alternative and nuclear energy (% of total energy use)
+        <option value="EG.USE.COMM.FO.ZS"> Fossil fuel energy consumption (% of total)
+        <option value="EG.USE.COMM.GD.PP.KD"> Energy use (kg of oil equivalent) per $1,000 GDP (constant 2011 PPP)
+        <option value="EG.USE.CRNW.ZS"> Combustible renewables and waste (% of total energy)
+        <option value="EG.USE.ELEC.KH.PC"> Electric power consumption (kWh per capita)
+        <option value="EG.USE.PCAP.KG.OE"> Energy use (kg of oil equivalent per capita)
+        <option value="EN.ATM.CO2E.EG.ZS"> CO2 intensity (kg per kg of oil equivalent energy use)
+        <option value="EN.ATM.CO2E.GF.KT"> CO2 emissions from gaseous fuel consumption (kt)
+        <option value="EN.ATM.CO2E.GF.ZS"> CO2 emissions from gaseous fuel consumption (% of total)
+        <option value="EN.ATM.CO2E.KD.GD"> CO2 emissions (kg per 2005 US$ of GDP)
+        <option value="EN.ATM.CO2E.KT"> CO2 emissions (kt)
+        <option value="EN.ATM.CO2E.LF.KT"> CO2 emissions from liquid fuel consumption (kt)
+        <option value="EN.ATM.CO2E.LF.ZS"> CO2 emissions from liquid fuel consumption (% of total)
+        <option value="EN.ATM.CO2E.PC"> CO2 emissions (metric tons per capita)
+        <option value="EN.ATM.CO2E.PP.GD"> CO2 emissions (kg per PPP $ of GDP)
+        <option value="EN.ATM.CO2E.PP.GD.KD"> CO2 emissions (kg per 2011 PPP $ of GDP)
+        <option value="EN.ATM.CO2E.SF.KT"> CO2 emissions from solid fuel consumption (kt)
+        <option value="EN.ATM.CO2E.SF.ZS"> CO2 emissions from solid fuel consumption (% of total)
+        <option value="EN.ATM.GHGO.KT.CE"> Other greenhouse gas emissions, HFC, PFC and SF6 (thousand metric tons of CO2
+            equivalent)
+        <option value="EN.ATM.HFCG.KT.CE"> HFC gas emissions (thousand metric tons of CO2 equivalent)
+        <option value="EN.ATM.METH.AG.KT.CE"> Agricultural methane emissions (thousand metric tons of CO2 equivalent)
+        <option value="EN.ATM.METH.AG.ZS"> Agricultural methane emissions (% of total)
+        <option value="EN.ATM.METH.EG.KT.CE"> Methane emissions in energy sector (thousand metric tons of CO2
+            equivalent)
+        <option value="EN.ATM.METH.EG.ZS"> Energy related methane emissions (% of total)
+        <option value="EN.ATM.METH.KT.CE"> Methane emissions (kt of CO2 equivalent)
+        <option value="EN.ATM.NOXE.AG.KT.CE"> Agricultural nitrous oxide emissions (thousand metric tons of CO2
+            equivalent)
+        <option value="EN.ATM.NOXE.AG.ZS"> Agricultural nitrous oxide emissions (% of total)
+        <option value="EN.ATM.NOXE.EG.KT.CE"> Nitrous oxide emissions in energy sector (thousand metric tons of CO2
+            equivalent)
+        <option value="EN.ATM.NOXE.EI.ZS"> Nitrous oxide emissions in industrial and energy processes (% of total
+            nitrous oxide emissions)
+        <option value="EN.ATM.NOXE.IN.KT.CE"> Industrial nitrous oxide emissions (thousand metric tons of CO2
+            equivalent)
+        <option value="EN.ATM.NOXE.KT.CE"> Nitrous oxide emissions (thousand metric tons of CO2 equivalent)
+        <option value="EN.ATM.PFCG.KT.CE"> PFC gas emissions (thousand metric tons of CO2 equivalent)
+        <option value="EN.ATM.PM25.MC.M3"> PM2.5 pollution, mean annual exposure (micrograms per cubic meter)
+        <option value="EN.ATM.PM25.MC.ZS"> PM2.5 pollution, population exposed to levels exceeding WHO guideline value
+            (% of total)
+        <option value="EN.ATM.SF6G.KT.CE"> SF6 gas emissions (thousand metric tons of CO2 equivalent)
+        <option value="EN.BIR.THRD.NO"> Bird species, threatened
+        <option value="EN.CLC.DRSK.XQ"> Disaster risk reduction progress score (1-5 scale 5=best)
+        <option value="EN.CLC.GHGR.MT.CE"> GHG net emissions/removals by LUCF (Mt of CO2 equivalent)
+        <option value="EN.CLC.MDAT.ZS"> Droughts, floods, extreme temperatures (% of population, average 1990-2009)
+        <option value="EN.CO2.BLDG.ZS"> CO2 emissions from residential buildings and commercial and public services (%
+            of total fuel combustion)
+        <option value="EN.CO2.ETOT.ZS"> CO2 emissions from electricity and heat production, total (% of total fuel
+            combustion)
+        <option value="EN.CO2.MANF.ZS"> CO2 emissions from manufacturing industries and construction (% of total fuel
+            combustion)
+        <option value="EN.CO2.OTHX.ZS"> CO2 emissions from other sectors, excluding residential buildings and commercial
+            and public services (% of total fuel combustion)
+        <option value="EN.CO2.TRAN.ZS"> CO2 emissions from transport (% of total fuel combustion)
+        <option value="EN.FSH.THRD.NO"> Fish species, threatened
+        <option value="EN.HPT.THRD.NO"> Plant species (higher), threatened
+        <option value="EN.MAM.THRD.NO"> Mammal species, threatened
+        <option value="EN.POP.EL5M.ZS"> Population living in areas where elevation is below 5 meters (% of total
+            population)
+        <option value="EN.URB.MCTY.TL.ZS"> Population in urban agglomerations of more than 1 million (% of total
+            population)
+        <option value="EP.PMP.DESL.CD"> Pump price for diesel fuel (US$ per liter)
+        <option value="EP.PMP.SGAS.CD"> Pump price for gasoline (US$ per liter)
+        <option value="ER.BDV.TOTL.XQ"> GEF benefits index for biodiversity (0 = no biodiversity potential to 100 =
+            maximum)
+        <option value="ER.GDP.FWTL.M3.KD"> Water productivity, total (constant 2005 US$ GDP per cubic meter of total
+            freshwater withdrawal)
+        <option value="ER.H2O.FWAG.ZS"> Annual freshwater withdrawals, agriculture (% of total freshwater withdrawal)
+        <option value="ER.H2O.FWDM.ZS"> Annual freshwater withdrawals, domestic (% of total freshwater withdrawal)
+        <option value="ER.H2O.FWIN.ZS"> Annual freshwater withdrawals, industry (% of total freshwater withdrawal)
+        <option value="ER.H2O.FWTL.K3"> Annual freshwater withdrawals, total (billion cubic meters)
+        <option value="ER.H2O.FWTL.ZS"> Annual freshwater withdrawals, total (% of internal resources)
+        <option value="ER.H2O.INTR.K3"> Renewable internal freshwater resources, total (billion cubic meters)
+        <option value="ER.H2O.INTR.PC"> Renewable internal freshwater resources per capita (cubic meters)
+        <option value="ER.LND.PTLD.ZS"> Terrestrial protected areas (% of total land area)
+        <option value="ER.MRN.PTMR.ZS"> Marine protected areas (% of territorial waters)
+        <option value="ER.PTD.TOTL.ZS"> Terrestrial and marine protected areas (% of total territorial area)
+        <option value="FB.AST.NPER.ZS"> Bank nonperforming loans to total gross loans (%)
+        <option value="FB.ATM.TOTL.P5"> Automated teller machines (ATMs) (per 100,000 adults)
+        <option value="FB.BNK.CAPA.ZS"> Bank capital to assets ratio (%)
+        <option value="FB.CBK.BRCH.P5"> Commercial bank branches (per 100,000 adults)
+        <option value="FB.CBK.BRWR.P3"> Borrowers from commercial banks (per 1,000 adults)
+        <option value="FB.CBK.DPTR.P3"> Depositors with commercial banks (per 1,000 adults)
+        <option value="FB.POS.TOTL.P5"> Point-of-sale terminals (per 100,000 adults)
+        <option value="FD.AST.PRVT.GD.ZS"> Domestic credit to private sector by banks (% of GDP)
+        <option value="FD.RES.LIQU.AS.ZS"> Bank liquid reserves to bank assets ratio (%)
+        <option value="FI.RES.TOTL.CD"> Total reserves (includes gold, current US$)
+        <option value="FI.RES.TOTL.DT.ZS"> Total reserves (% of total external debt)
+        <option value="FI.RES.TOTL.MO"> Total reserves in months of imports
+        <option value="FI.RES.XGLD.CD"> Total reserves minus gold (current US$)
+        <option value="FM.AST.CGOV.ZG.M3"> Claims on central government (annual growth as % of broad money)
+        <option value="FM.AST.DOMO.ZG.M3"> Claims on other sectors of the domestic economy (annual growth as % of broad
+            money)
+        <option value="FM.AST.DOMS.CN"> Net domestic credit (current LCU)
+        <option value="FM.AST.NFRG.CN"> Net foreign assets (current LCU)
+        <option value="FM.AST.PRVT.ZG.M3"> Claims on private sector (annual growth as % of broad money)
+        <option value="FM.LBL.BMNY.CN"> Broad money (current LCU)
+        <option value="FM.LBL.BMNY.GD.ZS"> Broad money (% of GDP)
+        <option value="FM.LBL.BMNY.IR.ZS"> Broad money to total reserves ratio
+        <option value="FM.LBL.BMNY.ZG"> Broad money growth (annual %)
+        <option value="FM.LBL.MONY.CN"> Money (current LCU)
+        <option value="FM.LBL.MQMY.CN"> Money and quasi money (M2) (current LCU)
+        <option value="FM.LBL.MQMY.GD.ZS"> Money and quasi money (M2) as % of GDP
+        <option value="FM.LBL.MQMY.IR.ZS"> Money and quasi money (M2) to total reserves ratio
+        <option value="FM.LBL.MQMY.ZG"> Money and quasi money growth (annual %)
+        <option value="FM.LBL.QMNY.CN"> Quasi money (current LCU)
+        <option value="FP.CPI.TOTL"> Consumer price index (2010 = 100)
+        <option value="FP.CPI.TOTL.ZG"> Inflation, consumer prices (annual %)
+        <option value="FP.WPI.TOTL"> Wholesale price index (2010 = 100)
+        <option value="FR.INR.DPST"> Deposit interest rate (%)
+        <option value="FR.INR.LEND"> Lending interest rate (%)
+        <option value="FR.INR.LNDP"> Interest rate spread (lending rate minus deposit rate, %)
+        <option value="FR.INR.RINR"> Real interest rate (%)
+        <option value="FR.INR.RISK"> Risk premium on lending (lending rate minus treasury bill rate, %)
+        <option value="FS.AST.CGOV.GD.ZS"> Claims on central government, etc. (% GDP)
+        <option value="FS.AST.DOMO.GD.ZS"> Claims on other sectors of the domestic economy (% of GDP)
+        <option value="FS.AST.DOMS.GD.ZS"> Domestic credit provided by financial sector (% of GDP)
+        <option value="FS.AST.PRVT.GD.ZS"> Domestic credit to private sector (% of GDP)
+        <option value="FS.LBL.LIQU.GD.ZS"> Liquid liabilities (M3) as % of GDP
+        <option value="FS.LBL.QLIQ.GD.ZS"> Quasi-liquid liabilities (% of GDP)
+        <option value="GB.XPD.RSDV.GD.ZS"> Research and development expenditure (% of GDP)
+        <option value="GC.BAL.CASH.CN"> Cash surplus/deficit (current LCU)
+        <option value="GC.BAL.CASH.GD.ZS"> Cash surplus/deficit (% of GDP)
+        <option value="GC.DOD.TOTL.CN"> Central government debt, total (current LCU)
+        <option value="GC.DOD.TOTL.GD.ZS"> Central government debt, total (% of GDP)
+        <option value="GC.FIN.DOMS.CN"> Net incurrence of liabilities, domestic (current LCU)
+        <option value="GC.FIN.DOMS.GD.ZS"> Net incurrence of liabilities, domestic (% of GDP)
+        <option value="GC.FIN.FRGN.CN"> Net incurrence of liabilities, foreign (current LCU)
+        <option value="GC.FIN.FRGN.GD.ZS"> Net incurrence of liabilities, foreign (% of GDP)
+        <option value="GC.REV.GOTR.CN"> Grants and other revenue (current LCU)
+        <option value="GC.REV.GOTR.ZS"> Grants and other revenue (% of revenue)
+        <option value="GC.REV.SOCL.CN"> Social contributions (current LCU)
+        <option value="GC.REV.SOCL.ZS"> Social contributions (% of revenue)
+        <option value="GC.REV.XGRT.CN"> Revenue, excluding grants (current LCU)
+        <option value="GC.REV.XGRT.GD.ZS"> Revenue, excluding grants (% of GDP)
+        <option value="GC.TAX.EXPT.CN"> Taxes on exports (current LCU)
+        <option value="GC.TAX.EXPT.ZS"> Taxes on exports (% of tax revenue)
+        <option value="GC.TAX.GSRV.CN"> Taxes on goods and services (current LCU)
+        <option value="GC.TAX.GSRV.RV.ZS"> Taxes on goods and services (% of revenue)
+        <option value="GC.TAX.GSRV.VA.ZS"> Taxes on goods and services (% value added of industry and services)
+        <option value="GC.TAX.IMPT.CN"> Customs and other import duties (current LCU)
+        <option value="GC.TAX.IMPT.ZS"> Customs and other import duties (% of tax revenue)
+        <option value="GC.TAX.INTT.CN"> Taxes on international trade (current LCU)
+        <option value="GC.TAX.INTT.RV.ZS"> Taxes on international trade (% of revenue)
+        <option value="GC.TAX.OTHR.CN"> Other taxes (current LCU)
+        <option value="GC.TAX.OTHR.RV.ZS"> Other taxes (% of revenue)
+        <option value="GC.TAX.TOTL.CN"> Tax revenue (current LCU)
+        <option value="GC.TAX.TOTL.GD.ZS"> Tax revenue (% of GDP)
+        <option value="GC.TAX.YPKG.CN"> Taxes on income, profits and capital gains (current LCU)
+        <option value="GC.TAX.YPKG.RV.ZS"> Taxes on income, profits and capital gains (% of revenue)
+        <option value="GC.TAX.YPKG.ZS"> Taxes on income, profits and capital gains (% of total taxes)
+        <option value="GC.XPN.COMP.CN"> Compensation of employees (current LCU)
+        <option value="GC.XPN.COMP.ZS"> Compensation of employees (% of expense)
+        <option value="GC.XPN.GSRV.CN"> Goods and services expense (current LCU)
+        <option value="GC.XPN.GSRV.ZS"> Goods and services expense (% of expense)
+        <option value="GC.XPN.INTP.CN"> Interest payments (current LCU)
+        <option value="GC.XPN.INTP.RV.ZS"> Interest payments (% of revenue)
+        <option value="GC.XPN.INTP.ZS"> Interest payments (% of expense)
+        <option value="GC.XPN.OTHR.CN"> Other expense (current LCU)
+        <option value="GC.XPN.OTHR.ZS"> Other expense (% of expense)
+        <option value="GC.XPN.TOTL.CN"> Expense (current LCU)
+        <option value="GC.XPN.TOTL.GD.ZS"> Expense (% of GDP)
+        <option value="GC.XPN.TRFT.CN"> Subsidies and other transfers (current LCU)
+        <option value="GC.XPN.TRFT.ZS"> Subsidies and other transfers (% of expense)
+        <option value="IC.BUS.DFRN.XQ"> Distance to frontier score (0=lowest performance to 100=frontier)
+        <option value="IC.BUS.DISC.XQ"> Business extent of disclosure index (0=less disclosure to 10=more disclosure)
+        <option value="IC.BUS.EASE.XQ"> Ease of doing business index (1=most business-friendly regulations)
+        <option value="IC.BUS.NDNS.ZS"> New business density (new registrations per 1,000 people ages 15-64)
+        <option value="IC.BUS.NREG"> New businesses registered (number)
+        <option value="IC.CRD.INFO.XQ"> Depth of credit information index (0=low to 8=high)
+        <option value="IC.CRD.PRVT.ZS"> Private credit bureau coverage (% of adults)
+        <option value="IC.CRD.PUBL.ZS"> Public credit registry coverage (% of adults)
+        <option value="IC.CUS.DURS.EX"> Average time to clear exports through customs (days)
+        <option value="IC.ELC.DURS"> Delay in obtaining an electrical connection (days)
+        <option value="IC.ELC.OUTG"> Power outages in firms in a typical month (number)
+        <option value="IC.ELC.TIME"> Time required to get electricity (days)
+        <option value="IC.EXP.COST.CD"> Cost to export (US$ per container)
+        <option value="IC.EXP.DOCS"> Documents to export (number)
+        <option value="IC.EXP.DURS"> Time to export (days)
+        <option value="IC.FRM.BKWC.ZS"> Firms using banks to finance working capital (% of firms)
+        <option value="IC.FRM.BNKS.ZS"> Firms using banks to finance investment (% of firms)
+        <option value="IC.FRM.BRIB.ZS"> Bribery incidence (% of firms experiencing at least one bribe payment request)
+        <option value="IC.FRM.CMPU.ZS"> Firms competing against unregistered firms (% of firms)
+        <option value="IC.FRM.CORR.ZS"> Informal payments to public officials (% of firms)
+        <option value="IC.FRM.CRIM.ZS"> Losses due to theft, robbery, vandalism, and arson (% sales)
+        <option value="IC.FRM.DURS"> Time required to obtain an operating license (days)
+        <option value="IC.FRM.FEMO.ZS"> Firms with female participation in ownership (% of firms)
+        <option value="IC.FRM.FREG.ZS"> Firms formally registered when operations started (% of firms)
+        <option value="IC.FRM.INFM.ZS"> Firms that do not report all sales for tax purposes (% of firms)
+        <option value="IC.FRM.ISOC.ZS"> Internationally-recognized quality certification (% of firms)
+        <option value="IC.FRM.OUTG.ZS"> Value lost due to electrical outages (% of sales)
+        <option value="IC.FRM.TRNG.ZS"> Firms offering formal training (% of firms)
+        <option value="IC.GOV.DURS.ZS"> Time spent dealing with the requirements of government regulations (% of senior
+            management time)
+        <option value="IC.IMP.COST.CD"> Cost to import (US$ per container)
+        <option value="IC.IMP.DOCS"> Documents to import (number)
+        <option value="IC.IMP.DURS"> Time to import (days)
+        <option value="IC.ISV.DURS"> Time to resolve insolvency (years)
+        <option value="IC.LGL.CRED.XQ"> Strength of legal rights index (0=weak to 12=strong)
+        <option value="IC.LGL.DURS"> Time required to enforce a contract (days)
+        <option value="IC.LGL.PROC"> Procedures to enforce a contract (number)
+        <option value="IC.PRP.DURS"> Time required to register property (days)
+        <option value="IC.PRP.PROC"> Procedures to register property (number)
+        <option value="IC.REG.COST.PC.ZS"> Cost of business start-up procedures (% of GNI per capita)
+        <option value="IC.REG.DURS"> Time required to start a business (days)
+        <option value="IC.REG.PROC"> Start-up procedures to register a business (number)
+        <option value="IC.TAX.DURS"> Time to prepare and pay taxes (hours)
+        <option value="IC.TAX.GIFT.ZS"> Firms expected to give gifts in meetings with tax officials (% of firms)
+        <option value="IC.TAX.LABR.CP.ZS"> Labor tax and contributions (% of commercial profits)
+        <option value="IC.TAX.METG"> Number of visits or required meetings with tax officials
+        <option value="IC.TAX.OTHR.CP.ZS"> Other taxes payable by businesses (% of commercial profits)
+        <option value="IC.TAX.PAYM"> Tax payments (number)
+        <option value="IC.TAX.PRFT.CP.ZS"> Profit tax (% of commercial profits)
+        <option value="IC.TAX.TOTL.CP.ZS"> Total tax rate (% of commercial profits)
+        <option value="IC.WRH.DURS"> Time required to build a warehouse (days)
+        <option value="IC.WRH.PROC"> Procedures to build a warehouse (number)
+        <option value="IE.PPI.ENGY.CD"> Investment in energy with private participation (current US$)
+        <option value="IE.PPI.TELE.CD"> Investment in telecoms with private participation (current US$)
+        <option value="IE.PPI.TRAN.CD"> Investment in transport with private participation (current US$)
+        <option value="IE.PPI.WATR.CD"> Investment in water and sanitation with private participation (current US$)
+        <option value="IP.JRN.ARTC.SC"> Scientific and technical journal articles
+        <option value="IP.PAT.NRES"> Patent applications, nonresidents
+        <option value="IP.PAT.RESD"> Patent applications, residents
+        <option value="IP.TMK.NRES"> Trademark applications, direct nonresident
+        <option value="IP.TMK.RESD"> Trademark applications, direct resident
+        <option value="IP.TMK.TOTL"> Trademark applications, total
+        <option value="IQ.CPA.BREG.XQ"> CPIA business regulatory environment rating (1=low to 6=high)
+        <option value="IQ.CPA.DEBT.XQ"> CPIA debt policy rating (1=low to 6=high)
+        <option value="IQ.CPA.ECON.XQ"> CPIA economic management cluster average (1=low to 6=high)
+        <option value="IQ.CPA.ENVR.XQ"> CPIA policy and institutions for environmental sustainability rating (1=low to
+            6=high)
+        <option value="IQ.CPA.FINQ.XQ"> CPIA quality of budgetary and financial management rating (1=low to 6=high)
+        <option value="IQ.CPA.FINS.XQ"> CPIA financial sector rating (1=low to 6=high)
+        <option value="IQ.CPA.FISP.XQ"> CPIA fiscal policy rating (1=low to 6=high)
+        <option value="IQ.CPA.GNDR.XQ"> CPIA gender equality rating (1=low to 6=high)
+        <option value="IQ.CPA.HRES.XQ"> CPIA building human resources rating (1=low to 6=high)
+        <option value="IQ.CPA.IRAI.XQ"> IDA resource allocation index (1=low to 6=high)
+        <option value="IQ.CPA.MACR.XQ"> CPIA macroeconomic management rating (1=low to 6=high)
+        <option value="IQ.CPA.PADM.XQ"> CPIA quality of public administration rating (1=low to 6=high)
+        <option value="IQ.CPA.PRES.XQ"> CPIA equity of public resource use rating (1=low to 6=high)
+        <option value="IQ.CPA.PROP.XQ"> CPIA property rights and rule-based governance rating (1=low to 6=high)
+        <option value="IQ.CPA.PROT.XQ"> CPIA social protection rating (1=low to 6=high)
+        <option value="IQ.CPA.PUBS.XQ"> CPIA public sector management and institutions cluster average (1=low to 6=high)
+        <option value="IQ.CPA.REVN.XQ"> CPIA efficiency of revenue mobilization rating (1=low to 6=high)
+        <option value="IQ.CPA.SOCI.XQ"> CPIA policies for social inclusion/equity cluster average (1=low to 6=high)
+        <option value="IQ.CPA.STRC.XQ"> CPIA structural policies cluster average (1=low to 6=high)
+        <option value="IQ.CPA.TRAD.XQ"> CPIA trade rating (1=low to 6=high)
+        <option value="IQ.CPA.TRAN.XQ"> CPIA transparency, accountability, and corruption in the public sector rating
+            (1=low to 6=high)
+        <option value="IQ.SCI.MTHD"> Methodology assessment of statistical capacity (scale 0 - 100)
+        <option value="IQ.SCI.OVRL"> Overall level of statistical capacity (scale 0 - 100)
+        <option value="IQ.SCI.PRDC"> Periodicity and timeliness assessment of statistical capacity (scale 0 - 100)
+        <option value="IQ.SCI.SRCE"> Source data assessment of statistical capacity (scale 0 - 100)
+        <option value="IQ.WEF.CUST.XQ"> Burden of customs procedure, WEF (1=extremely inefficient to 7=extremely
+            efficient)
+        <option value="IQ.WEF.PORT.XQ"> Quality of port infrastructure, WEF (1=extremely underdeveloped to 7=well
+            developed and efficient by international standards)
+        <option value="IS.AIR.DPRT"> Air transport, registered carrier departures worldwide
+        <option value="IS.AIR.GOOD.MT.K1"> Air transport, freight (million ton-km)
+        <option value="IS.AIR.PSGR"> Air transport, passengers carried
+        <option value="IS.ROD.DESL.KT"> Road sector diesel fuel consumption (kt of oil equivalent)
+        <option value="IS.ROD.DESL.PC"> Road sector diesel fuel consumption per capita (kg of oil equivalent)
+        <option value="IS.ROD.DNST.K2"> Road density (km of road per 100 sq. km of land area)
+        <option value="IS.ROD.ENGY.KT"> Road sector energy consumption (kt of oil equivalent)
+        <option value="IS.ROD.ENGY.PC"> Road sector energy consumption per capita (kg of oil equivalent)
+        <option value="IS.ROD.ENGY.ZS"> Road sector energy consumption (% of total energy consumption)
+        <option value="IS.ROD.GOOD.MT.K6"> Roads, goods transported (million ton-km)
+        <option value="IS.ROD.PAVE.ZS"> Roads, paved (% of total roads)
+        <option value="IS.ROD.PSGR.K6"> Roads, passengers carried (million passenger-km)
+        <option value="IS.ROD.SGAS.KT"> Road sector gasoline fuel consumption (kt of oil equivalent)
+        <option value="IS.ROD.SGAS.PC"> Road sector gasoline fuel consumption per capita (kg of oil equivalent)
+        <option value="IS.ROD.TOTL.KM"> Roads, total network (km)
+        <option value="IS.RRS.GOOD.MT.K6"> Railways, goods transported (million ton-km)
+        <option value="IS.RRS.PASG.KM"> Railways, passengers carried (million passenger-km)
+        <option value="IS.RRS.TOTL.KM"> Rail lines (total route-km)
+        <option value="IS.SHP.GCNW.XQ"> Liner shipping connectivity index (maximum value in 2004 = 100)
+        <option value="IS.SHP.GOOD.TU"> Container port traffic (TEU
+        <option value="IS.VEH.NVEH.P3"> Motor vehicles (per 1,000 people)
+        <option value="IS.VEH.PCAR.P3"> Passenger cars (per 1,000 people)
+        <option value="IS.VEH.ROAD.K1"> Vehicles (per km of road)
+        <option value="IT.CEL.SETS"> Mobile cellular subscriptions
+        <option value="IT.CEL.SETS.P2"> Mobile cellular subscriptions (per 100 people)
+        <option value="IT.MLT.MAIN"> Fixed telephone subscriptions
+        <option value="IT.MLT.MAIN.P2"> Fixed telephone subscriptions (per 100 people)
+        <option value="IT.NET.BBND"> Fixed (wired) broadband subscriptions
+        <option value="IT.NET.BBND.P2"> Fixed (wired) broadband subscriptions (per 100 people)
+        <option value="IT.NET.SECR"> Secure Internet servers
+        <option value="IT.NET.SECR.P6"> Secure Internet servers (per 1 million people)
+        <option value="IT.NET.USER.P2"> Internet users (per 100 people)
+        <option value="LP.EXP.DURS.MD"> Lead time to export, median case (days)
+        <option value="LP.IMP.DURS.MD"> Lead time to import, median case (days)
+        <option value="LP.LPI.CUST.XQ"> Logistics performance index
+        <option value="LP.LPI.INFR.XQ"> Logistics performance index
+        <option value="LP.LPI.ITRN.XQ"> Logistics performance index
+        <option value="LP.LPI.LOGS.XQ"> Logistics performance index
+        <option value="LP.LPI.OVRL.XQ"> Logistics performance index
+        <option value="LP.LPI.TIME.XQ"> Logistics performance index
+        <option value="LP.LPI.TRAC.XQ"> Logistics performance index
+        <option value="MS.MIL.MPRT.KD"> Arms imports (SIPRI trend indicator values)
+        <option value="MS.MIL.TOTL.P1"> Armed forces personnel, total
+        <option value="MS.MIL.TOTL.TF.ZS"> Armed forces personnel (% of total labor force)
+        <option value="MS.MIL.XPND.CN"> Military expenditure (current LCU)
+        <option value="MS.MIL.XPND.GD.ZS"> Military expenditure (% of GDP)
+        <option value="MS.MIL.XPND.ZS"> Military expenditure (% of central government expenditure)
+        <option value="MS.MIL.XPRT.KD"> Arms exports (SIPRI trend indicator values)
+        <option value="NE.CON.GOVT.CD"> General government final consumption expenditure (current US$)
+        <option value="NE.CON.GOVT.CN"> General government final consumption expenditure (current LCU)
+        <option value="NE.CON.GOVT.KD"> General government final consumption expenditure (constant 2005 US$)
+        <option value="NE.CON.GOVT.KD.ZG"> General government final consumption expenditure (annual % growth)
+        <option value="NE.CON.GOVT.KN"> General government final consumption expenditure (constant LCU)
+        <option value="NE.CON.GOVT.ZS"> General government final consumption expenditure (% of GDP)
+        <option value="NE.CON.PETC.CD"> Household final consumption expenditure, etc. (current US$)
+        <option value="NE.CON.PETC.CN"> Household final consumption expenditure, etc. (current LCU)
+        <option value="NE.CON.PETC.KD"> Household final consumption expenditure, etc. (constant 2005 US$)
+        <option value="NE.CON.PETC.KD.ZG"> Household final consumption expenditure, etc. (annual % growth)
+        <option value="NE.CON.PETC.KN"> Household final consumption expenditure, etc. (constant LCU)
+        <option value="NE.CON.PETC.ZS"> Household final consumption expenditure, etc. (% of GDP)
+        <option value="NE.CON.PRVT.CD"> Household final consumption expenditure (current US$)
+        <option value="NE.CON.PRVT.CN"> Household final consumption expenditure (current LCU)
+        <option value="NE.CON.PRVT.KD"> Household final consumption expenditure (constant 2005 US$)
+        <option value="NE.CON.PRVT.KD.ZG"> Household final consumption expenditure (annual % growth)
+        <option value="NE.CON.PRVT.KN"> Household final consumption expenditure (constant LCU)
+        <option value="NE.CON.PRVT.PC.KD"> Household final consumption expenditure per capita (constant 2005 US$)
+        <option value="NE.CON.PRVT.PC.KD.ZG"> Household final consumption expenditure per capita growth (annual %)
+        <option value="NE.CON.PRVT.PP.CD"> Household final consumption expenditure, PPP (current international $)
+        <option value="NE.CON.PRVT.PP.KD"> Household final consumption expenditure, PPP (constant 2011 international $)
+        <option value="NE.CON.TETC.CD"> Final consumption expenditure, etc. (current US$)
+        <option value="NE.CON.TETC.CN"> Final consumption expenditure, etc. (current LCU)
+        <option value="NE.CON.TETC.KD"> Final consumption expenditure, etc. (constant 2005 US$)
+        <option value="NE.CON.TETC.KD.ZG"> Final consumption expenditure, etc. (annual % growth)
+        <option value="NE.CON.TETC.KN"> Final consumption expenditure, etc. (constant LCU)
+        <option value="NE.CON.TETC.ZS"> Final consumption expenditure, etc. (% of GDP)
+        <option value="NE.CON.TOTL.CD"> Final consumption expenditure (current US$)
+        <option value="NE.CON.TOTL.CN"> Final consumption expenditure (current LCU)
+        <option value="NE.CON.TOTL.KD"> Final consumption expenditure (constant 2005 US$)
+        <option value="NE.CON.TOTL.KN"> Final consumption expenditure (constant LCU)
+        <option value="NE.DAB.DEFL.ZS"> Gross national expenditure deflator (base year varies by country)
+        <option value="NE.DAB.TOTL.CD"> Gross national expenditure (current US$)
+        <option value="NE.DAB.TOTL.CN"> Gross national expenditure (current LCU)
+        <option value="NE.DAB.TOTL.KD"> Gross national expenditure (constant 2005 US$)
+        <option value="NE.DAB.TOTL.KN"> Gross national expenditure (constant LCU)
+        <option value="NE.DAB.TOTL.ZS"> Gross national expenditure (% of GDP)
+        <option value="NE.EXP.GNFS.CD"> Exports of goods and services (current US$)
+        <option value="NE.EXP.GNFS.CN"> Exports of goods and services (current LCU)
+        <option value="NE.EXP.GNFS.KD"> Exports of goods and services (constant 2005 US$)
+        <option value="NE.EXP.GNFS.KD.ZG"> Exports of goods and services (annual % growth)
+        <option value="NE.EXP.GNFS.KN"> Exports of goods and services (constant LCU)
+        <option value="NE.EXP.GNFS.ZS"> Exports of goods and services (% of GDP)
+        <option value="NE.GDI.FPRV.CN"> Gross fixed capital formation, private sector (current LCU)
+        <option value="NE.GDI.FPRV.ZS"> Gross fixed capital formation, private sector (% of GDP)
+        <option value="NE.GDI.FTOT.CD"> Gross fixed capital formation (current US$)
+        <option value="NE.GDI.FTOT.CN"> Gross fixed capital formation (current LCU)
+        <option value="NE.GDI.FTOT.KD"> Gross fixed capital formation (constant 2005 US$)
+        <option value="NE.GDI.FTOT.KD.ZG"> Gross fixed capital formation (annual % growth)
+        <option value="NE.GDI.FTOT.KN"> Gross fixed capital formation (constant LCU)
+        <option value="NE.GDI.FTOT.ZS"> Gross fixed capital formation (% of GDP)
+        <option value="NE.GDI.STKB.CD"> Changes in inventories (current US$)
+        <option value="NE.GDI.STKB.CN"> Changes in inventories (current LCU)
+        <option value="NE.GDI.STKB.KN"> Changes in inventories (constant LCU)
+        <option value="NE.GDI.TOTL.CD"> Gross capital formation (current US$)
+        <option value="NE.GDI.TOTL.CN"> Gross capital formation (current LCU)
+        <option value="NE.GDI.TOTL.KD"> Gross capital formation (constant 2005 US$)
+        <option value="NE.GDI.TOTL.KD.ZG"> Gross capital formation (annual % growth)
+        <option value="NE.GDI.TOTL.KN"> Gross capital formation (constant LCU)
+        <option value="NE.GDI.TOTL.ZS"> Gross capital formation (% of GDP)
+        <option value="NE.IMP.GNFS.CD"> Imports of goods and services (current US$)
+        <option value="NE.IMP.GNFS.CN"> Imports of goods and services (current LCU)
+        <option value="NE.IMP.GNFS.KD"> Imports of goods and services (constant 2005 US$)
+        <option value="NE.IMP.GNFS.KD.ZG"> Imports of goods and services (annual % growth)
+        <option value="NE.IMP.GNFS.KN"> Imports of goods and services (constant LCU)
+        <option value="NE.IMP.GNFS.ZS"> Imports of goods and services (% of GDP)
+        <option value="NE.RSB.GNFS.CD"> External balance on goods and services (current US$)
+        <option value="NE.RSB.GNFS.CN"> External balance on goods and services (current LCU)
+        <option value="NE.RSB.GNFS.KN"> External balance on goods and services (constant LCU)
+        <option value="NE.RSB.GNFS.ZS"> External balance on goods and services (% of GDP)
+        <option value="NE.TRD.GNFS.ZS"> Trade (% of GDP)
+        <option value="NV.AGR.TOTL.CD"> Agriculture, value added (current US$)
+        <option value="NV.AGR.TOTL.CN"> Agriculture, value added (current LCU)
+        <option value="NV.AGR.TOTL.KD"> Agriculture, value added (constant 2005 US$)
+        <option value="NV.AGR.TOTL.KD.ZG"> Agriculture, value added (annual % growth)
+        <option value="NV.AGR.TOTL.KN"> Agriculture, value added (constant LCU)
+        <option value="NV.AGR.TOTL.ZS"> Agriculture, value added (% of GDP)
+        <option value="NV.IND.MANF.CD"> Manufacturing, value added (current US$)
+        <option value="NV.IND.MANF.CN"> Manufacturing, value added (current LCU)
+        <option value="NV.IND.MANF.KD"> Manufacturing, value added (constant 2005 US$)
+        <option value="NV.IND.MANF.KD.ZG"> Manufacturing, value added (annual % growth)
+        <option value="NV.IND.MANF.KN"> Manufacturing, value added (constant LCU)
+        <option value="NV.IND.MANF.ZS"> Manufacturing, value added (% of GDP)
+        <option value="NV.IND.TOTL.CD"> Industry, value added (current US$)
+        <option value="NV.IND.TOTL.CN"> Industry, value added (current LCU)
+        <option value="NV.IND.TOTL.KD"> Industry, value added (constant 2005 US$)
+        <option value="NV.IND.TOTL.KD.ZG"> Industry, value added (annual % growth)
+        <option value="NV.IND.TOTL.KN"> Industry, value added (constant LCU)
+        <option value="NV.IND.TOTL.ZS"> Industry, value added (% of GDP)
+        <option value="NV.MNF.CHEM.ZS.UN"> Chemicals (% of value added in manufacturing)
+        <option value="NV.MNF.FBTO.ZS.UN"> Food, beverages and tobacco (% of value added in manufacturing)
+        <option value="NV.MNF.MTRN.ZS.UN"> Machinery and transport equipment (% of value added in manufacturing)
+        <option value="NV.MNF.OTHR.ZS.UN"> Other manufacturing (% of value added in manufacturing)
+        <option value="NV.MNF.TXTL.ZS.UN"> Textiles and clothing (% of value added in manufacturing)
+        <option value="NV.SRV.TETC.CD"> Services, etc., value added (current US$)
+        <option value="NV.SRV.TETC.CN"> Services, etc., value added (current LCU)
+        <option value="NV.SRV.TETC.KD"> Services, etc., value added (constant 2005 US$)
+        <option value="NV.SRV.TETC.KD.ZG"> Services, etc., value added (annual % growth)
+        <option value="NV.SRV.TETC.KN"> Services, etc., value added (constant LCU)
+        <option value="NV.SRV.TETC.ZS"> Services, etc., value added (% of GDP)
+        <option value="NY.ADJ.AEDU.CD"> Adjusted savings
+        <option value="NY.ADJ.AEDU.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DCO2.CD"> Adjusted savings
+        <option value="NY.ADJ.DCO2.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DFOR.CD"> Adjusted savings
+        <option value="NY.ADJ.DFOR.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DKAP.CD"> Adjusted savings
+        <option value="NY.ADJ.DKAP.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DMIN.CD"> Adjusted savings
+        <option value="NY.ADJ.DMIN.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DNGY.CD"> Adjusted savings
+        <option value="NY.ADJ.DNGY.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DPEM.CD"> Adjusted savings
+        <option value="NY.ADJ.DPEM.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.DRES.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.ICTR.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.NNAT.CD"> Adjusted savings
+        <option value="NY.ADJ.NNAT.GN.ZS"> Adjusted savings
+        <option value="NY.ADJ.NNTY.CD"> Adjusted net national income (current US$)
+        <option value="NY.ADJ.NNTY.KD"> Adjusted net national income (constant 2005 US$)
+        <option value="NY.ADJ.NNTY.KD.ZG"> Adjusted net national income (annual % growth)
+        <option value="NY.ADJ.NNTY.PC.CD"> Adjusted net national income per capita (current US$)
+        <option value="NY.ADJ.SVNG.CD"> Adjusted net savings, including particulate emission damage (current US$)
+        <option value="NY.ADJ.SVNG.GN.ZS"> Adjusted net savings, including particulate emission damage (% of GNI)
+        <option value="NY.ADJ.SVNX.CD"> Adjusted net savings, excluding particulate emission damage (current US$)
+        <option value="NY.ADJ.SVNX.GN.ZS"> Adjusted net savings, excluding particulate emission damage (% of GNI)
+        <option value="NY.EXP.CAPM.KN"> Exports as a capacity to import (constant LCU)
+        <option value="NY.GDP.COAL.RT.ZS"> Coal rents (% of GDP)
+        <option value="NY.GDP.DEFL.KD.ZG"> Inflation, GDP deflator (annual %)
+        <option value="NY.GDP.DEFL.ZS"> GDP deflator (base year varies by country)
+        <option value="NY.GDP.DISC.CN"> Discrepancy in expenditure estimate of GDP (current LCU)
+        <option value="NY.GDP.DISC.KN"> Discrepancy in expenditure estimate of GDP (constant LCU)
+        <option value="NY.GDP.FCST.CD"> Gross value added at factor cost (current US$)
+        <option value="NY.GDP.FCST.CN"> Gross value added at factor cost (current LCU)
+        <option value="NY.GDP.FCST.KD"> Gross value added at factor cost (constant 2005 US$)
+        <option value="NY.GDP.FCST.KN"> Gross value added at factor cost (constant LCU)
+        <option value="NY.GDP.FRST.RT.ZS"> Forest rents (% of GDP)
+        <option value="NY.GDP.MINR.RT.ZS"> Mineral rents (% of GDP)
+        <option value="NY.GDP.MKTP.CD"> GDP (current US$)
+        <option value="NY.GDP.MKTP.CN"> GDP (current LCU)
+        <option value="NY.GDP.MKTP.KD"> GDP (constant 2005 US$)
+        <option value="NY.GDP.MKTP.KD.ZG"> GDP growth (annual %)
+        <option value="NY.GDP.MKTP.KN"> GDP (constant LCU)
+        <option value="NY.GDP.MKTP.PP.CD"> GDP, PPP (current international $)
+        <option value="NY.GDP.MKTP.PP.KD"> GDP, PPP (constant 2011 international $)
+        <option value="NY.GDP.NGAS.RT.ZS"> Natural gas rents (% of GDP)
+        <option value="NY.GDP.PCAP.CD"> GDP per capita (current US$)
+        <option value="NY.GDP.PCAP.CN"> GDP per capita (current LCU)
+        <option value="NY.GDP.PCAP.KD"> GDP per capita (constant 2005 US$)
+        <option value="NY.GDP.PCAP.KD.ZG"> GDP per capita growth (annual %)
+        <option value="NY.GDP.PCAP.KN"> GDP per capita (constant LCU)
+        <option value="NY.GDP.PCAP.PP.CD"> GDP per capita, PPP (current international $)
+        <option value="NY.GDP.PCAP.PP.KD"> GDP per capita, PPP (constant 2011 international $)
+        <option value="NY.GDP.PETR.RT.ZS"> Oil rents (% of GDP)
+        <option value="NY.GDP.TOTL.RT.ZS"> Total natural resources rents (% of GDP)
+        <option value="NY.GDS.TOTL.CD"> Gross domestic savings (current US$)
+        <option value="NY.GDS.TOTL.CN"> Gross domestic savings (current LCU)
+        <option value="NY.GDS.TOTL.KN"> Gross domestic savings (constant LCU)
+        <option value="NY.GDS.TOTL.ZS"> Gross domestic savings (% of GDP)
+        <option value="NY.GDY.TOTL.KD"> Gross domestic income (constant 2005 US$)
+        <option value="NY.GDY.TOTL.KN"> Gross domestic income (constant LCU)
+        <option value="NY.GNP.ATLS.CD"> GNI, Atlas method (current US$)
+        <option value="NY.GNP.MKTP.CD"> GNI (current US$)
+        <option value="NY.GNP.MKTP.CN"> GNI (current LCU)
+        <option value="NY.GNP.MKTP.KD"> GNI (constant 2005 US$)
+        <option value="NY.GNP.MKTP.KD.ZG"> GNI growth (annual %)
+        <option value="NY.GNP.MKTP.KN"> GNI (constant LCU)
+        <option value="NY.GNP.MKTP.PP.CD"> GNI, PPP (current international $)
+        <option value="NY.GNP.MKTP.PP.KD"> GNI, PPP (constant 2011 international $)
+        <option value="NY.GNP.PCAP.CD"> GNI per capita, Atlas method (current US$)
+        <option value="NY.GNP.PCAP.CN"> GNI per capita (current LCU)
+        <option value="NY.GNP.PCAP.KD"> GNI per capita (constant 2005 US$)
+        <option value="NY.GNP.PCAP.KD.ZG"> GNI per capita growth (annual %)
+        <option value="NY.GNP.PCAP.KN"> GNI per capita (constant LCU)
+        <option value="NY.GNP.PCAP.PP.CD"> GNI per capita, PPP (current international $)
+        <option value="NY.GNP.PCAP.PP.KD"> GNI per capita, PPP (constant 2011 international $)
+        <option value="NY.GNS.ICTR.CD"> Gross savings (current US$)
+        <option value="NY.GNS.ICTR.CN"> Gross savings (current LCU)
+        <option value="NY.GNS.ICTR.GN.ZS"> Gross savings (% of GNI)
+        <option value="NY.GNS.ICTR.ZS"> Gross savings (% of GDP)
+        <option value="NY.GSR.NFCY.CD"> Net income from abroad (current US$)
+        <option value="NY.GSR.NFCY.CN"> Net income from abroad (current LCU)
+        <option value="NY.GSR.NFCY.KN"> Net income from abroad (constant LCU)
+        <option value="NY.TAX.NIND.CD"> Net taxes on products (current US$)
+        <option value="NY.TAX.NIND.CN"> Net taxes on products (current LCU)
+        <option value="NY.TAX.NIND.KN"> Net taxes on products (constant LCU)
+        <option value="NY.TRF.NCTR.CD"> Net current transfers from abroad (current US$)
+        <option value="NY.TRF.NCTR.CN"> Net current transfers from abroad (current LCU)
+        <option value="NY.TRF.NCTR.KN"> Net current transfers from abroad (constant LCU)
+        <option value="NY.TTF.GNFS.KN"> Terms of trade adjustment (constant LCU)
+        <option value="PA.NUS.ATLS"> DEC alternative conversion factor (LCU per US$)
+        <option value="PA.NUS.FCRF"> Official exchange rate (LCU per US$, period average)
+        <option value="PA.NUS.PPP"> PPP conversion factor, GDP (LCU per international $)
+        <option value="PA.NUS.PPP.05"> 2005 PPP conversion factor, GDP (LCU per international $)
+        <option value="PA.NUS.PPPC.RF"> Price level ratio of PPP conversion factor (GDP) to market exchange rate
+        <option value="PA.NUS.PRVT.PP"> PPP conversion factor, private consumption (LCU per international $)
+        <option value="PA.NUS.PRVT.PP.05"> 2005 PPP conversion factor, private consumption (LCU per international $)
+        <option value="per_allsp.adq_pop_tot"> Adequacy of social protection and labor programs (% of total welfare of
+            beneficiary households)
+        <option value="per_allsp.ben_q1_tot"> Benefits incidence in poorest quintile (%) -All Social Protection and
+            Labor
+        <option value="per_allsp.cov_pop_tot"> Coverage (%) -All Social Protection and Labor
+        <option value="per_lm_alllm.adq_pop_tot"> Adequacy of unemployment benefits and ALMP (% of total welfare of
+            beneficiary households)
+        <option value="per_lm_alllm.ben_q1_tot"> Benefits incidence in poorest quintile (%) - All Labor Market
+        <option value="per_lm_alllm.cov_pop_tot"> Coverage (%) - All Labor Market
+        <option value="per_sa_allsa.adq_pop_tot"> Adequacy of social safety net programs (% of total welfare of
+            beneficiary households)
+        <option value="per_sa_allsa.ben_q1_tot"> Benefits incidence in poorest quintile (%) - All Social Assistance
+        <option value="per_sa_allsa.cov_pop_tot"> Coverage (%) - All Social Assistance
+        <option value="per_si_allsi.adq_pop_tot"> Adequacy of social insurance programs (% of total welfare of
+            beneficiary households)
+        <option value="per_si_allsi.ben_q1_tot"> Benefits incidence in poorest quintile (%) - All Social Insurance
+        <option value="per_si_allsi.cov_pop_tot"> Coverage (%) - All Social Insurance
+        <option value="PX.REX.REER"> Real effective exchange rate index (2010 = 100)
+        <option value="SE.ADT.1524.LT.FE.ZS"> Literacy rate, youth female (% of females ages 15-24)
+        <option value="SE.ADT.1524.LT.FM.ZS"> Ratio of young literate females to males (% ages 15-24)
+        <option value="SE.ADT.1524.LT.MA.ZS"> Literacy rate, youth male (% of males ages 15-24)
+        <option value="SE.ADT.1524.LT.ZS"> Literacy rate, youth total (% of people ages 15-24)
+        <option value="SE.ADT.LITR.FE.ZS"> Literacy rate, adult female (% of females ages 15 and above)
+        <option value="SE.ADT.LITR.MA.ZS"> Literacy rate, adult male (% of males ages 15 and above)
+        <option value="SE.ADT.LITR.ZS"> Literacy rate, adult total (% of people ages 15 and above)
+        <option value="SE.ENR.PRIM.FM.ZS"> Ratio of female to male primary enrollment (%)
+        <option value="SE.ENR.PRSC.FM.ZS"> Ratio of girls to boys in primary and secondary education (%)
+        <option value="SE.ENR.SECO.FM.ZS"> Ratio of female to male secondary enrollment (%)
+        <option value="SE.ENR.TERT.FM.ZS"> Ratio of female to male tertiary enrollment (%)
+        <option value="SE.PRE.ENRR"> School enrollment, preprimary (% gross)
+        <option value="SE.PRE.ENRR.FE"> School enrollment, preprimary, female (% gross)
+        <option value="SE.PRE.ENRR.MA"> School enrollment, preprimary, male (% gross)
+        <option value="SE.PRM.AGES"> Primary school starting age (years)
+        <option value="SE.PRM.CMPT.FE.ZS"> Primary completion rate, female (% of relevant age group)
+        <option value="SE.PRM.CMPT.MA.ZS"> Primary completion rate, male (% of relevant age group)
+        <option value="SE.PRM.CMPT.ZS"> Primary completion rate, total (% of relevant age group)
+        <option value="SE.PRM.DURS"> Primary education, duration (years)
+        <option value="SE.PRM.ENRL"> Primary education, pupils
+        <option value="SE.PRM.ENRL.FE.ZS"> Primary education, pupils (% female)
+        <option value="SE.PRM.ENRL.TC.ZS"> Pupil-teacher ratio, primary
+        <option value="SE.PRM.ENRR"> School enrollment, primary (% gross)
+        <option value="SE.PRM.ENRR.FE"> School enrollment, primary, female (% gross)
+        <option value="SE.PRM.ENRR.MA"> School enrollment, primary, male (% gross)
+        <option value="SE.PRM.GINT.FE.ZS"> Gross intake ratio in first grade of primary education, female (% of relevant
+            age group)
+        <option value="SE.PRM.GINT.MA.ZS"> Gross intake ratio in first grade of primary education, male (% of relevant
+            age group)
+        <option value="SE.PRM.GINT.ZS"> Gross intake ratio in first grade of primary education, total (% of relevant age
+            group)
+        <option value="SE.PRM.NENR"> School enrollment, primary (% net)
+        <option value="SE.PRM.NENR.FE"> School enrollment, primary, female (% net)
+        <option value="SE.PRM.NENR.MA"> School enrollment, primary, male (% net)
+        <option value="SE.PRM.NINT.FE.ZS"> Net intake rate in grade 1, female (% of official school-age population)
+        <option value="SE.PRM.NINT.MA.ZS"> Net intake rate in grade 1, male (% of official school-age population)
+        <option value="SE.PRM.NINT.ZS"> Net intake rate in grade 1 (% of official school-age population)
+        <option value="SE.PRM.PRIV.ZS"> School enrollment, primary, private (% of total primary)
+        <option value="SE.PRM.PRS5.FE.ZS"> Persistence to grade 5, female (% of cohort)
+        <option value="SE.PRM.PRS5.MA.ZS"> Persistence to grade 5, male (% of cohort)
+        <option value="SE.PRM.PRS5.ZS"> Persistence to grade 5, total (% of cohort)
+        <option value="SE.PRM.PRSL.FE.ZS"> Persistence to last grade of primary, female (% of cohort)
+        <option value="SE.PRM.PRSL.MA.ZS"> Persistence to last grade of primary, male (% of cohort)
+        <option value="SE.PRM.PRSL.ZS"> Persistence to last grade of primary, total (% of cohort)
+        <option value="SE.PRM.REPT.FE.ZS"> Repeaters, primary, female (% of female enrollment)
+        <option value="SE.PRM.REPT.MA.ZS"> Repeaters, primary, male (% of male enrollment)
+        <option value="SE.PRM.REPT.ZS"> Repeaters, primary, total (% of total enrollment)
+        <option value="SE.PRM.TCAQ.FE.ZS"> Trained teachers in primary education, female (% of female teachers)
+        <option value="SE.PRM.TCAQ.MA.ZS"> Trained teachers in primary education, male (% of male teachers)
+        <option value="SE.PRM.TCAQ.ZS"> Trained teachers in primary education (% of total teachers)
+        <option value="SE.PRM.TCHR"> Primary education, teachers
+        <option value="SE.PRM.TCHR.FE.ZS"> Primary education, teachers (% female)
+        <option value="SE.PRM.TENR"> Adjusted net enrollment rate, primary (% of primary school age children)
+        <option value="SE.PRM.TENR.FE"> Adjusted net enrollment rate, primary, female (% of primary school age children)
+        <option value="SE.PRM.TENR.MA"> Adjusted net enrollment rate, primary, male (% of primary school age children)
+        <option value="SE.PRM.UNER"> Children out of school, primary
+        <option value="SE.PRM.UNER.FE"> Children out of school, primary, female
+        <option value="SE.PRM.UNER.MA"> Children out of school, primary, male
+        <option value="SE.SEC.AGES"> Lower secondary school starting age (years)
+        <option value="SE.SEC.CMPT.LO.FE.ZS"> Lower secondary completion rate, female (% of relevant age group)
+        <option value="SE.SEC.CMPT.LO.MA.ZS"> Lower secondary completion rate, male (% of relevant age group)
+        <option value="SE.SEC.CMPT.LO.ZS"> Lower secondary completion rate, total (% of relevant age group)
+        <option value="SE.SEC.DURS"> Secondary education, duration (years)
+        <option value="SE.SEC.ENRL"> Secondary education, pupils
+        <option value="SE.SEC.ENRL.FE.ZS"> Secondary education, pupils (% female)
+        <option value="SE.SEC.ENRL.GC"> Secondary education, general pupils
+        <option value="SE.SEC.ENRL.GC.FE.ZS"> Secondary education, general pupils (% female)
+        <option value="SE.SEC.ENRL.TC.ZS"> Pupil-teacher ratio, secondary
+        <option value="SE.SEC.ENRL.VO"> Secondary education, vocational pupils
+        <option value="SE.SEC.ENRL.VO.FE.ZS"> Secondary education, vocational pupils (% female)
+        <option value="SE.SEC.ENRR"> School enrollment, secondary (% gross)
+        <option value="SE.SEC.ENRR.FE"> School enrollment, secondary, female (% gross)
+        <option value="SE.SEC.ENRR.MA"> School enrollment, secondary, male (% gross)
+        <option value="SE.SEC.NENR"> School enrollment, secondary (% net)
+        <option value="SE.SEC.NENR.FE"> School enrollment, secondary, female (% net)
+        <option value="SE.SEC.NENR.MA"> School enrollment, secondary, male (% net)
+        <option value="SE.SEC.PRIV.ZS"> School enrollment, secondary, private (% of total secondary)
+        <option value="SE.SEC.PROG.FE.ZS"> Progression to secondary school, female (%)
+        <option value="SE.SEC.PROG.MA.ZS"> Progression to secondary school, male (%)
+        <option value="SE.SEC.PROG.ZS"> Progression to secondary school (%)
+        <option value="SE.SEC.REPT.FE.ZS"> Repeaters, secondary, female (% of female enrollment)
+        <option value="SE.SEC.REPT.MA.ZS"> Repeaters, secondary, male (% of male enrollment)
+        <option value="SE.SEC.REPT.ZS"> Repeaters, secondary, total (% of total enrollment)
+        <option value="SE.SEC.TCHR"> Secondary education, teachers
+        <option value="SE.SEC.TCHR.FE"> Secondary education, teachers, female
+        <option value="SE.SEC.TCHR.FE.ZS"> Secondary education, teachers (% female)
+        <option value="SE.TER.ENRR"> School enrollment, tertiary (% gross)
+        <option value="SE.TER.ENRR.FE"> School enrollment, tertiary, female (% gross)
+        <option value="SE.TER.ENRR.MA"> School enrollment, tertiary, male (% gross)
+        <option value="SE.TER.TCHR.FE.ZS"> Tertiary education, academic staff (% female)
+        <option value="SE.XPD.CPRM.ZS"> Current education expenditure, primary (% of total expenditure in primary public
+            institutions)
+        <option value="SE.XPD.CSEC.ZS"> Current education expenditure, secondary (% of total expenditure in secondary
+            public institutions)
+        <option value="SE.XPD.CTER.ZS"> Current education expenditure, tertiary (% of total expenditure in tertiary
+            public institutions)
+        <option value="SE.XPD.CTOT.ZS"> Current education expenditure, total (% of total expenditure in public
+            institutions)
+        <option value="SE.XPD.MPRM.ZS"> All education staff compensation, primary (% of total expenditure in primary
+            public institutions)
+        <option value="SE.XPD.MSEC.ZS"> All education staff compensation, secondary (% of total expenditure in secondary
+            public institutions)
+        <option value="SE.XPD.MTER.ZS"> All education staff compensation, tertiary (% of total expenditure in tertiary
+            public institutions)
+        <option value="SE.XPD.MTOT.ZS"> All education staff compensation, total (% of total expenditure in public
+            institutions)
+        <option value="SE.XPD.PRIM.PC.ZS"> Government expenditure per student, primary (% of GDP per capita)
+        <option value="SE.XPD.PRIM.ZS"> Share of public expenditure for primary education (% of public education
+            expenditure)
+        <option value="SE.XPD.SECO.PC.ZS"> Government expenditure per student, secondary (% of GDP per capita)
+        <option value="SE.XPD.SECO.ZS"> Share of public expenditure for secondary education (% of public education
+            expenditure)
+        <option value="SE.XPD.TERT.PC.ZS"> Government expenditure per student, tertiary (% of GDP per capita)
+        <option value="SE.XPD.TERT.ZS"> Share of expenditure for tertiary education (% of total education expenditure)
+        <option value="SE.XPD.TOTL.GB.ZS"> Government expenditure on education, total (% of government expenditure)
+        <option value="SE.XPD.TOTL.GD.ZS"> Government expenditure on education, total (% of GDP)
+        <option value="SG.GEN.LSOM.ZS"> Female legislators, senior officials and managers (% of total)
+        <option value="SG.GEN.PARL.ZS"> Proportion of seats held by women in national parliaments (%)
+        <option value="SG.VAW.ARGU.ZS"> Women who believe a husband is justified in beating his wife when she argues
+            with him (%)
+        <option value="SG.VAW.BURN.ZS"> Women who believe a husband is justified in beating his wife when she burns the
+            food (%)
+        <option value="SG.VAW.GOES.ZS"> Women who believe a husband is justified in beating his wife when she goes out
+            without telling him (%)
+        <option value="SG.VAW.NEGL.ZS"> Women who believe a husband is justified in beating his wife when she neglects
+            the children (%)
+        <option value="SG.VAW.REAS.ZS"> Women who believe a husband is justified in beating his wife (any of five
+            reasons) (%)
+        <option value="SG.VAW.REFU.ZS"> Women who believe a husband is justified in beating his wife when she refuses
+            sex with him (%)
+        <option value="SH.ANM.NPRG.ZS"> Prevalence of anemia among non-pregnant women (% of women ages 15-49)
+        <option value="SH.CON.1524.FE.ZS"> Condom use, population ages 15-24, female (% of females ages 15-24)
+        <option value="SH.CON.1524.MA.ZS"> Condom use, population ages 15-24, male (% of males ages 15-24)
+        <option value="SH.DTH.IMRT"> Number of infant deaths
+        <option value="SH.DTH.MORT"> Number of under-five deaths
+        <option value="SH.DTH.NMRT"> Number of neonatal deaths
+        <option value="SH.DYN.AIDS.FE.ZS"> Women share of population ages 15+ living with HIV (%)
+        <option value="SH.DYN.AIDS.ZS"> Prevalence of HIV, total (% of population ages 15-49)
+        <option value="SH.DYN.MORT"> Mortality rate, under-5 (per 1,000 live births)
+        <option value="SH.DYN.MORT.FE"> Mortality rate, under-5, female (per 1,000)
+        <option value="SH.DYN.MORT.MA"> Mortality rate, under-5, male (per 1,000)
+        <option value="SH.DYN.NMRT"> Mortality rate, neonatal (per 1,000 live births)
+        <option value="SH.H2O.SAFE.RU.ZS"> Improved water source, rural (% of rural population with access)
+        <option value="SH.H2O.SAFE.UR.ZS"> Improved water source, urban (% of urban population with access)
+        <option value="SH.H2O.SAFE.ZS"> Improved water source (% of population with access)
+        <option value="SH.HIV.0014"> Children (0-14) living with HIV
+        <option value="SH.HIV.1524.FE.ZS"> Prevalence of HIV, female (% ages 15-24)
+        <option value="SH.HIV.1524.MA.ZS"> Prevalence of HIV, male (% ages 15-24)
+        <option value="SH.HIV.ARTC.ZS"> Antiretroviral therapy coverage (% of people living with HIV)
+        <option value="SH.IMM.IDPT"> Immunization, DPT (% of children ages 12-23 months)
+        <option value="SH.IMM.MEAS"> Immunization, measles (% of children ages 12-23 months)
+        <option value="SH.MED.BEDS.ZS"> Hospital beds (per 1,000 people)
+        <option value="SH.MED.CMHW.P3"> Community health workers (per 1,000 people)
+        <option value="SH.MED.NUMW.P3"> Nurses and midwives (per 1,000 people)
+        <option value="SH.MED.PHYS.ZS"> Physicians (per 1,000 people)
+        <option value="SH.MLR.NETS.ZS"> Use of insecticide-treated bed nets (% of under-5 population)
+        <option value="SH.MLR.TRET.ZS"> Children with fever receiving antimalarial drugs (% of children under age 5 with
+            fever)
+        <option value="SH.MMR.DTHS"> Number of maternal deaths
+        <option value="SH.MMR.RISK"> Lifetime risk of maternal death (1 in
+        <option value="SH.MMR.RISK.ZS"> Lifetime risk of maternal death (%)
+        <option value="SH.PRG.ANEM"> Prevalence of anemia among pregnant women (%)
+        <option value="SH.PRV.SMOK.FE"> Smoking prevalence, females (% of adults)
+        <option value="SH.PRV.SMOK.MA"> Smoking prevalence, males (% of adults)
+        <option value="SH.STA.ACSN"> Improved sanitation facilities (% of population with access)
+        <option value="SH.STA.ACSN.RU"> Improved sanitation facilities, rural (% of rural population with access)
+        <option value="SH.STA.ACSN.UR"> Improved sanitation facilities, urban (% of urban population with access)
+        <option value="SH.STA.ANVC.ZS"> Pregnant women receiving prenatal care (%)
+        <option value="SH.STA.ARIC.ZS"> ARI treatment (% of children under 5 taken to a health provider)
+        <option value="SH.STA.BFED.ZS"> Exclusive breastfeeding (% of children under 6 months)
+        <option value="SH.STA.BRTC.ZS"> Birth attended by Skilled Health worker (in % of total birth)
+        <option value="SH.STA.BRTW.ZS"> Low-birthweight babies (% of births)
+        <option value="SH.STA.MALN.FE.ZS"> Malnutrition prevalence, weight for age, female (% of children under 5)
+        <option value="SH.STA.MALN.MA.ZS"> Malnutrition prevalence, weight for age, male (% of children under 5)
+        <option value="SH.STA.MALN.ZS"> Malnutrition prevalence, weight for age (% of children under 5)
+        <option value="SH.STA.MMRT"> Maternal mortality ratio (modeled estimate, per 100,000 live births)
+        <option value="SH.STA.MMRT.NE"> Maternal mortality ratio (national estimate, per 100,000 live births)
+        <option value="SH.STA.ORCF.ZS"> Diarrhea treatment (% of children under 5 receiving oral rehydration and
+            continued feeding)
+        <option value="SH.STA.ORTH"> Diarrhea treatment (% of children under 5 who received ORS packet)
+        <option value="SH.STA.OWGH.FE.ZS"> Prevalence of overweight, female (% of children under 5)
+        <option value="SH.STA.OWGH.MA.ZS"> Prevalence of overweight, male (% of children under 5)
+        <option value="SH.STA.OWGH.ZS"> Prevalence of overweight (% of children under 5)
+        <option value="SH.STA.STNT.FE.ZS"> Malnutrition prevalence, height for age, female (% of children under 5)
+        <option value="SH.STA.STNT.MA.ZS"> Malnutrition prevalence, height for age, male (% of children under 5)
+        <option value="SH.STA.STNT.ZS"> Malnutrition prevalence, height for age (% of children under 5)
+        <option value="SH.STA.WAST.FE.ZS"> Prevalence of wasting, female (% of children under 5)
+        <option value="SH.STA.WAST.MA.ZS"> Prevalence of wasting, male (% of children under 5)
+        <option value="SH.STA.WAST.ZS"> Prevalence of wasting (% of children under 5)
+        <option value="SH.SVR.WAST.FE.ZS"> Prevalence of severe wasting, weight for height, female (% of children under
+            5)
+        <option value="SH.SVR.WAST.MA.ZS"> Prevalence of severe wasting, weight for height, male (% of children under 5)
+        <option value="SH.SVR.WAST.ZS"> Prevalence of severe wasting, weight for height (% of children under 5)
+        <option value="SH.TBS.CURE.ZS"> Tuberculosis treatment success rate (% of new cases)
+        <option value="SH.TBS.DTEC.ZS"> Tuberculosis case detection rate (%, all forms)
+        <option value="SH.TBS.INCD"> Incidence of tuberculosis (per 100,000 people)
+        <option value="SH.VAC.TTNS.ZS"> Newborns protected against tetanus (%)
+        <option value="SH.XPD.EXTR.ZS"> External resources for health (% of total expenditure on health)
+        <option value="SH.XPD.OOPC.TO.ZS"> Out-of-pocket health expenditure (% of total expenditure on health)
+        <option value="SH.XPD.OOPC.ZS"> Out-of-pocket health expenditure (% of private expenditure on health)
+        <option value="SH.XPD.PCAP"> Health expenditure per capita (current US$)
+        <option value="SH.XPD.PCAP.PP.KD"> Health expenditure per capita, PPP (constant 2011 international $)
+        <option value="SH.XPD.PRIV.ZS"> Health expenditure, private (% of GDP)
+        <option value="SH.XPD.PUBL"> Health expenditure, public (% of total health expenditure)
+        <option value="SH.XPD.PUBL.GX.ZS"> Health expenditure, public (% of government expenditure)
+        <option value="SH.XPD.PUBL.ZS"> Health expenditure, public (% of GDP)
+        <option value="SH.XPD.TOTL.ZS"> Health expenditure, total (% of GDP)
+        <option value="SI.DST.02ND.20"> Income share held by second 20%
+        <option value="SI.DST.03RD.20"> Income share held by third 20%
+        <option value="SI.DST.04TH.20"> Income share held by fourth 20%
+        <option value="SI.DST.05TH.20"> Income share held by highest 20%
+        <option value="SI.DST.10TH.10"> Income share held by highest 10%
+        <option value="SI.DST.FRST.10"> Income share held by lowest 10%
+        <option value="SI.DST.FRST.20"> Income share held by lowest 20%
+        <option value="SI.POV.2DAY"> Poverty headcount ratio at $2 a day (PPP) (% of population)
+        <option value="SI.POV.DDAY"> Poverty headcount ratio at $1.25 a day (PPP) (% of population)
+        <option value="SI.POV.GAP2"> Poverty gap at $2 a day (PPP) (%)
+        <option value="SI.POV.GAPS"> Poverty gap at $1.25 a day (PPP) (%)
+        <option value="SI.POV.GINI"> GINI index (World Bank estimate)
+        <option value="SI.POV.NAGP"> Poverty gap at national poverty lines (%)
+        <option value="SI.POV.NAHC"> Poverty headcount ratio at national poverty lines (% of population)
+        <option value="SI.POV.RUGP"> Rural poverty gap at national poverty lines (%)
+        <option value="SI.POV.RUHC"> Rural poverty headcount ratio at national poverty lines (% of rural population)
+        <option value="SI.POV.URGP"> Urban poverty gap at national poverty lines (%)
+        <option value="SI.POV.URHC"> Urban poverty headcount ratio at national poverty lines (% of urban population)
+        <option value="SI.SPR.PC40"> Survey mean consumption or income per capita, bottom 40% (2005 PPP $ per day)
+        <option value="SI.SPR.PC40.ZG"> Annualized growth in survey mean consumption or income per capita, bottom 40%
+            (%, based on 2005 PPP)
+        <option value="SI.SPR.PCAP"> Survey mean consumption or income per capita, total population (2005 PPP $ per day)
+        <option value="SI.SPR.PCAP.ZG"> Annualized growth in survey mean consumption or income per capita, total
+            population (%, based on 2005 PPP)
+        <option value="SL.AGR.0714.FE.ZS"> Child employment in agriculture, female (% of female economically active
+            children ages 7-14)
+        <option value="SL.AGR.0714.MA.ZS"> Child employment in agriculture, male (% of male economically active children
+            ages 7-14)
+        <option value="SL.AGR.0714.ZS"> Child employment in agriculture (% of economically active children ages 7-14)
+        <option value="SL.AGR.EMPL.FE.ZS"> Employees, agriculture, female (% of female employment)
+        <option value="SL.AGR.EMPL.MA.ZS"> Employees, agriculture, male (% of male employment)
+        <option value="SL.AGR.EMPL.ZS"> Employment in agriculture (% of total employment)
+        <option value="SL.EMP.1524.SP.FE.NE.ZS"> Employment to population ratio, ages 15-24, female (%) (national
+            estimate)
+        <option value="SL.EMP.1524.SP.FE.ZS"> Employment to population ratio, ages 15-24, female (%) (modeled ILO
+            estimate)
+        <option value="SL.EMP.1524.SP.MA.NE.ZS"> Employment to population ratio, ages 15-24, male (%) (national
+            estimate)
+        <option value="SL.EMP.1524.SP.MA.ZS"> Employment to population ratio, ages 15-24, male (%) (modeled ILO
+            estimate)
+        <option value="SL.EMP.1524.SP.NE.ZS"> Employment to population ratio, ages 15-24, total (%) (national estimate)
+        <option value="SL.EMP.1524.SP.ZS"> Employment to population ratio, ages 15-24, total (%) (modeled ILO estimate)
+        <option value="SL.EMP.INSV.FE.ZS"> Share of women in wage employment in the nonagricultural sector (% of total
+            nonagricultural employment)
+        <option value="SL.EMP.MPYR.FE.ZS"> Employers, female (% of employment)
+        <option value="SL.EMP.MPYR.MA.ZS"> Employers, male (% of employment)
+        <option value="SL.EMP.MPYR.ZS"> Employers, total (% of employment)
+        <option value="SL.EMP.SELF.FE.ZS"> Self-employed, female (% of females employed)
+        <option value="SL.EMP.SELF.MA.ZS"> Self-employed, male (% of males employed)
+        <option value="SL.EMP.SELF.ZS"> Self-employed, total (% of total employed)
+        <option value="SL.EMP.TOTL.SP.FE.NE.ZS"> Employment to population ratio, 15+, female (%) (national estimate)
+        <option value="SL.EMP.TOTL.SP.FE.ZS"> Employment to population ratio, 15+, female (%) (modeled ILO estimate)
+        <option value="SL.EMP.TOTL.SP.MA.NE.ZS"> Employment to population ratio, 15+, male (%) (national estimate)
+        <option value="SL.EMP.TOTL.SP.MA.ZS"> Employment to population ratio, 15+, male (%) (modeled ILO estimate)
+        <option value="SL.EMP.TOTL.SP.NE.ZS"> Employment to population ratio, 15+, total (%) (national estimate)
+        <option value="SL.EMP.TOTL.SP.ZS"> Employment to population ratio, 15+, total (%) (modeled ILO estimate)
+        <option value="SL.EMP.VULN.FE.ZS"> Vulnerable employment, female (% of female employment)
+        <option value="SL.EMP.VULN.MA.ZS"> Vulnerable employment, male (% of male employment)
+        <option value="SL.EMP.VULN.ZS"> Vulnerable employment, total (% of total employment)
+        <option value="SL.EMP.WORK.FE.ZS"> Wage and salaried workers, female (% of females employed)
+        <option value="SL.EMP.WORK.MA.ZS"> Wage and salary workers, male (% of males employed)
+        <option value="SL.EMP.WORK.ZS"> Wage and salaried workers, total (% of total employed)
+        <option value="SL.FAM.0714.FE.ZS"> Children in employment, unpaid family workers, female (% of female children
+            in employment, ages 7-14)
+        <option value="SL.FAM.0714.MA.ZS"> Children in employment, unpaid family workers, male (% of male children in
+            employment, ages 7-14)
+        <option value="SL.FAM.0714.ZS"> Children in employment, unpaid family workers (% of children in employment, ages
+            7-14)
+        <option value="SL.FAM.WORK.FE.ZS"> Contributing family workers, female (% of females employed)
+        <option value="SL.FAM.WORK.MA.ZS"> Contributing family workers, male (% of males employed)
+        <option value="SL.FAM.WORK.ZS"> Contributing family workers, total (% of total employed)
+        <option value="SL.GDP.PCAP.EM.KD"> GDP per person employed (constant 1990 PPP $)
+        <option value="SL.IND.EMPL.FE.ZS"> Employees, industry, female (% of female employment)
+        <option value="SL.IND.EMPL.MA.ZS"> Employees, industry, male (% of male employment)
+        <option value="SL.IND.EMPL.ZS"> Employment in industry (% of total employment)
+        <option value="SL.MNF.0714.FE.ZS"> Child employment in manufacturing, female (% of female economically active
+            children ages 7-14)
+        <option value="SL.MNF.0714.MA.ZS"> Child employment in manufacturing, male (% of male economically active
+            children ages 7-14)
+        <option value="SL.MNF.0714.ZS"> Child employment in manufacturing (% of economically active children ages 7-14)
+        <option value="SL.SLF.0714.FE.ZS"> Children in employment, self-employed, female (% of female children in
+            employment, ages 7-14)
+        <option value="SL.SLF.0714.MA.ZS"> Children in employment, self-employed, male (% of male children in
+            employment, ages 7-14)
+        <option value="SL.SLF.0714.ZS"> Children in employment, self-employed (% of children in employment, ages 7-14)
+        <option value="SL.SRV.0714.FE.ZS"> Child employment in services, female (% of female economically active
+            children ages 7-14)
+        <option value="SL.SRV.0714.MA.ZS"> Child employment in services, male (% of male economically active children
+            ages 7-14)
+        <option value="SL.SRV.0714.ZS"> Child employment in services (% of economically active children ages 7-14)
+        <option value="SL.SRV.EMPL.FE.ZS"> Employees, services, female (% of female employment)
+        <option value="SL.SRV.EMPL.MA.ZS"> Employees, services, male (% of male employment)
+        <option value="SL.SRV.EMPL.ZS"> Employment in services (% of total employment)
+        <option value="SL.TLF.0714.FE.ZS"> Children in employment, female (% of female children ages 7-14)
+        <option value="SL.TLF.0714.MA.ZS"> Children in employment, male (% of male children ages 7-14)
+        <option value="SL.TLF.0714.SW.FE.TM"> Average working hours of children, study and work, female, ages 7-14
+            (hours per week)
+        <option value="SL.TLF.0714.SW.FE.ZS"> Children in employment, study and work, female (% of female children in
+            employment, ages 7-14)
+        <option value="SL.TLF.0714.SW.MA.TM"> Average working hours of children, study and work, male, ages 7-14 (hours
+            per week)
+        <option value="SL.TLF.0714.SW.MA.ZS"> Children in employment, study and work, male (% of male children in
+            employment, ages 7-14)
+        <option value="SL.TLF.0714.SW.TM"> Average working hours of children, study and work, ages 7-14 (hours per week)
+        <option value="SL.TLF.0714.SW.ZS"> Children in employment, study and work (% of children in employment, ages
+            7-14)
+        <option value="SL.TLF.0714.WK.FE.TM"> Average working hours of children, working only, female, ages 7-14 (hours
+            per week)
+        <option value="SL.TLF.0714.WK.FE.ZS"> Children in employment, work only, female (% of female children in
+            employment, ages 7-14)
+        <option value="SL.TLF.0714.WK.MA.TM"> Average working hours of children, working only, male, ages 7-14 (hours
+            per week)
+        <option value="SL.TLF.0714.WK.MA.ZS"> Children in employment, work only, male (% of male children in employment,
+            ages 7-14)
+        <option value="SL.TLF.0714.WK.TM"> Average working hours of children, working only, ages 7-14 (hours per week)
+        <option value="SL.TLF.0714.WK.ZS"> Children in employment, work only (% of children in employment, ages 7-14)
+        <option value="SL.TLF.0714.ZS"> Children in employment, total (% of children ages 7-14)
+        <option value="SL.TLF.ACTI.1524.FE.NE.ZS"> Labor force participation rate for ages 15-24, female (%) (national
+            estimate)
+        <option value="SL.TLF.ACTI.1524.MA.NE.ZS"> Labor force participation rate for ages 15-24, male (%) (national
+            estimate)
+        <option value="SL.TLF.ACTI.1524.NE.ZS"> Labor force participation rate for ages 15-24, total (%) (national
+            estimate)
+        <option value="SL.TLF.CACT.FE.NE.ZS"> Labor force participation rate, female (% of female population ages 15+)
+            (national estimate)
+        <option value="SL.TLF.CACT.FE.ZS"> Labor force participation rate, female (% of female population ages 15+)
+            (modeled ILO estimate)
+        <option value="SL.TLF.CACT.FM.NE.ZS"> Ratio of female to male labor force participation rate (%) (national
+            estimate)
+        <option value="SL.TLF.CACT.FM.ZS"> Ratio of female to male labor force participation rate (%) (modeled ILO
+            estimate)
+        <option value="SL.TLF.CACT.MA.NE.ZS"> Labor force participation rate, male (% of male population ages 15+)
+            (national estimate)
+        <option value="SL.TLF.CACT.MA.ZS"> Labor force participation rate, male (% of male population ages 15+) (modeled
+            ILO estimate)
+        <option value="SL.TLF.CACT.NE.ZS"> Labor force participation rate, total (% of total population ages 15+)
+            (national estimate)
+        <option value="SL.TLF.CACT.ZS"> Labor force participation rate, total (% of total population ages 15+) (modeled
+            ILO estimate)
+        <option value="SL.TLF.PART.FE.ZS"> Part time employment, female (% of total female employment)
+        <option value="SL.TLF.PART.MA.ZS"> Part time employment, male (% of total male employment)
+        <option value="SL.TLF.PART.TL.FE.ZS"> Part time employment, female (% of total part time employment)
+        <option value="SL.TLF.PART.ZS"> Part time employment, total (% of total employment)
+        <option value="SL.TLF.PRIM.FE.ZS"> Labor force with primary education, female (% of female labor force)
+        <option value="SL.TLF.PRIM.MA.ZS"> Labor force with primary education, male (% of male labor force)
+        <option value="SL.TLF.PRIM.ZS"> Labor force with primary education (% of total)
+        <option value="SL.TLF.SECO.FE.ZS"> Labor force with secondary education, female (% of female labor force)
+        <option value="SL.TLF.SECO.MA.ZS"> Labor force with secondary education, male (% of male labor force)
+        <option value="SL.TLF.SECO.ZS"> Labor force with secondary education (% of total)
+        <option value="SL.TLF.TERT.FE.ZS"> Labor force with tertiary education, female (% of female labor force)
+        <option value="SL.TLF.TERT.MA.ZS"> Labor force with tertiary education, male (% of male labor force)
+        <option value="SL.TLF.TERT.ZS"> Labor force with tertiary education (% of total)
+        <option value="SL.TLF.TOTL.FE.ZS"> Labor force, female (% of total labor force)
+        <option value="SL.TLF.TOTL.IN"> Labor force, total
+        <option value="SL.UEM.1524.FE.NE.ZS"> Unemployment, youth female (% of female labor force ages 15-24) (national
+            estimate)
+        <option value="SL.UEM.1524.FE.ZS"> Unemployment, youth female (% of female labor force ages 15-24) (modeled ILO
+            estimate)
+        <option value="SL.UEM.1524.MA.NE.ZS"> Unemployment, youth male (% of male labor force ages 15-24) (national
+            estimate)
+        <option value="SL.UEM.1524.MA.ZS"> Unemployment, youth male (% of male labor force ages 15-24) (modeled ILO
+            estimate)
+        <option value="SL.UEM.1524.NE.ZS"> Unemployment, youth total (% of total labor force ages 15-24) (national
+            estimate)
+        <option value="SL.UEM.1524.ZS"> Unemployment, youth total (% of total labor force ages 15-24) (modeled ILO
+            estimate)
+        <option value="SL.UEM.LTRM.FE.ZS"> Long-term unemployment, female (% of female unemployment)
+        <option value="SL.UEM.LTRM.MA.ZS"> Long-term unemployment, male (% of male unemployment)
+        <option value="SL.UEM.LTRM.ZS"> Long-term unemployment (% of total unemployment)
+        <option value="SL.UEM.NEET.FE.ZS"> Share of youth not in education, employment or training, female (% of female
+            youth population)
+        <option value="SL.UEM.NEET.MA.ZS"> Share of youth not in education, employment or training, male (% of male
+            youth population)
+        <option value="SL.UEM.NEET.ZS"> Share of youth not in education, employment or training, total (% of youth
+            population)
+        <option value="SL.UEM.PRIM.FE.ZS"> Unemployment with primary education, female (% of female unemployment)
+        <option value="SL.UEM.PRIM.MA.ZS"> Unemployment with primary education, male (% of male unemployment)
+        <option value="SL.UEM.PRIM.ZS"> Unemployment with primary education (% of total unemployment)
+        <option value="SL.UEM.SECO.FE.ZS"> Unemployment with secondary education, female (% of female unemployment)
+        <option value="SL.UEM.SECO.MA.ZS"> Unemployment with secondary education, male (% of male unemployment)
+        <option value="SL.UEM.SECO.ZS"> Unemployment with secondary education (% of total unemployment)
+        <option value="SL.UEM.TERT.FE.ZS"> Unemployment with tertiary education, female (% of female unemployment)
+        <option value="SL.UEM.TERT.MA.ZS"> Unemployment with tertiary education, male (% of male unemployment)
+        <option value="SL.UEM.TERT.ZS"> Unemployment with tertiary education (% of total unemployment)
+        <option value="SL.UEM.TOTL.FE.NE.ZS"> Unemployment, female (% of female labor force) (national estimate)
+        <option value="SL.UEM.TOTL.FE.ZS"> Unemployment, female (% of female labor force) (modeled ILO estimate)
+        <option value="SL.UEM.TOTL.MA.NE.ZS"> Unemployment, male (% of male labor force) (national estimate)
+        <option value="SL.UEM.TOTL.MA.ZS"> Unemployment, male (% of male labor force) (modeled ILO estimate)
+        <option value="SL.UEM.TOTL.NE.ZS"> Unemployment, total (% of total labor force) (national estimate)
+        <option value="SL.UEM.TOTL.ZS"> Unemployment, total (% of total labor force) (modeled ILO estimate)
+        <option value="SL.WAG.0714.FE.ZS"> Children in employment, wage workers, female (% of female children in
+            employment, ages 7-14)
+        <option value="SL.WAG.0714.MA.ZS"> Children in employment, wage workers, male (% of male children in employment,
+            ages 7-14)
+        <option value="SL.WAG.0714.ZS"> Children in employment, wage workers (% of children in employment, ages 7-14)
+        <option value="SM.EMI.TERT.ZS"> Emigration rate of tertiary educated (% of total tertiary educated population)
+        <option value="SM.POP.NETM"> Net migration
+        <option value="SM.POP.REFG"> Refugee population by country or territory of asylum
+        <option value="SM.POP.REFG.OR"> Refugee population by country or territory of origin
+        <option value="SM.POP.TOTL"> International migrant stock, total
+        <option value="SM.POP.TOTL.ZS"> International migrant stock (% of population)
+        <option value="SN.ITK.DEFC.ZS"> Prevalence of undernourishment (% of population)
+        <option value="SN.ITK.DFCT"> Depth of the food deficit (kilocalories per person per day)
+        <option value="SN.ITK.SALT.ZS"> Consumption of iodized salt (% of households)
+        <option value="SN.ITK.VITA.ZS"> Vitamin A supplementation coverage rate (% of children ages 6-59 months)
+        <option value="SP.ADO.TFRT"> Adolescent fertility rate (births per 1,000 women ages 15-19)
+        <option value="SP.DTH.INFR.ZS"> Completeness of infant death reporting (% of reported infant deaths to estimated
+            infant deaths)
+        <option value="SP.DTH.REPT.ZS"> Completeness of total death reporting (% of reported total deaths to estimated
+            total deaths)
+        <option value="SP.DYN.AMRT.FE"> Mortality rate, adult, female (per 1,000 female adults)
+        <option value="SP.DYN.AMRT.MA"> Mortality rate, adult, male (per 1,000 male adults)
+        <option value="SP.DYN.CBRT.IN"> Birth rate, crude (per 1,000 people)
+        <option value="SP.DYN.CDRT.IN"> Death rate, crude (per 1,000 people)
+        <option value="SP.DYN.CONU.ZS"> Contraceptive prevalence (% of women ages 15-49)
+        <option value="SP.DYN.IMRT.FE.IN"> Mortality rate, infant, female (per 1,000 live births)
+        <option value="SP.DYN.IMRT.IN"> Mortality rate, infant (per 1,000 live births)
+        <option value="SP.DYN.IMRT.MA.IN"> Mortality rate, infant, male (per 1,000 live births)
+        <option value="SP.DYN.LE00.FE.IN"> Life expectancy at birth, female (years)
+        <option value="SP.DYN.LE00.IN"> Life expectancy at birth, total (years)
+        <option value="SP.DYN.LE00.MA.IN"> Life expectancy at birth, male (years)
+        <option value="SP.DYN.TFRT.IN"> Fertility rate, total (births per woman)
+        <option value="SP.DYN.TO65.FE.ZS"> Survival to age 65, female (% of cohort)
+        <option value="SP.DYN.TO65.MA.ZS"> Survival to age 65, male (% of cohort)
+        <option value="SP.DYN.WFRT"> Wanted fertility rate (births per woman)
+        <option value="SP.HOU.FEMA.ZS"> Female headed households (% of households with a female head)
+        <option value="SP.MTR.1519.ZS"> Teenage mothers (% of women ages 15-19 who have had children or are currently
+            pregnant)
+        <option value="SP.POP.0014.TO.ZS"> Population ages 0-14 (% of total)
+        <option value="SP.POP.1564.TO.ZS"> Population ages 15-64 (% of total)
+        <option value="SP.POP.65UP.TO.ZS"> Population ages 65 and above (% of total)
+        <option value="SP.POP.DPND"> Age dependency ratio (% of working-age population)
+        <option value="SP.POP.DPND.OL"> Age dependency ratio, old (% of working-age population)
+        <option value="SP.POP.DPND.YG"> Age dependency ratio, young (% of working-age population)
+        <option value="SP.POP.GROW"> Population growth (annual %)
+        <option value="SP.POP.SCIE.RD.P6"> Researchers in RD (per million people)
+        <option value="SP.POP.TECH.RD.P6"> Technicians in RD (per million people)
+        <option value="SP.POP.TOTL"> Total Population (in number of people)
+        <option value="SP.POP.TOTL.FE.ZS"> Population, female (% of total)
+        <option value="SP.REG.BRTH.RU.ZS"> Completeness of birth registration, rural (%)
+        <option value="SP.REG.BRTH.UR.ZS"> Completeness of birth registration, urban (%)
+        <option value="SP.REG.BRTH.ZS"> Completeness of birth registration (%)
+        <option value="SP.RUR.TOTL"> Rural population
+        <option value="SP.RUR.TOTL.ZG"> Rural population growth (annual %)
+        <option value="SP.RUR.TOTL.ZS"> Percentage of Population in Rural Areas (in % of Total Population)
+        <option value="SP.URB.GROW"> Urban population growth (annual %)
+        <option value="SP.URB.TOTL"> Urban population
+        <option value="SP.URB.TOTL.IN.ZS"> Urban population (% of total)
+        <option value="SP.UWT.TFRT"> Unmet need for contraception (% of married women ages 15-49)
+        <option value="ST.INT.ARVL"> International tourism, number of arrivals
+        <option value="ST.INT.DPRT"> International tourism, number of departures
+        <option value="ST.INT.RCPT.CD"> International tourism, receipts (current US$)
+        <option value="ST.INT.RCPT.XP.ZS"> International tourism, receipts (% of total exports)
+        <option value="ST.INT.TRNR.CD"> International tourism, receipts for passenger transport items (current US$)
+        <option value="ST.INT.TRNX.CD"> International tourism, expenditures for passenger transport items (current US$)
+        <option value="ST.INT.TVLR.CD"> International tourism, receipts for travel items (current US$)
+        <option value="ST.INT.TVLX.CD"> International tourism, expenditures for travel items (current US$)
+        <option value="ST.INT.XPND.CD"> International tourism, expenditures (current US$)
+        <option value="ST.INT.XPND.MP.ZS"> International tourism, expenditures (% of total imports)
+        <option value="TG.VAL.TOTL.GD.ZS"> Merchandise trade (% of GDP)
+        <option value="TM.QTY.MRCH.XD.WD"> Import volume index (2000 = 100)
+        <option value="TM.TAX.MANF.BC.ZS"> Binding coverage, manufactured products (%)
+        <option value="TM.TAX.MANF.BR.ZS"> Bound rate, simple mean, manufactured products (%)
+        <option value="TM.TAX.MANF.IP.ZS"> Share of tariff lines with international peaks, manufactured products (%)
+        <option value="TM.TAX.MANF.SM.AR.ZS"> Tariff rate, applied, simple mean, manufactured products (%)
+        <option value="TM.TAX.MANF.SM.FN.ZS"> Tariff rate, most favored nation, simple mean, manufactured products (%)
+        <option value="TM.TAX.MANF.SR.ZS"> Share of tariff lines with specific rates, manufactured products (%)
+        <option value="TM.TAX.MANF.WM.AR.ZS"> Tariff rate, applied, weighted mean, manufactured products (%)
+        <option value="TM.TAX.MANF.WM.FN.ZS"> Tariff rate, most favored nation, weighted mean, manufactured products (%)
+        <option value="TM.TAX.MRCH.BC.ZS"> Binding coverage, all products (%)
+        <option value="TM.TAX.MRCH.BR.ZS"> Bound rate, simple mean, all products (%)
+        <option value="TM.TAX.MRCH.IP.ZS"> Share of tariff lines with international peaks, all products (%)
+        <option value="TM.TAX.MRCH.SM.AR.ZS"> Tariff rate, applied, simple mean, all products (%)
+        <option value="TM.TAX.MRCH.SM.FN.ZS"> Tariff rate, most favored nation, simple mean, all products (%)
+        <option value="TM.TAX.MRCH.SR.ZS"> Share of tariff lines with specific rates, all products (%)
+        <option value="TM.TAX.MRCH.WM.AR.ZS"> Tariff rate, applied, weighted mean, all products (%)
+        <option value="TM.TAX.MRCH.WM.FN.ZS"> Tariff rate, most favored nation, weighted mean, all products (%)
+        <option value="TM.TAX.TCOM.BC.ZS"> Binding coverage, primary products (%)
+        <option value="TM.TAX.TCOM.BR.ZS"> Bound rate, simple mean, primary products (%)
+        <option value="TM.TAX.TCOM.IP.ZS"> Share of tariff lines with international peaks, primary products (%)
+        <option value="TM.TAX.TCOM.SM.AR.ZS"> Tariff rate, applied, simple mean, primary products (%)
+        <option value="TM.TAX.TCOM.SM.FN.ZS"> Tariff rate, most favored nation, simple mean, primary products (%)
+        <option value="TM.TAX.TCOM.SR.ZS"> Share of tariff lines with specific rates, primary products (%)
+        <option value="TM.TAX.TCOM.WM.AR.ZS"> Tariff rate, applied, weighted mean, primary products (%)
+        <option value="TM.TAX.TCOM.WM.FN.ZS"> Tariff rate, most favored nation, weighted mean, primary products (%)
+        <option value="TM.VAL.AGRI.ZS.UN"> Agricultural raw materials imports (% of merchandise imports)
+        <option value="TM.VAL.FOOD.ZS.UN"> Food imports (% of merchandise imports)
+        <option value="TM.VAL.FUEL.ZS.UN"> Fuel imports (% of merchandise imports)
+        <option value="TM.VAL.ICTG.ZS.UN"> ICT goods imports (% total goods imports)
+        <option value="TM.VAL.INSF.ZS.WT"> Insurance and financial services (% of commercial service imports)
+        <option value="TM.VAL.MANF.ZS.UN"> Manufactures imports (% of merchandise imports)
+        <option value="TM.VAL.MMTL.ZS.UN"> Ores and metals imports (% of merchandise imports)
+        <option value="TM.VAL.MRCH.AL.ZS"> Merchandise imports from economies in the Arab World (% of total merchandise
+            imports)
+        <option value="TM.VAL.MRCH.CD.WT"> Merchandise imports (current US$)
+        <option value="TM.VAL.MRCH.HI.ZS"> Merchandise imports from high-income economies (% of total merchandise
+            imports)
+        <option value="TM.VAL.MRCH.OR.ZS"> Merchandise imports from developing economies outside region (% of total
+            merchandise imports)
+        <option value="TM.VAL.MRCH.R1.ZS"> Merchandise imports from developing economies in East Asia Pacific (% of
+            total merchandise imports)
+        <option value="TM.VAL.MRCH.R1.ZS"> Merchandise imports from developing economies in East Asia Pacific (% of
+            total merchandise imports)
+        <option value="TM.VAL.MRCH.R2.ZS"> Merchandise imports from developing economies in Europe Central Asia (% of
+            total merchandise imports)
+        <option value="TM.VAL.MRCH.R2.ZS"> Merchandise imports from developing economies in Europe Central Asia (% of
+            total merchandise imports)
+        <option value="TM.VAL.MRCH.R3.ZS"> Merchandise imports from developing economies in Latin America the Caribbean
+            (% of total merchandise imports)
+        <option value="TM.VAL.MRCH.R3.ZS"> Merchandise imports from developing economies in Latin America the Caribbean
+            (% of total merchandise imports)
+        <option value="TM.VAL.MRCH.R4.ZS"> Merchandise imports from developing economies in Middle East North Africa (%
+            of total merchandise imports)
+        <option value="TM.VAL.MRCH.R5.ZS"> Merchandise imports from developing economies in South Asia (% of total
+            merchandise imports)
+        <option value="TM.VAL.MRCH.R6.ZS"> Merchandise imports from developing economies in Sub-Saharan Africa (% of
+            total merchandise imports)
+        <option value="TM.VAL.MRCH.RS.ZS"> Merchandise imports by the reporting economy, residual (% of total
+            merchandise imports)
+        <option value="TM.VAL.MRCH.WL.CD"> Merchandise imports by the reporting economy (current US$)
+        <option value="TM.VAL.MRCH.WR.ZS"> Merchandise imports from developing economies within region (% of total
+            merchandise imports)
+        <option value="TM.VAL.MRCH.XD.WD"> Import value index (2000 = 100)
+        <option value="TM.VAL.OTHR.ZS.WT"> Computer, communications and other services (% of commercial service imports)
+        <option value="TM.VAL.SERV.CD.WT"> Commercial service imports (current US$)
+        <option value="TM.VAL.TRAN.ZS.WT"> Transport services (% of commercial service imports)
+        <option value="TM.VAL.TRVL.ZS.WT"> Travel services (% of commercial service imports)
+        <option value="TT.PRI.MRCH.XD.WD"> Net barter terms of trade index (2000 = 100)
+        <option value="TX.QTY.MRCH.XD.WD"> Export volume index (2000 = 100)
+        <option value="TX.VAL.AGRI.ZS.UN"> Agricultural raw materials exports (% of merchandise exports)
+        <option value="TX.VAL.FOOD.ZS.UN"> Food exports (% of merchandise exports)
+        <option value="TX.VAL.FUEL.ZS.UN"> Fuel exports (% of merchandise exports)
+        <option value="TX.VAL.ICTG.ZS.UN"> ICT goods exports (% of total goods exports)
+        <option value="TX.VAL.INSF.ZS.WT"> Insurance and financial services (% of commercial service exports)
+        <option value="TX.VAL.MANF.ZS.UN"> Manufactures exports (% of merchandise exports)
+        <option value="TX.VAL.MMTL.ZS.UN"> Ores and metals exports (% of merchandise exports)
+        <option value="TX.VAL.MRCH.AL.ZS"> Merchandise exports to economies in the Arab World (% of total merchandise
+            exports)
+        <option value="TX.VAL.MRCH.CD.WT"> Merchandise exports (current US$)
+        <option value="TX.VAL.MRCH.HI.ZS"> Merchandise exports to high-income economies (% of total merchandise exports)
+        <option value="TX.VAL.MRCH.OR.ZS"> Merchandise exports to developing economies outside region (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.R1.ZS"> Merchandise exports to developing economies in East Asia Pacific (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.R1.ZS"> Merchandise exports to developing economies in East Asia Pacific (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.R2.ZS"> Merchandise exports to developing economies in Europe Central Asia (% of
+            total merchandise exports)
+        <option value="TX.VAL.MRCH.R3.ZS"> Merchandise exports to developing economies in Latin America the Caribbean (%
+            of total merchandise exports)
+        <option value="TX.VAL.MRCH.R4.ZS"> Merchandise exports to developing economies in Middle East North Africa (% of
+            total merchandise exports)
+        <option value="TX.VAL.MRCH.R4.ZS"> Merchandise exports to developing economies in Middle East North Africa (% of
+            total merchandise exports)
+        <option value="TX.VAL.MRCH.R5.ZS"> Merchandise exports to developing economies in South Asia (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.R6.ZS"> Merchandise exports to developing economies in Sub-Saharan Africa (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.RS.ZS"> Merchandise exports by the reporting economy, residual (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.WL.CD"> Merchandise exports by the reporting economy (current US$)
+        <option value="TX.VAL.MRCH.WR.ZS"> Merchandise exports to developing economies within region (% of total
+            merchandise exports)
+        <option value="TX.VAL.MRCH.XD.WD"> Export value index (2000 = 100)
+        <option value="TX.VAL.OTHR.ZS.WT"> Computer, communications and other services (% of commercial service exports)
+        <option value="TX.VAL.SERV.CD.WT"> Commercial service exports (current US$)
+        <option value="TX.VAL.TECH.CD"> High-technology exports (current US$)
+        <option value="TX.VAL.TECH.MF.ZS"> High-technology exports (% of manufactured exports)
+        <option value="TX.VAL.TRAN.ZS.WT"> Transport services (% of commercial service exports)
+        <option value="TX.VAL.TRVL.ZS.WT"> Travel services (% of commercial service exports)
+        <option value="VC.BTL.DETH"> Battle-related deaths (number of people)
+        <option value="VC.IDP.TOTL.HE"> Internally displaced persons (number, high estimate)
+        <option value="VC.IDP.TOTL.LE"> Internally displaced persons (number, low estimate)
+        <option value="VC.IHR.PSRC.P5"> Intentional homicides (per 100,000 people)
+        <option value="VC.PKP.TOTL.UN"> Presence of peace keepers (number of troops, police, and military observers in
+            mandate)
+
+    </select>
+
+
+
+    <select id="start" onchange="displayData()">
+        <option value="2000">2000
+        <option value="1970">1970
+        <option value="1971">1971
+        <option value="1972">1972
+        <option value="1973">1973
+        <option value="1974">1974
+        <option value="1975">1975
+        <option value="1976">1976
+        <option value="1977">1977
+        <option value="1978">1978
+        <option value="1979">1979
+        <option value="1980">1980
+        <option value="1981">1981
+        <option value="1982">1982
+        <option value="1983">1983
+        <option value="1984">1984
+        <option value="1985">1985
+        <option value="1986">1986
+        <option value="1987">1987
+        <option value="1988">1988
+        <option value="1989">1989
+        <option value="1990">1990
+        <option value="1991">1991
+        <option value="1992">1992
+        <option value="1993">1993
+        <option value="1994">1994
+        <option value="1995">1995
+        <option value="1996">1996
+        <option value="1997">1997
+        <option value="1998">1998
+        <option value="1999">1999
+        <option value="2000">2000
+        <option value="2001">2001
+        <option value="2002">2002
+        <option value="2003">2003
+        <option value="2004">2004
+        <option value="2005">2005
+        <option value="2006">2006
+        <option value="2007">2007
+        <option value="2008">2008
+        <option value="2009">2009
+        <option value="2010">2010
+        <option value="2011">2011
+        <option value="2012">2012
+        <option value="2013">2013
+        <option value="2014">2014
+        <option value="2015">2015
+    </select>
+
+    <select id="end" onchange="displayData()">
+        <option value="2014">2014
+        <option value="1970">1970
+        <option value="1971">1971
+        <option value="1972">1972
+        <option value="1973">1973
+        <option value="1974">1974
+        <option value="1975">1975
+        <option value="1976">1976
+        <option value="1977">1977
+        <option value="1978">1978
+        <option value="1979">1979
+        <option value="1980">1980
+        <option value="1981">1981
+        <option value="1982">1982
+        <option value="1983">1983
+        <option value="1984">1984
+        <option value="1985">1985
+        <option value="1986">1986
+        <option value="1987">1987
+        <option value="1988">1988
+        <option value="1989">1989
+        <option value="1990">1990
+        <option value="1991">1991
+        <option value="1992">1992
+        <option value="1993">1993
+        <option value="1994">1994
+        <option value="1995">1995
+        <option value="1996">1996
+        <option value="1997">1997
+        <option value="1998">1998
+        <option value="1999">1999
+        <option value="2000">2000
+        <option value="2001">2001
+        <option value="2002">2002
+        <option value="2003">2003
+        <option value="2004">2004
+        <option value="2005">2005
+        <option value="2006">2006
+        <option value="2007">2007
+        <option value="2008">2008
+        <option value="2009">2009
+        <option value="2010">2010
+        <option value="2011">2011
+        <option value="2012">2012
+        <option value="2013">2013
+        <option value="2014">2014
+        <option value="2015">2015
+    </select>
+
+    <div>
+        <p></p>
+    </div>
+
+
+
+</body>

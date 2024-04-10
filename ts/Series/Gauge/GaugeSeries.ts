@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,7 +46,8 @@ const {
     extend,
     merge,
     pick,
-    pInt
+    pInt,
+    defined
 } = U;
 
 
@@ -408,11 +409,11 @@ class GaugeSeries extends Series {
      *
      * */
 
-    public data: Array<GaugePoint> = void 0 as any;
-    public points: Array<GaugePoint> = void 0 as any;
-    public options: GaugeSeriesOptions = void 0 as any;
+    public data!: Array<GaugePoint>;
+    public points!: Array<GaugePoint>;
+    public options!: GaugeSeriesOptions;
 
-    public yAxis: RadialAxis.AxisComposition = void 0 as any;
+    public yAxis!: RadialAxis.AxisComposition;
     public pivot?: SVGElement;
 
     /* *
@@ -487,6 +488,11 @@ class GaugeSeries extends Series {
             // Positions for data label
             point.plotX = center[0];
             point.plotY = center[1];
+
+            if (defined(point.y) && yAxis.max - yAxis.min) {
+                point.percentage =
+                    (point.y - yAxis.min) / (yAxis.max - yAxis.min) * 100;
+            }
         });
     }
 
@@ -513,15 +519,10 @@ class GaugeSeries extends Series {
 
             if (graphic) {
                 graphic.animate(shapeArgs);
-                shapeArgs.d = d; // animate alters it
+                shapeArgs.d = d; // Animate alters it
             } else {
                 point.graphic =
                     (renderer as any)[point.shapeType as any](shapeArgs)
-                        .attr({
-                            // required by VML when animation is false
-                            rotation: shapeArgs.rotation,
-                            zIndex: 1
-                        })
                         .addClass('highcharts-dial')
                         .add(series.group);
             }
@@ -575,12 +576,12 @@ class GaugeSeries extends Series {
                 const graphic = point.graphic;
 
                 if (graphic) {
-                    // start value
+                    // Start value
                     graphic.attr({
                         rotation: series.yAxis.startAngleRad * 180 / Math.PI
                     });
 
-                    // animate
+                    // Animate
                     graphic.animate({
                         rotation: point.shapeArgs.rotation
                     }, series.options.animation);
@@ -649,8 +650,8 @@ interface GaugeSeries {
 }
 
 extend(GaugeSeries.prototype, {
-    // chart.angular will be set to true when a gauge series is present,
-    // and this will be used on the axes
+    // `chart.angular` will be set to true when a gauge series is present, and
+    // this will be used on the axes
     angular: true,
     directTouch: true, // #5063
     drawGraph: noop,
@@ -748,4 +749,4 @@ export default GaugeSeries;
  * @apioption series.gauge.data
  */
 
-''; // adds the doclets above in the transpiled file
+''; // Adds the doclets above in the transpiled file

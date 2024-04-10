@@ -100,7 +100,11 @@ QUnit.test('Extremes - inverted chart', function (assert) {
                 {
                     data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
                 }
-            ]
+            ],
+            scrollbar: {
+                buttonsEnabled: true,
+                height: 14
+            }
         }),
         controller = new TestController(chart),
         newExtremes;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,19 +18,20 @@
 
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
         prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
+            pointClass: Point
         }
     },
     seriesTypes: {
-        area: {
-            prototype: areaProto
+        scatter: {
+            prototype: {
+                pointClass: ScatterPoint
+            }
         },
         dumbbell: {
             prototype: {
@@ -39,9 +40,9 @@ const {
         }
     }
 } = SeriesRegistry;
+
 import U from '../../Core/Utilities.js';
 const {
-    isObject,
     extend
 } = U;
 
@@ -51,7 +52,7 @@ const {
  *
  * */
 
-class LollipopPoint extends DumbbellPoint {
+class LollipopPoint extends Point {
 
     /* *
      *
@@ -59,28 +60,11 @@ class LollipopPoint extends DumbbellPoint {
      *
      * */
 
-    public options: LollipopPointOptions = void 0 as any;
-
-    public series: LollipopSeries = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    public init(
-        _series: LollipopSeries,
-        options: LollipopPointOptions,
-        _x?: number
-    ): typeof pointProto {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return pointProto.init.apply(this, arguments);
-    }
-
+    public connector?: SVGElement;
+    public options!: LollipopPointOptions;
+    public series!: LollipopSeries;
+    public plotX!: number;
+    public pointWidth!: number;
 }
 
 /* *
@@ -90,13 +74,15 @@ class LollipopPoint extends DumbbellPoint {
  * */
 
 interface LollipopPoint {
-    pointSetState: typeof areaProto.pointClass.prototype.setState;
+    destroy: typeof DumbbellPoint.prototype['destroy'],
+    pointSetState: typeof ScatterPoint.prototype['setState'],
+    setState: typeof DumbbellPoint.prototype['setState']
 }
 
 extend(LollipopPoint.prototype, {
-    pointSetState: areaProto.pointClass.prototype.setState,
-    // Does not work with the inherited `isvalid`
-    isValid: pointProto.isValid
+    destroy: DumbbellPoint.prototype.destroy,
+    pointSetState: ScatterPoint.prototype.setState,
+    setState: DumbbellPoint.prototype.setState
 });
 
 /* *

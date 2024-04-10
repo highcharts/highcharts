@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,11 +18,10 @@
  *
  * */
 
-import type Options from '../../Core/Options';
+import type { DefaultOptions } from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 
 /* *
  *
@@ -38,9 +37,11 @@ namespace SkiesTheme {
      *
      * */
 
-    export const options: DeepPartial<Options> = {
-        colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',
-            '#82914E', '#86777F', '#42A07B'],
+    export const options: DeepPartial<DefaultOptions> = {
+        colors: [
+            '#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',
+            '#82914E', '#86777F', '#42A07B'
+        ],
         chart: {
             className: 'skies',
             borderWidth: 0,
@@ -116,11 +117,6 @@ namespace SkiesTheme {
             },
             itemHiddenStyle: {
                 color: 'silver'
-            }
-        },
-        labels: {
-            style: {
-                color: '#3E576F'
             }
         }
     };

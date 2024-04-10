@@ -68,7 +68,7 @@ QUnit.test('Pie data labels alignTo option', function (assert) {
     }
     assert.ok(
         isAlignmnetCorrect,
-        "All labels are aligned correctly when alignTo = 'plotEdges'"
+        'All labels are aligned correctly when alignTo = \'plotEdges\''
     );
 
     chart.series[0].update({
@@ -120,6 +120,6 @@ QUnit.test('Pie data labels alignTo option', function (assert) {
     }
     assert.ok(
         isAlignmnetCorrect,
-        "All labels are aligned correctly when alignTo = 'connectors'"
+        'All labels are aligned correctly when alignTo = \'connectors\''
     );
 });

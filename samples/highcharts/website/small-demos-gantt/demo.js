@@ -45,7 +45,8 @@ function inverted() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.'
                 }
             }
         },
@@ -225,7 +226,7 @@ function inverted() {
 
 
 function subtasks() {
-    var today = new Date(),
+    const today = new Date(),
         day = 1000 * 60 * 60 * 24;
 
     // Set to 00:00:00:000 today
@@ -286,12 +287,14 @@ function subtasks() {
             },
             point: {
                 descriptionFormatter: function (point) {
-                    var dependency = point.dependency &&
+                    const dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,
-                        dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
+                        dependsOn = dependency ?
+                            ' Depends on ' + dependency + '.' : '';
 
                     return Highcharts.format(
-                        '{point.yCategory}. Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.{dependsOn}',
+                        '{point.yCategory}. Start {point.x:%Y-%m-%d}, end ' +
+                        '{point.x2:%Y-%m-%d}.{dependsOn}',
                         { point, dependsOn }
                     );
                 }
@@ -330,7 +333,8 @@ function subtasks() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.'
                 }
             }
         },
@@ -340,8 +344,7 @@ function subtasks() {
                 borderWidth: 0,
                 connectors: {
                     lineWidth: 2
-                },
-                borderRadius: 0
+                }
             }
         },
         series: [{
@@ -590,7 +593,6 @@ function nav() {
                 type: 'gantt',
                 color: 'white',
                 borderColor: 'white',
-                borderRadius: 0,
                 pointWidth: 10,
                 accessibility: {
                     enabled: false
@@ -619,13 +621,16 @@ function nav() {
         accessibility: {
             point: {
                 descriptionFormatter: function (point) {
-                    var completedValue = point.completed ?
+                    const completedValue = point.completed ?
                             point.completed.amount || point.completed : null,
                         completed = completedValue ?
-                            ' Task ' + Math.round(completedValue * 1000) / 10 + '% completed.' :
+                            ' Task ' + Math.round(
+                                completedValue * 1000
+                            ) / 10 + '% completed.' :
                             '';
                     return Highcharts.format(
-                        '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
+                        '{point.yCategory}.{completed} Start ' +
+                        '{point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.',
                         { point, completed }
                     );
                 }
@@ -639,8 +644,10 @@ function nav() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.',
-                    yAxisDescriptionPlural: 'The chart has one Y axis showing task categories.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.',
+                    yAxisDescriptionPlural: 'The chart has one Y axis ' +
+                        'showing task categories.'
                 }
             }
         },
@@ -648,9 +655,8 @@ function nav() {
             series: {
                 groupPadding: 0.3,
                 pointPadding: 0.3,
-                pointWidth: 30,
+                pointWidth: 25,
                 borderWidth: 0,
-                borderRadius: 0,
                 dataLabels: {
                     enabled: false,
                     color: 'white',
@@ -738,8 +744,8 @@ function drag() {
     http://api.highcharts.com/gantt.
 */
 
-    var today = new Date(),
-        day = 1000 * 60 * 60 * 24;
+    let today = new Date();
+    const day = 1000 * 60 * 60 * 24;
 
     // Set to 00:00:00:000 today
     today.setUTCHours(0);
@@ -771,7 +777,8 @@ function drag() {
         lang: {
             accessibility: {
                 axis: {
-                    xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                    xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                        'showing time in both week numbers and days.'
                 }
             }
         },
@@ -780,8 +787,10 @@ function drag() {
                 descriptionFormatter: function (point) {
                     return Highcharts.format(
                         point.milestone ?
-                            '{point.name}, milestone for {point.yCategory} at {point.x:%Y-%m-%d}.' :
-                            '{point.name}, assigned to {point.yCategory} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
+                            '{point.name}, milestone for {point.yCategory} ' +
+                            'at {point.x:%Y-%m-%d}.' :
+                            '{point.name}, assigned to {point.yCategory} ' +
+                            'from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
                         { point }
                     );
                 }
@@ -858,7 +867,8 @@ function drag() {
                 rotation: 270,
                 indentation: 0,
                 padding: 0,
-                format: '<p style="background-color:transparent;border: 0px solid #e6e6e6;padding:10px 8px 8px;">{text}</p>'
+                format: '<p style="background-color:transparent;border: 0px ' +
+                    'solid #e6e6e6;padding:10px 8px 8px;">{text}</p>'
             },
             grid: {
                 enabled: false
@@ -899,7 +909,9 @@ function drag() {
                 useHTML: true,
                 allowOverlap: true,
                 padding: 0,
-                format: '<p style="font-size:10px;background-color:transparent;color:transparent;padding:20px 8px 8px;">{value: %E}</p>'
+                format: '<p style="font-size:10px;background-color:' +
+                    'transparent;color:transparent;padding:20px 8px 8px;">' +
+                    '{value: %E}</p>'
             }
         },
         tooltip: {
@@ -940,7 +952,6 @@ function drag() {
                 borderColor: '#E1D369',
                 borderWidth: 2,
                 name: '2',
-                borderRadius: 20,
                 dependency: 'proto_done',
                 zIndex: 1,
                 y: 0,

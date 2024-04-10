@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2021 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2024 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,7 @@
 import type Point from '../../Core/Series/Point';
 import type RectangleObject from '../../Core/Renderer/RectangleObject';
 import type Series from '../../Core/Series/Series';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
@@ -28,21 +29,8 @@ import type {
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
-        }
-    },
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+    column: { prototype: { pointClass: ColumnPoint } }
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import XRangeSeries from './XRangeSeries.js';
@@ -57,6 +45,10 @@ declare module '../../Core/Series/PointLike' {
     interface PointLike {
         tooltipDateKeys?: Array<string>;
     }
+}
+
+interface BBoxObjectWithCenter extends BBoxObject {
+    centerX?: number;
 }
 
 /* *
@@ -111,8 +103,9 @@ class XRangePoint extends ColumnPoint {
      *
      * */
 
-    public options: XRangePointOptions = void 0 as any;
-    public series: XRangeSeries = void 0 as any;
+    public options!: XRangePointOptions;
+    public series!: XRangeSeries;
+    public dlBox?: BBoxObjectWithCenter;
 
     /* *
      *
@@ -136,31 +129,29 @@ class XRangePoint extends ColumnPoint {
             if (!this.options.colorIndex) {
                 this.colorIndex = colorByPoint.colorIndex;
             }
-        } else if (!this.color) {
-            this.color = series.color;
+        } else {
+            this.color = this.options.color || series.color;
         }
-
     }
+
     /**
      * Extend init to have y default to 0.
      *
      * @private
      */
-    public init(): XRangePoint {
-        pointProto.init.apply(this, arguments as any);
+    public constructor(series: XRangeSeries, options: XRangePointOptions) {
+        super(series, options);
 
         if (!this.y) {
             this.y = 0;
         }
-
-        return this;
     }
 
     /**
      * @private
      */
     public setState(): void {
-        pointProto.setState.apply(this, arguments as any);
+        super.setState.apply(this, arguments as any);
 
         this.series.drawPoint(this, this.series.getAnimationVerb());
     }
@@ -171,12 +162,16 @@ class XRangePoint extends ColumnPoint {
      * @private
      */
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
-        const cfg = pointProto.getLabelConfig.call(this) as
+        const cfg = super.getLabelConfig.call(this) as
                 XRangePoint.XRangePointLabelObject,
             yCats = this.series.yAxis.categories;
 
         cfg.x2 = this.x2;
         cfg.yCategory = this.yCategory = yCats && yCats[this.y as any];
+
+        // Use 'category' as 'key' to ensure tooltip datetime formatting.
+        // Use 'name' only when 'category' is undefined.
+        cfg.key = this.category || this.name;
 
         return cfg;
     }
@@ -193,7 +188,7 @@ class XRangePoint extends ColumnPoint {
 
 /* *
  *
- * Class Prototype
+ *  Class Prototype
  *
  * */
 
@@ -208,6 +203,7 @@ interface XRangePoint {
     yCategory?: string;
 
 }
+
 extend(XRangePoint.prototype, {
     ttBelow: false,
     tooltipDateKeys: ['x', 'x2']
@@ -266,4 +262,4 @@ export default XRangePoint;
  * @requires modules/xrange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

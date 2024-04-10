@@ -4,17 +4,17 @@ Highcharts.chart('container', {
         width: 300
     },
     series: [{
-        name: "aaa",
+        name: 'aaa',
         data: [7]
     }, {
-        name: "bbb",
+        name: 'bbb',
         data: [0]
     }, {
-        name: "A really really really really  long name this text should " +
-            "have ellipsis",
+        name: 'A really really really really  long name this text should ' +
+            'have ellipsis',
         data: [13]
     }, {
-        name: "ccc",
+        name: 'ccc',
         data: [19]
     }]
 });

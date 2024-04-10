@@ -53,7 +53,7 @@ Be aware that for charts with a large number of data points, individual data poi
 
 It is also always possible to expose a data series as a group only - without exposing the individual data points - by using the [`series.accessibility.exposeAsGroupOnly`](https://api.highcharts.com/highcharts/series.line.accessibility.exposeAsGroupOnly) option.
 
-For large data series, [sonification](https://www.highcharts.com/docs/accessibility/sonification) can be a great tool for making trends and patterns more accessible to screen reader users.
+For large data series, [sonification](https://www.highcharts.com/docs/sonification/getting-started) can be a great tool for making trends and patterns more accessible to screen reader users.
 
 Axis configuration
 ------------------

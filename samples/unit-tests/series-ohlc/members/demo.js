@@ -1,5 +1,5 @@
 QUnit.test('directTouch', function (assert) {
-    var ohlcSeries = Highcharts.seriesTypes.ohlc;
+    var ohlcSeries = Highcharts.Series.types.ohlc;
     assert.strictEqual(
         ohlcSeries.prototype.directTouch,
         false,

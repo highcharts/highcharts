@@ -1,16 +1,12 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import ChainModifier from '/base/js/Data/Modifiers/ChainModifier.js';
-import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
-import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
-import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import ChainModifier from '/base/code/es-modules/Data/Modifiers/ChainModifier.js';
+import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
+import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
 QUnit.test('ChainModifier.benchmark', function (assert) {
 
     const modifier = new ChainModifier(
             {},
-            new GroupModifier({
-                groupColumn: 'y'
-            }),
             new RangeModifier({
                 ranges: [{
                     column: 'value',
@@ -56,22 +52,21 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
 QUnit.test('ChainModifier.modify', function (assert) {
 
     const done = assert.async(),
-        modifier = new ChainModifier(
-            {},
-            new GroupModifier({
-                groupColumn: 'y'
-            }),
-            new RangeModifier({
+        modifier = new ChainModifier({
+            chain: [{
+                type: 'Range',
                 ranges: [{
-                    column: 'value',
+                    column: 'y',
                     minValue: 'A',
                     maxValue: 'b'
                 }]
-            })
-        ),
+            }]
+        }),
         table = new DataTable({
-            x: [1, 2, 3, 4, 5, 6],
-            y: ['a', 'a', 'b', 'b', 'c', 'c']
+            columns: {
+                x: [1, 2, 3, 4, 5, 6],
+                y: ['a', 'a', 'b', 'b', 'c', 'c']
+            }
         });
 
     modifier
@@ -80,17 +75,17 @@ QUnit.test('ChainModifier.modify', function (assert) {
 
             assert.equal(
                 table.modified.getRowCount(),
-                2,
-                'Modified table should contain two rows, one for each group.'
+                4,
+                'Modified table should contain four rows.'
             );
 
             assert.deepEqual(
-                table.modified.getColumn('table')[1].getColumns(),
+                table.modified.getColumns(),
                 {
-                    x: [3, 4],
-                    y: ['b', 'b']
+                    x: [1, 2, 3, 4],
+                    y: ['a', 'a', 'b', 'b']
                 },
-                'Modified table should have expected structure of two rows with sub tables.'
+                'Modified table should have expected structure of four rows.'
             );
 
         })
@@ -107,13 +102,14 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [1, 2, 3, 4, 5, 6]
+            columns: {
+                x: [1, 2, 3, 4, 5, 6]
+            }
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
@@ -168,13 +164,14 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [1, 2, 3, 4, 5, 6]
+            columns: {
+                x: [1, 2, 3, 4, 5, 6]
+            }
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
@@ -230,14 +227,15 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [6, 5, 4, 3, 2, 1],
-            ignoredColumn: ['a', 'b', 'c', 'd', 'e', 'f']
+            columns: {
+                x: [6, 5, 4, 3, 2, 1],
+                ignoredColumn: ['a', 'b', 'c', 'd', 'e', 'f']
+            }
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',

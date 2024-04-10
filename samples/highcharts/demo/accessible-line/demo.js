@@ -1,4 +1,4 @@
-var colors = Highcharts.getOptions().colors;
+const colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container', {
     chart: {
@@ -10,11 +10,14 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Most common desktop screen readers'
+        text: 'Most common desktop screen readers',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: WebAIM. Click on points to visit official screen reader website'
+        text: 'Source: WebAIM. Click on points to visit official screen ' +
+            'reader website',
+        align: 'left'
     },
 
     yAxis: {
@@ -33,11 +36,15 @@ Highcharts.chart('container', {
         accessibility: {
             description: 'Time from December 2010 to September 2019'
         },
-        categories: ['December 2010', 'May 2012', 'January 2014', 'July 2015', 'October 2017', 'September 2019']
+        categories: [
+            'December 2010', 'May 2012', 'January 2014', 'July 2015',
+            'October 2017', 'September 2019'
+        ]
     },
 
     tooltip: {
-        valueSuffix: '%'
+        valueSuffix: '%',
+        stickOnContact: true
     },
 
     plotOptions: {
@@ -49,7 +56,8 @@ Highcharts.chart('container', {
                     }
                 }
             },
-            cursor: 'pointer'
+            cursor: 'pointer',
+            lineWidth: 2
         }
     },
 
@@ -109,7 +117,10 @@ Highcharts.chart('container', {
                     itemWidth: 150
                 },
                 xAxis: {
-                    categories: ['Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015', 'Oct. 2017', 'Sep. 2019'],
+                    categories: [
+                        'Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015',
+                        'Oct. 2017', 'Sep. 2019'
+                    ],
                     title: ''
                 },
                 yAxis: {

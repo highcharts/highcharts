@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+    Highcharts.getJSON('https://www.highcharts.com/samples/data/world-population-density.json', function (data) {
 
         // Prevent logarithmic errors in color calulcation
         data.forEach(function (p) {
@@ -18,12 +18,32 @@
             },
 
             title: {
-                text: 'Zoom in on country by double click'
+                text: 'Zoom in on country by double click',
+                align: 'left'
             },
 
             mapNavigation: {
                 enabled: true,
-                enableDoubleClickZoomTo: true
+                enableDoubleClickZoomTo: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+            mapView: {
+                fitToGeometry: {
+                    type: 'MultiPoint',
+                    coordinates: [
+                        // Alaska west
+                        [-164, 54],
+                        // Greenland north
+                        [-35, 84],
+                        // New Zealand east
+                        [179, -38],
+                        // Chile south
+                        [-68, -55]
+                    ]
+                }
             },
 
             colorAxis: {
@@ -36,11 +56,6 @@
                 data: data,
                 joinBy: ['iso-a3', 'code3'],
                 name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }

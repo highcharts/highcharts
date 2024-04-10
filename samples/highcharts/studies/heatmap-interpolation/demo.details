@@ -1,0 +1,6 @@
+---
+ name: Heatmap interpolation study
+ authors:
+   - Torstein Hønsi, Markus Knutson Barstad
+ js_wrap: b
+...

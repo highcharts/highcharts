@@ -1,0 +1,7 @@
+---
+name: Custom instrument
+authors:
+  - Øystein Moseng
+skipTest: true
+js_wrap: b
+...

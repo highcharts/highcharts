@@ -28,7 +28,13 @@ export interface WilliamsROptions extends SMAOptions {
 }
 
 export interface WilliamsRParamsOptions extends SMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default WilliamsROptions;

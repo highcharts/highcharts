@@ -2,11 +2,12 @@ Highcharts.addEvent(
     Highcharts.Series,
     'afterSetOptions',
     function (e) {
-        var colors = Highcharts.getOptions().colors,
-            i = 0,
+        const colors = Highcharts.getOptions().colors,
             nodes = {};
+        let i = 0;
+
         if (
-            this instanceof Highcharts.seriesTypes.networkgraph &&
+            this instanceof Highcharts.Series.types.networkgraph &&
             e.options.id === 'language-tree'
         ) {
             e.options.data.forEach(function (link) {

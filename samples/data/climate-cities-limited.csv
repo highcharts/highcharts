@@ -1,0 +1,7 @@
+city,country,elevation,lat,lat2,lon,lon2,csv
+Buenos Aires,Argentine Republic,10,-34.60,-34.75,-58.38,-58.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-34.6_-58.38.csv
+Dublin,Republic of Ireland,8,53.35,53.25,-6.26,-6.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/53.35_-6.26.csv
+New York,United States of America,10,40.71,40.75,-74.01,-74.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/40.71_-74.01.csv
+Sydney,Commonwealth of Australia,35,-33.87,-33.75,151.21,151.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-33.87_151.21.csv
+Tokyo,Japan,17,35.69,35.75,139.69,139.75,https://assets.highcharts.com/dashboard-demodata/climate/cities/35.69_139.69.csv
+Johannesburg,Republic of South Africa,1753,-26.20,-26.25,28.05,28.25,https://assets.highcharts.com/dashboard-demodata/climate/cities/-26.2_28.05.csv

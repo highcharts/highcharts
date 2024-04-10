@@ -1,0 +1,6 @@
+---
+ name: Highcharts global temperatures heat map
+ authors:
+   - Joshua Kunst
+ js_wrap: b
+...

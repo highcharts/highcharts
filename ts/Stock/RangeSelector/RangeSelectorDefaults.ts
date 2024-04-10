@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -136,7 +136,7 @@ const rangeSelector: RangeSelectorOptions = {
      * }]
      * ```
      *
-     * @sample {highstock} stock/rangeselector/datagrouping/
+     * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by buttons
      *
      * @type      {Array<*>}
@@ -217,7 +217,7 @@ const rangeSelector: RangeSelectorOptions = {
      *
      * @see [series.dataGrouping](#plotOptions.series.dataGrouping)
      *
-     * @sample {highstock} stock/rangeselector/datagrouping/
+     * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by range selector buttons
      *
      * @type      {*}
@@ -364,7 +364,7 @@ const rangeSelector: RangeSelectorOptions = {
      * @type  {number|undefined}
      * @since 2.1.9
      */
-    height: void 0, // reserved space for buttons and input
+    height: void 0, // Reserved space for buttons and input
 
     /**
      * The border color of the date input boxes.
@@ -401,7 +401,7 @@ const rangeSelector: RangeSelectorOptions = {
 
     /**
      * The date format in the input boxes when not selected for editing.
-     * Defaults to `%b %e, %Y`.
+     * Defaults to `%e %b %Y`.
      *
      * This is used to determine which type of input to show,
      * `datetime-local`, `date` or `time` and falling back to `text` when
@@ -414,7 +414,7 @@ const rangeSelector: RangeSelectorOptions = {
      *         Milliseconds in the range selector
      *
      */
-    inputDateFormat: '%b %e, %Y',
+    inputDateFormat: '%e %b %Y',
 
     /**
      * A custom callback function to parse values entered in the input boxes
@@ -494,7 +494,9 @@ const rangeSelector: RangeSelectorOptions = {
     inputSpacing: 5,
 
     /**
-     * The index of the button to appear pre-selected.
+     * The index of the button to appear pre-selected. If the selected range
+     * exceeds the total data range and the 'all' option is available,
+     * the 'all' option, showing the full range, is automatically selected.
      *
      * @type      {number}
      */
@@ -547,7 +549,9 @@ const rangeSelector: RangeSelectorOptions = {
         /** @ignore */
         color: Palette.highlightColor80,
         /** @ignore */
-        cursor: 'pointer'
+        cursor: 'pointer',
+        /** @ignore */
+        fontSize: '0.8em'
     },
 
     /**
@@ -563,7 +567,9 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: Palette.neutralColor60
+        color: Palette.neutralColor60,
+        /** @ignore */
+        fontSize: '0.8em'
     }
 };
 

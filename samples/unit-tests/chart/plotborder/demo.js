@@ -26,14 +26,16 @@ QUnit.test('Plot border', function (assert) {
 
         var width = chart.container
             .querySelector('.highcharts-plot-border')
-            .getAttribute('width');
+            .getBBox()
+            .width;
         chart.setSize(500, undefined, { duration: 50 });
 
         setTimeout(function () {
             assert.notEqual(
                 chart.container
                     .querySelector('.highcharts-plot-border')
-                    .getAttribute('width'),
+                    .getBBox()
+                    .width,
                 width,
                 'Plot border rectanble width should change after redraw'
             );

@@ -44,11 +44,11 @@ Highcharts.seriesType(
         getSum: getSum,
         markerAttribs: Highcharts.noop,
         drawGraph: Highcharts.noop,
-        crispCol: Highcharts.seriesTypes.column.prototype.crispCol,
-        drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
+        crispCol: Highcharts.Series.types.column.prototype.crispCol,
+        drawPoints: Highcharts.Series.types.column.prototype.drawPoints,
         getColumnMetrics:
-            Highcharts.seriesTypes.column.prototype.getColumnMetrics,
-        translate: Highcharts.seriesTypes.column.prototype.translate
+            Highcharts.Series.types.column.prototype.getColumnMetrics,
+        translate: Highcharts.Series.types.column.prototype.translate
     }
 );
 

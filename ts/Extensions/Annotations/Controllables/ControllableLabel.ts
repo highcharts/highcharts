@@ -16,9 +16,9 @@ import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableAnchorObject } from './Controllable';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type { ControllableLabelOptions } from './ControllableOptions';
+import type ControlTarget from '../ControlTarget';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -27,10 +27,9 @@ import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions';
 
 import Controllable from './Controllable.js';
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -55,14 +54,6 @@ interface ControllableAlignObject extends AlignObject {
     height?: number;
     width?: number;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedClasses: Array<Function> = [];
 
 /* *
  *
@@ -232,13 +223,8 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (composedClasses.indexOf(SVGRendererClass) === -1) {
-            composedClasses.push(SVGRendererClass);
-
-            const svgRendererProto = SVGRendererClass.prototype;
-
-            svgRendererProto.symbols.connector = symbolConnector;
-        }
+        const symbols = SVGRendererClass.prototype.symbols;
+        symbols.connector = symbolConnector;
 
     }
 
@@ -479,8 +465,9 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _point: AnnotationPointType
-    ): ControllableAnchorObject {
+    ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;
@@ -498,10 +485,11 @@ class ControllableLabel extends Controllable {
      * Returns the label position relative to its anchor.
      */
     public position(
-        anchor: ControllableAnchorObject
+        anchor: ControlTarget.Anchor
     ): (PositionObject|null|undefined) {
         const item = this.graphic,
             chart = this.annotation.chart,
+            tooltip = chart.tooltip,
             point = this.points[0],
             itemOptions = this.options,
             anchorAbsolutePosition = anchor.absolutePosition,
@@ -519,11 +507,13 @@ class ControllableLabel extends Controllable {
         if (item && showItem) {
             const { width = 0, height = 0 } = item;
 
-            if (itemOptions.distance) {
-                itemPosition = Tooltip.prototype.getPosition.call(
+            if (itemOptions.distance && tooltip) {
+                itemPosition = tooltip.getPosition.call(
                     {
-                        chart: chart,
-                        distance: pick(itemOptions.distance, 16)
+                        chart,
+                        distance: pick(itemOptions.distance, 16),
+                        getPlayingField: tooltip.getPlayingField,
+                        pointer: tooltip.pointer
                     },
                     width,
                     height,

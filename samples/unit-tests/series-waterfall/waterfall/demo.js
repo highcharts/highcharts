@@ -25,7 +25,7 @@ QUnit.test('General waterfall tests', function (assert) {
     assert.ok(
         chart.series[0].points[chart.series[0].points.length - 1].shapeArgs.y,
         chart.yAxis[0].toPixels(20.0001),
-        "MinPointLength doesn't influence data rendering (#6062)."
+        'MinPointLength doesn\'t influence data rendering (#6062).'
     );
 
     chart.series[0].update({

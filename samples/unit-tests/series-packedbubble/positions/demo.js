@@ -101,6 +101,43 @@ QUnit.test('Bubble positions', function (assert) {
         'hidden',
         'dataLabels are visible with allowOverlap set to true'
     );
+
+    chart.update({
+        plotOptions: {
+            packedbubble: {
+                dataLabels: {
+                    enabled: true
+                },
+                useSimulation: false
+            }
+        },
+        legend: {
+            align: 'right'
+        },
+        series: [{
+            data: [500, 600, 700, 300, 200]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].group.translateX,
+        chart.series[0].dataLabelsGroup.translateX,
+        `Series group and data labels group should have the same translated
+        position (#20120).`
+    );
+
+    chart.update({
+        legend: {
+            align: 'left'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].group.translateX,
+        chart.series[0].dataLabelsGroup.translateX,
+        `Series group and data labels group should have the same translated
+        position after changing the legend position (#20120).`
+    );
 });
 
 QUnit.test('PackedBubble layout simulation', function (assert) {
@@ -172,10 +209,10 @@ QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
     bubbleOne.onMouseOver();
     bubbleTwo.onMouseOver();
 
-    const lineWidth = bubbleOne.graphic["stroke-width"];
+    const lineWidth = bubbleOne.graphic['stroke-width'];
     assert.strictEqual(
         lineWidth,
         10,
-        "Linewidth should go back to 10 after de-hovering."
+        'Linewidth should go back to 10 after de-hovering.'
     );
 });

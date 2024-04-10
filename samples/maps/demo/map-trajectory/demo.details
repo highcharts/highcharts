@@ -1,0 +1,13 @@
+---
+name: Audio map with trajectory
+authors:
+  - Øystein Moseng
+requiresManualTesting: true
+js_wrap: b
+use_png_thumbnail: true
+tags:
+  - Highcharts Maps demo
+categories:
+  - General:
+    - priority: 11
+...

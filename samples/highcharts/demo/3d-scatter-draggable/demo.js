@@ -16,7 +16,7 @@ Highcharts.setOptions({
 });
 
 // Set up the chart
-var chart = new Highcharts.Chart({
+const chart = new Highcharts.Chart({
     chart: {
         renderTo: 'container',
         margin: 100,
@@ -90,7 +90,8 @@ var chart = new Highcharts.Chart({
             [5, 4, 2], [6, 1, 3], [6, 9, 5], [4, 8, 2], [9, 7, 4], [5, 4, 2],
             [9, 6, 1], [2, 7, 3], [4, 5, 4], [6, 8, 1], [3, 4, 0], [2, 2, 6],
             [5, 1, 2], [9, 9, 7], [6, 9, 9], [8, 4, 3], [4, 1, 7], [6, 2, 5],
-            [0, 4, 9], [3, 5, 9], [6, 9, 1], [1, 9, 2]]
+            [0, 4, 9], [3, 5, 9], [6, 9, 1], [1, 9, 2]
+        ]
     }]
 });
 
@@ -100,7 +101,7 @@ var chart = new Highcharts.Chart({
     function dragStart(eStart) {
         eStart = chart.pointer.normalize(eStart);
 
-        var posX = eStart.chartX,
+        const posX = eStart.chartX,
             posY = eStart.chartY,
             alpha = chart.options.chart.options3d.alpha,
             beta = chart.options.chart.options3d.beta,

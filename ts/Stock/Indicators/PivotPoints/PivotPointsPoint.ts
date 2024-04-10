@@ -15,8 +15,8 @@
  * */
 
 import type SMAPointType from '../SMA/SMAPoint';
+import type PivotPointsIndicator from './PivotPointsIndicator';
 
-import PivotPointsIndicator from './PivotPointsIndicator';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const SMAPoint: typeof SMAPointType =
     SeriesRegistry.seriesTypes.sma.prototype.pointClass;
@@ -34,8 +34,8 @@ function destroyExtraLabels(
     point: PivotPointsPoint,
     functionName: string
 ): void {
-    let props: Array<string> = point.series.pointArrayMap,
-        prop: string,
+    const props: Array<string> = point.series.pointArrayMap;
+    let prop: string,
         i: number = props.length;
 
     (SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype as any)[
@@ -66,9 +66,9 @@ class PivotPointsPoint extends SMAPoint {
      *
      * */
 
-    public P: number = void 0 as any;
-    public pivotLine: string = void 0 as any;
-    public series: PivotPointsIndicator = void 0 as any;
+    public P!: number;
+    public pivotLine!: string;
+    public series!: PivotPointsIndicator;
 
     /* *
      *

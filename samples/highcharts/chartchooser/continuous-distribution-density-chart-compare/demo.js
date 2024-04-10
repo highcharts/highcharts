@@ -1,4 +1,5 @@
-const dataSource = [4,
+const dataSource = [
+    4,
     4.3,
     4.4,
     4.4,
@@ -879,8 +880,10 @@ const dataSource = [4,
     26.8,
     26.8,
     30.3,
-    30.3];
-const dataSourceHighway = [3.9,
+    30.3
+];
+const dataSourceHighway = [
+    3.9,
     4.1,
     4.2,
     4.5,
@@ -1761,10 +1764,10 @@ const dataSourceHighway = [3.9,
     19.6,
     19.6,
     20.9,
-    20.9];
+    20.9
+];
 const xiData = [];
 const xiDataHighway = [];
-const animationDuration = 1;//4000;
 const range = 31,
     startPoint = 2;
 let i = 0,
@@ -1798,20 +1801,17 @@ for (i = 0; i < xiData.length; i++) {
     dataHighway.push([xiDataHighway[i], (1 / NHighway) * tempHighway]);
 }
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "areaspline",
-        animation: true
+        type: 'areaspline'
     },
     title: {
-        text: "2022 Car's Fuel Consumption Ratings <br/> (City vs Highway Consumption)"
+        text: '2022 Car\'s Fuel Consumption Ratings <br/> ' +
+            '(City vs Highway Consumption)'
     },
 
     subtitle: {
-        text: "Source <a href='https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64' target='_blank'>Canada.ca </a>"
-    },
-    xAxis: {
-        title: { text: null }
+        text: 'Source <a href=\'https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64\' target=\'_blank\'>Canada.ca </a>'
     },
     yAxis: {
         title: { text: null }
@@ -1825,27 +1825,24 @@ Highcharts.chart("container", {
             marker: {
                 enabled: false
             },
-            dashStyle: "shortdot",
-            color: "#ff8d1e",
-            pointStart: xiData[0],
-            animation: {
-                duration: animationDuration
-            }
+            dashStyle: 'shortdot',
+            color: '#ff8d1e',
+            pointStart: xiData[0]
         }
     },
     series: [
         {
-            name: "City Consumption",
-            dashStyle: "solid",
+            name: 'City Consumption',
+            dashStyle: 'solid',
             lineWidth: 2,
-            color: "#1E90FF",
+            color: '#1E90FF',
             data: data
         },
         {
-            name: "Highway Consumption",
-            dashStyle: "solid",
+            name: 'Highway Consumption',
+            dashStyle: 'solid',
             lineWidth: 2,
-            color: "#ff8d1e",
+            color: '#ff8d1e',
             data: dataHighway
         }
     ]

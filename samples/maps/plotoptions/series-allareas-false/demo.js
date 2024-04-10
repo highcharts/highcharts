@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     // Prepare demo data
-    var data = [{
+    const data = [{
         'hc-key': 'us',
         value: 3
     }, {
@@ -45,11 +45,6 @@
             joinBy: 'hc-key',
             allAreas: false,
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.name}'

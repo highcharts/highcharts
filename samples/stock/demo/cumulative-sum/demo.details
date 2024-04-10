@@ -3,10 +3,9 @@
  authors:
    - Rafal Sebestjanski
  js_wrap: b
- new_until: 2021-12-31
  tags:
    - Highcharts Stock demo
  categories:
    - General:
-      priority: 1
+      priority: 11
 ...

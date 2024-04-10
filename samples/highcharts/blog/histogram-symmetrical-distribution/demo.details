@@ -1,0 +1,6 @@
+---
+ name: Histogram of "Fisher's Iris Data", Sepal Width data.
+ authors:
+   - jlbriggs
+ js_wrap: b
+...

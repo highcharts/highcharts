@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,6 +18,7 @@ export interface SymbolOptions {
     anchorX?: number;
     anchorY?: number;
     backgroundSize?: ('contain'|'cover'|'within');
+    context?: 'legend';
     clockwise?: (0|1);
     end?: number;
     height?: number;

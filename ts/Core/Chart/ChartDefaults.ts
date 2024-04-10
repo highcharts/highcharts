@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
@@ -235,6 +235,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-load/
      *         Alert on chart load
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-load/
      *         Alert on chart load
      * @sample {highmaps} maps/chart/events-load/
@@ -253,6 +255,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-redraw/
      *         Alert on chart redraw
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-redraw/
      *         Alert on chart redraw when adding a series or moving the
      *         zoomed range
@@ -268,6 +272,9 @@ const ChartDefaults: ChartOptions = {
     /**
      * Fires after initial load of the chart (directly after the `load`
      * event), and after each redraw (directly after the `redraw` event).
+     *
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      *
      * @type      {Highcharts.ChartRenderCallbackFunction}
      * @since     5.0.7
@@ -420,6 +427,31 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * When a chart with an x and a y-axis is rendered, we first pre-render the
+     * labels of both in order to measure them. Then, if either of the axis
+     * labels take up so much space that it significantly affects the length of
+     * the other axis, we repeat the process.
+     *
+     * By default we stop at two axis layout runs, but it may be that the second
+     * run also alter the space required by either axis, for example if it
+     * causes the labels to rotate. In this situation, a subsequent redraw of
+     * the chart may cause the tick and label placement to change for apparently
+     * no reason.
+     *
+     * Use the `axisLayoutRuns` option to set the maximum allowed number of
+     * repetitions. But keep in mind that the default value of 2 is set because
+     * every run costs performance time.
+     *
+     * **Note:** Changing that option to higher than the default might decrease
+     * performance significantly, especially with bigger sets of data.
+     *
+     * @type      {number}
+     * @default   2
+     * @since     @next
+     * @apioption chart.axisLayoutRuns
+     */
+
+    /**
      * Allows setting a key to switch between zooming and panning. Can be
      * one of `alt`, `ctrl`, `meta` (the command key on Mac and Windows
      * key on Windows) or `shift`. The keys are mapped directly to the key
@@ -459,13 +491,17 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
+         * When this option is set to `y` or `xy`, [yAxis.startOnTick](#yAxis.startOnTick)
+         * and [yAxis.endOnTick](#yAxis.endOnTick) are overwritten to `false`.
+         *
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
+         * @declare    Highcharts.OptionsChartPanningTypeValue
          * @type       {string}
          * @validvalue ["x", "y", "xy"]
          * @default    {highcharts|highstock} x
-         * @default    {highmaps} xy
+         * @product    highcharts highstock gantt
          */
         type: 'x'
     },
@@ -481,7 +517,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type       {string}
      * @default    {highcharts} undefined
-     * @default    {highstock} x
+     * @default    {highstock} undefined
      * @since      3.0
      * @product    highcharts highstock gantt
      * @deprecated
@@ -496,6 +532,13 @@ const ChartDefaults: ChartOptions = {
      * are required to style the chart. The default style sheet is
      * available from `https://code.highcharts.com/css/highcharts.css`.
      *
+     * [Read more in the docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+     * on what classes and variables are available.
+     *
+     * @sample highcharts/css/colors
+     *         Color theming with CSS
+     * @sample highcharts/css/prefers-color-scheme
+     *         Dynamic theme based on system settings
      * @type       {boolean}
      * @default    false
      * @since      7.0
@@ -519,7 +562,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * In styled mode, this sets how many colors the class names
      * should rotate between. With ten colors, series (or points) are
-     * given class names like `highcharts-color-0`, `highcharts-color-0`
+     * given class names like `highcharts-color-0`, `highcharts-color-1`
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *
@@ -538,18 +581,6 @@ const ChartDefaults: ChartOptions = {
      * @since 10.1.0
      */
     allowMutatingData: true,
-
-    /**
-     * Alias of `type`.
-     *
-     * @sample {highcharts} highcharts/chart/defaultseriestype/
-     *         Bar
-     *
-     * @deprecated
-     *
-     * @product highcharts
-     */
-    defaultSeriesType: 'line',
 
     /**
      * If true, the axes will scale to the remaining visible series once
@@ -583,8 +614,7 @@ const ChartDefaults: ChartOptions = {
      * @productdesc {highcharts}
      * If a bar series is present in the chart, it will be inverted
      * automatically. Inverting the chart doesn't have an effect if there
-     * are no cartesian series in the chart, or if the chart is
-     * [polar](#chart.polar).
+     * are no cartesian series in the chart.
      *
      * @sample {highcharts} highcharts/chart/inverted/
      *         Inverted line
@@ -613,7 +643,8 @@ const ChartDefaults: ChartOptions = {
 
     /**
      * The button that appears after a selection zoom, allowing the user
-     * to reset zoom.
+     * to reset zoom. This option is deprecated in favor of
+     * [zooming](#chart.zooming).
      *
      * @since      2.2
      * @deprecated 10.2.1
@@ -630,7 +661,6 @@ const ChartDefaults: ChartOptions = {
          *         Relative to the chart
          *
          * @type      {Highcharts.ButtonRelativeToValue}
-         * @default   plot
          * @apioption chart.resetZoomButton.relativeTo
          */
 
@@ -650,9 +680,11 @@ const ChartDefaults: ChartOptions = {
          */
         theme: {
             /**
-             * @internal
+             * The z-index of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.theme.zIndex
              */
-            zIndex: 6
         },
 
         /**
@@ -668,29 +700,33 @@ const ChartDefaults: ChartOptions = {
          * @type {Highcharts.AlignObject}
          */
         position: {
-
             /**
              * The horizontal alignment of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.position.align
              */
-            align: 'right',
 
             /**
              * The horizontal offset of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.position.x
              */
-            x: -10,
 
             /**
              * The vertical alignment of the button.
              *
              * @type      {Highcharts.VerticalAlignValue}
-             * @default   top
              * @apioption chart.resetZoomButton.position.verticalAlign
              */
 
             /**
              * The vertical offset of the button.
+             *
+             * @type {number}
+             * @apioption chart.resetZoomButton.position.y
              */
-            y: 10
         }
     },
 
@@ -721,7 +757,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.plotShadow
      */
@@ -765,11 +801,9 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @type      {boolean}
-     * @default   true
      * @since     2.1
-     * @apioption chart.reflow
      */
+    reflow: true,
 
     /**
      * The HTML element where the chart will be rendered. If it is a string,
@@ -804,6 +838,20 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * Whether to apply a drop shadow to the global series group. This causes
+     * all the series to have the same shadow. Contrary to the `series.shadow`
+     * option, this prevents items from casting shadows on each other, like for
+     * others series in a stack. The shadow can be an object configuration
+     * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
+     *
+     * @sample highcharts/chart/seriesgroupshadow/ Shadow
+     *
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
+     * @default   false
+     * @apioption chart.shadow
+     */
+
+    /**
      * Whether to apply a drop shadow to the outer chart area. Requires
      * that backgroundColor be set. The shadow can be an object
      * configuration containing `color`, `offsetX`, `offsetY`, `opacity` and
@@ -816,7 +864,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/border/
      *         Chart border and shadow
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.shadow
      */
@@ -915,14 +963,26 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * Additional CSS styles to apply inline to the container `div`. Note
-     * that since the default font styles are applied in the renderer, it
-     * is ignorant of the individual chart options and must be set globally.
+     * Additional CSS styles to apply inline to the container `div` and the root
+     * SVG.
+     *
+     * According to the CSS syntax documentation, it is recommended to quote
+     * font family names that contain white space, digits, or punctuation
+     * characters other than hyphens. In such cases, wrap the fontFamily
+     * name as follows: `fontFamily: '"Font name"'`.
+     *
+     * Since v11, the root font size is 1rem by default, and all child element
+     * are given a relative `em` font size by default. This allows implementers
+     * to control all the chart's font sizes by only setting the root level.
      *
      * @see    In styled mode, general chart styles can be set with the
      *         `.highcharts-root` class.
      * @sample {highcharts} highcharts/chart/style-serif-font/
      *         Using a serif type font
+     * @sample {highcharts} highcharts/chart/style-special-font/
+     *         Using a font with special character in name
+     * @sample {highcharts} highcharts/members/relative-font-size/
+     *         Relative font sizes
      * @sample {highcharts} highcharts/css/em/
      *         Styled mode with relative font sizes
      * @sample {highstock} stock/chart/style/
@@ -931,7 +991,7 @@ const ChartDefaults: ChartOptions = {
      *         Using a serif type font
      *
      * @type      {Highcharts.CSSObject}
-     * @default   {"fontFamily": "\"Lucida Grande\", \"Lucida Sans Unicode\", Verdana, Arial, Helvetica, sans-serif","fontSize":"12px"}
+     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"1rem"}
      * @apioption chart.style
      */
 
@@ -957,6 +1017,7 @@ const ChartDefaults: ChartOptions = {
      * @since      2.1.0
      * @apioption  chart.type
      */
+    type: 'line',
 
     /**
      * Decides in what dimensions the user can zoom by dragging the mouse.
@@ -972,6 +1033,8 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highcharts} highcharts/chart/zoomtype-xy/
      *         Xy
+     * @sample {highcharts} highcharts/chart/zoomtype-polar/
+     *         Zoom on polar chart
      * @sample {highstock} stock/demo/basic-line/
      *         None by default
      * @sample {highstock} stock/chart/zoomtype-x/
@@ -1002,7 +1065,6 @@ const ChartDefaults: ChartOptions = {
      * @product    highcharts highstock gantt
      * @deprecated
      */
-    zoomBySingleTouch: false,
 
     /**
      * Chart zooming options.
@@ -1030,6 +1092,7 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can zoom by dragging the mouse.
          * Can be one of `x`, `y` or `xy`.
          *
+         * @declare    Highcharts.OptionsChartZoomingTypeValue
          * @type       {string}
          * @default    {highcharts} undefined
          * @product    highcharts highstock gantt
@@ -1107,6 +1170,10 @@ const ChartDefaults: ChartOptions = {
 
             /**
              * The position of the button.
+             *
+             * Note: Adjusting position values might cause overlap with chart
+             * elements. Ensure coordinates do not obstruct other components or
+             * data visibility.
              *
              * @sample {highcharts} highcharts/chart/resetzoombutton-position/
              *         Above the plot area
@@ -1274,8 +1341,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @see In styled mode, a plot background image can be set with the
      *      `.highcharts-plot-background` class and a [custom pattern](
-     *      https://www.highcharts.com/docs/chart-design-and-style/
-     *      gradients-shadows-and-patterns).
+     *      https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
      *
      * @sample {highcharts} highcharts/chart/plotbackgroundimage/
      *         Skies

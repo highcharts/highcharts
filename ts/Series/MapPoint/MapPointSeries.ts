@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,17 +21,19 @@ import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
-import { Palette } from '../../Core/Color/Palettes.js';
-import Point from '../../Core/Series/Point.js';
+import MapPointSeriesDefaults from './MapPointSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+    map: MapSeries,
+    scatter: ScatterSeries
+} = SeriesRegistry.seriesTypes;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -40,7 +42,7 @@ const {
     merge
 } = U;
 
-import '../../Core/DefaultOptions.js';
+import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
 
 /* *
@@ -64,47 +66,25 @@ class MapPointSeries extends ScatterSeries {
      *
      * */
 
-    /**
-     * A mappoint series is a special form of scatter series where the points
-     * can be laid out in map coordinates on top of a map.
-     *
-     * @sample maps/demo/mapline-mappoint/
-     *         Map-line and map-point series.
-     *
-     * @extends      plotOptions.scatter
-     * @product      highmaps
-     * @optionparent plotOptions.mappoint
-     */
-    public static defaultOptions: MapPointSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        dataLabels: {
-            crop: false,
-            defer: false,
-            enabled: true,
-            formatter: function (
-                this: Point.PointLabelObject
-            ): (string|undefined) { // #2945
-                return this.point.name;
-            },
-            overflow: false as any,
-            style: {
-                /** @internal */
-                color: Palette.neutralColor100
-            }
-        }
-    } as MapPointSeriesOptions);
+    public static defaultOptions: MapPointSeriesOptions = merge(
+        ScatterSeries.defaultOptions,
+        MapPointSeriesDefaults
+    );
 
     /* *
      *
      *  Properties
      *
      * */
-    public chart: MapChart = void 0 as any;
+    public chart!: MapChart;
 
-    public data: Array<MapPointPoint> = void 0 as any;
+    public data!: Array<MapPointPoint>;
 
-    public options: MapPointSeriesOptions = void 0 as any;
+    public options!: MapPointSeriesOptions;
 
-    public points: Array<MapPointPoint> = void 0 as any;
+    public points!: Array<MapPointPoint>;
+
+    public clearBounds = MapSeries.prototype.clearBounds;
 
     /* *
      *
@@ -167,12 +147,25 @@ class MapPointSeries extends ScatterSeries {
 
         // Create map based translation
         if (mapView) {
-            const { hasCoordinates } = mapView.projection;
+            const mainSvgTransform = mapView.getSVGTransform(),
+                { hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
+                const svgTransform = (
+                    isNumber(p.insetIndex) &&
+                    mapView.insets[p.insetIndex].getSVGTransform()
+                ) || mainSvgTransform;
 
-                const xy = this.projectPoint(p.options);
+                const xy = (
+                    this.projectPoint(p.options) ||
+                    (
+                        p.properties &&
+                        this.projectPoint(p.properties)
+                    )
+                );
+
+                let didBounds;
                 if (xy) {
                     x = xy.x;
                     y = xy.y;
@@ -181,16 +174,28 @@ class MapPointSeries extends ScatterSeries {
                 } else if (p.bounds) {
                     x = p.bounds.midX;
                     y = p.bounds.midY;
+                    if (svgTransform && isNumber(x) && isNumber(y)) {
+                        p.plotX = x * svgTransform.scaleX +
+                            svgTransform.translateX;
+                        p.plotY = y * svgTransform.scaleY +
+                            svgTransform.translateY;
+                        didBounds = true;
+                    }
                 }
 
                 if (isNumber(x) && isNumber(y)) {
 
                     // Establish plotX and plotY
-                    const plotCoords = mapView.projectedUnitsToPixels({ x, y });
-                    p.plotX = plotCoords.x;
-                    p.plotY = hasCoordinates ?
-                        plotCoords.y :
-                        this.chart.plotHeight - plotCoords.y;
+                    if (!didBounds) {
+                        const plotCoords = mapView.projectedUnitsToPixels(
+                            { x, y }
+                        );
+
+                        p.plotX = plotCoords.x;
+                        p.plotY = hasCoordinates ?
+                            plotCoords.y :
+                            this.chart.plotHeight - plotCoords.y;
+                    }
 
                 } else {
                     p.y = p.plotX = p.plotY = void 0;
@@ -209,6 +214,64 @@ class MapPointSeries extends ScatterSeries {
     /* eslint-enable valid-jsdoc */
 
 }
+
+/* *
+ *
+ * Extra
+ *
+ * */
+
+/* *
+ * The mapmarker symbol
+ */
+const mapmarker = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath => {
+    const isLegendSymbol = options && options.context === 'legend';
+    let anchorX: number,
+        anchorY: number;
+
+    if (isLegendSymbol) {
+        anchorX = x + w / 2;
+        anchorY = y + h;
+
+    // Put the pin in the anchor position (dataLabel.shape)
+    } else if (
+        options &&
+        typeof options.anchorX === 'number' &&
+        typeof options.anchorY === 'number'
+    ) {
+        anchorX = options.anchorX;
+        anchorY = options.anchorY;
+
+    // Put the pin in the center and shift upwards (point.marker.symbol)
+    } else {
+        anchorX = x + w / 2;
+        anchorY = y + h / 2;
+        y -= h;
+    }
+
+    const r = isLegendSymbol ? h / 3 : h / 2;
+    return [
+        ['M', anchorX, anchorY],
+        ['C', anchorX, anchorY, anchorX - r, y + r * 1.5, anchorX - r, y + r],
+        // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+        ['A', r, r, 1, 1, 1, anchorX + r, y + r],
+        ['C', anchorX + r, y + r * 1.5, anchorX, anchorY, anchorX, anchorY],
+        ['Z']
+    ];
+};
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Highcharts Maps */
+        mapmarker: typeof mapmarker;
+    }
+}
+SVGRenderer.prototype.symbols.mapmarker = mapmarker;
 
 /* *
  *
@@ -257,160 +320,4 @@ export default MapPointSeries;
  *
  * */
 
-/**
- * A `mappoint` series. If the [type](#series.mappoint.type) option
- * is not specified, it is inherited from [chart.type](#chart.type).
- *
- *
- * @extends   series,plotOptions.mappoint
- * @excluding dataParser, dataURL
- * @product   highmaps
- * @apioption series.mappoint
- */
-
-/**
- * An array of data points for the series. For the `mappoint` series
- * type, points can be given in the following ways:
- *
- * 1. An array of numerical values. In this case, the numerical values will be
- *    interpreted as `y` options. The `x` values will be automatically
- *    calculated, either starting at 0 and incremented by 1, or from
- *    `pointStart` and `pointInterval` given in the series options. If the axis
- *    has categories, these will be used. Example:
- *    ```js
- *    data: [0, 5, 3, 5]
- *    ```
- *
- * 2. An array of arrays with 2 values. In this case, the values correspond
- * to `[hc-key, value]`. Example:
- *
- *  ```js
- *     data: [
- *         ['us-ny', 0],
- *         ['us-mi', 5],
- *         ['us-tx', 3],
- *         ['us-ak', 5]
- *     ]
- *  ```
- *
- * 3. An array of objects with named values. The following snippet shows only a
- *    few settings, see the complete options set below. If the total number of
- *    data points exceeds the series'
- *    [turboThreshold](#series.mappoint.turboThreshold),
- *    this option is not available.
- *    ```js
- *        data: [{
- *            x: 1,
- *            y: 7,
- *            name: "Point2",
- *            color: "#00FF00"
- *        }, {
- *            x: 1,
- *            y: 4,
- *            name: "Point1",
- *            color: "#FF00FF"
- *        }]
- *    ```
- *
- * @type      {Array<number|Array<number,(number|null)>|null|*>}
- * @extends   series.map.data
- * @excluding labelrank, middleX, middleY, path, value
- * @product   highmaps
- * @apioption series.mappoint.data
- */
-
-/**
- * The geometry of a point.
- *
- * To achieve a better separation between the structure and the data,
- * it is recommended to use `mapData` to define the geometry instead
- * of defining it on the data points themselves.
- *
- * The geometry object is compatible to that of a `feature` in geoJSON, so
- * features of geoJSON can be passed directly into the `data`, optionally
- * after first filtering and processing it.
- *
- * @sample maps/series/data-geometry/
- *         geometry defined in data
- *
- * @type      {Object}
- * @since 9.3.0
- * @product   highmaps
- * @apioption series.mappoint.data.geometry
- */
-
-/**
- * The geometry type, which in case of the `mappoint` series is always `Point`.
- *
- * @type      {string}
- * @since 9.3.0
- * @product   highmaps
- * @validvalue ["Point"]
- * @apioption series.mappoint.data.geometry.type
- */
-
-/**
- * The geometry coordinates in terms of `[longitude, latitude]`.
- *
- * @type      {Highcharts.LonLatArray}
- * @since 9.3.0
- * @product   highmaps
- * @apioption series.mappoint.data.geometry.coordinates
- */
-
-/**
- * The latitude of the point. Must be combined with the `lon` option
- * to work. Overrides `x` and `y` values.
- *
- * @sample {highmaps} maps/demo/mappoint-latlon/
- *         Point position by lat/lon
- *
- * @type      {number}
- * @since     1.1.0
- * @product   highmaps
- * @apioption series.mappoint.data.lat
- */
-
-/**
- * The longitude of the point. Must be combined with the `lon` option
- * to work. Overrides `x` and `y` values.
- *
- * @sample {highmaps} maps/demo/mappoint-latlon/
- *         Point position by lat/lon
- *
- * @type      {number}
- * @since     1.1.0
- * @product   highmaps
- * @apioption series.mappoint.data.lon
- */
-
-/**
- * The x coordinate of the point in terms of projected units.
- *
- * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
- *         Map point demo
- *
- * @type      {number}
- * @product   highmaps
- * @apioption series.mappoint.data.x
- */
-
-/**
- * The x coordinate of the point in terms of projected units.
- *
- * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
- *         Map point demo
- *
- * @type      {number|null}
- * @product   highmaps
- * @apioption series.mappoint.data.y
- */
-
-/**
-* @type      {number}
-* @product   highmaps
-* @excluding borderColor, borderWidth
-* @apioption plotOptions.mappoint
-*/
-
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

@@ -1,6 +1,6 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     title: {
-        text: "Bergen Wind Forecast"
+        text: 'Bergen Wind Forecast'
     },
     subtitle: {
         text:
@@ -9,7 +9,7 @@ Highcharts.chart("container", {
 
     xAxis: {
         crosshair: true,
-        type: "datetime"
+        type: 'datetime'
     },
 
     yAxis: {
@@ -17,23 +17,24 @@ Highcharts.chart("container", {
             text: null
         },
         labels: {
-            format: "{text}m/s"
+            format: '{text}m/s'
         }
     },
 
     tooltip: {
         crosshairs: true,
         shared: true,
-        valueSuffix: "m/s",
-        xDateFormat: "%A, %b %e"
+        valueSuffix: 'm/s',
+        xDateFormat: '%A, %b %e'
     },
 
     data: {
         csvURL:
-        "https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/bergen-wind-prediction.csv",
+        'https://www.highcharts.com/samples/data/bergen-wind-prediction.csv',
         seriesMapping: [{ low: 0, high: 1 }, { y: 2 }],
         complete: function (options) {
-            options.series[1].name = "Possible wind";
+            options.series[0].name = 'Possible wind';
+            options.series[1].name = 'Expected wind';
         }
     },
 
@@ -52,15 +53,15 @@ Highcharts.chart("container", {
 
     series: [
         {
-            type: "areasplinerange",
+            type: 'areasplinerange',
             color: {
                 patternIndex: 0
             }
         },
         {
-            type: "spline",
+            type: 'spline',
             lineWidth: 3,
-            color: "#AA00F2"
+            color: '#AA00F2'
         }
     ]
 });

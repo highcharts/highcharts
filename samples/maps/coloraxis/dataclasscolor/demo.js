@@ -10,8 +10,12 @@
                 borderWidth: 1
             },
 
-            colors: ['rgba(64,19,117,0.05)', 'rgba(64,19,117,0.2)', 'rgba(64,19,117,0.4)',
-                'rgba(64,19,117,0.5)', 'rgba(64,19,117,0.6)', 'rgba(64,19,117,0.8)', 'rgba(64,19,117,1)'],
+            colors: [
+                'rgba(64,19,117,0.05)', 'rgba(64,19,117,0.2)',
+                'rgba(64,19,117,0.4)', 'rgba(64,19,117,0.5)',
+                'rgba(64,19,117,0.6)', 'rgba(64,19,117,0.8)',
+                'rgba(64,19,117,1)'
+            ],
 
             title: {
                 text: 'Data classes with categorized colors'
@@ -79,10 +83,10 @@
 
 
     // Load the data from a Google Spreadsheet
-    // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA&output=html
+    // https://docs.google.com/spreadsheets/d/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-        googleSpreadsheetKey: '1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA',
+        googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
 
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {

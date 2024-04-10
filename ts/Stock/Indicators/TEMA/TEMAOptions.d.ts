@@ -28,7 +28,13 @@ export interface TEMAOptions extends EMAOptions {
 }
 
 export interface TEMAParamsOptions extends EMAParamsOptions {
-    // for inheritance
+    // For inheritance
 }
+
+/* *
+ *
+ *  Imports
+ *
+ * */
 
 export default TEMAOptions;

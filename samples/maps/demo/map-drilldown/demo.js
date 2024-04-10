@@ -34,10 +34,12 @@ const drilldown = async function (e) {
         // Apply the recommended map view if any
         chart.mapView.update(
             Highcharts.merge(
-                { insets: undefined },
+                {
+                    insets: undefined,
+                    padding: 0
+                },
                 topology.objects.default['hc-recommended-mapview']
-            ),
-            false
+            )
         );
 
         // Hide loading and add series
@@ -55,9 +57,15 @@ const drilldown = async function (e) {
 };
 
 // On drill up, reset to the top-level map view
-const drillup = function (e) {
+const afterDrillUp = function (e) {
     if (e.seriesOptions.custom && e.seriesOptions.custom.mapView) {
-        e.target.mapView.update(e.seriesOptions.custom.mapView, false);
+        e.target.mapView.update(
+            Highcharts.merge(
+                { insets: undefined },
+                e.seriesOptions.custom.mapView
+            ),
+            false
+        );
     }
 };
 
@@ -82,7 +90,7 @@ const drillup = function (e) {
         chart: {
             events: {
                 drilldown,
-                drillup
+                afterDrillUp
             }
         },
 
@@ -132,6 +140,9 @@ const drillup = function (e) {
                 color: '#FFFFFF',
                 textDecoration: 'none',
                 textOutline: '1px #000000'
+            },
+            breadcrumbs: {
+                floating: true
             },
             drillUpButton: {
                 relativeTo: 'spacingBox',

@@ -1,20 +1,31 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
+
     // Create the chart
     Highcharts.stockChart('container', {
         chart: {
             events: {
                 load: function () {
-                    var chart = this;
+                    const chart = this;
 
-                    // Select the save button of the popup and assign a click event
+                    // Select the save button of the popup and assign a
+                    // click event
                     document
-                        .querySelectorAll('.highcharts-popup-annotations button')[0]
+                        .querySelectorAll(
+                            '.highcharts-popup-annotations ' +
+                            'button'
+                        )[0]
                         .addEventListener(
                             'click',
                             // Function which saves the new background color.
                             function () {
-                                var color = document.querySelectorAll(
-                                    '.highcharts-popup-annotations input[name="stroke"]'
+                                const color = document.querySelectorAll(
+                                    '.highcharts-popup-annotations ' +
+                                    'input[name="stroke"]'
                                 )[0].value;
 
                                 // Update the circle
@@ -25,7 +36,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
                                 });
 
                                 // Close the popup
-                                chart.annotationsPopupContainer.style.display = 'none';
+                                chart.annotationsPopupContainer.style.display =
+                                    'none';
                             }
                         );
                 }
@@ -38,15 +50,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             events: {
                 // On selecting the annotation the showPopup event is fired
                 showPopup: function (event) {
-                    var chart = this.chart;
+                    const chart = this.chart;
 
                     if (!chart.annotationsPopupContainer) {
                         // Get and store the popup annotations container
                         chart.annotationsPopupContainer = document
-                            .getElementsByClassName('highcharts-popup-annotations')[0];
+                            .getElementsByClassName(
+                                'highcharts-popup-annotations'
+                            )[0];
                     }
 
-                    // Show the popup container, but not when we add the annotation.
+                    // Show the popup container, but not when we add the
+                    // annotation.
                     if (
                         event.formType === 'annotation-toolbar' &&
                         !chart.activeButton
@@ -93,4 +108,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             }
         }]
     });
-});
+})();

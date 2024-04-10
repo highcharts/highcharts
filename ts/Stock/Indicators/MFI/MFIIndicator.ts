@@ -2,7 +2,7 @@
  *
  *  Money Flow Index indicator for Highcharts Stock
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -45,6 +45,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function sumArray(array: Array<number>): number {
 
     return array.reduce(function (prev: number, cur: number): number {
@@ -52,14 +55,23 @@ function sumArray(array: Array<number>): number {
     });
 }
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateTypicalPrice(point: Array<number>): number {
     return (point[1] + point[2] + point[3]) / 3;
 }
 
+/**
+ *
+ */
 function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
     return typicalPrice * volume;
 }
@@ -106,7 +118,7 @@ class MFIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+            index: void 0, // Unchangeable index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
@@ -127,9 +139,9 @@ class MFIIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<MFIPoint> = void 0 as any;
-    public options: MFIOptions = void 0 as any;
-    public points: Array<MFIPoint> = void 0 as any;
+    public data!: Array<MFIPoint>;
+    public options!: MFIOptions;
+    public points!: Array<MFIPoint>;
 
     /* *
      *
@@ -141,14 +153,11 @@ class MFIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             decimals: number = (params.decimals as any),
-            // MFI starts calculations from the second point
-            // Cause we need to calculate change between two points
-            range = 1,
             volumeSeries: (LineSeries | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
@@ -156,19 +165,23 @@ class MFIIndicator extends SMAIndicator {
                 volumeSeries && (volumeSeries.yData as any)
             ),
             MFI: Array<Array<number>> = [],
-            isUp = false,
             xData: Array<number> = [],
             yData: Array<number> = [],
             positiveMoneyFlow: Array<number> = [],
-            negativeMoneyFlow: Array<number> = [],
-            newTypicalPrice: number,
+            negativeMoneyFlow: Array<number> = [];
+
+        let newTypicalPrice: number,
             oldTypicalPrice: number,
             rawMoneyFlow: number,
             negativeMoneyFlowSum: number,
             positiveMoneyFlowSum: number,
             moneyFlowRatio: number,
             MFIPoint: number,
-            i: number;
+            i: number,
+            isUp = false,
+            // MFI starts calculations from the second point
+            // Cause we need to calculate change between two points
+            range = 1;
 
         if (!volumeSeries) {
             error(
@@ -189,8 +202,10 @@ class MFIIndicator extends SMAIndicator {
         ) {
             return;
         }
+
         // Calculate first typical price
         newTypicalPrice = calculateTypicalPrice(yVal[range]);
+
         // Accumulate first N-points
         while (range < period + 1) {
             // Calculate if up or down
@@ -304,4 +319,4 @@ export default MFIIndicator;
  * @apioption series.mfi
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

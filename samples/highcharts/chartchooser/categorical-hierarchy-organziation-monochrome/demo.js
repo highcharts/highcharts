@@ -1,6 +1,6 @@
-const colorG = "#E8E8E8",
-    colorW = "#FFFFFF";
-Highcharts.chart("container", {
+const colorG = '#E8E8E8',
+    colorW = '#FFFFFF';
+Highcharts.chart('container', {
     chart: {
         height: 600,
         inverted: true
@@ -8,243 +8,254 @@ Highcharts.chart("container", {
 
     title: {
         useHTML: true,
-        text: "Statistics Division of United Nations"
+        text: 'Statistics Division of United Nations'
     },
     accessibility: {
         typeDescription:
-      "The organizational chart displays hierarchically the different departments of the United Nations statistics division."
+      'The organizational chart displays hierarchically the different ' +
+      'departments of the United Nations statistics division.'
     },
 
     series: [
         {
-            type: "organization",
-            name: "United Nations",
-            keys: ["from", "to"],
+            type: 'organization',
+            name: 'United Nations',
+            keys: ['from', 'to'],
             data: [
-                ["Director", "SPDS"],
-                ["Director", "ESU"],
-                ["Director", "CDS"],
-                ["Director", "OTMS"],
-                ["Director", "ESB"],
-                ["Director", "DSSB"],
-                ["Director", "EESB"],
-                ["Director", "TSB"],
-                ["Director", "SSB"],
-                ["ESB", "NAS"],
-                ["ESB", "EEAS"],
-                ["DSSB", "DSS"],
-                ["DSSB", "SHSS"],
-                ["EESB", "ESS"],
-                ["EESB", "IESS"],
-                ["TSB", "IMTSS"],
-                ["TSB", "SITSS"],
-                ["SSB", "GDSU"],
-                ["SSB", "SDS"],
-                ["SSB", "SGCU"]
+                ['Director', 'SPDS'],
+                ['Director', 'ESU'],
+                ['Director', 'CDS'],
+                ['Director', 'OTMS'],
+                ['Director', 'ESB'],
+                ['Director', 'DSSB'],
+                ['Director', 'EESB'],
+                ['Director', 'TSB'],
+                ['Director', 'SSB'],
+                ['ESB', 'NAS'],
+                ['ESB', 'EEAS'],
+                ['DSSB', 'DSS'],
+                ['DSSB', 'SHSS'],
+                ['EESB', 'ESS'],
+                ['EESB', 'IESS'],
+                ['TSB', 'IMTSS'],
+                ['TSB', 'SITSS'],
+                ['SSB', 'GDSU'],
+                ['SSB', 'SDS'],
+                ['SSB', 'SGCU']
             ],
             levels: [
                 {
                     level: 0,
-                    color: "silver",
+                    color: 'silver',
                     dataLabels: {
-                        color: "black"
+                        color: 'black'
                     },
                     height: 25
                 },
                 {
                     level: 1,
-                    color: "silver",
+                    color: 'silver',
                     dataLabels: {
-                        color: "black"
+                        color: 'black'
                     },
                     height: 25
                 },
                 {
                     level: 2,
                     dataLabels: {
-                        color: "black"
+                        color: 'black'
                     },
                     height: 25
                 },
                 {
                     level: 4,
                     dataLabels: {
-                        color: "black"
+                        color: 'black'
                     },
                     height: 25
                 }
             ],
             nodes: [
                 {
-                    id: "Director",
+                    id: 'Director',
                     title: null,
-                    name: "Director",
+                    name: 'Director',
                     color: colorG,
-                    info: "Director"
+                    info: 'Director'
                 },
                 {
-                    className: "title",
-                    id: "ESU",
+                    className: 'title',
+                    id: 'ESU',
                     title: null,
-                    name: "Executive Support",
-                    layout: "hanging",
+                    name: 'Executive Support',
+                    layout: 'hanging',
                     color: colorW,
                     info:
-            "Planning and coordination of the overall Division’s work program and operation, <br/>including program management finance/budget management, <br/>human resources management, and general office administration"
+            'Planning and coordination of the overall Division’s work ' +
+            'program and operation, <br/>including program management ' +
+            'finance/budget management, <br/>human resources management, and ' +
+            'general office administration'
                 },
                 {
-                    id: "SPDS",
+                    id: 'SPDS',
                     title: null,
-                    name: "Stats Planning & Development",
+                    name: 'Stats Planning & Development',
                     image: null,
-                    layout: "hanging",
+                    layout: 'hanging',
                     color: colorW,
                     info:
-            "Methodological work on MDG indicators, databases; <br/>coordination of inter-agency groups for MDG global indicators, <br/>responsible for MDG global monitoring. <br/>Coordination of global gender statistics program"
+            'Methodological work on MDG indicators, databases; <br/>' +
+            'coordination of inter-agency groups for MDG global indicators, ' +
+            '<br/>responsible for MDG global monitoring. <br/>Coordination ' +
+            'of global gender statistics program'
                 },
                 {
-                    id: "CDS",
+                    id: 'CDS',
                     title: null,
-                    name: "Capacity Development",
-                    layout: "hanging",
+                    name: 'Capacity Development',
+                    layout: 'hanging',
                     color: colorW,
                     info:
-            "Management and implementation of the Technical <br/>Co-operation and Statistical Capacity Building Program"
+            'Management and implementation of the Technical <br/>' +
+            'Co-operation and Statistical Capacity Building Program'
                 },
                 {
-                    id: "OTMS",
+                    id: 'OTMS',
                     title: null,
-                    name: "Office & Tech Management",
-                    layout: "hanging",
+                    name: 'Office & Tech Management',
+                    layout: 'hanging',
                     color: colorW,
                     info:
-            "Application of information technologies for the collection, <br>processing and dissemination of international statistics<br> and metadata by all branches of the Statistics Division"
+            'Application of information technologies for the collection, <br>' +
+            'processing and dissemination of international statistics<br> ' +
+            'and metadata by all branches of the Statistics Division'
                 },
                 {
-                    id: "ESB",
+                    id: 'ESB',
                     title: null,
-                    name: "Economics Stats",
+                    name: 'Economics Stats',
                     column: 2,
-                    layout: "hanging",
+                    layout: 'hanging',
                     color: colorG,
-                    info: "Economics Statistics Branch"
+                    info: 'Economics Statistics Branch'
                 },
                 {
-                    id: "NAS",
+                    id: 'NAS',
                     title: null,
-                    name: "National Accounts",
-                    layout: "hanging",
+                    name: 'National Accounts',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "National Accounts Section"
+                    info: 'National Accounts Section'
                 },
                 {
-                    id: "EEAS",
+                    id: 'EEAS',
                     title: null,
-                    name: "Environmental Economic",
-                    layout: "hanging",
+                    name: 'Environmental Economic',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Environmental Economic Accounts Section"
+                    info: 'Environmental Economic Accounts Section'
                 },
                 {
-                    id: "DSSB",
-                    name: "Demographic & Social Stats",
+                    id: 'DSSB',
+                    name: 'Demographic & Social Stats',
                     column: 2,
-                    layout: "hanging",
+                    layout: 'hanging',
                     color: colorG,
-                    info: "Demographic and Social Statistics Branch"
+                    info: 'Demographic and Social Statistics Branch'
                 },
                 {
-                    id: "DSS",
-                    name: "Demographic Stats",
-                    layout: "hanging",
+                    id: 'DSS',
+                    name: 'Demographic Stats',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Demographic Statistics Section"
+                    info: 'Demographic Statistics Section'
                 },
                 {
-                    id: "SHSS",
-                    name: "Social & Housing Stats",
-                    layout: "hanging",
+                    id: 'SHSS',
+                    name: 'Social & Housing Stats',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Social and Housing Statistics Section"
+                    info: 'Social and Housing Statistics Section'
                 },
                 {
-                    id: "EESB",
-                    name: "Environment & Energy Stats",
+                    id: 'EESB',
+                    name: 'Environment & Energy Stats',
                     column: 2,
-                    layout: "hanging",
+                    layout: 'hanging',
                     color: colorG,
-                    info: "Environment and Energy Statistics Branch"
+                    info: 'Environment and Energy Statistics Branch'
                 },
                 {
-                    id: "ESS",
-                    name: "Environment Stats",
-                    layout: "hanging",
+                    id: 'ESS',
+                    name: 'Environment Stats',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Environment Statistics Section"
+                    info: 'Environment Statistics Section'
                 },
                 {
-                    id: "IESS",
-                    name: "Industrial & Energy Stats",
-                    layout: "hanging",
+                    id: 'IESS',
+                    name: 'Industrial & Energy Stats',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Industrial and Energy Statistics Section"
+                    info: 'Industrial and Energy Statistics Section'
                 },
                 {
-                    id: "TSB",
-                    name: "Trade Stats",
+                    id: 'TSB',
+                    name: 'Trade Stats',
                     column: 2,
-                    layout: "hanging",
+                    layout: 'hanging',
                     color: colorG,
-                    info: "Trade Statistics Branch"
+                    info: 'Trade Statistics Branch'
                 },
                 {
-                    id: "IMTSS",
-                    name: "Merchandise Trade Stats",
-                    layout: "hanging",
+                    id: 'IMTSS',
+                    name: 'Merchandise Trade Stats',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "International Merchandise Trade Statistics Section"
+                    info: 'International Merchandise Trade Statistics Section'
                 },
                 {
-                    id: "SITSS",
-                    name: "Stats of Trade",
-                    layout: "hanging",
+                    id: 'SITSS',
+                    name: 'Stats of Trade',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Statistics of International Trade in Services Section"
+                    info: 'Statistics of International Trade in Services ' +
+                        'Section'
                 },
                 {
-                    id: "SSB",
-                    name: "Stats Services",
+                    id: 'SSB',
+                    name: 'Stats Services',
                     column: 2,
-                    layout: "hanging",
+                    layout: 'hanging',
                     color: colorG,
-                    info: "Statistical Services Branch"
+                    info: 'Statistical Services Branch'
                 },
                 {
-                    id: "GDSU",
-                    name: "Global Data Services",
-                    layout: "hanging",
+                    id: 'GDSU',
+                    name: 'Global Data Services',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Global Data Services Unit"
+                    info: 'Global Data Services Unit'
                 },
                 {
-                    id: "SDS",
-                    name: "Stats Dissemination",
-                    layout: "hanging",
+                    id: 'SDS',
+                    name: 'Stats Dissemination',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Statistical Dissemination Section"
+                    info: 'Statistical Dissemination Section'
                 },
                 {
-                    id: "SGCU",
-                    name: "Geographic Conferences",
-                    layout: "hanging",
+                    id: 'SGCU',
+                    name: 'Geographic Conferences',
+                    layout: 'hanging',
                     color: colorW,
-                    info: "Statistical and Geographic Conferences Unit"
+                    info: 'Statistical and Geographic Conferences Unit'
                 }
             ],
             colorByPoint: false,
-            color: "#007ad0",
+            color: '#007ad0',
             dataLabels: {
-                color: "white"
+                color: 'white'
             },
             nodeWidth: 50,
             nodePadding: 5

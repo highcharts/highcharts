@@ -1,13 +1,17 @@
 /**
- * Create a constructor for sparklines that takes some sensible defaults and merges in the individual
- * chart options. This function is also available from the jQuery plugin as $(element).highcharts('SparkLine').
+ * Create a constructor for sparklines that takes some sensible defaults
+ * and merges in the individual chart options. This function is also available
+ * from the jQuery plugin as $(element).highcharts('SparkLine').
  */
 Highcharts.SparkLine = function (a, b, c) {
     const hasRenderToArg = typeof a === 'string' || a.nodeName;
     let options = arguments[hasRenderToArg ? 1 : 0];
     const defaultOptions = {
         chart: {
-            renderTo: (options.chart && options.chart.renderTo) || (hasRenderToArg && a),
+            renderTo: (
+                (options.chart && options.chart.renderTo) ||
+                (hasRenderToArg && a)
+            ),
             backgroundColor: null,
             borderWidth: 0,
             type: 'area',
@@ -96,9 +100,10 @@ const start = +new Date(),
 
 let n = 0;
 
-// Creating 153 sparkline charts is quite fast in modern browsers, but IE8 and mobile
-// can take some seconds, so we split the input into chunks and apply them in timeouts
-// in order avoid locking up the browser process and allow interaction.
+// Creating 153 sparkline charts is quite fast in modern browsers, but mobile
+// can take some seconds, so we split the input into chunks and
+// apply them in timeouts in order avoid locking up the browser process
+// and allow interaction.
 function doChunk() {
     const time = +new Date(),
         len = tds.length;
@@ -120,7 +125,9 @@ function doChunk() {
                 pointStart: 1
             }],
             tooltip: {
-                headerFormat: '<span style="font-size: 10px">' + td.parentElement.querySelector('th').innerText + ', Q{point.x}:</span><br/>',
+                headerFormat: '<span style="font-size: 10px">' +
+                    td.parentElement.querySelector('th').innerText +
+                    ', Q{point.x}:</span><br/>',
                 pointFormat: '<b>{point.y}.000</b> USD'
             },
             chart: chart
@@ -128,7 +135,8 @@ function doChunk() {
 
         n += 1;
 
-        // If the process takes too much time, run a timeout to allow interaction with the browser
+        // If the process takes too much time, run a timeout
+        // to allow interaction with the browser
         if (new Date() - time > 500) {
             tds.splice(0, i + 1);
             setTimeout(doChunk, 0);
@@ -137,7 +145,11 @@ function doChunk() {
 
         // Print a feedback on the performance
         if (n === fullLen) {
-            document.getElementById('result').innerHTML = 'Generated ' + fullLen + ' sparklines in ' + (new Date() - start) + ' ms';
+            document.getElementById('result').innerHTML =
+                'Generated ' +
+                fullLen +
+                ' sparklines in ' +
+                (new Date() - start) + ' ms';
         }
     }
 }

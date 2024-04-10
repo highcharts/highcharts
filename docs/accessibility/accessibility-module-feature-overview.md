@@ -42,10 +42,10 @@ Tactile export
 
 As long as the [exporting module](https://www.highcharts.com/docs/export-module/export-module-overview) is included alongside the Accessibility module, users can download an SVG version of the chart. This SVG can be printed and turned into a tactile graphic using embossing printers or similar technology.
 
-Sonification
-------------
+Sonification and Audio Charts
+-----------------------------
 
-With Highcharts you can play back the chart as sound. This can be highly effective for conveying trends and patterns quickly without need for visuals. For more information, see [Sonification](https://www.highcharts.com/docs/accessibility/sonification).
+With Highcharts you can play back the chart as sound. This can be highly effective for conveying trends and patterns quickly without need for visuals. For more information, see [Getting started with audio charts](https://www.highcharts.com/docs/sonification/getting-started).
 
 Cognitive accessibility
 -----------------------

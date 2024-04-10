@@ -12,7 +12,7 @@ Highcharts.chart('container', {
         }
     },
     yAxis: {
-        //min: -5
+        // min: -5
     },
 
     series: [{

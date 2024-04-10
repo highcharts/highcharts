@@ -1,0 +1,10 @@
+---
+name: GeoHeatmap Leaf Area Index In February 2017
+authors:
+  - Magdalena Gut, Piotr Madej
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

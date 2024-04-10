@@ -1,0 +1,82 @@
+/* Global font */
+@import url("https://fonts.googleapis.com/css?family=Signika:400,700");
+@import url("../highcharts.css");
+
+:root {
+    --highcharts-background-color: none;
+
+    /* Colors for data series and points. */
+    --highcharts-color-0: #f45b5b;
+    --highcharts-color-1: #8085e9;
+    --highcharts-color-2: #8d4654;
+    --highcharts-color-3: #7798bf;
+    --highcharts-color-4: #aaeeee;
+    --highcharts-color-5: #ff0066;
+    --highcharts-color-6: #eeaaee;
+    --highcharts-color-7: #55bf3b;
+    --highcharts-color-8: #df5353;
+    --highcharts-color-9: #7798bf;
+}
+
+/* General */
+.highcharts-container {
+    background: url(https://www.highcharts.com/samples/graphics/sand.png);
+    font-family: Signika, arial, helvetica, sans-serif;
+}
+
+.highcharts-axis-labels {
+    font-size: 1em;
+}
+
+.highcharts-tooltip-box {
+    stroke-width: 0;
+    fill: #ffffff;
+}
+
+.highcharts-legend-item > text {
+    font-size: 1.1em;
+}
+
+/* Boxplot */
+.highcharts-boxplot-box {
+    fill: #505053;
+}
+
+/* Navigator */
+.highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke: #d0d0d8;
+}
+
+.highcharts-navigator-series {
+    fill: var(--highcharts-color-0);
+    stroke: var(--highcharts-color-0);
+}
+
+/* Scrollbar */
+.highcharts-scrollbar-track {
+    stroke: #c0c0c8;
+    fill: #f2f2f2;
+}
+
+/* Title */
+.highcharts-title {
+    font-weight: bold;
+}
+
+/* Buttons */
+.highcharts-button {
+    fill: #ffffff;
+    stroke: #c0c0c8;
+}
+
+.highcharts-button text {
+    fill: #000000;
+}
+
+.highcharts-button-pressed {
+    fill: #d0d0d8;
+}
+
+.highcharts-button-box {
+    stroke-width: 1px;
+}

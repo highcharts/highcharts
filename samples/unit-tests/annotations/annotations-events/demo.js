@@ -1,9 +1,13 @@
 QUnit.test('Annotations events - general', function (assert) {
+    const done = assert.async();
+
     var addEventCalled = 0,
         afterUpdateEventCalled = 0,
         removeEventCalled = 0,
         closeEventCalled = 0,
+        chartRedrawEventCalled = 0,
         circleAfterUpdateCalled = 0,
+        customButtonClicked = 0,
         popupOptions,
         getShapes = function () {
             return [
@@ -28,6 +32,24 @@ QUnit.test('Annotations events - general', function (assert) {
             ];
         },
         chart = Highcharts.chart('container', {
+            chart: {
+                events: {
+                    redraw() {
+                        chartRedrawEventCalled++;
+                    }
+                }
+            },
+            exporting: {
+                buttons: {
+                    customButton: {
+                        className: 'highcharts-label-annotation button',
+                        symbol: 'triangle',
+                        onclick() {
+                            customButtonClicked++;
+                        }
+                    }
+                }
+            },
             annotations: [
                 {
                     shapes: getShapes(),
@@ -66,6 +88,7 @@ QUnit.test('Annotations events - general', function (assert) {
                 }
             ],
             navigation: {
+                bindingsClassName: 'highcharts-button-symbol',
                 events: {
                     showPopup: function (event) {
                         popupOptions = event.options;
@@ -125,7 +148,7 @@ QUnit.test('Annotations events - general', function (assert) {
         afterUpdateEventCalled,
         1,
         'annotations.events.afterUpdate called just once - after' +
-            '`annotation.update()`.'
+        '`annotation.update()`.'
     );
 
     var mouseDown = false,
@@ -184,7 +207,8 @@ QUnit.test('Annotations events - general', function (assert) {
 
     assert.ok(
         true,
-        'No errors after removing selected annotation and selecting a new one (#11015)'
+        'No errors after removing selected annotation and selecting a new ' +
+        'one (#11015)'
     );
 
     controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
@@ -202,12 +226,163 @@ QUnit.test('Annotations events - general', function (assert) {
             ],
             type: 'basicAnnotation'
         },
-        "Annotations' popup should get correct config for fields (#11716)"
+        'Annotations\' popup should get correct config for fields (#11716)'
+    );
+
+    // Click again to deselect the annotation
+    controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
+
+    // Call touchend event to simulate touchscreen tap end
+    const circle = chart.annotations[0].graphic.element;
+    Highcharts.fireEvent(circle, 'touchend');
+
+    assert.ok(
+        document
+            .querySelector('.highcharts-control-points path')
+            .getAttribute('visibility') !== 'hidden',
+        'Control point for annotation should be visible after touch (#18276).'
     );
 
     chart.navigationBindings.activeAnnotation.setVisibility();
     assert.ok(
         closeEventCalled,
         '#15730: Popup should close when hiding annotation'
+    );
+
+    const customButton = chart.exportSVGElements[3].element;
+    Highcharts.fireEvent(customButton, 'click');
+    controller.click(150, 150);
+    assert.ok(
+        customButtonClicked && chart.annotations[2].options.visible,
+        `#16675: Annotation should be added from the custom button, that has a
+        custom SVG symbol.`
+    );
+
+    chart.addAxis({
+        height: '50%',
+        top: '50%',
+        offset: 0
+    }, false, false);
+
+    chart.yAxis[0].update({
+        height: '50%'
+    }, false);
+
+    chart.addSeries({
+        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 23.3, 18.3, 13.9, 9.6],
+        yAxis: 1
+    }, true);
+
+    const xAxis = 0,
+        yAxis = 1;
+
+    const anno = chart.addAnnotation({
+        type: 'basicAnnotation',
+        shapes: [{
+            type: 'path',
+            points: [
+                { xAxis, yAxis, x: 3, y: 25 },
+                { xAxis, yAxis, x: 2, y: 25 },
+                { xAxis, yAxis, x: 2, y: 15 },
+                { xAxis, yAxis, x: 3, y: 15 },
+                { command: 'Z' }
+            ]
+        }]
+    });
+
+    const rect = chart.annotations[3].shapes[0],
+        target = rect.controlPoints[0];
+
+    controller.click(
+        chart.xAxis[0].toPixels(2),
+        chart.yAxis[1].toPixels(20)
+    );
+
+    controller.mouseDown(
+        target.graphic.x + target.graphic.width / 2,
+        target.graphic.y + target.graphic.height / 2
+    );
+
+    controller.mouseMove(
+        chart.xAxis[0].toPixels(1),
+        chart.yAxis[1].toPixels(10)
+    );
+
+    controller.mouseUp();
+
+    assert.strictEqual(
+        Math.round(chart.yAxis[1].toPixels(10)),
+        Math.round(chart.yAxis[1].toPixels(rect.points[2].y)),
+        '#19024, rectangle should resize to exact drag position.'
+    );
+
+    const initialRedrawCounter = chartRedrawEventCalled;
+
+    chart.series[0].update({
+        kdTreeNow: false
+    }, false);
+
+    // Simulate mouse move on a chart to build a kdTree
+    controller.mouseMove(
+        chart.xAxis[0].toPixels(1),
+        chart.yAxis[1].toPixels(10)
+    );
+
+    anno.update({
+        shapes: [{}]
+    });
+
+    assert.strictEqual(
+        initialRedrawCounter,
+        chartRedrawEventCalled,
+        'Chart redraw event should not be called when calling ' +
+        'annotation.update, #20080.'
+    );
+
+    setTimeout(() => {
+        assert.ok(
+            chart.series[0].kdTree, 'kdTree should be built upon mouse ' +
+            'move on a chart.'
+        );
+        done();
+    }, 0);
+    let clicks = 0;
+
+    annotation = chart.addAnnotation({
+        labels: [{
+            useHTML: true,
+            text: 'test label',
+            point: {
+                x: 200,
+                y: 100
+            }
+        }],
+        events: {
+            click: function () {
+                clicks++;
+            }
+        },
+        shapes: [{
+            points: [{
+                x: 100,
+                y: 100
+            }, {
+                x: 200,
+                y: 100
+            }],
+            type: 'path',
+            strokeWidth: 10
+        }],
+        draggable: false
+    });
+
+    controller.click(chart.plotLeft + 105, chart.plotTop + 100);
+    controller.click(chart.plotLeft + 200, chart.plotTop + 75);
+
+    assert.equal(
+        clicks,
+        2,
+        'Click event should be correctly bound both for HTML annotation ' +
+        'label and SVG path (#19926).'
     );
 });

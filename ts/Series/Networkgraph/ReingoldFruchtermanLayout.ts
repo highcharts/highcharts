@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -35,6 +35,7 @@ const {
     clamp,
     defined,
     isFunction,
+    fireEvent,
     pick
 } = U;
 import VerletIntegration from './VerletIntegration.js';
@@ -75,7 +76,7 @@ class ReingoldFruchtermanLayout {
      * */
 
     public approximation?: string;
-    public attractiveForce: Function = void 0 as any;
+    public attractiveForce!: Function;
     public barycenter?: Record<string, number>;
     public box: Record<string, number> = {};
     public currentStep: number = 0;
@@ -85,15 +86,15 @@ class ReingoldFruchtermanLayout {
     public forces?: Array<string>;
     public chart?: Chart;
     public initialRendering: boolean = true;
-    public integration: GraphIntegrationObject = void 0 as any;
+    public integration!: GraphIntegrationObject;
     public k?: number;
     public links: Array<Point> = [];
     public maxIterations?: number;
     public nodes: Array<Point> = [];
-    public options: ReingoldFruchtermanLayout.Options = void 0 as any;
+    public options!: ReingoldFruchtermanLayout.Options;
     public prevSystemTemperature?: number;
-    public quadTree: QuadTree = void 0 as any;
-    public repulsiveForce: Function = void 0 as any;
+    public quadTree!: QuadTree;
+    public repulsiveForce!: Function;
     public series: Array<NetworkgraphSeries> = [];
     public simulation: (false|number) = false;
     public startTemperature?: number;
@@ -227,6 +228,9 @@ class ReingoldFruchtermanLayout {
                 );
             } else {
                 this.simulation = false;
+                this.series.forEach((s): void => {
+                    fireEvent(s, 'afterSimulation');
+                });
             }
         }
     }

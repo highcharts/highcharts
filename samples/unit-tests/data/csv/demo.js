@@ -102,7 +102,8 @@ QUnit.test('csv-deduce-delimiter', function (assert) {
     /*
      * Note that the input data is malformed. So what should happen is:
      *  - Guess that the delimiter is ;
-     *  - There's a missing column in the header since the header is delimited on ,
+     *  - There
+         's a missing column in the header since the header is delimited on ,
      *  - A blank column should be inserted into the header
      *  - Result is one series - Series 1 - with three data points
      *
@@ -257,7 +258,8 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
     Highcharts.error = function () {};
 
     var data =
-        'Date,Value\n2016-01-29,1\n2016-01-30,2\n2016-01-31,3\n2016-02-01,3\n2016-02-02,3';
+        'Date,Value\n2016-01-29,1\n2016-01-30,2\n2016-01-31,3\n2016-02-01,' +
+        '3\n2016-02-02,3';
 
     var chart = Highcharts.chart('container', {
             title: {
@@ -361,7 +363,8 @@ QUnit.test('csv-deduce-format-us', function (assert) {
     Highcharts.error = function () {};
 
     var data =
-        'Date,Value\n2016/1/29,1\n2016/1/30,2\n2016/1/31,3\n2016/2/1,3\n2016/2/1,3';
+        'Date,Value\n2016/1/29,1\n2016/1/30,2\n2016/1/31,3\n2016/2/1,' +
+        '3\n2016/2/1,3';
     var chart = Highcharts.chart('container', {
             title: {
                 text: 'Deduce US format'
@@ -643,12 +646,11 @@ QUnit.test('startRow, endRow, startColumn, endColumn', function (assert) {
     });
 });
 
-// Highcharts 4.0.4, Issue #3437
-// Data module fails with numeric data in first column
 QUnit.test('Data module numeric x (#3437)', function (assert) {
-    var data =
-        ',Apples,Oranges\n2010,15,3\n2011,5,2\n2012,13,4\n2013,4,10\n2014,2,6';
-    var chart = Highcharts.chart('container', {
+    const data =
+        ',Apples,Oranges,Bananas\n2010,15,3,10\n2011,5,2,8\n2012,13,4,' +
+        '2\n2013,4,10,7\n2014,2,6,10';
+    const chart = Highcharts.chart('container', {
         data: {
             csv: data
         }
@@ -656,6 +658,48 @@ QUnit.test('Data module numeric x (#3437)', function (assert) {
     assert.ok(
         chart.series.length > 0,
         'The data module failed to load numeric data'
+    );
+
+    chart.update({
+        data: {
+            seriesMapping: [{
+                x: 0,
+                y: 1,
+                A: 1,
+                B: 2,
+                C: 3
+            }, {
+                x: 0,
+                y: 2,
+                A: 1,
+                B: 2,
+                C: 3
+            }, {
+                x: 0,
+                y: 3,
+                A: 1,
+                B: 2,
+                C: 3
+            }]
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].name,
+        'Apples',
+        'Each series should have different name from data, #10005.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].name,
+        'Oranges',
+        'Each series should have different name from data, #10005.'
+    );
+
+    assert.strictEqual(
+        chart.series[2].name,
+        'Bananas',
+        'Each series should have different name from data, #10005.'
     );
 });
 

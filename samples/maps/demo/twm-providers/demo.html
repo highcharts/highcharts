@@ -1,0 +1,28 @@
+
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/tiledwebmap.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/maps/modules/debugger.js"></script>
+
+<div class="main">
+    <div id="container"></div>
+
+    <div class="row d-flex justify-content-center main">
+        <div class="col-md-6 text-center">
+            <label for="provider" class="mt-4">Choose a provider:</label>
+            <select name="provider" id="provider" class="form-select"></select>
+
+            <label for="theme" class="mt-4">Choose a theme:</label>
+            <select name="theme" id="theme" class="form-select"></select>
+
+            <label for="apikey" class="mt-4">Insert API key if needed and press button:</label>
+            <input name="apikey" id="apikey" class="form-control" />
+
+            <button id="submitAPIkey" class="btn btn-outline-secondary">
+                Add API key
+            </button>
+        </div>
+    </div>
+</div>

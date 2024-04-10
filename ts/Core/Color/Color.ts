@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -43,7 +43,7 @@ const {
  * @name Highcharts.Color
  *
  * @param {Highcharts.ColorType} input
- * The input color in either rbga or hex format
+ * The input color in either rgba or hex format
  */
 class Color implements ColorLike {
 
@@ -103,7 +103,7 @@ class Color implements ColorLike {
      * @function Highcharts.Color.parse
      *
      * @param {Highcharts.ColorType} [input]
-     * The input color in either rbga or hex format.
+     * The input color in either rgba or hex format.
      *
      * @return {Highcharts.Color}
      * Color instance.
@@ -130,42 +130,6 @@ class Color implements ColorLike {
             return new GlobalColor(input);
         }
 
-        // Backwards compatibility, allow instanciation without new (#13053)
-        if (!(this instanceof Color)) {
-            return new Color(input);
-        }
-
-        this.init(input);
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public input: ColorType;
-    public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
-    public stops?: Array<Color>;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Parse the input color to rgba array
-     *
-     * @private
-     * @function Highcharts.Color#init
-     *
-     * @param {Highcharts.ColorType} input
-     * The input color in either rbga or hex format
-     */
-    private init(
-        input: ColorType
-    ): void {
         let result: (RegExpExecArray|null),
             rgba: (Color.RGBA|undefined),
             i: number,
@@ -237,6 +201,22 @@ class Color implements ColorLike {
         }
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public input: ColorType;
+    public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
+    public stops?: Array<Color>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Return the color or gradient stops in the specified format
      *
@@ -267,7 +247,7 @@ class Color implements ColorLike {
             return ret;
         }
 
-        // it's NaN if gradient colors on a column chart
+        // It's NaN if gradient colors on a column chart
         if (rgba && isNumber(rgba[0])) {
             if (format === 'rgb' || (!format && rgba[3] === 1)) {
                 return 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
@@ -526,10 +506,10 @@ export default Color;
  * @function Highcharts.color
  *
  * @param {Highcharts.ColorType} input
- *        The input color in either rbga or hex format
+ *        The input color in either rgba or hex format
  *
  * @return {Highcharts.Color}
  *         Color instance
  */
 
-(''); // detach doclets above
+(''); // Detach doclets above

@@ -192,7 +192,8 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         );
     }
 
-    // Klinger Oscilator needs at least 56 points to calculate the default period: 55.
+    // Klinger Oscilator needs at least 56 points to calculate the default
+    // period: 55.
     assert.strictEqual(
         series[0].points.length,
         series[2].points.length + series[2].options.params.slowAvgPeriod,
@@ -203,12 +204,12 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     assert.strictEqual(
         series[2].xData[0],
         1559136600000,
-        `First x point should start on that day.`
+        'First x point should start on that day.'
     );
     assert.strictEqual(
         series[2].xData[series[2].xData.length - 1],
         1560864600000,
-        `The last x point should be on the last day of array.`
+        'The last x point should be on the last day of array.'
     );
 
     chart.series[0]
