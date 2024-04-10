@@ -54,328 +54,326 @@ async function setupDashboard() {
             // Data connectors, one per election
             connectors: getDataConnectors()
         },
-        components: [
-            {
-                renderTo: 'elections-selector-wrapper',
-                type: 'CustomHTML',
-                html: `
-                <select name="elections" id="election-year">
-                    <option value="2020">2020 - Biden vs Trump</option>
-                    <option value="2016">2016 - Clinton vs Trump</option>
-                    <option value="2012">2012 - Obama vs Romney</option>
-                    <option value="2008">2008 - Obama vs McCain</option>
-                </select>`
-            },
-            {
-                renderTo: 'html-control',
-                type: 'CustomHTML',
-                id: 'html-control-div'
-            },
-            {
-                renderTo: 'html-result',
-                type: 'CustomHTML',
-                id: 'html-result-div',
-                title: 'Electoral College Results'
-            },
-            {
-                renderTo: 'election-map',
-                type: 'Highcharts',
-                chartConstructor: 'mapChart',
-                title: 'Popular Vote Results', // Populated by election year
-                chartOptions: {
-                    chart: {
-                        type: 'map',
-                        map: mapData,
-                        styledMode: false,
-                        animation: false,
-                        events: {
-                            click: function () {
-                                // Clicked outside map
-                                onStateClicked(board, 'US');
-                                resetMap(this);
-                            }
-                        },
-                        spacing: [0, 30, 30, 30]
-                    },
-                    title: {
-                        text: ''
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    mapNavigation: {
-                        buttonOptions: {
-                            verticalAlign: 'bottom'
-                        },
-                        enabled: true,
-                        enableMouseWheelZoom: true
-                    },
-                    colorAxis: {
-                        min: -100,
-                        max: 100,
-                        dataClasses: [{
-                            from: -100,
-                            to: 0,
-                            colorIndex: 0,
-                            name: 'Democrat'
-                        }, {
-                            from: 0,
-                            to: 100,
-                            colorIndex: 1,
-                            name: 'Republican'
-                        }]
-                    },
-                    plotOptions: {
-                        series: {
-                            allowPointSelect: true
+        components: [{
+            renderTo: 'elections-selector-wrapper',
+            type: 'CustomHTML',
+            html: `
+            <select name="elections" id="election-year">
+                <option value="2020">2020 - Biden vs Trump</option>
+                <option value="2016">2016 - Clinton vs Trump</option>
+                <option value="2012">2012 - Obama vs Romney</option>
+                <option value="2008">2008 - Obama vs McCain</option>
+            </select>`
+        },
+        {
+            renderTo: 'html-control',
+            type: 'CustomHTML',
+            id: 'html-control-div'
+        },
+        {
+            renderTo: 'html-result',
+            type: 'CustomHTML',
+            id: 'html-result-div',
+            title: 'Electoral College Results'
+        },
+        {
+            renderTo: 'election-map',
+            type: 'Highcharts',
+            chartConstructor: 'mapChart',
+            title: 'Popular Vote Results', // Populated by election year
+            chartOptions: {
+                chart: {
+                    type: 'map',
+                    map: mapData,
+                    styledMode: false,
+                    animation: false,
+                    events: {
+                        click: function () {
+                            // Clicked outside map
+                            onStateClicked(board, 'US');
+                            resetMap(this);
                         }
                     },
-                    series: [
-                        {
-                            name: 'US Map',
-                            type: 'map'
+                    spacing: [0, 30, 30, 30]
+                },
+                title: {
+                    text: ''
+                },
+                legend: {
+                    enabled: false
+                },
+                mapNavigation: {
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    },
+                    enabled: true,
+                    enableMouseWheelZoom: true
+                },
+                colorAxis: {
+                    min: -100,
+                    max: 100,
+                    dataClasses: [{
+                        from: -100,
+                        to: 0,
+                        colorIndex: 0,
+                        name: 'Democrat'
+                    }, {
+                        from: 0,
+                        to: 100,
+                        colorIndex: 1,
+                        name: 'Republican'
+                    }]
+                },
+                plotOptions: {
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+                series: [
+                    {
+                        name: 'US Map',
+                        type: 'map'
+                    },
+                    {
+                        name: 'State election result',
+                        data: [],
+                        joinBy: 'postal-code',
+                        dataLabels: {
+                            enabled: true,
+                            color: 'white',
+                            format: '{point.postal-code}',
+                            style: {
+                                textTransform: 'uppercase'
+                            }
                         },
-                        {
-                            name: 'State election result',
-                            data: [],
-                            joinBy: 'postal-code',
-                            dataLabels: {
-                                enabled: true,
-                                color: 'white',
-                                format: '{point.postal-code}',
-                                style: {
-                                    textTransform: 'uppercase'
-                                }
-                            },
-                            point: {
-                                events: {
-                                    click: function (e) {
-                                        const sel = e.point['postal-code'];
-                                        if (sel !== selectedState) {
-                                            selectedState = sel;
-                                        } else {
-                                            // Back to national view if clicking on already selected state.
-                                            selectedState = 'US';
-                                        }
-                                        onStateClicked(board, selectedState);
+                        point: {
+                            events: {
+                                click: function (e) {
+                                    const sel = e.point['postal-code'];
+                                    if (sel !== selectedState) {
+                                        selectedState = sel;
+                                    } else {
+                                        // Back to national view if clicking on already selected state.
+                                        selectedState = 'US';
                                     }
+                                    onStateClicked(board, selectedState);
                                 }
                             }
-                        }, {
-                            name: 'Separators',
-                            type: 'mapline',
-                            nullColor: 'silver',
-                            showInLegend: false,
-                            enableMouseTracking: false,
-                            accessibility: {
-                                enabled: false
-                            }
                         }
-                    ],
-                    tooltip: {
-                        useHTML: true,
-                        headerFormat: '<table class="map-tooltip"><caption>{point.key}</caption><tr><th>Party</th><th>Electors</th><th>Votes</th></tr>',
-                        pointFormat: '<tr><td>Dem.</td><td>{point.custom.elVotesDem}</td><td>{point.custom.votesDem}</td></tr>' +
-                            '<tr><td>Rep.</td><td>{point.custom.elVotesRep}</td><td>{point.custom.votesRep}</td></tr>' +
-                            '<tr><th colspan="3">{point.custom.winner}</th></tr>',
-                        footerFormat: '</table>'
-                    },
-                    lang: {
+                    }, {
+                        name: 'Separators',
+                        type: 'mapline',
+                        nullColor: 'silver',
+                        showInLegend: false,
+                        enableMouseTracking: false,
                         accessibility: {
-                            chartContainerLabel: commonTitle + '. Highcharts Interactive Map.'
+                            enabled: false
                         }
-                    },
-                    accessibility: {
-                        description: 'The map is displaying ' + commonTitle + ', ' + defaultYear
                     }
-                }
-            }, {
-                renderTo: 'election-chart-national',
-                type: 'Highcharts',
-                title: {
-                    text: 'Historical ' + commonTitle + 's'
+                ],
+                tooltip: {
+                    useHTML: true,
+                    headerFormat: '<table class="map-tooltip"><caption>{point.key}</caption><tr><th>Party</th><th>Electors</th><th>Votes</th></tr>',
+                    pointFormat: '<tr><td>Dem.</td><td>{point.custom.elVotesDem}</td><td>{point.custom.votesDem}</td></tr>' +
+                        '<tr><td>Rep.</td><td>{point.custom.elVotesRep}</td><td>{point.custom.votesRep}</td></tr>' +
+                        '<tr><th colspan="3">{point.custom.winner}</th></tr>',
+                    footerFormat: '</table>'
                 },
-                chartOptions: {
-                    title: {
-                        text: '<span class="title-bck-wrapper">' + defaultYear + '</span>National',
-                        align: 'left',
-                        useHTML: true
-                    },
-                    chart: {
-                        styledMode: true,
-                        type: 'bar',
-                        spacing: [40, 20, 40, 20]
-                    },
-                    credits: {
-                        enabled: true,
-                        href: 'https://www.archives.gov/electoral-college/allocation',
-                        text: 'National Archives'
-                    },
-                    legend: {
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: commonTitle + '. Highcharts Interactive Map.'
+                    }
+                },
+                accessibility: {
+                    description: 'The map is displaying ' + commonTitle + ', ' + defaultYear
+                }
+            }
+        }, {
+            renderTo: 'election-chart-national',
+            type: 'Highcharts',
+            title: {
+                text: 'Historical ' + commonTitle + 's'
+            },
+            chartOptions: {
+                title: {
+                    text: '<span class="title-bck-wrapper">' + defaultYear + '</span>National',
+                    align: 'left',
+                    useHTML: true
+                },
+                chart: {
+                    styledMode: true,
+                    type: 'bar',
+                    spacing: [40, 20, 40, 20]
+                },
+                credits: {
+                    enabled: true,
+                    href: 'https://www.archives.gov/electoral-college/allocation',
+                    text: 'National Archives'
+                },
+                legend: {
+                    enabled: false
+                },
+                tooltip: {
+                    enabled: true,
+                    format: '{point.candidate}: {point.electors} electors'
+                },
+                plotOptions: {
+                    bar: {
+                        pointPadding: 0,
+                        groupPadding: 0.2,
+                        grouping: false,
+                        dataLabels: {
+                            align: 'left',
+                            useHTML: true,
+                            enabled: true,
+                            inside: true,
+                            format: '{point.y:.1f}% Total Votes'
+                        }
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    categories: [electionData[defaultYear].candDem, electionData[defaultYear].candRep],
+                    labels: {
+                        useHTML: true,
+                        accessibility: {
+                            description: 'Election year'
+                        }
+                    }
+                },
+                yAxis: {
+                    enabled: false,
+                    labels: {
                         enabled: false
                     },
-                    tooltip: {
-                        enabled: true,
-                        format: '{point.candidate}: {point.electors} electors'
-                    },
-                    plotOptions: {
-                        bar: {
-                            pointPadding: 0,
-                            groupPadding: 0.2,
-                            grouping: false,
-                            dataLabels: {
-                                align: 'left',
-                                useHTML: true,
-                                enabled: true,
-                                inside: true,
-                                format: '{point.y:.1f}% Total Votes'
-                            }
-                        }
-                    },
-                    xAxis: {
-                        type: 'category',
-                        categories: [electionData[defaultYear].candDem, electionData[defaultYear].candRep],
-                        labels: {
-                            useHTML: true,
-                            accessibility: {
-                                description: 'Election year'
-                            }
-                        }
-                    },
-                    yAxis: {
-                        enabled: false,
-                        labels: {
-                            enabled: false
-                        },
-                        title: false,
-                        accessibility: {
-                            description: 'Percent of votes'
-                        }
-                    },
-                    series: getHistoricalElectionSeries('US', defaultYear),
-                    lang: {
-                        accessibility: {
-                            chartContainerLabel: commonTitle + ' results.'
-                        }
-                    },
+                    title: false,
                     accessibility: {
-                        description: 'The chart displays national election results.'
+                        description: 'Percent of votes'
                     }
-                }
-            }, {
-                renderTo: 'election-chart',
-                type: 'Highcharts',
-                chartOptions: {
-                    title: {
-                        text: '<span class="title-bck-wrapper">Historic</span>National',
-                        align: 'left',
-                        useHTML: true
-                    },
-                    chart: {
-                        styledMode: true,
-                        type: 'column',
-                        spacing: [40, 20, 40, 20]
-                    },
-                    credits: {
-                        enabled: true,
-                        href: 'https://www.archives.gov/electoral-college/allocation',
-                        text: 'National Archives'
-                    },
-                    legend: {
-                        enabled: true,
-                        floating: true,
-                        verticalAlign: 'top',
-                        align: 'right'
-                    },
-                    tooltip: {
-                        enabled: true,
-                        format: '{point.candidate}: {point.electors} electors'
-                    },
-                    plotOptions: {
-                        column: {
-                            pointPadding: 0,
-                            dataLabels: [{
-                                enabled: true,
-                                inside: false,
-                                format: '{point.y:.1f}'
-                            }]
-                        }
-                    },
-                    xAxis: {
-                        type: 'category',
-                        categories: electionYears,
-                        labels: {
-                            accessibility: {
-                                description: 'Election year'
-                            }
-                        }
-                    },
-                    yAxis: {
-                        showLastLabel: false,
-                        title: {
-                            text: 'Percent of votes'
-                        },
-                        accessibility: {
-                            description: 'Percent of votes'
-                        }
-                    },
-                    series: getHistoricalElectionSeries(),
-                    lang: {
-                        accessibility: {
-                            chartContainerLabel: commonTitle + ' results.'
-                        }
-                    },
-                    accessibility: {
-                        description: 'The chart displays historical election results.'
-                    }
-                }
-            }, {
-                renderTo: 'election-grid',
-                type: 'DataGrid',
-                connector: {
-                    id: 'votes' + defaultYear
                 },
+                series: getHistoricalElectionSeries('US', defaultYear),
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: commonTitle + ' results.'
+                    }
+                },
+                accessibility: {
+                    description: 'The chart displays national election results.'
+                }
+            }
+        }, {
+            renderTo: 'election-chart',
+            type: 'Highcharts',
+            chartOptions: {
                 title: {
-                    text: 'Updating...' // Populated later
+                    text: '<span class="title-bck-wrapper">Historic</span>National',
+                    align: 'left',
+                    useHTML: true
                 },
-                dataGridOptions: {
-                    cellHeight: 38,
-                    editable: false, // TBD: enable
-                    columns: {
-                        state: {
-                            headerFormat: 'State'
-                        },
-                        'postal-code': {
-                            show: false
-                        },
-                        demPercent: {
-                            show: false
-                        },
-                        repPercent: {
-                            show: false
-                        },
-                        demVotes: {
-                            show: false
-                        },
-                        repVotes: {
-                            show: false
-                        },
-                        demVoteSummary: {
-                            headerFormat: 'Dem. votes'
-                        },
-                        repVoteSummary: {
-                            headerFormat: 'Rep. votes'
-                        },
-                        totalVotes: {
-                            headerFormat: 'Total votes',
-                            cellFormatter: function () {
-                                return Number(this.value).toLocaleString('en-US');
-                            }
+                chart: {
+                    styledMode: true,
+                    type: 'column',
+                    spacing: [40, 20, 40, 20]
+                },
+                credits: {
+                    enabled: true,
+                    href: 'https://www.archives.gov/electoral-college/allocation',
+                    text: 'National Archives'
+                },
+                legend: {
+                    enabled: true,
+                    floating: true,
+                    verticalAlign: 'top',
+                    align: 'right'
+                },
+                tooltip: {
+                    enabled: true,
+                    format: '{point.candidate}: {point.electors} electors'
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0,
+                        dataLabels: [{
+                            enabled: true,
+                            inside: false,
+                            format: '{point.y:.1f}'
+                        }]
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    categories: electionYears,
+                    labels: {
+                        accessibility: {
+                            description: 'Election year'
+                        }
+                    }
+                },
+                yAxis: {
+                    showLastLabel: false,
+                    title: {
+                        text: 'Percent of votes'
+                    },
+                    accessibility: {
+                        description: 'Percent of votes'
+                    }
+                },
+                series: getHistoricalElectionSeries(),
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: commonTitle + ' results.'
+                    }
+                },
+                accessibility: {
+                    description: 'The chart displays historical election results.'
+                }
+            }
+        }, {
+            renderTo: 'election-grid',
+            type: 'DataGrid',
+            connector: {
+                id: 'votes' + defaultYear
+            },
+            title: {
+                text: 'Updating...' // Populated later
+            },
+            dataGridOptions: {
+                cellHeight: 38,
+                editable: false, // TBD: enable
+                columns: {
+                    state: {
+                        headerFormat: 'State'
+                    },
+                    'postal-code': {
+                        show: false
+                    },
+                    demPercent: {
+                        show: false
+                    },
+                    repPercent: {
+                        show: false
+                    },
+                    demVotes: {
+                        show: false
+                    },
+                    repVotes: {
+                        show: false
+                    },
+                    demVoteSummary: {
+                        headerFormat: 'Dem. votes'
+                    },
+                    repVoteSummary: {
+                        headerFormat: 'Rep. votes'
+                    },
+                    totalVotes: {
+                        headerFormat: 'Total votes',
+                        cellFormatter: function () {
+                            return Number(this.value).toLocaleString('en-US');
                         }
                     }
                 }
             }
-        ]
+        }]
     }, true);
 
     // Apply initial election data
@@ -734,9 +732,6 @@ async function updateResultComponent(electionTable, year) {
     const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBC: is this safe?
     el = document.getElementById('info-to-win');
     el.innerHTML = neededVotes + ' to win';
-
-    // national chart
-
 }
 
 
@@ -746,16 +741,16 @@ function updateControlComponent(year) {
     const title = document.querySelector('#election-description-container > h1');
     const descContainer = document.getElementById('election-description');
 
-    // update title with year
+    // Update title with year
     title.innerHTML = year + ' ' + commonTitle;
 
-    // // Brief text about the election
+    // Brief text about the election
     const brief = el.querySelector('descr').innerHTML;
 
-    // // Wikipedia link
+    // Wikipedia link
     const wikiUrl = el.querySelector('wiki').innerHTML;
 
-    // // Update custom HTML component
+    // Update custom HTML component
     descContainer.innerHTML = `${brief}<a href="${wikiUrl}" target="_blank">Wikipedia</a>.`;
 }
 
