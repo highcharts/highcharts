@@ -25,7 +25,9 @@ console.time('scatter');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         height: '100%'
     },
 

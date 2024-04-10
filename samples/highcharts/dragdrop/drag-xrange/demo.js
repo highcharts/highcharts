@@ -6,7 +6,9 @@ Highcharts.chart('container', {
     chart: {
         animation: false,
         type: 'xrange',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
@@ -41,7 +43,7 @@ Highcharts.chart('container', {
                     dragStart: function (e) {
                         setDragStatus(
                             'Drag started at page coordinates ' +
-                                e.chartX + '/' + e.chartY + (
+                            e.chartX + '/' + e.chartY + (
                                 e.updateProp ?
                                     '. Updating ' + e.updateProp :
                                     ''

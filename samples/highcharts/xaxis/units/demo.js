@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         events: {
             render: function () {
                 const info = this.xAxis[0].tickPositions.info;
