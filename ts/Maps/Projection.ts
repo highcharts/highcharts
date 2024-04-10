@@ -81,7 +81,7 @@ const deg2rad = Math.PI * 2 / 360,
  * operator, and preserves the distinction between -180 and 180.
  * @private
  */
-function wrapLon(lon: number): number {
+const wrapLon = (lon: number): number => {
     // Replacing the if's with while would increase the range, but make it prone
     // to crashes on bad data
     if (lon < -180) {
@@ -91,21 +91,19 @@ function wrapLon(lon: number): number {
         lon -= 360;
     }
     return lon;
-}
+};
 
 /**
  * Calculate the haversine of an angle.
  * @private
  */
-function hav(radians: number): number {
-    return (1 - Math.cos(radians)) / 2;
-}
+const hav = (radians: number): number => (1 - Math.cos(radians)) / 2;
 
 /**
 * Calculate the haversine of an angle from two coordinates.
 * @private
 */
-function havFromCoords(point1: LonLatArray, point2: LonLatArray): number {
+const havFromCoords = (point1: LonLatArray, point2: LonLatArray): number => {
     const cos = Math.cos,
         lat1 = point1[1] * deg2rad,
         lon1 = point1[0] * deg2rad,
@@ -116,7 +114,7 @@ function havFromCoords(point1: LonLatArray, point2: LonLatArray): number {
         havFromCoords = hav(deltaLat) + cos(lat1) * cos(lat2) * hav(deltaLon);
 
     return havFromCoords;
-}
+};
 
 /* *
  *
