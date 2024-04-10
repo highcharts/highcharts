@@ -1709,7 +1709,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @type      {number}
          * @product   highcharts highstock gantt
          */
-        distance: 5,
+        distance: 4,
 
         /**
          * Enable or disable the data labels.
