@@ -1281,11 +1281,15 @@ function toDocletString(
 
     if (
         tags.description &&
-        tags.description.length === 1
+        (
+            tags.description.length <= 1 ||
+            tags.description[1][0] !== '{'
+        )
     ) {
         compiled += (
             indent + ' * ' +
-            tags.description[0]
+            tags.description
+                .join('\n\n')
                 .trim()
                 .split('\n')
                 .join(indent + ' * ')
