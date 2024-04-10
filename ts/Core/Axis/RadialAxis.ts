@@ -30,6 +30,7 @@ import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
+import type { Options as OptionsType } from '../Options.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
@@ -207,7 +208,7 @@ namespace RadialAxis {
      * The default options extend defaultYAxisOptions.
      * @private
      */
-    const defaultRadialGaugeOptions: DeepPartial<Options> = {
+    let defaultRadialGaugeOptions: DeepPartial<Options> = {
         endOnTick: false,
         gridLineWidth: 0,
         labels: {
@@ -392,6 +393,17 @@ namespace RadialAxis {
                 onTickAfterGetPosition
             );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
+
+            wrap((H as any), 'setOptions', function (
+                this: any,
+                proceed: Function,
+                options: OptionsType
+            ): OptionsType {
+                defaultRadialGaugeOptions =
+                    merge(defaultRadialGaugeOptions, options.yAxis);
+
+                return proceed.apply(this, [].slice.call(arguments, 1));
+            });
         }
 
         return AxisClass as (T&typeof AxisComposition);
