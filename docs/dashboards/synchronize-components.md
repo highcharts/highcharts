@@ -82,7 +82,7 @@ Dashboards.board('container', {
   }, {
       renderTo: 'dashboard-col-1',
       connector: {
-          id: 'Vitamin',
+          id: 'Vitamin'
       },
       sync: {
           visibility: true,
