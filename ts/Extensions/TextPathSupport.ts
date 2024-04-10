@@ -9,17 +9,6 @@ import Point from '../Core/Series/Point';
 const { deg2rad } = H;
 const { addEvent, merge, uniqueKey, defined, extend } = U;
 
-declare module '../Core/Renderer/SVG/SVGElement' {
-    interface SVGElement {
-        setTextPath(
-            element: SVGElement,
-            path: SVGElement | undefined,
-            textPathOptions:
-            AnyRecord
-        ): void
-    }
-}
-
 /**
  * Set a text path for a `text` or `label` element, allowing the text to
  * flow along a path.
@@ -41,7 +30,7 @@ declare module '../Core/Renderer/SVG/SVGElement' {
  * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
  */
 function setTextPath(
-    this: SVGElement,
+    element: SVGElement,
     path: SVGElement|undefined,
     textPathOptions: AnyRecord
 ): void {
@@ -56,8 +45,8 @@ function setTextPath(
         }
     }, textPathOptions);
 
-    const url = this.renderer.url,
-        textWrapper = this.text || this,
+    const url = element.renderer.url,
+        textWrapper = element.text || element,
         textPath = textWrapper.textPath,
         { attributes, enabled } = textPathOptions;
 
@@ -101,9 +90,9 @@ function setTextPath(
 
 
                 // Handle label properties
-                this.attr({ transform: '' });
-                if (this.box) {
-                    this.box = this.box.destroy();
+                element.attr({ transform: '' });
+                if (element.box) {
+                    element.box = element.box.destroy();
                 }
 
                 // Wrap the nodes in a textPath
@@ -128,11 +117,11 @@ function setTextPath(
         delete textWrapper.textPath;
     }
 
-    if (this.added) {
+    if (element.added) {
 
         // Rebuild text after added
         textWrapper.textCache = '';
-        this.renderer.buildText(textWrapper);
+        element.renderer.buildText(textWrapper);
     }
 }
 
@@ -251,7 +240,7 @@ function drawTextPath(
         ] || labelOptions.textPath;
 
     if (textPathOptions && !labelOptions.useHTML) {
-        dataLabel.setTextPath(
+        setTextPath(
             dataLabel,
             point.getDataLabelPath?.(dataLabel) ||
                 point.graphic,
