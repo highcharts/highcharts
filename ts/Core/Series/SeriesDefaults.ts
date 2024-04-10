@@ -1702,6 +1702,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         defer: true,
 
         /**
+         * The distance of the data label from the data point. Note that the
+         * `padding` setting also affects the rendered distance, but is not
+         * visible unless the data label has a border or background.
+         *
+         * @type      {number}
+         * @product   highcharts highstock gantt
+         */
+        distance: 5,
+
+        /**
          * Enable or disable the data labels.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/
@@ -1859,6 +1869,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * When either the `borderWidth` or the `backgroundColor` is set,
          * this is the padding within the box.
          *
+         * An array of numbers sets padding for the respective sides. An array
+         * of two numbers repeats the values for the horizontal and vertical
+         * sides.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
@@ -1866,7 +1880,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @since 2.2.1
          */
-        padding: 5,
+        padding: [1, 3],
 
         /**
          * Aligns data labels relative to points. If `center` alignment is

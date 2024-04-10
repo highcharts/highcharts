@@ -38,7 +38,6 @@
                     // color: '#FFFFFF',
                     backgroundColor: 'contrast',
                     borderRadius: 3,
-                    padding: 3,
                     style: {
                         fontWeight: 'bold'
                     },

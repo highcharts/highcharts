@@ -9,7 +9,13 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 backgroundColor: 'contrast',
-                distance: '-30%'
+                borderRadius: 3,
+                distance: '-30%',
+                /*
+                padding: 0,
+                paddingLeft: 3,
+                paddingRight: 3
+                */
             }
         }
     },

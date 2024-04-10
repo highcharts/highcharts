@@ -44,6 +44,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isNumber,
     isString,
     merge,
     objectEach,
@@ -244,7 +245,7 @@ namespace DataLabel {
             enabledDataSorting = this.enabledDataSorting,
             plotX = point.plotX,
             plotY = point.plotY,
-            rotation = options.rotation || 0,
+            { distance, rotation = 0 } = options,
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
                 chart.isInsidePlot(
@@ -333,10 +334,19 @@ namespace DataLabel {
 
             setStartPos(alignTo); // Data sorting
 
+            // Apply the distance
+            let { x = 0, y = 0 } = options;
+            if (isNumber(distance) && this.isCartesian) {
+                x += distance * (1 - 2 * alignFactor);
+                y += distance * (1 - 2 * verticalAlignFactor);
+            }
+
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
                 options, {
+                    x,
+                    y,
                     width: unrotatedbBox.width,
                     height: unrotatedbBox.height
                 }
@@ -593,7 +603,10 @@ namespace DataLabel {
                             borderColor,
                             distance,
                             style = {}
-                        } = labelOptions;
+                        } = labelOptions,
+                        padding: Array<number> = splat(
+                            labelOptions.padding || 0
+                        );
 
                     let labelConfig,
                         formatString,
@@ -675,7 +688,9 @@ namespace DataLabel {
                         attr = {
                             r: labelOptions.borderRadius ?? 3,
                             rotation,
-                            padding: labelOptions.padding,
+                            padding: padding[0],
+                            paddingLeft: padding[3 % padding.length],
+                            paddingRight: padding[1 % padding.length],
                             zIndex: 1
                         };
 
