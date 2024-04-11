@@ -4,14 +4,16 @@ QUnit.test('Testing textPath labels', function (assert) {
             600,
             400
         ),
-        getPolygon = Highcharts.TextPathSupport.getPolygon,
         makeTextPathPolygon = (pathArr, textStr) => {
-            const label = ren
-                    .text(textStr)
-                    .setTextPath(ren.path(pathArr), { enabled: true })
-                    .add(),
-                tpElement = label.element.querySelector('textPath');
-            return getPolygon(label, tpElement, ren);
+            const label = ren.text(textStr).add();
+            label.bBox = label.element.getBBox();
+            Highcharts.TextPath.setTextPath(
+                label,
+                ren.path(pathArr),
+                { enabled: true }
+            );
+            Highcharts.fireEvent(label, 'afterGetBBox');
+            return label.bBox.polygon;
         },
         straightPath = ['M', 100, 100, 'L', 200, 100],
         curvedPath = [
