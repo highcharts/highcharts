@@ -11,65 +11,63 @@
 
 <link rel="shortcut icon"
 	href="https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico">
-<div id="page_container">
 
-	<!-- Dashboards container -->
-	<div id="container">
-		<div class="row">
-			<div class="cell" id="connect_bar">
-				<h1>Sognekraft</h1>
-				<div id="connect_switch">
-						<input id="connect_toggle" type="checkbox" accesskey="k" onclick="onConnectClicked()"></input>
-					<label for="connect_toggle"></label>
+<!-- Dashboards container -->
+<div id="container">
+	<div class="row">
+		<div class="cell" id="connect_bar">
+			<h1>Sognekraft</h1>
+			<div id="connect_switch">
+				<input id="connect_toggle" type="checkbox" accesskey="k" onclick="onConnectClicked()"></input>
+				<label for="connect_toggle"></label>
+			</div>
+			<div id="dropdown-container">
+				<button title="Klikk for å velgja kraftstasjon" onclick="onStationSelectClicked()"
+					class="dropdown-button">Kraftverk&#9662;</button>
+				<div id="dropdownContent" class="dropdown-content">
+					<!-- Populated dynamically : e.g 
+						<a class="dropdown-select" href="#">Leikanger</a>
+					-->
 				</div>
-				<div id="dropdown-container">
-					<button title="Klikk for å velgja kraftstasjon" onclick="onStationSelectClicked()"
-						class="dropdown-button">Kraftverk&#9662;</button>
-					<div id="dropdownContent" class="dropdown-content">
-						<!-- Populated dynamically : e.g 
-						<a class="dropdown-select" href="#">Årøy II</a>
-						-->
-					</div>
-				</div>
-				<span id="connect_status"></span>
-				<h1>Highcharts</h1>
 			</div>
-		</div>
-			<div class="row el-aggr">
-				<div class="cell el-kpi" id="kpi-agg-1"></div>
-				<div class="cell el-chart" id="chart-agg-1"></div>
-				<div class="cell data-grid" id="data-grid-1"></div>
-			</div>
-			<div class="row el-aggr">
-				<div class="cell el-kpi" id="kpi-agg-2"></div>
-				<div class="cell el-chart" id="chart-agg-2"></div>
-				<div class="cell data-grid" id="data-grid-2"></div>
-			</div>
-		<div class="row el-info">
-			<div class="cell" id="el-info"></div>
-			<div class="cell" id="el-map"></div>
+			<span id="connect_status"></span>
+			<h1>Highcharts</h1>
 		</div>
 	</div>
-
-	<div class="highcharts-description">
-		<p>
-			This application displays key data from a selection of power generation plants in the area of Sogn, Norway.
-			The charts, KPIs and tables display the generated power in units of MW (Megawatts).
-		</p>
-		<p>
-			How to use:
-		<ul>
-			<li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
-			<li>When connecting succeeds a selection of power plants becomes available in the <b>Power Station</b>
-				dropdown.
-			</li>
-			<li>Select any of the power stations to start displaying data. The reporting interval is determine by the
-				server but will normally be every five minutes.
-			</li>
-			<li>The application only displays one power station simultaneously the a new station can be selected without
-				disconnecting from the server.
-			</li>
-		</ul>
-		</p>
+	<div class="row el-aggr">
+		<div class="cell el-kpi" id="kpi-agg-1"></div>
+		<div class="cell el-chart" id="chart-agg-1"></div>
+		<div class="cell data-grid" id="data-grid-1"></div>
 	</div>
+	<div class="row el-aggr">
+		<div class="cell el-kpi" id="kpi-agg-2"></div>
+		<div class="cell el-chart" id="chart-agg-2"></div>
+		<div class="cell data-grid" id="data-grid-2"></div>
+	</div>
+	<div class="row el-info">
+		<div class="cell" id="el-info"></div>
+		<div class="cell" id="el-map"></div>
+	</div>
+</div>
+
+<div class="highcharts-description">
+	<p>
+		This application displays key data from a selection of power generation plants in the area of Sogn, Norway.
+		The charts, KPIs and tables display the generated power in units of MW (Megawatts).
+	</p>
+	<p>
+		How to use:
+	<ul>
+		<li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
+		<li>When connecting succeeds a selection of power plants becomes available in the <b>Power Station</b>
+			dropdown.
+		</li>
+		<li>Select any of the power stations to start displaying data. The reporting interval is determine by the
+			server but will normally be every five minutes.
+		</li>
+		<li>The application only displays one power station simultaneously the a new station can be selected without
+			disconnecting from the server.
+		</li>
+	</ul>
+	</p>
 </div>

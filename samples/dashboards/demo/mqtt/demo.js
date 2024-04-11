@@ -134,6 +134,11 @@ const lang = {
             }
         }
         return '';
+    },
+
+    // Name + unit
+    hdr: function (id) {
+        return this.tr(id) + ' (' + this.unit(id) + ')';
     }
 };
 
@@ -307,7 +312,8 @@ async function dashboardCreate() {
                             this.info.forEach(item => {
                                 rows += `<tr>
                                     <td>${item.name}</td>
-                                    <td>${item.value} ${item.unit}</td>
+                                    <td>${item.value}</td>
+                                    <td>${item.unit}</td>
                                 </tr>`;
                             });
 
@@ -350,7 +356,7 @@ async function dashboardCreate() {
                 },
                 yAxis: {
                     title: {
-                        text: lang.tr('Generated power', true),
+                        text: lang.hdr('P_gen'),
                         y: -80
                     },
                     labels: {
@@ -367,7 +373,7 @@ async function dashboardCreate() {
                     max: 0 // Populated at update
                 },
                 series: [{
-                    name: lang.tr('Generated power'),
+                    name: lang.tr('P_gen'),
                     enableMouseTracking: true,
                     innerRadius: '90%',
                     radius: '120%'
@@ -386,7 +392,7 @@ async function dashboardCreate() {
             connector: {
                 id: connId,
                 columnAssignment: [{
-                    seriesId: lang.tr('Generated power'),
+                    seriesId: lang.tr('P_gen'),
                     data: ['time', 'power']
                 }]
             },
@@ -407,7 +413,7 @@ async function dashboardCreate() {
                     min: 0,
                     max: 0, // Populated on update
                     title: {
-                        text: lang.tr('Generated power', true)
+                        text: lang.hdr('P_gen')
                     }
                 },
                 credits: {
@@ -449,7 +455,8 @@ async function dashboardCreate() {
                         }
                     },
                     power: {
-                        headerFormat: lang.tr('Generated power') + ' (MW)'
+                        headerFormat: lang.tr('P_gen') +
+                            ' (' + lang.unit('P_gen') + ')'
                     }
                 }
             }
@@ -1203,6 +1210,15 @@ function uiSetConnectStatus(connected) {
 
     el = document.getElementById('connect_toggle');
     el.checked = connected;
+
+    // Use logo image only when connected, otherwise text
+    el = document.getElementById('logo_img');
+    if (el) {
+        el.style.display = connected ? 'inline' : 'none';
+
+        el = document.getElementById('logo_txt');
+        el.style.display = connected ? 'none' : 'block';
+    }
 }
 
 

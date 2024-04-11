@@ -145,6 +145,10 @@ div#connect_bar h1 {
     font-size: 2.5vw;
 }
 
+div#connect_bar img {
+    display: none;
+}
+
 div#connect_bar #connect_status {
     font-weight: bold;
     color: #dadae2;
@@ -546,6 +550,15 @@ div#info-container {
     background-color: var(--color-tooltip-background);
     text-align: left;
     padding: 3px;
+}
+
+#el-map .map-tooltip td:nth-of-type(1) {
+    font-weight: bold;
+    color: blue;
+}
+
+#el-map .map-tooltip td:nth-of-type(2) {
+    font-weight: bold;
 }
 
 #el-map .highcharts-tooltip {
