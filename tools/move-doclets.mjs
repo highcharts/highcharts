@@ -47,8 +47,9 @@ const HELP = [
 const MAP_PROPERTY_TYPES = {
     '.dataLabels': 'Partial<DataLabelOptions>',
     '.legendType': '(\'point\'|\'series\')',
+    '.marker': 'PointMarkerOptions',
     '.tooltip': 'Partial<TooltipOptions>',
-    'series.heatmap.colorKey': 'string',
+    'series.heatmap.colorKey': 'string'
 };
 
 const MAP_TYPE_IMPORTS = {
@@ -305,34 +306,16 @@ function decorateType(
         }
     };
 
-    /**
-     * @param {TS.Node} node
-     */
-    const reflectWithNode = node => ({
-        [TS.SyntaxKind.BigIntKeyword]: 'bigint',
-        [TS.SyntaxKind.BigIntLiteral]: 'bigint',
-        [TS.SyntaxKind.FalseKeyword]: 'boolean',
-        [TS.SyntaxKind.TrueKeyword]: 'boolean',
-        [TS.SyntaxKind.ArrowFunction]: 'function',
-        [TS.SyntaxKind.FunctionDeclaration]: 'function',
-        [TS.SyntaxKind.FunctionExpression]: 'function',
-        [TS.SyntaxKind.FunctionKeyword]: 'function',
-        [TS.SyntaxKind.NumberKeyword]: 'number',
-        [TS.SyntaxKind.NumericLiteral]: 'number',
-        [TS.SyntaxKind.ObjectKeyword]: '*',
-        [TS.SyntaxKind.ObjectLiteralExpression]: '*',
-        [TS.SyntaxKind.StringKeyword]: 'string',
-        [TS.SyntaxKind.StringLiteral]: 'string',
-    }[node.kind]);
-
     let optionType;
 
     if (
         !optionType &&
         branch.doclet
     ) {
-        optionType =
-            TSLib.getTagText(branch.doclet, 'type')?.replace(/[{}]/g, '');
+        optionType = TSLib.getTagText(branch.doclet, 'type');
+        if (optionType) {
+            optionType = optionType.replace(/^{(.*)}/g, '$1')
+        }
     }
 
     if (
@@ -374,8 +357,8 @@ function decorateType(
             }
 
             optionType = (
-                reflectWithNode(child) ||
-                reflectWithNode(TSLib.getNodesFirstChild(node))
+                TSLib.toTypeof(child) ||
+                TSLib.toTypeof(TSLib.getNodesFirstChild(node))
             );
 
         }
@@ -389,7 +372,7 @@ function decorateType(
         if (node.type) {
             optionType = node.type.getText();
         } else {
-            optionType = reflectWithNode(node.getLastToken());
+            optionType = TSLib.toTypeof(node.getLastToken());
         }
     }
 
@@ -560,20 +543,38 @@ function generateDynamicCode(
         );
     }
 
-    code += (
-        branch.children ?
-            (
-                'interface ' + getInterfaceName(branch) + ' {\n' +
-                (branch.children || [])
-                    .map(subBranch => generateDynamicCode(subBranch))
-                    .join('') +
-                '\n}\n'
-            ) :
-            (
-                '    ' + getPropertyName(branch) + '?: ' +
-                getMemberType(branch) + ';\n'
-            )
-    );
+    if (branch.children) {
+        const replacements = [];
+        code += 'interface ' + getInterfaceName(branch) + ' {\n';
+        for (const child of branch.children) {
+            if (child.children) {
+                if (
+                    child.doclet &&
+                    Object.keys(child.doclet.tags).length
+                ) {
+                    code += TSLib.toDocletString(doclet, 4);
+                }
+                code += (
+                    '    ' + getPropertyName(child) + '?: ' +
+                    getMemberType(child) + ';\n'
+                );
+                replacements.push([0, 0, generateDynamicCode(child)]);
+            } else {
+                code += generateDynamicCode(child);
+            }
+        }
+        code += '\n}\n';
+        for (const replacement of replacements) {
+            replacement[0] = code.length;
+            replacement[1] = code.length;
+        }
+        code = TSLib.changeSourceCode(code, replacements);
+    } else {
+        code += (
+            '    ' + getPropertyName(branch) + '?: ' +
+            getMemberType(branch) + ';\n'
+        );
+    }
 
     if (code[0] !== '\n') {
         code = '\n' + code;
@@ -709,22 +710,26 @@ function getMemberType(
 ) {
     const doclet = branch.doclet;
 
-    return (
-        branch.type ||
-        (doclet && TSLib.getTagText(doclet, 'type')) ||
-        '*'
-    )
+    let interfaceName = getInterfaceName(branch);
+    let memberType = (
+            branch.type ||
+            (doclet && TSLib.getTagText(doclet, 'type')) ||
+            '*'
+        )
         .replace(/[{}]/gu, '')
-        .replace(/\*/gu, (
-            (doclet && TSLib.getTagText(doclet, 'declare')) ||
-            (
-                branch.name === 'data' ?
-                    getInterfaceName(branch)
-                        .replace('SeriesDataOptions', 'PointOptions') : 
-                    getInterfaceName(branch) || '*'
-            )
-        ))
         .replace(/,(\S)/gu, ', $1');
+
+    if (interfaceName) {
+
+        if (branch.name === 'data') {
+            interfaceName =
+                interfaceName.replace('SeriesDataOptions', 'PointOptions');
+        }
+
+        memberType = memberType.replace(/\*/gu, interfaceName);
+    }
+
+    return memberType;
 }
 
 
@@ -783,9 +788,7 @@ function mergeImports(
     const getImportPath = (importNode) => {
         return Path.join(
             currentPath,
-            importNode.moduleSpecifier
-                .getText()
-                .replace(/^(['"])(.*)\1$/, '$2')
+            TSLib.sanitizeText(importNode.moduleSpecifier.getText())
         );
     };
 
@@ -797,11 +800,10 @@ function mergeImports(
             for (const child of TSLib.getNodesChildren(node)) {
                 extractImports(child);
             }
-        } else if (
-            TS.isImportDeclaration(node)
-        ) {
+        } else if (TS.isImportDeclaration(node)) {
             const path = getImportPath(node);
-            const nodeTypes = TSLib.extractTypes(node.importClause?.getText());
+            const nodeTypes =
+                TSLib.extractTypes(node.importClause?.getText() || '');
             const allTypes = imports[path] = imports[path] || [];
 
             for (const nodeType of nodeTypes) {
@@ -841,7 +843,6 @@ function mergeImports(
                         continue;
                     }
                     if (!allTypes.includes(branchType)) {
-                        console.log(path, branchType);
                         allTypes.push(branchType);
                     }
                 }
@@ -1059,8 +1060,9 @@ function removeDoclets(
     FS.writeFileSync(
         source.fileName, 
         source.getFullText()
-            .replace(/\s*\/\*\*.*?\*\//gsu, '')
-            .replace(/\s*(\(?)''\1;[^\n]*\n/gsu, '\n\n'),
+            .replace(/^ *\/\*\*.*?\*\//gmu, '')
+            .replace(/^(\(?)''\1;.*$/gmu, '')
+            .replace(/\n\s+\n/gsu, '\n\n'),
         'utf8'
     );
 }

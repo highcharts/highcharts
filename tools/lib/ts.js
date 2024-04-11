@@ -48,6 +48,9 @@ const NATIVE_TYPES = [
 ];
 
 
+const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
+
+
 const TYPE_SPLIT = /\W+/gsu;
 
 
@@ -283,8 +286,8 @@ function getChildInfos(
             getInterfaceInfo(node, includeNodes) ||
             getImportInfo(node, includeNodes) ||
             getFunctionInfo(node, includeNodes) ||
-            getDeconstructInfos(node, includeNodes) ||
             getExportInfo(node, includeNodes) ||
+            getDeconstructInfos(node, includeNodes) ||
             getClassInfo(node, includeNodes)
         );
 
@@ -383,6 +386,9 @@ function getClassInfo(
         }
     }
 
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
+
     if (includeNodes) {
         _info.node = node;
     }
@@ -436,6 +442,9 @@ function getDeconstructInfos(
         _info.deconstructs[(element.propertyName || element.name).text] =
             element.name.text;
     }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
         _info.node = node;
@@ -494,17 +503,19 @@ function getDocletInfosBetween(
                 }
                 if (node.tags) {
                     for (const tag of node.tags) {
-                        _tagName = tag.tagName.getText();
+                        _tagName = tag.tagName.text;
                         addTag(
                             _doclet,
                             _tagName,
                             tag.getText()
+                                .trim()
                                 .substring(_tagName.length + 1)
                                 .split(/\n *\*?/gu)
                                 .join('\n')
                                 .trim()
                         );
                     }
+                    _doclet.meta = getInfoMeta(node);
                     if (includeNodes) {
                         _doclet.node = node;
                     }
@@ -595,17 +606,35 @@ function getExportInfo(
     includeNodes
 ) {
 
-    if (
-        !TS.isExportAssignment(node) &&
-        !TS.isExportDeclaration(node) &&
-        !TS.isExportSpecifier(node)
-    ) {
+    if (!TS.isExportAssignment(node)) {
         return void 0;
     }
 
-    // debug(node, 4);
+    /** @type {ExportInfo} */
+    const _info = {
+        kind: 'Export'
+    };
 
-    return void 0;
+    if (TS.isIdentifier(node.expression)) {
+        _info.name = node.expression.text;
+    } else {
+        const _object = getChildInfos([node.expression], includeNodes)[0];
+        if (_object) {
+            if (_object.name) {
+                _info.name = _object.name;
+            }
+            _info.object = _object;
+        }
+    }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
+
+    if (includeNodes) {
+        _info.node = node;
+    }
+
+    return _info;
 }
 
 
@@ -642,7 +671,7 @@ function getFunctionInfo(
     _info.name = (
         TS.isConstructorDeclaration(node) ?
             'constructor' :
-            ((node.name && node.name.getText()) || '')
+            ((node.name && node.name.text) || '')
     );
 
     if (node.typeParameters) {
@@ -666,6 +695,9 @@ function getFunctionInfo(
     if (node.type) {
         _info.return = node.type.getText();
     }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
         _info.node = node;
@@ -701,9 +733,7 @@ function getImportInfo(
         kind: 'Import'
     };
 
-    _info.from = node.moduleSpecifier
-        .getText()
-        .replace(/^(['"])(.*)\1$/u, '$2');
+    _info.from = sanitizeText(node.moduleSpecifier.getText());
 
     if (node.importClause) {
         const _imports = _info.imports = {};
@@ -713,17 +743,17 @@ function getImportInfo(
 
         for (const clause of getNodesChildren(node.importClause)) {
             if (TS.isIdentifier(clause)) {
-                _imports.default = clause.getText();
+                _imports.default = clause.text;
             }
             if (TS.isNamedImports(clause)) {
                 for (const child of getNodesChildren(clause)) {
                     if (TS.isImportSpecifier(child)) {
                         propertyName = (
                             child.propertyName &&
-                            child.propertyName.getText() ||
-                            child.name.getText()
+                            child.propertyName.text ||
+                            child.name.text
                         );
-                        _imports[propertyName] = child.name.getText();
+                        _imports[propertyName] = child.name.text;
                     }
                 }
             }
@@ -731,11 +761,68 @@ function getImportInfo(
 
     }
 
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
+
     if (includeNode) {
         _info.node = node;
     }
 
     return _info;
+}
+
+
+/**
+ * Retrieves info flags from the given node.
+ *
+ * @param {TS.Node} node
+ * Node to retrieve from.
+ *
+ * @return {Array<InfoFlag>|undefined}
+ * Retrieved info flags or `undefined`.
+ */
+function getInfoFlags(
+    node
+) {
+    /** @type {Array<InfoFlag>} */
+    const _flags = [];
+
+    if (!TS.canHaveModifiers(node)) {
+        return void 0;
+    }
+
+    for (const modifier of (TS.getModifiers(node) || [])) {
+        if (!TS.isDecorator(modifier)) {
+            _flags.push(modifier.getText());
+        }
+    }
+
+    if (!_flags.length) {
+        return void 0;
+    }
+
+    return _flags;
+}
+
+
+/**
+ * Retrieves meta information for a given node.
+ *
+ * @param {TS.Node} node
+ * Node to return meta information for.
+ *
+ * @return {MetaInfo}
+ * Meta information for the given node.
+ */
+function getInfoMeta(
+    node
+) {
+    return {
+        begin: node.getStart(),
+        end: node.getEnd(),
+        overhead: node.getLeadingTriviaWidth(),
+        syntax: node.kind
+    };
 }
 
 
@@ -765,7 +852,7 @@ function getInterfaceInfo(
         kind: 'Interface'
     };
 
-    _info.name = node.name.getText();
+    _info.name = node.name.text;
 
     if (node.typeParameters) {
         const _generics = _info.generics = [];
@@ -798,6 +885,9 @@ function getInterfaceInfo(
             }
         }
     }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
         _info.node = node;
@@ -896,13 +986,18 @@ function getObjectInfo(
     };
 
     if (node.properties) {
-        const _properties = _info.properties = [];
-        for (const property of getChildInfos(node.properties, includeNodes)) {
-            if (
-                property.kind === 'Doclet' ||
-                property.kind === 'Property'
-            ) {
-                _properties.push(property);
+        const _childInfos = getChildInfos(node.properties, includeNodes);
+
+        if (_childInfos.length) {
+            const _properties = _info.properties = [];
+
+            for (const _childInfo of _childInfos) {
+                if (
+                    _childInfo.kind === 'Doclet' ||
+                    _childInfo.kind === 'Property'
+                ) {
+                    _properties.push(_childInfo);
+                }
             }
         }
     }
@@ -910,6 +1005,9 @@ function getObjectInfo(
     if (_type) {
         _info.type = _type;
     }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
         _info.node = node;
@@ -939,7 +1037,8 @@ function getPropertyInfo(
     if (
         !TS.isPropertyAssignment(node) &&
         !TS.isPropertyDeclaration(node) &&
-        !TS.isPropertySignature(node)
+        !TS.isPropertySignature(node) &&
+        !TS.isShorthandPropertyAssignment(node)
     ) {
         return void 0;
     }
@@ -949,24 +1048,36 @@ function getPropertyInfo(
         kind: 'Property'
     };
 
-    _info.name = node.name.getText();
+    _info.name = node.name.text;
 
-    if (node.type) {
+    if (
+        !TS.isPropertyAssignment(node) &&
+        !TS.isShorthandPropertyAssignment(node) &&
+        node.type
+    ) {
         _info.type = node.type.getText();
     }
 
-    if (
-        !TS.isPropertySignature(node) &&
-        node.initializer
-    ) {
-        const expression = getChildInfos([node.initializer]);
+    if (!TS.isPropertySignature(node)) {
+        const _initializer = (
+            TS.isShorthandPropertyAssignment(node) ?
+                node.objectAssignmentInitializer :
+                node.initializer
+        );
 
-        if (expression.length) {
-            _info.value = expression[0];
-        } else {
-            _info.value = node.initializer.getText();
+        if (_initializer) {
+            const expression = getChildInfos([_initializer]);
+
+            if (expression.length) {
+                _info.value = expression[0];
+            } else {
+                _info.value = node.initializer.getText();
+            }
         }
     }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     if (includeNode) {
         _info.node = node;
@@ -1088,15 +1199,26 @@ function getVariableInfo(
             _info.type = node.type.getText();
         }
         if (node.initializer) {
-            const expression = getChildInfos([node.initializer]);
+            const _initializer = getChildInfos([node.initializer]);
 
-            if (expression.length) {
-                _info.value = expression[0];
+            if (!_info.type) {
+                _info.type = toTypeof(node.initializer);
+            }
+
+            if (_initializer.length) {
+                _info.value = _initializer[0];
             } else {
-                _info.value = node.initializer.getText();
+                _info.value = sanitizeText(node.initializer.getText());
             }
         }
     }
+
+    _info.flags = getInfoFlags(
+        TS.isVariableDeclarationList(node.parent) ?
+            node.parent.parent :
+            node
+    );
+    _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1249,6 +1371,22 @@ function removeTag(
 
 
 /**
+ * Sanitize text from surrounding quote characters.
+ *
+ * @param {string} text
+ * Text to sanitize.
+ *
+ * @return {string}
+ * Sanitized text.
+ */
+function sanitizeText(
+    text
+) {
+    return ('' + text).replace(SANITIZE_TEXT, '$2');
+}
+
+
+/**
  * Compiles doclet information into a code string.
  *
  * @see changeSourceCode
@@ -1365,6 +1503,37 @@ function toJSONString(
 }
 
 
+/**
+ * Reflects a node kind to a primitive type.
+ *
+ * @param {TS.Node} node
+ * Node to reflect.
+ *
+ * @return {string|undefined}
+ * Reflected primitive type or `undefined`.
+ */
+function toTypeof(
+    node
+) {
+    return {
+        [TS.SyntaxKind.BigIntKeyword]: 'bigint',
+        [TS.SyntaxKind.BigIntLiteral]: 'bigint',
+        [TS.SyntaxKind.FalseKeyword]: 'boolean',
+        [TS.SyntaxKind.TrueKeyword]: 'boolean',
+        [TS.SyntaxKind.ArrowFunction]: 'function',
+        [TS.SyntaxKind.FunctionDeclaration]: 'function',
+        [TS.SyntaxKind.FunctionExpression]: 'function',
+        [TS.SyntaxKind.FunctionKeyword]: 'function',
+        [TS.SyntaxKind.NumberKeyword]: 'number',
+        [TS.SyntaxKind.NumericLiteral]: 'number',
+        [TS.SyntaxKind.ObjectKeyword]: '*',
+        [TS.SyntaxKind.ObjectLiteralExpression]: '*',
+        [TS.SyntaxKind.StringKeyword]: 'string',
+        [TS.SyntaxKind.StringLiteral]: 'string'
+    }[node.kind];
+}
+
+
 /* *
  *
  *  Default Export
@@ -1390,8 +1559,10 @@ module.exports = {
     mergeDocletInfos,
     newDocletInfo,
     removeTag,
+    sanitizeText,
     toDocletString,
-    toJSONString
+    toJSONString,
+    toTypeof
 };
 
 
@@ -1403,10 +1574,6 @@ module.exports = {
 
 
 /**
- * @typedef {'declare'|'export'|'private'|'protected'} InfoFlag
- */
-
-/**
  * @typedef ClassInfo
  * @property {DocletInfo} [doclet]
  * @property {string} extends
@@ -1414,6 +1581,7 @@ module.exports = {
  * @property {Array<VariableInfo>} generics
  * @property {Array<string>} implements
  * @property {'Class'} kind
+ * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.ClassDeclaration} [node]
  * @property {Array<PropertyInfo>} properties
@@ -1427,6 +1595,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {`Deconstruct`} kind
  * @property {string} [from]
+ * @property {MetaInfo} meta
  * @property {TS.VariableDeclaration} [node]
  * @property {string} [type]
  */
@@ -1435,8 +1604,21 @@ module.exports = {
 /**
  * @typedef DocletInfo
  * @property {'Doclet'} kind
+ * @property {MetaInfo} meta
  * @property {TS.JSDoc} [node]
  * @property {Record<string,Array<string>>} tags
+ */
+
+
+/**
+ * @typedef ExportInfo
+ * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
+ * @property {'Export'} kind
+ * @property {string} [name]
+ * @property {NodeInfo} [object]
+ * @property {MetaInfo} meta
+ * @property {TS.ImportDeclaration} [node]
  */
 
 
@@ -1446,6 +1628,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} generics
  * @property {'Function'} kind
+ * @property {MetaInfo} meta
  * @property {string} name
  * @property {Array<VariableInfo>} [parameters]
  * @property {'?'} [suffix]
@@ -1458,8 +1641,16 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Record<string,string>} imports
  * @property {'Import'} kind
+ * @property {MetaInfo} meta
  * @property {TS.ImportDeclaration} [node]
  * @property {string} from
+ */
+
+
+/**
+ * @typedef {'async'|'abstract'|'declare'|'default'|'export'|'private'|
+ *           'protected'
+ *          } InfoFlag
  */
 
 
@@ -1470,6 +1661,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} generics
  * @property {'Interface'} kind
+ * @property {MetaInfo} meta
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
  * @property {Array<Propery>} properties
@@ -1477,13 +1669,26 @@ module.exports = {
 
 
 /**
- * @typedef {DocletInfo|ImportInfo|InterfaceInfo|ObjectInfo|PropertyInfo|VariableInfo} NodeInfo
+ * @typedef MetaInfo
+ * @property {number} begin
+ * @property {number} end
+ * @property {'Meta'} kind
+ * @property {number} overhead
+ */
+
+
+/**
+ * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
+ *           InterfaceInfo|ObjectInfo|PropertyInfo|SourceInfo|VariableInfo
+ *          } NodeInfo
  */
 
 
 /**
  * @typedef ObjectInfo
+ * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
+ * @property {MetaInfo} meta
  * @property {TS.Node} [node]
  * @property {Array<Propery>} properties
  * @property {string} [type]
@@ -1495,6 +1700,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Property'} kind
+ * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
  * @property {string} [type]
@@ -1504,10 +1710,10 @@ module.exports = {
 
 /**
  * @typedef SourceInfo
+ * @property {Array<NodeInfo>} code
  * @property {'Source'} kind
  * @property {TS.SourceFile} [node]
  * @property {string} path
- * @property {Array<NodeInfo>} code
  */
 
 
@@ -1516,6 +1722,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {`Variable`} kind
+ * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.VariableDeclaration} [node]
  * @property {string} [type]

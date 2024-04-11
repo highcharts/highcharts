@@ -32,7 +32,7 @@ npx gulp api-tree [OPTIONS]
 OPTIONS:
   --info            This information.
   --debug           Includes source code of the related node.
-  --sources [path]  Only loads source files from the given ts/ path. (recursive)
+  --sources [path]  Only loads source files from the given path. (recursive)
 `;
 
 
@@ -65,13 +65,13 @@ async function apiTree() {
     const sources = argv.sources;
 
     const moduleFiles = FSLib
-        .getFilePaths(Path.join('ts', sources || 'Core'), true)
+        .getFilePaths((sources || Path.join('ts', 'Core')), true)
         .filter(path => !(
             path.endsWith('Options.d.ts') ||
             path.endsWith('Options.ts')
         ));
     const optionFiles = FSLib
-        .getFilePaths(Path.join('ts', sources || ''), true)
+        .getFilePaths((sources || 'ts'), true)
         .filter(path => (
             path.endsWith('Options.d.ts') ||
             path.endsWith('Options.ts')
