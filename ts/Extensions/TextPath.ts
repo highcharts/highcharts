@@ -123,12 +123,13 @@ function setTextPath(
     }
 }
 
-function setPolygon(label: SVGElement): void {
-    const tp = label.element.querySelector('textPath');
+function setPolygon(event: any): void {
+    const element = event.target,
+        tp = element.element?.querySelector('textPath');
 
     if (tp) {
         const polygon: [number, number][] = [],
-            { b, h } = label.renderer.fontMetrics(label.element),
+            { b, h } = element.renderer.fontMetrics(element.element),
             descender = h - b,
             lineCleanerRegex = new RegExp(
                 '(<tspan>|' +
@@ -220,7 +221,7 @@ function setPolygon(label: SVGElement): void {
         // Close it
         polygon.push(polygon[0].slice() as [number, number]);
 
-        label.bBox.polygon = polygon;
+        element.bBox.polygon = polygon;
     }
 }
 
@@ -257,6 +258,7 @@ function compose(SVGElementClass: typeof SVGElement): void {
     addEvent(SVGElementClass, 'afterGetBBox', setPolygon);
 }
 const TextPathSupport = {
+    setTextPath,
     drawTextPath,
     compose
 };

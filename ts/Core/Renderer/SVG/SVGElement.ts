@@ -1548,6 +1548,9 @@ class SVGElement implements SVGElementLike {
                 bBox = this.getRotatedBox(bBox, rotation);
             }
 
+            // Necessary for the following event to be able to modify the bBox
+            this.bBox = bBox;
+
             fireEvent(this, 'afterGetBBox');
         }
 
