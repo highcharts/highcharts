@@ -12,8 +12,9 @@
     --color-background: #fff;
     --color-component-title: rgb(42, 165, 71);
     --color-sk: rgb(0, 112, 192);
-    --color-tooltip-background: #c0d8ec;
+    --color-tooltip-background: #dce5ec;
     --color-tooltip-text: #000;
+    --color-tooltip-border: #666;
     --chart-row-height: 300px;
     --info-row-height: 450px;
 }
@@ -21,7 +22,7 @@
 /* Colors */
 
 .el-kpi {
-    --color-axis-labels: #a7a4b0;
+    --color-axis-labels: rgb(16, 19, 238);
     --color-background: #fff;
     --color-gauge: #4caffe;
     --color-hover: #5352be;
@@ -42,8 +43,8 @@
     --color-pane: #eee;
     --color-pane-line: #ccc;
     --color-text: #2f2b38;
-    --color-table-bg: #fff;
-    --color-table-td: #f0f0f8;
+    --color-table-td: #f8f8f8;
+    --color-table-bg: #c8c8c8;
 }
 
 #el-info {
@@ -73,6 +74,8 @@
     :root {
         --color-background: #000;
         --color-component-title: rgb(160, 238, 160);
+        --color-tooltip-background: #c0d8ec;
+        --color-tooltip-border: #ccc;
     }
 
     .el-aggr,
@@ -82,7 +85,7 @@
         --color-pane: #20202c;
         --color-pane-line: #838394;
         --color-text: #dadae2;
-        --color-table-bg: #ccc;
+        --color-table-bg: #666;
         --color-table-td: #333;
     }
 
@@ -93,7 +96,7 @@
     }
 
     .el-kpi {
-        --color-axis: #dfdfee;
+        --color-axis-labels: #dfdfde;
         --color-background: #0d0d0d;
         --color-pane: #20202c;
         --color-pane-line: #838394;
@@ -122,7 +125,7 @@
     fill: var(--color-tooltip-background);
     fill-opacity: 1;
     stroke-width: 1px;
-    stroke: #336;
+    stroke: var(--color-tooltip-border);
 }
 
 .highcharts-tooltip text {
@@ -284,9 +287,14 @@ div.highcharts-description {
     background: none;
 }
 
+.el-kpi .highcharts-data-label text {
+    fill: var(--color-axis-labels);
+    font-size: 18px;
+}
+
 .el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
-    fill: var(--color-axis);
-    stroke: none;
+    fill: var(--color-axis-labels);
+    font-weight: bold;
 }
 
 .el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
@@ -390,10 +398,10 @@ div#info-container {
     margin: 0;
 
     & h3 {
-        padding: 0;
+        padding: 3px;
         margin: 0;
         text-align: center;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     & p {
@@ -412,10 +420,11 @@ div#info-container {
     margin-top: 10px;
     background-color: var(--color-table-bg);
     width: 100%;
+    border-spacing: 1px;
 
     & caption {
         color: var(--color-table-caption);
-        font-size: 13px;
+        font-size: 16px;
         font-weight: bold;
     }
 
@@ -435,13 +444,13 @@ div#info-container {
     }
 
     & tr.unit th {
-        font-size: 11px;
+        font-size: 12px;
         color: var(--color-unit);
         font-weight: normal;
     }
 
     & td {
-        padding: 3px;
+        padding: 5px;
         background-color: var(--color-table-td);
         color: var(--color-text);
     }

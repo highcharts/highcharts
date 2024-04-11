@@ -4,13 +4,6 @@
 // Application configuration
 //
 
-// Map view when the location is unknown
-const defaultMapView = {
-    // Sogndal-ish
-    center: [7.08, 61.22],
-    zoom: 7
-};
-
 // Map marker for power generator
 const stationMarker = {
     symbol: 'circle',
@@ -286,7 +279,9 @@ async function dashboardCreate() {
                         alignTo: 'spacingBox'
                     }
                 },
-                mapView: defaultMapView,
+                mapView: {
+                    zoom: 9
+                },
                 series: [{
                     type: 'tiledwebmap',
                     provider: {
@@ -332,7 +327,6 @@ async function dashboardCreate() {
                     data: [] // Populated on update
                 }],
                 tooltip: {
-                    // shape: 'rect',
                     useHTML: true
                 }
             }
@@ -348,7 +342,7 @@ async function dashboardCreate() {
                 chart: {
                     spacing: [8, 8, 8, 8],
                     type: 'solidgauge',
-                    styledMode: false
+                    styledMode: true
                 },
                 pane: {
                     background: {
@@ -735,47 +729,27 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         await mapPoints.data[0].remove();
     }
 
-    let mapView;
-    if (location !== null) {
-        const fields = ['q_turb', 'P_gen'];
-        const item = powerPlantInfo.aggs[0];
+    const fields = ['q_turb', 'P_gen'];
+    const item = powerPlantInfo.aggs[0];
 
-        // Power station marker
-        await mapPoints.addPoint({
-            name: stationName,
-            lon: location.lon,
-            lat: location.lat,
-            marker: stationMarker,
-            info: getInfoRecord(item, fields)
-        });
+    // Power station marker
+    await mapPoints.addPoint({
+        name: stationName,
+        lon: location.lon,
+        lat: location.lat,
+        marker: stationMarker,
+        info: getInfoRecord(item, fields)
+    });
 
-        // Add reservoir markers if present
-        await addReservoirMarkers(mapPoints, powerPlantInfo);
+    // Add reservoir markers if present
+    await addReservoirMarkers(mapPoints, powerPlantInfo);
 
-        // Add intake markers if present
-        await addIntakeMarkers(mapPoints, powerPlantInfo);
-
-        // Update map center and zoom
-        mapView = {
-            center: [location.lon, location.lat],
-            zoom: 9
-        };
-    } else {
-        await mapPoints.addPoint({
-            name: '?',
-            lon: defaultMapView.center[0],
-            lat: defaultMapView.center[1],
-            marker: {
-                symbol: 'square'
-            }
-        });
-        mapView = defaultMapView;
-    }
+    // Add intake markers if present
+    await addIntakeMarkers(mapPoints, powerPlantInfo);
 
     // Adjust map view to new location
     await mapComp.chart.mapView.setView(
-        mapView.center,
-        mapView.zoom
+        [location.lon, location.lat]
     );
 
     // Update dashboard components
