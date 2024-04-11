@@ -1,4 +1,4 @@
-QUnit.test('Testing textPath labels', function (assert) {
+QUnit.test('Testing textPath labels\' polygons', function (assert) {
     const ren = new Highcharts.Renderer(
             document.getElementById('container'),
             600,
@@ -70,4 +70,46 @@ QUnit.test('Testing textPath labels', function (assert) {
     testPolygon(straightPath, 'testing<br>textpath', 'non-curved linebreaked');
     testPolygon(curvedPath, 'testing textpath', 'curved non-linebreaked');
     testPolygon(curvedPath, 'testing<br>textpath', 'curved non-linebreaked');
+});
+
+QUnit.test('Hiding overlapping textPath labels', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 150
+        },
+        series: [{
+            type: 'treegraph',
+            keys: ['parent', 'id'],
+            data: [
+                [undefined, 'Proto Indo-European'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian'],
+                ['Proto Indo-European', 'Indo-Iranian']
+            ],
+            dataLabels: {
+                enabled: true,
+                allowOverlap: false,
+                linkFormat: 'TEST LINK LABEL'
+            }
+        }]
+    });
+
+    assert.equal(
+        chart.series[0].links[6].dataLabels[0].text.visibility,
+        undefined,
+        'TextPath label should be visible'
+    );
+
+    assert.equal(
+        chart.series[0].links[5].dataLabels[0].text.visibility,
+        'hidden',
+        'TextPath label should be hidden'
+    );
 });
