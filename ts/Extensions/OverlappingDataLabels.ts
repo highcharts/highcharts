@@ -110,7 +110,6 @@ function chartHideOverlappingLabels(
                     y: label.attr('y')
                 },
                 bBox = label.getBBox();
-
             label.width = bBox.width;
             label.height = bBox.height;
 
@@ -123,7 +122,7 @@ function chartHideOverlappingLabels(
                 ) + padding,
                 width: (label.width || 0) - 2 * padding,
                 height: (label.height || 0) - 2 * padding,
-                polygon: bBox.polygon
+                polygon: label?.bBox?.polygon
             };
         }
     }
@@ -137,6 +136,7 @@ function chartHideOverlappingLabels(
 
     for (let i = 0; i < len; i++) {
         label = labels[i];
+
         if (label) {
 
             // Mark with initial opacity

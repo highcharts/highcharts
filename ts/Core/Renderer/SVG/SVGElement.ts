@@ -1552,6 +1552,9 @@ class SVGElement implements SVGElementLike {
             this.bBox = bBox;
 
             fireEvent(this, 'afterGetBBox');
+
+            // Necessary to pick up any changes after the fired event
+            bBox = this.bBox as BBoxObject;
         }
 
         // Cache it. When loading a chart in a hidden iframe in Firefox and
