@@ -9,7 +9,8 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import TextPathSupport from '../../Extensions/TextPath.js';
+import TextPath from '../../Extensions/TextPath.js';
 const G: AnyRecord = Highcharts;
-G.TextPathSupport = TextPathSupport;
+G.TextPath = TextPath;
+G.TextPath.compose(G.SVGElement);
 export default Highcharts;

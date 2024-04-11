@@ -35,8 +35,6 @@ import type SVGAttributes from './SVGAttributes';
 import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
-import TextPathSupport from '../../../Extensions/TextPath.js';
-const { getPolygon } = TextPathSupport;
 
 import A from '../../Animation/AnimationUtilities.js';
 const {
@@ -1548,12 +1546,9 @@ class SVGElement implements SVGElementLike {
             // Adjust for rotated text
             if (rotation) {
                 bBox = this.getRotatedBox(bBox, rotation);
-            } else {
-                const tp = this.element.querySelector('textPath');
-                if (tp) {
-                    bBox.polygon = getPolygon(this, tp, this.renderer);
-                }
             }
+
+            fireEvent(this, 'afterGetBBox');
         }
 
         // Cache it. When loading a chart in a hidden iframe in Firefox and
