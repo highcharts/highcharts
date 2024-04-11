@@ -54,6 +54,7 @@
             }],
             onSeries: 'dataseries',
             shape: 'squarepin',
+            borderRadius: 3,
             width: 16
         }, {
             type: 'flags',

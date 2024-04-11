@@ -744,13 +744,11 @@ function renderButton(
     parentElement: HTMLElement,
     options: ButtonOptions
 ): HTMLElement|undefined {
-    let button;
-
     if (!parentElement) {
         return;
     }
 
-    button = createElement(
+    const button = createElement(
         'button',
         {
             className: (

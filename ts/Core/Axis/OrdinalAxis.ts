@@ -614,6 +614,7 @@ namespace OrdinalAxis {
 
             const mouseDownX = chart.mouseDownX,
                 extremes = xAxis.getExtremes(),
+                dataMin = extremes.dataMin,
                 dataMax = extremes.dataMax,
                 min = extremes.min,
                 max = extremes.max,
@@ -642,6 +643,14 @@ namespace OrdinalAxis {
                 val2lin = xAxis.val2lin;
             let trimmedRange,
                 ordinalPositions;
+
+            // Make sure panning to the edges does not decrease the zoomed range
+            if (
+                (min <= dataMin && movedUnits < 0) ||
+                (max + overscroll >= dataMax && movedUnits > 0)
+            ) {
+                return;
+            }
 
             // We have an ordinal axis, but the data is equally spaced
             if (!extendedAxis.ordinal.positions) {
@@ -1261,9 +1270,11 @@ namespace OrdinalAxis {
 
                     fakeSeries.options = {
                         dataGrouping: grouping ? {
-                            firstAnchor: 'firstPoint',
-                            anchor: 'middle',
-                            lastAnchor: 'lastPoint',
+                            firstAnchor:
+                                series.options.dataGrouping?.firstAnchor,
+                            anchor: series.options.dataGrouping?.anchor,
+                            lastAnchor:
+                                series.options.dataGrouping?.firstAnchor,
                             enabled: true,
                             forced: true,
                             // Doesn't matter which, use the fastest

@@ -355,7 +355,7 @@
                     .map(Number);
                 rotation.push(0);
 
-                const geodesic = Highcharts.Projection.greatCircle(
+                const geodesic = Highcharts.Projection.geodesic(
                     chart.mapView.projection.options.rotation,
                     rotation
                 );

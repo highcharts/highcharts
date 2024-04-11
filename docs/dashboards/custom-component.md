@@ -29,8 +29,24 @@ The custom code looks like below:
 class YouTubeComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
+
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
+
+        this.options.editableOptions = [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }];
+
 
         return this;
     }
@@ -97,20 +113,7 @@ Dashboards.board({
     components: [{
         renderTo: 'cell-id',
         type: 'YouTube',
-        videoId: 'video-id-from-youtube',
-        editableOptions: [{
-            name: 'videoId',
-            propertyPath: ['videoId'],
-            type: 'input'
-        }, {
-            name: 'title',
-            propertyPath: ['title'],
-            type: 'input'
-        }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }]
+        videoId: 'video-id-from-youtube'
     }]
 });
 ```
@@ -135,27 +138,23 @@ Use the exact name which was used to register the component in the `ComponentReg
 ```
 
 ### Making custom component editable
-To make the custom component editable, you need to define the `editableOptions` property in the component options. The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
+To make the custom component editable, you need to define the `editableOptions` property in the component options. The best place to define the `editableOptions` is in the constructor of the custom component.  
+The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
 In the example below, the `videoId`, `title` and `caption` are editable options.
 ```js
-    components: [{
-        cell: 'cell-id',
-        type: 'YouTube',
-        videoId: 'video-id-from-youtube',
-        editableOptions: [{
-            name: 'videoId',
-            propertyPath: ['videoId'],
-            type: 'input'
-        }, {
-            name: 'title',
-            propertyPath: ['title'],
-            type: 'input'
-        }, {
-            name: 'caption',
-            propertyPath: ['caption'],
-            type: 'input'
-        }]
-    }]
+    this.options.editableOptions = [{
+        name: 'videoId',
+        propertyPath: ['videoId'],
+        type: 'input'
+    }, {
+        name: 'title',
+        propertyPath: ['title'],
+        type: 'input'
+    }, {
+        name: 'caption',
+        propertyPath: ['caption'],
+        type: 'input'
+    }];
 ```
 Also the `update` method should be extended to update the component with new options. Here we simply have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after performing the update.  
 ```js
@@ -294,10 +293,6 @@ class ThresholdComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
         this.type = 'Threshold';
-        this.sync = new Component.Sync(
-            this,
-            this.syncHandlers
-        );
         return this;
     }
 
@@ -386,4 +381,70 @@ Dashboards.board('container', {
         }]
     }]
 });
+```
+
+
+## Custom Component with data from the DataConnector
+
+The example below shows how to develop a custom component that fetches data from the DataConnector, processes and displays it on the dashboard.
+
+The custom component is created by extending the `HTMLComponent` class and it displays the total revenue.
+
+<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector' allow="fullscreen"></iframe>
+
+The DataConnector is registered on the `load` that is why we need to execute and await the `super.load()` method first to make sure that the DataConnector is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
+
+When the data is ready, the `getTotalRevenue` method is used to calculate the total revenue. The `getElementsFromString` method is used to parse the HTML string into the AST-like object. The `render` method is used to render the component on the dashboard.
+
+```js
+const { ComponentRegistry } = Dashboards,
+    HTMLComponent = ComponentRegistry.types.HTML;
+
+class TotalRevenueHTML extends HTMLComponent {
+    constructor(cell, options) {
+        super(cell, options);
+
+        this.type = 'TotalRevenueHTML';
+
+        return this;
+    }
+
+    async load() {
+        await super.load();
+        const revenue = this.getTotalRevenue();
+
+        this.elements = this.getElementsFromString(
+            `
+            <div class="revenue">
+                <p class="title">Total revenue</p>
+                <p class="value">${revenue} €</p>
+            </div>
+            `
+        );
+        this.render();
+    }
+
+    getTotalRevenue() {
+        const connector = this.getFirstConnector();
+        const table = connector.table.modified;
+
+        return table.columns.Revenue.reduce((acc, cur) => acc + cur);
+    }
+}
+
+ComponentRegistry.registerComponent('TotalRevenueHTML', TotalRevenueHTML);
+```
+
+Later on the component can be used in the dashboard by referencing the name it was registered with, in this case, `TotalRevenueHTML`.
+
+```js
+...
+components: [{
+    type: 'TotalRevenueHTML',
+    renderTo: 'cell-id-0',
+    connector: {
+        id: 'data'
+    }
+},
+...
 ```

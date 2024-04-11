@@ -30,7 +30,9 @@ Highcharts.chart('container', {
                 }, 1000);
             }
         },
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Chart selection demo'

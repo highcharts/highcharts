@@ -356,7 +356,9 @@ const network = Highcharts.chart('network', {
 const scatter = Highcharts.chart('scatter', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         animation: {
             duration: 500,
             easing: 'easeInQuint'

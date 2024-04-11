@@ -24,7 +24,6 @@ import type Globals from '../../Globals';
 import type Options from './HighchartsComponentOptions';
 
 import Component from '../Component.js';
-import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -213,7 +212,6 @@ const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
                 type: 'input'
             }
         ]),
-    syncHandlers: HighchartsSyncHandlers,
     editableOptionsBindings: merge(
         Component.defaultOptions.editableOptionsBindings,
         {
