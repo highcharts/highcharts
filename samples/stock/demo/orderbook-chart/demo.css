@@ -4,3 +4,9 @@
     height: 400px;
     margin: 0 auto;
 }
+
+.highcharts-figure {
+    margin: 0;
+    min-width: 310px;
+    max-width: 1000px;
+}

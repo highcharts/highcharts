@@ -1,5 +1,3 @@
-Highcharts.Templating.helpers.abs = value => Math.abs(value);
-
 function getRandomNumber(min, max) {
     return Math.round(Math.random() * (max - min)) + min;
 }
@@ -13,7 +11,7 @@ function generateBidAndAskData(n) {
         askPrice += ((i * getRandomNumber(8, 10)));
         data[0].push({
             x: i,
-            y: (-i - 1) * getRandomNumber(70000, 110000),
+            y: (i + 1) * getRandomNumber(70000, 110000),
             price: bidPrice
         });
 
@@ -64,12 +62,14 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: 'Price: <b>${point.point.price:,.1f}</b></br>',
-        pointFormat: '{series.name}: <b>{(abs point.y):,.0f}</b>',
+        pointFormat: '{series.name}: <b>{point.y:,.0f}</b>',
         shape: 'rect',
         positioner(labelWidth, _, point) {
-            const { plotX, plotY, h, negative } = point;
+            const { plotX, plotY, h } = point,
+                negative = plotX < this.chart.yAxis[0].left;
+
             return {
-                x: negative ? plotX + h - labelWidth : plotX - h,
+                x: negative ? plotX + h - labelWidth + 10 : plotX - h + 10,
                 y: plotY
             };
         }
@@ -89,25 +89,54 @@ Highcharts.chart('container', {
         }
     }],
 
-    yAxis: {
+    yAxis: [{
+        offset: 0,
         visible: true,
         opposite: true,
         gridLineWidth: 0,
-        tickAmount: 3,
+        tickAmount: 1,
+        left: '50%',
+        width: '50%',
         title: {
-            text: 'Amount of orders',
+            text: 'Amount of ask orders',
             style: {
                 visibility: 'hidden'
             }
         },
-        min: -1200000,
+        min: 0,
+        max: 1200000,
+        labels: {
+            enabled: true,
+            format: '{#if isLast}Asks{/if}',
+            style: {
+                color: '#ffffff',
+                fontSize: 16,
+                fontWeight: 700
+            },
+            y: 10
+        }
+    }, {
+        offset: 0,
+        visible: true,
+        opposite: true,
+        gridLineWidth: 0,
+        tickAmount: 2,
+        left: '0%',
+        width: '50%',
+        reversed: true,
+        title: {
+            text: 'Amount of bid orders',
+            style: {
+                visibility: 'hidden'
+            }
+        },
+        min: 0,
         max: 1200000,
         labels: {
             enabled: true,
             format: `
-                {#if isFirst}Bids{/if}
                 {#if (eq pos 0)}Price ($){/if}
-                {#if isLast}Asks{/if}
+                {#if isLast}Bids{/if}
             `,
             style: {
                 color: '#ffffff',
@@ -116,7 +145,7 @@ Highcharts.chart('container', {
             },
             y: 10
         }
-    },
+    }],
 
     legend: {
         enabled: false
@@ -133,7 +162,6 @@ Highcharts.chart('container', {
     plotOptions: {
         series: {
             animation: false,
-            stacking: 'normal',
             pointPadding: 0,
             groupPadding: 0,
             dataLabels: {
@@ -147,33 +175,16 @@ Highcharts.chart('container', {
 
     series: [{
         dataLabels: [{
-            x: -999,
-            style: {
-                fontSize: 14,
-                textOutline: 0
-            },
-            format: '{(abs point.y):,.0f}'
-        }, {
-            align: 'right',
-            style: {
-                fontSize: 13,
-                textOutline: 0
-            },
-            format: '{point.price:,.1f}'
-        }],
-        name: 'Bids',
-        color: '#42b3f0',
-        data: bidsData
-    }, {
-        dataLabels: [{
             x: 999,
-            align: 'right',
+            overflow: 'justify',
             style: {
                 fontSize: 14,
                 textOutline: 0
-            }
+            },
+            format: '{point.y:,.0f}'
         }, {
             align: 'left',
+            inside: true,
             style: {
                 fontSize: 13,
                 textOutline: 0
@@ -183,5 +194,26 @@ Highcharts.chart('container', {
         name: 'Asks',
         color: '#d76769',
         data: asksData
+    }, {
+        dataLabels: [{
+            x: -999,
+            style: {
+                fontSize: 14,
+                textOutline: 0
+            },
+            format: '{point.y:,.0f}'
+        }, {
+            align: 'right',
+            inside: true,
+            style: {
+                fontSize: 13,
+                textOutline: 0
+            },
+            format: '{point.price:,.1f}'
+        }],
+        name: 'Bids',
+        color: '#42b3f0',
+        data: bidsData,
+        yAxis: 1
     }]
 });
