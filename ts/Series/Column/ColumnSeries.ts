@@ -350,36 +350,21 @@ class ColumnSeries extends Series {
     ): BBoxObject {
         const borderWidth = this.borderWidth,
             inverted = this.chart.inverted,
-            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
-            yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
-        let right;
+            bottom = crisp(y + height, borderWidth, inverted);
+
+        // Vertical
+        y = crisp(y, borderWidth, inverted);
+        height = bottom - y;
 
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
         if (this.options.crisp) {
-            right = crisp(x + width, borderWidth);
+            const right = crisp(x + width, borderWidth);
             x = crisp(x, borderWidth);
             width = right - x;
         }
 
-        // Vertical
-        const bottom = crisp(y + height, borderWidth, inverted),
-            fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
-        y = crisp(y, borderWidth, inverted);
-        height = bottom - y;
-
-        // Top edges are exceptions
-        if (fromTop && height) { // #5146
-            //y -= 1;
-            //h += 1;
-        }
-
-        return {
-            x,
-            y,
-            width,
-            height
-        };
+        return { x, y, width, height };
     }
 
     /**
