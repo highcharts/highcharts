@@ -12,8 +12,8 @@
     --color-background: #fff;
     --color-component-title: rgb(42, 165, 71);
     --color-sk: rgb(0, 112, 192);
-    --color-tooltip-background: #b7eeb2;
-    --color-tooltip-text: #33f;
+    --color-tooltip-background: #c0d8ec;
+    --color-tooltip-text: #000;
     --chart-row-height: 300px;
     --info-row-height: 450px;
 }
@@ -54,11 +54,11 @@
 
 #el-map {
     --color-background: #b5d2e4;
-    --color-map: #dddbef;
+    --color-map: #05031a;
     --color-marker-border: #fff;
     --color-title-text: #fff;
     --color-marker-border-active: #336;
-    --color-marker-border-hover: #acebe0;
+    --color-marker-border-hover: #71daf7;
     --color-marker-text: #fff;
     --color-marker-text-border: #000;
     --color-navigation: #f7f7f7;
@@ -121,6 +121,12 @@
 .highcharts-tooltip-box {
     fill: var(--color-tooltip-background);
     fill-opacity: 1;
+    stroke-width: 1px;
+    stroke: #336;
+}
+
+.highcharts-tooltip text {
+    fill: var(--color-tooltip-text);
 }
 
 /* *
@@ -490,11 +496,7 @@ div#info-container {
 }
 
 #el-map .highcharts-series-0.highcharts-series-inactive {
-    opacity: 0.6;
-}
-
-#el-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
-    font-size: 12px;
+    opacity: 0.8;
 }
 
 #el-map .highcharts-series-1 .highcharts-data-label text {
@@ -502,33 +504,6 @@ div#info-container {
     paint-order: stroke;
     stroke: var(--color-text-border);
     stroke-width: 2px;
-}
-
-#el-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
-    pointer-events: none;
-}
-
-#el-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
-    fill: var(--color-marker-text);
-    stroke: var(--color-marker-text-border);
-    stroke-width: 1.5px;
-}
-
-#el-map .highcharts-series-1 .highcharts-point {
-    paint-order: stroke;
-    stroke: var(--color-marker-border);
-    stroke-width: 2;
-    cursor: pointer;
-}
-
-#el-map .highcharts-series-1 .highcharts-point-select {
-    stroke-width: 8;
-    stroke: var(--color-marker-border-active);
-}
-
-#el-map .highcharts-series-1 .highcharts-point:hover {
-    stroke-width: 4;
-    stroke: var(--color-marker-border-hover);
 }
 
 #el-map .highcharts-zoom-in text {

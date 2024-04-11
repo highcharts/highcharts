@@ -1,6 +1,41 @@
 /* eslint-disable camelcase */
+
+//
+// Application configuration
+//
+
+// Map view when the location is unknown
+const defaultMapView = {
+    // Sogndal-ish
+    center: [7.08, 61.22],
+    zoom: 7
+};
+
+// Map marker for power generator
+const stationMarker = {
+    symbol: 'circle',
+    radius: 10,
+    fillColor: 'green'
+};
+
+// Map marker for water reservoir
+const reservoirMarker = {
+    symbol: 'mapmarker',
+    radius: 8,
+    fillColor: '#33C'
+};
+
+// Map marker for water intake
+const intakeMarker = {
+    symbol: 'triangle-down',
+    radius: 6,
+    fillColor: 'red'
+};
+
+// Global variables
 let board = null;
 let maxConnectedUnits;
+
 
 //
 // Language support
@@ -142,36 +177,6 @@ const lang = {
     }
 };
 
-// Map view when the location is unknown
-const defaultMapView = {
-    // Sogndal-ish
-    center: [7.08, 61.22],
-    zoom: 7
-};
-
-// Map marker for power generator facility
-const stationMarker = {
-    symbol: 'circle',
-    radius: 10,
-    fillColor: 'green',
-    lineColor: '#ffffff',
-    lineWidth: 2
-};
-
-// Map marker for water reservoir
-const reservoirMarker = {
-    symbol: 'mapmarker',
-    radius: 10,
-    fillColor: 'blue'
-};
-
-// Map marker for water intake
-const intakeMarker = {
-    symbol: 'triangle-down',
-    radius: 6,
-    fillColor: 'red'
-};
-
 // Launches the Dashboards application
 async function dashboardCreate() {
     const powerUnit = 'MW';
@@ -245,12 +250,13 @@ async function dashboardCreate() {
             id: connId,
             type: 'JSON',
             options: {
-                firstRowAsNames: true,
+                firstRowAsNames: false,
+                columnNames: ['time', 'power'],
                 data: [
-                    ['time', 'power'],
-                    // Test data: to be removed
+                    // TBD: to be removed? Seems to be needed...
                     [Date.UTC(2024, 0, 1), 0]
                 ],
+                // TBD: messes up syncing
                 dataModifier: {
                     type: 'Sort',
                     orderByColumn: 'time'
@@ -290,16 +296,16 @@ async function dashboardCreate() {
                 }, {
                     type: 'mappoint',
                     name: 'stations',
-                    color: 'blue',
+                    color: 'white',
                     dataLabels: {
                         align: 'left',
                         crop: false,
                         enabled: true,
                         format: '{point.name}',
                         padding: 0,
-                        verticalAlign: 'top',
-                        x: -2,
-                        y: 5
+                        verticalAlign: 'bottom',
+                        y: -2,
+                        x: 10
                     },
                     marker: {
                         symbol: 'square'
@@ -326,7 +332,7 @@ async function dashboardCreate() {
                     data: [] // Populated on update
                 }],
                 tooltip: {
-                    shape: 'rect',
+                    // shape: 'rect',
                     useHTML: true
                 }
             }
@@ -496,7 +502,7 @@ async function dashboardUpdate(powerPlantInfo) {
         }
 
         // Add the latest measurement
-        time = new Date(powerPlantInfo.time).valueOf();
+        time = new Date(powerPlantInfo.tst_iso).valueOf();
         const power = powerPlantInfo.aggs[i].P_gen;
 
         // Add row with latest data
@@ -591,7 +597,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
         // Description
         let html = '';
-        if (powerPlantInfo.description !== '') {
+        if (powerPlantInfo.description !== null) {
             html = `<span class="pw-descr">
             ${powerPlantInfo.description}</span>`;
 
@@ -930,14 +936,6 @@ const plantLookup = {
     Nydalselva: {
         topic: 'prod/NYD/nydalselva/overview'
     }
-    /*
-    Dale: {
-        topic: 'prod/SMKR/dale/overview'
-    },
-    Thue: {
-        topic: 'prod/SMKR/thue/overview'
-    },
-    */
 };
 
 /*
