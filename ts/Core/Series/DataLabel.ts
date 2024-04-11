@@ -846,7 +846,9 @@ namespace DataLabel {
         const chart = this.chart,
             align = options.align,
             verticalAlign = options.verticalAlign,
-            padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
+            padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
+            horizontalAxis = this.xAxis?.horiz ? this.xAxis :
+                this.yAxis?.horiz ? this.yAxis : void 0;
 
         let { x = 0, y = 0 } = options,
             off,
@@ -865,7 +867,8 @@ namespace DataLabel {
         }
 
         // Off right
-        off = (alignAttr.x || 0) + bBox.width - padding;
+        off = (alignAttr.x || 0) + bBox.width - padding +
+            (horizontalAxis ? horizontalAxis.left - chart.plotLeft : 0);
         if (off > chart.plotWidth) {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';

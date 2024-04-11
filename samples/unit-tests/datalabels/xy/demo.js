@@ -61,4 +61,16 @@ QUnit.test('Data label alignment and x/y options (#13580)', assert => {
     testAlignment('left', 'top');
     testAlignment('center', 'middle');
     testAlignment('right', 'bottom');
+
+    chart.update({
+        xAxis: {
+            left: 150
+        }
+    });
+
+    assert.ok(
+        chart.isInsidePlot(label.translateX, label.translateY),
+        `Label should be inside the plot if horizontal axis 'left' value is
+        greater than default.`
+    );
 });
