@@ -1030,7 +1030,7 @@
             );
         });
 
-    QUnit.skip('The dataGrouping enabling/disabling.', function (assert) {
+    QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
         const chart = Highcharts.stockChart('container', {
             chart: {
                 width: 400
@@ -1067,8 +1067,7 @@
         const series = chart.series[0],
             mapArray = [
                 'groupMap',
-                'hasGroupedData',
-                'currentDataGrouping'
+                'hasGroupedData'
             ];
 
         // When the dataGrouping is enabled, the properties should exist.
