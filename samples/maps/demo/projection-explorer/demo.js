@@ -373,30 +373,32 @@
                 // Use a custom animator property. For each step of the
                 // animation, get the point along the animation trajectory and
                 // update the projection with it.
-                chart.renderer.boxWrapper.animator = 0;
-                Highcharts.animate(
-                    chart.renderer.boxWrapper,
-                    { animator: 999 }, {
-                        duration: 1000,
-                        step: now => {
-                            const rotation = geodesic[Math.round(now)];
-                            chart.mapView.update({
-                                projection: {
-                                    rotation
-                                }
-                            }, true, false);
+                if (geodesic.length === 1000) {
+                    chart.renderer.boxWrapper.animator = 0;
+                    Highcharts.animate(
+                        chart.renderer.boxWrapper,
+                        { animator: 999 }, {
+                            duration: 1000,
+                            step: now => {
+                                const rotation = geodesic[Math.round(now)];
+                                chart.mapView.update({
+                                    projection: {
+                                        rotation
+                                    }
+                                }, true, false);
 
-                            rotation.forEach((value, i) => {
-                                const name = ['lambda', 'phi', 'gamma'][i];
-                                document.getElementById(`rotation-${name}`)
-                                    .value = Math.round(value);
-                                document.getElementById(
-                                    `rotation-${name}-output`
-                                ).innerText = Math.round(value);
-                            });
+                                rotation.forEach((value, i) => {
+                                    const name = ['lambda', 'phi', 'gamma'][i];
+                                    document.getElementById(`rotation-${name}`)
+                                        .value = Math.round(value);
+                                    document.getElementById(
+                                        `rotation-${name}-output`
+                                    ).innerText = Math.round(value);
+                                });
+                            }
                         }
-                    }
-                );
+                    );
+                }
             });
         });
 
