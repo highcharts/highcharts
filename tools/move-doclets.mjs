@@ -1071,8 +1071,8 @@ function removeDoclets(
     FS.writeFileSync(
         source.fileName, 
         source.getFullText()
-            .replace(/^ *\/\*\*.*?\*\//gmu, '')
-            .replace(/^(\(?)''\1;.*$/gmu, '')
+            .replace(/\n *\/\*\*.*?\*\//gsu, '')
+            .replace(/\n(\(?)''\1;[^\n]*/gsu, '')
             .replace(/\n\s+\n/gsu, '\n\n'),
         'utf8'
     );
