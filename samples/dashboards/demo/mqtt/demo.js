@@ -253,7 +253,12 @@ async function dashboardCreate() {
                 data: [
                     // TBD: to be removed? Seems to be needed...
                     [Date.UTC(2024, 0, 1), 0]
-                ]
+                ],
+                // TBD: messes up syncing
+                dataModifier: {
+                    type: 'Sort',
+                    orderByColumn: 'time'
+                }
             }
         };
     }
@@ -394,9 +399,6 @@ async function dashboardCreate() {
                     data: ['time', 'power']
                 }]
             },
-            sync: {
-                highlight: true
-            },
             chartOptions: {
                 chart: {
                     type: 'spline',
@@ -434,9 +436,6 @@ async function dashboardCreate() {
             renderTo: 'data-grid-' + pgIdx,
             connector: {
                 id: connId
-            },
-            sync: {
-                highlight: true
             },
             dataGridOptions: {
                 editable: false,
@@ -605,9 +604,10 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
         for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
             const item = powerPlantInfo.intakes[i];
+            const name = item.name.replace('_', ' ');
 
             colHtml = getDataFields(item, fields);
-            html += `<tr><td>${item.name}</td>${colHtml}</tr>`;
+            html += `<tr><td>${name}</td>${colHtml}</tr>`;
         }
         html += '</table>';
 
@@ -778,7 +778,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         const kpiComp = getComponent(board, 'kpi-agg-' + pgIdx);
         await kpiComp.update({
             value: rowCount > 0 ?
-                dataTable.getCellAsNumber('power', 0) : 0,
+                dataTable.getCellAsNumber('power', rowCount - 1) : 0,
             chartOptions: chartOptions,
             title: aggName
         });
