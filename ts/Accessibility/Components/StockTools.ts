@@ -179,21 +179,21 @@ class StockToolsComponent extends AccessibilityComponent {
         keyCode: number,
         e: KeyboardEvent
     ): void {
-        const component = this;
-        const keys = this.keyCodes;
+        // TODO: shift or ctrl? or both?
+        if (!this.focusInPopup || (this.focusInPopup && e.shiftKey)) {
+            e.preventDefault();
+            const component = this;
+            const keys = this.keyCodes;
 
-        // TODO: should this be with shift/ctrl?
-        // TODO: should some combination exit inputs?
+            if (keyCode === keys.left || keyCode === keys.up) {
+                component.decrementFocusedButtonIndex();
+            }
+            if (keyCode === keys.right || keyCode === keys.down) {
+                component.incrementFocusedButtonIndex();
+            }
 
-        e.preventDefault();
-        if (keyCode === keys.left || keyCode === keys.up) {
-            component.decrementFocusedButtonIndex();
+            component.focusButton();
         }
-        if (keyCode === keys.right || keyCode === keys.down) {
-            component.incrementFocusedButtonIndex();
-        }
-
-        component.focusButton();
     }
 
     private onEnterKeyPress(
