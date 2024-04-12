@@ -14,9 +14,9 @@
  *
  * */
 
-import type ComponentType from '../ComponentType';
+import type Component from '../Component';
 
-export type EmitterFunction = (this: ComponentType) => Function | void;
+export type EmitterFunction = (this: Component) => Function | void;
 
 /**
  *  Class responsible for adding event listeners on a component
@@ -85,7 +85,7 @@ class SyncEmitter {
      *
      * @param component The component to attach to.
      */
-    public create(component: ComponentType): void {
+    public create(component: Component): void {
         this.callback = this.func.call(component);
     }
 

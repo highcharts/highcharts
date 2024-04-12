@@ -2,7 +2,9 @@ console.time('line');
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift'
     },
@@ -35,7 +37,9 @@ Highcharts.chart('container', {
 
 Highcharts.chart('container-2', {
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift'
     },

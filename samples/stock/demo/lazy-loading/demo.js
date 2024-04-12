@@ -25,7 +25,9 @@ fetch(dataURL)
         Highcharts.stockChart('container', {
             chart: {
                 type: 'candlestick',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
 
             navigator: {

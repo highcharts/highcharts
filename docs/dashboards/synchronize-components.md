@@ -37,8 +37,7 @@ The above is a shortened way that in which you cannot set additional options if
 a given type of synchronization provides them. Only those enabled by default are
 set.
 
-If you would like to enable, for example, the `affectNavigator` option for the
-crossfilter sync, you must use a declaration like this:
+If you would like to enable, for example, the `affectNavigator` option for the crossfilter sync, you must use a declaration like this:
 
 ```js
 sync: {
@@ -48,6 +47,8 @@ sync: {
     }
 }
 ```
+
+The options above are only available for the [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component#crossfilter). Each component can have its own options for the predefined syncs. You can find their descriptions in the articles about these components (eg. the [Highlight Sync options for the Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component#highlight-sync-options)).
 
 An example of synchronized components:
 
@@ -77,11 +78,7 @@ Dashboards.board('container', {
           extremes: true
       },
       renderTo: 'dashboard-col-0',
-      type: 'Highcharts',
-      columnAssignment: {
-          Food: 'x',
-          'Vitamin A': 'value'
-      }
+      type: 'Highcharts'
   }, {
       renderTo: 'dashboard-col-1',
       connector: {
@@ -92,11 +89,7 @@ Dashboards.board('container', {
           highlight: true,
           extremes: true
       },
-      type: 'Highcharts',
-      columnAssignment: {
-          Food: 'x',
-          'Vitamin A': 'y'
-      }
+      type: 'Highcharts'
   }]
 });
 ```
@@ -123,23 +116,6 @@ sync: {
 ```
 
 
-### Highlight sync options
-
-Highlight sync can have additional options:
-```js
-sync: {
-    highlight: {
-        enabled: true,
-        highlightPoint: true,
-        showTooltip: false,
-        showCrosshair: true
-    }
-}
-```
-
-Demo:
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
-
 
 ## Custom synchronization
 
@@ -150,16 +126,16 @@ For each component, you can add or overwrite a custom [definition of the existin
 ```js
 sync: {
     customSync: {
-        handler: function() {
-            registerHandlerEvents();
-            return () => {
-                unregisterHandlerEvents();
-            }
-        }
         emitter: function() {
             registerEmitterEvents();
             return () => {
                 unregisterEmitterEvents();
+            }
+        },
+        handler: function() {
+            registerHandlerEvents();
+            return () => {
+                unregisterHandlerEvents();
             }
         }
     }
@@ -168,18 +144,41 @@ sync: {
 
 Synchronization most often uses the `dataCursor` object, which is common to the entire board. It points to a data table and allows you to create a relationship between the states of the user interface and the table cells, columns, or rows. The cursor can emit and receive events.
 
-To add synchronization to a [custom component](https://www.highcharts.com/docs/dashboards/custom-component), define the `sync` field by creating a new object of the `Component.Sync` class, where the component object (`this`) should be provided as the first argument of the constructor, and the second object with default handlers and emitters for predefined synchronizations for this component. Additionally, after the component has finished loading, you should run the `this.sync.start()` method to register handlers and emitters.
+
+To add synchronization to a [custom component](https://www.highcharts.com/docs/dashboards/custom-component), define a static field `predefinedSyncConfig` which should contain two options:
+* `defaultSyncOptions` - a record of default options per synchronization type (can be empty if we do not want to define options).
+* `defaultSyncPairs` - a record of default `emitter` and `handler` definitions per defined synchronization type.
+
+Additionally, after the component has finished rendering, you should run the `this.sync.start()` method to register the options and run the handlers and emitters.
+
 
 ```js
 class CustomComponent extends Component {
+    static predefinedSyncConfig = {
+        defaultSyncOptions: {
+            customSync: {
+                sampleOption: true
+            }
+        },
+        defaultSyncPairs: {
+            customSync: {
+                emitter: function() {
+                    ...
+                },
+                handler: function() {
+                    ...
+                }
+            }
+        }
+    };
+
     constructor(cell, options) {
         super(cell, options);
-        this.sync = new Component.Sync(this, this.syncHandlers);
         return this;
     }
 
-    async load() {
-        await super.load();
+    render() {
+        super.render();
         this.sync.start();
         return this;
     }
