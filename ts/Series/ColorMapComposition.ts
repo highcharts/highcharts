@@ -147,6 +147,9 @@ namespace ColorMapComposition {
                 // which would make it appear on top of the other elements. This
                 // deals with z-index without reordering DOM elements (#13049).
                 series.stateMarkerGraphic = new SVGElement(renderer, 'use')
+                    .css({
+                        pointerEvents: 'none'
+                    })
                     .add(point.graphic.parentGroup);
             }
             if (e?.state === 'hover') {
