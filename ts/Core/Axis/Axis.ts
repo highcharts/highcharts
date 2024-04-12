@@ -597,7 +597,7 @@ class Axis {
             {
                 labels: {
                     autoRotation: [-45],
-                    padding: 5
+                    padding: 4
                 },
                 margin: 15
             } :
@@ -605,7 +605,7 @@ class Axis {
             // respectively
             {
                 labels: {
-                    padding: 0
+                    padding: 1
                 },
                 title: {
                     rotation: 90 * this.side
