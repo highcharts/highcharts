@@ -25,6 +25,8 @@ const intakeMarker = {
     fillColor: 'red'
 };
 
+const defaultZoom = 9;
+
 // Global variables
 let board = null;
 let maxConnectedUnits;
@@ -175,7 +177,7 @@ async function dashboardCreate() {
     const powerUnit = 'MW';
 
     // Create configuration for power generator units
-    const pu = createPowerGeneratorUnit();
+    const pu = await createPowerGeneratorUnit();
 
     return await Dashboards.board('container', {
         dataPool: {
@@ -196,7 +198,7 @@ async function dashboardCreate() {
         };
     }
 
-    function createPowerGeneratorUnit() {
+    async function createPowerGeneratorUnit() {
         const powerGenUnits = {
             connectors: [],
             components: []
@@ -209,7 +211,7 @@ async function dashboardCreate() {
 
         // Map on power station level
         powerGenUnits.components.push(
-            createMapComponent()
+            await createMapComponent()
         );
 
         for (let i = 0; i < maxConnectedUnits; i++) {
@@ -258,7 +260,7 @@ async function dashboardCreate() {
         };
     }
 
-    function createMapComponent() {
+    async function createMapComponent() {
         return {
             type: 'Highcharts',
             renderTo: 'el-map',
@@ -268,7 +270,8 @@ async function dashboardCreate() {
                     text: ''
                 },
                 chart: {
-                    styledMode: false
+                    styledMode: false,
+                    animation: false
                 },
                 legend: {
                     enabled: false
@@ -279,14 +282,12 @@ async function dashboardCreate() {
                         alignTo: 'spacingBox'
                     }
                 },
-                mapView: {
-                    zoom: 9
-                },
                 series: [{
                     type: 'tiledwebmap',
                     provider: {
                         type: 'OpenStreetMap',
-                        theme: 'Standard'
+                        theme: 'Standard',
+                        subdomain: 'a'
                     }
                 }, {
                     type: 'mappoint',
@@ -693,18 +694,55 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
     }
 
-    const stationName = powerPlantInfo.name;
-    const location = powerPlantInfo.location;
-    let posInfo = lang.tr('Location unknown');
-    if (location !== null) {
-        posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
+    async function updateMap(powerPlantInfo) {
+        // Map
+        const mapComp = getComponent(board, 'el-map');
+        const mapPoints = mapComp.chart.series[1];
+
+        // Erase existing points
+        while (mapPoints.data.length > 0) {
+            await mapPoints.data[0].remove();
+        }
+
+        const fields = ['q_turb', 'P_gen'];
+        const item = powerPlantInfo.aggs[0];
+
+        // Power station marker
+        const location = powerPlantInfo.location;
+        await mapPoints.addPoint({
+            name: powerPlantInfo.name,
+            lon: location.lon,
+            lat: location.lat,
+            marker: stationMarker,
+            info: getInfoRecord(item, fields)
+        });
+
+        // Add reservoir markers if present
+        await addReservoirMarkers(mapPoints, powerPlantInfo);
+
+        // Add intake markers if present
+        await addIntakeMarkers(mapPoints, powerPlantInfo);
+
+        // Adjust map view to new location
+        const mapView = mapComp.chart.mapView;
+        await mapView.setView(
+            [location.lon, location.lat],
+            defaultZoom
+        );
     }
 
+    const stationName = powerPlantInfo.name;
+    const location = powerPlantInfo.location;
+
+    // Update map
+    await updateMap(powerPlantInfo);
+
     // Information
+    const posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
+
     const infoComp = getComponent(board, 'el-info');
     await infoComp.update({
         title: stationName
-        // html: '<h3>Oppdatert</h3>' + stationName // Does not work
     });
 
     const intakeHtml = getIntakeHtml(powerPlantInfo);
@@ -719,38 +757,6 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     ${reservoirHtml}
     </div>
     `;
-
-    // Map
-    const mapComp = getComponent(board, 'el-map');
-    const mapPoints = mapComp.chart.series[1];
-
-    // Erase existing points
-    while (mapPoints.data.length > 0) {
-        await mapPoints.data[0].remove();
-    }
-
-    const fields = ['q_turb', 'P_gen'];
-    const item = powerPlantInfo.aggs[0];
-
-    // Power station marker
-    await mapPoints.addPoint({
-        name: stationName,
-        lon: location.lon,
-        lat: location.lat,
-        marker: stationMarker,
-        info: getInfoRecord(item, fields)
-    });
-
-    // Add reservoir markers if present
-    await addReservoirMarkers(mapPoints, powerPlantInfo);
-
-    // Add intake markers if present
-    await addIntakeMarkers(mapPoints, powerPlantInfo);
-
-    // Adjust map view to new location
-    await mapComp.chart.mapView.setView(
-        [location.lon, location.lat]
-    );
 
     // Update dashboard components
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
