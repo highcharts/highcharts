@@ -29,10 +29,10 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * The dash style of the box.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * Box plot styling
+     *         Box plot styling
      *
      * @sample {highcharts} highcharts/css/boxplot/
-     * Box plot in styled mode
+     *         Box plot in styled mode
      *
      * @type {Highcharts.DashStyleValue}
      *
@@ -49,10 +49,10 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * The dash style of the median.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * Box plot styling
+     *         Box plot styling
      *
      * @sample {highcharts} highcharts/css/boxplot/
-     * Box plot in styled mode
+     *         Box plot in styled mode
      *
      * @type {Highcharts.DashStyleValue}
      *
@@ -69,10 +69,10 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * The dash style of the stem.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * Box plot styling
+     *         Box plot styling
      *
      * @sample {highcharts} highcharts/css/boxplot/
-     * Box plot in styled mode
+     *         Box plot in styled mode
      *
      * @type {Highcharts.DashStyleValue}
      *
@@ -89,10 +89,10 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * The dash style of the whiskers.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * Box plot styling
+     *         Box plot styling
      *
      * @sample {highcharts} highcharts/css/boxplot/
-     * Box plot in styled mode
+     *         Box plot in styled mode
      *
      * @type {Highcharts.DashStyleValue}
      *
@@ -112,8 +112,6 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @type {number}
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.high
      */
     high?: BoxPlotPoint['high'];
 
@@ -124,8 +122,6 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @type {number}
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.low
      */
     low?: BoxPlotPoint['low'];
 
@@ -136,8 +132,6 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @type {number}
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.median
      */
     median?: BoxPlotPoint['median'];
 
@@ -148,8 +142,6 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @type {number}
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.q1
      */
     q1?: BoxPlotPoint['q1'];
 
@@ -159,8 +151,6 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @type {number}
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.q3
      */
     q3?: BoxPlotPoint['q3'];
 

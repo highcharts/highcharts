@@ -27,11 +27,15 @@ import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
  * */
 
 const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
+
     intervals: 3,
+
+    pointsInInterval: 3,
+
     marker: {
         enabled: false
-    },
-    pointsInInterval: 3
+    }
+
 };
 
 /* *

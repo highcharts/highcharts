@@ -14,11 +14,11 @@
  *
  * */
 
-import BoxPlotPoint from './BoxPlotPoint';
-import BoxPlotPointOptions from './BoxPlotPointOptions';
-import BoxPlotSeries from './BoxPlotSeries';
-import ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type BoxPlotPoint from './BoxPlotPoint';
+import type BoxPlotPointOptions from './BoxPlotPointOptions';
+import type BoxPlotSeries from './BoxPlotSeries';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -26,11 +26,15 @@ import { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
+
 /**
  * A box plot is a convenient way of depicting groups of data through their
  * five-number summaries: the smallest observation (sample minimum), lower
  * quartile (Q1), median (Q2), upper quartile (Q3), and largest observation
  * (sample maximum).
+ *
+ * A `boxplot` series. If the [type](#series.boxplot.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @sample highcharts/demo/box-plot/
  *         Box plot
@@ -42,10 +46,12 @@ import { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *         Jittered scatter plot on top of a box plot
  *
  * @extends   plotOptions.column
- * @excluding borderColor, borderRadius, borderWidth, groupZPadding,
- *            states, boostThreshold, boostBlending
  *
  * @extends   series,plotOptions.boxplot
+ *
+ * @excluding borderColor, borderRadius, borderWidth, groupZPadding,
+ *                states, boostThreshold, boostBlending
+ *
  * @excluding dataParser, dataURL, marker, stack, stacking, states,
  *            boostThreshold, boostBlending
  *
@@ -60,14 +66,17 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
+     *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
      * @type {Highcharts.DashStyleValue}
+     *
      * @default Solid
+     *
      * @since 8.1.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.boxDashStyle
      */
     boxDashStyle?: BoxPlotPoint['boxDashStyle'];
 
@@ -80,9 +89,12 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     *
      * @default #ffffff
-     * @since   3.0
+     *
+     * @since 3.0
+     *
      * @product highcharts
      */
     fillColor?: BoxPlotPoint['fillColor'];
@@ -103,10 +115,11 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.boxplot.medianColor
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+     *
+     * @since 3.0
+     *
+     * @product highcharts
      */
     medianColor?: BoxPlotPoint['medianColor'];
 
@@ -114,14 +127,18 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * The dash style of the median.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * Box plot styling
+     *         Box plot styling
+     *
      * @sample {highcharts} highcharts/css/boxplot/
-     * Box plot in styled mode
+     *         Box plot in styled mode
+     *
      * @type {Highcharts.DashStyleValue}
+     *
      * @default Solid
+     *
      * @since 8.1.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.medianDashStyle
      */
     medianDashStyle?: BoxPlotPoint['medianDashStyle'];
 
@@ -139,11 +156,12 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *         Box plot in styled mode
      *
      * @type {number|null}
+     *
      * @since 3.0
+     *
      * @product highcharts
      */
     medianWidth?: BoxPlotPoint['medianWidth'];
-
     states?: SeriesStatesOptions<BoxPlotSeries>;
 
     /**
@@ -165,8 +183,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      *
      * @since 3.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.stemColor
      */
     stemColor?: BoxPlotPoint['stemColor'];
 
@@ -184,10 +202,12 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *         Error bar styling
      *
      * @type {Highcharts.DashStyleValue}
+     *
      * @default Solid
+     *
      * @since 3.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.stemDashStyle
      */
     stemDashStyle?: BoxPlotPoint['stemDashStyle'];
 
@@ -209,9 +229,10 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *         Error bar styling
      *
      * @type {number}
+     *
      * @since 3.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.stemWidth
      */
     stemWidth?: BoxPlotPoint['stemWidth'];
 
@@ -229,9 +250,10 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *         Box plot in styled mode
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     *
      * @since 3.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.whiskerColor
      */
     whiskerColor?: BoxPlotPoint['whiskerColor'];
 
@@ -245,10 +267,12 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *         Box plot in styled mode
      *
      * @type {Highcharts.DashStyleValue}
+     *
      * @default Solid
+     *
      * @since 8.1.0
+     *
      * @product highcharts
-     * @apioption plotOptions.boxplot.whiskerDashStyle
      */
     whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
 
@@ -258,12 +282,16 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * value of the box width. Set `0` to disable whiskers.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * True by default
+     *         True by default
+     *
      * @type {number|string}
+     *
      * @since 3.0
+     *
      * @product highcharts
      */
     whiskerLength?: BoxPlotPoint['whiskerLength'];
+
     /**
      * The line width of the whiskers, the horizontal lines marking low and
      * high values. When `undefined`, the general
@@ -273,10 +301,13 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * `.highcharts-boxplot-whisker` class.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     * Box plot styling
+     *         Box plot styling
+     *
      * @sample {highcharts} highcharts/css/boxplot/
-     * Box plot in styled mode
+     *         Box plot in styled mode
+     *
      * @since 3.0
+     *
      * @product highcharts
      */
     whiskerWidth?: BoxPlotPoint['whiskerWidth'];
@@ -346,18 +377,20 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *         Config objects
      *
      * @type {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
-     * @extends   series.line.data
+     *
+     * @extends series.line.data
+     *
      * @excluding marker
-     * @product   highcharts
-     * @apioption series.boxplot.data
+     *
+     * @product highcharts
      */
     data?: Array<[(number|string), number, number, number, number]|[(number|string), number, number, number, number, number]|BoxPlotPointOptions>;
 
     /**
-     * @default   high
-     * @apioption plotOptions.boxplot.colorKey
+     *
+     * @default high
      */
-    colorKey?: string;
+    colorKey?: number;
 
     /**
      * The width of the line surrounding the box. If any of
@@ -372,18 +405,15 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @since   3.0
+     * @since 3.0
+     *
      * @product highcharts
      */
     lineWidth?: number;
 
     tooltip?: Partial<TooltipOptions>;
 
-    /**
-     * @type {number|null}
-     */
     threshold?: number|null;
-
 }
 
 /* *
