@@ -8,7 +8,9 @@
 
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'x',
+            zooming: {
+                type: 'x'
+            },
             events: {
                 selection(event) {
                     if (event.xAxis) {

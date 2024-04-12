@@ -5,8 +5,10 @@ const chart = Highcharts.chart('container', {
     },
 
     chart: {
-        zoomBySingleTouch: true,
-        zoomType: 'x'
+        zooming: {
+            type: 'x',
+            singleTouch: true
+        }
     },
 
     xAxis: {
@@ -27,12 +29,14 @@ const chart = Highcharts.chart('container', {
 document.querySelector('.toggle-buttons').addEventListener(
     'click',
     e => {
-        const value = e.target.dataset.zoombysingletouch;
+        const value = e.target.dataset.singletouchzoom;
         if (value) {
-            const zoomBySingleTouch = value === 'true';
+            const singleTouch = value === 'true';
             chart.update({
                 chart: {
-                    zoomBySingleTouch
+                    zooming: {
+                        singleTouch
+                    }
                 }
             });
 

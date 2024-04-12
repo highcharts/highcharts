@@ -150,16 +150,16 @@ For each component, you can add or overwrite a custom [definition of the existin
 ```js
 sync: {
     customSync: {
-        handler: function() {
-            registerHandlerEvents();
-            return () => {
-                unregisterHandlerEvents();
-            }
-        }
         emitter: function() {
             registerEmitterEvents();
             return () => {
                 unregisterEmitterEvents();
+            }
+        },
+        handler: function() {
+            registerHandlerEvents();
+            return () => {
+                unregisterHandlerEvents();
             }
         }
     }
@@ -168,18 +168,41 @@ sync: {
 
 Synchronization most often uses the `dataCursor` object, which is common to the entire board. It points to a data table and allows you to create a relationship between the states of the user interface and the table cells, columns, or rows. The cursor can emit and receive events.
 
-To add synchronization to a [custom component](https://www.highcharts.com/docs/dashboards/custom-component), define the `sync` field by creating a new object of the `Component.Sync` class, where the component object (`this`) should be provided as the first argument of the constructor, and the second object with default handlers and emitters for predefined synchronizations for this component. Additionally, after the component has finished loading, you should run the `this.sync.start()` method to register handlers and emitters.
+
+To add synchronization to a [custom component](https://www.highcharts.com/docs/dashboards/custom-component), define a static field `predefinedSyncConfig` which should contain two options:
+* `defaultSyncOptions` - a record of default options per synchronization type (can be empty if we do not want to define options).
+* `defaultSyncPairs` - a record of default `emitter` and `handler` definitions per defined synchronization type.
+
+Additionally, after the component has finished rendering, you should run the `this.sync.start()` method to register the options and run the handlers and emitters.
+
 
 ```js
 class CustomComponent extends Component {
+    static predefinedSyncConfig = {
+        defaultSyncOptions: {
+            customSync: {
+                sampleOption: true
+            }
+        },
+        defaultSyncPairs: {
+            customSync: {
+                emitter: function() {
+                    ...
+                },
+                handler: function() {
+                    ...
+                }
+            }
+        }
+    };
+
     constructor(cell, options) {
         super(cell, options);
-        this.sync = new Component.Sync(this, this.syncHandlers);
         return this;
     }
 
-    async load() {
-        await super.load();
+    render() {
+        super.render();
         this.sync.start();
         return this;
     }

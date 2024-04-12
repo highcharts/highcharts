@@ -4,7 +4,9 @@ const type = 'grid',
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     accessibility: {
         description: ''
@@ -39,7 +41,7 @@ Highcharts.chart('container', {
     },
 
     series: [
-    // Marker clusters
+        // Marker clusters
         {
             name: 'Weight and height by country',
             dataLabels: {

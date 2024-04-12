@@ -43,11 +43,13 @@ Highcharts.setOptions({
 });
 
 console.time('line');
-const chart =  Highcharts.stockChart('container', {
+const chart = Highcharts.stockChart('container', {
 
     chart: {
         animation: false,
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
