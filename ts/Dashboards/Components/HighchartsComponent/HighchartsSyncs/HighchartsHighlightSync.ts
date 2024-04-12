@@ -35,6 +35,8 @@ import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
 import DataCursor from '../../../../Data/DataCursor.js';
+import U from '../../../Utilities.js';
+const { error } = U;
 
 /* *
 *
@@ -92,6 +94,7 @@ function getModifiedTableOffset(
  * */
 
 const defaultOptions: HighchartsHighlightSyncOptions = {
+    affectedSeriesId: null,
     highlightPoint: true,
     showTooltip: true,
     showCrosshair: true
@@ -213,7 +216,9 @@ const syncPair: Sync.SyncPair = {
         const getHoveredPoint = (
             e: DataCursor.Event
         ): Point | undefined => {
-            const table = e.table;
+            const { table, cursor } = e;
+            const highlightOptions = this.sync
+                .syncConfig.highlight as HighchartsHighlightSyncOptions;
             const modifier = table.getModifier();
 
             let offset = 0;
@@ -224,13 +229,31 @@ const syncPair: Sync.SyncPair = {
                 );
             }
 
-            if (chart && chart.series?.length) {
-                const cursor = e.cursor;
-                if (cursor.type === 'position') {
-                    let series;
+            if (chart && chart.series?.length && cursor.type === 'position') {
+                let series: Series | undefined;
+                const seriesId = highlightOptions.affectedSeriesId;
 
-                    const seriesIds =
-                        Object.keys(component.seriesFromConnector);
+                if (highlightOptions.affectedSeriesId) {
+                    const foundSeries = chart.get(
+                        highlightOptions.affectedSeriesId
+                    ) as Series;
+
+                    if (foundSeries?.points) {
+                        series = foundSeries;
+                    } else {
+                        error(
+                            'No series with ID \'' + seriesId + '\' found in ' +
+                            'the chart. Affected series will be selected ' +
+                            'according to the column assignment.'
+                        );
+                    }
+                }
+
+                if (!series) {
+                    const seriesIds = Object.keys(
+                        component.seriesFromConnector
+                    );
+
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
@@ -272,12 +295,12 @@ const syncPair: Sync.SyncPair = {
                             }
                         }
                     }
+                }
 
-                    if (series?.visible && cursor.row !== void 0) {
-                        const point = series.data[cursor.row - offset];
-                        if (point?.visible) {
-                            return point;
-                        }
+                if (series?.visible && cursor.row !== void 0) {
+                    const point = series.data[cursor.row - offset];
+                    if (point?.visible) {
+                        return point;
                     }
                 }
             }
