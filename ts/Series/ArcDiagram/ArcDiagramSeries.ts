@@ -312,9 +312,7 @@ class ArcDiagramSeries extends SankeySeries {
             node: ArcDiagramPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const equalNodes = node.series.options.equalNodes;
-            let offset = column.sankeyColumn.additionalSpace || 0,
-                totalNodeOffset,
+            const equalNodes = node.series.options.equalNodes,
                 nodePadding = series.nodePadding,
                 maxRadius = Math.min(
                     chart.plotWidth,
@@ -322,6 +320,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (column.sankeyColumn.maxLength || 0) /
                         series.nodes.length - nodePadding
                 );
+            let offset = column.sankeyColumn.additionalSpace || 0,
+                totalNodeOffset;
 
             for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum() *

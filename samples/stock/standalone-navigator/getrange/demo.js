@@ -22,7 +22,7 @@
 
     navigator.bind(chart);
 
-    document.getElementById('button').addEventListener('click', e => {
+    document.getElementById('button').addEventListener('click', () => {
         const { min, max } = navigator.getRange();
 
         chart.renderer.label(

@@ -336,9 +336,9 @@ class ColumnSeries extends Series {
         h: number
     ): BBoxObject {
         const borderWidth = this.borderWidth,
-            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0);
-        let right,
+            xCrisp = -((borderWidth as any) % 2 ? 0.5 : 0),
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
+        let right;
 
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.

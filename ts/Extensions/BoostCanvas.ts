@@ -973,8 +973,8 @@ namespace BoostCanvas {
 
             // Draw the columns
             this.points.forEach((point): void => {
-                let plotY = point.plotY,
-                    pointAttr: SVGAttributes;
+                const plotY = point.plotY;
+                let pointAttr: SVGAttributes;
 
                 if (
                     typeof plotY !== 'undefined' &&

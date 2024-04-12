@@ -23,7 +23,9 @@ function getMinMax(chart) {
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {

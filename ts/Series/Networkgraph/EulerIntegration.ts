@@ -190,14 +190,12 @@ function integrate(
     layout: ReingoldFruchtermanLayout,
     node: NetworkgraphPoint
 ): void {
-    let distanceR: number;
-
     (node.dispX as any) +=
         (node.dispX as any) * (layout.options.friction as any);
     (node.dispY as any) +=
         (node.dispY as any) * (layout.options.friction as any);
 
-    distanceR = node.temperature = layout.vectorLength({
+    const distanceR = node.temperature = layout.vectorLength({
         x: node.dispX as any,
         y: node.dispY as any
     });
