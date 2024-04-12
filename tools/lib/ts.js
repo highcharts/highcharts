@@ -510,6 +510,7 @@ function getDocletInfosBetween(
                             tag.getText()
                                 .trim()
                                 .substring(_tagName.length + 1)
+                                .trim()
                                 .split(/\n *\*?/gu)
                                 .join('\n')
                                 .trim()
@@ -1443,7 +1444,8 @@ function toDocletString(
                 text
                     .trim()
                     .split('\n')
-                    .join(indent + ' * ')
+                    .map(line => line.trim())
+                    .join(indent + ' * ' + ''.padEnd(tag.length + 2, ' '))
             );
         }
     }

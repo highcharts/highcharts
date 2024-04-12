@@ -1112,6 +1112,10 @@ function writeDocletsTree(
         if (!isRegistered(branch, node)) {
             if (TS.isInterfaceDeclaration(node)) {
                 if (getInterfaceName(branch) === node.name.text) {
+                    if (branch.doclet) {
+                        TSLib.removeTag(branch.doclet, 'apioption');
+                        TSLib.removeTag(branch.doclet, 'optionparent');
+                    }
                     changes.push([node.getStart(), node.kind, branch]);
                 }
             } else if (
@@ -1122,6 +1126,10 @@ function writeDocletsTree(
                     getPropertyName(branch) === node.name.text &&
                     getInterfaceName(branch, true) === parent.name.text
                 ) {
+                    if (branch.doclet) {
+                        TSLib.removeTag(branch.doclet, 'apioption');
+                        TSLib.removeTag(branch.doclet, 'optionparent');
+                    }
                     changes.push([node.getStart() - 4, node.kind, branch]);
                 }
             }
@@ -1228,10 +1236,6 @@ function writeDocletsTree(
         const replacements = [];
 
         for (const change of changes) {
-            if (change[2].doclet) {
-                TSLib.removeTag(change[2].doclet, 'apioption');
-                TSLib.removeTag(change[2].doclet, 'optionparent');
-            }
             switch (change[1]) {
                 case TS.SyntaxKind.InterfaceDeclaration:
                     if (change[2].doclet) {
