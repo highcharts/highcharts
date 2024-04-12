@@ -1745,7 +1745,7 @@ class RangeSelector {
         };
 
         const groupsOverlap = (buttonGroupWidth: number): boolean => {
-            if (inputGroup && buttonGroup) {
+            if (inputGroup?.alignOptions && buttonGroup) {
                 const inputGroupX = (
                     inputGroup.alignAttr.translateX +
                     inputGroup.alignOptions.x -
@@ -1756,7 +1756,7 @@ class RangeSelector {
                     2
                 );
 
-                const inputGroupWidth = inputGroup.alignOptions.width;
+                const inputGroupWidth = inputGroup.alignOptions.width || 0;
 
                 const buttonGroupX = buttonGroup.alignAttr.translateX +
                     buttonGroup.getBBox().x;

@@ -683,7 +683,9 @@ const str = {
         type: 'streamgraph',
         marginBottom: 10,
         // height: 430,
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         backgroundColor: 'transparent',
         animation: {
             duration: 2000,

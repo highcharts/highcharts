@@ -177,6 +177,27 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-keys-data allow="fullscreen"></iframe>
 
+### Multiple connectors
+
+The Highcharts Component also supports more than one data source. That means the connector option should then be configured as an array of objects rather than a single object.
+
+Code sample:
+```js
+components: [{
+    type: 'Highcharts',
+    connector: [{
+        id: 'connector-1',
+        columnAssignment: [ ... ]
+    }, {
+        id: 'connector-2',
+        columnAssignment: [ ... ]
+    }]
+}]
+```
+
+Example:
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/highcharts-components/multiple-connectors" allow="fullscreen"></iframe>
+
 
 ## Components synchronization
 

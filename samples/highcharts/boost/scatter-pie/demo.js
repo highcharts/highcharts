@@ -18,7 +18,9 @@ console.time('asyncRender');
 Highcharts.chart('container', {
 
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     xAxis: {
