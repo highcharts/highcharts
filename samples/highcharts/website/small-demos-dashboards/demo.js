@@ -483,7 +483,7 @@ function climate() {
 
 
         // Update city grid selection
-        const showCelsius = scale === 'C';
+        // const showCelsius = scale === 'C';
         if (newData) {
             // await selectionGrid.update({
             //     dataGridOptions: {
