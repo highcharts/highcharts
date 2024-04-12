@@ -45,20 +45,26 @@ const HELP = [
 
 
 const MAP_PROPERTY_TYPES = {
+    '.color': 'ColorType',
     '.dataLabels': 'Partial<DataLabelOptions>',
+    '.fillColor': 'ColorType',
     '.legendType': '(\'point\'|\'series\')',
     '.marker': 'PointMarkerOptions',
+    '.sonification': 'SeriesSonificationOptions',
     '.tooltip': 'Partial<TooltipOptions>',
-    'series.heatmap.colorKey': 'string'
+    '.zones': 'Array<SeriesZonesOptions>',
+    'series.heatmap.colorKey': 'string',
 };
 
 const MAP_TYPE_IMPORTS = {
     'ColorType': 'ts/Core/Color/ColorType',
+    'DashStyleValue': 'ts/Core/Renderer/DashStyleValue',
     'DataLabelOptions': 'ts/Core/Series/DataLabelOptions',
     'PointEventsOptions': 'ts/Core/Series/PointOptions',
     'PointMarkerOptions': 'ts/Core/Series/PointOptions',
     'PointOptions': 'ts/Core/Series/PointOptions',
     'PointShortOptions': 'ts/Core/Series/PointOptions',
+    'SeriesSonificationOptions': 'ts/Extensions/Sonification/Options',
     'TooltipOptions': 'ts/Core/TooltipOptions'
 };
 
@@ -265,6 +271,11 @@ function decorateType(
     branch,
     node
 ) {
+
+    if (node.kind === TS.SyntaxKind.UndefinedKeyword) {
+        branch.type = 'undefined';
+        return;
+    }
 
     /**
      * @param {string} fullName
