@@ -376,7 +376,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
+     * @type {Array<[(number|string),number,number,number,number]|[(number|string),number,number,number,number,number]|*>}
      *
      * @extends series.line.data
      *
@@ -390,7 +390,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @default high
      */
-    colorKey?: number;
+    colorKey?: string;
 
     /**
      * The width of the line surrounding the box. If any of
