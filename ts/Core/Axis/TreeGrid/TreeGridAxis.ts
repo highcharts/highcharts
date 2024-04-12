@@ -42,8 +42,6 @@ import type {
 
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
-import H from '../../Globals.js';
-const { composed } = H;
 import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
@@ -58,7 +56,6 @@ const {
     isString,
     merge,
     pick,
-    pushUnique,
     removeEvent,
     wrap
 } = U;
@@ -470,7 +467,7 @@ function onBeforeRender(
                     }
                 }
 
-                // setScale is fired after all the series is initialized,
+                // `setScale` is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
                     data,
@@ -590,7 +587,7 @@ function wrapGenerateTick(
                     options: options
                 });
         } else {
-            // update labels depending on tick interval
+            // Update labels depending on tick interval
             tick.parameters.category = gridNode.name;
             tick.options = options;
             tick.addLabel();
@@ -631,7 +628,8 @@ function wrapInit(
         ): void {
             if (e.options.data) {
                 const treeGrid = getTreeGridFromData(
-                    (e.options.data as any),
+                    (
+                        e.options.data as any),
                     userOptions.uniqueNames || false,
                     1
                 );
@@ -654,7 +652,7 @@ function wrapInit(
                     if (axis.brokenAxis) {
                         axis.brokenAxis.setBreaks(breaks, false);
 
-                        // remove the node from the axis collapsedNodes
+                        // Remove the node from the axis collapsedNodes
                         if (axis.treeGrid.collapsedNodes) {
                             axis.treeGrid.collapsedNodes = axis.treeGrid
                                 .collapsedNodes
@@ -888,12 +886,10 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (pushUnique(composed, this.compose)) {
+        if (!AxisClass.keepProps.includes('treeGrid')) {
             const axisProps = AxisClass.prototype;
 
-            if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
-                AxisClass.keepProps.push('treeGrid');
-            }
+            AxisClass.keepProps.push('treeGrid');
 
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);
@@ -1111,7 +1107,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks after toggling the collapse/expand
      * state of a node. If it is collapsed it will be expanded, and if it is
-     * exapended it will be collapsed.
+     * expanded it will be collapsed.
      *
      * @private
      *

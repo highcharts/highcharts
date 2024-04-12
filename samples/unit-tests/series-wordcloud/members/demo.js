@@ -45,7 +45,8 @@ QUnit.test('hasData', function (assert) {
             points: ['Point']
         }),
         true,
-        'should return true if series.visible is true, and series.points has length > 0'
+        'should return true if series.visible is true, and series.points has ' +
+        'length > 0'
     );
 });
 
@@ -135,7 +136,8 @@ QUnit.test('getRotation', function (assert) {
     assert.strictEqual(
         getRotation(3, 0, -60, 60),
         -60,
-        'should return -60 which is the 1st of 3 orientations between -60 to 60.'
+        'should return -60 which is the 1st of 3 orientations between -60 to ' +
+        '60.'
     );
     assert.strictEqual(
         getRotation(3, 1, -60, 60),
@@ -209,7 +211,8 @@ QUnit.test('deriveFontSize', function (assert) {
     assert.strictEqual(
         deriveFontSize(0.1, 10, 5),
         5,
-        'should return the minFontSize if the result of relativeWeight times maxFontSize is lower.'
+        'should return the minFontSize if the result of relativeWeight times ' +
+        'maxFontSize is lower.'
     );
 });
 

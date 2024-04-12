@@ -163,7 +163,8 @@ function allocateIfNotSeriesBoosting(
 ): void {
     const boost = series.boost;
 
-    if (renderer &&
+    if (
+        renderer &&
         boost &&
         boost.target &&
         boost.canvas &&
@@ -203,7 +204,7 @@ function compose<T extends typeof Series>(
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Boost.Series')) {
         const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
             seriesProto = SeriesClass.prototype as BoostSeriesComposition;
 
@@ -308,7 +309,7 @@ function compose<T extends typeof Series>(
                 ScatterSeries.prototype.fill = true;
             }
 
-            // We need to handle heatmaps separatly, since we can't perform the
+            // We need to handle heatmaps separately, since we can't perform the
             // size/color calculations in the shader easily.
             // @todo This likely needs future optimization.
             [HeatmapSeries, TreemapSeries].forEach((SC): void => {
@@ -460,8 +461,7 @@ function createAndAttachRenderer(
                 // it will cover the most common use case of one or more
                 // successive boosted or non-boosted series (#9819).
                 zIndex: series.options.zIndex
-            })
-            .clip(boost.clipRect);
+            });
 
         if (target instanceof ChartClass) {
             (target.boost as any).markerGroup = target.renderer
@@ -475,7 +475,19 @@ function createAndAttachRenderer(
     boost.canvas.height = height;
 
     if (boost.clipRect) {
-        boost.clipRect.attr(getBoostClipRect(chart, target));
+        const box = getBoostClipRect(chart, target),
+
+            // When using panes, the image itself must be clipped. When not
+            // using panes, it is better to clip the target group, because then
+            // we preserve clipping on touch- and mousewheel zoom preview.
+            clippedElement = (
+                box.width === chart.clipBox.width &&
+                box.height === chart.clipBox.height
+            ) ? targetGroup :
+                (boost.targetFo || boost.target);
+
+        boost.clipRect.attr(box);
+        clippedElement?.clip(boost.clipRect);
     }
 
     boost.resize();
@@ -495,13 +507,12 @@ function createAndAttachRenderer(
         });
 
         if (!boost.wgl.init(boost.canvas)) {
-            // The OGL renderer couldn't be inited.
-            // This likely means a shader error as we wouldn't get to this point
-            // if there was no WebGL support.
+            // The OGL renderer couldn't be inited. This likely means a shader
+            // error as we wouldn't get to this point if there was no WebGL
+            // support.
             error('[highcharts boost] - unable to init WebGL renderer');
         }
 
-        // target.ogl.clear();
         boost.wgl.setOptions(chart.options.boost || {});
 
         if (target instanceof ChartClass) {
@@ -621,7 +632,7 @@ function enterBoost(
     series: Series
 ): void {
     series.boost = series.boost || {
-        // faster than a series bind:
+        // Faster than a series bind:
         getPoint: ((bp): BoostPointComposition => getPoint(series, bp))
     };
 
@@ -1043,6 +1054,15 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
+
+    // When touch-zooming or mouse-panning, re-rendering the canvas would not
+    // perform fast enough. Instead, let the axes redraw, but not the series.
+    // The series is scale-translated in an event handler for an approximate
+    // preview.
+    if (xAxis.isPanning || yAxis.isPanning) {
+        return;
+    }
+
     // Get or create the renderer
     renderer = createAndAttachRenderer(chart, this);
 
@@ -1077,7 +1097,7 @@ function seriesRenderCanvas(this: Series): void {
             chart.seriesGroup
         );
     } else {
-        // If series has a private markeGroup, remove that
+        // If series has a private markerGroup, remove that
         // and use common markerGroup
         if (
             this.markerGroup &&
@@ -1236,7 +1256,7 @@ function seriesRenderCanvas(this: Series): void {
                     }
                     // Add points and reset
                     if (!compareX || clientX !== lastClientX) {
-                        // maxI is number too:
+                        // `maxI` is number too:
                         if (typeof minI !== 'undefined') {
                             plotY =
                                 yAxis.toPixels(maxVal as any, true);
@@ -1404,11 +1424,17 @@ function wrapSeriesGetExtremes(
     this: Series,
     proceed: Function
 ): DataExtremesObject {
-    if (
-        this.boosted &&
-        hasExtremes(this)
-    ) {
-        return {};
+
+    if (this.boosted) {
+        if (hasExtremes(this)) {
+            return {};
+        }
+        if (this.xAxis.isPanning || this.yAxis.isPanning) {
+            // Do not re-compute the extremes during panning, because looping
+            // the data is expensive. The `this` contains the `dataMin` and
+            // `dataMax` to use.
+            return this;
+        }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
 }
@@ -1440,6 +1466,15 @@ function wrapSeriesProcessData(
             series.options.stacking ||
             !hasExtremes(series, true)
         ) {
+            // Do nothing until the panning stops
+            if (
+                series.boosted && (
+                    series.xAxis?.isPanning || series.yAxis?.isPanning
+                )
+            ) {
+                return;
+            }
+
             // Extra check for zoomed scatter data
             if (isScatter && !series.yAxis.treeGrid) {
                 scatterProcessData.call(series, arguments[1]);

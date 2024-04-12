@@ -148,8 +148,8 @@ function getColor(
 function getLevelOptions<T extends TreeUtilities.Series>(
     params: any
 ): (T['mapOptionsToLevel']) {
-    let result: T['mapOptionsToLevel'] = {},
-        defaults: any,
+    const result: T['mapOptionsToLevel'] = {};
+    let defaults: any,
         converted,
         i: number,
         from: any,

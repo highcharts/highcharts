@@ -3,7 +3,8 @@
     // Get random data for this sample
     function getRandomData(topology) {
         return topology.objects.default.geometries.map(() =>
-            Math.round(Math.random() * 100));
+            Math.round(Math.random() * 100)
+        );
     }
 
     const topology = await fetch(
@@ -354,7 +355,7 @@
                     .map(Number);
                 rotation.push(0);
 
-                const geodesic = Highcharts.Projection.greatCircle(
+                const geodesic = Highcharts.Projection.geodesic(
                     chart.mapView.projection.options.rotation,
                     rotation
                 );

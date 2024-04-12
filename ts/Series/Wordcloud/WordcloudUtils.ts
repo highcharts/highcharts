@@ -84,8 +84,8 @@ function getNormals(
     p1: WordcloudUtils.PolygonPointObject,
     p2: WordcloudUtils.PolygonPointObject
 ): WordcloudUtils.PolygonObject {
-    const dx = p2[0] - p1[0], // x2 - x1
-        dy = p2[1] - p1[1]; // y2 - y1
+    const dx = p2[0] - p1[0], // X2 - x1
+        dy = p2[1] - p1[1]; // Y2 - y1
 
     return [
         [-dy, dx],
@@ -235,7 +235,8 @@ function intersectsAnyWord(
         isIntersecting = function (p: WordcloudPoint): boolean {
             let result = isRectanglesIntersecting(rect, p.rect as any);
 
-            if (result &&
+            if (
+                result &&
                 ((point.rotation as any) % 90 || (p.rotation as any) % 90)
             ) {
                 result = isPolygonsColliding(
@@ -317,7 +318,7 @@ function archimedeanSpiral(
 }
 
 /**
- * Gives a set of cordinates for an rectangular spiral.
+ * Gives a set of coordinates for an rectangular spiral.
  *
  * @private
  * @function squareSpiral
@@ -382,7 +383,7 @@ function squareSpiral(
 }
 
 /**
- * Gives a set of cordinates for an rectangular spiral.
+ * Gives a set of coordinates for an rectangular spiral.
  *
  * @private
  * @function rectangularSpiral
@@ -601,7 +602,7 @@ function getSpiral(
         arr: Array<ReturnType<WordcloudSeries.WordcloudSpiralFunction>> = [];
 
     for (let i = 1; i < length; i++) {
-        // @todo unnecessary amount of precaclulation
+        // @todo unnecessary amount of precalculation
         arr.push(fn(i, params));
     }
 
@@ -705,7 +706,7 @@ function intersectionTesting(
     point.polygon = polygon;
     point.rotation = options.rotation;
 
-    /* while w intersects any previously placed words:
+    /* While w intersects any previously placed words:
         do {
         move w a little bit along a spiral path
         } while any part of w is outside the playing field and

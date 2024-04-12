@@ -43,8 +43,10 @@ namespace BrandDarkTheme {
      * */
 
     export const options: DeepPartial<DefaultOptions> = {
-        colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
-            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+        colors: [
+            '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+            '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+        ],
 
         chart: {
             backgroundColor: {
@@ -213,7 +215,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
-        // scroll charts
+        // Scroll charts
         rangeSelector: {
             buttonTheme: {
                 fill: '#46465C',

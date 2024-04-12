@@ -41,13 +41,10 @@ import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
-import H from '../Globals.js';
-const { composed } = H;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
-import RangeSelectorDefaults from
-    '../../Stock/RangeSelector/RangeSelectorDefaults.js';
+import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
@@ -62,11 +59,8 @@ const {
     isString,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
-
-import '../Pointer.js';
 
 /* *
  *
@@ -220,7 +214,7 @@ class StockChart extends Chart {
      *        Custom options.
      *
      * @param {Function} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded.
      *
      *
@@ -399,8 +393,9 @@ namespace StockChart {
         SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const seriesProto = SeriesClass.prototype;
 
-        if (pushUnique(composed, compose)) {
+        if (!seriesProto.forceCropping) {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
@@ -409,7 +404,8 @@ namespace StockChart {
 
             ChartClass.prototype.setFixedRange = setFixedRange;
 
-            SeriesClass.prototype.forceCropping = seriesForceCropping;
+            seriesProto.forceCropping = seriesForceCropping;
+
             addEvent(SeriesClass, 'setOptions', onSeriesSetOptions);
 
             SVGRendererClass.prototype.crispPolyLine = svgRendererCrispPolyLine;
@@ -441,18 +437,18 @@ namespace StockChart {
 
         const chart = axis.chart,
             log = axis.logarithmic,
-            options = axis.crosshair.label, // the label's options
-            horiz = axis.horiz, // axis orientation
-            opposite = axis.opposite, // axis position
-            left = axis.left, // left position
-            top = axis.top, // top position
+            options = axis.crosshair.label, // The label's options
+            horiz = axis.horiz, // Axis orientation
+            opposite = axis.opposite, // Axis position
+            left = axis.left, // Left position
+            top = axis.top, // Top position
             width = axis.width,
             tickInside = axis.options.tickPosition === 'inside',
             snap = axis.crosshair.snap !== false,
             e = event.e || (axis.cross && axis.cross.e),
             point = event.point;
 
-        let crossLabel = axis.crossLabel, // the svgElement
+        let crossLabel = axis.crossLabel, // The svgElement
             posx,
             posy,
             formatOption = options.format,
@@ -579,8 +575,8 @@ namespace StockChart {
         // Check the edges
         if (horiz) {
             limit = {
-                left: left - crossBox.x,
-                right: left + axis.width - crossBox.x
+                left,
+                right: left + axis.width
             };
         } else {
             limit = {
@@ -651,7 +647,7 @@ namespace StockChart {
             // Do it only for the first Y axis of each pane
             if (!panes[key] && labelOptions.enabled) {
                 if (
-                    labelOptions.distance === 15 && // default
+                    labelOptions.distance === 15 && // Default
                     axis.side === 1
                 ) {
                     labelOptions.distance = 0;
@@ -806,7 +802,7 @@ namespace StockChart {
                         y2 = y1 + axis2.len;
                         x1 = x2 = Math.round(transVal + axis.transB);
 
-                        // outside plot area
+                        // Outside plot area
                         if (
                             force !== 'pass' &&
                             (x1 < axisLeft || x1 > axisLeft + axis.width)
@@ -833,7 +829,7 @@ namespace StockChart {
                         x2 = x1 + axis2.len;
                         y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
-                        // outside plot area
+                        // Outside plot area
                         if (
                             force !== 'pass' &&
                             (y1 < axisTop || y1 > axisTop + axis.height)
@@ -978,14 +974,14 @@ namespace StockChart {
         width: number
     ): SVGPath {
 
-        // points format: [['M', 0, 0], ['L', 100, 0]]
+        // Points format: [['M', 0, 0], ['L', 100, 0]]
         // normalize to a crisp line
         for (let i = 0; i < points.length; i = i + 2) {
             const start = points[i],
                 end = points[i + 1];
 
             if (start[1] === end[1]) {
-                // Substract due to #1129. Now bottom and left axis gridlines
+                // Subtract due to #1129. Now bottom and left axis gridlines
                 // behave the same.
                 start[1] = end[1] =
                     Math.round(start[1]) - (width % 2 / 2);

@@ -185,7 +185,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  * @apioption series.candlestick.data
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled
 
 /* *
  *

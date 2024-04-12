@@ -166,7 +166,7 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  * @apioption series.ohlc.data.open
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled
 
 /* *
  *

@@ -8,6 +8,13 @@ on:
         required: false
         default: false
         type: boolean
+  workflow_dispatch:
+    inputs:
+      testTimezones:
+        description: 'Whether timezone tests should run'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test_unit_tests:
@@ -48,13 +55,22 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - name: Install utils
-        run: npm i github:highcharts/highcharts-utils
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm i
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
         with:
-          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          start: node utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
           browser: chrome
           config-file: test/cypress/highcharts/config.mjs

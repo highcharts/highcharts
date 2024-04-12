@@ -44,7 +44,8 @@ function onChange(e) {
         table.setCell(
             table.getColumnNames()[column],
             row,
-            (isNaN(value) ? td.innerText : value)
+            (isNaN(value) ? td.innerText : value
+            )
         );
 
         renderTable(container2, table.modified);

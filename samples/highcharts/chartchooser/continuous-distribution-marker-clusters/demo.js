@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     accessibility: {
         description: ''
@@ -120,7 +122,8 @@ Highcharts.chart('container', {
             'kg'
                 );
             }
-            return 'There are <b>' + this.point.clusterPointsAmount + '</b> points';
+            return 'There are <b>' + this.point.clusterPointsAmount +
+                '</b> points';
 
         }
     },

@@ -5,6 +5,8 @@ authors:
 js_wrap: b
 tags:
   - Highcharts demo
+  - Axes
+  - Data
 categories:
   - Line charts
 ...

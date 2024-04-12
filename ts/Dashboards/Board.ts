@@ -25,8 +25,11 @@
  * */
 
 import type Component from './Components/Component';
+import type ComponentType from './Components/ComponentType';
 import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from './JSON';
+import type EditMode from './EditMode/EditMode';
+import type Fullscreen from './EditMode/Fullscreen';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -34,14 +37,11 @@ import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js'
 import DataCursor from '../Data/DataCursor.js';
 import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
 import DataPool from '../Data/DataPool.js';
-import EditMode from './EditMode/EditMode.js';
-import Fullscreen from './EditMode/Fullscreen.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
+import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
 import U from '../Core/Utilities.js';
-import HTMLComponent from './Components/HTMLComponent.js';
-import ComponentType from './Components/ComponentType';
 const {
     merge,
     addEvent,
@@ -162,40 +162,27 @@ class Board implements Serializable<Board, Board.JSON> {
         this.options = merge(Board.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
-        this.guiEnabled = (this.options.gui || {}).enabled;
+        this.guiEnabled = !options.gui ?
+            false : this.options?.gui?.enabled;
+        this.editModeEnabled = !options.editMode ?
+            false : this.options?.editMode?.enabled;
         this.layouts = [];
         this.mountedComponents = [];
 
         this.initContainer(renderTo);
 
-        // Create layouts wrapper.
-        this.layoutsWrapper = createElement(
-            'div', {
-                className: Globals.classNames.layoutsWrapper
-            }, {},
-            this.container
-        );
-
         // Init edit mode.
-        if (
-            EditMode && !(
-                this.options.editMode &&
-                !this.options.editMode.enabled
-            )
-        ) {
-            this.editMode = new EditMode(this, this.options.editMode);
+        if (this.guiEnabled) {
+            this.initLayout();
         }
 
         // Add table cursors support.
         this.dataCursor = new DataCursor();
 
-        // Add fullscreen support.
-        this.fullscreen = new Fullscreen(this);
-
         this.index = Globals.boards.length;
         Globals.boards.push(this);
 
-        // a11y module
+        // A11y module
         this.a11y = new DashboardsAccessibility(this);
     }
 
@@ -257,7 +244,13 @@ class Board implements Serializable<Board, Board.JSON> {
      * Flag to determine if the GUI is enabled.
      * @internal
      * */
-    public guiEnabled: (boolean|undefined);
+    public guiEnabled?: boolean;
+
+    /**
+     * Flag to determine if the EditMode is enabled.
+     * @internal
+     * */
+    private editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
@@ -279,7 +272,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * The wrapper for the layouts.
      * @internal
      * */
-    public layoutsWrapper: globalThis.HTMLElement;
+    public layoutsWrapper?: globalThis.HTMLElement;
 
     /**
      * An array of mounted components on the dashboard.
@@ -308,7 +301,7 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * @internal
      * @param async Whether to initialize the dashboard asynchronously. When
-     * false or undefined the function returns the dashboard isntance.
+     * false or undefined the function returns the dashboard instance.
      *  instance.
      *
      * @returns
@@ -334,15 +327,7 @@ class Board implements Serializable<Board, Board.JSON> {
     protected init(async?: boolean): (Board|Promise<Board>) {
         const options = this.options;
 
-        if (options.gui && this.options.gui) {
-            this.setLayouts(this.options.gui);
-        }
-
-        // Init layouts from JSON.
-        if (options.layoutsJSON && !this.layouts.length) {
-            this.setLayoutsFromJSON(options.layoutsJSON);
-        }
-        let componentPromises = (options.components) ?
+        const componentPromises = (options.components) ?
             this.setComponents(options.components) : [];
 
         // Init events.
@@ -393,18 +378,63 @@ class Board implements Serializable<Board, Board.JSON> {
         }
 
         // Clear the container from any content.
-        renderTo.innerHTML = '';
+        if (this.guiEnabled) {
+            renderTo.innerHTML = '';
 
-        // Set the main wrapper container.
-        board.boardWrapper = renderTo;
+            // Set the main wrapper container.
+            board.boardWrapper = renderTo;
 
-        // Add container for the board.
-        board.container = createElement(
-            'div', {
-                className: Globals.classNames.boardContainer
-            }, {},
-            this.boardWrapper
-        );
+            // Add container for the board.
+            board.container = createElement(
+                'div', {
+                    className: Globals.classNames.boardContainer
+                }, {},
+                this.boardWrapper
+            );
+        } else {
+            board.container = renderTo;
+        }
+    }
+
+    /**
+     * Inits creating a layouts and setup the EditMode tools.
+     * @internal
+     *
+     */
+    private initLayout():void {
+        const options = this.options;
+
+        if (!Dashboards.EditMode) {
+            throw new Error('Missing layout.js module');
+        } else {
+
+            // Create layouts wrapper.
+            this.layoutsWrapper = createElement(
+                'div', {
+                    className: Globals.classNames.layoutsWrapper
+                }, {},
+                this.container
+            );
+
+            if (options.gui) {
+                this.setLayouts(options.gui);
+            }
+
+            // Init layouts from JSON.
+            if (options.layoutsJSON && !this.layouts.length) {
+                this.setLayoutsFromJSON(options.layoutsJSON);
+            }
+
+            if (this.editModeEnabled) {
+                this.editMode = new Dashboards.EditMode(
+                    this,
+                    this.options.editMode
+                );
+
+                // Add fullscreen support.
+                this.fullscreen = new Dashboards.FullScreen(this);
+            }
+        }
     }
 
     /**
@@ -463,38 +493,11 @@ class Board implements Serializable<Board, Board.JSON> {
         components: Array<Partial<ComponentType['options']>>
     ): Array<Promise<Component|void>> {
         const promises = [];
+        const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            promises.push(Bindings.addComponent(components[i]));
+            promises.push(Bindings.addComponent(components[i], board));
         }
         return promises;
-    }
-
-    /**
-     * Returns the current size of the layout container based on the selected
-     * responsive breakpoints.
-     * @internal
-     *
-     * @returns Return current size of the layout container in px.
-     */
-    public getLayoutContainerSize(): string {
-        const board = this,
-            responsiveOptions = board.options.responsiveBreakpoints,
-            cntWidth = (board.layoutsWrapper || {}).clientWidth;
-
-        let size = Globals.responsiveBreakpoints.large;
-
-        if (responsiveOptions) {
-            if (cntWidth <= responsiveOptions.small) {
-                size = Globals.responsiveBreakpoints.small;
-            } else if (
-                cntWidth > responsiveOptions.small &&
-                cntWidth <= responsiveOptions.medium
-            ) {
-                size = Globals.responsiveBreakpoints.medium;
-            }
-        }
-
-        return size;
     }
 
     /**
@@ -504,7 +507,7 @@ class Board implements Serializable<Board, Board.JSON> {
         const board = this;
 
         // Destroy layouts.
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
             board.layouts[i].destroy();
         }
 
@@ -512,7 +515,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.resizeObserver?.unobserve(board.container);
 
         // Destroy container.
-        board.container.remove();
+        board.container?.remove();
 
         // @ToDo Destroy bindings.
 
@@ -532,7 +535,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public exportLocal(): void {
         localStorage.setItem(
             // Dashboard.prefix + this.id,
-            Globals.classNamePrefix + '1', // temporary for demo test
+            Globals.classNamePrefix + '1', // Temporary for demo test
             JSON.stringify(this.toJSON())
         );
     }
@@ -554,8 +557,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * layouts and its cells.
      */
     public reflow(): void {
-        const board = this,
-            cntSize = board.getLayoutContainerSize();
+        const board = this;
 
         if (board.editMode) {
             const editModeTools = board.editMode.tools;
@@ -563,30 +565,10 @@ class Board implements Serializable<Board, Board.JSON> {
             board.editMode.hideToolbars(['cell', 'row']);
             board.editMode.hideContextPointer();
 
-            // update expanded context menu container
+            // Update expanded context menu container
             if (editModeTools.contextMenu) {
                 editModeTools.contextMenu
                     .updatePosition(editModeTools.contextButtonElement);
-            }
-        }
-
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            this.reflowLayout(board.layouts[i], cntSize);
-        }
-    }
-
-    public reflowLayout(layout: Layout, cntSize: string): void {
-        let row, cell;
-
-        for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-            row = layout.rows[j];
-
-            for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                cell = row.cells[k];
-                cell.reflow(cntSize);
-                if (cell.nestedLayout) {
-                    this.reflowLayout(cell.nestedLayout, cntSize);
-                }
             }
         }
     }
@@ -608,7 +590,6 @@ class Board implements Serializable<Board, Board.JSON> {
                 {
                     componentOptions: options.componentOptions as
                         Partial<Component.Options>,
-                    responsiveBreakpoints: options.responsiveBreakpoints,
                     dataPool: options.dataPool,
                     layoutsJSON: options.layouts
                 }
@@ -642,8 +623,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions as
-                    Partial<Component.ComponentOptionsJSON>,
-                responsiveBreakpoints: board.options.responsiveBreakpoints
+                    Partial<Component.ComponentOptionsJSON>
             }
         };
     }
@@ -657,31 +637,36 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public getOptions(): Globals.DeepPartial<Board.Options> {
         const board = this,
-            layouts = [],
-            components = [];
-
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            layouts.push(board.layouts[i].getOptions());
-        }
+            options: Globals.DeepPartial<Board.Options> = {
+                ...this.options,
+                components: []
+            };
 
         for (let i = 0, iEnd = board.mountedComponents.length; i < iEnd; ++i) {
             if (
                 board.mountedComponents[i].cell &&
                 board.mountedComponents[i].cell.mountedComponent
             ) {
-                components.push(
+                options.components?.push(
                     board.mountedComponents[i].component.getOptions()
                 );
             }
         }
 
-        return {
-            ...this.options,
-            gui: {
-                layouts
-            },
-            components: components
-        };
+        if (this.guiEnabled) {
+            options.gui = {
+                layouts: []
+            };
+            for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+                options.gui.layouts?.push(
+                    board.layouts[i].getOptions() as Layout.Options
+                );
+            }
+        } else {
+            delete options.gui;
+        }
+
+        return options;
     }
 }
 
@@ -744,11 +729,11 @@ namespace Board {
          **/
         layoutsJSON?: Array<Layout.JSON>;
         /**
-         * Responsive breakpoints for the board - small, medium and large.
+         * Before changing the styling of the Dashboards layout to fully CSS, it
+         * was responsible for responsive breakpoints for the board - small,
+         * medium and large.
          *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/responsive/responsive-breakpoints/ | Change responsive breakpoints}
+         * @deprecated
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
@@ -763,7 +748,7 @@ namespace Board {
          **/
         componentOptions?: Partial<Component.ComponentOptionsJSON>;
         /**
-         * List of components to add to the board in JSON fromat.
+         * List of components to add to the board in JSON format.
          **/
         components?: Array<Component.ComponentOptionsJSON>;
         /**
@@ -784,25 +769,37 @@ namespace Board {
          **/
         guiEnabled?: boolean;
         /**
-         * Responsive breakpoints for the board - small, medium and large.
+         * Before changing the styling of the Dashboards layout to fully CSS, it
+         * was responsible for responsive breakpoints for the board - small,
+         * medium and large.
+         *
+         * @deprecated
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**
      * Responsive breakpoints for the board - small, medium and large.
+     *
+     * @deprecated
      **/
     export interface ResponsiveBreakpoints extends JSON.Object {
         /**
          * Value in px to test the dashboard is in small mode.
+         *
+         * @deprecated
          **/
         small: number;
         /**
          * Value in px to test the dashboard is in medium mode.
+         *
+         * @deprecated
          **/
         medium: number;
         /**
          * Value in px to test the dashboard is in large mode.
+         *
+         * @deprecated
          **/
         large: number;
     }
@@ -859,12 +856,7 @@ namespace Board {
             },
             layouts: []
         },
-        components: [],
-        responsiveBreakpoints: {
-            small: 576,
-            medium: 992,
-            large: 1200
-        }
+        components: []
     };
 
     /* *
@@ -881,7 +873,7 @@ namespace Board {
     export function importLocal(): (Board|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
-            Globals.classNamePrefix + '1' // temporary for demo test
+            Globals.classNamePrefix + '1' // Temporary for demo test
         );
 
         if (dashboardJSON) {
@@ -889,7 +881,7 @@ namespace Board {
                 return Serializable
                     .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
-                // nothing to do
+                // Nothing to do
             }
         }
     }

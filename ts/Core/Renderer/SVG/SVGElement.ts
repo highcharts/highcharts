@@ -69,6 +69,7 @@ const {
     objectEach,
     pick,
     pInt,
+    replaceNested,
     syncTimeout,
     uniqueKey
 } = U;
@@ -154,7 +155,7 @@ class SVGElement implements SVGElementLike {
     public added?: boolean;
     // @todo public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
-    // @todo public alignOptions?: AlignObject;
+    public alignOptions?: AlignObject;
     public alignTo?: string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
@@ -202,6 +203,7 @@ class SVGElement implements SVGElementLike {
     public visibility?: 'hidden'|'inherit'|'visible';
     public width?: number;
     public x?: number;
+    public xAlign?: number;
     public y?: number;
     // @todo public zIndex?: number;
 
@@ -227,13 +229,13 @@ class SVGElement implements SVGElementLike {
      */
     private _defaultGetter(key: string): (number|string) {
         let ret = pick(
-            (this as AnyRecord)[key + 'Value'], // align getter
+            (this as AnyRecord)[key + 'Value'], // Align getter
             (this as AnyRecord)[key],
             this.element ? this.element.getAttribute(key) : null,
             0
         );
 
-        if (/^[\-0-9\.]+$/.test(ret)) { // is numerical
+        if (/^[\-0-9\.]+$/.test(ret)) { // Is numerical
             ret = parseFloat(ret);
         }
         return ret;
@@ -308,7 +310,7 @@ class SVGElement implements SVGElementLike {
             ).appendChild(element);
         }
 
-        // fire an event for internal hooks
+        // Fire an event for internal hooks
         if (this.onAdd) {
             this.onAdd();
         }
@@ -399,7 +401,7 @@ class SVGElement implements SVGElementLike {
      *        holds `width`, `height`, `x` and `y` properties.
      *
      * @param {boolean} [redraw]
-     *        Decide if SVGElement should be redrawed with new alignment or
+     *        Decide if SVGElement should be redrawn with new alignment or
      *        just change its attributes.
      *
      * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
@@ -410,15 +412,16 @@ class SVGElement implements SVGElementLike {
         box?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs = {} as SVGAttributes,
+        const attribs: SVGAttributes = {},
             renderer = this.renderer,
-            alignedObjects: Array<SVGElement> = renderer.alignedObjects as any;
+            alignedObjects = renderer.alignedObjects;
 
-        let x,
-            y,
-            alignTo: (string|undefined),
-            alignFactor,
-            vAlignFactor;
+        let x: number,
+            y: number,
+            animateX = true,
+            alignTo: string|undefined,
+            alignFactor: number|undefined,
+            vAlignFactor: number|undefined;
 
         // First call on instanciate
         if (alignOptions) {
@@ -426,15 +429,15 @@ class SVGElement implements SVGElementLike {
             this.alignByTranslate = alignByTranslate;
             if (!box || isString(box)) {
                 this.alignTo = alignTo = box || 'renderer';
-                // prevent duplicates, like legendGroup after resize
+                // Prevent duplicates, like legendGroup after resize
                 erase(alignedObjects, this);
                 alignedObjects.push(this);
-                box = void 0; // reassign it below
+                box = void 0; // Reassign it below
             }
 
         // When called on resize, no arguments are supplied
         } else {
-            alignOptions = this.alignOptions;
+            alignOptions = this.alignOptions || {};
             alignByTranslate = this.alignByTranslate;
             alignTo = this.alignTo;
         }
@@ -446,12 +449,12 @@ class SVGElement implements SVGElementLike {
         );
 
         // Assign variables
-        const align = (alignOptions as any).align,
-            vAlign = (alignOptions as any).verticalAlign;
-        // default: left align
-        x = ((box as any).x || 0) + ((alignOptions as any).x || 0);
-        // default: top align
-        y = ((box as any).y || 0) + ((alignOptions as any).y || 0);
+        const align = alignOptions.align,
+            vAlign = alignOptions.verticalAlign;
+        // Default: left align
+        x = ((box as any).x || 0) + (alignOptions.x || 0);
+        // Default: top align
+        y = ((box as any).y || 0) + (alignOptions.y || 0);
 
         // Align
         if (align === 'right') {
@@ -460,7 +463,10 @@ class SVGElement implements SVGElementLike {
             alignFactor = 2;
         }
         if (alignFactor) {
-            x += ((box as any).width - ((alignOptions as any).width || 0)) /
+            animateX = x !== this.xAlign;
+            this.xAlign = x;
+
+            x += ((box as any).width - (alignOptions.width || 0)) /
                 alignFactor;
         }
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
@@ -473,13 +479,21 @@ class SVGElement implements SVGElementLike {
             vAlignFactor = 2;
         }
         if (vAlignFactor) {
-            y += ((box as any).height - ((alignOptions as any).height || 0)) /
+            y += ((box as any).height - (alignOptions.height || 0)) /
                 vAlignFactor;
         }
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
         if (redraw) {
+
+            // Right- and center-aligned labels should not animate when we're
+            // only changing the text (#20965)
+            if (!animateX) {
+                this.attr({
+                    [alignByTranslate ? 'translateX' : 'x']: x
+                });
+            }
             this[this.placed ? 'animate' : 'attr'](attribs);
             this.placed = true;
         }
@@ -542,7 +556,7 @@ class SVGElement implements SVGElementLike {
         }
 
         if (animOptions.duration !== 0) {
-            // allows using a callback with the global animation without
+            // Allows using a callback with the global animation without
             // overwriting it
             if (complete) {
                 animOptions.complete = complete;
@@ -772,14 +786,14 @@ class SVGElement implements SVGElementLike {
             skipAttr,
             setter;
 
-        // single key-value pair
+        // Single key-value pair
         if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
             (hash as any)[key] = val;
         }
 
-        // used as a getter: first argument is a string, second is undefined
+        // Used as a getter: first argument is a string, second is undefined
         if (typeof hash === 'string') {
             ret = (
                 (this as AnyRecord)[hash + 'Getter'] ||
@@ -790,7 +804,7 @@ class SVGElement implements SVGElementLike {
                 element
             );
 
-        // setter
+        // Setter
         } else {
 
             objectEach(hash, function eachAttribute(
@@ -899,7 +913,7 @@ class SVGElement implements SVGElementLike {
         // Math.round because strokeWidth can sometimes have roundoff errors
         const normalizer = Math.round(strokeWidth) % 2 / 2;
 
-        // normalize for crisp edges
+        // Normalize for crisp edges
         rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
         rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
         rect.width = Math.floor(
@@ -967,7 +981,7 @@ class SVGElement implements SVGElementLike {
                 stops = (colorOptions as GradientColor).stops;
                 radialReference = (elem as any).radialReference;
 
-                // Keep < 2.2 kompatibility
+                // Keep < 2.2 compatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
                         x1: gradAttr[0] as number,
@@ -1192,7 +1206,7 @@ class SVGElement implements SVGElementLike {
                 .replace(/dot/g, '1,3,')
                 .replace('dash', '4,3,')
                 .replace(/,$/, '')
-                .split(','); // ending comma
+                .split(','); // Ending comma
 
             i = v.length;
             while (i--) {
@@ -1223,10 +1237,10 @@ class SVGElement implements SVGElementLike {
             grandParent: SVGElement,
             i;
 
-        // remove events
+        // Remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = (element as any).point = null;
-        stop(wrapper as any); // stop running animations
+        stop(wrapper as any); // Stop running animations
 
         if (wrapper.clipPath && ownerSVGElement) {
             const clipPath = wrapper.clipPath;
@@ -1257,7 +1271,7 @@ class SVGElement implements SVGElementLike {
             wrapper.stops = void 0;
         }
 
-        // remove element
+        // Remove element
         wrapper.safeRemoveChild(element);
 
         // In case of useHTML, clean up empty containers emulating SVG groups
@@ -1273,7 +1287,7 @@ class SVGElement implements SVGElementLike {
             parentToClean = grandParent;
         }
 
-        // remove from alignObjects
+        // Remove from alignObjects
         if (wrapper.alignTo) {
             erase(renderer.alignedObjects, wrapper);
         }
@@ -1388,7 +1402,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#getBBox
      *
      * @param {boolean} [reload]
-     *        Skip the cache and get the updated DOM bouding box.
+     *        Skip the cache and get the updated DOM bounding box.
      *
      * @param {number} [rot]
      *        Override the element's rotation. This is internally used on axis
@@ -1511,7 +1525,7 @@ class SVGElement implements SVGElementLike {
                     bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
-            // useHTML within SVG
+            // Use HTML within SVG
             } else {
 
                 bBox = wrapper.htmlGetBBox();
@@ -1544,11 +1558,7 @@ class SVGElement implements SVGElementLike {
 
             // Adjust for rotated text
             if (rotation) {
-                const baseline = Number(
-                    element.getAttribute('y') || 0
-                ) - bBox.y;
-
-                bBox = this.getRotatedBox(bBox, rotation, baseline);
+                bBox = this.getRotatedBox(bBox, rotation);
             }
         }
 
@@ -1575,27 +1585,56 @@ class SVGElement implements SVGElementLike {
      */
     public getRotatedBox(
         box: BBoxObject,
-        rotation: number,
-        baseline: number
+        rotation: number
     ): BBoxObject {
-        const width = box.width,
-            height = box.height,
-            alignValue = this.alignValue,
+        const { x: boxX, y: boxY, width, height } = box,
+            {
+                alignValue,
+                translateY,
+                rotationOriginX = 0,
+                rotationOriginY = 0
+            } = this,
             alignFactor = ({
                 'right': 1,
                 'center': 0.5
             } as Record<string, number>)[alignValue || 0] || 0,
+            baseline = Number(this.element.getAttribute('y') || 0) -
+                (translateY ? 0 : boxY),
             rad = rotation * deg2rad,
             rad90 = (rotation - 90) * deg2rad,
-            wCosRad = width * Math.cos(rad),
-            wSinRad = width * Math.sin(rad),
+            cosRad = Math.cos(rad),
+            sinRad = Math.sin(rad),
+            wCosRad = width * cosRad,
+            wSinRad = width * sinRad,
             cosRad90 = Math.cos(rad90),
             sinRad90 = Math.sin(rad90),
+            [
+                [
+                    xOriginCosRad,
+                    xOriginSinRad
+                ],
+                [
+                    yOriginCosRad,
+                    yOriginSinRad
+                ]
+            ] = [
+                rotationOriginX,
+                rotationOriginY
+            ].map((rotOrigin): number[] => [
+                rotOrigin - (rotOrigin * cosRad),
+                rotOrigin * sinRad
+            ]),
 
             // Find the starting point on the left side baseline of
             // the text
-            pX = box.x + alignFactor * (width - wCosRad),
-            pY = box.y + baseline - alignFactor * wSinRad,
+            pX = (
+                (boxX + alignFactor * (width - wCosRad)) +
+                xOriginCosRad + yOriginSinRad
+            ),
+            pY = (
+                (boxY + baseline - alignFactor * wSinRad) -
+                xOriginSinRad + yOriginCosRad
+            ),
 
             // Find all corners
             aX = pX + baseline * cosRad90,
@@ -1928,7 +1967,7 @@ class SVGElement implements SVGElementLike {
 
                     // Set attributes for the <text>
                     const textAttribs: SVGAttributes = {
-                        // dx/dy options must by set on <text> (parent), the
+                        // `dx`/`dy` options must by set on <text> (parent), the
                         // rest should be set on <textPath>
                         x: 0,
                         y: 0
@@ -2073,7 +2112,7 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#strokeWidth
      *
      * @return {number}
-     * The stroke width in pixels. Even if the given stroke widtch (in CSS or by
+     * The stroke width in pixels. Even if the given stroke width (in CSS or by
      * attributes) is based on `em` or other units, the pixel size is returned.
      */
     public strokeWidth(): number {
@@ -2087,22 +2126,22 @@ class SVGElement implements SVGElementLike {
         const val = this.getStyle('stroke-width');
 
         let ret = 0,
-            dummy: SVGDOMElement;
+            tempElement: SVGDOMElement;
 
         // Read pixel values directly
-        if (val.indexOf('px') === val.length - 2) {
+        if (/px$/.test(val)) {
             ret = pInt(val);
 
         // Other values like em, pt etc need to be measured
         } else if (val !== '') {
-            dummy = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
-            attr(dummy, {
+            tempElement = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
+            attr(tempElement, {
                 width: val as any,
                 'stroke-width': 0
             });
-            (this.element.parentNode as any).appendChild(dummy);
-            ret = (dummy as any).getBBox().width;
-            (dummy.parentNode as any).removeChild(dummy);
+            this.element.parentNode.appendChild(tempElement);
+            ret = (tempElement as any).getBBox().width;
+            tempElement.parentNode.removeChild(tempElement);
         }
         return ret;
     }
@@ -2172,12 +2211,10 @@ class SVGElement implements SVGElementLike {
         }
 
         // Replace text content and escape markup
-        titleNode.textContent =
-                // #3276, #3895
-                String(pick(value, ''))
-                    .replace(/<[^>]*>/g, '')
-                    .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>');
+        titleNode.textContent = replaceNested( // Scan #[73]
+            pick(value, ''), // #3276, #3895
+            [/<[^>]*>/g, '']
+        ).replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     }
 
     /**
@@ -2239,6 +2276,8 @@ class SVGElement implements SVGElementLike {
             element,
             matrix,
             rotation = 0,
+            rotationOriginX,
+            rotationOriginY,
             scaleX,
             scaleY,
             translateX = 0,
@@ -2250,7 +2289,7 @@ class SVGElement implements SVGElementLike {
         // #1846).
         const transform = ['translate(' + translateX + ',' + translateY + ')'];
 
-        // apply matrix
+        // Apply matrix
         if (defined(matrix)) {
             transform.push(
                 'matrix(' + matrix.join(',') + ')'
@@ -2258,16 +2297,25 @@ class SVGElement implements SVGElementLike {
         }
 
         // Apply rotation
-        if (rotation) { // text rotation or inverted chart
+        if (rotation) {
             transform.push(
                 'rotate(' + rotation + ' ' +
-                pick(this.rotationOriginX, element.getAttribute('x'), 0) +
+                pick(rotationOriginX, element.getAttribute('x'), 0) +
                 ' ' +
-                pick(this.rotationOriginY, element.getAttribute('y') || 0) + ')'
+                pick(rotationOriginY, element.getAttribute('y') || 0) + ')'
             );
+
+            // HTML labels rotation (#20685)
+            if (this.text?.element.tagName === 'SPAN') {
+                this.text.attr({
+                    rotation,
+                    rotationOriginX: (rotationOriginX || 0) - this.padding,
+                    rotationOriginY: (rotationOriginY || 0) - this.padding
+                });
+            }
         }
 
-        // apply scale
+        // Apply scale
         if (defined(scaleX) || defined(scaleY)) {
             transform.push(
                 'scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')'
@@ -2295,7 +2343,7 @@ class SVGElement implements SVGElementLike {
         key: 'visibility',
         element: SVGDOMElement
     ): void {
-        // IE9-11 doesn't handle visibilty:inherit well, so we remove the
+        // IE9-11 doesn't handle visibility:inherit well, so we remove the
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
@@ -2426,10 +2474,10 @@ class SVGElement implements SVGElementLike {
  * */
 
 interface SVGElement extends SVGElementLike {
-    // takes interfaces from shared interface and internal namespace
+    // Takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationOriginXSetter: SVGElement.SetterFunction<(number|string|null)>;
-    rotationOriginYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    rotationOriginXSetter(value: number|null, key?: string): void;
+    rotationOriginYSetter(value: number|null, key?: string): void;
     rotationSetter(value: number, key?: string): void;
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
@@ -2669,4 +2717,4 @@ export default SVGElement;
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

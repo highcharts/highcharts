@@ -239,7 +239,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * @private
-     * @function Highcarts.seriesTypes.hollowcandlestick#init
+     * @function Highcharts.seriesTypes.hollowcandlestick#init
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -288,8 +288,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
         point: HollowCandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let attribs = super.pointAttribs.call(this, point, state),
-            stateOptions;
+        const attribs = super.pointAttribs.call(this, point, state);
+        let stateOptions;
 
         const index = point.index,
             hollowcandleInfo = this.hollowCandlestickData[index];
@@ -432,4 +432,4 @@ export default HollowCandlestickSeries;
  * @apioption series.hollowcandlestick.data
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled

@@ -383,7 +383,8 @@ class TreegraphSeries extends TreemapSeries {
 
                 y1 = Math.floor(
                     (fromNode.shapeArgs.y || 0) +
-                    (fromNode.shapeArgs.height || 0) / 2) + crisp,
+                    (fromNode.shapeArgs.height || 0) / 2
+                ) + crisp,
 
                 y2 = Math.floor(
                     (toNode.shapeArgs.y || 0) +
@@ -796,7 +797,7 @@ export default TreegraphSeries;
  * points can be given in the following ways:
  *
  * 1. The array of arrays, with `keys` property, which defines how the fields in
- *     array should be interpretated
+ *     array should be interpreted
  *    ```js
  *       keys: ['id', 'parent'],
  *       data: [
@@ -845,4 +846,4 @@ export default TreegraphSeries;
  * @apioption series.treegraph.data.collapsed
  */
 
-''; // gets doclets above into transpiled version
+''; // Gets doclets above into transpiled version

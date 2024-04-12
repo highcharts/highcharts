@@ -66,7 +66,7 @@ export interface AjaxSuccessCallbackFunction {
  *        The Ajax settings to use.
  *
  * @return {false|undefined}
- *         Returns false, if error occured.
+ *         Returns false, if error occurred.
  */
 function ajax(
     settings: AjaxSettingsObject
@@ -85,7 +85,7 @@ function ajax(
      * @param {XMLHttpRequest} xhr
      * Internal request object.
      * @param {string|Error} err
-     * Occured error.
+     * Occurred error.
      */
     function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
         if (settings.error) {
@@ -189,13 +189,16 @@ function getJSON(
  * Additional attributes for the post request
  */
 
+/**
+ *
+ */
 function post(
     url: string,
     data: Record<string, any>,
     fetchOptions?: RequestInit
 ): Promise<void> {
     const formData = new win.FormData();
-    // add the data
+    // Add the data
     objectEach(data, function (val: string, name: string): void {
         formData.append(name, val);
     });
@@ -275,4 +278,4 @@ export default HttpUtilities;
  * @type {string}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

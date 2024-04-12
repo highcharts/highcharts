@@ -185,7 +185,7 @@ class BubbleLegendItem {
 
         let connectorSpace;
 
-        // Do not create bubbleLegend now if ranges or ranges valeus are not
+        // Do not create bubbleLegend now if ranges or ranges values are not
         // specified or if are empty array.
         if (!ranges || !ranges.length || !isNumber(ranges[0].value)) {
             (legend.options.bubbleLegend as any).autoRanges = true;
@@ -407,7 +407,7 @@ class BubbleLegendItem {
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
-            connectorLength = 0; // do not use connector
+            connectorLength = 0; // Do not use connector
             options.connectorDistance = 0;
             (range.labelAttribs as any).align = 'center';
         }
@@ -659,7 +659,7 @@ class BubbleLegendItem {
         let calculatedSize,
             maxSize = bubbleSeries.options.maxSize;
 
-        // Calculate prediceted max size of bubble
+        // Calculate predicted max size of bubble
         if (floating || !(/%$/.test(maxSize as any))) {
             calculatedSize = maxPxSize;
 
@@ -711,7 +711,8 @@ class BubbleLegendItem {
             bubbleSeriesSize = pxSizes.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
-        if (Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
+        if (
+            Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
             1
         ) {
             this.updateRanges(
@@ -820,4 +821,4 @@ export default BubbleLegendItem;
  * @type {number}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

@@ -26,7 +26,7 @@ import type Funnel3DPointOptions from '../Funnel3D/Funnel3DPointOptions';
  * */
 
 export interface Pyramid3DPointOptions extends Funnel3DPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

@@ -177,16 +177,17 @@
         runTests(chart, assert);
     });
 
-    QUnit.test('Series update with Highcharts Stock (#8196)', function (assert) {
-        var chart = Highcharts.stockChart('container', {
-            series: [
-                {
-                    data: [1, 2, 3, 4]
-                }
-            ]
+    QUnit.test(
+        'Series update with Highcharts Stock (#8196)', function (assert) {
+            var chart = Highcharts.stockChart('container', {
+                series: [
+                    {
+                        data: [1, 2, 3, 4]
+                    }
+                ]
+            });
+            runTests(chart, assert);
         });
-        runTests(chart, assert);
-    });
 }());
 
 QUnit.test('Series update with ids', assert => {

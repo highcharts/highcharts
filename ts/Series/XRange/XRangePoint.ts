@@ -129,10 +129,9 @@ class XRangePoint extends ColumnPoint {
             if (!this.options.colorIndex) {
                 this.colorIndex = colorByPoint.colorIndex;
             }
-        } else if (!this.color) {
-            this.color = series.color;
+        } else {
+            this.color = this.options.color || series.color;
         }
-
     }
 
     /**
@@ -263,4 +262,4 @@ export default XRangePoint;
  * @requires modules/xrange
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

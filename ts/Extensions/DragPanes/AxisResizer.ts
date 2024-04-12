@@ -238,12 +238,12 @@ class AxisResizer {
          * be ignored. Borrowed from Navigator.
          */
         if (!e.touches || e.touches[0].pageX !== 0) {
+            const pointer = this.axis.chart.pointer;
             // Drag the control line
-            if (this.grabbed) {
+            if (this.grabbed && pointer) {
                 this.hasDragged = true;
                 this.updateAxes(
-                    this.axis.chart.pointer.normalize(e).chartY -
-                    (this.options.y as any)
+                    pointer.normalize(e).chartY - (this.options.y || 0)
                 );
             }
         }
@@ -259,10 +259,10 @@ class AxisResizer {
      */
     public onMouseUp(e: PointerEvent): void {
 
-        if (this.hasDragged) {
+        const pointer = this.axis.chart.pointer;
+        if (this.hasDragged && pointer) {
             this.updateAxes(
-                this.axis.chart.pointer.normalize(e).chartY -
-                (this.options.y as any)
+                pointer.normalize(e).chartY - (this.options.y || 0)
             );
         }
 
@@ -278,7 +278,7 @@ class AxisResizer {
      */
     public onMouseDown(): void {
         // Clear all hover effects.
-        this.axis.chart.pointer.reset(false, 0);
+        this.axis.chart.pointer?.reset(false, 0);
 
         // Disable runPointActions.
         this.grabbed = this.axis.chart.activeResizer = true;
@@ -300,7 +300,7 @@ class AxisResizer {
             // Main axis is included in the prev array by default
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
-            // prev and next configs
+            // Prev and next configs
             axesConfigs: Array<AnyRecord> = [],
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -339,9 +339,9 @@ class AxisResizer {
                         (
                             // If it's first elem. in first group
                             isFirst ?
-                                // then it's an Axis object
+                                // Then it's an Axis object
                                 axisInfo as any :
-                                // else it should be an id
+                                // Else it should be an id
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,

@@ -451,7 +451,8 @@ QUnit.test('Missing points using navigator (#5699, #17212)', function (assert) {
     assert.strictEqual(
         chart.series[0].processedXData[0],
         chart.series[1].processedXData[0],
-        'Navigator by default should start at the parent series starting point, #17212.'
+        'Navigator by default should start at the parent series starting ' +
+        'point, #17212.'
     );
 
     navigator.handlesMousedown(
@@ -1251,7 +1252,8 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
     assert.equal(
         chart.navigator.series[0].options.dataLabels[0].enabled,
         false,
-        'DataLabels in Navigator should be enabled, if specified in options (wrapped with array).'
+        'DataLabels in Navigator should be enabled, if specified in options ' +
+        '(wrapped with array).'
     );
 });
 
@@ -1332,22 +1334,24 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
 });
 
 
-QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        rangeSelector: {
-            selected: 1
-        },
-        series: [{
-            pointInterval: 36e7
-        }]
-    });
-    assert.notStrictEqual(
-        chart.xAxis[0].max,
-        0,
-        `After adding series to the chart that has set the range,
+QUnit.test(
+    'Initiation chart without data but with set range, #15864.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 1
+            },
+            series: [{
+                pointInterval: 36e7
+            }]
+        });
+        assert.notStrictEqual(
+            chart.xAxis[0].max,
+            0,
+            `After adding series to the chart that has set the range,
         the navigator shouldn't stick to min.`
-    );
-});
+        );
+    });
 
 
 QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {

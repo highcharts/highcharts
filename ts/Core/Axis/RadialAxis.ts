@@ -191,13 +191,13 @@ namespace RadialAxis {
      * @private
      */
     const defaultCircularOptions: DeepPartial<Options> = {
-        gridLineWidth: 1, // spokes
+        gridLineWidth: 1, // Spokes
         labels: {
-            align: void 0, // auto
+            align: void 0, // Auto
             x: 0,
-            y: void 0, // auto
+            y: void 0, // Auto
             style: {
-                textOverflow: 'none' // wrap lines by default (#7248)
+                textOverflow: 'none' // Wrap lines by default (#7248)
             }
         },
         maxPadding: 0,
@@ -357,7 +357,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Axis.Radial')) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -392,7 +392,8 @@ namespace RadialAxis {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetPosition',
-                onTickAfterGetPosition);
+                onTickAfterGetPosition
+            );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
 
@@ -412,7 +413,7 @@ namespace RadialAxis {
             if (
                 this.isRadial &&
                 this.tickPositions &&
-                // undocumented option for now, but working
+                // Undocumented option for now, but working
                 this.options.labels &&
                 this.options.labels.allowOverlap !== true
             ) {
@@ -877,9 +878,10 @@ namespace RadialAxis {
             // In case when translatedVal is negative, the 0 value must be
             // used instead, in order to deal with lines and labels that
             // fall out of the visible range near the center of a pane
-            pick(this.isCircular ?
-                length :
-                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            pick(
+                this.isCircular ?
+                    length :
+                    (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
             ) - this.offset
         );
     }
@@ -1194,14 +1196,14 @@ namespace RadialAxis {
                         centerSlot = 0;
                     }
                     if (angle > centerSlot && angle < 180 - centerSlot) {
-                        align = 'left'; // right hemisphere
+                        align = 'left'; // Right hemisphere
                     } else if (
                         angle > 180 + centerSlot &&
                         angle < 360 - centerSlot
                     ) {
-                        align = 'right'; // left hemisphere
+                        align = 'right'; // Left hemisphere
                     } else {
-                        align = 'center'; // top or bottom
+                        align = 'center'; // Top or bottom
                     }
                 } else {
                     align = 'center';
@@ -1247,12 +1249,12 @@ namespace RadialAxis {
                     align = (labelDir === 'start') ? 'left' : 'right';
                 }
 
-                // For angles beetwen (90 + n * 180) +- 20
+                // For angles between (90 + n * 180) +- 20
                 if (reducedAngle2 > 70 && reducedAngle2 < 110) {
                     align = 'center';
                 }
 
-                // auto Y translation
+                // Auto Y translation
                 if (
                     reducedAngle1 < 15 ||
                     (reducedAngle1 >= 180 && reducedAngle1 < 195)
@@ -1272,7 +1274,7 @@ namespace RadialAxis {
                         labelBBox.height : -labelBBox.height * 0.25;
                 }
 
-                // auto X translation
+                // Auto X translation
                 if (reducedAngle2 < 15) {
                     translateX = labelDir === 'start' ?
                         -labelBBox.height * 0.15 : labelBBox.height * 0.15;
@@ -1370,7 +1372,7 @@ namespace RadialAxis {
             } else {
                 // When the pane's startAngle or the axis' angle is set then
                 // new x and y values for vertical axis' center must be
-                // calulated
+                // calculated
                 start = this.postTranslate(this.angleRad, center[3] / 2);
                 center[0] = start.x - this.chart.plotLeft;
                 center[1] = start.y - this.chart.plotTop;
@@ -1398,7 +1400,7 @@ namespace RadialAxis {
         axisProto.setAxisTranslation.call(this);
 
         // Set transA and minPixelPadding
-        if (this.center) { // it's not defined the first time
+        if (this.center) { // It's not defined the first time
             if (this.isCircular) {
 
                 this.transA = (this.endAngleRad - this.startAngleRad) /
@@ -1465,7 +1467,7 @@ namespace RadialAxis {
             userOptions
         );
 
-        // Make sure the plotBands array is instanciated for each Axis
+        // Make sure the plotBands array is instantiated for each Axis
         // (#2649)
         if (!options.plotBands) {
             options.plotBands = [];

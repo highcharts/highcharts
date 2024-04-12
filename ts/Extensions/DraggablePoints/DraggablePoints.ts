@@ -44,16 +44,13 @@ import DraggableChart from './DraggableChart.js';
 const { initDragDrop } = DraggableChart;
 import DragDropDefaults from './DragDropDefaults.js';
 import DragDropProps from './DragDropProps.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -166,7 +163,7 @@ interface SeriesDragDropPropsResizeSideFunction {
 Add drag/drop support to specific data props for different series types.
 
 The dragDrop.draggableX/Y user options on series enable/disable all of these per
-irection unless they are specifically set in options using
+direction unless they are specifically set in options using
 dragDrop.{optionName}. If the prop does not specify an optionName here, it can
 only be enabled/disabled by the user with draggableX/Y.
 
@@ -212,10 +209,11 @@ function compose(
 ): void {
     DraggableChart.compose(ChartClass);
 
-    if (pushUnique(composed, compose)) {
+    const seriesProto = SeriesClass.prototype;
+
+    if (!seriesProto.dragDropProps) {
         const PointClass = SeriesClass.prototype.pointClass,
             seriesTypes = SeriesClass.types,
-            seriesProto = SeriesClass.prototype,
             pointProto = PointClass.prototype;
 
         pointProto.getDropValues = pointGetDropValues;
@@ -578,7 +576,7 @@ function pointGetDropValues(
             }
 
             if (key === 'lat') {
-                // if map is bigger than possible projection range
+                // If map is bigger than possible projection range
                 if (isNaN(min) || min > mapView.projection.maxLatitude) {
                     min = mapView.projection.maxLatitude;
                 }
@@ -587,14 +585,14 @@ function pointGetDropValues(
                     max = -1 * mapView.projection.maxLatitude;
                 }
 
-                // swap for latitude
+                // Swap for latitude
                 const temp = max;
                 max = min;
                 min = temp;
             }
 
             if (!mapView.projection.hasCoordinates) {
-                // establish y value
+                // Establish y value
                 const lonLatRes = mapView.pixelsToLonLat({
                     x: newPos.chartX - chart.plotLeft,
                     y: chart.plotHeight - newPos.chartY + chart.plotTop
@@ -912,7 +910,7 @@ export default DraggablePoints;
  * @callback Highcharts.PointDragCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointDragEventObject} event
  *        Event arguments.
@@ -972,7 +970,7 @@ export default DraggablePoints;
  * @callback Highcharts.PointDragStartCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointDragStartEventObject} event
  *        Event arguments.
@@ -995,7 +993,7 @@ export default DraggablePoints;
  * @callback Highcharts.PointDropCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointDropEventObject} event
  *        Event arguments.
@@ -1039,4 +1037,4 @@ export default DraggablePoints;
  * @type {"drop"}
  */
 
-''; // detaches doclets above
+''; // Detaches doclets above

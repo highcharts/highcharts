@@ -61,7 +61,7 @@ declare module '../../Core/GlobalsLike.d.ts' {
 class StandaloneNavigator {
 
     public navigator: Navigator;
-    public boundAxes: Map<Axis, Array<Function>> = new Map();
+    public boundAxes: Array<{ axis: Axis, callbacks: Array<Function> }> = [];
     public chartOptions: Partial<Options>;
     public userOptions: StandaloneNavigatorOptions;
 
@@ -194,16 +194,20 @@ class StandaloneNavigator {
             this.navigator,
             'setRange',
             (e: SetRangeEvent): void => {
-                const { min, max, redraw, animation, eventArguments } = e;
-
-                if (eventArguments.trigger !== axis) {
-                    axis.setExtremes(min, max, redraw, animation);
-                }
+                axis.setExtremes(e.min, e.max, e.redraw, e.animation);
             }
         );
         removeEventCallbacks.push(removeSetRangeEvent);
 
-        this.boundAxes.set(axis, removeEventCallbacks);
+        let boundAxis = this.boundAxes.filter(function (boundAxis): boolean {
+            return boundAxis.axis === axis;
+        })[0];
+
+        if (!boundAxis) {
+            boundAxis = { axis, callbacks: [] };
+            this.boundAxes.push(boundAxis);
+        }
+        boundAxis.callbacks = removeEventCallbacks;
 
         // Show axis' series in navigator based on showInNavigator property
         axis.series.forEach((series): void => {
@@ -239,13 +243,13 @@ class StandaloneNavigator {
     public unbind(axisOrChart?: Chart | Axis): void {
         // If no axis or chart is provided, unbind all bound axes
         if (!axisOrChart) {
-            this.boundAxes.forEach((removeEventCallbacks): void => {
-                removeEventCallbacks.forEach(
+            this.boundAxes.forEach(({ callbacks }): void => {
+                callbacks.forEach(
                     (removeCallback): void => removeCallback()
                 );
             });
 
-            this.boundAxes.clear();
+            this.boundAxes.length = 0;
 
             return;
         }
@@ -254,16 +258,14 @@ class StandaloneNavigator {
             axisOrChart :
             axisOrChart.xAxis[0];
 
-        // Call the event removal callbacks for this specific axis
-        const removeEventCallbacks = this.boundAxes.get(axis);
-        if (removeEventCallbacks) {
-            removeEventCallbacks.forEach(
-                (removeCallback): void => removeCallback()
-            );
+        for (let i = this.boundAxes.length - 1; i >= 0; i--) {
+            if (this.boundAxes[i].axis === axis) {
+                this.boundAxes[i].callbacks.forEach(
+                    (callback): void => callback()
+                );
+                this.boundAxes.splice(i, 1);
+            }
         }
-
-        // Remove this axis from the Map
-        this.boundAxes.delete(axis);
     }
 
     /**
@@ -273,12 +275,12 @@ class StandaloneNavigator {
      */
     public destroy(): void {
         // Disconnect events
-        this.boundAxes.forEach((removeEventCallbacks): void => {
-            removeEventCallbacks.forEach(
+        this.boundAxes.forEach(({ callbacks }): void => {
+            callbacks.forEach(
                 (removeCallback): void => removeCallback()
             );
         });
-        this.boundAxes.clear();
+        this.boundAxes.length = 0;
         this.navigator.destroy();
         this.navigator.chart.destroy();
     }
@@ -455,4 +457,4 @@ export default StandaloneNavigator;
  *//**
  */
 
-''; // detach doclets above
+''; // Detach doclets above

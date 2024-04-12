@@ -6,6 +6,7 @@ requiresManualTesting: true
 js_wrap: b
 tags:
   - Highcharts demo
+  - Dynamic
 categories:
   - Column and bar charts:
       priority: 3

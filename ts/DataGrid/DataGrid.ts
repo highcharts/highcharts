@@ -35,12 +35,9 @@ const {
     makeDiv
 } = DataGridUtils;
 import Globals from './Globals.js';
+const { isSafari, win } = Globals;
 import Templating from '../Core/Templating.js';
 import DataGridDefaults from './DataGridDefaults.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -246,7 +243,7 @@ class DataGrid {
     ) {
         // Initialize containers
         if (typeof container === 'string') {
-            const existingContainer = doc.getElementById(container);
+            const existingContainer = win.document.getElementById(container);
             if (existingContainer) {
                 this.container = existingContainer;
             } else {
@@ -544,6 +541,10 @@ class DataGrid {
         this.container.addEventListener('mouseover', (e): void => {
             this.handleMouseOver(e);
         });
+
+        this.container.addEventListener('click', (e):void => {
+            this.handleRowClick(e);
+        });
     }
 
 
@@ -559,7 +560,7 @@ class DataGrid {
      */
     private updateVisibleCells(force: boolean = false): void {
         let scrollTop = this.outerContainer.scrollTop;
-        if (H.isSafari) {
+        if (isSafari) {
             scrollTop = clamp(
                 scrollTop,
                 0,
@@ -683,6 +684,7 @@ class DataGrid {
      * Related mouse event.
      */
     private onDocumentClick(e: MouseEvent): void {
+
         if (this.cellInputEl && e.target) {
             const cellEl = this.cellInputEl.parentNode;
             const isClickInInput = cellEl && cellEl.contains(e.target as Node);
@@ -715,7 +717,28 @@ class DataGrid {
         }
     }
 
+    /**
+     * Handle click over rows.
+     *
+     * @internal
+     *
+     * @param e
+     * Related mouse event.
+     */
+    private handleRowClick(e: MouseEvent): void {
+        const target = e.target as HTMLElement;
+        const clickEvent = this.options.events?.row?.click;
 
+        if (
+            clickEvent &&
+            target?.classList.contains(Globals.classNames.cell)
+        ) {
+            clickEvent.call(
+                target.parentElement as HTMLElement,
+                e
+            );
+        }
+    }
     /**
      * Remove the <input> overlay and update the cell value
      * @internal
@@ -810,7 +833,7 @@ class DataGrid {
             Math.ceil(
                 (
                     this.outerContainer.offsetHeight ||
-                    this.options.defaultHeight // when datagrid is hidden,
+                    this.options.defaultHeight // When datagrid is hidden,
                     // offsetHeight is 0, so we need to get defaultValue to
                     // avoid empty rows
                 ) / this.options.cellHeight

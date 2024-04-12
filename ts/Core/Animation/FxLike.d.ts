@@ -19,7 +19,7 @@
  * by `declare module` pattern.
  */
 export interface FxLike {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

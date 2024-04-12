@@ -58,7 +58,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      */
     affectsMapView: true,
 
-    animation: false, // makes the complex shapes slow
+    animation: false, // Makes the complex shapes slow
 
     dataLabels: {
         crop: false,
@@ -69,7 +69,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
                 numberFormatter(value, -1) :
                 this.point.name; // #20231
         },
-        inside: true, // for the color
+        inside: true, // For the color
         overflow: false as any,
         padding: 0,
         verticalAlign: 'middle'
@@ -577,7 +577,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
 /**
  * For map and mapline series types, the SVG path for the shape. For
- * compatibily with old IE, not all SVG path definitions are supported,
+ * compatibility with old IE, not all SVG path definitions are supported,
  * but M, L and C operators are safe.
  *
  * To achieve a better separation between the structure and the data,

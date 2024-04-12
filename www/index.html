@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+<base href="https://code.highcharts.com/" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="robots" content="index, follow" />
+<link rel="stylesheet" href="https://code.highcharts.com/webstyling/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="https://code.highcharts.com/webstyling/template.css" type="text/css" />
+<title>code.highcharts.com</title>
+<style>
+            h2 {
+                margin-top: 60px !important;
+                scroll-margin-top: 60px;
+            }
+            h4 {
+                margin-top: 30px;
+                scroll-margin-top: 60px;
+            }
+            a {
+                color: #6570C3;
+            }
+            a:focus, a:hover {
+                color: #288630;
+                text-decoration: underline;
+            }
+            #toc {
+                margin: 15px;
+                min-width: 200px;
+                box-shadow: 0 2px 1px #e5e5e5;
+                border: 1px solid #ddd;
+            }
+            #toc td, #toc th {
+                padding: 5px 15px;
+            }
+        </style>
+<script src="https://code.jquery.com/jquery.min.js"></script>
+<script src="https://code.highcharts.com/webstyling/bootstrap.js"></script>
+<script>
+    jQuery.getScript("https://code.highcharts.com/products.js", function() {
+        // Products is added as a global.
+        var patch = window.products.Highcharts.nr,
+            minor = patch.slice(0, -2),
+            major = minor.slice(0, -2),
+            // Handle floating precision by multiplying and dividing by
+            // 100.
+            nextMinor = (Math.round((+minor + 0.1) * 100) / 100) + "",
+            nextMajor = (+major + 1) + "",
+            mapOfClassNameToVersion = {
+                '.patch': patch,
+                '.minor': minor,
+                '.major': major,
+                '.next-minor': nextMinor,
+                '.next-major': nextMajor
+            };
+
+        // Wait for document ready before continuing.
+        jQuery(function() {
+
+            // Add hyperlinks to all list elements.
+            jQuery('li').each(function() {
+                var $li = jQuery(this),
+                    url = $li.text();
+
+                // Replace string tags for patch, minor, and major.
+                url = url
+                    .replace('@patch', patch)
+                    .replace('@minor', minor)
+                    .replace('@major', major);
+
+                // Add hyperlink to the list element.
+                $li.html("<a href='"+ url + "'>" + url + "</a>");
+            });
+
+            // Replace all tags with version numbers.
+            jQuery.each(mapOfClassNameToVersion, function (key, value) {
+                jQuery(key).each(function (i, el) {
+                    jQuery(el).html(value);
+                });
+            });
+        });
+
+        // Handle Dashboards version
+        const dashboardsRelease = window.products['Highcharts Dashboards'];
+
+        if (dashboardsRelease) {
+            const links = document.querySelectorAll('#dashboards a');
+            const [major, minor] = dashboardsRelease.nr.split('.');
+
+            links.forEach(link =>{
+                link.href = link.href.replace(
+                    '@dashboards-minor',
+                    [major, minor].join('.')
+                ).replace(
+                    '@dashboards-patch',
+                    dashboardsRelease.nr
+                )
+
+                link.text = link.text.replace(
+                    '@dashboards-minor',
+                    [major, minor].join('.')
+                ).replace(
+                    '@dashboards-patch',
+                    dashboardsRelease.nr
+                );
+            });
+        }
+    });
+</script>
+</head>
+<body>
+<div id="menu" class="nav-down">
+<nav class="navbar navbar-default">
+<div class="container-fluid">
+<a class="navbar-brand" href="https://www.highcharts.com/" title="Highcharts">
+<img src="https://wp-assets.highcharts.com/svg/highcharts-logo-padded.svg" alt="Highcharts" /></a>
+</div>
+</nav>
+</div>
+<div id="hs-component">
+<div class="container">
+<div class="item-page">
+<h1>Highcharts file service</h1>
+<div class="content-container container">
+<div class="row">
+<div class="col-md1-1 col-sm-12">
+
+<p><em>Please feel free to link to the files from our CDN at code.highcharts.com. The files are hosted from Cloudflare, which distributes them to edge locations all over the world for fast access and reliability. Please note we maintain a fair usage policy on bandwidth usage.</em></p>
+
+<p><em>
+Note that when retrieving Highcharts code via our CDN, you automatically access the most up-to-date version of our software. To qualify for this benefit, you must maintain an active Highcharts Advantage plan.
+If you're uncertain about the specific Highcharts version covered by your license, please refer to your License Statement provided at the time of purchase. Alternatively, you can reach out to our sales team at sales@highsoft.com, and we will gladly verify the information for you.
+</em></p>
+
+<table id="toc">
+    <thead><th>Table of contents</th></thead>
+    <tbody>
+        <tr><td><a href="#highcharts-core">Highcharts Core</a></td></tr>
+        <tr><td><a href="#highcharts-stock">Highcharts Stock</a></td></tr>
+        <tr><td><a href="#highcharts-maps">Highcharts Maps</a></td></tr>
+        <tr><td><a href="#highcharts-gantt">Highcharts Gantt</a></td></tr>
+        <tr><td><a href="#highcharts-dashboards">Highcharts Dashboards</a></td></tr>
+        <tr><td><a href="#stylecss">Styled mode</a></td></tr>
+        <tr><td><a href="#esmodules">ECMAScript modules</a></td></tr>
+    </tbody>
+</table>
+
+<p>We recommend loading a <a href="#specific-version">specific version</a> of the library. This ensures that the version you are loading remains compatible with both your configurations and your license.</p>
+
+<h2 id="highcharts-core">Highcharts Core</h2>
+<p>There are many ways to use Highcharts, and you can choose the one that works best with your project. For the details please check the <a href="https://www.highcharts.com/docs/getting-started/installation">installation documentation</a>.</p>
+
+<h4 id="specific-version">Specific version</h4>
+<p>You'll find a specific Highcharts version by appending the version number to the root level:</p>
+<ul>
+<li><a>https://code.highcharts.com/@patch/highcharts.js</a></li>
+<li><a>https://code.highcharts.com/@patch/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/@patch/highcharts-more.js</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<p>By truncating the version number you'll be able to load the latest stable release within that
+major version number. For example, <strong><span class="minor">@minor</span></strong> points to the latest stable <span class="minor">@minor</span>.x, but when
+<span class="next-minor">@next-minor</span>.x or <span class="next-major">@next-major</span>.x.x is released, you will still load the latest release of <span class="minor">@minor</span>.</p>
+<ul>
+<li><a>https://code.highcharts.com/@minor/highcharts.js</a></li>
+<li><a>https://code.highcharts.com/@minor/highcharts-more.js</a></li>
+<li><a>https://code.highcharts.com/@minor/modules/exporting.js</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<p>The latest stable version of Highcharts is served from the root of code.highcharts.com:</p>
+<ul>
+<li><a>https://code.highcharts.com/highcharts.js</a></li>
+<li><a>https://code.highcharts.com/highcharts.src.js</a></li>
+<li><a>https://code.highcharts.com/highcharts-more.js</a></li>
+<li><a>https://code.highcharts.com/highcharts-more.src.js</a></li>
+<li><a>https://code.highcharts.com/highcharts-3d.js</a></li>
+<li><a>https://code.highcharts.com/highcharts-3d.src.js</a></li>
+<li><a>https://code.highcharts.com/modules/accessibility.js</a></li>
+<li><a>https://code.highcharts.com/modules/accessibility.src.js</a></li>
+<li><a>https://code.highcharts.com/modules/boost.js</a></li>
+<li><a>https://code.highcharts.com/modules/boost.src.js</a></li>
+<li><a>https://code.highcharts.com/modules/data.js</a></li>
+<li><a>https://code.highcharts.com/modules/data.src.js</a></li>
+<li><a>https://code.highcharts.com/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/modules/exporting.src.js</a></li>
+<li><a>https://code.highcharts.com/modules/drilldown.js</a></li>
+<li><a>https://code.highcharts.com/modules/drilldown.src.js</a></li>
+<li><a>https://code.highcharts.com/modules/offline-exporting.js</a></li>
+<li><a>https://code.highcharts.com/modules/offline-exporting.src.js</a></li>
+</ul>
+<p>The full list of all available modules can be found on the <a href="https://github.com/highcharts/highcharts-dist/tree/master/modules">Highcharts distribution repository</a>.</p>
+
+
+<h2 id="highcharts-stock">Highcharts Stock</h2>
+<p>Highcharts Stock files are available under the <strong>/stock</strong> subfolder, with the same folder
+structure as above.</p>
+
+<h4>Specific version</h4>
+<p>You'll find a specific Highcharts version by appending the version number to the /stock folder:</p>
+<ul>
+<li><a>https://code.highcharts.com/stock/@patch/highstock.js</a></li>
+<li><a>https://code.highcharts.com/stock/@patch/highcharts-more.js</a></li>
+<li><a>https://code.highcharts.com/stock/@patch/modules/exporting.js</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<ul>
+<li><a>https://code.highcharts.com/stock/@minor/highstock.js</a></li>
+<li><a>https://code.highcharts.com/stock/@minor/highcharts-more.js</a></li>
+<li><a>https://code.highcharts.com/stock/@minor/modules/exporting.js</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<p>The latest stable version of Highcharts Stock is served from code.highcharts.com/stock:</p>
+<ul>
+<li><a>https://code.highcharts.com/stock/highstock.js</a></li>
+<li><a>https://code.highcharts.com/stock/highstock.src.js</a></li>
+<li><a>https://code.highcharts.com/stock/highcharts-more.js</a></li>
+<li><a>https://code.highcharts.com/stock/highcharts-more.src.js</a></li>
+<li><a>https://code.highcharts.com/stock/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/stock/modules/exporting.src.js</a></li>
+<li><a>https://code.highcharts.com/stock/modules/drilldown.js</a></li>
+<li><a>https://code.highcharts.com/stock/modules/drilldown.src.js</a></li>
+<li><a>https://code.highcharts.com/stock/modules/solid-gauge.js</a></li>
+<li><a>https://code.highcharts.com/stock/modules/solid-gauge.src.js</a></li>
+</ul>
+
+
+<h2 id="highcharts-maps">Highcharts Maps</h2>
+<p>Highcharts Maps files are available under the <strong>/maps</strong> subfolder, with the same folder
+structure as above. The <a href="https://code.highcharts.com/mapdata/">Highcharts Maps map collection</a>
+is available under the <strong>/mapdata</strong> subfolder.</p>
+
+<h4>Specific version</h4>
+<p>You'll find a specific Highcharts Maps version by appending the version number to the /maps folder.
+To get a specifc version of the map collection, append the version number to the /mapdata folder:</p>
+<ul>
+<li><a>https://code.highcharts.com/maps/@patch/highmaps.js</a></li>
+<li><a>https://code.highcharts.com/maps/@patch/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/mapdata/2.1.0/countries/us/us-all.js</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<ul>
+<li><a>https://code.highcharts.com/maps/@minor/highmaps.js</a></li>
+<li><a>https://code.highcharts.com/maps/@minor/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/mapdata/2.1/countries/us/us-all.js</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<p>The latest stable version of Highcharts Maps is served from code.highcharts.com/maps in both standalone
+and Highcharts plugin form. The map collection is served from code.highcharts.com/mapdata with a
+folder structure depending on map type and ISO code:</p>
+<ul>
+<li><a>https://code.highcharts.com/maps/highmaps.js</a></li>
+<li><a>https://code.highcharts.com/maps/highmaps.src.js</a></li>
+<li><a>https://code.highcharts.com/maps/modules/map.js</a></li>
+<li><a>https://code.highcharts.com/maps/modules/map.src.js</a></li>
+<li><a>https://code.highcharts.com/maps/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/maps/modules/exporting.src.js</a></li>
+<li><a>https://code.highcharts.com/mapdata/countries/us/us-all.js</a></li>
+</ul>
+
+
+<h2 id="highcharts-gantt">Highcharts Gantt</h2>
+<p>Highcharts Gantt files are available under the <strong>/gantt</strong> subfolder, with the same folder
+structure as above.</p>
+
+<h4>Specific version</h4>
+<p>You'll find a specific Highcharts Gantt version by appending the version number to the /gantt folder:</p>
+<ul>
+<li><a>https://code.highcharts.com/gantt/@patch/highcharts-gantt.js</a></li>
+<li><a>https://code.highcharts.com/gantt/@patch/modules/exporting.js</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<ul>
+<li><a>https://code.highcharts.com/gantt/@minor/highcharts-gantt.js</a></li>
+<li><a>https://code.highcharts.com/gantt/@minor/modules/exporting.js</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<p>The latest stable version of Highcharts Gantt is served from code.highcharts.com/gantt in both standalone
+and Highcharts plugin form.</p>
+<ul>
+<li><a>https://code.highcharts.com/gantt/highcharts-gantt.js</a></li>
+<li><a>https://code.highcharts.com/gantt/highcharts-gantt.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/exporting.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/exporting.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/gantt.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/gantt.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/grid-axis.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/grid-axis.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/pathfinder.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/pathfinder.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/pattern-fill.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/pattern-fill.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/static-scale.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/static-scale.src.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/treegrid.js</a></li>
+<li><a>https://code.highcharts.com/gantt/modules/treegrid.src.js</a></li>
+</ul>
+
+
+<section id="dashboards">
+<h2 id="highcharts-dashboards">Highcharts Dashboards</h2>
+<p>Highcharts Dashboards files are available under the <strong>/dashboards</strong> subfolder, with the same folder
+structure as above.</p>
+
+<h4>Specific version</h4>
+<p>You'll find a specific Highcharts Dashboards version by appending the version number to the /dashboards folder:</p>
+<ul>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-patch/dashboards.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-patch/datagrid.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-patch/modules/layout.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-patch/modules/math-modifier.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-patch/css/dashboards.css</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-patch/css/datagrid.css</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<ul>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-minor/dashboards.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-minor/datagrid.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-minor/modules/layout.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-minor/modules/math-modifier.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-minor/css/dashboards.css</a></li>
+<li><a>https://code.highcharts.com/dashboards/@dashboards-minor/css/datagrid.css</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<p>The latest stable version of Highcharts Dashboards is served from code.highcharts.com/dashboards in both standalone
+and Highcharts plugin form.</p>
+<ul>
+<li><a>https://code.highcharts.com/dashboards/dashboards.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/datagrid.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/modules/layout.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/modules/math-modifier.js</a></li>
+<li><a>https://code.highcharts.com/dashboards/css/dashboards.css</a></li>
+<li><a>https://code.highcharts.com/dashboards/css/datagrid.css</a></li>
+</ul>
+</section>
+
+
+<h2 id="stylecss">Styled mode</h2>
+<p>You can read more about styled mode at <a href="https://www.highcharts.com/docs/chart-design-and-style/style-by-css">Styled mode - styling by CSS</a>.</p>
+<p>For Highcharts Dashboards specific styling see the previous section and for more details see <a href="https://www.highcharts.com/docs/dashboards/your-first-dashboard">the setup guide for the Dashboards</a>.</p>
+
+<h4>Specific version</h4>
+<ul>
+<li><a>https://code.highcharts.com/@patch/css/highcharts.css</a></li>
+</ul>
+
+<h4>Truncated versions</h4>
+<ul>
+<li><a>https://code.highcharts.com/@minor/css/highcharts.css</a></li>
+</ul>
+
+<h4>Latest stable</h4>
+<ul>
+<li><a>https://code.highcharts.com/css/highcharts.css</a></li>
+</ul>
+
+
+<h2 id="esmodules">ECMAScript modules</h2>
+<p>
+Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules.
+You can <a href="https://jakearchibald.com/2017/es-modules-in-browsers/">import ES modules directly in modern browsers</a>
+without any bundling tools, by using <code>&lt;script type="module"&gt;</code> (<a href="https://jsfiddle.net/highcharts/rtcx6j3h/">demo</a>):
+</p>
+<pre>&lt;script type="module"&gt;
+    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+    Highcharts.chart('container', {
+        ...
+    });
+&lt;/script&gt;</pre>
+
+</div></div></div></div></div></div>
+</body>
+</html>

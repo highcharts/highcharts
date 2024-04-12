@@ -28,10 +28,7 @@ import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
-const {
-    composed,
-    noop
-} = H;
+const { noop } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
@@ -39,7 +36,6 @@ const {
     extend,
     isObject,
     merge,
-    pushUnique,
     relativeLength
 } = U;
 
@@ -171,9 +167,9 @@ function applyBorderRadius(
                 'A',
                 r,
                 r,
-                0, // slanting,
-                0, // long arc
-                1, // clockwise
+                0, // Slanting,
+                0, // Long arc
+                1, // Clockwise
                 cx + bigR * Math.cos(params.start),
                 cy + bigR * Math.sin(params.start)
             ]);
@@ -377,12 +373,12 @@ function seriesOnAfterColumnTranslate(
 /** @private */
 function compose(
     SeriesClass: typeof Series,
-    PieSeriesClass: typeof PieSeries,
     SVGElementClass: typeof SVGElement,
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const PieSeriesClass = SeriesClass.types.pie;
 
-    if (pushUnique(composed, compose)) {
+    if (!SVGElementClass.symbolCustomAttribs.includes('borderRadius')) {
         const symbols = SVGRendererClass.prototype.symbols;
 
         addEvent(
@@ -542,21 +538,21 @@ function roundedRect(
     path.length = 0;
     path.push(
         ['M', ...a],
-        // top side
+        // Top side
         ['L', ...b],
-        // top right corner
+        // Top right corner
         ['A', rTop, rTop, 0, 0, 1, ...c],
-        // right side
+        // Right side
         ['L', ...d],
-        // bottom right corner
+        // Bottom right corner
         ['A', rBtm, rBtm, 0, 0, 1, ...e],
-        // bottom side
+        // Bottom side
         ['L', ...f],
-        // bottom left corner
+        // Bottom left corner
         ['A', rBtm, rBtm, 0, 0, 1, ...g],
-        // left side
+        // Left side
         ['L', ...h],
-        // top left corner
+        // Top left corner
         ['A', rTop, rTop, 0, 0, 1, ...a],
         ['Z']
     );
@@ -620,4 +616,4 @@ export default BorderRadius;
  * @default end
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

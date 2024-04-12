@@ -5,7 +5,8 @@ window.onload = function () {
         },
 
         title: {
-            text: 'Tooltip position using standalone framework in a scrollable container'
+            text: 'Tooltip position using standalone framework in a ' +
+                'scrollable container'
         },
 
         series: [{

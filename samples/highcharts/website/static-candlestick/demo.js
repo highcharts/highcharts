@@ -58,14 +58,18 @@ const candlestick = function () {
                         const chart = this;
                         updateStyle('highcharts-title', 'opacity', 0, '0s');
                         updateStyle('candlestick', 'opacity', 0, '0s');
-                        updateStyle('highcharts-yaxis-labels', 'opacity', 0, '0s');
+                        updateStyle(
+                            'highcharts-yaxis-labels', 'opacity', 0, '0s'
+                        );
 
                         chart.update({
                             navigator: {
                                 enabled: true
                             }
                         });
-                        updateStyle('candlestick', 'transform', 'rotate(0deg)', '0s');
+                        updateStyle(
+                            'candlestick', 'transform', 'rotate(0deg)', '0s'
+                        );
                         if (big) {
                             chart.rangeSelector.clickButton(3);
                         } else {
@@ -74,14 +78,30 @@ const candlestick = function () {
 
                         const p1 = function () {
                             chart.xAxis[0].update({ visible: true });
-                            updateStyle('highcharts-axis-labels', 'opacity', 1, '800ms');
+                            updateStyle(
+                                'highcharts-axis-labels', 'opacity', 1, '800ms'
+                            );
                             updateStyle('candlestick', 'opacity', 0, '0s');
                             updateStyle('candlestick', 'opacity', 1, '1s');
-                            updateStyle('highcharts-point-up', 'fillOpacity', 1, '1s');
-                            updateStyle('highcharts-point-down', 'fillOpacity', 1, '1s');
-                            updateStyle('highcharts-range-selector-buttons', 'opacity', 1, '1s');
+                            updateStyle(
+                                'highcharts-point-up', 'fillOpacity', 1, '1s'
+                            );
+                            updateStyle(
+                                'highcharts-point-down', 'fillOpacity', 1, '1s'
+                            );
+                            updateStyle(
+                                'highcharts-range-selector-buttons',
+                                'opacity',
+                                1,
+                                '1s'
+                            );
                             if (!reduced) {
-                                updateStyle('candlestick', 'transform', 'rotate(0deg)', '1s');
+                                updateStyle(
+                                    'candlestick',
+                                    'transform',
+                                    'rotate(0deg)',
+                                    '1s'
+                                );
                             }
 
                         };
@@ -121,10 +141,13 @@ const candlestick = function () {
             accessibility: {
                 landmarkVerbosity: 'disabled',
                 screenReaderSection: {
-                    beforeChartFormat: '<h2>Stock chart demo</h2><p>Interactive candlestick chart displaying stock prices for Apple (AAPL) over time.</p>'
+                    beforeChartFormat: '<h2>Stock chart demo</h2><p>' +
+                        'Interactive candlestick chart displaying stock ' +
+                        'prices for Apple (AAPL) over time.</p>'
                 },
                 series: {
-                    descriptionFormat: '{series.name}, {series.points.length} data points.'
+                    descriptionFormat: '{series.name}, ' +
+                        '{series.points.length} data points.'
                 },
                 point: {
                     dateFormat: '%A, %B %e %Y',
@@ -180,9 +203,12 @@ const candlestick = function () {
                 offset: -30,
                 events: {
                     afterSetExtremes: function () {
-                        // document.querySelector('.highcharts-candlestick-series.candlestick').classList.add('h');
-                        updateStyle('highcharts-point-up', 'fillOpacity', 1, '1s');
-                        updateStyle('highcharts-point-down', 'fillOpacity', 1, '1s');
+                        updateStyle(
+                            'highcharts-point-up', 'fillOpacity', 1, '1s'
+                        );
+                        updateStyle(
+                            'highcharts-point-down', 'fillOpacity', 1, '1s'
+                        );
                     }
                 }
             }],

@@ -73,6 +73,7 @@ const {
     merge,
     pick,
     pInt,
+    replaceNested,
     uniqueKey
 } = U;
 
@@ -283,10 +284,10 @@ class SVGRenderer implements SVGRendererLike {
                 });
             };
 
-            // run the fix now
+            // Run the fix now
             subPixelFix();
 
-            // run it on resize
+            // Run it on resize
             renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
         }
     }
@@ -429,13 +430,13 @@ class SVGRenderer implements SVGRendererLike {
             }
 
             if (hasInternalReferenceBug) {
-                return win.location.href
-                    .split('#')[0] // remove the hash
-                    .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parantheses and quotes
-                    .replace(/([\('\)])/g, '\\$1')
-                    // replace spaces (needed for Safari only)
-                    .replace(/ /g, '%20');
+                // Scan alert #[72]: Loop for nested patterns
+                return replaceNested(
+                    win.location.href.split('#')[0], // Remove hash
+                    [/<[^>]*>/g, ''], // Wing cut HTML
+                    [/([\('\)])/g, '\\$1'], // Escape parantheses and quotes
+                    [/ /g, '%20'] // Replace spaces (needed for Safari only)
+                );
             }
         }
         return '';
@@ -478,8 +479,8 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Detect whether the renderer is hidden. This happens when one of the
      * parent elements has `display: none`. Used internally to detect when we
-     * needto render preliminarily in another div to get the text bounding boxes
-     * right.
+     * need to render preliminarily in another div to get the text bounding
+     * boxes right.
      *
      * @function Highcharts.SVGRenderer#isHidden
      *
@@ -898,7 +899,7 @@ class SVGRenderer implements SVGRendererLike {
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            // Substract due to #1129. Now bottom and left axis gridlines behave
+            // Subtract due to #1129. Now bottom and left axis gridlines behave
             // the same.
             start[1] = end[1] =
                 Math[roundingFunction](start[1]) - (width % 2 / 2);
@@ -949,7 +950,7 @@ class SVGRenderer implements SVGRendererLike {
 
         if (isArray(path)) {
             attribs.d = path;
-        } else if (isObject(path)) { // attributes
+        } else if (isObject(path)) { // Attributes
             extend(attribs, path as any);
         }
         return this.createElement('path').attr(attribs) as any;
@@ -1394,7 +1395,7 @@ class SVGRenderer implements SVGRendererLike {
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
             sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
-            // get the symbol definition function
+            // Get the symbol definition function
             symbolFn = (sym && this.symbols[sym]);
 
         let obj: (SVGElement|undefined),
@@ -1420,7 +1421,7 @@ class SVGRenderer implements SVGRendererLike {
                 obj.attr('fill', 'none');
             }
 
-            // expando properties for use in animate and attr
+            // Expando properties for use in animate and attr
             extend(obj, {
                 symbolName: (sym || void 0),
                 x: x,
@@ -2210,7 +2211,7 @@ export default SVGRenderer;
 
 /**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
- * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
+ * instances. It is instantiated with the {@link SVGRenderer#clipRect} function
  * and applied with the {@link SVGElement#clip} function.
  *
  * @example
@@ -2416,4 +2417,4 @@ export default SVGRenderer;
  * @type {number|undefined}
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

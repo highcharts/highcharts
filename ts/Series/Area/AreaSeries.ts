@@ -503,7 +503,7 @@ class AreaSeries extends LineSeries {
                 stackX: StackItem,
                 x: string
             ): void {
-                // nulled after switching between
+                // Nulled after switching between
                 // grouping and not (#1651, #2336)
                 if (stackX.total !== null) {
                     keys.push(x);
@@ -554,7 +554,7 @@ class AreaSeries extends LineSeries {
 
                                     // If there are missing points in the next
                                     // stack in any of the series below this
-                                    // one, we need to substract the missing
+                                    // one, we need to subtract the missing
                                     // values and add a hiatus to the left or
                                     // right.
                                     } else if (visibleSeries[i]) {
@@ -753,4 +753,4 @@ export default AreaSeries;
  * @apioption series.area.fillOpacity
  */
 
-''; // adds doclets above to transpilat
+''; // Adds doclets above to transpiled

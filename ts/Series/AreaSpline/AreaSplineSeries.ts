@@ -246,4 +246,4 @@ export default AreaSplineSeries;
  * @apioption series.areaspline.fillOpacity
  */
 
-''; // adds doclets above into transpilat
+''; // Adds doclets above into transpiled

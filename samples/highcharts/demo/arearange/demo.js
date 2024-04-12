@@ -6,7 +6,9 @@
     Highcharts.chart('container', {
         chart: {
             type: 'arearange',
-            zoomType: 'x',
+            zooming: {
+                type: 'x'
+            },
             scrollablePlotArea: {
                 minWidth: 600,
                 scrollPositionX: 1

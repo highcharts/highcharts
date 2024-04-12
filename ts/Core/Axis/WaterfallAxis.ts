@@ -100,7 +100,7 @@ namespace WaterfallAxis {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Axis.Waterfall')) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterBuildStacks', onAxisAfterBuildStacks);
             addEvent(AxisClass, 'afterRender', onAxisAfterRender);
@@ -130,8 +130,10 @@ namespace WaterfallAxis {
         const axis = this as WaterfallAxis,
             stackLabelOptions = axis.options.stackLabels;
 
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
+        if (
+            stackLabelOptions && stackLabelOptions.enabled &&
+            axis.waterfall.stacks
+        ) {
             axis.waterfall.renderStackTotals();
         }
     }
@@ -154,8 +156,8 @@ namespace WaterfallAxis {
         const axes = this.axes as Array<WaterfallAxis>,
             series = this.series;
 
-        for (const seri of series) {
-            if (seri.options.stacking) {
+        for (const serie of series) {
+            if (serie.options.stacking) {
                 for (const axis of axes) {
                     if (!axis.isXAxis) {
                         axis.waterfall.stacks.changed = true;

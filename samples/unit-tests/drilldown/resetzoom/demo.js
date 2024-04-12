@@ -385,78 +385,80 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
 });
 
 
-QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column',
-            zoomType: 'x'
-        },
-        xAxis: {
-            minRange: 0.1
-        },
-        series: [{
-            data: [{
-                y: 5,
-                drilldown: 'drill'
-            }, {
-                y: 2,
-                drilldown: 'drill'
-            }]
-        }],
-        drilldown: {
-            breadcrumbs: {
-                showFullPath: false
+QUnit.test(
+    'Drilldown and reset zoom should not crash the chart, #8095.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                zoomType: 'x'
+            },
+            xAxis: {
+                minRange: 0.1
             },
             series: [{
-                id: 'drill',
-                data: [8, 9, 8]
-            }]
-        }
-    });
+                data: [{
+                    y: 5,
+                    drilldown: 'drill'
+                }, {
+                    y: 2,
+                    drilldown: 'drill'
+                }]
+            }],
+            drilldown: {
+                breadcrumbs: {
+                    showFullPath: false
+                },
+                series: [{
+                    id: 'drill',
+                    data: [8, 9, 8]
+                }]
+            }
+        });
 
-    const controller = new TestController(chart);
+        const controller = new TestController(chart);
 
-    chart.series[0].points[0].doDrilldown();
-    controller.pan([300, 200], [200, 200]);
+        chart.series[0].points[0].doDrilldown();
+        controller.pan([300, 200], [200, 200]);
 
-    assert.strictEqual(
-        typeof chart.drillUpButton,
-        'object',
-        'We have a drillUp button'
-    );
-    assert.strictEqual(
-        typeof chart.resetZoomButton,
-        'object',
-        'Reset zoom button should also be visible.'
-    );
-    assert.ok(
-        chart.resetZoomButton.xSetting >
+        assert.strictEqual(
+            typeof chart.drillUpButton,
+            'object',
+            'We have a drillUp button'
+        );
+        assert.strictEqual(
+            typeof chart.resetZoomButton,
+            'object',
+            'Reset zoom button should also be visible.'
+        );
+        assert.ok(
+            chart.resetZoomButton.xSetting >
             chart.drillUpButton.xSetting + chart.drillUpButton.width,
-        'Buttons should not overlap.'
-    );
+            'Buttons should not overlap.'
+        );
 
-    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
-    chart.series[0].points[0].doDrilldown();
+        Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
+        chart.series[0].points[0].doDrilldown();
 
-    assert.ok(
-        'No errors in the console.'
-    );
+        assert.ok(
+            'No errors in the console.'
+        );
 
-    // Reset chart to initial state.
-    Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
-    chart.drillUp();
+        // Reset chart to initial state.
+        Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
+        chart.drillUp();
 
-    // Zoom in basic level.
-    controller.pan([100, 200], [300, 200]);
+        // Zoom in basic level.
+        controller.pan([100, 200], [300, 200]);
 
-    chart.series[0].points[0].doDrilldown();
-    chart.drillUp();
-    assert.strictEqual(
-        typeof chart.resetZoomButton,
-        'object',
-        'Reset zoom button should be visible again.'
-    );
-});
+        chart.series[0].points[0].doDrilldown();
+        chart.drillUp();
+        assert.strictEqual(
+            typeof chart.resetZoomButton,
+            'object',
+            'Reset zoom button should be visible again.'
+        );
+    });
 
 
 QUnit.test(

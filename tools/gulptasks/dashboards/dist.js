@@ -70,7 +70,8 @@ gulp.task(
     gulp.series(
         () => dist(),
         'dashboards/scripts',
-        () => scriptsCompile(void 0, require('./_config.json')),
+        () => scriptsCompile(void 0, require('./_config.json'), 'dashboards'),
+        () => scriptsCompile(void 0, require('./_config.json'), 'datagrid'),
         'dashboards/dist-build',
         'dashboards/dist-examples',
         'dashboards/dist-zip',

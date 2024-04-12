@@ -1,4 +1,5 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import PluginHandler from '../../../../code/dashboards/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
@@ -39,7 +40,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            cell: 'dashboard-col-1',
+            renderTo: 'dashboard-col-1',
             type: 'Highcharts',
             chartOptions: {
                 type: 'column',
@@ -58,7 +59,7 @@ Dashboards.board('container', {
             }
         },
         {
-            cell: 'dashboard-col-3',
+            renderTo: 'dashboard-col-3',
             type: 'HTML',
             elements: [{
                 tagName: 'img',

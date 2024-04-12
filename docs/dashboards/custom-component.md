@@ -29,8 +29,24 @@ The custom code looks like below:
 class YouTubeComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
+
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
+
+        this.options.editableOptions = [{
+            name: 'videoId',
+            propertyPath: ['videoId'],
+            type: 'input'
+        }, {
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }];
+
 
         return this;
     }
@@ -57,10 +73,21 @@ class YouTubeComponent extends Component {
         return this;
     }
 
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+
     getOptionsOnDrop(sidebar) {
         super.getOptionsOnDrop.call(this, sidebar);
         return {
-            cell: '',
+            renderTo: '',
             type: 'YouTube',
             videoId: '115hdz9NsrY'
         };
@@ -84,7 +111,7 @@ Dashboards.board({
         }]
     }],
     components: [{
-        cell: 'cell-id',
+        renderTo: 'cell-id',
         type: 'YouTube',
         videoId: 'video-id-from-youtube'
     }]
@@ -109,20 +136,64 @@ Use the exact name which was used to register the component in the `ComponentReg
         }
     },
 ```
----
+
+### Making custom component editable
+To make the custom component editable, you need to define the `editableOptions` property in the component options. The best place to define the `editableOptions` is in the constructor of the custom component.  
+The `editableOptions` property is an array of objects, where each object represents one editable option. Read more about the `editableOptions` in the [Editable Options API.](https://api.highcharts.com/dashboards/#modules/Dashboards_Components_EditableOptions.EditableOptions)  
+In the example below, the `videoId`, `title` and `caption` are editable options.
+```js
+    this.options.editableOptions = [{
+        name: 'videoId',
+        propertyPath: ['videoId'],
+        type: 'input'
+    }, {
+        name: 'title',
+        propertyPath: ['title'],
+        type: 'input'
+    }, {
+        name: 'caption',
+        propertyPath: ['caption'],
+        type: 'input'
+    }];
+```
+Also the `update` method should be extended to update the component with new options. Here we simply have to switch the videoId and set the new videoId to the iframe element. Note that the loading indicator needs to be disabled after performing the update.  
+```js
+    async update(newOptions, shouldRerender) {
+        super.update.call(this, newOptions, shouldRerender);
+
+        this.youTubeElement.setAttribute(
+            'src',
+            'https://www.youtube.com/embed/' + this.options.videoId
+        );
+
+        this.cell.setLoadingState(false);
+    }
+```
+Additionally the `lang` options for the new option can be added.
+```js
+    editMode: {
+        enabled: true,
+        lang: {
+            videoId: 'Video ID'
+        },
+        ...
+    }
+```
+
+
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) doesn't allow to reuse the HTML code, which is already present in the DOM. To overcome this limitation, you can create a custom HTML component, which will allow you to reference the HTML element by its `id` attribute or pass the HTML as a string to the `html` property.
 
 <iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component" allow="fullscreen"></iframe>
 
-This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
+This custom component will extend basic HTML component, so we need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Dashboards.AST` class, which will be used to parse the string type HTML into the AST-like object.  In case something is missing in the AST class you can extend it the same as in Highcharts, see the documentation for [AST](https://api.highcharts.com/class-reference/Highcharts.AST).
 
 Then we can create our custom class, which extends the `HTMLComponent` class. The only thing we need to do, is to create a method to extract the HTML from the options and parse it into the AST-like object. In the example this method is called `getCustomHTML` and it assigns the element generated by the AST to the `elements` property. The only thing left is to register the new component in the `ComponentRegistry` and we are ready to use it.
 
 ```js
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
-    AST = Highcharts.AST;
+    AST = Dashboards.AST;
 
 class CustomHTML extends HTMLComponent {
     constructor(cell, options) {
@@ -138,18 +209,12 @@ class CustomHTML extends HTMLComponent {
             const customHTML = document.getElementById(options.id).outerHTML;
 
             this.options.elements = new AST(customHTML).nodes;
-        } else if (options.html) {
-            this.options.elements = new AST(options.html).nodes;
         }
     }
 }
 
 ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 ```
-
-This custom component can generate HTML elements in the dashboards by:
-- referencing the HTML element by its `id` attribute
-- passing the HTML as a string to the `html` property
 
 Use of this component is shown below:
 
@@ -171,11 +236,11 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'CustomHTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         id: 'custom-html-div'
     }, {
         type: 'CustomHTML',
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         html: `
             <div>
                 <h1>Custom HTML 2</h1>
@@ -184,7 +249,7 @@ Dashboards.board('container', {
         `
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -297,7 +362,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'Threshold',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         component: 'HTML',
         value: 7,
         thresholds: [{

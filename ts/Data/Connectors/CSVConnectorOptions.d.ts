@@ -39,6 +39,12 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      */
     csvURL?: string;
     /**
+     * The decimal point used for parsing numbers in the CSV.
+     *
+     * @default '.'
+     */
+    decimalPoint?: string;
+    /**
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.
      */
@@ -52,6 +58,12 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      * @default true
      */
     firstRowAsNames?: boolean;
+    /**
+     * Item or cell delimiter for parsing CSV.
+     *
+     * @default ','
+     */
+    itemDelimiter?: string;
 }
 
 /**

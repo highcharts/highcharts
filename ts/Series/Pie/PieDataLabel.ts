@@ -142,7 +142,7 @@ namespace ColumnDataLabel {
             let maxDataLabelWidth = 0,
                 dataLabelWidth;
 
-            // find widest data label
+            // Find widest data label
             points.forEach(function (point): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
@@ -165,7 +165,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'PieDataLabel')) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;
@@ -552,7 +552,8 @@ namespace ColumnDataLabel {
 
         // Do not apply the final placement and draw the connectors until we
         // have verified that labels are not spilling over.
-        if (arrayMax(overflow) === 0 ||
+        if (
+            arrayMax(overflow) === 0 ||
             (this.verifyDataLabelOverflow as any)(overflow)
         ) {
 
@@ -679,11 +680,12 @@ namespace ColumnDataLabel {
         overflow: Array<number>
     ): boolean {
 
-        let center = this.center,
+        const center = this.center,
             options = this.options,
             centerOption = options.center,
-            minSize = options.minSize || 80,
-            newSize = minSize,
+            minSize = options.minSize || 80;
+
+        let newSize = minSize,
             // If a size is set, return true and don't try to shrink the pie
             // to fit the labels.
             ret = options.size !== null;
@@ -691,16 +693,18 @@ namespace ColumnDataLabel {
         if (!ret) {
             // Handle horizontal size and center
             if ((centerOption as any)[0] !== null) { // Fixed center
-                newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize as any);
+                newSize = Math.max(
+                    center[2] -
+                    Math.max(overflow[1], overflow[3]), minSize as any
+                );
 
             } else { // Auto center
                 newSize = Math.max(
-                    // horizontal overflow
+                    // Horizontal overflow
                     center[2] - overflow[1] - overflow[3],
                     minSize as any
                 );
-                // horizontal center
+                // Horizontal center
                 center[0] += (overflow[3] - overflow[1]) / 2;
             }
 
@@ -715,10 +719,10 @@ namespace ColumnDataLabel {
                 newSize = clamp(
                     newSize,
                     minSize as any,
-                    // vertical overflow
+                    // Vertical overflow
                     center[2] - overflow[0] - overflow[2]
                 );
-                // vertical center
+                // Vertical center
                 center[1] += (overflow[0] - overflow[2]) / 2;
             }
 

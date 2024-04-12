@@ -31,7 +31,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'cell-id',
+        renderTo: 'cell-id',
         elements: [
             {
                 tagName: 'h1',
@@ -43,7 +43,7 @@ Dashboards.board('container', {
             id: 'data'
         },
         type: 'DataGrid',
-        cell: 'cell-id-2',
+        renderTo: 'cell-id-2',
         dataGridOptions: {
             editable: false,
             columns: {

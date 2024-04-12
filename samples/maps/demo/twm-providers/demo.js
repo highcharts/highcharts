@@ -9,7 +9,9 @@
                         providerSelect = document.getElementById('provider'),
                         themeSelect = document.getElementById('theme'),
                         apikeyInput = document.getElementById('apikey'),
-                        submitAPIkeyBtn = document.getElementById('submitAPIkey'),
+                        submitAPIkeyBtn = document.getElementById(
+                            'submitAPIkey'
+                        ),
                         { TilesProviderRegistry } = Highcharts;
 
                     function updateTWM() {

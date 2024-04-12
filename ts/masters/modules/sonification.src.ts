@@ -35,3 +35,5 @@ G.sonification = {
 };
 
 Sonification.compose(G.Chart, G.Series, G.Point);
+
+export default Highcharts;

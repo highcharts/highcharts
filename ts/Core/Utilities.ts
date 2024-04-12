@@ -101,10 +101,10 @@ function error(
         if (stop) {
             throw new Error(message);
         }
-        // else ...
+        // Else ...
         if (
             win.console &&
-            error.messages.indexOf(message) === -1 // prevent console flooting
+            error.messages.indexOf(message) === -1 // Prevent console flooting
         ) {
             console.warn(message); // eslint-disable-line no-console
         }
@@ -224,7 +224,8 @@ function merge<T>(): T {
             }
 
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (isObject(value, true) &&
+            if (
+                isObject(value, true) &&
                 !isClass(value) &&
                 !isDOMElement(value)
             ) {
@@ -355,7 +356,11 @@ function diffObjects(
                 // If the newer key is explicitly undefined, keep it (#10525)
                 (key in newer && !(key in older))
             ) {
-                ret[key] = keeper[key];
+
+                if (key !== '__proto__' && key !== 'constructor') {
+                    ret[key] = keeper[key];
+                }
+
             }
         });
     }
@@ -976,6 +981,40 @@ function relativeLength(
 }
 
 /**
+ * Replaces text in a string with a given replacement in a loop to catch nested
+ * matches after previous replacements.
+ *
+ * @function Highcharts.replaceNested
+ *
+ * @param {string} text
+ * Text to search and modify.
+ *
+ * @param {...Array<(RegExp|string)>} replacements
+ * One or multiple tuples with search pattern (`[0]: (string|RegExp)`) and
+ * replacement (`[1]: string`) for matching text.
+ *
+ * @return {string}
+ * Text with replacements.
+ */
+function replaceNested(
+    text: string,
+    ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
+): string {
+    let previous: string,
+        replacement: [(string|RegExp), string];
+
+    do {
+        previous = text;
+
+        for (replacement of replacements) {
+            text = text.replace(replacement[0], replacement[1]);
+        }
+    } while (text !== previous);
+
+    return text;
+}
+
+/**
  * Wrap a method with extended functionality, preserving the original function.
  *
  * @function Highcharts.wrap
@@ -1070,11 +1109,11 @@ function normalizeTickInterval(
     let i,
         retInterval = interval;
 
-    // round to a tenfold of 1, 2, 2.5 or 5
+    // Round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, getMagnitude(interval));
     const normalized = interval / magnitude;
 
-    // multiples for a linear scale
+    // Multiples for a linear scale
     if (!multiples) {
         multiples = hasTickAmount ?
             // Finer grained ticks when the tick amount is hard set, including
@@ -1085,7 +1124,7 @@ function normalizeTickInterval(
             [1, 2, 2.5, 5, 10];
 
 
-        // the allowDecimals option
+        // The allowDecimals option
         if (allowDecimals === false) {
             if (magnitude === 1) {
                 multiples = multiples.filter(function (num: number): boolean {
@@ -1097,10 +1136,10 @@ function normalizeTickInterval(
         }
     }
 
-    // normalize the interval to the nearest multiple
+    // Normalize the interval to the nearest multiple
     for (i = 0; i < multiples.length; i++) {
         retInterval = multiples[i];
-        // only allow tick amounts smaller than natural
+        // Only allow tick amounts smaller than natural
         if (
             (
                 hasTickAmount &&
@@ -1158,7 +1197,7 @@ function stableSort<T>(
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        (arr[i] as any).safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // Stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1168,7 +1207,7 @@ function stableSort<T>(
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete (arr[i] as any).safeI; // stable sort index
+        delete (arr[i] as any).safeI; // Stable sort index
     }
 }
 
@@ -1394,7 +1433,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof pathElement === 'undefined' ||
             pathElement === '__proto__'
         ) {
-            return; // undefined
+            return; // Undefined
         }
 
         if (pathElement === 'this') {
@@ -1416,7 +1455,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             typeof child.nodeType === 'number' ||
             child as unknown === win
         ) {
-            return; // undefined
+            return; // Undefined
         }
 
         // Else, proceed
@@ -1737,7 +1776,7 @@ function objectEach<TObject, TContext>(
  *        The array to test
  *
  * @param {Function} fn
- *        The function to run on each item. Return truty to pass the test.
+ *        The function to run on each item. Return truthy to pass the test.
  *        Receives arguments `currentValue`, `index` and `array`.
  *
  * @param {*} ctx
@@ -1807,7 +1846,8 @@ function addEvent<T>(
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // without H a dependency loop occurs
+    if (
+        (H as any).Point && // Without H a dependency loop occurs
         el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
@@ -1902,7 +1942,7 @@ function removeEvent<T>(
             len;
 
         if (!(el as any).nodeName) {
-            return; // break on non-DOM events
+            return; // Break on non-DOM events
         }
 
         if (type) {
@@ -1981,7 +2021,8 @@ function fireEvent<T>(
     /* eslint-enable valid-jsdoc */
     eventArguments = eventArguments || {};
 
-    if (doc.createEvent &&
+    if (
+        doc.createEvent &&
         (
             (el as any).dispatchEvent ||
             (
@@ -2157,7 +2198,7 @@ if ((win as any).jQuery) {
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        Function to run when the chart has loaded and and all external
+     *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.
@@ -2168,7 +2209,7 @@ if ((win as any).jQuery) {
     (win as any).jQuery.fn.highcharts = function (): any {
         const args = [].slice.call(arguments) as any;
 
-        if (this[0]) { // this[0] is the renderTo div
+        if (this[0]) { // `this[0]` is the renderTo div
 
             // Create the chart
             if (args[0]) {
@@ -2284,6 +2325,7 @@ const Utilities = {
     pushUnique,
     relativeLength,
     removeEvent,
+    replaceNested,
     splat,
     stableSort,
     syncTimeout,
@@ -2309,7 +2351,7 @@ export default Utilities;
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
- * A callback function to exectute when the animation finishes.
+ * A callback function to execute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
  *//**
@@ -2349,7 +2391,7 @@ export default Utilities;
  * @interface Highcharts.Class<T>
  * @extends Function
  *//**
- * Class costructor.
+ * Class constructor.
  * @function Highcharts.Class<T>#new
  * @param {...Array<*>} args
  *        Constructor arguments.
@@ -2526,7 +2568,7 @@ export default Utilities;
  */
 
 /**
- * Formats data as a string. Usually the data is accessible throught the `this`
+ * Formats data as a string. Usually the data is accessible through the `this`
  * keyword.
  *
  * @callback Highcharts.FormatterCallbackFunction<T>
@@ -2640,4 +2682,4 @@ export default Utilities;
  * @namespace Highcharts
  */
 
-''; // detach doclets above
+''; // Detach doclets above

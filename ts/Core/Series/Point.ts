@@ -54,7 +54,6 @@ const {
     isNumber,
     isObject,
     merge,
-    objectEach,
     pick,
     syncTimeout,
     removeEvent,
@@ -299,7 +298,7 @@ class Point {
 
         options = Point.prototype.optionsToObject.call(this, options);
 
-        // copy options directly to point
+        // Copy options directly to point
         extend(point, options as any);
 
         point.options = point.options ?
@@ -406,7 +405,7 @@ class Point {
             };
 
             if (point.legendItem) {
-                // pies have legend items
+                // Pies have legend items
                 chart.legend.destroyItem(point);
             }
 
@@ -491,18 +490,10 @@ class Point {
             series = this.series,
             seriesOptions = series.options;
 
-        // load event handlers on demand to save time on mouseover/out
-        if ((seriesOptions.point as any).events[eventType] ||
-            (
-                point.options &&
-                point.options.events &&
-                (point.options.events as any)[eventType]
-            )
-        ) {
-            point.importEvents();
-        }
+        // Load event handlers on demand to save time on mouseover/out
+        point.manageEvent(eventType);
 
-        // add default handler if in selection mode
+        // Add default handler if in selection mode
         if (eventType === 'click' && seriesOptions.allowPointSelect) {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
@@ -762,7 +753,7 @@ class Point {
             ret[pointArrayMap[0]] = options;
 
         } else if (isArray(options)) {
-            // with leading x value
+            // With leading x value
             if (!keys && (options as any).length > valueCount) {
                 firstItemType = typeof (options as any)[0];
                 if (firstItemType === 'string') {
@@ -866,7 +857,7 @@ class Point {
             colorCount = optionsChart.colorCount,
             colorIndex: number;
 
-        // remove points nonZonedColor for later recalculation
+        // Remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
 
         if (series.options.colorByPoint) {
@@ -877,7 +868,7 @@ class Point {
             }
             colorIndex = series.colorCounter;
             series.colorCounter++;
-            // loop back to zero
+            // Loop back to zero
             if (series.colorCounter === colorCount) {
                 series.colorCounter = 0;
             }
@@ -986,7 +977,7 @@ class Point {
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
-            key = '{point.' + key; // without the closing bracket
+            key = '{point.' + key; // Without the closing bracket
             if (valuePrefix || valueSuffix) {
 
                 pointFormat = pointFormat.replace(
@@ -1087,7 +1078,7 @@ class Point {
                 }
             }
 
-            // record changes in the parallel arrays
+            // Record changes in the parallel arrays
             i = point.index as any;
             series.updateParallelArrays(point, i);
 
@@ -1101,7 +1092,7 @@ class Point {
                 point.options :
                 pick(options, (seriesOptions.data as any)[i]);
 
-            // redraw
+            // Redraw
             series.isDirty = series.isDirtyData = true;
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
                 chart.isDirtyBox = true;
@@ -1199,7 +1190,7 @@ class Point {
 
         this.selectedStaging = selected;
 
-        // fire the event with the default handler
+        // Fire the event with the default handler
         point.firePointEvent(
             selected ? 'select' : 'unselect',
             { accumulate: accumulate },
@@ -1220,7 +1211,7 @@ class Point {
 
                 point.setState((selected as any) && 'select');
 
-                // unselect all other points unless Ctrl or Cmd + click
+                // Unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
                     chart.getSelectedPoints().forEach(function (
                         loopPoint: Point
@@ -1234,7 +1225,7 @@ class Point {
                                 loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
 
-                            // Programatically selecting a point should restore
+                            // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
@@ -1264,14 +1255,16 @@ class Point {
     public onMouseOver(e?: PointerEvent): void {
         const point = this,
             series = point.series,
-            chart = series.chart,
-            pointer = chart.pointer;
+            { inverted, pointer } = series.chart;
 
-        e = e ?
-            pointer.normalize(e) :
-            // In cases where onMouseOver is called directly without an event
-            pointer.getChartCoordinatesFromPoint(point, chart.inverted) as any;
-        pointer.runPointActions(e as any, point);
+        if (pointer) {
+            e = e ?
+                pointer.normalize(e) :
+                // In cases where onMouseOver is called directly without an
+                // event
+                pointer.getChartCoordinatesFromPoint(point, inverted) as any;
+            pointer.runPointActions(e as any, point);
+        }
     }
 
     /**
@@ -1299,33 +1292,45 @@ class Point {
     }
 
     /**
-     * Import events from the series' and point's options. Only do it on
+     * Manage specific event from the series' and point's options. Only do it on
      * demand, to save processing time on hovering.
      *
      * @private
      * @function Highcharts.Point#importEvents
      */
-    public importEvents(): void {
-        if (!this.hasImportedEvents) {
-            const point = this,
-                options = merge(
-                    point.series.options.point as PointOptions,
-                    point.options
-                ),
-                events = options.events;
+    public manageEvent(eventType: string): void {
+        const point = this,
+            options = merge(
+                point.series.options.point,
+                point.options
+            ),
+            userEvent =
+                options.events?.[eventType as keyof typeof options.events];
 
-            point.events = events;
+        if (
+            isFunction(userEvent) &&
+            (
+                !point.hcEvents?.[eventType] ||
+                // Some HC modules, like marker-clusters, draggable-poins etc.
+                // use events in their logic, so we need to be sure, that
+                // callback function is different
+                point.hcEvents?.[eventType]?.map((el): Function => el.fn)
+                    .indexOf(userEvent) === -1
+            )
+        ) {
+            addEvent(point, eventType, userEvent);
+            point.hasImportedEvents = true;
+        } else if (
+            point.hasImportedEvents &&
+            !userEvent &&
+            point.hcEvents?.[eventType]
+        ) {
+            removeEvent(point, eventType);
+            delete point.hcEvents[eventType];
 
-            objectEach(events, function (
-                event: Function,
-                eventType: string
-            ): void {
-                if (isFunction(event)) {
-                    addEvent(point, eventType, event);
-                }
-            });
-            this.hasImportedEvents = true;
-
+            if (!Object.keys(point.hcEvents)) {
+                point.hasImportedEvents = false;
+            }
         }
     }
 
@@ -1377,26 +1382,26 @@ class Point {
             stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
-        state = state || ''; // empty string
+        state = state || ''; // Empty string
 
         if (
-            // already has this state
+            // Already has this state
             (state === point.state && !move) ||
 
-            // selected points don't respond to hover
+            // Selected points don't respond to hover
             (point.selected && state !== 'select') ||
 
-            // series' state options is disabled
+            // Series' state options is disabled
             (stateOptions.enabled === false) ||
 
-            // general point marker's state options is disabled
+            // General point marker's state options is disabled
             (state && (
                 stateDisabled ||
                 (normalDisabled &&
                 (markerStateOptions as any).enabled === false)
             )) ||
 
-            // individual point marker's state options is disabled
+            // Individual point marker's state options is disabled
             (
                 state &&
                 pointMarker.states &&
@@ -1478,14 +1483,15 @@ class Point {
                 stateMarkerGraphic.hide();
             }
         } else {
-            // if a graphic is not applied to each point in the normal state,
+            // If a graphic is not applied to each point in the normal state,
             // create a shared graphic for the hover state
             if (state && markerStateOptions) {
                 newSymbol = pointMarker.symbol || series.symbol;
 
                 // If the point has another symbol than the previous one, throw
                 // away the state marker graphic and force a new one (#1459)
-                if (stateMarkerGraphic &&
+                if (
+                    stateMarkerGraphic &&
                     stateMarkerGraphic.currentSymbol !== newSymbol
                 ) {
                     stateMarkerGraphic = stateMarkerGraphic.destroy();
@@ -1517,7 +1523,8 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic &&
+                if (
+                    !chart.styledMode && stateMarkerGraphic &&
                     point.state !== 'inactive'
                 ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
@@ -1541,7 +1548,8 @@ class Point {
             markerGraphic && markerGraphic.visibility || 'inherit'
         );
 
-        if (haloOptions &&
+        if (
+            haloOptions &&
             haloOptions.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
@@ -1620,7 +1628,8 @@ class Point {
  * */
 
 interface Point extends PointLike {
-    // merge extensions with point class
+    // Merge extensions with point class
+    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
 }
 
 /* *
@@ -1677,7 +1686,7 @@ export default Point;
  * @callback Highcharts.PointClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
@@ -1746,10 +1755,10 @@ export default Point;
  * @callback Highcharts.PointMouseOutCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.PointerEvent} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1758,10 +1767,10 @@ export default Point;
  * @callback Highcharts.PointMouseOverCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1791,10 +1800,10 @@ export default Point;
  * @callback Highcharts.PointRemoveCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {global.Event} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1810,10 +1819,10 @@ export default Point;
  * @callback Highcharts.PointUpdateCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointUpdateEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1860,10 +1869,10 @@ export default Point;
  * @callback Highcharts.PointSelectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
 /**
@@ -1873,10 +1882,10 @@ export default Point;
  * @callback Highcharts.PointUnselectCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        Point where the event occured.
+ *        Point where the event occurred.
  *
  * @param {Highcharts.PointInteractionEventObject} event
- *        Event that occured.
+ *        Event that occurred.
  */
 
-''; // keeps doclets above in JS file.
+''; // Keeps doclets above in JS file.

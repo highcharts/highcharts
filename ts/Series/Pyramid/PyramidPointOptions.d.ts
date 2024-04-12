@@ -25,7 +25,7 @@ import type FunnelPointOptions from '../Funnel/FunnelPointOptions';
  * */
 
 export interface PyramidPointOptions extends FunnelPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

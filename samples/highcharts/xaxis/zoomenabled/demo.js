@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'line',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     xAxis: {
@@ -9,6 +11,9 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [-29.9, -71.5, -106.4, -129.2, -144.0, -176.0, 29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
+        data: [
+            -29.9, -71.5, -106.4, -129.2, -144.0, -176.0, 29.9, 71.5, 106.4,
+            129.2, 144.0, 176.0
+        ]
     }]
 });

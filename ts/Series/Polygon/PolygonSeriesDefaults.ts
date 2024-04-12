@@ -131,7 +131,7 @@ const PolygonSeriesDefaults: PolygonSeriesOptions = {
  * @apioption series.polygon.data
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

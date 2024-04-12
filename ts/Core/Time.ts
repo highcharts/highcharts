@@ -124,6 +124,8 @@ const hasOldSafariBug =
  */
 class Time {
 
+    public static formatCache: Record<string, Intl.DateTimeFormat> = {};
+
     /* *
      *
      *  Constructors
@@ -265,7 +267,7 @@ class Time {
         // UTC time with no timezone handling
         if (
             this.useUTC ||
-            // leap calculation in UTC only
+            // Leap calculation in UTC only
             (hasNewSafariBug && unit === 'FullYear')
         ) {
             return (date as any)['setUTC' + unit](value);
@@ -410,13 +412,21 @@ class Time {
             return (timestamp: number | Date): number => {
 
                 try {
+                    // Cache the DateTimeFormat instances for performance
+                    // (#20720)
+                    const cacheKey = `shortOffset,${options.timezone || ''}`,
+                        dateTimeFormat = Time.formatCache[cacheKey] = (
+                            Time.formatCache[cacheKey] ||
+                            // eslint-disable-next-line new-cap
+                            Intl.DateTimeFormat('en', {
+                                timeZone: options.timezone,
+                                timeZoneName: 'shortOffset'
+                            })
+                        );
+
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const [date, gmt, hours, colon, minutes = 0] =
-                        // eslint-disable-next-line new-cap
-                        Intl.DateTimeFormat('en', {
-                            timeZone: options.timezone,
-                            timeZoneName: 'shortOffset'
-                        })
+                        dateTimeFormat
                             .format(timestamp)
                             .split(/(GMT|:)/)
                             .map(Number),
@@ -507,7 +517,7 @@ class Time {
 
         const time = this,
             date = new this.Date(timestamp as any),
-            // get the basic time values
+            // Get the basic time values
             hours = this.get('Hours', date),
             day = this.get('Day', date),
             dayOfMonth = this.get('Date', date),
@@ -570,7 +580,7 @@ class Time {
                     p: hours < 12 ? 'AM' : 'PM',
                     // Lower case AM or PM
                     P: hours < 12 ? 'am' : 'pm',
-                    // Two digits seconds, 00 through  59
+                    // Two digits seconds, 00 through 59
                     S: pad(this.get('Seconds', date)),
                     // Milliseconds (naming from Ruby)
                     L: pad(Math.floor((timestamp as any) % 1000), 3)
@@ -615,7 +625,7 @@ class Time {
     public resolveDTLFormat(
         f: Time.DateTimeLabelFormatOption
     ): Time.DateTimeLabelFormatObject {
-        if (!isObject(f, true)) { // check for string or array
+        if (!isObject(f, true)) { // Check for string or array
             f = splat(f);
             return {
                 main: f[0],
@@ -663,7 +673,7 @@ class Time {
             count = normalizedInterval.count || 1;
 
         let i,
-            minYear: any, // used in months and years as a basis for Date.UTC()
+            minYear: any, // Used in months and years as a basis for Date.UTC()
             variableDayLength,
             minDay;
 
@@ -680,7 +690,7 @@ class Time {
                     )
             ); // #3652, #3654
 
-            if (interval >= timeUnits.second) { // second
+            if (interval >= timeUnits.second) { // Second
                 time.set(
                     'Seconds',
                     minDate,
@@ -690,7 +700,7 @@ class Time {
                 );
             }
 
-            if (interval >= timeUnits.minute) { // minute
+            if (interval >= timeUnits.minute) { // Minute
                 time.set(
                     'Minutes',
                     minDate,
@@ -700,7 +710,7 @@ class Time {
                 );
             }
 
-            if (interval >= timeUnits.hour) { // hour
+            if (interval >= timeUnits.hour) { // Hour
                 time.set(
                     'Hours',
                     minDate,
@@ -712,7 +722,7 @@ class Time {
                 );
             }
 
-            if (interval >= timeUnits.day) { // day
+            if (interval >= timeUnits.day) { // Day
                 time.set(
                     'Date',
                     minDate,
@@ -727,7 +737,7 @@ class Time {
                 );
             }
 
-            if (interval >= timeUnits.month) { // month
+            if (interval >= timeUnits.month) { // Month
                 time.set(
                     'Month',
                     minDate,
@@ -737,14 +747,14 @@ class Time {
                 minYear = time.get('FullYear', minDate);
             }
 
-            if (interval >= timeUnits.year) { // year
+            if (interval >= timeUnits.year) { // Year
                 minYear -= minYear % count;
                 time.set('FullYear', minDate, minYear);
             }
 
-            // week is a special case that runs outside the hierarchy
+            // Week is a special case that runs outside the hierarchy
             if (interval === timeUnits.week) {
-                // get start of current week, independent of count
+                // Get start of current week, independent of count
                 minDay = time.get('Day', minDate);
                 time.set(
                     'Date',
@@ -793,15 +803,15 @@ class Time {
             while (t < (max as any)) {
                 tickPositions.push(t);
 
-                // if the interval is years, use Date.UTC to increase years
+                // If the interval is years, use Date.UTC to increase years
                 if (interval === timeUnits.year) {
                     t = time.makeTime(minYear + i * count, 0);
 
-                // if the interval is months, use Date.UTC to increase months
+                // If the interval is months, use Date.UTC to increase months
                 } else if (interval === timeUnits.month) {
                     t = time.makeTime(minYear, minMonth + i * count);
 
-                // if we're using global time, the interval is not fixed as it
+                // If we're using global time, the interval is not fixed as it
                 // jumps one hour at the DST crossover
                 } else if (
                     variableDayLength &&
@@ -819,7 +829,7 @@ class Time {
                     interval === timeUnits.hour &&
                     count > 1
                 ) {
-                    // make sure higher ranks are preserved across DST (#6797,
+                    // Make sure higher ranks are preserved across DST (#6797,
                     // #7621)
                     t = time.makeTime(
                         minYear,
@@ -828,7 +838,7 @@ class Time {
                         minHours + i * count
                     );
 
-                // else, the interval is fixed and we use simple addition
+                // Else, the interval is fixed and we use simple addition
                 } else {
                     t += interval * count;
                 }
@@ -836,7 +846,7 @@ class Time {
                 i++;
             }
 
-            // push the last time
+            // Push the last time
             tickPositions.push(t);
 
 
@@ -859,7 +869,7 @@ class Time {
         }
 
 
-        // record information on the chosen unit - for dynamic label formatter
+        // Record information on the chosen unit - for dynamic label formatter
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
@@ -910,7 +920,7 @@ class Time {
             } as Record<Time.TimeUnit, number>;
 
         let n: Time.TimeUnit = 'millisecond',
-            // for sub-millisecond data, #4223
+            // For sub-millisecond data, #4223
             lastN: Time.TimeUnit = n;
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
@@ -1078,4 +1088,4 @@ export default Time;
  * Timezone offset in minutes.
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file
