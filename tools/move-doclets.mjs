@@ -45,27 +45,35 @@ const HELP = [
 
 
 const MAP_PROPERTY_TYPES = {
+    '.center': '[string|number|null,string|number|null]',
     '.color': 'ColorType',
+    '.colorKey': 'string',
     '.dataLabels': 'Partial<DataLabelOptions>',
     '.fillColor': 'ColorType',
+    '.findNearestPointBy': 'SeriesFindNearestPointByValue',
+    '.legendSymbol': 'LegendSymbolType',
     '.legendType': '(\'point\'|\'series\')',
     '.marker': 'PointMarkerOptions',
     '.sonification': 'SeriesSonificationOptions',
+    '.stacking': 'StackOverflowValue',
     '.tooltip': 'Partial<TooltipOptions>',
+    '.zoneAxis': '(\'x\'|\'y\'|\'z\'|undefined)',
     '.zones': 'Array<SeriesZonesOptions>',
-    'series.heatmap.colorKey': 'string',
 };
 
 const MAP_TYPE_IMPORTS = {
     'ColorType': 'ts/Core/Color/ColorType',
     'DashStyleValue': 'ts/Core/Renderer/DashStyleValue',
     'DataLabelOptions': 'ts/Core/Series/DataLabelOptions',
+    'LegendSymbolType': 'ts/Core/Series/SeriesOptions',
     'PointEventsOptions': 'ts/Core/Series/PointOptions',
     'PointMarkerOptions': 'ts/Core/Series/PointOptions',
     'PointOptions': 'ts/Core/Series/PointOptions',
     'PointShortOptions': 'ts/Core/Series/PointOptions',
+    'SeriesFindNearestPointByValue': 'ts/Core/Series/SeriesOptions',
     'SeriesSonificationOptions': 'ts/Extensions/Sonification/Options',
-    'TooltipOptions': 'ts/Core/TooltipOptions'
+    'StackOverflowValue': 'ts/Core/Series/SeriesOptions',
+    'TooltipOptions': 'ts/Core/TooltipOptions',
 };
 
 const OPTION_CASTING = {
