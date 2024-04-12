@@ -31,6 +31,9 @@ const defaultZoom = 9;
 let board = null;
 let maxConnectedUnits;
 
+// Log to console
+const logEnabled = false;
+
 
 //
 // Language support
@@ -250,12 +253,7 @@ async function dashboardCreate() {
                 data: [
                     // TBD: to be removed? Seems to be needed...
                     [Date.UTC(2024, 0, 1), 0]
-                ],
-                // TBD: messes up syncing
-                dataModifier: {
-                    type: 'Sort',
-                    orderByColumn: 'time'
-                }
+                ]
             }
         };
     }
@@ -286,8 +284,7 @@ async function dashboardCreate() {
                     type: 'tiledwebmap',
                     provider: {
                         type: 'OpenStreetMap',
-                        theme: 'Standard',
-                        subdomain: 'a'
+                        theme: 'Standard'
                     }
                 }, {
                     type: 'mappoint',
@@ -398,8 +395,6 @@ async function dashboardCreate() {
                 }]
             },
             sync: {
-                visibility: true,
-                extremes: true,
                 highlight: true
             },
             chartOptions: {
@@ -441,9 +436,7 @@ async function dashboardCreate() {
                 id: connId
             },
             sync: {
-                highlight: true,
-                extremes: true,
-                visibility: true
+                highlight: true
             },
             dataGridOptions: {
                 editable: false,
@@ -452,7 +445,8 @@ async function dashboardCreate() {
                         headerFormat: lang.tr('Measure time') + ' (UTC)',
                         cellFormatter: function () {
                             // eslint-disable-next-line max-len
-                            return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' + Highcharts.dateFormat('%H:%M', this.value);
+                            return Highcharts.dateFormat('%Y-%m-%d', this.value) + ' ' +
+                                Highcharts.dateFormat('%H:%M:%S', this.value);
                         }
                     },
                     power: {
@@ -469,14 +463,15 @@ async function dashboardCreate() {
 async function dashboardUpdate(powerPlantInfo) {
     const dataPool = board.dataPool;
 
+    // Clear content of data table
+    await dashboardReset();
+
+    // Update all generators of the plant
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
 
         const dataTable = await dataPool.getConnectorTable(connId);
-
-        // Clear the data
-        await dataTable.deleteRows();
 
         // Get measurement history (24 hours, 10 minute intervals)
         const hist = powerPlantInfo.aggs[i].P_hist;
@@ -497,15 +492,14 @@ async function dashboardUpdate(powerPlantInfo) {
         }
 
         // Add the latest measurement
-        time = new Date(powerPlantInfo.tst_iso).valueOf();
+        const latest = new Date(powerPlantInfo.tst_iso).valueOf();
         const power = powerPlantInfo.aggs[i].P_gen;
-
-        // Add row with latest data
-        rowData.push([time, power]);
+        rowData.push([latest, power]);
 
         // Add all rows to the data table
         await dataTable.setRows(rowData);
     }
+
     // Refresh all Dashboards components
     await dashboardsComponentUpdate(powerPlantInfo);
 }
@@ -784,7 +778,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         const kpiComp = getComponent(board, 'kpi-agg-' + pgIdx);
         await kpiComp.update({
             value: rowCount > 0 ?
-                dataTable.getCellAsNumber('power', rowCount - 1) : 0,
+                dataTable.getCellAsNumber('power', 0) : 0,
             chartOptions: chartOptions,
             title: aggName
         });
@@ -877,9 +871,6 @@ const mqttQos = 0;
 // NB! Replace with public before publishing on the web !!!!!
 const userName = 'highsoft';
 const password = 'Qs0URPjxnWlcuYBmFWNK';
-
-// Log functionality
-const logEnabled = true;
 
 // Connection status
 let connectFlag;
@@ -1137,20 +1128,15 @@ async function onMessageArrived(mqttPacket) {
     powerPlantInfo.nIntakes = powerPlantInfo.intakes.length;
     powerPlantInfo.nReservoirs = powerPlantInfo.reservoirs.length;
 
-    console.dir(powerPlantInfo);
-
     if (msgCount === 0) {
         // Connect and create the Dashboard when the first packet arrives
         await dashboardConnect(powerPlantInfo);
     }
 
-    // Has a power generator has been added or removed?
+    // Has a power generator been added or removed?
     if (nConnectedUnits !== powerPlantInfo.nAggs) {
         nConnectedUnits = powerPlantInfo.nAggs;
         uiSetComponentVisibility(true, powerPlantInfo.nAggs);
-
-        // Reset the entire dashboard
-        await dashboardReset();
     }
 
     // Update Dashboard
