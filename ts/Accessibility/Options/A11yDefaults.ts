@@ -659,6 +659,7 @@ const Options: DeepPartial<A11yOptions> = {
              * @since 7.1.0
              */
             order: [
+                'stockTools', // TODO: should this be added by stock?
                 'series', 'zoom', 'rangeSelector',
                 'navigator', 'legend', 'chartMenu'
             ],
