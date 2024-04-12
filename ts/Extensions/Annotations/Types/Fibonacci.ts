@@ -186,7 +186,7 @@ class Fibonacci extends Tunnel {
                     type: 'path',
                     d: createPathDGenerator(i),
                     stroke: lineColors[i] || lineColor,
-                    className: 'highcharts-fibonacci-stroke'
+                    className: 'highcharts-fibonacci-line'
                 }, i);
 
                 if (i > 0) {

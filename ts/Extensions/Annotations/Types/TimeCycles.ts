@@ -152,7 +152,7 @@ class TimeCycles extends CrookedLine {
                 type: 'path',
                 d: this.getPath(),
                 points: this.options.points,
-                className: 'highcharts-timecycles'
+                className: 'highcharts-timecycles-lines'
             }),
             0
         );

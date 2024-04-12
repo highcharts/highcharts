@@ -701,12 +701,12 @@ class Measure extends Annotation {
             // Add new crosshairs
             crosshairOptionsX = merge(
                 defaultOptions,
-                { className: 'highcharts-measure-crosshairs-x' },
+                { className: 'highcharts-measure-crosshair-x' },
                 options.crosshairX
             );
             crosshairOptionsY = merge(
                 defaultOptions,
-                { className: 'highcharts-measure-crosshairs-y' },
+                { className: 'highcharts-measure-crosshair-y' },
                 options.crosshairY
             );
 

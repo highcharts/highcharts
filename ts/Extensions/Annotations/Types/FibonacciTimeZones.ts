@@ -154,7 +154,7 @@ class FibonacciTimeZones extends CrookedLine {
                     {
                         type: 'path',
                         points: points,
-                        className: 'highcharts-fibonacci-timezones'
+                        className: 'highcharts-fibonacci-timezones-lines'
                     }
                 ),
                 i // Shape's index. Can be found in annotation.shapes[i].index

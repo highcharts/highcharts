@@ -184,7 +184,7 @@ class Pitchfork extends InfinityLine {
                         };
                     }
                 ],
-                className: 'highcharts-pitchfork-inner'
+                className: 'highcharts-pitchfork-inner-background'
             }),
             3
         );
@@ -198,7 +198,7 @@ class Pitchfork extends InfinityLine {
                     shapes[2].points[1],
                     this.points[2]
                 ],
-                className: 'highcharts-pitchfork-outer'
+                className: 'highcharts-pitchfork-outer-background'
             }),
             4
         );

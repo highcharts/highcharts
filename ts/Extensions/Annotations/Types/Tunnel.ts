@@ -139,7 +139,7 @@ class Tunnel extends CrookedLine {
                         },
                         this.points[3]
                     ],
-                    className: 'highcharts-tunnel-line'
+                    className: 'highcharts-tunnel-lines'
                 }
             ),
             0
