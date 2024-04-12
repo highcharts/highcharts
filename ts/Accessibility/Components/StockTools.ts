@@ -41,8 +41,13 @@ class StockToolsComponent extends AccessibilityComponent {
 
     private setButtons(): void {
         const chart = this.chart,
-            stockTools = chart.stockTools,
-            buttons = stockTools?.toolbar.querySelectorAll('button');
+            stockTools = chart.stockTools;
+
+        if (!stockTools || !stockTools.visible || !stockTools.toolbar) {
+            return;
+        }
+
+        const buttons = stockTools.toolbar.querySelectorAll('button');
 
         if (!buttons || !buttons.length) {
             return;
