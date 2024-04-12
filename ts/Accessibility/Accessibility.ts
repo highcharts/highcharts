@@ -57,7 +57,7 @@ import ProxyProvider from './ProxyProvider.js';
 import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
 import SeriesComponent from './Components/SeriesComponent/SeriesComponent.js';
 // TODO: StockToolsComponent should possibly be loaded elsewhere
-import StockToolsComponent from './Components/StockTools';
+import StockToolsComponent from './Components/StockTools.js';
 import ZoomComponent from './Components/ZoomComponent.js';
 
 import whcm from './HighContrastMode.js';
