@@ -67,9 +67,9 @@ QUnit.test('Packed Bubble Tooltip options', function (assert) {
             'PackedBubble series works correctly with shared tooltip.'
         );
     } catch (error) {
-        assert.ok(
-            false,
-            'PackedBubble series with shared tooltip throws error.'
+        assert.notOk(
+            error,
+            'PackedBubble series with shared tooltip should not throw error'
         );
     }
 });

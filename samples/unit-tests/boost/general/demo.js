@@ -416,6 +416,44 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             '#17820.'
         );
 
+        chart.update({
+            chart: {
+                inverted: true
+            },
+            navigator: {
+                height: 40
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.plotHeight,
+            `Clip rect height should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('width'),
+            chart.plotWidth + chart.navigator.top + chart.navigator.height,
+            `Clip rect width should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.navigator.left,
+            `Clip rect 'x' should take into account navigator boosted
+            series on inverted charts, #20936.`
+        );
+
+        chart.update({
+            navigator: {
+                opposite: true
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.plotLeft,
+            `Clip rect 'x' should take into account opposite navigator boosted
+            series on inverted charts, #20936.`
+        );
     }
 );
 

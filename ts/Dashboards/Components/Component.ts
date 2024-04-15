@@ -380,12 +380,18 @@ abstract class Component {
         }
     }
 
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Function fired when component's `tableChanged` event is fired.
      * @internal
      */
     public abstract onTableChanged(e?: Component.EventTypes): void;
-
 
     /**
      * Returns the component's options when it is dropped from the sidebar.
@@ -400,12 +406,14 @@ abstract class Component {
         return {};
     }
 
-
-    /* *
+    /**
+     * Returns the first connector of the component if it exists.
      *
-     *  Functions
-     *
-     * */
+     * @internal
+     */
+    public getFirstConnector(): Component.ConnectorTypes | undefined {
+        return this.connectorHandlers[0]?.connector;
+    }
 
     /**
      * Setup listeners on cell/other things up the chain
@@ -585,6 +593,10 @@ abstract class Component {
         // Update options
         fireEvent(this, 'update', eventObject);
 
+        if (newOptions.connector && Array.isArray(this.options.connector)) {
+            this.options.connector = void 0;
+        }
+
         this.options = merge(this.options, newOptions);
         const connectorOptions: ConnectorHandler.ConnectorOptions[] = (
             this.options.connector ? (
@@ -593,17 +605,21 @@ abstract class Component {
             ) : []
         );
 
-        let connectorsHaveChanged = false;
-        for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
-            const oldConnectorId = this.connectorHandlers[i]?.options.id;
-            const newConnectorId = connectorOptions[i]?.id;
+        let connectorsHaveChanged =
+            connectorOptions.length !== this.connectorHandlers.length;
 
-            if (oldConnectorId !== newConnectorId) {
-                connectorsHaveChanged = true;
-                break;
+        if (!connectorsHaveChanged) {
+            for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
+                const oldConnectorId = this.connectorHandlers[i]?.options.id;
+                const newConnectorId = connectorOptions[i]?.id;
+
+                if (oldConnectorId !== newConnectorId) {
+                    connectorsHaveChanged = true;
+                    break;
+                }
+
+                this.connectorHandlers[i].updateOptions(connectorOptions[i]);
             }
-
-            this.connectorHandlers[i].updateOptions(connectorOptions[i]);
         }
 
         if (connectorsHaveChanged) {
@@ -879,6 +895,13 @@ abstract class Component {
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
             if (isArray(result)) {
+                if (
+                    propertyPath[0] === 'connector' &&
+                    result.length > 1
+                ) {
+                    return 'multiple connectors';
+                }
+
                 result = result[0];
             }
 

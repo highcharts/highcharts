@@ -43,7 +43,7 @@ const syncPair: Sync.SyncPair = {
         const component = this as HighchartsComponent;
 
         const { chart, board } = component;
-        const connector = this.connectorHandlers?.[0]?.connector;
+        const connector = this.getFirstConnector();
         if (!board || !chart) {
             return;
         }

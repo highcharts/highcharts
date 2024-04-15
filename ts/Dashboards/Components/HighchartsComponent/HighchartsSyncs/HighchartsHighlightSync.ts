@@ -27,11 +27,16 @@ import type {
     RangeModifierRangeOptions
 } from '../../../../Data/Modifiers/RangeModifierOptions';
 import type HCComponent from '../HighchartsComponent.js';
+import type {
+    HighchartsHighlightSyncOptions
+} from '../HighchartsComponentOptions';
 import type DataTable from '../../../../Data/DataTable';
 import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
 import DataCursor from '../../../../Data/DataCursor.js';
+import U from '../../../Utilities.js';
+const { error } = U;
 
 /* *
 *
@@ -89,6 +94,7 @@ function getModifiedTableOffset(
  * */
 
 const defaultOptions: HighchartsHighlightSyncOptions = {
+    affectedSeriesId: null,
     highlightPoint: true,
     showTooltip: true,
     showCrosshair: true
@@ -179,8 +185,8 @@ const syncPair: Sync.SyncPair = {
                     }
                 }
             }, false);
-            chart.redraw();
         }
+        chart.redraw();
 
         // Return function that handles cleanup
         return function (): void {
@@ -210,7 +216,9 @@ const syncPair: Sync.SyncPair = {
         const getHoveredPoint = (
             e: DataCursor.Event
         ): Point | undefined => {
-            const table = e.table;
+            const { table, cursor } = e;
+            const highlightOptions = this.sync
+                .syncConfig.highlight as HighchartsHighlightSyncOptions;
             const modifier = table.getModifier();
 
             let offset = 0;
@@ -221,13 +229,31 @@ const syncPair: Sync.SyncPair = {
                 );
             }
 
-            if (chart && chart.series?.length) {
-                const cursor = e.cursor;
-                if (cursor.type === 'position') {
-                    let series;
+            if (chart && chart.series?.length && cursor.type === 'position') {
+                let series: Series | undefined;
+                const seriesId = highlightOptions.affectedSeriesId;
 
-                    const seriesIds =
-                        Object.keys(component.seriesFromConnector);
+                if (highlightOptions.affectedSeriesId) {
+                    const foundSeries = chart.get(
+                        highlightOptions.affectedSeriesId
+                    ) as Series;
+
+                    if (foundSeries?.points) {
+                        series = foundSeries;
+                    } else {
+                        error(
+                            'No series with ID \'' + seriesId + '\' found in ' +
+                            'the chart. Affected series will be selected ' +
+                            'according to the column assignment.'
+                        );
+                    }
+                }
+
+                if (!series) {
+                    const seriesIds = Object.keys(
+                        component.seriesFromConnector
+                    );
+
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
@@ -269,12 +295,12 @@ const syncPair: Sync.SyncPair = {
                             }
                         }
                     }
+                }
 
-                    if (series?.visible && cursor.row !== void 0) {
-                        const point = series.data[cursor.row - offset];
-                        if (point?.visible) {
-                            return point;
-                        }
+                if (series?.visible && cursor.row !== void 0) {
+                    const point = series.data[cursor.row - offset];
+                    if (point?.visible) {
+                        return point;
                     }
                 }
             }
@@ -483,55 +509,6 @@ const syncPair: Sync.SyncPair = {
         }
     }
 };
-
-
-/* *
-*
-*  Declarations
-*
-* */
-
-/**
- * Highcharts component highlight sync options.
- *
- * Example:
- * ```
- * {
- *     enabled: true,
- *     highlightPoint: true,
- *     showTooltip: false,
- *     showCrosshair: true
- * }
- * ```
- */
-export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
-    /**
-     * Whether the marker should be synced. When hovering over a point in
-     * other component in the same group, the 'hover' state is enabled at
-     * the corresponding point in this component.
-     *
-     * @default true
-     */
-    highlightPoint?: boolean;
-    /**
-     * Whether the tooltip should be synced. When hovering over a point in
-     * other component in the same group, in this component the tooltip
-     * should be also shown.
-     *
-     * @default true
-     */
-    showTooltip?: boolean;
-    /**
-     * Whether the crosshair should be synced. When hovering over a point in
-     * other component in the same group, in this component the crosshair
-     * should be also shown.
-     *
-     * Works only for axes that have crosshair enabled.
-     *
-     * @default true
-     */
-    showCrosshair?: boolean;
-}
 
 
 /* *

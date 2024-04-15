@@ -7,8 +7,13 @@
     --highcharts-color-1: #9689e6;
 }
 
+.highcharts-figure {
+    margin: 0;
+}
+
 #container {
     height: 730px;
+    margin: 0 auto;
 }
 
 .highcharts-candlestick-series .highcharts-point {

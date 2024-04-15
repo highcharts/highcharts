@@ -59,8 +59,16 @@ Dashboards.board('container', {
             highlight: true
         },
         chartOptions: {
+            chart: {
+                animation: false
+            },
             xAxis: {
                 type: 'category'
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             },
             series: [{
                 type: 'column',
