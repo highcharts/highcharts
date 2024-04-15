@@ -651,7 +651,8 @@ text.highcharts-data-label {
     #html-result,
     #html-control,
     #election-map,
-    #election-chart {
+    #election-chart,
+    #election-charts {
         flex: 1 1 50%;
     }
 
