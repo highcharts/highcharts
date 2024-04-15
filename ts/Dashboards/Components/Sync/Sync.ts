@@ -246,12 +246,12 @@ class Sync {
 
             let {
                 emitter: emitterConfig,
-                handler: handlerConfig
+                handler: handlerConfig,
+                group
             } = syncOptions;
+
             if (handlerConfig) {
-                // Avoid registering the same handler multiple times
-                // i.e. panning and selection uses the same handler
-                if (typeof handlerConfig === 'boolean') {
+                if (handlerConfig === true) {
                     handlerConfig =
                         Sync.defaultHandlers[id]
                             .handler as Sync.HandlerConfig;
@@ -260,13 +260,12 @@ class Sync {
                 const handler = new SyncHandler(id, handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
-
                     handler.register(component);
                 }
             }
 
             if (emitterConfig) {
-                if (typeof emitterConfig === 'boolean') {
+                if (emitterConfig === true) {
                     emitterConfig =
                         Sync.defaultHandlers[id]
                             .emitter as Sync.EmitterConfig;
@@ -279,9 +278,12 @@ class Sync {
                 }
             }
 
+            if (group) {
+                component.board.syncGroups.addComponent(group, id, component);
+            }
         }
-        this.isSyncing = true;
 
+        this.isSyncing = true;
         this.listeners.push(component.on('update', (): void => this.stop()));
     }
 
@@ -296,10 +298,20 @@ class Sync {
             registeredSyncEmitters
         } = this;
 
+        for (const id of Object.keys(this.syncConfig)) {
+            const syncOptions = this.syncConfig[id];
+            if (syncOptions.group) {
+                component.board.syncGroups.removeComponent(
+                    syncOptions.group,
+                    id,
+                    component
+                );
+            }
+        }
+
         Object.keys(registeredSyncHandlers).forEach((id): void => {
             registeredSyncHandlers[id].remove();
             delete registeredSyncHandlers[id];
-
         });
         Object.keys(registeredSyncEmitters).forEach((id): void => {
             registeredSyncEmitters[id].remove();
@@ -379,6 +391,19 @@ namespace Sync {
          * or `null` it will be disabled
          */
         emitter?: EmitterConfig | null | boolean;
+
+        /**
+         * The group in which components should be synced.
+         *
+         * Can be used to sync the Highcharts Components with different
+         * connectors.
+         *
+         * If `null` or `undefined` the component will be synced with all
+         * components with the same connector and the sync turned on.
+         *
+         * @default null
+         */
+        group?: string;
 
         /**
          * Responsible for _handling_ incoming action from the synced component

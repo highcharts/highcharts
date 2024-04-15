@@ -40,6 +40,7 @@ import DataPool from '../Data/DataPool.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
+import SyncGroupRegistry from './Components/SyncGroupRegistry.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
 import U from '../Core/Utilities.js';
 const {
@@ -159,6 +160,7 @@ class Board implements Serializable<Board, Board.JSON> {
         renderTo: (string|HTMLElement),
         options: Board.Options
     ) {
+        this.syncGroups = new SyncGroupRegistry();
         this.options = merge(Board.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
@@ -289,6 +291,12 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      */
     private resizeObserver?: ResizeObserver;
+
+    /**
+     * The sync groups registry.
+     * @internal
+     */
+    public syncGroups: SyncGroupRegistry;
 
     /* *
      *
