@@ -1340,15 +1340,6 @@ namespace RadialAxis {
                 );
         }
 
-        if (polar && !this.horiz) {
-            defaultPolarOptions = merge(
-                coll === 'xAxis' ?
-                    defaultOptions.xAxis :
-                    defaultOptions.yAxis,
-                defaultRadialOptions
-            );
-        }
-
         if (inverted && coll === 'yAxis') {
             defaultPolarOptions.stackLabels = isObject(
                 defaultOptions.yAxis, true
