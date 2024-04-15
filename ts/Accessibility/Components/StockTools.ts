@@ -12,7 +12,8 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const {
     attr,
-    addEvent
+    addEvent,
+    fireEvent
 } = U;
 
 // TODO: Handle closing of popup by submitting
@@ -47,7 +48,9 @@ class StockToolsComponent extends AccessibilityComponent {
             return;
         }
 
-        const buttons = stockTools.toolbar.querySelectorAll('button');
+        const buttons = stockTools.toolbar.querySelectorAll<HTMLElement>(
+            'div > ul > li > button'
+        );
 
         if (!buttons || !buttons.length) {
             return;
@@ -82,6 +85,7 @@ class StockToolsComponent extends AccessibilityComponent {
         const button = this.buttons[this.focusedButtonIndex];
 
         if (button) {
+
             button.focus();
         }
     }
@@ -197,19 +201,62 @@ class StockToolsComponent extends AccessibilityComponent {
     }
 
     private onEnterKeyPress(
-        this: StockToolsComponent,
-        _keyCode: number,
-        e: KeyboardEvent
+        this: StockToolsComponent
     ): void {
         const component = this;
         if (!component.focusInPopup) {
-            e.preventDefault();
             const button = component.buttons[component.focusedButtonIndex];
 
-            button.click();
+            if (button.classList.contains('highcharts-submenu-item-arrow')) {
+                const submenu = button.parentElement
+                    ?.querySelector<HTMLElement>(
+                    '.highcharts-submenu-wrapper'
+                );
 
-            component.focusInPopup = true;
-            return;
+                if (submenu) {
+                    if (submenu.dataset.open === 'true') {
+                        this.buttons = this.buttons.filter((btn): boolean =>
+                            btn.closest('.highcharts-submenu-wrapper') === null
+                        );
+
+                        submenu.dataset.open = 'false';
+                    } else {
+                        const childButtons =
+                        button.parentElement
+                            ?.querySelectorAll<HTMLElement>(
+                            '.highcharts-submenu-wrapper button'
+                        );
+
+                        if (childButtons?.length) {
+                            const buttonsBefore = this.buttons.slice(
+                                0,
+                                this.focusedButtonIndex + 1
+                            );
+                            const buttonsAfter = this.buttons.slice(
+                                this.focusedButtonIndex + 1
+                            );
+
+                            this.buttons = [
+                                ...buttonsBefore,
+                                ...Array.from(childButtons),
+                                ...buttonsAfter
+                            ];
+
+                            submenu.dataset.open = 'true';
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.focusInPopup) {
+            //  TODO: Fix this in popup code, remove this workaround
+            if (
+                document.activeElement?.tagName === 'BUTTON' &&
+                (document.activeElement as HTMLElement).innerText === 'Add'
+            ) {
+                fireEvent(this.chart.navigationBindings, 'closePopup');
+            }
         }
     }
 
@@ -261,6 +308,13 @@ class StockToolsComponent extends AccessibilityComponent {
 
                 this.focusButton();
 
+                // Setup submenu buttons
+                chart.stockTools?.toolbar.querySelectorAll<HTMLElement>(
+                    '.highcharts-submenu-wrapper'
+                ).forEach((submenu): void => {
+                    submenu.dataset.open = 'false';
+                });
+
             },
             terminate: (): void => {
                 this.focusedButtonIndex = 0;
@@ -272,6 +326,12 @@ class StockToolsComponent extends AccessibilityComponent {
                         eventCleanup();
                     }
                 }
+
+                this.chart.stockTools?.toolbar.querySelectorAll<HTMLElement>(
+                    '.highcharts-submenu-wrapper'
+                ).forEach((submenu): void => {
+                    submenu.removeAttribute('data-open');
+                });
             }
         });
     }
