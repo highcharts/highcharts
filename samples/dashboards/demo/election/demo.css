@@ -59,8 +59,12 @@
     }
     
     #elections-selector-wrapper select {
-        color: #fff;
+        color: #F2F1F4;
         background-color: var(--component-background-optional);
+    }
+
+    #html-control-div {
+        color: #F2F1F4;
     }
 }
 
@@ -143,11 +147,11 @@ body {
 
 .highcharts-dashboards-component-title {
     margin: 0;
-    padding: 10px 0;
+    padding: 10px 4px;
     fill: var(--color-title);
     color: var(--color-title);
-    font-weight: 500;
     font-size: 1.2em;
+    font-weight: normal;
     text-align: left;
 }
 
@@ -329,10 +333,11 @@ body {
 #html-control-div #election-description {
     text-align: left;
     font-size: 0.9em;
-    padding: 15px 40px 5px 40px;
+    padding: 10px 40px 5px 40px;
     margin: 10px 20px;
     border-left: 1px solid var(--highcharts-neutral-color-100);
     padding-left: 40px;
+    line-height: 1.4em;
     width: calc(60% - 40px);
 }
 
@@ -461,6 +466,15 @@ body {
  *
  * */
 
+#election-map {
+    height: 805px;
+}
+
+#election-chart-national,
+#election-chart {
+    height: 200px;
+}
+
 #election-chart-national h2 {
     text-indent: -9999px;
 }
@@ -470,6 +484,7 @@ body {
     color: #000;
     font-size: 1.2em;
     text-transform: capitalize;
+    font-weight: normal;
 }
 
 #election-chart .highcharts-axis {

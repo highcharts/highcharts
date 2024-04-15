@@ -197,19 +197,17 @@ async function setupDashboard() {
                 chart: {
                     styledMode: true,
                     type: 'bar',
+                    height: 340,
                     spacing: [40, 20, 40, 20]
                 },
                 credits: {
-                    enabled: true,
-                    href: 'https://www.archives.gov/electoral-college/allocation',
-                    text: 'National Archives'
+                    enabled: false
                 },
                 legend: {
                     enabled: false
                 },
                 tooltip: {
-                    enabled: true,
-                    format: '{point.candidate}: {point.electors} electors'
+                    enabled: false
                 },
                 plotOptions: {
                     bar: {
@@ -221,7 +219,18 @@ async function setupDashboard() {
                             useHTML: true,
                             enabled: true,
                             inside: true,
-                            format: '{point.y:.1f}% Total Votes'
+                            formatter: function () {
+                                const seriesName = this.series.name;
+                                let dataLabel;
+
+                                if (seriesName === 'Democrat') {
+                                    dataLabel = document.querySelector('#info-dem2').innerHTML;
+                                } else if (seriesName === 'Republican') {
+                                    dataLabel = document.querySelector('#info-rep2').innerHTML;
+                                }
+
+                                return dataLabel;
+                            }
                         }
                     }
                 },
@@ -267,6 +276,7 @@ async function setupDashboard() {
                 chart: {
                     styledMode: true,
                     type: 'column',
+                    height: 340,
                     spacing: [40, 20, 40, 20]
                 },
                 credits: {
@@ -692,6 +702,8 @@ async function updateResultComponent(electionTable, year) {
     const totalColVotes = demColVotes + repColVotes;
     const demVotes = electionTable.getCellAsNumber('demVotes', row);
     const repVotes = electionTable.getCellAsNumber('repVotes', row);
+    const demPercent = electionTable.getCellAsNumber('demPercent', row);
+    const repPercent = electionTable.getCellAsNumber('repPercent', row);
 
     // Grab auxiliary data about the election (photos, description, etc.)
     const yearEl = document.querySelector('elections year#ei_' + year);
@@ -707,12 +719,12 @@ async function updateResultComponent(electionTable, year) {
     let el = document.getElementById('info-dem1');
     el.innerHTML = `${candDem}: ${demColVotes}`;
     el = document.getElementById('info-dem2');
-    el.innerHTML = `${demVotes.toLocaleString('en-US')} Total Votes`;
+    el.innerHTML = `${demVotes.toLocaleString('en-US')} (${demPercent}%) Total Votes`;
 
     el = document.getElementById('info-rep1');
     el.innerHTML = `${candRep}: ${repColVotes}`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = `${repVotes.toLocaleString('en-US')} Total Votes`;
+    el.innerHTML = `${repVotes.toLocaleString('en-US')} (${repPercent}%) Total Votes`;
 
     // Result bar
     el = document.getElementById('bar-dem');
