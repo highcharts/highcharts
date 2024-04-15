@@ -2800,6 +2800,22 @@ function setOptions(
     // Copy in the default options
     merge(true, defaultOptions, options);
 
+    if (defaultOptions.defaultCircularOptions) {
+        merge(
+            true,
+            defaultOptions.defaultCircularOptions,
+            options.xAxis
+        );
+    }
+
+    if (defaultOptions.defaultRadialGaugeOptions) {
+        merge(
+            true,
+            defaultOptions.defaultRadialGaugeOptions,
+            options.yAxis
+        );
+    }
+
     // Update the time object
     if (options.time || options.global) {
         if (H.time) {
