@@ -13,21 +13,20 @@
     --container-background: var(--highcharts-neutral-color-10);
 
     /* Frequently used colors */
-    --color-background: var(--highcharts-neutral-color-3);
     --color-text: #2f2b38;
     --color-sk: rgb(0, 112, 192);
     --color-tooltip-background: #dce5ec;
     --color-tooltip-text: #000;
     --color-tooltip-border: #666;
 
+    /* Components */
+    --component-background: var(--highcharts-neutral-color-3);
+    --component-title-text: #136326;
+    --component-rounded-corners: 10px;
+
     /* Component dimensions */
     --chart-row-height: 300px;
     --info-row-height: 450px;
-
-    /* Components */
-    --component-title-text: rgb(19, 99, 38);
-    --component-background: var(--highcharts-neutral-color-0);
-    --component-rounded-corners: 10px;
 }
 
 /* Colors */
@@ -35,27 +34,21 @@
 .el-kpi {
     --color-axis-labels: var(--color-sk);
     --color-gauge: var(--color-sk);
-    --color-hover: #5352be;
-    --color-active: #336;
-    --color-hover-text: #fff;
     --color-pane: #eee;
     --color-pane-line: #ccc;
 }
 
 #el-info {
-    --color-table-td: #f8f8f8;
-    --color-table-bg: #c8c8c8;
-    --color-header: #000;
+    --color-table-td: var(--highcharts-neutral-color-5);
+    --color-table-bg: var(--highcharts-neutral-color-20);
+    --color-header: var(--highcharts-neutral-color-80);
     --color-unit: green;
     --color-table-caption: var(--color-sk);
 }
 
 #el-map {
-    --color-background: #b5d2e4;
     --color-map: #05031a;
     --color-marker-border: #fff;
-    --color-marker-border-active: #336;
-    --color-marker-border-hover: #71daf7;
     --color-marker-text: #fff;
     --color-marker-text-border: #000;
     --color-navigation: #f7f7f7;
@@ -75,9 +68,6 @@
     }
 
     #el-info {
-        --color-table-bg: #666;
-        --color-table-td: #333;
-        --color-header: #fff;
         --color-unit: #f0f0f0;
         --color-table-caption: rgb(148, 183, 212);
     }
@@ -105,7 +95,7 @@ body {
 
 .highcharts-dashboards-component {
     border-radius: var(--component-rounded-corners);
-    background-color: var(--color-background);
+    background-color: var(--component-background);
     padding: 0;
 }
 
@@ -418,7 +408,7 @@ div#connect-bar button:hover {
 
 #el-info .highcharts-dashboards-component-content {
     overflow-y: auto;
-    background-color: var(--color-background);
+    background-color: var(--component-background);
 }
 
 #el-info div#info-container {
@@ -498,7 +488,7 @@ div#connect-bar button:hover {
  * */
 
 #el-map .highcharts-background {
-    fill: var(--color-background);
+    fill: var(--component-background);
 }
 
 #el-map text.highcharts-credits {
@@ -521,7 +511,7 @@ div#connect-bar button:hover {
 
 #el-map .highcharts-series-0 .highcharts-point {
     fill: var(--color-map);
-    stroke: var(--color-background);
+    stroke: var(--component-background);
 }
 
 #el-map .highcharts-series-0.highcharts-series-inactive {
@@ -565,7 +555,7 @@ div#connect-bar button:hover {
 
 #el-map .map-tooltip td:nth-of-type(1) {
     font-weight: bold;
-    color: blue;
+    color: var(--color-sk);
 }
 
 #el-map .map-tooltip td:nth-of-type(2) {
