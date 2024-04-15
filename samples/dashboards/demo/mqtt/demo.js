@@ -251,7 +251,7 @@ async function dashboardCreate() {
                 firstRowAsNames: false,
                 columnNames: ['time', 'power'],
                 data: [
-                    // TBD: to be removed? Seems to be needed...
+                    // TBD: to be removed? Still seems to be needed...
                     [Date.UTC(2024, 0, 1), 0]
                 ],
                 // TBD: messes up syncing
@@ -268,6 +268,7 @@ async function dashboardCreate() {
             type: 'Highcharts',
             renderTo: 'el-map',
             chartConstructor: 'mapChart',
+            title: 'Kraftverk med magasin og inntak',
             chartOptions: {
                 title: {
                     text: ''
@@ -922,7 +923,7 @@ window.onload = () => {
     // Initialize data transport
     mqttInit();
 
-    const el = document.getElementById('connect_bar');
+    const el = document.getElementById('connect-bar');
     connectBar.offColor = el.style.backgroundColor; // From CSS
 
     // Populate dropdown menu
@@ -1172,7 +1173,7 @@ async function onConnect() {
  *  Custom UI (not Dashboard)
  */
 function uiSetConnectStatus(connected) {
-    let el = document.getElementById('connect_bar');
+    let el = document.getElementById('connect-bar');
     el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
 
     el = document.getElementById('dropdown-container');
@@ -1206,7 +1207,7 @@ function uiShowStatus(msg) {
 
 
 function uiShowError(msg) {
-    const el = document.getElementById('connect_bar');
+    const el = document.getElementById('connect-bar');
 
     el.style.backgroundColor = connectBar.errColor;
     document.getElementById('connect_status').innerHTML = 'Error: ' + msg;
