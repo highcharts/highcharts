@@ -326,15 +326,9 @@ div.highcharts-description {
 * Dashboards styles
 */
 
-.highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
-    color: var(--highcharts-neutral-color-100);
-    border-radius: 10px;
-}
-
 #container {
     padding: 10px;
-    background-color: var(--highcharts-neutral-color-5);
+    background-color: var(--container-background);
 }
 
 .row {
@@ -343,16 +337,22 @@ div.highcharts-description {
     flex-direction: row;
 }
 
-.cell {
+.cell,
+.col-wrapper {
     flex: 1;
     min-width: 20px;
+}
+
+.col-wrapper {
+    display: flex;
+    flex-direction: column;
 }
 
 .cell > .highcharts-dashboards-component {
     position: relative;
     margin: 10px;
+    padding: 10px;
     background-clip: border-box;
-    background-color: var(--highcharts-background-color);
 }
 
 .el-aggr {
@@ -365,19 +365,19 @@ div.highcharts-description {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    max-height: var(--info-row-height);
-    flex: 1;
+    height: var(--info-row-height);
+    flex: 1 1 50%;
 }
 
 .el-kpi,
 .data-grid {
     flex: 1 1 25%;
-    max-height: var(--chart-row-height);
+    height: var(--chart-row-height);
 }
 
 .el-chart {
     flex: 1 1 50%;
-    max-height: var(--chart-row-height);
+    height: var(--chart-row-height);
 }
 
 .el-kpi .highcharts-dashboards-component-kpi-value {
@@ -551,19 +551,27 @@ div#info-container {
     stroke: none;
 }
 
+/* LARGE */
+@media (max-width: 1200px) {
+    .row {
+        flex-direction: row;
+    }
+}
+
+/* MEDIUM */
 @media (max-width: 992px) {
     .row {
         flex-direction: column;
     }
 }
 
+/* SMALL */
 @media (max-width: 576px) {
-    .row {
-        flex-direction: column;
-    }
-
+    .el-kpi,
+    .el-chart,
+    .data-grid,
     .el-info,
-    .el-map,
+    .el-info > div,
     .el-aggr {
         flex: unset;
         width: 100%;
