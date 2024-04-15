@@ -957,6 +957,12 @@ window.onload = () => {
     };
 };
 
+// Hide the logo on small devices
+window.onresize = () => {
+    uiSetLogoVisibility(connectFlag);
+};
+
+
 /*
  *  Application user interface
  */
@@ -1176,12 +1182,20 @@ function uiSetConnectStatus(connected) {
     el.checked = connected;
 
     // Use logo image only when connected, otherwise text
-    el = document.getElementById('logo_img');
+    uiSetLogoVisibility(connected);
+}
+
+
+function uiSetLogoVisibility(connected) {
+    // Use logo image only when connected and on a wider screen,
+    // otherwise text only.
+    let el = document.getElementById('logo_img');
     if (el) {
-        el.style.display = connected ? 'inline' : 'none';
+        const showLogo = (window.innerWidth > 576) && connected;
+        el.style.display = showLogo ? 'inline' : 'none';
 
         el = document.getElementById('logo_txt');
-        el.style.display = connected ? 'none' : 'block';
+        el.style.display = showLogo ? 'none' : 'block';
     }
 }
 
