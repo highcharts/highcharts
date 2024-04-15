@@ -9,10 +9,12 @@
  * */
 
 :root {
+    /* Dashboards container */
     --container-background: var(--highcharts-neutral-color-10);
+
+    /* Frequently used colors */
     --color-background: var(--highcharts-neutral-color-3);
     --color-text: #2f2b38;
-    --color-component-title: rgb(42, 165, 71);
     --color-sk: rgb(0, 112, 192);
     --color-tooltip-background: #dce5ec;
     --color-tooltip-text: #000;
@@ -23,16 +25,16 @@
     --info-row-height: 450px;
 
     /* Components */
-    --color-title: #000;
+    --component-title-text: rgb(19, 99, 38);
     --component-background: var(--highcharts-neutral-color-0);
-    --component-rounded-corners: 6px;
+    --component-rounded-corners: 10px;
 }
 
 /* Colors */
 
 .el-kpi {
-    --color-axis-labels: rgb(16, 19, 238);
-    --color-gauge: #4caffe;
+    --color-axis-labels: var(--color-sk);
+    --color-gauge: var(--color-sk);
     --color-hover: #5352be;
     --color-active: #336;
     --color-hover-text: #fff;
@@ -67,7 +69,7 @@
     /* dark mode */
     :root {
         --color-text: #dadae2;
-        --color-component-title: rgb(160, 238, 160);
+        --component-title-text: rgb(160, 238, 160);
         --color-tooltip-background: #c0d8ec;
         --color-tooltip-border: #ccc;
     }
@@ -84,7 +86,6 @@
         --color-axis-labels: #dfdfde;
         --color-pane: #20202c;
         --color-pane-line: #838394;
-        --color-title: #ccc;
     }
 }
 
@@ -102,22 +103,24 @@ body {
     padding: 5px;
 }
 
-.highcharts-dashboards-component-content,
-.highcharts-dashboards-component-highcharts-content {
-    background-color: var(--component-background);
+.highcharts-dashboards-component {
+    border-radius: var(--component-rounded-corners);
+    background-color: var(--color-background);
+    padding: 0;
 }
 
-.dataGrid-container {
-    background: none;
+.highcharts-background {
+    fill: none;
+    stroke: none;
 }
 
 .highcharts-dashboards-component-title {
     white-space: nowrap;
     font-size: 16px;
-    letter-spacing: 1.5px;
-    color: var(--color-component-title);
+    letter-spacing: 1.2px;
+    color: var(--component-title-text);
     text-align: center;
-    margin: 5px 0;
+    margin: 0;
     padding: 0;
 }
 
@@ -132,7 +135,7 @@ body {
     fill: var(--color-tooltip-text);
 }
 
-div.highcharts-description {
+.highcharts-description {
     margin: auto;
     padding: 20px;
     background-color: var(--container-background);
@@ -201,6 +204,33 @@ div.highcharts-description {
     display: none;
 }
 
+/* LARGE */
+@media (max-width: 1200px) {
+    .row {
+        flex-direction: row;
+    }
+}
+
+/* MEDIUM */
+@media (max-width: 992px) {
+    .row {
+        flex-direction: column;
+    }
+}
+
+/* SMALL */
+@media (max-width: 576px) {
+    .el-kpi,
+    .el-chart,
+    .data-grid,
+    .el-info,
+    .el-info > div,
+    .el-aggr {
+        flex: unset;
+        width: 100%;
+    }
+}
+
 /* *
  *
  *  Control/status bar (top row)
@@ -230,10 +260,10 @@ div#connect-bar img {
     display: none;
 }
 
-div#connect-bar #connect_status {
+div#connect-bar #connect-status {
     font-weight: bold;
     color: #dadae2;
-    font-size: 0.8vw;
+    font-size: 0.9vw;
 }
 
 div#connect-bar label span {
@@ -250,11 +280,11 @@ div#connect-bar button:hover {
 }
 
 /* From: https://www.educative.io/answers/how-to-create-a-toggle-switch-with-css */
-#connect_switch #connect_toggle {
+#connect-switch #connect-toggle {
     display: none;
 }
 
-#connect_switch label {
+#connect-switch label {
     display: inline-block;
     width: 40px;
     height: 20px;
@@ -265,7 +295,7 @@ div#connect-bar button:hover {
     margin-left: 32px;
 }
 
-#connect_switch label::before {
+#connect-switch label::before {
     content: "";
     position: absolute;
     top: 2px;
@@ -277,11 +307,11 @@ div#connect-bar button:hover {
     transition: transform 0.3s;
 }
 
-#connect_switch #connect_toggle:checked + label {
+#connect-switch #connect-toggle:checked + label {
     background-color: #2196f3;
 }
 
-#connect_switch #connect_toggle:checked + label::before {
+#connect-switch #connect-toggle:checked + label::before {
     transform: translateX(20px);
 }
 
@@ -360,10 +390,6 @@ div#connect-bar button:hover {
     font-weight: bold;
 }
 
-.el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
-    stroke: none;
-}
-
 .el-kpi .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
     fill: var(--highcharts-neutral-color-5);
     stroke: var(--highcharts-neutral-color-20);
@@ -395,7 +421,7 @@ div#connect-bar button:hover {
     background-color: var(--color-background);
 }
 
-div#info-container {
+#el-info div#info-container {
     padding: 5px;
     margin: 0;
 
@@ -483,10 +509,6 @@ div#info-container {
     fill: var(--color-map);
 }
 
-#el-map .highcharts-halo {
-    display: none;
-}
-
 #el-map .highcharts-map-navigation {
     fill: var(--highcharts-neutral-color-5);
     font-size: 20px;
@@ -521,6 +543,13 @@ div#info-container {
     transform: translate(2px, -1px);
 }
 
+/* Map tooltip (table) */
+#el-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
 #el-map .map-tooltip caption {
     font-size: 13px;
     font-weight: bold;
@@ -541,37 +570,4 @@ div#info-container {
 
 #el-map .map-tooltip td:nth-of-type(2) {
     font-weight: bold;
-}
-
-#el-map .highcharts-tooltip {
-    fill: none;
-    filter: none;
-    stroke: none;
-}
-
-/* LARGE */
-@media (max-width: 1200px) {
-    .row {
-        flex-direction: row;
-    }
-}
-
-/* MEDIUM */
-@media (max-width: 992px) {
-    .row {
-        flex-direction: column;
-    }
-}
-
-/* SMALL */
-@media (max-width: 576px) {
-    .el-kpi,
-    .el-chart,
-    .data-grid,
-    .el-info,
-    .el-info > div,
-    .el-aggr {
-        flex: unset;
-        width: 100%;
-    }
 }

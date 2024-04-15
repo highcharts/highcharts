@@ -1179,7 +1179,7 @@ function uiSetConnectStatus(connected) {
     el = document.getElementById('dropdown-container');
     el.style.visibility = connected ? 'visible' : 'hidden';
 
-    el = document.getElementById('connect_toggle');
+    el = document.getElementById('connect-toggle');
     el.checked = connected;
 
     // Use logo image only when connected, otherwise text
@@ -1190,19 +1190,19 @@ function uiSetConnectStatus(connected) {
 function uiSetLogoVisibility(connected) {
     // Use logo image only when connected and on a wider screen,
     // otherwise text only.
-    let el = document.getElementById('logo_img');
+    let el = document.getElementById('logo-img');
     if (el) {
         const showLogo = (window.innerWidth > 576) && connected;
         el.style.display = showLogo ? 'inline' : 'none';
 
-        el = document.getElementById('logo_txt');
+        el = document.getElementById('logo-text');
         el.style.display = showLogo ? 'none' : 'block';
     }
 }
 
 
 function uiShowStatus(msg) {
-    document.getElementById('connect_status').innerHTML = msg;
+    document.getElementById('connect-status').innerHTML = msg;
 }
 
 
@@ -1210,5 +1210,5 @@ function uiShowError(msg) {
     const el = document.getElementById('connect-bar');
 
     el.style.backgroundColor = connectBar.errColor;
-    document.getElementById('connect_status').innerHTML = 'Error: ' + msg;
+    document.getElementById('connect-status').innerHTML = 'Error: ' + msg;
 }
