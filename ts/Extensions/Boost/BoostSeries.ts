@@ -202,7 +202,6 @@ function compose<T extends typeof Series>(
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
-
     if (pushUnique(composed, 'Boost.Series')) {
         const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
             seriesProto = SeriesClass.prototype as BoostSeriesComposition;
@@ -747,6 +746,7 @@ const getSeriesBoosting = (
     if (series.forceCrop) {
         return false;
     }
+
     return (
         isChartSeriesBoosting(series.chart) ||
         (
@@ -1454,9 +1454,7 @@ function wrapSeriesProcessData(
         const series = this as BoostSeriesComposition,
             isScatter = series.is('scatter') &&
                 !series.is('bubble') &&
-                !(
-                    series.is('heatmap') && !this.renderCanvas
-                );
+                !series.is('heatmap');
 
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
