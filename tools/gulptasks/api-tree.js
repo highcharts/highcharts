@@ -88,8 +88,11 @@ async function apiTree() {
     };
 
     for (const file of moduleFiles) {
-        moduleTree[Path.relative('ts', file)] =
-            TSLib.getSourceInfo(file, argv.debug);
+        moduleTree[file] = TSLib.getSourceInfo(
+            file,
+            await FS.readFile(file, 'utf8'),
+            argv.debug
+        );
     }
 
     LogLib.success('Done.');
@@ -115,8 +118,11 @@ async function apiTree() {
     };
 
     for (const file of optionFiles) {
-        optionTree[Path.relative('ts', file)] =
-            TSLib.getSourceInfo(file, argv.debug);
+        optionTree[file] = TSLib.getSourceInfo(
+            file,
+            await FS.readFile(file, 'utf8'),
+            argv.debug
+        );
     }
 
     LogLib.success('Done.');

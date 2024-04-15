@@ -21,9 +21,6 @@
  * */
 
 
-const FS = require('node:fs');
-
-
 const TS = require('typescript');
 
 
@@ -1089,12 +1086,15 @@ function getPropertyInfo(
 
 
 /**
- * Retrieves source information from the given file path.
+ * Retrieves source information from the given file source.
  *
  * @param {string} filePath
  * Path to source file.
  *
- * @param {boolean} includeNodes
+ * @param {string} sourceCode
+ * Code of source file.
+ *
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {SourceInfo}
@@ -1102,11 +1102,12 @@ function getPropertyInfo(
  */
 function getSourceInfo(
     filePath,
+    sourceCode,
     includeNodes
 ) {
     const sourceFile = TS.createSourceFile(
         filePath,
-        FS.readFileSync(filePath, 'utf8'),
+        sourceCode,
         TS.ScriptTarget.Latest,
         true
     );
@@ -1342,6 +1343,25 @@ function newDocletInfo(
 
 
 /**
+ * Removes all doclets from source code.
+ *
+ * @param {string} sourceCode
+ * Source code to remove doclets from.
+ *
+ * @return {string}
+ * Source code without doclets.
+ */
+function removeAllDoclets(
+    sourceCode
+) {
+    return sourceCode.getFullText()
+        .replace(/\n *\/\*\*.*?\*\//gsu, '')
+        .replace(/\n(\(?)''\1;[^\n]*/gsu, '')
+        .replace(/\n\s+\n/gsu, '\n\n');
+}
+
+
+/**
  * Removes a tag from a DocletInfo object.
  *
  * @param {DocletInfo} doclet
@@ -1560,6 +1580,7 @@ module.exports = {
     isNativeType,
     mergeDocletInfos,
     newDocletInfo,
+    removeAllDoclets,
     removeTag,
     sanitizeText,
     toDocletString,

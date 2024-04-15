@@ -1070,24 +1070,6 @@ async function moveSeriesDoclets(
 
 
 /**
- * @param {TS.SourceFile} source
- * @return {string}
- */
-function removeDoclets(
-    source
-) {
-    FS.writeFileSync(
-        source.fileName, 
-        source.getFullText()
-            .replace(/\n *\/\*\*.*?\*\//gsu, '')
-            .replace(/\n(\(?)''\1;[^\n]*/gsu, '')
-            .replace(/\n\s+\n/gsu, '\n\n'),
-        'utf8'
-    );
-}
-
-
-/**
  * @param {TS.SourceFile} target
  * @param {Record<string,*>} tree
  */
