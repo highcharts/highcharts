@@ -1,16 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable jsdoc/require-description */
 
-
-// Layout
-// ! -----------------------!
-// ! HTML        | HTML     !
-// ! ------------|--------- !
-// ! Map         | Chart    !
-// ! -----------------------!
-// ! Data grid              !
-// ! -----------------------!
-
 // Data grid contents
 
 // State    | Dem. electors | Rep. electors | Dem. votes  | Rep. votes  | Total votes
@@ -219,18 +209,7 @@ async function setupDashboard() {
                             useHTML: true,
                             enabled: true,
                             inside: true,
-                            formatter: function () {
-                                const seriesName = this.series.name;
-                                let dataLabel;
-
-                                if (seriesName === 'Democrat') {
-                                    dataLabel = document.querySelector('#info-dem2').innerHTML;
-                                } else if (seriesName === 'Republican') {
-                                    dataLabel = document.querySelector('#info-rep2').innerHTML;
-                                }
-
-                                return dataLabel;
-                            }
+                            format: '{point.votes}'
                         }
                     }
                 },
@@ -456,7 +435,6 @@ async function setupDashboard() {
         let key = null;
 
         lines.forEach(function (line) {
-            // const match = line.match(csvSplit);
             const match = parseLine(line);
             const year = match[0]; // Year
 
@@ -485,7 +463,7 @@ async function setupDashboard() {
                 }
 
                 // Create processed data record
-                const party = match[8];
+                const party = match[14].trim();
                 const candidate = match[7];
 
                 // Ignore "other" candidates and empty candidate names
@@ -643,6 +621,12 @@ function resetMap(mapChart) {
     }
 }
 
+
+function formatVotes(votes, percent) {
+    return `${votes.toLocaleString('en-US')} (${percent}%) Total Votes`;
+}
+
+
 function getHistoricalElectionSeries(state, year) {
     const series = [{
         name: 'Democrat',
@@ -660,18 +644,25 @@ function getHistoricalElectionSeries(state, year) {
         const row = electionData[key].data.find(c => c[5] === (state || 'US'));
 
         if (row) {
+            const demPercent = Number(row[3]);
+            const repPercent = Number(row[4]);
+            const demVotes = Number(row[6]);
+            const repVotes = Number(row[7]);
+
             // Percentage, Democrat
             series[0].data.push({
                 candidate: electionData[key].candDem,
-                y: Number(row[3]),
-                electors: row[1]
+                y: demPercent,
+                electors: row[1],
+                votes: formatVotes(demVotes, demPercent)
             });
 
             // Percentage, Republicans
             series[1].data.push({
                 candidate: electionData[key].candRep,
-                y: Number(row[4]),
-                electors: row[2]
+                y: repPercent,
+                electors: row[2],
+                votes: formatVotes(repVotes, repPercent)
             });
         }
     }
@@ -719,12 +710,12 @@ async function updateResultComponent(electionTable, year) {
     let el = document.getElementById('info-dem1');
     el.innerHTML = `${candDem}: ${demColVotes}`;
     el = document.getElementById('info-dem2');
-    el.innerHTML = `${demVotes.toLocaleString('en-US')} (${demPercent}%) Total Votes`;
+    el.innerHTML = formatVotes(demVotes, demPercent);
 
     el = document.getElementById('info-rep1');
     el.innerHTML = `${candRep}: ${repColVotes}`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = `${repVotes.toLocaleString('en-US')} (${repPercent}%) Total Votes`;
+    el.innerHTML = formatVotes(repVotes, repPercent);
 
     // Result bar
     el = document.getElementById('bar-dem');
@@ -733,7 +724,7 @@ async function updateResultComponent(electionTable, year) {
     el.style.width = ((repColVotes / totalColVotes) * 100) + '%';
 
     // Votes needed to win
-    const neededVotes = Math.floor(totalColVotes / 2) + 1; // TBC: is this safe?
+    const neededVotes = Math.floor(totalColVotes / 2) + 1;
     el = document.getElementById('info-to-win');
     el.innerHTML = neededVotes + ' to win';
 }
@@ -841,7 +832,7 @@ async function onStateClicked(board, state) {
 
     // Update chart title
     const comp = getComponent(board, 'election-chart');
-    const compbar = getComponent(board, 'election-chart-national');
+    const barComponent = getComponent(board, 'election-chart-national');
 
     // Election data for current state
     const stateSeries = getHistoricalElectionSeries(state);
@@ -859,7 +850,7 @@ async function onStateClicked(board, state) {
         }
     });
 
-    await compbar.update({
+    await barComponent.update({
         chartOptions: {
             title: {
                 text: '<span class="title-bck-wrapper">' + yearSelector.value +
@@ -900,7 +891,7 @@ async function onYearClicked(board, year) {
 
 
 //
-// Custom HTML component (TBD: remove when integrated with Dashboards)
+// Custom HTML component
 //
 const { ComponentRegistry } = Dashboards,
     HTMLComponent = ComponentRegistry.types.HTML,
