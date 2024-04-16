@@ -21,11 +21,22 @@
 				<input id="connect-toggle" type="checkbox" accesskey="k" onclick="onConnectClicked()"></input>
 				<label for="connect-toggle"></label>
 			</div>
+                <!-- Dialog for entering credentials, usually hidden -->
+                <div id="auth-dialog" class="modal">
+                    <div id="auth-content">
+                        <span id="auth-close">&times;</span>
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" />
+                        <label for="pass">Password:</label>
+                        <input type="password" id="password" name="password" minlength="8" required />
+                        <input id="auth-submit" type="submit" value="Sign in" />
+                    </div>
+                </div>
 			<div id="dropdown-container">
 				<button title="Klikk for å velgja kraftstasjon" onclick="onStationSelectClicked()"
-					class="dropdown-button">Kraftverk&#9662;</button>
+                        class="dropdown-button">Kraftverk&nbsp;&#9662;</button>
 				<div id="dropdownContent" class="dropdown-content">
-					<!-- Populated dynamically : e.g 
+                        <!-- Populated dynamically, e.g 
 						<a class="dropdown-select" href="#">Leikanger</a>
 					-->
 				</div>
@@ -34,6 +45,7 @@
 			<h1>Highcharts</h1>
 		</div>
 	</div>
+    <!-- Two rows for the power plant, up to 2 generators -->
 	<div class="row el-aggr">
 		<div class="cell el-kpi" id="kpi-agg-1"></div>
 		<div class="cell el-chart" id="chart-agg-1"></div>
@@ -44,30 +56,33 @@
 		<div class="cell el-chart" id="chart-agg-2"></div>
 		<div class="cell data-grid" id="data-grid-2"></div>
 	</div>
+        <!-- Row for information and map -->
 	<div class="row el-info">
 		<div class="cell" id="el-info"></div>
 		<div class="cell" id="el-map"></div>
 	</div>
 </div>
 
-<div class="highcharts-description">
-	<p>
-		This application displays key data from a selection of power generation plants in the area of Sogn, Norway.
-		The charts, KPIs and tables display the generated power in units of MW (Megawatts).
-	</p>
-	<p>
-		How to use:
-	<ul>
-		<li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
-		<li>When connecting succeeds a selection of power plants becomes available in the <b>Power Station</b>
-			dropdown.
-		</li>
-		<li>Select any of the power stations to start displaying data. The reporting interval is determine by the
-			server but will normally be every five minutes.
-		</li>
-		<li>The application only displays one power station simultaneously the a new station can be selected without
-			disconnecting from the server.
-		</li>
-	</ul>
-	</p>
-</div>
+    <div class="highcharts-description">
+        <p>
+            This application displays key data from a selection of power generation plants in the area of Sogn,
+            Norway.
+            The charts, KPIs and tables display the generated power in units of MW (Megawatts).
+        </p>
+        <p>
+            How to use:
+        <ul>
+            <li>Click <b>Connect</b> to connect to Sognekraft's MQTT server.</li>
+            <li>When connecting succeeds a selection of power plants becomes available in the <b>Power Station</b>
+                dropdown.
+            </li>
+            <li>Select any of the power stations to start displaying data. The reporting interval is determined by
+                the server but will normally be every five minutes.
+            </li>
+            <li>The application only displays one power station simultaneously</li>
+            <li>Another station can be selected without disconnecting from the server.
+            </li>
+        </ul>
+        </p>
+    </div>
+

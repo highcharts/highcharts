@@ -28,154 +28,17 @@ const intakeMarker = {
 const defaultZoom = 9;
 
 // Global variables
-let board = null;
-let maxConnectedUnits;
+let dashboard = null; // The Dashboard is created after MQTT connection
+let maxConnectedUnits; // Number of power generators
+
+// Support for Nynorsk and English
+const lang = getLanguageSupport('en');
 
 // Log to console
 const logEnabled = false;
 
 
-//
-// Language support
-//
-const lang = {
-    // Selected language
-    current: 'nn',
-
-    // Translations, fixed strings
-    Name: {
-        nn: 'Namn'
-    },
-    'Power station': {
-        nn: 'Kraftverk'
-    },
-    'Measure time': {
-        nn: 'Måletidspunkt',
-        unit: 'UTC'
-    },
-    'Location unknown': {
-        nn: 'Ukjend plassering'
-    },
-    'No connected reservoirs': {
-        nn: 'Ingen tilknyta vassmagasin'
-    },
-    'No intakes': {
-        nn: 'Ingen inntak'
-    },
-
-    // Power generation parameters
-    P_gen: {
-        nn: 'Effekt',
-        en: 'Generated power',
-        unit: 'MW'
-    },
-    q_turb: {
-        nn: 'Vassforbruk',
-        en: 'Water usage',
-        unit: 'm3/sek'
-    },
-    h: {
-        nn: 'Høgde',
-        en: 'Elevation',
-        unit: 'moh'
-    },
-    location: {
-        nn: 'Plassering',
-        en: 'Location',
-        unit: 'lat/lon'
-    },
-    volume: {
-        nn: 'Volum',
-        en: 'Volume',
-        unit: 'mill. m3'
-    },
-    intakes: {
-        nn: 'Inntak',
-        en: 'Intakes'
-    },
-    reservoirs: {
-        nn: 'Vassmagasin',
-        en: 'Reservoirs'
-    },
-    drain: {
-        nn: 'Avlaup',
-        en: 'Drain',
-        unit: 'm3/sek'
-    },
-    inflow: {
-        nn: 'Tilsig',
-        en: 'Inflow',
-        unit: 'm3/sek'
-    },
-    level: {
-        nn: 'Nivå',
-        en: 'level',
-        unit: 'moh'
-    },
-    HRV: {
-        nn: 'Høgaste regulerte vasstand',
-        en: 'Highest regulated level',
-        unit: 'moh'
-    },
-    LRV: {
-        nn: 'Lågaste regulerte vasstand',
-        en: 'Lowest regulated level',
-        unit: 'moh'
-    },
-    energy: {
-        nn: 'Energi',
-        en: 'Energy',
-        unit: 'MWh'
-    },
-    net_flow: {
-        nn: 'Netto endring',
-        en: 'Net flow',
-        unit: 'm3/sek'
-    },
-    q_min_set: {
-        nn: 'Minstevassføring krav',
-        en: 'Required minimal flow',
-        unit: 'm3/sek'
-    },
-    q_min_act: {
-        nn: 'Minstevassføring målt',
-        en: 'Measured minimal flow',
-        unit: 'm3/sek'
-    },
-
-    // Translator function
-    tr: function (str) {
-        const item = str in this ? this[str] : null;
-        if (item === null) {
-            // No translation exists, return original
-            return str;
-        }
-
-        let ret = str;
-        if (this.current in this[str]) {
-            ret = this[str][this.current];
-        }
-
-        return ret;
-    },
-
-    // Get measurement unit (if applicable)
-    unit: function (id) {
-        if (id in this) {
-            if ('unit' in this[id]) {
-                return this[id].unit;
-            }
-        }
-        return '';
-    },
-
-    // Name + unit
-    hdr: function (id) {
-        return this.tr(id) + ' (' + this.unit(id) + ')';
-    }
-};
-
-// Launches the Dashboards application
+// Creates the dashboard
 async function dashboardCreate() {
     const powerUnit = 'MW';
 
@@ -268,7 +131,7 @@ async function dashboardCreate() {
             type: 'Highcharts',
             renderTo: 'el-map',
             chartConstructor: 'mapChart',
-            title: 'Kraftverk med magasin og inntak',
+            title: lang.tr('mapTitle'),
             chartOptions: {
                 title: {
                     text: ''
@@ -461,7 +324,7 @@ async function dashboardCreate() {
 
 
 async function dashboardUpdate(powerPlantInfo) {
-    const dataPool = board.dataPool;
+    const dataPool = dashboard.dataPool;
 
     // Clear content of data table
     await dashboardReset();
@@ -507,11 +370,11 @@ async function dashboardUpdate(powerPlantInfo) {
 
 async function dashboardConnect(powerPlantInfo) {
     // Launch  Dashboard
-    if (board === null) {
-        board = await dashboardCreate();
+    if (dashboard === null) {
+        dashboard = await dashboardCreate();
     }
 
-    const dataPool = board.dataPool;
+    const dataPool = dashboard.dataPool;
     for (let i = 0; i < powerPlantInfo.nAggs; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
@@ -525,8 +388,8 @@ async function dashboardConnect(powerPlantInfo) {
 
 
 async function dashboardsComponentUpdate(powerPlantInfo) {
-    function getComponent(board, id) {
-        return board.mountedComponents.map(c => c.component)
+    function getComponent(dashboard, id) {
+        return dashboard.mountedComponents.map(c => c.component)
             .find(c => c.options.renderTo === id);
     }
 
@@ -691,7 +554,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
     async function updateMap(powerPlantInfo) {
         // Map
-        const mapComp = getComponent(board, 'el-map');
+        const mapComp = getComponent(dashboard, 'el-map');
         const mapPoints = mapComp.chart.series[1];
 
         // Erase existing points
@@ -735,7 +598,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     // Information
     const posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
 
-    const infoComp = getComponent(board, 'el-info');
+    const infoComp = getComponent(dashboard, 'el-info');
     await infoComp.update({
         title: stationName
     });
@@ -772,11 +635,11 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
 
         // Get data
-        const dataTable = await board.dataPool.getConnectorTable(connId);
+        const dataTable = await dashboard.dataPool.getConnectorTable(connId);
         const rowCount = await dataTable.getRowCount();
 
         // KPI
-        const kpiComp = getComponent(board, 'kpi-agg-' + pgIdx);
+        const kpiComp = getComponent(dashboard, 'kpi-agg-' + pgIdx);
         await kpiComp.update({
             value: rowCount > 0 ?
                 dataTable.getCellAsNumber('power', rowCount - 1) : 0,
@@ -785,7 +648,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         });
 
         // Chart
-        const chartComp = getComponent(board, 'chart-agg-' + pgIdx);
+        const chartComp = getComponent(dashboard, 'chart-agg-' + pgIdx);
         await chartComp.update({
             connector: {
                 id: connId
@@ -795,7 +658,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         });
 
         // Datagrid
-        const gridComp = getComponent(board, 'data-grid-' + pgIdx);
+        const gridComp = getComponent(dashboard, 'data-grid-' + pgIdx);
         await gridComp.update({
             connector: {
                 id: connId
@@ -807,7 +670,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
 
 async function dashboardReset() {
-    const dataPool = board.dataPool;
+    const dataPool = dashboard.dataPool;
     for (let i = 0; i < maxConnectedUnits; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
@@ -869,9 +732,9 @@ const port = 8083;
 let mqttActiveTopic = null;
 const mqttQos = 0;
 
-// NB! Replace with public before publishing on the web !!!!!
-const userName = 'highsoft';
-const password = 'Qs0URPjxnWlcuYBmFWNK';
+// Authentication
+let user = null;
+let password = null;
 
 // Connection status
 let connectFlag;
@@ -923,8 +786,24 @@ window.onload = () => {
     // Initialize data transport
     mqttInit();
 
+    // UI objects
     const el = document.getElementById('connect-bar');
     connectBar.offColor = el.style.backgroundColor; // From CSS
+    const authDialog = document.getElementById('auth-dialog');
+
+    // Authentication dialog
+    document.getElementById('auth-submit').onclick = () => {
+        user = document.getElementById('username').value;
+        password = document.getElementById('password').value;
+
+        mqttConnect();
+        authDialog.style.display = 'none';
+    };
+    // Get the <span> element that closes the modal
+    const authClose = document.getElementById('auth-close');
+
+    // When the user clicks on <span> (x), close the modal
+    authClose.onclick = onConnectCancel;
 
     // Populate dropdown menu
     const dropdownDiv = document.getElementById('dropdownContent');
@@ -937,6 +816,14 @@ window.onload = () => {
     // Custom click handler (dropdown button for selecting power stations)
     window.onclick = function (event) {
         if (!event.target.matches('.dropdown-button')) {
+            // Handle dropdown items
+            if (event.target.matches('.dropdown-select')) {
+                const name = event.target.innerText;
+                if (name in plantLookup) {
+                    onStationClicked(name);
+                }
+            }
+
             // Close the dropdown menu if the user clicks outside of it
             const dropdowns = document.getElementsByClassName('dropdown-content');
 
@@ -947,12 +834,9 @@ window.onload = () => {
                 }
             }
 
-            // Handle dropdown items
-            if (event.target.matches('.dropdown-select')) {
-                const name = event.target.innerText;
-                if (name in plantLookup) {
-                    onStationClicked(name);
-                }
+            // Close authentication dialog
+            if (event.target === authDialog) {
+                onConnectCancel();
             }
         }
     };
@@ -972,8 +856,21 @@ function onConnectClicked() {
     if (connectFlag) {
         mqttDisconnect();
     } else {
-        mqttConnect();
+        if (user === null) {
+            // Show authentication dialog
+            document.getElementById('auth-dialog').style.display = 'block';
+        } else {
+            mqttConnect();
+        }
     }
+}
+
+
+function onConnectCancel() {
+    document.getElementById('auth-dialog').style.display = 'none';
+    document.getElementById('connect-toggle').checked = false;
+    user = null;
+    password = null;
 }
 
 
@@ -1019,7 +916,7 @@ function mqttConnect() {
         cleanSession: true,
         onSuccess: onConnect,
         onFailure: onFailure,
-        userName: userName,
+        userName: user,
         password: password
     });
 }
@@ -1109,15 +1006,17 @@ async function onConnectionLost(resp) {
     if (resp.errorCode !== 0) {
         uiShowError(resp.errorMessage);
     }
+    onConnectCancel();
 }
 
 
 function onFailure(resp) {
     nConnectedUnits = 0;
     connectFlag = false;
-    uiSetConnectStatus(false);
 
+    uiSetConnectStatus(false);
     uiShowError(resp.errorMessage);
+    onConnectCancel();
 }
 
 
@@ -1162,6 +1061,7 @@ async function onConnect() {
 
     console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
+    uiShowStatus('-');
 
     // Subscribe if a topic exists
     if (mqttActiveTopic !== null) {
@@ -1211,4 +1111,151 @@ function uiShowError(msg) {
 
     el.style.backgroundColor = connectBar.errColor;
     document.getElementById('connect-status').innerHTML = 'Error: ' + msg;
+}
+
+
+//
+// Language support
+//
+function getLanguageSupport(lang) {
+    return {
+        // Selected language
+        current: lang,
+
+        // Translations, fixed strings
+        Name: {
+            nn: 'Namn'
+        },
+        'Power station': {
+            nn: 'Kraftverk'
+        },
+        'Location unknown': {
+            nn: 'Ukjend plassering'
+        },
+        'No connected reservoirs': {
+            nn: 'Ingen tilknyta magasin'
+        },
+        'No intakes': {
+            nn: 'Ingen inntak'
+        },
+        mapTitle: {
+            nn: 'Kraftverk med magasin og inntak',
+            en: 'Power station with water reservoirs and intake'
+        },
+
+        // Power generation parameters
+        'Measure time': {
+            nn: 'Måletidspunkt',
+            unit: 'UTC'
+        },
+        P_gen: {
+            nn: 'Effekt',
+            en: 'Generated power',
+            unit: 'MW'
+        },
+        q_turb: {
+            nn: 'Vassforbruk',
+            en: 'Water usage',
+            unit: 'm3/sek'
+        },
+        h: {
+            nn: 'Høgde',
+            en: 'Elevation',
+            unit: 'moh'
+        },
+        location: {
+            nn: 'Plassering',
+            en: 'Location',
+            unit: 'lat/lon'
+        },
+        volume: {
+            nn: 'Volum',
+            en: 'Volume',
+            unit: 'mill. m3'
+        },
+        intakes: {
+            nn: 'Inntak',
+            en: 'Intakes'
+        },
+        reservoirs: {
+            nn: 'Vassmagasin',
+            en: 'Reservoirs'
+        },
+        drain: {
+            nn: 'Avlaup',
+            en: 'Drain',
+            unit: 'm3/sek'
+        },
+        inflow: {
+            nn: 'Tilsig',
+            en: 'Inflow',
+            unit: 'm3/sek'
+        },
+        level: {
+            nn: 'Nivå',
+            en: 'level',
+            unit: 'moh'
+        },
+        HRV: {
+            nn: 'Høgaste regulerte vasstand',
+            en: 'Highest regulated level',
+            unit: 'moh'
+        },
+        LRV: {
+            nn: 'Lågaste regulerte vasstand',
+            en: 'Lowest regulated level',
+            unit: 'moh'
+        },
+        energy: {
+            nn: 'Energi',
+            en: 'Energy',
+            unit: 'MWh'
+        },
+        net_flow: {
+            nn: 'Netto endring',
+            en: 'Net flow',
+            unit: 'm3/sek'
+        },
+        q_min_set: {
+            nn: 'Minstevassføring krav',
+            en: 'Required minimal flow',
+            unit: 'm3/sek'
+        },
+        q_min_act: {
+            nn: 'Minstevassføring målt',
+            en: 'Measured minimal flow',
+            unit: 'm3/sek'
+        },
+
+        // Translator function
+        tr: function (str) {
+            const item = str in this ? this[str] : null;
+            if (item === null) {
+                // No translation exists, return original
+                return str;
+            }
+
+            let ret = str;
+            if (this.current in this[str]) {
+                ret = this[str][this.current];
+            }
+
+            return ret;
+        },
+
+        // Get measurement unit (if applicable)
+        unit: function (id) {
+            if (id in this) {
+                if ('unit' in this[id]) {
+                    return this[id].unit;
+                }
+            }
+            return '';
+        },
+
+        // Name + unit
+        hdr: function (id) {
+            return this.tr(id) + ' (' + this.unit(id) + ')';
+        }
+    };
 }
