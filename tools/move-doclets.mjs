@@ -39,6 +39,7 @@ const HELP = [
     'OPTIONS:',
     '  --help -h        This help.',
     '  --json           Log JSON tree of each source. (move-doclets.json)',
+    '  --remove         Remove doclets from source file after movement',
     '  --series [path]  Move doclets for given series path. (recursive)',
     '  --verbose        Log extra debug information.'
 ].join('\n');
@@ -781,7 +782,7 @@ async function main() {
 
     if (argv.series) {
         verbose && console.info('Moving series doclets...');
-        await moveSeriesDoclets(argv.series, argv.json);
+        await moveSeriesDoclets(argv.series, !!argv.json, !!argv.remove);
     }
 
 }
@@ -1000,10 +1001,12 @@ function mergeInterfaceOverwrite(
 /**
  * @param {string} path
  * @param {boolean} logJSON
+ * @param {boolean} removeDoclets
  */
 async function moveSeriesDoclets(
     path,
-    logJSON
+    logJSON,
+    removeDoclets
 ) {
     const files = FSLib.getFilePaths(path, true);
 
@@ -1060,10 +1063,20 @@ async function moveSeriesDoclets(
 
         writeDocletsTree(target, tree);
 
-        verbose && console.info('');
-        console.info('Cleaning', source.fileName);
+        if (removeDoclets) {
 
-        removeDoclets(source);
+            verbose && console.info('');
+            console.info('Cleaning', source.fileName);
+
+            await FS.promises.writeFile(
+                sourcePath,
+                TSLib.removeAllDoclets(
+                    await FS.promises.readFile(sourcePath, 'utf8')
+                ),
+                'utf8'
+            );
+
+        }
     }
 
 }

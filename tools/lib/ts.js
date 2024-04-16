@@ -1354,7 +1354,7 @@ function newDocletInfo(
 function removeAllDoclets(
     sourceCode
 ) {
-    return sourceCode.getFullText()
+    return sourceCode
         .replace(/\n *\/\*\*.*?\*\//gsu, '')
         .replace(/\n(\(?)''\1;[^\n]*/gsu, '')
         .replace(/\n\s+\n/gsu, '\n\n');
