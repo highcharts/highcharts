@@ -8,12 +8,22 @@
 <!-- Dashboards container -->
 <div id="container">
     <div class="row">
-        <div class="cell" id="html-result"></div>
+        <div class="cell" id="elections-selector-wrapper"></div>
+    </div>
+    <div class="row">
         <div class="cell" id="html-control"></div>
     </div>
     <div class="row">
+        <div class="cell" id="html-result"></div>
+    </div>
+    <div class="row">
         <div class="cell" id="election-map"></div>
-        <div class="cell" id="election-chart"></div>
+        <div class="cell" id="election-charts">
+            <div class="col-wrapper">
+                <div class="cell" id="election-chart-national"></div>
+                <div class="cell" id="election-chart"></div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="cell" id="election-grid"></div>
@@ -45,7 +55,7 @@
             modified by the user.</li>
     </ul>
     <h2>Data sources</h2>
-    <p>The data used in this demo are provided by Wikipedia.com and the U.S. National Archives.</p>
+    <p>The data used in this demo are provided by Wikipedia.com and the <a href="https://www.archives.gov/electoral-college/allocation">U.S. National Archives</a>.</p>
 </div>
 
 <!-- Data for Custom HTML components and election meta data -->
@@ -69,14 +79,13 @@
             </div>
             <div class="info" id="bar-container">
                 <!-- row 2: graphic bar with indicator on needed votes -->
-                <div id="bar-dem"></div>
+                <div id="bar-dem">
+                    <div id="info-dem2" class="bar-datalabel">Left</div>
+                </div>
                 <div id="bar-line"><span id="arrow">&#9662;</span></div>
-                <div id="bar-rep"></div>
-            </div>
-            <div class="info">
-                <!-- row 3: total votes, percentages -->
-                <div id="info-dem2">Left</div>
-                <div id="info-rep2">Right</div>
+                <div id="bar-rep">
+                    <div id="info-rep2" class="bar-datalabel">Right</div>
+                </div>
             </div>
         </div>
         <!-- Row 1, cell 3: photo of Republican candidate -->
@@ -87,14 +96,10 @@
 
     <!-- HTML custom component, top right: election information -->
     <div id="html-control-div">
-        <label for="elections">Election year:</label>
-        <select name="elections" id="election-year">
-            <option value="2020">2020 - Biden vs Trump</option>
-            <option value="2016">2016 - Clinton vs Trump</option>
-            <option value="2012">2012 - Obama vs Romney</option>
-            <option value="2008">2008 - Obama vs McCain</option>
-        </select>
-        <div id="election-description"></div>
+        <div id="election-description-container">
+            <h1>U.S. Presidential Election</h1>
+            <div id="election-description"></div>
+        </div>
     </div>
 
     <!-- Data extracted from Wikipedia -->
