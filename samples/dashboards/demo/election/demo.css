@@ -9,12 +9,12 @@
  * */
 :root {
     /* Democrat */
-    --highcharts-color-0: #4D8ADB;
-    --highcharts-color-0-light: #D7E3F3;
+    --highcharts-color-0: #4d8adb;
+    --highcharts-color-0-light: rgb(215, 227, 243);
 
     /* Republican */
-    --highcharts-color-1: #BE2F24;
-    --highcharts-color-1-light: #F5D3D1;
+    --highcharts-color-1: #be2f24;
+    --highcharts-color-1-light: #f5d3d1;
 
     /* Others */
     --container-background: var(--highcharts-neutral-color-10);
@@ -37,14 +37,13 @@
     :root {
         /* Others */
         --color-link: #cca;
-        --container-background: #2F2E38;
+        --container-background: #2f2e38;
+        --color-title: #c8c7d1;
 
         /* components */
-        --component-background: #E3E3E8;
+        --component-background: #e3e3e8;
         --component-background-optional: #474554;
         --datagrid-border-color: var(--component-background-optional);
-
-        --color-title: #c8c7d1;
     }
 
     #container {
@@ -57,14 +56,14 @@
         --color-title: #dadae2;
         --color-text: #dadae2;
     }
-    
+
     #elections-selector-wrapper select {
-        color: #F2F1F4;
+        color: #f2f1f4;
         background-color: var(--component-background-optional);
     }
 
     #html-control-div {
-        color: #F2F1F4;
+        color: #f2f1f4;
     }
 
     #election-chart .highcharts-column-series path.highcharts-point,
@@ -74,7 +73,7 @@
 }
 
 body {
-    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #election-map {
@@ -126,7 +125,7 @@ body {
     flex-direction: row;
 }
 
-.cell, 
+.cell,
 .col-wrapper {
     flex: 1;
     min-width: 20px;
@@ -338,7 +337,7 @@ body {
 #html-control-div #election-description {
     text-align: left;
     font-size: 0.9em;
-    padding: 10px 40px 5px 40px;
+    padding: 10px 40px 5px;
     margin: 10px 20px;
     border-left: 1px solid var(--highcharts-neutral-color-100);
     padding-left: 40px;
@@ -514,16 +513,16 @@ body {
 
 #election-chart .highcharts-yaxis-grid .highcharts-grid-line,
 #election-chart-national .highcharts-yaxis-grid .highcharts-grid-line,
-#election-chart .highcharts-axis-line 
+#election-chart .highcharts-axis-line,
 #election-chart-national .highcharts-axis-line {
-    stroke-width: 0px;
+    stroke-width: 0;
 }
 
 .highcharts-title .title-bck-wrapper {
     padding: 10px 5px;
     color: #fff;
     border-radius: 5px;
-    background-color: #2F2E38;
+    background-color: #2f2e38;
     margin-right: 5px;
 }
 
@@ -538,7 +537,7 @@ body {
 }
 
 #election-chart-national .highcharts-axis-line {
-    stroke-width: 0px;
+    stroke-width: 0;
 }
 
 #election-chart-national .highcharts-data-label {
@@ -581,7 +580,7 @@ body {
 }
 
 #election-grid .highcharts-datagrid-column-headers {
-    background-color: #ACABBA;
+    background-color: #acabba;
     border-bottom: 1px solid #000;
 }
 
@@ -591,7 +590,7 @@ body {
 }
 
 .highcharts-datagrid-cell {
-    border-color: #cccccc;
+    border-color: #ccc;
 }
 
 #election-grid .highcharts-datagrid-column-headers .highcharts-datagrid-column-header:nth-child(2),
@@ -617,7 +616,7 @@ body {
 }
 
 .highcharts-datagrid-row {
-    background-color: #ffffff;
+    background-color: #fff;
 }
 
 .highcharts-datagrid-row:nth-child(even) {
@@ -681,7 +680,7 @@ text.highcharts-data-label {
     }
 
     #html-control-div #election-description {
-        padding-right: 0px;
+        padding-right: 0;
     }
 
     #html-control-div #election-description-container h1 {
@@ -714,12 +713,12 @@ text.highcharts-data-label {
     #html-control-div #election-description-container {
         flex-direction: column;
     }
-    
+
     #html-control-div #election-description-container h1,
     #html-control-div #election-description {
         width: 100%;
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
         border: none;
     }
 
@@ -729,7 +728,7 @@ text.highcharts-data-label {
     }
 
     #html-control-div {
-        padding: 0px;
+        padding: 0;
     }
 
     #election-map {
