@@ -66,6 +66,11 @@
     #html-control-div {
         color: #F2F1F4;
     }
+
+    #election-chart .highcharts-column-series path.highcharts-point,
+    #election-chart-national .highcharts-bar-series path.highcharts-point {
+        stroke: none;
+    }
 }
 
 body {

@@ -280,9 +280,7 @@ async function setupDashboard() {
                     spacing: [40, 20, 40, 20]
                 },
                 credits: {
-                    enabled: true,
-                    href: 'https://www.archives.gov/electoral-college/allocation',
-                    text: 'National Archives'
+                    enabled: false
                 },
                 legend: {
                     enabled: true,
@@ -661,19 +659,21 @@ function getHistoricalElectionSeries(state, year) {
         }
         const row = electionData[key].data.find(c => c[5] === (state || 'US'));
 
-        // Percentage, Democrat
-        series[0].data.push({
-            candidate: electionData[key].candDem,
-            y: Number(row[3]),
-            electors: row[1]
-        });
+        if (row) {
+            // Percentage, Democrat
+            series[0].data.push({
+                candidate: electionData[key].candDem,
+                y: Number(row[3]),
+                electors: row[1]
+            });
 
-        // Percentage, Republicans
-        series[1].data.push({
-            candidate: electionData[key].candRep,
-            y: Number(row[4]),
-            electors: row[2]
-        });
+            // Percentage, Republicans
+            series[1].data.push({
+                candidate: electionData[key].candRep,
+                y: Number(row[4]),
+                electors: row[2]
+            });
+        }
     }
 
     return series;
