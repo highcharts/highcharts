@@ -85,7 +85,6 @@ const arc = {
         events: {
             load: function () {
                 const links = document.querySelectorAll('.highcharts-link');
-                const chart = this;
                 setTimeout(function () {
                     changeOpacity(links, 1, 2);
                 }, 700);
