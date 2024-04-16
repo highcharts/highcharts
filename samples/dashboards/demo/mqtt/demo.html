@@ -22,19 +22,18 @@
 				<label for="connect-toggle"></label>
 			</div>
                 <!-- Dialog for entering credentials, usually hidden -->
-                <div id="auth-dialog" class="modal">
+                <div id="auth-dialog">
                     <div id="auth-content">
-                        <span id="auth-close">&times;</span>
-                        <label for="username">Username:</label>
+                        <label for="username" id="user-label"></label>
                         <input type="text" id="username" name="username" />
-                        <label for="pass">Password:</label>
+                        <label for="pass" id="pass-label"></label>
                         <input type="password" id="password" name="password" minlength="8" required />
-                        <input id="auth-submit" type="submit" value="Sign in" />
+                        <input id="auth-submit" type="submit"/>
+                        <span id="auth-close">&times;</span>
                     </div>
                 </div>
 			<div id="dropdown-container">
-				<button title="Klikk for å velgja kraftstasjon" onclick="onStationSelectClicked()"
-                        class="dropdown-button">Kraftverk&nbsp;&#9662;</button>
+                    <button onclick="onStationSelectClicked()" id="dropdown-button"></button>
 				<div id="dropdownContent" class="dropdown-content">
                         <!-- Populated dynamically, e.g 
 						<a class="dropdown-select" href="#">Leikanger</a>

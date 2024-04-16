@@ -310,23 +310,23 @@ div#connect-bar button:hover {
     transform: translateX(20px);
 }
 
-/* Dropdown Button (from w3schools.com) */
-.dropdown-button {
+/* Selecting power station */
+#dropdown-button {
     background-color: #3498db;
     color: white;
     padding: 10px;
-    font-size: 1.5vw;
+    font-size: 1.3vw;
     border: none;
     cursor: pointer;
 }
 
 /* Dropdown button on hover & focus */
-.dropdown-button:hover,
-.dropdown-button:focus {
-    background-color: #def;
+#dropdown-button:hover,
+#dropdown-button:focus {
+    background-color: #1777a1;
 }
 
-/* The container <div> - needed to position the dropdown content */
+/* Container for power station names */
 #dropdown-container {
     position: relative;
     display: inline-block;
@@ -337,23 +337,24 @@ div#connect-bar button:hover {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #def;
-    min-width: 50px;
+    background-color: #169ed8;
+    width: 100%;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
 
 /* Links inside the dropdown */
 .dropdown-content a {
-    color: black;
+    color: #fff;
     padding: 12px 16px;
     text-decoration: none;
+    font-size: 16px;
     display: block;
 }
 
 /* Change color of dropdown links on hover */
 .dropdown-content a:hover {
-    background-color: #ddd;
+    background-color: #1777a1;
 }
 
 /* Show the dropdown menu */
@@ -385,17 +386,16 @@ div#connect-bar button:hover {
     background-color: #fefefe;
     color: blue;
     margin: 0 auto;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #888;
-    height: 25px;
     width: 50%;
 }
 
-/* The Close Button */
+/* Close button */
 #auth-close {
-    color: #aaa;
+    color: #c33;
     float: right;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
 }
 

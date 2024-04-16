@@ -31,8 +31,8 @@ const defaultZoom = 9;
 let dashboard = null; // The Dashboard is created after MQTT connection
 let maxConnectedUnits; // Number of power generators
 
-// Support for Nynorsk and English
-const lang = getLanguageSupport('en');
+// Support for Nynorsk (nn) and English (en)
+const lang = getLanguageSupport('nn');
 
 // Log to console
 const logEnabled = false;
@@ -707,32 +707,16 @@ function uiSetComponentVisibility(visible, nUnits = 0) {
 //     https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
 //     https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
 
-// NB! REMOVE before publishing on the web !!!!
-
-// Private credentials: ******
-// Private topics: prod/[stad]/[kraftverk]/overview
-
-// Available:
-//  - LEIK/leikanger
-//  - SOG/aaroy_I|aaroy_II
-//  - VAD/dyrnesli
-//  - SOG/aaroy_I
-//  - KUV/fosseteigen|tynjadalen|leinafoss
-//  - NYD/helgheim|timbra|nydalselva|indreboe|sandal|steinsvik
-//  - SMKR/dale|thue|horpedal
-//  - FJL/berge|bjaastad|hatlestad|jordal|lidal|romoyri
-
-
 // MQTT handle
 let mqtt = null;
 
-// Connection parameters
+// MQTT connection parameters
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
 let mqttActiveTopic = null;
 const mqttQos = 0;
 
-// Authentication
+// Authentication (from popup dialog)
 let user = null;
 let password = null;
 
@@ -777,21 +761,26 @@ const plantLookup = {
  *  Application interface
  */
 window.onload = () => {
-    // Invoked when page has finished loading
-    msgCount = 0;
-    nConnectedUnits = 0;
-    connectFlag = false;
-    maxConnectedUnits = document.getElementsByClassName('el-aggr').length;
-
     // Initialize data transport
     mqttInit();
+
+    maxConnectedUnits = document.getElementsByClassName('el-aggr').length;
 
     // UI objects
     const el = document.getElementById('connect-bar');
     connectBar.offColor = el.style.backgroundColor; // From CSS
-    const authDialog = document.getElementById('auth-dialog');
+
+    const dropDownButton = document.getElementById('dropdown-button');
+
+    // Language dependencies
+    dropDownButton.title = lang.tr('powerStationHelp');
+    dropDownButton.innerHTML = lang.tr('Power station') + '&nbsp;&#9662;';
+    document.getElementById('user-label').innerText = lang.tr('Username');
+    document.getElementById('pass-label').innerText = lang.tr('Password');
+    document.getElementById('auth-submit').value = lang.tr('Apply');
 
     // Authentication dialog
+    const authDialog = document.getElementById('auth-dialog');
     document.getElementById('auth-submit').onclick = () => {
         user = document.getElementById('username').value;
         password = document.getElementById('password').value;
@@ -799,10 +788,11 @@ window.onload = () => {
         mqttConnect();
         authDialog.style.display = 'none';
     };
-    // Get the <span> element that closes the modal
+
+    // Get the element that closes the modal
     const authClose = document.getElementById('auth-close');
 
-    // When the user clicks on <span> (x), close the modal
+    // When the user clicks on (x), close the modal
     authClose.onclick = onConnectCancel;
 
     // Populate dropdown menu
@@ -815,7 +805,7 @@ window.onload = () => {
 
     // Custom click handler (dropdown button for selecting power stations)
     window.onclick = function (event) {
-        if (!event.target.matches('.dropdown-button')) {
+        if (event.target !== dropDownButton) {
             // Handle dropdown items
             if (event.target.matches('.dropdown-select')) {
                 const name = event.target.innerText;
@@ -900,6 +890,11 @@ function mqttInit() {
     // Register callbacks
     mqtt.onConnectionLost = onConnectionLost;
     mqtt.onMessageArrived = onMessageArrived;
+
+    // Connection status
+    msgCount = 0;
+    nConnectedUnits = 0;
+    connectFlag = false;
 }
 
 
@@ -1061,7 +1056,7 @@ async function onConnect() {
 
     console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
-    uiShowStatus('-');
+    uiShowStatus('noStation');
 
     // Subscribe if a topic exists
     if (mqttActiveTopic !== null) {
@@ -1102,7 +1097,7 @@ function uiSetLogoVisibility(connected) {
 
 
 function uiShowStatus(msg) {
-    document.getElementById('connect-status').innerHTML = msg;
+    document.getElementById('connect-status').innerHTML = lang.tr(msg);
 }
 
 
@@ -1123,6 +1118,15 @@ function getLanguageSupport(lang) {
         current: lang,
 
         // Translations, fixed strings
+        Username: {
+            nn: 'Brukarnamn'
+        },
+        Password: {
+            nn: 'Passord'
+        },
+        Apply: {
+            nn: 'Bruk'
+        },
         Name: {
             nn: 'Namn'
         },
@@ -1141,6 +1145,14 @@ function getLanguageSupport(lang) {
         mapTitle: {
             nn: 'Kraftverk med magasin og inntak',
             en: 'Power station with water reservoirs and intake'
+        },
+        noStation: {
+            nn: 'Ingen kraftverk valgd',
+            en: 'No power station selected'
+        },
+        powerStationHelp: {
+            en: 'Click to select a power station',
+            nn: 'Klikk for å velgja kraftstasjon'
         },
 
         // Power generation parameters
