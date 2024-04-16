@@ -155,3 +155,24 @@ QUnit.test('Proxy region', function (assert) {
 
     testProxyRegions(' after update');
 });
+
+QUnit.test('Describing series which is grouped', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [
+            {
+                type: 'column',
+                data: Array.from({ length: 1000 }, () => Math.random() * 100),
+                pointInterval: 24 * 36e5,
+                dataGrouping: {
+                    enabled: true,
+                    forced: true
+                }
+            }
+        ]
+    });
+
+    assert.ok(
+        chart.series[0].group.element.getAttribute('aria-label'),
+        'Group element has ariaLabel.'
+    );
+});

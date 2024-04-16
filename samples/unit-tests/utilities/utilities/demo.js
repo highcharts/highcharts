@@ -337,7 +337,8 @@
     /**
      * Tests that destroyObjectProperties calls the destroy method on properties
      * before delete.
-     * /
+     */
+    /*
     QUnit.test('DestroyObjectProperties', function (assert) {
         var testObject = {}, // Test object with the properties to destroy
             destroyCount = 0; // Number of destroy calls made
