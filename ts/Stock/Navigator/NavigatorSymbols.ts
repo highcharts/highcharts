@@ -53,7 +53,7 @@ function navigatorHandle(
         ['L', -markerPosition, height - 3],
         ['M', markerPosition - 1, 4],
         ['L', markerPosition - 1, height - 3],
-        ...rect.rect(-halfWidth - 1, 0.5, halfWidth * 2, height + 0.5, { r })
+        ...rect.rect(-halfWidth - 1, 0.5, halfWidth * 2 + 1, height, { r })
     ];
 }
 
