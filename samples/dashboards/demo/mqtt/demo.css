@@ -10,7 +10,7 @@
 
 :root {
     /* Dashboards container */
-    --container-background: var(--highcharts-neutral-color-10);
+    --container-background: var(--highcharts-neutral-color-3);
 
     /* Frequently used colors */
     --color-text: #2f2b38;
@@ -20,7 +20,7 @@
     --color-tooltip-border: #666;
 
     /* Components */
-    --component-background: var(--highcharts-neutral-color-3);
+    --component-background: var(--highcharts-neutral-color-10);
     --component-title-text: #136326;
     --component-rounded-corners: 10px;
 
@@ -62,6 +62,7 @@
     /* dark mode */
     :root {
         --color-text: #dadae2;
+        --component-background: var(--highcharts-neutral-color-20);
         --component-title-text: rgb(160, 238, 160);
         --color-tooltip-background: #c0d8ec;
         --color-tooltip-border: #ccc;
@@ -76,6 +77,10 @@
         --color-axis-labels: #dfdfde;
         --color-pane: #20202c;
         --color-pane-line: #838394;
+    }
+
+    #el-map {
+        --color-tooltip-border: #666;
     }
 }
 
