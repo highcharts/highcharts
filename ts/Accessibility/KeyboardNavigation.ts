@@ -175,7 +175,6 @@ class KeyboardNavigation {
                 componentName: keyof Accessibility.ComponentsObject
             ): Array<KeyboardNavigationHandler> {
                 if (!components[componentName]) {
-                    // TODO: Consider adding a warning
                     return modules;
                 }
                 const navModules = components[componentName]

@@ -28,6 +28,7 @@ import type {
 } from './StockToolsOptions';
 
 import StockToolsDefaults from './StockToolsDefaults.js';
+import StockToolsComponent from '../../Accessibility/Components/StockTools.js';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -96,6 +97,21 @@ class Toolbar {
             this.showHideNavigatorion();
         }
 
+        addEvent(chart, 'beforeA11yUpdate', (e): void => {
+            if (
+                chart.options.accessibility?.enabled &&
+                chart.options.accessibility.keyboardNavigation.order
+                    .includes('stockTools') &&
+                !e.target.accessibility.components['stockTools']
+            ) {
+                const component =
+                    e.target.accessibility.components['stockTools'] =
+                        new StockToolsComponent();
+
+                component.initBase(e.target, null as any);
+            }
+        });
+
         fireEvent(this, 'afterInit');
     }
 
@@ -145,7 +161,6 @@ class Toolbar {
 
         // Create buttons
         buttons.forEach((btnName: string): void => {
-
             const button = this.addButton(toolbar, defs, btnName, lang);
 
             this.eventsToUnbind.push(

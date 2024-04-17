@@ -56,8 +56,6 @@ import NewDataAnnouncer from './Components/SeriesComponent/NewDataAnnouncer.js';
 import ProxyProvider from './ProxyProvider.js';
 import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
 import SeriesComponent from './Components/SeriesComponent/SeriesComponent.js';
-// TODO: StockToolsComponent should possibly be loaded elsewhere
-import StockToolsComponent from './Components/StockTools.js';
 import ZoomComponent from './Components/ZoomComponent.js';
 
 import whcm from './HighContrastMode.js';
@@ -177,7 +175,6 @@ class Accessibility {
         const a11yOptions = chart.options.accessibility;
 
         this.components = {
-            stockTools: new StockToolsComponent(), // TODO: maybe move
             container: new ContainerComponent(),
             infoRegions: new InfoRegionsComponent(),
             legend: new LegendComponent(),
@@ -188,7 +185,6 @@ class Accessibility {
             navigator: new NavigatorComponent()
         };
 
-
         if (a11yOptions.customComponents) {
             extend(this.components, a11yOptions.customComponents);
         }
@@ -197,7 +193,6 @@ class Accessibility {
         this.getComponentOrder().forEach(function (
             componentName: string
         ): void {
-
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
