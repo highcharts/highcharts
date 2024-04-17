@@ -256,9 +256,13 @@ div#connect-bar img {
 }
 
 div#connect-bar #connect-status {
-    font-weight: bold;
     color: #dadae2;
     font-size: 0.9vw;
+
+    & b {
+        color: #15f651;
+        font-size: 1vw;
+    }
 }
 
 div#connect-bar label span {
