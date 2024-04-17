@@ -1,7 +1,6 @@
 ---
-name: Pinch-zoom study
+name: Map with activate button
 authors:
   - Torstein Hønsi
 js_wrap: b
-use_png_thumbnail: true
 ...
