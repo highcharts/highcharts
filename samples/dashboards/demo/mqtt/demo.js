@@ -4,6 +4,9 @@
 // Application configuration
 //
 
+// Support for Nynorsk (nn) and English (en)
+const lang = getLanguageSupport('nn');
+
 // Map marker for power generator
 const stationMarker = {
     symbol: 'circle',
@@ -27,20 +30,29 @@ const intakeMarker = {
 
 const defaultZoom = 9;
 
+
 // Global variables
 let dashboard = null; // The Dashboard is created after MQTT connection
-let maxConnectedUnits; // Number of power generators
-
-// Support for Nynorsk (nn) and English (en)
-const lang = getLanguageSupport('nn');
-
-// Log to console
-const logEnabled = false;
+let maxConnectedGenerators; // Number of power generators
 
 
 // Creates the dashboard
 async function dashboardCreate() {
     const powerUnit = 'MW';
+
+    const commonChartOptions = {
+        title: {
+            text: ''
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                stickyTracking: false
+            }
+        }
+    };
 
     // Create configuration for power generator units
     const pu = await createPowerGeneratorUnit();
@@ -80,7 +92,7 @@ async function dashboardCreate() {
             await createMapComponent()
         );
 
-        for (let i = 0; i < maxConnectedUnits; i++) {
+        for (let i = 0; i < maxConnectedGenerators; i++) {
             // Power generator index (1...n)
             const pgIdx = i + 1;
 
@@ -133,15 +145,10 @@ async function dashboardCreate() {
             chartConstructor: 'mapChart',
             title: lang.tr('mapTitle'),
             chartOptions: {
-                title: {
-                    text: ''
-                },
+                ...commonChartOptions,
                 chart: {
                     styledMode: false,
                     animation: false
-                },
-                legend: {
-                    enabled: false
                 },
                 mapNavigation: {
                     enabled: true,
@@ -206,11 +213,19 @@ async function dashboardCreate() {
             renderTo: 'kpi-agg-' + pgIdx,
             title: '',
             chartOptions: {
+                ...commonChartOptions,
                 chart: {
                     spacing: [8, 8, 8, 8],
                     type: 'solidgauge',
                     styledMode: true
                 },
+                /*
+                plotOptions: {
+                    series: {
+                        stickyTracking: false,
+                    }
+                },
+                */
                 pane: {
                     background: {
                         innerRadius: '90%',
@@ -264,9 +279,13 @@ async function dashboardCreate() {
                 }]
             },
             chartOptions: {
+                ...commonChartOptions,
                 chart: {
                     type: 'spline',
                     animation: true
+                },
+                credits: {
+                    enabled: false
                 },
                 xAxis: {
                     type: 'datetime'
@@ -277,15 +296,6 @@ async function dashboardCreate() {
                     title: {
                         text: lang.hdr('P_gen')
                     }
-                },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
-                },
-                title: {
-                    text: ''
                 },
                 tooltip: {
                     valueSuffix: ' ' + powerUnit
@@ -323,21 +333,21 @@ async function dashboardCreate() {
 }
 
 
-async function dashboardUpdate(powerPlantInfo) {
+async function dashboardUpdate(powerStationData) {
     const dataPool = dashboard.dataPool;
 
     // Clear content of data table
     await dashboardReset();
 
-    // Update all generators of the plant
-    for (let i = 0; i < powerPlantInfo.nAggs; i++) {
+    // Update all generators of the power station
+    for (let i = 0; i < powerStationData.nGenerators; i++) {
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
 
         const dataTable = await dataPool.getConnectorTable(connId);
 
         // Get measurement history (24 hours, 10 minute intervals)
-        const hist = powerPlantInfo.aggs[i].P_hist;
+        const hist = powerStationData.aggs[i].P_hist;
         let time = new Date(hist.start).valueOf();
 
         const interval = hist.res * 1000; // Resolution: seconds
@@ -355,8 +365,8 @@ async function dashboardUpdate(powerPlantInfo) {
         }
 
         // Add the latest measurement
-        const latest = new Date(powerPlantInfo.tst_iso).valueOf();
-        const power = powerPlantInfo.aggs[i].P_gen;
+        const latest = new Date(powerStationData.tst_iso).valueOf();
+        const power = powerStationData.aggs[i].P_gen;
         rowData.push([latest, power]);
 
         // Add all rows to the data table
@@ -364,18 +374,18 @@ async function dashboardUpdate(powerPlantInfo) {
     }
 
     // Refresh all Dashboards components
-    await dashboardsComponentUpdate(powerPlantInfo);
+    await dashboardsComponentUpdate(powerStationData);
 }
 
 
-async function dashboardConnect(powerPlantInfo) {
+async function dashboardConnect(powerStationData) {
     // Launch  Dashboard
     if (dashboard === null) {
         dashboard = await dashboardCreate();
     }
 
     const dataPool = dashboard.dataPool;
-    for (let i = 0; i < powerPlantInfo.nAggs; i++) {
+    for (let i = 0; i < powerStationData.nGenerators; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
@@ -383,11 +393,11 @@ async function dashboardConnect(powerPlantInfo) {
         await dataTable.deleteRows();
     }
 
-    await dashboardsComponentUpdate(powerPlantInfo);
+    await dashboardsComponentUpdate(powerStationData);
 }
 
 
-async function dashboardsComponentUpdate(powerPlantInfo) {
+async function dashboardsComponentUpdate(powerStationData) {
     function getComponent(dashboard, id) {
         return dashboard.mountedComponents.map(c => c.component)
             .find(c => c.options.renderTo === id);
@@ -440,8 +450,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         return colHtml;
     }
 
-    function getIntakeHtml(powerPlantInfo) {
-        if (powerPlantInfo.nIntakes === 0) {
+    function getIntakeHtml(powerStationData) {
+        if (powerStationData.nIntakes === 0) {
             const str = lang.tr('No intakes');
 
             return `<h3 class="intake">${str}</h3>`;
@@ -449,9 +459,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
         // Description
         let html = '';
-        if (powerPlantInfo.description !== null) {
+        if (powerStationData.description !== null) {
             html = `<span class="pw-descr">
-            ${powerPlantInfo.description}</span>`;
+            ${powerStationData.description}</span>`;
 
         }
         const intake = lang.tr('intakes');
@@ -466,8 +476,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             <tr><th>${name}</th>${colHtml}</tr>
             <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
-        for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
-            const item = powerPlantInfo.intakes[i];
+        for (let i = 0; i < powerStationData.nIntakes; i++) {
+            const item = powerStationData.intakes[i];
             const name = item.name.replace('_', ' ');
 
             colHtml = getDataFields(item, fields);
@@ -478,8 +488,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         return html;
     }
 
-    function getReservoirHtml(powerPlantInfo) {
-        if (powerPlantInfo.nReservoirs === 0) {
+    function getReservoirHtml(powerStationData) {
+        if (powerStationData.nReservoirs === 0) {
             const str = lang.tr('No connected reservoirs');
 
             return `<h3 class="intake">${str}</h3>`;
@@ -499,8 +509,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             <tr><th>${name}</th>${colHtml}</tr>
             <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
-        for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
-            const item = powerPlantInfo.reservoirs[i];
+        for (let i = 0; i < powerStationData.nReservoirs; i++) {
+            const item = powerStationData.reservoirs[i];
             colHtml = getDataFields(item, fields);
 
             html += `<tr><td>${item.name}</td>${colHtml}</tr>`;
@@ -510,12 +520,12 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         return html;
     }
 
-    async function addIntakeMarkers(mapComp, powerPlantInfo) {
+    async function addIntakeMarkers(mapComp, powerStationData) {
         // Fields to display in tooltip
         const fields = ['q_min_set', 'q_min_act'];
 
-        for (let i = 0; i < powerPlantInfo.nIntakes; i++) {
-            const item = powerPlantInfo.intakes[i];
+        for (let i = 0; i < powerStationData.nIntakes; i++) {
+            const item = powerStationData.intakes[i];
             if (item.location === null) {
                 continue;
             }
@@ -531,12 +541,12 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
     }
 
-    async function addReservoirMarkers(mapComp, powerPlantInfo) {
+    async function addReservoirMarkers(mapComp, powerStationData) {
         // Fields to display in tooltip
         const fields = ['h', 'volume', 'drain'];
 
-        for (let i = 0; i < powerPlantInfo.nReservoirs; i++) {
-            const item = powerPlantInfo.reservoirs[i];
+        for (let i = 0; i < powerStationData.nReservoirs; i++) {
+            const item = powerStationData.reservoirs[i];
             if (item.location === null) {
                 continue;
             }
@@ -552,7 +562,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
     }
 
-    async function updateMap(powerPlantInfo) {
+    async function updateMap(powerStationData) {
         // Map
         const mapComp = getComponent(dashboard, 'el-map');
         const mapPoints = mapComp.chart.series[1];
@@ -563,12 +573,12 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         }
 
         const fields = ['q_turb', 'P_gen'];
-        const item = powerPlantInfo.aggs[0];
+        const item = powerStationData.aggs[0];
 
         // Power station marker
-        const location = powerPlantInfo.location;
+        const location = powerStationData.location;
         await mapPoints.addPoint({
-            name: powerPlantInfo.name,
+            name: powerStationData.name,
             lon: location.lon,
             lat: location.lat,
             marker: stationMarker,
@@ -576,10 +586,10 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         });
 
         // Add reservoir markers if present
-        await addReservoirMarkers(mapPoints, powerPlantInfo);
+        await addReservoirMarkers(mapPoints, powerStationData);
 
         // Add intake markers if present
-        await addIntakeMarkers(mapPoints, powerPlantInfo);
+        await addIntakeMarkers(mapPoints, powerStationData);
 
         // Adjust map view to new location
         const mapView = mapComp.chart.mapView;
@@ -589,11 +599,11 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         );
     }
 
-    const stationName = powerPlantInfo.name;
-    const location = powerPlantInfo.location;
+    const stationName = powerStationData.name;
+    const location = powerStationData.location;
 
     // Update map
-    await updateMap(powerPlantInfo);
+    await updateMap(powerStationData);
 
     // Information
     const posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
@@ -603,8 +613,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
         title: stationName
     });
 
-    const intakeHtml = getIntakeHtml(powerPlantInfo);
-    const reservoirHtml = getReservoirHtml(powerPlantInfo);
+    const intakeHtml = getIntakeHtml(powerStationData);
+    const reservoirHtml = getReservoirHtml(powerStationData);
 
     const el = document.querySelector(
         'div#el-info .highcharts-dashboards-component-content'
@@ -617,8 +627,8 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
     `;
 
     // Update dashboard components
-    for (let i = 0; i < powerPlantInfo.nAggs; i++) {
-        const aggInfo = powerPlantInfo.aggs[i];
+    for (let i = 0; i < powerStationData.nGenerators; i++) {
+        const aggInfo = powerStationData.aggs[i];
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
         const maxPower = aggInfo.P_max;
@@ -628,9 +638,9 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
             }
         };
 
-        // Add generator name only if the plant has multiple generators
+        // Add generator name only if the station has multiple generators
         let aggName = stationName;
-        if (powerPlantInfo.nAggs > 1) {
+        if (powerStationData.nGenerators > 1) {
             aggName += ` "${aggInfo.name}"`;
         }
 
@@ -671,7 +681,7 @@ async function dashboardsComponentUpdate(powerPlantInfo) {
 
 async function dashboardReset() {
     const dataPool = dashboard.dataPool;
-    for (let i = 0; i < maxConnectedUnits; i++) {
+    for (let i = 0; i < maxConnectedGenerators; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
@@ -722,8 +732,8 @@ let password = null;
 
 // Connection status
 let connectFlag;
-let msgCount;
-let nConnectedUnits;
+let nMsg;
+let nGenerators;
 
 // Connection status UI
 const connectBar = {
@@ -732,8 +742,8 @@ const connectBar = {
     errColor: 'red'
 };
 
-// Overview of power plants, as MQTT topics (TBD: create dynamically)
-const plantLookup = {
+// Overview of power stations, as MQTT topic.
+const powerStationLookup = {
     'Årøy I': {
         topic: 'prod/SOG/aaroy_I/overview'
     },
@@ -761,10 +771,12 @@ const plantLookup = {
  *  Application interface
  */
 window.onload = () => {
-    // Initialize data transport
+    // Initialize the data transport
     mqttInit();
 
-    maxConnectedUnits = document.getElementsByClassName('el-aggr').length;
+    // Determine the maximum number of supported power generators (aggregat)
+    // per power station. The number is determined by the definition in the HTML file.
+    maxConnectedGenerators = document.getElementsByClassName('el-aggr').length;
 
     // UI objects
     const el = document.getElementById('connect-bar');
@@ -789,38 +801,37 @@ window.onload = () => {
         authDialog.style.display = 'none';
     };
 
-    // Get the element that closes the modal
+    // Get the element that closes the authentication popup
     const authClose = document.getElementById('auth-close');
 
-    // When the user clicks on (x), close the modal
+    // When the user clicks on (x), close the authentication popup
     authClose.onclick = onConnectCancel;
 
-    // Populate dropdown menu
+    // Populate power station selection menu
     const dropdownDiv = document.getElementById('dropdownContent');
     let keyId = 1; // Keyboard shortcut ALT + x
-    for (const key of Object.keys(plantLookup)) {
+    for (const key of Object.keys(powerStationLookup)) {
         dropdownDiv.innerHTML += `<a class="dropdown-select" href="#" accessKey="${keyId}">${key}</a>`;
         keyId += 1;
     }
 
-    // Custom click handler (dropdown button for selecting power stations)
-    window.onclick = function (event) {
+    // Custom click handler
+    window.onclick = event => {
         if (event.target !== dropDownButton) {
-            // Handle dropdown items
+            // Power station menu items
             if (event.target.matches('.dropdown-select')) {
                 const name = event.target.innerText;
-                if (name in plantLookup) {
+                if (name in powerStationLookup) {
                     onStationClicked(name);
                 }
             }
 
-            // Close the dropdown menu if the user clicks outside of it
+            // Hide the power station menu if the user clicks outside of it
             const dropdowns = document.getElementsByClassName('dropdown-content');
-
             for (let i = 0; i < dropdowns.length; i++) {
-                const openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
+                const item = dropdowns[i];
+                if (item.classList.contains('show')) {
+                    item.classList.remove('show');
                 }
             }
 
@@ -830,11 +841,11 @@ window.onload = () => {
             }
         }
     };
-};
 
-// Hide the logo on small devices
-window.onresize = () => {
-    uiSetLogoVisibility(connectFlag);
+    // Hide the logo on small devices
+    window.onresize = () => {
+        uiSetLogoVisibility(connectFlag);
+    };
 };
 
 
@@ -871,10 +882,10 @@ function onStationSelectClicked() {
 
 
 async function onStationClicked(station) {
-    nConnectedUnits = 0;
+    nGenerators = 0;
 
     // Change topic to currently selected power station
-    await mqttResubscribe(plantLookup[station].topic);
+    await mqttResubscribe(powerStationLookup[station].topic);
 }
 
 
@@ -892,8 +903,8 @@ function mqttInit() {
     mqtt.onMessageArrived = onMessageArrived;
 
     // Connection status
-    msgCount = 0;
-    nConnectedUnits = 0;
+    nMsg = 0;
+    nGenerators = 0;
     connectFlag = false;
 }
 
@@ -979,22 +990,11 @@ function mqttDisconnect() {
 }
 
 
-function mqttLog(msg) {
-    if (logEnabled) {
-        console.log('Topic:     ' + msg.destinationName);
-        console.log('QoS:       ' + msg.qos);
-        console.log('Retained:  ' + msg.retained);
-        // Read Only, set if message might be a duplicate sent from broker
-        console.log('Duplicate: ' + msg.duplicate);
-    }
-}
-
-
 /*
  *  MQTT callbacks
  */
 async function onConnectionLost(resp) {
-    nConnectedUnits = 0;
+    nGenerators = 0;
     connectFlag = false;
     uiSetConnectStatus(false);
 
@@ -1006,7 +1006,7 @@ async function onConnectionLost(resp) {
 
 
 function onFailure(resp) {
-    nConnectedUnits = 0;
+    nGenerators = 0;
     connectFlag = false;
 
     uiSetConnectStatus(false);
@@ -1016,43 +1016,42 @@ function onFailure(resp) {
 
 
 async function onMessageArrived(mqttPacket) {
-    mqttLog(mqttPacket);
-
     if (mqttActiveTopic !== mqttPacket.destinationName) {
         console.log('Topic ignored: ' + mqttPacket.destinationName);
         return;
     }
 
     // Process incoming active topic
-    const powerPlantInfo = JSON.parse(mqttPacket.payloadString);
-    powerPlantInfo.nAggs = powerPlantInfo.aggs.length;
-    powerPlantInfo.nIntakes = powerPlantInfo.intakes.length;
-    powerPlantInfo.nReservoirs = powerPlantInfo.reservoirs.length;
+    const powerStationData = JSON.parse(mqttPacket.payloadString);
+    powerStationData.nGenerators = powerStationData.aggs.length;
+    powerStationData.nIntakes = powerStationData.intakes.length;
+    powerStationData.nReservoirs = powerStationData.reservoirs.length;
 
-    if (msgCount === 0) {
+    if (nMsg === 0) {
         // Connect and create the Dashboard when the first packet arrives
-        await dashboardConnect(powerPlantInfo);
+        await dashboardConnect(powerStationData);
     }
 
     // Has a power generator been added or removed?
-    if (nConnectedUnits !== powerPlantInfo.nAggs) {
-        nConnectedUnits = powerPlantInfo.nAggs;
-        uiSetComponentVisibility(true, powerPlantInfo.nAggs);
+    if (nGenerators !== powerStationData.nGenerators) {
+        nGenerators = powerStationData.nGenerators;
+        uiSetComponentVisibility(true, powerStationData.nGenerators);
     }
 
     // Update Dashboard
-    msgCount++;
-    dashboardUpdate(powerPlantInfo);
+    dashboardUpdate(powerStationData);
 
     // Update header
-    uiShowStatus(`<b>${powerPlantInfo.name}</b>`);
+    uiShowStatus(`<b>${powerStationData.name}</b>`);
+
+    nMsg++;
 }
 
 
 async function onConnect() {
     // Connection successful
     connectFlag = true;
-    nConnectedUnits = 0;
+    nGenerators = 0;
 
     console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
