@@ -35,7 +35,7 @@ const reservoirConfig = {
     mapMarker: {
         symbol: 'mapmarker',
         radius: 8,
-        fillColor: '#33C'
+        fillColor: '#33c'
     }
 };
 
@@ -54,10 +54,11 @@ const intakeConfig = {
 
 const defaultZoom = 9;
 
+// The Dashboard is created on MQTT connection
+let dashboard = null;
 
-// Global variables
-let dashboard = null; // The Dashboard is created after MQTT connection
-let maxConnectedGenerators; // Number of power generators
+// Max generators per power station
+let maxPowerGenerators;
 
 
 // Creates the dashboard
@@ -79,15 +80,83 @@ async function dashboardCreate() {
     };
 
     // Create configuration for power generator units
-    const pu = await createPowerGeneratorUnit();
+    const dashConfig = await createDashConfig();
 
     return await Dashboards.board('container', {
         dataPool: {
-            connectors: pu.connectors
+            connectors: dashConfig.connectors
         },
-        components: pu.components
+        components: dashConfig.components
     });
 
+    async function createDashConfig() {
+        const dashConfig = {
+            connectors: [],
+            components: []
+        };
+
+        // Information on power station level
+        dashConfig.components.push(
+            createInfoComponent()
+        );
+
+        // Map on power station level
+        dashConfig.components.push(
+            createMapComponent()
+        );
+
+        for (let i = 0; i < maxPowerGenerators; i++) {
+            // Power generator index (1...n)
+            const pgIdx = i + 1;
+
+            // Data connector ID
+            const connId = 'mqtt-data-' + pgIdx;
+
+            // Data connectors
+            dashConfig.connectors.push(
+                createDataConnector(connId)
+            );
+
+            // Dash components
+            dashConfig.components.push(
+                createKpiComponent(pgIdx)
+            );
+            dashConfig.components.push(
+                createChartComponent(connId, pgIdx)
+            );
+            dashConfig.components.push(
+                createDatagridComponent(connId, pgIdx)
+            );
+        }
+        return dashConfig;
+    }
+
+    // The data pool is updated by incoming MQTT data
+    function createDataConnector(connId) {
+        return {
+            id: connId,
+            type: 'JSON',
+            options: {
+                firstRowAsNames: false,
+                columnNames: ['time', 'power'],
+                data: [
+                    // TBD: to be removed. For now the table doesn't get
+                    // populated unless the first row is present at start-up.
+                    [Date.UTC(2024, 0, 1), 0]
+                ],
+                dataModifier: {
+                    // The incoming data must be sorted in ascending order
+                    // for the 'spline' chart to work correctly.
+                    type: 'Sort',
+                    orderByColumn: 'time'
+                }
+            }
+        };
+    }
+
+    // Custom HTML component for displaying power station, reservoirs and
+    // water intake parameters. If a description of the power station
+    // is available, it is also described here.
     function createInfoComponent() {
         return {
             type: 'HTML',
@@ -100,69 +169,8 @@ async function dashboardCreate() {
         };
     }
 
-    async function createPowerGeneratorUnit() {
-        const powerGenUnits = {
-            connectors: [],
-            components: []
-        };
-
-        // Information on power station level
-        powerGenUnits.components.push(
-            createInfoComponent()
-        );
-
-        // Map on power station level
-        powerGenUnits.components.push(
-            await createMapComponent()
-        );
-
-        for (let i = 0; i < maxConnectedGenerators; i++) {
-            // Power generator index (1...n)
-            const pgIdx = i + 1;
-
-            // Data connector ID
-            const connId = 'mqtt-data-' + pgIdx;
-
-            // Data connectors
-            powerGenUnits.connectors.push(
-                createDataConnector(connId)
-            );
-
-            // Dash components
-            powerGenUnits.components.push(
-                createKpiComponent(pgIdx)
-            );
-            powerGenUnits.components.push(
-                createChartComponent(connId, pgIdx)
-            );
-            powerGenUnits.components.push(
-                createDatagridComponent(connId, pgIdx)
-            );
-        }
-        return powerGenUnits;
-    }
-
-    function createDataConnector(connId) {
-        return {
-            id: connId,
-            type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['time', 'power'],
-                data: [
-                    // TBD: to be removed? Still seems to be needed...
-                    [Date.UTC(2024, 0, 1), 0]
-                ],
-                // TBD: messes up syncing
-                dataModifier: {
-                    type: 'Sort',
-                    orderByColumn: 'time'
-                }
-            }
-        };
-    }
-
-    async function createMapComponent() {
+    // Highcharts map with points for power station, reservoirs and intakes.
+    function createMapComponent() {
         return {
             type: 'Highcharts',
             renderTo: 'el-map',
@@ -200,9 +208,6 @@ async function dashboardCreate() {
                         y: -2,
                         x: 10
                     },
-                    marker: {
-                        symbol: 'square'
-                    },
                     tooltip: {
                         headerFormat: '',
                         footerFormat: '',
@@ -233,6 +238,8 @@ async function dashboardCreate() {
         };
     }
 
+    // KPI components for displaying the latest generated power.
+    // One KPI for each generator.
     function createKpiComponent(pgIdx) {
         return {
             type: 'KPI',
@@ -241,13 +248,12 @@ async function dashboardCreate() {
             chartOptions: {
                 ...commonChartOptions,
                 chart: {
-                    spacing: [8, 8, 8, 8],
                     type: 'solidgauge',
                     styledMode: true
                 },
                 pane: {
                     background: {
-                        innerRadius: '90%',
+                        innerRadius: '80%',
                         outerRadius: '120%',
                         shape: 'arc'
                     },
@@ -261,7 +267,7 @@ async function dashboardCreate() {
                         y: -80
                     },
                     labels: {
-                        distance: '105%',
+                        distance: '100%',
                         y: 5,
                         align: 'auto'
                     },
@@ -276,7 +282,7 @@ async function dashboardCreate() {
                 series: [{
                     name: lang.tr('P_gen'),
                     enableMouseTracking: true,
-                    innerRadius: '90%',
+                    innerRadius: '80%',
                     radius: '120%'
                 }],
                 tooltip: {
@@ -286,6 +292,8 @@ async function dashboardCreate() {
         };
     }
 
+    // Spline chart for displaying the history of generated power
+    // over the last 'n' hours. Latest measurement to the right.
     function createChartComponent(connId, pgIdx) {
         return {
             type: 'Highcharts',
@@ -323,6 +331,8 @@ async function dashboardCreate() {
         };
     }
 
+    // Datagrid displaying the history of generated power
+    // over the last 'n' hours. Latest measurement at the top.
     function createDatagridComponent(connId, pgIdx) {
         return {
             type: 'DataGrid',
@@ -351,12 +361,14 @@ async function dashboardCreate() {
     }
 }
 
-
+// Updates the data pool when a new MQTT message arrives. The old data
+// is removed before the new data is added. When complete, the Dasboards
+// components are updated.
 async function dashboardUpdate(powerStationData) {
     const dataPool = dashboard.dataPool;
 
     // Clear content of data table
-    await dashboardReset();
+    await datapoolReset();
 
     // Update all generators of the power station
     for (let i = 0; i < powerStationData.nGenerators; i++) {
@@ -396,7 +408,8 @@ async function dashboardUpdate(powerStationData) {
     await dashboardsComponentUpdate(powerStationData);
 }
 
-
+// The dashboard is created when the first MQTT message arrives.
+// (at this stage we know how many generators ech power station has).
 async function dashboardConnect(powerStationData) {
     // Launch  Dashboard
     if (dashboard === null) {
@@ -415,7 +428,7 @@ async function dashboardConnect(powerStationData) {
     await dashboardsComponentUpdate(powerStationData);
 }
 
-
+// Update all Dashboards components
 async function dashboardsComponentUpdate(powerStationData) {
     function getComponent(dashboard, id) {
         return dashboard.mountedComponents.map(c => c.component)
@@ -652,10 +665,14 @@ async function dashboardsComponentUpdate(powerStationData) {
         const aggInfo = powerStationData.aggs[i];
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
-        const maxPower = aggInfo.P_max;
+
+        // Get data
+        const dataTable = await dashboard.dataPool.getConnectorTable(connId);
+        const rowCount = await dataTable.getRowCount();
+
         const chartOptions = {
             yAxis: {
-                max: maxPower
+                max: aggInfo.P_max
             }
         };
 
@@ -664,10 +681,6 @@ async function dashboardsComponentUpdate(powerStationData) {
         if (powerStationData.nGenerators > 1) {
             aggName += ` "${aggInfo.name}"`;
         }
-
-        // Get data
-        const dataTable = await dashboard.dataPool.getConnectorTable(connId);
-        const rowCount = await dataTable.getRowCount();
 
         // KPI
         const kpiComp = getComponent(dashboard, 'kpi-agg-' + pgIdx);
@@ -678,7 +691,7 @@ async function dashboardsComponentUpdate(powerStationData) {
             title: aggName
         });
 
-        // Chart
+        // Spline chart
         const chartComp = getComponent(dashboard, 'chart-agg-' + pgIdx);
         await chartComp.update({
             connector: {
@@ -699,10 +712,10 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 }
 
-
-async function dashboardReset() {
+// Remove all data from the data pool
+async function datapoolReset() {
     const dataPool = dashboard.dataPool;
-    for (let i = 0; i < maxConnectedGenerators; i++) {
+    for (let i = 0; i < maxPowerGenerators; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
@@ -712,13 +725,14 @@ async function dashboardReset() {
     }
 }
 
+// Update component visibility according to the number
+// of used power generator (or entirely hidden).
+function uiSetComponentVisibility(visible, nGenerators = 0) {
+    const powGenCells = document.getElementsByClassName('el-aggr');
 
-function uiSetComponentVisibility(visible, nUnits = 0) {
-    const powUnitCells = document.getElementsByClassName('el-aggr');
-
-    for (let i = 0; i < powUnitCells.length; i++) {
-        const el = powUnitCells[i];
-        const unitVisible = visible && i < nUnits;
+    for (let i = 0; i < powGenCells.length; i++) {
+        const el = powGenCells[i];
+        const unitVisible = visible && i < nGenerators;
 
         el.style.display = unitVisible ? 'flex' : 'none';
     }
@@ -752,8 +766,8 @@ let user = null;
 let password = null;
 
 // Connection status
-let connectFlag;
-let nMsg;
+let mqttConnected;
+let nMqttPackets;
 let nGenerators;
 
 // Connection status UI
@@ -792,12 +806,12 @@ const powerStationLookup = {
  *  Application interface
  */
 window.onload = () => {
-    // Initialize the data transport
+    // Initialize the data transport layer
     mqttInit();
 
-    // Determine the maximum number of supported power generators (aggregat)
+    // Determine the maximum number of supported power generators ("aggregat")
     // per power station. The number is determined by the definition in the HTML file.
-    maxConnectedGenerators = document.getElementsByClassName('el-aggr').length;
+    maxPowerGenerators = document.getElementsByClassName('el-aggr').length;
 
     // UI objects
     const el = document.getElementById('connect-bar');
@@ -865,7 +879,7 @@ window.onload = () => {
 
     // Hide the logo on small devices
     window.onresize = () => {
-        uiSetLogoVisibility(connectFlag);
+        uiSetLogoVisibility(mqttConnected);
     };
 };
 
@@ -875,7 +889,7 @@ window.onload = () => {
  */
 function onConnectClicked() {
     // Connect to (or disconnect from) the MQTT server
-    if (connectFlag) {
+    if (mqttConnected) {
         mqttDisconnect();
     } else {
         if (user === null) {
@@ -903,6 +917,7 @@ function onStationSelectClicked() {
 
 
 async function onStationClicked(station) {
+    // This forces a redraw on the next MQTT packet
     nGenerators = 0;
 
     // Change topic to currently selected power station
@@ -924,14 +939,13 @@ function mqttInit() {
     mqtt.onMessageArrived = onMessageArrived;
 
     // Connection status
-    nMsg = 0;
-    nGenerators = 0;
-    connectFlag = false;
+    nMqttPackets = 0;
+    mqttConnected = false;
 }
 
 
 function mqttConnect() {
-    if (connectFlag) {
+    if (mqttConnected) {
         uiShowError('Already connected');
         return;
     }
@@ -950,7 +964,7 @@ function mqttConnect() {
 
 
 function mqttSubscribe(topic) {
-    if (connectFlag) {
+    if (mqttConnected) {
         // Subscribe to new topic
         mqtt.subscribe(topic, {
             qos: mqttQos
@@ -963,7 +977,7 @@ function mqttSubscribe(topic) {
 
 
 async function mqttResubscribe(newTopic) {
-    if (connectFlag) {
+    if (mqttConnected) {
         // Unsubscribe any existing topics
         const unsubscribeOptions = {
             onSuccess: async () => {
@@ -984,7 +998,7 @@ async function mqttResubscribe(newTopic) {
 
 
 function mqttUnubscribe() {
-    if (connectFlag) {
+    if (mqttConnected) {
         // Unsubscribe any existing topics
         console.log('Unsubscribe: ' + mqttActiveTopic);
         mqtt.unsubscribe(mqttActiveTopic);
@@ -995,7 +1009,7 @@ function mqttUnubscribe() {
 
 
 function mqttDisconnect() {
-    if (!connectFlag) {
+    if (!mqttConnected) {
         uiShowError('Already disconnected');
         return;
     }
@@ -1016,7 +1030,7 @@ function mqttDisconnect() {
  */
 async function onConnectionLost(resp) {
     nGenerators = 0;
-    connectFlag = false;
+    mqttConnected = false;
     uiSetConnectStatus(false);
 
     if (resp.errorCode !== 0) {
@@ -1028,10 +1042,11 @@ async function onConnectionLost(resp) {
 
 function onFailure(resp) {
     nGenerators = 0;
-    connectFlag = false;
+    mqttConnected = false;
 
     uiSetConnectStatus(false);
     uiShowError(resp.errorMessage);
+
     onConnectCancel();
 }
 
@@ -1048,7 +1063,7 @@ async function onMessageArrived(mqttPacket) {
     powerStationData.nIntakes = powerStationData.intakes.length;
     powerStationData.nReservoirs = powerStationData.reservoirs.length;
 
-    if (nMsg === 0) {
+    if (nMqttPackets === 0) {
         // Connect and create the Dashboard when the first packet arrives
         await dashboardConnect(powerStationData);
     }
@@ -1065,13 +1080,13 @@ async function onMessageArrived(mqttPacket) {
     // Update header
     uiShowStatus(`<b>${powerStationData.name}</b>`);
 
-    nMsg++;
+    nMqttPackets++;
 }
 
 
 async function onConnect() {
     // Connection successful
-    connectFlag = true;
+    mqttConnected = true;
     nGenerators = 0;
 
     console.log('Connected to ' + host + ' on port ' + port);
