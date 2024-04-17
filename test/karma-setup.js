@@ -94,7 +94,10 @@ Highcharts.setOptions({
     },
     drilldown: {
         animation: false
-    }
+    },
+    defaultCircularOptions: Highcharts._modules['Core/Axis/RadialAxisDefaults.js'].defaultCircularOptions,
+    defaultRadialGaugeOptions: Highcharts._modules['Core/Axis/RadialAxisDefaults.js'].defaultRadialGaugeOptions
+
 });
 // Save default functions from the default options, as they are not stringified
 // to JSON
