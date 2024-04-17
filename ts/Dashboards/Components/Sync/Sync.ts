@@ -246,8 +246,7 @@ class Sync {
 
             let {
                 emitter: emitterConfig,
-                handler: handlerConfig,
-                group
+                handler: handlerConfig
             } = syncOptions;
 
             if (handlerConfig) {
@@ -277,10 +276,6 @@ class Sync {
                     emitter.create(component);
                 }
             }
-
-            if (group) {
-                component.board.syncGroups.addComponent(group, id, component);
-            }
         }
 
         this.isSyncing = true;
@@ -297,17 +292,6 @@ class Sync {
             registeredSyncHandlers,
             registeredSyncEmitters
         } = this;
-
-        for (const id of Object.keys(this.syncConfig)) {
-            const syncOptions = this.syncConfig[id];
-            if (syncOptions.group) {
-                component.board.syncGroups.removeComponent(
-                    syncOptions.group,
-                    id,
-                    component
-                );
-            }
-        }
 
         Object.keys(registeredSyncHandlers).forEach((id): void => {
             registeredSyncHandlers[id].remove();
@@ -329,8 +313,6 @@ class Sync {
             this.start();
         }));
     }
-
-
 }
 
 /* *
