@@ -1016,6 +1016,8 @@ async function moveSeriesDoclets(
     let sourcePath;
     /** @type {TS.SourceFile} */
     let target;
+    /** @type {string} */
+    let targetCode;
     /** @type {Record<string,*>} */
     let tree;
 
@@ -1028,6 +1030,12 @@ async function moveSeriesDoclets(
         sourcePath = findPairedSource(file);
 
         if (!sourcePath) {
+            continue;
+        }
+
+        targetCode = await FS.promises.readFile(file, 'utf8');
+
+        if (targetCode.includes('/**')) {
             continue;
         }
 
@@ -1056,7 +1064,7 @@ async function moveSeriesDoclets(
 
         target = TS.createSourceFile(
             file,
-            await FS.promises.readFile(file, 'utf8'),
+            targetCode,
             TS.ScriptTarget.Latest,
             true
         );
@@ -1194,6 +1202,14 @@ function writeDocletsTree(
             }
 
             if (!isRegistered(branch)) {
+                if (
+                    branch.doclet &&
+                    !branch.doclet.tags.apioption &&
+                    !branch.doclet.tags.optionparent
+                ) {
+                    TSLib.addTag(branch.doclet, 'apioption', branch.fullName);
+                }
+
                 changes.push([
                     target.getEnd(),
                     TS.SyntaxKind.InterfaceDeclaration,
