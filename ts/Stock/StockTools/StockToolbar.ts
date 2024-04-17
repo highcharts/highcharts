@@ -27,8 +27,10 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import StockToolsDefaults from './StockToolsDefaults.js';
-import StockToolsComponent from '../../Accessibility/Components/StockTools.js';
+import StockToolsA11YComponent from '../../Accessibility/Components/StockTools.js';
+
+import G from '../../Core/Globals.js';
+const { defaultOptions } = G;
 
 import U from '../../Core/Utilities.js';
 const {
@@ -106,7 +108,7 @@ class Toolbar {
             ) {
                 const component =
                     e.target.accessibility.components['stockTools'] =
-                        new StockToolsComponent();
+                        new StockToolsA11YComponent();
 
                 component.initBase(e.target, null as any);
             }
@@ -392,8 +394,8 @@ class Toolbar {
             className: 'highcharts-menu-item-btn'
         }, void 0, buttonWrapper);
 
-        const descriptions = StockToolsDefaults.lang.stockTools
-            .descriptions[btnName];
+        const descriptions = defaultOptions?.lang?.stockTools
+            ?.descriptions[btnName];
 
         if (descriptions?.mainButton) {
             mainButton.setAttribute('aria-label', descriptions?.mainButton);
