@@ -651,8 +651,9 @@
         expectedMax = chart.xAxis[0].max;
         panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
 
-        assert.ok(
-            chart.xAxis[0].getExtremes().max !== expectedMax,
+        assert.notEqual(
+            chart.xAxis[0].getExtremes().max,
+            expectedMax,
             'DataGrouping should not prevent panning to the LEFT (#12099)'
         );
 
@@ -688,7 +689,7 @@
         });
 
         assert.strictEqual(
-            chart.series[0].yData[0],
+            chart.series[0].getColumn('y')[0],
             1000,
             'Correct yData (#8544).'
         );

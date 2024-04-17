@@ -551,6 +551,7 @@ function destroyGroupedData(
         // - `preserve` object in series.update()
         this.groupedData.length = 0;
         delete this.allGroupedData; // #19892
+        delete this.allGroupedTable;
     }
 }
 
