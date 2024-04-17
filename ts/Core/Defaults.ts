@@ -2797,9 +2797,6 @@ function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
 
-    // Copy in the default options
-    merge(true, defaultOptions, options);
-
     if (defaultOptions.defaultCircularOptions && options.xAxis) {
         merge(
             true,
@@ -2815,6 +2812,9 @@ function setOptions(
             options.yAxis
         );
     }
+
+    // Copy in the default options
+    merge(true, defaultOptions, options);
 
     // Update the time object
     if (options.time || options.global) {
