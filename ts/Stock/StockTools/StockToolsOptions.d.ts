@@ -32,6 +32,10 @@ export interface LangOptions {
 }
 
 export interface LangStockToolsOptions {
+    descriptions: Record<string, {
+        mainButton: string;
+        submenuToggleButton?: string;
+    }>;
     gui?: Record<string, string>;
 }
 

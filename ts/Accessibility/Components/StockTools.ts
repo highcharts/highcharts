@@ -9,6 +9,7 @@
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
+import Announcer from '../Utils/Announcer.js';
 import U from '../../Core/Utilities.js';
 const {
     attr,
@@ -16,7 +17,6 @@ const {
     fireEvent
 } = U;
 
-// TODO: Handle closing of popup by submitting
 class StockToolsComponent extends AccessibilityComponent {
 
     /* *
@@ -33,11 +33,18 @@ class StockToolsComponent extends AccessibilityComponent {
     public popupContainer: HTMLElement | undefined;
     public popupMutationObserver: MutationObserver | undefined;
 
+    public announcer?: Announcer;
+
     /**
      * Initialize the component
      */
     public init(): void {
-        this.proxyProvider.addGroup('stockTools', 'div');
+        if (this.chart.stockTools && this.chart.stockTools.wrapper) {
+            this.chart.stockTools?.wrapper.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+        }
     }
 
     private setButtons(): void {
@@ -64,8 +71,6 @@ class StockToolsComponent extends AccessibilityComponent {
 
         this.buttons.forEach((button, i): void => {
             attr(button, {
-                'aria-label': 'accessibility.stockTools.button',
-                'role': 'button',
                 tabindex: -1
             });
 
@@ -85,7 +90,6 @@ class StockToolsComponent extends AccessibilityComponent {
         const button = this.buttons[this.focusedButtonIndex];
 
         if (button) {
-
             button.focus();
         }
     }
@@ -98,7 +102,7 @@ class StockToolsComponent extends AccessibilityComponent {
             this.buttons = Array.from(popupButtons);
             this.buttons.forEach((button: HTMLElement): void => {
                 attr(button, {
-                    tabindex: 0
+                    tabindex: -1
                 });
             });
         }
@@ -215,9 +219,7 @@ class StockToolsComponent extends AccessibilityComponent {
 
                 if (submenu) {
                     if (submenu.dataset.open === 'true') {
-                        this.buttons = this.buttons.filter((btn): boolean =>
-                            btn.closest('.highcharts-submenu-wrapper') === null
-                        );
+                        this.setButtons();
 
                         submenu.dataset.open = 'false';
                     } else {
@@ -232,15 +234,17 @@ class StockToolsComponent extends AccessibilityComponent {
                                 0,
                                 this.focusedButtonIndex + 1
                             );
-                            const buttonsAfter = this.buttons.slice(
-                                this.focusedButtonIndex + 1
-                            );
 
                             this.buttons = [
                                 ...buttonsBefore,
-                                ...Array.from(childButtons),
-                                ...buttonsAfter
+                                ...Array.from(childButtons)
                             ];
+
+                            childButtons.forEach((childButton): void => {
+                                attr(childButton, {
+                                    tabindex: -1
+                                });
+                            });
 
                             submenu.dataset.open = 'true';
                         }
@@ -314,7 +318,6 @@ class StockToolsComponent extends AccessibilityComponent {
                 ).forEach((submenu): void => {
                     submenu.dataset.open = 'false';
                 });
-
             },
             terminate: (): void => {
                 this.focusedButtonIndex = 0;

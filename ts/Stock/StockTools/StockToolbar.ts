@@ -27,6 +27,8 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
+import StockToolsDefaults from './StockToolsDefaults.js';
+
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -375,6 +377,13 @@ class Toolbar {
             className: 'highcharts-menu-item-btn'
         }, void 0, buttonWrapper);
 
+        const descriptions = StockToolsDefaults.lang.stockTools
+            .descriptions[btnName];
+
+        if (descriptions?.mainButton) {
+            mainButton.setAttribute('aria-label', descriptions?.mainButton);
+        }
+
         // Submenu
         if (items && items.length) {
 
@@ -383,6 +392,13 @@ class Toolbar {
                 className: 'highcharts-submenu-item-arrow ' +
                     'highcharts-arrow-right'
             }, void 0, buttonWrapper);
+
+            if (descriptions?.submenuToggleButton) {
+                submenuArrow.setAttribute(
+                    'aria-label',
+                    descriptions.submenuToggleButton
+                );
+            }
 
             submenuArrow.style.backgroundImage = 'url(' +
                 this.iconsURL + 'arrow-bottom.svg)';
@@ -508,6 +524,9 @@ class Toolbar {
             className: 'highcharts-stocktools-toolbar ' +
                     guiOptions.toolbarClassName
         });
+
+        this.toolbar.setAttribute('aria-label', 'Stock tools');
+        this.toolbar.setAttribute('role', 'list');
 
         // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {
