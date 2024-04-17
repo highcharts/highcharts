@@ -2800,7 +2800,7 @@ function setOptions(
     // Copy in the default options
     merge(true, defaultOptions, options);
 
-    if (defaultOptions.defaultCircularOptions) {
+    if (defaultOptions.defaultCircularOptions && options.xAxis) {
         merge(
             true,
             defaultOptions.defaultCircularOptions,
@@ -2808,7 +2808,7 @@ function setOptions(
         );
     }
 
-    if (defaultOptions.defaultRadialGaugeOptions) {
+    if (defaultOptions.defaultRadialGaugeOptions && options.yAxis) {
         merge(
             true,
             defaultOptions.defaultRadialGaugeOptions,
