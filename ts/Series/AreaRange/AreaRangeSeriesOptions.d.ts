@@ -20,7 +20,10 @@ import type AreaRangeSeries from './AreaRangeSeries';
 import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointMarkerOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -173,7 +176,7 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
      *
      * @product highcharts highstock
      */
-    data?: Array<Array<(number|string), number>|Array<(number|string), number, number>|AreaRangePointOptions>;
+    data?: Array<(AreaRangePointOptions|PointShortOptions)>;
 
     /**
      *

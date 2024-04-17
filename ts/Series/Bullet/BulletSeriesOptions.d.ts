@@ -17,6 +17,7 @@
 import type BulletPointOptions from './BulletPointOptions';
 import type { BulletTargetOptions } from './BulletPointOptions';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
@@ -109,6 +110,8 @@ export interface BulletSeriesOptions extends ColumnSeriesOptions {
      *    }]
      *    ```
      *
+     * @type {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
+     *
      * @extends series.column.data
      *
      * @since 6.0.0
@@ -117,7 +120,7 @@ export interface BulletSeriesOptions extends ColumnSeriesOptions {
      *
      * @apioption series.bullet.data
      */
-    data?: Array<([(number|string), number]|[(number|string), number, number]|BulletPointOptions)>;
+    data?: Array<(BulletPointOptions|PointShortOptions)>;
 
     tooltip?: Partial<TooltipOptions>;
 

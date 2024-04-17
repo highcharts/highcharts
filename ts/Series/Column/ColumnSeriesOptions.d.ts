@@ -21,7 +21,10 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointMarkerOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
@@ -266,11 +269,13 @@ export interface ColumnSeriesOptions extends LineSeriesOptions {
      *
      * @excluding marker
      *
+     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
+     *
      * @product highcharts highstock
      *
      * @apioption series.column.data
      */
-    data?: Array<number|[(number|string), (number|null)]|null|ColumnPointOptions>;
+    data?: Array<(ColumnPointOptions|PointShortOptions)>;
 
     dataLabels?: Partial<DataLabelOptions>;
 

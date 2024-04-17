@@ -18,6 +18,7 @@ import type AreaPointOptions from './AreaPointOptions';
 import type AreaSeries from './AreaSeries';
 import type ColorType from '../../Core/Color/ColorType';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type {
     SeriesStatesOptions,
     LegendSymbolType
@@ -206,7 +207,7 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      *
      * @product highcharts highstock
      */
-    data?: Array<(number | null | [(number|string), (number|null)] | AreaPointOptions)>;
+    data?: Array<(AreaPointOptions|PointShortOptions)>;
 
     legendSymbol?: LegendSymbolType;
 

@@ -18,6 +18,7 @@ import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
 import type BoxPlotSeries from './BoxPlotSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -376,7 +377,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<[(number|string),number,number,number,number]|[(number|string),number,number,number,number,number]|*>}
+     * @type {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
      *
      * @extends series.line.data
      *
@@ -384,7 +385,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    data?: Array<[(number|string), number, number, number, number]|[(number|string), number, number, number, number, number]|BoxPlotPointOptions>;
+    data?: Array<(BoxPlotPointOptions|PointShortOptions)>;
 
     /**
      *
