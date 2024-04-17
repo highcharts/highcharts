@@ -13,7 +13,7 @@ describe('data grid highlight sync autoscroll', () => {
                 state: 'point.mouseOver'
             });
 
-            cy.get('.highcharts-datagrid-cell').eq(0).should('have.text', '2015-07-15');
+            cy.get('.highcharts-datagrid-cell').eq(0).should('have.text', '2015-07-10');
         });
     });
 
