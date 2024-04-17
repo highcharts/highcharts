@@ -24,9 +24,11 @@
     --component-title-text: #136326;
     --component-rounded-corners: 10px;
 
-    /* Component dimensions */
+    /* Dimensions */
     --chart-row-height: 300px;
     --info-row-height: 450px;
+    --dropdown-width: 9vw;
+    --text-font-size: 14px;
 }
 
 /* Colors */
@@ -257,11 +259,11 @@ div#connect-bar img {
 
 div#connect-bar #connect-status {
     color: #dadae2;
-    font-size: 0.9vw;
+    font-size: 1vw;
 
     & b {
         color: #15f651;
-        font-size: 1vw;
+        font-size: 1.5vw;
     }
 }
 
@@ -291,7 +293,6 @@ div#connect-bar button:hover {
     border-radius: 10px;
     position: relative;
     cursor: pointer;
-    margin-left: 32px;
 }
 
 #connect-switch label::before {
@@ -314,8 +315,16 @@ div#connect-bar button:hover {
     transform: translateX(20px);
 }
 
-/* Selecting power station */
+/* Container for power station names */
+#dropdown-container {
+    width: var(--dropdown-width);
+    position: relative;
+    display: inline-block;
+    visibility: hidden; /* Visible on connect */
+}
+
 #dropdown-button {
+    width: 100%;
     background-color: #3498db;
     color: white;
     padding: 10px;
@@ -324,41 +333,31 @@ div#connect-bar button:hover {
     cursor: pointer;
 }
 
-/* Dropdown button on hover & focus */
 #dropdown-button:hover,
 #dropdown-button:focus {
     background-color: #1777a1;
 }
 
-/* Container for power station names */
-#dropdown-container {
-    position: relative;
-    display: inline-block;
-    visibility: hidden; /* Visible on connect */
-}
-
-/* Dropdown Content  */
+/* Dropdown content  */
 .dropdown-content {
+    width: 100%;
     display: none;
     position: absolute;
     background-color: #169ed8;
-    width: 100%;
+    font-size: 1vw;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
-}
 
-/* Links inside the dropdown */
-.dropdown-content a {
-    color: #fff;
-    padding: 12px 16px;
-    text-decoration: none;
-    font-size: 16px;
-    display: block;
-}
+    & a {
+        color: #fff;
+        padding: 4% 10%;
+        text-decoration: none;
+        display: block;
+    }
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-    background-color: #1777a1;
+    & a:hover {
+        background-color: #abc;
+    }
 }
 
 /* Show the dropdown menu */
@@ -372,7 +371,7 @@ div#connect-bar button:hover {
  *
  * */
 
-/* Background */
+/* Dialog background */
 #auth-dialog {
     display: none;
     position: fixed;
@@ -382,25 +381,45 @@ div#connect-bar button:hover {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(11, 76, 240, 0.2);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
-/* Content/Box */
+/* Dialog content */
 #auth-content {
-    background-color: #fefefe;
+    background-color: #a2c7f6;
+    border: thick double #666;
+    border-radius: 10px;
     color: blue;
     margin: 0 auto;
     padding: 15px;
-    border: 1px solid #888;
-    width: 50%;
+    width: 200px;
+
+    & label {
+        font-size: 18px;
+    }
+
+    & input {
+        margin: 0 0 15px;
+    }
+}
+
+/* Submit button */
+#auth-submit {
+    padding: 5px;
+    border: 1px outset #666;
+    border-radius: 5px;
+    background-color: #dbe3e8;
+    width: 60%;
+    cursor: pointer;
 }
 
 /* Close button */
 #auth-close {
     color: #c33;
     float: right;
-    font-size: 20px;
+    font-size: 36px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 /* *
@@ -444,7 +463,7 @@ div#connect-bar button:hover {
  *
  * */
 .data-grid {
-    font-size: 13px;
+    font-size: var(--text-font-size);
 }
 
 /* *
@@ -486,6 +505,7 @@ div#connect-bar button:hover {
     background-color: var(--color-table-bg);
     width: 100%;
     border-spacing: 1px;
+    font-size: var(--text-font-size);
 
     & caption {
         padding: 3px;
@@ -525,7 +545,7 @@ div#connect-bar button:hover {
 #el-info h3.intake {
     padding: 10px;
     color: var(--color-sk);
-    font-size: 13px;
+    font-size: var(--text-font-size);
 }
 
 /* *

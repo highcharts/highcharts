@@ -7,25 +7,49 @@
 // Support for Nynorsk (nn) and English (en)
 const lang = getLanguageSupport('nn');
 
-// Map marker for power generator
-const stationMarker = {
-    symbol: 'circle',
-    radius: 10,
-    fillColor: 'green'
+// Configuration for power generator
+const stationConfig = {
+    // Fields to display in tooltip and info table
+    infoFields: ['q_turb', 'P_gen'],
+
+    // Visual appearance on map
+    mapMarker: {
+        symbol: 'circle',
+        radius: 10,
+        fillColor: 'green'
+    }
 };
 
-// Map marker for water reservoir
-const reservoirMarker = {
-    symbol: 'mapmarker',
-    radius: 8,
-    fillColor: '#33C'
+// Configuration for water reservoir
+const reservoirConfig = {
+    // Fields to display in tooltip
+    tooltipFields: ['h', 'volume', 'drain'],
+
+    // Fields to display in info table
+    infoFields: [
+        'volume', 'drain', 'energy',
+        'h', 'LRV', 'HRV', 'net_flow'
+    ],
+
+    // Visual appearance on map
+    mapMarker: {
+        symbol: 'mapmarker',
+        radius: 8,
+        fillColor: '#33C'
+    }
 };
 
-// Map marker for water intake
-const intakeMarker = {
-    symbol: 'triangle-down',
-    radius: 6,
-    fillColor: 'red'
+// Configuration for water intake
+const intakeConfig = {
+    // Fields to display in tooltip and info table
+    infoFields: ['q_min_set', 'q_min_act'],
+
+    // Visual appearance on map
+    mapMarker: {
+        symbol: 'triangle-down',
+        radius: 6,
+        fillColor: 'red'
+    }
 };
 
 const defaultZoom = 9;
@@ -185,10 +209,12 @@ async function dashboardCreate() {
                         pointFormatter: function () {
                             let rows = '';
                             this.info.forEach(item => {
+                                const unit = item.value === '?' ?
+                                    '' : item.unit;
                                 rows += `<tr>
                                     <td>${item.name}</td>
                                     <td>${item.value}</td>
-                                    <td>${item.unit}</td>
+                                    <td>${unit}</td>
                                 </tr>`;
                             });
 
@@ -219,13 +245,6 @@ async function dashboardCreate() {
                     type: 'solidgauge',
                     styledMode: true
                 },
-                /*
-                plotOptions: {
-                    series: {
-                        stickyTracking: false,
-                    }
-                },
-                */
                 pane: {
                     background: {
                         innerRadius: '90%',
@@ -406,10 +425,10 @@ async function dashboardsComponentUpdate(powerStationData) {
     function getInfoRecord(item, fields) {
         const ret = [];
         fields.forEach(field => {
+            const isKnown = item !== null && item[field] !== null;
             ret.push({
                 name: lang.tr(field),
-                value: item !== null && item[field] !== null ?
-                    item[field] : '-',
+                value: isKnown ? item[field] : '?',
                 unit: lang.unit(field)
             });
         });
@@ -468,7 +487,7 @@ async function dashboardsComponentUpdate(powerStationData) {
         const name = lang.tr('Name');
 
         // Fields to display
-        const fields = ['q_min_set', 'q_min_act'];
+        const fields = intakeConfig.infoFields;
         let colHtml = getHeaderFields(fields);
         const colHtmlUnit = getUnitFields(fields);
 
@@ -496,10 +515,7 @@ async function dashboardsComponentUpdate(powerStationData) {
         }
 
         // Fields to display in table
-        const fields = [
-            'volume', 'drain', 'energy',
-            'h', 'LRV', 'HRV', 'net_flow'
-        ];
+        const fields = reservoirConfig.infoFields;
         let colHtml = getHeaderFields(fields);
         const colHtmlUnit = getUnitFields(fields);
         const name = lang.tr('Name');
@@ -521,9 +537,6 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 
     async function addIntakeMarkers(mapComp, powerStationData) {
-        // Fields to display in tooltip
-        const fields = ['q_min_set', 'q_min_act'];
-
         for (let i = 0; i < powerStationData.nIntakes; i++) {
             const item = powerStationData.intakes[i];
             if (item.location === null) {
@@ -532,19 +545,16 @@ async function dashboardsComponentUpdate(powerStationData) {
 
             // Add reservoir to map
             await mapComp.addPoint({
-                name: item.name,
+                name: item.name.replace('_', ' '),
                 lon: item.location.lon,
                 lat: item.location.lat,
-                marker: intakeMarker,
-                info: getInfoRecord(item, fields)
+                marker: intakeConfig.mapMarker,
+                info: getInfoRecord(item, intakeConfig.infoFields)
             });
         }
     }
 
     async function addReservoirMarkers(mapComp, powerStationData) {
-        // Fields to display in tooltip
-        const fields = ['h', 'volume', 'drain'];
-
         for (let i = 0; i < powerStationData.nReservoirs; i++) {
             const item = powerStationData.reservoirs[i];
             if (item.location === null) {
@@ -556,8 +566,8 @@ async function dashboardsComponentUpdate(powerStationData) {
                 name: item.name,
                 lon: item.location.lon,
                 lat: item.location.lat,
-                marker: reservoirMarker,
-                info: getInfoRecord(item, fields)
+                marker: reservoirConfig.mapMarker,
+                info: getInfoRecord(item, reservoirConfig.tooltipFields)
             });
         }
     }
@@ -567,31 +577,36 @@ async function dashboardsComponentUpdate(powerStationData) {
         const mapComp = getComponent(dashboard, 'el-map');
         const mapPoints = mapComp.chart.series[1];
 
-        // Erase existing points
+        // Erase existing map points
         while (mapPoints.data.length > 0) {
             await mapPoints.data[0].remove();
         }
 
-        const fields = ['q_turb', 'P_gen'];
-        const item = powerStationData.aggs[0];
+        // Create tooltip content for power station
+        let infoItems = [];
+        powerStationData.aggs.forEach(item => {
+            infoItems = infoItems.concat(
+                getInfoRecord(item, stationConfig.infoFields)
+            );
+        });
 
-        // Power station marker
+        // Add power station map point
         const location = powerStationData.location;
         await mapPoints.addPoint({
             name: powerStationData.name,
             lon: location.lon,
             lat: location.lat,
-            marker: stationMarker,
-            info: getInfoRecord(item, fields)
+            marker: stationConfig.mapMarker,
+            info: infoItems
         });
 
-        // Add reservoir markers if present
+        // Add reservoir map points if applicable
         await addReservoirMarkers(mapPoints, powerStationData);
 
-        // Add intake markers if present
+        // Add intake map points if applicable
         await addIntakeMarkers(mapPoints, powerStationData);
 
-        // Adjust map view to new location
+        // Center map at the new power station location
         const mapView = mapComp.chart.mapView;
         await mapView.setView(
             [location.lon, location.lat],
@@ -599,34 +614,40 @@ async function dashboardsComponentUpdate(powerStationData) {
         );
     }
 
-    const stationName = powerStationData.name;
-    const location = powerStationData.location;
+    async function updateInfoHtml(data) {
+        // Information
+        const stationName = data.name;
+        const location = data.location;
 
-    // Update map
-    await updateMap(powerStationData);
+        const posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
 
-    // Information
-    const posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
+        const infoComp = getComponent(dashboard, 'el-info');
+        await infoComp.update({
+            title: stationName
+        });
 
-    const infoComp = getComponent(dashboard, 'el-info');
-    await infoComp.update({
-        title: stationName
-    });
+        const intakeHtml = getIntakeHtml(data);
+        const reservoirHtml = getReservoirHtml(data);
 
-    const intakeHtml = getIntakeHtml(powerStationData);
-    const reservoirHtml = getReservoirHtml(powerStationData);
-
-    const el = document.querySelector(
-        'div#el-info .highcharts-dashboards-component-content'
-    );
-    el.innerHTML = `<div id="info-container">
+        const el = document.querySelector(
+            'div#el-info .highcharts-dashboards-component-content'
+        );
+        el.innerHTML = `<div id="info-container">
     <h3>${posInfo}</h3>
     ${intakeHtml}
     ${reservoirHtml}
     </div>
     `;
 
-    // Update dashboard components
+    }
+
+    // Update map component
+    await updateMap(powerStationData);
+
+    // Update info component (Custom HTML)
+    await updateInfoHtml(powerStationData);
+
+    // Update KPI, chart and datagrid (one per power generator)
     for (let i = 0; i < powerStationData.nGenerators; i++) {
         const aggInfo = powerStationData.aggs[i];
         const pgIdx = i + 1;
@@ -639,7 +660,7 @@ async function dashboardsComponentUpdate(powerStationData) {
         };
 
         // Add generator name only if the station has multiple generators
-        let aggName = stationName;
+        let aggName = powerStationData.name;
         if (powerStationData.nGenerators > 1) {
             aggName += ` "${aggInfo.name}"`;
         }
