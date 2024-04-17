@@ -2430,7 +2430,7 @@ class Chart {
                 { labels } = options;
 
             if (
-                chart.hasCartesianSeries &&
+                chart.hasCartesianSeries && // #20948
                 axis.horiz &&
                 axis.visible &&
                 labels.enabled &&
