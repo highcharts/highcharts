@@ -125,9 +125,8 @@ const syncPair: Sync.SyncPair = {
             }
 
             if (highlightOptions.autoScroll) {
-                const visibleRowsAmount = dataGrid.rowElements.length;
                 dataGrid.scrollToRow(
-                    row - Math.round(visibleRowsAmount / 2) + 1
+                    row - Math.round(dataGrid.rowElements.length / 2) + 1
                 );
             }
 
@@ -139,7 +138,7 @@ const syncPair: Sync.SyncPair = {
                     dataGrid.toggleRowHighlight(highlightedDataRow);
                     dataGrid.hoveredRow = highlightedDataRow;
                 }
-            }, 50);
+            }, highlightOptions.autoScroll ? 30 : 0);
         };
 
         const handleCursorOut = (): void => {
