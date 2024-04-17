@@ -174,6 +174,10 @@ class KeyboardNavigation {
                 modules: Array<KeyboardNavigationHandler>,
                 componentName: keyof Accessibility.ComponentsObject
             ): Array<KeyboardNavigationHandler> {
+                if (!components[componentName]) {
+                    // TODO: Consider adding a warning
+                    return modules;
+                }
                 const navModules = components[componentName]
                     .getKeyboardNavigation();
                 return modules.concat(navModules);
