@@ -12,17 +12,17 @@
     /* Dashboards container */
     --container-background: var(--highcharts-neutral-color-3);
 
-    /* Frequently used colors */
-    --color-text: #2f2b38;
-    --color-sk: rgb(0, 112, 192);
-    --color-tooltip-background: #dce5ec;
-    --color-tooltip-text: #000;
-    --color-tooltip-border: #666;
-
-    /* Components */
+    /* Dashboards components */
     --component-background: var(--highcharts-neutral-color-10);
     --component-title-text: #136326;
     --component-rounded-corners: 10px;
+
+    /* Frequently used colors */
+    --color-text: #2f2b38;
+    --color-tooltip-background: #dce5ec;
+    --color-tooltip-text: #000;
+    --color-tooltip-border: #666;
+    --color-custom: rgb(0, 112, 192); /* Sognekraft color */
 
     /* Dimensions */
     --chart-row-height: 300px;
@@ -34,8 +34,8 @@
 /* Colors */
 
 .el-kpi {
-    --color-axis-labels: var(--color-sk);
-    --color-gauge: var(--color-sk);
+    --color-axis-labels: var(--color-custom);
+    --color-gauge: var(--color-custom);
     --color-pane: #eee;
     --color-pane-line: #ccc;
 }
@@ -45,7 +45,7 @@
     --color-table-bg: var(--highcharts-neutral-color-20);
     --color-header: var(--highcharts-neutral-color-80);
     --color-unit: green;
-    --color-table-caption: var(--color-sk);
+    --color-table-caption: var(--color-custom);
 }
 
 #el-map {
@@ -544,7 +544,7 @@ div#connect-bar button:hover {
 
 #el-info h3.intake {
     padding: 10px;
-    color: var(--color-sk);
+    color: var(--color-custom);
     font-size: var(--text-font-size);
 }
 
@@ -622,7 +622,7 @@ div#connect-bar button:hover {
 
 #el-map .map-tooltip td:nth-of-type(1) {
     font-weight: bold;
-    color: var(--color-sk);
+    color: var(--color-custom);
 }
 
 #el-map .map-tooltip td:nth-of-type(2) {
