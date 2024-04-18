@@ -5,7 +5,7 @@
 //
 
 // Support for Nynorsk (nn) and English (en)
-const lang = getLanguageSupport('nn');
+const lang = getLanguageSupport('en');
 
 // Configuration for power generator
 const stationConfig = {
@@ -23,7 +23,7 @@ const stationConfig = {
 // Configuration for water reservoir
 const reservoirConfig = {
     // Fields to display in tooltip
-    tooltipFields: ['h', 'volume', 'drain'],
+    tooltipFields: ['h', 'volume', 'drain', 'net_flow'],
 
     // Fields to display in info table
     infoFields: [
@@ -254,7 +254,7 @@ async function dashboardCreate() {
                 pane: {
                     background: {
                         innerRadius: '80%',
-                        outerRadius: '120%',
+                        outerRadius: '130%',
                         shape: 'arc'
                     },
                     center: ['50%', '70%'],
@@ -267,7 +267,7 @@ async function dashboardCreate() {
                         y: -80
                     },
                     labels: {
-                        distance: '100%',
+                        distance: '105%',
                         y: 5,
                         align: 'auto'
                     },
@@ -283,7 +283,7 @@ async function dashboardCreate() {
                     name: lang.tr('P_gen'),
                     enableMouseTracking: true,
                     innerRadius: '80%',
-                    radius: '120%'
+                    radius: '130%'
                 }],
                 tooltip: {
                     valueSuffix: ' ' + powerUnit
@@ -368,7 +368,7 @@ async function dashboardUpdate(powerStationData) {
     const dataPool = dashboard.dataPool;
 
     // Clear content of data table
-    await datapoolReset();
+    await dataPoolReset();
 
     // Update all generators of the power station
     for (let i = 0; i < powerStationData.nGenerators; i++) {
@@ -713,7 +713,7 @@ async function dashboardsComponentUpdate(powerStationData) {
 }
 
 // Remove all data from the data pool
-async function datapoolReset() {
+async function dataPoolReset() {
     const dataPool = dashboard.dataPool;
     for (let i = 0; i < maxPowerGenerators; i++) {
         const puId = i + 1;
@@ -774,7 +774,7 @@ let nGenerators;
 const connectBar = {
     offColor: '', // Populated from CSS
     onColor: 'hsla(202.19deg, 100%, 37.65%, 1)',
-    errColor: 'red'
+    errColor: '#c33'
 };
 
 // Overview of power stations, as MQTT topic.
@@ -844,10 +844,8 @@ window.onload = () => {
 
     // Populate power station selection menu
     const dropdownDiv = document.getElementById('dropdownContent');
-    let keyId = 1; // Keyboard shortcut ALT + x
     for (const key of Object.keys(powerStationLookup)) {
-        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#" accessKey="${keyId}">${key}</a>`;
-        keyId += 1;
+        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
     }
 
     // Custom click handler
