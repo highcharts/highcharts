@@ -51,6 +51,7 @@ const {
 import HU from '../../Core/HttpUtilities.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
+import AnnotationChart from '../Annotations/AnnotationChart';
 const {
     addEvent,
     css,
@@ -1213,6 +1214,24 @@ namespace Exporting {
                 }));
             }
         });
+
+        if (chart instanceof AnnotationChart) {
+            const exportSourceHeight = options?.exporting?.sourceHeight ?? 1;
+            const chartHeightFactor = chart.chartHeight / exportSourceHeight;
+            const exportSourceWidth = options?.exporting?.sourceWidth ?? 1;
+            const chartWidthFactor = chart.chartWidth / exportSourceWidth;
+            const annotations = options?.annotations ?? [];
+
+            (annotations as any).forEach((annotation: any, index: any) => {
+                if (
+                    typeof annotation.labels[0] !== 'undefined' &&
+                    typeof chart.annotations[index]?.labels[0]?.options !== 'undefined'
+                ) {
+                    annotation.labels[0].x = chart.annotations[index].labels[0].options.x * chartWidthFactor;
+                    annotation.labels[0].y = chart.annotations[index].labels[0].options.y * chartHeightFactor;
+                }
+            });
+        }
 
         // Make sure the `colorAxis` object of the `defaultOptions` isn't used
         // in the chart copy's user options, because a color axis should only be
