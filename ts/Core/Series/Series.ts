@@ -1625,10 +1625,6 @@ class Series {
         const series = this,
             { table, isCartesian, options, xAxis } = series,
             cropThreshold = options.cropThreshold,
-            getExtremesFromAll =
-                forceExtremesFromAll ||
-                series.getExtremesFromAll ||
-                options.getExtremesFromAll, // #4599
             logarithmic = xAxis?.logarithmic,
             dataLength = table.rowCount;
 
@@ -1655,7 +1651,7 @@ class Series {
         if (
             isCartesian &&
             series.sorted &&
-            !getExtremesFromAll &&
+            !forceExtremesFromAll &&
             (
                 !cropThreshold ||
                 dataLength > cropThreshold ||
@@ -2031,7 +2027,11 @@ class Series {
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
         const { xAxis, yAxis } = this,
-            table = forceExtremesFromAll && this.cropped ?
+            getExtremesFromAll =
+                forceExtremesFromAll ||
+                this.getExtremesFromAll ||
+                this.options.getExtremesFromAll, // #4599, #21003
+            table = getExtremesFromAll && this.cropped ?
                 this.table :
                 this.table.modified,
             rowCount = table.rowCount,
@@ -2049,9 +2049,7 @@ class Series {
                 1 : 0,
             // #2117, need to compensate for log X axis
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
-            doAll = forceExtremesFromAll ||
-                this.getExtremesFromAll ||
-                this.options.getExtremesFromAll ||
+            doAll = getExtremesFromAll ||
                 this.cropped ||
                 !xAxis; // For colorAxis support
 
