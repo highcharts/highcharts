@@ -27,7 +27,7 @@
     /* Dimensions */
     --chart-row-height: 300px;
     --info-row-height: 450px;
-    --dropdown-width: 9vw;
+    --dropdown-width: 12vw;
     --text-font-size: 14px;
 }
 
@@ -93,6 +93,7 @@
  * */
 body {
     background-color: var(--container-background);
+    font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #container {
