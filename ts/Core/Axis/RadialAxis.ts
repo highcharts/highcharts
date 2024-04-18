@@ -19,7 +19,10 @@
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane/Pane';
-import type { PaneBackgroundShapeValue } from '../../Extensions/Pane/PaneOptions.js';
+import type {
+    PaneBackgroundOptions,
+    PaneBackgroundShapeValue
+} from '../../Extensions/Pane/PaneOptions.js';
 import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
 import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
 import type Point from '../Series/Point';
@@ -589,7 +592,7 @@ namespace RadialAxis {
         this: AxisComposition,
         from: number,
         to: number,
-        options: PlotBandOptions
+        options: PlotBandOptions&PaneBackgroundOptions
     ): SVGPath {
 
         const chart = this.chart,
@@ -676,7 +679,8 @@ namespace RadialAxis {
                         innerRadius,
                         outerRadius - thickness
                     ),
-                    open
+                    open,
+                    borderRadius: options.borderRadius
                 }
             );
 
