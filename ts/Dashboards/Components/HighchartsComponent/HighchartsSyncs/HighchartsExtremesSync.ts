@@ -51,7 +51,7 @@ const syncPair: Sync.SyncPair = {
         const { chart, board } = component;
         const connector = component.connectorHandlers?.[0]?.connector;
         const table = connector && connector.table;
-        const syncOptions = this.sync.syncConfig;
+        const syncOptions = this.sync.syncConfig.extremes;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
 
@@ -228,7 +228,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as HighchartsComponent;
-        const syncOptions = this.sync.syncConfig;
+        const syncOptions = this.sync.syncConfig.extremes;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
 

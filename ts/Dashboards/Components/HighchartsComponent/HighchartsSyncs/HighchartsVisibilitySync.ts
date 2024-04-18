@@ -41,7 +41,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as HighchartsComponent;
-        const syncOptions = this.sync.syncConfig;
+        const syncOptions = this.sync.syncConfig.visibility;
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const { chart, board } = component;
@@ -99,7 +99,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as HighchartsComponent;
-        const syncOptions = this.sync.syncConfig;
+        const syncOptions = this.sync.syncConfig.visibility;
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const { board } = component;

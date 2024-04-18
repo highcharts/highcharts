@@ -41,7 +41,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as DataGridComponent;
-        const syncOptions = this.sync.syncConfig;
+        const syncOptions = this.sync.syncConfig.extremes;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
 

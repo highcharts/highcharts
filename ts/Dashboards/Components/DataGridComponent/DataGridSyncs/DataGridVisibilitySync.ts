@@ -42,7 +42,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as DataGridComponent;
-        const syncOptions = this.sync.syncConfig;
+        const syncOptions = this.sync.syncConfig.visibility;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
 
@@ -59,7 +59,7 @@ const syncPair: Sync.SyncPair = {
             dataGrid.update({
                 columns: {
                     [columnName]: {
-                        show: cursor.state !== 'series.hide'
+                        show: cursor.state !== 'series.hide' + groupKey
                     }
                 }
             });
