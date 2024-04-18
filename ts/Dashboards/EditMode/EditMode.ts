@@ -398,11 +398,9 @@ class EditMode {
     }
 
     /**
-     * Initialize the container for the dashboard.
+     * Initialize the container for the layouts.
      * @internal
      *
-     * @param renderTo
-     * The DOM element to render to, or its id.
      */
     private initLayout(): void {
         const board = this.board;
