@@ -401,7 +401,7 @@ class DataCursor {
         if (listeners) {
             const index = listeners.indexOf(listener);
 
-            if (index) {
+            if (index >= 0) {
                 listeners.splice(index, 1);
             }
         }
