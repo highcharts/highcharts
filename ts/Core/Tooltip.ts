@@ -496,7 +496,9 @@ class Tooltip {
                         void 0,
                         options.useHTML,
                         void 0,
-                        'tooltip'
+                        // Add custom `className` to tooltip label (#20459)
+                        options.className ?
+                            `tooltip ${options.className}` : 'tooltip'
                     )
                     .attr({
                         padding: options.padding,

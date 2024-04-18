@@ -441,8 +441,11 @@ class SVGLabel extends SVGElement {
                             '' : 'highcharts-label-box'
                     ) +
                     (
+                        // Replace spaces with '-' to create proper className
+                        // for label box (#20459)
                         this.className ?
-                            ' highcharts-' + this.className + '-box' : ''
+                            ' highcharts-' +
+                            this.className.replace(/ /g, '-') + '-box' : ''
                     )
                 );
 
