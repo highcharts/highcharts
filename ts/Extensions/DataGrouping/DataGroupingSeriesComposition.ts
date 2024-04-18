@@ -631,7 +631,7 @@ function groupData(
     table: DataTableLight
 ): DataGroupingResultObject {
     xData = table.getColumn('x', true) as Array<number> || [];
-    yData = table.getColumn('y', true) as Array<number> || [];
+    yData = table.getColumn('y', true) as Array<number>;
 
     const series = this,
         data = series.data,
