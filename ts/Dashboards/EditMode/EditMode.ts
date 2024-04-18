@@ -127,7 +127,10 @@ class EditMode {
                 isVisible: false,
                 element: createElement(
                     'div',
-                    { className: EditGlobals.classNames.contextDetectionPointer },
+                    {
+                        className:
+                            EditGlobals.classNames.contextDetectionPointer
+                    },
                     {},
                     board.container
                 )
@@ -478,7 +481,6 @@ class EditMode {
             }
         }
     }
-    
     /**
      * Set events for the layout.
      * @internal

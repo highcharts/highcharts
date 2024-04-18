@@ -47,8 +47,7 @@ const {
     addEvent,
     error,
     objectEach,
-    uniqueKey,
-    createElement
+    uniqueKey
 } = U;
 
 /* *
