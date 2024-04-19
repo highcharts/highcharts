@@ -83,7 +83,7 @@ class DataGrid {
     public static dataGrid(
         container: (string | HTMLElement),
         options: Globals.DeepPartial<DataGridOptions>
-    ) {
+    ): DataGrid {
         return new DataGrid(container, options);
     }
 
