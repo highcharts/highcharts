@@ -209,7 +209,7 @@ async function setupDashboard() {
                             useHTML: true,
                             enabled: true,
                             inside: true,
-                            format: '{point.votes}'
+                            format: '<span class="datalabels-wrapper">{point.votes}</span>'
                         }
                     }
                 },

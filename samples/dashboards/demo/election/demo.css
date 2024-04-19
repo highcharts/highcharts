@@ -767,6 +767,12 @@ text.highcharts-data-label {
     #election-grid .highcharts-datagrid-cell:nth-child(6) {
         display: none;
     }
+
+    #eleciton-chart-national .datalabels-wrapper {
+        display: inline-block;
+        white-space: normal;
+        width: 70px;
+    }
 }
 
 /* SMALL */
