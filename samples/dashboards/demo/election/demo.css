@@ -573,6 +573,7 @@ text.highcharts-data-label {
 }
 
 #election-chart-national .highcharts-axis-labels {
+    color: #000;
     font-size: 1.3em;
     font-weight: bold;
 }
