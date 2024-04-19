@@ -1435,6 +1435,7 @@ function toDocletString(
     }
 
     const tags = doclet.tags;
+    const tagKeys = Object.keys(tags);
 
     let compiled = indent + '/**';
 
@@ -1453,10 +1454,10 @@ function toDocletString(
                 .split('\n')
                 .join(indent + ' * ')
         );
-        delete tags.description;
+        tagKeys.splice(tagKeys.indexOf('description'), 1);
     }
 
-    for (const tag of Object.keys(tags)) {
+    for (const tag of tagKeys) {
         for (const text of tags[tag]) {
             compiled += (
                 indent + ' *' +
