@@ -48,7 +48,7 @@ const NATIVE_TYPES = [
 const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
 
 
-const TYPE_SPLIT = /\W+/gsu;
+const TYPE_SPLIT = /[\W\.]+/gsu;
 
 
 /* *
