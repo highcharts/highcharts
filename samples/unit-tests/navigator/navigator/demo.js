@@ -4,7 +4,10 @@ QUnit.test(
         var chart = $('#container')
             .highcharts('StockChart', {
                 navigator: {
-                    height: 20
+                    height: 20,
+                    xAxis: {
+                        id: 'test'
+                    }
                 },
                 series: [
                     {
@@ -31,6 +34,11 @@ QUnit.test(
             chart.scroller.handles[0].zIndex >=
                 chart.scroller.xAxis.labelGroup.zIndex,
             'Labels no overlap handles'
+        );
+
+        assert.ok(
+            chart.get('test') !== undefined,
+            'Navigator xAxis should be accessed by custom id.'
         );
     }
 );

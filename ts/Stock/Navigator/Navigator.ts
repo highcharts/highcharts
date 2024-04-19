@@ -1274,8 +1274,8 @@ class Navigator {
                 ordinal: baseXaxis.options.ordinal,
                 overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
-                id: 'navigator-x-axis',
-                yAxis: 'navigator-y-axis',
+                id: navigatorOptions.xAxis?.id || 'navigator-x-axis',
+                yAxis: navigatorOptions.yAxis?.id || 'navigator-y-axis',
                 type: 'datetime',
                 index: xAxisIndex,
                 isInternal: true,
@@ -1297,7 +1297,7 @@ class Navigator {
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
                 {
-                    id: 'navigator-y-axis',
+                    id: this.navigatorOptions.yAxis?.id || 'navigator-y-axis',
                     alignTicks: false,
                     offset: 0,
                     index: yAxisIndex,
@@ -1560,8 +1560,8 @@ class Navigator {
                 linkedTo: null, // #6734
                 group: 'nav', // For columns
                 padXAxis: false,
-                xAxis: 'navigator-x-axis',
-                yAxis: 'navigator-y-axis',
+                xAxis: this.navigatorOptions.xAxis?.id || 'navigator-x-axis',
+                yAxis: this.navigatorOptions.yAxis?.id || 'navigator-y-axis',
                 showInLegend: false,
                 stacking: void 0, // #4823
                 isInternal: true,
