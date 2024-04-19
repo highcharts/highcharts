@@ -42,8 +42,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 }]
             }
         }),
-        test = new TestController(chart),
-        breadrumbs = chart.breadcrumbs;
+        test = new TestController(chart);
 
     chart.series[0].points[0].doDrilldown();
     test.triggerEvent(

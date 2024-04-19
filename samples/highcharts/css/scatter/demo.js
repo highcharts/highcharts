@@ -2,7 +2,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'scatter',
         styledMode: true,
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Height Versus Weight of 507 Individuals by Gender'

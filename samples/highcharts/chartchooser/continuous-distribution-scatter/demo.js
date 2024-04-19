@@ -52,7 +52,9 @@ getData().then(data => {
     Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
         colors,
         title: {

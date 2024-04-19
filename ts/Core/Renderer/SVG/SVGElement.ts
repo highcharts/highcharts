@@ -155,7 +155,7 @@ class SVGElement implements SVGElementLike {
     public added?: boolean;
     // @todo public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
-    // @todo public alignOptions?: AlignObject;
+    public alignOptions?: AlignObject;
     public alignTo?: string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
@@ -203,6 +203,7 @@ class SVGElement implements SVGElementLike {
     public visibility?: 'hidden'|'inherit'|'visible';
     public width?: number;
     public x?: number;
+    public xAlign?: number;
     public y?: number;
     // @todo public zIndex?: number;
 
@@ -411,15 +412,16 @@ class SVGElement implements SVGElementLike {
         box?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs = {} as SVGAttributes,
+        const attribs: SVGAttributes = {},
             renderer = this.renderer,
-            alignedObjects: Array<SVGElement> = renderer.alignedObjects as any;
+            alignedObjects = renderer.alignedObjects;
 
-        let x,
-            y,
-            alignTo: (string|undefined),
-            alignFactor,
-            vAlignFactor;
+        let x: number,
+            y: number,
+            animateX = true,
+            alignTo: string|undefined,
+            alignFactor: number|undefined,
+            vAlignFactor: number|undefined;
 
         // First call on instanciate
         if (alignOptions) {
@@ -435,7 +437,7 @@ class SVGElement implements SVGElementLike {
 
         // When called on resize, no arguments are supplied
         } else {
-            alignOptions = this.alignOptions;
+            alignOptions = this.alignOptions || {};
             alignByTranslate = this.alignByTranslate;
             alignTo = this.alignTo;
         }
@@ -447,12 +449,12 @@ class SVGElement implements SVGElementLike {
         );
 
         // Assign variables
-        const align = (alignOptions as any).align,
-            vAlign = (alignOptions as any).verticalAlign;
+        const align = alignOptions.align,
+            vAlign = alignOptions.verticalAlign;
         // Default: left align
-        x = ((box as any).x || 0) + ((alignOptions as any).x || 0);
+        x = ((box as any).x || 0) + (alignOptions.x || 0);
         // Default: top align
-        y = ((box as any).y || 0) + ((alignOptions as any).y || 0);
+        y = ((box as any).y || 0) + (alignOptions.y || 0);
 
         // Align
         if (align === 'right') {
@@ -461,7 +463,10 @@ class SVGElement implements SVGElementLike {
             alignFactor = 2;
         }
         if (alignFactor) {
-            x += ((box as any).width - ((alignOptions as any).width || 0)) /
+            animateX = x !== this.xAlign;
+            this.xAlign = x;
+
+            x += ((box as any).width - (alignOptions.width || 0)) /
                 alignFactor;
         }
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
@@ -474,13 +479,21 @@ class SVGElement implements SVGElementLike {
             vAlignFactor = 2;
         }
         if (vAlignFactor) {
-            y += ((box as any).height - ((alignOptions as any).height || 0)) /
+            y += ((box as any).height - (alignOptions.height || 0)) /
                 vAlignFactor;
         }
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
         // Animate only if already placed
         if (redraw) {
+
+            // Right- and center-aligned labels should not animate when we're
+            // only changing the text (#20965)
+            if (!animateX) {
+                this.attr({
+                    [alignByTranslate ? 'translateX' : 'x']: x
+                });
+            }
             this[this.placed ? 'animate' : 'attr'](attribs);
             this.placed = true;
         }
