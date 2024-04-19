@@ -83,9 +83,13 @@ function chartSetStockTools(
             chartOptions.stockTools && chartOptions.stockTools.gui,
             options && options.gui
         ),
-        langOptions = lang && lang.stockTools && lang.stockTools.gui;
+        langOptions = lang && lang.stockTools && lang.stockTools;
 
-    this.stockTools = new Toolbar(guiOptions, langOptions, this);
+    this.stockTools = new Toolbar(
+        guiOptions,
+        langOptions ?? StockToolsDefaults.lang.stockTools,
+        this
+    );
 
     if (this.stockTools.guiEnabled) {
         this.isDirtyBox = true;

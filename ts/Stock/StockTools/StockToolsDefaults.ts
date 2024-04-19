@@ -46,23 +46,23 @@ const lang: LangOptions = {
                 mainButton: 'Open indicators menu'
             },
             simpleShapes: {
-                mainButton: 'Add a label',
+                mainButton: 'Add a {selected} to the chart',
                 submenuToggleButton: 'Open labels submenu'
             },
             lines: {
-                mainButton: 'Add a line',
+                mainButton: 'Add a {selected} line',
                 submenuToggleButton: 'Open lines submenu'
             },
             crookedLines: {
-                mainButton: 'Add a crooked line',
+                mainButton: 'Add "{selected}" crooked line',
                 submenuToggleButton: 'Open crooked lines submenu'
             },
             measure: {
-                mainButton: 'Measure',
+                mainButton: 'Select "{selected}" measure tool',
                 submenuToggleButton: 'Open measure submenu'
             },
             advanced: {
-                mainButton: 'Add an advanced shape',
+                mainButton: 'Add "{selected}" advanced shape',
                 submenuToggleButton: 'Open advanced shapes submenu'
             },
             toggleAnnotations: {

@@ -21,6 +21,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
+    LangStockToolsOptions,
     StockToolsGuiDefinitionsButtonsOptions,
     StockToolsGuiDefinitionsOptions,
     StockToolsGuiOptions,
@@ -29,8 +30,8 @@ import type {
 
 import StockToolsA11YComponent from '../../Accessibility/Components/StockTools.js';
 
-import G from '../../Core/Globals.js';
-const { defaultOptions } = G;
+import T from '../../Core/Templating.js';
+const { format } = T;
 
 import U from '../../Core/Utilities.js';
 const {
@@ -75,7 +76,7 @@ class Toolbar {
 
     public constructor(
         options: StockToolsGuiOptions,
-        langOptions: (Record<string, string>|undefined),
+        langOptions: LangStockToolsOptions,
         chart: Chart
     ) {
         this.chart = chart;
@@ -130,7 +131,7 @@ class Toolbar {
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
-    public lang: (Record<string, string>|undefined);
+    public lang: LangStockToolsOptions;
     public listWrapper!: HTMLDOMElement;
     public options: StockToolsGuiOptions;
     public placed: boolean;
@@ -374,7 +375,7 @@ class Toolbar {
             StockToolsGuiDefinitionsOptions
         ),
         btnName: string,
-        lang: Record<string, string> = {}
+        lang: LangStockToolsOptions
     ): Record<string, HTMLDOMElement> {
         const btnOptions: StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
@@ -385,7 +386,7 @@ class Toolbar {
         // Main button wrapper
         const buttonWrapper = createElement('li', {
             className: pick(classMapping[btnName], '') + ' ' + userClassName,
-            title: lang[btnName] || btnName
+            title: lang.gui[btnName] ?? btnName
         }, void 0, target);
 
         // Single button
@@ -394,11 +395,26 @@ class Toolbar {
             className: 'highcharts-menu-item-btn'
         }, void 0, buttonWrapper);
 
-        const descriptions = defaultOptions?.lang?.stockTools
-            ?.descriptions[btnName];
+        const descriptions = lang.descriptions[btnName];
 
+        // Set the default aria label
         if (descriptions?.mainButton) {
-            mainButton.setAttribute('aria-label', descriptions?.mainButton);
+            mainButton.setAttribute(
+                'aria-label',
+                format(
+                    descriptions.mainButton,
+                    {
+                        selected: mainButton.dataset.selected ??
+                            lang.gui[btnName]
+                    }
+                )
+            );
+        }
+
+        // Save these for use when updating the aria-label on submenu selection
+        if (!('label' in mainButton.dataset)) {
+            mainButton.dataset.label = lang.gui[btnName]?.toLowerCase();
+            mainButton.dataset.btnName = btnName;
         }
 
         // Submenu
@@ -645,27 +661,45 @@ class Toolbar {
         const buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.className,
             // Main button in first level og GUI
-            mainNavButton = buttonWrapper.parentNode.parentNode;
+            mainNavItem = buttonWrapper.parentNode.parentNode;
 
         // If the button is disabled, don't do anything
         if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
             return;
         }
         // Set class
-        mainNavButton.className = '';
+        mainNavItem.className = '';
         if (buttonWrapperClass) {
-            mainNavButton.classList.add(buttonWrapperClass.trim());
+            mainNavItem.classList.add(buttonWrapperClass.trim());
         }
 
         // Set icon
-        mainNavButton
+        mainNavItem
             .querySelectorAll<HTMLElement>('.highcharts-menu-item-btn')[0]
             .style.backgroundImage =
             button.style.backgroundImage;
 
+        const mainButton = mainNavItem.querySelector('button');
+
+        const selectedLabel = button.dataset.label;
+        const btnName = mainButton?.dataset.btnName;
+
+        if (mainButton && selectedLabel && btnName) {
+            const descriptions = this.lang.descriptions[btnName];
+            mainButton.setAttribute(
+                'aria-label',
+                format(
+                    descriptions?.mainButton,
+                    {
+                        selected: selectedLabel
+                    }
+                )
+            );
+        }
+
         // Set active class
         if (redraw) {
-            this.toggleButtonActiveClass(mainNavButton);
+            this.toggleButtonActiveClass(mainNavItem);
         }
     }
 
