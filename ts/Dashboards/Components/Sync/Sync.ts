@@ -385,7 +385,7 @@ namespace Sync {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/groups | Sync groups for the same connector }
          *
-         * @default null
+         * @default undefined
          */
         group?: string;
 
