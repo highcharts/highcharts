@@ -1561,13 +1561,13 @@ class SVGElement implements SVGElementLike {
                 bBox = this.getRotatedBox(bBox, rotation);
             }
 
-            // Necessary for the following event to be able to modify the bBox
-            this.bBox = bBox;
+            // Create a reference to catch changes to bBox
+            const e = { bBox };
 
-            fireEvent(this, 'afterGetBBox');
+            fireEvent(this, 'afterGetBBox', e);
 
-            // Necessary to pick up any changes after the fired event
-            bBox = this.bBox as BBoxObject;
+            // Pick up any changes after the fired event
+            bBox = e.bBox;
         }
 
         // Cache it. When loading a chart in a hidden iframe in Firefox and

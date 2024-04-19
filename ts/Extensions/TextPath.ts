@@ -5,6 +5,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 import DataLabelOptions from '../Core/Series/DataLabelOptions';
 import Point from '../Core/Series/Point';
+import BBoxObject from '../Core/Renderer/BBoxObject';
 const { deg2rad } = H;
 const { addEvent, merge, uniqueKey, defined, extend } = U;
 
@@ -123,13 +124,13 @@ function setTextPath(
     }
 }
 
-function setPolygon(event: any): void {
-    const element = event.target,
-        tp = element.element?.querySelector('textPath');
+function setPolygon(this: SVGElement, event: any): BBoxObject {
+    const bBox = event.bBox,
+        tp = this.element?.querySelector('textPath');
 
     if (tp) {
         const polygon: [number, number][] = [],
-            { b, h } = element.renderer.fontMetrics(element.element),
+            { b, h } = this.renderer.fontMetrics(this.element),
             descender = h - b,
             lineCleanerRegex = new RegExp(
                 '(<tspan>|' +
@@ -221,8 +222,9 @@ function setPolygon(event: any): void {
         // Close it
         polygon.push(polygon[0].slice() as [number, number]);
 
-        element.bBox.polygon = polygon;
+        bBox.polygon = polygon;
     }
+    return bBox;
 }
 
 function drawTextPath(
