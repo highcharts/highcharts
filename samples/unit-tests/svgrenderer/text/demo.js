@@ -875,6 +875,8 @@ QUnit.test('textPath', assert => {
         400
     );
 
+    const { setTextPath } = Highcharts.TextPath;
+
     const path = ren
         .path([
             ['M', 50, 50],
@@ -888,8 +890,9 @@ QUnit.test('textPath', assert => {
 
     const text = ren
         .text('Hello path', 20, 20)
-        .setTextPath(path, {})
         .add();
+
+    setTextPath(text, path, {});
 
     const textPathHref = text.element.querySelector('textPath')
         .getAttribute('href');
@@ -908,7 +911,7 @@ QUnit.test('textPath', assert => {
         'The textPath should be preserved after modifying the text'
     );
 
-    text.setTextPath(undefined, { attributes: { dy: 20 } });
+    setTextPath(text, undefined, { attributes: { dy: 20 } });
 
     assert.strictEqual(
         text.element.querySelector('textPath').getAttribute('href'),
