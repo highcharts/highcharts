@@ -266,6 +266,7 @@ text.highcharts-data-label {
     height: var(--progress-bar-height);
     background-color: var(--highcharts-color-0);
     border-radius: 5px 0 0 5px;
+    transition: width 0.5s;
 }
 
 #bar-line {
@@ -291,6 +292,7 @@ text.highcharts-data-label {
     height: var(--progress-bar-height);
     background-color: var(--highcharts-color-1);
     border-radius: 0 5px 5px 0;
+    transition: width 0.5s;
 }
 
 #election-result .info {
