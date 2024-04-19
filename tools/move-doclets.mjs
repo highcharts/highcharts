@@ -63,6 +63,7 @@ const MAP_PROPERTY_TYPES = {
 };
 
 const MAP_TYPE_IMPORTS = {
+    'ColorString': 'ts/Core/Color/ColorString',
     'ColorType': 'ts/Core/Color/ColorType',
     'DashStyleValue': 'ts/Core/Renderer/DashStyleValue',
     'DataLabelOptions': 'ts/Core/Series/DataLabelOptions',
