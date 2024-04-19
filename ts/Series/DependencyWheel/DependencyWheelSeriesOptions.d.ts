@@ -16,8 +16,11 @@
  *
  * */
 
+import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
 import type DependencyWheelSeries from './DependencyWheelSeries';
 import type SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -102,7 +105,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *
      * @apioption series.dependencywheel.data
      */
-    data?: Array<Array<string, string, number>|DependencyWheelPointOptions>;
+    data?: Array<(DependencyWheelPointOptions|PointShortOptions)>;
 
     dataLabels?: Partial<DataLabelOptions>;
 
