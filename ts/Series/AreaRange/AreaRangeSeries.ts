@@ -20,11 +20,11 @@ import type Axis from '../../Core/Axis/Axis';
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
+import type PointMarkerOptions from '../../Core/Series/PointOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type PointMarkerOptions from '../../Core/Series/PointOptions';
-import { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -562,7 +562,7 @@ class AreaRangeSeries extends AreaSeries {
 
     public modifyMarkerSettings(): {
         marker?: PointMarkerOptions;
-        symbol?: keyof SymbolTypeRegistry;
+        symbol?: SymbolKey;
     } {
         const series = this,
             originalMarkerSettings = {
@@ -587,7 +587,7 @@ class AreaRangeSeries extends AreaSeries {
 
     public restoreMarkerSettings(originalSettings: {
         marker?: PointMarkerOptions;
-        symbol?: keyof SymbolTypeRegistry;
+        symbol?: SymbolKey;
     }): void {
         const series = this;
 
