@@ -767,12 +767,6 @@ text.highcharts-data-label {
     #election-grid .highcharts-datagrid-cell:nth-child(6) {
         display: none;
     }
-
-    #eleciton-chart-national .datalabels-wrapper {
-        display: inline-block;
-        white-space: normal;
-        width: 70px;
-    }
 }
 
 /* SMALL */
@@ -823,8 +817,11 @@ text.highcharts-data-label {
         padding-left: 3px;
     }
 
-    #election-chart-national .highcharts-data-label {
-        font-size: 0.5em;
+    #election-chart-national .datalabels-wrapper {
+        font-size: 0.75em;
+        display: inline-block;
+        white-space: normal;
+        width: 100px;
     }
 
     #election-chart-national .highcharts-axis-labels {
