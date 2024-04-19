@@ -33,21 +33,9 @@ describe('Sync groups for the same connectors.', () => {
     it('Group can be toggled by updating a component.', () => {
         cy.get('.highcharts-legend-item').eq(2).click();
         cy.get('#s3').select('First Group');
-        cy.board().then(board => {
-            const component = board.mountedComponents[2].component;
-            const componentFromFirstGroup = board.mountedComponents[0].component;
-            const componentFromSecondGroup = board.mountedComponents[3].component;
-            component.chart.series[0].setVisible(true);
-            assert.equal(
-                componentFromFirstGroup.chart.series[0].visible,
-                true,
-                'After updating group for a component, it should be synced with the other components in the same group.'
-            );
-            assert.equal(
-                componentFromSecondGroup.chart.series[0].visible,
-                false,
-                'After updating group for a component, it should be not synced with the previous group.'
-            );
-        });
+        cy.wait(100);
+        cy.get('.highcharts-legend-item').eq(2).click();
+        cy.get('.highcharts-legend-item').eq(1).should('not.have.class', 'highcharts-legend-item-hidden');
+        cy.get('.highcharts-legend-item').eq(3).should('have.class', 'highcharts-legend-item-hidden');
     });
 });
