@@ -4,17 +4,16 @@ QUnit.test('Testing textPath labels\' polygons', function (assert) {
             600,
             400
         ),
-        makeTextPathPolygon = (pathArr, textStr) => {
-            const label = ren.text(textStr).add();
-            label.bBox = label.element.getBBox();
-            Highcharts.TextPath.setTextPath(
-                label,
+        makeTextPathPolygon = (pathArr, textStr) => (ren
+            .text(textStr)
+            .add()
+            .setTextPath(
                 ren.path(pathArr),
                 { enabled: true }
-            );
-            Highcharts.fireEvent(label, 'afterGetBBox');
-            return label.bBox.polygon;
-        },
+            )
+            .getBBox()
+            .polygon
+        ),
         straightPath = ['M', 100, 100, 'L', 200, 100],
         curvedPath = [
             ['M', 120, 100, 'C', 440, 200, 100, 420, 220, 170],
@@ -22,6 +21,7 @@ QUnit.test('Testing textPath labels\' polygons', function (assert) {
         ],
         testPolygon = (path, textContent, polygonName) => {
             const polygon = makeTextPathPolygon(path, textContent);
+
             assert.strictEqual(
                 polygon !== undefined,
                 true,
@@ -102,7 +102,7 @@ QUnit.test('Hiding overlapping textPath labels', function (assert) {
     });
 
     assert.equal(
-        chart.series[0].links[6].dataLabels[0].text.visibility,
+        chart.series[0].links[0].dataLabels[0].text.visibility,
         undefined,
         'TextPath label should be visible'
     );

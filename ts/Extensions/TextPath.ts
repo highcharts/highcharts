@@ -9,6 +9,12 @@ import BBoxObject from '../Core/Renderer/BBoxObject';
 const { deg2rad } = H;
 const { addEvent, merge, uniqueKey, defined, extend } = U;
 
+declare module '../Core/Renderer/SVG/SVGElement' {
+    interface SVGElement {
+        setTextPath(): SVGElement
+    }
+}
+
 /**
  * Set a text path for a `text` or `label` element, allowing the text to
  * flow along a path.
@@ -30,10 +36,10 @@ const { addEvent, merge, uniqueKey, defined, extend } = U;
  * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
  */
 function setTextPath(
-    element: SVGElement,
+    this: SVGElement,
     path: SVGElement|undefined,
     textPathOptions: AnyRecord
-): void {
+): SVGElement {
     // Defaults
     textPathOptions = merge(true, {
         enabled: true,
@@ -44,8 +50,8 @@ function setTextPath(
         }
     }, textPathOptions);
 
-    const url = element.renderer.url,
-        textWrapper = element.text || element,
+    const url = this.renderer.url,
+        textWrapper = this.text || this,
         textPath = textWrapper.textPath,
         { attributes, enabled } = textPathOptions;
 
@@ -89,9 +95,9 @@ function setTextPath(
 
 
                 // Handle label properties
-                element.attr({ transform: '' });
-                if (element.box) {
-                    element.box = element.box.destroy();
+                this.attr({ transform: '' });
+                if (this.box) {
+                    this.box = this.box.destroy();
                 }
 
                 // Wrap the nodes in a textPath
@@ -116,12 +122,14 @@ function setTextPath(
         delete textWrapper.textPath;
     }
 
-    if (element.added) {
+    if (this.added) {
 
         // Rebuild text after added
         textWrapper.textCache = '';
-        element.renderer.buildText(textWrapper);
+        this.renderer.buildText(textWrapper);
     }
+
+    return this;
 }
 
 function setPolygon(this: SVGElement, event: any): BBoxObject {
@@ -238,10 +246,8 @@ function drawTextPath(
         ] || labelOptions.textPath;
 
     if (textPathOptions && !labelOptions.useHTML) {
-        setTextPath(
-            dataLabel,
-            point.getDataLabelPath?.(dataLabel) ||
-                point.graphic,
+        dataLabel.setTextPath(
+            point.getDataLabelPath?.(dataLabel) || point.graphic,
             textPathOptions
         );
 
@@ -256,11 +262,12 @@ function drawTextPath(
         }
     }
 }
+
 function compose(SVGElementClass: typeof SVGElement): void {
     addEvent(SVGElementClass, 'afterGetBBox', setPolygon);
+    SVGElementClass.prototype.setTextPath = setTextPath;
 }
 const TextPathSupport = {
-    setTextPath,
     drawTextPath,
     compose
 };
