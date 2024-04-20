@@ -89,11 +89,6 @@ declare module '../CSSObject' {
     }
 }
 
-interface TextPathObject {
-    path: SVGElement;
-    undo: Function;
-}
-
 /* *
  *
  *  Class
@@ -196,7 +191,6 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     public textWidth?: number;
-    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
     public translateY?: number;

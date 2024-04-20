@@ -9,9 +9,16 @@ import BBoxObject from '../Core/Renderer/BBoxObject';
 const { deg2rad } = H;
 const { addEvent, merge, uniqueKey, defined, extend } = U;
 
+
+interface TextPathObject {
+    path: SVGElement;
+    undo: Function;
+}
+
 declare module '../Core/Renderer/SVG/SVGElement' {
     interface SVGElement {
-        setTextPath(): SVGElement
+        setTextPath(): SVGElement,
+        textPath: TextPathObject
     }
 }
 
@@ -132,6 +139,16 @@ function setTextPath(
     return this;
 }
 
+/**
+ * Attach a polygon to a bounding box if the element contains a textPath.
+ *
+ * @function Highcharts.SVGElement#setPolygon
+ *
+ * @param {any} event
+ *        An event containing a bounding box object
+ *
+ * @return {Highcharts.BBoxObject} Returns the bounding box object.
+ */
 function setPolygon(this: SVGElement, event: any): BBoxObject {
     const bBox = event.bBox,
         tp = this.element?.querySelector('textPath');
@@ -235,6 +252,22 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
     return bBox;
 }
 
+/**
+ * Draw text along a textPath for a dataLabel.
+ *
+ * @function Highcharts.SVGElement#setTextPath
+ *
+ * @param {Highcharts.SVGElement} dataLabel
+ *        The label in question.
+ *
+ * @param {Highcharts.DataLabelOptions} labelOptions
+ *        Datalabel options to check for textPath options.
+ *
+ * @param {Highcharts.Point} point
+ *        The point which the datalabel belongs to.
+ *
+ * @return {void}
+ */
 function drawTextPath(
     dataLabel: SVGElement,
     labelOptions: DataLabelOptions,
