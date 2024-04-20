@@ -1,3 +1,23 @@
+/* *
+ *
+ *  Highcharts module with textPath functionality.
+ *
+ *  (c) 2009-2024 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type PositionObject from '../Core/Renderer/PositionObject';
 import SVGElement from '../Core/Renderer/SVG/SVGElement';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -9,12 +29,23 @@ import BBoxObject from '../Core/Renderer/BBoxObject';
 const { deg2rad } = H;
 const { addEvent, merge, uniqueKey, defined, extend } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
+/**
+ * @private
+ */
 interface TextPathObject {
     path: SVGElement;
     undo: Function;
 }
 
+/**
+ * @private
+ */
 declare module '../Core/Renderer/SVG/SVGElement' {
     interface SVGElement {
         setTextPath(): SVGElement,
@@ -260,7 +291,7 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
  * @param {Highcharts.SVGElement} dataLabel
  *        The label in question.
  *
- * @param {Highcharts.DataLabelOptions} labelOptions
+ * @param {DataLabelOptions} labelOptions
  *        Datalabel options to check for textPath options.
  *
  * @param {Highcharts.Point} point
@@ -300,6 +331,7 @@ function compose(SVGElementClass: typeof SVGElement): void {
     addEvent(SVGElementClass, 'afterGetBBox', setPolygon);
     SVGElementClass.prototype.setTextPath = setTextPath;
 }
+
 const TextPathSupport = {
     drawTextPath,
     compose
