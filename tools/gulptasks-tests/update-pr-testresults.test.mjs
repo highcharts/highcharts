@@ -6,10 +6,9 @@ import {
     fetchAllReviewsForVersion
 } from '../gulptasks/update-pr-testresults.js';
 
-describe('', async ()=>{
-
+describe('Review fetching functions', async ()=>{
     // TODO: Investigate missing review
-    it.skip('should be able to fetch a single review', async () => {
+    await it.skip('should be able to fetch a single review', async () => {
         const singleReview = await fetchExistingReview('123456789');
 
         notEqual(singleReview, undefined, 'JSON should not be undefined');
@@ -18,7 +17,7 @@ describe('', async ()=>{
     });
 
     // TODO: Update the version used
-    it('should be able to fetch allreview for a version ', async ()=>{
+    await it('should be able to fetch allreview for a version ', async ()=>{
         const reviewsForVersion = await fetchAllReviewsForVersion('11.1.0');
 
         ok(reviewsForVersion, 'JSON should not be undefined');

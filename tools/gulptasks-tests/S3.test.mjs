@@ -5,7 +5,7 @@ describe('S3 utils', async ()=> {
     const S3 =  await import('../gulptasks/lib/uploadS3.js')
     const { toS3Path } = S3;
 
-    it('toS3Path', async ()=>{
+    await it('toS3Path', async ()=>{
         assert.deepEqual(
             toS3Path(
                 'samples/graphics/cyber-monday/core.svg',

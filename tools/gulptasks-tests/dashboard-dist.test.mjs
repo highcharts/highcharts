@@ -18,13 +18,13 @@ describe('dashboards/dist', async () => {
         // await run(['dist-clean']);
     });
 
-    it.skip('dashboards/dist-examples creates build/dist directory', async () => {
+    await it.skip('dashboards/dist-examples creates build/dist directory', async () => {
         await run(['dashboards/dist-build']);
 
         ok(await stat('build/dist'));
     });
 
-    it('dashboards/dist-examples creates build/dist/dashboards/index.html ', async () => {
+    await it('dashboards/dist-examples creates build/dist/dashboards/index.html ', async () => {
         await run(['dashboards/dist-examples']);
 
         ok(await stat('build/dist/dashboards/index.html'));
