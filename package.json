@@ -143,6 +143,9 @@
     ],
     "*.css": [
       "stylelint"
+    ],
+    "tools/gulptasks/**/*": [
+      "node tools/gulptasks-tests/test-all.mjs"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>",
