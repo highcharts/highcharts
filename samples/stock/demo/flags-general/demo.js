@@ -27,7 +27,7 @@
             id: 'dataseries',
             tooltip: {
                 pointFormat: `<span style='color:{point.color}'>●</span>
-                    {series.name}: <b>{point.y:.2f}$</b><br/>`
+                    {series.name}: <b>$${'{point.y:.2f}'}</b><br/>`
             }
 
             // the event marker flags
