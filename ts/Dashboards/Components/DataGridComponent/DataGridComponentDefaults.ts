@@ -25,7 +25,6 @@ import type Globals from '../../Globals';
 import type Options from './DataGridComponentOptions';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../../Core/Utilities.js';
 const {
     uniqueKey
@@ -46,7 +45,6 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
         propertyPath: ['connector', 'id'],
         type: 'select'
     }],
-    syncHandlers: DataGridSyncHandlers,
     onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {

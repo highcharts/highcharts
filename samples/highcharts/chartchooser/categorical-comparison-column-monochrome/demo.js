@@ -4,7 +4,9 @@ Highcharts.setOptions({
 Highcharts.chart('container', {
     chart: {
         type: 'column',
-        zoomType: 'y'
+        zooming: {
+            type: 'y'
+        }
     },
     title: {
         text: 'Corn vs wheat estimated production for 2020 (1000 MT)'

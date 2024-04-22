@@ -76,6 +76,15 @@ namespace Bindings {
         let guiElement;
 
         if (typeof idOrElement === 'string') {
+            if (document.querySelectorAll('#' + idOrElement).length > 1) {
+                error(
+                    'Multiple cells have identical ID ' +
+                    '("' + idOrElement + '"), potentially leading to ' +
+                    'unexpected behaviour. Ensure that each cell has a ' +
+                    'unique ID on the page.'
+                );
+            }
+
             container = parentElement ?
                 parentElement.querySelector('#' + idOrElement) :
                 document.getElementById(idOrElement);
@@ -106,6 +115,20 @@ namespace Bindings {
         if (!renderTo) {
             error(
                 'The `renderTo` option is required to render the component.'
+            );
+            return;
+        }
+
+        if (
+            board.mountedComponents.filter(
+                (el): boolean => (
+                    (el.options.renderTo || el.options.cell) === renderTo)
+            ).length > 0
+        ) {
+            error(
+                'The component is misconfigured and is unable to initialize ' +
+                'it. A different component has already been declared in the`' +
+                renderTo + '` cell.'
             );
             return;
         }

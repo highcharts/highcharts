@@ -27,16 +27,19 @@ import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
 import type Cell from '../../Layout/Cell';
-import type { Options } from './NavigatorComponentOptions';
-import type { RangeModifierOptions, RangeModifierRangeOptions } from '../../../Data/Modifiers/RangeModifierOptions';
-import type SidebarPopup from '../../EditMode/SidebarPopup';
-import type Sync from '../Sync/Sync';
+import type {
+    CrossfilterSyncOptions,
+    Options
+} from './NavigatorComponentOptions';
+import type {
+    RangeModifierOptions, RangeModifierRangeOptions
+} from '../../../Data/Modifiers/RangeModifierOptions';
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import DataTable from '../../../Data/DataTable.js';
-import NavigatorSyncHandler from './NavigatorSyncHandlers.js';
+import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import U from '../../../Core/Utilities.js';
 const {
     diffObjects,
@@ -75,6 +78,11 @@ class NavigatorComponent extends Component {
         NavigatorComponentDefaults as Partial<Options>
     );
 
+    /**
+     * Predefined sync configuration for the Navigator component.
+     */
+    public static predefinedSyncConfig = NavigatorSyncs;
+
 
     /* *
      *
@@ -111,7 +119,6 @@ class NavigatorComponent extends Component {
         return component;
     }
 
-
     /* *
      *
      *  Constructor
@@ -123,6 +130,7 @@ class NavigatorComponent extends Component {
         options: Options
     ) {
         super(cell, options);
+        this.type = 'Navigator';
 
         this.options = merge(NavigatorComponent.defaultOptions, options);
 
@@ -136,9 +144,6 @@ class NavigatorComponent extends Component {
             .chart(this.chartContainer, (this.options.chartOptions || {}));
         this.chartContainer.classList
             .add(Globals.classNamePrefix + 'navigator');
-
-        this.filterAndAssignSyncOptions(NavigatorSyncHandler);
-        this.sync = new NavigatorComponent.Sync(this, this.syncHandlers);
 
         if (this.sync.syncConfig.crossfilter?.enabled) {
             this.chart.update(
@@ -173,12 +178,6 @@ class NavigatorComponent extends Component {
      * Options for the navigator component
      */
     public options: Options;
-
-    /**
-     * Reference to the sync system that allow to sync i.e tooltips.
-     * @private
-     */
-    public sync: Component['sync'];
 
 
     /**
@@ -251,27 +250,30 @@ class NavigatorComponent extends Component {
 
 
     /**
-     * Returns the first column of columnAssignments to use for navigator data.
+     * Returns the first column of columnAssignment to use for navigator data.
      * @private
      *
      * @return
      * Navigator column assignment.
      */
     public getColumnAssignment(): [string, string] {
-        const columnAssignments = (this.options.columnAssignments || {});
+        const columnAssignment = this.options.columnAssignment ??
+            this.options.columnAssignments ?? {};
 
         let columnsAssignment: (string|null);
 
-        for (const column of Object.keys(columnAssignments)) {
-            columnsAssignment = columnAssignments[column];
+        for (const column of Object.keys(columnAssignment)) {
+            columnsAssignment = columnAssignment[column];
 
             if (columnsAssignment !== null) {
                 return [column, columnsAssignment];
             }
         }
 
-        if (this.connector) {
-            const columns = this.connector.table.getColumnNames();
+        const connector = this.getFirstConnector();
+
+        if (connector) {
+            const columns = connector.table.getColumnNames();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -379,9 +381,10 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart;
+        const connector = this.getFirstConnector();
 
-        if (this.connector) {
-            const table = this.connector.table,
+        if (connector) {
+            const table = connector.table,
                 column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [];
 
@@ -412,8 +415,8 @@ class NavigatorComponent extends Component {
      */
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
-            this.sync.syncConfig.crossfilter as Sync.CrossfilterSyncOptions;
-        const table = this.connector?.table;
+            this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
+        const table = this.getFirstConnector()?.table;
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];
@@ -543,10 +546,6 @@ class NavigatorComponent extends Component {
 
         await super.update(options, false);
 
-        if (options.sync) {
-            this.filterAndAssignSyncOptions(NavigatorSyncHandler);
-        }
-
         if (options.chartOptions) {
             chart.update(
                 merge(this.sync.syncConfig.crossfilter?.enabled ? (
@@ -563,10 +562,7 @@ class NavigatorComponent extends Component {
         }
     }
 
-    public getOptionsOnDrop(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        sidebar: SidebarPopup
-    ): Partial<Options> {
+    public getOptionsOnDrop(): Partial<Options> {
         return {};
     }
 }

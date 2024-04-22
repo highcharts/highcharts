@@ -12,7 +12,9 @@
     // Create the chart
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'x'
+            zooming: {
+                type: 'x'
+            }
         },
         title: {
             text: 'AAPL Stock Price'
