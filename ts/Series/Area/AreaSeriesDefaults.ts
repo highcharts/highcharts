@@ -44,14 +44,12 @@ import type AreaSeriesOptions from './AreaSeriesOptions';
  */
 const AreaSeriesDefaults: AreaSeriesOptions = {
 
-
     /**
      * @see [fillColor](#plotOptions.area.fillColor)
      * @see [fillOpacity](#plotOptions.area.fillOpacity)
      *
      * @apioption plotOptions.area.color
      */
-
 
     /**
      * Fill color or gradient for the area. When `undefined`, the series'
@@ -72,7 +70,6 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @product   highcharts highstock
      * @apioption plotOptions.area.fillColor
      */
-
 
     /**
      * Fill opacity for the area. When you set an explicit `fillColor`,
@@ -97,7 +94,6 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @apioption plotOptions.area.fillOpacity
      */
 
-
     /**
      * A separate color for the graph line. By default the line takes the
      * `color` of the series, but the lineColor setting allows setting a
@@ -114,9 +110,9 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @apioption plotOptions.area.lineColor
      */
 
-
     /**
-     * A separate color for the negative part of the area.
+     * A separate color for the negative part of the area. Note that `zones`
+     * takes precedence over the negative fill color.
      *
      * In styled mode, a negative color is set with the
      * `.highcharts-negative` class name.
@@ -132,7 +128,6 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @apioption plotOptions.area.negativeFillColor
      */
 
-
     /**
      * Whether the whole area or just the line should respond to mouseover
      * tooltips and other mouse or touch events.
@@ -146,7 +141,6 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @product   highcharts highstock
      * @apioption plotOptions.area.trackByArea
      */
-
 
     /**
      * The Y axis value to serve as the base for the area, for

@@ -118,7 +118,8 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
     fillOpacity?: number;
 
     /**
-     * A separate color for the negative part of the area.
+     * A separate color for the negative part of the area. Note that `zones`
+     * takes precedence over the negative fill color.
      *
      * In styled mode, a negative color is set with the
      * `.highcharts-negative` class name.
