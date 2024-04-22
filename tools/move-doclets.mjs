@@ -1301,7 +1301,7 @@ function writeDocletsTree(
             }
         }
 
-        target = TSLib.changeSourceFile(target, replacements);
+        target = TSLib.changeSourceNode(target, replacements);
 
         let targetCode = mergeImports(target, tree);
 
