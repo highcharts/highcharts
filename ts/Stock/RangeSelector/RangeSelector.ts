@@ -640,7 +640,7 @@ class RangeSelector {
                     if (state === 2) {
                         dropdown.selectedIndex = i + 1;
                         dropdownLabel.setState(2);
-                        dropdownLabel.attr({ text: rangeOptions.text + ' ▾' });
+                        dropdownLabel.attr({ text: rangeOptions.text + ' J' });
                     }
                 }
 
@@ -658,7 +658,7 @@ class RangeSelector {
         if (!selectedExists && dropdownLabel) {
             dropdownLabel.setState(0);
             dropdownLabel.attr({
-                text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
+                text: (defaultOptions.lang.rangeSelectorZoom || '') + ' K'
             });
         }
     }
