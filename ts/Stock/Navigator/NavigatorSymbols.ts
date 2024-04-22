@@ -22,7 +22,8 @@ import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
 
 import rect from '../../Core/Renderer/SVG/Symbols.js';
-import Utilities from '../../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
+const { relativeLength } = U;
 /* *
  *
  *  Constants
@@ -42,7 +43,7 @@ function navigatorHandle(
 ): SVGPath {
     const halfWidth = options.width ? options.width / 2 : width,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
-        r = Utilities.relativeLength(
+        r = relativeLength(
             options.borderRadius || 0,
             Math.min(halfWidth * 2, height)
         );
