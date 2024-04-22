@@ -289,7 +289,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
     }
 
     // Execute
-    matches.forEach(function (match): void {
+    matches.forEach((match): void => {
         const { body, elseBody, expression, fn } = match;
         let replacement: any,
             i: number;
