@@ -176,6 +176,8 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      */
     dataLabels: {
 
+        padding: 5,
+
         /**
          * Alignment method for data labels. Possible values are:
          *
