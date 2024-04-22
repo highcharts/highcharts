@@ -9,9 +9,9 @@ One thing that is important to notice is that gauges have no x-axis. The x-axis 
 
 To create an Angular gauge set chart.type to "gauge":
 
-    
+
     chart: {
-        type: 'gauge'            
+        type: 'gauge'
     }
 
 Normally there is only one point in a gauge series, but it also handles multiple point, like in our clock example with three dials. You can add as many background elements as you like to the gauge, allowing you to style it all the way from the minimal default design to heavy, 3D like works of art with shadows and reflections created with linear and radial gradients.
@@ -24,6 +24,7 @@ Since Highcharts 4, we also provide a second type of gauges, the `solidgauge`. I
 Gauge examples
 --------------
 
+*   [Simple gauge with rounded plot bands](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/xaxis/plotbands-gauge-borderradius)
 *   [Speedometer with dual axes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-dual)
 *   [The Highcharts Clock](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-clock)
 *   [VU meter](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-vu-meter)

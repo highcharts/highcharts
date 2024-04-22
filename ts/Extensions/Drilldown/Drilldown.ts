@@ -586,6 +586,8 @@ class ChartAdditions {
                                         });
                                         chart.mapView
                                             .fitToBounds(void 0, void 0);
+                                        chart.mapView.allowTransformAnimation =
+                                            true; // #20857
                                     }
                                     fireEvent(chart, 'afterApplyDrilldown');
                                 }
@@ -736,7 +738,10 @@ class ChartAdditions {
                 if (
                     oldSeries.xAxis &&
                     oldSeries.xAxis.names &&
-                    (drilldownLevelsNumber === 0 || i === drilldownLevelsNumber)
+                    (
+                        drilldownLevelsNumber === 0 ||
+                        i === drilldownLevelsNumber - 1
+                    )
                 ) {
                     oldSeries.xAxis.names.length = 0;
                 }
@@ -795,13 +800,6 @@ class ChartAdditions {
 
                 if (!chart.mapView) {
                     fireEvent(chart, 'afterDrillUp');
-                    chart.redraw();
-                    if (chart.ddDupes) {
-                        chart.ddDupes.length = 0; // #3315
-                    } // #8324
-                    // Fire a once-off event after all series have been drilled
-                    // up (#5158)
-                    fireEvent(chart, 'drillupall');
                 } else {
                     const shouldAnimate = level.levelNumber === levelNumber &&
                         isMultipleDrillUp,
@@ -883,17 +881,22 @@ class ChartAdditions {
                             }
 
                             newSeries.isDrilling = false;
-                            if (chart.ddDupes) {
-                                chart.ddDupes.length = 0; // #3315
-                            } // #8324
-                            // Fire a once-off event after all series have been
-                            // drilled up (#5158)
-                            fireEvent(chart, 'drillupall');
                         }
                     }
                 }
             }
         }
+
+        if (!chart.mapView) {
+            chart.redraw();
+        }
+
+        if (chart.ddDupes) {
+            chart.ddDupes.length = 0; // #3315
+        } // #8324
+        // Fire a once-off event after all series have been
+        // drilled up (#5158)
+        fireEvent(chart, 'drillupall');
     }
 
     /**

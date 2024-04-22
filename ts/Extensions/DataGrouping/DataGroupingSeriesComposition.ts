@@ -482,6 +482,7 @@ function applyGrouping(
         series.table.modified = modified;
     } else {
         series.groupMap = void 0;
+        series.currentDataGrouping = void 0;
     }
     series.hasGroupedData = hasGroupedData;
 
