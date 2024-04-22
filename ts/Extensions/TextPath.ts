@@ -300,18 +300,19 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
  * @return {void}
  */
 function drawTextPath(
-    dataLabel: SVGElement,
-    labelOptions: DataLabelOptions,
-    point: Point
+    this: SVGElement,
+    event: any
 ): void {
-    const textPathOptions =
-        (labelOptions as any)[
-            point.formatPrefix + 'TextPath'
-        ] || labelOptions.textPath;
+    const labelOptions: DataLabelOptions = event.labelOptions,
+        point: Point = event.point,
+        textPathOptions = (
+            (labelOptions as any)[point.formatPrefix + 'TextPath'] ||
+            labelOptions.textPath
+        );
 
     if (textPathOptions && !labelOptions.useHTML) {
-        dataLabel.setTextPath(
-            point.getDataLabelPath?.(dataLabel) || point.graphic,
+        this.setTextPath(
+            point.getDataLabelPath?.(this) || point.graphic,
             textPathOptions
         );
 
@@ -329,11 +330,11 @@ function drawTextPath(
 
 function compose(SVGElementClass: typeof SVGElement): void {
     addEvent(SVGElementClass, 'afterGetBBox', setPolygon);
+    addEvent(SVGElementClass, 'beforeAddingDataLabel', drawTextPath);
     SVGElementClass.prototype.setTextPath = setTextPath;
 }
 
 const TextPathSupport = {
-    drawTextPath,
     compose
 };
 
