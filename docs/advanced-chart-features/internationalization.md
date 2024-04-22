@@ -15,7 +15,7 @@ All modern browsers reliably support bidirectional text in SVG, though there mig
 
 In Firefox < 4 there is a bug that completely breaks bidi text in SVG. As a convenient workaround for this, we have added a boolean constant, _Highcharts.hasBidiBug_, that can be used to determine when to use HTML in labels:
 
-    
+
     labels: {
         useHTML: Highcharts.hasBidiBug
     }
@@ -36,6 +36,50 @@ Numbers can be internationalized by extending the numberFormat function. See the
 Live demo
 ---------
 
-See a [live Arabic chart](https://jsfiddle.net/highcharts/buYCZ/) demo.  
-See a [live Arabic chart](https://jsfiddle.net/highcharts/ebqj2e19/) demo.  
+See a [live Arabic chart](https://jsfiddle.net/highcharts/buYCZ/) demo.
+See a [live Arabic chart](https://jsfiddle.net/highcharts/ebqj2e19/) demo.
 See a [live Chinese chart](https://jsfiddle.net/highcharts/u923mpct/) demo.
+
+## Language modules (preview)
+
+The Highcharts language modules contains translations for texts in the
+[lang](https://api.highcharts.com/highcharts/lang) option. They are meant to
+provide a convenient way to set the default texts of series, tooltips, axes,
+chart descriptions for accessibility, and more.
+
+As of version 11.4, the following language modules are available:
+
+* [Chinese (Simplified)](https://code.highcharts.com/i18n/zh-CN.js)
+* [French](https://code.highcharts.com/i18n/fr-FR.js)
+* [Norwegian, Bokmål](https://code.highcharts.com/i18n/nb-NO.js)
+
+They can be used by adding the module alongside the main Highcharts script in HTML:
+
+```html
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<!-- Other Highcharts modules -->
+
+<script src="https://code.highcharts.com/i18n/nb-NO.js"></script>
+```
+
+or by loading the JSON file in JavaScript:
+
+```js
+const langOptions = await fetch('https://code.highcharts.com/i18n/nb-NO.json')
+    .then(response => response.json());
+
+Highcharts.setOptions({
+    lang: langOptions
+});
+
+```
+
+Note that the language options have to be set before initializing the chart with `Highcharts.chart()`.
+
+<iframe
+    style="width: 100%; height: 450px; border: none;"
+    src="https://www.highcharts.com/samples/embed/highcharts/demo/i18n"
+    allow="fullscreen"
+></iframe>
+
+

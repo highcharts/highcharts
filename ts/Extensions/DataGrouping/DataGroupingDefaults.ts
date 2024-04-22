@@ -64,7 +64,7 @@ const common = {
             '-%A, %e %b %Y'
         ],
         week: [
-            'Week from %A, %e %b %Y',
+            '{lang.weekFrom} %A, %e %b %Y',
             '%A, %e %b',
             '-%A, %e %b %Y'
         ],

@@ -31,18 +31,27 @@ export interface LabelsItemsOptions {
 }
 
 export interface LangOptions {
+    stockOpen: string;
+    stockHigh: string;
+    stockLow: string;
+    stockClose: string;
+    weekFrom: string;
+    chartTitle: string;
     decimalPoint: string;
     invalidDate?: string;
     loading: string;
     months: Array<string>;
     numericSymbolMagnitude?: number;
     numericSymbols: Array<string> | undefined;
+    pieSliceName: string;
     resetZoom: string;
     resetZoomTitle: string;
+    seriesName: string;
     shortMonths: Array<string>;
     shortWeekdays?: Array<string>;
     thousandsSep: string;
     weekdays: Array<string>;
+    yAxisTitle: string;
     zoomIn?: string;
     zoomOut?: string;
 }

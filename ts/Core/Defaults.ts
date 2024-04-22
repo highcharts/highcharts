@@ -132,6 +132,19 @@ const defaultOptions: DefaultOptions = {
      * ```
      */
     lang: {
+        stockOpen: 'Open',
+        stockHigh: 'High',
+        stockLow: 'Low',
+        stockClose: 'Close',
+
+        weekFrom: 'Week from',
+
+        /**
+         * The default chart title.
+         *
+         * @since next
+         */
+        chartTitle: 'Chart title',
 
         /**
          * The loading text that appears when the chart is set into the loading
@@ -152,6 +165,13 @@ const defaultOptions: DefaultOptions = {
             'January', 'February', 'March', 'April', 'May', 'June', 'July',
             'August', 'September', 'October', 'November', 'December'
         ],
+
+        /**
+         * [Format string](https://www.highcharts.com/docs/chart-concepts/templating) for the default series name.
+         *
+         * @since next
+         */
+        seriesName: 'Series {add series.index 1}',
 
         /**
          * An array containing the months names in abbreviated form. Corresponds
@@ -246,6 +266,30 @@ const defaultOptions: DefaultOptions = {
         numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'],
 
         /**
+         * The default name for a pie slice (point).
+         * @since next
+         */
+
+        pieSliceName: 'Slice',
+
+        /**
+         * The default text for the rangeselector buttons.
+         *
+         * @since next
+         */
+
+        rangeSelector: {
+            allText: 'All',
+            allTitle: 'View all',
+            monthText: '{count}m',
+            monthTitle: 'View {count} {#eq count 1}month{else}months{/eq}',
+            yearText: '{count}y',
+            yearTitle: 'View {count} {#eq count 1}year{else}years{/eq}',
+            ytdText: 'YTD',
+            ytdTitle: 'View year to date'
+        },
+
+        /**
          * The magnitude of [numericSymbols](#lang.numericSymbol) replacements.
          * Use 10000 for Japanese, Korean and various Chinese locales, which
          * use symbols for 10^4, 10^8 and 10^12.
@@ -283,7 +327,14 @@ const defaultOptions: DefaultOptions = {
          * @default \u0020
          * @since   1.2.2
          */
-        thousandsSep: ' '
+        thousandsSep: ' ',
+
+        /**
+         * The default title of the Y axis
+         *
+         * @since next
+         */
+        yAxisTitle: 'Values'
     },
 
     /**
@@ -629,8 +680,8 @@ const defaultOptions: DefaultOptions = {
          *
          * @default {highcharts|highmaps} Chart title
          * @default {highstock} undefined
+         * @apioption title.text
          */
-        text: 'Chart title',
 
         /**
          * The horizontal alignment of the title. Can be one of "left", "center"
@@ -2343,7 +2394,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             day: '%A, %e %b %Y',
             /** @internal */
-            week: 'Week from %A, %e %b %Y',
+            week: '{lang.weekFrom} %A, %e %b %Y',
             /** @internal */
             month: '%B %Y',
             /** @internal */

@@ -203,7 +203,10 @@ namespace RadialAxis {
         maxPadding: 0,
         minPadding: 0,
         showLastLabel: false,
-        tickLength: 0
+        tickLength: 0,
+        title: {
+            text: null
+        }
     };
 
     /**
