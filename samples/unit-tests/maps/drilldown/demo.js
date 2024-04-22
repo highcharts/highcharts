@@ -153,6 +153,48 @@ QUnit.test('Map drilldown with zooming animation', async assert => {
                 );
             }, duration / 2);
         }, duration * 3);
+
+        setTimeout(function () {
+            chart.update({
+                chart: {
+                    animation: false
+                },
+                mapNavigation: {
+                    enabled: true
+                }
+            }, false);
+            chart.series[0].points[0].doDrilldown();
+
+            setTimeout(function () {
+                // Calculate scales before and after zooming in for test
+                const scaleXBefore = chart.series[0].transformGroups[0].scaleX;
+                chart.mapNavigation.navButtons[0].element
+                    .dispatchEvent(new Event('click'));
+                const scaleXAfter = chart.series[0].transformGroups[0].scaleX;
+                chart.mapNavigation.navButtons[1].element
+                    .dispatchEvent(new Event('click'));
+
+                // Enable animation during zooming in
+                chart.update({
+                    chart: {
+                        animation: true
+                    }
+                });
+                chart.mapNavigation.navButtons[0].element
+                    .dispatchEvent(new Event('click'));
+
+                setTimeout(function () {
+                    assert.ok(
+                        scaleXBefore <
+                            chart.series[0].transformGroups[0].scaleX &&
+                        chart.series[0].transformGroups[0].scaleX < scaleXAfter,
+                        `Map zooming animation should work correctly after
+                        drilldown into series (#20857).`
+                    );
+                }, 100);
+            }, duration * 3);
+        }, duration * 5);
+
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
 
