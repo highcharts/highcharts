@@ -1067,7 +1067,8 @@
         const series = chart.series[0],
             mapArray = [
                 'groupMap',
-                'hasGroupedData'
+                'hasGroupedData',
+                'currentDataGrouping'
             ];
 
         // When the dataGrouping is enabled, the properties should exist.
