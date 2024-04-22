@@ -31,7 +31,7 @@ async function distUploadStudies() {
     const sourceFiles = glob
         .sync(`${sourceDir}/**/*`)
         .filter(file => !isDirectory(file) && !isDotEntry(file));
-    const rootFiles = sourceFiles.map(file => toS3Path(file, sourceDir + '/', S3_DEST_PATH));
+    const rootFiles = sourceFiles.map(file => toS3Path(file, void 0, S3_DEST_PATH));
 
     return uploadFiles({
         files: [...rootFiles],
