@@ -6,7 +6,11 @@
 }
 
 .highcharts-figure {
-    margin: 0;
+    margin: 0 auto;
     min-width: 310px;
     max-width: 1000px;
+}
+
+.highcharts-description {
+    margin: 10px;
 }
