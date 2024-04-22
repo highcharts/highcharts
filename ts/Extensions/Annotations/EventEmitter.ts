@@ -365,13 +365,15 @@ abstract class EventEmitter {
                 }
 
                 emitter.cancelClick = emitter.hasDragged;
-                emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
-                // ControlPoints vs Annotation:
-                fireEvent(pick(
-                    annotation, // #15952
-                    emitter
-                ), 'afterUpdate');
+                if (emitter.hasDragged) {
+                    // ControlPoints vs Annotation:
+                    fireEvent(pick(
+                        annotation, // #15952
+                        emitter
+                    ), 'afterUpdate');
+                }
+                emitter.hasDragged = false;
                 emitter.onMouseUp();
             },
             isTouchDevice || firesTouchEvents ? { passive: false } : void 0
