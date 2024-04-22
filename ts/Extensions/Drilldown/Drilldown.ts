@@ -586,6 +586,8 @@ class ChartAdditions {
                                         });
                                         chart.mapView
                                             .fitToBounds(void 0, void 0);
+                                        chart.mapView.allowTransformAnimation =
+                                            true; // #20857
                                     }
                                     fireEvent(chart, 'afterApplyDrilldown');
                                 }
