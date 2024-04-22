@@ -1266,6 +1266,7 @@ class Navigator {
 
         chart.isDirtyBox = true;
 
+
         if (navigator.navigatorEnabled) {
             // An x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
@@ -1274,8 +1275,8 @@ class Navigator {
                 ordinal: baseXaxis.options.ordinal,
                 overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
-                id: navigatorOptions.xAxis?.id || 'navigator-x-axis',
-                yAxis: navigatorOptions.yAxis?.id || 'navigator-y-axis',
+                id: navigatorOptions.xAxis?.id,
+                yAxis: navigatorOptions.yAxis?.id,
                 type: 'datetime',
                 index: xAxisIndex,
                 isInternal: true,
@@ -1297,7 +1298,7 @@ class Navigator {
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
                 {
-                    id: this.navigatorOptions.yAxis?.id || 'navigator-y-axis',
+                    id: this.navigatorOptions.yAxis?.id,
                     alignTicks: false,
                     offset: 0,
                     index: yAxisIndex,
@@ -1560,8 +1561,8 @@ class Navigator {
                 linkedTo: null, // #6734
                 group: 'nav', // For columns
                 padXAxis: false,
-                xAxis: this.navigatorOptions.xAxis?.id || 'navigator-x-axis',
-                yAxis: this.navigatorOptions.yAxis?.id || 'navigator-y-axis',
+                xAxis: this.navigatorOptions.xAxis?.id,
+                yAxis: this.navigatorOptions.yAxis?.id,
                 showInLegend: false,
                 stacking: void 0, // #4823
                 isInternal: true,
