@@ -4,7 +4,7 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    QUnit.skip('General dataGrouping options', function (assert) {
+    QUnit.test('General dataGrouping options', function (assert) {
         let calledWithNaN = false;
 
         var chart = Highcharts.stockChart('container', {
@@ -22,7 +22,7 @@
             },
 
             xAxis: {
-                min: 1
+                min: 1.1
             },
 
             series: [
@@ -402,7 +402,7 @@
         );
     });
 
-    QUnit.skip('Switch from grouped to non-grouped', function (assert) {
+    QUnit.test('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {
                 width: 600,
@@ -480,7 +480,7 @@
                 '.highcharts-series-0 ' +
                 'path'
             ).length,
-            32,
+            33,
             'Daily columns, monthlies should be removed (#7547) (Timezone: ' +
             'UTC ' +
             Math.round(new Date().getTimezoneOffset() / -60) +
@@ -833,7 +833,7 @@
             );
         });
 
-    QUnit.skip(
+    QUnit.test(
         'When groupAll: true, group point should have the same start ' +
         'regardless of axis extremes, #15005.',
         function (assert) {
@@ -875,7 +875,7 @@
             'group should start from the beginning (0).'
             );
 
-            chart.xAxis[0].setExtremes(1);
+            chart.xAxis[0].setExtremes(1.1);
 
             assert.strictEqual(
                 groupAllFirstGroupStart,
@@ -974,7 +974,7 @@
             );
         });
 
-    QUnit.skip(
+    QUnit.test(
         'Panning with dataGrouping and ordinal axis, #3825.',
         function (assert) {
             const chart = Highcharts.stockChart('container', {
@@ -1030,7 +1030,7 @@
             );
         });
 
-    QUnit.skip('The dataGrouping enabling/disabling.', function (assert) {
+    QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
         const chart = Highcharts.stockChart('container', {
             chart: {
                 width: 400

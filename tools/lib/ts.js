@@ -48,7 +48,7 @@ const NATIVE_TYPES = [
 const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
 
 
-const TYPE_SPLIT = /\W+/gsu;
+const TYPE_SPLIT = /[\W\.]+/gsu;
 
 
 /* *
@@ -125,19 +125,19 @@ function changeSourceCode(
 
 
 /**
- * Shifts ranges in the source file with replacements.
+ * Shifts ranges in the source node with replacements.
  *
- * @param {TS.SourceFile} sourceFile
+ * @param {TS.SourceFile} sourceNode
  * Source file to change.
  *
  * @param {Array<[number,number,string]} replacements
  * Replacements to apply.
  *
  * @return {TS.SourceFile}
- * New source file with changes.
+ * New source node with changes.
  */
-function changeSourceFile(
-    sourceFile,
+function changeSourceNode(
+    sourceNode,
     replacements
 ) {
 
@@ -145,12 +145,12 @@ function changeSourceFile(
         !replacements ||
         !replacements.length
     ) {
-        return sourceFile;
+        return sourceNode;
     }
 
     return TS.createSourceFile(
-        sourceFile.fileName,
-        changeSourceCode(sourceFile.getFullText(), replacements),
+        sourceNode.fileName,
+        changeSourceCode(sourceNode.getFullText(), replacements),
         TS.ScriptTarget.ESNext,
         true
     );
@@ -1435,6 +1435,7 @@ function toDocletString(
     }
 
     const tags = doclet.tags;
+    const tagKeys = Object.keys(tags);
 
     let compiled = indent + '/**';
 
@@ -1453,10 +1454,10 @@ function toDocletString(
                 .split('\n')
                 .join(indent + ' * ')
         );
-        delete tags.description;
+        tagKeys.splice(tagKeys.indexOf('description'), 1);
     }
 
-    for (const tag of Object.keys(tags)) {
+    for (const tag of tagKeys) {
         for (const text of tags[tag]) {
             compiled += (
                 indent + ' *' +
@@ -1566,7 +1567,7 @@ function toTypeof(
 module.exports = {
     addTag,
     changeSourceCode,
-    changeSourceFile,
+    changeSourceNode,
     debug,
     extractTypes,
     getChildInfos,
