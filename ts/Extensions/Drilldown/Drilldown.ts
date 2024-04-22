@@ -881,6 +881,7 @@ class ChartAdditions {
                             }
 
                             newSeries.isDrilling = false;
+                            newSeries._hasTracking = false;
                             if (chart.ddDupes) {
                                 chart.ddDupes.length = 0; // #3315
                             } // #8324

@@ -317,3 +317,84 @@ QUnit.test('Map drilldown animation for GeoJSON maps', async assert => {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test(
+    '#20886, Map drilldown datalabel mouse tracking',
+    async assert => {
+        const world = await fetch(
+                'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
+            ).then(response => response.json()),
+            africa = await fetch(
+                'https://code.highcharts.com/mapdata/custom/africa.topo.json'
+            ).then(response => response.json());
+
+        // Create the chart
+        const chart = Highcharts.mapChart('container', {
+                chart: {
+                    animation: false,
+                    events: {
+                        drillupall() {
+                            const chart = this;
+                            assert.ok(
+                                // eslint-disable-next-line no-underscore-dangle
+                                chart.series[0]._hasTracking === false,
+                                'Tracking should be false before chart ' +
+                                're-renders on \"drillupall\" event.'
+                            );
+                        }
+                    }
+                },
+                mapNavigation: {
+                    enabled: true,
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    }
+                },
+                plotOptions: {
+                    map: {
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    mapData: world,
+                    custom: {
+                        startPos: void 0
+                    },
+                    data: [{
+                        'hc-key': 'af',
+                        value: 1,
+                        drilldown: 'africa'
+                    }]
+                }],
+                drilldown: {
+                    animation: false,
+                    mapZooming: true,
+                    series: [{
+                        id: 'africa',
+                        mapData: africa
+                    }]
+                }
+            }),
+            done = assert.async();
+
+        chart.series[0].points
+            .find(p => p['hc-key'] === 'af').firePointEvent('click');
+
+        setTimeout(() => {
+            chart.drillUp();
+
+            setTimeout(() => {
+                assert.ok(
+                    chart.series[0].dataLabelsGroup
+                        .hasClass('highcharts-tracker'),
+                    'Data label group should have tracking after drillup.'
+                );
+
+                done();
+            }, 5);
+        }, 5);
+    }
+);
