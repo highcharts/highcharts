@@ -1,0 +1,166 @@
+/* @import url("https://code.highcharts.com/css/highcharts.css"); */
+
+#container {
+    /* min-width: 320px; */
+    width: 700px;
+    height: 480px;
+    position: absolute;
+    top: 100px;
+    left: 48%;
+
+    /* border: 1px solid #ccc; */
+}
+
+/* styles for testing */
+body {
+    color: white;
+    margin-top: -80px;
+}
+
+.container {
+    height: 824px;
+    width: 1392px;
+    background: linear-gradient(180deg, #18171c 0%, #2f2e38 100%);
+    position: relative;
+}
+
+.background-image {
+    background: url("http://192.168.1.176:3030/desktop.png") no-repeat center center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#demo-content {
+    background-color: transparent;
+}
+
+.btn-small {
+    white-space: nowrap;
+}
+
+.top-bar {
+    visibility: hidden;
+}
+
+#message {
+    height: unset;
+}
+
+.fake {
+    position: relative;
+    background: linear-gradient(180deg, #201836 0%, #46465c 100%);
+}
+
+/* for the dashboard chart */
+
+.highcharts-root image {
+    transition: all 2s;
+    opacity: 1;
+    transform-origin: center;
+}
+
+.highcharts-root image {
+    transform: translate(-135px, 185px)  scale(3, 2);
+    opacity: 0.8;
+}
+
+.highcharts-root image.move {
+    transform: translate(-1535px, 185px)  scale(3, 3);
+    opacity: 0;
+}
+
+.highcharts-background {
+    fill: transparent;
+}
+
+.highcharts-title {
+    color: #c8c7d1 !important;
+    fill: #c8c7d1 !important;
+}
+
+.highcharts-title a {
+    color: #c8c7d1 !important;
+    font-weight: 300;
+}
+
+.highcharts-subtitle {
+    color: #c8c7d1 !important;
+    fill: #c8c7d1 !important;
+}
+
+.subtitle {
+    color: #5e5c70;
+}
+
+.highcharts-button-box {
+    fill: #474554;
+    stroke: #5e5c70;
+}
+
+.jellypus {
+    transform-origin: center;
+
+    /* transform: translateX(-1000px); */
+    transition: all 2s;
+}
+
+.jellypus .highcharts-point {
+    fill-opacity: 1;
+    stroke-width: 0.5px;
+    stroke-dasharray: 3px;
+    stroke: white;
+}
+
+.jellypus.highcharts-markers .highcharts-point {
+    stroke: white;
+    fill: url(#rgrad);
+    fill-opacity: 0.8;
+    stroke-dasharray: 0;
+}
+
+.jellypus.highcharts-markers .highcharts-point.head {
+    fill: url(#rgrad);
+    fill-opacity: 0.8;
+    stroke: white;
+}
+
+#projection-buttons {
+    display: none;
+}
+
+#play-controls {
+    max-width: 700px;
+    position: absolute;
+    right: 100px;
+    top: 320px;
+    visibility: hidden;
+}
+
+#play-pause-button {
+    margin-left: 10px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border: 1px solid #5e5c70;
+    border-radius: 25px;
+    color: #acabba;
+    background-color: #5e5c70;
+    transition: background-color 250ms;
+}
+
+#play-pause-button:hover {
+    background-color: #474554;
+}
+
+#play-range {
+    transform: translateY(2.5px);
+    width: calc(100% - 90px);
+    background: #5e5c70;
+}
+
+@media screen  and (min-width: 992px) {
+    .highcharts-root image.move {
+        transform: translate(-435px, 185px)  scale(3, 4);
+    }
+}
