@@ -20,7 +20,6 @@ import type { HeatmapPointMarkerOptions } from './HeatmapPointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesStatesOptions,
-    Partial,
     LegendSymbolType
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -64,7 +63,6 @@ declare module '../../Core/Series/SeriesOptions' {
         brightness?: number;
     }
 }
-
 
 /**
  * A heatmap is a graphical representation of data where the individual
