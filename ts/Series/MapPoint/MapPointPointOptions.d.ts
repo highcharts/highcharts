@@ -69,7 +69,7 @@ export interface MapPointPointGeometryOptions extends GeoJSONGeometryPoint {
 
 export interface MapPointPointOptions extends ScatterPointOptions {
 
-    geometry?: GeoJSONGeometryPoint;
+    geometry?: MapPointPointGeometryOptions;
 
     /**
      * The latitude of the point. Must be combined with the `lon` option
