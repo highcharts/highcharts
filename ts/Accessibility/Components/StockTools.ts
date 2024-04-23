@@ -35,6 +35,7 @@ class StockToolsComponent extends AccessibilityComponent {
 
     public announcer!: Announcer;
 
+    public keyboardNavigationHandler!: KeyboardNavigationHandler;
     /**
      * Initialize the component
      */
@@ -53,7 +54,7 @@ class StockToolsComponent extends AccessibilityComponent {
         const chart = this.chart,
             stockTools = chart.stockTools;
 
-        if (!stockTools || !stockTools.visible || !stockTools.toolbar) {
+        if (!stockTools || !stockTools.visible || !stockTools?.toolbar) {
             return;
         }
 
@@ -168,11 +169,9 @@ class StockToolsComponent extends AccessibilityComponent {
         this: StockToolsComponent,
         _keyCode: number,
         e: KeyboardEvent
-    ): void {
+    ): number {
         const component = this;
         if (component.focusInPopup) {
-            e.preventDefault();
-
             if (e.shiftKey) {
                 component.decrementFocusedButtonIndex();
             } else {
@@ -181,14 +180,21 @@ class StockToolsComponent extends AccessibilityComponent {
 
             component.focusButton();
 
+            return component.keyboardNavigationHandler.response.success;
         }
+
+        if (e.shiftKey) {
+            return component.keyboardNavigationHandler.response.prev;
+        }
+
+        return component.keyboardNavigationHandler.response.next;
     }
 
     private onDirectionKeyPress(
         this: StockToolsComponent,
         keyCode: number,
         e: KeyboardEvent
-    ): void {
+    ): number {
         // TODO: shift or ctrl? or both?
         if (!this.focusInPopup || (this.focusInPopup && e.shiftKey)) {
             e.preventDefault();
@@ -203,12 +209,49 @@ class StockToolsComponent extends AccessibilityComponent {
             }
 
             component.focusButton();
+
+            return component.keyboardNavigationHandler.response.success;
+        }
+
+        return this.keyboardNavigationHandler.response.noHandler;
+    }
+
+    private handleSubmenuButtonClick(
+        this: StockToolsComponent,
+        e: MouseEvent
+    ): void {
+        const childButton = e.target as HTMLElement;
+
+        const submenu = childButton.parentElement?.closest<HTMLElement>(
+            '.highcharts-submenu-wrapper'
+        );
+
+        this.setButtons();
+
+        this.focusedButtonIndex = this.buttons.findIndex(
+            (el): boolean => el.parentElement
+                ?.classList.contains('highcharts-active') ?? false
+        );
+
+        const ariaLabel = childButton.getAttribute('aria-label');
+
+        if (this.focusedButtonIndex !== -1 && ariaLabel) {
+            this.buttons[this.focusedButtonIndex].setAttribute(
+                'aria-label',
+                ariaLabel
+            );
+        }
+
+        this.focusButton();
+
+        if (submenu) {
+            submenu.dataset.open = 'false';
         }
     }
 
     private onEnterKeyPress(
         this: StockToolsComponent
-    ): void {
+    ): number {
         const component = this;
         if (!component.focusInPopup) {
             const button = component.buttons[component.focusedButtonIndex];
@@ -246,6 +289,12 @@ class StockToolsComponent extends AccessibilityComponent {
                                 attr(childButton, {
                                     tabindex: -1
                                 });
+
+                                childButton.addEventListener(
+                                    'click',
+                                    this.handleSubmenuButtonClick.bind(this),
+                                    { once: true }
+                                );
                             });
 
 
@@ -259,6 +308,8 @@ class StockToolsComponent extends AccessibilityComponent {
                             'Submenu closed'
                     );
                 }
+
+                return this.keyboardNavigationHandler.response.noHandler;
             }
         }
 
@@ -269,13 +320,18 @@ class StockToolsComponent extends AccessibilityComponent {
                 (document.activeElement as HTMLElement).innerText === 'Add'
             ) {
                 fireEvent(this.chart.navigationBindings, 'closePopup');
+
+                return component.keyboardNavigationHandler.response.success;
             }
         }
+
+        // Return noHandler as default to not cancel the default event
+        return component.keyboardNavigationHandler.response.noHandler;
     }
 
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes;
-        return new KeyboardNavigationHandler(this.chart, {
+        const kbdConfig: KeyboardNavigationHandler.Options = {
             keyCodeMap: [
                 [
                     [keys.left, keys.right, keys.up, keys.down],
@@ -290,7 +346,10 @@ class StockToolsComponent extends AccessibilityComponent {
                     this.onEnterKeyPress.bind(this)
                 ]
             ],
-            validate: (): boolean => true,
+            validate: (): boolean => !!(
+                this.chart.stockTools &&
+                    this.chart.stockTools.visible
+            ),
             init: (dir: number): void => {
                 const chart = this.chart;
                 if (chart.navigationBindings) {
@@ -316,7 +375,12 @@ class StockToolsComponent extends AccessibilityComponent {
                                         .querySelector('button');
                                     if (btn.dataset.label) {
                                         this.announcer.announce(
-                                            `${btn.dataset.label} selected`
+                                            chart.langFormat(
+                                                '{label} selected',
+                                                {
+                                                    label: btn.dataset.label
+                                                }
+                                            )
                                         );
                                     }
                                 }
@@ -333,13 +397,13 @@ class StockToolsComponent extends AccessibilityComponent {
 
                 if (dir === -1) {
                     this.focusedButtonIndex =
-                                (this.buttons?.length ?? 0) - 1;
+                        (this.buttons.length ? this.buttons.length - 1 : 0);
                 }
 
                 this.focusButton();
 
                 // Setup submenu buttons
-                chart.stockTools?.toolbar.querySelectorAll<HTMLElement>(
+                chart.stockTools?.toolbar?.querySelectorAll<HTMLElement>(
                     '.highcharts-submenu-wrapper'
                 ).forEach((submenu): void => {
                     submenu.dataset.open = 'false';
@@ -357,13 +421,20 @@ class StockToolsComponent extends AccessibilityComponent {
                     }
                 }
 
-                this.chart.stockTools?.toolbar.querySelectorAll<HTMLElement>(
+                this.chart.stockTools?.toolbar?.querySelectorAll<HTMLElement>(
                     '.highcharts-submenu-wrapper'
                 ).forEach((submenu): void => {
                     submenu.removeAttribute('data-open');
                 });
             }
-        });
+        };
+
+        this.keyboardNavigationHandler = new KeyboardNavigationHandler(
+            this.chart,
+            kbdConfig
+        );
+
+        return this.keyboardNavigationHandler;
     }
 }
 
