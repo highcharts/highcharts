@@ -247,28 +247,20 @@ QUnit.test('Solid gauge updates', function (assert) {
         point = chart.series[0].points[0],
         yAxis = chart.yAxis[0];
 
-    assert.strictEqual(
-        yAxis.options.labels.style.color,
-        'red',
-        '#16112: Axis options set by setOptions should be picked up'
-    );
-
-    assert.strictEqual(
-        yAxis.options.tickLength,
-        tickLength,
-        '#20804: Axis options set by setOptions should overwrite defaults.'
-    );
-
-    assert.strictEqual(
-        yAxis.options.minorTickLength,
-        minorTickLength,
-        '#20804: Axis options set by setOptions should overwrite defaults.'
-    );
-
-    assert.strictEqual(
-        yAxis.options.labels.distance,
-        distance,
-        '#20804: Axis options set by setOptions should overwrite defaults.'
+    assert.deepEqual(
+        [
+            yAxis.options.labels.style.color,
+            yAxis.options.tickLength,
+            yAxis.options.minorTickLength,
+            yAxis.options.labels.distance
+        ], [
+            'red',
+            tickLength,
+            minorTickLength,
+            distance
+        ],
+        `Axis options set by setOptions should overwrite defaults, #16112 and 
+        #20804.`
     );
 
     chart.series[0].update({
