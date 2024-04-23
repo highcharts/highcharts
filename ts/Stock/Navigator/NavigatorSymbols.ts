@@ -42,7 +42,7 @@ function navigatorHandle(
     options: SymbolOptions = {}
 ): SVGPath {
     const halfWidth = options.width ? options.width / 2 : width,
-        markerPosition = Math.round(halfWidth / 3) + 0.5,
+        markerPosition = 2,
         r = relativeLength(
             options.borderRadius || 0,
             Math.min(halfWidth * 2, height)
