@@ -1026,7 +1026,7 @@ namespace AxisDefaults {
 
             /**
              * The pixel padding for axis labels, to ensure white space between
-             * them. Defaults to 5 for horizontal axes, 0 for vertical.
+             * them. Defaults to 4 for horizontal axes, 1 for vertical.
              *
              * @default   undefined
              * @product   highcharts gantt
