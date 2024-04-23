@@ -36,6 +36,9 @@ const {
     fireEvent
 } = U;
 
+import HU from './../../Utils/HTMLUtilities.js';
+const { getFakeMouseEvent } = HU;
+
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -421,9 +424,28 @@ class SeriesKeyboardNavigation {
                     ): number {
                         const point = chart.highlightedPoint;
                         if (point) {
+                            const fakeMouseEvent = getFakeMouseEvent('click'),
+                                buildtEvent = {};
+
+                            for (const prop in fakeMouseEvent) {
+                                if (prop !== 'prototype') {
+                                    (buildtEvent as any)[prop] = (
+                                        fakeMouseEvent as any
+                                    )[prop];
+                                }
+                            }
+
+                            const pEvent = this
+                                .chart
+                                .pointer
+                                ?.normalize(buildtEvent as MouseEvent);
+                            (
+                                (pEvent as MouseEvent).target as any
+                            ) = point.graphic?.element;
+
                             (event as any).point = point;
-                            fireEvent(point.series, 'click', event);
-                            point.firePointEvent('click');
+                            fireEvent(point.series, 'click', pEvent);
+                            point.firePointEvent('click', pEvent);
                         }
                         return this.response.success;
                     }],
