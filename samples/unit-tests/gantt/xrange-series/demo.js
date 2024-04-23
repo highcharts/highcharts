@@ -139,23 +139,14 @@
             i,
             points,
             point,
-            $graphic,
-            $graphOrig,
-            $graphOver,
-            clipRectID,
-            $clipRect,
-            graphOverBox,
             origX,
             overX,
             origY,
             overY,
             origWidth,
             overWidth,
-            clipWidth,
             origHeight,
             overHeight,
-            clipHeight,
-            partialFill,
             error = 1;
 
         // THE CHART

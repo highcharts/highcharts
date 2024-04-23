@@ -311,7 +311,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx);
+                replacement = format(replacement ? body : elseBody, ctx, chart);
             }
 
 

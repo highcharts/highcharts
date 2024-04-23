@@ -37,8 +37,7 @@ The above is a shortened way that in which you cannot set additional options if
 a given type of synchronization provides them. Only those enabled by default are
 set.
 
-If you would like to enable, for example, the `affectNavigator` option for the
-crossfilter sync, you must use a declaration like this:
+If you would like to enable, for example, the `affectNavigator` option for the crossfilter sync, you must use a declaration like this:
 
 ```js
 sync: {
@@ -48,6 +47,8 @@ sync: {
     }
 }
 ```
+
+The options above are only available for the [Navigator Component](https://www.highcharts.com/docs/dashboards/navigator-component#crossfilter). Each component can have its own options for the predefined syncs. You can find their descriptions in the articles about these components (eg. the [Highlight Sync options for the Highcharts Component](https://www.highcharts.com/docs/dashboards/highcharts-component#highlight-sync-options)).
 
 An example of synchronized components:
 
@@ -77,11 +78,7 @@ Dashboards.board('container', {
           extremes: true
       },
       renderTo: 'dashboard-col-0',
-      type: 'Highcharts',
-      columnAssignment: {
-          Food: 'x',
-          'Vitamin A': 'value'
-      }
+      type: 'Highcharts'
   }, {
       renderTo: 'dashboard-col-1',
       connector: {
@@ -92,11 +89,7 @@ Dashboards.board('container', {
           highlight: true,
           extremes: true
       },
-      type: 'Highcharts',
-      columnAssignment: {
-          Food: 'x',
-          'Vitamin A': 'y'
-      }
+      type: 'Highcharts'
   }]
 });
 ```
@@ -123,22 +116,22 @@ sync: {
 ```
 
 
-### Highlight sync options
+### Sync groups
 
-Highlight sync can have additional options:
+By default, all components with a given type of synchronization enabled and sharing the same connector are synchronized. If you want to divide synchronized components into groups, you can do so using the [`group`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry#group) option, which is available for each type of synchronization.
+
+Example:
 ```js
 sync: {
-    highlight: {
+    visibility: {
         enabled: true,
-        highlightPoint: true,
-        showTooltip: false,
-        showCrosshair: true
+        group: 'group-name'
     }
 }
 ```
 
 Demo:
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/groups allow="fullscreen"></iframe>
 
 
 ## Custom synchronization

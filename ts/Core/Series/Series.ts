@@ -1595,10 +1595,6 @@ class Series {
             xAxis = series.xAxis,
             options = series.options,
             cropThreshold = options.cropThreshold,
-            getExtremesFromAll =
-                forceExtremesFromAll ||
-                series.getExtremesFromAll ||
-                options.getExtremesFromAll, // #4599
             logarithmic = xAxis?.logarithmic,
             isCartesian = series.isCartesian;
         let croppedData: Series.CropDataObject,
@@ -1627,7 +1623,7 @@ class Series {
         if (
             isCartesian &&
             series.sorted &&
-            !getExtremesFromAll &&
+            !forceExtremesFromAll &&
             (
                 !cropThreshold ||
                 dataLength > cropThreshold ||
@@ -1965,15 +1961,20 @@ class Series {
     ): DataExtremesObject {
         const xAxis = this.xAxis,
             yAxis = this.yAxis,
-            xData = this.processedXData || this.xData,
             activeYData = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting && !this.is('column') ?
                 1 : 0,
             // #2117, need to compensate for log X axis
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
-        let xExtremes,
+            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
+            getExtremesFromAll =
+                forceExtremesFromAll ||
+                this.getExtremesFromAll ||
+                this.options.getExtremesFromAll; // #4599
+
+        let { processedXData, processedYData } = this,
+            xExtremes,
             validValue,
             withinRange,
             x,
@@ -1984,8 +1985,17 @@ class Series {
             xMax = 0,
             activeCounter = 0;
 
-        yData = yData || this.stackedYData || this.processedYData || [];
-        const yDataLength = yData.length;
+        // Get the processed data from the full range (#21003)
+        if (this.cropped && getExtremesFromAll) {
+            const processedData = this.getProcessedData(true);
+            processedXData = processedData.xData;
+            processedYData = processedData.yData;
+        }
+
+        yData = yData || this.stackedYData || processedYData || [];
+        const yDataLength = yData.length,
+            xData = processedXData || this.xData;
+
 
         if (xAxis) {
             xExtremes = xAxis.getExtremes();

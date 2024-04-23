@@ -16,8 +16,9 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
+import type DataLabelOptions, {
+    DataLabelTextPathOptions
+} from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';

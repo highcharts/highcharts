@@ -8,7 +8,6 @@
         Series,
         seriesTypes,
         SVGElement,
-        Tick,
         wrap
     } = H;
 

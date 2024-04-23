@@ -854,10 +854,12 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz
             } = axis,
             {
-                legend: legendOptions,
                 height: colorAxisHeight,
                 width: colorAxisWidth
             } = axis.options,
+            {
+                legend: legendOptions
+            } = chart.options,
             width = pick(
                 defined(colorAxisWidth) ?
                     relativeLength(colorAxisWidth, chart.chartWidth) : void 0,
