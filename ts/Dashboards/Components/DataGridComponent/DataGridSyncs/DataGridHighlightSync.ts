@@ -111,6 +111,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
+        let highlightTimeout: number | undefined;
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
             if (cursor.type !== 'position') {
@@ -130,7 +131,10 @@ const syncPair: Sync.SyncPair = {
                 );
             }
 
-            setTimeout((): void => {
+            if (highlightTimeout) {
+                clearTimeout(highlightTimeout);
+            }
+            highlightTimeout = setTimeout((): void => {
                 const highlightedDataRow = dataGrid.container
                     .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
 
@@ -138,7 +142,7 @@ const syncPair: Sync.SyncPair = {
                     dataGrid.toggleRowHighlight(highlightedDataRow);
                     dataGrid.hoveredRow = highlightedDataRow;
                 }
-            }, highlightOptions.autoScroll ? 30 : 0);
+            }, highlightOptions.autoScroll ? 10 : 0);
         };
 
         const handleCursorOut = (): void => {
