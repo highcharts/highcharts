@@ -112,6 +112,7 @@ class Toolbar {
                         new StockToolsA11YComponent();
 
                 component.initBase(e.target, null as any);
+                component.init();
             }
         });
 

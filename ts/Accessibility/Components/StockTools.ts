@@ -33,12 +33,14 @@ class StockToolsComponent extends AccessibilityComponent {
     public popupContainer: HTMLElement | undefined;
     public popupMutationObserver: MutationObserver | undefined;
 
-    public announcer?: Announcer;
+    public announcer!: Announcer;
 
     /**
      * Initialize the component
      */
     public init(): void {
+        this.announcer = new Announcer(this.chart, 'polite');
+
         if (this.chart.stockTools && this.chart.stockTools.wrapper) {
             this.chart.stockTools?.wrapper.setAttribute(
                 'aria-hidden',
@@ -246,9 +248,16 @@ class StockToolsComponent extends AccessibilityComponent {
                                 });
                             });
 
+
                             submenu.dataset.open = 'true';
                         }
                     }
+
+                    component.announcer.announce(
+                        submenu.dataset.open === 'true' ?
+                            'Submenu opened' :
+                            'Submenu closed'
+                    );
                 }
             }
         }
@@ -295,6 +304,23 @@ class StockToolsComponent extends AccessibilityComponent {
                             chart.navigationBindings,
                             'closePopup',
                             this.onHidePopup.bind(this)
+                        ),
+                        addEvent(
+                            chart.navigationBindings,
+                            'selectButton',
+                            (e): void => {
+                                // Button is not the button
+                                // but the parent element
+                                if ('button' in e) {
+                                    const btn = e.button
+                                        .querySelector('button');
+                                    if (btn.dataset.label) {
+                                        this.announcer.announce(
+                                            `${btn.dataset.label} selected`
+                                        );
+                                    }
+                                }
+                            }
                         )
                     );
                 }
@@ -318,6 +344,7 @@ class StockToolsComponent extends AccessibilityComponent {
                 ).forEach((submenu): void => {
                     submenu.dataset.open = 'false';
                 });
+
             },
             terminate: (): void => {
                 this.focusedButtonIndex = 0;
