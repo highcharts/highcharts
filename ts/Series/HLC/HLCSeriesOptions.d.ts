@@ -155,9 +155,11 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *
      * @default close
      *
+     * @validvalue ["high","low","close"]
+     *
      * @product highstock
      */
-    pointValKey?: ('high'|'low'|'close');
+    pointValKey?: string;
 
     states?: SeriesStatesOptions<HLCSeries>;
 
