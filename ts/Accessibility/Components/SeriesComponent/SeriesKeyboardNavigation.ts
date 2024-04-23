@@ -424,7 +424,15 @@ class SeriesKeyboardNavigation {
                     ): number {
                         const point = chart.highlightedPoint;
                         if (point) {
-                            const fakeMouseEvent = getFakeMouseEvent('click'),
+                            const { plotLeft, plotTop } = this.chart,
+                                { plotX = 0, plotY = 0 } = point,
+                                fakeMouseEvent = getFakeMouseEvent(
+                                    'click',
+                                    {
+                                        x: plotLeft + plotX,
+                                        y: plotTop + plotY
+                                    }
+                                ),
                                 buildtEvent = {};
 
                             for (const prop in fakeMouseEvent) {
@@ -444,6 +452,7 @@ class SeriesKeyboardNavigation {
                             ) = point.graphic?.element;
 
                             (event as any).point = point;
+
                             fireEvent(point.series, 'click', pEvent);
                             point.firePointEvent('click', pEvent);
                         }
