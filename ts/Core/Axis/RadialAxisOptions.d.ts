@@ -28,6 +28,13 @@ export interface RadialAxisOptions extends YAxisOptions {
     // Nothing to add yet
 }
 
+declare module '../Options' {
+    interface Options {
+        defaultCircularOptions?: RadialAxisOptions,
+        defaultRadialGaugeOptions?: RadialAxisOptions
+    }
+}
+
 /* *
  *
  *  Default Export

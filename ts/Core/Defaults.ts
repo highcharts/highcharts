@@ -29,7 +29,10 @@ import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const { merge } = U;
+const {
+    fireEvent,
+    merge
+} = U;
 
 /* *
  *
@@ -2796,22 +2799,7 @@ function getOptions(): DefaultOptions {
 function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
-
-    if (defaultOptions.defaultCircularOptions && options.xAxis) {
-        merge(
-            true,
-            defaultOptions.defaultCircularOptions,
-            options.xAxis
-        );
-    }
-
-    if (defaultOptions.defaultRadialGaugeOptions && options.yAxis) {
-        merge(
-            true,
-            defaultOptions.defaultRadialGaugeOptions,
-            options.yAxis
-        );
-    }
+    fireEvent(H, 'setOptions', { options });
 
     // Copy in the default options
     merge(true, defaultOptions, options);

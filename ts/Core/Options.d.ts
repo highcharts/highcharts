@@ -18,7 +18,6 @@ import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
-import type RadialAxisOptions from './Axis/RadialAxisOptions';
 
 /* *
  *
@@ -74,8 +73,6 @@ export interface Options {
 }
 
 export interface DefaultOptions extends Options {
-    defaultCircularOptions?: RadialAxisOptions,
-    defaultRadialGaugeOptions?: RadialAxisOptions
 }
 
 export type OptionsOverflowValue = ('allow'|'justify');

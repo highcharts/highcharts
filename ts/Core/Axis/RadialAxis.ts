@@ -18,6 +18,7 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
+import type { DefaultOptions } from '../Options';
 import type Pane from '../../Extensions/Pane/Pane';
 import type { PaneBackgroundShapeValue } from '../../Extensions/Pane/PaneOptions.js';
 import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
@@ -121,6 +122,10 @@ namespace RadialAxis {
 
     interface AutoAlignEvent extends Event {
         align?: string;
+    }
+
+    interface SetOptionsEvent extends Event {
+        options: DeepPartial<DefaultOptions>
     }
 
     export declare class AxisComposition extends Axis {
@@ -277,6 +282,11 @@ namespace RadialAxis {
                 TickClass as typeof TickComposition,
                 'afterGetPosition',
                 onTickAfterGetPosition
+            );
+            addEvent(
+                H,
+                'setOptions',
+                onGlobalSetOptions
             );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
@@ -1189,6 +1199,30 @@ namespace RadialAxis {
     }
 
     /**
+     * Update default options for radial axes from setOptions method.
+     */
+    function onGlobalSetOptions(
+        this: typeof H,
+        { options }: SetOptionsEvent
+    ): void {
+        if (options.xAxis) {
+            merge(
+                true,
+                defaultCircularOptions,
+                options.xAxis
+            );
+        }
+
+        if (options.yAxis) {
+            merge(
+                true,
+                defaultRadialGaugeOptions,
+                options.yAxis
+            );
+        }
+    }
+
+    /**
      * Translate from intermediate plotX (angle), plotY (axis.len - radius)
      * to final chart coordinates.
      *
@@ -1323,14 +1357,14 @@ namespace RadialAxis {
             if (!this.isXAxis) {
                 defaultPolarOptions = merge(
                     defaultOptions.yAxis,
-                    defaultOptions.defaultRadialGaugeOptions
+                    defaultRadialGaugeOptions
                 );
             }
         } else if (polar) {
             defaultPolarOptions = this.horiz ?
                 merge(
                     defaultOptions.xAxis,
-                    defaultOptions.defaultCircularOptions
+                    defaultCircularOptions
                 ) :
                 merge(
                     coll === 'xAxis' ?
@@ -1415,16 +1449,6 @@ namespace RadialAxis {
  *  Registry
  *
  * */
-
-// Extend default options
-merge(
-    true,
-    defaultOptions,
-    {
-        defaultCircularOptions,
-        defaultRadialGaugeOptions
-    }
-);
 
 /* *
  *
