@@ -111,8 +111,6 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      * @excluding y, marker
      *
      * @product highstock
-     *
-     * @apioption series.hlc.data
      */
     data?: Array<(HLCPointOptions|PointShortOptions)>;
 
@@ -155,11 +153,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *
      * @declare Highcharts.OptionsHLCPointValKeyValue
      *
-     * @type {string}
-     *
      * @default close
-     *
-     * @validvalue ["high", "low", "close"]
      *
      * @product highstock
      */
