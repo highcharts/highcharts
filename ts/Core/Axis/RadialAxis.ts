@@ -1444,6 +1444,19 @@ namespace RadialAxis {
 
 }
 
+// Extend default options
+merge(
+    true,
+    defaultOptions,
+    {
+        radialAxis: {
+            defaultCircularOptions,
+            defaultRadialGaugeOptions,
+            defaultRadialOptions
+        }
+    }
+);
+
 /* *
  *
  *  Registry
