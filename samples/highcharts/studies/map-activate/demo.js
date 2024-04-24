@@ -1,3 +1,14 @@
+/**
+ * Snippet to activate the map navigation on click.
+ *
+ * To do
+ * - Option for the button to remain hidden until the user interacts with the
+ *   chart.
+ * - Option to change the map's state back
+ * - Make the button HTML
+ * - Make sample and blog article
+ */
+
 (({ addEvent, Chart }) => {
 
     function activateChart(chart) {

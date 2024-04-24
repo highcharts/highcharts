@@ -71,6 +71,22 @@ class DataGrid {
      */
     public static readonly defaultOptions = DataGridDefaults;
 
+    /**
+     * Factory function for data grid instances.
+     *
+     * @param container
+     * Element or element ID to create the grid structure into.
+     *
+     * @param options
+     * Options to create the grid structure.
+     */
+    public static dataGrid(
+        container: (string | HTMLElement),
+        options: Globals.DeepPartial<DataGridOptions>
+    ): DataGrid {
+        return new DataGrid(container, options);
+    }
+
     /* *
      *
      *  Properties
