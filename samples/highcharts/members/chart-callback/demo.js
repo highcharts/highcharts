@@ -14,7 +14,9 @@
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Events added from Chart prototype'

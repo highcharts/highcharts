@@ -52241,7 +52241,9 @@ data.vessels.forEach(function (vessel, i) {
 
 Highcharts.ganttChart('container', {
     chart: {
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     yAxis: {

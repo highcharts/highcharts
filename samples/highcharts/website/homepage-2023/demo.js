@@ -73,6 +73,7 @@ function randomNumber(min, max) {
     return Math.random() * (max - min) + min;
 }
 // arc
+/*
 const arc = {
     chart: {
         backgroundColor: 'transparent',
@@ -265,6 +266,7 @@ const arc = {
         ]
     }
 };
+*/
 
 // column range
 const cr = {
@@ -663,7 +665,9 @@ const str = {
         type: 'streamgraph',
         marginBottom: 30,
         height: 430,
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         backgroundColor: 'transparent',
         animation: {
             duration: 2000,

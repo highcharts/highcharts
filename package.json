@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.4.0",
+  "version": "11.4.1",
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -147,6 +147,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
+    "chatgpt": "^5.2.5",
     "eslint-plugin-brackets": "^0.1.3"
   }
 }

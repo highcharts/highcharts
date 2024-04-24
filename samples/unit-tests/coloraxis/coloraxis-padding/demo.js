@@ -106,6 +106,37 @@ QUnit.test('Color axis width, height and padding', function (assert) {
         2,
         'Color axis width should be changed after changing chart size.'
     );
+
+    const symbolHeight = 50,
+        symbolWidth = 250;
+
+    chart.colorAxis[0].update({
+        width: void 0,
+        height: void 0
+    }, false);
+
+    chart.update({
+        legend: {
+            symbolHeight: 50,
+            symbolWidth: 250
+        }
+    });
+
+    colorAxisBox = chart.colorAxis[0].gridGroup.getBBox();
+
+    assert.close(
+        colorAxisBox.width,
+        symbolWidth,
+        1.01,
+        'Color axis width should be set based on legend.symbolWidth (#20451).'
+    );
+
+    assert.close(
+        colorAxisBox.height,
+        symbolHeight,
+        1.01,
+        'Color axis height should be set based on legend.symbolHeight (#20451).'
+    );
 });
 
 QUnit.test('Color axis padding with long labels (#15551)', function (assert) {

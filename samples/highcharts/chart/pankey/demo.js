@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'line',
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         panning: true,
         panKey: 'shift'
     },

@@ -1,6 +1,8 @@
 const chartOptions = {
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Average Monthly Weather Data for Tokyo',

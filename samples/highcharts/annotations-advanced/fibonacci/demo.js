@@ -1,6 +1,8 @@
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy',
+        zooming: {
+            type: 'xy'
+        },
         events: {
             load: function () {
                 this.annotations.forEach(function (annotation) {

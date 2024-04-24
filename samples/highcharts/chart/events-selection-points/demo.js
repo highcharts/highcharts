@@ -33,7 +33,7 @@ function selectPointsByDrag(e) {
         series.points.forEach(point => {
             if (
                 point.x >= e.xAxis[0].min && point.x <= e.xAxis[0].max &&
-                    point.y >= e.yAxis[0].min && point.y <= e.yAxis[0].max
+                point.y >= e.yAxis[0].min && point.y <= e.yAxis[0].max
             ) {
                 point.select(true, true);
             }
@@ -85,7 +85,9 @@ Highcharts.chart('container', {
             selectedpoints: selectedPoints,
             click: unselectByClick
         },
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
 
     series: [{
