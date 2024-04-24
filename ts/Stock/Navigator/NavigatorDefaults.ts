@@ -137,6 +137,15 @@ const NavigatorDefaults: NavigatorOptions = {
         width: 7,
 
         /**
+         * Border radius of the handles.
+         *
+         * @sample {highstock} stock/navigator/handles-border-radius/
+         *      Border radius on the navigator handles.
+         *
+         * @since next
+         */
+        borderRadius: 0,
+        /**
          * Height for handles.
          *
          * @sample {highstock} stock/navigator/styled-handles/
