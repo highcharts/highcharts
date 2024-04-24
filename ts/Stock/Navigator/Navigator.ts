@@ -1275,8 +1275,6 @@ class Navigator {
                 ordinal: baseXaxis.options.ordinal,
                 overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
-                id: navigatorOptions.xAxis?.id,
-                yAxis: navigatorOptions.yAxis?.id,
                 type: 'datetime',
                 index: xAxisIndex,
                 isInternal: true,
@@ -1298,7 +1296,6 @@ class Navigator {
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
                 {
-                    id: this.navigatorOptions.yAxis?.id,
                     alignTicks: false,
                     offset: 0,
                     index: yAxisIndex,

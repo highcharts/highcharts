@@ -38,6 +38,11 @@ QUnit.test(
             chart.get('test') !== undefined,
             'Navigator xAxis should be accessed by custom id.'
         );
+
+        assert.ok(
+            chart.get('navigator-y-axis') !== undefined,
+            'Navigator yAxis should be accessed by the default id.'
+        );
     }
 );
 
