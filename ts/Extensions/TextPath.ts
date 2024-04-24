@@ -257,7 +257,7 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
                     if (lineIndex === 0) {
                         polygon.unshift(upper);
                     }
-                    if (lineIndex === numOfLines) {
+                    if (lineIndex === numOfLines - 1) {
                         polygon.push(lower);
                     }
                 }
