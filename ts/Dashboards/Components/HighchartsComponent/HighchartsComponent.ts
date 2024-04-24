@@ -826,25 +826,35 @@ class HighchartsComponent extends Component {
         };
     }
 
+    /**
+     * Retrieves editable options for the chart.
+     *
+     * @returns
+     * The editable options for the chart and its values.
+     */
     public getEditableOptions(): Options {
         const component = this;
         const componentOptions = component.options;
         const chart = component.chart;
         const chartOptions = chart && chart.options;
-        const chartType = chartOptions && chartOptions.chart?.type || 'line';
+        const chartType = chartOptions?.chart?.type || 'line';
 
-        return merge(componentOptions, {
-            chartOptions
-        }, {
-            chartOptions: {
-                yAxis: splat(chart && chart.yAxis[0].options),
-                xAxis: splat(chart && chart.xAxis[0].options),
-                plotOptions: {
-                    series: ((chartOptions && chartOptions.plotOptions) ||
-                        {})[chartType]
+        return merge(
+            {
+                chartOptions
+            },
+            {
+                chartOptions: {
+                    yAxis: splat(chart && chart.yAxis[0].options),
+                    xAxis: splat(chart && chart.xAxis[0].options),
+                    plotOptions: {
+                        series: ((chartOptions && chartOptions.plotOptions) ||
+                            {})[chartType]
+                    }
                 }
-            }
-        });
+            },
+            componentOptions
+        );
     }
 
 

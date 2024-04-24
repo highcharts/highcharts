@@ -757,6 +757,13 @@ QUnit.test(
             chart.series[1].group.attr('visibility') !== 'hidden',
             'Series should be visible'
         );
+
+        chart.addSeries({
+            data: [20, 30, 40],
+            visible: false
+        });
+        chart.series[2].show();
+        assert.ok(true, 'No errors should occur on showing a series (#20967)');
     }
 );
 

@@ -468,7 +468,10 @@ async function synchronizeDirectory(
 function toS3Path(fromPath, removeFromDestPath, prefix) {
     return {
         from: fromPath,
-        to: Path.join(prefix || '', Path.relative(removeFromDestPath, fromPath))
+        to: Path.join(
+            prefix || '',
+            Path.relative(removeFromDestPath || '', fromPath)
+        )
     };
 }
 

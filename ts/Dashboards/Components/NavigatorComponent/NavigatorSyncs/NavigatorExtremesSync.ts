@@ -48,6 +48,8 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as NavigatorComponent;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = (
             extremes: Axis.ExtremesObject
@@ -64,7 +66,7 @@ const syncPair: Sync.SyncPair = {
                         type: 'position',
                         column: filterColumn,
                         row: table.getRowIndexBy(filterColumn, min),
-                        state: 'xAxis.extremes.min'
+                        state: 'xAxis.extremes.min' + groupKey
                     },
                     extremes as unknown as Event
                 );
@@ -75,7 +77,7 @@ const syncPair: Sync.SyncPair = {
                         type: 'position',
                         column: filterColumn,
                         row: table.getRowIndexBy(filterColumn, max),
-                        state: 'xAxis.extremes.max'
+                        state: 'xAxis.extremes.max' + groupKey
                     },
                     extremes as unknown as Event
                 );
@@ -98,6 +100,8 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as NavigatorComponent;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const dataCursor = component.board.dataCursor;
 
@@ -122,7 +126,7 @@ const syncPair: Sync.SyncPair = {
                 if (cursor.columns) {
                     extremesColumn = pick(cursor.columns[0], extremesColumn);
                 }
-            } else if (cursor.state === 'xAxis.extremes.max') {
+            } else if (cursor.state === 'xAxis.extremes.max' + groupKey) {
                 extremesColumn = pick(cursor.column, extremesColumn);
                 maxIndex = pick(cursor.row, maxIndex);
             } else {
@@ -164,17 +168,17 @@ const syncPair: Sync.SyncPair = {
             if (table) {
                 dataCursor.addListener(
                     table.id,
-                    'xAxis.extremes',
+                    'xAxis.extremes' + groupKey,
                     extremesListener
                 );
                 dataCursor.addListener(
                     table.id,
-                    'xAxis.extremes.max',
+                    'xAxis.extremes.max' + groupKey,
                     extremesListener
                 );
                 dataCursor.addListener(
                     table.id,
-                    'xAxis.extremes.min',
+                    'xAxis.extremes.min' + groupKey,
                     extremesListener
                 );
             }
@@ -186,17 +190,17 @@ const syncPair: Sync.SyncPair = {
             if (table) {
                 dataCursor.removeListener(
                     table.id,
-                    'xAxis.extremes',
+                    'xAxis.extremes' + groupKey,
                     extremesListener
                 );
                 dataCursor.removeListener(
                     table.id,
-                    'xAxis.extremes.max',
+                    'xAxis.extremes.max' + groupKey,
                     extremesListener
                 );
                 dataCursor.removeListener(
                     table.id,
-                    'xAxis.extremes.min',
+                    'xAxis.extremes.min' + groupKey,
                     extremesListener
                 );
             }
