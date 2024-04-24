@@ -28,13 +28,13 @@ Highcharts.stockChart('container', {
 
     xAxis: {
         minRange: day * 3,
-        max: Date.UTC(2021, 0, 6)
+        min: Date.UTC(2021, 0, 2)
     },
 
     series: [{
-        data: [1, 2, 5, 10, 20, 50, 100, -100, 100, -100],
+        data: [10, 2, 5, 10, 12, 13, 3, 2, 5],
         cumulativeStart: true
     }, {
-        data: [100, -50, -15, 15, -50, -20, -30, 100, -100, 100]
+        data: [10, 2, 5, 10, 12, 13, 3, 2, 5]
     }]
 });
