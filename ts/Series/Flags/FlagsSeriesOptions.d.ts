@@ -21,12 +21,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
 import type { FlagsShapeValue } from './FlagsPointOptions';
-import type {
-    SeriesStatesOptions,
-    FlagsShapeValue,
-    Partial,
-    CSSObject
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
@@ -34,7 +29,6 @@ import type TooltipOptions from '../../Core/TooltipOptions';
  *  Declarations
  *
  * */
-
 
 /**
  * Flags are used to mark events in stock charts. They can be added on the
@@ -314,5 +308,11 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     tooltip?: Partial<TooltipOptions>;
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default FlagsSeriesOptions;

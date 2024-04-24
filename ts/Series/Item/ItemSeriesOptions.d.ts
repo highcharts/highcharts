@@ -16,11 +16,17 @@
  *
  * */
 
-import type { ItemPointMarkerOptions } from './ItemPointOptions';
+import type {
+    ItemPointOptions,
+    ItemPointMarkerOptions
+} from './ItemPointOptions';
 import type ItemSeries from './ItemSeries';
 import type PieSeriesOptions from '../Pie/PieSeriesOptions';
-import type { PointShortOptions } from '../../Core/SeriesPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type {
+    SeriesEventsOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -28,6 +34,12 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
+/**
+ * @optionparent series.item.events
+ */
+interface ItemSeriesEventsOptions extends SeriesEventsOptions {
+    legendItem?: undefined;
+}
 
 /**
  * An item chart is an infographic chart where a number of items are laid

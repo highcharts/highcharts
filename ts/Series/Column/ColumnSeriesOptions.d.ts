@@ -18,6 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPointOptions from './ColumnPointOptions';
 import type ColumnSeries from './ColumnSeries';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -61,7 +62,6 @@ declare module '../../Core/Series/SeriesOptions' {
         color?: ColorType;
     }
 }
-
 
 /**
  * Column series display one column per value along an X axis.
@@ -277,7 +277,7 @@ export interface ColumnSeriesOptions extends LineSeriesOptions {
      */
     data?: Array<(ColumnPointOptions|PointShortOptions)>;
 
-    dataLabels?: Partial<DataLabelOptions>;
+    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
 
     /**
      * Whether to group non-stacked columns or to let them render

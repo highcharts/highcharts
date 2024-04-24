@@ -21,7 +21,10 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { NetworkgraphDataLabelsOptions } from './NetworkgraphSeriesOptions';
 import type NodesComposition from '../NodesComposition';
-import type PointOptions from '../../Core/Series/PointOptions';
+import type {
+    PointMarkerOptions,
+    PointOptions
+} from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -41,7 +44,7 @@ declare module '../../Core/Series/PointOptions' {
  *
  * @optionparent series.networkgraph.data
  */
-export interface NetworkgraphDataOptions extends Point {
+export interface NetworkgraphDataOptions extends PointOptions {
 
     dataLabels?: (NetworkgraphDataLabelsOptions|Array<NetworkgraphDataLabelsOptions>);
 
@@ -80,7 +83,7 @@ export interface NetworkgraphPointOptions
      *
      * @apioption series.networkgraph.nodes.dataLabels
      */
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: (NetworkgraphDataLabelsOptions|Array<NetworkgraphDataLabelsOptions>);
 
     /**
      * The id of the auto-generated node, referring to the `from` or `to`
@@ -91,7 +94,7 @@ export interface NetworkgraphPointOptions
     /**
      * Options for the node markers.
      */
-    marker?: MarkerOptions;
+    marker?: PointMarkerOptions;
 
     /**
      * Mass of the node. By default, each node has mass equal to it's marker

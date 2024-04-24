@@ -21,8 +21,8 @@
 import type Chart from '../../Core/Chart/Chart';
 import type { GraphIntegrationObject } from '../GraphLayoutComposition';
 import type NetworkgraphPoint from './NetworkgraphPoint';
-import type NetworkgraphSeries from './NetworkgraphSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 
 import EulerIntegration from './EulerIntegration.js';
 import H from '../../Core/Globals.js';
@@ -95,7 +95,7 @@ class ReingoldFruchtermanLayout {
     public prevSystemTemperature?: number;
     public quadTree!: QuadTree;
     public repulsiveForce!: Function;
-    public series: Array<NetworkgraphSeries> = [];
+    public series: Array<Series> = [];
     public simulation: (false|number) = false;
     public startTemperature?: number;
     public systemTemperature?: number;
@@ -664,10 +664,10 @@ class ReingoldFruchtermanLayout {
      * @private
      */
     public applyLimitBox(
-        node: NetworkgraphPoint,
+        node: Point,
         box: Record<string, number>
     ): void {
-        const radius = node.radius;
+        const radius = (node as NetworkgraphPoint).radius;
         /*
         TO DO: Consider elastic collision instead of stopping.
         o' means end position when hitting plotting area edge:

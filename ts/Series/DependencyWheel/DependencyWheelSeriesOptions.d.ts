@@ -18,7 +18,10 @@
 
 import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
 import type DependencyWheelSeries from './DependencyWheelSeries';
-import type SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
+import type {
+    SankeySeriesNodeOptions,
+    SankeySeriesOptions
+} from '../Sankey/SankeySeriesOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -29,6 +32,9 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
+interface DependencyWheelSeriesNodeOptions extends SankeySeriesNodeOptions {
+    // Nothing to add
+}
 
 /**
  * A dependency wheel chart is a type of flow diagram, where all nodes are laid
@@ -168,15 +174,13 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *
      * @extends series.sankey.nodes
      *
-     * @type {Array<*>}
-     *
      * @product highcharts
      *
      * @excluding offset
      *
      * @apioption series.dependencywheel.nodes
      */
-    nodes?: Array<DependencyWheelSeriesNodesOptions>;
+    nodes?: Array<DependencyWheelSeriesNodeOptions>;
 
     /**
      * Size of the wheel in pixel or percent relative to the canvas space.

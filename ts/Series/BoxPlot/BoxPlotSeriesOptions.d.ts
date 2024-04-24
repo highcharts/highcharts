@@ -20,13 +20,13 @@ import type BoxPlotSeries from './BoxPlotSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
  *  Declarations
  *
  * */
-
 
 /**
  * A box plot is a convenient way of depicting groups of data through their

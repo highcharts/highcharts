@@ -18,6 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type HLCSeriesOptions from '../HLC/HLCSeriesOptions';
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -42,7 +43,6 @@ declare module '../Line/LineSeriesOptions' {
 
     }
 }
-
 
 /**
  * An OHLC chart is a style of financial chart used to describe price

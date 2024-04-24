@@ -18,6 +18,7 @@ import type CandlestickSeries from './CandlestickSeries';
 import type CandlestickPointOptions from './CandlestickPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -25,7 +26,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
-
 
 /**
  * A candlestick chart is a style of financial chart used to describe
@@ -149,7 +149,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *
      * @product highstock
      */
-    data?: Array<[(number|string), number, number, number]|[(number|string), number, number, number, number]|CandlestickPointOptions>;
+    data?: Array<(CandlestickPointOptions|PointShortOptions)>;
 
     /**
      *

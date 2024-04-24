@@ -16,7 +16,10 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type HeatmapSeries from './HeatmapSeries';
-import type { HeatmapPointMarkerOptions } from './HeatmapPointOptions';
+import type {
+    HeatmapPointMarkerOptions,
+    HeatmapPointOptions
+} from './HeatmapPointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesStatesOptions,
@@ -262,7 +265,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     pointPadding?: number;
 
-    pointRange?: HeatmapSeriesPointRangeOptions;
+    pointRange?: (number|null);
 
     /**
      * The row size - how many Y axis units each heatmap row should span.

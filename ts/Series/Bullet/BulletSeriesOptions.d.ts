@@ -15,7 +15,8 @@
  * */
 
 import type BulletPointOptions from './BulletPointOptions';
-import type { BulletTargetOptions } from './BulletPointOptions';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -25,7 +26,6 @@ import type TooltipOptions from '../../Core/TooltipOptions';
  *  Declarations
  *
  * */
-
 
 /**
  * A bullet graph is a variation of a bar graph. The bullet graph features
@@ -191,26 +191,6 @@ export interface BulletTargetOptions {
     width?: (number|string);
 
 }
-
-/**
- *
- * @product highcharts
- *
- * @excluding halo, lineWidth, lineWidthPlus, marker
- *
- * @apioption series.bullet.states.select
- */
-
-/**
- *
- * @product highcharts
- *
- * @excluding halo, lineWidth, lineWidthPlus, marker
- *
- * @apioption series.bullet.states.hover
- */
-
-('');
 
 /* *
  *

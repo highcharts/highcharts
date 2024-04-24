@@ -20,8 +20,10 @@ import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type Templating from '../../Core/Templating';
 import type NodesComposition from '../NodesComposition';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
+import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -55,6 +57,7 @@ export interface SankeySeriesNodeOptions {
 
 export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
     curveFactor?: number;
+    data?: Array<(SankeyPointOptions|PointShortOptions)>
     dataLabels?: SankeyDataLabelOptions;
     height?: number;
     inactiveOtherPoints?: boolean;

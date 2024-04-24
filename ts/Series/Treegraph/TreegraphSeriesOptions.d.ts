@@ -16,7 +16,8 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type DataLabelOptions, {
+import type {
+    DataLabelOptions,
     DataLabelTextPathOptions
 } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';

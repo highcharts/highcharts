@@ -36,7 +36,7 @@ declare module './Options' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: DeepPartial<TooltipOptions>;
+        tooltip?: Partial<TooltipOptions>;
     }
 }
 

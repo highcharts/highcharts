@@ -54,7 +54,7 @@ export interface MapPointPointGeometryOptions extends GeoJSONGeometryPoint {
      *
      * @product highmaps
      */
-    coordinates?: LonLatArray;
+    coordinates: LonLatArray;
 
     /**
      * The geometry type, which in case of the `mappoint` series is always `Point`.
@@ -63,7 +63,7 @@ export interface MapPointPointGeometryOptions extends GeoJSONGeometryPoint {
      *
      * @product highmaps
      */
-    type?: 'Point';
+    type: 'Point';
 
 }
 

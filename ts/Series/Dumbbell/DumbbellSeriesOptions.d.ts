@@ -17,12 +17,12 @@
 import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
+import type DumbbellPointOptions from './DumbbellPointOptions';
+import type DumbbellSeries from './DumbbellSeries';
 import type {
-    ColorString,
     LegendSymbolType,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type DumbbellSeries from './DumbbellSeries';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -33,7 +33,6 @@ import type {
  *  Declarations
  *
  * */
-
 
 /**
  * The dumbbell series is a cartesian series with higher and lower values

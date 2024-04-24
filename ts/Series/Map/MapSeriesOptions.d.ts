@@ -19,7 +19,8 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
-import type PointOptions, {
+import type {
+    PointOptions,
     PointShortOptions,
     PointMarkerOptions
 } from '../../Core/Series/PointOptions';
@@ -31,12 +32,108 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
-
 /* *
  *
  *  Declarations
  *
  * */
+
+/**
+ * Whether all areas of the map defined in `mapData` should be rendered.
+ * If `true`, areas which don't correspond to a data point, are rendered
+ * as `null` points. If `false`, those areas are skipped.
+ *
+ * @sample maps/plotoptions/series-allareas-false/
+ *         All areas set to false
+ *
+ * @type {boolean}
+ *
+ * @default true
+ *
+ * @product highmaps
+ *
+ * @apioption plotOptions.series.allAreas
+ */
+
+/**
+ * The border color of the map areas.
+ *
+ * In styled mode, the border stroke is given in the `.highcharts-point`
+ * class.
+ *
+ * @sample {highmaps} maps/plotoptions/series-border/
+ *         Borders demo
+ *
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ *
+ * @default #cccccc
+ *
+ * @product highmaps
+ *
+ * @apioption plotOptions.series.borderColor
+ */
+
+/**
+ * The border width of each map area.
+ *
+ * In styled mode, the border stroke width is given in the
+ * `.highcharts-point` class.
+ *
+ * @sample maps/plotoptions/series-border/
+ *         Borders demo
+ *
+ * @type {number}
+ *
+ * @default 1
+ *
+ * @product highmaps
+ *
+ * @apioption plotOptions.series.borderWidth
+ */
+
+/**
+ * What property to join the `mapData` to the value data. For example,
+ * if joinBy is "code", the mapData items with a specific code is merged
+ * into the data with the same code. For maps loaded from GeoJSON, the
+ * keys may be held in each point's `properties` object.
+ *
+ * The joinBy option can also be an array of two values, where the first
+ * points to a key in the `mapData`, and the second points to another
+ * key in the `data`.
+ *
+ * When joinBy is `null`, the map items are joined by their position in
+ * the array, which performs much better in maps with many data points.
+ * This is the recommended option if you are printing more than a
+ * thousand data points and have a backend that can preprocess the data
+ * into a parallel array of the mapData.
+ *
+ * @sample maps/plotoptions/series-border/
+ *         Joined by "code"
+ *
+ * @sample maps/demo/geojson/
+ *         GeoJSON joined by an array
+ *
+ * @sample maps/series/joinby-null/
+ *         Simple data joined by null
+ *
+ * @type {string|Array<string>}
+ *
+ * @default hc-key
+ *
+ * @product highmaps
+ *
+ * @apioption plotOptions.series.joinBy
+ */
+
+/**
+ * Define the z index of the series.
+ *
+ * @type {number}
+ *
+ * @product highmaps
+ *
+ * @apioption plotOptions.series.zIndex
+ */
 
 /**
  * The map series is used for basic choropleth maps, where each map area has
@@ -133,102 +230,3 @@ export interface MapSeriesOptions
  * */
 
 export default MapSeriesOptions;
-
-/**
- * Define the z index of the series.
- *
- * @type {number}
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.zIndex
- */
-
-/**
- * What property to join the `mapData` to the value data. For example,
- * if joinBy is "code", the mapData items with a specific code is merged
- * into the data with the same code. For maps loaded from GeoJSON, the
- * keys may be held in each point's `properties` object.
- *
- * The joinBy option can also be an array of two values, where the first
- * points to a key in the `mapData`, and the second points to another
- * key in the `data`.
- *
- * When joinBy is `null`, the map items are joined by their position in
- * the array, which performs much better in maps with many data points.
- * This is the recommended option if you are printing more than a
- * thousand data points and have a backend that can preprocess the data
- * into a parallel array of the mapData.
- *
- * @sample maps/plotoptions/series-border/
- *         Joined by "code"
- *
- * @sample maps/demo/geojson/
- *         GeoJSON joined by an array
- *
- * @sample maps/series/joinby-null/
- *         Simple data joined by null
- *
- * @type {string|Array<string>}
- *
- * @default hc-key
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.joinBy
- */
-
-/**
- * The border width of each map area.
- *
- * In styled mode, the border stroke width is given in the
- * `.highcharts-point` class.
- *
- * @sample maps/plotoptions/series-border/
- *         Borders demo
- *
- * @type {number}
- *
- * @default 1
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.borderWidth
- */
-
-/**
- * The border color of the map areas.
- *
- * In styled mode, the border stroke is given in the `.highcharts-point`
- * class.
- *
- * @sample {highmaps} maps/plotoptions/series-border/
- *         Borders demo
- *
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- *
- * @default #cccccc
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.borderColor
- */
-
-/**
- * Whether all areas of the map defined in `mapData` should be rendered.
- * If `true`, areas which don't correspond to a data point, are rendered
- * as `null` points. If `false`, those areas are skipped.
- *
- * @sample maps/plotoptions/series-allareas-false/
- *         All areas set to false
- *
- * @type {boolean}
- *
- * @default true
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.allAreas
- */
-
-('');

@@ -18,12 +18,17 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type ConnectorsOptions, {
+import type {
+    ConnectorsOptions,
     ConnectorsStartMarkerOptions
 } from '../../Gantt/ConnectorsOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type GanttPointOptions from './GanttPointOptions';
 import type GanttSeries from './GanttSeries';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesEventsOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type XRangeSeriesOptions from '../XRange/XRangeSeriesOptions';
 
@@ -58,6 +63,9 @@ export type GanttDependencyOptions = (
     | Array<string>
 );
 
+export interface GanttSeriesEventsOptions extends SeriesEventsOptions {
+    afterAnimate?: undefined;
+}
 
 /**
  * A `gantt` series. If the [type](#series.gantt.type) option is not specified,

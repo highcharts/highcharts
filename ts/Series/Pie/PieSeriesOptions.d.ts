@@ -39,7 +39,7 @@ import type TooltipOptions from '../../Core/TooltipOptions';
  *
  * */
 
-interface PieSeriesEventOptions extends SeriesEventOptions {
+interface PieSeriesEventsOptions extends SeriesEventsOptions {
 
     /**
      * Fires when the checkbox next to the point name in the legend is
@@ -371,7 +371,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
     legendType?: ('point'|'series');
 
     /** @ignore-option */
-    lineWidth?: PieSeriesLineWidthOptions;
+    lineWidth?: number;
 
     /** @ignore-option */
     marker?: PointMarkerOptions;

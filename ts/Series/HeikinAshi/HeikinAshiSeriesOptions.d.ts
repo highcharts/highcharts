@@ -16,6 +16,7 @@
 
 import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
 import type DataGroupingOptions from '../../Extensions/DataGrouping/DataGroupingOptions';
+import type HeikinAshiPointOptions from './HeikinAshiPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 
 /* *
@@ -23,7 +24,6 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  *  Declarations
  *
  * */
-
 
 /**
  * An HeikinAshi series is a style of financial chart used to describe price

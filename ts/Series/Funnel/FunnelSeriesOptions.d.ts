@@ -17,6 +17,7 @@
  * */
 
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
+import type FunnelPointOptions from './FunnelPointOptions';
 import type FunnelSeries from './FunnelSeries';
 import type PieSeriesOptions from '../Pie/PieSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';

@@ -19,7 +19,8 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions, {
+import type {
+    DataLabelOptions,
     DataLabelTextPathOptions
 } from '../../Core/Series/DataLabelOptions';
 import type { EventCallback } from '../../Core/Callback';
@@ -31,10 +32,14 @@ import type NetworkgraphPoint from './NetworkgraphPoint';
 import type NetworkgraphSeries from './NetworkgraphSeries';
 import type NodesComposition from '../NodesComposition';
 import type Point from '../../Core/Series/Point';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointMarkerOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
 import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
-import type SeriesOptions, {
+import type {
     SeriesEventsOptions,
+    SeriesOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 

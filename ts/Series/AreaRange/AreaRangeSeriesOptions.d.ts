@@ -103,7 +103,7 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
      *
      * @default {highstock} 0.75
      */
-    fillOpacity?: AreaRangeSeriesFillOpacityOptions;
+    fillOpacity?: number;
 
     /**
      *
