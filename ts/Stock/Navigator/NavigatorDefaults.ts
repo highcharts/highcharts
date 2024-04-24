@@ -480,6 +480,8 @@ const NavigatorDefaults: NavigatorOptions = {
 
         gridLineColor: Palette.neutralColor10,
 
+        id: 'navigator-x-axis',
+
         gridLineWidth: 1,
 
         tickPixelInterval: 200,
@@ -548,6 +550,8 @@ const NavigatorDefaults: NavigatorOptions = {
         endOnTick: false,
 
         minPadding: 0.1,
+
+        id: 'navigator-y-axis',
 
         maxPadding: 0.1,
 
