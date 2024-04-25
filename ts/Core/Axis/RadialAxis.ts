@@ -128,6 +128,12 @@ namespace RadialAxis {
         options: DeepPartial<DefaultOptions>
     }
 
+    interface RadialDefaultOptions {
+        circular: DeepPartial<RadialAxisOptions>,
+        radial: DeepPartial<RadialAxisOptions>,
+        radialGauge: DeepPartial<RadialAxisOptions>
+    }
+
     export declare class AxisComposition extends Axis {
         angleRad: number;
         autoConnect?: boolean;
@@ -227,6 +233,12 @@ namespace RadialAxis {
         }
     }
 
+    export const RadialDefaultOptions: RadialDefaultOptions = {
+        circular: merge(defaultCircularOptions),
+        radial: merge(defaultRadialOptions),
+        radialGauge: merge(defaultRadialGaugeOptions)
+    };
+
     /**
      * Augments methods for the value axis.
      *
@@ -247,6 +259,7 @@ namespace RadialAxis {
     ): (T&typeof AxisComposition) {
 
         if (pushUnique(composed, 'Axis.Radial')) {
+
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -283,10 +296,29 @@ namespace RadialAxis {
                 'afterGetPosition',
                 onTickAfterGetPosition
             );
+            /**
+             * Update default options for radial axes from setOptions method.
+             */
             addEvent(
                 H,
                 'setOptions',
-                onGlobalSetOptions
+                function (this: typeof H, { options }: SetOptionsEvent): void {
+                    if (options.xAxis) {
+                        merge(
+                            true,
+                            RadialAxis.RadialDefaultOptions.circular,
+                            options.xAxis
+                        );
+                    }
+
+                    if (options.yAxis) {
+                        merge(
+                            true,
+                            RadialAxis.RadialDefaultOptions.radialGauge,
+                            options.yAxis
+                        );
+                    }
+                }
             );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
@@ -1199,30 +1231,6 @@ namespace RadialAxis {
     }
 
     /**
-     * Update default options for radial axes from setOptions method.
-     */
-    function onGlobalSetOptions(
-        this: typeof H,
-        { options }: SetOptionsEvent
-    ): void {
-        if (options.xAxis) {
-            merge(
-                true,
-                defaultCircularOptions,
-                options.xAxis
-            );
-        }
-
-        if (options.yAxis) {
-            merge(
-                true,
-                defaultRadialGaugeOptions,
-                options.yAxis
-            );
-        }
-    }
-
-    /**
      * Translate from intermediate plotX (angle), plotY (axis.len - radius)
      * to final chart coordinates.
      *
@@ -1357,20 +1365,20 @@ namespace RadialAxis {
             if (!this.isXAxis) {
                 defaultPolarOptions = merge(
                     defaultOptions.yAxis,
-                    defaultRadialGaugeOptions
+                    RadialAxis.RadialDefaultOptions.radialGauge
                 );
             }
         } else if (polar) {
             defaultPolarOptions = this.horiz ?
                 merge(
                     defaultOptions.xAxis,
-                    defaultCircularOptions
+                    RadialAxis.RadialDefaultOptions.circular
                 ) :
                 merge(
                     coll === 'xAxis' ?
                         defaultOptions.xAxis :
                         defaultOptions.yAxis,
-                    defaultRadialOptions
+                    RadialAxis.RadialDefaultOptions.radial
                 );
         }
 
@@ -1443,25 +1451,6 @@ namespace RadialAxis {
     /* eslint-enable valid-jsdoc */
 
 }
-
-// Extend default options
-merge(
-    true,
-    defaultOptions,
-    {
-        radialAxis: {
-            defaultCircularOptions,
-            defaultRadialGaugeOptions,
-            defaultRadialOptions
-        }
-    }
-);
-
-/* *
- *
- *  Registry
- *
- * */
 
 /* *
  *
