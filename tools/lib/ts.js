@@ -917,9 +917,9 @@ function getNamespaceInfo(
         return void 0;
     }
 
-    /** @type {ModuleInfo} */
+    /** @type {NamespaceInfo} */
     const _info = {
-        kind: 'Module',
+        kind: 'Namespace',
         name: node.name.text
     };
 
@@ -1747,7 +1747,7 @@ module.exports = {
  * @typedef NamespaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {'Module'} kind
+ * @property {'Namespace'} kind
  * @property {Array<NodeInfo>} members
  * @property {MetaInfo} meta
  * @property {string} name
@@ -1756,7 +1756,7 @@ module.exports = {
 
 /**
  * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
- *           InterfaceInfo|ModuleInfo|ObjectInfo|PropertyInfo|SourceInfo|
+ *           InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|SourceInfo|
  *           VariableInfo
  *          } NodeInfo
  */
