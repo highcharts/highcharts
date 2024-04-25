@@ -1098,10 +1098,10 @@ function seriesRenderCanvas(this: Series): void {
         this.markerGroup = this.plotGroup(
             'markerGroup',
             'markers',
-            true as any,
+            'visible',
             1,
             chart.seriesGroup
-        );
+        ).addClass('highcharts-tracker');
     } else {
         // If series has a private markerGroup, remove that
         // and use common markerGroup
