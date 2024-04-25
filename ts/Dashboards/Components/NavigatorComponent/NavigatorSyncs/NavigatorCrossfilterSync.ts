@@ -86,11 +86,21 @@ const syncPair: Sync.SyncPair = {
                 dataCursor.emitCursor(
                     table,
                     {
-                        type: 'range',
-                        columns: [filterColumn],
-                        firstRow: 0,
-                        lastRow: table.getRowCount() - 1,
-                        state: 'crossfilter'
+                        type: 'position',
+                        column: filterColumn,
+                        row: table.getRowIndexBy(filterColumn, min),
+                        state: 'xAxis.extremes.min'
+                    },
+                    extremes as unknown as Event
+                );
+
+                dataCursor.emitCursor(
+                    table,
+                    {
+                        type: 'position',
+                        column: filterColumn,
+                        row: table.getRowIndexBy(filterColumn, max),
+                        state: 'xAxis.extremes.max'
                     },
                     extremes as unknown as Event
                 );
