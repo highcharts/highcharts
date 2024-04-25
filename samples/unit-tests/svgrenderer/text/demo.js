@@ -875,8 +875,6 @@ QUnit.test('textPath', assert => {
         400
     );
 
-    const { setTextPath } = Highcharts.TextPath;
-
     const path = ren
         .path([
             ['M', 50, 50],
