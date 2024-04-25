@@ -334,8 +334,8 @@ function compose(SVGElementClass: typeof SVGElement): void {
     SVGElementClass.prototype.setTextPath = setTextPath;
 }
 
-const TextPathSupport = {
+const TextPath = {
     compose
 };
 
-export default TextPathSupport;
+export default TextPath;
