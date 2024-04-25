@@ -15,18 +15,19 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type {
     HeatmapPointMarkerOptions,
     HeatmapPointOptions
 } from './HeatmapPointOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesStatesOptions,
     LegendSymbolType
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 
 /* *
  *
@@ -222,7 +223,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      *
      * @product highcharts highmaps
      */
-    data?: Array<Array<number>|HeatmapPointOptions>;
+    data?: Array<(HeatmapPointOptions|PointShortOptions)>;
 
     dataLabels?: Partial<DataLabelOptions>;
 
