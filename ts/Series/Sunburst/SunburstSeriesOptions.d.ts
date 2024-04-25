@@ -18,14 +18,15 @@
  *
  * */
 
+import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type SunburstSeries from './SunburstSeries';
 import type {
-    TreemapSeriesLevelsColorVariationOptions,
-    TreemapSeriesLevelsOptions,
+    TreemapSeriesLevelColorVariationOptions,
+    TreemapSeriesLevelOptions,
     TreemapSeriesOptions
 } from '../Treemap/TreemapSeriesOptions';
 
@@ -44,7 +45,7 @@ export type SunburstDataLabelRotationValue = (
     'auto'|'perpendicular'|'parallel'|'circular'
 );
 
-export interface SunburstSeriesLevelsColorVariationOptions extends TreemapSeriesLevelsColorVariationOptions {
+export interface SunburstSeriesLevelsColorVariationOptions extends TreemapSeriesLevelColorVariationOptions {
     key?: string;
     to?: number;
 }
@@ -54,8 +55,8 @@ export interface SunburstSeriesLevelSizeOptions {
     value?: number;
 }
 
-export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelsOptions {
-    borderColor?: ColorType;
+export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
+    borderColor?: ColorString;
     borderDashStyle?: DashStyleValue;
     borderWidth?: number;
     color?: ColorType;
@@ -64,6 +65,7 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelsOptions {
     levelSize?: unknown;
     rotation?: number;
     rotationMode?: string;
+    slicedOffset?: number;
 }
 
 export interface SunburstSeriesOptions extends TreemapSeriesOptions {

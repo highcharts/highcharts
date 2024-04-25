@@ -25,7 +25,10 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 import type { TreegraphLinkOptions } from './TreegraphLink';
 import type TreegraphPoint from './TreegraphPoint';
-import type TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
+import type {
+    TreemapSeriesLevelOptions,
+    TreemapSeriesOptions
+} from '../Treemap/TreemapSeriesOptions';
 
 /* *
  *
@@ -68,12 +71,13 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkTextPath?: DataLabelTextPathOptions;
 }
 
-export interface TreegraphSeriesLevelOptions extends TreegraphSeriesOptions {
+export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
+    collapseButton: CollapseButtonOptions;
     collapsed?: boolean;
 }
 
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
-    dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
+    dataLabels: (TreegraphDataLabelOptions|Array<TreegraphDataLabelOptions>);
     collapseButton: CollapseButtonOptions;
     fillSpace: boolean;
     link: TreegraphLinkOptions;
