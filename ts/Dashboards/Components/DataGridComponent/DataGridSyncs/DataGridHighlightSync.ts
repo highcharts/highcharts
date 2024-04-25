@@ -46,6 +46,8 @@ const syncPair: Sync.SyncPair = {
 
         const { dataGrid, board } = component;
         const highlightOptions = this.sync.syncConfig.highlight;
+        const groupKey = highlightOptions.group ?
+            ':' + highlightOptions.group : '';
 
         if (!board || !dataGrid || !highlightOptions?.enabled) {
             return;
@@ -62,7 +64,7 @@ const syncPair: Sync.SyncPair = {
                     type: 'position',
                     row: parseInt(row.dataset.rowIndex, 10),
                     column: e.columnName,
-                    state: 'dataGrid.hoverRow'
+                    state: 'dataGrid.hoverRow' + groupKey
                 });
             }
         };
@@ -72,7 +74,7 @@ const syncPair: Sync.SyncPair = {
             if (table) {
                 cursor.emitCursor(table, {
                     type: 'position',
-                    state: 'dataGrid.hoverOut'
+                    state: 'dataGrid.hoverOut' + groupKey
                 });
             }
         };
@@ -102,6 +104,8 @@ const syncPair: Sync.SyncPair = {
 
         const { board } = component;
         const highlightOptions = component.sync.syncConfig.highlight;
+        const groupKey = highlightOptions.group ?
+            ':' + highlightOptions.group : '';
 
         if (!highlightOptions?.enabled) {
             return;
@@ -144,8 +148,16 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            cursor.addListener(table.id, 'point.mouseOver', handleCursor);
-            cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+            cursor.addListener(
+                table.id,
+                'point.mouseOver' + groupKey,
+                handleCursor
+            );
+            cursor.addListener(
+                table.id,
+                'point.mouseOut' + groupKey,
+                handleCursorOut
+            );
         };
 
         const unregisterCursorListeners = (): void => {
@@ -155,8 +167,16 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            cursor.removeListener(table.id, 'point.mouseOver', handleCursor);
-            cursor.removeListener(table.id, 'point.mouseOut', handleCursorOut);
+            cursor.removeListener(
+                table.id,
+                'point.mouseOver' + groupKey,
+                handleCursor
+            );
+            cursor.removeListener(
+                table.id,
+                'point.mouseOut' + groupKey,
+                handleCursorOut
+            );
         };
 
         if (board) {

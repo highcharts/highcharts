@@ -52,6 +52,8 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as NavigatorComponent;
+        const syncOptions = this.sync.syncConfig.crossfilter;
+        const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = async (
             extremes: Axis.ExtremesObject
@@ -89,7 +91,7 @@ const syncPair: Sync.SyncPair = {
                         type: 'position',
                         column: filterColumn,
                         row: table.getRowIndexBy(filterColumn, min),
-                        state: 'xAxis.extremes.min'
+                        state: 'crossfilter' + groupKey
                     },
                     extremes as unknown as Event
                 );
@@ -100,7 +102,7 @@ const syncPair: Sync.SyncPair = {
                         type: 'position',
                         column: filterColumn,
                         row: table.getRowIndexBy(filterColumn, max),
-                        state: 'xAxis.extremes.max'
+                        state: 'crossfilter' + groupKey
                     },
                     extremes as unknown as Event
                 );
