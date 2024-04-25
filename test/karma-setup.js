@@ -224,12 +224,12 @@ function resetDefaultOptions(testName) {
 
     // Restore radial axis defaults
     Highcharts._modules['Core/Axis/RadialAxis.js'].RadialDefaultOptions = {
-    	circular: Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-            .defaultCircularOptions,
-        radial: Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-            .defaultRadialOptions,
-        radialGauge: Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-            .defaultRadialGaugeOptions
+    	circular: Highcharts.merge(Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
+            .defaultCircularOptions),
+        radial: Highcharts.merge(Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
+            .defaultRadialOptions),
+        radialGauge: Highcharts.merge(Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
+            .defaultRadialGaugeOptions)
     }
 
     // Create a new Time instance to avoid state leaks related to time and the
@@ -468,7 +468,6 @@ if (window.QUnit) {
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
-            console.log('test');
             if (test.test.resets && test.test.resets.forEach) {
                 test.test.resets.forEach(function (key) {
                     var fn = {
