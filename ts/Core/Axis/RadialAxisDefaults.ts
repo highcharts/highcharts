@@ -136,9 +136,9 @@ const defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
  * */
 
 const RadialAxisDefaults = {
-    defaultCircularOptions,
-    defaultRadialGaugeOptions,
-    defaultRadialOptions
+    circular: defaultCircularOptions,
+    radial: defaultRadialOptions,
+    radialGauge: defaultRadialGaugeOptions
 };
 
 export default RadialAxisDefaults;

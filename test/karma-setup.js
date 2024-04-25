@@ -223,14 +223,10 @@ function resetDefaultOptions(testName) {
     Highcharts.setOptions(defaultOptionsRaw);
 
     // Restore radial axis defaults
-    Highcharts._modules['Core/Axis/RadialAxis.js'].RadialDefaultOptions = {
-    	circular: Highcharts.merge(Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-            .defaultCircularOptions),
-        radial: Highcharts.merge(Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-            .defaultRadialOptions),
-        radialGauge: Highcharts.merge(Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-            .defaultRadialGaugeOptions)
-    }
+    Highcharts._modules['Core/Axis/RadialAxis.js'].RadialDefaultOptions =
+        Highcharts.merge(
+            Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
+        );
 
     // Create a new Time instance to avoid state leaks related to time and the
     // legacy global options

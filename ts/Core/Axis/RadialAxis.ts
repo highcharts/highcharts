@@ -31,11 +31,6 @@ import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 import type Tick from './Tick';
 import type RadialAxisOptions from './RadialAxisOptions';
 import RadialAxisDefaults from './RadialAxisDefaults.js';
-const {
-    defaultCircularOptions,
-    defaultRadialGaugeOptions,
-    defaultRadialOptions
-} = RadialAxisDefaults;
 
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -190,6 +185,9 @@ namespace RadialAxis {
         axis: RadialAxis.AxisComposition;
     }
 
+    export const RadialDefaultOptions: RadialDefaultOptions =
+        merge(RadialAxisDefaults);
+
     /* *
      *
      *  Functions
@@ -232,12 +230,6 @@ namespace RadialAxis {
             ); // #1197, #2260
         }
     }
-
-    export const RadialDefaultOptions: RadialDefaultOptions = {
-        circular: merge(defaultCircularOptions),
-        radial: merge(defaultRadialOptions),
-        radialGauge: merge(defaultRadialGaugeOptions)
-    };
 
     /**
      * Augments methods for the value axis.
@@ -296,29 +288,10 @@ namespace RadialAxis {
                 'afterGetPosition',
                 onTickAfterGetPosition
             );
-            /**
-             * Update default options for radial axes from setOptions method.
-             */
             addEvent(
                 H,
                 'setOptions',
-                function (this: typeof H, { options }: SetOptionsEvent): void {
-                    if (options.xAxis) {
-                        merge(
-                            true,
-                            RadialAxis.RadialDefaultOptions.circular,
-                            options.xAxis
-                        );
-                    }
-
-                    if (options.yAxis) {
-                        merge(
-                            true,
-                            RadialAxis.RadialDefaultOptions.radialGauge,
-                            options.yAxis
-                        );
-                    }
-                }
+                onGlobalSetOptions
             );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
@@ -1227,6 +1200,30 @@ namespace RadialAxis {
     ): void {
         if (this.axis.getPosition) {
             extend(e.pos, this.axis.getPosition(this.pos));
+        }
+    }
+
+    /**
+     * Update default options for radial axes from setOptions method.
+     */
+    function onGlobalSetOptions(
+        this: typeof H,
+        { options }: SetOptionsEvent
+    ): void {
+        if (options.xAxis) {
+            merge(
+                true,
+                RadialAxis.RadialDefaultOptions.circular,
+                options.xAxis
+            );
+        }
+
+        if (options.yAxis) {
+            merge(
+                true,
+                RadialAxis.RadialDefaultOptions.radialGauge,
+                options.yAxis
+            );
         }
     }
 
