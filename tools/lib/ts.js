@@ -897,7 +897,7 @@ function getInterfaceInfo(
 
 
 /**
- * Retrieves namespace information from the given node.
+ * Retrieves namespace and module information from the given node.
  *
  * @param {TS.Node} node
  * Node that might be a namespace or module.
@@ -906,7 +906,7 @@ function getInterfaceInfo(
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {NamespaceInfo|undefined}
- * Namespace or `undefined`.
+ * Namespace, module or `undefined`.
  */
 function getNamespaceInfo(
     node,
@@ -919,7 +919,13 @@ function getNamespaceInfo(
 
     /** @type {NamespaceInfo} */
     const _info = {
-        kind: 'Namespace',
+        kind: (
+            node
+                .getChildren()
+                .some(token => token.kind === TS.SyntaxKind.ModuleKeyword) ?
+                'Module' :
+                'Namespace'
+        ),
         name: node.name.text
     };
 
@@ -1747,7 +1753,7 @@ module.exports = {
  * @typedef NamespaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {'Namespace'} kind
+ * @property {'Module'|'Namespace'} kind
  * @property {Array<NodeInfo>} members
  * @property {MetaInfo} meta
  * @property {string} name
