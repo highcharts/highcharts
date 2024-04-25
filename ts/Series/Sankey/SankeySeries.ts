@@ -53,6 +53,8 @@ const {
     relativeLength,
     stableSort
 } = U;
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose((H as AnyRecord).SVGElement);
 
 /* *
  *

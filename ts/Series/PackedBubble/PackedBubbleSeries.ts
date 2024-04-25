@@ -66,6 +66,8 @@ const {
     merge,
     pick
 } = U;
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose((H as AnyRecord).SVGElement);
 
 /* *
  *
