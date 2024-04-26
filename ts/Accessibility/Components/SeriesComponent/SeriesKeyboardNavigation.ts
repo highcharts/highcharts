@@ -428,19 +428,14 @@ class SeriesKeyboardNavigation {
                             extend(
                                 event as any,
                                 {
-                                    pageX: plotLeft + plotX,
-                                    pageY: plotTop + plotY,
+                                    chartX: plotLeft + plotX,
+                                    chartY: plotTop + plotY,
                                     point: point
                                 }
                             );
 
-                            const pEvent = this
-                                .chart
-                                .pointer
-                                ?.normalize(event);
-
-                            fireEvent(point.series, 'click', pEvent);
-                            point.firePointEvent('click', pEvent);
+                            fireEvent(point.series, 'click', event);
+                            point.firePointEvent('click', event);
                         }
                         return this.response.success;
                     }],
