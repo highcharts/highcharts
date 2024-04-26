@@ -14,17 +14,41 @@
                         (acc, point) => acc + point.shapeArgs.height,
                         0
                     ),
-                    itemWidth = this.points[0].shapeArgs.width,
-                    totalArea = totalHeight * itemWidth,
-                    areaPerItem = totalArea / total,
-                    radius = Math.sqrt(areaPerItem) / 2;
+                    columnWidth = this.points[0].shapeArgs.width;
+
+                let slotsPerColumn = 1,
+                    slotWidth = columnWidth;
+                while (slotsPerColumn < total) {
+                    if (
+                        total / slotsPerColumn <
+                        (totalHeight / slotWidth) * 1.2
+                    ) {
+                        break;
+                    }
+                    slotsPerColumn++;
+                    slotWidth = columnWidth / slotsPerColumn;
+                }
+
+                const slotHeight = (totalHeight * slotsPerColumn) / total;
+
+                if (this.options.allowOverflow) {
+                    slotWidth = slotHeight;
+                }
+
+                const radius = Math.min(slotWidth, slotHeight) / 2;
 
                 for (const point of this.points) {
                     const shapeArgs = point.shapeArgs,
-                        graphics = point.graphics = point.graphics || [];
+                        graphics = point.graphics = point.graphics || [],
+                        startX = shapeArgs.x + (
+                            shapeArgs.width -
+                            slotsPerColumn * slotWidth +
+                            slotWidth
+                        ) / 2;
 
-                    let x = shapeArgs.x + radius,
-                        y = shapeArgs.y + shapeArgs.height - radius;
+                    let x = startX,
+                        y = shapeArgs.y + shapeArgs.height - slotHeight / 2,
+                        slotColumn = 0;
 
                     if (!point.graphic) {
                         point.graphic = this.chart.renderer.g('point')
@@ -52,10 +76,12 @@
                         graphic.isActive = true;
                         graphics[val] = graphic;
 
-                        x += radius * 2;
-                        if (x + radius > shapeArgs.x + itemWidth) {
-                            x = shapeArgs.x + radius;
-                            y -= radius * 2;
+                        x += slotWidth;
+                        slotColumn++;
+                        if (slotColumn >= slotsPerColumn) {
+                            slotColumn = 0;
+                            x = startX;
+                            y -= slotHeight;
                         }
                     }
                 }
@@ -78,40 +104,53 @@ Highcharts.chart('container', {
     yAxis: {
         visible: false
     },
-    series: [{
-        data: [
-            ['R', 1],
-            ['SV', 11],
-            ['AP', 49],
-            ['SP', 19],
-            ['MDG', 1],
-            ['KrF', 8],
-            ['V', 8],
-            ['H', 45],
-            ['FrP', 27]
-        ],
-        type: 'column',
-        opacity: 0.3
-    }, {
-        data: [
-            ['R', 1],
-            ['SV', 11],
-            ['AP', 49],
-            ['SP', 19],
-            ['MDG', 1],
-            ['KrF', 8],
-            ['V', 8],
-            ['H', 45],
-            ['FrP', 27]
-        ],
-        colorByPoint: true,
-        dataLabels: {
-            enabled: true,
-            y: -10,
-            style: {
-                fontSize: '1em',
-                fontWeight: 'normal'
+    legend: {
+        enabled: false
+    },
+    series: [
+        /*
+        {
+            data: [
+                ['R', 1],
+                ['SV', 11],
+                ['AP', 49],
+                ['SP', 19],
+                ['MDG', 1],
+                ['KrF', 8],
+                ['V', 8],
+                ['H', 45],
+                ['FrP', 27]
+            ],
+            type: 'column',
+            color: 'transparent',
+            borderColor: 'black',
+            dashStyle: 'dot',
+            name: 'Target boxes'
+        },
+        // */
+        {
+            data: [
+                ['R', 1],
+                ['SV', 11],
+                ['AP', 49],
+                ['SP', 19],
+                ['MDG', 1],
+                ['KrF', 8],
+                ['V', 8],
+                ['H', 45],
+                ['FrP', 27]
+            ],
+            name: 'Delegates',
+            colorByPoint: true,
+            allowOverflow: true,
+            dataLabels: {
+                enabled: true,
+                y: -10,
+                style: {
+                    fontSize: '1em',
+                    fontWeight: 'normal'
+                }
             }
         }
-    }]
+    ]
 });
