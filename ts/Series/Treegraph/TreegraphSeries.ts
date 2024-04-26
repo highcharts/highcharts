@@ -19,6 +19,7 @@
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
@@ -135,6 +136,23 @@ class TreegraphSeries extends TreemapSeries {
     public init(): void {
         super.init.apply(this, arguments);
         this.layoutAlgorythm = new TreegraphLayout();
+
+        // Register the link data labels in the label collector for overlap
+        // detection.
+        this.chart.labelCollectors.push((): Array<SVGElement> => {
+            const linkLabels = [];
+
+            // Check links for overlap
+            if (!splat(this.options.dataLabels)[0].allowOverlap) {
+
+                for (const link of this.links) {
+                    if (link.dataLabel) {
+                        linkLabels.push(link.dataLabel);
+                    }
+                }
+            }
+            return linkLabels;
+        });
     }
 
     /**
@@ -526,21 +544,6 @@ class TreegraphSeries extends TreemapSeries {
             this.drawNodeLabels(this.points);
 
             // Render link labels.
-            seriesProto.drawDataLabels.call(this, this.links);
-
-            // Check links for overlap
-            if (!this.options.dataLabels[0].allowOverlap) {
-                const linkLabels = [];
-
-                for (const link of this.links) {
-                    if (link.dataLabel) {
-                        linkLabels.push(link.dataLabel);
-                    }
-                }
-
-                this.chart.hideOverlappingLabels(linkLabels);
-            }
-
             seriesProto.drawDataLabels.call(this, this.links);
         }
     }
