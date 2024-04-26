@@ -185,7 +185,7 @@ namespace RadialAxis {
         axis: RadialAxis.AxisComposition;
     }
 
-    export const RadialDefaultOptions: RadialDefaultOptions =
+    export const radialDefaultOptions: RadialDefaultOptions =
         merge(RadialAxisDefaults);
 
     /* *
@@ -1213,7 +1213,7 @@ namespace RadialAxis {
         if (options.xAxis) {
             merge(
                 true,
-                RadialAxis.RadialDefaultOptions.circular,
+                RadialAxis.radialDefaultOptions.circular,
                 options.xAxis
             );
         }
@@ -1221,7 +1221,7 @@ namespace RadialAxis {
         if (options.yAxis) {
             merge(
                 true,
-                RadialAxis.RadialDefaultOptions.radialGauge,
+                RadialAxis.radialDefaultOptions.radialGauge,
                 options.yAxis
             );
         }
@@ -1362,20 +1362,20 @@ namespace RadialAxis {
             if (!this.isXAxis) {
                 defaultPolarOptions = merge(
                     defaultOptions.yAxis,
-                    RadialAxis.RadialDefaultOptions.radialGauge
+                    RadialAxis.radialDefaultOptions.radialGauge
                 );
             }
         } else if (polar) {
             defaultPolarOptions = this.horiz ?
                 merge(
                     defaultOptions.xAxis,
-                    RadialAxis.RadialDefaultOptions.circular
+                    RadialAxis.radialDefaultOptions.circular
                 ) :
                 merge(
                     coll === 'xAxis' ?
                         defaultOptions.xAxis :
                         defaultOptions.yAxis,
-                    RadialAxis.RadialDefaultOptions.radial
+                    RadialAxis.radialDefaultOptions.radial
                 );
         }
 

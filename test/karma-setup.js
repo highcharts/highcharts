@@ -130,7 +130,8 @@ handleDefaultOptionsFunctions(true);
 */
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-
+Highcharts.radialDefaultOptionsRaw =
+    JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
@@ -223,10 +224,8 @@ function resetDefaultOptions(testName) {
     Highcharts.setOptions(defaultOptionsRaw);
 
     // Restore radial axis defaults
-    Highcharts._modules['Core/Axis/RadialAxis.js'].RadialDefaultOptions =
-        Highcharts.merge(
-            Highcharts._modules['Core/Axis/RadialAxisDefaults.js']
-        );
+    Highcharts.RadialAxis.radialDefaultOptions =
+        JSON.parse(Highcharts.radialDefaultOptionsRaw);
 
     // Create a new Time instance to avoid state leaks related to time and the
     // legacy global options
