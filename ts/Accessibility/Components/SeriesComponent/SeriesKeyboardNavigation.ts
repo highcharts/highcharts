@@ -33,11 +33,9 @@ const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent
+    fireEvent,
+    extend
 } = U;
-
-import HU from './../../Utils/HTMLUtilities.js';
-const { getFakeMouseEvent } = HU;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
@@ -425,33 +423,21 @@ class SeriesKeyboardNavigation {
                         const point = chart.highlightedPoint;
                         if (point) {
                             const { plotLeft, plotTop } = this.chart,
-                                { plotX = 0, plotY = 0 } = point,
-                                fakeMouseEvent = getFakeMouseEvent(
-                                    'click',
-                                    {
-                                        x: plotLeft + plotX,
-                                        y: plotTop + plotY
-                                    }
-                                ),
-                                buildtEvent = {};
+                                { plotX = 0, plotY = 0 } = point;
 
-                            for (const prop in fakeMouseEvent) {
-                                if (prop !== 'prototype') {
-                                    (buildtEvent as any)[prop] = (
-                                        fakeMouseEvent as any
-                                    )[prop];
+                            extend(
+                                event as any,
+                                {
+                                    pageX: plotLeft + plotX,
+                                    pageY: plotTop + plotY,
+                                    point: point
                                 }
-                            }
+                            );
 
                             const pEvent = this
                                 .chart
                                 .pointer
-                                ?.normalize(buildtEvent as MouseEvent);
-                            (
-                                (pEvent as MouseEvent).target as any
-                            ) = point.graphic?.element;
-
-                            (event as any).point = point;
+                                ?.normalize(event);
 
                             fireEvent(point.series, 'click', pEvent);
                             point.firePointEvent('click', pEvent);
