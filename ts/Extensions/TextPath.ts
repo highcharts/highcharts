@@ -60,6 +60,10 @@ declare module '../Core/Renderer/SVG/SVGElement' {
  * In order to unset the path for an existing element, call `setTextPath`
  * with `{ enabled: false }` as the second argument.
  *
+ * Text path support is not bundled into `highcharts.js`, and requires the
+ * `modules/textpath.js` file. However, it is included in the script files of
+ * those series types that use it by default
+ *
  * @sample highcharts/members/renderer-textpath/ Text path demonstrated
  *
  * @function Highcharts.SVGElement#setTextPath
