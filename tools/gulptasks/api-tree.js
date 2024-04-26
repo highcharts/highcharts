@@ -64,18 +64,36 @@ async function apiTree() {
 
     const sources = argv.sources;
 
-    const moduleFiles = FSLib
-        .getFilePaths((sources || Path.join('ts', 'Core')), true)
-        .filter(path => !(
-            path.endsWith('Options.d.ts') ||
-            path.endsWith('Options.ts')
-        ));
-    const optionFiles = FSLib
-        .getFilePaths((sources || 'ts'), true)
-        .filter(path => (
-            path.endsWith('Options.d.ts') ||
-            path.endsWith('Options.ts')
-        ));
+    let singleFile = false;
+    let moduleSource = Path.join('ts', 'Core');
+    let optionSource = 'ts';
+
+    if (sources) {
+        singleFile = FSLib.isFile(sources);
+        moduleSource = sources;
+        optionSource = sources;
+    }
+
+    const moduleFiles = (
+        singleFile ?
+            [moduleSource] :
+            FSLib
+                .getFilePaths(moduleSource, true)
+                .filter(path => !(
+                    path.endsWith('Options.d.ts') ||
+                    path.endsWith('Options.ts')
+                ))
+    );
+    const optionFiles = (
+        singleFile ?
+            [optionSource] :
+            FSLib
+                .getFilePaths(optionSource, true)
+                .filter(path => (
+                    path.endsWith('Options.d.ts') ||
+                    path.endsWith('Options.ts')
+                ))
+    );
 
     LogLib.warn(`Parsing ${moduleFiles.length} module files ...`);
 

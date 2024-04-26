@@ -248,10 +248,9 @@ class Sync {
                 emitter: emitterConfig,
                 handler: handlerConfig
             } = syncOptions;
+
             if (handlerConfig) {
-                // Avoid registering the same handler multiple times
-                // i.e. panning and selection uses the same handler
-                if (typeof handlerConfig === 'boolean') {
+                if (handlerConfig === true) {
                     handlerConfig =
                         Sync.defaultHandlers[id]
                             .handler as Sync.HandlerConfig;
@@ -260,13 +259,12 @@ class Sync {
                 const handler = new SyncHandler(id, handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
-
                     handler.register(component);
                 }
             }
 
             if (emitterConfig) {
-                if (typeof emitterConfig === 'boolean') {
+                if (emitterConfig === true) {
                     emitterConfig =
                         Sync.defaultHandlers[id]
                             .emitter as Sync.EmitterConfig;
@@ -278,10 +276,9 @@ class Sync {
                     emitter.create(component);
                 }
             }
-
         }
-        this.isSyncing = true;
 
+        this.isSyncing = true;
         this.listeners.push(component.on('update', (): void => this.stop()));
     }
 
@@ -299,7 +296,6 @@ class Sync {
         Object.keys(registeredSyncHandlers).forEach((id): void => {
             registeredSyncHandlers[id].remove();
             delete registeredSyncHandlers[id];
-
         });
         Object.keys(registeredSyncEmitters).forEach((id): void => {
             registeredSyncEmitters[id].remove();
@@ -317,8 +313,6 @@ class Sync {
             this.start();
         }));
     }
-
-
 }
 
 /* *
@@ -379,6 +373,21 @@ namespace Sync {
          * or `null` it will be disabled
          */
         emitter?: EmitterConfig | null | boolean;
+
+        /**
+         * The group in which components sharing the same connector should be
+         * synced.
+         *
+         * If `null` or `undefined` the component will be synced with all
+         * components with the same connector.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/groups | Sync groups for the same connector }
+         *
+         * @default undefined
+         */
+        group?: string;
 
         /**
          * Responsible for _handling_ incoming action from the synced component

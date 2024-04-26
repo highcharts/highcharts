@@ -289,6 +289,7 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     private resizeObserver?: ResizeObserver;
 
+
     /* *
      *
      *  Functions

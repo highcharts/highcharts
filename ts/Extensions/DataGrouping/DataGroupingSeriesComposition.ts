@@ -457,6 +457,7 @@ function applyGrouping(
         series.processedYData = groupedYData as any;
     } else {
         series.groupMap = null as any;
+        series.currentDataGrouping = void 0;
     }
     series.hasGroupedData = hasGroupedData;
 
