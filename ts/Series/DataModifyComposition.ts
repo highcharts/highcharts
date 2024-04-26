@@ -732,7 +732,7 @@ export default DataModifyComposition;
 
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point **before** the range.
+ * range or should start from the last point **before** the range.
  *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
@@ -787,7 +787,7 @@ export default DataModifyComposition;
 
 /**
  * Defines if cumulation should start from the first point within the visible
- * range or should start from the first point **before** the range.
+ * range or should start from the last point **before** the range.
  *
  * In other words, this flag determines if first point within the visible range
  * will start at 0 (`cumulativeStart=true`) or should have been already calculated
