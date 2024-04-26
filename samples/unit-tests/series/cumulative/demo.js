@@ -100,5 +100,58 @@ QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
         `Default approximation when dataGrouping
         is enabled should be equal to sum, #18974.`
     );
+});
 
+QUnit.test('cumulative start option', function (assert) {
+    const data = [1, 1, 1, 1, 1];
+    const chart = Highcharts.stockChart('container', {
+        plotOptions: {
+            series: {
+                cumulative: true
+            }
+        },
+        xAxis: {
+            tickInterval: 1,
+            labels: {
+                format: '{value}'
+            },
+
+            min: 1.1
+        },
+        series: [
+            {
+                cumulativeStart: true,
+                data
+            },
+            {
+                data
+            }
+        ]
+    });
+
+    const series = chart.series,
+        point1 = series[0].points[1],
+        point2 = series[1].points[1];
+
+    assert.notEqual(
+        point1.plotY,
+        point2.plotY,
+        'Points should have different position'
+    );
+
+    chart.xAxis[0].setExtremes(2.1, null);
+
+    assert.notEqual(
+        series[0].points[2].plotY,
+        series[1].points[2].plotY,
+        'Points should have different position'
+    );
+
+    chart.xAxis[0].setExtremes(1.1, null);
+
+    assert.notEqual(
+        point1,
+        chart.yAxis[0].toPixels(0),
+        'Frist Point should start at 0'
+    );
 });
