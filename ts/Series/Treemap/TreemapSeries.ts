@@ -63,6 +63,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    arrayMax,
     correctFloat,
     defined,
     error,
@@ -74,6 +75,7 @@ const {
     merge,
     pick,
     pushUnique,
+    splat,
     stableSort
 } = U;
 
@@ -206,7 +208,11 @@ class TreemapSeries extends ScatterSeries {
 
     public points!: Array<TreemapPoint>;
 
+    private hasOutsideDataLabels?: boolean;
+
     public rootNode!: string;
+
+    private simulation = 0;
 
     public tree!: TreemapNode;
 
@@ -464,6 +470,17 @@ class TreemapSeries extends ScatterSeries {
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
+
+        // We need to pre-render the data labels in order to measure the height
+        // of data label group
+        if (
+            parent.level === 0 &&
+            !this.dataLabelsGroup &&
+            this.hasOutsideDataLabels
+        ) {
+            this.drawDataLabels();
+        }
+
         if (level && level.layoutStartingDirection) {
             area.direction = level.layoutStartingDirection === 'vertical' ?
                 0 :
@@ -473,12 +490,35 @@ class TreemapSeries extends ScatterSeries {
 
         let i = -1;
         for (const child of children) {
-            const values: TreemapNode.NodeValuesObject = childrenValues[++i];
+            const values = childrenValues[++i];
 
             child.values = merge(values, {
                 val: child.childrenTotal,
                 direction: (alternate ? 1 - area.direction : area.direction)
             });
+
+            // Make room for outside data labels
+            if (
+                child.children.length &&
+                child.point.dataLabels?.length
+            ) {
+                const axisRange = series.rootNode === child.id ?
+                    values.height : 100;
+
+                const dlHeight = arrayMax(
+                    child.point.dataLabels.map((dl): number => (
+                        dl.options?.inside === false ?
+                            dl.height || 0 :
+                            0
+                    ))
+                ) / series.yAxis.len * axisRange;
+
+                child.areaCorrection = (child.values.height + dlHeight) /
+                    child.values.height;
+                child.values.y += dlHeight;
+                child.values.height -= dlHeight;
+            }
+
             child.pointValues = merge(values, {
                 x: (values.x / series.axisRatio),
                 // Flip y-values to avoid visual regression with csvCoord in
@@ -489,6 +529,105 @@ class TreemapSeries extends ScatterSeries {
             // If node has children, then call method recursively
             if (child.children.length) {
                 series.calculateChildrenAreas(child, child.values);
+            }
+        }
+
+        // Experimental block to make space for the outside data labels
+        if (parent.level === 0 && this.hasOutsideDataLabels) {
+            const leafs = this.points.filter(
+                    (p): boolean|undefined => p.node.isLeaf
+                ),
+                values = leafs.map((point): number => point.options.value || 0),
+                // Areas in terms of axis units squared
+                areas = leafs.map(({ node: { pointValues } }): number => (
+                    pointValues ?
+                        pointValues.width * pointValues.height :
+                        0
+                )),
+                valueSum = values.reduce(
+                    (sum, value): number => sum + value,
+                    0
+                ),
+                areaSum = areas.reduce(
+                    (sum, value): number => sum + value,
+                    0
+                ),
+                expectedAreaPerValue = areaSum / valueSum;
+
+            let minMiss = 0,
+                maxMiss = 0;
+
+            leafs.forEach((point, i): void => {
+                // Less than 1 => rendered too small, greater than 1 =>
+                // rendered too big
+                let fit = values[i] ?
+                    (areas[i] / values[i]) / expectedAreaPerValue :
+                    1;
+                const miss = 1 - fit,
+                    areaCorrection = point.node.parentNode?.areaCorrection || 1,
+                    lowerThreshold = 1 - 0.05,
+                    upperThreshold = 1 + 0.2;
+
+                // Negative fit means the outside data label requires more space
+                // than is available in the group. Gradually increase.
+                if (fit <= 0) {
+                    fit = 2 / areaCorrection;
+
+                // Small areas are sensitive to size correction and the model
+                // risks exploding. Moderate.
+                } else if (fit < lowerThreshold) {
+                    fit = lowerThreshold;
+                } else if (fit > upperThreshold) {
+                    fit = upperThreshold;
+                }
+
+                if (miss > maxMiss) {
+                    maxMiss = miss;
+                }
+                if (miss < minMiss) {
+                    minMiss = miss;
+                }
+
+                if (typeof point.value === 'number') {
+                    point.simulatedValue = (
+                        point.simulatedValue || point.value
+                    ) / fit;
+                }
+
+            });
+
+            /* /
+            console.log('--- simulation',
+                this.simulation,
+                'minName',
+                minName,
+                'maxName',
+                maxName,
+                'worstMiss',
+                Math.max(Math.abs(minMiss), Math.abs(maxMiss))
+            );
+            */
+
+            if (
+                // An area error less than 5% is acceptable, the human ability
+                // to assess area size is not that accurate
+                (minMiss < -0.05 || maxMiss > 0.05) &&
+                // In case an eternal loop is brewing, pull the emergency brake
+                this.simulation < 10
+            ) {
+                this.simulation++;
+                this.setTreeValues(parent);
+                (area as any).val = parent.val;
+                this.calculateChildrenAreas(parent, area);
+
+            // Simulation is settled, proceed to rendering. Reset the simulated
+            // values and set the tree values with real data.
+            } else {
+                leafs.forEach((point): void => {
+                    delete point.simulatedValue;
+                });
+                this.setTreeValues(parent);
+                this.simulation = 0;
             }
         }
     }
@@ -558,13 +697,11 @@ class TreemapSeries extends ScatterSeries {
                 return n.node.visible;
             });
 
-        let options: DataLabelOptions,
-            level: TreemapSeriesOptions;
-
         for (const point of points) {
-            level = mapOptionsToLevel[point.node.level];
-            // Set options to new object to avoid problems with scope
-            options = { style: {} };
+            const style: CSSObject = {},
+                // Set options to new object to avoid problems with scope
+                options: DataLabelOptions = { style },
+                level = mapOptionsToLevel[point.node.level];
 
             // If not a leaf, then label should be disabled as default
             if (!point.node.isLeaf) {
@@ -573,17 +710,39 @@ class TreemapSeries extends ScatterSeries {
 
             // If options for level exists, include them as well
             if (level && level.dataLabels) {
-                options = merge(options, level.dataLabels);
+                merge(true, options, splat(level.dataLabels)[0]);
                 series.hasDataLabels = (): boolean => true;
+            }
+
+            // Headers are always top-aligned. Leaf nodes no not support
+            // headers.
+            if (point.node.isLeaf) {
+                delete options.inside;
+            }
+            if (options.inside === false) {
+                options.verticalAlign = 'top';
             }
 
             // Set dataLabel width to the width of the point shape.
             if (point.shapeArgs) {
-                (options.style as any).width = point.shapeArgs.width;
-                if (point.dataLabel) {
-                    point.dataLabel.css({
-                        width: point.shapeArgs.width + 'px'
-                    });
+                const width = point.shapeArgs.width;
+                if (width) {
+                    style.width = `${width}px`;
+                    if (point.dataLabel) {
+
+                        // Make the label box itself fill the width
+                        if (options.inside === false) {
+                            point.dataLabel.attr({
+                                width: width - 2 * point.dataLabel.padding,
+                                'text-align': options.align
+                            });
+                        }
+
+                        point.dataLabel.css({ width: `${width}px` });
+                    }
+                // Hide labels for shapes that are too small
+                } else if (point.dataLabel) {
+                    style.visibility = 'hidden';
                 }
             }
 
@@ -914,6 +1073,7 @@ class TreemapSeries extends ScatterSeries {
             ): void => {
                 const options = event.userOptions;
 
+                // Deprepacated options
                 if (
                     defined(options.allowDrillToNode) &&
                     !defined(options.allowTraversingTree)
@@ -929,6 +1089,22 @@ class TreemapSeries extends ScatterSeries {
                     options.traverseUpButton = options.drillUpButton;
                     delete options.drillUpButton;
                 }
+
+                // Check if we need to reserve space for headers
+                const dataLabels: Array<DataLabelOptions> = splat(
+                    options.dataLabels || {}
+                );
+
+                options.levels?.forEach((level): void => {
+                    dataLabels.push.apply(
+                        dataLabels,
+                        splat(level.dataLabels || {})
+                    );
+                });
+
+                this.hasOutsideDataLabels = dataLabels.some(
+                    (dl): boolean => dl.inside === false
+                );
             });
 
         super.init(chart, options);
@@ -1316,7 +1492,11 @@ class TreemapSeries extends ScatterSeries {
             (a.sortIndex || 0) - (b.sortIndex || 0)
         ));
         // Set the values
-        const val = pick(point && point.options.value, childrenTotal);
+        const val = pick(
+            point?.simulatedValue,
+            point?.options.value,
+            childrenTotal
+        );
         if (point) {
             point.value = val;
         }
