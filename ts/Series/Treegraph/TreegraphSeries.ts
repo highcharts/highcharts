@@ -19,7 +19,6 @@
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';

@@ -335,7 +335,12 @@ function drawTextPath(
 function compose(SVGElementClass: typeof SVGElement): void {
     addEvent(SVGElementClass, 'afterGetBBox', setPolygon);
     addEvent(SVGElementClass, 'beforeAddingDataLabel', drawTextPath);
-    SVGElementClass.prototype.setTextPath = setTextPath;
+
+    const svgElementProto = SVGElementClass.prototype;
+
+    if (!svgElementProto.setTextPath) {
+        svgElementProto.setTextPath = setTextPath;
+    }
 }
 
 const TextPath = {
