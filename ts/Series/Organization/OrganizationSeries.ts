@@ -44,9 +44,9 @@ const {
     merge,
     pick
 } = U;
-import Highcharts from '../../Core/Globals.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose((Highcharts as AnyRecord).SVGElement);
+TextPath.compose(SVGElement);
 
 /* *
  *

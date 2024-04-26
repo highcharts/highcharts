@@ -55,9 +55,9 @@ import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
-import Highcharts from '../../Core/Globals.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose((Highcharts as AnyRecord).SVGElement);
+TextPath.compose(SVGElement);
 
 /* *
  *
