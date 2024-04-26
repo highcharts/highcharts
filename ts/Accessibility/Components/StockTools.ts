@@ -220,9 +220,8 @@ class StockToolsComponent extends AccessibilityComponent {
         this: StockToolsComponent,
         e: MouseEvent
     ): void {
-        const childButton = e.target as HTMLElement;
-
-        const submenu = childButton.parentElement?.closest<HTMLElement>(
+        const childButton = e.target as HTMLButtonElement;
+        const submenu = childButton?.parentElement?.closest<HTMLElement>(
             '.highcharts-submenu-wrapper'
         );
 
@@ -233,20 +232,21 @@ class StockToolsComponent extends AccessibilityComponent {
                 ?.classList.contains('highcharts-active') ?? false
         );
 
-        const ariaLabel = childButton.getAttribute('aria-label');
+        const ariaLabel = childButton?.getAttribute('aria-label');
 
         if (this.focusedButtonIndex !== -1 && ariaLabel) {
-            this.buttons[this.focusedButtonIndex].setAttribute(
-                'aria-label',
-                ariaLabel
+            // Temporarily remove aria label
+            // TODO:
+            this.buttons[this.focusedButtonIndex].removeAttribute(
+                'aria-label'
             );
         }
-
-        this.focusButton();
 
         if (submenu) {
             submenu.dataset.open = 'false';
         }
+
+        this.focusButton();
     }
 
     private onEnterKeyPress(
@@ -266,7 +266,10 @@ class StockToolsComponent extends AccessibilityComponent {
                     if (submenu.dataset.open === 'true') {
                         this.setButtons();
 
+                        this.announcer.announce('Submenu closed');
+
                         submenu.dataset.open = 'false';
+
                     } else {
                         const childButtons =
                         button.parentElement
@@ -289,28 +292,16 @@ class StockToolsComponent extends AccessibilityComponent {
                                 attr(childButton, {
                                     tabindex: -1
                                 });
-
-                                childButton.addEventListener(
-                                    'click',
-                                    this.handleSubmenuButtonClick.bind(this),
-                                    { once: true }
-                                );
                             });
 
-
                             submenu.dataset.open = 'true';
+                            component.announcer.announce('Submenu opened');
                         }
                     }
-
-                    component.announcer.announce(
-                        submenu.dataset.open === 'true' ?
-                            'Submenu opened' :
-                            'Submenu closed'
-                    );
                 }
-
-                return this.keyboardNavigationHandler.response.noHandler;
             }
+
+            return this.keyboardNavigationHandler.response.noHandler;
         }
 
         if (this.focusInPopup) {
@@ -327,6 +318,35 @@ class StockToolsComponent extends AccessibilityComponent {
 
         // Return noHandler as default to not cancel the default event
         return component.keyboardNavigationHandler.response.noHandler;
+    }
+
+    private async onSelectButton(this: StockToolsComponent): Promise<void> {
+        // Annouce the selected button
+        const activeButton = this.chart.navigationBindings
+            ?.selectedButtonElement
+            ?.querySelector('button');
+
+        if (activeButton) {
+            const itemName = activeButton.dataset.label ?? 'Submenu item';
+            const announcement = `${itemName} tool selected`;
+
+            this.announcer.announce(announcement);
+
+            this.setButtons();
+            this.focusedButtonIndex =
+                this.buttons.findIndex(
+                    (el): boolean => el.parentElement
+                        ?.classList
+                        .contains('highcharts-active') ?? false
+                );
+
+            const button =
+                this.buttons[this.focusedButtonIndex];
+            await this.announcer.waitForAnnounce();
+
+            // TODO: possibly focus elsewhere
+            button.focus();
+        }
     }
 
     public getKeyboardNavigation(): KeyboardNavigationHandler {
@@ -367,24 +387,7 @@ class StockToolsComponent extends AccessibilityComponent {
                         addEvent(
                             chart.navigationBindings,
                             'selectButton',
-                            (e): void => {
-                                // Button is not the button
-                                // but the parent element
-                                if ('button' in e) {
-                                    const btn = e.button
-                                        .querySelector('button');
-                                    if (btn.dataset.label) {
-                                        this.announcer.announce(
-                                            chart.langFormat(
-                                                '{label} selected',
-                                                {
-                                                    label: btn.dataset.label
-                                                }
-                                            )
-                                        );
-                                    }
-                                }
-                            }
+                            this.onSelectButton.bind(this)
                         )
                     );
                 }
