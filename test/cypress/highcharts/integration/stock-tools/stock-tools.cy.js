@@ -243,3 +243,31 @@ describe('Annotations popup text field', () => {
         cy.get('input[highcharts-data-name="typeOptions.line.fill"]').as('input').clear().type(' ').should('have.value', ' ')
     });
 });
+
+describe.only('A11Y', ()=>{
+    before(() => {
+        cy.viewport(1000, 1000);
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
+    });
+
+    it('Stock tools container should have aria-label', ()=>{
+        cy.get('.highcharts-stocktools-toolbar').should('have.attr', 'aria-label', 'Stock tools');
+
+    })
+
+    it('All top level buttons should have aria-labels on first render', () => {
+        cy.get('.highcharts-stocktools-toolbar > li > button').should('have.attr', 'aria-label');
+    });
+
+    it('Should update aria-label of main button when selecting submenu item', ()=>{
+        cy.get('.highcharts-label-annotation .highcharts-submenu-item-arrow').click();
+
+        // Select the "circle" simple shapes tool in the submenu
+        cy.get('[data-btn-name="circle"]').click();
+        cy.get('[title="Simple shapes"] button').first()
+            .should('have.attr','aria-label', 'Deselect circle tool')
+            .click() // Toggle the state again
+            .should('have.attr', 'aria-label', 'Select circle tool');
+    });
+
+});

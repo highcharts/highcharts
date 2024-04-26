@@ -280,6 +280,11 @@ function onNavigationBindingsDeselectButton(
         }
         // Set active class on the current button
         gui.toggleButtonActiveClass(button);
+
+        const selectedButton = event.button.querySelector('button');
+        if (selectedButton) {
+            gui.setAriaLabelForParentButton(selectedButton);
+        }
     }
 }
 
@@ -297,15 +302,24 @@ function onNavigationBindingsSelectButton(
     if (gui && gui.guiEnabled) {
         let button = event.button;
 
-        // Unselect other active buttons
-        gui.unselectAllButtons(event.button);
-
         // If clicked on a submenu, select state for it's parent
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
+
+        // Unselect other active buttons
+        gui.unselectAllButtons(button);
+
         // Set active class on the current button
-        gui.toggleButtonActiveClass(button);
+        if (!button.classList.contains('highcharts-active')) {
+            gui.toggleButtonActiveClass(button);
+        }
+
+        const selectedButton = event.button.querySelector('button');
+
+        if (selectedButton) {
+            gui.setAriaLabelForParentButton(selectedButton);
+        }
     }
 }
 

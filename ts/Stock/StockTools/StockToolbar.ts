@@ -269,6 +269,46 @@ class Toolbar {
         );
     }
 
+    public setAriaLabel(element: HTMLElement, context: {
+        selected: boolean;
+        buttonLabel: string;
+    }): void {
+        const ariaLabel = format(
+            '{#if (selected)}Deselect{else}Select{/if} {buttonLabel} tool',
+            context
+        );
+
+        element.setAttribute(
+            'aria-label',
+            ariaLabel
+        );
+    }
+
+    public setAriaLabelForParentButton(button: HTMLElement): void {
+        const selectedLabel = button.dataset.label;
+
+        // TODO: can this be cleaned up?
+        const mainButton = button.parentElement
+            ?.parentElement?.parentElement
+            ?.querySelector<HTMLElement>('.highcharts-menu-item-btn');
+
+        // Update the aria-label of the main button
+        // when a submenu item is selected
+        if (mainButton && selectedLabel) {
+            const isActive = mainButton.parentElement
+                ?.classList.contains('highcharts-active');
+
+            this.setAriaLabel(
+                mainButton,
+                {
+                    selected: isActive ?? false,
+                    buttonLabel: selectedLabel
+                }
+            );
+
+        }
+    }
+
     /**
      * Create buttons in submenu
      *
@@ -322,6 +362,9 @@ class Toolbar {
 
         // Replace current symbol, in main button, with submenu's button style
         this.switchSymbol(firstSubmenuItem, false);
+
+        this.setAriaLabelForParentButton(firstSubmenuItem);
+
     }
 
     /**
@@ -399,7 +442,7 @@ class Toolbar {
         const descriptions = lang.descriptions[btnName];
 
         // Set the default aria label
-        if (descriptions?.mainButton) {
+        if (descriptions?.mainButton && !items) {
             mainButton.setAttribute(
                 'aria-label',
                 format(
@@ -679,24 +722,6 @@ class Toolbar {
             .querySelectorAll<HTMLElement>('.highcharts-menu-item-btn')[0]
             .style.backgroundImage =
             button.style.backgroundImage;
-
-        const mainButton = mainNavItem.querySelector('button');
-
-        const selectedLabel = button.dataset.label;
-        const btnName = mainButton?.dataset.btnName;
-
-        if (mainButton && selectedLabel && btnName) {
-            const descriptions = this.lang.descriptions[btnName];
-            mainButton.setAttribute(
-                'aria-label',
-                format(
-                    descriptions?.mainButton,
-                    {
-                        selected: selectedLabel
-                    }
-                )
-            );
-        }
 
         // Set active class
         if (redraw) {
