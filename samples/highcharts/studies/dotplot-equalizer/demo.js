@@ -21,6 +21,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
+            slotsPerBar: 1,
             stacking: 'normal',
             marker: {
                 symbol: 'rect',
