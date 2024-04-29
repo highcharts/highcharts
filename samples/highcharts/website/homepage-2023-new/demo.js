@@ -2417,7 +2417,7 @@ const rb = {
     }]
 };
 
-const charts = [db, rb, db, arc, db, cr, db, str, db, sk, rc];
+const charts = [rb, arc, cr, str, sk, rc];
 
 function makeChart() {
     // let chartNum;
@@ -2427,7 +2427,7 @@ function makeChart() {
     // } else {
     //     chartNum = Math.round(randomNumber(1, 6));
     // }
-    const chartNum = Math.round(randomNumber(0, 10));
+    const chartNum = Math.round(randomNumber(0, charts.length - 1));
     const chart = charts[chartNum];
     // (chartNum);
     Highcharts.chart('container', chart);
