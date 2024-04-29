@@ -33,8 +33,7 @@ const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent,
-    extend
+    fireEvent
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -425,14 +424,13 @@ class SeriesKeyboardNavigation {
                             const { plotLeft, plotTop } = this.chart,
                                 { plotX = 0, plotY = 0 } = point;
 
-                            extend(
-                                event as any,
-                                {
-                                    chartX: plotLeft + plotX,
-                                    chartY: plotTop + plotY,
-                                    point: point
-                                }
-                            );
+                            event = {
+                                ...(event as any),
+                                chartX: plotLeft + plotX,
+                                chartY: plotTop + plotY,
+                                point: point,
+                                target: point.graphic?.element
+                            };
 
                             fireEvent(point.series, 'click', event);
                             point.firePointEvent('click', event);
