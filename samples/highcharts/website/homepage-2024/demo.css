@@ -1,27 +1,22 @@
 /* @import url("https://code.highcharts.com/css/highcharts.css"); */
+@import url("http://192.168.1.176:3030/hc-styles.css");
 
 #container {
-    /* min-width: 320px; */
     width: 700px;
     height: 480px;
-    position: absolute;
-    top: 100px;
-    left: 48%;
 
     /* border: 1px solid #ccc; */
 }
 
-/* styles for testing */
-body {
-    color: white;
-    margin-top: -80px;
+.demo-container {
+    position: relative;
 }
 
-.container {
-    height: 824px;
-    width: 1392px;
-    background: linear-gradient(180deg, #18171c 0%, #2f2e38 100%);
-    position: relative;
+/* styles for testing */
+body {
+    background-color: #18171c;
+    color: white;
+    margin-top: -100px;
 }
 
 .background-image {
@@ -33,6 +28,7 @@ body {
 
 #demo-content {
     background-color: transparent;
+    margin: 0;
 }
 
 .btn-small {
@@ -79,7 +75,8 @@ body {
     fill: #c8c7d1 !important;
 }
 
-.highcharts-title a {
+.highcharts-title a,
+.highcharts-subtitle a {
     color: #c8c7d1 !important;
     font-weight: 300;
 }
@@ -89,12 +86,22 @@ body {
     fill: #c8c7d1 !important;
 }
 
+.highcharts-data-labels text {
+    fill: #c8c7d1 !important;
+    font-weight: normal;
+}
+
 .subtitle {
     color: #5e5c70;
 }
 
 .highcharts-button-box {
     fill: #474554;
+    stroke: #5e5c70;
+}
+
+.highcharts-reset-zoom .highcharts-button-box {
+    fill: #acabba;
     stroke: #5e5c70;
 }
 
@@ -129,24 +136,58 @@ body {
     display: none;
 }
 
+/* bar chart race controls */
+
+/* create a style for .highcharts-bar-series:nth-of-type where if nth-of-type is less than 10, hide it */
+.highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(1),
+.highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(2),
+.highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(3),
+.highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(4),
+.highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(5),
+.highcharts-bar-series.highcharts-data-labels .highcharts-data-label:nth-of-type(6) {
+    display: none;
+}
+
 #play-controls {
     max-width: 700px;
     position: absolute;
-    right: 100px;
-    top: 320px;
+    right: 160px;
+    top: 370px;
     visibility: hidden;
 }
 
 #play-pause-button {
     margin-left: 10px;
-    width: 50px;
-    height: 50px;
+    padding-left: 15px;
+    width: 40px;
+    height: 40px;
     cursor: pointer;
     border: 1px solid #5e5c70;
     border-radius: 25px;
     color: #acabba;
     background-color: #5e5c70;
     transition: background-color 250ms;
+}
+
+#play-arrow {
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 14px solid #e3e3e8;
+}
+
+#pause-bars {
+    display: none;
+    margin-left: -3px;
+    width: 14px;
+    height: 14px;
+    border-top: 0;
+    border-bottom: 0;
+    border-left: 6px solid #e3e3e8;
+    border-right: 6px solid #e3e3e8;
+    fill: red;
 }
 
 #play-pause-button:hover {
@@ -157,6 +198,63 @@ body {
     transform: translateY(2.5px);
     width: calc(100% - 90px);
     background: #5e5c70;
+}
+
+/* Change Chart button */
+
+.button-container {
+    position: absolute;
+    left: 12px;
+    bottom: 2px;
+}
+
+.chart-button {
+    border: 0;
+    border-radius: 5px;
+    padding: 10px 18px;
+    background-color: #2f2e38;
+    color: #e3e3e8;
+    font-size: 14px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    width: 120px;
+    height: 31px;
+    transition: all 0.1s ease;
+}
+
+.chart-button:disabled {
+    /* border: 2px solid #5e5c70; */
+    color: #acabba;
+}
+
+.button-text {
+    border: 2px solid #474554;
+    font-weight: 700;
+    font-size: 12px;
+    color: inherit;
+    background-color: rgba(0, 0, 0, 1);
+    border-radius: 5px;
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    width: 120px;
+}
+
+.button-text:hover {
+    border: 3px solid #8791ff;
+    color: #e1e3ff;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.chart-button:disabled .button-text {
+    border: 3px solid #5e5c70;
+    color: #acabba;
+}
+
+.confetti {
+    z-index: 10;
 }
 
 @media screen  and (min-width: 992px) {
