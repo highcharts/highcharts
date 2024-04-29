@@ -19,6 +19,7 @@
     "webpack"
   ],
   "scripts": {
+    "api": "gulp api",
     "dapi": "gulp dashboards/api",
     "dbuild": "gulp dashboards/dist",
     "dgulp": "gulp dashboards/scripts-watch",

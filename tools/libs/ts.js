@@ -1600,10 +1600,10 @@ module.exports = {
 /**
  * @typedef ClassInfo
  * @property {DocletInfo} [doclet]
- * @property {string} extends
+ * @property {string} [extends]
  * @property {Array<InfoFlag>} [flags]
- * @property {Array<VariableInfo>} generics
- * @property {Array<string>} implements
+ * @property {Array<VariableInfo>} [generics]
+ * @property {Array<string>} [implements]
  * @property {'Class'} kind
  * @property {MetaInfo} meta
  * @property {string} name
@@ -1617,7 +1617,7 @@ module.exports = {
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {`Deconstruct`} kind
+ * @property {'Deconstruct'} kind
  * @property {string} [from]
  * @property {MetaInfo} meta
  * @property {TS.VariableDeclaration} [node]
@@ -1650,12 +1650,11 @@ module.exports = {
  * @typedef FunctionInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {Array<VariableInfo>} generics
+ * @property {Array<VariableInfo>} [generics]
  * @property {'Function'} kind
  * @property {MetaInfo} meta
  * @property {string} name
  * @property {Array<VariableInfo>} [parameters]
- * @property {'?'} [suffix]
  * @property {string} [return]
  */
 
@@ -1681,14 +1680,14 @@ module.exports = {
 /**
  * @typedef InterfaceInfo
  * @property {DocletInfo} [doclet]
- * @property {Array<string>} extends
+ * @property {Array<string>} [extends]
  * @property {Array<InfoFlag>} [flags]
- * @property {Array<VariableInfo>} generics
+ * @property {Array<VariableInfo>} [generics]
  * @property {'Interface'} kind
  * @property {MetaInfo} meta
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
- * @property {Array<Propery>} properties
+ * @property {Array<PropertyInfo>} properties
  */
 
 
@@ -1714,7 +1713,7 @@ module.exports = {
  * @property {'Object'} kind
  * @property {MetaInfo} meta
  * @property {TS.Node} [node]
- * @property {Array<Propery>} properties
+ * @property {Array<PropertyInfo>} properties
  * @property {string} [type]
  */
 
@@ -1745,7 +1744,7 @@ module.exports = {
  * @typedef VariableInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {`Variable`} kind
+ * @property {'Variable'} kind
  * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.VariableDeclaration} [node]
