@@ -20,7 +20,7 @@ const gulp = require('gulp');
  * Removes Highcharts files from the `js` folder.
  */
 function removeHighcharts() {
-    const fsLib = require('./lib/fs');
+    const fsLib = require('../libs/fs');
 
     fsLib.deleteDirectory('js/Accessibility/', true);
     fsLib.deleteDirectory('js/Core/Axis/', true);
@@ -46,9 +46,9 @@ function removeHighcharts() {
  */
 async function scriptsTS(argv) {
     const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
     const {
         bundleTargetFolder,
         typeScriptFolder,

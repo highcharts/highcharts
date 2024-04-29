@@ -4,7 +4,7 @@
 
 const gulp = require('gulp');
 const fs = require('fs');
-const logLib = require('./lib/log');
+const logLib = require('../libs/log');
 const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const { getFilesChanged, getLatestCommitShaSync } = require('./lib/git');

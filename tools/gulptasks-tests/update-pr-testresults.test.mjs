@@ -6,18 +6,18 @@ import {
     fetchAllReviewsForVersion
 } from '../gulptasks/update-pr-testresults.js';
 
-describe('Review fetching functions', async ()=>{
+describe('Review fetching functions', async () => {
     // TODO: Investigate missing review
     await it.skip('should be able to fetch a single review', async () => {
         const singleReview = await fetchExistingReview('123456789');
 
-        notEqual(singleReview, undefined, 'JSON should not be undefined');
+        notEqual(singleReview, void 0, 'JSON should not be undefined');
         ok(Object.keys(singleReview).length > 0, 'JSON should have at least one element');
 
     });
 
     // TODO: Update the version used
-    await it('should be able to fetch allreview for a version ', async ()=>{
+    await it('should be able to fetch allreview for a version ', async () => {
         const reviewsForVersion = await fetchAllReviewsForVersion('11.1.0');
 
         ok(reviewsForVersion, 'JSON should not be undefined');
@@ -25,6 +25,4 @@ describe('Review fetching functions', async ()=>{
 
     });
 
-})
-
-
+});

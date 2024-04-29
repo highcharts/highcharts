@@ -3,7 +3,7 @@
  */
 
 const gulp = require('gulp');
-const log = require('./lib/log');
+const log = require('../libs/log');
 
 /**
  * Create the palette module file based on highcharts.css

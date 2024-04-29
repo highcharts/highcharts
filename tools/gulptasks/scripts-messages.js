@@ -311,7 +311,7 @@ function writeErrorsJson(parsedErrors, jsonPath, modulePath) {
  * Promise to keep
  */
 function scriptsMessages() {
-    const logLib = require('./lib/log.js');
+    const logLib = require('../libs/log.js');
 
     return parseErrorsDirectory(path.join(rootPath, 'errors'))
         .then(parsedErrors => writeErrorsJson(

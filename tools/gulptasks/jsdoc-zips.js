@@ -3,7 +3,7 @@ const fs = require('fs');
 const gulp = require('gulp');
 const path = require('path');
 const zip = require('gulp-zip');
-const log = require('./lib/log');
+const log = require('../libs/log');
 
 // Constants
 const DIR_BUILD = 'build';
