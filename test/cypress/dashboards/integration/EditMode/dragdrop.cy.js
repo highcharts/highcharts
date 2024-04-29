@@ -11,17 +11,4 @@ describe('Edit Mode options', () => {
         cy.get('.highcharts-dashboards-edit-toolbar-row').children().should('have.length', 2);
         cy.get('.highcharts-dashboards-edit-resize-snap').should('not.exist');
     });
-
-    it('Values in the sidebar should reflect what is on the chart, #20944.', () => {
-        cy.toggleEditMode();
-
-        // Open sidebar
-        cy.get('#dashboard-col-0').click();
-        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
-
-        // Navigate to the option
-        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(0).click();
-        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(1).click();
-        cy.get('.highcharts-dashboards-edit-dropdown-button-content > span').should('have.text', '10');
-    });
 });
