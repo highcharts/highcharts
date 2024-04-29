@@ -1,7 +1,7 @@
 import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { reportError, wrapRequire } from './test-utils';
-import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
+import { starting, finished, success, warn } from '../../tools/libs/log.js';
 import { argv } from 'node:process';
 import yargs from 'yargs/yargs';
 
