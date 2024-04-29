@@ -92,7 +92,7 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'columnitem'
+        type: 'dotplot'
     },
     title: {
         text: 'Stortinget'
@@ -142,7 +142,6 @@ Highcharts.chart('container', {
             ],
             name: 'Delegates',
             colorByPoint: true,
-            allowOverflow: true,
             dataLabels: {
                 enabled: true,
                 y: -10,
