@@ -1,21 +1,26 @@
 let start;
 
-Highcharts.chart('container', {
+const c = Highcharts.chart('container', {
 
     data: {
         csv: document.getElementById('csv').innerHTML,
         parsed: function () {
             start = +new Date();
+        },
+        complete(options) {
+            options.series.forEach(series => {
+                const turboData = [];
+                series.data.forEach(data => {
+                    turboData.push([data.x, data.y, data.value]);
+                });
+                series.data = turboData;
+            });
         }
     },
 
     chart: {
         type: 'heatmap',
         margin: [60, 10, 80, 50]
-    },
-
-    boost: {
-        useGPUTranslations: true
     },
 
     title: {
@@ -86,10 +91,9 @@ Highcharts.chart('container', {
         tooltip: {
             headerFormat: 'Temperature<br/>',
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-        },
-        turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
+        }
     }]
 
 });
-
+console.log(c);
 console.log('Rendered in ' + (new Date() - start) + ' ms'); // eslint-disable-line no-console
