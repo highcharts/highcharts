@@ -16,18 +16,19 @@ Highcharts.chart('container', {
         enabled: false
     },
     series: [{
+        keys: ['name', 'y', 'color'],
         data: [
-            ['R', 1],
-            ['SV', 11],
-            ['AP', 49],
-            ['SP', 19],
-            ['MDG', 1],
-            ['KrF', 8],
-            ['V', 8],
-            ['H', 45],
-            ['FrP', 27]
+            ['R', 1, '#9c0014'],
+            ['SV', 11, '#da47bb'],
+            ['AP', 49, '#e90031'],
+            ['SP', 19, '#a8cd4d'],
+            ['MDG', 1, '#3e8720'],
+            ['KrF', 8, '#f4b436'],
+            ['V', 8, '#14b48f'],
+            ['H', 45, '#00bbef'],
+            ['FrP', 27, '#005996']
         ],
-        name: 'Delegates',
+        name: 'Seats',
         colorByPoint: true,
         dataLabels: {
             enabled: true,
