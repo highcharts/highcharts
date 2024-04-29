@@ -21,6 +21,12 @@
  * */
 
 
+const FS = require('node:fs');
+
+const FSLib = require('./fs');
+
+const Path = require('node:path');
+
 const TS = require('typescript');
 
 
@@ -57,6 +63,7 @@ const TYPE_SPLIT = /[\W\.]+/gsu;
  *
  * */
 
+
 /**
  * Adds a tag to a DocletInfo object.
  *
@@ -66,7 +73,7 @@ const TYPE_SPLIT = /[\W\.]+/gsu;
  * @param {string} tag
  * Tag to add to.
  *
- * @param {string|undefined} [text]
+ * @param {string} [text]
  * Text to add.
  *
  * @return {DocletInfo}
@@ -125,7 +132,7 @@ function changeSourceCode(
 
 
 /**
- * Shifts ranges in the source node with replacements.
+ * [TS] Shifts ranges in the source node with replacements.
  *
  * @param {TS.SourceFile} sourceNode
  * Source file to change.
@@ -158,7 +165,7 @@ function changeSourceNode(
 
 
 /**
- * Logs debug information for a node and its children into the console.
+ * [TS] Logs debug information for a node and its children into the console.
  *
  * @param {TS.Node} node
  * Node to debug.
@@ -235,29 +242,29 @@ function extractTypes(
 
 
 /**
- * Retrieve child informations.
+ * [TS] Retrieve child informations.
  *
  * @param {Array<TS.Node>} nodes
  * Child nodes to extract from.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {Array<NodeInfo>}
+ * @return {Array<Info>}
  * Retrieved child informations.
  */
 function getChildInfos(
     nodes,
     includeNodes
 ) {
-    /** @type {Array<NodeInfo>} */
+    /** @type {Array<Info>} */
     const _infos = [];
 
     /** @type {DocletInfo} */
     let _doclet;
     /** @type {Array<DocletInfo>} */
     let _doclets;
-    /** @type {NodeInfo} */
+    /** @type {CodeInfo} */
     let _child;
     /** @type {TS.Node} */
     let previousNode = nodes[0];
@@ -596,7 +603,7 @@ function getDocletsBetween(
  * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {NodeInfo|undefined}
+ * @return {ExportInfo|undefined}
  * Export information or `undefined`.
  */
 function getExportInfo(
@@ -896,7 +903,7 @@ function getInterfaceInfo(
 
 
 /**
- * Retrieves all logical children and skips statement tokens.
+ * [TS] Retrieves all logical children and skips statement tokens.
  *
  * @param {TS.Node} node
  * Node to retrieve logical children from.
@@ -919,7 +926,7 @@ function getNodesChildren(
 
 
 /**
- * Retrieve the first logical child of a node.
+ * [TS] Retrieve the first logical child of a node.
  *
  * @param {TS.Node} node
  * Node to retrieve the first logical child from.
@@ -935,7 +942,7 @@ function getNodesFirstChild(
 
 
 /**
- * Retrieve the last logical child of a node.
+ * [TS] Retrieve the last logical child of a node.
  *
  * @param {TS.Node} node
  * Node to retrieve the last logical child from.
@@ -1098,7 +1105,7 @@ function getPropertyInfo(
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {SourceInfo}
- * Source information or exception.
+ * Source information.
  */
 function getSourceInfo(
     filePath,
@@ -1265,6 +1272,7 @@ function isNativeType(
         !isCapitalCase(type) ||
         NATIVE_TYPES.includes(type) ||
         type.startsWith('Array') ||
+        type.startsWith('Partial') ||
         TS.SyntaxKind[type] > 0
     );
 }
@@ -1273,10 +1281,10 @@ function isNativeType(
 /**
  * Merge multiple DocletInfo objects into the first.
  *
- * @param {DocletInfo|undefined} targetDoclet
+ * @param {DocletInfo} [targetDoclet]
  * Doclet information to add to.
  *
- * @param {Array<DocletInfo>} sourceDoclets
+ * @param {...Array<DocletInfo>} [sourceDoclets]
  * Doclet informations to add.
  *
  * @return {DocletInfo}
@@ -1392,6 +1400,97 @@ function removeTag(
 
 
 /**
+ * Resolves type relative to the given source information.
+ *
+ * @param {SourceInfo} sourceInfo
+ * Source information to use.
+ *
+ * @param {string} type
+ * Type to resolve to.
+ *
+ * @return {ResolvedInfo|undefined}
+ * Resolve information.
+ */
+function resolveType(
+    sourceInfo,
+    type
+) {
+    /** @type {ResolvedInfo} */
+    const resolvedInfo = {
+        kind: 'Resolved',
+        path: sourceInfo.path,
+        resolvedInfo: void 0,
+        resolvedPath: sourceInfo.path,
+        type
+    };
+
+    for (const info of sourceInfo.code) {
+
+        if (info.kind === 'Import') {
+            const imports = info.imports;
+
+            for (const item in imports) {
+
+                if (
+                    item === type ||
+                    imports[item] === type
+                ) {
+                    const resolvedImport = resolveType(
+                        FS.readFileSync(
+                            Path.resolve(
+                                Path.dirname(FSLib.path(sourceInfo.path)),
+                                Path.dirname(FSLib.path(info.from))
+                            ),
+                            'utf8'
+                        ),
+                        item
+                    );
+
+                    if (resolvedImport) {
+                        resolvedInfo.resolvedInfo = resolvedImport.resolvedInfo;
+                        resolvedInfo.resolvedPath = resolvedImport.path;
+                        return resolvedInfo;
+                    }
+
+                }
+
+            }
+
+        }
+
+        switch (info.kind) {
+            case 'Export':
+                if (
+                    info.object &&
+                    (
+                        info.name === type ||
+                        info.object.name === type
+                    )
+                ) {
+                    resolvedInfo.resolvedInfo = info.object;
+                    return resolvedInfo;
+                }
+                break;
+            case 'Class':
+            case 'Interface':
+            case 'Object':
+            case 'Variable':
+                if (info.name === type) {
+                    resolvedInfo.resolvedInfo = info;
+                    return resolvedInfo;
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    return void 0;
+}
+
+
+/**
  * Sanitize text from surrounding quote characters.
  *
  * @param {string} text
@@ -1415,7 +1514,7 @@ function sanitizeText(
  * @param {DocletInfo} doclet
  * Doclet information to compile.
  *
- * @param {number|string} indent
+ * @param {number|string} [indent]
  * Indent styling.
  *
  * @return {string}
@@ -1499,7 +1598,7 @@ function toDocletString(
  * @param {unknown} jsonTree
  * Tree to convert.
  *
- * @param {string} [indent]
+ * @param {number|string} [indent]
  * Indent option.
  *
  * @return {string}
@@ -1509,6 +1608,11 @@ function toJSONString(
     jsonTree,
     indent
 ) {
+
+    if (typeof indent === 'number') {
+        indent = ''.padEnd(indent, ' ');
+    }
+
     return JSON.stringify(
         jsonTree,
         (_key, value) => (
@@ -1527,7 +1631,7 @@ function toJSONString(
 
 
 /**
- * Reflects a node kind to a primitive type.
+ * [TS] Reflects a node kind to a primitive type.
  *
  * @param {TS.Node} node
  * Node to reflect.
@@ -1583,6 +1687,7 @@ module.exports = {
     newDocletInfo,
     removeAllDoclets,
     removeTag,
+    resolveType,
     sanitizeText,
     toDocletString,
     toJSONString,
@@ -1609,6 +1714,13 @@ module.exports = {
  * @property {string} name
  * @property {TS.ClassDeclaration} [node]
  * @property {Array<PropertyInfo>} properties
+ */
+
+
+/**
+ * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
+ *           InterfaceInfo|ObjectInfo|PropertyInfo|SourceInfo|VariableInfo
+ *          } CodeInfo
  */
 
 
@@ -1640,7 +1752,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
  * @property {string} [name]
- * @property {NodeInfo} [object]
+ * @property {CodeInfo} [object]
  * @property {MetaInfo} meta
  * @property {TS.ImportDeclaration} [node]
  */
@@ -1701,13 +1813,6 @@ module.exports = {
 
 
 /**
- * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
- *           InterfaceInfo|ObjectInfo|PropertyInfo|SourceInfo|VariableInfo
- *          } NodeInfo
- */
-
-
-/**
  * @typedef ObjectInfo
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
@@ -1732,8 +1837,18 @@ module.exports = {
 
 
 /**
+ * @typedef ResolvedInfo
+ * @property {'Resolved'} kind
+ * @property {string} path
+ * @property {CodeInfo} resolvedInfo
+ * @property {string} resolvedPath
+ * @property {string} type
+ */
+
+
+/**
  * @typedef SourceInfo
- * @property {Array<NodeInfo>} code
+ * @property {Array<Info>} code
  * @property {'Source'} kind
  * @property {TS.SourceFile} [node]
  * @property {string} path

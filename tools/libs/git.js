@@ -45,7 +45,7 @@ function getStatus() {
                         .map(line => PORCELAN_REGEXP.exec(line))
                         .filter(match => !!match)
                         .map(match => (
-                            (new Array(...match))
+                            [...match]
                                 .slice(1)
                                 .map(column => column.trim())
                         ))

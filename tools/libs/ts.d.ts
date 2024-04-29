@@ -37,6 +37,20 @@ declare namespace TSLib {
     }
 
 
+    type CodeInfo = (
+        | ClassInfo
+        | DeconstructInfo
+        | DocletInfo
+        | ExportInfo
+        | ImportInfo
+        | InterfaceInfo
+        | ObjectInfo
+        | PropertyInfo
+        | SourceInfo
+        | VariableInfo
+    );
+
+
     interface DeconstructInfo {
         deconstructs: Record<string, string>;
         doclet?: DocletInfo;
@@ -62,7 +76,7 @@ declare namespace TSLib {
         flags?: Array<InfoFlag>;
         kind: 'Export';
         name?: string;
-        object?: NodeInfo;
+        object?: CodeInfo;
         meta: MetaInfo;
         node?: TS.ImportDeclaration;
     }
@@ -122,20 +136,6 @@ declare namespace TSLib {
     }
 
 
-    type NodeInfo = (
-        | ClassInfo
-        | DeconstructInfo
-        | DocletInfo
-        | ExportInfo
-        | ImportInfo
-        | InterfaceInfo
-        | ObjectInfo
-        | PropertyInfo
-        | SourceInfo
-        | VariableInfo
-    );
-
-
     interface ObjectInfo {
         flags?: Array<InfoFlag>;
         kind: 'Object';
@@ -162,8 +162,17 @@ declare namespace TSLib {
     }
 
 
+    interface ResolvedInfo {
+        kind: 'Resolved',
+        path: string;
+        resolvedInfo: CodeInfo;
+        resolvedPath: string;
+        type: string;
+    }
+
+
     interface SourceInfo {
-        code: Array<NodeInfo>;
+        code: Array<CodeInfo>;
         kind: 'Source';
         node?: TS.SourceFile;
         path: string;
@@ -183,6 +192,97 @@ declare namespace TSLib {
 
 
     /**
+     * Adds a tag to a DocletInfo object.
+     *
+     * @param {DocletInfo} doclet
+     * Doclet information to modify.
+     *
+     * @param {string} tag
+     * Tag to add to.
+     *
+     * @param {string} [text]
+     * Text to add.
+     *
+     * @return {DocletInfo}
+     * DocletInfo object as reference.
+     */
+    function addTag(
+        doclet: DocletInfo,
+        tag: string,
+        text?: string
+    ): DocletInfo;
+
+
+    /**
+     * Shifts ranges in the source code with replacements.
+     *
+     * @param sourceCode
+     * Source code to change.
+     *
+     * @param replacements
+     * Replacements to apply.
+     *
+     * @return
+     * Changed source code.
+     */
+    function changeSourceCode(
+        sourceCode: string,
+        replacements: Array<[begin: number, end: number, replacement: string]>
+    ): string;
+
+
+    /**
+     * Logs debug information for a node and its children into the console.
+     *
+     * @param node
+     * Node to debug.
+     *
+     * @param depth
+     * Level of debug depth regarding children.
+     *
+     * @param indent
+     * Internal parameter.
+     */
+    function debug(
+        node: TS.Node,
+        depth?: number,
+        indent?: string
+    ): void;
+
+
+    /**
+     * [TS] Retrieve child informations.
+     *
+     * @param nodes
+     * Child nodes to extract from.
+     *
+     * @param includeNodes
+     * Whether to include the TypeScript nodes in the information.
+     *
+     * @return
+     * Retrieved child informations.
+     */
+    function getChildInfos(
+        nodes: Array<TS.Node>,
+        includeNodes?: boolean
+    ): Array<CodeInfo>;
+
+
+    /**
+     * [TS] Retrieves all logical children and skips statement tokens.
+     *
+     * @param node
+     * Node to retrieve logical children from.
+     *
+     * @return
+     * Array of logical children.
+     */
+    function getNodesChildren(
+        node: TS.Node
+    ): Array<TS.Node>;
+
+
+    /**
      * Retrieves source information from the given file source.
      *
      * @param filePath
@@ -195,13 +295,179 @@ declare namespace TSLib {
      * Whether to include the TypeScript nodes in the information.
      *
      * @return
-     * Source information or exception.
+     * Source information.
      */
     function getSourceInfo(
         filePath: string,
         sourceCode: string,
         includeNodes?: boolean
     ): SourceInfo;
+
+
+    /**
+     * Retrieves the last text of the specified tag from a DocletInfo object.
+     *
+     * @param doclet
+     * Doclet information to retrieve from.
+     *
+     * @param tag
+     * Tag to retrieve.
+     *
+     * @return
+     * Retrieved text or `undefined`.
+     */
+    function getTagText(
+        doclet: DocletInfo,
+        tag: string
+    ): (string|undefined);
+
+
+    /**
+     * Tests if a text string starts with upper case.
+     *
+     * @param text
+     * Text string to test.
+     *
+     * @return
+     * `true`, if text string starts with upper case.
+     */
+    function isCapitalCase(
+        text: string
+    ): boolean;
+
+
+    /**
+     * Tests if a type is integrated into TypeScript.
+     *
+     * @param type
+     * Type to test.
+     *
+     * @return
+     * `true`, if type is integrated into TypeScript.
+     */
+    function isNativeType(
+        type: string
+    ): boolean;
+
+
+    /**
+     * Merge multiple DocletInfo objects into the first.
+     *
+     * @param targetDoclet
+     * Doclet information to add to.
+     *
+     * @param sourceDoclets
+     * Doclet informations to add.
+     *
+     * @return
+     * First DocletObject as reference.
+     */
+    function mergeDocletInfos(
+        targetDoclet?: DocletInfo,
+        ...sourceDoclets: Array<DocletInfo>
+    ): DocletInfo;
+
+
+    /**
+     * Creates a new DocletInfo object.
+     *
+     * @param template
+     * Doclet information to apply.
+     *
+     * @return
+     * The new doclet information.
+     */
+    function newDocletInfo(
+        template?: DocletInfo
+    ): DocletInfo;
+
+
+    /**
+     * Removes a tag from a DocletInfo object.
+     *
+     * @param doclet
+     * Doclet information to modify.
+     *
+     * @param tag
+     * Tag to remove.
+     *
+     * @return
+     * Removed tag text.
+     */
+    function removeTag(
+        doclet: DocletInfo,
+        tag: string
+    ): Array<string>;
+
+
+    /**
+     * Resolves type relative to the given source information.
+     *
+     * @param sourceInfo
+     * Source information to use.
+     *
+     * @param type
+     * Type to resolve to.
+     *
+     * @return
+     * Resolve information.
+     */
+    function resolveType(
+        sourceInfo: SourceInfo,
+        type: string
+    ): ResolvedInfo;
+
+
+    /**
+     * Compiles doclet information into a code string.
+     *
+     * @see changeSourceCode
+     *
+     * @param doclet
+     * Doclet information to compile.
+     *
+     * @param indent
+     * Indent styling.
+     *
+     * @return
+     * Doclet string.
+     */
+    function toDocletString(
+        doclet: DocletInfo,
+        indent?: (number|string)
+    ): string;
+
+    /**
+     * Converts any tree to a JSON string, while converting TypeScript nodes to raw
+     * code.
+     *
+     * @param jsonTree
+     * Tree to convert.
+     *
+     * @param indent
+     * Indent option.
+     *
+     * @return
+     * Converted JSON string.
+     */
+    function toJSONString(
+        jsonTree: unknown,
+        indent?: string
+    ): string;
+
+
+    /**
+     * [TS] Reflects a node kind to a primitive type.
+     *
+     * @param node
+     * Node to reflect.
+     *
+     * @return
+     * Reflected primitive type or `undefined`.
+     */
+    function toTypeof(
+        node: TS.Node
+    ): (string|undefined);
 
 
 }
