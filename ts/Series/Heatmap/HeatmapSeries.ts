@@ -309,7 +309,7 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.processedXData.length; // != 0
+        return !!(this.processedXData || this.xData); // != 0
     }
 
     /**
