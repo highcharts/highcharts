@@ -364,24 +364,28 @@ QUnit.test(
     '#20886, Map drilldown datalabel mouse tracking',
     async assert => {
         const world = await fetch(
-                'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
+                'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
             ).then(response => response.json()),
             africa = await fetch(
-                'https://code.highcharts.com/mapdata/custom/africa.topo.json'
-            ).then(response => response.json());
+                'https://code.highcharts.com/mapdata/custom/africa.geo.json'
+            ).then(response => response.json()),
+            duration = 50;
 
         // Create the chart
         const chart = Highcharts.mapChart('container', {
                 chart: {
-                    animation: false,
+                    animation: {
+                        duration: duration
+                    },
                     events: {
                         drillupall() {
                             const chart = this;
-                            assert.ok(
+                            assert.notOk(
                                 // eslint-disable-next-line no-underscore-dangle
-                                chart.series[0]._hasTracking === false,
-                                'Tracking should be false before chart ' +
-                                're-renders on \"drillupall\" event.'
+                                chart.get('world_map')._hasTracking,
+                                `Tracking should be false before chart
+                                re-renders on \"drillupall\" event and
+                                animations are enabled.`
                             );
                         }
                     }
@@ -401,6 +405,7 @@ QUnit.test(
                     }
                 },
                 series: [{
+                    id: 'world_map',
                     mapData: world,
                     custom: {
                         startPos: void 0
@@ -412,7 +417,9 @@ QUnit.test(
                     }]
                 }],
                 drilldown: {
-                    animation: false,
+                    animation: {
+                        duration: duration
+                    },
                     mapZooming: true,
                     series: [{
                         id: 'africa',
@@ -430,13 +437,13 @@ QUnit.test(
 
             setTimeout(() => {
                 assert.ok(
-                    chart.series[0].dataLabelsGroup
+                    chart.get('world_map').dataLabelsGroup
                         .hasClass('highcharts-tracker'),
                     'Data label group should have tracking after drillup.'
                 );
 
                 done();
-            }, 5);
-        }, 5);
+            }, duration * 1.5);
+        }, duration * 1.5);
     }
 );

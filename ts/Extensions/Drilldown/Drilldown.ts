@@ -855,6 +855,7 @@ class ChartAdditions {
                                         }
                                     }
                                 );
+                                newSeries._hasTracking = false;
                             } else {
                                 // When user don't want to zoom into region only
                                 // fade out
@@ -879,7 +880,6 @@ class ChartAdditions {
                             }
 
                             newSeries.isDrilling = false;
-                            newSeries._hasTracking = false;
                         }
                     }
                 }
