@@ -9,6 +9,7 @@ import type Funnel3DPointOptions from './Funnel3DPointOptions';
 import type Funnel3DSeries from './Funnel3DSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 
 /* *
  *
@@ -16,17 +17,185 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
+
+/**
+ * A funnel3d is a 3d version of funnel series type. Funnel charts are
+ * a type of chart often used to visualize stages in a sales project,
+ * where the top are the initial stages with the most clients.
+ *
+ * It requires that the `highcharts-3d.js`, `cylinder.js` and
+ * `funnel3d.js` module are loaded.
+ *
+ * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @sample highcharts/demo/funnel3d/
+ *         Funnel3d
+ *
+ * @sample {highcharts} highcharts/demo/funnel3d/
+ *         Funnel3d demo
+ *
+ * @extends plotOptions.column
+ *
+ * @extends series,plotOptions.funnel3d
+ *
+ * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase,
+ *            dataSorting, boostBlending
+ *
+ * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
+ *
+ * @product highcharts
+ *
+ * @since 7.1.0
+ *
+ * @requires highcharts-3d
+ *
+ * @requires modules/cylinder
+ *
+ * @requires modules/funnel3d
+ */
 export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
+
+    animation?: boolean;
+
     center?: Array<(number|string|null)>;
+
+    colorByPoint?: boolean;
+
+    /**
+     * An array of data points for the series. For the `funnel3d` series
+     * type, points can be given in the following ways:
+     *
+     * 1.  An array of numerical values. In this case, the numerical values
+     * will be interpreted as `y` options. The `x` values will be automatically
+     * calculated, either starting at 0 and incremented by 1, or from
+     *  `pointStart`
+     * and `pointInterval` given in the series options. If the axis has
+     * categories, these will be used. Example:
+     *
+     *  ```js
+     *  data: [0, 5, 3, 5]
+     *  ```
+     *
+     * 2.  An array of objects with named values. The following snippet shows
+     *  only a
+     * few settings, see the complete options set below. If the total number of
+     *  data
+     * points exceeds the series' [turboThreshold](#series.funnel3d.turboThreshold),
+     * this option is not available.
+     *
+     *  ```js
+     *     data: [{
+     *         y: 2,
+     *         name: "Point2",
+     *         color: "#00FF00"
+     *     }, {
+     *         y: 4,
+     *         name: "Point1",
+     *         color: "#FF00FF"
+     *     }]
+     *  ```
+     *
+     * @sample {highcharts} highcharts/chart/reflow-true/
+     *         Numerical values
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-arrays/
+     *         Arrays of numeric x and y
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+     *         Arrays of datetime x and y
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-name-value/
+     *         Arrays of point.name and y
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-objects/
+     *         Config objects
+     *
+     * @type {Array<number|Array<number>|*>}
+     *
+     * @extends series.column.data
+     *
+     * @product highcharts
+     */
     data?: Array<(Funnel3DPointOptions|PointShortOptions)>;
+
+    dataLabels?: Partial<DataLabelOptions>;
+
+    edgeWidth?: number;
+
+    /**
+     * By default sides fill is set to a gradient through this option being
+     * set to `true`. Set to `false` to get solid color for the sides.
+     *
+     * @product highcharts
+     */
     gradientForSides?: boolean;
+
+    /**
+     * The height of the series. If it is a number it defines
+     * the pixel height, if it is a percentage string it is the percentage
+     * of the plot area height.
+     *
+     * @type {number|string}
+     *
+     * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+     *
+     * @product highcharts
+     */
     height?: (number|string);
+
     ignoreHiddenPoint?: boolean;
+
+    /**
+     * The height of the neck, the lower part of the funnel. A number
+     * defines pixel width, a percentage string defines a percentage
+     * of the plot area height.
+     *
+     * @type {number|string}
+     *
+     * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+     *
+     * @product highcharts
+     */
     neckHeight?: (number|string);
+
+    /**
+     * The width of the neck, the lower part of the funnel. A number defines
+     * pixel width, a percentage string defines a percentage of the plot
+     * area width.
+     *
+     * @type {number|string}
+     *
+     * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+     *
+     * @product highcharts
+     */
     neckWidth?: (number|string);
+
+    /**
+     * A reversed funnel has the widest area down. A reversed funnel with
+     * no neck width and neck height is a pyramid.
+     *
+     * @product highcharts
+     */
     reversed?: boolean;
+
+    showInLegend?: boolean;
+
     states?: SeriesStatesOptions<Funnel3DSeries>;
+
+    /**
+     * The max width of the series compared to the width of the plot area,
+     * or the pixel width if it is a number.
+     *
+     * @type {number|string}
+     *
+     * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+     *
+     * @product highcharts
+     */
     width?: (number|string);
+
 }
 
 export default Funnel3DSeriesOptions;
