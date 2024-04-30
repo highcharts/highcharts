@@ -37,6 +37,10 @@ declare module '../Options' {
     }
 }
 
+export interface LegendEventsOptions {
+    itemClick?: EventCallback<Legend, Event>
+}
+
 export interface LegendOptions {
     align: AlignValue;
     alignColumns: boolean;
@@ -46,6 +50,7 @@ export interface LegendOptions {
     borderWidth?: number;
     className: string;
     enabled: boolean;
+    events?: LegendEventsOptions;
     floating?: boolean;
     itemCheckboxStyle: CSSObject;
     itemDistance?: number;

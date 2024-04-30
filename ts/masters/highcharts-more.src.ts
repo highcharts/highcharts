@@ -26,8 +26,8 @@ import RadialAxis from '../Core/Axis/RadialAxis.js';
 import WaterfallSeries from '../Series/Waterfall/WaterfallSeries.js';
 const G: AnyRecord = Highcharts;
 G.RadialAxis = RadialAxis;
-BubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
-PackedBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
+BubbleSeries.compose(G.Axis, G.Chart, G.Legend);
+PackedBubbleSeries.compose(G.Axis, G.Chart, G.Legend);
 Pane.compose(G.Chart, G.Pointer);
 PolarAdditions.compose(
     G.Axis,

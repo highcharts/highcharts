@@ -93,9 +93,10 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      * event information. The default action is to toggle the visibility of
      * the point. This can be prevented by calling `event.preventDefault()`.
      *
-     * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
-     *         Confirm toggle visibility
+     *  **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
      *
+     * @deprecated
      * @type      {Highcharts.PointLegendItemClickCallbackFunction}
      * @since     1.2.0
      * @product   highcharts highmaps

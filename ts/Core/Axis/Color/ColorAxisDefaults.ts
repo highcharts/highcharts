@@ -463,6 +463,10 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * Fires when the legend item belonging to the colorAxis is clicked.
      * One parameter, `event`, is passed to the function.
      *
+     * **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
+     *
+     * @deprecated
      * @type      {Function}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.events.legendItemClick

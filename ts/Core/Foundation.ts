@@ -19,9 +19,11 @@
 import type { XAxisOptions } from './Axis/AxisOptions';
 import type { ChartOptions } from './Chart/ChartOptions';
 import type { SeriesOptions } from './Series/SeriesOptions';
+import type { LegendOptions } from './Legend/LegendOptions';
 
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
+import Legend from './Legend/Legend.js';
 import Series from './Series/Series.js';
 import U from './Utilities.js';
 const {
@@ -55,8 +57,8 @@ namespace Foundation {
      * @private
      */
     export function registerEventOptions(
-        component: Axis|Chart|Series,
-        options: XAxisOptions|ChartOptions|SeriesOptions
+        component: Axis|Chart|Legend|Series,
+        options: XAxisOptions|ChartOptions|LegendOptions|SeriesOptions
     ): void {
 
         // A lookup over those events that are added by _options_ (not

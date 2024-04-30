@@ -5113,6 +5113,10 @@ export default Series;
  * default action is to toggle the visibility of the series. This can be
  * prevented by returning `false` or calling `event.preventDefault()`.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickCallbackFunction.
+ *
+ * @deprecated
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
@@ -5125,6 +5129,10 @@ export default Series;
 /**
  * Information about the event.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickEventObject.
+ *
+ * @deprecated
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.
