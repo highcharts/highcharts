@@ -362,7 +362,7 @@ class XRangeSeries extends ColumnSeries {
         const r = Math.min(
             relativeLength((
                 typeof borderRadius === 'object' ?
-                    borderRadius.radius :
+                    (borderRadius as any).radius :
                     borderRadius || 0
             ), pointHeight),
             Math.min(width, pointHeight) / 2

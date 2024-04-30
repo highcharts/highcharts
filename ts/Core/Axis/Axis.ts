@@ -597,13 +597,17 @@ class Axis {
             // Top and bottom axis defaults
             {
                 labels: {
-                    autoRotation: [-45]
+                    autoRotation: [-45],
+                    padding: 4
                 },
                 margin: 15
             } :
             // Left and right axis, title rotated 90 or 270 degrees
             // respectively
             {
+                labels: {
+                    padding: 1
+                },
                 title: {
                     rotation: 90 * this.side
                 }
@@ -2909,6 +2913,7 @@ class Axis {
      */
     public unsquish(): number {
         const labelOptions = this.options.labels,
+            padding = labelOptions.padding || 0,
             horiz = this.horiz,
             tickInterval = this.tickInterval,
             slotSize = this.len / (
@@ -2921,13 +2926,13 @@ class Axis {
             ),
             rotationOption = labelOptions.rotation,
             // We don't know the actual rendered line height at this point, but
-            // it defaults to 0.75em
-            lineHeight = this.labelMetrics().h,
+            // it defaults to 0.8em
+            lineHeight = correctFloat(this.labelMetrics().h * 0.8),
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded: number): number {
-                let step = spaceNeeded / (slotSize || 1);
+                let step = (spaceNeeded + 2 * padding) / (slotSize || 1);
 
                 step = step > 1 ? Math.ceil(step) : 1;
 
@@ -3073,7 +3078,7 @@ class Axis {
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * labelOptions.padding)
+                Math.round(slotWidth - 2 * (labelOptions.padding || 0))
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),

@@ -394,11 +394,12 @@ class PackedBubbleSeries extends BubbleSeries {
         });
 
         this.calculateParentRadius();
-        parentNodeLayout.nodes.forEach((node): void => {
-            if (node.seriesIndex === this.index) {
-                nodeAdded = true;
-            }
-        });
+        (parentNodeLayout.nodes as Array<PackedBubblePoint>)
+            .forEach((node): void => {
+                if (node.seriesIndex === this.index) {
+                    nodeAdded = true;
+                }
+            });
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
@@ -471,7 +472,8 @@ class PackedBubbleSeries extends BubbleSeries {
             this.parentNodeLayout
         ) {
             this.parentNodeLayout.removeElementFromCollection(
-                this.parentNode, this.parentNodeLayout.nodes
+                this.parentNode,
+                this.parentNodeLayout.nodes as Array<PackedBubblePoint>
             );
             if (this.parentNode.dataLabel) {
                 this.parentNode.dataLabel =
@@ -724,7 +726,8 @@ class PackedBubbleSeries extends BubbleSeries {
                                 plotY: point.plotY
                             }), false);
                             layout.removeElementFromCollection(
-                                point, layout.nodes
+                                point,
+                                layout.nodes as Array<PackedBubblePoint>
                             );
                             point.remove();
                         }
@@ -1116,10 +1119,10 @@ class PackedBubbleSeries extends BubbleSeries {
                 }
             } else {
                 series.graph.hide();
-                series.parentNodeLayout
-                    .removeElementFromCollection(
-                        series.parentNode, series.parentNodeLayout.nodes
-                    );
+                series.parentNodeLayout.removeElementFromCollection(
+                    series.parentNode,
+                    series.parentNodeLayout.nodes as Array<PackedBubblePoint>
+                );
                 if ((series.parentNode as any).dataLabel) {
                     (series.parentNode as any).dataLabel.hide();
                 }
@@ -1132,7 +1135,8 @@ class PackedBubbleSeries extends BubbleSeries {
             } else {
                 series.points.forEach((node): void => {
                     series.layout.removeElementFromCollection(
-                        node, series.layout.nodes
+                        node,
+                        series.layout.nodes as Array<PackedBubblePoint>
                     );
                 });
             }

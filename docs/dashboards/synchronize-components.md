@@ -116,6 +116,23 @@ sync: {
 ```
 
 
+### Sync groups
+
+By default, all components with a given type of synchronization enabled and sharing the same connector are synchronized. If you want to divide synchronized components into groups, you can do so using the [`group`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_Sync_Sync.Sync.OptionsEntry#group) option, which is available for each type of synchronization.
+
+Example:
+```js
+sync: {
+    visibility: {
+        enabled: true,
+        group: 'group-name'
+    }
+}
+```
+
+Demo:
+<iframe style="width: 100%; height: 651px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/groups allow="fullscreen"></iframe>
+
 
 ## Custom synchronization
 

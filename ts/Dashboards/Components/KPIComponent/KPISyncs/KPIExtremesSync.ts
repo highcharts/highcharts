@@ -44,6 +44,8 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as KPIComponent;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const { board } = this;
 
@@ -81,7 +83,7 @@ const syncPair: Sync.SyncPair = {
 
             cursor.addListener(
                 table.id,
-                'xAxis.extremes.max',
+                'xAxis.extremes.max' + groupKey,
                 handleChangeExtremes
             );
         };
@@ -96,7 +98,7 @@ const syncPair: Sync.SyncPair = {
 
             cursor.removeListener(
                 table.id,
-                'xAxis.extremes.max',
+                'xAxis.extremes.max' + groupKey,
                 handleChangeExtremes
             );
         };
