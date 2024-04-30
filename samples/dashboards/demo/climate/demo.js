@@ -574,20 +574,41 @@ async function setupBoard() {
                 xAxis: {
                     type: 'datetime',
                     dateTimeLabelFormats: {
-                        month: '%e. %b'
+                        week: '%Y-%m-%e',
+                        month: '%Y-%m'
                     },
                     accessibility: {
                         description: 'Years'
                     }
                 },
-                yAxis: {
+                yAxis: [{
                     title: {
                         text: 'Celsius'
                     },
                     accessibility: {
                         description: 'Celsius'
                     }
-                },
+                }, {
+                    opposite: true,
+                    title: {
+                        text: 'Days with rain'
+                    },
+                    accessibility: {
+                        description: 'Days with rain'
+                    }
+                }],
+                series: [{
+                    id: 'Days with rain',
+                    name: 'Days with rain',
+                    yAxis: 1,
+                    type: 'column'
+                }, {
+                    id: 'Average temperature',
+                    name: 'Average temperature'
+                }, {
+                    id: 'Maximum temperature',
+                    name: 'Maximum temperature'
+                }],
                 lang: {
                     accessibility: {
                         chartContainerLabel:
@@ -843,8 +864,8 @@ async function updateBoard(board, city, column, scale, newData) {
         options.colorAxis.colorStops = colorStops;
 
         const tempUnit = showCelsius ? 'Celsius' : 'Fahrenheit';
-        options.yAxis.title.text = tempUnit;
-        options.yAxis.accessibility.description = tempUnit;
+        options.yAxis[0].title.text = tempUnit;
+        options.yAxis[0].accessibility.description = tempUnit;
 
         await cityChart.update({
             connector: {

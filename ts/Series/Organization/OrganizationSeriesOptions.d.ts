@@ -50,10 +50,10 @@ export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 export interface OrganizationLinkOptions {
     linkOpacity?: number;
     curveFactor?: number;
-    color: ColorString;
-    lineWidth: number;
-    type: OrganizationLinkTypeValues;
-    radius: number;
+    color?: ColorString;
+    lineWidth?: number;
+    type?: OrganizationLinkTypeValues;
+    radius?: number;
 }
 
 export type OrganizationHangingIndentTranslationValue = (

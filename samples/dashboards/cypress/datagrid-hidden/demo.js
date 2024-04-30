@@ -9,7 +9,7 @@ const columns = {
 };
 
 
-const grid = new DataGrid.DataGrid('container', {
+DataGrid.dataGrid('container', {
     dataTable: new DataTable({ columns })
 });
 

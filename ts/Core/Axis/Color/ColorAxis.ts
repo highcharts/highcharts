@@ -352,6 +352,13 @@ class ColorAxis extends Axis implements AxisLike {
             legend.render();
             this.chart.getMargins(true);
 
+            // If not drilling down/up
+            if (!this.chart.series.some((series): boolean | undefined =>
+                series.isDrilling
+            )) {
+                axis.isDirty = true; // Flag to fire drawChartBox
+            }
+
             // First time only
             if (!axis.added) {
 
@@ -847,10 +854,12 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz
             } = axis,
             {
-                legend: legendOptions,
                 height: colorAxisHeight,
                 width: colorAxisWidth
             } = axis.options,
+            {
+                legend: legendOptions
+            } = chart.options,
             width = pick(
                 defined(colorAxisWidth) ?
                     relativeLength(colorAxisWidth, chart.chartWidth) : void 0,

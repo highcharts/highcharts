@@ -9,7 +9,9 @@
         chart: {
             type: 'bubble',
             plotBorderWidth: 1,
-            zoomType: 'xy'
+            zooming: {
+                type: 'xy'
+            }
         },
         legend: {
             enabled: false
@@ -99,7 +101,7 @@
                     y: 102.5,
                     z: 12,
                     name:
-                    'NL',
+                        'NL',
                     country: 'Netherlands'
                 },
                 { x: 80.3, y: 86.1, z: 11.8, name: 'SE', country: 'Sweden' },
@@ -111,7 +113,7 @@
                     y: 93.2,
                     z: 24.7,
                     name:
-                    'UK',
+                        'UK',
                     country: 'United Kingdom'
                 },
                 { x: 69.2, y: 57.6, z: 10.4, name: 'IT', country: 'Italy' },
@@ -121,7 +123,7 @@
                     y: 126.4,
                     z: 35.3,
                     name:
-                    'US',
+                        'US',
                     country: 'United States'
                 },
                 { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },

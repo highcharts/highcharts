@@ -35,6 +35,11 @@ import type Sync from '../Sync/Sync';
  */
 export interface Options extends Component.Options {
     /**
+     * Connector options
+     */
+    connector?: Component.ConnectorOptions;
+
+    /**
      * The style class to add to the rendered data grid container.
      */
     dataGridClassName?: string;
@@ -151,7 +156,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|Sync.HighlightSyncOptions;
+    highlight?: boolean|Sync.OptionsEntry;
     /**
      * Visibility sync is available for Highcharts and DataGrid components.
      * Synchronizes the visibility of data from a hidden/shown series.

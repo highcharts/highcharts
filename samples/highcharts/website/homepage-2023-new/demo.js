@@ -85,7 +85,6 @@ const arc = {
         events: {
             load: function () {
                 const links = document.querySelectorAll('.highcharts-link');
-                const chart = this;
                 setTimeout(function () {
                     changeOpacity(links, 1, 2);
                 }, 700);
@@ -683,7 +682,9 @@ const str = {
         type: 'streamgraph',
         marginBottom: 10,
         // height: 430,
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         backgroundColor: 'transparent',
         animation: {
             duration: 2000,
