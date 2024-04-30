@@ -248,8 +248,8 @@ function decorateName(
 
     if (branch.doclet) {
         optionName = (
-            TSLib.getTagText(branch.doclet, 'apioption') ||
-            TSLib.getTagText(branch.doclet, 'optionparent')
+            TSLib.extractTagText(branch.doclet, 'apioption') ||
+            TSLib.extractTagText(branch.doclet, 'optionparent')
         );
         if (optionName) {
             branch.name = optionName.split('.').pop();
@@ -337,7 +337,7 @@ function decorateType(
         !optionType &&
         branch.doclet
     ) {
-        optionType = TSLib.getTagText(branch.doclet, 'type');
+        optionType = TSLib.extractTagText(branch.doclet, 'type');
         if (optionType) {
             optionType = optionType.replace(/^{(.*)}/g, '$1')
         }
@@ -708,8 +708,8 @@ function getInterfaceName(
 
     if (doclet) {
         const fullName = (
-            TSLib.getTagText(doclet, 'apioption') ||
-            TSLib.getTagText(doclet, 'optionparent')
+            TSLib.extractTagText(doclet, 'apioption') ||
+            TSLib.extractTagText(doclet, 'optionparent')
         );
 
         if (fullName) {
@@ -732,7 +732,7 @@ function getMemberType(
     let interfaceName = getInterfaceName(branch);
     let memberType = (
             branch.type ||
-            (doclet && TSLib.getTagText(doclet, 'type')) ||
+            (doclet && TSLib.extractTagText(doclet, 'type')) ||
             '*'
         )
         .replace(/[{}]/gu, '')

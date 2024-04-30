@@ -37,7 +37,7 @@ import Yargs from 'yargs';
 async function main() {
     const args = await Yargs.argv;
     const debug = !!args.debug;
-    const source = args.source || 'ts'
+    const source = args.source as string || 'ts'
     const classes: Record<string, TSLib.SourceInfo> = {};
 
     let content: string;
