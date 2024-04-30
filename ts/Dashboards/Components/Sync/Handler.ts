@@ -22,7 +22,7 @@
  *
  * */
 
-import type ComponentType from '../ComponentType';
+import type Component from '../Component';
 
 /* *
  *
@@ -107,7 +107,7 @@ class SyncHandler {
      * @param component
      * The component to register on.
      */
-    public register(component: ComponentType): void {
+    public register(component: Component): void {
         const { func } = this;
         this.callback = func.call(component);
     }

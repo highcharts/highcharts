@@ -147,6 +147,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
+    "chatgpt": "^5.2.5",
     "eslint-plugin-brackets": "^0.1.3"
   }
 }

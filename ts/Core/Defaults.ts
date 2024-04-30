@@ -1478,7 +1478,7 @@ const defaultOptions: DefaultOptions = {
          *         Item text styles
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.75em", "fontWeight": "bold", "textOverflow": "ellipsis"}
+         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.8em", "fontWeight": "bold", "textOverflow": "ellipsis"}
          */
         itemStyle: {
             /**
@@ -1809,7 +1809,7 @@ const defaultOptions: DefaultOptions = {
              *      `.highcharts-legend-title` class.
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"fontSize": "0.75em", "fontWeight": "bold"}
+             * @default {"fontSize": "0.8em", "fontWeight": "bold"}
              * @since   3.0
              */
             style: {

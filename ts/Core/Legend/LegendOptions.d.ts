@@ -19,10 +19,13 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type { EventCallback as ECallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type EventCallback from '../EventCallback';
 import type F from '../Templating';
 import type Legend from './Legend';
+import type PointerEvent from '../PointerEvent';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
 /* *
@@ -37,8 +40,14 @@ declare module '../Options' {
     }
 }
 
+declare module '../Series/SeriesOptions' {
+    interface SeriesEventsOptions {
+        legendItemClick?: LegendItemClickCallback;
+    }
+}
+
 export interface LegendEventsOptions {
-    itemClick?: EventCallback<Legend, Event>
+    itemClick?: ECallback<Legend, Event>
 }
 
 export interface LegendOptions {
@@ -88,6 +97,8 @@ export interface LegendOptions {
     x: number;
     y: number;
 }
+
+export type LegendItemClickCallback = EventCallback<PointerEvent>;
 
 export interface LegendNavigationOptions {
     activeColor: ColorType;

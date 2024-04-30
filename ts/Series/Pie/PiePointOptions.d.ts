@@ -14,8 +14,11 @@
  *
  * */
 
+import type { LegendItemClickCallback } from '../../Core/Legend/LegendOptions';
 import type LinePointOptions from '../Line/LinePointOptions';
 import type PieDataLabelOptions from './PieDataLabelOptions';
+import type { PointEventsOptions } from '../../Core/Series/PointOptions';
+import type { SeriesPointOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -23,10 +26,76 @@ import type PieDataLabelOptions from './PieDataLabelOptions';
  *
  * */
 
+/**
+ * @optionparent plotOptions.pie.point.events
+ */
+export interface PiePointEventsOptions extends PointEventsOptions {
+
+    /**
+     * Fires when the legend item belonging to the pie point (slice) is
+     * clicked. The `this` keyword refers to the point itself. One
+     * parameter, `event`, is passed to the function, containing common
+     * event information. The default action is to toggle the visibility of
+     * the point. This can be prevented by calling `event.preventDefault()`.
+     *
+     * **Note:** This option is deprecated in favor of
+     * Highcharts.LegendItemClickEventObject.
+     *
+     * @deprecated
+     *
+     * @type {Highcharts.PointLegendItemClickCallbackFunction}
+     *
+     * @since 1.2.0
+     *
+     * @product highcharts highmaps
+     */
+    legendItemClick: LegendItemClickCallback
+
+}
+
+/**
+ * @optionparent plotOptions.pie.data
+ */
 export interface PiePointOptions extends LinePointOptions {
-    dataLabels?: PieDataLabelOptions|PieDataLabelOptions[];
+
+    /**
+     * @type {Highcharts.SeriesPieDataLabelsOptionsObject}
+     *
+     * @product highcharts highmaps
+     */
+    dataLabels?: (PieDataLabelOptions|Array<PieDataLabelOptions>);
+
+    /**
+     * The sequential index of the data point in the legend.
+     *
+     * @type {number}
+     *
+     * @product highcharts highmaps
+     *
+     * @apioption series.pie.data.legendIndex
+     */
+
+    /**
+     * Whether to display a slice offset from the center.
+     *
+     * @sample {highcharts} highcharts/point/sliced/
+     *         One sliced point
+     *
+     * @type {boolean}
+     *
+     * @product highcharts highmaps
+     */
     sliced?: boolean;
+
     visible?: boolean;
+
+}
+
+/**
+ * @optionparent plotOptions.pie.point
+ */
+export interface PieSeriesPointOptions extends SeriesPointOptions {
+    events?: PiePointEventsOptions;
 }
 
 /* *

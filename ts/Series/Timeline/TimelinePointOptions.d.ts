@@ -28,10 +28,36 @@ import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
  * */
 
 export interface TimelinePointOptions extends LinePointOptions {
+
     dataLabels?: TimelineDataLabelOptions;
+
+    /**
+     * The description of event. This description will be shown in tooltip.
+     *
+     * @product highcharts
+     */
+    description?: string;
+
     isNull?: boolean;
+
+    /**
+     * The label of event.
+     *
+     * @product highcharts
+     */
+    label?: string;
+
+    /**
+     * The name of event.
+     *
+     * @product highcharts
+     */
+    name?: string;
+
     radius?: number;
+
     visible?: boolean;
+
 }
 
 /* *
