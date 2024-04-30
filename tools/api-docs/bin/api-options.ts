@@ -61,7 +61,7 @@ async function main() {
                         info.kind === 'Interface'
                     ) {
 
-                        // TSLib.autoExtendInfo(sourceInfo, info);
+                        TSLib.autoExtendInfo(sourceInfo, info);
 
                     }
 

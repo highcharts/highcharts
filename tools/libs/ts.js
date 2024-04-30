@@ -40,6 +40,9 @@ const TS = require('typescript');
 const DOCLET = /\/\*\*.*?\*\//gsu;
 
 
+const NATIVE_HELPER =
+    /^(?:Array|Extract|Omit|Partial|Record|Require)(?:<|$)/su;
+
 const NATIVE_TYPES = [
     'Array',
     'Function',
@@ -90,6 +93,82 @@ function addTag(
 
     if (text) {
         tags[tag].push(text);
+    }
+
+}
+
+
+/**
+ * Extends ClassInfo and InterfaceInfo with additional inherited properties and
+ * functions.
+ *
+ * @param {SourceInfo} sourceInfo
+ * Source information of the class or interface.
+ *
+ * @param {ClassInfo|InterfaceInfo} infoToExtend
+ * Class or interface information to extends.
+ *
+ * @return {ClassInfo|InterfaceInfo}
+ * Extended class or interface information.
+ */
+function autoExtendInfo(
+    sourceInfo,
+    infoToExtend
+) {
+    /** @type {Array<string>} */
+    const extendsToDo = [];
+
+    if (infoToExtend.extends) {
+        const extendsTypes = (
+            typeof infoToExtend.extends === 'string' ?
+                [infoToExtend.extends] :
+                infoToExtend.extends
+        );
+
+        for (const extendsType of extendsTypes) {
+            for (const extractedType of extractTypes(extendsType)) {
+                if (!extendsToDo.includes(extractedType)) {
+                    extendsToDo.push(extractedType);
+                }
+            }
+        }
+
+    }
+
+    /** @type {ResolvedInfo} */
+    let resolvedExtendType;
+    /** @type {CodeInfo} */
+    let resolvedInfo;
+
+    for (const extendType of extendsToDo) {
+        resolvedExtendType = resolveType(sourceInfo, extendType);
+
+        if (!resolvedExtendType) {
+            return;
+        }
+
+        resolvedInfo = resolvedExtendType.resolvedInfo;
+
+        if (
+            resolvedInfo.kind !== 'Class' &&
+            resolvedInfo.kind !== 'Interface'
+        ) {
+            continue;
+        }
+
+        for (let property of resolvedInfo.properties) {
+
+            if (extractInfo(infoToExtend.properties, property.name)) {
+                continue;
+            }
+
+            property = newCodeInfo(property);
+            property.inherited = true;
+
+            infoToExtend.properties.push(property);
+
+        }
+
     }
 
 }
@@ -204,68 +283,6 @@ function debug(
 
 
 /**
- * Extends ClassInfo and InterfaceInfo with additional inherited properties and
- * functions.
- *
- * @param {SourceInfo} sourceInfo
- * Source information of the class or interface.
- *
- * @param {ClassInfo|InterfaceInfo} infoToExtend
- * Class or interface information to extends.
- *
- * @return {ClassInfo|InterfaceInfo}
- * Extended class or interface information.
- */
-function autoExtendInfo(
-    sourceInfo,
-    infoToExtend
-) {
-    /** @type {Array<string>} */
-    const extendsToDo = [];
-
-    if (infoToExtend.extends) {
-        if (typeof infoToExtend.extends === 'string') {
-            extendsToDo.push(infoToExtend.extends);
-        } else {
-            extendsToDo.push(...infoToExtend.extends);
-        }
-    }
-
-    /** @type {ResolvedInfo} */
-    let resolvedExtendType;
-    /** @type {CodeInfo} */
-    let resolvedInfo;
-
-    for (const extendType of extendsToDo) {
-        resolvedExtendType = resolveType(sourceInfo, extendType);
-        resolvedInfo = resolvedExtendType.resolvedInfo;
-
-        if (
-            resolvedInfo.kind !== 'Class' &&
-            resolvedInfo.kind !== 'Interface'
-        ) {
-            continue;
-        }
-
-        for (let property of resolvedInfo.properties) {
-
-            if (extractInfo(infoToExtend.properties, property.name)) {
-                continue;
-            }
-
-            property = newCodeInfo(property);
-            property.inherited = true;
-
-            infoToExtend.properties.push(property);
-
-        }
-
-    }
-
-}
-
-
-/**
  * Extracts information from an array of CodeInfo types.
  *
  * @param {Array<CodeInfo>} arr
@@ -345,7 +362,8 @@ function extractTagText(
 
 
 /**
- * Extracts all types of a type statement, including intersects and unions.
+ * Extracts all types of a type statement, including conditionals, generics,
+ * intersects and unions.
  *
  * @param {string} typeString
  * Type statement as string to extract from.
@@ -1386,8 +1404,7 @@ function isNativeType(
         type.length < 2 ||
         !isCapitalCase(type) ||
         NATIVE_TYPES.includes(type) ||
-        type.startsWith('Array') ||
-        type.startsWith('Partial') ||
+        NATIVE_HELPER.test(type) ||
         TS.SyntaxKind[type] > 0
     );
 }
@@ -1560,12 +1577,16 @@ function removeTag(
  * @param {string} type
  * Type to resolve to.
  *
+ * @param {Record<string,SourceInfo>} [_stack]
+ * Internal stack for recursion.
+ *
  * @return {ResolvedInfo|undefined}
  * Resolve information.
  */
 function resolveType(
     sourceInfo,
-    type
+    type,
+    _stack = {}
 ) {
     /** @type {ResolvedInfo} */
     const resolvedInfo = {
@@ -1596,6 +1617,11 @@ function resolveType(
                         FSLib.path(info.from)
                     );
 
+                    if (Path.extname(resolvedPath) === '.js') {
+                        resolvedPath = resolvedPath
+                            .substring(0, resolvedPath.length - 3);
+                    }
+
                     if (!Path.extname(resolvedPath)) {
                         if (FS.existsSync(resolvedPath + '.d.ts')) {
                             resolvedPath += '.d.ts';
@@ -1605,14 +1631,23 @@ function resolveType(
                             continue;
                         }
                     }
-                    console.log(resolvedPath);
+
+                    if (_stack[resolvedPath]) {
+                        return void 0; // Break circular references
+                    }
+
                     const resolvedSource = getSourceInfo(
                         resolvedPath,
                         FS.readFileSync(resolvedPath, 'utf8')
                     );
-                    const resolvedImport = resolveType(resolvedSource, item);
+
+                    _stack[resolvedPath] = resolvedSource;
+
+                    const resolvedImport =
+                        resolveType(resolvedSource, item, _stack);
 
                     if (resolvedImport) {
+                        delete _stack[resolvedPath];
                         resolvedInfo.resolvedInfo = resolvedImport.resolvedInfo;
                         resolvedInfo.resolvedPath = resolvedImport.path;
                         return resolvedInfo;
