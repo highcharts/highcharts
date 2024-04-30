@@ -15,7 +15,8 @@ const chart = Highcharts.chart('container', {
 });
 
 document.getElementById('add').addEventListener('click', () => {
-    chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return random integer between 1 and 10.
+    chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return
+    // random integer between 1 and 10.
 });
 
 document.getElementById('remove').addEventListener('click', () => {

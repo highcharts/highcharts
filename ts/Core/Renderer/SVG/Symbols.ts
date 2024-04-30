@@ -35,6 +35,9 @@ const {
 
 /* eslint-disable require-jsdoc, valid-jsdoc */
 
+/**
+ *
+ */
 function arc(
     cx: number,
     cy: number,
@@ -271,6 +274,9 @@ function callout(
     return path;
 }
 
+/**
+ *
+ */
 function circle(
     x: number,
     y: number,
@@ -285,6 +291,9 @@ function circle(
     });
 }
 
+/**
+ *
+ */
 function diamond(
     x: number,
     y: number,
@@ -301,6 +310,9 @@ function diamond(
 }
 
 // #15291
+/**
+ *
+ */
 function rect(
     x: number,
     y: number,
@@ -320,6 +332,9 @@ function rect(
     ];
 }
 
+/**
+ *
+ */
 function roundedRect(
     x: number,
     y: number,
@@ -342,6 +357,9 @@ function roundedRect(
     ];
 }
 
+/**
+ *
+ */
 function triangle(
     x: number,
     y: number,
@@ -356,6 +374,9 @@ function triangle(
     ];
 }
 
+/**
+ *
+ */
 function triangleDown(
     x: number,
     y: number,

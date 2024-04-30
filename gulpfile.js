@@ -22,6 +22,7 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'api-tree',
     'api-upload',
     'dashboards/api',
     'dashboards/api-docs',
@@ -71,6 +72,8 @@ Gulp.registry(new GulpForwardReference());
     'lint-ts',
     'palette',
     'prep-release',
+    'reset-clone',
+    'reset-visual-references',
     'scripts',
     'scripts-clean',
     'scripts-code',
@@ -88,7 +91,6 @@ Gulp.registry(new GulpForwardReference());
     'test-karma',
     'test-tree',
     'test-ts',
-    'reset-visual-references',
     'tsdoc',
     'tsdoc-debug',
     'tsdoc-watch',

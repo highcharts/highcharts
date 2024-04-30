@@ -76,7 +76,7 @@ jobs:
           --master ./tmp/filesizes/master.json \
           --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json \
           --pr ${{github.event.pull_request.number}} \
-          --user circleci-mu
+          --user highsoft-bot
         env:
           GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
 
@@ -142,7 +142,7 @@ jobs:
         run: |
           npx gulp update-pr-testresults \
           --fail-silently \
-          --user circleci-mu \
+          --user highsoft-bot \
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:

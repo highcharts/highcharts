@@ -227,9 +227,11 @@ class HTMLTableConverter extends DataConverter {
 
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>' +
+                    htmlRows.push(
+                        '<tr>' +
                         rowArray[rowIndex].join('') +
-                        '</tr>');
+                        '</tr>'
+                    );
                 }
             }
         }

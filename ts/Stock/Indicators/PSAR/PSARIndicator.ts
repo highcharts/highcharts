@@ -43,10 +43,16 @@ const {
 
 // Utils:
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateDirection(
     previousDirection: number, low: number, high: number, PSAR: number
 ): number {
@@ -68,6 +74,9 @@ function calculateDirection(
  * inc - increment for acceleration factor
  * maxAcc - maximum acceleration factor
  * initAcc - initial acceleration factor
+ */
+/**
+ *
  */
 function getAccelerationFactor(
     dir: number,
@@ -91,6 +100,9 @@ function getAccelerationFactor(
     return initAcc;
 }
 
+/**
+ *
+ */
 function getExtremePoint(
     high: number,
     low: number,
@@ -103,10 +115,16 @@ function getExtremePoint(
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
 
+/**
+ *
+ */
 function getEPMinusPSAR(EP: number, PSAR: number): number {
     return EP - PSAR;
 }
 
+/**
+ *
+ */
 function getAccelerationFactorMultiply(
     accelerationFactor: number,
     EPMinusSAR: number
@@ -125,6 +143,9 @@ function getAccelerationFactorMultiply(
  * sHigh - second previous high
  * pHigh - previous high
  * pEP - previous extreme point
+ */
+/**
+ *
  */
 function getPSAR(
     pdir: number,

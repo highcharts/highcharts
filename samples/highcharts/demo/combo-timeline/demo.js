@@ -366,7 +366,11 @@ const options = {
         text: 'Highcharts and Highsoft timeline'
     },
     caption: {
-        text: 'An advanced demo showing a combination of various Highcharts features, including flags and plot bands. The chart shows how Highcharts and Highsoft has evolved over time, with number of employees, revenue, search popularity, office locations, and various events of interest.'
+        text: 'An advanced demo showing a combination of various Highcharts ' +
+            'features, including flags and plot bands. The chart shows how ' +
+            'Highcharts and Highsoft has evolved over time, with number of ' +
+            'employees, revenue, search popularity, office locations, and ' +
+            'various events of interest.'
     },
     credits: {
         enabled: false
@@ -611,7 +615,8 @@ const options = {
             step: 'left',
             tooltip: {
                 headerFormat:
-                    '<span style="font-size: 11px;color:#666">{point.x:%B %e, %Y}</span><br>',
+                    '<span style="font-size: 11px;color:#666">{point.x:%B %e,' +
+                    ' %Y}</span><br>',
                 pointFormat: '{point.name}<br><b>{point.y}</b>',
                 valueSuffix: ' employees'
             },
@@ -728,7 +733,8 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2016, 8, 29),
-                    text: 'Styled mode, responsive options, accessibility, chart.update',
+                    text: 'Styled mode, responsive options, accessibility, ' +
+                        'chart.update',
                     title: '5.0'
                 },
                 {
@@ -748,17 +754,21 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2021, 1, 2),
-                    text: 'Improved security, accessibility options, zoom by single touch',
+                    text: 'Improved security, accessibility options, zoom by ' +
+                        'single touch',
                     title: '9.0'
                 },
                 {
                     x: Date.UTC(2022, 2, 7),
-                    text: 'Bread crumbs, improved Boost pixel ratio, threshold alignment in charts with multiple axes',
+                    text: 'Bread crumbs, improved Boost pixel ratio, ' +
+                        'threshold alignment in charts with multiple axes',
                     title: '10.0'
                 },
                 {
                     x: Date.UTC(2023, 3, 27),
-                    text: 'Design upgrade, Faster codebase, Flow maps, Pictorial charts, Treegraphs, Geographical heatmaps, Audio charts',
+                    text: 'Design upgrade, Faster codebase, Flow maps, ' +
+                        'Pictorial charts, Treegraphs, Geographical heatmaps,' +
+                        ' Audio charts',
                     title: '11.0'
                 }
             ],
@@ -772,12 +782,15 @@ if (Highcharts.Series.types.flags) {
             data: [
                 {
                     x: Date.UTC(2012, 10, 1),
-                    text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
+                    text: 'Highsoft won "Entrepeneur of the Year" in Sogn og ' +
+                        'Fjordane, Norway',
                     title: 'Award'
                 },
                 {
                     x: Date.UTC(2012, 11, 25),
-                    text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.',
+                    text: 'Packt Publishing published <em>Learning ' +
+                        'Highcharts by Example</em>. Since then, many other ' +
+                        'books are written about Highcharts.',
                     title: 'First book'
                 },
                 {
@@ -787,17 +800,20 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2014, 4, 25),
-                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                        'Awards',
                     title: 'Award'
                 },
                 {
                     x: Date.UTC(2018, 11, 13),
-                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                        'Awards',
                     title: 'Award'
                 },
                 {
                     x: Date.UTC(2017, 9, 20),
-                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    text: 'Highsoft nominated Best Startup in Nordic Startup ' +
+                        'Awards',
                     title: 'Award'
                 }
             ],

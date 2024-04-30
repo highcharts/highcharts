@@ -28,6 +28,7 @@ import type Options from './HTMLComponentOptions';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
 import HTMLComponentDefaults from './HTMLComponentDefaults.js';
+import HTMLSyncs from './HTMLSyncs/HTMLSyncs.js';
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -52,10 +53,12 @@ AST.allowedAttributes = [
     'checked',
     'src',
     'name',
-    'selected'];
+    'selected'
+];
 AST.allowedReferences = [
     ...AST.allowedReferences,
-    'data:image/'];
+    'data:image/'
+];
 
 /* *
  *
@@ -83,6 +86,11 @@ class HTMLComponent extends Component {
         Component.defaultOptions,
         HTMLComponentDefaults
     );
+
+    /**
+     * Predefined sync config for HTML component.
+     */
+    public static predefinedSyncConfig = HTMLSyncs;
 
     /* *
      *
@@ -155,12 +163,6 @@ class HTMLComponent extends Component {
      */
     public options: Options;
 
-    /**
-     * Reference to sync component that allows to sync.
-     *
-     * @internal
-     */
-    public sync: Component['sync'];
 
     /* *
      *
@@ -188,10 +190,6 @@ class HTMLComponent extends Component {
 
         this.type = 'HTML';
         this.elements = [];
-        this.sync = new Component.Sync(
-            this,
-            this.syncHandlers
-        );
     }
 
 

@@ -180,20 +180,20 @@ function climate() {
                             afterSetExtremes: function (e) {
                                 window.clearTimeout(selectionTimeout);
                                 selectionTimeout =
-                                window.setTimeout(async () => {
-                                    if (
-                                        activeTimeRange[0] !== e.min ||
-                                    activeTimeRange[1] !== e.max
-                                    ) {
-                                        activeTimeRange = [e.min, e.max];
-                                        await updateBoard(
-                                            board,
-                                            activeCity,
-                                            activeColumn,
-                                            activeScale
-                                        );
-                                    }
-                                }, 50);
+                                    window.setTimeout(async () => {
+                                        if (
+                                            activeTimeRange[0] !== e.min ||
+                                            activeTimeRange[1] !== e.max
+                                        ) {
+                                            activeTimeRange = [e.min, e.max];
+                                            await updateBoard(
+                                                board,
+                                                activeCity,
+                                                activeColumn,
+                                                activeScale
+                                            );
+                                        }
+                                    }, 50);
                             }
                         }
                     },
@@ -209,7 +209,7 @@ function climate() {
                     chart: {
                         map: await fetch(
                             'https://code.highcharts.com/mapdata/' +
-                        'custom/world.topo.json'
+                            'custom/world.topo.json'
                         ).then(response => response.json()),
                         styledMode: true,
                         height: 190,
@@ -305,8 +305,8 @@ function climate() {
                             headerFormat: '',
                             pointFormat: (
                                 '<b>{point.name}</b><br>' +
-                            'Elevation: {point.custom.elevation}m<br>' +
-                            '{point.y:.1f}˚{point.custom.yScale}'
+                                'Elevation: {point.custom.elevation}m<br>' +
+                                '{point.y:.1f}˚{point.custom.yScale}'
                             )
                         }
                     }],
@@ -417,7 +417,10 @@ function climate() {
                 colorStopsDays :
                 colorStopsTemperature
         );
-        const selectionTable = await dataPool.getConnectorTable('Range Selection');
+        const selectionTable = await dataPool.getConnectorTable(
+            'Range ' +
+            'Selection'
+        );
         const [
             timeRangeSelector,
             worldMap
@@ -428,7 +431,7 @@ function climate() {
         const cityTable = await dataPool.getConnectorTable(city);
 
         if (newData) {
-        // Update time range selector
+            // Update time range selector
             timeRangeSelector.chart.series[0].update({
                 type: column[0] === 'T' ? 'spline' : 'column',
                 data: cityTable.modified
@@ -480,25 +483,47 @@ function climate() {
 
 
         // Update city grid selection
-        const showCelsius = scale === 'C';
+        // const showCelsius = scale === 'C';
         if (newData) {
-        // await selectionGrid.update({
-        //     dataGridOptions: {
-        //         columns: {
-        //             TNC: {
-        //                 show: showCelsius
-        //             },
-        //             TNF: {
-        //                 show: !showCelsius
-        //             },
-        //             TXC: {
-        //                 show: showCelsius
-        //             },
-        //             TXF: {
-        //                 show: !showCelsius
-        //             }
-        //         }
-        //     },
+            // await selectionGrid.update({
+            //     dataGridOptions: {
+            //         columns: {
+            //             TNC: {
+            //                 show: showCelsius
+            //             },
+            //             TNF: {
+            //                 show: !showCelsius
+            //             },
+            //             TXC: {
+            //                 show: showCelsius
+            //             },
+            //             TXF: {
+            //                 show: !showCelsius
+            //             }
+            //         }
+            //     },
+            //     columnAssignment: {
+            //         time: 'x',
+            //         FD: column === 'FD' ? 'y' : null,
+            //         ID: column === 'ID' ? 'y' : null,
+            //         RR1: column === 'RR1' ? 'y' : null,
+            //         TN: null,
+            //         TNC: column === 'TNC' ? 'y' : null,
+            //         TNF: column === 'TNF' ? 'y' : null,
+            //         TX: null,
+            //         TXC: column === 'TXC' ? 'y' : null,
+            //         TXF: column === 'TXF' ? 'y' : null,
+            //         Date: null
+            //     }
+            // });
+        }
+
+        // selectionGrid.dataGrid.scrollToRow(
+        //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
+        // );
+
+        // // Update city chart selection
+        // await cityChart.update({
         //     columnAssignment: {
         //         time: 'x',
         //         FD: column === 'FD' ? 'y' : null,
@@ -511,40 +536,18 @@ function climate() {
         //         TXC: column === 'TXC' ? 'y' : null,
         //         TXF: column === 'TXF' ? 'y' : null,
         //         Date: null
+        //     },
+        //     chartOptions: {
+        //         chart: {
+        //             type: column[0] === 'T' ? 'spline' : 'column'
+        //         },
+        //         colorAxis: {
+        //             min: colorMin,
+        //             max: colorMax,
+        //             stops: colorStops
+        //         }
         //     }
         // });
-        }
-
-        // selectionGrid.dataGrid.scrollToRow(
-        //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
-        // );
-
-    // // Update city chart selection
-    // await cityChart.update({
-    //     columnAssignment: {
-    //         time: 'x',
-    //         FD: column === 'FD' ? 'y' : null,
-    //         ID: column === 'ID' ? 'y' : null,
-    //         RR1: column === 'RR1' ? 'y' : null,
-    //         TN: null,
-    //         TNC: column === 'TNC' ? 'y' : null,
-    //         TNF: column === 'TNF' ? 'y' : null,
-    //         TX: null,
-    //         TXC: column === 'TXC' ? 'y' : null,
-    //         TXF: column === 'TXF' ? 'y' : null,
-    //         Date: null
-    //     },
-    //     chartOptions: {
-    //         chart: {
-    //             type: column[0] === 'T' ? 'spline' : 'column'
-    //         },
-    //         colorAxis: {
-    //             min: colorMin,
-    //             max: colorMax,
-    //             stops: colorStops
-    //         }
-    //     }
-    // });
     }
 }
 
@@ -639,7 +642,6 @@ function minimal() {
                 id: 'Vitamin'
             },
             type: 'DataGrid',
-            editable: true,
             sync: {
                 highlight: true
             }
@@ -700,16 +702,20 @@ function datacursor() {
                         const series = chart.series[0];
 
                         // react to table cursor
-                        cursor.addListener(table.id, 'point.mouseOver', function (e) {
-                            const point = series.data[e.cursor.row];
+                        cursor.addListener(
+                            table.id,
+                            'point.mouseOver', function (e) {
+                                const point = series.data[e.cursor.row];
 
-                            if (chart.hoverPoint !== point) {
-                                chart.tooltip.refresh(point);
-                            }
-                        });
-                        cursor.addListener(table.id, 'point.mouseOut', function () {
-                            chart.tooltip.hide();
-                        });
+                                if (chart.hoverPoint !== point) {
+                                    chart.tooltip.refresh(point);
+                                }
+                            });
+                        cursor.addListener(
+                            table.id,
+                            'point.mouseOut', function () {
+                                chart.tooltip.hide();
+                            });
                     }
                 }
             },
@@ -864,7 +870,6 @@ function extremes() {
                 },
                 chart: {
                     type: 'column',
-                    zoomType: 'x',
                     margin: [10, 10, 10, 35],
                     spacing: 0,
                     height: 130,
@@ -873,11 +878,16 @@ function extremes() {
                             chart1 = this;
                         }
                     },
-                    resetZoomButton: {
-                        align: 'center',
-                        theme: {
-                            zIndex: 20,
-                            padding: 4
+                    zooming: {
+                        type: 'x',
+                        resetButton: {
+                            position: {
+                                align: 'center'
+                            },
+                            theme: {
+                                zIndex: 20,
+                                padding: 4
+                            }
                         }
                     }
                 },
@@ -936,7 +946,6 @@ function extremes() {
                 },
                 chart: {
                     type: 'column',
-                    zoomType: 'x',
                     margin: [10, 10, 10, 35],
                     spacing: 0,
                     height: 130,
@@ -945,11 +954,16 @@ function extremes() {
                             chart2 = this;
                         }
                     },
-                    resetZoomButton: {
-                        align: 'center',
-                        theme: {
-                            zIndex: 20,
-                            padding: 4
+                    zooming: {
+                        type: 'x',
+                        resetButton: {
+                            position: {
+                                align: 'center'
+                            },
+                            theme: {
+                                zIndex: 20,
+                                padding: 4
+                            }
                         }
                     }
                 },

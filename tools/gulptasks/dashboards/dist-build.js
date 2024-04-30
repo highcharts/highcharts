@@ -138,6 +138,7 @@ async function distBuildDataGrid() {
     }
 
     const {
+        buildFolder,
         buildFolderDataGrid,
         bundleTargetFolderDataGrid
     } = require('./_config.json');
@@ -145,17 +146,22 @@ async function distBuildDataGrid() {
     fsLib.deleteDirectory(buildFolderDataGrid, true);
     logLib.success(`Deleted ${buildFolderDataGrid}`);
 
-    const buildCodeTarget = path.join(buildFolderDataGrid, 'code');
-    fsLib.copyAllFiles(bundleTargetFolderDataGrid, buildCodeTarget, true);
-    logLib.success(`Created ${buildCodeTarget}`);
+    const buildCodeDataGridTarget = path.join(buildFolderDataGrid, 'code');
+    fsLib.copyAllFiles(bundleTargetFolderDataGrid, buildCodeDataGridTarget, true);
+
+    // Copy the files to the dashboards so they can be compressed later together with the dashboards.
+    const buildCodeDashboardsTarget = path.join(buildFolder, 'code');
+    fsLib.copyAllFiles(bundleTargetFolderDataGrid, buildCodeDashboardsTarget, true);
+
+    logLib.success(`Created ${buildCodeDataGridTarget}`);
 }
 
 
 gulp.task(
     'dashboards/dist-build',
     gulp.series(
-        buildCSS,
         distBuildDashboards,
-        distBuildDataGrid
+        distBuildDataGrid,
+        buildCSS
     )
 );

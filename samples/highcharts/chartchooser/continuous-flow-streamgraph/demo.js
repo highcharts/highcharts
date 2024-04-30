@@ -2,7 +2,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'streamgraph',
         marginBottom: 30,
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         floating: true,

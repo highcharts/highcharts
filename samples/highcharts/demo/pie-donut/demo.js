@@ -224,7 +224,8 @@ Highcharts.chart('container', {
         size: '80%',
         innerSize: '60%',
         dataLabels: {
-            format: '<b>{point.name}:</b> <span style="opacity: 0.5">{y}%</span>',
+            format: '<b>{point.name}:</b> <span style="opacity: 0.5">' +
+                '{y}%</span>',
             filter: {
                 property: 'y',
                 operator: '>',

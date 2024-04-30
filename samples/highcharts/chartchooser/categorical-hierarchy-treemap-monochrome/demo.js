@@ -2,10 +2,15 @@ Highcharts.chart('container', {
     accessibility: {
         screenReaderSection: {
             beforeChartFormat:
-        '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
+        '<{headingTagName}>{chartTitle}</{headingTagName}><div>' +
+        '{typeDescription}</div><div>{chartSubtitle}</div><div>' +
+        '{chartLongdesc}</div>'
         },
         description:
-      'The demo below visualizes the Fiji divisions and provinces by population in 2017. The central and Western provinces are the most populated, where the Northern and Eastern provinces are the least populated.'
+      'The demo below visualizes the Fiji divisions and provinces by ' +
+      'population in 2017. The central and Western provinces are the most ' +
+      'populated, where the Northern and Eastern provinces are the least ' +
+      'populated.'
     },
     series: [
         {

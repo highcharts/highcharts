@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "11.4.0",
+  "version": "11.4.1",
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -40,6 +40,7 @@
     "utils": "highcharts-utils",
     "prepare": "husky install",
     "postinstall": "npx gulp update-vendor",
+    "reset": "npx gulp reset-clone && npm i",
     "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
     "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
   },
@@ -50,7 +51,7 @@
     "@babel/preset-env": "^7.20.2",
     "@cypress-audit/lighthouse": "^1.4.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.4",
-    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.27",
+    "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.2.0",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.7",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
@@ -64,7 +65,7 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^4.0.1",
-    "cloudflare": "^2.9.1",
+    "cloudflare": "^3.0.0",
     "colors": "^1.4.0",
     "cypress": "^13.2.0",
     "cypress-visual-regression": "^3.0.0",
@@ -144,5 +145,9 @@
       "stylelint"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "dependencies": {
+    "chatgpt": "^5.2.5",
+    "eslint-plugin-brackets": "^0.1.3"
+  }
 }

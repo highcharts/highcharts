@@ -268,7 +268,7 @@ class Chart {
      *
      * */
 
-    /** definitions */
+    // Definitions
     public constructor(
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
@@ -279,7 +279,7 @@ class Chart {
         callback?: Chart.CallbackFunction
     );
 
-    /** Implementation */
+    // Implementation
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Options>),
         /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -2430,6 +2430,7 @@ class Chart {
                 { labels } = options;
 
             if (
+                chart.hasCartesianSeries && // #20948
                 axis.horiz &&
                 axis.visible &&
                 labels.enabled &&
@@ -2778,8 +2779,9 @@ class Chart {
 
     /**
      * Emit console warning if the a11y module is not loaded.
+     * @private
      */
-    public warnIfA11yModuleNotLoaded():void {
+    public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
         if (options && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
@@ -3289,7 +3291,8 @@ class Chart {
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
         objectEach(options, function (val, key): void {
-            if ((chart as any)[key] &&
+            if (
+                (chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
                 (chart as any)[key].update(val, false);
@@ -3634,7 +3637,7 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted, resetZoomButton } = this;
+            { inverted } = this;
 
         let hasZoomed = false,
             displayButton: boolean|undefined;
@@ -3652,8 +3655,8 @@ class Chart {
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
-                toLength = to[wh] || axis.len,
-                fromLength = from[wh] || axis.len,
+                toLength = pick(to[wh], axis.len),
+                fromLength = pick(from[wh], axis.len),
                 // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :
@@ -3676,16 +3679,22 @@ class Chart {
             }
 
             let newMin = axis.toValue(minPx, true) +
-                    minPointOffset * pointRangeDirection,
+                // Don't apply offset for selection (#20784)
+                    (selection ? 0 : minPointOffset * pointRangeDirection),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        (minPointOffset * pointRangeDirection) ||
-                        // Polar zoom tests failed when this was not commented:
-                        // (axis.isXAxis && axis.pointRangePadding) ||
-                        0
+                        selection ? // Don't apply offset for selection (#20784)
+                            0 :
+                            (
+                                (minPointOffset * pointRangeDirection) ||
+                                // Polar zoom tests failed when this was not
+                                // commented:
+                                // (axis.isXAxis && axis.pointRangePadding) ||
+                                0
+                            )
                     ),
                 allExtremes = axis.allExtremes;
 
@@ -3856,10 +3865,10 @@ class Chart {
             } else {
 
                 // Show or hide the Reset zoom button
-                if (displayButton && !resetZoomButton) {
+                if (displayButton && !this.resetZoomButton) {
                     this.showResetZoom();
-                } else if (!displayButton && resetZoomButton) {
-                    this.resetZoomButton = resetZoomButton.destroy();
+                } else if (!displayButton && this.resetZoomButton) {
+                    this.resetZoomButton = this.resetZoomButton.destroy();
                 }
 
                 this.redraw(

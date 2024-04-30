@@ -32,6 +32,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
     TreemapSeriesLayoutAlgorithmValue,
+    TreemapSeriesLevelOptions,
     TreemapSeriesOptions
 } from './TreemapSeriesOptions';
 
@@ -196,7 +197,7 @@ class TreemapSeries extends ScatterSeries {
 
     public idPreviousRoot?: string;
 
-    public mapOptionsToLevel!: Record<string, TreemapSeriesOptions>;
+    public mapOptionsToLevel!: Record<string, TreemapSeriesLevelOptions>;
 
     public nodeMap!: Record<string, TreemapNode>;
 
@@ -559,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
             });
 
         let options: DataLabelOptions,
-            level: TreemapSeriesOptions;
+            level: TreemapSeriesLevelOptions;
 
         for (const point of points) {
             level = mapOptionsToLevel[point.node.level];
@@ -714,7 +715,8 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false,
             nodeParent: TreemapNode;
 
-        if ((point.node.parent !== this.rootNode) &&
+        if (
+            (point.node.parent !== this.rootNode) &&
             point.node.isLeaf
         ) {
             nodeParent = point.node;
@@ -970,7 +972,8 @@ class TreemapSeries extends ScatterSeries {
             );
 
             series.eventsToUnbind.push(
-                addEvent(series, 'destroy',
+                addEvent(
+                    series, 'destroy',
                     function destroyEvents(e: any): void {
                         const chart = this.chart;
                         if (chart.breadcrumbs && !e.keepEventsForUpdate) {

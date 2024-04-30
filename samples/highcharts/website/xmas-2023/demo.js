@@ -2,12 +2,6 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-
-function randomNum(min, max) { // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-
 const berry = {
     enabled: true,
     fillColor: '#DC2626',
@@ -28,15 +22,23 @@ Highcharts.chart('container', {
             load: function () {
                 const chart = this;
 
-                const flakeSet1 = document.querySelectorAll('.highcharts-series-12 .highcharts-point');
+                const flakeSet1 = document.querySelectorAll(
+                    '.highcharts-series-12 .highcharts-point'
+                );
 
-                const flakeSet2 = document.querySelectorAll('.highcharts-series-13 .highcharts-point');
+                const flakeSet2 = document.querySelectorAll(
+                    '.highcharts-series-13 .highcharts-point'
+                );
 
                 const berryPoints = [4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-                const branchSnow = document.querySelectorAll('.highcharts-areasplinerange-series');
+                const branchSnow = document.querySelectorAll(
+                    '.highcharts-areasplinerange-series'
+                );
 
-                const bottomSnow = document.querySelectorAll('.highcharts-series-19');
+                const bottomSnow = document.querySelectorAll(
+                    '.highcharts-series-19'
+                );
 
                 const buds = document.querySelectorAll('.highcharts-series-18');
 
@@ -104,7 +106,9 @@ Highcharts.chart('container', {
                         }
                     });
 
-                    document.querySelector('.highcharts-title').style.opacity = 1;
+                    document.querySelector(
+                        '.highcharts-title'
+                    ).style.opacity = 1;
 
 
                 }, 2000);
@@ -158,7 +162,9 @@ Highcharts.chart('container', {
 
                     chart.redraw();
 
-                    document.querySelector('.highcharts-subtitle').style.opacity = 1;
+                    document.querySelector(
+                        '.highcharts-subtitle'
+                    ).style.opacity = 1;
 
 
                 }, 2200);
@@ -174,7 +180,8 @@ Highcharts.chart('container', {
     },
     title: {
         useHTML: true,
-        text: '<div id="title">Wishing You A<br><span>Berry Bright</span> Holiday</div>',
+        text: '<div id="title">Wishing You A<br><span>Berry Bright</span> ' +
+            'Holiday</div>',
         align: 'center',
         x: 0,
         y: 70
@@ -515,7 +522,8 @@ Highcharts.chart('container', {
             name: 'snow flakes',
             enableMouseTracking: false,
             type: 'scatter',
-            data: [{ x: 17, y: 8 },
+            data: [
+                { x: 17, y: 8 },
                 { x: 8, y: 6 },
                 { x: 20, y: 1 },
                 { x: 2, y: 6 },
@@ -596,7 +604,8 @@ Highcharts.chart('container', {
                 { x: 18, y: 3 },
                 { x: 19, y: 3 },
                 { x: 18, y: 8 },
-                { x: 3, y: 20 }],
+                { x: 3, y: 20 }
+            ],
             xAxis: 1,
             yAxis: 1
         },
@@ -606,7 +615,8 @@ Highcharts.chart('container', {
             enableMouseTracking: false,
             type: 'scatter',
             color: '#f0f0f0',
-            data: [{ x: 0, y: 6 },
+            data: [
+                { x: 0, y: 6 },
                 { x: 7, y: 15 },
                 { x: 0, y: 7 },
                 { x: 18, y: 9 },
@@ -646,7 +656,8 @@ Highcharts.chart('container', {
                 { x: 0, y: 10 },
                 { x: 8, y: 14 },
                 { x: 9, y: 7 },
-                { x: 16, y: 6 }]
+                { x: 16, y: 6 }
+            ]
         },
         // 14 arearange snow
         {

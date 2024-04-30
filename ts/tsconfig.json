@@ -124,8 +124,8 @@
 
         /* Completeness */
         // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-        // "skipLibCheck": true                              /* Skip type checking all .d.ts files. */
-        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        // "skipLibCheck": true,                             /* Skip type checking all .d.ts files. */
 
         /* Deprecated */
         // "ignoreDeprecations": "5.0",                      /* Silence deprecation errors of specified TypeScript version. */

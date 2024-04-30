@@ -453,8 +453,10 @@ class Navigator {
             !maskInside
         ].forEach((hasMask: (boolean|undefined), index: number): void => {
             const shade = renderer.rect()
-                .addClass('highcharts-navigator-mask' +
-                    (index === 1 ? '-inside' : '-outside'))
+                .addClass(
+                    'highcharts-navigator-mask' +
+                    (index === 1 ? '-inside' : '-outside')
+                )
                 .add(navigatorGroup);
 
             if (!chart.styledMode) {
@@ -1028,7 +1030,8 @@ class Navigator {
                 if (chartX < (dragOffset as any)) { // Outside left
                     chartX = dragOffset;
                 // Outside right
-                } else if (chartX >
+                } else if (
+                    chartX >
                     navigatorSize + (dragOffset as any) - range
                 ) {
                     chartX = navigatorSize + (dragOffset as any) - range;
@@ -1263,6 +1266,7 @@ class Navigator {
 
         chart.isDirtyBox = true;
 
+
         if (navigator.navigatorEnabled) {
             // An x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
@@ -1271,8 +1275,6 @@ class Navigator {
                 ordinal: baseXaxis.options.ordinal,
                 overscroll: baseXaxis.options.overscroll
             }, navigatorOptions.xAxis, {
-                id: 'navigator-x-axis',
-                yAxis: 'navigator-y-axis',
                 type: 'datetime',
                 index: xAxisIndex,
                 isInternal: true,
@@ -1294,7 +1296,6 @@ class Navigator {
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
                 {
-                    id: 'navigator-y-axis',
                     alignTicks: false,
                     offset: 0,
                     index: yAxisIndex,
@@ -1557,8 +1558,8 @@ class Navigator {
                 linkedTo: null, // #6734
                 group: 'nav', // For columns
                 padXAxis: false,
-                xAxis: 'navigator-x-axis',
-                yAxis: 'navigator-y-axis',
+                xAxis: this.navigatorOptions.xAxis?.id,
+                yAxis: this.navigatorOptions.yAxis?.id,
                 showInLegend: false,
                 stacking: void 0, // #4823
                 isInternal: true,
@@ -1679,7 +1680,8 @@ class Navigator {
         // If user has defined data (and no base series) or explicitly defined
         // navigator.series as an array, we create these series on top of any
         // base series.
-        if ((chartNavigatorSeriesOptions as any).data &&
+        if (
+            (chartNavigatorSeriesOptions as any).data &&
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
@@ -1932,8 +1934,10 @@ class Navigator {
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data comes in, unless user set navigator.stickToMax to false.
-        navigator.stickToMax = pick(this.chart.options.navigator &&
-            this.chart.options.navigator.stickToMax, shouldStickToMax);
+        navigator.stickToMax = pick(
+            this.chart.options.navigator &&
+            this.chart.options.navigator.stickToMax, shouldStickToMax
+        );
 
         navigator.stickToMin = navigator.shouldStickToMin(
             baseSeries,
@@ -2025,10 +2029,11 @@ class Navigator {
                 this.chart,
                 'getMargins',
                 function (): void {
-                    let chart = this,
-                        navigator = chart.navigator as Navigator,
-                        marginName = navigator.opposite ?
-                            'plotTop' : 'marginBottom';
+                    const chart = this,
+                        navigator = chart.navigator as Navigator;
+
+                    let marginName = navigator.opposite ?
+                        'plotTop' : 'marginBottom';
 
                     if (chart.inverted) {
                         marginName = navigator.opposite ?

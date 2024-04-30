@@ -601,7 +601,8 @@ class Series {
                 });
 
                 // The series needs an X and an Y axis
-                if (!(series as any)[coll] &&
+                if (
+                    !(series as any)[coll] &&
                     series.optionalAxis !== coll
                 ) {
                     error(18, true, chart);
@@ -1089,7 +1090,8 @@ class Series {
         }
 
         // Reduce pointIndex if data is cropped
-        if (pointIndex !== -1 &&
+        if (
+            pointIndex !== -1 &&
             typeof pointIndex !== 'undefined' &&
             this.cropped
         ) {
@@ -1593,10 +1595,6 @@ class Series {
             xAxis = series.xAxis,
             options = series.options,
             cropThreshold = options.cropThreshold,
-            getExtremesFromAll =
-                forceExtremesFromAll ||
-                series.getExtremesFromAll ||
-                options.getExtremesFromAll, // #4599
             logarithmic = xAxis?.logarithmic,
             isCartesian = series.isCartesian;
         let croppedData: Series.CropDataObject,
@@ -1622,9 +1620,10 @@ class Series {
         }
 
         // Optionally filter out points outside the plot area
-        if (isCartesian &&
+        if (
+            isCartesian &&
             series.sorted &&
-            !getExtremesFromAll &&
+            !forceExtremesFromAll &&
             (
                 !cropThreshold ||
                 dataLength > cropThreshold ||
@@ -1633,7 +1632,8 @@ class Series {
         ) {
 
             // It's outside current extremes
-            if ((processedXData as any)[dataLength - 1] < (min as any) ||
+            if (
+                (processedXData as any)[dataLength - 1] < (min as any) ||
                 (processedXData as any)[0] > (max as any)
             ) {
                 processedXData = [];
@@ -1704,7 +1704,8 @@ class Series {
         // If the series data or axes haven't changed, don't go through
         // this. Return false to pass the message on to override methods
         // like in data grouping.
-        if (series.isCartesian &&
+        if (
+            series.isCartesian &&
             !series.isDirty &&
             !xAxis.isDirty &&
             !series.yAxis.isDirty &&
@@ -1960,15 +1961,20 @@ class Series {
     ): DataExtremesObject {
         const xAxis = this.xAxis,
             yAxis = this.yAxis,
-            xData = this.processedXData || this.xData,
             activeYData = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting && !this.is('column') ?
                 1 : 0,
             // #2117, need to compensate for log X axis
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
-        let xExtremes,
+            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
+            getExtremesFromAll =
+                forceExtremesFromAll ||
+                this.getExtremesFromAll ||
+                this.options.getExtremesFromAll; // #4599
+
+        let { processedXData, processedYData } = this,
+            xExtremes,
             validValue,
             withinRange,
             x,
@@ -1979,8 +1985,17 @@ class Series {
             xMax = 0,
             activeCounter = 0;
 
-        yData = yData || this.stackedYData || this.processedYData || [];
-        const yDataLength = yData.length;
+        // Get the processed data from the full range (#21003)
+        if (this.cropped && getExtremesFromAll) {
+            const processedData = this.getProcessedData(true);
+            processedXData = processedData.xData;
+            processedYData = processedData.yData;
+        }
+
+        yData = yData || this.stackedYData || processedYData || [];
+        const yDataLength = yData.length,
+            xData = processedXData || this.xData;
+
 
         if (xAxis) {
             xExtremes = xAxis.getExtremes();
@@ -2179,7 +2194,8 @@ class Series {
             ) : void 0;
 
             // Calculate the bottom y value for stacked series
-            if (stacking &&
+            if (
+                stacking &&
                 series.visible &&
                 stacks &&
                 stacks[xValue]
@@ -2199,7 +2215,8 @@ class Series {
                     lowValue = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (lowValue === stackThreshold &&
+                    if (
+                        lowValue === stackThreshold &&
                         stackIndicator.key === stacks[xValue].base
                     ) {
                         lowValue = pick(
@@ -4588,7 +4605,8 @@ class Series {
 
             if (!series.chart.styledMode) {
 
-                if ((stateOptions as any)[state] &&
+                if (
+                    (stateOptions as any)[state] &&
                     (stateOptions as any)[state].enabled === false
                 ) {
                     return;

@@ -812,7 +812,8 @@ class FlowMapSeries extends MapLineSeries {
                 markerEndOptions
             );
 
-            (shapeArgs.d as SVGPath).splice(2, 0,
+            (shapeArgs.d as SVGPath).splice(
+                2, 0,
                 ...marker
             );
         }

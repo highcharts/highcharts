@@ -74,7 +74,7 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \n]*'([^']+)/g;
+    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
     const codeblocks = [];
 
@@ -133,6 +133,31 @@ function resolveJSON(js) {
         }
     }
     codeblocks.push(js);
+
+    // Add some files that are referenced by variables in the demos, so we're
+    // not able to parse the static file name.
+    if (js.indexOf('fetch') !== -1) {
+        [
+            'aapl-c.json',
+            'goog-c.json',
+            'msft-c.json'
+        ].forEach(filename => {
+                const data = fs.readFileSync(
+                    path.join(
+                        __dirname,
+                        '..',
+                        'samples/data',
+                        filename
+                    ),
+                    'utf8'
+                );
+                codeblocks.push(`window.JSONSources[
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/${filename}'
+                ] = ${data};`);
+            }
+        );
+    }
+
     return codeblocks.join('\n');
 }
 
@@ -298,7 +323,8 @@ module.exports = function (config) {
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
             'samples/highcharts/blog/gdp-growth-annual/demo.js',
             'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/website/xmas-2021/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -382,8 +408,8 @@ module.exports = function (config) {
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
-                    '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    'Expected: ',
+                    'Debug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n        Expected: '
                 );
 
                 ret = ret.replace(regex, a => a.cyan);
@@ -459,6 +485,8 @@ module.exports = function (config) {
                             );
                         }
                     }
+                    // Replace external data sources with internal data samples
+                    js = resolveJSON(js);
 
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
@@ -624,9 +652,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, samplePath, js, assertion) {
-    let scriptBody = resolveJSON(js);
-
+function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 

@@ -82,10 +82,11 @@ QUnit.test('Contexts', function (assert) {
     });
 
     function getChannelsString(timeline) {
-        return timeline.channels.map(c => c.events
-            .map(e => e.time + ':' + (
-                e.message ? e.message : e.instrumentEventOptions.note
-            )).join(',')).join('#');
+        return timeline.channels.map(
+            c => c.events
+                .map(e => e.time + ':' + (
+                    e.message ? e.message : e.instrumentEventOptions.note
+                )).join(',')).join('#');
     }
 
     // Common to both tests
@@ -112,7 +113,8 @@ QUnit.test('Contexts', function (assert) {
             // Global context track 1
             '3350:90,4012.5:90,4675:90,5337.5:90,6000:90',
             // Global context track 2
-            '3350:94,3650:94,3950:94,4250:94,4550:94,4850:94,5150:94,5450:94,5750:94'
+            '3350:94,3650:94,3950:94,4250:94,4550:94,4850:94,5150:94,5450:94,' +
+            '5750:94'
         ]).join('#'),
         'Times and notes for all channels are as expected'
     );

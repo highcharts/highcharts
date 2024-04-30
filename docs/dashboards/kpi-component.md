@@ -70,7 +70,7 @@ KPIComponent allows end-user including the extra chart.
     More information about styling charts, you can find in our [docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
     Also, be aware that we prepared the component so it was minimalist.  
-    To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Plugins_KPIComponent.KPIComponent-1#defaultChartOptions).
+    To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent-1#defaultChartOptions).
 
 3. Define chart options for the KPI.
 For the full set of available chart options, see the [Highcharts API](https://api.highcharts.com/highcharts/)
@@ -104,7 +104,7 @@ For the full set of available chart options, see the [Highcharts API](https://ap
     });
     ```
 
-    By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronization, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#types/Dashboards_Plugins_KPIComponent.KPIComponent.LinkedValueToOptions) option as in the example above.
+    By default, the KPI value is synchronized with the Y value of the first point in the first series. To turn off the synchronization, disable the [linkedValueTo](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options#linkedValueTo) option as in the example above.
 
     You can also use this option to change the point to be synchronized with the value, setting its index and the index of the series it belongs to.
 
@@ -163,11 +163,10 @@ The `value` can be customized by:
     ```
 
 ## Sync with other components
-The KPI Component allows user to sync the component with other components in dashboard or group.
-You can find more information about it in the [sync chapter](https://www.highcharts.com/docs/dashboards/synchronize-components).
+The KPI Component allows users to sync the component with other components in Dashboards. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 ## API options
-For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent.KPIComponent.ComponentOptions).
+For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options).
 
 
 

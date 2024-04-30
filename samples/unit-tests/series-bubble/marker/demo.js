@@ -165,7 +165,8 @@ QUnit.test('Bubble animation and async redraws (#13494)', assert => {
             assert.strictEqual(
                 chart.series[0].points[0].graphic.attr('width'),
                 chart.series[1].points[0].graphic.attr('width'),
-                'Equal weight points for both series should now be the same size'
+                'Equal weight points for both series should now be the same ' +
+                'size'
             );
         }, 200);
 

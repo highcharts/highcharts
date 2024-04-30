@@ -910,8 +910,10 @@ for (region in data) {
                 points.push(countryP);
                 causeI = 0;
                 for (cause in data[region][country]) {
-                    if ({}.hasOwnProperty.call(data[region][country],
-                        cause)) {
+                    if ({}.hasOwnProperty.call(
+                        data[region][country],
+                        cause
+                    )) {
 
                         causeP = {
                             id: countryP.id + '_' + causeI,

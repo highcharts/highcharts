@@ -132,7 +132,7 @@ Dashboards.board('container', {
 
 ### Assigning column data to series data
 
-The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
+The data can be parsed through the [columnAssignment](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) option to map correct values from the connector to reflect them in the series.
 You can declare which columns will be parameter of the point as well. Specifically, it is useful for series like OHLC, candlestick, columnrange or arearange. The `seriesId` field is mandatory for displaying series (for instance in the legend) properly.
 [Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts-columnassignment). 
 
@@ -177,8 +177,71 @@ columnAssignment: [{
 ```
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-keys-data allow="fullscreen"></iframe>
 
+### Multiple connectors
+
+The Highcharts Component also supports more than one data source. That means the connector option should then be configured as an array of objects rather than a single object.
+
+Code sample:
+```js
+components: [{
+    type: 'Highcharts',
+    connector: [{
+        id: 'connector-1',
+        columnAssignment: [ ... ]
+    }, {
+        id: 'connector-2',
+        columnAssignment: [ ... ]
+    }]
+}]
+```
+
+Example:
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/highcharts-components/multiple-connectors" allow="fullscreen"></iframe>
+
+
+## Components synchronization
+
+One of the many available options for the Highcharts Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
+
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
+
+The sync can be an object configuration containing: `highlight`, `visibility` and `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
+
+See demos of `sync` types below:
+* [Extremes Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/)
+* [Highlight Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/)
+* [Visibility Sync](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/)
+
+
+### Highlight sync options
+
+Highlight sync can have additional options:
+```js
+sync: {
+    highlight: {
+        enabled: true,
+        affectedSeriesId: 'series-1',
+        highlightPoint: true,
+        showTooltip: false,
+        showCrosshair: true
+    }
+}
+```
+
+If you want to force highlight sync to always affect one specific series, use the [`affectedSeriesId`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.HighchartsHighlightSyncOptions#affectedSeriesId) option in the argument specifying the ID of that series. When undefined, empty or set to null, option assignment works by default based on the hovered column and column assignment.
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/highcharts-highlight-affected-series allow="fullscreen"></iframe>
+
+If you want to determine how the highlight of points on the chart should work (i.e. whether the hover state should be set for a marker, whether the crosshair should be synced and whether the tooltip should be shown), use the `highlightPoint`, `showCrosshair` and `showTooltip` options. Read more in the [API docs](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.HighchartsHighlightSyncOptions#affectedSeriesId).
+
+Demo:
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
+
+
+
 ## API options
-For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Plugins_HighchartsComponent.HighchartsComponent.Options).
+For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions).
 
 ## Highcharts Compatibility
 The Highcharts component is compatible with all Highcharts modules in v10 or higher.

@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 /* *
@@ -189,6 +189,10 @@
     fill: #fff;
 }
 
+.highcharts-legend-item:hover > text {
+    fill: #cc0;
+}
+
 /* *
  *
  *  KPI
@@ -274,7 +278,8 @@
     background-color: var(--color-background);
 }
 
-#selection-grid .highcharts-datagrid-column-header {
+#selection-grid .highcharts-datagrid-column-header,
+.highcharts-datagrid-cell {
     font-size: 12px;
 }
 

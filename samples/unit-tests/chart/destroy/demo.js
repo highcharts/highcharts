@@ -66,7 +66,8 @@ QUnit.test('Destroy in own callback', function (assert) {
     );
 });
 
-// Highcharts 4.0.4, Issue #3600: No-data-to-display module broken with chart creation in callback
+// Highcharts 4.0.4, Issue #3600: No-data-to-display module broken with
+// chart creation in callback
 QUnit.test('Destroy in own callback and recreate (#3600)', function (assert) {
     let newChart;
 
@@ -133,5 +134,25 @@ QUnit.test('Destroy in own callback and recreate (#3600)', function (assert) {
         true,
         `Destroy chart with highchare-more during mouse over the point,
         console should be clear #20572.`
+    );
+
+    newChart = Highcharts.chart('container', {
+        series: [{
+            type: 'line',
+            data: [1.5, 2.5]
+        }, {
+            type: 'arearange',
+            data: [[1, 2], [2, 3]]
+        }]
+    });
+
+    newChart.series[1].points[1].onMouseOver();
+    newChart.series[0].points[0].onMouseOver();
+    newChart.destroy();
+
+    assert.ok(
+        true,
+        `Chart destroy should be possible without any errors even if the user
+        hovers over points during destroy #20560.`
     );
 });

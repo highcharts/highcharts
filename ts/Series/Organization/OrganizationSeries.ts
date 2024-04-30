@@ -234,7 +234,7 @@ class OrganizationSeries extends SankeySeries {
             options = this.options,
             fromNode = point.fromNode,
             toNode = point.toNode,
-            linkWidth = pick(options.linkLineWidth, options.link.lineWidth),
+            linkWidth = pick(options.linkLineWidth, options.link.lineWidth, 0),
             crisp = (Math.round(linkWidth) % 2) / 2,
             factor = pick((options.link as any).offset, 0.5),
             type = pick(
@@ -301,8 +301,10 @@ class OrganizationSeries extends SankeySeries {
                             (fromNode.shapeArgs.height || 0) -
                             hangingIndent / 2
                         ) + crisp :
-                        Math.floor((fromNode.shapeArgs.y || 0) +
-                        hangingIndent / 2) + crisp;
+                        Math.floor(
+                            (fromNode.shapeArgs.y || 0) +
+                        hangingIndent / 2
+                        ) + crisp;
                     y2 = !hangingRight ? (
                         (toNode.shapeArgs.y || 0) +
                         (toNode.shapeArgs.height || 0)
@@ -444,8 +446,10 @@ class OrganizationSeries extends SankeySeries {
 
         if (dlOptions.linkTextPath && dlOptions.linkTextPath.enabled) {
             for (const link of this.points) {
-                link.options.dataLabels = merge(link.options.dataLabels,
-                    { useHTML: false });
+                link.options.dataLabels = merge(
+                    link.options.dataLabels,
+                    { useHTML: false }
+                );
             }
         }
 

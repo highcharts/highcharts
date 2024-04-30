@@ -45,6 +45,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function sumArray(array: Array<number>): number {
 
     return array.reduce(function (prev: number, cur: number): number {
@@ -52,14 +55,23 @@ function sumArray(array: Array<number>): number {
     });
 }
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateTypicalPrice(point: Array<number>): number {
     return (point[1] + point[2] + point[3]) / 3;
 }
 
+/**
+ *
+ */
 function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
     return typicalPrice * volume;
 }

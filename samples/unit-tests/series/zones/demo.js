@@ -312,7 +312,8 @@ QUnit.test('Adding and removing zones', function (assert) {
     assert.strictEqual(
         chart.series[0].graph.attr('visibility'),
         'inherit',
-        'Series line\'s visibility should be inherited from the parent group (#10569).'
+        'Series line\'s visibility should be inherited from the parent ' +
+        'group (#10569).'
     );
 
     chart.series[0].setVisible(true);

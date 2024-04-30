@@ -438,9 +438,12 @@ class Pathfinder {
      *
      * @param {Object} options
      *        Options for the calculation. Currently only
-     *        options.algorithmMargin.
+     *        `options.algorithmMargin`.
      *
-     * @return {Array<object>}
+     * @param {number} options.algorithmMargin
+     *        The algorithm margin to use for the obstacles.
+
+    * @return {Array<object>}
      *         An array of calculated obstacles. Each obstacle is defined as an
      *         object with xMin, xMax, yMin and yMax properties.
      */

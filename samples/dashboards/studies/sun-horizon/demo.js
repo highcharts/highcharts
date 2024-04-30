@@ -133,10 +133,14 @@ const colorize = (chart, angle) => {
             color: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 stops: [
-                    [0, Highcharts.color('#89c269')
-                        .brighten(relativeBrightness + 0.2).get()],
-                    [1, Highcharts.color('#89c269')
-                        .brighten(relativeBrightness - 0.2).get()]
+                    [
+                        0, Highcharts.color('#89c269')
+                            .brighten(relativeBrightness + 0.2).get()
+                    ],
+                    [
+                        1, Highcharts.color('#89c269')
+                            .brighten(relativeBrightness - 0.2).get()
+                    ]
                 ]
             }
         }, false);
@@ -212,8 +216,11 @@ const offscreenLabel = (chart, celestialBody) => {
 // Display the moon phase
 const moonPhase = chart => {
     const { fraction, phase } = SunCalc.getMoonIllumination(date),
+        { parallacticAngle } = SunCalc.getMoonPosition(date, lat, lng),
         renderer = chart.renderer,
-        radius = 25;
+        radius = 25,
+        deg2rad = Math.PI * 2 / 360,
+        rotation = parallacticAngle / deg2rad;
 
     // The following code is borrowed from
     // https://github.com/tingletech/moon-phase
@@ -253,7 +260,9 @@ const moonPhase = chart => {
             .add(chart.moon);
         chart.moon.light = renderer.path()
             .attr({
-                fill: '#eeeeee'
+                fill: '#eeeeee',
+                rotationOriginX: radius,
+                rotationOriginY: radius
             })
             .translate(10, 25)
             .add(chart.moon);
@@ -302,7 +311,8 @@ const moonPhase = chart => {
             ['m', radius, 0],
             ['a', mag, 20, 0, 1, sweep[0], 0, 2 * radius],
             ['a', 20, 20, 0, 1, sweep[1], 0, -2 * radius]
-        ]
+        ],
+        rotation
     });
     chart.moon.label.attr({
         text: Math.round(fraction * 100) + '%'
@@ -424,25 +434,11 @@ const createBoard = async () => {
             layouts: [{
                 rows: [{
                     cells: [{
-                        id: 'horizon-chart',
-                        width: '100%'
+                        id: 'horizon-chart'
                     }, {
-                        id: 'controls',
-                        width: '50%',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            }
-                        }
-
+                        id: 'controls'
                     }, {
-                        id: 'times',
-                        width: '50%',
-                        responsive: {
-                            small: {
-                                width: '100%'
-                            }
-                        }
+                        id: 'times'
                     }, {
                         id: 'horizon-map'
                     }]
@@ -520,7 +516,7 @@ const createBoard = async () => {
                         minWidth: 3000,
                         scrollPositionX: date.getHours() / 23
                     },
-                    margin: [0, 0, 60, 0],
+                    margin: [0, 0, 0, 0],
                     events: {
                         render() {
                             colorize(this);
@@ -542,11 +538,24 @@ const createBoard = async () => {
                     text: null
                 },
                 xAxis: {
-                    tickInterval: 30,
+                    tickInterval: 45,
                     minPadding: 0,
                     maxPadding: 0,
                     labels: {
-                        format: '{value}°'
+                        format: `
+                        {#eq value 0}N{/eq}
+                        {#eq value 45}NE{/eq}
+                        {#eq value 90}E{/eq}
+                        {#eq value 135}SE{/eq}
+                        {#eq value 180}S{/eq}
+                        {#eq value 225}SW{/eq}
+                        {#eq value 270}W{/eq}
+                        {#eq value 315}NW{/eq}
+                        `,
+                        distance: -110,
+                        style: {
+                            color: '#cccccc'
+                        }
                     }
                 },
                 yAxis: {
@@ -567,7 +576,8 @@ const createBoard = async () => {
                             text: 'Nautical twilight',
                             align: 'center',
                             style: {
-                                color: '#cccccc'
+                                color: '#cccccc',
+                                fontWeight: 'bold'
                             }
                         },
                         color: Highcharts.color(skyColor).brighten(-0.6).get()
@@ -577,8 +587,11 @@ const createBoard = async () => {
                         label: {
                             text: 'Civil twilight',
                             align: 'center',
+                            verticalAlign: 'bottom',
+                            y: -10,
                             style: {
-                                color: '#cccccc'
+                                color: '#cccccc',
+                                fontWeight: 'bold'
                             }
                         },
                         color: Highcharts.color(skyColor).brighten(-0.3).get()
@@ -946,11 +959,13 @@ const createBoard = async () => {
 
                         updateTimeInputLabel();
                         chart.get('sun-point').update(
-                            getCelestialBodyXY('sun', date), true,
+                            getCelestialBodyXY('sun', date),
+                            true,
                             false
                         );
                         chart.get('moon-point').update(
-                            getCelestialBodyXY('moon', date), true,
+                            getCelestialBodyXY('moon', date, true),
+                            true,
                             false
                         );
                     });

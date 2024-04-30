@@ -42,6 +42,7 @@ const {
     addEvent,
     defined,
     extend,
+    isNumber,
     merge,
     objectEach,
     wrap
@@ -146,7 +147,9 @@ class FlagsSeries extends ColumnSeries {
             optionsY = options.y,
             yAxis = series.yAxis,
             boxesMap: Record<string, DistributedBoxObject> = {},
-            boxes: Array<DistributedBoxObject> = [];
+            boxes: Array<DistributedBoxObject> = [],
+            borderRadius = isNumber(options.borderRadius) ?
+                options.borderRadius : 0;
 
         let plotX: (number|undefined),
             plotY: (number|undefined),
@@ -201,11 +204,11 @@ class FlagsSeries extends ColumnSeries {
                 if (!graphic) {
                     graphic = point.graphic = renderer.label(
                         '',
-                        null as any,
-                        null as any,
+                        0,
+                        void 0,
                         shape as any,
-                        null as any,
-                        null as any,
+                        void 0,
+                        void 0,
                         options.useHTML
                     )
                         .addClass('highcharts-point')
@@ -223,7 +226,8 @@ class FlagsSeries extends ColumnSeries {
                     align: centered ? 'center' : 'left',
                     width: options.width,
                     height: options.height,
-                    'text-align': options.textAlign
+                    'text-align': options.textAlign,
+                    r: borderRadius
                 });
 
                 if (!chart.styledMode) {
@@ -366,7 +370,8 @@ class FlagsSeries extends ColumnSeries {
                     function (): void {
 
                         // Raise this point
-                        if ((point.stackIndex as any) > 0 &&
+                        if (
+                            (point.stackIndex as any) > 0 &&
                             !point.raised
                         ) {
                             point._y = (graphic as any).y;

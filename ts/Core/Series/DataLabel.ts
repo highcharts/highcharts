@@ -268,7 +268,8 @@ namespace DataLabel {
             },
             justify = rotation === 0 ? pick(
                 options.overflow,
-                (enabledDataSorting ? 'none' : 'justify')
+                (enabledDataSorting ? 'none' : 'justify'
+                )
             ) === 'justify' : false;
 
         // Math.round for rounding errors (#2683), alignTo to allow column
@@ -845,14 +846,20 @@ namespace DataLabel {
         const chart = this.chart,
             align = options.align,
             verticalAlign = options.verticalAlign,
-            padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
+            padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
+            horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
+            horizontalAxisShift = horizontalAxis ?
+                horizontalAxis.left - chart.plotLeft : 0,
+            verticalAxis = chart.inverted ? this.xAxis : this.yAxis,
+            verticalAxisShift = verticalAxis ?
+                verticalAxis.top - chart.plotTop : 0;
 
         let { x = 0, y = 0 } = options,
             off,
             justified;
 
         // Off left
-        off = (alignAttr.x || 0) + padding;
+        off = (alignAttr.x || 0) + padding + horizontalAxisShift;
         if (off < 0) {
             if (align === 'right' && x >= 0) {
                 options.align = 'left';
@@ -864,7 +871,7 @@ namespace DataLabel {
         }
 
         // Off right
-        off = (alignAttr.x || 0) + bBox.width - padding;
+        off = (alignAttr.x || 0) + bBox.width - padding + horizontalAxisShift;
         if (off > chart.plotWidth) {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';
@@ -876,7 +883,7 @@ namespace DataLabel {
         }
 
         // Off top
-        off = alignAttr.y + padding;
+        off = alignAttr.y + padding + verticalAxisShift;
         if (off < 0) {
             if (verticalAlign === 'bottom' && y >= 0) {
                 options.verticalAlign = 'top';
@@ -888,7 +895,7 @@ namespace DataLabel {
         }
 
         // Off bottom
-        off = (alignAttr.y || 0) + bBox.height - padding;
+        off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
         if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';

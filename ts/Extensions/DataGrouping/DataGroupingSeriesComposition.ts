@@ -413,7 +413,8 @@ function applyGrouping(
             // the group to capture varying group sizes like months or DST
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
-            if (!(groupPositions.info as any).segmentStarts ||
+            if (
+                !(groupPositions.info as any).segmentStarts ||
                 (groupPositions.info as any).segmentStarts.indexOf(i) === -1
             ) {
                 gapSize = Math.max(
@@ -456,6 +457,7 @@ function applyGrouping(
         series.processedYData = groupedYData as any;
     } else {
         series.groupMap = null as any;
+        series.currentDataGrouping = void 0;
     }
     series.hasGroupedData = hasGroupedData;
 

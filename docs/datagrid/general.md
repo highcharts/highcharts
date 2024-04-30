@@ -1,7 +1,8 @@
 DataGrid
 ===
 
-The DataGrid is a versatile tool for visualizing and editing tabular data.
+The DataGrid is a versatile tool registered together with the Highcharts Dashboards package for visualizing and editing tabular data.
+It can be a part of a dashboard or used as a standalone component, but requires a Dashboards license.  
 By incorporating this component, users can effectively interact with data in a structured and editable table format.
 
 
@@ -9,7 +10,7 @@ By incorporating this component, users can effectively interact with data in a s
 - The package can be imported through a script tag from the Highcharts CDN like this:
 
     ```html
-    <script src="https://code.highcharts.com/datagrid/datagrid.js"></script>
+    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
     ```
 
 - Or it can be installed through NPM like this:
@@ -51,7 +52,7 @@ const grid = new DataGrid.DataGrid('container', {
 The DataGrid component requires the following styles to be imported in your main CSS file:
 
 ```css
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 ```
 
 

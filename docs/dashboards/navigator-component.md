@@ -28,7 +28,7 @@ Dashboard.board('container', {
       connector: {
         id: 'Range Selection'
       },
-      columnAssignments: {
+      columnAssignment: {
         'TXC': 'y'
       },
       sync: {
@@ -42,6 +42,12 @@ Dashboard.board('container', {
 ```
 
 
+
+## Components synchronization
+
+The Navigator Component can be synced with other components in Dashboards. Two synchronization types are predefined for the Navigator Component: [`crossfilter`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter) and [`extremes`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes). You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
+
+Crossfilter sync is specific to the Navigator Component. You can learn more about this below.
 
 ## Crossfilter
 
@@ -74,7 +80,7 @@ Dashboard.board('container', {
       connector: {
         id: 'Economy'
       },
-      columnAssignments: {
+      columnAssignment: {
         'Agriculture': 'y'
       },
       sync: {
@@ -87,7 +93,7 @@ Dashboard.board('container', {
       connector: {
         id: 'Economy'
       },
-      columnAssignments: {
+      columnAssignment: {
         'Industry': 'y'
       },
       sync: {

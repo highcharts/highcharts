@@ -857,7 +857,8 @@ namespace Exporting {
                             }
                         }, void 0, innerMenu);
 
-                        AST.setElementHTML(element, item.text ||
+                        AST.setElementHTML(
+                            element, item.text ||
                             (chart.options.lang as any)[item.textKey as any]
                         );
 
@@ -894,15 +895,15 @@ namespace Exporting {
         const menuStyle: CSSObject = { display: 'block' };
 
         // If outside right, right align it
-        if (x + (chart.exportMenuWidth as any) > chartWidth) {
+        if (x + (chart.exportMenuWidth || 0) > chartWidth) {
             menuStyle.right = (chartWidth - x - width - menuPadding) + 'px';
         } else {
             menuStyle.left = (x - menuPadding) + 'px';
         }
         // If outside bottom, bottom align it
         if (
-            y + height + (chart.exportMenuHeight as any) > chartHeight &&
-            button.alignOptions.verticalAlign !== 'top'
+            y + height + (chart.exportMenuHeight || 0) > chartHeight &&
+            button.alignOptions?.verticalAlign !== 'top'
         ) {
             menuStyle.bottom = (chartHeight - y - menuPadding) + 'px';
         } else {

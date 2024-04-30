@@ -6,10 +6,6 @@ class Slider extends Component {
         this.type = 'Slider';
         this.createDOMStructure();
         this.xColumn = [];
-        this.sync = new Component.Sync(
-            this,
-            this.syncHandlers
-        );
         return this;
     }
 
@@ -88,10 +84,14 @@ class Slider extends Component {
         });
     }
 
-    setConnector(connector) {
-        super.setConnector(connector);
-        const valuesColumnName = this.options.connector?.valuesColumn;
-        const table = connector && connector.table && connector.table.modified;
+    async initConnectors() {
+        await super.initConnectors();
+
+        const mainConnectorHandler = this.connectorHandlers[0] || {};
+        const table = mainConnectorHandler.connector &&
+            mainConnectorHandler.connector.table;
+        const valuesColumnName = mainConnectorHandler.options &&
+            mainConnectorHandler.options.valuesColumn;
 
         if (table && valuesColumnName) {
             this.xColumn = table.columns[valuesColumnName] || [];
@@ -170,7 +170,9 @@ Dashboards.board('container', {
                     }
 
                     return this.on('sliderValueChanged', e => {
-                        const table = this.connector && this.connector.table;
+                        const connector = this.getFirstConnector();
+                        const table = connector && connector.table;
+
                         if (table) {
                             // Emit cursor event when slider value changes
                             cursor.emitCursor(table, {
@@ -217,7 +219,8 @@ Dashboards.board('container', {
                 text: 'Happiness Score vs Population 2022'
             },
             subtitle: {
-                text: 'Showing average happiness score below and above the chosen population.'
+                text: 'Showing average happiness score below and above the ' +
+                    'chosen population.'
             },
             credits: {
                 text: 'worldhappiness.report',
@@ -249,7 +252,10 @@ Dashboards.board('container', {
                 handler: function () {
                     const { board } = this;
                     const { dataCursor: cursor } = board;
-                    const table = this.connector && this.connector.table;
+                    const connectorHandler = this.connectorHandlers[0];
+                    const table = connectorHandler &&
+                        connectorHandler.connector &&
+                        connectorHandler.connector.table;
                     const chart = this.chart;
                     const syncedColumnName =
                         this.sync.syncConfig.customSync.syncedColumn;
@@ -343,7 +349,8 @@ Dashboards.board('container', {
                             yColumn.slice(rowIndex, yColumn.length)
                         ].map(side => Math.round(
                             side.reduce(
-                                (acc, current) => acc + current, 0) /
+                                (acc, current) => acc + current, 0
+                            ) /
                                 side.length * 100
                         ) / 100);
 

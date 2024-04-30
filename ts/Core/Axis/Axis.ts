@@ -394,7 +394,8 @@ class Axis {
             axis.side,
             (horiz ?
                 (axis.opposite ? 0 : 2) : // Top : bottom
-                (axis.opposite ? 1 : 3)) // Right : left
+                (axis.opposite ? 1 : 3)
+            ) // Right : left
         );
 
         /**
@@ -595,13 +596,17 @@ class Axis {
             // Top and bottom axis defaults
             {
                 labels: {
-                    autoRotation: [-45]
+                    autoRotation: [-45],
+                    padding: 4
                 },
                 margin: 15
             } :
             // Left and right axis, title rotated 90 or 270 degrees
             // respectively
             {
+                labels: {
+                    padding: 1
+                },
                 title: {
                     rotation: 90 * this.side
                 }
@@ -1479,7 +1484,8 @@ class Axis {
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        (axis.max as any), (series.xData as any).length - 1
+                        (
+                            axis.max as any), (series.xData as any).length - 1
                     );
 
                     series.processData();
@@ -2177,8 +2183,10 @@ class Axis {
             if (endOnTick) {
                 this.max = roundedMax;
             } else {
-                while ((this.max as any) + minPointOffset <
-                        tickPositions[tickPositions.length - 1]) {
+                while (
+                    (this.max as any) + minPointOffset <
+                        tickPositions[tickPositions.length - 1]
+                ) {
                     tickPositions.pop();
                 }
             }
@@ -2902,6 +2910,7 @@ class Axis {
      */
     public unsquish(): number {
         const labelOptions = this.options.labels,
+            padding = labelOptions.padding || 0,
             horiz = this.horiz,
             tickInterval = this.tickInterval,
             slotSize = this.len / (
@@ -2914,13 +2923,13 @@ class Axis {
             ),
             rotationOption = labelOptions.rotation,
             // We don't know the actual rendered line height at this point, but
-            // it defaults to 0.75em
-            lineHeight = this.labelMetrics().h,
+            // it defaults to 0.8em
+            lineHeight = correctFloat(this.labelMetrics().h * 0.8),
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded: number): number {
-                let step = spaceNeeded / (slotSize || 1);
+                let step = (spaceNeeded + 2 * padding) / (slotSize || 1);
 
                 step = step > 1 ? Math.ceil(step) : 1;
 
@@ -3066,7 +3075,7 @@ class Axis {
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * labelOptions.padding)
+                Math.round(slotWidth - 2 * (labelOptions.padding || 0))
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
@@ -3311,7 +3320,8 @@ class Axis {
         }
 
         // Max width defaults to the length of the axis
-        if (!styledMode &&
+        if (
+            !styledMode &&
             !axisTitleOptions.style.width &&
             !axis.isRadial
         ) {
@@ -4093,8 +4103,10 @@ class Axis {
         }
 
         // Destroy elements
-        ['axisLine', 'axisTitle', 'axisGroup',
-            'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
+        [
+            'axisLine', 'axisTitle', 'axisGroup',
+            'gridGroup', 'labelGroup', 'cross', 'scrollbar'
+        ].forEach(
             function (prop: string): void {
                 if ((axis as any)[prop]) {
                     (axis as any)[prop] = (axis as any)[prop].destroy();

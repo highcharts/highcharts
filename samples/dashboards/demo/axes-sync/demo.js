@@ -29,7 +29,9 @@ Highcharts.setOptions({
         spacingBottom: 20,
         height: 300,
         type: 'area',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     legend: {
         enabled: false
@@ -138,7 +140,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             title: {
                 text: 'Global'
@@ -152,7 +156,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'Global Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'Global Polio (Pol3) immunization ' +
+                    'coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {
@@ -175,7 +180,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             title: {
                 text: 'South-East Asia'
@@ -194,7 +201,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'South-East Asia Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'South-East Asia Polio (Pol3) ' +
+                    'immunization coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {
@@ -218,7 +226,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'y'
+                zooming: {
+                    type: 'y'
+                }
             },
             title: {
                 text: 'Africa'
@@ -237,7 +247,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'Africa Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'Africa Polio (Pol3) immunization ' +
+                    'coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {
@@ -261,7 +272,9 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
-                zoomType: 'y'
+                zooming: {
+                    type: 'y'
+                }
             },
             title: {
                 text: 'Europe'
@@ -274,7 +287,8 @@ Dashboards.board('container', {
         },
         lang: {
             accessibility: {
-                chartContainerLabel: 'Europe Polio (Pol3) immunization coverage, Highcharts interactive chart.'
+                chartContainerLabel: 'Europe Polio (Pol3) immunization ' +
+                    'coverage, Highcharts interactive chart.'
             }
         },
         accessibility: {

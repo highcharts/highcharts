@@ -1,4 +1,4 @@
-function displayData() {
+window.displayData = function () {
 
     const iso2 = document.getElementById('Country_Select').value;
     // Get indicator code from SelectList
@@ -51,10 +51,12 @@ function displayData() {
             },
             tooltip: {
                 valueDecimals: 2,
-                pointFormat: '<span style="color: { point.color }">\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
+                pointFormat: '<span style="color: { point.color }">' +
+                    '\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
             },
             xAxis: {
-                categories: date.reverse() // .reverse() to have the min year on the left
+                categories: date.reverse() // .reverse() to have the min
+                // year on the left
             },
             series: [{
                 name: countryName,
@@ -64,4 +66,4 @@ function displayData() {
     }).catch(function (error) {
         console.log(error);
     });
-}
+};

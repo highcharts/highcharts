@@ -136,7 +136,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             // which QUnit catches by itself
             assert.ok(
                 true,
-                'Removing a series before it is fully rendered should not cause error'
+                'Removing a series before it is fully rendered should not ' +
+                'cause error'
             );
             done();
         }, 1000);
@@ -286,7 +287,10 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                 Highcharts,
                 'displayError',
                 function (e) {
-                    assert.strictEqual(e.code, 12, 'Error 12 should be invoked');
+                    assert.strictEqual(
+                        e.code, 12, 'Error 12 should be ' +
+                        'invoked'
+                    );
                     remove();
                     done();
                 }
@@ -408,9 +412,48 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         assert.strictEqual(
             chart.boost.clipRect.attr('height'),
             chart.navigator.top + chart.navigator.height - chart.plotTop,
-            'Clip rect should take into account navigator boosted series, #17820.'
+            'Clip rect should take into account navigator boosted series, ' +
+            '#17820.'
         );
 
+        chart.update({
+            chart: {
+                inverted: true
+            },
+            navigator: {
+                height: 40
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.plotHeight,
+            `Clip rect height should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('width'),
+            chart.plotWidth + chart.navigator.top + chart.navigator.height,
+            `Clip rect width should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.navigator.left,
+            `Clip rect 'x' should take into account navigator boosted
+            series on inverted charts, #20936.`
+        );
+
+        chart.update({
+            navigator: {
+                opposite: true
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.plotLeft,
+            `Clip rect 'x' should take into account opposite navigator boosted
+            series on inverted charts, #20936.`
+        );
     }
 );
 

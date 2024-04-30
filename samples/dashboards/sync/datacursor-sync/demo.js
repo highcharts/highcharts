@@ -49,13 +49,15 @@ function buildChartOptions(type, table, cursor) {
                     const chart = this;
                     const series = chart.series[0];
                     // react to table cursor
-                    cursor.addListener(table.id, 'point.mouseOver', function (e) {
-                        const point = series.data[e.cursor.row];
+                    cursor.addListener(
+                        table.id,
+                        'point.mouseOver', function (e) {
+                            const point = series.data[e.cursor.row];
 
-                        if (chart.hoverPoint !== point) {
-                            chart.tooltip.refresh(point);
-                        }
-                    });
+                            if (chart.hoverPoint !== point) {
+                                chart.tooltip.refresh(point);
+                            }
+                        });
                     cursor.addListener(table.id, 'point.mouseOut', function () {
                         chart.tooltip.hide();
                     });

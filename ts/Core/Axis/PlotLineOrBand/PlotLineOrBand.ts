@@ -271,11 +271,11 @@ class PlotLineOrBand {
         ) {
             // Apply defaults
             optionsLabel = merge({
-                align: horiz && isBand && 'center',
+                align: horiz && isBand ? 'center' : void 0,
                 x: horiz ? !isBand && 4 : 10,
-                verticalAlign: !horiz && isBand && 'middle',
+                verticalAlign: !horiz && isBand ? 'middle' : void 0,
                 y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
-                rotation: horiz && !isBand && 90
+                rotation: horiz && !isBand ? 90 : 0
             } as PlotLineLabelOptions, optionsLabel);
 
             this.renderLabel(optionsLabel, path, isBand, zIndex);
@@ -325,7 +325,7 @@ class PlotLineOrBand {
                     align: optionsLabel.textAlign || optionsLabel.align,
                     rotation: optionsLabel.rotation,
                     'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                        '-label' + (optionsLabel.className || ''),
+                        '-label ' + (optionsLabel.className || ''),
                     zIndex
                 });
 
@@ -497,6 +497,17 @@ export default PlotLineOrBand;
  *
  * @type      {Highcharts.ColorString}
  * @apioption xAxis.plotBands.borderColor
+ */
+
+/**
+ * Border radius for the plot band. Applies only to gauges. Can be a pixel
+ * value or a percentage, for example `50%`.
+ *
+ * @type      {number|string}
+ * @since     next
+ * @sample    {highcharts} highcharts/xaxis/plotbands-gauge-borderradius
+ *            Angular gauge with rounded plot bands
+ * @apioption xAxis.plotBands.borderRadius
  */
 
 /**

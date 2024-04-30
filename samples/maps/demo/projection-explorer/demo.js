@@ -3,7 +3,8 @@
     // Get random data for this sample
     function getRandomData(topology) {
         return topology.objects.default.geometries.map(() =>
-            Math.round(Math.random() * 100));
+            Math.round(Math.random() * 100)
+        );
     }
 
     const topology = await fetch(
@@ -354,29 +355,50 @@
                     .map(Number);
                 rotation.push(0);
 
-                const geodesic = Highcharts.Projection.greatCircle(
-                    chart.mapView.projection.options.rotation,
-                    rotation
-                );
+                // Get the distance between the current rotation and the new one
+                // with 1000 steps so that we can animate it using the built-in
+                // easing functions.
+                const distance = Highcharts.Projection.distance(
+                        chart.mapView.projection.options.rotation,
+                        rotation
+                    ),
+                    stepDistance = distance / 1000,
+                    geodesic = Highcharts.Projection.geodesic(
+                        chart.mapView.projection.options.rotation,
+                        rotation,
+                        true,
+                        stepDistance
+                    );
 
-                geodesic.forEach((rotationStep, i) => {
-                    setTimeout(() => {
-                        rotationStep.push(0);
-                        chart.mapView.update({
-                            projection: {
-                                rotation: rotationStep
+                // Use a custom animator property. For each step of the
+                // animation, get the point along the animation trajectory and
+                // update the projection with it.
+                if (geodesic.length === 1000) {
+                    chart.renderer.boxWrapper.animator = 0;
+                    Highcharts.animate(
+                        chart.renderer.boxWrapper,
+                        { animator: 999 }, {
+                            duration: 1000,
+                            step: now => {
+                                const rotation = geodesic[Math.round(now)];
+                                chart.mapView.update({
+                                    projection: {
+                                        rotation
+                                    }
+                                }, true, false);
+
+                                rotation.forEach((value, i) => {
+                                    const name = ['lambda', 'phi', 'gamma'][i];
+                                    document.getElementById(`rotation-${name}`)
+                                        .value = Math.round(value);
+                                    document.getElementById(
+                                        `rotation-${name}-output`
+                                    ).innerText = Math.round(value);
+                                });
                             }
-                        }, true, false);
-
-                        rotationStep.forEach((value, i) => {
-                            const name = ['lambda', 'phi', 'gamma'][i];
-                            document.getElementById(`rotation-${name}`)
-                                .value = Math.round(value);
-                            document.getElementById(`rotation-${name}-output`)
-                                .innerText = Math.round(value);
-                        });
-                    }, 25 * i);
-                });
+                        }
+                    );
+                }
             });
         });
 
