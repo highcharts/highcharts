@@ -845,6 +845,11 @@ namespace DataLabel {
     ): (boolean|undefined) {
         const chart = this.chart,
             align = options.align,
+            alignFactor = {
+                left: 0,
+                center: 0.5,
+                right: 1
+            }[align || 'left'],
             verticalAlign = options.verticalAlign,
             padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
             horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
@@ -861,11 +866,12 @@ namespace DataLabel {
         // Off left
         off = (alignAttr.x || 0) + padding + horizontalAxisShift;
         if (off < 0) {
-            if (align === 'right' && x >= 0) {
+            if (align !== 'left') {
                 options.align = 'left';
-                options.inside = true;
-            } else {
-                x -= off;
+                if (x >= 0) {
+                    options.inside = true;
+                }
+                x -= off + bBox.width * alignFactor;
             }
             justified = true;
         }
@@ -873,11 +879,12 @@ namespace DataLabel {
         // Off right
         off = (alignAttr.x || 0) + bBox.width - padding + horizontalAxisShift;
         if (off > chart.plotWidth) {
-            if (align === 'left' && x <= 0) {
+            if (align !== 'right') {
                 options.align = 'right';
-                options.inside = true;
-            } else {
-                x += chart.plotWidth - off;
+                x += chart.plotWidth - off + bBox.width * (1 - alignFactor);
+                if (x <= 0) {
+                    options.inside = true;
+                }
             }
             justified = true;
         }
