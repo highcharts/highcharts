@@ -26,9 +26,11 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
-    SeriesStatesOptions
+    SeriesStatesOptions,
+    SeriesLinecapValue,
+    LegendSymbolType
 } from '../../Core/Series/SeriesOptions';
-
+import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
