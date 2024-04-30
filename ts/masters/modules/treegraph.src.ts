@@ -11,7 +11,5 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import TreegraphSeries from '../../Series/Treegraph/TreegraphSeries.js';
-const G: AnyRecord = Highcharts;
-TreegraphSeries.compose(G.Series);
+import '../../Series/Treegraph/TreegraphSeries.js';
 export default Highcharts;
