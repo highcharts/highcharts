@@ -22,7 +22,7 @@
 
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
-import Globals from '../Globals';
+import type Globals from '../Globals';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
