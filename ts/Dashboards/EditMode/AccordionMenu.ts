@@ -22,7 +22,7 @@
 
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
-import type Globals from '../Globals';
+import Globals from '../Globals';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -65,6 +65,9 @@ class AccordionMenu {
     private closeSidebar: Function;
     private changedOptions: DeepPartial<Component.Options> = {};
     private chartOptionsJSON = {};
+    private component?: Component;
+    private oldOptionsBuffer: DeepPartial<Component.Options> = {};
+    private oldChartOptionsBuffer: Globals.AnyRecord = {};
 
     /* *
      *
@@ -84,6 +87,10 @@ class AccordionMenu {
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
+
+        this.component = component;
+        this.oldOptionsBuffer = merge({}, component.options);
+        this.oldChartOptionsBuffer = {};
 
         const accordionContainer = createElement(
             'div',
@@ -124,14 +131,11 @@ class AccordionMenu {
                     .lang.confirmButton,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: async (): Promise<void> => {
-                    const changedOptions = this
-                        .changedOptions as Partial<Component.Options>;
-
-                    await component.update(
-                        merge(changedOptions, {
+                    if (Object.keys(this.chartOptionsJSON).length) {
+                        await component.update({
                             chartOptions: this.chartOptionsJSON
-                        })
-                    );
+                        } as any);
+                    }
 
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
@@ -146,7 +150,14 @@ class AccordionMenu {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.cancelButton,
                 className: EditGlobals.classNames.popupCancelBtn,
-                callback: (): void => {
+                callback: async (): Promise<void> => {
+                    const oldOptions =
+                        this.oldOptionsBuffer as Partial<Component.Options>;
+
+                    await component.update(
+                        oldOptions
+                    );
+
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
                     menu.closeSidebar();
@@ -173,6 +184,8 @@ class AccordionMenu {
         const pathLength = propertyPath.length - 1;
 
         let currentLevel = this.changedOptions as Globals.AnyRecord;
+        let currentChartOptionsLevel;
+        let currentOldChartOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -185,8 +198,8 @@ class AccordionMenu {
                         ' a chart options.'
                 );
             }
-
         }
+
         for (let i = 0; i < pathLength; i++) {
             const key = propertyPath[i];
 
@@ -195,9 +208,49 @@ class AccordionMenu {
             }
 
             currentLevel = currentLevel[key];
+
+            if (key === 'chartOptions') {
+                const realChartOptions = (this.component as any).chart?.options;
+
+                if (realChartOptions) {
+                    const oldOptionsBuffer =
+                        this.oldOptionsBuffer as Globals.AnyRecord;
+                    if (!oldOptionsBuffer.chartOptions) {
+                        oldOptionsBuffer.chartOptions = {};
+                    }
+                    currentOldChartOptionsBufferLevel =
+                        oldOptionsBuffer.chartOptions as Globals.AnyRecord;
+                    currentChartOptionsLevel = realChartOptions;
+                }
+            } else if (
+                currentChartOptionsLevel &&
+                currentOldChartOptionsBufferLevel
+            ) {
+                currentChartOptionsLevel = currentChartOptionsLevel[key];
+
+                if (currentOldChartOptionsBufferLevel[key] === void 0) {
+                    currentOldChartOptionsBufferLevel[key] = {};
+                }
+
+                currentOldChartOptionsBufferLevel =
+                    currentOldChartOptionsBufferLevel[key];
+            }
         }
 
-        currentLevel[propertyPath[pathLength]] = value;
+        const lastKey = propertyPath[pathLength];
+        currentLevel[lastKey] = value;
+
+        if (currentOldChartOptionsBufferLevel && currentChartOptionsLevel) {
+            currentOldChartOptionsBufferLevel[lastKey] = (
+                currentOldChartOptionsBufferLevel[lastKey] ??
+                currentChartOptionsLevel[lastKey]
+            );
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.component?.update(
+            this.changedOptions as Partial<Component.Options>
+        );
     }
 
     /**
