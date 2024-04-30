@@ -6,14 +6,15 @@
         H.seriesTypes.column,
         'afterColumnTranslate',
         function () {
-            const options = this.options,
+            const series = this,
+                options = series.options,
                 topMargin = options.topMargin || 0,
                 bottomMargin = options.bottomMargin || 0,
-                idx = this.index;
+                idx = series.index;
 
             if (options.headSize) {
 
-                this.points.forEach(function (point) {
+                series.points.forEach(function (point) {
                     const shapeArgs = point.shapeArgs,
                         w = shapeArgs.width,
                         h = shapeArgs.height,
@@ -79,16 +80,16 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 y: 30,
-                format: `<span style="color:{point.color}">
-                    Force: {point.y}</span>`
+                format: '<span style="color:{point.color}">' +
+                    'Force: {point.y}</span>'
             },
             color: 'rgb(1, 127, 250)',
             negativeColor: 'rgb(255, 7, 77)'
         }
     },
     tooltip: {
-        format: `<span style="color:{point.color}">\u25CF</span>
-            Force: <b>{point.y}</b>`
+        format: '<span style="color:{point.color}">\u25CF</span>' +
+            'Force: <b>{point.y}</b>'
     },
     yAxis: {
         reversedStacks: false,
