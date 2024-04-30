@@ -102,7 +102,7 @@ class DotPlotSeries extends ColumnSeries {
                 0
             ),
             itemPadding = options.itemPadding || 0,
-            columnWidth = this.points[0].shapeArgs?.width || 0;
+            columnWidth = this.points[0]?.shapeArgs?.width || 0;
 
         let slotsPerBar = options.slotsPerBar,
             slotWidth = columnWidth;
