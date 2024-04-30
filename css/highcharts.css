@@ -80,13 +80,12 @@
     --highcharts-negative-color: #f21313;
 
     /* Transparent colors for annotations */
-    --highcharts-transparent-color-0: rgba(130, 170, 255, 0.4);
-    --highcharts-transparent-color-1: rgba(139, 191, 216, 0.4);
-    --highcharts-transparent-color-2: rgba(150, 216, 192, 0.4);
-    --highcharts-transparent-color-3: rgba(156, 229, 161, 0.4);
-    --highcharts-transparent-color-4: rgba(162, 241, 130, 0.4);
-    --highcharts-transparent-color-5: rgba(169, 255, 101, 0.4);
-    --highcharts-transparent-color-6: rgba(0, 0, 0, 0.75);
+    --highcharts-annotation-color-0: rgba(130, 170, 255, 0.4);
+    --highcharts-annotation-color-1: rgba(139, 191, 216, 0.4);
+    --highcharts-annotation-color-2: rgba(150, 216, 192, 0.4);
+    --highcharts-annotation-color-3: rgba(156, 229, 161, 0.4);
+    --highcharts-annotation-color-4: rgba(162, 241, 130, 0.4);
+    --highcharts-annotation-color-5: rgba(169, 255, 101, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1144,28 +1143,28 @@ text.highcharts-drilldown-data-label,
 .highcharts-fibonacci-background-0,
 .highcharts-pitchfork-inner-background,
 .highcharts-measure-background {
-    fill: var(--highcharts-transparent-color-0);
+    fill: var(--highcharts-annotation-color-0);
 }
 
 .highcharts-fibonacci-background-1 {
-    fill: var(--highcharts-transparent-color-1);
+    fill: var(--highcharts-annotation-color-1);
 }
 
 .highcharts-fibonacci-background-2 {
-    fill: var(--highcharts-transparent-color-2);
+    fill: var(--highcharts-annotation-color-2);
 }
 
 .highcharts-fibonacci-background-3,
 .highcharts-pitchfork-outer-background {
-    fill: var(--highcharts-transparent-color-3);
+    fill: var(--highcharts-annotation-color-3);
 }
 
 .highcharts-fibonacci-background-4 {
-    fill: var(--highcharts-transparent-color-4);
+    fill: var(--highcharts-annotation-color-4);
 }
 
 .highcharts-fibonacci-background-5 {
-    fill: var(--highcharts-transparent-color-5);
+    fill: var(--highcharts-annotation-color-5);
 }
 
 .highcharts-fibonacci-line {
@@ -1181,7 +1180,8 @@ text.highcharts-drilldown-data-label,
 .highcharts-vertical-line,
 .highcharts-measure-crosshair-x,
 .highcharts-measure-crosshair-y {
-    stroke: var(--highcharts-transparent-color-6);
+    stroke: var(--highcharts-neutral-color-100);
+    stroke-opacity: 0.75;
     fill: none;
 }
 
@@ -1199,8 +1199,9 @@ text.highcharts-drilldown-data-label,
 }
 
 .highcharts-basic-shape {
-    fill: var(--highcharts-transparent-color-6);
-    stroke: var(--highcharts-transparent-color-6);
+    fill: var(--highcharts-neutral-color-100);
+    stroke: var(--highcharts-neutral-color-100);
+    opacity: 0.74;
 }
 
 /* Annotations module */
