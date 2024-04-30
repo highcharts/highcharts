@@ -1,0 +1,36 @@
+name: Test tooling
+
+on:
+  pull_request:
+    branches: [ 'master' ]
+    paths:
+      - 'tools/**/*'
+      - '.github/workflows/test-tooling.yml'
+  workflow_dispatch:
+
+permissions:
+   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Run test
+        run: node --test ./tools/gulptasks-tests/
+
