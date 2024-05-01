@@ -712,6 +712,8 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drillToByLeaf(point: TreemapPoint): (boolean|string) {
+        const { drillToLastLeaf } = point.series.options;
+
         let drillId: (boolean|string) = false,
             nodeParent: TreemapNode;
 
@@ -719,11 +721,17 @@ class TreemapSeries extends ScatterSeries {
             (point.node.parent !== this.rootNode) &&
             point.node.isLeaf
         ) {
-            nodeParent = point.node;
-            while (!drillId) {
-                nodeParent = this.nodeMap[nodeParent.parent as any];
-                if (nodeParent.parent === this.rootNode) {
-                    drillId = nodeParent.id;
+            if (drillToLastLeaf) {
+                drillId = point.id;
+            } else {
+                nodeParent = point.node;
+                while (!drillId) {
+                    if (typeof nodeParent.parent !== 'undefined') {
+                        nodeParent = this.nodeMap[nodeParent.parent];
+                    }
+                    if (nodeParent.parent === this.rootNode) {
+                        drillId = nodeParent.id;
+                    }
                 }
             }
         }
@@ -1385,7 +1393,7 @@ class TreemapSeries extends ScatterSeries {
 
         if (
             rootId !== '' &&
-            (!rootNode || !rootNode.children.length)
+            (!rootNode)
         ) {
             series.setRootNode('', false);
             rootId = series.rootNode;
