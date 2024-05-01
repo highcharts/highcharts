@@ -6,12 +6,7 @@ QUnit.test(
                     type: 'area'
                 },
                 legend: {
-                    useHTML: true,
-                    events: {
-                        itemClick: function () {
-                            legendItemClickFlag = true;
-                        }
-                    }
+                    useHTML: true
                 },
                 series: [{
                     name: 'Installation 1',
@@ -46,6 +41,22 @@ QUnit.test(
             `Hide series on legend item symbol click when useHTML: true
             (#6553).`
         );
+
+        chart.legend.update({
+            events: {
+                itemClick: function () {
+                    legendItemClickFlag = true;
+                }
+            }
+        });
+
+        assert.notEqual(
+            chart.legend.options.events.itemClick,
+            void 0,
+            'Legend event item click should be created after update.'
+        );
+
+        test.click(x, y);
 
         assert.ok(
             legendItemClickFlag,

@@ -282,10 +282,10 @@ function onLegendItemClick(this: Legend, e: any): void | boolean {
         return false;
     }
 
-    const series = e.legendItem,
-        chart = series.chart,
-        visible = series.visible,
-        legend = series.chart.legend;
+    const legend = this,
+        series = e.legendItem,
+        chart = legend.chart,
+        visible = series.visible;
     let status;
 
     if (legend && legend.bubbleLegend) {

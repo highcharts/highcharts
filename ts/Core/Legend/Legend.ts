@@ -27,7 +27,6 @@ import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
-import type Series from '../Series/Series';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -44,6 +43,7 @@ const {
     composed,
     marginNames
 } = H;
+import Series from '../Series/Series.js';
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -325,6 +325,12 @@ class Legend {
         const chart = this.chart;
 
         this.setOptions(merge(true, this.options, options));
+
+        if ('events' in this.options) {
+            // Legend event handlers
+            registerEventOptions(this, this.options);
+        }
+
         this.destroy();
         chart.isDirtyLegend = chart.isDirtyBox = true;
         if (pick(redraw, true)) {
@@ -1576,6 +1582,7 @@ class Legend {
             legendItem = item.legendItem || {},
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
+            isSeries = item instanceof Series,
             activeClass = 'highcharts-legend-' +
                 (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode,
@@ -1655,38 +1662,34 @@ class Legend {
                         // to be added prior to click in some cases (#7418).
                         boxWrapper.removeClass(activeClass);
 
-                        if (legend.eventOptions.itemClick) {
-                            fireEvent(
-                                legend,
-                                'itemClick',
+                        fireEvent(
+                            legend,
+                            'itemClick',
+                            {
+                                // Pass over the click/touch event. #4.
+                                browserEvent: event,
+                                legendItem: item
+                            },
+                            defaultItemClick
+                        );
+
+                        // Deprecated logic
+                        // Click the name or symbol
+                        if (isPoint) {
+                            item.firePointEvent(
+                                'legendItemClick',
                                 {
-                                    // Pass over the click/touch event. #4.
-                                    browserEvent: event,
-                                    legendItem: item
-                                },
-                                defaultItemClick
+                                    browserEvent: event
+                                }
                             );
-                        } else {
-                            // Deprecated logic
-                            // Click the name or symbol
-                            if ((item as any).firePointEvent) { // Point
-                                (item as any).firePointEvent(
-                                    'legendItemClick',
-                                    {
-                                        browserEvent: event
-                                    },
-                                    defaultItemClick
-                                );
-                            } else {
-                                fireEvent(
-                                    item,
-                                    'legendItemClick',
-                                    {
-                                        browserEvent: event
-                                    },
-                                    defaultItemClick
-                                );
-                            }
+                        } else if (isSeries) {
+                            fireEvent(
+                                item,
+                                'legendItemClick',
+                                {
+                                    browserEvent: event
+                                }
+                            );
                         }
                     });
             }
