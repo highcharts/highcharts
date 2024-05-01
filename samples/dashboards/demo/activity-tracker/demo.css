@@ -28,6 +28,12 @@
     flex: 1 1 30%;
 }
 
+p.demo-description {
+    margin: 0;
+    padding: 15px;
+    text-align: justify;
+}
+
 /**
  * @license Highcharts
  *
