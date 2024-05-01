@@ -1853,7 +1853,7 @@ export default Legend;
  * Related legend item, it can be series, point, color axis or data class from
  * color axis.
  * @name Highcharts.LegendItemClickEventObject#legendItem
- * @type {Highcharts.LegendItem}
+ * @type {Highcharts.Series|Highcharts.Point|Highcharts.LegendItemObject}
  * *//**
  * Related legend.
  * @name Highcharts.LegendItemClickEventObject#target
