@@ -445,7 +445,7 @@ function numberFormat(
     // number 42 000 000, this line adds 42.
     ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
 
-    if ((+exponent[1] < 0 && !firstDecimals)) {
+    if (+exponent[1] < 0 && !firstDecimals) {
         ret = '0';
     } else {
         // Add the remaining thousands groups, joined by the thousands separator
