@@ -1,8 +1,8 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
- *  Extenstion for 3d axes
+ *  Extension for 3d axes
  *
  *  License: www.highcharts.com/license
  *
@@ -21,20 +21,16 @@
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
+
+import H from '../Globals.js';
+const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     extend,
+    pushUnique,
     wrap
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -49,7 +45,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (U.pushUnique(composedMembers, TickClass)) {
+    if (pushUnique(composed, 'Axis.Tick3D')) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -213,9 +213,8 @@ namespace Globals {
         deg2rad = Math.PI * 2 / 360,
         hasBidiBug = (
             isFirefox &&
-            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // Issue #38
         ),
-        hasTouch = !!win.TouchEvent,
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',
@@ -254,6 +253,13 @@ namespace Globals {
      * @type {Array<Highcharts.Chart|undefined>}
      */
     export const charts: GlobalsLike['charts'] = [];
+
+    /**
+     * A shared registry between all bundles to keep track of applied
+     * compositions.
+     * @private
+     */
+    export const composed: Array<string> = [];
 
     /**
      * A hook for defining additional date format specifiers. New
@@ -317,4 +323,4 @@ export default Globals as unknown as GlobalsLike;
  * @type {Highcharts.Options}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

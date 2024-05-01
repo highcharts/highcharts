@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json'
+        'https://www.highcharts.com/samples/data/us-population-density.json'
     ).then(response => response.json());
 
     // Make codes uppercase to match the map data
@@ -57,7 +57,8 @@
         series: [{
             accessibility: {
                 point: {
-                    valueDescriptionFormat: '{xDescription}, {point.value} people per square kilometer.'
+                    valueDescriptionFormat: '{xDescription}, {point.value} ' +
+                        'people per square kilometer.'
                 }
             },
             animation: {

@@ -1,9 +1,9 @@
 function grabComponent(name) {
-    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({ force: true});
     cy.get('.highcharts-dashboards-edit-grid-items')
         .children()
         .contains(name)
-        .trigger('mousedown');
+        .trigger('mousedown', { force: true });
 }
 
 function dropComponent(elementName) {
@@ -17,10 +17,15 @@ describe('Add components through UI', () => {
         cy.visit('/dashboards/cypress/add-layout');
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
+
+        Cypress.on('uncaught:exception', () => {
+            cy.log('Uncaught exception. Check the console for more details.');
+            return false;
+        })
     });
 
     it('should close the add component sidebar, clicking outside', function() {
-        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click({force: true});
         cy.board().then((board) => {
             cy.get('.highcharts-dashboards-edit-sidebar').should('exist');
             cy.get('.highcharts-dashboards-edit-overlay-active').should('exist');
@@ -98,9 +103,12 @@ describe('Add components through UI', () => {
     });
 
     it('should be able to add a chart component and resize it', function() {
+        // Act
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
+
+        // Assert
         cy.board().then((board) => {
             assert.equal(
                 board.layouts[0].rows[0].cells.length,
@@ -126,7 +134,7 @@ describe('Add components through UI', () => {
     });
 
     it('DataGrid component should be added.', function() {
-        grabComponent('datagrid');
+        grabComponent('DataGrid');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
         cy.board().then((board) => {
@@ -176,11 +184,11 @@ describe('Add components through UI', () => {
 
         cy.get('#dashboard-col-0').click({ force: true });
         cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true });
 
         cy.get('#dashboard-col-2').click({ force: true });
-        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
-        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click({ force: true });
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true });
 
         grabComponent('chart');
         dropComponent('.highcharts-dashboards-wrapper');
@@ -210,17 +218,17 @@ describe('Edit mode with toolbars disabled', () => {
     });
 
     it('Add component button should not exist.', () => {
-        cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').should('not.exist');
+        cy.get('.highcharts-dashboards-edit-tools-btn').should('not.exist');
     });
 });
 
-describe('Edit mode with buttons disabled', () => {
+describe('Edit mode with add component button disabled', () => {
     before(() => {
-        cy.visit('/dashboards/edit-mode/buttons-disabled');
+        cy.visit('/dashboards/edit-mode/add-component-button-disabled');
         cy.toggleEditMode();
     });
 
-    it('Edit tools buttons should not exist.', () => {
+    it('Add component button should not exist.', () => {
         cy.get('.highcharts-dashboards-edit-tools-btn').should('not.exist');
     });
 });

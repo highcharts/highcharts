@@ -14,8 +14,7 @@ const {
     addEvent,
     correctFloat,
     defined,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -37,14 +36,6 @@ export interface PaneChart extends Chart {
     pane: Array<Pane>;
     getHoverPane(eventArgs: any): (Pane|undefined);
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -82,17 +73,14 @@ function compose(
     ChartClass: typeof Chart,
     PointerClass: typeof Pointer
 ): void {
+    const chartProto = ChartClass.prototype as PaneChart;
 
-    if (pushUnique(composedMembers, ChartClass)) {
-        const chartProto = ChartClass.prototype as PaneChart;
-
+    if (!chartProto.getHoverPane) {
         chartProto.collectionsWithUpdate.push('pane');
         chartProto.getHoverPane = chartGetHoverPane;
 
         addEvent(ChartClass, 'afterIsInsidePlot', onChartAfterIsInsiderPlot);
-    }
 
-    if (pushUnique(composedMembers, PointerClass)) {
         addEvent(PointerClass, 'afterGetHoverData', onPointerAfterGetHoverData);
         addEvent(
             PointerClass,
@@ -197,6 +185,9 @@ function onChartAfterIsInsiderPlot(
     }
 }
 
+/**
+ *
+ */
 function onPointerAfterGetHoverData(
     this: Pointer,
     eventArgs: Pointer.EventArgsObject

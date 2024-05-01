@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -186,7 +186,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
  * @sample {highcharts} highcharts/demo/euler-diagram/
  *         Euler diagram
  *
- * @type      {number}
+ * @type      {string}
  * @since     7.0.0
  * @product   highcharts
  * @apioption series.venn.data.name
@@ -233,7 +233,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
  * @apioption series.venn.states.select
  */
 
-''; // detach doclets above
+''; // Detachs doclets above
 
 /* *
  *

@@ -38,6 +38,7 @@ async function distRelease() {
     }
 
     const buildFolder = config.buildFolder;
+    const buildFolderDataGrid = config.buildFolderDataGrid;
     const distRepository = config.distRepository;
 
     if (!fs.existsSync(distRepository)) {
@@ -80,12 +81,29 @@ async function distRelease() {
     // Copy build/dist into repository
 
     fsLib.copyAllFiles(path.join(buildFolder, 'code'), distRepository, true);
+    fsLib.copyAllFiles(path.join(buildFolderDataGrid, 'code'), distRepository, true);
 
     fsLib.copyFile(
         config.readmeFile,
         path.join(distRepository, 'README.md'),
         true
     );
+
+    // Copy datagrid files to separate directory
+
+    const dataGridFiles = [
+        'datagrid.js',
+        'datagrid.src.js',
+        'datagrid.js.map',
+        'css/datagrid.css'
+    ];
+
+    dataGridFiles.forEach(file => {
+        fsLib.copyFile(
+            path.join(buildFolderDataGrid, 'js-gzip', file),
+            path.join(buildFolderDataGrid, '../', 'datagrid/js-gzip', file)
+        );
+    });
 
     // Change version
 

@@ -12,8 +12,10 @@ const chart = new Highcharts.Chart({
         }
     },
     xAxis: {
-        categories: ['Toyota', 'BMW', 'Volvo', 'Audi', 'Peugeot', 'Mercedes-Benz',
-            'Volkswagen', 'Polestar', 'Kia', 'Nissan']
+        categories: [
+            'Toyota', 'BMW', 'Volvo', 'Audi', 'Peugeot', 'Mercedes-Benz',
+            'Volkswagen', 'Polestar', 'Kia', 'Nissan'
+        ]
     },
     yAxis: {
         title: {
@@ -49,13 +51,21 @@ const chart = new Highcharts.Chart({
 });
 
 function showValues() {
-    document.getElementById('alpha-value').innerHTML = chart.options.chart.options3d.alpha;
-    document.getElementById('beta-value').innerHTML = chart.options.chart.options3d.beta;
-    document.getElementById('depth-value').innerHTML = chart.options.chart.options3d.depth;
+    document.getElementById(
+        'alpha-value'
+    ).innerHTML = chart.options.chart.options3d.alpha;
+    document.getElementById(
+        'beta-value'
+    ).innerHTML = chart.options.chart.options3d.beta;
+    document.getElementById(
+        'depth-value'
+    ).innerHTML = chart.options.chart.options3d.depth;
 }
 
 // Activate the sliders
-document.querySelectorAll('#sliders input').forEach(input => input.addEventListener('input', e => {
+document.querySelectorAll(
+    '#sliders input'
+).forEach(input => input.addEventListener('input', e => {
     chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
     showValues();
     chart.redraw(false);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -153,7 +153,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    colorByPoint: true, // always true for pies
+    colorByPoint: true, // Always true for pies
 
     /**
      * A series specific or series type specific color set to use instead
@@ -475,7 +475,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    marker: null as any, // point options are specified in the base options
+    marker: null as any, // Point options are specified in the base options
 
     /**
      * The minimum size for a pie in response to auto margins. The pie will
@@ -735,7 +735,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
  * @apioption series.pie.events
  */
 
-''; // placeholder for transpiled doclets above
+''; // Placeholder for transpiled doclets above
 
 /* *
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -71,11 +71,11 @@ class LineSeries extends Series {
      *
      * */
 
-    public data: Array<LinePoint> = void 0 as any;
+    public data!: Array<LinePoint>;
 
-    public options: LineSeriesOptions = void 0 as any;
+    public options!: LineSeriesOptions;
 
-    public points: Array<LinePoint> = void 0 as any;
+    public points!: Array<LinePoint>;
 
     /* *
      *
@@ -232,7 +232,7 @@ class LineSeries extends Series {
                 plotY = point.plotY,
                 lastPoint = (points as any)[i - 1],
                 isNull = point.isNull || typeof plotY !== 'number';
-            // the path to this point from the previous
+            // The path to this point from the previous
             let pathToPoint: SVGPath;
 
             if (
@@ -274,14 +274,14 @@ class LineSeries extends Series {
 
                 } else if (step) {
 
-                    if (step === 1) { // right
+                    if (step === 1) { // Right
                         pathToPoint = [[
                             'L',
                             lastPoint.plotX as any,
                             plotY as any
                         ]];
 
-                    } else if (step === 2) { // center
+                    } else if (step === 2) { // Center
                         pathToPoint = [[
                             'L',
                             ((lastPoint.plotX as any) + plotX) / 2,
@@ -306,7 +306,7 @@ class LineSeries extends Series {
                     ]);
 
                 } else {
-                    // normal line to next point
+                    // Normal line to next point
                     pathToPoint = [[
                         'L',
                         plotX as any,
@@ -319,7 +319,7 @@ class LineSeries extends Series {
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
+                    if (step === 2) { // Step = center (#8073)
                         xMap.push(point.x);
                     }
                 }
@@ -640,4 +640,4 @@ export default LineSeries;
  * @apioption series.line.data.marker
  */
 
-''; // include precedent doclets in transpilat
+''; // Include precedent doclets in transpiled

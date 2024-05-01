@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,7 +25,17 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface VariwidePointOptions extends ColumnPointOptions {
-    // Nothing here
+
+    /**
+     * The relative width for each column. On a category axis, the widths are
+     * distributed so they sum up to the X axis length. On linear and datetime
+     * axes, the columns will be laid out from the X value and Z units along the
+     * axis.
+     *
+     * @product highcharts
+     */
+    z?: number;
+
 }
 
 /* *

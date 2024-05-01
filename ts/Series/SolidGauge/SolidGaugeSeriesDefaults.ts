@@ -2,7 +2,7 @@
  *
  *  Solid angular gauge module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -218,7 +218,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  * @apioption series.solidgauge.data.radius
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

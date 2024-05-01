@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -73,12 +73,12 @@ class VariwideSeries extends ColumnSeries {
      * */
 
     public crispOption?: boolean;
-    public data: Array<VariwidePoint> = void 0 as any;
-    public options: VariwideSeriesOptions = void 0 as any;
-    public points: Array<VariwidePoint> = void 0 as any;
-    public relZ: Array<number> = void 0 as any;
-    public totalZ: number = void 0 as any;
-    public zData?: Array<number> = void 0 as any;
+    public data!: Array<VariwidePoint>;
+    public options!: VariwideSeriesOptions;
+    public points!: Array<VariwidePoint>;
+    public relZ!: Array<number>;
+    public totalZ!: number;
+    public zData?: Array<number>;
 
     /* *
      *
@@ -145,12 +145,16 @@ class VariwideSeries extends ColumnSeries {
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
-            minPx = axis.toPixels(axis.reversed ?
-                (axis.dataMax || 0) + axis.pointRange :
-                (axis.dataMin || 0)),
-            maxPx = axis.toPixels(axis.reversed ?
-                (axis.dataMin || 0) :
-                (axis.dataMax || 0) + axis.pointRange),
+            minPx = axis.toPixels(
+                axis.reversed ?
+                    (axis.dataMax || 0) + axis.pointRange :
+                    (axis.dataMin || 0)
+            ),
+            maxPx = axis.toPixels(
+                axis.reversed ?
+                    (axis.dataMin || 0) :
+                    (axis.dataMax || 0) + axis.pointRange
+            ),
             len = Math.abs(maxPx - minPx),
             totalZ = this.totalZ,
             left = this.chart.inverted ?
@@ -230,7 +234,7 @@ class VariwideSeries extends ColumnSeries {
     }
 }
 
-// Extend translation by distoring X position based on Z.
+// Extend translation by distorting X position based on Z.
 addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
 
     // Temporarily disable crisping when computing original shapeArgs

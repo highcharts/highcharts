@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,6 +34,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @sample highcharts/demo/box-plot/
  *         Box plot
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ * @sample {highcharts} highcharts/series-scatter/jitter-boxplot
+ *         Jittered scatter plot on top of a box plot
  *
  * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
@@ -480,7 +484,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
  * @apioption series.boxplot.data.whiskerDashStyle
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

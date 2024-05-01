@@ -83,9 +83,9 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
-    public data: Array<NATRPoint> = void 0 as any;
-    public points: Array<NATRPoint> = void 0 as any;
-    public options: NATROptions = void 0 as any;
+    public data!: Array<NATRPoint>;
+    public points!: Array<NATRPoint>;
+    public options!: NATROptions;
 
     /* *
      *
@@ -176,4 +176,4 @@ export default NATRIndicator;
  * @apioption series.natr
  */
 
-''; // to include the above in the js output'
+''; // To include the above in the js output'

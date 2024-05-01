@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -84,13 +84,13 @@ class VariablePieSeries extends PieSeries {
      *
      * */
 
-    public data: Array<VariablePiePoint> = void 0 as any;
+    public data!: Array<VariablePiePoint>;
 
-    public options: VariablePieSeriesOptions = void 0 as any;
+    public options!: VariablePieSeriesOptions;
 
-    public points: Array<VariablePiePoint> = void 0 as any;
+    public points!: Array<VariablePiePoint>;
 
-    public radii: Array<number> = void 0 as any;
+    public radii!: Array<number>;
 
     /* *
      *
@@ -192,7 +192,7 @@ class VariablePieSeries extends PieSeries {
 
         // Calculate radius for all pie slice's based on their Z values
         for (let i = 0; i < zData.length; i++) {
-            // if zData[i] is null/undefined/string we need to take zMin for
+            // If zData[i] is null/undefined/string we need to take zMin for
             // smallest radius.
             value = this.zValEval(zData[i]) ? zData[i] : zMin;
 
@@ -284,7 +284,7 @@ class VariablePieSeries extends PieSeries {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // issue #172
+            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset: number = options.slicedOffset as any,
             startAngle = options.startAngle || 0,
@@ -301,7 +301,7 @@ class VariablePieSeries extends PieSeries {
             start,
             end,
             angle,
-            // the x component of the radius vector for a given point
+            // The x component of the radius vector for a given point
             radiusX: (number|undefined),
             radiusY: (number|undefined),
             point: (VariablePiePoint|undefined),
@@ -440,4 +440,4 @@ export default VariablePieSeries;
  * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

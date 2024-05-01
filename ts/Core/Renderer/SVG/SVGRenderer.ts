@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -74,6 +74,7 @@ const {
     merge,
     pick,
     pInt,
+    replaceNested,
     uniqueKey
 } = U;
 
@@ -101,6 +102,10 @@ let hasInternalReferenceBug: (boolean|undefined);
  *
  * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
+ *
+ * See [How to use the SVG Renderer](
+ * https://www.highcharts.com/docs/advanced-chart-features/renderer) for a
+ * comprehensive tutorial.
  *
  * @sample highcharts/members/renderer-on-chart
  *         Annotating a chart programmatically.
@@ -141,88 +146,30 @@ let hasInternalReferenceBug: (boolean|undefined);
  */
 class SVGRenderer implements SVGRendererLike {
 
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        container: HTMLDOMElement,
-        width: number,
-        height: number,
-        style?: CSSObject,
-        forExport?: boolean,
-        allowHTML?: boolean,
-        styledMode?: boolean
-    ) {
-        this.init(
-            container,
-            width,
-            height,
-            style,
-            forExport,
-            allowHTML,
-            styledMode
-        );
-    }
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public alignedObjects: Array<SVGElement> = void 0 as any;
-
-    public allowHTML?: boolean;
-
     /**
      * The root `svg` node of the renderer.
      *
      * @name Highcharts.SVGRenderer#box
      * @type {Highcharts.SVGDOMElement}
      */
-    public box: globalThis.SVGElement = void 0 as any;
-
     /**
      * The wrapper for the root `svg` node of the renderer.
      *
      * @name Highcharts.SVGRenderer#boxWrapper
      * @type {Highcharts.SVGElement}
      */
-    public boxWrapper: SVGElement = void 0 as any;
-
-    public cache: Record<string, BBoxObject> = void 0 as any;
-
-    public cacheKeys: Array<string> = void 0 as any;
-
-    public chartIndex: number = void 0 as any;
-
     /**
      * A pointer to the `defs` node of the root SVG.
      *
      * @name Highcharts.SVGRenderer#defs
      * @type {Highcharts.SVGElement}
      */
-    public defs: SVGElement = void 0 as any;
-
     /**
      * Whether the rendered content is intended for export.
      *
      * @name Highcharts.SVGRenderer#forExport
      * @type {boolean | undefined}
      */
-    public forExport?: boolean;
-    public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
-    public gradients: Record<string, SVGElement> = void 0 as any;
-    public height: number = void 0 as any;
-    public imgCount: number = void 0 as any;
-    public rootFontSize: string|undefined;
-    public style: CSSObject = void 0 as any;
-    public styledMode?: boolean;
-    public unSubPixelFix?: Function;
-
     /**
      * Page url used for internal references.
      *
@@ -230,14 +177,6 @@ class SVGRenderer implements SVGRendererLike {
      * @name Highcharts.SVGRenderer#url
      * @type {string}
      */
-    public url: string = void 0 as any;
-    public width: number = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
 
     /**
      * Initialize the SVGRenderer. Overridable initializer function that takes
@@ -269,7 +208,7 @@ class SVGRenderer implements SVGRendererLike {
      * does, it will avoid setting presentational attributes in some cases, but
      * not when set explicitly through `.attr` and `.css` etc.
      */
-    public init(
+    public constructor(
         container: HTMLDOMElement,
         width: number,
         height: number,
@@ -277,18 +216,18 @@ class SVGRenderer implements SVGRendererLike {
         forExport?: boolean,
         allowHTML?: boolean,
         styledMode?: boolean
-    ): void {
+    ) {
         const renderer = this,
             boxWrapper = renderer
                 .createElement('svg')
                 .attr({
                     version: '1.1',
                     'class': 'highcharts-root'
-                }) as any,
-            element = boxWrapper.element;
+                }),
+            element = boxWrapper.element as SVGDOMElement;
 
         if (!styledMode) {
-            boxWrapper.css(this.getStyle(style as any));
+            boxWrapper.css(this.getStyle(style || {}));
         }
 
         container.appendChild(element);
@@ -302,9 +241,9 @@ class SVGRenderer implements SVGRendererLike {
             attr(element, 'xmlns', this.SVG_NS);
         }
 
-        this.box = element as any;
+        this.box = element;
         this.boxWrapper = boxWrapper;
-        renderer.alignedObjects = [];
+        this.alignedObjects = [];
 
         this.url = this.getReferenceURL();
 
@@ -315,15 +254,15 @@ class SVGRenderer implements SVGRendererLike {
             doc.createTextNode('Created with @product.name@ @product.version@')
         );
 
-        renderer.defs = this.createElement('defs').add();
-        renderer.allowHTML = allowHTML;
-        renderer.forExport = forExport;
-        renderer.styledMode = styledMode;
-        renderer.gradients = {}; // Object where gradient SvgElements are stored
-        renderer.cache = {}; // Cache for numerical bounding boxes
-        renderer.cacheKeys = [];
-        renderer.imgCount = 0;
-        renderer.rootFontSize = boxWrapper.getStyle('font-size');
+        this.defs = this.createElement('defs').add();
+        this.allowHTML = allowHTML;
+        this.forExport = forExport;
+        this.styledMode = styledMode;
+        this.gradients = {}; // Object where gradient SvgElements are stored
+        this.cache = {}; // Cache for numerical bounding boxes
+        this.cacheKeys = [];
+        this.imgCount = 0;
+        this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
 
@@ -346,14 +285,46 @@ class SVGRenderer implements SVGRendererLike {
                 });
             };
 
-            // run the fix now
+            // Run the fix now
             subPixelFix();
 
-            // run it on resize
+            // Run it on resize
             renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
         }
     }
 
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public alignedObjects: Array<SVGElement>;
+    public allowHTML?: boolean;
+    public box: globalThis.SVGElement;
+    public boxWrapper: SVGElement;
+    public cache: Record<string, BBoxObject>;
+    public cacheKeys: Array<string>;
+    public chartIndex!: number;
+    public defs: SVGElement;
+    public forExport?: boolean;
+    public globalAnimation!: (boolean|Partial<AnimationOptions>);
+    public gradients: Record<string, SVGElement>;
+    public height!: number;
+    public imgCount: number;
+    public rootFontSize: string|undefined;
+    public style!: CSSObject;
+    public styledMode?: boolean;
+    public unSubPixelFix?: Function;
+    public url: string;
+    public width!: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
@@ -460,13 +431,13 @@ class SVGRenderer implements SVGRendererLike {
             }
 
             if (hasInternalReferenceBug) {
-                return win.location.href
-                    .split('#')[0] // remove the hash
-                    .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parantheses and quotes
-                    .replace(/([\('\)])/g, '\\$1')
-                    // replace spaces (needed for Safari only)
-                    .replace(/ /g, '%20');
+                // Scan alert #[72]: Loop for nested patterns
+                return replaceNested(
+                    win.location.href.split('#')[0], // Remove hash
+                    [/<[^>]*>/g, ''], // Wing cut HTML
+                    [/([\('\)])/g, '\\$1'], // Escape parantheses and quotes
+                    [/ /g, '%20'] // Replace spaces (needed for Safari only)
+                );
             }
         }
         return '';
@@ -509,8 +480,8 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Detect whether the renderer is hidden. This happens when one of the
      * parent elements has `display: none`. Used internally to detect when we
-     * needto render preliminarily in another div to get the text bounding boxes
-     * right.
+     * need to render preliminarily in another div to get the text bounding
+     * boxes right.
      *
      * @function Highcharts.SVGRenderer#isHidden
      *
@@ -568,10 +539,7 @@ class SVGRenderer implements SVGRendererLike {
      * The generated SVGElement.
      */
     public createElement(nodeName: string): SVGElement {
-        const wrapper = new this.Element();
-
-        wrapper.init(this as any, nodeName);
-        return wrapper;
+        return new this.Element(this, nodeName);
     }
 
     /**
@@ -897,7 +865,7 @@ class SVGRenderer implements SVGRendererLike {
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            // Substract due to #1129. Now bottom and left axis gridlines behave
+            // Subtract due to #1129. Now bottom and left axis gridlines behave
             // the same.
             start[1] = end[1] =
                 Math[roundingFunction](start[1]) - (width % 2 / 2);
@@ -948,7 +916,7 @@ class SVGRenderer implements SVGRendererLike {
 
         if (isArray(path)) {
             attribs.d = path;
-        } else if (isObject(path)) { // attributes
+        } else if (isObject(path)) { // Attributes
             extend(attribs, path as any);
         }
         return this.createElement('path').attr(attribs) as any;
@@ -1393,7 +1361,7 @@ class SVGRenderer implements SVGRendererLike {
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
             sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
-            // get the symbol definition function
+            // Get the symbol definition function
             symbolFn = (sym && this.symbols[sym]);
 
         let obj: (SVGElement|undefined),
@@ -1419,7 +1387,7 @@ class SVGRenderer implements SVGRendererLike {
                 obj.attr('fill', 'none');
             }
 
-            // expando properties for use in animate and attr
+            // Expando properties for use in animate and attr
             extend(obj, {
                 symbolName: (sym || void 0),
                 x: x,
@@ -2209,7 +2177,7 @@ export default SVGRenderer;
 
 /**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
- * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
+ * instances. It is instantiated with the {@link SVGRenderer#clipRect} function
  * and applied with the {@link SVGElement#clip} function.
  *
  * @example
@@ -2415,4 +2383,4 @@ export default SVGRenderer;
  * @type {number|undefined}
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

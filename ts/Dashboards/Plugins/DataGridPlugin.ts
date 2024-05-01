@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,10 +19,10 @@
  *
  * */
 
-import type DataGrid from '../../DataGrid/DataGrid';
+import type { DataGridNamespace } from './DataGridTypes';
 import type PluginHandler from '../PluginHandler';
 
-import DataGridComponent from './DataGridComponent.js';
+import DataGridComponent from '../Components/DataGridComponent/DataGridComponent.js';
 
 /* *
  *
@@ -48,9 +48,9 @@ declare module '../Components/ComponentType' {
  * @param {Dashboards.DataGrid} dataGrid DataGrid core to connect.
  */
 function connectDataGrid(
-    DataGridClass: typeof DataGrid
+    DataGridNS: DataGridNamespace
 ): void {
-    DataGridComponent.DataGridConstructor = DataGridClass;
+    DataGridComponent.DataGridNamespace = DataGridNS;
 }
 
 /**
@@ -73,10 +73,9 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e Plugin context provided by the Dashboard.
  */
 function onUnregister(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     e: PluginHandler.Event
-): void {
-    const { Sync } = e;
-}
+): void {}
 
 /* *
  *

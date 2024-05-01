@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
@@ -27,10 +27,6 @@ import type {
 } from './DragDropOptions';
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
 import type {
     PointDropEventObject,
@@ -55,8 +51,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -128,14 +123,6 @@ interface DragHandlesObject {
     group: SVGElement;
     point: string;
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -290,10 +277,9 @@ function chartZoomOrPanKeyPressed(
 function compose(
     ChartClass: typeof Chart
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composedMembers, ChartClass)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.hideDragHandles) {
         chartProto.hideDragHandles = chartHideDragHandles;
         chartProto.setGuideBoxState = chartSetGuideBoxState;
         chartProto.zoomOrPanKeyPressed = chartZoomOrPanKeyPressed;
@@ -404,7 +390,7 @@ function getGroupedPoints(point: Point): Array<Point> {
     if (series.boosted) { // #11156
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
             points.push(
-                (new series.pointClass()).init( // eslint-disable-line new-cap
+                new series.pointClass( // eslint-disable-line new-cap
                     series,
                     data[i]
                 )
@@ -573,7 +559,7 @@ function getPositionSnapshot(
                     point.plotX : point.plotY;
             } else {
                 pointProps[key + 'Offset'] =
-                    // e.g. yAxis.toPixels(point.high), xAxis.toPixels
+                    // E.g. yAxis.toPixels(point.high), xAxis.toPixels
                     // (point.end)
                     axis.toPixels(point[key as keyof typeof point]) -
                     (axis.horiz ? e.chartX : e.chartY);
@@ -1013,7 +999,7 @@ function resizeGuideBox(point: Point, dX: number, dY: number): void {
         dragDropData: DragDropDataObject = chart.dragDropData as any,
         resizeProp =
             (series.dragDropProps as any)[dragDropData.updateProp as any],
-        // dragDropProp.resizeSide holds info on which side to resize.
+        // `dragDropProp.resizeSide` holds info on which side to resize.
         newPoint = (dragDropData as any).newPoints[point.id as any].newValues,
         resizeSide = typeof resizeProp.resizeSide === 'function' ?
             resizeProp.resizeSide(newPoint, point) : resizeProp.resizeSide;

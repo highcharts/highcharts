@@ -173,7 +173,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
             }
         }
     }
-    // Ensure we always have at least one value, even in very spaceous charts
+    // Ensure we always have at least one value, even in very spacious charts
     distances.push(80);
 
     return max(
@@ -239,12 +239,12 @@ class Pathfinder {
      *
      * */
 
-    public chart: Chart = void 0 as any;
-    public chartObstacles: Array<any> = void 0 as any;
-    public chartObstacleMetrics: Record<string, number> = void 0 as any;
-    public connections: Array<Connection> = void 0 as any;
-    public group: SVGElement = void 0 as any;
-    public lineObstacles: Array<any> = void 0 as any;
+    public chart!: Chart;
+    public chartObstacles!: Array<any>;
+    public chartObstacleMetrics!: Record<string, number>;
+    public connections!: Array<Connection>;
+    public group!: SVGElement;
+    public lineObstacles!: Array<any>;
 
     /* *
      *
@@ -437,10 +437,13 @@ class Pathfinder {
      * @function Highcharts.Pathfinder#getChartObstacles
      *
      * @param {Object} options
-     *        Options for the calculation. Currenlty only
-     *        options.algorithmMargin.
+     *        Options for the calculation. Currently only
+     *        `options.algorithmMargin`.
      *
-     * @return {Array<object>}
+     * @param {number} options.algorithmMargin
+     *        The algorithm margin to use for the obstacles.
+
+    * @return {Array<object>}
      *         An array of calculated obstacles. Each obstacle is defined as an
      *         object with xMin, xMax, yMin and yMax properties.
      */

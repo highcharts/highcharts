@@ -16,7 +16,8 @@ Highcharts.setOptions({
         type: 'category'
     },
     tooltip: {
-        pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> population growth in {point.name}'
+        pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
+            'population growth in {point.name}'
     },
     legend: {
         enabled: false
@@ -74,13 +75,10 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'south-america-chart',
-                    width: '1/3'
+                    id: 'south-america-chart'
                 }, {
-                    width: '1/3',
                     id: 'north-america-chart'
                 }, {
-                    width: '1/3',
                     id: 'asia-chart'
                 }]
             }, {
@@ -91,7 +89,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'asia-chart',
+        renderTo: 'asia-chart',
         sync: {
             visibility: true,
             extremes: true
@@ -118,7 +116,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'north-america-chart',
+        renderTo: 'north-america-chart',
 
         sync: {
             visibility: true,
@@ -144,7 +142,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'south-america-chart',
+        renderTo: 'south-america-chart',
 
         sync: {
             visibility: true,
@@ -171,7 +169,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'legend',
+        renderTo: 'legend',
 
         connector: {
             id: 'population-growth'

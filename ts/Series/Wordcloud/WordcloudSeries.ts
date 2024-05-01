@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -98,9 +98,9 @@ class WordcloudSeries extends ColumnSeries {
      * Properties
      *
      * */
-    public data: Array<WordcloudPoint> = void 0 as any;
-    public options: WordcloudSeriesOptions = void 0 as any;
-    public points: Array<WordcloudPoint> = void 0 as any;
+    public data!: Array<WordcloudPoint>;
+    public options!: WordcloudSeriesOptions;
+    public points!: Array<WordcloudPoint>;
 
     /**
      *
@@ -175,8 +175,8 @@ class WordcloudSeries extends ColumnSeries {
                 return p.weight;
             }),
             maxWeight = Math.max.apply(null, weights),
-            // concat() prevents from sorting the original array.
-            data = series.points.concat().sort((a, b): number => (
+            // `concat()` prevents from sorting the original array.
+            points = series.points.concat().sort((a, b): number => (
                 b.weight - a.weight // Sort descending
             ));
 
@@ -195,7 +195,7 @@ class WordcloudSeries extends ColumnSeries {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        for (const point of data) {
+        for (const point of points) {
             const relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -221,13 +221,13 @@ class WordcloudSeries extends ColumnSeries {
         }
 
         // Calculate the playing field.
-        field = getPlayingField(xAxis.len, yAxis.len, data);
+        field = getPlayingField(xAxis.len, yAxis.len, points);
         const spiral = getSpiral(series.spirals[options.spiral as any], {
             field: field
         });
 
         // Draw all the points.
-        for (const point of data) {
+        for (const point of points) {
             const relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -238,7 +238,7 @@ class WordcloudSeries extends ColumnSeries {
                     fontSize: fontSize + 'px'
                 }, options.style as any),
                 placement = placementStrategy(point, {
-                    data: data,
+                    data: points,
                     field: field,
                     placed: placed,
                     rotation: rotation
@@ -246,7 +246,8 @@ class WordcloudSeries extends ColumnSeries {
                 attr = extend(
                     series.pointAttribs(
                         point,
-                        (point.selected && 'select' as any)
+                        (point.selected && 'select' as any
+                        )
                     ),
                     {
                         align: 'center',
@@ -321,7 +322,7 @@ class WordcloudSeries extends ColumnSeries {
                 if (!hasRendered) {
                     attr.x = 0;
                     attr.y = 0;
-                // or animate from previous position
+                // Or animate from previous position
                 } else {
                     delete attr.x;
                     delete attr.y;

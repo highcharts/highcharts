@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         HTML: true,
@@ -80,8 +82,10 @@ Highcharts.chart('container', {
             type: 'line',
             name: '2011-2020',
             color: '#2f7ed8',
-            data: [[0.6, 5.189],
-                [3.6, 2.9]],
+            data: [
+                [0.6, 5.189],
+                [3.6, 2.9]
+            ],
             marker: {
                 enabled: false
             },
@@ -112,8 +116,10 @@ Highcharts.chart('container', {
             name: '2001-2010',
             visible: false,
             color: '#0d233a',
-            data: [[0.3, 5.88],
-                [3.2, 5.82]],
+            data: [
+                [0.3, 5.88],
+                [3.2, 5.82]
+            ],
             marker: {
                 enabled: false
             },
@@ -144,8 +150,10 @@ Highcharts.chart('container', {
             name: '1991-2000',
             color: '#8bbc21',
             visible: false,
-            data: [[0.9, 6.045],
-                [2.3, 5.88]],
+            data: [
+                [0.9, 6.045],
+                [2.3, 5.88]
+            ],
             marker: {
                 enabled: false
             },
@@ -174,8 +182,10 @@ Highcharts.chart('container', {
             type: 'line',
             name: '1991-2000',
             color: '#f7a35c',
-            data: [[2.3, 6.25],
-                [4.2, 12.57]],
+            data: [
+                [2.3, 6.25],
+                [4.2, 12.57]
+            ],
             marker: {
                 enabled: false
             },

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -64,6 +64,14 @@ const MapLineSeriesDefaults: MapLineSeriesOptions = {
     legendSymbol: 'lineMarker'
 
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapLineSeriesDefaults;
 
 /**
  * A `mapline` series. If the [type](#series.mapline.type) option is
@@ -148,10 +156,4 @@ const MapLineSeriesDefaults: MapLineSeriesOptions = {
  * @apioption plotOptions.mapline.states.hover
  */
 
-/* *
- *
- *  Default Export
- *
- * */
-
-export default MapLineSeriesDefaults;
+(''); // Keeps doclets above in JS file

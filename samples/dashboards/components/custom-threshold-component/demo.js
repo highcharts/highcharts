@@ -9,10 +9,6 @@ class ThresholdComponent extends Component {
     constructor(cell, options) {
         super(cell, options);
         this.type = 'Threshold';
-        this.sync = new Component.Sync(
-            this,
-            this.syncHandlers
-        );
         return this;
     }
 
@@ -71,7 +67,7 @@ const board = Dashboards.board('container', {
     },
     components: [{
         type: 'Threshold',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         component: 'HTML',
         value: 10,
         options: {

@@ -29,7 +29,8 @@
         },
 
         tooltip: {
-            format: '{point.id}{#if point.lat}<br>Lat: {point.lat} Lon {point.lon}{/if}'
+            format: '{point.id}{#if point.lat}<br>Lat: {point.lat} Lon ' +
+                '{point.lon}{/if}'
         },
 
         plotOptions: {
@@ -56,7 +57,8 @@
             dataLabels: {
                 format: '{point.id}'
             },
-            // Use id instead of name to allow for referencing points later using
+            // Use id instead of name to allow for referencing points later
+            // using
             // chart.get
             data: [{
                 id: 'London',

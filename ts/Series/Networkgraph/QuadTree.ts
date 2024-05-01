@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2021 Paweł Fus
+ *  (c) 2010-2024 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -122,7 +122,7 @@ class QuadTree {
     }
 
     /**
-     * Depfth first treversal (DFS). Using `before` and `after` callbacks,
+     * Depth first treversal (DFS). Using `before` and `after` callbacks,
      * we can get two results: preorder and postorder traversals, reminder:
      *
      * ```

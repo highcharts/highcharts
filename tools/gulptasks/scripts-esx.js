@@ -61,7 +61,7 @@ function addFactory(modulePath, moduleCode, basePath, namespace) {
 `(function (root, factory) {
 if (typeof module === "object" && module.exports) {
     factory["default"] = factory;
-    module.exports = ${isPM ? 'root.document ? factory(root) : ' : ''} factory;
+    module.exports = ${isPM ? 'root && root.document ? factory(root) : ' : ''} factory;
 } else if (typeof define === "function" && define.amd) {
     define("${externalModulePath}", function () {
         return factory(root);

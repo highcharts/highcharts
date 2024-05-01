@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,6 +19,7 @@
 import type { AxisCollectionKey } from './AxisOptions';
 import type Pane from '../../Extensions/Pane/Pane';
 import type RadialAxis from './RadialAxis';
+import type RadialAxisOptions from './RadialAxisOptions';
 
 import ColorAxisLike from './Color/ColorAxisLike.js';
 import U from '../Utilities.js';
@@ -38,7 +39,7 @@ interface SolidGaugeAxis extends ColorAxisLike, RadialAxis.AxisComposition {
     coll: AxisCollectionKey;
     max: number;
     min: number;
-    options: (ColorAxisLike.Options&RadialAxis.Options);
+    options: (ColorAxisLike.Options&RadialAxisOptions);
     pane: Pane;
 }
 

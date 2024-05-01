@@ -39,6 +39,9 @@ const {
  * */
 
 // Utils:
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
@@ -94,9 +97,9 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<RSIPoint> = void 0 as any;
-    public points: Array<RSIPoint> = void 0 as any;
-    public options: RSIOptions = void 0 as any;
+    public data!: Array<RSIPoint>;
+    public points!: Array<RSIPoint>;
+    public options!: RSIOptions;
 
     /* *
      *
@@ -136,7 +139,7 @@ class RSIIndicator extends SMAIndicator {
         if (isNumber(yVal[0])) {
             values = yVal as Array<number>;
         } else {
-            // in case of the situation, where the series type has data length
+            // In case of the situation, where the series type has data length
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
@@ -263,4 +266,4 @@ export default RSIIndicator;
  * @apioption series.rsi
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

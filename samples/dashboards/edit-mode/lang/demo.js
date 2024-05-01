@@ -21,10 +21,7 @@ const norwegianEditMode = {
     off: 'av',
     settings: 'Alternativer',
     addComponent: 'Legg til komponenter',
-    dataLabels: 'Data merkelapp',
-    small: 'Liten',
-    medium: 'Medium',
-    large: 'Stor'
+    dataLabels: 'Data merkelapp'
 };
 
 Dashboards.board('container', {
@@ -48,7 +45,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -56,7 +53,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {

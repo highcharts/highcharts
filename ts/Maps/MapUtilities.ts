@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -51,16 +51,14 @@ const boundsFromPath = function (
  * @private
  */
 const pointInPolygon = function (
-    point: { x: number, y: number },
+    { x, y }: { x: number, y: number },
     polygon: Array<Array<number>>
 ): boolean {
     let i,
         j,
         rel1,
         rel2,
-        c = false,
-        x = point.x,
-        y = point.y;
+        c = false;
 
     for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
         rel1 = polygon[i][1] > y;

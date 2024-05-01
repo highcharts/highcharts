@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  3D pie series
  *
@@ -23,7 +23,10 @@ import type Series from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import H from '../../Core/Globals.js';
-const { deg2rad } = H;
+const {
+    composed,
+    deg2rad
+} = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -56,14 +59,6 @@ declare module '../Pie/PieSeriesOptions' {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Class
  *
  * */
@@ -80,7 +75,7 @@ class Pie3DSeries extends PieSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, 'Pie3D')) {
             SeriesClass.types.pie = Pie3DSeries;
         }
 
@@ -98,7 +93,7 @@ class Pie3DSeries extends PieSeries {
     public addPoint(): void {
         super.addPoint.apply(this, arguments);
         if (this.chart.is3d()) {
-            // destroy (and rebuild) everything!!!
+            // Destroy (and rebuild) everything!!!
             this.update(this.userOptions, true); // #3845 pass the old options
         }
     }
@@ -126,10 +121,12 @@ class Pie3DSeries extends PieSeries {
                 // Scale down the group and place it in the center
                 (group as any).oldtranslateX = pick(
                     (group as any).oldtranslateX,
-                    (group as any).translateX);
+                    (group as any).translateX
+                );
                 (group as any).oldtranslateY = pick(
                     (group as any).oldtranslateY,
-                    (group as any).translateY);
+                    (group as any).translateY
+                );
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
@@ -247,8 +244,7 @@ class Pie3DSeries extends PieSeries {
             z = 0;
         }
 
-        for (const point of series.data) {
-
+        for (const point of series.points) {
             const shapeArgs = point.shapeArgs;
 
             point.shapeType = 'arc3d';
@@ -340,4 +336,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpilation
+''; // Keeps doclets above after transpiledion

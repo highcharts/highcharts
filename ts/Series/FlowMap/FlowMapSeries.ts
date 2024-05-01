@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2024 Askel Eirik Johansson, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -341,12 +341,12 @@ class FlowMapSeries extends MapLineSeries {
      *
      * */
 
-    public data: Array<FlowMapPoint> = void 0 as any;
-    public options: FlowMapSeriesOptions = void 0 as any;
-    public points: Array<FlowMapPoint> = void 0 as any;
-    public smallestWeight?: number = void 0 as any;
-    public greatestWeight?: number = void 0 as any;
-    public centerOfPoints: PositionObject = void 0 as any;
+    public data!: Array<FlowMapPoint>;
+    public options!: FlowMapSeriesOptions;
+    public points!: Array<FlowMapPoint>;
+    public smallestWeight?: number;
+    public greatestWeight?: number;
+    public centerOfPoints!: PositionObject;
 
     /**
      *
@@ -367,7 +367,7 @@ class FlowMapSeries extends MapLineSeries {
         const series = this,
             points = series.points;
 
-        if (!init) { // run the animation
+        if (!init) { // Run the animation
             points.forEach((point: FlowMapPoint): void => {
                 if (
                     point.shapeArgs &&
@@ -378,7 +378,7 @@ class FlowMapSeries extends MapLineSeries {
                         x = path[0][1],
                         y = path[0][2];
 
-                    // to animate SVG path the initial path array needs to be
+                    // To animate SVG path the initial path array needs to be
                     // same as target, but element should be visible, so we
                     // insert array elements with start (M) values
                     if (x && y) {
@@ -550,7 +550,7 @@ class FlowMapSeries extends MapLineSeries {
                         foundPoint.plotX &&
                         foundPoint.plotY
                     ) {
-                        // after linked point update flowmap point should
+                        // After linked point update flowmap point should
                         // be also updated
                         addEvent(foundPoint, 'update', dirtySeries);
 
@@ -812,7 +812,8 @@ class FlowMapSeries extends MapLineSeries {
                 markerEndOptions
             );
 
-            (shapeArgs.d as SVGPath).splice(2, 0,
+            (shapeArgs.d as SVGPath).splice(
+                2, 0,
                 ...marker
             );
         }
@@ -1072,4 +1073,4 @@ export default FlowMapSeries;
  */
 
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

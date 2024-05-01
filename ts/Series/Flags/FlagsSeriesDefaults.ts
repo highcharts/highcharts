@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,10 +16,7 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -37,13 +34,20 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Flags on a line series
  *
  * @extends      plotOptions.column
- * @excluding    animation, borderColor, borderRadius, borderWidth,
+ * @excluding    animation, borderColor, borderWidth,
  *               colorByPoint, cropThreshold, dataGrouping, pointPadding,
  *               pointWidth, turboThreshold
  * @product      highstock
  * @optionparent plotOptions.flags
  */
 const FlagsSeriesDefaults: FlagsSeriesOptions = {
+
+    /**
+     * The corner radius of the border surrounding each flag. For `squarepin`
+     * shaped flags only. A number signifies pixels. A percentage string, like
+     * for example 50%, signifies a relative size.
+     */
+    borderRadius: 0,
 
     /**
      * In case the flag is placed on a series, on what point key to place
@@ -332,7 +336,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * @apioption series.flags.data.title
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file
 
 /* *
  *

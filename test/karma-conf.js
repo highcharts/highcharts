@@ -59,7 +59,7 @@ function getHTML(path) {
         // load async, so sometimes they're loaded prior to screenshot,
         // sometimes not
         .replace(
-            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            /<link[a-z"=:\.\/ ]+(fonts\.googleapis.com|fonts\.gstatic.com)[^>]+>/gi,
             ''
         );
 
@@ -74,7 +74,7 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \n]*'([^']+)/g;
+    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
     const codeblocks = [];
 
@@ -86,9 +86,9 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to samples/data
         innerMatch = src.match(
-            /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/cdn\.jsdelivr\.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www\.highcharts\.com)\/samples\/data\/([a-z0-9\-\.]+$)/
         ) || src.match(
-            /^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/
+            /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-\.]+$)/
         );
 
         if (innerMatch) {
@@ -107,7 +107,7 @@ function resolveJSON(js) {
 
         // Look for sources that can be matched to the map collection
         innerMatch = src.match(
-            /^(https:\/\/code.highcharts.com\/mapdata\/([a-z\/\.\-]+))$/
+            /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+))$/
         );
         if (innerMatch) {
             filename = innerMatch[2];
@@ -133,6 +133,31 @@ function resolveJSON(js) {
         }
     }
     codeblocks.push(js);
+
+    // Add some files that are referenced by variables in the demos, so we're
+    // not able to parse the static file name.
+    if (js.indexOf('fetch') !== -1) {
+        [
+            'aapl-c.json',
+            'goog-c.json',
+            'msft-c.json'
+        ].forEach(filename => {
+                const data = fs.readFileSync(
+                    path.join(
+                        __dirname,
+                        '..',
+                        'samples/data',
+                        filename
+                    ),
+                    'utf8'
+                );
+                codeblocks.push(`window.JSONSources[
+                    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/${filename}'
+                ] = ${data};`);
+            }
+        );
+    }
+
     return codeblocks.join('\n');
 }
 
@@ -164,8 +189,8 @@ function handleDetails(path) {
 
 const browserStackBrowsers = require('./karma-bs.json');
 
-module.exports = function (config) {
 
+module.exports = function (config) {
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
 
@@ -223,7 +248,7 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    const tests = (
+    let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
@@ -232,6 +257,10 @@ module.exports = function (config) {
         )
         .filter(path => !!path)
         .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
+
+    if (argv.reverse) {
+        tests = require('glob').sync(tests[0]).reverse();
+    }
 
     // Get the files
     let files = require('./karma-files.json');
@@ -243,7 +272,6 @@ module.exports = function (config) {
             // Essentials
             'test/call-analyzer.js',
             'test/test-controller.js',
-            'test/test-touch.js',
             'test/test-utilities.js',
             'test/json-sources.js',
 
@@ -295,7 +323,8 @@ module.exports = function (config) {
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
             'samples/highcharts/blog/gdp-growth-annual/demo.js',
             'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
+            'samples/highcharts/website/xmas-2021/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -346,6 +375,10 @@ module.exports = function (config) {
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
+        browserConsoleLogOptions: {
+            path: `${process.cwd()}/test/console.log`,
+            terminal: false
+        },
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
@@ -375,8 +408,8 @@ module.exports = function (config) {
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
-                    '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    'Expected: ',
+                    'Debug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n        Expected: '
                 );
 
                 ret = ret.replace(regex, a => a.cyan);
@@ -452,6 +485,8 @@ module.exports = function (config) {
                             );
                         }
                     }
+                    // Replace external data sources with internal data samples
+                    js = resolveJSON(js);
 
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
@@ -617,9 +652,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, samplePath, js, assertion) {
-    let scriptBody = resolveJSON(js);
-
+function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 

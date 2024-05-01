@@ -2,7 +2,7 @@
  *
  *  Solid angular gauge module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -75,14 +75,14 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
-    public data: Array<SolidGaugePoint> = void 0 as any;
-    public points: Array<SolidGaugePoint> = void 0 as any;
-    public options: SolidGaugeSeriesOptions = void 0 as any;
+    public data!: Array<SolidGaugePoint>;
+    public points!: Array<SolidGaugePoint>;
+    public options!: SolidGaugeSeriesOptions;
 
-    public axis: SolidGaugeAxis = void 0 as any;
-    public yAxis: SolidGaugeAxis = void 0 as any;
-    public startAngleRad: SolidGaugeSeries['thresholdAngleRad'] = void 0 as any;
-    public thresholdAngleRad: number = void 0 as any;
+    public axis!: SolidGaugeAxis;
+    public yAxis!: SolidGaugeAxis;
+    public startAngleRad!: SolidGaugeSeries['thresholdAngleRad'];
+    public thresholdAngleRad!: number;
 
     /* *
      *
@@ -138,7 +138,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
         for (const point of series.points) {
             // #10630 null point should not be draw
-            if (!point.isNull) { // condition like in pie chart
+            if (!point.isNull) { // Condition like in pie chart
                 const radius = ((
                         pInt(
                             pick(
@@ -232,7 +232,7 @@ class SolidGaugeSeries extends GaugeSeries {
                     d = shapeArgs.d;
                     graphic.animate(extend({ fill: toColor }, shapeArgs));
                     if (d) {
-                        shapeArgs.d = d; // animate alters it
+                        shapeArgs.d = d; // Animate alters it
                     }
                 } else {
                     point.graphic = graphic = renderer.arc(shapeArgs)

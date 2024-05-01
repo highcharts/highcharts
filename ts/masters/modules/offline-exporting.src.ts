@@ -6,7 +6,7 @@
  *
  * Client side exporting module
  *
- * (c) 2015-2021 Torstein Honsi / Oystein Moseng
+ * (c) 2015-2024 Torstein Honsi / Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
@@ -16,8 +16,9 @@ import DownloadURL from '../../Extensions/DownloadURL.js';
 import OfflineExporting from '../../Extensions/OfflineExporting/OfflineExporting.js';
 const G: AnyRecord = Highcharts;
 // Compatibility
-G.dataURLtoBlob = DownloadURL.dataURLtoBlob;
+G.dataURLtoBlob = G.dataURLtoBlob || DownloadURL.dataURLtoBlob;
 G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
-G.downloadURL = DownloadURL.downloadURL;
+G.downloadURL = G.downloadURL || DownloadURL.downloadURL;
 // Compose
 OfflineExporting.compose(G.Chart);
+export default Highcharts;

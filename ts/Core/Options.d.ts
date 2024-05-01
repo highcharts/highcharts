@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,7 +36,7 @@ export interface LangOptions {
     loading: string;
     months: Array<string>;
     numericSymbolMagnitude?: number;
-    numericSymbols: Array<string>;
+    numericSymbols: Array<string> | undefined;
     resetZoom: string;
     resetZoomTitle: string;
     shortMonths: Array<string>;

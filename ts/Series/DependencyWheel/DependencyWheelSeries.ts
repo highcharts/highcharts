@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,7 +35,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    merge
+    merge,
+    relativeLength
 } = U;
 
 /* *
@@ -70,15 +71,15 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<DependencyWheelPoint> = void 0 as any;
+    public data!: Array<DependencyWheelPoint>;
 
-    public options: DependencyWheelSeriesOptions = void 0 as any;
+    public options!: DependencyWheelSeriesOptions;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>> = void 0 as any;
+    public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
-    public nodes: Array<DependencyWheelPoint> = void 0 as any;
+    public nodes!: Array<DependencyWheelPoint>;
 
-    public points: Array<DependencyWheelPoint> = void 0 as any;
+    public points!: Array<DependencyWheelPoint>;
 
     /* *
      *
@@ -240,7 +241,9 @@ class DependencyWheelSeries extends SankeySeries {
                     centerX = center[0],
                     centerY = center[1],
                     r = center[2] / 2,
-                    innerR = r - (options.nodeWidth as any),
+                    nodeWidth = options.nodeWidth === 'auto' ?
+                        20 : options.nodeWidth,
+                    innerR = r - relativeLength(nodeWidth || 0, r),
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
                         factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
@@ -313,8 +316,8 @@ class DependencyWheelSeries extends SankeySeries {
                                 'A',
                                 innerR, innerR,
                                 0,
-                                0, // long arc
-                                1, // clockwise
+                                0, // Long arc
+                                1, // Clockwise
                                 corners[1].x, corners[1].y
                             ], [
                                 'C',

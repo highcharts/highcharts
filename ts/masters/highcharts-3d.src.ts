@@ -30,3 +30,4 @@ Pie3DSeries.compose(G.Series);
 Series3D.compose(G.Series);
 SVGRenderer3D.compose(RendererRegistry.getRendererType());
 ZAxis.compose(G.Chart);
+export default G;

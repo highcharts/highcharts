@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,8 +25,21 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface WindbarbPointOptions extends ColumnPointOptions {
+
+    /**
+     * The wind direction in degrees, where 0 is north (pointing towards south).
+     *
+     * @product highcharts highstock
+     */
     direction?: number;
+
+    /**
+     * The wind speed in meters per second.
+     *
+     * @product highcharts highstock
+     */
     value?: number;
+
 }
 
 /* *

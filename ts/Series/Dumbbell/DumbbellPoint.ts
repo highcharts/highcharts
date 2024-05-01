@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -41,10 +41,10 @@ class DumbbellPoint extends AreaRangePoint {
      *
      * */
 
-    public series: DumbbellSeries = void 0 as any;
-    public options: DumbbellPointOptions = void 0 as any;
+    public series!: DumbbellSeries;
+    public options!: DumbbellPointOptions;
     public connector?: SVGElement;
-    public pointWidth: number = void 0 as any;
+    public pointWidth!: number;
 
     /* *
      *
@@ -57,8 +57,6 @@ class DumbbellPoint extends AreaRangePoint {
      * (between low and high value).
      *
      * @private
-     * @param {Highcharts.Point} this The point to inspect.
-     *
      */
     public setState(): void {
         const point = this,

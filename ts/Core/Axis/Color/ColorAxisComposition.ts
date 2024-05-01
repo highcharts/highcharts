@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -93,14 +93,6 @@ namespace ColorAxisComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -113,8 +105,6 @@ namespace ColorAxisComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -125,13 +115,12 @@ namespace ColorAxisComposition {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype,
+            fxProto = FxClass.prototype,
+            seriesProto = SeriesClass.prototype;
 
-        if (!ColorAxisConstructor) {
+        if (!chartProto.collectionsWithUpdate.includes('colorAxis')) {
             ColorAxisConstructor = ColorAxisClass;
-        }
-
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
             chartProto.collectionsWithInit.colorAxis = [
@@ -141,16 +130,10 @@ namespace ColorAxisComposition {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             wrapChartCreateAxis(ChartClass);
-        }
-
-        if (U.pushUnique(composedMembers, FxClass)) {
-            const fxProto = FxClass.prototype;
 
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
-        }
 
-        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
             addEvent(
                 LegendClass,
@@ -158,18 +141,16 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             extend(
-                SeriesClass.prototype,
+                seriesProto,
                 {
                     optionalAxis: 'colorAxis',
                     translateColors: seriesTranslateColors
                 }
             );
             extend(
-                SeriesClass.prototype.pointClass.prototype,
+                seriesProto.pointClass.prototype,
                 {
                     setVisible: pointSetVisible
                 }
@@ -358,7 +339,7 @@ namespace ColorAxisComposition {
                 (point as any)[key][method]();
             }
         });
-        this.series.buildKDTree(); // rebuild kdtree #13195
+        this.series.buildKDTree(); // Rebuild kdtree #13195
     }
 
     /**

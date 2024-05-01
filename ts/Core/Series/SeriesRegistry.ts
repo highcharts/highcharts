@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,7 @@ const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
 const {
+    extend,
     extendClass,
     merge
 } = U;
@@ -66,7 +67,7 @@ namespace SeriesRegistry {
     export function registerSeriesType(
         seriesType: string,
         SeriesClass: typeof Series
-    ): void {
+    ): boolean {
         const defaultPlotOptions = defaultOptions.plotOptions || {},
             seriesOptions = SeriesClass.defaultOptions,
             seriesProto = SeriesClass.prototype;
@@ -77,11 +78,17 @@ namespace SeriesRegistry {
             seriesProto.pointClass = Point;
         }
 
+        if (seriesTypes[seriesType]) {
+            return false;
+        }
+
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
         }
 
         seriesTypes[seriesType] = SeriesClass;
+
+        return true;
     }
 
     /**
@@ -129,6 +136,7 @@ namespace SeriesRegistry {
         );
 
         // Create the class
+        delete seriesTypes[type];
         registerSeriesType(type, extendClass(
             seriesTypes[parent] as any || function (): void {},
             seriesProto
@@ -137,10 +145,9 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass = extendClass(
-                Point,
-                pointProto
-            ) as any;
+            class PointClass extends Point {}
+            extend(PointClass.prototype, pointProto as any);
+            seriesTypes[type].prototype.pointClass = PointClass;
         }
 
         return seriesTypes[type] as unknown as T;

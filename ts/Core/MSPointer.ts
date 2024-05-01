@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
     charts,
+    composed,
     doc,
     noop,
     win
@@ -34,6 +35,7 @@ const {
     css,
     objectEach,
     pick,
+    pushUnique,
     removeEvent
 } = U;
 
@@ -102,18 +104,17 @@ function translateMSPointer(
     wktype: string,
     func: Function
 ): void {
-    const chart = charts[Pointer.hoverChartIndex || NaN];
+    const pointer = charts[Pointer.hoverChartIndex ?? -1]?.pointer;
 
     if (
+        pointer &&
         (
             e.pointerType === 'touch' ||
             e.pointerType === e.MSPOINTER_TYPE_TOUCH
-        ) && chart
+        )
     ) {
-        const p: AnyRecord = chart.pointer;
-
         func(e);
-        p[method]({
+        (pointer as any)[method]({
             type: wktype,
             target: e.currentTarget,
             preventDefault: noop,
@@ -138,7 +139,7 @@ class MSPointer extends Pointer {
      * */
 
     public static isRequired(): boolean {
-        return !!(!H.hasTouch && (win.PointerEvent || win.MSPointerEvent));
+        return !!(!win.TouchEvent && (win.PointerEvent || win.MSPointerEvent));
     }
 
     /* *
@@ -179,9 +180,9 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Chart, options: Options): void {
+    public constructor(chart: Chart, options: Options) {
 
-        super.init(chart, options);
+        super(chart, options);
 
         if (this.hasZoom) { // #4014
             css(chart.container, {
@@ -269,14 +270,6 @@ namespace MSPointer {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -284,9 +277,11 @@ namespace MSPointer {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
+        if (pushUnique(composed, 'Core.MSPointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });

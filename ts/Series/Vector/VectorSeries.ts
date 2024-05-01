@@ -2,7 +2,7 @@
  *
  *  Vector plot series module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -76,15 +76,15 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
-    public data: Array<VectorPoint> = void 0 as any;
+    public data!: Array<VectorPoint>;
 
     public lengthData?: Array<number>;
 
-    public lengthMax: number = void 0 as any;
+    public lengthMax!: number;
 
-    public options: VectorSeriesOptions = void 0 as any;
+    public options!: VectorSeriesOptions;
 
-    public points: Array<VectorPoint> = void 0 as any;
+    public points!: Array<VectorPoint>;
 
     /* *
      *
@@ -126,19 +126,19 @@ class VectorSeries extends ScatterSeries {
             // The stem and the arrow head. Draw the arrow first with rotation
             // 0, which is the arrow pointing down (vector from north to south).
             path: SVGPath = [
-                ['M', 0, 7 * u + o], // base of arrow
+                ['M', 0, 7 * u + o], // Base of arrow
                 ['L', -1.5 * u, 7 * u + o],
                 ['L', 0, 10 * u + o],
                 ['L', 1.5 * u, 7 * u + o],
                 ['L', 0, 7 * u + o],
-                ['L', 0, -10 * u + o] // top
+                ['L', 0, -10 * u + o] // Top
             ];
 
         return path;
     }
 
     /*
-    drawLegendSymbol: function (legend, item) {
+    DrawLegendSymbol: function (legend, item) {
         let options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,

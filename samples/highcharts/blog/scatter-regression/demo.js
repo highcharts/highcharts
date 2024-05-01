@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'GDP per capita vs Self-reported Life Satisfaction, 2015'
@@ -24,7 +26,8 @@ Highcharts.chart('container', {
     tooltip: {
         useHTML: true,
         headerFormat: null,
-        pointFormat: '<b>Country</b>: {point.name}<br><b>GDP per capita</b>: {point.x} $<br/><b>Life satisfaction</b>: {point.y}'
+        pointFormat: '<b>Country</b>: {point.name}<br><b>GDP per capita</b>: ' +
+            '{point.x} $<br/><b>Life satisfaction</b>: {point.y}'
 
     },
     legend: {

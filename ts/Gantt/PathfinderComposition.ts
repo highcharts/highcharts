@@ -34,8 +34,7 @@ import U from '../Core/Utilities.js';
 const {
     defined,
     error,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -140,8 +139,10 @@ function warnLegacy(chart: Chart): void {
             (chart.options.connectors = chart.options.connectors || {}),
             (chart.options as any).pathfinder
         );
-        error('WARNING: Pathfinder options have been renamed. ' +
-            'Use "chart.connectors" or "series.connectors" instead.');
+        error(
+            'WARNING: Pathfinder options have been renamed. ' +
+            'Use "chart.connectors" or "series.connectors" instead.'
+        );
     }
 }
 
@@ -155,14 +156,6 @@ namespace ConnectionComposition {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -173,8 +166,9 @@ namespace ConnectionComposition {
         PathfinderClass: typeof Pathfinder,
         PointClass: typeof Point
     ): void {
+        const pointProto = PointClass.prototype;
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (!pointProto.getPathfinderAnchorPoint) {
             // Initialize Pathfinder for charts
             ChartClass.prototype.callbacks.push(function (
                 chart: Chart
@@ -187,17 +181,11 @@ namespace ConnectionComposition {
                     this.pathfinder.update(true); // First draw, defer render
                 }
             });
-        }
-
-        if (pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype;
 
             pointProto.getMarkerVector = pointGetMarkerVector;
             pointProto.getPathfinderAnchorPoint = pointGetPathfinderAnchorPoint;
             pointProto.getRadiansToVector = pointGetRadiansToVector;
-        }
 
-        if (pushUnique(composedMembers, setOptions)) {
             // Set default Pathfinder options
             setOptions(ConnectorsDefaults);
         }

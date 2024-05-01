@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highcharts Stock
  *
- *  (c) 2010-2021 Grzegorz Blachliński
+ *  (c) 2010-2024 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -43,10 +43,16 @@ const {
 
 // Utils:
 
+/**
+ *
+ */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ *
+ */
 function calculateDirection(
     previousDirection: number, low: number, high: number, PSAR: number
 ): number {
@@ -68,6 +74,9 @@ function calculateDirection(
  * inc - increment for acceleration factor
  * maxAcc - maximum acceleration factor
  * initAcc - initial acceleration factor
+ */
+/**
+ *
  */
 function getAccelerationFactor(
     dir: number,
@@ -91,6 +100,9 @@ function getAccelerationFactor(
     return initAcc;
 }
 
+/**
+ *
+ */
 function getExtremePoint(
     high: number,
     low: number,
@@ -103,10 +115,16 @@ function getExtremePoint(
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
 
+/**
+ *
+ */
 function getEPMinusPSAR(EP: number, PSAR: number): number {
     return EP - PSAR;
 }
 
+/**
+ *
+ */
 function getAccelerationFactorMultiply(
     accelerationFactor: number,
     EPMinusSAR: number
@@ -125,6 +143,9 @@ function getAccelerationFactorMultiply(
  * sHigh - second previous high
  * pHigh - previous high
  * pEP - previous extreme point
+ */
+/**
+ *
  */
 function getPSAR(
     pdir: number,
@@ -202,7 +223,7 @@ class PSARIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+            period: void 0, // Unchangeable period, do not inherit (#15362)
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value
@@ -246,10 +267,10 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
-    public data: Array<PSARPoint> = void 0 as any;
-    public nameComponents: Array<string> = void 0 as any;
-    public points: Array<PSARPoint> = void 0 as any;
-    public options: PSAROptions = void 0 as any;
+    public data!: Array<PSARPoint>;
+    public nameComponents: Array<string>|undefined = void 0;
+    public points!: Array<PSARPoint>;
+    public options!: PSAROptions;
 
     /* *
      *
@@ -402,7 +423,7 @@ class PSARIndicator extends SMAIndicator {
 
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
-    nameComponents: Array<string>;
+    nameComponents: Array<string>|undefined;
 }
 
 /* *
@@ -446,4 +467,4 @@ export default PSARIndicator;
  * @apioption series.psar
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

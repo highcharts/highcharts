@@ -27,11 +27,14 @@ jobs:
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm i
+
+      - name: Check TypeScript version
+        run: npx tsc -v
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -51,11 +54,14 @@ jobs:
       - name: Use Node.js lts/*
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm i
+
+      - name: Check TypeScript version
+        run: npx tsc -v
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -70,7 +76,7 @@ jobs:
           --master ./tmp/filesizes/master.json \
           --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json \
           --pr ${{github.event.pull_request.number}} \
-          --user circleci-mu
+          --user highsoft-bot
         env:
           GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
 
@@ -136,7 +142,7 @@ jobs:
         run: |
           npx gulp update-pr-testresults \
           --fail-silently \
-          --user circleci-mu \
+          --user highsoft-bot \
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:

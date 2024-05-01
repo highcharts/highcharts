@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -49,13 +49,13 @@ class VariwidePoint extends ColumnPoint {
 
     /* *
      *
-     *  Properites
+     *  Properties
      *
      * */
 
-    public crosshairWidth: number = void 0 as any;
-    public options: VariwidePointOptions = void 0 as any;
-    public series: VariwideSeries = void 0 as any;
+    public crosshairWidth!: number;
+    public options!: VariwidePointOptions;
+    public series!: VariwideSeries;
 
     /* *
      *

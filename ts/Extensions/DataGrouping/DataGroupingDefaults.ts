@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,10 +31,10 @@ import type {
  * @private
  */
 const common = {
-    // enabled: null, // (true for stock charts, false for basic),
+    /// enabled: null, // (true for stock charts, false for basic),
     // forced: undefined,
     groupPixelWidth: 2,
-    // the first one is the point or start value, the second is the start
+    // The first one is the point or start value, the second is the start
     // value if we're dealing with range, the third one is the end value if
     // dealing with a range
     dateTimeLabelFormats: {
@@ -79,7 +79,7 @@ const common = {
             '-%Y'
         ]
     }
-    // smoothed = false, // enable this for navigator series only
+    /// smoothed = false, // enable this for navigator series only
 };
 
 /**
@@ -106,7 +106,7 @@ const seriesSpecific = {
     },
     hlc: {
         groupPixelWidth: 5
-    // Move to HeikinAshiSeries.ts aftre refactoring data grouping.
+    // Move to HeikinAshiSeries.ts after refactoring data grouping.
     },
     heikinashi: {
         groupPixelWidth: 10
@@ -120,8 +120,8 @@ const seriesSpecific = {
  */
 const units = [
     [
-        'millisecond', // unit name
-        [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+        'millisecond', // Unit name
+        [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // Allowed multiples
     ], [
         'second',
         [1, 2, 5, 10, 15, 30]

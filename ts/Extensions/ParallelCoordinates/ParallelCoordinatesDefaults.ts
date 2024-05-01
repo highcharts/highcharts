@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2021 Pawel Fus
+ *  (c) 2010-2024 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -145,7 +145,7 @@ const xAxisDefaults: Partial<AxisOptions> = {
  * @apioption yAxis.tooltipValueFormat
  */
 
-''; // keeps doclets above separate in JS file
+''; // Keeps doclets above separate in JS file
 
 /* *
  *

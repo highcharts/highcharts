@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -43,6 +43,8 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 import MarkerClusterScatter from './MarkerClusterScatter.js';
 import U from '../../Core/Utilities.js';
@@ -235,8 +237,6 @@ export interface MarkerClusterSplitDataObject {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 (defaultOptions.plotOptions || {}).series = merge(
     (defaultOptions.plotOptions || {}).series,
     MarkerClusterDefaults
@@ -255,31 +255,24 @@ function compose(
     highchartsDefaultOptions: Options,
     SeriesClass: typeof Series
 ): void {
-    const PointClass = SeriesClass.prototype.pointClass;
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (pushUnique(composed, 'MarkerClusters')) {
+        const PointClass = SeriesClass.prototype.pointClass,
+            { scatter: ScatterSeries } = SeriesClass.types;
+
         addEvent(AxisClass, 'setExtremes', onAxisSetExtremes);
-    }
 
-    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'render', onChartRender);
-    }
 
-    if (pushUnique(composedMembers, PointClass)) {
         addEvent(PointClass, 'drillToCluster', onPointDrillToCluster);
         addEvent(PointClass, 'update', onPointUpdate);
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
-    }
 
-    const {
-        scatter: ScatterSeries
-    } = SeriesClass.types;
-
-    if (ScatterSeries) {
-        MarkerClusterScatter.compose(highchartsDefaultOptions, ScatterSeries);
+        if (ScatterSeries) {
+            MarkerClusterScatter
+                .compose(highchartsDefaultOptions, ScatterSeries);
+        }
     }
 
 }
@@ -330,7 +323,7 @@ function onChartRender(
             if (
                 (options || {}).animation &&
                 series.markerClusterInfo &&
-                series.chart.pointer.pinchDown.length === 0 &&
+                (series.chart.pointer?.pinchDown || []).length === 0 &&
                 ((series.xAxis || {}).eventArgs || {}).trigger !== 'pan' &&
                 oldState &&
                 Object.keys(oldState).length
@@ -450,10 +443,10 @@ export default MarkerClusters;
  * @callback Highcharts.MarkerClusterDrillCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point where the event occured.
+ *        The point where the event occurred.
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

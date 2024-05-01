@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -41,7 +41,7 @@ const { isNumber } = U;
  */
 const GanttSeriesDefaults: GanttSeriesOptions = {
 
-    // options - default options merged with parent
+    // Options - default options merged with parent
 
     grouping: false,
 
@@ -58,8 +58,8 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
 
         pointFormat: null as any,
 
-        pointFormatter: function (this: GanttPoint): string {
-            const point = this,
+        pointFormatter: function (this): string {
+            const point = this as GanttPoint,
                 series = point.series,
                 xAxis = series.xAxis,
                 formats = series.tooltipOptions.dateTimeLabelFormats,
@@ -289,7 +289,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.events
  */
 
-''; // detachs doclets above
+''; // Detachs doclets above
 
 /* *
  *

@@ -1,12 +1,14 @@
 (async () => {
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json'
+        'https://www.highcharts.com/samples/data/range.json'
     ).then(response => response.json());
 
     Highcharts.chart('container', {
         chart: {
             type: 'arearange',
-            zoomType: 'x',
+            zooming: {
+                type: 'x'
+            },
             scrollablePlotArea: {
                 minWidth: 600,
                 scrollPositionX: 1

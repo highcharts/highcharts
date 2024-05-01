@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -21,7 +21,6 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGAttributes3D from '../../Core/Renderer/SVG/SVGAttributes3D';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -37,8 +36,7 @@ import U from '../../Core/Utilities.js';
 const {
     error,
     extend,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -65,19 +63,6 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-interface Funnel3DMethodsObject {
-    parts: Array<string>;
-    mainParts: Array<string>;
-    sideGroups: Array<string>;
-    sideParts: Record<string, Array<string>>;
-    pathType: string;
-    opacitySetter(opacity: number): SVGElement;
-    fillSetter(this: SVGElement, fill: ColorType): SVGElement;
-    adjustForGradient(this: SVGElement): void;
-    zIndexSetter(this: SVGElement): boolean;
-    onAdd(this: SVGElement): void;
-}
-
 interface Funnel3DPathsObject extends SVGPath3D {
     backLower: SVGPath;
     backUpper: SVGPath;
@@ -89,14 +74,6 @@ interface Funnel3DPathsObject extends SVGPath3D {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
@@ -105,11 +82,10 @@ const composedMembers: Array<unknown> = [];
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const rendererProto =
+        SVGRendererClass.prototype as SVGRenderer3D.Composition;
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
-        const rendererProto =
-            SVGRendererClass.prototype as SVGRenderer3D.Composition;
-
+    if (!rendererProto.funnel3d) {
         rendererProto.Element3D.types.funnel3d = SVGElement3DFunnel;
 
         extend(rendererProto, {
@@ -129,13 +105,13 @@ function rendererFunnel3d(
         funnel3d: SVGElement =
             renderer.element3d('funnel3d', shapeArgs) as any,
         styledMode = renderer.styledMode,
-        // hide stroke for Firefox
+        // Hide stroke for Firefox
         strokeAttrs: SVGAttributes = {
             'stroke-width': 1,
             stroke: 'none'
         };
 
-    // create groups for sides for oppacity setter
+    // Create groups for sides for opacity setter
     funnel3d.upperGroup = renderer.g('funnel3d-upper-group').attr({
         zIndex: funnel3d.frontUpper.zIndex
     }).add(funnel3d);
@@ -189,14 +165,14 @@ function rendererFunnel3dPath(
 
     const renderer = this,
         chart: Chart = charts[renderer.chartIndex] as any,
-        // adjust angles for visible edges
+        // Adjust angles for visible edges
         // based on alpha, selected through visual tests
         alphaCorrection = shapeArgs.alphaCorrection = 90 - Math.abs(
             ((chart.options.chart.options3d as any).alpha % 180) -
             90
         ),
 
-        // set zIndexes of parts based on cubiod logic, for
+        // Set zIndexes of parts based on cuboid logic, for
         // consistency
         cuboidData = this.cuboidPath.call(renderer, merge(
             shapeArgs, {
@@ -231,7 +207,7 @@ function rendererFunnel3dPath(
         middleTopArgs = bottomArgs,
         middleTop = bottom,
         middleBottom = bottom,
-        // masking for cylinders or a missing part of a side shape
+        // Masking for cylinders or a missing part of a side shape
         useAlphaCorrection;
 
     if (hasMiddle) {

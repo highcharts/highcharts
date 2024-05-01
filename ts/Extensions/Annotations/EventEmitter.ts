@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Highsoft, Black Label
+ *  (c) 2009-2024 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,6 @@
 import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
-import type { AnnotationPointType } from './AnnotationSeries';
 import type {
     ControllableLabelType,
     ControllableShapeType
@@ -109,7 +108,7 @@ abstract class EventEmitter {
                 if (type !== 'click' || !emitter.cancelClick) {
                     (event as any).call(
                         emitter,
-                        emitter.chart.pointer.normalize(e),
+                        emitter.chart.pointer?.normalize(e),
                         emitter.target
                     );
                 }
@@ -326,7 +325,7 @@ abstract class EventEmitter {
                 (e as any)?.sourceCapabilities?.firesTouchEvents
             ) || false;
 
-        e = pointer.normalize(e);
+        e = pointer?.normalize(e) || e;
 
         let prevChartX = e.chartX,
             prevChartY = e.chartY;
@@ -339,7 +338,7 @@ abstract class EventEmitter {
             function (e: AnnotationEventObject): void {
                 emitter.hasDragged = true;
 
-                e = pointer.normalize(e);
+                e = pointer?.normalize(e) || e;
                 e.prevChartX = prevChartX;
                 e.prevChartY = prevChartY;
 
@@ -353,7 +352,7 @@ abstract class EventEmitter {
         emitter.removeMouseUp = addEvent(
             doc,
             isTouchDevice || firesTouchEvents ? 'touchend' : 'mouseup',
-            function (e: AnnotationEventObject): void {
+            function (): void {
                 // Sometimes the target is the annotation and sometimes its the
                 // controllable
                 const annotation = pick(
@@ -373,7 +372,7 @@ abstract class EventEmitter {
                     annotation, // #15952
                     emitter
                 ), 'afterUpdate');
-                emitter.onMouseUp(e);
+                emitter.onMouseUp();
             },
             isTouchDevice || firesTouchEvents ? { passive: false } : void 0
         );
@@ -382,17 +381,8 @@ abstract class EventEmitter {
     /**
      * Mouse up handler.
      */
-    public onMouseUp(
-        _e: AnnotationEventObject
-    ): void {
-        const chart = this.chart,
-            annotation = this.target as Annotation || this,
-            annotationsOptions = chart.options.annotations,
-            index = chart.annotations.indexOf(annotation);
-
+    public onMouseUp(): void {
         this.removeDocEvents();
-
-        annotationsOptions[index] = annotation.options;
     }
 
     abstract redraw(animation?: boolean): void;

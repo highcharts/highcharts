@@ -27,21 +27,24 @@
     });
 
     // 2- Create the GenericCandlestickPoint object
-    const GenericCandlestickPoint = extendClass(Point, {
+    class GenericCandlestickPoint extends Point {
         /**
-         * Apply the options containing the x and multiple y-values.
-         * This is called on point init or from point.update. Extends base Point by adding
-         * multiple y-values.
+         * Apply the options containing the x and multiple y-values. This is
+         * called on point init or from point.update. Extends base Point by
+         * adding multiple y-values.
          *
          * @param {Object} options
          */
-        applyOptions: function (options) {
+        applyOptions(options) {
             const point = this,
                 series = point.series;
 
             let i = 0;
 
-            if (typeof options === 'object' && typeof options.length !== 'number') {
+            if (
+                typeof options ===
+                'object' && typeof options.length !== 'number'
+            ) {
                 // TODO implement object input support?
                 throw new Error('Object input not yet supported');
             } else if (options.length) { // array
@@ -60,15 +63,19 @@
                     yValues.push(options[i]);
                     i++;
                 }
-                // It is appropriate to sort the y-values as each value-pair is a subset of a larger value-pair in candlestick charts
+                // It is appropriate to sort the y-values as each value-pair is
+                // a subset of a larger value-pair in candlestick charts
                 yValues.sort(function (a, b) {
                     return a - b;
                 });
                 point.yValues = yValues;
 
-                // Treats high/low as the value-pair with the largest value range, open/close with the second largest value range
-                // TODO open/high/low/close should be removed, but all kinds of functionality depend on these fields
-                // These fields are being used somewhere in Highcharts to achieve data grouping and in calucation of yBottom
+                // Treats high/low as the value-pair with the largest value
+                // range, open/close with the second largest value range TODO
+                // open/high/low/close should be removed, but all kinds of
+                // functionality depend on these fields These fields are being
+                // used somewhere in Highcharts to achieve data grouping and in
+                // calucation of yBottom
                 point.open = yValues[yValues.length - 2];
                 point.high = yValues[yValues.length - 1];
                 point.low = yValues[0];
@@ -76,8 +83,9 @@
             }
 
             /*
-             * If no x is set by now, get auto incremented value. All points must have an
-             * x value, however the y value can be null to create a gap in the series
+             * If no x is set by now, get auto incremented value. All points
+             * must have an x value, however the y value can be null to create a
+             * gap in the series
              */
             point.y = point.yValues[point.yValues.length - 1];
             if (point.x === UNDEFINED && series) {
@@ -85,34 +93,36 @@
             }
             point.options = options;
             return point;
-        },
+        }
 
         /**
          * A generic tooltip formatter for multiple Y-values per point
          */
-        tooltipFormatter: function () {
+        tooltipFormatter() {
             const point = this,
                 series = point.series,
                 yValueLabels = series.options.yValueLabels,
                 yValues = point.yValues;
 
-            let tooltipHtml = '<span style="color:' + series.color + ';font-weight:bold">' + (point.name || series.name) + '</span><br/>';
+            let tooltipHtml = '<span style="color:' + series.color +
+                ';font-weight:bold">' + (point.name || series.name) +
+                '</span><br/>';
 
             for (let i = 0; i < yValueLabels.length; i++) {
                 tooltipHtml += yValueLabels[i] + ': ' + yValues[i] + '<br />';
             }
 
             return tooltipHtml;
-        },
+        }
 
         /**
          * Return a plain array for speedy calculation
          */
-        toYData: function () {
+        toYData() {
             return this.yValues;
         }
 
-    });
+    }
 
     // 3 - Create the GenericCandlestickSeries object
     const GenericCandlestickSeries = extendClass(ColumnSeries, {
@@ -122,13 +132,14 @@
         /**
          * One-to-one mapping from options to SVG attributes
          */
-        pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+        pointAttrToOptions: {
             fill: 'color',
             stroke: 'lineColor',
             'stroke-width': 'lineWidth'
         },
 
-        toYData: function (point) { // return a plain array for speedy calculation
+        // Return a plain array for speedy calculation
+        toYData: function (point) {
             return [point.open, point.high, point.low, point.close];
         },
 

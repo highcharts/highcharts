@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'bar',
-        zoomType: 'y'
+        zooming: {
+            type: 'y'
+        }
     },
     title: {
         text: 'Top 10 EU countries in organic farming area (2018)'

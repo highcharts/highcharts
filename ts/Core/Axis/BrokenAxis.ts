@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -118,19 +118,9 @@ namespace BrokenAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Adds support for broken axes.
@@ -141,7 +131,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
+        if (!AxisClass.keepProps.includes('brokenAxis')) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -152,9 +142,7 @@ namespace BrokenAxis {
                 onAxisAfterSetTickPositions
             );
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
-        }
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;
@@ -460,7 +448,7 @@ namespace BrokenAxis {
                 gapSize = groupingSize;
             }
 
-            // extension for ordinal breaks
+            // Extension for ordinal breaks
             let current, next;
             while (i--) {
                 // Reassign next if it is not visible
@@ -476,7 +464,7 @@ namespace BrokenAxis {
                 if ((next.x as any) - (current.x as any) > gapSize) {
                     const xRange = ((current.x as any) + (next.x as any)) / 2;
 
-                    points.splice( // insert after this one
+                    points.splice( // Insert after this one
                         i + 1,
                         0,
                         {
@@ -711,7 +699,7 @@ namespace BrokenAxis {
 
         /**
          * Dynamically set or unset breaks in an axis. This function in lighter
-         * than usin Axis.update, and it also preserves animation.
+         * than using Axis.update, and it also preserves animation.
          *
          * @private
          * @function Highcharts.Axis#setBreaks
@@ -909,7 +897,7 @@ namespace BrokenAxis {
                         brokenAxis.breakArray = breakArray;
 
                         // Used with staticScale, and below the actual axis
-                        // length, when breaks are substracted.
+                        // length, when breaks are subtracted.
                         if (
                             isNumber(min) &&
                             isNumber(max) &&

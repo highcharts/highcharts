@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,6 +31,7 @@ declare module '../../Core/Options'{
 export interface PaneBackgroundOptions {
     backgroundColor?: ColorType;
     borderColor?: ColorType;
+    borderRadius?: number|string;
     borderWidth?: number;
     className?: string;
     from?: number;

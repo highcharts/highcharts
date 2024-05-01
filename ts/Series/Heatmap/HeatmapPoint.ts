@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -47,17 +47,17 @@ class HeatmapPoint extends ScatterPoint {
      *
      * */
 
-    public options: HeatmapPointOptions = void 0 as any;
+    public options!: HeatmapPointOptions;
 
     public pointPadding?: number;
 
-    public series: HeatmapSeries = void 0 as any;
+    public series!: HeatmapSeries;
 
-    public value: (number|null) = void 0 as any;
+    public value!: (number|null);
 
-    public x: number = void 0 as any;
+    public x!: number;
 
-    public y: number = void 0 as any;
+    public y!: number;
 
     /* *
      *
@@ -98,7 +98,9 @@ class HeatmapPoint extends ScatterPoint {
                 point.pointPadding, seriesOptions.pointPadding, 0
             ),
             cellAttr: HeatmapPoint.CellAttributes = {
-                x1: clamp(Math.round(xAxis.len -
+                x1: clamp(
+                    Math.round(
+                        xAxis.len -
                     xAxis.translate(
                         point.x - xPad,
                         false,
@@ -107,9 +109,11 @@ class HeatmapPoint extends ScatterPoint {
                         true,
                         -pointPlacement
                     )
-                ), -xAxis.len, 2 * xAxis.len),
+                    ), -xAxis.len, 2 * xAxis.len),
 
-                x2: clamp(Math.round(xAxis.len -
+                x2: clamp(
+                    Math.round(
+                        xAxis.len -
                     xAxis.translate(
                         point.x + xPad,
                         false,
@@ -118,7 +122,7 @@ class HeatmapPoint extends ScatterPoint {
                         true,
                         -pointPlacement
                     )
-                ), -xAxis.len, 2 * xAxis.len),
+                    ), -xAxis.len, 2 * xAxis.len),
 
                 y1: clamp(Math.round(
                     yAxis.translate(
@@ -216,7 +220,7 @@ class HeatmapPoint extends ScatterPoint {
      * @private
      */
     public isValid(): boolean {
-        // undefined is allowed
+        // Undefined is allowed
         return (
             this.value !== Infinity &&
             this.value !== -Infinity
@@ -232,7 +236,7 @@ class HeatmapPoint extends ScatterPoint {
  * */
 
 interface HeatmapPoint extends ColorMapComposition.PointComposition {
-    // nothing to add
+    // Nothing to add
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: true,

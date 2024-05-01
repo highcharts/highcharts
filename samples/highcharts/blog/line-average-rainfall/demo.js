@@ -8,7 +8,10 @@ Highcharts.chart('container', {
     },
     xAxis: {
 
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
     },
     yAxis: {
         title: {
@@ -22,7 +25,9 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'London',
-        data: [48.9, 38.8, 39.3, 41.4, 47, 48.3,
-            59, 59.6, 52.4, 65.2, 59.3, 51.2]
+        data: [
+            48.9, 38.8, 39.3, 41.4, 47, 48.3,
+            59, 59.6, 52.4, 65.2, 59.3, 51.2
+        ]
     }]
 });

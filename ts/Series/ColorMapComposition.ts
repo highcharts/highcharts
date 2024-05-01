@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -92,8 +92,6 @@ namespace ColorMapComposition {
      *
      * */
 
-    const composedMembers: Array<unknown> = [];
-
     export const pointMembers = {
         dataLabelOnNull: true,
         moveToTopOnHover: true,
@@ -102,7 +100,8 @@ namespace ColorMapComposition {
 
     export const seriesMembers = {
         colorKey: 'value',
-        axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+        axisTypes: ['xAxis', 'yAxis', 'colorAxis'] as
+            Array<'xAxis'|'yAxis'|'colorAxis'>,
         parallelArrays: ['x', 'y', 'value'],
         pointArrayMap: ['value'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -124,9 +123,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (U.pushUnique(composedMembers, PointClass)) {
-            addEvent(PointClass, 'afterSetState', onPointAfterSetState);
-        }
+        addEvent(PointClass, 'afterSetState', onPointAfterSetState);
 
         return SeriesClass as (T&typeof SeriesComposition);
     }
@@ -160,13 +157,13 @@ namespace ColorMapComposition {
             this.value !== null &&
             this.value !== Infinity &&
             this.value !== -Infinity &&
-            // undefined is allowed, but NaN is not (#17279)
+            // Undefined is allowed, but NaN is not (#17279)
             (this.value === void 0 || !isNaN(this.value))
         );
     }
 
     /**
-     * Get the color attibutes to apply on the graphic
+     * Get the color attributes to apply on the graphic
      * @private
      * @function Highcharts.colorMapSeriesMixin.colorAttribs
      * @param {Highcharts.Point} point

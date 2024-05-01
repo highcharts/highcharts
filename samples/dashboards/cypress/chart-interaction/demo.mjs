@@ -1,4 +1,5 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import PluginHandler from '../../../../code/dashboards/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
@@ -40,13 +41,9 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
         chartOptions: {
-            series: [{
-                name: 'Series from options',
-                data: [1, 2, 3, 4]
-            }],
             chart: {
                 animation: false,
                 type: 'column'
@@ -72,21 +69,21 @@ Dashboards.board('container', {
             }
         },
         connector: {
-            id: 'connector-1'
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: '$NOK',
+                data: '$NOK'
+            }]
         },
         sync: {
             visibility: true,
             highlight: true
         }
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             type: 'column',
-            series: [{
-                name: 'Series from options',
-                data: [1, 2, 3, 4]
-            }],
             chart: {
                 animation: false
             },
@@ -97,7 +94,14 @@ Dashboards.board('container', {
             }
         },
         connector: {
-            id: 'connector-1'
+            id: 'connector-1',
+            columnAssignment: [{
+                seriesId: '$GME',
+                data: '$GME'
+            }, {
+                seriesId: '$AMC',
+                data: '$AMC'
+            }]
         },
         sync: {
             visibility: true,

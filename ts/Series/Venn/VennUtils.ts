@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -183,14 +183,15 @@ function bisect(
     tolerance?: number,
     maxIterations?: number
 ): number {
-    let fA = f(a),
+    const fA = f(a),
         fB = f(b),
         nMax = maxIterations || 100,
-        tol = tolerance || 1e-10,
-        delta = b - a,
-        n = 1,
+        tol = tolerance || 1e-10;
+
+    let delta = b - a,
         x: (number|undefined),
-        fX: (number|undefined);
+        fX: (number|undefined),
+        n = 1;
 
     if (a >= b) {
         throw new Error('a must be smaller than b.');
@@ -252,7 +253,7 @@ function getCentroid(
  * @param {number} r1
  * Radius of the first circle.
  * @param {number} r2
- * Radiues of the second circle.
+ * Radius of the second circle.
  * @param {number} overlap
  * The wanted overlap between the two circles.
  * @return {number}
@@ -264,8 +265,9 @@ function getDistanceBetweenCirclesByOverlap(
     r2: number,
     overlap: number
 ): number {
-    let maxDistance = r1 + r2,
-        distance;
+    const maxDistance = r1 + r2;
+
+    let distance: number;
 
     if (overlap <= 0) {
         // If overlap is below or equal to zero, then there is no overlap.
@@ -278,7 +280,7 @@ function getDistanceBetweenCirclesByOverlap(
         distance = bisect((x: number): number => {
             const actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
 
-            // Return the differance between wanted and actual overlap.
+            // Return the difference between wanted and actual overlap.
             return overlap - actualOverlap;
         }, 0, maxDistance);
     }
@@ -329,8 +331,7 @@ function getLabelWidth(
                 );
 
             // If the position is valid, then we want to move towards the
-            // max distance. If not, then we want to  away from the max
-            // distance.
+            // max distance. If not, then we want to away from the max distance.
             return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
         }, 0, maxDistance);
     };
@@ -340,7 +341,7 @@ function getLabelWidth(
 }
 
 /**
- * Calculates a margin for a point based on the iternal and external
+ * Calculates a margin for a point based on the internal and external
  * circles. The margin describes if the point is well placed within the
  * internal circles, and away from the external.
  * @private
@@ -405,6 +406,9 @@ function getOverlapBetweenCircles(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isSet(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -412,6 +416,9 @@ function isSet(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isValidRelation(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -435,6 +442,9 @@ function isValidRelation(
 }
 
 // eslint-disable-next-line require-jsdoc
+/**
+ *
+ */
 function isValidSet(
     x: (VennPointOptions|VennRelationObject)
 ): boolean {
@@ -659,7 +669,7 @@ function loss(
  * @param {Highcharts.NelderMeadPointArray} initial
  *        The initial point to optimize.
  * @return {Highcharts.NelderMeadPointArray}
- *         Returns the opimized position of a point.
+ *         Returns the optimized position of a point.
  */
 function nelderMead(
     fn: NelderMeadTestFunction,
@@ -908,8 +918,10 @@ function sortByTotalOverlap(
     a: VennRelationObject,
     b: VennRelationObject
 ): number {
-    if (typeof b.totalOverlap !== 'undefined' &&
-        typeof a.totalOverlap !== 'undefined') {
+    if (
+        typeof b.totalOverlap !== 'undefined' &&
+        typeof a.totalOverlap !== 'undefined'
+    ) {
         return b.totalOverlap - a.totalOverlap;
     }
     return NaN;

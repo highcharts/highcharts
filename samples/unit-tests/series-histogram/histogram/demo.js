@@ -473,6 +473,12 @@ QUnit.test('Histogram', function (assert) {
         'Bins frequencies are calculated correctly'
     );
 
+    assert.deepEqual(
+        histogram.data.map(point => point.x2),
+        [32, 42, 52, 62, 72, 82, 91],
+        'Bins x2 value is calculated properly (#20340)'
+    );
+
     histogram.update({
         binWidth: 5
     });
@@ -480,34 +486,39 @@ QUnit.test('Histogram', function (assert) {
     assert.deepEqual(
         histogram.xData,
         [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87],
-        'After updating histogram\'s bin width bin ranges are calculated correctly'
+        'After updating histogram\'s bin width bin ranges are calculated ' +
+        'correctly'
     );
 
     assert.deepEqual(
         histogram.yData,
         [2, 0, 2, 2, 3, 1, 4, 2, 0, 2, 1, 0, 0, 1],
-        'After updating histogram\'s bin width bin frequencies are calculated correctly'
+        'After updating histogram\'s bin width bin frequencies are ' +
+        'calculated correctly'
     );
 
     baseSeries.addPoint(20);
     assert.deepEqual(
         histogram.yData,
         [2, 1, 0, 4, 0, 4, 1, 4, 1, 2, 1, 0, 0, 0, 1],
-        'After adding a new point to the base series bin frequencies are calculated correctly'
+        'After adding a new point to the base series bin frequencies are ' +
+        'calculated correctly'
     );
 
     chart.get('p1').update({ y: 20 });
     assert.deepEqual(
         histogram.yData,
         [3, 0, 0, 4, 0, 4, 1, 4, 1, 2, 1, 0, 0, 0, 1],
-        'After updating a point in the base series bin frequencies are calculated correctly'
+        'After updating a point in the base series bin frequencies are ' +
+        'calculated correctly'
     );
 
     chart.get('p1').remove();
     assert.deepEqual(
         histogram.yData,
         [2, 0, 0, 4, 0, 4, 1, 4, 1, 2, 1, 0, 0, 0, 1],
-        'After removing a point in the base series bin frequencies are calculated correctly'
+        'After removing a point in the base series bin frequencies are ' +
+        'calculated correctly'
     );
 
     chart.addSeries({
@@ -657,7 +668,8 @@ QUnit.test('Histogram', function (assert) {
                 return point.y;
             }),
         [6, 2, 7, 4, 11, 7, 7],
-        'Histogram does not produce points with NaN y values, when baseSeries data has float values'
+        'Histogram does not produce points with NaN y values, when ' +
+        'baseSeries data has float values'
     );
 
     baseSeries.remove();
@@ -703,7 +715,8 @@ QUnit.test('Histogram', function (assert) {
         // Rounding is applied in order to crisp column edges
         Math.round(chart.get('histo-s2').barW),
         Math.round(chart.get('histo-s2').closestPointRangePx),
-        'Histogram has appropriate pointRange value, when multiple series on the same axis, #9128, #10025'
+        'Histogram has appropriate pointRange value, when multiple series on ' +
+        'the same axis, #9128, #10025'
     );
 
     chart.update(
@@ -816,6 +829,7 @@ QUnit.test('#12077 - Histogram long digits.', function (assert) {
                     {
                         length: 10000
                     },
+                    // eslint-disable-next-line no-loss-of-precision
                     () => 6.6429209090989899214
                 ),
                 id: 's1'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -106,17 +106,17 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
-    public canvas?: HTMLCanvasElement = void 0 as any;
+    public canvas?: HTMLCanvasElement;
 
-    public colorAxis: ColorAxis = void 0 as any;
+    public colorAxis!: ColorAxis;
 
-    public context?: CanvasRenderingContext2D = void 0 as any;
+    public context?: CanvasRenderingContext2D;
 
-    public data: Array<HeatmapPoint> = void 0 as any;
+    public data!: Array<HeatmapPoint>;
 
-    public options: HeatmapSeriesOptions = void 0 as any;
+    public options!: HeatmapSeriesOptions;
 
-    public points: Array<HeatmapPoint> = void 0 as any;
+    public points!: Array<HeatmapPoint>;
 
     public valueData?: Array<number>;
 
@@ -323,7 +323,7 @@ class HeatmapSeries extends ScatterSeries {
 
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
-        // general point range
+        // General point range
         this.yAxis.axisPointRange = options.rowsize || 1;
 
         // Bind new symbol names
@@ -627,7 +627,7 @@ export default HeatmapSeries;
 
 /**
  * Heatmap series only. The value of the point, resulting in a color
- * controled by options as set in the colorAxis configuration.
+ * controlled by options as set in the colorAxis configuration.
  * @name Highcharts.Point#value
  * @type {number|null|undefined}
  */
@@ -639,10 +639,10 @@ export default HeatmapSeries;
  * @name Highcharts.PointOptionsObject#pointPadding
  * @type {number|undefined}
  *//**
- * Heatmap series only. The value of the point, resulting in a color controled
+ * Heatmap series only. The value of the point, resulting in a color controlled
  * by options as set in the colorAxis configuration.
  * @name Highcharts.PointOptionsObject#value
  * @type {number|null|undefined}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

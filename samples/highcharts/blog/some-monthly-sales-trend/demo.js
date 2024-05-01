@@ -6,7 +6,8 @@ Highcharts.chart('container', {
         text: 'Social Media Marketing has grown revenue by 27% in past 3 months'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
             'Jul', 'Aug', 'Sep', 'Oct'
         ]
     },

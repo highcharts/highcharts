@@ -23,7 +23,7 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mapLoaded = false;
 
 
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath = 'https://www.highcharts.com/samples/graphics/homepage/';
 const maps = {
     chart: {
         animation: {
@@ -43,14 +43,22 @@ const maps = {
             load: function () {
                 const chart = this;
 
-                const mapPointPoint = document.querySelector('.map-point-point');
-                const mapPointTop = document.getElementsByClassName('map-point-top')[1];
-                const mapPointCenter = document.getElementsByClassName('map-point-center')[1];
+                const mapPointPoint = document.querySelector(
+                    '.map-point-point'
+                );
+                const mapPointTop = document.getElementsByClassName(
+                    'map-point-top'
+                )[1];
+                const mapPointCenter = document.getElementsByClassName(
+                    'map-point-center'
+                )[1];
                 const leftSide =  document.querySelector('.left');
                 const rightSide =  document.querySelector('.right');
                 const top =  document.querySelector('.top');
                 const bottom =  document.querySelector('.bottom');
-                const background = document.getElementsByClassName('highcharts-plot-background')[0];
+                const background = document.getElementsByClassName(
+                    'highcharts-plot-background'
+                )[0];
 
                 const finalHide = function () {
                     [].forEach.call(
@@ -584,7 +592,7 @@ const finalMap = function () {
 
         // Load the dataset
         const data = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+            'https://www.highcharts.com/samples/data/world-population-density.json'
         ).then(response => response.json());
 
         // Assign id's
@@ -603,9 +611,15 @@ const finalMap = function () {
                 },
                 events: {
                     load: function () {
-                        const mapSeries = document.querySelector('.highcharts-map-series');
-                        const title = document.querySelector('.highcharts-title');
-                        const subtitle = document.querySelector('.highcharts-subtitle');
+                        const mapSeries = document.querySelector(
+                            '.highcharts-map-series'
+                        );
+                        const title = document.querySelector(
+                            '.highcharts-title'
+                        );
+                        const subtitle = document.querySelector(
+                            '.highcharts-subtitle'
+                        );
                         mapSeries.style.opacity = 0;
                         setTimeout(function () {
                             mapSeries.style.opacity = 0;
@@ -623,7 +637,9 @@ const finalMap = function () {
                         }, 2000);
                     },
                     redraw: function () {
-                        const mapSeries = document.querySelector('.highcharts-map-series');
+                        const mapSeries = document.querySelector(
+                            '.highcharts-map-series'
+                        );
                         if (mapLoaded) {
                             mapSeries.classList.add('show');
                         }

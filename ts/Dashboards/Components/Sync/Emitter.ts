@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -14,9 +14,9 @@
  *
  * */
 
-import type ComponentType from '../ComponentType';
+import type Component from '../Component';
 
-export type EmitterFunction = (this: ComponentType) => Function | void;
+export type EmitterFunction = (this: Component) => Function | void;
 
 /**
  *  Class responsible for adding event listeners on a component
@@ -53,10 +53,12 @@ class SyncEmitter {
      * @remark Can be any string, but should be unique.
      */
     public id: string;
+
     /**
      * The function to be called when the emitter is activated.
      */
     public func: EmitterFunction;
+
     /**
      * Callback function that is called when the emitter is removed.
      * Normally provided as the return value of {@link func}.
@@ -83,7 +85,7 @@ class SyncEmitter {
      *
      * @param component The component to attach to.
      */
-    public create(component: ComponentType): void {
+    public create(component: Component): void {
         this.callback = this.func.call(component);
     }
 

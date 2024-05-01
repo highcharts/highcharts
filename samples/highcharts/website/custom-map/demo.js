@@ -19,7 +19,8 @@ Highcharts.mapChart('container', {
         useHTML: false,
         headerFormat: '',
         pointFormat:
-        '<b>{point.n1}</b><br>Locality: <b>{point.lo}</b><br>Commune: <b>{point.n2}</b>'
+        '<b>{point.n1}</b><br>Locality: <b>{point.lo}</b><br>Commune: <b>' +
+        '{point.n2}</b>'
     },
     series: [
         {

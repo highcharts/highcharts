@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -227,9 +227,11 @@ class HTMLTableConverter extends DataConverter {
 
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>' +
+                    htmlRows.push(
+                        '<tr>' +
                         rowArray[rowIndex].join('') +
-                        '</tr>');
+                        '</tr>'
+                    );
                 }
             }
         }
@@ -294,14 +296,9 @@ class HTMLTableConverter extends DataConverter {
         options: HTMLTableConverter.Options = this.options
     ): string {
         const {
-                useMultiLevelHeaders,
-                useRowspanHeaders
-            } = options,
-            decimalPoint = (
-                options.useLocalDecimalPoint ?
-                    (1.1).toLocaleString()[1] :
-                    '.'
-            );
+            useMultiLevelHeaders,
+            useRowspanHeaders
+        } = options;
 
         let html = '<thead>',
             i = 0,

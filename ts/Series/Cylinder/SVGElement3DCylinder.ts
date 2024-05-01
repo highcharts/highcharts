@@ -2,7 +2,7 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -63,7 +63,7 @@ class SVGElement3DCylinder extends SVGElement3D {
             bottom: color(fill).brighten(-0.1).get()
         });
 
-        // fill for animation getter (#6776)
+        // Fill for animation getter (#6776)
         this.color = this.fill = fill;
 
         return this;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -83,14 +83,6 @@ namespace PlotLineOrBandAxis {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Variables
      *
      * */
@@ -116,7 +108,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot band.
+     * The added plot band, or `undefined` if the options are not valid.
      */
     function addPlotBand(
         this: Composition,
@@ -192,7 +184,7 @@ namespace PlotLineOrBandAxis {
      * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot line.
+     * The added plot line, or `undefined` if the options are not valid.
      */
     function addPlotLine(
         this: Composition,
@@ -208,24 +200,20 @@ namespace PlotLineOrBandAxis {
         PlotLineOrBandType: typeof PlotLineOrBand,
         AxisClass: T
     ): (T&typeof Composition) {
+        const axisProto = AxisClass.prototype as Composition;
 
-        if (!PlotLineOrBandClass) {
+        if (!axisProto.addPlotBand) {
             PlotLineOrBandClass = PlotLineOrBandType;
-        }
 
-        if (U.pushUnique(composedMembers, AxisClass)) {
-            extend(
-                AxisClass.prototype as Composition,
-                {
-                    addPlotBand,
-                    addPlotLine,
-                    addPlotBandOrLine,
-                    getPlotBandPath,
-                    removePlotBand,
-                    removePlotLine,
-                    removePlotBandOrLine
-                }
-            );
+            extend(axisProto, {
+                addPlotBand,
+                addPlotLine,
+                addPlotBandOrLine,
+                getPlotBandPath,
+                removePlotBand,
+                removePlotLine,
+                removePlotBandOrLine
+            });
         }
 
         return AxisClass as (T&typeof Composition);
@@ -318,7 +306,7 @@ namespace PlotLineOrBandAxis {
                         ['Z']
                     );
                 }
-                (result as any).isFlat = isFlat;
+                result.isFlat = isFlat;
             }
 
         }

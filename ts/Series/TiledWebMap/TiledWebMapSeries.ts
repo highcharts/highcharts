@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Hubert Kozik, Kamil Musiałowski
+ *  (c) 2010-2024 Hubert Kozik, Kamil Musiałowski
  *
  *  License: www.highcharts.com/license
  *
@@ -16,16 +16,19 @@
  * */
 
 import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions';
-import type Chart from '../../Core/Chart/Chart';
 import type { MapLonLatObject } from '../../Maps/GeoJSON';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
+import type MapChart from '../../Core/Chart/MapChart';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
+import MapView from '../../Maps/MapView.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -60,27 +63,23 @@ interface TilesItem {
 
 /* *
  *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
-
-/* *
- *
  *  Functions
  *
  * */
 
 /** @private */
-function onChartBeforeMapViewInit(
-    this: Chart,
-    e: { geoBounds: Record<string, number> }
+function onRecommendMapView(
+    this: MapView,
+    e: {
+        geoBounds: Record<string, number>,
+        chart: MapChart
+    }
 ): boolean {
-    const twm: TiledWebMapSeriesOptions =
-        (this.options.series || []).filter(
-            (s: any): boolean => s.type === 'tiledwebmap')[0],
-        { geoBounds } = e;
+    const { geoBounds, chart } = e,
+        twm: TiledWebMapSeriesOptions =
+        (chart.options.series || []).filter(
+            (s: any): boolean => s.type === 'tiledwebmap'
+        )[0];
 
     if (twm && twm.provider && twm.provider.type && !twm.provider.url) {
         const ProviderDefinition =
@@ -96,30 +95,26 @@ function onChartBeforeMapViewInit(
             const def = new ProviderDefinition(),
                 { initialProjectionName: providerProjectionName } = def;
 
-            if (this.options.mapView) {
-                if (geoBounds) {
-                    const { x1, y1, x2, y2 } = geoBounds;
-                    this.options.mapView.recommendedMapView = {
-                        projection: {
-                            name: providerProjectionName,
-                            parallels: [y1, y2],
-                            rotation: [-(x1 + x2) / 2]
-                        }
-                    };
-                } else {
-                    this.options.mapView.recommendedMapView = {
-                        projection: {
-                            name: providerProjectionName
-                        },
-                        minZoom: 0
-                    };
-                }
+            if (geoBounds) {
+                const { x1, y1, x2, y2 } = geoBounds;
+                this.recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName,
+                        parallels: [y1, y2],
+                        rotation: [-(x1 + x2) / 2]
+                    }
+                };
+            } else {
+                this.recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName
+                    },
+                    minZoom: 0
+                };
             }
-
             return false;
         }
     }
-
     return true;
 }
 
@@ -158,11 +153,10 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public static compose(
-        ChartClass: typeof Chart
+        MapViewClass: typeof MapView
     ): void {
-
-        if (pushUnique(composedMembers, ChartClass)) {
-            addEvent(ChartClass, 'beforeMapViewInit', onChartBeforeMapViewInit);
+        if (pushUnique(composed, 'TiledWebMapSeries')) {
+            addEvent(MapViewClass, 'onRecommendMapView', onRecommendMapView);
         }
     }
 
@@ -172,7 +166,7 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
-    public options: TiledWebMapSeriesOptions = void 0 as any;
+    public options!: TiledWebMapSeriesOptions;
 
     public tiles: Record<string, TilesItem> | undefined;
 
@@ -192,9 +186,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert map coordinates in longitude/latitude to tile
-     *
-     * @function Highcharts.MapView#lonLatToTile
-     * @since 11.1.0
+     * @private
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject}
@@ -222,9 +214,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert tile to map coordinates in longitude/latitude
-     *
-     * @function Highcharts.MapView#tileToLonLat
-     * @since 11.1.0
+     * @private
      * @param  xTile
      *         Position x of the tile
      * @param  yTile
@@ -300,8 +290,10 @@ class TiledWebMapSeries extends MapSeries {
                                 }, {
                                     duration: duration
                                 }, (): void => {
-                                    if (i === Object.keys(tiles[zoomKey].tiles)
-                                        .length - 1) {
+                                    if (
+                                        i === Object.keys(tiles[zoomKey].tiles)
+                                            .length - 1
+                                    ) {
                                         tiles[zoomKey].isActive = true;
                                     }
                                 });
@@ -318,8 +310,10 @@ class TiledWebMapSeries extends MapSeries {
                                 }, (): void => {
                                     tiles[zoomKey].tiles[key].destroy();
                                     delete tiles[zoomKey].tiles[key];
-                                    if (i === Object.keys(tiles[zoomKey].tiles)
-                                        .length - 1) {
+                                    if (
+                                        i === Object.keys(tiles[zoomKey].tiles)
+                                            .length - 1
+                                    ) {
                                         tiles[zoomKey].isActive = false;
                                         tiles[zoomKey].loaded = false;
                                     }
@@ -358,7 +352,7 @@ class TiledWebMapSeries extends MapSeries {
                 if (provider.theme && defined(def.themes[provider.theme])) {
                     theme = def.themes[provider.theme];
                 } else {
-                    // if nothing set take first theme
+                    // If nothing set take first theme
                     const firstTheme = Object.keys(def.themes)[0];
                     theme = def.themes[firstTheme];
                     error(
@@ -447,7 +441,7 @@ class TiledWebMapSeries extends MapSeries {
                 }
             }
 
-            // if zoom is smaller/higher than supported by provider
+            // If zoom is smaller/higher than supported by provider
             if (defined(this.minZoom) && zoomFloor < this.minZoom) {
                 zoomFloor = this.minZoom;
                 maxTile = Math.pow(2, zoomFloor);
@@ -528,7 +522,8 @@ class TiledWebMapSeries extends MapSeries {
                                                     (
                                                         mapView.zoom < 0 ? 0 :
                                                             Math.floor(
-                                                                mapView.zoom)
+                                                                mapView.zoom
+                                                            )
                                                     )
                                             ) ||
                                             givenZoom === series.minZoom
@@ -536,7 +531,7 @@ class TiledWebMapSeries extends MapSeries {
                                             tiles[`${givenZoom}`]
                                                 .actualTilesCount++;
 
-                                            // if last tile
+                                            // If last tile
                                             if (
                                                 tiles[`${givenZoom}`]
                                                     .howManyTiles ===
@@ -545,7 +540,7 @@ class TiledWebMapSeries extends MapSeries {
                                             ) {
                                                 tiles[givenZoom].loaded = true;
 
-                                                // fade-in new tiles if there is
+                                                // Fade-in new tiles if there is
                                                 // no other animation
                                                 if (!series.isAnimating) {
                                                     series.redrawTiles = false;
@@ -568,13 +563,14 @@ class TiledWebMapSeries extends MapSeries {
                     }
                 };
 
-                // calculate topLeft and bottomRight corners without normalize
+                // Calculate topLeft and bottomRight corners without normalize
                 const topLeftUnits = mapView.pixelsToProjectedUnits({
                         x: 0,
                         y: 0
                     }),
                     topLeftArr = mapView.projection.def.inverse(
-                        [topLeftUnits.x, topLeftUnits.y]),
+                        [topLeftUnits.x, topLeftUnits.y]
+                    ),
                     topLeft = {
                         lon: topLeftArr[0] - lambda,
                         lat: topLeftArr[1]
@@ -584,13 +580,14 @@ class TiledWebMapSeries extends MapSeries {
                         y: chart.plotHeight
                     }),
                     bottomRightArr = mapView.projection.def.inverse(
-                        [bottomRightUnits.x, bottomRightUnits.y]),
+                        [bottomRightUnits.x, bottomRightUnits.y]
+                    ),
                     bottomRight = {
                         lon: bottomRightArr[0] - lambda,
                         lat: bottomRightArr[1]
                     };
 
-                // do not support vertical looping
+                // Do not support vertical looping
                 if (
                     topLeft.lat > mapView.projection.maxLatitude ||
                     bottomRight.lat < -1 * mapView.projection.maxLatitude
@@ -602,7 +599,7 @@ class TiledWebMapSeries extends MapSeries {
                 const startPos = this.lonLatToTile(topLeft, zoomFloor),
                     endPos = this.lonLatToTile(bottomRight, zoomFloor);
 
-                // calculate group translations based on first loaded tile
+                // Calculate group translations based on first loaded tile
                 const firstTileLonLat = this.tileToLonLat(
                         startPos.x,
                         startPos.y,
@@ -642,14 +639,15 @@ class TiledWebMapSeries extends MapSeries {
             for (const zoomKey of Object.keys(tiles)) {
                 for (const key of Object.keys(tiles[zoomKey].tiles)) {
                     if (mapView.projection && mapView.projection.def) {
-                        // calculate group translations based on first loaded
+                        // Calculate group translations based on first loaded
                         // tile
                         const scale = ((tileSize / worldSize) *
                                 Math.pow(2, zoom)) / ((tileSize / worldSize) *
                                 Math.pow(2, parseFloat(zoomKey))),
                             scaledTileSize = scale * 256,
                             firstTile = tiles[zoomKey].tiles[Object.keys(
-                                tiles[zoomKey].tiles)[0]],
+                                tiles[zoomKey].tiles
+                            )[0]],
                             { posX, posY } = tiles[zoomKey].tiles[key];
 
                         if (
@@ -724,10 +722,11 @@ class TiledWebMapSeries extends MapSeries {
                                 series.isAnimating = true;
                                 tiles[zoomKey].tiles[key]
                                     .attr({ animator: 0 })
-                                    .animate({ animator: 1 }, { step },
+                                    .animate(
+                                        { animator: 1 }, { step },
                                         function (): void {
                                             series.isAnimating = false;
-                                            // if animate ended after loading
+                                            // If animate ended after loading
                                             // the tiles
                                             if (series.redrawTiles) {
                                                 series.redrawTiles = false;
@@ -739,7 +738,7 @@ class TiledWebMapSeries extends MapSeries {
                             // When dragging or first rendering,
                             // animation is off
                             } else {
-                                // animate tiles if something broke
+                                // Animate tiles if something broke
                                 if (
                                     series.redrawTiles ||
                                     parseFloat(zoomKey) !== zoomFloor ||
@@ -750,9 +749,11 @@ class TiledWebMapSeries extends MapSeries {
                                         ) &&
                                         Object.keys(tiles[zoomKey].tiles)
                                             .map((key): TileItem =>
-                                                tiles[zoomKey].tiles[key])
+                                                tiles[zoomKey].tiles[key]
+                                            )
                                             .some((tile): boolean =>
-                                                tile.opacity === 0)
+                                                tile.opacity === 0
+                                            )
                                     )
                                 ) {
                                     series.redrawTiles = false;
@@ -798,7 +799,7 @@ class TiledWebMapSeries extends MapSeries {
 
         if (
             mapView &&
-            !defined(mapView.options.projection) &&
+            !defined(chart.userOptions.mapView?.projection) &&
             provider &&
             provider.type
         ) {

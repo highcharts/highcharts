@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -34,7 +34,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  *         Dependency wheel
  *
  * @extends      plotOptions.sankey
- * @exclude      dataSorting, nodeAlignment
+ * @exclude      dataSorting, nodeAlignment, nodeDistance
  * @since        7.1.0
  * @product      highcharts
  * @requires     modules/dependency-wheel
@@ -197,7 +197,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  * @apioption series.dependencywheel.nodes.dataLabels
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

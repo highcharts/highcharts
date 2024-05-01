@@ -122,7 +122,7 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
          */
         allowPointSelect: false
     },
-    /**
+
     /**
      *
      * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
@@ -434,4 +434,4 @@ export default PackedBubbleSeriesDefaults;
  * @apioption series.packedbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

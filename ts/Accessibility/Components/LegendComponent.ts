@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
@@ -108,7 +108,8 @@ function shouldDoLegendA11y(chart: Chart): boolean {
             (chart.options.legend as any).accessibility || {}
         ),
         unsupportedColorAxis = chart.colorAxis && chart.colorAxis.some(
-            (c): boolean => !c.dataClasses || !c.dataClasses.length);
+            (c): boolean => !c.dataClasses || !c.dataClasses.length
+        );
 
     return !!(
         items && items.length &&
@@ -648,21 +649,9 @@ namespace LegendComponent {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -709,14 +698,11 @@ namespace LegendComponent {
         ChartClass: typeof Chart,
         LegendClass: typeof Legend
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.highlightLegendItem) {
             chartProto.highlightLegendItem = chartHighlightLegendItem;
-        }
 
-        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(
                 LegendClass as typeof LegendComposition,
                 'afterColorizeItem',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2022 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Class representing a Timeline with sonification events to play.
  *
@@ -397,17 +397,17 @@ class SonificationTimeline {
                         const mid = (s + e) >> 1,
                             t = events[mid].time,
                             cmp = t - fromTime;
-                        if (cmp > 0) { // ahead
+                        if (cmp > 0) { // Ahead
                             if (next && t < lastValidTime) {
                                 lastValidTime = t;
                             }
                             e = mid;
-                        } else if (cmp < 0) { // behind
+                        } else if (cmp < 0) { // Behind
                             if (!next && t > lastValidTime) {
                                 lastValidTime = t;
                             }
                             s = mid + 1;
-                        } else { // same as from time
+                        } else { // Same as from time
                             if (next) {
                                 s = mid + 1;
                             } else {
@@ -481,11 +481,12 @@ class SonificationTimeline {
         });
 
         if (closestEvent) {
-            this.play((e): boolean => !!(closestEvent &&
+            this.play(
+                (e): boolean => !!(closestEvent &&
                 e.time < closestEvent.time + 1 &&
                 e.time > closestEvent.time - 1 &&
                 e.relatedPoint === closestEvent.relatedPoint
-            ), false, false, onEnd);
+                ), false, false, onEnd);
             this.playingChannels = this.playingChannels || this.channels;
             this.isPaused = true;
             this.isPlaying = false;
@@ -543,9 +544,9 @@ class SonificationTimeline {
                 while (s < e) {
                     const mid = (s + e) >> 1,
                         t = events[mid].time;
-                    if (t < fromTime) { // behind
+                    if (t < fromTime) { // Behind
                         s = mid + 1;
-                    } else if (t > toTime) { // ahead
+                    } else if (t > toTime) { // Ahead
                         e = mid;
                     } else {
                         return true;
@@ -556,8 +557,10 @@ class SonificationTimeline {
                 return; // If not, don't play - avoid cancelling current play
             }
 
-            this.play((e): boolean => e.time >= fromTime && e.time <= toTime,
-                false, false, onEnd);
+            this.play(
+                (e): boolean => e.time >= fromTime && e.time <= toTime,
+                false, false, onEnd
+            );
             this.playingChannels = this.playingChannels || this.channels;
             this.isPaused = true;
             this.isPlaying = false;
@@ -578,7 +581,8 @@ class SonificationTimeline {
         channels.forEach((c): void => {
             const events = c.events.filter((e, ix, arr): boolean => !!(
                     e.relatedPoint && e.time <= curTime &&
-                    (!filter || filter(e, ix, arr)))),
+                    (!filter || filter(e, ix, arr)))
+                ),
                 closestEvent = events[events.length - 1];
             if (closestEvent) {
                 const closestTime = closestEvent.time,
@@ -633,7 +637,9 @@ class SonificationTimeline {
 
     getMIDIData(): Uint8Array {
         return toMIDI(this.channels.filter(
-            (c): boolean => c.type === 'instrument'));
+            (c): boolean => c.type === 'instrument'
+        )
+        );
     }
 
 

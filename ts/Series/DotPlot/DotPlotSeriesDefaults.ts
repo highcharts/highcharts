@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Torstein Honsi
+ *  (c) 2009-2024 Torstein Honsi
  *
  *  Dot plot series type for Highcharts
  *
@@ -27,14 +27,15 @@ import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
  * */
 
 const DotPlotSeriesDefaults: DotPlotSeriesOptions = {
-    itemPadding: 0.2,
+    itemPadding: 0.1,
     marker: {
         symbol: 'circle',
         states: {
             hover: {},
             select: {}
         }
-    }
+    },
+    slotsPerBar: void 0
 };
 
 /* *

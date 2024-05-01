@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -23,7 +23,10 @@ import type Axis from '../../Core/Axis/Axis';
 import type TilemapSeriesOptions from './TilemapSeriesOptions';
 
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    composed,
+    noop
+} = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -64,14 +67,6 @@ declare module '../../Core/Series/SeriesOptions' {
         enabled?: boolean;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -161,7 +156,7 @@ class TilemapSeries extends HeatmapSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (pushUnique(composed, 'TilemapSeries')) {
             addEvent(
                 AxisClass,
                 'afterSetAxisTranslation',
@@ -177,13 +172,13 @@ class TilemapSeries extends HeatmapSeries {
      *
      * */
 
-    public data: Array<TilemapPoint> = void 0 as any;
+    public data!: Array<TilemapPoint>;
 
-    public options: TilemapSeriesOptions = void 0 as any;
+    public options!: TilemapSeriesOptions;
 
-    public points: Array<TilemapPoint> = void 0 as any;
+    public points!: Array<TilemapPoint>;
 
-    public tileShape: TilemapShapes.DefinitionObject = void 0 as any;
+    public tileShape!: TilemapShapes.DefinitionObject;
 
     /* *
      *
@@ -255,7 +250,7 @@ class TilemapSeries extends HeatmapSeries {
 
         return {
             padding: (
-                axis.single ? // if there is only one tick adjust padding #18647
+                axis.single ? // If there is only one tick adjust padding #18647
                     Math.abs(coord1 - coord2) / 2 :
                     Math.abs(coord1 - coord2)
             ) || 0,
@@ -309,7 +304,7 @@ extend(TilemapSeries.prototype, { // Prototype functions
     getSymbol: noop,
     // Use drawPoints, markerAttribs, pointAttribs methods from the old
     // heatmap implementation.
-    // TODO: Consider standarizing heatmap and tilemap into more
+    // TODO: Consider standardizing heatmap and tilemap into more
     // consistent form.
     markerAttribs: ScatterSeries.prototype.markerAttribs,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
@@ -348,4 +343,4 @@ export default TilemapSeries;
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

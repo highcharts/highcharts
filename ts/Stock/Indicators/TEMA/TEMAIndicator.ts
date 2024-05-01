@@ -81,10 +81,10 @@ class TEMAIndicator extends EMAIndicator {
      *
      * */
 
-    public EMApercent: number = void 0 as any;
-    public data: Array<TEMAPoint> = void 0 as any;
-    public options: TEMAOptions = void 0 as any;
-    public points: Array<TEMAPoint> = void 0 as any;
+    public EMApercent!: number;
+    public data!: Array<TEMAPoint>;
+    public options!: TEMAOptions;
+    public points!: Array<TEMAPoint>;
 
     /* *
      *
@@ -178,7 +178,7 @@ class TEMAIndicator extends EMAIndicator {
             yVal
         );
 
-        // first point
+        // First point
         sma = accumulatePeriodPoints / period;
         accumulatePeriodPoints = 0;
 
@@ -340,4 +340,4 @@ export default TEMAIndicator;
  * @apioption series.tema
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

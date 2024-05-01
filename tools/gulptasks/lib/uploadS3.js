@@ -12,8 +12,8 @@
 
 
 const AWS = require('@aws-sdk/client-s3');
-const { fromEnv, fromIni } = require('@aws-sdk/credential-providers');
-const FS = require('node:fs/promises');
+const { fromIni } = require('@aws-sdk/credential-providers');
+const FS = require('node:fs');
 const Path = require('node:path/posix');
 
 /* *
@@ -218,8 +218,7 @@ async function getS3LastModified(
         response = await region.listObjectsV2({
             Bucket: bucket,
             ContinuationToken: continueToken,
-            StartAfter: pathPrefix
-
+            Prefix: pathPrefix
         });
 
         if (response.Contents) {
@@ -385,7 +384,10 @@ async function synchronizeDirectory(
         const chunkPromises = [];
 
         for (const fileKey of fileKeysChunk) {
-            const filePath = Path.join(sourcePath, fileKey);
+            const filePath = Path.join(
+                sourcePath,
+                Path.relative(targetPathPrefix, fileKey)
+            );
 
             // skip versioned files
             if (fileKey.match(versionPattern)) {
@@ -393,12 +395,9 @@ async function synchronizeDirectory(
             }
 
             if (!FS.existsSync(filePath)) {
-                chunkPromises.push(deleteS3Object(filePath, session));
-            }
-
-            if (
-                fileModificationTimes[fileKey] <
-                FS.lstatSync(filePath).mtime
+                chunkPromises.push(deleteS3Object(fileKey, session));
+            } else if (
+                fileModificationTimes[fileKey] < FS.lstatSync(filePath).mtime
             ) {
                 chunkPromises.push(
                     uploadFile(
@@ -469,7 +468,10 @@ async function synchronizeDirectory(
 function toS3Path(fromPath, removeFromDestPath, prefix) {
     return {
         from: fromPath,
-        to: Path.join(prefix || '', Path.relative(removeFromDestPath, fromPath))
+        to: Path.join(
+            prefix || '',
+            Path.relative(removeFromDestPath || '', fromPath)
+        )
     };
 }
 
@@ -565,7 +567,7 @@ async function uploadFile(
 ) {
     const log = require('./log');
 
-    let fileContent = await FS.readFile(sourcePath);
+    let fileContent = FS.readFileSync(sourcePath);
 
     if (filterCallback) {
         fileContent = filterCallback(sourcePath, fileContent);
@@ -578,7 +580,7 @@ async function uploadFile(
 
         fsLib.makePath(Path.dirname(targetPath));
 
-        await FS.writeFile(targetPath, fileContent, { encoding: 'binary' });
+        FS.writeFileSync(targetPath, fileContent, { encoding: 'binary' });
 
         log.message(targetPath, 'would be uploaded');
     } else {

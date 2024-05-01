@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -137,7 +137,7 @@ class TextBuilder {
         } else if (textStr !== '') {
 
             if (tempParent) {
-                // attach it to the DOM to read offset width and font size
+                // Attach it to the DOM to read offset width and font size
                 tempParent.appendChild(textNode);
             }
 
@@ -266,7 +266,7 @@ class TextBuilder {
                         // Target width
                         Math.max(
                             0,
-                            // Substract the font face to make room for the
+                            // Subtract the font face to make room for the
                             // ellipsis itself
                             width - 0.8 * dy
                         ),
@@ -338,7 +338,7 @@ class TextBuilder {
                         SVG_NS,
                         'tspan'
                     ) as SVGDOMElement;
-                    br.textContent = '\u200B'; // zero-width space
+                    br.textContent = '\u200B'; // Zero-width space
                     attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
                 });
@@ -431,7 +431,7 @@ class TextBuilder {
             // Handle breaks
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
-                node.textContent = '\u200B'; // zero-width space
+                node.textContent = '\u200B'; // Zero-width space
 
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];
@@ -485,7 +485,7 @@ class TextBuilder {
         getString: Function
     ): void {
         const svgElement = this.svgElement;
-        const { renderer, rotation } = svgElement;
+        const { rotation } = svgElement;
         // Cache the lengths to avoid checking the same twice
         const lengths = [] as Array<number>;
 
@@ -501,7 +501,7 @@ class TextBuilder {
             charEnd: number,
             concatenatedEnd?: number
         ): number {
-            // charEnd is used when finding the character-by-character
+            // `charEnd` is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
             const end = concatenatedEnd || charEnd;
@@ -528,7 +528,7 @@ class TextBuilder {
             return lengths[end];
         };
 
-        svgElement.rotation = 0; // discard rotation when computing box
+        svgElement.rotation = 0; // Discard rotation when computing box
         actualWidth = getSubStringLength((textNode.textContent as any).length);
 
         if (startAt + actualWidth > width) {

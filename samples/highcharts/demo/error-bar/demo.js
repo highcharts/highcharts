@@ -1,6 +1,8 @@
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         text: 'Temperature vs Rainfall'
@@ -73,7 +75,8 @@ Highcharts.chart('container', {
             ],
             tooltip: {
                 pointFormat:
-                    '<span style="font-weight: bold; color: {series.color}">{series.name}</span>: <b>{point.y:.1f} mm</b> '
+                    '<span style="font-weight: bold; color: {series.color}">' +
+                    '{series.name}</span>: <b>{point.y:.1f} mm</b> '
             }
         },
         {
@@ -136,7 +139,8 @@ Highcharts.chart('container', {
             ],
             tooltip: {
                 pointFormat:
-                    '<span style="font-weight: bold; color: {series.color}">{series.name}</span>: <b>{point.y:.1f}°C</b> '
+                    '<span style="font-weight: bold; color: {series.color}">' +
+                    '{series.name}</span>: <b>{point.y:.1f}°C</b> '
             }
         },
         {

@@ -19,7 +19,8 @@ const chart = Highcharts.chart('container', {
     },
     lang: {
         accessibility: {
-            chartContainerLabel: 'Big data sonification. Highcharts interactive chart.'
+            chartContainerLabel: 'Big data sonification. Highcharts ' +
+                'interactive chart.'
         }
     },
     sonification: {

@@ -2,7 +2,7 @@
  *
  *  Highcharts pyramid3d series module
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
@@ -66,11 +66,11 @@ class Pyramid3DSeries extends Funnel3DSeries {
      *
      * */
 
-    public data: Array<Pyramid3DPoint> = void 0 as any;
+    public data!: Array<Pyramid3DPoint>;
 
-    public options: Pyramid3DSeriesOptions = void 0 as any;
+    public options!: Pyramid3DSeriesOptions;
 
-    public points: Array<Pyramid3DPoint> = void 0 as any;
+    public points!: Array<Pyramid3DPoint>;
 
 }
 

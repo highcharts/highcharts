@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -71,8 +71,7 @@ class EditContextMenu extends Menu {
     constructor(
         parentElement: HTMLElement,
         options: EditContextMenu.Options,
-        editMode: EditMode,
-        parent?: HTMLElement
+        editMode: EditMode
     ) {
         super(
             editMode.board.container,
@@ -84,7 +83,7 @@ class EditContextMenu extends Menu {
         this.options = merge(EditContextMenu.defaultOptions, options || {});
 
         // Move it in the DOM after the edit tools so it is better accessible.
-        this.editMode.board.layoutsWrapper.parentNode.insertBefore(
+        this.editMode.board.layoutsWrapper?.parentNode.insertBefore(
             this.container,
             this.editMode.board.layoutsWrapper
         );

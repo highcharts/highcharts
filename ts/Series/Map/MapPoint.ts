@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -100,15 +100,15 @@ class MapPoint extends ScatterPoint {
 
     public middleY?: number;
 
-    public options: MapPointOptions = void 0 as any;
+    public options!: MapPointOptions;
 
-    public path: SVGPath = void 0 as any;
+    public path!: SVGPath;
 
     public projectedPath?: SVGPath;
 
     public properties?: Record<string, (number|string)>;
 
-    public series: MapSeries = void 0 as any;
+    public series!: MapSeries;
 
     /* *
      *
@@ -136,7 +136,11 @@ class MapPoint extends ScatterPoint {
                     series.mapMap[mapKey];
 
             if (mapPoint) {
-                extend(point, mapPoint); // copy over properties
+                // Copy over properties; #20231 prioritize point.name
+                extend(point, {
+                    ...mapPoint,
+                    name: point.name ?? mapPoint.name
+                });
             } else if (series.pointArrayMap.indexOf('value') !== -1) {
                 point.value = point.value || null;
             }

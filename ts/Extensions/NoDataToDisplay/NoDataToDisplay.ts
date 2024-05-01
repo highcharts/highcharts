@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -31,8 +31,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -61,15 +60,6 @@ declare module '../../Core/Options'{
         noData?: NoDataOptions;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -178,18 +168,15 @@ function compose(
     ChartClass: typeof Chart,
     highchartsDefaultOptions: Options
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composedMembers, ChartClass)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.showNoData) {
         chartProto.hasData = chartHasData;
         chartProto.hideNoData = chartHideNoData;
         chartProto.showNoData = chartShowNoData;
 
         addEvent(ChartClass, 'render', onChartRender);
-    }
 
-    if (pushUnique(composedMembers, highchartsDefaultOptions)) {
         merge(true, highchartsDefaultOptions, NoDataDefaults);
     }
 

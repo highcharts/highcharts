@@ -9,8 +9,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ]
     },
 
     yAxis: {
@@ -19,6 +21,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
+            slotsPerBar: 1,
             stacking: 'normal',
             marker: {
                 symbol: 'rect',

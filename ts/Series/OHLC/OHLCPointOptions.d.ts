@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,7 +24,23 @@ import type HLCPointOptions from '../HLC/HLCPointOptions';
  * */
 
 export interface OHLCPointOptions extends HLCPointOptions {
+
+    /**
+     * The closing value of each data point.
+     *
+     * @product highstock
+     */
+    close?: number
+
+    /**
+     * The opening value of each data point.
+     *
+     * @product highstock
+     */
+    open?: number;
+
     upColor?: ColorType;
+
 }
 
 export default OHLCPointOptions;

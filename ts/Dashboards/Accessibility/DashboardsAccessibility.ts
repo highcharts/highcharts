@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -73,7 +73,7 @@ class DashboardsAccessibility {
     }
 }
 
-// namespace DashboardsAccessibility { }
+/// namespace DashboardsAccessibility { }
 
 /* *
  *

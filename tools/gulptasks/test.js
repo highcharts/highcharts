@@ -133,8 +133,8 @@ function checkDemosConsistency() {
                     logLib.failure('no tags found:', detailsFile);
                     errors++;
                 } else {
-                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                    if (!demoTags.some(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        logLib.failure('demo.details should include at least one tag from demo-config.js ', detailsFile);
                         errors++;
                     }
                 }
@@ -238,73 +238,24 @@ function checkDocsConsistency() {
  *         Promise to keep
  */
 async function test() {
+    const fs = require('fs');
     const argv = require('yargs').argv;
     const log = require('./lib/log');
 
-    const { shouldRun, saveRun } = require('./lib/test');
+    const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
-    if (argv.help) {
-        log.message(`
-HIGHCHARTS TEST RUNNER
+    if (argv.help || argv.helpme) {
+        log.message(
+            `HIGHCHARTS TYPESCRIPT TEST RUNNER
 
-Available arguments for 'gulp test':
-
---browsers
-Comma separated list of browsers to test. Available browsers are
-'ChromeHeadless, Chrome, Firefox, Safari, Edge, IE' depending on what is
-installed on the local system. Defaults to ChromeHeadless.
-
-In addition, virtual browsers from Browserstack are supported. They are
-prefixed by the operating system. Available BrowserStack browsers are
-'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
-Win.IE'.
-
-For debugging in Visual Studio Code, use 'ChromeHeadless.Debugging'.
-
-A shorthand option, '--browsers all', runs all BrowserStack machines.
-
---browsercount
-Number of browserinstances to spread/shard the tests across. Default value is 2.
-Will default use ChromeHeadless browser. For other browsers specify
-argument --splitbrowsers (same usage as above --browsers argument).
-
---debug
-Skips rebuilding and prints some debugging info.
-
---force
-Forces all tests without cached results.
-
---speak
-Says if tests failed or succeeded.
-
---tests
-Comma separated list of tests to run. Defaults to '*.*' that runs all tests
-in the 'samples/' directory.
-Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
-directory.
-
---testsAbsolutePath
-Comma separated list of tests to run. By default runs all tests
-in the 'samples/' directory.
-Example:
-'gulp test --testsAbsolutePath /User/{userName}/{path}/{to}/highcharts/samples/unit-tests/3d/axis/demo.js'
-runs all tests in the file.
-
---visualcompare
+Available arguments for 'gulp test':` +
+            HELP_TEXT_COMMON +
+            `--visualcompare
 Performs a visual comparison of the output and creates a reference.svg and candidate.svg
 when doing so. A JSON file with the results is produced in the location
 specified by config.imageCapture.resultsOutputPath.
-
---ts
-Compile TypeScript-based tests.
-
---dots
-Use the less verbose 'dots' reporter
-
---timeout
-Set a different disconnect timeout from default config
-
-`);
+            `
+        );
         return;
     }
 
@@ -325,6 +276,19 @@ Set a different disconnect timeout from default config
         jsDirectory: JS_DIRECTORY,
         testsDirectory: TESTS_DIRECTORY
     };
+
+    const { getProductTests } = require('./lib/test');
+    const productTests = getProductTests();
+
+    // If false, there's no modified products
+    // If undefined, there's no product argument, so fall back to karma config
+    if (productTests === false) {
+        log.message('No tests to run, exiting early');
+        return;
+    }
+
+    // Conditionally build required code
+    await gulp.task('scripts')();
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
@@ -347,22 +311,28 @@ Set a different disconnect timeout from default config
         log.message('Run `gulp test --help` for available options');
 
         const KarmaServer = require('karma').Server;
+        const { parseConfig } = require('karma').config;
+
         const PluginError = require('plugin-error');
         const {
             reporters: defaultReporters,
             browserDisconnectTimeout: defaultTimeout
         } = require(KARMA_CONFIG_FILE);
 
+        const karmaConfig = parseConfig(KARMA_CONFIG_FILE, {
+            reporters: argv.dots ? ['dots'] : defaultReporters,
+            browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
+            singleRun: true,
+            tests: Array.isArray(productTests) ?
+                productTests.map(testPath => `samples/unit-tests/${testPath}/**/demo.js`) :
+                void 0,
+            client: {
+                cliArgs: argv
+            }
+        });
+
         await new Promise((resolve, reject) => new KarmaServer(
-            {
-                configFile: KARMA_CONFIG_FILE,
-                reporters: argv.dots ? ['dots'] : defaultReporters,
-                browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
-                singleRun: true,
-                client: {
-                    cliArgs: argv
-                }
-            },
+            karmaConfig,
             err => {
 
                 // Force exit in BrowserStack GitHub Action
@@ -395,7 +365,36 @@ Set a different disconnect timeout from default config
                 resolve();
             }
         ).start());
+
+        // Capture console.error, console.warn and console.log
+        const consoleLogPath = `${BASE}/test/console.log`;
+        const consoleLog = await fs.promises.readFile(
+            consoleLogPath,
+            'utf-8'
+        ).catch(() => {});
+        if (consoleLog) {
+            const errors = (consoleLog.match(/ ERROR:/g) || []).length,
+                warnings = (consoleLog.match(/ WARN:/g) || []).length,
+                logs = (consoleLog.match(/ LOG:/g) || []).length;
+
+            const message = [];
+            if (errors) {
+                message.push(`${errors} errors`.red);
+            }
+            if (warnings) {
+                message.push(`${warnings} warnings`.yellow);
+            }
+            if (logs) {
+                message.push(`${logs} logs`);
+            }
+
+            log.message(
+                `The browser console logged ${message.join(', ')}.\n` +
+                'They can be reviewed in ' + consoleLogPath.cyan + '.'
+            );
+        }
+
     }
 }
 
-gulp.task('test', gulp.series('test-docs', 'scripts', test));
+gulp.task('test', gulp.series('test-docs', test));

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,12 +24,15 @@ import type Point from '../../Core/Series/Point';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DataLabel from '../../Core/Series/DataLabel.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -42,19 +45,9 @@ namespace ColumnDataLabel {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Override the basic data label alignment by adjusting for the position of
@@ -80,7 +73,7 @@ namespace ColumnDataLabel {
             // Data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                (point as AreaRangePoint).below, // Fange series
+                (point as AreaRangePoint).below, // Range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, yLen)
             ),
@@ -157,11 +150,13 @@ namespace ColumnDataLabel {
     }
 
     /** @private */
-    export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
+    export function compose(
+        ColumnSeriesClass: typeof ColumnSeries
+    ): void {
 
         DataLabel.compose(Series);
 
-        if (U.pushUnique(composedMembers, ColumnSeriesClass)) {
+        if (pushUnique(composed, 'ColumnDataLabel')) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

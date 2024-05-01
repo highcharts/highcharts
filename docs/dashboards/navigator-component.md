@@ -23,12 +23,12 @@ indicator for the active city.
 Dashboard.board('container', {
   components: [
     {
-      cell: 'time-range-selector'
+      renderTo: 'time-range-selector'
       type: 'Navigator',
       connector: {
         id: 'Range Selection'
       },
-      columnAssignments: {
+      columnAssignment: {
         'TXC': 'y'
       },
       sync: {
@@ -43,12 +43,22 @@ Dashboard.board('container', {
 
 
 
+## Components synchronization
+
+The Navigator Component can be synced with other components in Dashboards. Two synchronization types are predefined for the Navigator Component: [`crossfilter`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter) and [`extremes`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes). You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
+
+Crossfilter sync is specific to the Navigator Component. You can learn more about this below.
+
 ## Crossfilter
 
 Alternatively to the synchronization of extremes the NavigatorComponent can
 synchronize extremes in a shared crossfilter. This crossfilter is managed by a
 a RangeModifier which sources the table of a connector. All components have to
 share the same connector and table to make the crossfilter work.
+
+For crossfilter sync, you can enable the `affectNavigators` option, which
+causes, in addition to changing the content of the table, also the content of
+other crossfilters. See the demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/crossfilter-affecting-navigators).
 
 Read more about components synchronization [here](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
@@ -65,12 +75,12 @@ ranges with the help of the NavigatorComponent and a shared DataConnector.
 Dashboard.board('container', {
   components: [
     {
-      cell: 'Top-left'
+      renderTo: 'Top-left'
       type: 'Navigator',
       connector: {
         id: 'Economy'
       },
-      columnAssignments: {
+      columnAssignment: {
         'Agriculture': 'y'
       },
       sync: {
@@ -78,12 +88,12 @@ Dashboard.board('container', {
       }
     },
     {
-      cell: 'Top-left'
+      renderTo: 'Top-left'
       type: 'Navigator',
       connector: {
         id: 'Economy'
       },
-      columnAssignments: {
+      columnAssignment: {
         'Industry': 'y'
       },
       sync: {

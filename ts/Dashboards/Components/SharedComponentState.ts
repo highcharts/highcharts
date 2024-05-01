@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009 - 2023 Highsoft AS
+ *  (c) 2009-2024 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -393,7 +393,7 @@ namespace SharedComponentState {
     }
 
     /**
-     * All information objects of DataPrsentationState events.
+     * All information objects of DataPresentationState events.
      */
     export type Event = (
         ColumnOrderEvent | ColumnVisibilityEvent |

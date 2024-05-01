@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,10 @@ import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const { merge } = U;
+const {
+    fireEvent,
+    merge
+} = U;
 
 /* *
  *
@@ -232,7 +235,7 @@ const defaultOptions: DefaultOptions = {
          * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
-         * `numericSymbols` to `null` disables shortening altogether.
+         * `numericSymbols` to `undefined` disables shortening altogether.
          *
          * @sample {highcharts} highcharts/lang/numericsymbols/
          *         Replacing the symbols with text
@@ -494,7 +497,7 @@ const defaultOptions: DefaultOptions = {
      * );
      * ```
      *
-     * Since v6.0.5, the time options were moved from the `global` obect to the
+     * Since v6.0.5, the time options were moved from the `global` object to the
      * `time` object, and time options can be set on each individual chart.
      *
      * @sample {highcharts|highstock}
@@ -540,23 +543,25 @@ const defaultOptions: DefaultOptions = {
         getTimezoneOffset: void 0,
 
         /**
-         * Requires [moment.js](https://momentjs.com/). If the timezone option
-         * is specified, it creates a default
-         * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
-         * up the specified timezone in moment.js. If moment.js is not included,
-         * this throws a Highcharts error in the console, but does not crash the
-         * chart.
+         * A named time zone. Supported time zone names rely on the browser
+         * implementations, as described in the [mdn
+         * docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
+         * If the given time zone is not recognized by the browser, Highcharts
+         * provides a warning and falls back to returning a 0 offset,
+         * corresponding to the UCT time zone.
+         *
+         * Until v11.2.0, this option depended on moment.js.
          *
          * @see [getTimezoneOffset](#time.getTimezoneOffset)
          *
-         * @sample {highcharts|highstock} highcharts/time/timezone/
-         *         Europe/Oslo
+         * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
          *
          * @type      {string}
          * @since     5.0.7
          * @product   highcharts highstock gantt
          */
         timezone: void 0,
+
         /**
          * The timezone offset in minutes. Positive values are west, negative
          * values are east of UTC, as in the ECMAScript
@@ -1261,7 +1266,7 @@ const defaultOptions: DefaultOptions = {
         labelFormatter: function (
             this: Legend.Item
         ): string {
-            /** eslint-enable valid-jsdoc */
+            // eslint-enable valid-jsdoc
             return this.name as any;
         },
 
@@ -1525,7 +1530,7 @@ const defaultOptions: DefaultOptions = {
          *         Item text styles
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.75em", "fontWeight": "bold", "textOverflow": "ellipsis"}
+         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.8em", "fontWeight": "bold", "textOverflow": "ellipsis"}
          */
         itemStyle: {
             /**
@@ -1556,7 +1561,7 @@ const defaultOptions: DefaultOptions = {
          * are inherited from `style` unless overridden here.
          *
          * @see In styled mode, the hovered legend items can be styled with
-         *      the `.highcharts-legend-item:hover` pesudo-class.
+         *      the `.highcharts-legend-item:hover` pseudo-class.
          *
          * @sample {highcharts} highcharts/legend/itemhoverstyle/
          *         Red on hover
@@ -1631,13 +1636,13 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            width: '13px', // for IE precision
+            width: '13px', // For IE precision
             /**
              * @ignore
              */
             height: '13px'
         },
-        // itemWidth: undefined,
+        /// itemWidth: undefined,
 
         /**
          * When this is true, the legend symbol width will be the same as
@@ -1651,6 +1656,10 @@ const defaultOptions: DefaultOptions = {
         /**
          * The pixel height of the symbol for series types that use a rectangle
          * in the legend. Defaults to the font size of legend items.
+         *
+         * Note: This option is a default source of color axis height, if the
+         * [colorAxis.height](https://api.highcharts.com/highcharts/colorAxis.height)
+         * option is not set.
          *
          * @productdesc {highmaps}
          * In Highmaps, when the symbol is the gradient of a vertical color
@@ -1688,6 +1697,10 @@ const defaultOptions: DefaultOptions = {
         /**
          * The pixel width of the legend item symbol. When the `squareSymbol`
          * option is set, this defaults to the `symbolHeight`, otherwise 16.
+         *
+         * Note: This option is a default source of color axis width, if the
+         * [colorAxis.width](https://api.highcharts.com/highcharts/colorAxis.width)
+         * option is not set.
          *
          * @productdesc {highmaps}
          * In Highmaps, when the symbol is the gradient of a horizontal color
@@ -1792,7 +1805,7 @@ const defaultOptions: DefaultOptions = {
          */
         verticalAlign: 'bottom',
 
-        // width: undefined,
+        // Width: undefined,
 
         /**
          * The x offset of the legend relative to its horizontal alignment
@@ -1848,7 +1861,7 @@ const defaultOptions: DefaultOptions = {
              *      `.highcharts-legend-title` class.
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"fontSize": "0.75em", "fontWeight": "bold"}
+             * @default {"fontSize": "0.8em", "fontWeight": "bold"}
              * @since   3.0
              */
             style: {
@@ -1976,16 +1989,19 @@ const defaultOptions: DefaultOptions = {
          * The color of the tooltip border. When `undefined`, the border takes
          * the color of the corresponding series or point.
          *
-         * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         Follow series by default
-         * @sample {highcharts} highcharts/tooltip/bordercolor-black/
-         *         Black border
-         * @sample {highstock} stock/tooltip/general/
-         *         Styled tooltip
-         * @sample {highmaps} maps/tooltip/background-border/
-         *         Background and border demo
+         * Note that the [borderWidth](#tooltip.borderWidth) is usually 0 by
+         * default, so the border color may not be visible until a border width
+         * is set.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @sample {highcharts} highcharts/tooltip/bordercolor-default/ Follow
+         *         series by default
+         * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black
+         *         border
+         * @sample {highstock} stock/tooltip/general/ Styled tooltip
+         * @sample {highmaps} maps/tooltip/background-border/ Background and
+         *         border demo
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption tooltip.borderColor
          */
 
@@ -2863,6 +2879,7 @@ function getOptions(): DefaultOptions {
 function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
+    fireEvent(H, 'setOptions', { options });
 
     // Copy in the default options
     merge(true, defaultOptions, options);
@@ -2925,10 +2942,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartAddSeriesCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {Highcharts.ChartAddSeriesEventObject} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -2960,10 +2977,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartClickCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {Highcharts.PointerEventObject} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -3006,10 +3023,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartLoadCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -3020,10 +3037,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartRedrawCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -3033,10 +3050,10 @@ export default DefaultOptions;
  * @callback Highcharts.ChartRenderCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {global.Event} event
- *        The event that occured.
+ *        The event that occurred.
  */
 
 /**
@@ -3047,7 +3064,7 @@ export default DefaultOptions;
  * @callback Highcharts.ChartSelectionCallbackFunction
  *
  * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
+ *        The chart on which the event occurred.
  *
  * @param {Highcharts.SelectEventObject} event
  *        Event informations
@@ -3056,4 +3073,4 @@ export default DefaultOptions;
  *         Return false to prevent the default action, usually zoom.
  */
 
-(''); // detach doclets above
+(''); // Detach doclets above

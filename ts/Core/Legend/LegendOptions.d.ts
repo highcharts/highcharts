@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,8 +21,10 @@ import type {
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type EventCallback from '../EventCallback';
 import type F from '../Templating';
 import type Legend from './Legend';
+import type PointerEvent from '../PointerEvent';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
 /* *
@@ -34,6 +36,12 @@ import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 declare module '../Options' {
     interface Options {
         legend: LegendOptions;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesEventsOptions {
+        legendItemClick?: LegendItemClickCallback;
     }
 }
 
@@ -83,6 +91,8 @@ export interface LegendOptions {
     x: number;
     y: number;
 }
+
+export type LegendItemClickCallback = EventCallback<PointerEvent>;
 
 export interface LegendNavigationOptions {
     activeColor: ColorType;

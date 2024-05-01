@@ -3,7 +3,7 @@ describe('MathModifier created columns and interaction.', () => {
         cy.visit('/dashboards/cypress/datagrid-mathmodifier/');
     })
 
-    it('DataGrid nad HC component should disable changing the mathmodifier column.', () => {
+    it('DataGrid and HC component should disable changing the mathmodifier column.', () => {
         cy.board().then((board) => {
         const mComponents = board.mountedComponents,
             hcComponent = mComponents[0].component,
@@ -18,7 +18,7 @@ describe('MathModifier created columns and interaction.', () => {
                 'USD column is not editable'
             );
             hcComponent.chart.series.forEach(series => {
-                const draggableY = series.userOptions.dragDrop.draggableY;
+                const draggableY = series.options.dragDrop.draggableY;
                 if (series.name === 'USD') {
                     assert.equal(
                         draggableY,

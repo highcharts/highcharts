@@ -8,7 +8,10 @@
     // Create the chart
     Highcharts.stockChart('container', {
         navigation: {
-            bindingsClassName: 'tools-container' // informs Stock Tools where to look for HTML elements for adding technical indicators, annotations etc.
+            bindingsClassName:
+                'tools-container' // informs Stock Tools where to look for
+                // HTML elements for adding technical indicators,
+                // annotations etc.
         },
 
         stockTools: {

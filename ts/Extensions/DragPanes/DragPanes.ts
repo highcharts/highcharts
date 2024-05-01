@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -27,7 +27,6 @@ import type Pointer from '../../Core/Pointer';
 import AxisResizer from './AxisResizer.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -49,7 +48,7 @@ declare module '../../Core/Axis/AxisLike' {
 
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions extends AxisResizerOptions {
-        // nothing more to add
+        // Nothing more to add
     }
 }
 
@@ -58,14 +57,6 @@ declare module '../../Core/Chart/ChartLike' {
         activeResizer?: boolean;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -81,7 +72,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (U.pushUnique(composedMembers, AxisClass)) {
+    if (!AxisClass.keepProps.includes('resizer')) {
         merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
@@ -89,9 +80,7 @@ function compose(
 
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
-    }
 
-    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'runPointActions',

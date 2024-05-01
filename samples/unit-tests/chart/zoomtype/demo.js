@@ -64,7 +64,7 @@ QUnit.test('Zoom type', function (assert) {
     );
 
     // Zoom
-    controller.pan([200, 150], [250, 150]);
+    controller.pan([200, 150], [250, 200]);
     assert.strictEqual(
         chart.resetZoomButton.zIndex,
         6,
@@ -95,7 +95,8 @@ QUnit.test('Zoom type', function (assert) {
     controller.pan([500, plotTop + 10], [530, plotTop + 10]);
     assert.ok(
         chart.resetZoomButton,
-        'Y zoom should work when panning at the top of the plot on inverted chart (#18103)'
+        'Y zoom should work when panning at the top of the plot on inverted ' +
+        'chart (#18103)'
     );
 });
 
@@ -395,52 +396,39 @@ QUnit.test('Zooming scatter charts', function (assert) {
 
     // Do the first zoom
     chart.pointer.zoomX = chart.pointer.zoomY = true;
-    chart.zoom({
-        xAxis: [
-            {
-                axis: chart.xAxis[0],
-                min: 196,
-                max: 199
-            }
-        ],
-        yAxis: [
-            {
-                axis: chart.yAxis[0],
-                min: 81,
-                max: 93
-            }
-        ]
+    let x1 = chart.xAxis[0].toPixels(196),
+        x2 = chart.xAxis[0].toPixels(199),
+        y1 = chart.yAxis[0].toPixels(81),
+        y2 = chart.yAxis[0].toPixels(93);
+    chart.transform({
+        from: {
+            x: x1,
+            y: y1,
+            width: x2 - x1,
+            height: y2 - y1
+        },
+        trigger: 'zoom'
     });
 
     // Do the second zoom
     chart.pointer.zoomX = chart.pointer.zoomY = true;
-    chart.zoom({
-        xAxis: [
-            {
-                axis: chart.xAxis[0],
-                min: 197,
-                max: 199
-            }
-        ],
-        yAxis: [
-            {
-                axis: chart.yAxis[0],
-                min: 84,
-                max: 91
-            }
-        ]
+    x1 = chart.xAxis[0].toPixels(197);
+    x2 = chart.xAxis[0].toPixels(199);
+    y1 = chart.yAxis[0].toPixels(84);
+    y2 = chart.yAxis[0].toPixels(91);
+    chart.transform({
+        from: {
+            x: x1,
+            y: y1,
+            width: x2 - x1,
+            height: y2 - y1
+        },
+        trigger: 'zoom'
     });
 
-    assert.deepEqual(
-        chart.yAxis[0].getExtremes(),
-        {
-            min: 85,
-            max: 91,
-            dataMin: 85.5,
-            dataMax: 90.9,
-            userMin: 85.5,
-            userMax: 90.9
-        },
+    assert.strictEqual(
+        chart.series[0].points.filter(p => p.isInside).length,
+        2,
         'Two points should be within the zoomed area (#7639)'
     );
 });
@@ -497,7 +485,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[1].min, chart.yAxis[1].max],
         yAxis1,
-        'Y zoom on the first pane should not affect y-zoom on the second pane (#1289)'
+        'Y zoom on the first pane should not affect y-zoom on the second ' +
+        'pane (#1289)'
     );
 
     chart.zoomOut();
@@ -508,7 +497,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[0].min, chart.yAxis[0].max],
         yAxis0,
-        'Y zoom on the second pane should not affect y-zoom on the first pane (#1289)'
+        'Y zoom on the second pane should not affect y-zoom on the first ' +
+        'pane (#1289)'
     );
 
     chart = Highcharts.stockChart('container', {
@@ -561,7 +551,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[1].min, chart.yAxis[1].max],
         yAxis1,
-        'Y zoom on the first pane should not affect y-zoom on the second pane when chart inverted (#1289)'
+        'Y zoom on the first pane should not affect y-zoom on the second ' +
+        'pane when chart inverted (#1289)'
     );
 
     chart.zoomOut();
@@ -572,7 +563,8 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     assert.deepEqual(
         [chart.yAxis[0].min, chart.yAxis[0].max],
         yAxis0,
-        'Y zoom on the second pane should not affect y-zoom on the first pane when chart inverted (#1289)'
+        'Y zoom on the second pane should not affect y-zoom on the first ' +
+        'pane when chart inverted (#1289)'
     );
 });
 
@@ -612,7 +604,7 @@ QUnit.test('Zooming accross multiple charts, #15569', assert => {
     );
 
     assert.ok(
-        chart0.xAxis[0].displayBtn,
+        chart0.resetZoomButton,
         'Ending a zoom on a different chart should result in a zoom in.'
     );
     flexContainer.remove(); // Remove this line to visually debug the chart

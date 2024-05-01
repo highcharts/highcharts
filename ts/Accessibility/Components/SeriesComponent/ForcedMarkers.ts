@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Handle forcing series markers.
  *
@@ -26,10 +26,13 @@ import type {
 import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -60,20 +63,9 @@ namespace ForcedMarkersComposition {
 
     /* *
      *
-     *  Compositions
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-
-    /* *
-     *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
 
     /**
@@ -83,7 +75,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (U.pushUnique(composedMembers, SeriesClass)) {
+        if (pushUnique(composed, 'A11y.FM')) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',
@@ -94,11 +86,15 @@ namespace ForcedMarkersComposition {
                 'render',
                 seriesOnRender
             );
-
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterRender',
                 seriesOnAfterRender
+            );
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'renderCanvas',
+                seriesOnRenderCanvas
             );
         }
 
@@ -311,7 +307,7 @@ namespace ForcedMarkersComposition {
     function unforceSeriesMarkerOptions(series: SeriesComposition): void {
         const resetMarkerOptions = series.resetA11yMarkerOptions;
         if (resetMarkerOptions) {
-            const originalOpactiy = resetMarkerOptions.states &&
+            const originalOpacity = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
 
@@ -324,10 +320,25 @@ namespace ForcedMarkersComposition {
                 marker: {
                     enabled: resetMarkerOptions.enabled,
                     states: {
-                        normal: { opacity: originalOpactiy }
+                        normal: { opacity: originalOpacity }
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Reset markers if series is boosted and had forced markers (#17320).
+     * @private
+     */
+    function seriesOnRenderCanvas(this: SeriesComposition): void {
+        if (this.boosted && this.a11yMarkersForced) {
+            merge(true, this.options, {
+                marker: {
+                    enabled: false
+                }
+            });
+            delete this.a11yMarkersForced;
         }
     }
 

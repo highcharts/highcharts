@@ -49,7 +49,9 @@ const data3 = [
 const chart = Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
     title: {
         text: 'Sound pressure level'
@@ -124,7 +126,8 @@ const changeType = () => {
     const series = document.querySelector('.series');
     const seriesInd =
         parseInt(series.options[series.selectedIndex].value, 10) - 1;
-    const type = chart.series[seriesInd].type === 'column' ? 'scatter' : 'column';
+    const type = chart.series[seriesInd].type ===
+        'column' ? 'scatter' : 'column';
     chart.series[seriesInd].update({
         type: type
     });

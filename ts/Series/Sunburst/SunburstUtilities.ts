@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2021 Highsoft AS
+ *  (c) 2016-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -87,7 +87,7 @@ function calculateLevelSizes(
 
         // Convert percentage to pixels.
         // Calculate the remaining size to divide between "weight" levels.
-        // Calculate total weight to use in convertion from weight to
+        // Calculate total weight to use in conversion from weight to
         // pixels.
         for (const level of levels) {
             const options = (result as any)[level],

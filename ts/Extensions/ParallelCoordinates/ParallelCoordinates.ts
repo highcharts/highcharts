@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2021 Pawel Fus
+ *  (c) 2010-2024 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,6 @@ const {
     addEvent,
     defined,
     merge,
-    pushUnique,
     splat
 } = U;
 
@@ -154,14 +153,6 @@ namespace ParallelCoordinates {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -177,18 +168,16 @@ namespace ParallelCoordinates {
         ParallelAxis.compose(AxisClass);
         ParallelSeries.compose(SeriesClass);
 
-        if (pushUnique(composedMembers, ChartClass)) {
-            const ChartCompo = ChartClass as typeof ChartComposition;
-            const addsProto = ChartAdditions.prototype;
-            const chartProto = ChartCompo.prototype;
+        const ChartCompo = ChartClass as typeof ChartComposition,
+            addsProto = ChartAdditions.prototype,
+            chartProto = ChartCompo.prototype;
 
+        if (!chartProto.setParallelInfo) {
             chartProto.setParallelInfo = addsProto.setParallelInfo;
 
             addEvent(ChartCompo, 'init', onChartInit);
             addEvent(ChartCompo, 'update', onChartUpdate);
-        }
 
-        if (pushUnique(composedMembers, highchartsDefaultOptions)) {
             merge(
                 true,
                 highchartsDefaultOptions.chart,
@@ -204,7 +193,7 @@ namespace ParallelCoordinates {
      */
     function onChartInit(
         this: ChartComposition,
-        e: { args: { 0: DeepPartial<Options> } }
+        e: { args: [Partial<Options>] }
     ): void {
         const chart = this,
             options = e.args[0],
@@ -238,9 +227,12 @@ namespace ParallelCoordinates {
             }
 
             if (!options.legend) {
-                options.legend = {};
+                options.legend = {} as typeof options['legend'];
             }
-            if (typeof options.legend.enabled === 'undefined') {
+            if (
+                options.legend &&
+                typeof options.legend.enabled === 'undefined'
+            ) {
                 options.legend.enabled = false;
             }
             merge(
@@ -261,7 +253,7 @@ namespace ParallelCoordinates {
 
             options.yAxis = defaultYAxis.concat(newYAxes);
             options.xAxis = merge(
-                ParallelCoordinatesDefaults.xAxis, // docs
+                ParallelCoordinatesDefaults.xAxis, // Docs
                 splat(options.xAxis || {})[0]
             );
         }

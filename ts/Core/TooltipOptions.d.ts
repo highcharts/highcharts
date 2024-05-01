@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2023 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,7 +36,7 @@ declare module './Options' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: DeepPartial<TooltipOptions>;
+        tooltip?: Partial<TooltipOptions>;
     }
 }
 

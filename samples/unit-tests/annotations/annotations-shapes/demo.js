@@ -159,7 +159,9 @@ QUnit.test('Drawing path with a marker', function (assert) {
                 children: [
                     {
                         tagName: 'path',
-                        d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
+                        d:
+                            'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an
+                            // arrow)
                     }
                 ]
             }
@@ -222,12 +224,16 @@ QUnit.test('Drawing path with a marker', function (assert) {
 
     var shape = chart.annotations[0].shapes[0];
     assert.strictEqual(
-        shape.graphic.element.getAttribute('marker-end').replace(/"/g, ''), // Edge inserts double quotes
+        shape.graphic.element.getAttribute(
+            'marker-end'
+        ).replace(/"/g, ''), // Edge inserts double quotes
         'url(#' + shape.markerEnd.id + ')',
         'End marker id is correctly attached to the annotation\'s path'
     );
     assert.strictEqual(
-        shape.graphic.element.getAttribute('marker-start').replace(/"/g, ''), // Edge inserts double quotes,
+        shape.graphic.element.getAttribute(
+            'marker-start'
+        ).replace(/"/g, ''), // Edge inserts double quotes,
         'url(#' + shape.markerStart.id + ')',
         'Start marker is correctly attached to the annotation\'s path'
     );

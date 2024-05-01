@@ -1,6 +1,4 @@
 QUnit.test('Guard too dense minor grid lines', function (assert) {
-    assert.expect(0);
-
     Highcharts.setOptions({
         yAxis: {
             minorTickInterval: 'auto' // This is not working
@@ -22,11 +20,39 @@ QUnit.test('Guard too dense minor grid lines', function (assert) {
     });
 
     // Reset
-    Highcharts.setOptions({
-        yAxis: {
-            minorTickInterval: null
-        }
+    delete Highcharts.defaultOptions.yAxis.minorTickInterval;
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            type: 'category',
+            gridLineWidth: 1,
+            tickWidth: 1
+        },
+
+        series: [{
+            pointPlacement: 'between',
+            data: [
+                5,
+                2,
+                4, 3, 2, 1, 4, 3
+            ]
+        }]
     });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[-1].mark.attr('opacity'),
+        0,
+        'Tick mark outside axis shouldn\'t be visible (#20166).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[-1].gridLine.attr('opacity'),
+        0,
+        'Grid line outside axis shouldn\'t be visible (#20166).'
+    );
 });
 
 QUnit.test('Animation of grid lines and tick marks', function (assert) {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Highsoft AS
+ *  (c) 2010-2024 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -119,13 +119,13 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    public data: Array<BellcurvePoint> = void 0 as any;
+    public data!: Array<BellcurvePoint>;
 
     public mean?: number;
 
-    public options: BellcurveSeriesOptions = void 0 as any;
+    public options!: BellcurveSeriesOptions;
 
-    public points: Array<BellcurvePoint> = void 0 as any;
+    public points!: Array<BellcurvePoint>;
 
     public standardDeviation?: number;
 
@@ -169,6 +169,8 @@ class BellcurveSeries extends AreaSplineSeries {
                     series.mean || 0,
                     series.standardDeviation || 0
                 ),
+                false,
+                void 0,
                 false
             );
         }

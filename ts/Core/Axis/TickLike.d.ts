@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,7 +20,7 @@
  *
  */
 export interface TickLike {
-    // add with `declare module` pattern
+    // Add with `declare module` pattern
 }
 
 /* *

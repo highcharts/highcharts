@@ -1,3 +1,12 @@
+const navigatorOptions = {
+    xAxis: {
+        labels: {
+            format: '{value}%'
+        },
+        tickInterval: 10
+    }
+};
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -20,26 +29,26 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'Top-left'
+                    id: 'top-left'
                 }, {
-                    id: 'Top-middle'
+                    id: 'top-middle'
                 }, {
-                    id: 'Top-right'
+                    id: 'top-right'
                 }]
             }, {
                 cells: [{
-                    id: 'Bottom'
+                    id: 'bottom'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'Top-left',
+        renderTo: 'top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Agriculture: 'y'
         },
         sync: {
@@ -48,15 +57,16 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Agriculture'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
-        cell: 'Top-middle',
+        renderTo: 'top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Industry: 'y'
         },
         sync: {
@@ -65,15 +75,16 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Industry'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
-        cell: 'Top-right',
+        renderTo: 'top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Services: 'y'
         },
         sync: {
@@ -82,10 +93,11 @@ Dashboards.board('container', {
         chartOptions: {
             title: {
                 text: 'Services'
-            }
+            },
+            navigator: navigatorOptions
         }
     }, {
-        cell: 'Bottom',
+        renderTo: 'bottom',
         type: 'DataGrid',
         connector: {
             id: 'Economy'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
@@ -51,8 +51,7 @@ const {
     defined,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -95,8 +94,7 @@ declare module './SVGRendererLike' {
  *
  * */
 
-const composedMembers: Array<unknown> = [],
-    cos = Math.cos,
+const cos = Math.cos,
     sin = Math.sin,
     PI = Math.PI,
     dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
@@ -204,9 +202,10 @@ namespace SVGRenderer3D {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
+        const rendererProto = SVGRendererClass.prototype;
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
-            extend(SVGRendererClass.prototype, {
+        if (!rendererProto.element3d) {
+            extend(rendererProto, {
                 Element3D: SVGElement3D,
                 arc3d,
                 arc3dPath,
@@ -219,7 +218,6 @@ namespace SVGRenderer3D {
                 toLineSegments
             });
         }
-
 
     }
 
@@ -397,7 +395,7 @@ namespace SVGRenderer3D {
 
         result.faces = [];
 
-        // destroy all children
+        // Destroy all children
         result.destroy = function (): undefined {
             for (let i = 0; i < result.faces.length; i++) {
                 result.faces[i].destroy();
@@ -464,7 +462,7 @@ namespace SVGRenderer3D {
     }
 
     /**
-     * return result, generalization
+     * Return result, generalization
      * @private
      * @requires highcharts-3d
      */
@@ -473,19 +471,14 @@ namespace SVGRenderer3D {
         type: string,
         shapeArgs: SVGAttributes
     ): SVGElement3D {
-        // base
-        const elem3d = new SVGElement3D.types[type]();
-
-        // init
-        elem3d.init(this, 'g');
+        const elem3d = new SVGElement3D.types[type](this, 'g');
         elem3d.initArgs(shapeArgs);
 
-        // return
         return elem3d;
     }
 
     /**
-     * generelized, so now use simply
+     * Generalized, so now use simply
      * @private
      */
     function cuboid(
@@ -518,7 +511,7 @@ namespace SVGRenderer3D {
             // Priority for x axis is the biggest,
             // because of x direction has biggest influence on zIndex
             incrementX = 1000000,
-            // y axis has the smallest priority in case of our charts
+            // Y axis has the smallest priority in case of our charts
             // (needs to be set because of stacking)
             incrementY = 10,
             incrementZ = 100,
@@ -562,11 +555,11 @@ namespace SVGRenderer3D {
                 z: z + d
             }];
 
-        // apply perspective
+        // Apply perspective
         pArr = perspective(pArr, chart as any, shapeArgs.insidePlotArea);
 
         /**
-         * helper method to decide which side is visible
+         * Helper method to decide which side is visible
          * @private
          */
         const mapSidePath = (i: number): Position3DObject => {
@@ -576,7 +569,7 @@ namespace SVGRenderer3D {
                 if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
                     return {
                         x: pArr[i].x,
-                        // when height is 0 instead of cuboid we render plane
+                        // When height is 0 instead of cuboid we render plane
                         // so it is needed to add fake 10 height to imitate
                         // cuboid for side calculation
                         y: pArr[i].y + 10,
@@ -590,7 +583,7 @@ namespace SVGRenderer3D {
                 if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
                     return {
                         x: pArr[i].x + 10,
-                        // when height is 0 instead of cuboid we render plane
+                        // When height is 0 instead of cuboid we render plane
                         // so it is needed to add fake 10 height to imitate
                         // cuboid for side calculation
                         y: pArr[i].y,
@@ -602,7 +595,7 @@ namespace SVGRenderer3D {
 
                     return {
                         x: pArr[i].x,
-                        // when height is 0 instead of cuboid we render plane
+                        // When height is 0 instead of cuboid we render plane
                         // so it is needed to add fake 10 height to imitate
                         // cuboid for side calculation
                         y: pArr[i].y,
@@ -612,14 +605,14 @@ namespace SVGRenderer3D {
                 return pArr[i];
             },
             /**
-             * method creating the final side
+             * Method creating the final side
              * @private
              */
             mapPath = (i: number): Position3DObject => (pArr[i]),
 
             /**
              * First value - path with specific face
-             * Second  value - added info about side for later calculations.
+             * Second value - added info about side for later calculations.
              *                 Possible second values are 0 for path1, 1 for
              *                 path2 and -1 for no path chosen.
              * Third value - string containing information about current side of
@@ -636,7 +629,7 @@ namespace SVGRenderer3D {
                         verticesIndex1.map(mapPath),
                     face2: Array<Position3DObject> =
                         verticesIndex2.map(mapPath),
-                    // dummy face is calculated the same way as standard face,
+                    // Dummy face is calculated the same way as standard face,
                     // but if cuboid height is 0 additional height is added so
                     // it is possible to use this vertices array for visible
                     // face calculation
@@ -658,13 +651,13 @@ namespace SVGRenderer3D {
                     } else if (shapeArea(dummyFace2) < 0) {
                         ret = [face2, 1];
                     } else {
-                        ret = [face1, 0]; // force side calculation.
+                        ret = [face1, 0]; // Force side calculation.
                     }
                 }
                 return ret;
             };
 
-        // front or back
+        // Front or back
         const front = [3, 2, 1, 0],
             back = [7, 6, 5, 4];
         shape = pickShape(front, back, 'front');
@@ -672,14 +665,14 @@ namespace SVGRenderer3D {
             isFront = shape[1] as any;
 
 
-        // top or bottom
+        // Top or bottom
         const top = [1, 6, 7, 0],
             bottom = [4, 5, 2, 3];
         shape = pickShape(top, bottom, 'top');
         const path2 = shape[0] as any,
             isTop = shape[1] as any;
 
-        // side
+        // Side
         const right = [1, 2, 5, 6],
             left = [0, 7, 4, 3];
         shape = pickShape(right, left, 'side');
@@ -725,7 +718,7 @@ namespace SVGRenderer3D {
             },
             forcedSides: forcedSides,
 
-            // additional info about zIndexes
+            // Additional info about zIndexes
             isFront: isFront,
             isTop: isTop
         }; // #4774
@@ -827,7 +820,7 @@ namespace SVGRenderer3D {
             wrapper.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
 
 
-            // show all children
+            // Show all children
             wrapper.zIndex = zIndex;
             wrapper.attr({ zIndex: zIndex });
 
@@ -934,7 +927,7 @@ namespace SVGRenderer3D {
                 wrapper[randomProp + 'Setter'] = H.noop;
 
                 if (paramArr) {
-                    to = (paramArr as any)[0]; // custom attr
+                    to = (paramArr as any)[0]; // Custom attr
                     anim.step = function (a: unknown, fx: Fx): void {
                         const interpolate = (key: string): number => (
                             (from as any)[key] + (
@@ -966,7 +959,7 @@ namespace SVGRenderer3D {
             );
         };
 
-        // destroy all children
+        // Destroy all children
         wrapper.destroy = function (this: SVGElement): undefined {
             this.top.destroy();
             this.out.destroy();
@@ -977,7 +970,7 @@ namespace SVGRenderer3D {
             return elementProto.destroy.call(this);
         };
 
-        // hide all children
+        // Hide all children
         wrapper.hide = function (this: SVGElement): void {
             this.top.hide();
             this.out.hide();
@@ -1007,27 +1000,27 @@ namespace SVGRenderer3D {
      * @private
      */
     function arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
-        const cx = shapeArgs.x || 0, // x coordinate of the center
-            cy = shapeArgs.y || 0, // y coordinate of the center
-            start = shapeArgs.start || 0, // start angle
-            end = (shapeArgs.end || 0) - 0.00001, // end angle
-            r = shapeArgs.r || 0, // radius
-            ir = shapeArgs.innerR || 0, // inner radius
-            d = shapeArgs.depth || 0, // depth
-            alpha = shapeArgs.alpha || 0, // alpha rotation of the chart
-            beta = shapeArgs.beta || 0; // beta rotation of the chart
+        const cx = shapeArgs.x || 0, // X coordinate of the center
+            cy = shapeArgs.y || 0, // Y coordinate of the center
+            start = shapeArgs.start || 0, // Start angle
+            end = (shapeArgs.end || 0) - 0.00001, // End angle
+            r = shapeArgs.r || 0, // Radius
+            ir = shapeArgs.innerR || 0, // Inner radius
+            d = shapeArgs.depth || 0, // Depth
+            alpha = shapeArgs.alpha || 0, // Alpha rotation of the chart
+            beta = shapeArgs.beta || 0; // Beta rotation of the chart
 
         // Derived Variables
-        const cs = Math.cos(start), // cosinus of the start angle
-            ss = Math.sin(start), // sinus of the start angle
-            ce = Math.cos(end), // cosinus of the end angle
-            se = Math.sin(end), // sinus of the end angle
-            rx = r * Math.cos(beta), // x-radius
-            ry = r * Math.cos(alpha), // y-radius
-            irx = ir * Math.cos(beta), // x-radius (inner)
-            iry = ir * Math.cos(alpha), // y-radius (inner)
-            dx = d * Math.sin(beta), // distance between top and bottom in x
-            dy = d * Math.sin(alpha); // distance between top and bottom in y
+        const cs = Math.cos(start), // Cosinus of the start angle
+            ss = Math.sin(start), // Sinus of the start angle
+            ce = Math.cos(end), // Cosinus of the end angle
+            se = Math.sin(end), // Sinus of the end angle
+            rx = r * Math.cos(beta), // X-radius
+            ry = r * Math.cos(alpha), // Y-radius
+            irx = ir * Math.cos(beta), // X-radius (inner)
+            iry = ir * Math.cos(alpha), // Y-radius (inner)
+            dx = d * Math.sin(beta), // Distance between top and bottom in x
+            dy = d * Math.sin(alpha); // Distance between top and bottom in y
 
         // TOP
         let top: SVGPath = [
@@ -1120,7 +1113,7 @@ namespace SVGRenderer3D {
             out.push([
                 'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
             ]);
-            // Go back to the artifical end2
+            // Go back to the artificial end2
             out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
         }
 
@@ -1162,7 +1155,7 @@ namespace SVGRenderer3D {
             ['Z']
         ];
 
-        // correction for changed position of vanishing point caused by alpha
+        // Correction for changed position of vanishing point caused by alpha
         // and beta rotations
         const angleCorr = Math.atan2(dy, -dx);
 
@@ -1171,7 +1164,7 @@ namespace SVGRenderer3D {
             angleMid = Math.abs((start + end) / 2 + angleCorr);
 
         /**
-         * set to 0-PI range
+         * Set to 0-PI range
          * @private
          */
         function toZeroPIRange(angle: number): number {
@@ -1193,14 +1186,14 @@ namespace SVGRenderer3D {
 
         return {
             top: top,
-            // max angle is PI, so this is always higher
+            // Max angle is PI, so this is always higher
             zTop: Math.PI * incPrecision + 1,
             out: out,
             zOut: Math.max(a1, a2, a3),
             inn: inn,
             zInn: Math.max(a1, a2, a3),
             side1: side1,
-            // to keep below zOut and zInn in case of same values
+            // To keep below zOut and zInn in case of same values
             zSide1: a3 * 0.99,
             side2: side2,
             zSide2: a2 * 0.99

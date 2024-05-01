@@ -5,13 +5,13 @@
  *
  * CurrentDateIndicator
  *
- * (c) 2010-2021 Lars A. V. Cabrera
+ * (c) 2010-2024 Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
-
 const G: AnyRecord = Highcharts;
 CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
+export default Highcharts;

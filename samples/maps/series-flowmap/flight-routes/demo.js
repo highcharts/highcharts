@@ -23,7 +23,8 @@
                 accessibility: {
                     point: {
                         valueDescriptionFormat:
-                            'Origin: {point.options.from}, Destination: {point.options.to}.'
+                            'Origin: {point.options.from}, Destination: ' +
+                            '{point.options.to}.'
                     },
                     description:
                         'This is a map showing flight routes.'
@@ -62,7 +63,8 @@
             dataLabels: {
                 format: '{point.id}'
             },
-            // Use id instead of name to allow for referencing points later using the flowmap series.
+            // Use id instead of name to allow for referencing points later
+            // using the flowmap series.
             data: [{
                 id: 'London',
                 lat: 51.51,

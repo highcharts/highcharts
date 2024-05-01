@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2021 Highsoft AS
+ *  (c) 2014-2024 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -11,15 +11,6 @@
  * */
 
 'use strict';
-
-/* *
- *
- *  Imports
- *
- * */
-
-import U from '../../Core/Utilities.js';
-const { objectEach } = U;
 
 /* *
  *
@@ -55,11 +46,9 @@ namespace TreemapUtilities {
         func: TreemapRecursiveCallbackFunction<TContext, TItem>,
         context?: TContext
     ): void {
-        let next: any;
-
-        next = func.call(context || this, item);
+        const next = func.call(context || this, item);
         if (next !== false) {
-            recursive(next, func, context);
+            recursive(next, func as any, context);
         }
     }
 

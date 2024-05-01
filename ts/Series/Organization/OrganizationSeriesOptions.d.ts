@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2021 Torstein Honsi
+ *  (c) 2018-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -50,10 +50,10 @@ export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 export interface OrganizationLinkOptions {
     linkOpacity?: number;
     curveFactor?: number;
-    color: ColorString;
-    lineWidth: number;
-    type: OrganizationLinkTypeValues;
-    radius: number;
+    color?: ColorString;
+    lineWidth?: number;
+    type?: OrganizationLinkTypeValues;
+    radius?: number;
 }
 
 export type OrganizationHangingIndentTranslationValue = (
@@ -80,6 +80,7 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     dataLabels: OrganizationDataLabelOptions;
     hangingIndent?: number;
     hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
+    hangingSide?: 'left' | 'right';
     levels?: Array<OrganizationSeriesLevelOptions>;
     link: OrganizationLinkOptions;
     linkColor?: ColorString;

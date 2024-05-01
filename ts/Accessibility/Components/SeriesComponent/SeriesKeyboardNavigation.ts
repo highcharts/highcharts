@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2021 Øystein Moseng
+ *  (c) 2009-2024 Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
@@ -394,7 +394,8 @@ class SeriesKeyboardNavigation {
 
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                [inverted ? [keys.up, keys.down] : [keys.left, keys.right],
+                [
+                    inverted ? [keys.up, keys.down] : [keys.left, keys.right],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number
@@ -402,7 +403,8 @@ class SeriesKeyboardNavigation {
                         return keyboardNavigation.onKbdSideways(this, keyCode);
                     }],
 
-                [inverted ? [keys.left, keys.right] : [keys.up, keys.down],
+                [
+                    inverted ? [keys.left, keys.right] : [keys.up, keys.down],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number
@@ -410,7 +412,8 @@ class SeriesKeyboardNavigation {
                         return keyboardNavigation.onKbdVertical(this, keyCode);
                     }],
 
-                [[keys.enter, keys.space],
+                [
+                    [keys.enter, keys.space],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number,
@@ -425,19 +428,22 @@ class SeriesKeyboardNavigation {
                         return this.response.success;
                     }],
 
-                [[keys.home],
+                [
+                    [keys.home],
                     function (this: KeyboardNavigationHandler): number {
                         highlightFirstValidPointInChart(chart);
                         return this.response.success;
                     }],
 
-                [[keys.end],
+                [
+                    [keys.end],
                     function (this: KeyboardNavigationHandler): number {
                         highlightLastValidPointInChart(chart);
                         return this.response.success;
                     }],
 
-                [[keys.pageDown, keys.pageUp],
+                [
+                    [keys.pageDown, keys.pageUp],
                     function (
                         this: KeyboardNavigationHandler,
                         keyCode: number
@@ -680,14 +686,6 @@ namespace SeriesKeyboardNavigation {
 
     /* *
      *
-     *  Constants
-     *
-     * */
-
-    const composedMembers: Array<unknown> = [];
-
-    /* *
-     *
      *  Functions
      *
      * */
@@ -794,8 +792,10 @@ namespace SeriesKeyboardNavigation {
             }
 
             series.points.forEach((point): void => {
-                if (!defined(point.plotY) || !defined(point.plotX) ||
-                    point === curPoint) {
+                if (
+                    !defined(point.plotY) || !defined(point.plotX) ||
+                    point === curPoint
+                ) {
                     return;
                 }
 
@@ -901,25 +901,18 @@ namespace SeriesKeyboardNavigation {
         PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
+        const chartProto = ChartClass.prototype as ChartComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (U.pushUnique(composedMembers, ChartClass)) {
-            const chartProto = ChartClass.prototype as ChartComposition;
-
+        if (!chartProto.highlightAdjacentPoint) {
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
             chartProto.highlightAdjacentPointVertical = (
                 chartHighlightAdjacentPointVertical
             );
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
-        }
-
-        if (U.pushUnique(composedMembers, PointClass)) {
-            const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.highlight = pointHighlight;
-        }
-
-        if (U.pushUnique(composedMembers, SeriesClass)) {
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             /**
              * Set for which series types it makes sense to move to the closest

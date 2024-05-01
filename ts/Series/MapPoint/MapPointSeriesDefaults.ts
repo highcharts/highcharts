@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -60,6 +60,20 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
     },
     legendSymbol: 'lineMarker'
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapPointSeriesDefaults;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `mappoint` series. If the [type](#series.mappoint.type) option
@@ -211,16 +225,10 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
  */
 
 /**
-* @type      {number}
-* @product   highmaps
-* @excluding borderColor, borderWidth
-* @apioption plotOptions.mappoint
-*/
+ * @type      {number}
+ * @product   highmaps
+ * @excluding borderColor, borderWidth
+ * @apioption plotOptions.mappoint
+ */
 
-/* *
- *
- *  Default Export
- *
- * */
-
-export default MapPointSeriesDefaults;
+(''); // Keeps doclets above in JS file

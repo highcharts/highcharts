@@ -68,7 +68,8 @@
             },
             flowmap: {
                 tooltip: {
-                    pointFormat: '{point.options.from} \u2192 {point.options.to}'
+                    pointFormat: '{point.options.from} \u2192 ' +
+                        '{point.options.to}'
                 }
             }
         },
@@ -139,7 +140,8 @@
             accessibility: {
                 point: {
                     valueDescriptionFormat:
-                        'Origin: {point.options.from:.2f}, Destination: {point.options.to:.2f}.'
+                        'Origin: {point.options.from:.2f}, Destination: ' +
+                        '{point.options.to:.2f}.'
                 },
                 description:
                     'This is a map showing where early humans migrated.'

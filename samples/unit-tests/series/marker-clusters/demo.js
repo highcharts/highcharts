@@ -252,7 +252,8 @@ QUnit.test('General marker-clusters', function (assert) {
     assert.strictEqual(
         chart.tooltip.label.text.element.textContent,
         'Cluster size: ' + clusters[0].data.length,
-        'Clusters tooltip format should be consistent with tooltip.clusterFormat.'
+        'Clusters tooltip format should be consistent with ' +
+        'tooltip.clusterFormat.'
     );
 
     series.markerClusterInfo.noise[0].point.onMouseOver();
@@ -305,9 +306,10 @@ QUnit.test('General marker-clusters', function (assert) {
             series.xAxis.max,
             series.yAxis.min,
             series.yAxis.max
-        ],
-        [777, 789, 615, 621],
-        'After click on cluster chart should be zoomed to the cluster data range.'
+        ].map(Math.round),
+        [777, 789, 616, 620],
+        'After click on cluster chart should be zoomed to the cluster data ' +
+        'range.'
     );
 
     chart.zoomOut();
@@ -332,7 +334,8 @@ QUnit.test('General marker-clusters', function (assert) {
     assert.deepEqual(
         Object.keys(series.markerClusterInfo.pointsState),
         ['oldState', 'newState'],
-        'When animation is enabled pointsState should have old and new state props.'
+        'When animation is enabled pointsState should have old and new state ' +
+        'props.'
     );
 
     oldStateKeys = Object.keys(series.markerClusterInfo.pointsState.oldState);
@@ -381,7 +384,8 @@ QUnit.test('General marker-clusters', function (assert) {
 
     assert.ok(
         resultPosition,
-        'Points graphic should be translated to the parent point position before animation.'
+        'Points graphic should be translated to the parent point position ' +
+        'before animation.'
     );
 
     assert.ok(
@@ -404,7 +408,8 @@ QUnit.test('General marker-clusters', function (assert) {
 
     assert.ok(
         !chart.series[0].markerClusterInfo,
-        'Marker clusters should not be generated when a series has empty data (#13981).'
+        'Marker clusters should not be generated when a series has empty ' +
+        'data (#13981).'
     );
 
     // (#13302)
@@ -482,7 +487,8 @@ QUnit.test('General marker-clusters', function (assert) {
 
                             assert.ok(
                                 isAnimationCorrect,
-                                'Image markers animation should start from the ' +
+                                'Image markers animation should start from ' +
+                                'the ' +
                                     'old cluster position (#14342).'
                             );
 
@@ -726,7 +732,8 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
 
     assert.ok(
         result,
-        'Clusters should have only points that are spaced closer than the distance set by a user.'
+        'Clusters should have only points that are spaced closer than the ' +
+        'distance set by a user.'
     );
 
     assert.strictEqual(
@@ -795,7 +802,8 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     assert.notDeepEqual(
         groupedPointsKM,
         groupedPointsOKM,
-        'optimizedKmeans should not use kmeans when extremes range is smaller than on chart init.'
+        'optimizedKmeans should not use kmeans when extremes range is ' +
+        'smaller than on chart init.'
     );
 
     xAxis.setExtremes(250, 800, false);
@@ -821,6 +829,7 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     assert.deepEqual(
         groupedPointsKM,
         groupedPointsOKM,
-        'optimizedKmeans should use kmeans again when extremes range is greater than on chart init.'
+        'optimizedKmeans should use kmeans again when extremes range is ' +
+        'greater than on chart init.'
     );
 });

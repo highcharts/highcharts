@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2024 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -61,7 +61,6 @@ const {
     isNumber,
     merge,
     objectEach,
-    pushUnique,
     relativeLength,
     syncTimeout
 } = U;
@@ -71,8 +70,6 @@ const {
  *  Constants
  *
  * */
-
-const composedMembers: Array<unknown> = [];
 
 const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = {
     grid: function (
@@ -87,8 +84,6 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             gridOffset = this.getGridOffset();
 
         let x, y, gridX, gridY, key, i;
-
-        // drawGridLines(series, options);
 
         const scaledGridSize = series.getScaledGridSize(options);
 
@@ -401,10 +396,9 @@ function compose(
     highchartsDefaultOptions: Options,
     ScatterSeriesClass: typeof ScatterSeries
 ): void {
+    const scatterProto = ScatterSeriesClass.prototype;
 
-    if (pushUnique(composedMembers, ScatterSeriesClass)) {
-        const scatterProto = ScatterSeriesClass.prototype;
-
+    if (!scatterProto.markerClusterAlgorithms) {
         baseGeneratePoints = scatterProto.generatePoints;
 
         scatterProto.markerClusterAlgorithms = markerClusterAlgorithms;
@@ -428,9 +422,7 @@ function compose(
             'destroy',
             scatterProto.destroyClusteredData
         );
-    }
 
-    if (pushUnique(composedMembers, highchartsDefaultOptions)) {
         (highchartsDefaultOptions.plotOptions || {}).series = merge(
             (highchartsDefaultOptions.plotOptions || {}).series,
             MarkerClusterDefaults
@@ -619,7 +611,7 @@ function onPointDrillToCluster(
             xAxis = point.series.xAxis,
             yAxis = point.series.yAxis,
             chart = point.series.chart,
-            mapView = chart.mapView,
+            { inverted, mapView, pointer } = chart,
             clusterOptions = series.options.cluster,
             drillToCluster = (clusterOptions || {}).drillToCluster;
 
@@ -650,20 +642,34 @@ function onPointDrillToCluster(
 
             } else if (xAxis && yAxis) {
 
-                chart.pointer.zoomX = true;
-                chart.pointer.zoomY = true;
-                chart.zoom({
-                    originalEvent: e,
-                    xAxis: [{
-                        axis: xAxis,
-                        min: x1,
-                        max: x2
-                    }],
-                    yAxis: [{
-                        axis: yAxis,
-                        min: y1,
-                        max: y2
-                    }]
+                let x1Px = xAxis.toPixels(x1),
+                    x2Px = xAxis.toPixels(x2),
+                    y1Px = yAxis.toPixels(y1),
+                    y2Px = yAxis.toPixels(y2);
+
+                if (inverted) {
+                    [x1Px, x2Px, y1Px, y2Px] = [y1Px, y2Px, x1Px, x2Px];
+                }
+
+                if (x1Px > x2Px) {
+                    [x1Px, x2Px] = [x2Px, x1Px];
+                }
+                if (y1Px > y2Px) {
+                    [y1Px, y2Px] = [y2Px, y1Px];
+                }
+
+                if (pointer) {
+                    pointer.zoomX = true;
+                    pointer.zoomY = true;
+                }
+
+                chart.transform({
+                    from: {
+                        x: x1Px,
+                        y: y1Px,
+                        width: x2Px - x1Px,
+                        height: y2Px - y1Px
+                    }
                 });
             }
         }
@@ -725,7 +731,7 @@ function seriesAnimateClusterPoint(
             parentId = (newState || {})[clusterObj.stateId].parentsId[0];
             oldPointObj = oldState[parentId];
 
-            // If old and new poistions are the same do not animate.
+            // If old and new positions are the same do not animate.
             if (
                 newPointObj.point &&
                 newPointObj.point.graphic &&
@@ -1436,7 +1442,8 @@ function seriesGetPointsState(
             oldState.parentStateId &&
             state[newState.parentStateId] &&
             state[newState.parentStateId].parentsId.indexOf(
-                oldState.parentStateId) === -1
+                oldState.parentStateId
+            ) === -1
         ) {
             state[newState.parentStateId].parentsId.push(
                 oldState.parentStateId

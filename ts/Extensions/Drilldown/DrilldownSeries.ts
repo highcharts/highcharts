@@ -46,7 +46,6 @@ const {
     fireEvent,
     merge,
     pick,
-    pushUnique,
     syncTimeout
 } = U;
 
@@ -90,14 +89,6 @@ declare module '../../Core/Series/SeriesOptions' {
         drilldown?: string;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -205,7 +196,7 @@ function columnAnimateDrillupFrom(
 
     // Cancel mouse events on the series group (#2787)
     (series.trackerGroups || []).forEach((key: string): void => {
-        // we don't always have dataLabelsGroup
+        // We don't always have dataLabelsGroup
         if ((series as AnyRecord)[key]) {
             (series as AnyRecord)[key].on('mouseover');
         }
@@ -338,39 +329,15 @@ function compose(
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
 ): void {
-    const {
+    const PointClass = SeriesClass.prototype.pointClass,
+        pointProto = PointClass.prototype;
+
+    if (!pointProto.doDrilldown) {
+        const {
             column: ColumnSeriesClass,
             map: MapSeriesClass,
             pie: PieSeriesClass
-        } = seriesTypes,
-        PointClass = SeriesClass.prototype.pointClass;
-
-    if (ColumnSeriesClass && pushUnique(composedMembers, ColumnSeriesClass)) {
-        const columnProto = ColumnSeriesClass.prototype;
-
-        columnProto.animateDrilldown = columnAnimateDrilldown;
-        columnProto.animateDrillupFrom = columnAnimateDrillupFrom;
-        columnProto.animateDrillupTo = columnAnimateDrillupTo;
-    }
-
-    if (MapSeriesClass && pushUnique(composedMembers, MapSeriesClass)) {
-        const mapProto = MapSeriesClass.prototype;
-
-        mapProto.animateDrilldown = mapAnimateDrilldown;
-        mapProto.animateDrillupFrom = mapAnimateDrillupFrom;
-        mapProto.animateDrillupTo = mapAnimateDrillupTo;
-    }
-
-    if (PieSeriesClass && pushUnique(composedMembers, PieSeriesClass)) {
-        const pieProto = PieSeriesClass.prototype;
-
-        pieProto.animateDrilldown = pieAnimateDrilldown;
-        pieProto.animateDrillupFrom = columnAnimateDrillupFrom;
-        pieProto.animateDrillupTo = columnAnimateDrillupTo;
-    }
-
-    if (pushUnique(composedMembers, PointClass)) {
-        const pointProto = PointClass.prototype;
+        } = seriesTypes;
 
         addEvent(PointClass, 'afterInit', onPointAfterInit);
         addEvent(PointClass, 'afterSetState', onPointAfterSetState);
@@ -378,15 +345,37 @@ function compose(
 
         pointProto.doDrilldown = pointDoDrilldown;
         pointProto.runDrilldown = pointRunDrilldown;
-    }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(
             SeriesClass,
             'afterDrawDataLabels',
             onSeriesAfterDrawDataLabels
         );
         addEvent(SeriesClass, 'afterDrawTracker', onSeriesAfterDrawTracker);
+
+        if (ColumnSeriesClass) {
+            const columnProto = ColumnSeriesClass.prototype;
+
+            columnProto.animateDrilldown = columnAnimateDrilldown;
+            columnProto.animateDrillupFrom = columnAnimateDrillupFrom;
+            columnProto.animateDrillupTo = columnAnimateDrillupTo;
+        }
+
+        if (MapSeriesClass) {
+            const mapProto = MapSeriesClass.prototype;
+
+            mapProto.animateDrilldown = mapAnimateDrilldown;
+            mapProto.animateDrillupFrom = mapAnimateDrillupFrom;
+            mapProto.animateDrillupTo = mapAnimateDrillupTo;
+        }
+
+        if (PieSeriesClass) {
+            const pieProto = PieSeriesClass.prototype;
+
+            pieProto.animateDrilldown = pieAnimateDrilldown;
+            pieProto.animateDrillupFrom = columnAnimateDrillupFrom;
+            pieProto.animateDrillupTo = columnAnimateDrillupTo;
+        }
     }
 
 }
@@ -464,7 +453,7 @@ function mapAnimateDrillupFrom(
     if (chart && chart.mapView) {
         chart.mapView.allowTransformAnimation = false;
     }
-    // stop duplicating and overriding animations
+    // Stop duplicating and overriding animations
     if (series.options) {
         series.options.inactiveOtherPoints = true;
     }
@@ -490,7 +479,7 @@ function mapAnimateDrillupTo(
             group.attr({
                 opacity: 0.01
             });
-            // stop duplicating and overriding animations
+            // Stop duplicating and overriding animations
             if (series.options) {
                 series.options.inactiveOtherPoints = true;
             }
@@ -683,7 +672,8 @@ function pieAnimateDrilldown(
                         start: start + i * startAngle,
                         end: start + (i + 1) * startAngle
                     }))[animationOptions ? 'animate' : 'attr'](
-                        (animateTo as any),
+                        (
+                            animateTo as any),
                         animationOptions
                     );
                 }
@@ -755,7 +745,7 @@ function pointRunDrilldown(
     }
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
-    // for  seriesOptions, and call addSeriesAsDrilldown async if necessary.
+    // for seriesOptions, and call addSeriesAsDrilldown async if necessary.
     fireEvent(chart, 'drilldown', {
         point,
         seriesOptions: seriesOptions,

@@ -43,14 +43,18 @@
         },
         tooltip: {
             headerFormat: '',
-            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: ' +
+                '{point.lon}'
         },
         plotOptions: {
             mappoint: {
                 dataLabels: {
                     enabled: true,
                     formatter: function () {
-                        if (typeof (this.point.clusterPointsAmount) === 'undefined') {
+                        if (
+                            typeof (this.point.clusterPointsAmount) ===
+                            'undefined'
+                        ) {
                             return '';
                         }
                         return this.point.clusterPointsAmount;
