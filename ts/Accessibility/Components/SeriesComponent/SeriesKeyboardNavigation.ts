@@ -22,6 +22,7 @@ import type Accessibility from '../../Accessibility';
 import type {
     AccessibilityKeyboardNavigationSeriesNavigationOptions
 } from '../../Options/A11yOptions';
+import type { KeyboardEvent } from '../../../Core/KeyboardEvent';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import Point from '../../../Core/Series/Point.js';
@@ -420,16 +421,17 @@ class SeriesKeyboardNavigation {
                         event: KeyboardEvent
                     ): number {
                         const point = chart.highlightedPoint;
+
                         if (point) {
                             const { plotLeft, plotTop } = this.chart,
                                 { plotX = 0, plotY = 0 } = point;
 
                             event = {
-                                ...(event as any),
+                                ...event,
                                 chartX: plotLeft + plotX,
                                 chartY: plotTop + plotY,
                                 point: point,
-                                target: point.graphic?.element
+                                target: point.graphic?.element || event.target
                             };
 
                             fireEvent(point.series, 'click', event);
