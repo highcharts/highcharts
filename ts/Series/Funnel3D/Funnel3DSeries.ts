@@ -56,6 +56,7 @@ const {
 /**
  * The funnel3d series type.
  *
+ * @private
  * @class
  * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
