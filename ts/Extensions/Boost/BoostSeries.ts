@@ -747,7 +747,6 @@ const getSeriesBoosting = (
     if (series.forceCrop) {
         return false;
     }
-
     return (
         isChartSeriesBoosting(series.chart) ||
         (
