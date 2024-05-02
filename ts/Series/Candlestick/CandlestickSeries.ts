@@ -23,8 +23,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
-import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,

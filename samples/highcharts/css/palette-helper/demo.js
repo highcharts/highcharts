@@ -330,6 +330,6 @@ const generate = async () => {
 
 (async () => {
     [...document.querySelectorAll('input')]
-        .forEach(input => input.addEventListener('change', generate));
+        .forEach(input => input.addEventListener('input', generate));
     await generate();
 })();
