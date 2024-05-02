@@ -527,7 +527,23 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
         }
     },
 
-    legendSymbol: 'rectangle'
+    legendSymbol: 'rectangle',
+
+    /**
+     * This option enables automatic zooming to the last child level upon node
+     * interaction. This feature simplifies navigation by immediately focusing
+     * on the deepest layer of the data structure without intermediate steps.
+     *
+     * @sample {highcharts} highcharts/plotoptions/treemap-zoomtolastleaf/
+     *        Zooming to last leaf enabled
+     *
+     * @since   @next
+     *
+     * @default false
+     *
+     * @product highcharts
+     */
+    zoomToLastLeaf: false
 
 };
 
