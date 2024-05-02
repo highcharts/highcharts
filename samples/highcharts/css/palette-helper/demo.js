@@ -33,6 +33,8 @@ const chartPreview = async theme => {
 
         yAxis: {
             width: '40%',
+            top: '10%',
+            height: '90%',
             title: {
                 text: 'kg'
             }
@@ -166,8 +168,7 @@ const chartPreview = async theme => {
     });
 };
 
-const defaultOptions = Highcharts.merge(Highcharts.defaultOptions),
-    buttonTheme = SVGRenderer.buttonTheme;
+const defaultOptions = Highcharts.merge(Highcharts.defaultOptions);
 
 const generate = async () => {
 
@@ -222,11 +223,8 @@ const generate = async () => {
         if (!preview) {
             preview = document.createElement('div');
             preview.id = `neutral-preview-${weight}`;
+            preview.title = `.highcharts-neutral-color-${weight}`;
             neutralPreview.appendChild(preview);
-
-            const label = document.createElement('div');
-            label.innerText = `Neutral ${weight}`;
-            neutralPreview.appendChild(label);
         }
         preview.style.backgroundColor = color;
     });
@@ -245,11 +243,8 @@ const generate = async () => {
         if (!preview) {
             preview = document.createElement('div');
             preview.id = `highlight-preview-${weight}`;
+            preview.title = `.highcharts-highlight-color-${weight}`;
             highlightPreview.appendChild(preview);
-
-            const label = document.createElement('div');
-            label.innerText = `Highlight ${weight}`;
-            highlightPreview.appendChild(label);
         }
         preview.style.backgroundColor = color;
     });

@@ -47,18 +47,12 @@ input[type="color"]::-moz-color-swatch {
     border-radius: 50%;
 }
 
-#neutral-preview,
-#highlight-preview {
-    display: inline-block;
-    width: 49%;
-    vertical-align: top;
-}
-
 #neutral-preview div,
 #highlight-preview div {
     display: inline-block;
-    width: 50%;
+    width: 2em;
     height: 2em;
+    border-radius: 50%;
     box-sizing: border-box;
     padding: 3px;
     vertical-align: middle;

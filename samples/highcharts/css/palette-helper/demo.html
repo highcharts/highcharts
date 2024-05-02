@@ -33,7 +33,9 @@
 
     <h3>Palette preview</h3>
     <div id="preview">
+        <p>Neutral color variations for text and various elements.</p>
         <div id="neutral-preview"></div>
+        <p>Highlight color variations for highlighted text and selections.</p>
         <div id="highlight-preview"></div>
     </div>
 
@@ -44,7 +46,14 @@
     <div class="clear"></div>
 
     <h3>CSS output</h3>
+    <p>If you're using <a href="https://api.highcharts.com/highcharts/chart.styledMode">
+        styled mode</a>, this CSS can be pasted into your style sheet.
+        Remember that the <a href="https://code.highcharts.com/css/highcharts.css">
+        highcharts.css</a> file must be imported first.</p>
     <pre id="css"></pre>
     <h3>JavaScript output</h3>
+    <p>If you're <em>not</em> using styled mode, this JSON structure can be
+    applied using <a href="https://api.highcharts.com/class-reference/Highcharts#.setOptions">
+    Highcharts.setOptions</a> to set the global theme.</p>
     <pre id="js"></pre>
 </div>
