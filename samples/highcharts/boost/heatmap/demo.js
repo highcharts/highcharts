@@ -1,6 +1,6 @@
 let start;
 
-const c = Highcharts.chart('container', {
+Highcharts.chart('container', {
 
     data: {
         csv: document.getElementById('csv').innerHTML,
