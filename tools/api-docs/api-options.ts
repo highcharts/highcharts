@@ -1,4 +1,3 @@
-#!/usr/bin/env npx ts-node
 /* *
  *
  *  Creating API options documentation from TypeScript sources.
@@ -20,9 +19,9 @@
 
 import FS from 'node:fs/promises';
 
-import FSLib from '../../libs/fs.js';
+import FSLib from '../libs/fs.js';
 
-import TSLib from '../../libs/ts.js';
+import TSLib from '../libs/ts.js';
 
 import Yargs from 'yargs';
 
