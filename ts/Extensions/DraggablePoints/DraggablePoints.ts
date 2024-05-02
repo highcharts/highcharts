@@ -233,6 +233,7 @@ function compose(
             'bullet',
             'column',
             'columnrange',
+            'errorbar',
             'flags',
             'gantt',
             'ohlc',
