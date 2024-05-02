@@ -851,13 +851,15 @@ namespace DataLabel {
                 right: 1
             }[align || 'left'],
             verticalAlign = options.verticalAlign,
-            padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
+            dlPadding = dataLabel.padding || 0,
+            padding = dataLabel.box ? 0 : dlPadding,
             horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
             horizontalAxisShift = horizontalAxis ?
                 horizontalAxis.left - chart.plotLeft : 0,
             verticalAxis = chart.inverted ? this.xAxis : this.yAxis,
             verticalAxisShift = verticalAxis ?
-                verticalAxis.top - chart.plotTop : 0;
+                verticalAxis.top - chart.plotTop : 0,
+            innerWidth = bBox.width - 2 * (dlPadding - padding);
 
         let { x = 0, y = 0 } = options,
             off,
@@ -871,7 +873,7 @@ namespace DataLabel {
                 if (x >= 0) {
                     options.inside = true;
                 }
-                x -= off + bBox.width * alignFactor;
+                x -= off + innerWidth * alignFactor;
             }
             justified = true;
         }
@@ -881,10 +883,10 @@ namespace DataLabel {
         if (off > chart.plotWidth) {
             if (align !== 'right') {
                 options.align = 'right';
-                x += chart.plotWidth - off + bBox.width * (1 - alignFactor);
                 if (x <= 0) {
                     options.inside = true;
                 }
+                x += chart.plotWidth - off + innerWidth * (1 - alignFactor);
             }
             justified = true;
         }
