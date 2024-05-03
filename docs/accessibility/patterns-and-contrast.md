@@ -22,7 +22,7 @@ Consider using a [high contrast theme](https://www.highcharts.com/docs/chart-des
 
 ### Dash styles
 Consider applying [dash styles](https://api.highcharts.com/highcharts/plotOptions.line.dashStyle) to line series. This will make lines distinguishable even on poor black/white prints. See the [live demo of dash styles](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle/).
-  <!-- INSERT DEMO LINK WHEN READY -->
+  <!-- INSERT DEMO LINK WHEN READY accessibility/accessible-dashstyle -->
 
 For more examples of dash styles, you can take a look at this demo showing the name of different dash styles:
  <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/series-dashstyle-all allow="fullscreen"></iframe>
