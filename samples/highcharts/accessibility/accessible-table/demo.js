@@ -26,12 +26,18 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'John',
-        data: [5, 3, 4, 7, 2]
+        data: [5, 3, 4, 7, 2],
+        borderWidth: 2,
+        borderColor: '#000000'
     }, {
         name: 'Jane',
-        data: [2, 2, 3, 2, 1]
+        data: [2, 2, 3, 2, 1],
+        borderWidth: 2,
+        borderColor: '#000000'
     }, {
         name: 'Joe',
-        data: [3, 4, 4, 2, 5]
+        data: [3, 4, 4, 2, 5],
+        borderWidth: 2,
+        borderColor: '#000000'
     }]
 });
