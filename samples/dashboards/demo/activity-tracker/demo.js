@@ -1,15 +1,364 @@
-/*
-* Offline parser, toi be rewritten
-*
-*/
+/* eslint-disable max-len */
+const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
 
-const fs = require('fs');
-const { parseString } = require('xml2js');
 
-const gpxFilePath = 'Afternoon_Run.gpx';
-const outputFilePath = 'parsed_data.json';
+// this function needs to be replaced by columnAssignment implementation
+
+const getTrailCoordinates = data => {
+    const coordinateData = [];
+
+    for (let i = 1; i < data.length; i++) {
+        if (data[i].length >= 7) {
+            const lat2 = data[i][3];
+            const lon2 = data[i][4];
+            const cumulativeDistance = data[i][6];
+
+            coordinateData.push([lon2, lat2, cumulativeDistance]);
+        }
+    }
+    return coordinateData;
+};
+
+
+async function setupDashboard(allData, splitData) {
+    // Get data
+    let gpxData = null;
+    await fetchGpxData();
+
+    console.log(gpxData);
+
+    // Get the GPX data
+    async function fetchGpxData() {
+        await fetch(gpxDataUrl)
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                gpxData = parser.parseFromString(data, 'application/xml');
+            });
+    }
+
+    // Launch the dashboard
+    Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                id: 'all-datapoints-connector',
+                type: 'JSON',
+                options: {
+                    data: allData
+                }
+            },
+            {
+                id: 'splits-connector',
+                type: 'JSON',
+                options: {
+                    data: splitData
+                }
+            }
+            ]
+        },
+        gui: {
+            layouts: [{
+                id: 'layout-1',
+                rows: [{
+                    cells: [{
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            },
+                            medium: {
+                                width: '50%'
+                            },
+                            large: {
+                                width: '50%'
+                            }
+                        },
+                        id: 'activity-map' // mapchart
+                    },
+                    {
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            },
+                            medium: {
+                                width: '50%'
+                            },
+                            large: {
+                                width: '50%'
+                            }
+                        },
+                        id: 'activity-datagrid' // datagrid
+                    }
+                    ]
+                }, {
+                    cells: [{
+                        id: 'activity-chart' // line and area chart
+                    }]
+                }]
+            }]
+        },
+        components: [
+            {
+                renderTo: 'activity-map', // mapchart
+                type: 'Highcharts',
+                sync: {
+                    highlight: true
+                },
+                chartConstructor: 'mapChart',
+                connector: 'all-datapoints-connector',
+                columnAssignment: [
+                    {
+                        seriesId: 'pointSeries',
+                        data: ['latitude', 'longitude']
+                    }
+                ],
+
+
+                chartOptions: {
+                    title: {
+                        text: ''
+                    },
+                    styleMode: {
+                        enabled: false
+                    },
+                    navigation: {
+                        buttonOptions: {
+                            align: 'left',
+                            theme: {
+                                stroke: '#e6e6e6'
+                            }
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    mapNavigation: {
+                        enabled: true,
+                        buttonOptions: {
+                            alignTo: 'spacingBox'
+                        }
+                    },
+                    mapView: {
+                        fitToGeometry: {
+                            type: 'Polygon',
+                            coordinates: [
+                                [
+                                    [5.3000, 60.4200],
+                                    [5.3900, 60.4200],
+                                    [5.3900, 60.3600],
+                                    [5.3000, 60.3600],
+                                    [5.3000, 60.4200]
+                                ]
+                            ]
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [
+                        // add a baselayer map
+                        {
+                            type: 'tiledwebmap',
+                            name: 'Map',
+                            provider: {
+                                type: 'OpenStreetMap',
+                                theme: 'OpenTopoMap'
+                            },
+                            showInLegend: false
+                        },
+                        // add a trailmap on top of baselayer
+                        {
+                            name: 'Trail Activity',
+                            type: 'mapline',
+                            data: [{
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: getTrailCoordinates(allData)
+                                }
+                            }],
+                            showInLegend: false
+                        },
+                        // add a mappoint on top of trailmap
+                        {
+                            name: 'Location-gps',
+                            type: 'mappoint',
+                            data: [
+                                { latitude: 0, longitude: 0 }
+                            ]
+                        }
+                    ]
+                }
+
+            },
+            {
+                renderTo: 'activity-datagrid',
+                type: 'DataGrid',
+                title: {
+                    text: 'Splits',
+                    style: {
+                        textAlign: 'center'
+                    }
+                },
+                connector: {
+                    id: 'splits-connector'
+                },
+                sync: {
+                    highlight: true
+                },
+                dataGridOptions: {
+                    editable: false,
+                    columns: {
+                        time: {
+                            title: 'kilometer',
+                            dataIndex: 'kilometer',
+                            cellFormatter: function () {
+                                return this.value.toFixed(1);
+                            },
+                            width: 150
+                        },
+                        Speed: {
+                            title: 'Speed (km/h)',
+                            dataIndex: 'pace',
+                            cellFormatter: function () {
+                                return this.value.toFixed(1);
+                            },
+                            width: 150
+                        },
+                        Elevation: {
+                            title: 'Elevation (m)',
+                            dataIndex: 'elevation',
+                            cellFormatter: function () {
+                                return this.value.toFixed(1);
+                            },
+                            width: 150
+                        },
+                        HeartRate: {
+                            title: 'Heart Rate (bpm)',
+                            dataIndex: 'heartRate',
+                            cellFormatter: function () {
+                                return this.value.toFixed(1);
+                            },
+                            width: 150
+                        }
+                    }
+                }
+            },
+            {
+                renderTo: 'activity-chart',
+                type: 'Highcharts',
+
+                connector: {
+                    id: 'all-datapoints-connector',
+                    columnAssignment: [{
+                        seriesId: 'elevation-series',
+                        data: ['cumulativeDistance', 'elevation']
+                    },
+                    {
+                        seriesId: 'speed-series',
+                        data: ['cumulativeDistance', 'speed']
+                    },
+                    {
+                        seriesId: 'heartrate-series',
+                        data: ['cumulativeDistance', 'hr']
+                    }
+                    ]
+                },
+                chartOptions: {
+                    title: {
+                        text: ''
+                    },
+                    xAxis: [{
+                        title: {
+                            text: 'Distance (km)'
+                        }
+                    }],
+                    yAxis: [{
+                        title: {
+                            text: 'Elevation (m)'
+                        },
+                        opposite: false,
+                        labels: {
+                            enabled: true,
+                            formatter: function () {
+                                return this.value + ' m';
+                            }
+                        }
+                    },
+                    {
+                        title: {
+                            text: 'Heart Rate (bpm)'
+                        },
+                        opposite: true,
+                        labels: {
+                            enabled: true,
+                            formatter: function () {
+                                return this.value + ' bpm';
+                            }
+                        },
+                        offset: 80,
+                        gridLineWidth: 0,
+                        lineWidth: 1,
+                        lineColor: '#ff0000'
+                    },
+                    {
+                        title: {
+                            text: 'Speed (km/h)'
+                        },
+                        opposite: true,
+                        labels: {
+                            enabled: true,
+                            formatter: function () {
+                                return this.value + ' km/h';
+                            }
+                        },
+                        offset: 0,
+                        gridLineWidth: 0,
+                        lineWidth: 1,
+                        lineColor: '#0000ff'
+                    }
+                    ],
+                    tooltip: {
+                        shared: true,
+                        crosshairs: true,
+                        formatter: function () {
+                            // eslint-disable-next-line max-len
+                            let tooltip = '<b>Distance:</b> ' + this.x.toFixed(2) + ' km<br/>';
+                            this.points.forEach(function (point) {
+                                tooltip += '<b>' + point.series.name + '</b>: ' +
+                                    point.y.toFixed(2) + ' ' +
+                                    point.series.options.tooltipValueSuffix +
+                                    '<br/>';
+                            });
+                            return tooltip;
+                        }
+                    },
+
+                    series: [{
+                        name: 'Elevation',
+                        id: 'elevation-series',
+                        yAxis: 0,
+                        type: 'area',
+                        tooltipValueSuffix: 'm'
+                    },
+                    {
+                        name: 'Speed',
+                        id: 'speed-series',
+                        yAxis: 2,
+                        tooltipValueSuffix: 'km/h'
+                    },
+                    {
+                        name: 'Heart Rate',
+                        id: 'heartrate-series',
+                        yAxis: 1,
+                        tooltipValueSuffix: 'bpm'
+                    }]
+                }
+            }
+        ]
+    }, true);
+}
 
 // Parse GPX file
+/*
 function parseGPXFile(filePath, callback) {
     fs.readFile(filePath, (err, data) => {
         if (err) {
@@ -107,6 +456,7 @@ parseGPXFile(gpxFilePath, parsedData => {
     });
 });
 
+*/
 // TBD: Pre-process data, to be moved to server
 const splitsData = [
     { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
@@ -71419,337 +71769,4 @@ const allData = [
     ]
 ];
 
-// this function needs to be replaced by columnAssignment implementation
-
-const getTrailCoordinates = data => {
-    const coordinateData = [];
-
-    for (let i = 1; i < data.length; i++) {
-        if (data[i].length >= 7) {
-            const lat2 = data[i][3];
-            const lon2 = data[i][4];
-            const cumulativeDistance = data[i][6];
-
-            coordinateData.push([lon2, lat2, cumulativeDistance]);
-        }
-    }
-    return coordinateData;
-};
-
-Dashboards.board('container', {
-    dataPool: {
-        connectors: [{
-            id: 'all-datapoints-connector',
-            type: 'JSON',
-            options: {
-                data: allData
-            }
-        },
-        {
-            id: 'splits-connector',
-            type: 'JSON',
-            options: {
-                data: newSplitsData
-            }
-        }
-        ]
-    },
-    gui: {
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
-                    id: 'activity-map' // mapchart
-                },
-                {
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '50%'
-                        },
-                        large: {
-                            width: '50%'
-                        }
-                    },
-                    id: 'activity-datagrid' // datagrid
-                }
-                ]
-            }, {
-                cells: [{
-                    id: 'activity-chart' // line and area chart
-                }]
-            }]
-        }]
-    },
-    components: [
-        {
-            renderTo: 'activity-map', // mapchart
-            type: 'Highcharts',
-            sync: {
-                highlight: true
-            },
-            chartConstructor: 'mapChart',
-            connector: 'all-datapoints-connector',
-            columnAssignment: [
-                {
-                    seriesId: 'pointSeries',
-                    data: ['latitude', 'longitude']
-                }
-            ],
-
-
-            chartOptions: {
-                title: {
-                    text: ''
-                },
-                styleMode: {
-                    enabled: false
-                },
-                navigation: {
-                    buttonOptions: {
-                        align: 'left',
-                        theme: {
-                            stroke: '#e6e6e6'
-                        }
-                    }
-                },
-                credits: {
-                    enabled: false
-                },
-                mapNavigation: {
-                    enabled: true,
-                    buttonOptions: {
-                        alignTo: 'spacingBox'
-                    }
-                },
-                mapView: {
-                    fitToGeometry: {
-                        type: 'Polygon',
-                        coordinates: [
-                            [
-                                [5.3000, 60.4200],
-                                [5.3900, 60.4200],
-                                [5.3900, 60.3600],
-                                [5.3000, 60.3600],
-                                [5.3000, 60.4200]
-                            ]
-                        ]
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                series: [
-                    // add a baselayer map
-                    {
-                        type: 'tiledwebmap',
-                        name: 'Map',
-                        provider: {
-                            type: 'OpenStreetMap',
-                            theme: 'OpenTopoMap'
-                        },
-                        showInLegend: false
-                    },
-                    // add a trailmap on top of baselayer
-                    {
-                        name: 'Trail Activity',
-                        type: 'mapline',
-                        data: [{
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: getTrailCoordinates(allData)
-                            }
-                        }],
-                        showInLegend: false
-                    },
-                    // add a mappoint on top of trailmap
-                    {
-                        name: 'Location-gps',
-                        type: 'mappoint',
-                        data: [
-                            { latitude: 0, longitude: 0 }
-                        ]
-                    }
-                ]
-            }
-
-        },
-        {
-            renderTo: 'activity-datagrid',
-            type: 'DataGrid',
-            title: {
-                text: 'Splits',
-                style: {
-                    textAlign: 'center'
-                }
-            },
-            connector: {
-                id: 'splits-connector'
-            },
-            sync: {
-                highlight: true
-            },
-            dataGridOptions: {
-                editable: false,
-                columns: {
-                    time: {
-                        title: 'kilometer',
-                        dataIndex: 'kilometer',
-                        cellFormatter: function () {
-                            return this.value.toFixed(1);
-                        },
-                        width: 150
-                    },
-                    Speed: {
-                        title: 'Speed (km/h)',
-                        dataIndex: 'pace',
-                        cellFormatter: function () {
-                            return this.value.toFixed(1);
-                        },
-                        width: 150
-                    },
-                    Elevation: {
-                        title: 'Elevation (m)',
-                        dataIndex: 'elevation',
-                        cellFormatter: function () {
-                            return this.value.toFixed(1);
-                        },
-                        width: 150
-                    },
-                    HeartRate: {
-                        title: 'Heart Rate (bpm)',
-                        dataIndex: 'heartRate',
-                        cellFormatter: function () {
-                            return this.value.toFixed(1);
-                        },
-                        width: 150
-                    }
-                }
-            }
-        },
-        {
-            renderTo: 'activity-chart',
-            type: 'Highcharts',
-
-            connector: {
-                id: 'all-datapoints-connector',
-                columnAssignment: [{
-                    seriesId: 'elevation-series',
-                    data: ['cumulativeDistance', 'elevation']
-                },
-                {
-                    seriesId: 'speed-series',
-                    data: ['cumulativeDistance', 'speed']
-                },
-                {
-                    seriesId: 'heartrate-series',
-                    data: ['cumulativeDistance', 'hr']
-                }
-                ]
-            },
-            chartOptions: {
-                title: {
-                    text: ''
-                },
-                xAxis: [{
-                    title: {
-                        text: 'Distance (km)'
-                    }
-                }],
-                yAxis: [{
-                    title: {
-                        text: 'Elevation (m)'
-                    },
-                    opposite: false,
-                    labels: {
-                        enabled: true,
-                        formatter: function () {
-                            return this.value + ' m';
-                        }
-                    }
-                },
-                {
-                    title: {
-                        text: 'Heart Rate (bpm)'
-                    },
-                    opposite: true,
-                    labels: {
-                        enabled: true,
-                        formatter: function () {
-                            return this.value + ' bpm';
-                        }
-                    },
-                    offset: 80,
-                    gridLineWidth: 0,
-                    lineWidth: 1,
-                    lineColor: '#ff0000'
-                },
-                {
-                    title: {
-                        text: 'Speed (km/h)'
-                    },
-                    opposite: true,
-                    labels: {
-                        enabled: true,
-                        formatter: function () {
-                            return this.value + ' km/h';
-                        }
-                    },
-                    offset: 0,
-                    gridLineWidth: 0,
-                    lineWidth: 1,
-                    lineColor: '#0000ff'
-                }
-                ],
-                tooltip: {
-                    shared: true,
-                    crosshairs: true,
-                    formatter: function () {
-                        // eslint-disable-next-line max-len
-                        let tooltip = '<b>Distance:</b> ' + this.x.toFixed(2) + ' km<br/>';
-                        this.points.forEach(function (point) {
-                            tooltip += '<b>' + point.series.name + '</b>: ' +
-                                point.y.toFixed(2) + ' ' +
-                                point.series.options.tooltipValueSuffix +
-                                '<br/>';
-                        });
-                        return tooltip;
-                    }
-                },
-
-                series: [{
-                    name: 'Elevation',
-                    id: 'elevation-series',
-                    yAxis: 0,
-                    type: 'area',
-                    tooltipValueSuffix: 'm'
-                },
-                {
-                    name: 'Speed',
-                    id: 'speed-series',
-                    yAxis: 2,
-                    tooltipValueSuffix: 'km/h'
-                },
-                {
-                    name: 'Heart Rate',
-                    id: 'heartrate-series',
-                    yAxis: 1,
-                    tooltipValueSuffix: 'bpm'
-                }]
-            }
-        }
-    ]
-}, true);
+setupDashboard(allData, newSplitsData);
