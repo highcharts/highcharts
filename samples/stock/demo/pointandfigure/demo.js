@@ -1,7 +1,5 @@
 (async () => {
-
     const { isNumber, relativeLength, defined } = Highcharts;
-
     Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
         return [
             'M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'
@@ -62,8 +60,8 @@
                 );
 
             for (let i = 1; i <= times; i++) {
-                const newPoint = lastPoint + flipFactor *
-                                                    (calculatedBoxSize * i);
+                const newPoint =
+                    lastPoint + flipFactor * (calculatedBoxSize * i);
                 currPointGroup.y.push(newPoint);
             }
         }
@@ -163,8 +161,7 @@
 
             const pnfSeries = this.series.filter(series => series.is(
                 'pointandfigure'
-            )
-            );
+            ));
 
             pnfSeries.forEach(() => {
                 if (this.categories) {
@@ -173,7 +170,7 @@
                     this.series.forEach(function (series) {
                         const seriesClosest = series.closestPointRange,
                             visible = series.visible ||
-                        !series.chart.options.chart.ignoreHiddenSeries;
+                                !series.chart.options.chart.ignoreHiddenSeries;
 
                         if (defined(seriesClosest) && visible) {
                             ret = defined(ret) ?
@@ -186,7 +183,6 @@
             return ret;
         });
 
-    // eslint-disable-next-line no-underscore-dangle
     Highcharts.wrap(
         Highcharts.Series.prototype,
         'groupData', function (proceed) {
@@ -206,7 +202,7 @@
         'pointandfigure',
         'scatter', {
             // Options
-            boxSize: '5%',
+            boxSize: '2%',
             reversalAmount: 3,
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
@@ -216,8 +212,8 @@
                 headerFormat: ''
             },
             turboThreshold: 0,
-            groupPadding: 0.2,
-            pointPadding: 0.1,
+            groupPadding: 0,
+            pointPadding: 0,
             pointRange: null,
             dataGrouping: {
                 groupAll: true,
@@ -239,17 +235,14 @@
         // Series prototype
             takeOrdinalPosition: true,
             finalData: [],
-            getColumnMetrics:
-            Highcharts.seriesTypes.column.prototype.getColumnMetrics,
             markerAttribs,
             generatePnfData,
             translate() {
-                const metrics = this.getColumnMetrics(),
-                    calculatedBoxSize = this.calculatedBoxSize;
-                this.markerWidth =
-                metrics.width + metrics.paddedWidth + metrics.offset;
-                this.markerHeight =
-                this.yAxis.toPixels(0) - this.yAxis.toPixels(calculatedBoxSize);
+                console.log('translate');
+                const calculatedBoxSize = this.calculatedBoxSize;
+                this.markerHeight = this.markerWidth =
+                    this.yAxis.toPixels(0) -
+                    this.yAxis.toPixels(calculatedBoxSize);
                 return Highcharts.Series.prototype.translate.call(this);
             }
         }, {
@@ -262,11 +255,11 @@
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-        chart: {
-            height: 800
-        },
         title: {
             text: 'AAPL stock price - Point and Figure'
+        },
+        rangeSelector: {
+            enabled: false
         },
         series: [{
             name: 'AAPL',

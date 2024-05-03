@@ -39,7 +39,8 @@ module.exports = {
             'Chart types',
             'Various features',
             'Flags and Technical indicators',
-            'Designs'
+            'Designs',
+            'Experimental'
         ],
         filter: { tags: ['Highcharts Stock demo'] },
         path: '/stock/'
