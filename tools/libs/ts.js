@@ -1607,10 +1607,8 @@ function resolveType(
 
             for (const item in imports) {
 
-                if (
-                    item === type ||
-                    imports[item] === type // Import casting
-                ) {
+                // `item` is the external name, while `type` is the local name
+                if (imports[item] === type) {
 
                     resolvedPath = Path.resolve(
                         Path.dirname(FSLib.path(sourceInfo.path)),
@@ -1643,8 +1641,15 @@ function resolveType(
 
                     _stack[resolvedPath] = resolvedSource;
 
-                    const resolvedImport =
-                        resolveType(resolvedSource, item, _stack);
+                    const resolvedImport = resolveType(
+                        resolvedSource,
+                        (
+                            item === 'default' ?
+                                type :
+                                item
+                        ),
+                        _stack
+                    );
 
                     if (resolvedImport) {
                         delete _stack[resolvedPath];
