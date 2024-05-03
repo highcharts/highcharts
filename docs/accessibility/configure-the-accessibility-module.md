@@ -31,7 +31,7 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/timeline allow="fullscreen"></iframe>
+<!-- INSERT DEMO LINK accessibility/before-chart-format -->
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/timeline)
 
@@ -51,7 +51,7 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bubble allow="fullscreen"></iframe>
+<!-- INSERT DEMO LINK accessibility/value-description-format -->
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bubble)
 
@@ -88,11 +88,11 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bar-basic/ allow="fullscreen"></iframe>
+<!-- INSERT NEW DEMO HERE -->
 
 ### Additional text descriptions
 
-Note that you can also provide additional text descriptions for individual points and series using [`point.accessibility.description`](https://api.highcharts.com/highcharts/series.line.data.accessibility.description) and [`series.accessibility.description`](https://api.highcharts.com/highcharts/series.line.accessibility.description). This description is by default added to the existing description of the point/series, and can be useful to highlight points of interest. 
+Note that you can also provide additional text descriptions for individual points and series using [`point.accessibility.description`](https://api.highcharts.com/highcharts/series.line.data.accessibility.description) and [`series.accessibility.description`](https://api.highcharts.com/highcharts/series.line.accessibility.description). This description is by default added to the existing description of the point/series, and can be useful to highlight points or series of interest. 
 ```js
 Highcharts.chart('container', {
     series: [{
@@ -126,12 +126,14 @@ Be aware that for charts with a large number of data points, individual data poi
 Highcharts.chart('container', {
     accessibility: {
             series: {
-                pointDescriptionEnabledThreshold: 30
+                pointDescriptionEnabledThreshold: 100
             }
         },
     // ...
 });
 ```
+
+<!-- INSERT DEMO LINK accessibility/point-description-enabled-threshold -->
 
 It is possible to set a similar [threshold for keyboard navigation](https://api.highcharts.com/highcharts/accessibility.keyboardNavigation.seriesNavigation.pointNavigationEnabledThreshold), but this is disabled by default.
 
@@ -156,7 +158,7 @@ Highcharts.chart('container', {
 
 For large data series, [sonification](https://www.highcharts.com/docs/sonification/getting-started) can be a great tool for making trends and patterns more accessible to screen reader users.
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/big-data allow="fullscreen"></iframe>
+<!-- INSERT DEMO LINK accessibility/expose-as-group-only -->
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/sonification/big-data)
 
