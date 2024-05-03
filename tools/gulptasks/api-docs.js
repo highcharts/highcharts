@@ -61,11 +61,11 @@ async function apiDocs() {
     await Gulp.task('api-tree')();
 
     await ProcessLib.exec(
-        'npx ts-node tools/api-docs/bin/api-classes.ts' +
+        'npx ts-node tools/api-docs/api-classes.ts' +
             ` --source "${source}"`
     );
     await ProcessLib.exec(
-        'npx ts-node tools/api-docs/bin/api-options.ts' +
+        'npx ts-node tools/api-docs/api-options.ts' +
             ` --source "${source}"`
     );
 }

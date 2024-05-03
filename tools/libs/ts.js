@@ -139,6 +139,8 @@ function autoExtendInfo(
     let resolvedExtendType;
     /** @type {CodeInfo} */
     let resolvedInfo;
+    /** @type {string|undefined} */
+    let resolvedPath;
 
     for (const extendType of extendsToDo) {
         resolvedExtendType = resolveType(sourceInfo, extendType);
@@ -148,6 +150,13 @@ function autoExtendInfo(
         }
 
         resolvedInfo = resolvedExtendType.resolvedInfo;
+        resolvedPath = Path.join(
+            Path.dirname(sourceInfo.path),
+            Path.relative(
+                Path.dirname(sourceInfo.path),
+                resolvedExtendType.resolvedPath
+            )
+        );
 
         if (
             resolvedInfo.kind !== 'Class' &&
@@ -163,7 +172,10 @@ function autoExtendInfo(
             }
 
             property = newCodeInfo(property);
-            property.inherited = true;
+            property.meta.origin = {
+                parent: resolvedInfo.name,
+                path: resolvedPath
+            };
 
             infoToExtend.properties.push(property);
 
@@ -2020,6 +2032,14 @@ module.exports = {
  * @property {number} end
  * @property {'Meta'} kind
  * @property {number} overhead
+ * @property {MetaOrigin} [meta]
+ */
+
+
+/**
+ * @typedef MetaOrigin
+ * @property {string} parent
+ * @property {string} path
  */
 
 
