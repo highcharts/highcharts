@@ -2,13 +2,26 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 
-/* Map component */
-#activity-map .highcharts-point {
-    fill-opacity: 0.2;
+/* Application specific colors */
+:root {
+    --track-color: red;
+    --speed-color: red;
+    --heartrate-color: blue;
 }
 
+/* Map component */
 #activity-map {
     flex: 1 1 70%;
+}
+
+#activity-map .highcharts-color-1 {
+    fill: var(--track-color);
+    stroke: var(--track-color);
+}
+
+#activity-map .highcharts-point {
+    fill-opacity: 0.2;
+    stroke-width: 0.0007px;
 }
 
 /* Datagrid component */
@@ -19,20 +32,20 @@
 /* Chart component */
 #activity-chart .highcharts-color-0 {
     /* Elevation */
-    fill: rgb(205, 201, 201);
-    stroke: rgb(205, 201, 201);
-}
-
-#activity-chart .highcharts-color-2 {
-    /* Speed */
-    fill: blue;
-    stroke: blue;
+    fill: #cdc9c9;
+    stroke: #cdc9c9;
 }
 
 #activity-chart .highcharts-color-1 {
-    /* Hear rate */
-    fill: red;
-    stroke: red;
+    /* Speed */
+    fill: var(--speed-color);
+    stroke: var(--speed-color);
+}
+
+#activity-chart .highcharts-color-2 {
+    /* Heart rate */
+    fill: var(--heartrate-color);
+    stroke: var(--heartrate-color);
 }
 
 /* Demo description */
@@ -40,20 +53,4 @@ p.demo-description {
     margin: 0;
     padding: 15px;
     text-align: justify;
-}
-
-/* Custom default colors */
-.highcharts-color-1 {
-    fill: red;
-    stroke: red;
-}
-
-/* Custom series-specific */
-.highcharts-area {
-    fill-opacity: 0.3;
-    stroke-width: 0;
-}
-
-.highcharts-point {
-    stroke-width: 0.0006px;
 }
