@@ -1,3 +1,113 @@
+/*
+* Offline parser, toi be rewritten
+*
+*/
+
+const fs = require('fs');
+const { parseString } = require('xml2js');
+
+const gpxFilePath = 'Afternoon_Run.gpx';
+const outputFilePath = 'parsed_data.json';
+
+// Parse GPX file
+function parseGPXFile(filePath, callback) {
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            console.error('Error reading GPX file:', err);
+            return;
+        }
+
+        parseString(data, (err, result) => {
+            if (err) {
+                console.error('Error parsing GPX file:', err);
+                return;
+            }
+
+            const trackPoints = result.gpx.trk[0].trkseg[0].trkpt;
+
+            let cumulativeDistance = 0;
+            let prevTime;
+            let prevLat;
+            let prevLon;
+            let speedSum = 0;
+            let speedCount = 0;
+
+            // Prepare array for storing parsed data
+            const parsedData = [
+                // eslint-disable-next-line max-len
+                ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
+            ];
+
+            trackPoints.forEach(point => {
+                const time = new Date(point.time[0]).getTime();
+                const elevation = parseFloat(point.ele[0]);
+                // eslint-disable-next-line max-len
+                const hr = parseInt(point.extensions[0]['gpxtpx:TrackPointExtension'][0]['gpxtpx:hr'][0], 10);
+                const lat = parseFloat(point.$.lat);
+                const lon = parseFloat(point.$.lon);
+
+                if (prevTime) {
+                    // eslint-disable-next-line max-len
+                    const distance = haversineDistance(lat, lon, prevLat, prevLon);
+                    cumulativeDistance += distance / 1000;
+                    const timeDifference = time - prevTime;
+                    const speed = calculateSpeed(distance, timeDifference);
+                    speedSum += speed;
+                    speedCount++;
+
+                    const averageSpeed = speedSum / speedCount;
+                    // eslint-disable-next-line max-len
+                    parsedData.push([time, elevation, hr, lat, lon, averageSpeed, cumulativeDistance], 10);
+                } else {
+                    parsedData.push([time, elevation, hr, lat, lon, 0, 0]);
+                }
+
+                // Update previous values
+                prevTime = time;
+                prevLat = lat;
+                prevLon = lon;
+            });
+
+            callback(parsedData);
+        });
+    });
+}
+
+// Function to calculate distance between two points using Haversine formula
+function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Earth radius in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
+
+// Function to calculate speed in km/h
+function calculateSpeed(distance, timeDifference) {
+    const timeHours = timeDifference / (1000 * 3600);
+    return (distance / 1000) / timeHours;
+}
+
+// Parse GPX file and save parsed data to JSON file
+
+parseGPXFile(gpxFilePath, parsedData => {
+    fs.writeFile(outputFilePath, JSON.stringify(parsedData, null, 2), err => {
+        if (err) {
+            console.error('Error writing JSON file:', err);
+            return;
+        }
+        console.log('Parsed data saved to:', outputFilePath);
+    });
+});
+
+// TBD: Pre-process data, to be moved to server
 const splitsData = [
     { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
     { KM: 2, Pace: '6:04', Elev: -6, HR: 115 },
@@ -31,7 +141,10 @@ const newSplitsData = [
     ])
 ];
 
-
+/*
+* TBD: remove the static data, fetch GPX data from server, parse on fetch.
+*
+*/
 const allData = [
     [
         'time',
