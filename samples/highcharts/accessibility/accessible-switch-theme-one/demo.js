@@ -265,10 +265,6 @@ const chartOptions = {
         text: 'Chart with high contrast theme'
     },
     accessibility: {
-        screenReaderSection: {
-            beforeChartFormat: 'Column chart showing a selected high ' +
-                'contrast theme'
-        },
         landmarkVerbosity: 'one'
     },
     credits: {
@@ -289,7 +285,7 @@ function resetOptions() {
 }
 
 function createChart(chartOptions) {
-    return new Highcharts.Chart('container-column', chartOptions);
+    return new Highcharts.Chart('container', chartOptions);
 }
 
 Highcharts.setOptions(lightTheme);

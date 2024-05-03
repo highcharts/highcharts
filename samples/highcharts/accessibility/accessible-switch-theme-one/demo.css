@@ -13,8 +13,14 @@ label {
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
 }
 
-.container {
-    max-width: 800px;
-    height: 400px;
+#container {
+    height: 420px;
+}
+
+.highcharts-figure,
+.highcharts-data-table table,
+#demo-content {
+    min-width: 360px;
+    max-width: 820px;
     margin: 1em auto;
 }
