@@ -88,7 +88,7 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<!-- INSERT NEW DEMO HERE -->
+<!-- INSERT NEW DEMO HERE accessibility/value-suffix -->
 
 ### Additional text descriptions
 
