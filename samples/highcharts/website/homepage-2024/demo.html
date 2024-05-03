@@ -2,9 +2,8 @@
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/sankey.js"></script>
 <script src="https://code.highcharts.com/modules/arc-diagram.js"></script>
-<script src="https://code.highcharts.com/modules/draggable-points.js"></script>
-<script src="https://code.highcharts.com/modules/streamgraph.js"></script>
-<!-- <script src="https://code.highcharts.com/modules/accessibility.js"></script> -->
+<script src="https://code.highcharts.com/modules/streamgraph.js"></script> 
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/modules/networkgraph.js"></script>
 <script src="https://code.highcharts.com/modules/stock.js"></script>
 <script src="https://code.highcharts.com/modules/price-indicator.js"></script>
@@ -12,14 +11,27 @@
 <script src="https://code.highcharts.com/modules/funnel.js"></script>
 <script src="https://code.highcharts.com/modules/map.js"></script>
 <script src="https://code.highcharts.com/maps/modules/geoheatmap.js"></script>
-<script src="https://code.highcharts.com/gantt/modules/gantt.js"></script>
-<script src="https://code.highcharts.com/themes/brand-dark.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/gantt.js"></script> -->
 <script src="https://code.highcharts.com/gantt/modules/pattern-fill.js"></script>
-<script src="https://code.highcharts.com/modules/annotations.js"></script>
 
+<div class="outer-container">
+   <div id="container"></div>
+   <div class="button-container">
+       <button class="chart-button">
+           <div class="button-text">Change Chart!</div>
+       </button>
+   </div>
 
+   <div id="play-controls">
+       <button id="play-pause-button" class="" title="play">
+           <div id="play-arrow"></div>
+           <div id="pause-bars"></div>
+       </button>
+       <input id="play-range" type="range" value="2000" min="2000" max="2018" />
+   </div>
+</div>
 
-
+<!-- 
 <div class="site" id="page">
     <header class="bg-mudLogo sticky-top" role="banner">
        <a class="skip-link" href="#content">Skip to content</a>
@@ -388,23 +400,27 @@
                    <div class="container-page-animation col-12 col-sm-6 align-self-center" role="img" aria-label="Randomly selected chart animating abstractly. 
                       The visualizations may include arc diagram chart, column range chart, sankey chart, column chart, streamgraph or dashboard with charts">
                     
-                        <div class="demo-container">
-                            <div id="container"></div>
-                            <div class="button-container">
-                                <button class="chart-button">
-                                    <div class="button-text">Change Chart!</div>
-                                </button>
-                            </div>
-                        
-                            <div id="play-controls">
-                                <button id="play-pause-button" class="" title="play">
-                                    <div id="play-arrow"></div>
-                                    <div id="pause-bars"></div>
-                                </button>
-                                <input id="play-range" type="range" value="2000" min="2000" max="2018" />
-                            </div>
+                     
+                      <div class="outer-container">
+                        <div id="container"></div>
+                        <div class="button-container">
+                            <button class="chart-button">
+                                <div class="button-text">Change Chart!</div>
+                            </button>
                         </div>
-                         
+                     
+                        <button id="boom">
+                           Update algorithm
+                           </button>
+                     
+                        <div id="play-controls">
+                            <button id="play-pause-button" class="" title="play">
+                                <div id="play-arrow"></div>
+                                <div id="pause-bars"></div>
+                            </button>
+                            <input id="play-range" type="range" value="2000" min="2000" max="2018" />
+                        </div>
+                     </div>
                     
                     
                     </div>
@@ -479,9 +495,7 @@
     </section>
  </div>
 
-
-
-
+ -->
 
 <div id="projection-buttons" class="buttons row">
     <div class="col-12">
@@ -514,7 +528,7 @@
             Gamma ⟲ <span class="text-muted" id="rotation-gamma-output"></span>
         </label>
 
-        <div class="mt-4 toggle-panel" id="rotation-preset-panel" style="">
+        <div class="mt-4 toggle-panel" id="rotation-preset-panel">
             <h6>Preset rotations</h6>
             <div class="preset-rotations">
                 <!-- <a data-rotation="-15,0" href="javascript:;">Africa</a>, -->
@@ -529,7 +543,7 @@
     </div>
 
 
-    <div class="col-md-4 mt-4 toggle-panel" id="parallels-panel" style="display: none;">
+    <div class="col-md-4 mt-4 toggle-panel" id="parallels-panel" >
         <h4>Parallels</h4>
         <label>
             <input class="parallels" id="parallels-0" type="range" min="-90" max="90" value="30">
@@ -542,34 +556,11 @@
         </label>
     </div>
 
-    <div class="col-md-2 md-col-12 toggle-panel" id="small-world-panel" style="display: none;">
+    <div class="col-md-2 md-col-12 toggle-panel" id="small-world-panel" >
         <div id="small-world-container"></div>
 
     </div>
 </div>
-<!-- 
-<div class="timer-wrapper">
-    <svg class="timer-circle" width="100" height="100" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" stroke="#e6e6e6" stroke-width="10" fill="transparent"/>
-        <path fill="none" stroke="#f54" stroke-width="10" stroke-linecap="round" class="timer-path"></path>
-    </svg>
-    <div class="timer-text">0s</div>
-</div> -->
-
-<svg
-  viewBox="0 0 10 10"
-  xmlns="http://www.w3.org/2000/svg"
-  xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-    <radialGradient id="rgrad">
-      <stop offset="10%" stop-color="rgba(30, 19, 154, 1)" />
-      <stop offset="95%" stop-color="rgba(191, 242, 232, 1)" />
-    </radialGradient>
-  </defs>
-
-  <!-- using my radial gradient -->
-  <!-- <circle cx="5" cy="5" r="4" fill="url('#rgrad')" /> -->
-</svg>
 
 
 

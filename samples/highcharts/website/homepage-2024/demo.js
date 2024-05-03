@@ -13,7 +13,6 @@ Math.easeOutQuint = function (pos) {
     return Math.pow(pos - 1, 5) + 1;
 };
 
-let currentChart;
 
 // data for Sankey (SK)
 const dataSK = [
@@ -65,7 +64,7 @@ const arc = {
         // height: 400,
         // width: '100%',
         animation: {
-            duration: 2000,
+            duration: 1000,
             easing: ' easeOutQuint'
         },
         events: {
@@ -83,7 +82,26 @@ const arc = {
     colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1'],
 
     title: {
-        text: ''
+        floating: true,
+        useHTML: true,
+        align: 'left',
+        y: -30,
+        verticalAlign: 'bottom',
+        text: 'Arc Diagram',
+        style: {
+            fontSize: '14px'
+        }
+    },
+    subtitle: {
+        floating: true,
+        useHTML: true,
+        verticalAlign: 'bottom',
+        align: 'left',
+        y: -15,
+        style: {
+            fontSize: '14px'
+        },
+        text: '<a href="https://www.highcharts.com/demo/highcharts/arc-diagram">See full demo</a>'
     },
 
     accessibility: {
@@ -100,19 +118,24 @@ const arc = {
             enabled: false
         }
     },
-
+    tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
+    },
     series: [
         {
             keys: ['from', 'to', 'weight'],
             animation: {
-                duration: 3000,
+                duration: 2000,
                 easing: 'easeOutQuint'
             },
             equalNodes: false,
             marker: {
                 lineWidth: 1
             },
-            opacity: 0.8,
+            opacity: 1,
             type: 'arcdiagram',
             name: 'Train connections',
             linkWeight: 1,
@@ -277,7 +300,7 @@ const cr = {
         type: 'columnrange',
         inverted: true,
         backgroundColor: 'transparent',
-        margin: [50, 0, 30, 0],
+        margin: [50, 0, 100, 0],
         animation: {
             duration: 3000,
             easing: 'easeOutQuint'
@@ -318,7 +341,26 @@ const cr = {
         enabled: false
     },
     title: {
-        text: ''
+        floating: true,
+        useHTML: true,
+        align: 'left',
+        y: -30,
+        verticalAlign: 'bottom',
+        text: 'Column Range Chart',
+        style: {
+            fontSize: '14px'
+        }
+    },
+    subtitle: {
+        floating: true,
+        useHTML: true,
+        verticalAlign: 'bottom',
+        align: 'left',
+        y: -15,
+        style: {
+            fontSize: '14px'
+        },
+        text: '<a href="https://www.highcharts.com/demo/highcharts/columnrange">See full demo</a>'
     },
     colors: colors,
     xAxis: {
@@ -340,6 +382,7 @@ const cr = {
     },
 
     yAxis: {
+        visible: false,
         labels: {
             enabled: false
         },
@@ -352,12 +395,16 @@ const cr = {
     },
 
     tooltip: {
-        valueSuffix: '°C'
+        valueSuffix: '°C',
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
     },
 
     plotOptions: {
         columnrange: {
-            opacity: 0.9,
+            opacity: 1,
             borderRadius: 10,
             borderColor: null,
             dataLabels: {
@@ -422,8 +469,9 @@ const sk = {
         }
     },
     chart: {
+        margin: [50, 0, 100, 0],
         animation: {
-            duration: 3000,
+            duration: 2000,
             easing: 'easeOutQuint'
         },
         backgroundColor: 'transparent',
@@ -454,14 +502,26 @@ const sk = {
     },
     colors: ['#8087E8', '#6699A1', '#DA6D85', '#78758C'],
     title: {
+        floating: true,
         useHTML: true,
-        text: '',
         align: 'left',
-        y: 20,
-        x: 100,
+        y: -30,
+        verticalAlign: 'bottom',
+        text: 'Snakey Chart',
         style: {
-            fontSize: '24px'
+            fontSize: '14px'
         }
+    },
+    subtitle: {
+        floating: true,
+        useHTML: true,
+        verticalAlign: 'bottom',
+        align: 'left',
+        y: -15,
+        style: {
+            fontSize: '14px'
+        },
+        text: '<a href="https://www.highcharts.com/demo/highcharts/sankey-diagram">See full demo</a>'
     },
     credits: {
         enabled: false
@@ -469,7 +529,10 @@ const sk = {
     tooltip: {
         headerFormat: null,
         valueDecimals: 2,
-        backgroundColor: '#fff',
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        },
         pointFormat:
             '<b>{point.fromNode.name}</b> ({point.toNode.name})<br>' +
             '${point.weight} Total Funding Millions USD</span>',
@@ -513,174 +576,6 @@ const sk = {
     ]
 };
 
-// rounded corners
-const rc = {
-    chart: {
-        type: 'column',
-        backgroundColor: 'transparent',
-        margin: [80, 30, 30, 30],
-        animation: {
-            duration: 3000,
-            easing: 'easeOutQuint'
-        },
-        events: {
-            load: function () {
-                const chart = this;
-                const gridLines = document.querySelectorAll(
-                    '.highcharts-grid-line'
-                );
-                let pointWidth;
-
-                if (chart.chartWidth < 350) {
-                    pointWidth = 10;
-                } else if (chart.chartWidth > 570 && chart.chartWidth < 960) {
-                    pointWidth = 50;
-                } else if (chart.chartWidth >= 960) {
-                    pointWidth = 80;
-                } else {
-                    pointWidth = 30;
-                }
-
-                [].forEach.call(gridLines, function (element) {
-                    element.style.opacity = 0;
-                });
-                setTimeout(function () {
-                    chart.update({
-                        plotOptions: {
-                            series: {
-                                pointWidth: pointWidth,
-                                borderRadius: 4,
-                                opacity: 0.9,
-                                dataLabels: {
-                                    enabled: false,
-                                    style: {
-                                        fontSize: '10px',
-                                        color: 'rgba(0, 0, 0, 0.5)'
-                                    }
-                                }
-                            }
-                        }
-                    }, false);
-
-                    chart.redraw();
-
-                    [].forEach.call(gridLines, function (element, index) {
-                        if (index !== 7) {
-                            element.style.transition = 'all 2s';
-                            element.style.opacity = 1;
-                        }
-                    });
-                }, 2000);
-            }
-        }
-    },
-    credits: {
-        enabled: false
-    },
-    colors: colors,
-    xAxis: {
-        visible: false,
-        categories: [
-            'Apples',
-            'Pears',
-            'Bananas',
-            'Oranges',
-            'Lemons',
-            'Limes',
-            'Grapes',
-            'Kiwis',
-            'Mangoes',
-            'Strawberries'
-        ]
-    },
-    yAxis: {
-        gridLineColor: 'transparent',
-        title: {
-            text: ''
-        },
-        tickPositions: [-300, -200, -100, 0, 100, 200, 300, 400],
-        labels: {
-            enabled: false,
-            style: {
-                color: '#f0f0f0'
-            }
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    accessibility: {
-        description:
-            'The column chart is displaying fictional fruit consumption data.',
-        enabled: true
-    },
-    title: {
-        floating: true,
-        useHTML: true,
-        align: 'left',
-        y: -30,
-        verticalAlign: 'bottom',
-        text: 'Highcharts Stacked Column Chart',
-        style: {
-            fontSize: '14px'
-        }
-    },
-    subtitle: {
-        floating: true,
-        useHTML: true,
-        verticalAlign: 'bottom',
-        align: 'left',
-        y: -15,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/column-stacked">See full demo</a>'
-    },
-    plotOptions: {
-        series: {
-            borderRadius: 4,
-            opacity: 0.8,
-            groupPadding: 0,
-            pointPadding: 0,
-            pointWidth: 100,
-            borderColor: 'transparent',
-            borderWidth: 2,
-            dataLabels: {
-                enabled: false,
-                style: {
-                    textOutline: 'none',
-                    color: 'rbga(0,0,0,0.1)',
-                    fontSize: '12px',
-                    fontWeight: 300
-                }
-            },
-            stacking: 'normal'
-        }
-    },
-    series: [
-        {
-            data: [
-                -71.5, -106.4, 129.2, -144.0, 176.0, -135.6, 148.5, -216.4,
-                194.1, -95.6
-            ],
-            type: 'column'
-        },
-        {
-            data: [
-                -71.5, -106.4, 129.2, -144.0, 176.0, -135.6, 148.5, 216.4,
-                194.1, 95.6
-            ].reverse(),
-            type: 'column'
-        },
-        {
-            data: [
-                71.5, 106.4, -129.2, 144.0, 176.0, -135.6, 148.5, 216.4, 194.1,
-                95.6
-            ]
-        }
-    ]
-};
-
 const strColors = [
     '#6975FF', // purple
     '#6EE7B7', // green
@@ -711,17 +606,6 @@ const str = {
                 theme: {
                     fill: 'red'
                 }
-            }
-        },
-        events: {
-            load: function () {
-                const chart = this;
-
-                setTimeout(function () {
-                    chart.xAxis[0].setExtremes(5, 12);
-                    chart.yAxis[0].setExtremes(-50, 50);
-                    chart.showResetZoom();
-                }, 2000);
             }
         }
     },
@@ -759,7 +643,7 @@ const str = {
         y: -45,
         x: 10,
         verticalAlign: 'bottom',
-        text: 'Highcharts Streamgraph',
+        text: 'Streamgraph Chart',
         style: {
             fontSize: '14px'
         }
@@ -774,7 +658,7 @@ const str = {
         style: {
             fontSize: '14px'
         },
-        text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
+        text: '<a href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
     },
 
     xAxis: {
@@ -833,30 +717,6 @@ const str = {
     legend: {
         enabled: false
     },
-
-    // annotations: [{
-    //     labels: [{
-    //         point: {
-    //             x: 5.5,
-    //             xAxis: 0,
-    //             y: 30,
-    //             yAxis: 0
-    //         },
-    //         text: 'Cancelled<br>during<br>World War II'
-    //     }, {
-    //         point: {
-    //             x: 18,
-    //             xAxis: 0,
-    //             y: 90,
-    //             yAxis: 0
-    //         },
-    //         text: 'Soviet Union fell,<br>Germany united'
-    //     }],
-    //     labelOptions: {
-    //         backgroundColor: 'rgba(255,255,255,0.5)',
-    //         borderColor: 'silver'
-    //     }
-    // }],
 
     plotOptions: {
         series: {
@@ -1144,13 +1004,14 @@ const str = {
         ]
     }],
 
-    exporting: {
-        sourceWidth: 800,
-        sourceHeight: 600
+    tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
     }
 
 };
-
 
 // radial bar
 const rb = {
@@ -1202,7 +1063,7 @@ const rb = {
         y: -55,
         x: 12,
         verticalAlign: 'bottom',
-        text: 'Highcharts Radial Bar Chart',
+        text: 'Radial Bar Chart',
         style: {
             fontSize: '14px'
         }
@@ -1255,52 +1116,97 @@ const rb = {
         borderRadius: 10, // causes a cool animation effect
         colorByPoint: true,
         data: [29, 71, 106, 129, 144, 176, 135, 148, 216, 194, 95, 54]
-    }]
+    }],
+    tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
+    }
 };
 
-// jellypus
-
-const jellypus = {
+// original streamgraph
+const strOld = {
     chart: {
-        // styledMode: (true),
-        margin: 0,
+        type: 'streamgraph',
+        marginBottom: 10,
+        // height: 430,
+        zooming: {
+            type: 'x'
+        },
+        backgroundColor: 'transparent',
         animation: {
-            duration: 12000,
+            duration: 2000,
             easing: 'easeOutQuint'
         },
         events: {
             load: function () {
                 const chart = this;
-                const jpSeries = chart.series[0];
-
+                let count = 0;
                 setTimeout(function () {
-                    jpSeries.nodes[12].update(
-                        {
-                            plotX: -2000,
-                            plotY: 200
-                        },
-                        false
-                    );
+                    setInterval(function () {
+                        if (count < chart.series.length) {
+                            chart.series[count].update({
+                                fillOpacity: 0.85
+                            });
+                            count = count + 1;
+                        }
+                    }, 300);
+                }, 500);
 
-                    chart.redraw();
-
-                }, 3000);
-
+                // setTimeout(function () {
+                //     chart.series[0].points[132].onMouseOver();
+                // }, 4000);
             }
         }
     },
-    legend: {
-        enabled: false
+    accessibility: {
+        description:
+            'Streamgraphs are a type of stacked area charts where the areas ' +
+            'are displaced around a central axis. This chart is showing ' +
+            'price indices for air freight, importing and exporting.'
     },
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    xAxis: {
+                        min: Date.UTC(2017, 1, 1)
+                    }
+                }
+            }
+        ]
+    },
+    colors: [
+        '#8087E8',
+        '#A3EDBA',
+        '#F19E53',
+        '#30426B',
+        '#6699A1',
+        '#BBBAC5',
+        '#87B4E7',
+        '#DA6D85',
+        '#BBBAC5'
+    ],
+
     credits: {
         enabled: false
     },
+
+    exporting: {
+        enabled: false
+    },
+
     title: {
         floating: true,
+        useHTML: true,
         align: 'left',
         y: -30,
         verticalAlign: 'bottom',
-        text: 'Highcharts Network Graph',
+        text: 'Streamgraph Chart',
         style: {
             fontSize: '14px'
         }
@@ -1310,387 +1216,1982 @@ const jellypus = {
         useHTML: true,
         verticalAlign: 'bottom',
         align: 'left',
+        y: -15,
         style: {
             fontSize: '14px'
         },
-        y: -15,
-        text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/blog/tutorials/drawing-with-data-part-1/">Read about this chart</a>'
+        text: '<a href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
     },
+
+    xAxis: {
+        min: Date.UTC(2014, 1, 1),
+        max: Date.UTC(2020, 1, 1),
+        visible: false,
+        reversed: false,
+        maxPadding: 0,
+        type: 'datetime',
+        labels: {
+            align: 'left',
+            reserveSpace: false,
+            rotation: 0,
+            style: {
+                color: '#BBBAC5'
+            }
+        },
+        lineWidth: 1,
+        margin: 20,
+        tickWidth: 1
+    },
+
+    yAxis: {
+        visible: false,
+        title: {
+            text: ''
+        },
+        min: -40,
+        max: 40,
+        startOnTick: false,
+        endOnTick: false,
+        gridLineColor: 'transparent',
+        labels: {
+            style: {
+                color: '#BBBAC5'
+            }
+        }
+    },
+
+    legend: {
+        enabled: false
+    },
+
     plotOptions: {
         series: {
-            animation: false,
-            marker: {
-                enabled: false
+            lineWidth: 1,
+            label: {
+                minFontSize: 5,
+                maxFontSize: 15,
+                style: {
+                    color: 'rgba(255,255,255,0.75)'
+                }
             },
-            zIndex: 10
-        },
-        networkgraph: {
-            keys: ['from', 'to']
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         }
     },
+
     series: [
-        // 0 jellypus
         {
-            type: 'networkgraph',
-            className: 'jellypus',
-            zIndex: 2,
-            marker: {
-                enabled: true,
-                radius: 5,
-                symbol: 'circle'
-            },
-            layoutAlgorithm: {
-                enableSimulation: true,
-                initialPositions: 'random',
-                // Applied only to links, should be 0
-                attractiveForce: function () {
-                    return 2;
-                },
-                repulsiveForce: function () {
-                    return 1;
-                },
-                linkLength: 2,
-                integration: 'euler',
-                gravitationalConstant: 2
-            },
-            nodes: [
-                {
-                    id: '0',
-
-                    marker: {
-                        radius: 8
-                    },
-                    mass: 1
-                },
-                {
-                    id: '1',
-                    mass: 1,
-                    marker: {
-                        radius: 3
-                    }
-                },
-                {
-                    id: '2',
-                    mass: 1,
-                    marker: {
-                        radius: 3
-                    }
-                },
-                {
-                    id: '3',
-                    mass: 1,
-                    marker: {
-                        radius: 3
-                    }
-                },
-                {
-                    id: '4',
-                    mass: 1,
-                    marker: {
-                        radius: 3
-                    }
-                },
-                {
-                    id: '5',
-                    mass: 1,
-                    marker: {
-                        radius: 4
-                    }
-                },
-                {
-                    id: '6',
-                    mass: 1,
-                    marker: {
-                        radius: 4
-                    }
-                },
-                {
-                    id: '7',
-                    mass: 1,
-                    marker: {
-                        radius: 10
-                    }
-                },
-                {
-                    id: '8',
-                    mass: 1,
-                    marker: {
-                        radius: 5
-                    }
-                },
-                {
-                    id: '9',
-                    mass: 1,
-                    marker: {
-                        radius: 6
-                    }
-                },
-                {
-                    id: '10',
-                    mass: 1,
-                    marker: {
-                        radius: 6
-                    }
-                },
-                {
-                    id: '11',
-                    mass: 1,
-                    marker: {
-                        radius: 7
-                    }
-                },
-                {
-                    id: '12',
-                    className: 'head',
-                    mass: 200,
-                    marker: {
-                        radius: 20
-                    }
-                },
-                {
-                    id: '13',
-                    mass: 1,
-                    marker: {
-                        radius: 8
-                    }
-                },
-                {
-                    id: '14',
-                    mass: 1,
-                    marker: {
-                        radius: 8
-                    }
-                },
-                {
-                    id: '15',
-                    mass: 1,
-                    marker: {
-                        radius: 9
-                    }
-                },
-                {
-                    id: '16',
-                    mass: 1,
-                    marker: {
-                        radius: 9
-                    }
-                },
-                {
-                    id: '17',
-                    mass: 1,
-                    marker: {
-                        radius: 10
-                    }
-                },
-                {
-                    id: '18',
-                    mass: 1,
-                    marker: {
-                        radius: 10
-                    }
-                },
-                {
-                    id: '19',
-                    mass: 1,
-                    marker: {
-                        radius: 1
-                    }
-                },
-                {
-                    id: '20',
-                    mass: 1,
-                    marker: {
-                        radius: 1
-                    }
-                },
-                {
-                    id: '21',
-                    mass: 1,
-                    marker: {
-                        radius: 2
-                    }
-                },
-                {
-                    id: '22',
-                    mass: 1,
-                    marker: {
-                        radius: 2
-                    }
-                },
-                {
-                    id: '23',
-                    mass: 1,
-                    marker: {
-                        radius: 3
-                    }
-                },
-                {
-                    id: '24',
-                    mass: 1,
-                    marker: {
-                        radius: 3
-                    }
-                },
-                {
-                    id: '25',
-                    mass: 1,
-                    marker: {
-                        radius: 4
-                    }
-                },
-                {
-                    id: '26',
-                    mass: 1,
-                    marker: {
-                        radius: 4
-                    }
-                },
-                {
-                    id: '27',
-                    mass: 1,
-                    marker: {
-                        radius: 5
-                    }
-                },
-                {
-                    id: '28',
-                    mass: 1,
-                    marker: {
-                        radius: 5
-                    }
-                },
-                {
-                    id: '29',
-                    mass: 1,
-                    marker: {
-                        radius: 6
-                    }
-                },
-                {
-                    id: '30',
-                    mass: 1,
-                    marker: {
-                        radius: 6
-                    }
-                }
-            ],
+            name: 'West Germany',
+            visible: true,
+            fillOpacity: 0,
             data: [
-                ['0', '1'],
-                ['1', '2'],
-                ['1', '3'],
-                ['1', '4'],
-                ['1', '5'],
-                ['1', '6'],
-                ['1', '7'],
-                ['1', '8'],
-                ['1', '9'],
-                ['1', '10'],
-                ['1', '11'],
-                ['1', '12'],
-                ['1', '13'],
-                ['1', '14'],
-                ['1', '15'],
-                ['1', '16'],
-                ['1', '17'],
-                ['1', '18'],
-                ['1', '19'],
-                ['1', '20'],
-                ['1', '21'],
-                ['1', '22'],
-                ['1', '23'],
-                ['1', '24'],
-                ['1', '25'],
-                ['1', '26'],
-                ['1', '27'],
-                ['1', '28'],
-                ['1', '29'],
-                ['1', '30'],
-                ['1', '31'],
-                ['1', '32'],
-                ['1', '33'],
-                ['1', '34'],
-                ['1', '35'],
-                ['1', '36'],
-                ['1', '37'],
-                ['1', '38'],
-                ['1', '39'],
-                ['1', '40'],
-                ['1', '41'],
-                ['1', '42'],
-                ['1', '43'],
-                ['1', '44'],
-                ['1', '45'],
-                ['1', '46'],
-                ['1', '47'],
-                ['1', '48'],
-                ['1', '49'],
-                ['1', '50'],
-
-                ['1', '51'],
-                ['1', '52'],
-                ['1', '53'],
-                ['1', '54'],
-                ['1', '55'],
-                ['1', '56'],
-                ['1', '57'],
-                ['1', '58'],
-                ['1', '59'],
-                ['1', '60'],
-                ['1', '61'],
-                ['1', '62'],
-                ['1', '63'],
-                ['1', '64'],
-                ['1', '65'],
-                ['1', '66'],
-                ['1', '67'],
-                ['1', '68'],
-                ['1', '69'],
-                ['1', '70'],
-                ['1', '71'],
-                ['1', '72'],
-                ['1', '73'],
-                ['1', '74'],
-                ['1', '75'],
-                ['1', '76'],
-                ['1', '77'],
-                ['1', '78'],
-                ['1', '79'],
-                ['1', '80'],
-                ['1', '81'],
-                ['1', '82'],
-                ['1', '83'],
-                ['1', '84'],
-                ['1', '85'],
-                ['1', '86'],
-                ['1', '87'],
-                ['1', '88'],
-                ['1', '89'],
-                ['1', '90'],
-                ['1', '91'],
-                ['1', '92'],
-                ['1', '93'],
-                ['1', '94'],
-                ['1', '95'],
-                ['1', '96'],
-                ['1', '97'],
-                ['1', '98']
+                [Date.UTC(2002, 4, 1), 0.5],
+                [Date.UTC(2002, 5, 1), 1.9],
+                [Date.UTC(2002, 6, 1), 2.8],
+                [Date.UTC(2002, 7, 1), 7.5],
+                [Date.UTC(2002, 8, 1), 10.0],
+                [Date.UTC(2002, 9, 1), 5.5],
+                [Date.UTC(2002, 10, 1), 2.3],
+                [Date.UTC(2002, 11, 1), 4.5],
+                [Date.UTC(2002, 12, 1), 4.9],
+                [Date.UTC(2003, 1, 1), 9.2],
+                [Date.UTC(2003, 2, 1), 9.0],
+                [Date.UTC(2003, 3, 1), 11.2],
+                [Date.UTC(2003, 4, 1), 10.9],
+                [Date.UTC(2003, 5, 1), 10.5],
+                [Date.UTC(2003, 6, 1), 13.4],
+                [Date.UTC(2003, 7, 1), 11.9],
+                [Date.UTC(2003, 8, 1), 10.2],
+                [Date.UTC(2003, 9, 1), 9.2],
+                [Date.UTC(2003, 10, 1), 15.1],
+                [Date.UTC(2003, 11, 1), 14.8],
+                [Date.UTC(2003, 12, 1), 14.7],
+                [Date.UTC(2004, 1, 1), 15.7],
+                [Date.UTC(2004, 2, 1), 15.1],
+                [Date.UTC(2004, 3, 1), 13.7],
+                [Date.UTC(2004, 4, 1), 13.7],
+                [Date.UTC(2004, 5, 1), 8.3],
+                [Date.UTC(2004, 6, 1), 5.8],
+                [Date.UTC(2004, 7, 1), 4.9],
+                [Date.UTC(2004, 8, 1), 9.3],
+                [Date.UTC(2004, 9, 1), 10.3],
+                [Date.UTC(2004, 10, 1), 6.2],
+                [Date.UTC(2004, 11, 1), 9.8],
+                [Date.UTC(2004, 12, 1), 13.2],
+                [Date.UTC(2005, 1, 1), 10.3],
+                [Date.UTC(2005, 2, 1), 9.1],
+                [Date.UTC(2005, 3, 1), 10.6],
+                [Date.UTC(2005, 4, 1), 7.8],
+                [Date.UTC(2005, 5, 1), 15.5],
+                [Date.UTC(2005, 6, 1), 10.0],
+                [Date.UTC(2005, 7, 1), 13.7],
+                [Date.UTC(2005, 8, 1), 11.0],
+                [Date.UTC(2005, 9, 1), 7.2],
+                [Date.UTC(2005, 10, 1), 6.3],
+                [Date.UTC(2005, 11, 1), -1.6],
+                [Date.UTC(2005, 12, 1), -4.3],
+                [Date.UTC(2006, 1, 1), -6.0],
+                [Date.UTC(2006, 2, 1), 0.2],
+                [Date.UTC(2006, 3, 1), -4.0],
+                [Date.UTC(2006, 4, 1), -1.3],
+                [Date.UTC(2006, 5, 1), -2.5],
+                [Date.UTC(2006, 6, 1), 2.3],
+                [Date.UTC(2006, 7, 1), -0.5],
+                [Date.UTC(2006, 8, 1), -0.5],
+                [Date.UTC(2006, 9, 1), 2.1],
+                [Date.UTC(2006, 10, 1), 3.0],
+                [Date.UTC(2006, 11, 1), 6.4],
+                [Date.UTC(2006, 12, 1), 7.0],
+                [Date.UTC(2007, 1, 1), 6.9],
+                [Date.UTC(2007, 2, 1), 3.2],
+                [Date.UTC(2007, 3, 1), 7.2],
+                [Date.UTC(2007, 4, 1), 9.3],
+                [Date.UTC(2007, 5, 1), 7.5],
+                [Date.UTC(2007, 6, 1), 5.7],
+                [Date.UTC(2007, 7, 1), 5.7],
+                [Date.UTC(2007, 8, 1), 3.9],
+                [Date.UTC(2007, 9, 1), 8.6],
+                [Date.UTC(2007, 10, 1), 10.0],
+                [Date.UTC(2007, 11, 1), 11.5],
+                [Date.UTC(2007, 12, 1), 13.4],
+                [Date.UTC(2008, 1, 1), 14.3],
+                [Date.UTC(2008, 2, 1), 9.8],
+                [Date.UTC(2008, 3, 1), 11.6],
+                [Date.UTC(2008, 4, 1), 6.3],
+                [Date.UTC(2008, 5, 1), 6.0],
+                [Date.UTC(2008, 6, 1), 16.4],
+                [Date.UTC(2008, 7, 1), 17.6],
+                [Date.UTC(2008, 8, 1), 20.6],
+                [Date.UTC(2008, 9, 1), 11.2],
+                [Date.UTC(2008, 10, 1), 5.5],
+                [Date.UTC(2008, 11, 1), 5.2],
+                [Date.UTC(2008, 12, 1), 5.7],
+                [Date.UTC(2009, 1, 1), 1.9],
+                [Date.UTC(2009, 2, 1), -3.5],
+                [Date.UTC(2009, 3, 1), -9.4],
+                [Date.UTC(2009, 4, 1), -11.0],
+                [Date.UTC(2009, 5, 1), -15.5],
+                [Date.UTC(2009, 6, 1), -19.4],
+                [Date.UTC(2009, 7, 1), -21.8],
+                [Date.UTC(2009, 8, 1), -19.5],
+                [Date.UTC(2009, 9, 1), -17.8],
+                [Date.UTC(2009, 10, 1), -14.4],
+                [Date.UTC(2009, 11, 1), -11.3],
+                [Date.UTC(2009, 12, 1), -5.2],
+                [Date.UTC(2010, 1, 1), -4.4],
+                [Date.UTC(2010, 2, 1), 5.1],
+                [Date.UTC(2010, 3, 1), 11.3],
+                [Date.UTC(2010, 4, 1), 19.2],
+                [Date.UTC(2010, 5, 1), 22.0],
+                [Date.UTC(2010, 6, 1), 27.6],
+                [Date.UTC(2010, 7, 1), 30.5],
+                [Date.UTC(2010, 8, 1), 21.2],
+                [Date.UTC(2010, 9, 1), 21.9],
+                [Date.UTC(2010, 10, 1), 21.2],
+                [Date.UTC(2010, 11, 1), 15.0],
+                [Date.UTC(2010, 12, 1), 8.3],
+                [Date.UTC(2011, 1, 1), 13.2],
+                [Date.UTC(2011, 2, 1), 4.1],
+                [Date.UTC(2011, 3, 1), 9.6],
+                [Date.UTC(2011, 4, 1), 8.1],
+                [Date.UTC(2011, 5, 1), 12.2],
+                [Date.UTC(2011, 6, 1), 5.8],
+                [Date.UTC(2011, 7, 1), 10.2],
+                [Date.UTC(2011, 8, 1), 18.1],
+                [Date.UTC(2011, 9, 1), 11.9],
+                [Date.UTC(2011, 10, 1), 11.9],
+                [Date.UTC(2011, 11, 1), 13.0],
+                [Date.UTC(2011, 12, 1), 13.1],
+                [Date.UTC(2012, 1, 1), 9.5],
+                [Date.UTC(2012, 2, 1), 15.6],
+                [Date.UTC(2012, 3, 1), 7.1],
+                [Date.UTC(2012, 4, 1), 6.2],
+                [Date.UTC(2012, 5, 1), 8.4],
+                [Date.UTC(2012, 6, 1), 8.7],
+                [Date.UTC(2012, 7, 1), 3.8],
+                [Date.UTC(2012, 8, 1), -3.6],
+                [Date.UTC(2012, 9, 1), -2.5],
+                [Date.UTC(2012, 10, 1), -0.7],
+                [Date.UTC(2012, 11, 1), -0.7],
+                [Date.UTC(2012, 12, 1), -2.5],
+                [Date.UTC(2013, 1, 1), 2.6],
+                [Date.UTC(2013, 2, 1), -1.4],
+                [Date.UTC(2013, 3, 1), 0.1],
+                [Date.UTC(2013, 4, 1), -3.2],
+                [Date.UTC(2013, 5, 1), -4.4],
+                [Date.UTC(2013, 6, 1), -3.4],
+                [Date.UTC(2013, 7, 1), -4.7],
+                [Date.UTC(2013, 8, 1), -3.6],
+                [Date.UTC(2013, 9, 1), -1.2],
+                [Date.UTC(2013, 10, 1), -3.6],
+                [Date.UTC(2013, 11, 1), -3.1],
+                [Date.UTC(2013, 12, 1), 3.2],
+                [Date.UTC(2014, 1, 1), -1.6],
+                [Date.UTC(2014, 2, 1), -6.3],
+                [Date.UTC(2014, 3, 1), -3.6],
+                [Date.UTC(2014, 4, 1), 1.9],
+                [Date.UTC(2014, 5, 1), -1.2],
+                [Date.UTC(2014, 6, 1), 0.4],
+                [Date.UTC(2014, 7, 1), 0.5],
+                [Date.UTC(2014, 8, 1), 3.9],
+                [Date.UTC(2014, 9, 1), 1.8],
+                [Date.UTC(2014, 10, 1), 1.6],
+                [Date.UTC(2014, 11, 1), -1.8],
+                [Date.UTC(2014, 12, 1), -2.0],
+                [Date.UTC(2015, 1, 1), -4.0],
+                [Date.UTC(2015, 2, 1), -5.1],
+                [Date.UTC(2015, 3, 1), -7.8],
+                [Date.UTC(2015, 4, 1), -13.8],
+                [Date.UTC(2015, 5, 1), -13.1],
+                [Date.UTC(2015, 6, 1), -14.2],
+                [Date.UTC(2015, 7, 1), -14.2],
+                [Date.UTC(2015, 8, 1), -17.5],
+                [Date.UTC(2015, 9, 1), -17.0],
+                [Date.UTC(2015, 10, 1), -15.6],
+                [Date.UTC(2015, 11, 1), -11.5],
+                [Date.UTC(2015, 12, 1), -14.6],
+                [Date.UTC(2016, 1, 1), -11.0],
+                [Date.UTC(2016, 2, 1), -10.9],
+                [Date.UTC(2016, 3, 1), -4.9],
+                [Date.UTC(2016, 4, 1), -7.2],
+                [Date.UTC(2016, 5, 1), -10.2],
+                [Date.UTC(2016, 6, 1), -9.2],
+                [Date.UTC(2016, 7, 1), -9.9],
+                [Date.UTC(2016, 8, 1), -7.1],
+                [Date.UTC(2016, 9, 1), -6.7],
+                [Date.UTC(2016, 10, 1), -3.0],
+                [Date.UTC(2016, 11, 1), 1.4],
+                [Date.UTC(2016, 12, 1), 4.7],
+                [Date.UTC(2017, 1, 1), 0.5],
+                [Date.UTC(2017, 2, 1), 2.7],
+                [Date.UTC(2017, 3, 1), -0.5],
+                [Date.UTC(2017, 4, 1), -0.5],
+                [Date.UTC(2017, 5, 1), 1.9],
+                [Date.UTC(2017, 6, 1), 2.2],
+                [Date.UTC(2017, 7, 1), 4.4],
+                [Date.UTC(2017, 8, 1), -2.2],
+                [Date.UTC(2017, 9, 1), 1.0],
+                [Date.UTC(2017, 10, 1), 2.0],
+                [Date.UTC(2017, 11, 1), -1.6],
+                [Date.UTC(2017, 12, 1), -5.8],
+                [Date.UTC(2018, 1, 1), -1.9],
+                [Date.UTC(2018, 2, 1), 2.3],
+                [Date.UTC(2018, 3, 1), 1.7],
+                [Date.UTC(2018, 4, 1), 4.1],
+                [Date.UTC(2018, 5, 1), 1.4],
+                [Date.UTC(2018, 6, 1), 1.5],
+                [Date.UTC(2018, 7, 1), -1.8],
+                [Date.UTC(2018, 8, 1), -3.3],
+                [Date.UTC(2018, 9, 1), 2.4],
+                [Date.UTC(2018, 10, 1), -2.9],
+                [Date.UTC(2018, 11, 1), -3.3],
+                [Date.UTC(2018, 12, 1), -5.0],
+                [Date.UTC(2019, 1, 1), -2.9],
+                [Date.UTC(2019, 2, 1), -4.0],
+                [Date.UTC(2019, 3, 1), -5.8],
+                [Date.UTC(2019, 4, 1), -3.5],
+                [Date.UTC(2019, 5, 1), -2.1],
+                [Date.UTC(2019, 6, 1), -3.0],
+                [Date.UTC(2019, 7, 1), -1.4],
+                [Date.UTC(2019, 8, 1), -0.8],
+                [Date.UTC(2019, 9, 1), -3.2],
+                [Date.UTC(2019, 10, 1), -3.6],
+                [Date.UTC(2019, 11, 1), -0.5],
+                [Date.UTC(2019, 12, 1), -2.6],
+                [Date.UTC(2020, 1, 1), -2.2],
+                [Date.UTC(2020, 2, 1), -2.6],
+                [Date.UTC(2020, 3, 1), -8.1],
+                [Date.UTC(2020, 4, 1), -14.1]
+            ]
+        },
+        {
+            name: 'Germany',
+            fillOpacity: 0,
+            visible: true,
+            data: [
+                [Date.UTC(2002, 4, 1), 0.0],
+                [Date.UTC(2002, 5, 1), 0.3],
+                [Date.UTC(2002, 6, 1), 0.8],
+                [Date.UTC(2002, 7, 1), 1.2],
+                [Date.UTC(2002, 8, 1), 1.8],
+                [Date.UTC(2002, 9, 1), 1.5],
+                [Date.UTC(2002, 10, 1), 0.7],
+                [Date.UTC(2002, 11, 1), 3.3],
+                [Date.UTC(2002, 12, 1), 3.3],
+                [Date.UTC(2003, 1, 1), 1.6],
+                [Date.UTC(2003, 2, 1), 3.5],
+                [Date.UTC(2003, 3, 1), 5.6],
+                [Date.UTC(2003, 4, 1), 5.6],
+                [Date.UTC(2003, 5, 1), 4.0],
+                [Date.UTC(2003, 6, 1), 0.3],
+                [Date.UTC(2003, 7, 1), -0.5],
+                [Date.UTC(2003, 8, 1), -1.1],
+                [Date.UTC(2003, 9, 1), -1.1],
+                [Date.UTC(2003, 10, 1), -4.3],
+                [Date.UTC(2003, 11, 1), -2.0],
+                [Date.UTC(2003, 12, 1), -3.2],
+                [Date.UTC(2004, 1, 1), -3.7],
+                [Date.UTC(2004, 2, 1), -3.5],
+                [Date.UTC(2004, 3, 1), -5.5],
+                [Date.UTC(2004, 4, 1), -8.6],
+                [Date.UTC(2004, 5, 1), -8.2],
+                [Date.UTC(2004, 6, 1), -1.6],
+                [Date.UTC(2004, 7, 1), -6.4],
+                [Date.UTC(2004, 8, 1), -7.4],
+                [Date.UTC(2004, 9, 1), -7.1],
+                [Date.UTC(2004, 10, 1), 0.6],
+                [Date.UTC(2004, 11, 1), 2.8],
+                [Date.UTC(2004, 12, 1), 5.6],
+                [Date.UTC(2005, 1, 1), 5.8],
+                [Date.UTC(2005, 2, 1), 6.1],
+                [Date.UTC(2005, 3, 1), 5.3],
+                [Date.UTC(2005, 4, 1), 3.1],
+                [Date.UTC(2005, 5, 1), 3.5],
+                [Date.UTC(2005, 6, 1), 5.0],
+                [Date.UTC(2005, 7, 1), 4.6],
+                [Date.UTC(2005, 8, 1), 5.0],
+                [Date.UTC(2005, 9, 1), 3.0],
+                [Date.UTC(2005, 10, 1), 2.5],
+                [Date.UTC(2005, 11, 1), 4.6],
+                [Date.UTC(2005, 12, 1), 3.4],
+                [Date.UTC(2006, 1, 1), 4.0],
+                [Date.UTC(2006, 2, 1), 4.9],
+                [Date.UTC(2006, 3, 1), 5.5],
+                [Date.UTC(2006, 4, 1), 5.3],
+                [Date.UTC(2006, 5, 1), 4.7],
+                [Date.UTC(2006, 6, 1), 5.8],
+                [Date.UTC(2006, 7, 1), 5.1],
+                [Date.UTC(2006, 8, 1), 4.6],
+                [Date.UTC(2006, 9, 1), 5.1],
+                [Date.UTC(2006, 10, 1), 5.0],
+                [Date.UTC(2006, 11, 1), 8.8],
+                [Date.UTC(2006, 12, 1), 8.9],
+                [Date.UTC(2007, 1, 1), 8.6],
+                [Date.UTC(2007, 2, 1), 10.3],
+                [Date.UTC(2007, 3, 1), 10.5],
+                [Date.UTC(2007, 4, 1), 11.2],
+                [Date.UTC(2007, 5, 1), 11.5],
+                [Date.UTC(2007, 6, 1), 15.5],
+                [Date.UTC(2007, 7, 1), 15.5],
+                [Date.UTC(2007, 8, 1), 17.0],
+                [Date.UTC(2007, 9, 1), 18.8],
+                [Date.UTC(2007, 10, 1), 11.3],
+                [Date.UTC(2007, 11, 1), 7.4],
+                [Date.UTC(2007, 12, 1), 8.9],
+                [Date.UTC(2008, 1, 1), 8.5],
+                [Date.UTC(2008, 2, 1), 5.2],
+                [Date.UTC(2008, 3, 1), 5.0],
+                [Date.UTC(2008, 4, 1), 13.3],
+                [Date.UTC(2008, 5, 1), 12.5],
+                [Date.UTC(2008, 6, 1), 21.2],
+                [Date.UTC(2008, 7, 1), 24.0],
+                [Date.UTC(2008, 8, 1), 20.8],
+                [Date.UTC(2008, 9, 1), 11.3],
+                [Date.UTC(2008, 10, 1), 32.7],
+                [Date.UTC(2008, 11, 1), 33.9],
+                [Date.UTC(2008, 12, 1), 18.5],
+                [Date.UTC(2009, 1, 1), 24.2],
+                [Date.UTC(2009, 2, 1), 17.6],
+                [Date.UTC(2009, 3, 1), 8.1],
+                [Date.UTC(2009, 4, 1), -9.0],
+                [Date.UTC(2009, 5, 1), -14.9],
+                [Date.UTC(2009, 6, 1), -13.9],
+                [Date.UTC(2009, 7, 1), -21.1],
+                [Date.UTC(2009, 8, 1), -23.9],
+                [Date.UTC(2009, 9, 1), -13.1],
+                [Date.UTC(2009, 10, 1), -9.4],
+                [Date.UTC(2009, 11, 1), -2.5],
+                [Date.UTC(2009, 12, 1), 6.1],
+                [Date.UTC(2010, 1, 1), -0.8],
+                [Date.UTC(2010, 2, 1), 1.3],
+                [Date.UTC(2010, 3, 1), 20.8],
+                [Date.UTC(2010, 4, 1), 28.7],
+                [Date.UTC(2010, 5, 1), 42.0],
+                [Date.UTC(2010, 6, 1), 25.6],
+                [Date.UTC(2010, 7, 1), 28.4],
+                [Date.UTC(2010, 8, 1), 27.6],
+                [Date.UTC(2010, 9, 1), 20.4],
+                [Date.UTC(2010, 10, 1), 17.3],
+                [Date.UTC(2010, 11, 1), 13.6],
+                [Date.UTC(2010, 12, 1), 9.4],
+                [Date.UTC(2011, 1, 1), 15.2],
+                [Date.UTC(2011, 2, 1), 16.4],
+                [Date.UTC(2011, 3, 1), 2.2],
+                [Date.UTC(2011, 4, 1), -0.1],
+                [Date.UTC(2011, 5, 1), 4.2],
+                [Date.UTC(2011, 6, 1), 2.1],
+                [Date.UTC(2011, 7, 1), 1.0],
+                [Date.UTC(2011, 8, 1), 0.3],
+                [Date.UTC(2011, 9, 1), 3.3],
+                [Date.UTC(2011, 10, 1), -0.4],
+                [Date.UTC(2011, 11, 1), -0.7],
+                [Date.UTC(2011, 12, 1), 3.3],
+                [Date.UTC(2012, 1, 1), 4.5],
+                [Date.UTC(2012, 2, 1), 7.6],
+                [Date.UTC(2012, 3, 1), 8.8],
+                [Date.UTC(2012, 4, 1), 9.8],
+                [Date.UTC(2012, 5, 1), 0.2],
+                [Date.UTC(2012, 6, 1), 7.9],
+                [Date.UTC(2012, 7, 1), 5.5],
+                [Date.UTC(2012, 8, 1), 3.9],
+                [Date.UTC(2012, 9, 1), 4.5],
+                [Date.UTC(2012, 10, 1), 6.3],
+                [Date.UTC(2012, 11, 1), 12.7],
+                [Date.UTC(2012, 12, 1), 17.5],
+                [Date.UTC(2013, 1, 1), 14.1],
+                [Date.UTC(2013, 2, 1), 16.6],
+                [Date.UTC(2013, 3, 1), 14.2],
+                [Date.UTC(2013, 4, 1), 11.6],
+                [Date.UTC(2013, 5, 1), 12.4],
+                [Date.UTC(2013, 6, 1), 7.4],
+                [Date.UTC(2013, 7, 1), 6.4],
+                [Date.UTC(2013, 8, 1), 6.2],
+                [Date.UTC(2013, 9, 1), 10.5],
+                [Date.UTC(2013, 10, 1), 10.3],
+                [Date.UTC(2013, 11, 1), 10.3],
+                [Date.UTC(2013, 12, 1), 5.4],
+                [Date.UTC(2014, 1, 1), 2.8],
+                [Date.UTC(2014, 2, 1), 3.6],
+                [Date.UTC(2014, 3, 1), 3.0],
+                [Date.UTC(2014, 4, 1), 0.1],
+                [Date.UTC(2014, 5, 1), 4.3],
+                [Date.UTC(2014, 6, 1), -1.1],
+                [Date.UTC(2014, 7, 1), 1.8],
+                [Date.UTC(2014, 8, 1), 3.1],
+                [Date.UTC(2014, 9, 1), 2.0],
+                [Date.UTC(2014, 10, 1), 0.8],
+                [Date.UTC(2014, 11, 1), 1.2],
+                [Date.UTC(2014, 12, 1), 4.5],
+                [Date.UTC(2015, 1, 1), 8.6],
+                [Date.UTC(2015, 2, 1), 8.1],
+                [Date.UTC(2015, 3, 1), 9.5],
+                [Date.UTC(2015, 4, 1), 5.0],
+                [Date.UTC(2015, 5, 1), 4.6],
+                [Date.UTC(2015, 6, 1), 2.4],
+                [Date.UTC(2015, 7, 1), 0.7],
+                [Date.UTC(2015, 8, 1), -1.5],
+                [Date.UTC(2015, 9, 1), -1.1],
+                [Date.UTC(2015, 10, 1), 0.4],
+                [Date.UTC(2015, 11, 1), 2.6],
+                [Date.UTC(2015, 12, 1), -9.9],
+                [Date.UTC(2016, 1, 1), -3.0],
+                [Date.UTC(2016, 2, 1), -2.2],
+                [Date.UTC(2016, 3, 1), -9.7],
+                [Date.UTC(2016, 4, 1), 0.3],
+                [Date.UTC(2016, 5, 1), -2.6],
+                [Date.UTC(2016, 6, 1), -7.4],
+                [Date.UTC(2016, 7, 1), -8.9],
+                [Date.UTC(2016, 8, 1), -8.4],
+                [Date.UTC(2016, 9, 1), -3.1],
+                [Date.UTC(2016, 10, 1), -0.3],
+                [Date.UTC(2016, 11, 1), -6.3],
+                [Date.UTC(2016, 12, 1), -4.4],
+                [Date.UTC(2017, 1, 1), -5.6],
+                [Date.UTC(2017, 2, 1), -8.6],
+                [Date.UTC(2017, 3, 1), -5.9],
+                [Date.UTC(2017, 4, 1), -17.1],
+                [Date.UTC(2017, 5, 1), -14.4],
+                [Date.UTC(2017, 6, 1), -11.9],
+                [Date.UTC(2017, 7, 1), -9.6],
+                [Date.UTC(2017, 8, 1), -13.5],
+                [Date.UTC(2017, 9, 1), -6.5],
+                [Date.UTC(2017, 10, 1), -3.9],
+                [Date.UTC(2017, 11, 1), 0.4],
+                [Date.UTC(2017, 12, 1), 10.3],
+                [Date.UTC(2018, 1, 1), 8.6],
+                [Date.UTC(2018, 2, 1), 10.3],
+                [Date.UTC(2018, 3, 1), 3.1],
+                [Date.UTC(2018, 4, 1), 16.9],
+                [Date.UTC(2018, 5, 1), 7.1],
+                [Date.UTC(2018, 6, 1), 10.9],
+                [Date.UTC(2018, 7, 1), 8.0],
+                [Date.UTC(2018, 8, 1), 8.3],
+                [Date.UTC(2018, 9, 1), 9.6],
+                [Date.UTC(2018, 10, 1), 2.5],
+                [Date.UTC(2018, 11, 1), 1.5],
+                [Date.UTC(2018, 12, 1), 1.3],
+                [Date.UTC(2019, 1, 1), -2.2],
+                [Date.UTC(2019, 2, 1), -5.6],
+                [Date.UTC(2019, 3, 1), 1.1],
+                [Date.UTC(2019, 4, 1), -14.7],
+                [Date.UTC(2019, 5, 1), -3.0],
+                [Date.UTC(2019, 6, 1), -3.5],
+                [Date.UTC(2019, 7, 1), -7.9],
+                [Date.UTC(2019, 8, 1), -7.8],
+                [Date.UTC(2019, 9, 1), -8.9],
+                [Date.UTC(2019, 10, 1), -11.3],
+                [Date.UTC(2019, 11, 1), -6.3],
+                [Date.UTC(2019, 12, 1), -6.5],
+                [Date.UTC(2020, 1, 1), -9.5],
+                [Date.UTC(2020, 2, 1), -7.5],
+                [Date.UTC(2020, 3, 1), -11.9],
+                [Date.UTC(2020, 4, 1), -26.3]
+            ]
+        },
+        {
+            name: 'Soviet Union',
+            fillOpacity: 0,
+            data: [
+                [Date.UTC(2002, 4, 1), -8.0],
+                [Date.UTC(2002, 5, 1), -1.1],
+                [Date.UTC(2002, 6, 1), -2.7],
+                [Date.UTC(2002, 7, 1), 4.7],
+                [Date.UTC(2002, 8, 1), 17.1],
+                [Date.UTC(2002, 9, 1), 5.3],
+                [Date.UTC(2002, 10, 1), -2.4],
+                [Date.UTC(2002, 11, 1), -0.3],
+                [Date.UTC(2002, 12, 1), 2.3],
+                [Date.UTC(2003, 1, 1), 7.4],
+                [Date.UTC(2003, 2, 1), 10.8],
+                [Date.UTC(2003, 3, 1), 11.6],
+                [Date.UTC(2003, 4, 1), 11.5],
+                [Date.UTC(2003, 5, 1), 5.7],
+                [Date.UTC(2003, 6, 1), 8.9],
+                [Date.UTC(2003, 7, 1), 4.8],
+                [Date.UTC(2003, 8, 1), -1.0],
+                [Date.UTC(2003, 9, 1), 2.1],
+                [Date.UTC(2003, 10, 1), 13.3],
+                [Date.UTC(2003, 11, 1), 15.7],
+                [Date.UTC(2003, 12, 1), 12.7],
+                [Date.UTC(2004, 1, 1), 12.9],
+                [Date.UTC(2004, 2, 1), 12.2],
+                [Date.UTC(2004, 3, 1), 10.1],
+                [Date.UTC(2004, 4, 1), 14.8],
+                [Date.UTC(2004, 5, 1), 8.0],
+                [Date.UTC(2004, 6, 1), 6.2],
+                [Date.UTC(2004, 7, 1), 8.8],
+                [Date.UTC(2004, 8, 1), 19.4],
+                [Date.UTC(2004, 9, 1), 16.0],
+                [Date.UTC(2004, 10, 1), 8.2],
+                [Date.UTC(2004, 11, 1), 9.9],
+                [Date.UTC(2004, 12, 1), 13.5],
+                [Date.UTC(2005, 1, 1), 10.3],
+                [Date.UTC(2005, 2, 1), 11.5],
+                [Date.UTC(2005, 3, 1), 12.9],
+                [Date.UTC(2005, 4, 1), 5.6],
+                [Date.UTC(2005, 5, 1), 14.6],
+                [Date.UTC(2005, 6, 1), 8.3],
+                [Date.UTC(2005, 7, 1), 8.7],
+                [Date.UTC(2005, 8, 1), 4.0],
+                [Date.UTC(2005, 9, 1), -0.7],
+                [Date.UTC(2005, 10, 1), -1.1],
+                [Date.UTC(2005, 11, 1), -5.5],
+                [Date.UTC(2005, 12, 1), -9.2],
+                [Date.UTC(2006, 1, 1), -10.5],
+                [Date.UTC(2006, 2, 1), -2.7],
+                [Date.UTC(2006, 3, 1), -8.1],
+                [Date.UTC(2006, 4, 1), -6.6],
+                [Date.UTC(2006, 5, 1), -7.6],
+                [Date.UTC(2006, 6, 1), -2.4],
+                [Date.UTC(2006, 7, 1), -4.3],
+                [Date.UTC(2006, 8, 1), -4.7],
+                [Date.UTC(2006, 9, 1), -4.3],
+                [Date.UTC(2006, 10, 1), -2.4],
+                [Date.UTC(2006, 11, 1), -0.5],
+                [Date.UTC(2006, 12, 1), 1.5],
+                [Date.UTC(2007, 1, 1), 0.8],
+                [Date.UTC(2007, 2, 1), -5.3],
+                [Date.UTC(2007, 3, 1), -1.3],
+                [Date.UTC(2007, 4, 1), 3.7],
+                [Date.UTC(2007, 5, 1), 3.9],
+                [Date.UTC(2007, 6, 1), 3.2],
+                [Date.UTC(2007, 7, 1), 3.1],
+                [Date.UTC(2007, 8, 1), -1.9],
+                [Date.UTC(2007, 9, 1), 10.8],
+                [Date.UTC(2007, 10, 1), 11.5],
+                [Date.UTC(2007, 11, 1), 9.9],
+                [Date.UTC(2007, 12, 1), 16.7],
+                [Date.UTC(2008, 1, 1), 23.4],
+                [Date.UTC(2008, 2, 1), 17.1],
+                [Date.UTC(2008, 3, 1), 21.4],
+                [Date.UTC(2008, 4, 1), 18.2],
+                [Date.UTC(2008, 5, 1), 9.6],
+                [Date.UTC(2008, 6, 1), 17.0],
+                [Date.UTC(2008, 7, 1), 19.7],
+                [Date.UTC(2008, 8, 1), 29.8],
+                [Date.UTC(2008, 9, 1), 15.3],
+                [Date.UTC(2008, 10, 1), 7.6],
+                [Date.UTC(2008, 11, 1), 14.6],
+                [Date.UTC(2008, 12, 1), 14.8],
+                [Date.UTC(2009, 1, 1), 5.4],
+                [Date.UTC(2009, 2, 1), -1.1],
+                [Date.UTC(2009, 3, 1), -3.7],
+                [Date.UTC(2009, 4, 1), -9.3],
+                [Date.UTC(2009, 5, 1), -9.1],
+                [Date.UTC(2009, 6, 1), -20.0],
+                [Date.UTC(2009, 7, 1), -21.6],
+                [Date.UTC(2009, 8, 1), -19.7],
+                [Date.UTC(2009, 9, 1), -16.4],
+                [Date.UTC(2009, 10, 1), -12.9],
+                [Date.UTC(2009, 11, 1), -15.8],
+                [Date.UTC(2009, 12, 1), -12.3],
+                [Date.UTC(2010, 1, 1), -9.2],
+                [Date.UTC(2010, 2, 1), 4.9],
+                [Date.UTC(2010, 3, 1), 11.4],
+                [Date.UTC(2010, 4, 1), 21.4],
+                [Date.UTC(2010, 5, 1), 24.8],
+                [Date.UTC(2010, 6, 1), 42.2],
+                [Date.UTC(2010, 7, 1), 45.7],
+                [Date.UTC(2010, 8, 1), 42.0],
+                [Date.UTC(2010, 9, 1), 33.6],
+                [Date.UTC(2010, 10, 1), 34.1],
+                [Date.UTC(2010, 11, 1), 38.8],
+                [Date.UTC(2010, 12, 1), 23.8],
+                [Date.UTC(2011, 1, 1), 30.5],
+                [Date.UTC(2011, 2, 1), 9.7],
+                [Date.UTC(2011, 3, 1), 14.2],
+                [Date.UTC(2011, 4, 1), 9.2],
+                [Date.UTC(2011, 5, 1), 16.2],
+                [Date.UTC(2011, 6, 1), 5.0],
+                [Date.UTC(2011, 7, 1), 7.9],
+                [Date.UTC(2011, 8, 1), 11.4],
+                [Date.UTC(2011, 9, 1), 10.8],
+                [Date.UTC(2011, 10, 1), 11.9],
+                [Date.UTC(2011, 11, 1), 9.4],
+                [Date.UTC(2011, 12, 1), 13.5],
+                [Date.UTC(2012, 1, 1), 7.9],
+                [Date.UTC(2012, 2, 1), 10.0],
+                [Date.UTC(2012, 3, 1), 2.3],
+                [Date.UTC(2012, 4, 1), 7.8],
+                [Date.UTC(2012, 5, 1), 1.8],
+                [Date.UTC(2012, 6, 1), 9.7],
+                [Date.UTC(2012, 7, 1), 4.4],
+                [Date.UTC(2012, 8, 1), 5.2],
+                [Date.UTC(2012, 9, 1), -3.7],
+                [Date.UTC(2012, 10, 1), 0.7],
+                [Date.UTC(2012, 11, 1), -4.9],
+                [Date.UTC(2012, 12, 1), 0.7],
+                [Date.UTC(2013, 1, 1), 4.3],
+                [Date.UTC(2013, 2, 1), 0.4],
+                [Date.UTC(2013, 3, 1), -3.9],
+                [Date.UTC(2013, 4, 1), -8.6],
+                [Date.UTC(2013, 5, 1), -7.1],
+                [Date.UTC(2013, 6, 1), -6.4],
+                [Date.UTC(2013, 7, 1), -10.0],
+                [Date.UTC(2013, 8, 1), -11.8],
+                [Date.UTC(2013, 9, 1), -10.9],
+                [Date.UTC(2013, 10, 1), -13.5],
+                [Date.UTC(2013, 11, 1), -10.3],
+                [Date.UTC(2013, 12, 1), -9.6],
+                [Date.UTC(2014, 1, 1), -8.0],
+                [Date.UTC(2014, 2, 1), -11.8],
+                [Date.UTC(2014, 3, 1), -6.9],
+                [Date.UTC(2014, 4, 1), -0.7],
+                [Date.UTC(2014, 5, 1), -0.3],
+                [Date.UTC(2014, 6, 1), 0.5],
+                [Date.UTC(2014, 7, 1), 3.3],
+                [Date.UTC(2014, 8, 1), 1.0],
+                [Date.UTC(2014, 9, 1), 0.7],
+                [Date.UTC(2014, 10, 1), 1.1],
+                [Date.UTC(2014, 11, 1), 2.4],
+                [Date.UTC(2014, 12, 1), 0.2],
+                [Date.UTC(2015, 1, 1), -8.3],
+                [Date.UTC(2015, 2, 1), -3.8],
+                [Date.UTC(2015, 3, 1), -7.8],
+                [Date.UTC(2015, 4, 1), -14.7],
+                [Date.UTC(2015, 5, 1), -14.5],
+                [Date.UTC(2015, 6, 1), -14.9],
+                [Date.UTC(2015, 7, 1), -16.2],
+                [Date.UTC(2015, 8, 1), -15.2],
+                [Date.UTC(2015, 9, 1), -14.6],
+                [Date.UTC(2015, 10, 1), -11.3],
+                [Date.UTC(2015, 11, 1), -12.9],
+                [Date.UTC(2015, 12, 1), -14.6],
+                [Date.UTC(2016, 1, 1), -9.1],
+                [Date.UTC(2016, 2, 1), -7.9],
+                [Date.UTC(2016, 3, 1), -6.7],
+                [Date.UTC(2016, 4, 1), -4.8],
+                [Date.UTC(2016, 5, 1), -6.1],
+                [Date.UTC(2016, 6, 1), -6.6],
+                [Date.UTC(2016, 7, 1), -5.7],
+                [Date.UTC(2016, 8, 1), -4.3],
+                [Date.UTC(2016, 9, 1), -6.4],
+                [Date.UTC(2016, 10, 1), -5.7],
+                [Date.UTC(2016, 11, 1), 1.5],
+                [Date.UTC(2016, 12, 1), 1.3],
+                [Date.UTC(2017, 1, 1), 2.2],
+                [Date.UTC(2017, 2, 1), -2.7],
+                [Date.UTC(2017, 3, 1), -1.7],
+                [Date.UTC(2017, 4, 1), 0.2],
+                [Date.UTC(2017, 5, 1), -7.5],
+                [Date.UTC(2017, 6, 1), -4.2],
+                [Date.UTC(2017, 7, 1), -5.2],
+                [Date.UTC(2017, 8, 1), -9.9],
+                [Date.UTC(2017, 9, 1), -4.9],
+                [Date.UTC(2017, 10, 1), -8.3],
+                [Date.UTC(2017, 11, 1), -11.4],
+                [Date.UTC(2017, 12, 1), -5.0],
+                [Date.UTC(2018, 1, 1), -2.8],
+                [Date.UTC(2018, 2, 1), 4.5],
+                [Date.UTC(2018, 3, 1), 4.4],
+                [Date.UTC(2018, 4, 1), 0.5],
+                [Date.UTC(2018, 5, 1), 3.2],
+                [Date.UTC(2018, 6, 1), 6.3],
+                [Date.UTC(2018, 7, 1), 10.7],
+                [Date.UTC(2018, 8, 1), -2.9],
+                [Date.UTC(2018, 9, 1), 13.5],
+                [Date.UTC(2018, 10, 1), 9.3],
+                [Date.UTC(2018, 11, 1), 7.4],
+                [Date.UTC(2018, 12, 1), -0.7],
+                [Date.UTC(2019, 1, 1), -0.7],
+                [Date.UTC(2019, 2, 1), 0.3],
+                [Date.UTC(2019, 3, 1), -0.5],
+                [Date.UTC(2019, 4, 1), 0.0],
+                [Date.UTC(2019, 5, 1), 3.4],
+                [Date.UTC(2019, 6, 1), 1.9],
+                [Date.UTC(2019, 7, 1), -0.8],
+                [Date.UTC(2019, 8, 1), 0.3],
+                [Date.UTC(2019, 9, 1), -3.2],
+                [Date.UTC(2019, 10, 1), -1.3],
+                [Date.UTC(2019, 11, 1), 2.8],
+                [Date.UTC(2019, 12, 1), -3.1],
+                [Date.UTC(2020, 1, 1), -1.5],
+                [Date.UTC(2020, 2, 1), -1.9],
+                [Date.UTC(2020, 3, 1), -7.9],
+                [Date.UTC(2020, 4, 1), -9.7]
+            ]
+        },
+        {
+            name: 'Unified Team',
+            fillOpacity: 0,
+            data: [
+                [Date.UTC(2002, 4, 1), 5.0],
+                [Date.UTC(2002, 5, 1), 6.8],
+                [Date.UTC(2002, 6, 1), 9.0],
+                [Date.UTC(2002, 7, 1), 10.8],
+                [Date.UTC(2002, 8, 1), 11.1],
+                [Date.UTC(2002, 9, 1), 8.3],
+                [Date.UTC(2002, 10, 1), 8.0],
+                [Date.UTC(2002, 11, 1), 10.3],
+                [Date.UTC(2002, 12, 1), 11.4],
+                [Date.UTC(2003, 1, 1), 14.2],
+                [Date.UTC(2003, 2, 1), 15.2],
+                [Date.UTC(2003, 3, 1), 18.2],
+                [Date.UTC(2003, 4, 1), 17.4],
+                [Date.UTC(2003, 5, 1), 19.3],
+                [Date.UTC(2003, 6, 1), 25.8],
+                [Date.UTC(2003, 7, 1), 23.9],
+                [Date.UTC(2003, 8, 1), 19.3],
+                [Date.UTC(2003, 9, 1), 15.4],
+                [Date.UTC(2003, 10, 1), 21.4],
+                [Date.UTC(2003, 11, 1), 19.2],
+                [Date.UTC(2003, 12, 1), 18.5],
+                [Date.UTC(2004, 1, 1), 19.2],
+                [Date.UTC(2004, 2, 1), 20.8],
+                [Date.UTC(2004, 3, 1), 19.8],
+                [Date.UTC(2004, 4, 1), 13.2],
+                [Date.UTC(2004, 5, 1), 6.7],
+                [Date.UTC(2004, 6, 1), 2.7],
+                [Date.UTC(2004, 7, 1), -1.1],
+                [Date.UTC(2004, 8, 1), -1.0],
+                [Date.UTC(2004, 9, 1), 7.9],
+                [Date.UTC(2004, 10, 1), 3.8],
+                [Date.UTC(2004, 11, 1), 9.7],
+                [Date.UTC(2004, 12, 1), 13.6],
+                [Date.UTC(2005, 1, 1), 10.6],
+                [Date.UTC(2005, 2, 1), 6.0],
+                [Date.UTC(2005, 3, 1), 8.0],
+                [Date.UTC(2005, 4, 1), 8.1],
+                [Date.UTC(2005, 5, 1), 18.8],
+                [Date.UTC(2005, 6, 1), 10.6],
+                [Date.UTC(2005, 7, 1), 18.6],
+                [Date.UTC(2005, 8, 1), 19.1],
+                [Date.UTC(2005, 9, 1), 9.1],
+                [Date.UTC(2005, 10, 1), 6.5],
+                [Date.UTC(2005, 11, 1), -5.0],
+                [Date.UTC(2005, 12, 1), -9.4],
+                [Date.UTC(2006, 1, 1), -11.6],
+                [Date.UTC(2006, 2, 1), -4.6],
+                [Date.UTC(2006, 3, 1), -10.5],
+                [Date.UTC(2006, 4, 1), 0.5],
+                [Date.UTC(2006, 5, 1), -4.6],
+                [Date.UTC(2006, 6, 1), 1.7],
+                [Date.UTC(2006, 7, 1), -2.2],
+                [Date.UTC(2006, 8, 1), 0.3],
+                [Date.UTC(2006, 9, 1), 6.0],
+                [Date.UTC(2006, 10, 1), 7.1],
+                [Date.UTC(2006, 11, 1), 11.0],
+                [Date.UTC(2006, 12, 1), 12.7],
+                [Date.UTC(2007, 1, 1), 14.2],
+                [Date.UTC(2007, 2, 1), 8.0],
+                [Date.UTC(2007, 3, 1), 12.9],
+                [Date.UTC(2007, 4, 1), 11.1],
+                [Date.UTC(2007, 5, 1), 10.1],
+                [Date.UTC(2007, 6, 1), 6.3],
+                [Date.UTC(2007, 7, 1), 6.3],
+                [Date.UTC(2007, 8, 1), 6.7],
+                [Date.UTC(2007, 9, 1), 7.3],
+                [Date.UTC(2007, 10, 1), 7.8],
+                [Date.UTC(2007, 11, 1), 9.6],
+                [Date.UTC(2007, 12, 1), 12.6],
+                [Date.UTC(2008, 1, 1), 11.5],
+                [Date.UTC(2008, 2, 1), 7.9],
+                [Date.UTC(2008, 3, 1), 8.0],
+                [Date.UTC(2008, 4, 1), 4.8],
+                [Date.UTC(2008, 5, 1), 7.0],
+                [Date.UTC(2008, 6, 1), 24.8],
+                [Date.UTC(2008, 7, 1), 21.3],
+                [Date.UTC(2008, 8, 1), 17.4],
+                [Date.UTC(2008, 9, 1), 12.9],
+                [Date.UTC(2008, 10, 1), 9.9],
+                [Date.UTC(2008, 11, 1), 9.7],
+                [Date.UTC(2008, 12, 1), 2.2],
+                [Date.UTC(2009, 1, 1), -0.2],
+                [Date.UTC(2009, 2, 1), -5.7],
+                [Date.UTC(2009, 3, 1), -13.7],
+                [Date.UTC(2009, 4, 1), -17.5],
+                [Date.UTC(2009, 5, 1), -22.1],
+                [Date.UTC(2009, 6, 1), -22.4],
+                [Date.UTC(2009, 7, 1), -22.1],
+                [Date.UTC(2009, 8, 1), -22.0],
+                [Date.UTC(2009, 9, 1), -21.2],
+                [Date.UTC(2009, 10, 1), -15.5],
+                [Date.UTC(2009, 11, 1), -8.0],
+                [Date.UTC(2009, 12, 1), 0.4],
+                [Date.UTC(2010, 1, 1), 1.5],
+                [Date.UTC(2010, 2, 1), 17.8],
+                [Date.UTC(2010, 3, 1), 27.9],
+                [Date.UTC(2010, 4, 1), 33.4],
+                [Date.UTC(2010, 5, 1), 37.2],
+                [Date.UTC(2010, 6, 1), 38.1],
+                [Date.UTC(2010, 7, 1), 33.4],
+                [Date.UTC(2010, 8, 1), 24.9],
+                [Date.UTC(2010, 9, 1), 29.5],
+                [Date.UTC(2010, 10, 1), 23.6],
+                [Date.UTC(2010, 11, 1), 4.0],
+                [Date.UTC(2010, 12, 1), 1.0],
+                [Date.UTC(2011, 1, 1), -0.8],
+                [Date.UTC(2011, 2, 1), -6.6],
+                [Date.UTC(2011, 3, 1), -7.2],
+                [Date.UTC(2011, 4, 1), -3.2],
+                [Date.UTC(2011, 5, 1), 2.8],
+                [Date.UTC(2011, 6, 1), 0.5],
+                [Date.UTC(2011, 7, 1), 7.8],
+                [Date.UTC(2011, 8, 1), 13.3],
+                [Date.UTC(2011, 9, 1), 6.8],
+                [Date.UTC(2011, 10, 1), 7.1],
+                [Date.UTC(2011, 11, 1), 14.8],
+                [Date.UTC(2011, 12, 1), 9.3],
+                [Date.UTC(2012, 1, 1), 12.8],
+                [Date.UTC(2012, 2, 1), 20.4],
+                [Date.UTC(2012, 3, 1), 14.6],
+                [Date.UTC(2012, 4, 1), 13.1],
+                [Date.UTC(2012, 5, 1), 5.2],
+                [Date.UTC(2012, 6, 1), 4.9],
+                [Date.UTC(2012, 7, 1), -4.1],
+                [Date.UTC(2012, 8, 1), -7.5],
+                [Date.UTC(2012, 9, 1), -4.6],
+                [Date.UTC(2012, 10, 1), -6.2],
+                [Date.UTC(2012, 11, 1), 1.8],
+                [Date.UTC(2012, 12, 1), 4.5],
+                [Date.UTC(2013, 1, 1), 4.0],
+                [Date.UTC(2013, 2, 1), -0.3],
+                [Date.UTC(2013, 3, 1), 6.1],
+                [Date.UTC(2013, 4, 1), -5.7],
+                [Date.UTC(2013, 5, 1), -0.8],
+                [Date.UTC(2013, 6, 1), 1.9],
+                [Date.UTC(2013, 7, 1), 2.7],
+                [Date.UTC(2013, 8, 1), 2.9],
+                [Date.UTC(2013, 9, 1), 1.8],
+                [Date.UTC(2013, 10, 1), 0.5],
+                [Date.UTC(2013, 11, 1), 2.3],
+                [Date.UTC(2013, 12, 1), -0.1],
+                [Date.UTC(2014, 1, 1), -3.0],
+                [Date.UTC(2014, 2, 1), -3.8],
+                [Date.UTC(2014, 3, 1), -2.4],
+                [Date.UTC(2014, 4, 1), 5.2],
+                [Date.UTC(2014, 5, 1), 5.0],
+                [Date.UTC(2014, 6, 1), 1.8],
+                [Date.UTC(2014, 7, 1), -0.7],
+                [Date.UTC(2014, 8, 1), -4.6],
+                [Date.UTC(2014, 9, 1), 4.4],
+                [Date.UTC(2014, 10, 1), 7.0],
+                [Date.UTC(2014, 11, 1), -2.2],
+                [Date.UTC(2014, 12, 1), 4.4],
+                [Date.UTC(2015, 1, 1), 1.5],
+                [Date.UTC(2015, 2, 1), -0.8],
+                [Date.UTC(2015, 3, 1), -3.1],
+                [Date.UTC(2015, 4, 1), -9.8],
+                [Date.UTC(2015, 5, 1), -9.8],
+                [Date.UTC(2015, 6, 1), -13.0],
+                [Date.UTC(2015, 7, 1), -9.0],
+                [Date.UTC(2015, 8, 1), -10.3],
+                [Date.UTC(2015, 9, 1), -8.6],
+                [Date.UTC(2015, 10, 1), -10.8],
+                [Date.UTC(2015, 11, 1), -2.3],
+                [Date.UTC(2015, 12, 1), -11.7],
+                [Date.UTC(2016, 1, 1), -7.3],
+                [Date.UTC(2016, 2, 1), -6.7],
+                [Date.UTC(2016, 3, 1), 6.5],
+                [Date.UTC(2016, 4, 1), -1.7],
+                [Date.UTC(2016, 5, 1), -9.0],
+                [Date.UTC(2016, 6, 1), -7.1],
+                [Date.UTC(2016, 7, 1), -13.6],
+                [Date.UTC(2016, 8, 1), -9.9],
+                [Date.UTC(2016, 9, 1), -9.3],
+                [Date.UTC(2016, 10, 1), -3.6],
+                [Date.UTC(2016, 11, 1), -3.7],
+                [Date.UTC(2016, 12, 1), 9.3],
+                [Date.UTC(2017, 1, 1), 3.1],
+                [Date.UTC(2017, 2, 1), 10.5],
+                [Date.UTC(2017, 3, 1), -8.0],
+                [Date.UTC(2017, 4, 1), -5.7],
+                [Date.UTC(2017, 5, 1), 0.9],
+                [Date.UTC(2017, 6, 1), -2.4],
+                [Date.UTC(2017, 7, 1), 2.8],
+                [Date.UTC(2017, 8, 1), -5.9],
+                [Date.UTC(2017, 9, 1), 6.4],
+                [Date.UTC(2017, 10, 1), 6.8],
+                [Date.UTC(2017, 11, 1), 5.3],
+                [Date.UTC(2017, 12, 1), -6.6],
+                [Date.UTC(2018, 1, 1), -5.4],
+                [Date.UTC(2018, 2, 1), -4.0],
+                [Date.UTC(2018, 3, 1), 2.7],
+                [Date.UTC(2018, 4, 1), 7.2],
+                [Date.UTC(2018, 5, 1), 3.6],
+                [Date.UTC(2018, 6, 1), 2.3],
+                [Date.UTC(2018, 7, 1), 0.8],
+                [Date.UTC(2018, 8, 1), 4.3],
+                [Date.UTC(2018, 9, 1), -3.8],
+                [Date.UTC(2018, 10, 1), -6.8],
+                [Date.UTC(2018, 11, 1), -6.5],
+                [Date.UTC(2018, 12, 1), 0.6],
+                [Date.UTC(2019, 1, 1), 3.1],
+                [Date.UTC(2019, 2, 1), -5.9],
+                [Date.UTC(2019, 3, 1), -7.2],
+                [Date.UTC(2019, 4, 1), -5.2],
+                [Date.UTC(2019, 5, 1), -4.3],
+                [Date.UTC(2019, 6, 1), -5.3],
+                [Date.UTC(2019, 7, 1), -2.5],
+                [Date.UTC(2019, 8, 1), -2.8],
+                [Date.UTC(2019, 9, 1), -6.2],
+                [Date.UTC(2019, 10, 1), -8.8],
+                [Date.UTC(2019, 11, 1), -5.9],
+                [Date.UTC(2019, 12, 1), -9.7],
+                [Date.UTC(2020, 1, 1), -8.0],
+                [Date.UTC(2020, 2, 1), -7.6],
+                [Date.UTC(2020, 3, 1), -12.3],
+                [Date.UTC(2020, 4, 1), -24.3]
+            ]
+        },
+        {
+            name: 'Hungary',
+            fillOpacity: 0,
+            data: [
+                [Date.UTC(2002, 4, 1), -0.2],
+                [Date.UTC(2002, 5, 1), -6.1],
+                [Date.UTC(2002, 6, 1), -6.1],
+                [Date.UTC(2002, 7, 1), -5.0],
+                [Date.UTC(2002, 8, 1), -8.6],
+                [Date.UTC(2002, 9, 1), -10.4],
+                [Date.UTC(2002, 10, 1), -7.5],
+                [Date.UTC(2002, 11, 1), -9.0],
+                [Date.UTC(2002, 12, 1), -9.0],
+                [Date.UTC(2003, 1, 1), -10.2],
+                [Date.UTC(2003, 2, 1), -3.0],
+                [Date.UTC(2003, 3, 1), -1.6],
+                [Date.UTC(2003, 4, 1), -5.7],
+                [Date.UTC(2003, 5, 1), -0.8],
+                [Date.UTC(2003, 6, 1), 1.1],
+                [Date.UTC(2003, 7, 1), 6.8],
+                [Date.UTC(2003, 8, 1), 7.6],
+                [Date.UTC(2003, 9, 1), 3.7],
+                [Date.UTC(2003, 10, 1), 3.4],
+                [Date.UTC(2003, 11, 1), 3.8],
+                [Date.UTC(2003, 12, 1), 1.7],
+                [Date.UTC(2004, 1, 1), 8.9],
+                [Date.UTC(2004, 2, 1), 0.0],
+                [Date.UTC(2004, 3, 1), 0.4],
+                [Date.UTC(2004, 4, 1), 5.9],
+                [Date.UTC(2004, 5, 1), 7.6],
+                [Date.UTC(2004, 6, 1), 7.4],
+                [Date.UTC(2004, 7, 1), 7.5],
+                [Date.UTC(2004, 8, 1), 7.4],
+                [Date.UTC(2004, 9, 1), 5.2],
+                [Date.UTC(2004, 10, 1), 4.4],
+                [Date.UTC(2004, 11, 1), 5.3],
+                [Date.UTC(2004, 12, 1), 6.0],
+                [Date.UTC(2005, 1, 1), -0.6],
+                [Date.UTC(2005, 2, 1), 2.1],
+                [Date.UTC(2005, 3, 1), 0.9],
+                [Date.UTC(2005, 4, 1), 2.3],
+                [Date.UTC(2005, 5, 1), -1.3],
+                [Date.UTC(2005, 6, 1), -2.5],
+                [Date.UTC(2005, 7, 1), -2.6],
+                [Date.UTC(2005, 8, 1), -3.7],
+                [Date.UTC(2005, 9, 1), -0.8],
+                [Date.UTC(2005, 10, 1), 0.0],
+                [Date.UTC(2005, 11, 1), -1.1],
+                [Date.UTC(2005, 12, 1), 0.6],
+                [Date.UTC(2006, 1, 1), 0.6],
+                [Date.UTC(2006, 2, 1), 2.5],
+                [Date.UTC(2006, 3, 1), 1.9],
+                [Date.UTC(2006, 4, 1), -1.1],
+                [Date.UTC(2006, 5, 1), 4.1],
+                [Date.UTC(2006, 6, 1), 4.5],
+                [Date.UTC(2006, 7, 1), 2.3],
+                [Date.UTC(2006, 8, 1), 4.6],
+                [Date.UTC(2006, 9, 1), 6.1],
+                [Date.UTC(2006, 10, 1), 9.1],
+                [Date.UTC(2006, 11, 1), 8.4],
+                [Date.UTC(2006, 12, 1), 7.4],
+                [Date.UTC(2007, 1, 1), 6.6],
+                [Date.UTC(2007, 2, 1), 9.8],
+                [Date.UTC(2007, 3, 1), 9.8],
+                [Date.UTC(2007, 4, 1), 1.4],
+                [Date.UTC(2007, 5, 1), 0.0],
+                [Date.UTC(2007, 6, 1), -0.5],
+                [Date.UTC(2007, 7, 1), -0.1],
+                [Date.UTC(2007, 8, 1), 0.2],
+                [Date.UTC(2007, 9, 1), 1.8],
+                [Date.UTC(2007, 10, 1), 2.6],
+                [Date.UTC(2007, 11, 1), 5.7],
+                [Date.UTC(2007, 12, 1), 3.4],
+                [Date.UTC(2008, 1, 1), 3.6],
+                [Date.UTC(2008, 2, 1), 3.8],
+                [Date.UTC(2008, 3, 1), 5.1],
+                [Date.UTC(2008, 4, 1), 18.8],
+                [Date.UTC(2008, 5, 1), 22.5],
+                [Date.UTC(2008, 6, 1), 27.1],
+                [Date.UTC(2008, 7, 1), 27.2],
+                [Date.UTC(2008, 8, 1), 25.0],
+                [Date.UTC(2008, 9, 1), 10.9],
+                [Date.UTC(2008, 10, 1), 4.6],
+                [Date.UTC(2008, 11, 1), 1.9],
+                [Date.UTC(2008, 12, 1), 23.1],
+                [Date.UTC(2009, 1, 1), -0.5],
+                [Date.UTC(2009, 2, 1), -5.1],
+                [Date.UTC(2009, 3, 1), -9.1],
+                [Date.UTC(2009, 4, 1), -11.1],
+                [Date.UTC(2009, 5, 1), -20.2],
+                [Date.UTC(2009, 6, 1), -22.7],
+                [Date.UTC(2009, 7, 1), -21.2],
+                [Date.UTC(2009, 8, 1), -16.8],
+                [Date.UTC(2009, 9, 1), -12.3],
+                [Date.UTC(2009, 10, 1), -7.2],
+                [Date.UTC(2009, 11, 1), 0.6],
+                [Date.UTC(2009, 12, 1), -7.2],
+                [Date.UTC(2010, 1, 1), 3.1],
+                [Date.UTC(2010, 2, 1), 8.5],
+                [Date.UTC(2010, 3, 1), 15.0],
+                [Date.UTC(2010, 4, 1), 20.6],
+                [Date.UTC(2010, 5, 1), 22.5],
+                [Date.UTC(2010, 6, 1), 23.4],
+                [Date.UTC(2010, 7, 1), 18.4],
+                [Date.UTC(2010, 8, 1), 14.5],
+                [Date.UTC(2010, 9, 1), 21.4],
+                [Date.UTC(2010, 10, 1), 24.7],
+                [Date.UTC(2010, 11, 1), 20.4],
+                [Date.UTC(2010, 12, 1), 16.7],
+                [Date.UTC(2011, 1, 1), 20.6],
+                [Date.UTC(2011, 2, 1), 19.8],
+                [Date.UTC(2011, 3, 1), 20.0],
+                [Date.UTC(2011, 4, 1), 18.2],
+                [Date.UTC(2011, 5, 1), 22.7],
+                [Date.UTC(2011, 6, 1), 19.3],
+                [Date.UTC(2011, 7, 1), 22.3],
+                [Date.UTC(2011, 8, 1), 23.8],
+                [Date.UTC(2011, 9, 1), 17.4],
+                [Date.UTC(2011, 10, 1), 14.0],
+                [Date.UTC(2011, 11, 1), 10.5],
+                [Date.UTC(2011, 12, 1), 9.2],
+                [Date.UTC(2012, 1, 1), 13.3],
+                [Date.UTC(2012, 2, 1), 12.1],
+                [Date.UTC(2012, 3, 1), 9.3],
+                [Date.UTC(2012, 4, 1), 5.9],
+                [Date.UTC(2012, 5, 1), 0.8],
+                [Date.UTC(2012, 6, 1), 3.8],
+                [Date.UTC(2012, 7, 1), -1.0],
+                [Date.UTC(2012, 8, 1), -5.2],
+                [Date.UTC(2012, 9, 1), -6.4],
+                [Date.UTC(2012, 10, 1), -6.9],
+                [Date.UTC(2012, 11, 1), -2.3],
+                [Date.UTC(2012, 12, 1), -1.0],
+                [Date.UTC(2013, 1, 1), -8.5],
+                [Date.UTC(2013, 2, 1), -7.8],
+                [Date.UTC(2013, 3, 1), -5.8],
+                [Date.UTC(2013, 4, 1), -7.7],
+                [Date.UTC(2013, 5, 1), -3.5],
+                [Date.UTC(2013, 6, 1), -0.4],
+                [Date.UTC(2013, 7, 1), -0.2],
+                [Date.UTC(2013, 8, 1), 0.4],
+                [Date.UTC(2013, 9, 1), 3.5],
+                [Date.UTC(2013, 10, 1), 3.1],
+                [Date.UTC(2013, 11, 1), 0.8],
+                [Date.UTC(2013, 12, 1), 1.4],
+                [Date.UTC(2014, 1, 1), 2.8],
+                [Date.UTC(2014, 2, 1), 1.2],
+                [Date.UTC(2014, 3, 1), 0.5],
+                [Date.UTC(2014, 4, 1), 3.7],
+                [Date.UTC(2014, 5, 1), 2.1],
+                [Date.UTC(2014, 6, 1), -2.3],
+                [Date.UTC(2014, 7, 1), -2.1],
+                [Date.UTC(2014, 8, 1), 0.1],
+                [Date.UTC(2014, 9, 1), 0.9],
+                [Date.UTC(2014, 10, 1), 4.3],
+                [Date.UTC(2014, 11, 1), -1.3],
+                [Date.UTC(2014, 12, 1), -0.7],
+                [Date.UTC(2015, 1, 1), -1.7],
+                [Date.UTC(2015, 2, 1), 0.2],
+                [Date.UTC(2015, 3, 1), -1.0],
+                [Date.UTC(2015, 4, 1), -4.8],
+                [Date.UTC(2015, 5, 1), -5.5],
+                [Date.UTC(2015, 6, 1), -5.7],
+                [Date.UTC(2015, 7, 1), -4.4],
+                [Date.UTC(2015, 8, 1), -5.4],
+                [Date.UTC(2015, 9, 1), -9.1],
+                [Date.UTC(2015, 10, 1), -13.0],
+                [Date.UTC(2015, 11, 1), -11.3],
+                [Date.UTC(2015, 12, 1), -8.4],
+                [Date.UTC(2016, 1, 1), -13.8],
+                [Date.UTC(2016, 2, 1), -11.7],
+                [Date.UTC(2016, 3, 1), -11.2],
+                [Date.UTC(2016, 4, 1), -12.4],
+                [Date.UTC(2016, 5, 1), -9.5],
+                [Date.UTC(2016, 6, 1), -4.6],
+                [Date.UTC(2016, 7, 1), -4.7],
+                [Date.UTC(2016, 8, 1), -4.1],
+                [Date.UTC(2016, 9, 1), -0.4],
+                [Date.UTC(2016, 10, 1), 3.7],
+                [Date.UTC(2016, 11, 1), 8.4],
+                [Date.UTC(2016, 12, 1), 2.8],
+                [Date.UTC(2017, 1, 1), 8.6],
+                [Date.UTC(2017, 2, 1), 8.0],
+                [Date.UTC(2017, 3, 1), 9.3],
+                [Date.UTC(2017, 4, 1), 12.7],
+                [Date.UTC(2017, 5, 1), 8.3],
+                [Date.UTC(2017, 6, 1), 6.8],
+                [Date.UTC(2017, 7, 1), 5.8],
+                [Date.UTC(2017, 8, 1), 3.0],
+                [Date.UTC(2017, 9, 1), 3.0],
+                [Date.UTC(2017, 10, 1), 0.4],
+                [Date.UTC(2017, 11, 1), 0.4],
+                [Date.UTC(2017, 12, 1), 2.7],
+                [Date.UTC(2018, 1, 1), 1.2],
+                [Date.UTC(2018, 2, 1), 3.5],
+                [Date.UTC(2018, 3, 1), 3.4],
+                [Date.UTC(2018, 4, 1), 2.2],
+                [Date.UTC(2018, 5, 1), -1.5],
+                [Date.UTC(2018, 6, 1), -1.2],
+                [Date.UTC(2018, 7, 1), -1.0],
+                [Date.UTC(2018, 8, 1), -2.7],
+                [Date.UTC(2018, 9, 1), -2.6],
+                [Date.UTC(2018, 10, 1), -2.4],
+                [Date.UTC(2018, 11, 1), -0.9],
+                [Date.UTC(2018, 12, 1), -1.2],
+                [Date.UTC(2019, 1, 1), -5.4],
+                [Date.UTC(2019, 2, 1), -5.1],
+                [Date.UTC(2019, 3, 1), -7.8],
+                [Date.UTC(2019, 4, 1), -6.9],
+                [Date.UTC(2019, 5, 1), -1.2],
+                [Date.UTC(2019, 6, 1), -1.4],
+                [Date.UTC(2019, 7, 1), 2.3],
+                [Date.UTC(2019, 8, 1), 1.8],
+                [Date.UTC(2019, 9, 1), -0.8],
+                [Date.UTC(2019, 10, 1), 1.4],
+                [Date.UTC(2019, 11, 1), -0.9],
+                [Date.UTC(2019, 12, 1), 4.2],
+                [Date.UTC(2020, 1, 1), 1.1],
+                [Date.UTC(2020, 2, 1), 4.7],
+                [Date.UTC(2020, 3, 1), -2.5],
+                [Date.UTC(2020, 4, 1), -6.9]
             ]
         }
-    ]
+    ],
+
+    tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
+    }
 };
 
+// jellypus
+function jellypus() {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'networkgraph',
+            margin: 0,
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuint'
+            },
+            events: {
+                load: function () {
+
+                    const chart = this;
+                    const jpSeries = chart.series[0];
+
+                    const colors = [
+                        '#6975FF', '#A5ACFF', '#8791FF',
+                        '#F59E0B', '#10B981'
+                    ];
+
+                    jpSeries.nodes.forEach(function (node, i) {
+                        node.update({
+                            color: colors[i % 5]
+                        }, false);
+                    });
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        title: {
+            floating: true,
+            align: 'left',
+            y: -30,
+            verticalAlign: 'bottom',
+            text: 'Network Graph',
+            style: {
+                fontSize: '14px'
+            }
+        },
+        subtitle: {
+            floating: true,
+            useHTML: true,
+            verticalAlign: 'bottom',
+            align: 'left',
+            style: {
+                fontSize: '14px'
+            },
+            y: -15,
+            text: '<a href="https://www.highcharts.com/demo/highcharts/network-graph">See full demo</a>'
+        },
+        plotOptions: {
+            networkgraph: {
+                turboThreshold: 0,
+                keys: ['from', 'to', 'color'],
+                className: 'jellypus',
+                zIndex: 2,
+                marker: {
+                    enabled: true,
+                    radius: 5,
+                    symbol: 'circle'
+                },
+                layoutAlgorithm: {
+                    enableSimulation: true,
+                    initialPositions: 'random',
+                    // Applied only to links, should be 0
+                    attractiveForce: function () {
+                        return 2;
+                    },
+                    repulsiveForce: function () {
+                        return 1;
+                    },
+                    linkLength: 2,
+                    integration: 'euler',
+                    gravitationalConstant: 2
+                }
+            }
+        },
+        tooltip: {
+            backgroundColor: '#474554',
+            style: {
+                color: '#f0f0f0'
+            }
+        },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 600 // up to this
+                },
+                chartOptions: {
+                    chart: {
+                        marginRight: 80
+                    },
+                    series: [{
+                        data: [
+                            ['0', '1'],
+                            ['1', '2'],
+                            ['1', '3'],
+                            ['1', '4'],
+                            ['1', '5'],
+                            ['1', '6'],
+                            ['1', '7'],
+                            ['1', '8'],
+                            ['1', '9'],
+                            ['1', '10'],
+                            ['1', '11'],
+                            ['1', '12'],
+                            ['1', '13'],
+                            ['1', '14'],
+                            ['1', '15'],
+                            ['1', '16'],
+                            ['1', '17'],
+                            ['1', '18'],
+                            ['1', '19'],
+                            ['1', '20'],
+                            ['1', '21'],
+                            ['1', '22'],
+                            ['1', '23'],
+                            ['1', '24'],
+                            ['1', '25'],
+                            ['1', '26'],
+                            ['1', '27'],
+                            ['1', '28'],
+                            ['1', '29'],
+                            ['1', '30'],
+                            ['1', '31'],
+                            ['1', '32'],
+                            ['1', '33'],
+                            ['1', '34'],
+                            ['1', '35'],
+                            ['1', '36'],
+                            ['1', '37'],
+                            ['1', '38'],
+                            ['1', '39'],
+                            ['1', '40'],
+                            ['1', '41'],
+                            ['1', '42'],
+                            ['1', '43'],
+                            ['1', '44'],
+                            ['1', '45'],
+                            ['1', '46'],
+                            ['1', '47'],
+                            ['1', '48'],
+                            ['1', '49'],
+                            ['1', '50'],
+                            ['1', '51'],
+                            ['1', '52'],
+                            ['1', '53'],
+                            ['1', '54'],
+                            ['1', '55'],
+                            ['1', '56'],
+                            ['1', '57'],
+                            ['1', '58'],
+                            ['1', '59'],
+                            ['1', '60'],
+                            ['1', '61'],
+                            ['1', '62'],
+                            ['1', '63'],
+                            ['1', '64'],
+                            ['1', '65'],
+                            ['1', '66'],
+                            ['1', '67'],
+                            ['1', '68'],
+                            ['1', '69'],
+                            ['1', '70'],
+                            ['1', '71'],
+                            ['1', '72'],
+                            ['1', '73'],
+                            ['1', '74'],
+                            ['1', '75'],
+                            ['1', '76'],
+                            ['1', '77'],
+                            ['1', '78'],
+                            ['1', '79'],
+                            ['1', '80'],
+                            ['1', '81'],
+                            ['1', '82'],
+                            ['1', '83'],
+                            ['1', '84'],
+                            ['1', '85'],
+                            ['1', '86'],
+                            ['1', '87'],
+                            ['1', '88'],
+                            ['1', '89'],
+                            ['1', '90'],
+                            ['1', '91'],
+                            ['1', '92'],
+                            ['1', '93'],
+                            ['1', '94'],
+                            ['1', '95'],
+                            ['1', '96'],
+                            ['1', '97'],
+                            ['1', '98']
+                        ],
+                        nodes: [
+                            {
+                                id: '0',
+                                marker: {
+                                    radius: 8
+                                },
+                                mass: 1
+                            },
+                            {
+                                id: '1',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '2',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '3',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '4',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '5',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '6',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '7',
+                                mass: 1,
+                                marker: {
+                                    radius: 10
+                                }
+                            },
+                            {
+                                id: '8',
+                                mass: 1,
+                                marker: {
+                                    radius: 5
+                                }
+                            },
+                            {
+                                id: '9',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            },
+                            {
+                                id: '10',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            },
+                            {
+                                id: '11',
+                                mass: 1,
+                                marker: {
+                                    radius: 7
+                                }
+                            },
+                            {
+                                id: '12',
+                                className: 'head',
+                                mass: 200,
+                                plotX: 700,
+                                plotY: 180,
+                                marker: {
+                                    radius: 20
+                                }
+                            },
+                            {
+                                id: '13',
+                                mass: 1,
+                                marker: {
+                                    radius: 8
+                                }
+                            },
+                            {
+                                id: '14',
+                                mass: 1,
+                                marker: {
+                                    radius: 8
+                                }
+                            },
+                            {
+                                id: '15',
+                                mass: 1,
+                                marker: {
+                                    radius: 9
+                                }
+                            },
+                            {
+                                id: '16',
+                                mass: 1,
+                                marker: {
+                                    radius: 9
+                                }
+                            },
+                            {
+                                id: '17',
+                                mass: 1,
+                                marker: {
+                                    radius: 10
+                                }
+                            },
+                            {
+                                id: '18',
+                                mass: 1,
+                                marker: {
+                                    radius: 10
+                                }
+                            },
+                            {
+                                id: '19',
+                                mass: 1,
+                                marker: {
+                                    radius: 1
+                                }
+                            },
+                            {
+                                id: '20',
+                                mass: 1,
+                                marker: {
+                                    radius: 1
+                                }
+                            },
+                            {
+                                id: '21',
+                                mass: 1,
+                                marker: {
+                                    radius: 2
+                                }
+                            },
+                            {
+                                id: '22',
+                                mass: 1,
+                                marker: {
+                                    radius: 2
+                                }
+                            },
+                            {
+                                id: '23',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '24',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '25',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '26',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '27',
+                                mass: 1,
+                                marker: {
+                                    radius: 5
+                                }
+                            },
+                            {
+                                id: '28',
+                                mass: 1,
+                                marker: {
+                                    radius: 5
+                                }
+                            },
+                            {
+                                id: '29',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            },
+                            {
+                                id: '30',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            }
+                        ]
+                    }]
+                }
+            },
+            {
+                condition: {
+                    minWidth: 601 // above this
+                },
+                chartOptions: {
+                    series: [{
+                        data: [
+                            ['0', '1'],
+                            ['1', '2'],
+                            ['1', '3'],
+                            ['1', '4'],
+                            ['1', '5'],
+                            ['1', '6'],
+                            ['1', '7'],
+                            ['1', '8'],
+                            ['1', '9'],
+                            ['1', '10'],
+                            ['1', '11'],
+                            ['1', '12'],
+                            ['1', '13'],
+                            ['1', '14'],
+                            ['1', '15'],
+                            ['1', '16'],
+                            ['1', '17'],
+                            ['1', '18'],
+                            ['1', '19'],
+                            ['1', '20'],
+                            ['1', '21'],
+                            ['1', '22'],
+                            ['1', '23'],
+                            ['1', '24'],
+                            ['1', '25'],
+                            ['1', '26'],
+                            ['1', '27'],
+                            ['1', '28'],
+                            ['1', '29'],
+                            ['1', '30'],
+                            ['1', '31'],
+                            ['1', '32'],
+                            ['1', '33'],
+                            ['1', '34'],
+                            ['1', '35'],
+                            ['1', '36'],
+                            ['1', '37'],
+                            ['1', '38'],
+                            ['1', '39'],
+                            ['1', '40'],
+                            ['1', '41'],
+                            ['1', '42'],
+                            ['1', '43'],
+                            ['1', '44'],
+                            ['1', '45'],
+                            ['1', '46'],
+                            ['1', '47'],
+                            ['1', '48'],
+                            ['1', '49'],
+                            ['1', '50'],
+                            ['1', '51'],
+                            ['1', '52'],
+                            ['1', '53'],
+                            ['1', '54'],
+                            ['1', '55'],
+                            ['1', '56'],
+                            ['1', '57'],
+                            ['1', '58'],
+                            ['1', '59'],
+                            ['1', '60'],
+                            ['1', '61'],
+                            ['1', '62'],
+                            ['1', '63'],
+                            ['1', '64'],
+                            ['1', '65'],
+                            ['1', '66'],
+                            ['1', '67'],
+                            ['1', '68'],
+                            ['1', '69'],
+                            ['1', '70'],
+                            ['1', '71'],
+                            ['1', '72'],
+                            ['1', '73'],
+                            ['1', '74'],
+                            ['1', '75'],
+                            ['1', '76'],
+                            ['1', '77'],
+                            ['1', '78'],
+                            ['1', '79'],
+                            ['1', '80'],
+                            ['1', '81'],
+                            ['1', '82'],
+                            ['1', '83'],
+                            ['1', '84'],
+                            ['1', '85'],
+                            ['1', '86'],
+                            ['1', '87'],
+                            ['1', '88'],
+                            ['1', '89'],
+                            ['1', '90'],
+                            ['1', '91'],
+                            ['1', '92'],
+                            ['1', '93'],
+                            ['1', '94'],
+                            ['1', '95'],
+                            ['1', '96'],
+                            ['1', '97'],
+                            ['1', '98']
+                        ],
+                        nodes: [
+                            {
+                                id: '0',
+                                marker: {
+                                    radius: 8
+                                },
+                                mass: 1
+                            },
+                            {
+                                id: '1',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '2',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '3',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '4',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '5',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '6',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '7',
+                                mass: 1,
+                                marker: {
+                                    radius: 10
+                                }
+                            },
+                            {
+                                id: '8',
+                                mass: 1,
+                                marker: {
+                                    radius: 5
+                                }
+                            },
+                            {
+                                id: '9',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            },
+                            {
+                                id: '10',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            },
+                            {
+                                id: '11',
+                                mass: 1,
+                                marker: {
+                                    radius: 7
+                                }
+                            },
+                            {
+                                id: '12',
+                                className: 'head',
+                                mass: 200,
+                                plotX: 0,
+                                plotY: 180,
+                                marker: {
+                                    radius: 20
+                                }
+                            },
+                            {
+                                id: '13',
+                                mass: 1,
+                                marker: {
+                                    radius: 8
+                                }
+                            },
+                            {
+                                id: '14',
+                                mass: 1,
+                                marker: {
+                                    radius: 8
+                                }
+                            },
+                            {
+                                id: '15',
+                                mass: 1,
+                                marker: {
+                                    radius: 9
+                                }
+                            },
+                            {
+                                id: '16',
+                                mass: 1,
+                                marker: {
+                                    radius: 9
+                                }
+                            },
+                            {
+                                id: '17',
+                                mass: 1,
+                                marker: {
+                                    radius: 10
+                                }
+                            },
+                            {
+                                id: '18',
+                                mass: 1,
+                                marker: {
+                                    radius: 10
+                                }
+                            },
+                            {
+                                id: '19',
+                                mass: 1,
+                                marker: {
+                                    radius: 1
+                                }
+                            },
+                            {
+                                id: '20',
+                                mass: 1,
+                                marker: {
+                                    radius: 1
+                                }
+                            },
+                            {
+                                id: '21',
+                                mass: 1,
+                                marker: {
+                                    radius: 2
+                                }
+                            },
+                            {
+                                id: '22',
+                                mass: 1,
+                                marker: {
+                                    radius: 2
+                                }
+                            },
+                            {
+                                id: '23',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '24',
+                                mass: 1,
+                                marker: {
+                                    radius: 3
+                                }
+                            },
+                            {
+                                id: '25',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '26',
+                                mass: 1,
+                                marker: {
+                                    radius: 4
+                                }
+                            },
+                            {
+                                id: '27',
+                                mass: 1,
+                                marker: {
+                                    radius: 5
+                                }
+                            },
+                            {
+                                id: '28',
+                                mass: 1,
+                                marker: {
+                                    radius: 5
+                                }
+                            },
+                            {
+                                id: '29',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            },
+                            {
+                                id: '30',
+                                mass: 1,
+                                marker: {
+                                    radius: 6
+                                }
+                            }
+                        ]
+                    }]
+                }
+            }]
+        }
+    });
+}
+
 // live candlestick
-
 let csInterval;
-
 function cs() {
+
+    // Define a custom symbol path
+    Highcharts.SVGRenderer.prototype.symbols.oval = function (x, y, w, h) {
+        const r = w / 2;
+
+        return [
+            'M', x, y,
+            'A', r, r, 0, 1, 1, x + w, y,
+            'L', x + w, y + h,
+            'A', r, r, 0, 1, 1, x, y + h,
+            'L', x, y,
+            'Z'
+        ];
+    };
+
     const options = {
         title: {
             floating: true,
             align: 'left',
             y: -30,
             verticalAlign: 'bottom',
-            text: 'Highstock Dynamic Candlestick Chart',
+            text: 'Dynamic Candlestick Chart',
             style: {
                 fontSize: '14px'
             }
@@ -1706,7 +3207,15 @@ function cs() {
             },
             text: '<a href="https://www.highcharts.com/demo/stock/live-candlestick">See full demo</a>'
         },
+        caption: {
+            useHTML: true,
+            text: '<div id="stop">Stop animation</div>',
+            align: 'center',
+            verticalAlign: 'middle',
+            x: 0,
+            y: 150
 
+        },
         xAxis: {
             overscroll: 500000,
             range: 4 * 200000,
@@ -1736,7 +3245,7 @@ function cs() {
                 count: 1,
                 text: 'All'
             }],
-            selected: 0,
+            selected: 1,
             inputEnabled: false,
             buttonTheme: { // styles for the buttons
                 fill: '#474554',
@@ -1760,14 +3269,28 @@ function cs() {
                 }
             }
         },
-
+        scrollbar: {
+            barBorderColor: '#918FA3',
+            barBackgroundColor: '#918FA3',
+            trackBorderColor: '#918FA3'
+        },
         navigator: {
             top: 300,
+            handles: {
+                symbols: ['oval', 'oval'],
+                width: 8,
+                height: 24,
+                backgroundColor: '#918FA3',
+                lineWidth: 0
+            },
+            outlineColor: '#5E5C70',
             series: {
-                color: '#545ECC',
-                fillOpacity: 1
+                color: '#5E5C70',
+                lineColor: '#5E5C70',
+                fillOpacity: 0.6
             },
             xAxis: {
+                gridLineColor: '#5E5C70',
                 labels: {
                     style: {
                         textOutline: 'none',
@@ -1776,17 +3299,24 @@ function cs() {
                 }
             }
         },
+        tooltip: {
+            backgroundColor: '#474554',
+            style: {
+                color: '#f0f0f0'
+            }
+        },
 
         series: [{
             type: 'candlestick',
-            color: '#EF4444',
-            upColor: '#90EE90',
-            lineColor: '#FEF3C7',
+            color: '#6975FF',
+            upColor: '#10B981',
+            lineColor: '#FBBF24',
             lastPrice: {
                 enabled: true,
                 label: {
                     enabled: true,
-                    backgroundColor: '#EF4444'
+                    backgroundColor: '#474554',
+                    borderColor: '#ACABBA'
                 }
             }
         }]
@@ -2767,7 +4297,12 @@ function cs() {
     ];
 
     // Create the chart
-    currentChart = Highcharts.stockChart('container', options);
+    Highcharts.stockChart('container', options);
+
+    document.getElementById('stop').addEventListener('click', () => {
+        clearInterval(csInterval);
+    });
+
 }
 
 // bar chart race
@@ -2877,16 +4412,6 @@ function barchartRace() {
         return [output[0], output.slice(1, nbr)];
     }
 
-    // function getSubtitle() {
-    //     const population =
-    //      (getData(input.value)[0][1] / 1000000000).toFixed(2);
-    //     return `<div style="font-weight:200;font-size: 3em;opacity: 0.4">
-    //      ${input.value}</div>
-    //     <div style="font-size: 22px;opacity: 0.4">
-    //         Total: ${population} billion
-    //     </div>`;
-    // }
-
     (async () => {
 
         dataset = await fetch(
@@ -2899,7 +4424,7 @@ function barchartRace() {
                 animation: {
                     duration: 500
                 },
-                margin: [50, 0, 0, 0],
+                margin: [50, 10, 0, 10],
                 events: {
                     load: function () {
 
@@ -2912,6 +4437,7 @@ function barchartRace() {
                     }
                 }
             },
+            colors: colors,
             credits: {
                 enabled: false
             },
@@ -2920,7 +4446,7 @@ function barchartRace() {
                 align: 'left',
                 y: -30,
                 verticalAlign: 'bottom',
-                text: 'Highcharts Bar Chart Race',
+                text: 'Bar Chart Race',
                 style: {
                     fontSize: '14px'
                 }
@@ -2994,31 +4520,17 @@ function barchartRace() {
                     chartOptions: {
                         xAxis: {
                             visible: false
-                        },
-                        subtitle: {
-                            x: 0
-                        },
-                        plotOptions: {
-                            series: {
-                                dataLabels: [{
-                                    enabled: true,
-                                    y: 8
-                                }, {
-                                    enabled: true,
-                                    format: '{point.name}',
-                                    y: -8,
-                                    style: {
-                                        fontWeight: 'normal',
-                                        opacity: 0.7
-                                    }
-                                }]
-                            }
                         }
                     }
                 }]
+            },
+            tooltip: {
+                backgroundColor: '#474554',
+                style: {
+                    color: '#f0f0f0'
+                }
             }
         });
-        currentChart = chart;
     })();
 
     /*
@@ -3046,17 +4558,6 @@ function barchartRace() {
         // Auto-pause
             pause(btn);
         }
-
-        // chart.update(
-        //     {
-        //         subtitle: {
-        //             text: getSubtitle()
-        //         }
-        //     },
-        //     false,
-        //     false,
-        //     false
-        // );
 
         chart.series[0].update({
             name: input.value,
@@ -3096,8 +4597,7 @@ function barchartRace() {
 // packed bubble chart
 const spb = {
     chart: {
-        type: 'packedbubble',
-        height: '70%'
+        type: 'packedbubble'
     },
     credits: {
         enabled: false
@@ -3116,7 +4616,7 @@ const spb = {
         align: 'left',
         y: -40,
         verticalAlign: 'bottom',
-        text: 'Highcharts Split Packed<br>Bubble Chart',
+        text: 'Split Packed<br>Bubble Chart',
         style: {
             fontSize: '14px'
         }
@@ -3133,6 +4633,10 @@ const spb = {
         text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/highcharts/packed-bubble-split">See full demo</a>'
     },
     tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        },
         useHTML: true,
         pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
     },
@@ -3640,7 +5144,29 @@ const spb = {
             name: 'Korea',
             value: 610.1
         }]
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 600 // up to this
+            },
+            chartOptions: {
+                chart: {
+                    marginBottom: 80
+                }
+            }
+        },
+        {
+            condition: {
+                minWidth: 601 // above this
+            },
+            chartOptions: {
+                chart: {
+                    marginBottom: 0
+                }
+            }
+        }]
+    }
 };
 
 // depedency wheel
@@ -3661,13 +5187,14 @@ const dw = {
             }
         }
     },
+    colors: colors,
     title: {
         floating: true,
         useHTML: true,
         align: 'left',
         y: -30,
         verticalAlign: 'bottom',
-        text: 'Highcharts<br>Dependency Wheel',
+        text: 'Dependency Wheel',
         style: {
             fontSize: '14px'
         }
@@ -3681,7 +5208,7 @@ const dw = {
             fontSize: '14px'
         },
         y: -15,
-        text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/highcharts/dependency-wheel">See full demo</a>'
+        text: '<a href="https://www.highcharts.com/demo/highcharts/dependency-wheel">See full demo</a>'
     },
 
     accessibility: {
@@ -3759,7 +5286,13 @@ const dw = {
             distance: 10
         },
         size: '95%'
-    }]
+    }],
+    tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
+    }
 
 };
 
@@ -3775,7 +5308,6 @@ const fc = {
         events: {
             load: function () {
                 const chart = this;
-
                 setTimeout(() => {
                     chart.series[0].update({
                         width: '70%',
@@ -3785,6 +5317,7 @@ const fc = {
             }
         }
     },
+    colors: colors,
     credits: {
         enabled: false
     },
@@ -3794,7 +5327,7 @@ const fc = {
         align: 'left',
         y: -30,
         verticalAlign: 'bottom',
-        text: 'Highcharts Funnel Chart',
+        text: 'Funnel Chart',
         style: {
             fontSize: '14px'
         }
@@ -3815,7 +5348,8 @@ const fc = {
             dataLabels: {
                 distance: 100,
                 enabled: true,
-                format: '<b style="color:{point.color}">{point.color}</b>',
+                // eslint-disable-next-line max-len
+                format: '<b style="color:{point.color}">{point.name} ({point.y})</b>',
                 softConnector: true,
                 style: {
                     color: 'white',
@@ -3826,7 +5360,7 @@ const fc = {
             neckWidth: '1%',
             neckHeight: '25%',
             width: '1%',
-            borderColor: '#18171C',
+            borderColor: 'rgba(0, 0, 0, 0)',
             borderWidth: 3,
             borderRadius: 8
         }
@@ -3844,20 +5378,43 @@ const fc = {
             ['Finalized', 846]
         ]
     }],
-
+    tooltip: {
+        backgroundColor: '#474554',
+        style: {
+            color: '#f0f0f0'
+        }
+    },
     responsive: {
         rules: [{
             condition: {
                 maxWidth: 500
             },
             chartOptions: {
+                chart: {
+                    marginBottom: 100
+                },
                 plotOptions: {
                     series: {
                         dataLabels: {
-                            inside: true
-                        },
-                        center: ['50%', '50%'],
-                        width: '100%'
+                            distance: 20
+                        }
+                    }
+                }
+            }
+        },
+        {
+            condition: {
+                minWidth: 501
+            },
+            chartOptions: {
+                chart: {
+                    marginBottom: 10
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            distance: 100
+                        }
                     }
                 }
             }
@@ -3886,7 +5443,6 @@ function geoHeatMap() {
                 },
                 events: {
                     load: function () {
-                        const chart = this;
                         const viewLinks = document.querySelectorAll(
                             '.preset-rotations a'
                         );
@@ -3919,7 +5475,7 @@ function geoHeatMap() {
                 align: 'left',
                 y: -30,
                 verticalAlign: 'bottom',
-                text: 'Highcharts<br>GeoHeatMap',
+                text: 'GeoHeatMap',
                 style: {
                     fontSize: '14px'
                 }
@@ -3933,7 +5489,7 @@ function geoHeatMap() {
                 style: {
                     fontSize: '14px'
                 },
-                text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/maps/geoheatmap-orthographic">See full demo</a>'
+                text: '<a href="https://www.highcharts.com/demo/maps/geoheatmap-orthographic">See full demo</a>'
             },
 
             legend: {
@@ -3974,9 +5530,16 @@ function geoHeatMap() {
                     color: 'rgba(214,51,51,0.5)'
                 }]
             },
+            tooltip: {
+                backgroundColor: '#474554',
+                style: {
+                    color: '#f0f0f0'
+                }
+            },
 
             series: [{
                 name: 'Othographic projection',
+                nullColor: 'transparent',
                 states: {
                     inactive: {
                         enabled: false
@@ -3995,7 +5558,6 @@ function geoHeatMap() {
                 data: data
             }]
         });
-        currentChart = globe;
     })();
 
     document.querySelectorAll('.preset-rotations a').forEach(input => {
@@ -4053,6 +5615,7 @@ function geoHeatMap() {
     });
 }
 
+// gantt chart
 function gantt() {
     const day = 24 * 36e5,
         today = Math.floor(Date.now() / day) * day;
@@ -4067,7 +5630,7 @@ function gantt() {
                 easing: 'easeOutQuint'
             }
         },
-
+        colors: colors,
         plotOptions: {
             series: {
                 borderRadius: '50%',
@@ -4169,6 +5732,10 @@ function gantt() {
         }
         ],
         tooltip: {
+            backgroundColor: '#474554',
+            style: {
+                color: '#f0f0f0'
+            },
             pointFormat: '<span style="font-weight: bold">' +
             '{point.name}</span><br>' +
             '{point.start:%e %b}' +
@@ -4183,9 +5750,9 @@ function gantt() {
             floating: true,
             useHTML: true,
             align: 'left',
-            y: -20,
+            y: -5,
             verticalAlign: 'bottom',
-            text: 'Highcharts Gantt Chart',
+            text: 'Gantt Chart',
             style: {
                 fontSize: '14px'
             }
@@ -4195,24 +5762,16 @@ function gantt() {
             useHTML: true,
             verticalAlign: 'bottom',
             align: 'left',
-            y: -5,
+            y: 10,
             style: {
                 fontSize: '14px'
             },
-            text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/gantt/project-management">See full demo</a>'
+            text: '<a href="https://www.highcharts.com/demo/gantt/project-management">See full demo</a>'
         },
         xAxis: [{
             labels: {
                 enabled: false
             },
-            // currentDateIndicator: {
-            //     color: '#5E5C70',
-            //     dashStyle: 'ShortDot',
-            //     width: 2,
-            //     label: {
-            //         format: ''
-            //     }
-            // },
             dateTimeLabelFormats: {
                 day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">' +
                      '%a</span>'
@@ -4242,7 +5801,6 @@ function gantt() {
                     y: -2
                 }
             }
-            // staticScale: 30
         },
         accessibility: {
             keyboardNavigation: {
@@ -4326,13 +5884,14 @@ function gantt() {
         }
     });
 
-    currentChart = Highcharts.ganttChart('container', options);
+    Highcharts.ganttChart('container', options);
 
 }
 
 const charts = [
     jellypus,  str, cs, barchartRace,
-    spb, dw, fc, geoHeatMap, gantt, rb, rc
+    spb, dw, fc, geoHeatMap, gantt, strOld, arc, rb,
+    sk, cr
 ];
 
 
@@ -4343,12 +5902,6 @@ function makeChart() {
     document.getElementById('play-controls').style.visibility = 'hidden';
     clearInterval(barInterval);
     clearInterval(csInterval);
-
-    console.log(currentChart);
-
-    if (currentChart !== undefined) {
-        currentChart.destroy();
-    }
 
     const chartToMake = charts[chartNum];
 
@@ -4361,10 +5914,9 @@ function makeChart() {
     if (typeof chartToMake === 'function') {
         chartToMake();
     } else {
-        currentChart = Highcharts.chart('container', chartToMake);
+        Highcharts.chart('container', chartToMake);
     }
 }
-
 
 makeChart();
 
@@ -4375,25 +5927,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let confetti = []; // Array to hold confetti elements
     let exploding = false;
 
-    const colors = [
-        '#8087E8',
-        '#A3EDBA',
-        '#F19E53',
-        '#6699A1',
-        '#E1D369',
-        '#87B4E7',
-        '#DA6D85',
-        '#BBBAC5'
-    ]; // Array of predefined colors
-
     fillButton(80); // Initially fill the button with 40 confetti pieces
 
     button.addEventListener('click', function () {
         explodeConfetti(); // Explode confetti on click
-        this.disabled = true;
-        setTimeout(function () {
-            button.disabled = false;
-        }, 3000);
+        // this.disabled = true;
+        // setTimeout(function () {
+        //     button.disabled = false;
+        // }, 3000);
     });
 
     button.addEventListener('mouseenter', function () {
@@ -4419,9 +5960,9 @@ document.addEventListener('DOMContentLoaded', function () {
         confettiPiece.className = 'confetti';
         // Random size between 8px and 3px
         let size = Math.random() * (8 - 3) + 5;
-        const shapeType = Math.floor(Math.random() * 4);
+        const shapeType = Math.floor(Math.random() * 3);
         let borderColor;
-        // 0 = triangle, 1 = circle, 2 = square, 3 = line
+        // 0 = triangle, 1 = circle, 2 = square
         switch (shapeType) {
         case 0: // Triangle
             // eslint-disable-next-line max-len
@@ -4446,16 +5987,6 @@ document.addEventListener('DOMContentLoaded', function () {
             confettiPiece.style.opacity = 0.5;
             confettiPiece.style.backgroundColor =
             colors[Math.floor(Math.random() * colors.length)];
-            break;
-        case 3: // Line
-            // confettiPiece.style.width = `${size / 5}px`;
-            // confettiPiece.style.height = `${size * 2}px`;
-            // confettiPiece.style.backgroundColor =
-            // colors[Math.floor(Math.random() * colors.length)];
-            // Rotate line randomly
-            // confettiPiece.style.transform =
-            // `rotate(${Math.random() * 180 - 90}deg)`;
-            // confettiPiece.style.opacity = 0.5;
             break;
         default: // Default case
             break;
@@ -4490,7 +6021,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         confettiPiece.style.transition = 'all 0.5s ease';
-        confettiPiece.style.opacity = 0.4;
+        confettiPiece.style.opacity = 0;
 
 
     }
@@ -4512,7 +6043,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     piece.style.transform =
                         `translate(${deltaX}px, ${deltaY}px)`;
                     piece.style.transition = 'all 0.5s ease';
-                    piece.style.opacity = 0.4;
+                    piece.style.opacity = 0;
 
                 }
             }
@@ -4528,10 +6059,10 @@ document.addEventListener('DOMContentLoaded', function () {
         makeChart();
 
         // Refill the button with confetti after explosion
-        setTimeout(function () {
-            fillButton(80);
-            exploding = false;
-        }, 3000);
+
+        fillButton(80);
+        exploding = false;
+        // }, 3000);
     }
 
     function clearConfetti() {
