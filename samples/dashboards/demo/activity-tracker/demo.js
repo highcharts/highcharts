@@ -71310,11 +71310,9 @@ const allData = [
 
 const getTrailCoordinates = data => {
     const coordinateData = [];
-    // const totalDistance = 0;
+
     for (let i = 1; i < data.length; i++) {
         if (data[i].length >= 7) {
-            // const lat1 = data[i - 1][3];
-            // const lon1 = data[i - 1][4];
             const lat2 = data[i][3];
             const lon2 = data[i][4];
             const cumulativeDistance = data[i][6];
@@ -71359,7 +71357,7 @@ Dashboards.board('container', {
                             width: '50%'
                         }
                     },
-                    id: 'dashboard-col-1' // mapchart
+                    id: 'activity-map' // mapchart
                 },
                 {
                     responsive: {
@@ -71373,19 +71371,19 @@ Dashboards.board('container', {
                             width: '50%'
                         }
                     },
-                    id: 'dashboard-col-2' // datagrid
+                    id: 'activity-datagrid' // datagrid
                 }
                 ]
             }, {
                 cells: [{
-                    id: 'dashboard-col-3' // line and area chart
+                    id: 'activity-chart' // line and area chart
                 }]
             }]
         }]
     },
     components: [
         {
-            renderTo: 'dashboard-col-1', // mapchart
+            renderTo: 'activity-map', // mapchart
             type: 'Highcharts',
             sync: {
                 highlight: true
@@ -71477,7 +71475,7 @@ Dashboards.board('container', {
 
         },
         {
-            renderTo: 'dashboard-col-2',
+            renderTo: 'activity-datagrid',
             type: 'DataGrid',
             title: {
                 text: 'Splits',
@@ -71530,7 +71528,7 @@ Dashboards.board('container', {
             }
         },
         {
-            renderTo: 'dashboard-col-3',
+            renderTo: 'activity-chart',
             type: 'Highcharts',
 
             connector: {

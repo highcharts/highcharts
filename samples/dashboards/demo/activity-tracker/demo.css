@@ -2,32 +2,37 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 
+/* Map component */
+#activity-map .highcharts-point {
+    fill-opacity: 0.2;
+}
+
+#activity-map {
+    flex: 1 1 70%;
+}
+
+/* Datagrid component */
+#activity-datagrid {
+    flex: 1 1 30%;
+}
+
 /* Chart component */
-#dashboard-col-3 .highcharts-color-0 {
+#activity-chart .highcharts-color-0 {
+    /* Elevation */
     fill: rgb(205, 201, 201);
     stroke: rgb(205, 201, 201);
 }
 
-#dashboard-col-3 .highcharts-color-2 {
+#activity-chart .highcharts-color-2 {
+    /* Speed */
     fill: blue;
     stroke: blue;
 }
 
-#dashboard-col-3 .highcharts-color-1 {
+#activity-chart .highcharts-color-1 {
+    /* Hear rate */
     fill: red;
     stroke: red;
-}
-
-#dashboard-col-1 .highcharts-point {
-    fill-opacity: 0.2;
-}
-
-#dashboard-col-1 {
-    flex: 1 1 70%;
-}
-
-#dashboard-col-2 {
-    flex: 1 1 30%;
 }
 
 /* Demo description */
@@ -37,13 +42,13 @@ p.demo-description {
     text-align: justify;
 }
 
-/* Customized default colors */
+/* Custom default colors */
 .highcharts-color-1 {
     fill: red;
     stroke: red;
 }
 
-/* Customized series-specific */
+/* Custom series-specific */
 .highcharts-area {
     fill-opacity: 0.3;
     stroke-width: 0;
