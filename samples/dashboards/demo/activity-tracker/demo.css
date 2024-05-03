@@ -15,11 +15,13 @@
 }
 
 #activity-map .highcharts-color-1 {
+    /* Track */
     fill: var(--track-color);
     stroke: var(--track-color);
 }
 
 #activity-map .highcharts-point {
+    /* Track */
     fill-opacity: 0.2;
     stroke-width: 0.0007px;
 }
