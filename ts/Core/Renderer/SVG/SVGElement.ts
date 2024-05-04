@@ -484,16 +484,16 @@ class SVGElement implements SVGElementLike {
         }
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
+        // Right- and center-aligned labels should not animate when we're only
+        // changing the text (#20965)
+        if (!animateX) {
+            this.attr({
+                [alignByTranslate ? 'translateX' : 'x']: x
+            });
+        }
+
         // Animate only if already placed
         if (redraw) {
-
-            // Right- and center-aligned labels should not animate when we're
-            // only changing the text (#20965)
-            if (!animateX) {
-                this.attr({
-                    [alignByTranslate ? 'translateX' : 'x']: x
-                });
-            }
             this[this.placed ? 'animate' : 'attr'](attribs);
             this.placed = true;
         }
