@@ -1,51 +1,54 @@
-/*
-* Offline parser, to be rewritten
-*
-*/
+// TBD: a scalable approach, calculate on parsing.GPX data
+const kmPoints = [
+    { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
+    { KM: 2, Pace: '6:04', Elev: -6, HR: 115 },
+    { KM: 3, Pace: '6:01', Elev: 0, HR: 128 },
+    { KM: 4, Pace: '6:58', Elev: 51, HR: 130 },
+    { KM: 5, Pace: '7:12', Elev: 41, HR: 131 },
+    { KM: 6, Pace: '6:11', Elev: 10, HR: 125 },
+    { KM: 7, Pace: '8:08', Elev: 70, HR: 132 },
+    { KM: 8, Pace: '9:35', Elev: 103, HR: 147 },
+    { KM: 9, Pace: '9:04', Elev: 125, HR: 162 },
+    { KM: 10, Pace: '9:13', Elev: 128, HR: 163 },
+    { KM: 11, Pace: '6:41', Elev: -7, HR: 167 },
+    { KM: 12, Pace: '6:15', Elev: -102, HR: 158 },
+    { KM: 13, Pace: '6:59', Elev: -43, HR: 137 },
+    { KM: 14, Pace: '6:08', Elev: -64, HR: 130 },
+    { KM: 15, Pace: '7:02', Elev: -60, HR: 137 },
+    { KM: 16, Pace: '8:02', Elev: -110, HR: 124 },
+    { KM: 17, Pace: '9:42', Elev: -141, HR: 129 },
+    { KM: 17.72, Pace: '5:07', Elev: 8, HR: 136 }
+];
+
+// Summary data: one point per kilometer, used in DataGrid only
+const summaryData = [
+    ['KM', 'Pace', 'Elev', 'HR'],
+    ...kmPoints.map(split => [
+        // TBD: format conflicts with DataGrid options
+        split.KM,
+        split.Pace + ' km/h',
+        split.Elev + ' m',
+        split.HR + ' bpm'
+    ])
+];
 
 
-const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
-
-
-// this function needs to be replaced by columnAssignment implementation
-
-const getTrailCoordinates = data => {
-    const coordinateData = [];
-
-    for (let i = 1; i < data.length; i++) {
-        if (data[i].length >= 7) {
-            const lat2 = data[i][3];
-            const lon2 = data[i][4];
-            const cumulativeDistance = data[i][6];
-
-            coordinateData.push([lon2, lat2, cumulativeDistance]);
-        }
-    }
-    return coordinateData;
-};
-
-
-async function setupDashboard(splitData) {
-    // Get data
-    let xmlDoc;
-    let gpxData;
-
-    await fetchGpxData();
+async function setupDashboard() {
+    const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
 
     // Get the GPX data
-    async function fetchGpxData() {
-        await fetch(gpxDataUrl)
-            .then(response => response.text())
-            .then(data => {
-                const parser = new DOMParser();
-                xmlDoc = parser.parseFromString(data, 'application/xml');
-            });
-    }
+    let gpxData = { all: null, summary: [] };
+
+    await fetch(gpxDataUrl)
+        .then(response => response.text())
+        .then(data => {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data, 'application/xml');
+            gpxData = parseGpxData(xmlDoc);
+        });
 
     // Convert GPX data to he application's required data format
-    if (xmlDoc) {
-        gpxData = parseGpxData(xmlDoc);
-    } else {
+    if (!gpxData) {
         console.error('Failed to load GPX data');
         return;
     }
@@ -57,14 +60,14 @@ async function setupDashboard(splitData) {
                 id: 'all-datapoints-connector',
                 type: 'JSON',
                 options: {
-                    data: gpxData
+                    data: gpxData.all
                 }
             },
             {
-                id: 'splits-connector',
+                id: 'summary-connector',
                 type: 'JSON',
                 options: {
-                    data: splitData
+                    data: gpxData.summary
                 }
             }
             ]
@@ -166,7 +169,7 @@ async function setupDashboard(splitData) {
                         enabled: false
                     },
                     series: [
-                        // add a baselayer map
+                        // Base layer map
                         {
                             type: 'tiledwebmap',
                             name: 'Map',
@@ -176,79 +179,71 @@ async function setupDashboard(splitData) {
                             },
                             showInLegend: false
                         },
-                        // add a trailmap on top of baselayer
+                        // Trail map on top of base layer
                         {
                             name: 'Trail Activity',
                             type: 'mapline',
                             data: [{
                                 geometry: {
                                     type: 'LineString',
-                                    coordinates: getTrailCoordinates(gpxData)
+                                    coordinates:
+                                        getTrailCoordinates(gpxData.all)
                                 }
                             }],
                             showInLegend: false
-                        },
-                        // add a mappoint on top of trailmap
-                        {
-                            name: 'Location-gps',
-                            type: 'mappoint',
-                            data: [
-                                { latitude: 0, longitude: 0 }
-                            ]
                         }
                     ]
                 }
-
             },
             {
                 renderTo: 'activity-datagrid',
                 type: 'DataGrid',
                 title: {
-                    text: 'Splits',
+                    text: 'Summary',
                     style: {
                         textAlign: 'center'
                     }
                 },
                 connector: {
-                    id: 'splits-connector'
+                    id: 'summary-connector'
                 },
                 sync: {
+                    // TBD: does not work.
+                    // this data connector is only used in the DataGrid
                     highlight: true
                 },
                 dataGridOptions: {
                     editable: false,
                     columns: {
+                        // TBD: clean up
+                        // this is redundant in the current implementation
                         time: {
                             title: 'kilometer',
                             dataIndex: 'kilometer',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
-                            },
-                            width: 150
+                            }
                         },
                         Speed: {
                             title: 'Speed (km/h)',
                             dataIndex: 'pace',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
-                            },
-                            width: 150
+                            }
                         },
                         Elevation: {
                             title: 'Elevation (m)',
                             dataIndex: 'elevation',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
-                            },
-                            width: 150
+                            }
                         },
                         HeartRate: {
                             title: 'Heart Rate (bpm)',
                             dataIndex: 'heartRate',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
-                            },
-                            width: 150
+                            }
                         }
                     }
                 }
@@ -368,124 +363,114 @@ async function setupDashboard(splitData) {
             }
         ]
     }, true);
-}
 
 
-function parseGpxData(doc) {
-    function getNodeText(node, name) {
-        const el = node.getElementsByTagName(name);
+    function getTrailCoordinates(data) {
+        const coordinateData = [];
 
-        return el[0].textContent;
+        for (let i = 1; i < data.length; i++) {
+            if (data[i].length >= 7) {
+                const lat2 = data[i][3];
+                const lon2 = data[i][4];
+                const cumulativeDistance = data[i][6];
+
+                coordinateData.push([lon2, lat2, cumulativeDistance]);
+            }
+        }
+        return coordinateData;
     }
 
-    const trackPoints = doc.getElementsByTagName('trkpt');
+    function parseGpxData(doc) {
+        function getNodeText(node, name) {
+            const el = node.getElementsByTagName(name);
 
-    let cumulativeDistance = 0;
-    let prevTime;
-    let prevLat;
-    let prevLon;
-    let speedSum = 0;
-    let speedCount = 0;
-
-    // Array for storing parsed data
-    const parsedData = [
-        // eslint-disable-next-line max-len
-        ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
-    ];
-
-    for (const point of trackPoints) {
-        // Location
-        const lat = parseFloat(point.getAttribute('lat'));
-        const lon = parseFloat(point.getAttribute('lon'));
-
-        // Timestamp
-        const tsIso = getNodeText(point, 'time');
-        const time = new Date(tsIso).getTime();
-
-        // Elevation
-        const elevation = parseFloat(getNodeText(point, 'ele'));
-
-        // Heart rate
-        const hr = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
-
-        if (prevTime > 0) {
-            // eslint-disable-next-line max-len
-            const distance = haversineDistance(lat, lon, prevLat, prevLon);
-            cumulativeDistance += distance / 1000;
-            const timeDifference = time - prevTime;
-            const speed = calculateSpeed(distance, timeDifference);
-            speedSum += speed;
-            speedCount++;
-
-            const averageSpeed = speedSum / speedCount;
-            // eslint-disable-next-line max-len
-            parsedData.push([time, elevation, hr, lat, lon, averageSpeed, cumulativeDistance], 10);
-        } else {
-            parsedData.push([time, elevation, hr, lat, lon, 0, 0]);
+            return el[0].textContent;
         }
 
-        // Update previous values
-        prevTime = time;
-        prevLat = lat;
-        prevLon = lon;
+        const trackPoints = doc.getElementsByTagName('trkpt');
+
+        let cumulativeDistance = 0;
+        let prevTime = 0;
+        let prevLat;
+        let prevLon;
+        let speedSum = 0;
+        let speedCount = 0;
+
+        // Array for storing parsed data
+        const parsedData = [
+            // eslint-disable-next-line max-len
+            ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
+        ];
+
+        for (const point of trackPoints) {
+            // Location
+            const lat = parseFloat(point.getAttribute('lat'));
+            const lon = parseFloat(point.getAttribute('lon'));
+
+            // Timestamp
+            const tsIso = getNodeText(point, 'time');
+            const time = new Date(tsIso).getTime();
+
+            // Elevation
+            const elevation = parseFloat(getNodeText(point, 'ele'));
+
+            // Heart rate
+            const hr = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
+
+            if (prevTime > 0) {
+                const distance = calculateDistance(lat, lon, prevLat, prevLon);
+                cumulativeDistance += distance / 1000;
+                const timeDifference = time - prevTime;
+                const speed = calculateSpeed(distance, timeDifference);
+                speedSum += speed;
+                speedCount++;
+
+                const averageSpeed = speedSum / speedCount;
+                parsedData.push(
+                    [
+                        time, elevation, hr, lat, lon,
+                        averageSpeed,
+                        cumulativeDistance
+                    ]);
+            } else {
+                parsedData.push([time, elevation, hr, lat, lon, 0, 0]);
+            }
+
+            // Update previous values
+            prevTime = time;
+            prevLat = lat;
+            prevLon = lon;
+        }
+        return {
+            all: parsedData,
+            summary: summaryData // TBD: calculate
+        };
     }
-    return parsedData;
+
+
+    // Calculate distance between two points using Haversine formula
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Earth radius in meters
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+
+
+    // Calculate speed in km/h
+    function calculateSpeed(distance, timeDifference) {
+        const timeHours = timeDifference / (1000 * 3600);
+        return (distance / 1000) / timeHours;
+    }
 }
 
-
-// Function to calculate distance between two points using Haversine formula
-function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371e3; // Earth radius in meters
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c;
-}
-
-// Function to calculate speed in km/h
-function calculateSpeed(distance, timeDifference) {
-    const timeHours = timeDifference / (1000 * 3600);
-    return (distance / 1000) / timeHours;
-}
-
-// TBD: a scalable approach, calculate on parsing.
-const kmPoints = [
-    { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
-    { KM: 2, Pace: '6:04', Elev: -6, HR: 115 },
-    { KM: 3, Pace: '6:01', Elev: 0, HR: 128 },
-    { KM: 4, Pace: '6:58', Elev: 51, HR: 130 },
-    { KM: 5, Pace: '7:12', Elev: 41, HR: 131 },
-    { KM: 6, Pace: '6:11', Elev: 10, HR: 125 },
-    { KM: 7, Pace: '8:08', Elev: 70, HR: 132 },
-    { KM: 8, Pace: '9:35', Elev: 103, HR: 147 },
-    { KM: 9, Pace: '9:04', Elev: 125, HR: 162 },
-    { KM: 10, Pace: '9:13', Elev: 128, HR: 163 },
-    { KM: 11, Pace: '6:41', Elev: -7, HR: 167 },
-    { KM: 12, Pace: '6:15', Elev: -102, HR: 158 },
-    { KM: 13, Pace: '6:59', Elev: -43, HR: 137 },
-    { KM: 14, Pace: '6:08', Elev: -64, HR: 130 },
-    { KM: 15, Pace: '7:02', Elev: -60, HR: 137 },
-    { KM: 16, Pace: '8:02', Elev: -110, HR: 124 },
-    { KM: 17, Pace: '9:42', Elev: -141, HR: 129 },
-    { KM: 17.72, Pace: '5:07', Elev: 8, HR: 136 }
-];
-
-// Summary data: one point per kilometer, used in DataGrid.
-const summaryData = [
-    ['KM', 'Pace', 'Elev', 'HR'],
-    ...kmPoints.map(split => [
-        split.KM,
-        split.Pace + ' km/h',
-        split.Elev + ' m',
-        split.HR + ' bpm'
-    ])
-];
 
 setupDashboard(summaryData);
