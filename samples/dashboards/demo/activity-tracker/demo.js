@@ -1,4 +1,4 @@
-// TBD: a scalable approach, calculate on parsing.GPX data
+/*
 const kmPoints = [
     { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
     { KM: 2, Pace: '6:04', Elev: -6, HR: 115 },
@@ -31,13 +31,13 @@ const summaryData = [
         split.HR + ' bpm'
     ])
 ];
-
+*/
 
 async function setupDashboard() {
     const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
 
     // Get the GPX data
-    let gpxData = { all: null, summary: [] };
+    let gpxData;
 
     await fetch(gpxDataUrl)
         .then(response => response.text())
@@ -219,7 +219,7 @@ async function setupDashboard() {
                         // this is redundant in the current implementation
                         time: {
                             title: 'kilometer',
-                            dataIndex: 'kilometer',
+                            dataIndex: 'km',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
                             }
@@ -233,14 +233,14 @@ async function setupDashboard() {
                         },
                         Elevation: {
                             title: 'Elevation (m)',
-                            dataIndex: 'elevation',
+                            dataIndex: 'elev',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
                             }
                         },
                         HeartRate: {
                             title: 'Heart Rate (bpm)',
-                            dataIndex: 'heartRate',
+                            dataIndex: 'hr',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
                             }
@@ -387,7 +387,11 @@ async function setupDashboard() {
             return el[0].textContent;
         }
 
-        const trackPoints = doc.getElementsByTagName('trkpt');
+        // All recorded points
+        const allPoints = doc.getElementsByTagName('trkpt');
+
+        // Kilometer boundary points (for DataGrid)
+        const kmPoints = [];
 
         let cumulativeDistance = 0;
         let prevTime = 0;
@@ -395,6 +399,7 @@ async function setupDashboard() {
         let prevLon;
         let speedSum = 0;
         let speedCount = 0;
+        let kilomteter = 0;
 
         // Array for storing parsed data
         const parsedData = [
@@ -402,7 +407,7 @@ async function setupDashboard() {
             ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
         ];
 
-        for (const point of trackPoints) {
+        for (const point of allPoints) {
             // Location
             const lat = parseFloat(point.getAttribute('lat'));
             const lon = parseFloat(point.getAttribute('lon'));
@@ -415,7 +420,7 @@ async function setupDashboard() {
             const elevation = parseFloat(getNodeText(point, 'ele'));
 
             // Heart rate
-            const hr = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
+            const heartRate = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
 
             if (prevTime > 0) {
                 const distance = calculateDistance(lat, lon, prevLat, prevLon);
@@ -428,12 +433,24 @@ async function setupDashboard() {
                 const averageSpeed = speedSum / speedCount;
                 parsedData.push(
                     [
-                        time, elevation, hr, lat, lon,
+                        time, elevation, heartRate, lat, lon,
                         averageSpeed,
                         cumulativeDistance
                     ]);
+
+                // Kilometer boundary?
+                const currentKm = Math.trunc(cumulativeDistance);
+                if (currentKm > kilomteter) {
+                    kilomteter = currentKm;
+                    kmPoints.push({
+                        km: currentKm,
+                        pace: averageSpeed,
+                        elev: elevation,
+                        hr: heartRate
+                    });
+                }
             } else {
-                parsedData.push([time, elevation, hr, lat, lon, 0, 0]);
+                parsedData.push([time, elevation, heartRate, lat, lon, 0, 0]);
             }
 
             // Update previous values
@@ -441,9 +458,20 @@ async function setupDashboard() {
             prevLat = lat;
             prevLon = lon;
         }
+
+        const summaryData = [
+            ['KM', 'Speed', 'Elev', 'HR'],
+            ...kmPoints.map(split => [
+                // TBD: use DataGrid options for units
+                split.km,
+                split.pace, // + ' km/h',
+                split.elev, // + ' m',
+                split.hr // + ' bpm'
+            ])
+        ];
         return {
             all: parsedData,
-            summary: summaryData // TBD: calculate
+            summary: summaryData
         };
     }
 
@@ -473,4 +501,4 @@ async function setupDashboard() {
 }
 
 
-setupDashboard(summaryData);
+setupDashboard();
