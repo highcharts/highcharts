@@ -1,0 +1,12 @@
+---
+name: Renko series
+authors:
+  - Pawel Fus
+new_until: 2024-08-06
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Chart types:
+      priority: 0
+...
