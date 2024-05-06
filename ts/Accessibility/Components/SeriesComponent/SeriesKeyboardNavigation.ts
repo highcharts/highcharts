@@ -22,7 +22,7 @@ import type Accessibility from '../../Accessibility';
 import type {
     AccessibilityKeyboardNavigationSeriesNavigationOptions
 } from '../../Options/A11yOptions';
-import type { KeyboardEvent } from '../../../Core/KeyboardEvent';
+import type KeyboardEvent from '../../../Core/KeyboardEvent';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import Point from '../../../Core/Series/Point.js';

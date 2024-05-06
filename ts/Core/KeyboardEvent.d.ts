@@ -21,3 +21,5 @@ export interface KeyboardEvent extends globalThis.KeyboardEvent {
     chartY: number;
     point?: Point;
 }
+
+export default KeyboardEvent;
