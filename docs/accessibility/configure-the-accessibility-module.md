@@ -76,7 +76,7 @@ Highcharts.chart('container', {
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-avg-temp)
 
 ### Prefixes and suffixes
-Options are also available for specifying value prefixes and suffixes. 
+Options are also available for specifying value prefixes and suffixes. Uses `tooltip.valueSuffix` if not defined.
 
 ```js
 Highcharts.chart('container', {
@@ -88,7 +88,6 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-<!-- INSERT NEW DEMO HERE accessibility/value-suffix -->
 
 ### Additional text descriptions
 
