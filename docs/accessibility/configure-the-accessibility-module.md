@@ -150,14 +150,13 @@ Highcharts.chart('container', {
     // ...
 });
 ```
-
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/art-grants/ allow="fullscreen"></iframe>
+<!-- INSERT DEMO LINK accessibility/expose-as-group-only -->
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/art-grants)
 
 For large data series, [sonification](https://www.highcharts.com/docs/sonification/getting-started) can be a great tool for making trends and patterns more accessible to screen reader users.
 
-<!-- INSERT DEMO LINK accessibility/expose-as-group-only -->
+<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/big-data allow="fullscreen"></iframe>
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/sonification/big-data)
 
