@@ -94,7 +94,7 @@ class DotPlotSeries extends ColumnSeries {
             renderer = series.chart.renderer,
             seriesMarkerOptions = options.marker,
             total = this.points.reduce(
-                (acc, point): number => acc + (point.y || 0),
+                (acc, point): number => acc + Math.abs(point.y || 0),
                 0
             ),
             totalHeight = this.points.reduce(
@@ -102,7 +102,7 @@ class DotPlotSeries extends ColumnSeries {
                 0
             ),
             itemPadding = options.itemPadding || 0,
-            columnWidth = this.points[0].shapeArgs?.width || 0;
+            columnWidth = this.points[0]?.shapeArgs?.width || 0;
 
         let slotsPerBar = options.slotsPerBar,
             slotWidth = columnWidth;
@@ -140,11 +140,14 @@ class DotPlotSeries extends ColumnSeries {
                 startX = (shapeArgs.x || 0) + (
                     (shapeArgs.width || 0) -
                     slotsPerBar * width
-                ) / 2;
+                ) / 2,
+                positiveYValue = Math.abs(point.y ?? 0),
+                shapeY = (shapeArgs.y || 0),
+                shapeHeight = (shapeArgs.height || 0);
 
             let graphics: Array<SVGElement|undefined>,
                 x = startX,
-                y = (shapeArgs.y || 0) + (shapeArgs.height || 0) - height,
+                y = point.negative ? shapeY : shapeY + shapeHeight - height,
                 slotColumn = 0;
 
             point.graphics = graphics = point.graphics || [];
@@ -169,7 +172,7 @@ class DotPlotSeries extends ColumnSeries {
                     point.graphic = renderer.g('point').add(series.group);
                 }
 
-                for (let val = 0; val < point.y || 0; val++) {
+                for (let val = 0; val < positiveYValue; val++) {
                     const attr = {
                         x: x + width * itemPadding,
                         y: y + height * itemPadding,
@@ -195,7 +198,7 @@ class DotPlotSeries extends ColumnSeries {
                     if (slotColumn >= slotsPerBar) {
                         slotColumn = 0;
                         x = startX;
-                        y -= height;
+                        y = point.negative ? y + height : y - height;
                     }
                 }
             }
