@@ -8,10 +8,6 @@ Highcharts.stockChart('container', {
         text: 'X values are relative to pointStart and pointInterval'
     },
 
-    rangeSelector: {
-        selected: 1
-    },
-
     series: [{
         data: [
             [1, 29.9],

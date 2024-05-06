@@ -651,6 +651,14 @@ class RangeSelector {
             rangeSelector.setSelected(selectedIndex);
         } else {
             rangeSelector.setSelected();
+
+            if (dropdownLabel) {
+                dropdownLabel.setState(0);
+                dropdownLabel.attr({
+                    text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
+                });
+
+            }
         }
 
         for (let i = 0; i < buttonStates.length; i++) {
@@ -665,21 +673,17 @@ class RangeSelector {
 
                     if (state === 2) {
                         dropdown.selectedIndex = i + 1;
-                        dropdownLabel.setState(2);
-                        dropdownLabel.attr({
-                            text: rangeSelector.buttonOptions[i].text + ' ▾'
-                        });
+
+                        if (dropdownLabel) {
+                            dropdownLabel.setState(2);
+                            dropdownLabel.attr({
+                                text: rangeSelector.buttonOptions[i].text + ' ▾'
+                            });
+                        }
                     }
                 }
 
             }
-        }
-
-        if (!selectedExists && dropdownLabel) {
-            dropdownLabel.setState(0);
-            dropdownLabel.attr({
-                text: (defaultOptions.lang.rangeSelectorZoom || '') + ' ▾'
-            });
         }
     }
 
