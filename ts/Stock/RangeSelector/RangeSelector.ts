@@ -38,6 +38,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
+import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
 const {
     addEvent,
     createElement,
@@ -528,11 +529,13 @@ class RangeSelector {
             ytdMax = ytdExtremes.max,
             selected = rangeSelector.selected,
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
+            buttonStates = new Array(rangeSelector.buttonOptions.length)
+                .fill(0),
+            selectedExists = isNumber(selected),
             buttons = rangeSelector.buttons;
 
-        let selectedExists = isNumber(selected),
-            isSelectedTooGreat = false;
-
+        let isSelectedTooGreat = false,
+            selectedIndex = null;
         rangeSelector.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
@@ -540,12 +543,11 @@ class RangeSelector {
             const range = rangeOptions._range,
                 type = rangeOptions.type,
                 count = rangeOptions.count || 1,
-                button = buttons[i],
                 offsetRange =
                     (rangeOptions._offsetMax as any) -
                     (rangeOptions._offsetMin as any),
                 isSelected = i === selected,
-                // Disable buttons where the range exceeds what is allowed in
+                // Disable buttons where the range exceeds what is allowed i;
                 // the current view
                 isTooGreatRange = (range as any) >
                     (dataMax as any) - (dataMin as any),
@@ -553,11 +555,9 @@ class RangeSelector {
                 // range
                 isTooSmallRange = (range as any) < (baseAxis.minRange as any);
 
-            let state = 0,
-                // Do not select the YTD button if not explicitly told so
-                isYTDButNotSelected = false,
+            // Do not select the YTD button if not explicitly told so
+            let isYTDButNotSelected = false,
                 // Disable the All button if we're already showing all
-                isAllButAlreadyShowingAll = false,
                 isSameRange = range === actualRange;
 
             if (isSelected && isTooGreatRange) {
@@ -571,9 +571,25 @@ class RangeSelector {
                 actualRange < range
             ) {
                 // Handle ordinal ranges
-                const positions = baseAxis.ordinal.positions;
+                const positions = baseAxis.ordinal.positions,
+                    prevOrdinalPosition =
+                        OrdinalAxis.Additions.findIndexOf(
+                            positions,
+                            baseAxis.min as number,
+                            true
+                        ),
+                    nextOrdinalPosition =
+                        Math.min(
+                            OrdinalAxis.Additions.findIndexOf(
+                                positions,
+                                baseAxis.max as number,
+                                true
+                            ) + 1, positions.length - 1);
 
-                if (positions[positions.length - 1] - positions[0] > range) {
+                if (
+                    positions[nextOrdinalPosition] -
+                        positions[prevOrdinalPosition] > range
+                ) {
                     isSameRange = true;
                 }
             } else if (
@@ -597,11 +613,6 @@ class RangeSelector {
                     (baseAxis.max as any) - (baseAxis.min as any) >=
                     (dataMax as any) - (dataMin as any)
                 );
-                isAllButAlreadyShowingAll = (
-                    !isSelected &&
-                    selectedExists &&
-                    isSameRange
-                );
             }
 
             // The new zoom area happens to match the range for a button - mark
@@ -614,53 +625,56 @@ class RangeSelector {
                 (
                     isTooGreatRange ||
                     isTooSmallRange ||
-                    isAllButAlreadyShowingAll ||
                     hasNoData
                 )
             );
+
             const select = (
                 (isSelectedTooGreat && type === 'all') ||
-                (isSelected && isSameRange) ||
-                (isSameRange && !selectedExists && !isYTDButNotSelected) ||
+                (isYTDButNotSelected ? false : isSameRange) ||
                 (isSelected && rangeSelector.frozenStates)
             );
 
+
             if (disable) {
-                state = 3;
+                buttonStates[i] = 3;
             } else if (select) {
-                selectedExists = true; // Only one button can be selected
-                state = 2;
+                if (!selectedExists || i === selected) {
+                    selectedIndex = i;
+                }
             }
 
-            if (!isNumber(button.state)) {
-                button.setState(0);
-            }
+        });
 
-            // If state has changed, update the button
+        if (selectedIndex !== null) {
+            buttonStates[selectedIndex] = 2;
+            rangeSelector.setSelected(selectedIndex);
+        } else {
+            rangeSelector.setSelected();
+        }
+
+        for (let i = 0; i < buttonStates.length; i++) {
+            const state = buttonStates[i];
+            const button = buttons[i];
+
             if (button.state !== state) {
                 button.setState(state);
 
                 if (dropdown) {
-                    dropdown.options[i + 1].disabled = disable;
+                    dropdown.options[i + 1].disabled = (state === 3);
 
                     if (state === 2) {
                         dropdown.selectedIndex = i + 1;
                         dropdownLabel.setState(2);
-                        dropdownLabel.attr({ text: rangeOptions.text + ' ▾' });
+                        dropdownLabel.attr({
+                            text: rangeSelector.buttonOptions[i].text + ' ▾'
+                        });
                     }
                 }
 
-                // Reset (#9209)
-                if (state === 0 && selected === i) {
-                    rangeSelector.setSelected();
-                } else if (
-                    (state === 2 && !defined(selected)) ||
-                    isSelectedTooGreat
-                ) {
-                    rangeSelector.setSelected(i);
-                }
             }
-        });
+        }
+
         if (!selectedExists && dropdownLabel) {
             dropdownLabel.setState(0);
             dropdownLabel.attr({
@@ -1297,6 +1311,7 @@ class RangeSelector {
         }
 
         this.alignElements();
+        this.updateButtonStates();
     }
 
     /**
@@ -1539,7 +1554,6 @@ class RangeSelector {
                 }
 
                 plotLeft -= chart.spacing[3];
-                this.updateButtonStates();
 
                 // Detect collision between button group and exporting
                 const xOffsetForExportButton = getXOffsetForExportButton(
