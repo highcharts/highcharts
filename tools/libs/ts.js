@@ -99,8 +99,7 @@ function addTag(
 
 
 /**
- * Extends ClassInfo and InterfaceInfo with additional inherited properties and
- * functions.
+ * Extends ClassInfo and InterfaceInfo with additional inherited members.
  *
  * @param {SourceInfo} sourceInfo
  * Source information of the class or interface.
@@ -167,9 +166,9 @@ function autoExtendInfo(
             continue;
         }
 
-        for (let property of resolvedInfo.properties) {
+        for (let property of resolvedInfo.members) {
 
-            if (extractInfo(infoToExtend.properties, property.name)) {
+            if (extractInfo(infoToExtend.members, property.name)) {
                 continue;
             }
 
@@ -179,7 +178,7 @@ function autoExtendInfo(
                 path: resolvedPath
             };
 
-            infoToExtend.properties.push(property);
+            infoToExtend.members.push(property);
 
         }
 
@@ -552,14 +551,14 @@ function getClassInfo(
     }
 
     if (node.members) {
-        const _properties = _info.properties = [];
+        const _members = _info.members = [];
         for (const member of getChildInfos(node.members, includeNodes)) {
             if (
                 member.kind === 'Doclet' ||
                 member.kind === 'Function' ||
                 member.kind === 'Property'
             ) {
-                _properties.push(member);
+                _members.push(member);
             }
         }
     }
@@ -1053,14 +1052,14 @@ function getInterfaceInfo(
     }
 
     if (node.members) {
-        const _properties = _info.properties = [];
+        const _members = _info.members = [];
         for (const member of getChildInfos(node.members, includeNodes)) {
             if (
                 member.kind === 'Doclet' ||
                 member.kind === 'Interface' ||
                 member.kind === 'Property'
             ) {
-                _properties.push(member);
+                _members.push(member);
             }
         }
     }
@@ -1215,14 +1214,14 @@ function getObjectInfo(
         const _childInfos = getChildInfos(node.properties, includeNodes);
 
         if (_childInfos.length) {
-            const _properties = _info.properties = [];
+            const _members = _info.members = [];
 
             for (const _childInfo of _childInfos) {
                 if (
                     _childInfo.kind === 'Doclet' ||
                     _childInfo.kind === 'Property'
                 ) {
-                    _properties.push(_childInfo);
+                    _members.push(_childInfo);
                 }
             }
         }
@@ -1987,10 +1986,10 @@ module.exports = {
  * @property {Array<VariableInfo>} [generics]
  * @property {Array<string>} [implements]
  * @property {'Class'} kind
+ * @property {Array<(FunctionInfo|PropertyInfo)>} members
  * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.ClassDeclaration} [node]
- * @property {Array<(FunctionInfo|PropertyInfo)>} properties
  */
 
 
@@ -2075,10 +2074,10 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} [generics]
  * @property {'Interface'} kind
+ * @property {Array<(FunctionInfo|PropertyInfo)>} members
  * @property {MetaInfo} meta
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
- * @property {Array<PropertyInfo>} properties
  */
 
 
@@ -2115,9 +2114,9 @@ module.exports = {
  * @typedef ObjectInfo
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
+ * @property {Array<(FunctionInfo|PropertyInfo)>} members
  * @property {MetaInfo} meta
  * @property {TS.Node} [node]
- * @property {Array<PropertyInfo>} properties
  * @property {string} [type]
  */
 
