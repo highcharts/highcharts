@@ -502,13 +502,45 @@ function moveAllFiles(
 
 
 /**
+ * Normalize target file path based on source file path.
+ *
+ * @param {string} sourcePath
+ * File path to use as reference for normalization.
+ *
+ * @param {string} targetPath
+ * File path to normalize.
+ *
+ * @param {boolean} [toPosix]
+ * Convert to a POSIX-uniform path, if set to `true`.
+ *
+ * @return {string}
+ * Normalize target file path.
+ */
+function normalizePath(
+    sourcePath,
+    targetPath,
+    toPosix
+) {
+
+    sourcePath = Path.posix.dirname(path(sourcePath, true));
+    targetPath = path(targetPath, true);
+
+    if (Path.posix.isAbsolute(targetPath)) {
+        targetPath = Path.posix.relative(sourcePath, targetPath);
+    }
+
+    return path(Path.posix.join(sourcePath, targetPath), toPosix);
+}
+
+
+/**
  * Converts from POSIX path to the system-specific path by default. Set the flag
  * to convert to POSIX.
  *
  * @param {string} path
  *        Path to convert.
  *
- * @param {boolean} toPosix
+ * @param {boolean} [toPosix]
  *        Convert to a POSIX-uniform path, if set to `true`.
  *
  * @return {string}
@@ -552,5 +584,6 @@ module.exports = {
     isFile,
     makePath,
     moveAllFiles,
+    normalizePath,
     path
 };

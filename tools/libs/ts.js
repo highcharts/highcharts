@@ -106,14 +106,18 @@ function addTag(
  * Source information of the class or interface.
  *
  * @param {ClassInfo|InterfaceInfo} infoToExtend
- * Class or interface information to extends.
+ * Class or interface information to extend.
+ *
+ * @param {boolean} [includeNodes]
+ * Whether to include the TypeScript nodes in the information.
  *
  * @return {ClassInfo|InterfaceInfo}
  * Extended class or interface information.
  */
 function autoExtendInfo(
     sourceInfo,
-    infoToExtend
+    infoToExtend,
+    includeNodes
 ) {
     /** @type {Array<string>} */
     const extendsToDo = [];
@@ -135,27 +139,25 @@ function autoExtendInfo(
 
     }
 
-    /** @type {ResolvedInfo} */
-    let resolvedExtendType;
     /** @type {CodeInfo} */
     let resolvedInfo;
     /** @type {string|undefined} */
     let resolvedPath;
+    /** @type {ResolvedInfo} */
+    let resolvedType;
 
     for (const extendType of extendsToDo) {
-        resolvedExtendType = resolveType(sourceInfo, extendType);
+        resolvedType = resolveType(sourceInfo, extendType, includeNodes);
 
-        if (!resolvedExtendType) {
+        if (!resolvedType) {
             return;
         }
 
-        resolvedInfo = resolvedExtendType.resolvedInfo;
-        resolvedPath = Path.join(
-            Path.dirname(sourceInfo.path),
-            Path.relative(
-                Path.dirname(sourceInfo.path),
-                resolvedExtendType.resolvedPath
-            )
+        resolvedInfo = resolvedType.resolvedInfo;
+        resolvedPath = FSLib.normalizePath(
+            sourceInfo.path,
+            resolvedType.resolvedPath,
+            true
         );
 
         if (
@@ -1317,8 +1319,8 @@ function getPropertyInfo(
  * @param {string} filePath
  * Path to source file.
  *
- * @param {string} sourceCode
- * Code of source file.
+ * @param {string} [sourceText]
+ * Text of source file.
  *
  * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
@@ -1328,12 +1330,12 @@ function getPropertyInfo(
  */
 function getSourceInfo(
     filePath,
-    sourceCode,
+    sourceText,
     includeNodes
 ) {
     const sourceFile = TS.createSourceFile(
         filePath,
-        sourceCode,
+        (sourceText || FS.readFileSync(filePath, 'utf8')),
         TS.ScriptTarget.Latest,
         true
     );
@@ -1637,6 +1639,9 @@ function removeTag(
  * @param {string} type
  * Type to resolve to.
  *
+ * @param {boolean} [includeNodes]
+ * Whether to include the TypeScript nodes in the information.
+ *
  * @param {Record<string,SourceInfo>} [_stack]
  * Internal stack for recursion.
  *
@@ -1646,6 +1651,7 @@ function removeTag(
 function resolveType(
     sourceInfo,
     type,
+    includeNodes,
     _stack = {}
 ) {
     /** @type {ResolvedInfo} */
@@ -1670,10 +1676,8 @@ function resolveType(
                 // `item` is the external name, while `type` is the local name
                 if (imports[item] === type) {
 
-                    resolvedPath = Path.resolve(
-                        Path.dirname(FSLib.path(sourceInfo.path)),
-                        FSLib.path(info.from)
-                    );
+                    resolvedPath =
+                        FSLib.normalizePath(sourceInfo.path, info.from, true);
 
                     if (Path.extname(resolvedPath) === '.js') {
                         resolvedPath = resolvedPath
@@ -1696,7 +1700,8 @@ function resolveType(
 
                     const resolvedSource = getSourceInfo(
                         resolvedPath,
-                        FS.readFileSync(resolvedPath, 'utf8')
+                        FS.readFileSync(resolvedPath, 'utf8'),
+                        includeNodes
                     );
 
                     _stack[resolvedPath] = resolvedSource;
@@ -1708,6 +1713,7 @@ function resolveType(
                                 type :
                                 item
                         ),
+                        includeNodes,
                         _stack
                     );
 
