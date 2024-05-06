@@ -1,55 +1,9 @@
-/*
-const kmPoints = [
-    { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
-    { KM: 2, Pace: '6:04', Elev: -6, HR: 115 },
-    { KM: 3, Pace: '6:01', Elev: 0, HR: 128 },
-    { KM: 4, Pace: '6:58', Elev: 51, HR: 130 },
-    { KM: 5, Pace: '7:12', Elev: 41, HR: 131 },
-    { KM: 6, Pace: '6:11', Elev: 10, HR: 125 },
-    { KM: 7, Pace: '8:08', Elev: 70, HR: 132 },
-    { KM: 8, Pace: '9:35', Elev: 103, HR: 147 },
-    { KM: 9, Pace: '9:04', Elev: 125, HR: 162 },
-    { KM: 10, Pace: '9:13', Elev: 128, HR: 163 },
-    { KM: 11, Pace: '6:41', Elev: -7, HR: 167 },
-    { KM: 12, Pace: '6:15', Elev: -102, HR: 158 },
-    { KM: 13, Pace: '6:59', Elev: -43, HR: 137 },
-    { KM: 14, Pace: '6:08', Elev: -64, HR: 130 },
-    { KM: 15, Pace: '7:02', Elev: -60, HR: 137 },
-    { KM: 16, Pace: '8:02', Elev: -110, HR: 124 },
-    { KM: 17, Pace: '9:42', Elev: -141, HR: 129 },
-    { KM: 17.72, Pace: '5:07', Elev: 8, HR: 136 }
-];
-
-// Summary data: one point per kilometer, used in DataGrid only
-const summaryData = [
-    ['KM', 'Pace', 'Elev', 'HR'],
-    ...kmPoints.map(split => [
-        // TBD: format conflicts with DataGrid options
-        split.KM,
-        split.Pace + ' km/h',
-        split.Elev + ' m',
-        split.HR + ' bpm'
-    ])
-];
-*/
-
 async function setupDashboard() {
     const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
 
-    // Get the GPX data
-    let gpxData;
-
-    await fetch(gpxDataUrl)
-        .then(response => response.text())
-        .then(data => {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(data, 'application/xml');
-            gpxData = parseGpxData(xmlDoc);
-        });
-
-    // Convert GPX data to he application's required data format
+    // Load data from server
+    const gpxData = await loadGpxData(gpxDataUrl);
     if (!gpxData) {
-        console.error('Failed to load GPX data');
         return;
     }
 
@@ -155,6 +109,7 @@ async function setupDashboard() {
                         fitToGeometry: {
                             type: 'Polygon',
                             coordinates: [
+                                // TBD: make scalable
                                 [
                                     [5.3000, 60.4200],
                                     [5.3900, 60.4200],
@@ -209,37 +164,35 @@ async function setupDashboard() {
                 },
                 sync: {
                     // TBD: does not work.
-                    // this data connector is only used in the DataGrid
+                    // This data connector is only used in the DataGrid
                     highlight: true
                 },
                 dataGridOptions: {
                     editable: false,
                     columns: {
-                        // TBD: clean up
-                        // this is redundant in the current implementation
-                        time: {
-                            title: 'kilometer',
+                        km: {
+                            headerFormat: 'Kilometer',
                             dataIndex: 'km',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
                             }
                         },
-                        Speed: {
-                            title: 'Speed (km/h)',
+                        pace: {
+                            headerFormat: 'Speed (km/h)',
                             dataIndex: 'pace',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
                             }
                         },
-                        Elevation: {
-                            title: 'Elevation (m)',
+                        elev: {
+                            headerFormat: 'Elevation (m)',
                             dataIndex: 'elev',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
                             }
                         },
-                        HeartRate: {
-                            title: 'Heart Rate (bpm)',
+                        hr: {
+                            headerFormat: 'Heart Rate (bpm)',
                             dataIndex: 'hr',
                             cellFormatter: function () {
                                 return this.value.toFixed(1);
@@ -380,6 +333,28 @@ async function setupDashboard() {
         return coordinateData;
     }
 
+
+    async function loadGpxData(url) {
+        // Get the GPX data
+        let response;
+        try {
+            response = await fetch(url);
+        } catch (err) {
+            console.error(err);
+            return;
+        }
+
+        if (response.ok) {
+            const data = await response.text();
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data, 'application/xml');
+
+            return parseGpxData(xmlDoc);
+        }
+        console.error('Failed to parse GPX data');
+    }
+
+
     function parseGpxData(doc) {
         function getNodeText(node, name) {
             const el = node.getElementsByTagName(name);
@@ -388,10 +363,10 @@ async function setupDashboard() {
         }
 
         // All recorded points
-        const allPoints = doc.getElementsByTagName('trkpt');
+        const trackPoints = doc.getElementsByTagName('trkpt');
 
-        // Kilometer boundary points (for DataGrid)
-        const kmPoints = [];
+        // Kilometer boundary points (for DataGrid only)
+        const kmPoints = [['km', 'pace', 'elev', 'hr']];
 
         let cumulativeDistance = 0;
         let prevTime = 0;
@@ -399,15 +374,15 @@ async function setupDashboard() {
         let prevLon;
         let speedSum = 0;
         let speedCount = 0;
-        let kilomteter = 0;
+        let kilometer = 0;
 
         // Array for storing parsed data
-        const parsedData = [
+        const allPoints = [
             // eslint-disable-next-line max-len
             ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
         ];
 
-        for (const point of allPoints) {
+        for (const point of trackPoints) {
             // Location
             const lat = parseFloat(point.getAttribute('lat'));
             const lon = parseFloat(point.getAttribute('lon'));
@@ -423,6 +398,7 @@ async function setupDashboard() {
             const heartRate = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
 
             if (prevTime > 0) {
+                // Create point
                 const distance = calculateDistance(lat, lon, prevLat, prevLon);
                 cumulativeDistance += distance / 1000;
                 const timeDifference = time - prevTime;
@@ -431,7 +407,7 @@ async function setupDashboard() {
                 speedCount++;
 
                 const averageSpeed = speedSum / speedCount;
-                parsedData.push(
+                allPoints.push(
                     [
                         time, elevation, heartRate, lat, lon,
                         averageSpeed,
@@ -440,17 +416,13 @@ async function setupDashboard() {
 
                 // Kilometer boundary?
                 const currentKm = Math.trunc(cumulativeDistance);
-                if (currentKm > kilomteter) {
-                    kilomteter = currentKm;
-                    kmPoints.push({
-                        km: currentKm,
-                        pace: averageSpeed,
-                        elev: elevation,
-                        hr: heartRate
-                    });
+                if (currentKm > kilometer) {
+                    kilometer = currentKm;
+                    // eslint-disable-next-line max-len
+                    kmPoints.push([currentKm, averageSpeed, elevation, heartRate]);
                 }
             } else {
-                parsedData.push([time, elevation, heartRate, lat, lon, 0, 0]);
+                allPoints.push([time, elevation, heartRate, lat, lon, 0, 0]);
             }
 
             // Update previous values
@@ -459,19 +431,9 @@ async function setupDashboard() {
             prevLon = lon;
         }
 
-        const summaryData = [
-            ['KM', 'Speed', 'Elev', 'HR'],
-            ...kmPoints.map(split => [
-                // TBD: use DataGrid options for units
-                split.km,
-                split.pace, // + ' km/h',
-                split.elev, // + ' m',
-                split.hr // + ' bpm'
-            ])
-        ];
         return {
-            all: parsedData,
-            summary: summaryData
+            all: allPoints,
+            summary: kmPoints
         };
     }
 
