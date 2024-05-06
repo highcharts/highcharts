@@ -7,6 +7,6 @@ js_wrap: b
 tags:
   - Highcharts Stock demo
 categories:
-  - Experimental:
+  - Chart types:
       priority: 0
 ...
