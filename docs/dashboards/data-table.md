@@ -79,7 +79,7 @@ There are a few ways to create a DataTable:
         orderByColumn: 'City'
     });
 
-    const table = new Highcharts.DataTable({
+    const table = new Dashboards.DataTable({
         columns: {
             Rank: [1, 2, 3, 4, 5, 6],
             City: ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
