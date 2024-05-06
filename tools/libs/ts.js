@@ -2062,7 +2062,7 @@ module.exports = {
 
 /**
  * @typedef {'async'|'abstract'|'declare'|'default'|'export'|'private'|
- *           'protected'
+ *           'protected'|'static'
  *          } InfoFlag
  */
 
