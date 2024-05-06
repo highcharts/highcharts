@@ -1,4 +1,9 @@
-/* eslint-disable max-len */
+/*
+* Offline parser, to be rewritten
+*
+*/
+
+
 const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
 
 
@@ -20,12 +25,12 @@ const getTrailCoordinates = data => {
 };
 
 
-async function setupDashboard(allData, splitData) {
+async function setupDashboard(splitData) {
     // Get data
-    let gpxData = null;
-    await fetchGpxData();
+    let xmlDoc;
+    let gpxData;
 
-    console.log(gpxData);
+    await fetchGpxData();
 
     // Get the GPX data
     async function fetchGpxData() {
@@ -33,8 +38,16 @@ async function setupDashboard(allData, splitData) {
             .then(response => response.text())
             .then(data => {
                 const parser = new DOMParser();
-                gpxData = parser.parseFromString(data, 'application/xml');
+                xmlDoc = parser.parseFromString(data, 'application/xml');
             });
+    }
+
+    // Convert GPX data to he application's required data format
+    if (xmlDoc) {
+        gpxData = parseGpxData(xmlDoc);
+    } else {
+        console.error('Failed to load GPX data');
+        return;
     }
 
     // Launch the dashboard
@@ -44,7 +57,7 @@ async function setupDashboard(allData, splitData) {
                 id: 'all-datapoints-connector',
                 type: 'JSON',
                 options: {
-                    data: allData
+                    data: gpxData
                 }
             },
             {
@@ -111,8 +124,6 @@ async function setupDashboard(allData, splitData) {
                         data: ['latitude', 'longitude']
                     }
                 ],
-
-
                 chartOptions: {
                     title: {
                         text: ''
@@ -172,7 +183,7 @@ async function setupDashboard(allData, splitData) {
                             data: [{
                                 geometry: {
                                     type: 'LineString',
-                                    coordinates: getTrailCoordinates(allData)
+                                    coordinates: getTrailCoordinates(gpxData)
                                 }
                             }],
                             showInLegend: false
@@ -320,10 +331,12 @@ async function setupDashboard(allData, splitData) {
                         shared: true,
                         crosshairs: true,
                         formatter: function () {
-                            // eslint-disable-next-line max-len
-                            let tooltip = '<b>Distance:</b> ' + this.x.toFixed(2) + ' km<br/>';
+                            let tooltip = '<b>Distance:</b> ' +
+                                this.x.toFixed(2) + ' km<br/>';
+
                             this.points.forEach(function (point) {
-                                tooltip += '<b>' + point.series.name + '</b>: ' +
+                                tooltip += '<b>' + point.series.name +
+                                    '</b>: ' +
                                     point.y.toFixed(2) + ' ' +
                                     point.series.options.tooltipValueSuffix +
                                     '<br/>';
@@ -357,70 +370,68 @@ async function setupDashboard(allData, splitData) {
     }, true);
 }
 
-// Parse GPX file
-/*
-function parseGPXFile(filePath, callback) {
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            console.error('Error reading GPX file:', err);
-            return;
+
+function parseGpxData(doc) {
+    function getNodeText(node, name) {
+        const el = node.getElementsByTagName(name);
+
+        return el[0].textContent;
+    }
+
+    const trackPoints = doc.getElementsByTagName('trkpt');
+
+    let cumulativeDistance = 0;
+    let prevTime;
+    let prevLat;
+    let prevLon;
+    let speedSum = 0;
+    let speedCount = 0;
+
+    // Array for storing parsed data
+    const parsedData = [
+        // eslint-disable-next-line max-len
+        ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
+    ];
+
+    for (const point of trackPoints) {
+        // Location
+        const lat = parseFloat(point.getAttribute('lat'));
+        const lon = parseFloat(point.getAttribute('lon'));
+
+        // Timestamp
+        const tsIso = getNodeText(point, 'time');
+        const time = new Date(tsIso).getTime();
+
+        // Elevation
+        const elevation = parseFloat(getNodeText(point, 'ele'));
+
+        // Heart rate
+        const hr = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
+
+        if (prevTime > 0) {
+            // eslint-disable-next-line max-len
+            const distance = haversineDistance(lat, lon, prevLat, prevLon);
+            cumulativeDistance += distance / 1000;
+            const timeDifference = time - prevTime;
+            const speed = calculateSpeed(distance, timeDifference);
+            speedSum += speed;
+            speedCount++;
+
+            const averageSpeed = speedSum / speedCount;
+            // eslint-disable-next-line max-len
+            parsedData.push([time, elevation, hr, lat, lon, averageSpeed, cumulativeDistance], 10);
+        } else {
+            parsedData.push([time, elevation, hr, lat, lon, 0, 0]);
         }
 
-        parseString(data, (err, result) => {
-            if (err) {
-                console.error('Error parsing GPX file:', err);
-                return;
-            }
-
-            const trackPoints = result.gpx.trk[0].trkseg[0].trkpt;
-
-            let cumulativeDistance = 0;
-            let prevTime;
-            let prevLat;
-            let prevLon;
-            let speedSum = 0;
-            let speedCount = 0;
-
-            // Prepare array for storing parsed data
-            const parsedData = [
-                // eslint-disable-next-line max-len
-                ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
-            ];
-
-            trackPoints.forEach(point => {
-                const time = new Date(point.time[0]).getTime();
-                const elevation = parseFloat(point.ele[0]);
-                // eslint-disable-next-line max-len
-                const hr = parseInt(point.extensions[0]['gpxtpx:TrackPointExtension'][0]['gpxtpx:hr'][0], 10);
-                const lat = parseFloat(point.$.lat);
-                const lon = parseFloat(point.$.lon);
-
-                if (prevTime) {
-                    // eslint-disable-next-line max-len
-                    const distance = haversineDistance(lat, lon, prevLat, prevLon);
-                    cumulativeDistance += distance / 1000;
-                    const timeDifference = time - prevTime;
-                    const speed = calculateSpeed(distance, timeDifference);
-                    speedSum += speed;
-                    speedCount++;
-
-                    const averageSpeed = speedSum / speedCount;
-                    // eslint-disable-next-line max-len
-                    parsedData.push([time, elevation, hr, lat, lon, averageSpeed, cumulativeDistance], 10);
-                } else {
-                    parsedData.push([time, elevation, hr, lat, lon, 0, 0]);
-                }
-
-                // Update previous values
-                prevTime = time;
-                prevLat = lat;
-                prevLon = lon;
-            });
-
-            callback(parsedData);
-        });
-    });
+        // Update previous values
+        prevTime = time;
+        prevLat = lat;
+        prevLon = lon;
+    }
+    return parsedData;
 }
+
 
 // Function to calculate distance between two points using Haversine formula
 function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -444,19 +455,7 @@ function calculateSpeed(distance, timeDifference) {
     return (distance / 1000) / timeHours;
 }
 
-// Parse GPX file and save parsed data to JSON file
 
-parseGPXFile(gpxFilePath, parsedData => {
-    fs.writeFile(outputFilePath, JSON.stringify(parsedData, null, 2), err => {
-        if (err) {
-            console.error('Error writing JSON file:', err);
-            return;
-        }
-        console.log('Parsed data saved to:', outputFilePath);
-    });
-});
-
-*/
 // TBD: Pre-process data, to be moved to server
 const splitsData = [
     { KM: 1, Pace: '7:36', Elev: 5, HR: 84 },
@@ -71769,4 +71768,4 @@ const allData = [
     ]
 ];
 
-setupDashboard(allData, newSplitsData);
+setupDashboard(newSplitsData);
