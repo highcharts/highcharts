@@ -1516,10 +1516,12 @@ function mergeDocletInfos(
 /**
  * Creates a new CodeInfo object from a template.
  *
- * @param {CodeInfo} template
+ * @template {CodeInfo} T
+ *
+ * @param {T} template
  * Template to create from.
  *
- * @return {CodeInfo}
+ * @return {T}
  * Template copy.
  */
 function newCodeInfo(
@@ -1995,7 +1997,7 @@ module.exports = {
 /**
  * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
  *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
- *           SourceInfo|VariableInfo
+ *           VariableInfo
  *          } CodeInfo
  */
 
@@ -2086,7 +2088,7 @@ module.exports = {
  * @property {number} end
  * @property {'Meta'} kind
  * @property {number} overhead
- * @property {MetaOrigin} [meta]
+ * @property {MetaOrigin} [origin]
  */
 
 
