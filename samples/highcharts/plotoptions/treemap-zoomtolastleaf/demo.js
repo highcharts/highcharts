@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         layoutAlgorithm: 'squarified',
         allowTraversingTree: true,
         interactByLeaf: true,
-        allowZoomToLastLeaf: true,
+        zoomToLastLeaf: true,
         data: [{
             id: 'id_1',
             name: 'A'
