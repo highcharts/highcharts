@@ -174,14 +174,14 @@ Example of setting the [`axis.accessibility.rangeDescription] and [`axis.accessi
 Highcharts.chart('container', {
      yAxis: {
         accessibility: {
-            description: 'Percentage population',
-            rangeDescription: 'Range: 0 to 5%'
-        }
+            description: 'Daily steps in total for all three persons',
+            rangeDescription: 'Ranges from 22214 steps to 33730 steps'
+        },
     },
     // ...
 });
 ```
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-bar" allow="fullscreen"></iframe>
+<!-- INSERT DEMO LINK accessibility/range-description-axis-description-->
 
 [View demo code](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/arearange)
 
