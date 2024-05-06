@@ -349,12 +349,17 @@ function createAndAttachRenderer(
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: BoostTargetObject = chart,
-        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined';
+        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined',
+        hasClickHandler = false;
 
     if (isChartSeriesBoosting(chart)) {
         target = chart;
     } else {
         target = series;
+        hasClickHandler = Boolean(
+            series.options.events?.click ||
+            series.options.point?.events?.click
+        );
     }
 
     const boost: Required<BoostTargetAdditions> = target.boost =
@@ -438,10 +443,11 @@ function createAndAttachRenderer(
                     height
                 })
                 .css({
-                    pointerEvents: 'none',
+                    pointerEvents: hasClickHandler ? void 0 : 'none',
                     mixedBlendMode: 'normal',
                     opacity: alpha
-                } as any);
+                })
+                .addClass(hasClickHandler ? 'highcharts-tracker' : '');
 
             if (target instanceof ChartClass) {
                 (target.boost as any).markerGroup.translate(
@@ -1092,10 +1098,10 @@ function seriesRenderCanvas(this: Series): void {
         this.markerGroup = this.plotGroup(
             'markerGroup',
             'markers',
-            true as any,
+            'visible',
             1,
             chart.seriesGroup
-        );
+        ).addClass('highcharts-tracker');
     } else {
         // If series has a private markerGroup, remove that
         // and use common markerGroup

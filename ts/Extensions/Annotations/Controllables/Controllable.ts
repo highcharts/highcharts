@@ -190,6 +190,9 @@ abstract class Controllable implements ControlTarget {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _parentGroup?: SVGElement
     ): void {
+        if (this.options.className && this.graphic) {
+            this.graphic.addClass(this.options.className);
+        }
         this.renderControlPoints();
     }
 
