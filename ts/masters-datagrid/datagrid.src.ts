@@ -47,6 +47,7 @@ declare global {
     interface DataGridNamespace {
         win: typeof Globals.win;
         DataGrid: typeof _DataGrid;
+        dataGrid: typeof _DataGrid.dataGrid;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
         DataConnector: typeof DataConnector;
@@ -72,6 +73,7 @@ const G = Globals as unknown as DataGridNamespace;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataGrid = _DataGrid;
+G.dataGrid = _DataGrid.dataGrid;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;

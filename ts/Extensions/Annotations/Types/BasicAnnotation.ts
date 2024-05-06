@@ -348,6 +348,9 @@ class BasicAnnotation extends Annotation {
         if (options.shapes) {
             delete options.labelOptions;
             const type = options.shapes[0].type;
+
+            options.shapes[0].className =
+                (options.shapes[0].className || '') + ' highcharts-basic-shape';
             // The rectangle is rendered as a path, whereas other basic shapes
             // are rendered as their respective SVG shapes.
             if (type && type !== 'path') {

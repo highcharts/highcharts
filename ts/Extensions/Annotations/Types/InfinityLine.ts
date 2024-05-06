@@ -184,7 +184,8 @@ class InfinityLine extends CrookedLine {
         const line = this.initShape(
             merge(typeOptions.line, {
                 type: 'path',
-                points: points
+                points: points,
+                className: 'highcharts-infinity-lines'
             }),
             0
         );

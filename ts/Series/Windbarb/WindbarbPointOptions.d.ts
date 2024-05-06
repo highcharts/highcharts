@@ -25,8 +25,21 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface WindbarbPointOptions extends ColumnPointOptions {
+
+    /**
+     * The wind direction in degrees, where 0 is north (pointing towards south).
+     *
+     * @product highcharts highstock
+     */
     direction?: number;
+
+    /**
+     * The wind speed in meters per second.
+     *
+     * @product highcharts highstock
+     */
     value?: number;
+
 }
 
 /* *

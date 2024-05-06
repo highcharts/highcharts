@@ -26,11 +26,11 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
  * */
 
 export interface ItemPointOptions extends PiePointOptions {
-    marker: ItemPointMarkerOptions;
+    marker?: ItemPointMarkerOptions;
 }
 
 export interface ItemPointMarkerOptions extends PointMarkerOptions {
-    radius: undefined;
+    radius?: undefined;
 }
 
 /* *
