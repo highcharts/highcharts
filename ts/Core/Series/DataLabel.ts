@@ -324,7 +324,7 @@ namespace DataLabel {
             }, alignTo || {});
 
             // Align to plot edges
-            if (options.alignTo === 'plotEdges') {
+            if (options.alignTo === 'plotEdges' && series.isCartesian) {
                 alignTo[inverted ? 'x' : 'y'] = 0;
                 alignTo[inverted ? 'width' : 'height'] = this.yAxis?.len || 0;
             }
