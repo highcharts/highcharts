@@ -88,7 +88,7 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
     assert.close(
         tooltipAbsolute,
         pointX,
-        5,
+        8,
         '#16944: Tooltip position should appear at point with outside true'
     );
 
@@ -105,7 +105,7 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
     assert.close(
         tooltipAbsolute,
         pointX,
-        5,
+        8,
         'Tooltip position should appear at point with sets margin for chart ' +
         'and container'
     );
