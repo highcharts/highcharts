@@ -13,7 +13,8 @@
 body {
     background-color: #18171c;
     color: white;
-    margin-top: -100px;
+
+    /* margin-top: -100px; */
 }
 
 #demo-content {
@@ -25,13 +26,13 @@ body {
     white-space: nowrap;
 }
 
-.top-bar {
+/* .top-bar {
     visibility: hidden;
-}
+} */
 
-#message {
+/* #message {
     height: unset;
-}
+} */
 
 .fake {
     position: relative;
@@ -206,7 +207,7 @@ body {
     bottom: 2px;
 }
 
-.chart-button {
+.button-container .chart-button {
     border: 0;
     border-radius: 5px;
     background-color: transparent;
@@ -220,11 +221,11 @@ body {
     transition: all 0.1s ease;
 }
 
-.chart-button:disabled {
+.button-container .chart-button:disabled {
     color: #75738c;
 }
 
-.button-text {
+.button-container .button-text {
     border: 2px solid #474554;
     padding-top: 4px;
     font-weight: 700;

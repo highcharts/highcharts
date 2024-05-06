@@ -5922,169 +5922,172 @@ makeChart();
 
 // button
 document.addEventListener('DOMContentLoaded', function () {
-    const container = document.querySelector('.button-container');
+    // const container = document.querySelector('.button-container');
     const button = document.querySelector('.chart-button');
-    let confetti = []; // Array to hold confetti elements
-    let exploding = false;
+    // let confetti = []; // Array to hold confetti elements
+    // let exploding = false;
 
-    fillButton(80); // Initially fill the button with 40 confetti pieces
+    // fillButton(80); // Initially fill the button with 40 confetti pieces
 
     button.addEventListener('click', function () {
-        explodeConfetti(); // Explode confetti on click
+        makeChart();
+        // explodeConfetti(); // Explode confetti on click
         // this.disabled = true;
         // setTimeout(function () {
         //     button.disabled = false;
         // }, 3000);
     });
 
-    button.addEventListener('mouseenter', function () {
-        hoverEffect(true); // Apply hover effect
-    });
+    // button.addEventListener('mouseenter', function () {
+    //     hoverEffect(true); // Apply hover effect
+    // });
 
-    button.addEventListener('mouseleave', function () {
-        hoverEffect(false); // Remove hover effect
-    });
+    // button.addEventListener('mouseleave', function () {
+    //     hoverEffect(false); // Remove hover effect
+    // });
 
-    function fillButton(num) {
-        clearConfetti(); // Clear existing confetti first
-        for (let i = 0; i < num; i++) {
-            const confettiPiece = createConfetti(false);
-            confetti.push(confettiPiece);
-            container.appendChild(confettiPiece);
-            placeConfetti(confettiPiece);
-        }
-    }
+    // function fillButton(num) {
+    //     clearConfetti(); // Clear existing confetti first
+    //     for (let i = 0; i < num; i++) {
+    //         const confettiPiece = createConfetti(false);
+    //         confetti.push(confettiPiece);
+    //         container.appendChild(confettiPiece);
+    //         placeConfetti(confettiPiece);
+    //     }
+    // }
 
-    function createConfetti() {
-        const confettiPiece = document.createElement('div');
-        confettiPiece.className = 'confetti';
-        // Random size between 8px and 3px
-        let size = Math.random() * (8 - 3) + 5;
-        const shapeType = Math.floor(Math.random() * 3);
-        let borderColor;
-        // 0 = triangle, 1 = circle, 2 = square
-        switch (shapeType) {
-        case 0: // Triangle
-            // eslint-disable-next-line max-len
-            borderColor = colors[Math.floor(Math.random() * colors.length)];
-            size = Math.random() * (8 - 3) + 2;
-            confettiPiece.style.borderLeft = `${size}px solid transparent`;
-            confettiPiece.style.borderRight = `${size}px solid transparent`;
-            confettiPiece.style.borderBottom =
-                `${size * 2}px ${borderColor} solid`;
-            break;
-        case 1: // Circle
-            confettiPiece.style.width = `${size}px`;
-            confettiPiece.style.height = `${size}px`;
-            confettiPiece.style.borderRadius = '50%';
-            confettiPiece.style.opacity = 0.5;
-            confettiPiece.style.backgroundColor =
-            colors[Math.floor(Math.random() * colors.length)];
-            break;
-        case 2: // Square
-            confettiPiece.style.width = `${size}px`;
-            confettiPiece.style.height = `${size}px`;
-            confettiPiece.style.opacity = 0.5;
-            confettiPiece.style.backgroundColor =
-            colors[Math.floor(Math.random() * colors.length)];
-            break;
-        default: // Default case
-            break;
-        }
-        confettiPiece.style.position = 'absolute';
-        confettiPiece.style.opacity = 0;
+    // function createConfetti() {
+    //     const confettiPiece = document.createElement('div');
+    //     confettiPiece.className = 'confetti';
+    //     // Random size between 8px and 3px
+    //     let size = Math.random() * (8 - 3) + 5;
+    //     const shapeType = Math.floor(Math.random() * 3);
+    //     let borderColor;
+    //     // 0 = triangle, 1 = circle, 2 = square
+    //     switch (shapeType) {
+    //     case 0: // Triangle
+    //         // eslint-disable-next-line max-len
+    //         borderColor = colors[Math.floor(Math.random() * colors.length)];
+    //         size = Math.random() * (8 - 3) + 2;
+    //         confettiPiece.style.borderLeft = `${size}px solid transparent`;
+    //         confettiPiece.style.borderRight = `${size}px solid transparent`;
+    //         confettiPiece.style.borderBottom =
+    //             `${size * 2}px ${borderColor} solid`;
+    //         break;
+    //     case 1: // Circle
+    //         confettiPiece.style.width = `${size}px`;
+    //         confettiPiece.style.height = `${size}px`;
+    //         confettiPiece.style.borderRadius = '50%';
+    //         confettiPiece.style.opacity = 0.5;
+    //         confettiPiece.style.backgroundColor =
+    //         colors[Math.floor(Math.random() * colors.length)];
+    //         break;
+    //     case 2: // Square
+    //         confettiPiece.style.width = `${size}px`;
+    //         confettiPiece.style.height = `${size}px`;
+    //         confettiPiece.style.opacity = 0.5;
+    //         confettiPiece.style.backgroundColor =
+    //         colors[Math.floor(Math.random() * colors.length)];
+    //         break;
+    //     default: // Default case
+    //         break;
+    //     }
+    //     confettiPiece.style.position = 'absolute';
+    //     confettiPiece.style.opacity = 0;
 
-        return confettiPiece;
-    }
+    //     return confettiPiece;
+    // }
 
-    function placeConfetti(confettiPiece) {
-        const horizontalPadding = 16; // 16px padding on left and right
-        const verticalPadding = 8; // 8px padding on top and bottom
-        let posX, posY;
+    // function placeConfetti(confettiPiece) {
+    //     const horizontalPadding = 16; // 16px padding on left and right
+    //     const verticalPadding = 8; // 8px padding on top and bottom
+    //     let posX, posY;
 
-        if (Math.random() < 0.3) {
-            posX = Math.random() * button.offsetWidth  + horizontalPadding;
-            posY = Math.random() * button.offsetHeight;
-        } else {
-            posX = Math.random() * button.offsetWidth;
-            posY = Math.random() * button.offsetHeight + verticalPadding;
-        }
+    //     if (Math.random() < 0.3) {
+    //         posX = Math.random() * button.offsetWidth  + horizontalPadding;
+    //         posY = Math.random() * button.offsetHeight;
+    //     } else {
+    //         posX = Math.random() * button.offsetWidth;
+    //         posY = Math.random() * button.offsetHeight + verticalPadding;
+    //     }
 
-        const distance = 10; // Small movement range
-        const angle = Math.random() * 360;
-        const deltaX = distance * Math.cos(angle * Math.PI / 180);
-        const deltaY = distance * Math.sin(angle * Math.PI / 180);
-        confettiPiece.style.left = `${posX}px`;
-        confettiPiece.style.top = `${posY}px`;
+    //     const distance = 10; // Small movement range
+    //     const angle = Math.random() * 360;
+    //     const deltaX = distance * Math.cos(angle * Math.PI / 180);
+    //     const deltaY = distance * Math.sin(angle * Math.PI / 180);
+    //     confettiPiece.style.left = `${posX}px`;
+    //     confettiPiece.style.top = `${posY}px`;
 
-        confettiPiece.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-
-        confettiPiece.style.transition = 'all 0.5s ease';
-        confettiPiece.style.opacity = 0;
+    //     confettiPiece.style.transform
+    // = `translate(${deltaX}px, ${deltaY}px)`;
 
 
-    }
+    //     confettiPiece.style.transition = 'all 0.5s ease';
+    //     confettiPiece.style.opacity = 0;
 
-    function hoverEffect(apply) {
-        confetti.forEach(piece => {
 
-            let distance = 25; // Small movement range
-            const angle = Math.random() * 360;
-            const deltaX = distance * Math.cos(angle * Math.PI / 180);
-            const deltaY = distance * Math.sin(angle * Math.PI / 180);
-            if (apply) {
-                piece.style.transition = 'all 0.5s ease';
-                piece.style.opacity = 0.4;
-                piece.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-            } else {
-                if (!exploding) {
-                    distance = 10;
-                    piece.style.transform =
-                        `translate(${deltaX}px, ${deltaY}px)`;
-                    piece.style.transition = 'all 0.5s ease';
-                    piece.style.opacity = 0;
+    // }
 
-                }
-            }
-        });
-    }
+    // function hoverEffect(apply) {
+    //     confetti.forEach(piece => {
 
-    function explodeConfetti() {
-        exploding = true;
-        confetti.forEach(piece => {
-            animateConfetti(piece);
-        });
+    //         let distance = 25; // Small movement range
+    //         const angle = Math.random() * 360;
+    //         const deltaX = distance * Math.cos(angle * Math.PI / 180);
+    //         const deltaY = distance * Math.sin(angle * Math.PI / 180);
+    //         if (apply) {
+    //             piece.style.transition = 'all 0.5s ease';
+    //             piece.style.opacity = 0.4;
+    //             piece.style.transform
+    //              = `translate(${deltaX}px, ${deltaY}px)`;
+    //         } else {
+    //             if (!exploding) {
+    //                 distance = 10;
+    //                 piece.style.transform =
+    //                     `translate(${deltaX}px, ${deltaY}px)`;
+    //                 piece.style.transition = 'all 0.5s ease';
+    //                 piece.style.opacity = 0;
 
-        makeChart();
+    //             }
+    //         }
+    //     });
+    // }
 
-        // Refill the button with confetti after explosion
+    // function explodeConfetti() {
+    //     exploding = true;
+    //     confetti.forEach(piece => {
+    //         animateConfetti(piece);
+    //     });
 
-        fillButton(80);
-        exploding = false;
-        // }, 3000);
-    }
+    //     makeChart();
 
-    function clearConfetti() {
-        confetti.forEach(piece => piece.remove());
-        confetti = [];
-    }
+    //     // Refill the button with confetti after explosion
 
-    function animateConfetti(confettiPiece) {
-        const angle = Math.random() * 360; // Explode in all directions
-        const distance = Math.random() * 150;
-        const finalX = parseFloat(confettiPiece.style.left) +
-        distance * Math.sin(angle * Math.PI / 180);
-        const finalY = parseFloat(confettiPiece.style.top) -
-        distance * Math.cos(angle * Math.PI / 180);
+    //     fillButton(80);
+    //     exploding = false;
+    //     // }, 3000);
+    // }
 
-        confettiPiece.style.transition = 'all 1s ease-out';
-        confettiPiece.style.left = `${finalX}px`;
-        confettiPiece.style.top = `${finalY}px`;
-        confettiPiece.style.opacity = 0;
+    // function clearConfetti() {
+    //     confetti.forEach(piece => piece.remove());
+    //     confetti = [];
+    // }
 
-        setTimeout(() => {
-            confettiPiece.remove();
-        }, 1000);
-    }
+    // function animateConfetti(confettiPiece) {
+    //     const angle = Math.random() * 360; // Explode in all directions
+    //     const distance = Math.random() * 150;
+    //     const finalX = parseFloat(confettiPiece.style.left) +
+    //     distance * Math.sin(angle * Math.PI / 180);
+    //     const finalY = parseFloat(confettiPiece.style.top) -
+    //     distance * Math.cos(angle * Math.PI / 180);
+
+    //     confettiPiece.style.transition = 'all 1s ease-out';
+    //     confettiPiece.style.left = `${finalX}px`;
+    //     confettiPiece.style.top = `${finalY}px`;
+    //     confettiPiece.style.opacity = 0;
+
+    //     setTimeout(() => {
+    //         confettiPiece.remove();
+    //     }, 1000);
+    // }
 });
