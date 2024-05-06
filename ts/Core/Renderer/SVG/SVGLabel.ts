@@ -380,6 +380,8 @@ class SVGLabel extends SVGElement {
             this.text.attr({ text });
         }
         this.updateTextPadding();
+
+        this.reAlign();
     }
 
     /*
