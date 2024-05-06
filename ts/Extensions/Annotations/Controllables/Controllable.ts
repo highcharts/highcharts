@@ -304,19 +304,16 @@ abstract class Controllable implements ControlTarget {
     ): void {
         const annotation = this.annotation,
             options = merge(true, this.options, newOptions),
-            parentGroup = this.graphic.parentGroup,
             Constructor: any = this.constructor;
 
-        this.destroy();
         const newControllable = new Constructor(
             annotation,
             options,
             this.index,
             this.itemType
         );
-        merge(true, this as any, newControllable);
+        merge(true, this as Controllable, newControllable);
 
-        this.render(parentGroup);
         this.redraw();
     }
 
