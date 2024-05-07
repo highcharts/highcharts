@@ -22,8 +22,6 @@ function generateData() {
 
     function generate(currentIndices) {
         if (currentIndices.length === layers.length) {
-            // When the length of currentIndices matches the dimensions length,
-            // push to data
             data.push({
                 data: [...currentIndices]
             });
@@ -32,7 +30,6 @@ function generateData() {
 
         const dimensionIndex = currentIndices.length;
         for (let i = 0; i < layers[dimensionIndex]; i++) {
-            // continue with the next dimension
             generate([...currentIndices, i]);
         }
     }
@@ -51,7 +48,8 @@ Highcharts.chart('container', {
         text: 'Visualizing a neural network with Highcharts'
     },
     subtitle: {
-        text: 'You can use the parallel-coordinates module to visualize a neural network.'
+        text: 'You can use the parallel-coordinates module ' +
+            'to visualize a neural network.'
     },
     tooltip: {
         formatter() {
@@ -77,7 +75,7 @@ Highcharts.chart('container', {
                 lineColor: '#7f30a6',
                 states: {
                     hover: {
-                        lineColor: 'red'
+                        lineColor: '#fa56fc'
                     }
                 }
             },
@@ -86,7 +84,8 @@ Highcharts.chart('container', {
                     enabled: false
                 },
                 hover: {
-                    enabled: false
+                    lineColor: '#7f30a6',
+                    lineWidthPlus: 0
                 }
             }
         }
