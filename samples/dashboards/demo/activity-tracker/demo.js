@@ -11,9 +11,14 @@ async function setupDashboard() {
     Dashboards.board('container', {
         dataPool: {
             connectors: [{
-                id: 'all-datapoints-connector',
+                id: 'trackpoints-connector',
                 type: 'JSON',
                 options: {
+                    firstRowAsNames: false,
+                    columnNames: [
+                        'time', 'elevation', 'hr',
+                        'latitude', 'longitude', 'speed', 'cumulativeDistance'
+                    ],
                     data: gpxData.all
                 }
             },
@@ -21,10 +26,11 @@ async function setupDashboard() {
                 id: 'summary-connector',
                 type: 'JSON',
                 options: {
+                    firstRowAsNames: false,
+                    columnNames: ['km', 'pace', 'elev', 'hr'],
                     data: gpxData.summary
                 }
-            }
-            ]
+            }]
         },
         gui: {
             layouts: [{
@@ -57,8 +63,7 @@ async function setupDashboard() {
                             }
                         },
                         id: 'activity-datagrid'
-                    }
-                    ]
+                    }]
                 }, {
                     cells: [{
                         id: 'activity-chart' // Line and area chart
@@ -68,10 +73,10 @@ async function setupDashboard() {
         },
         components: [
             {
-                renderTo: 'activity-map', // Map
+                renderTo: 'activity-map',
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
-                connector: 'all-datapoints-connector',
+                connector: 'trackpoints-connector',
                 columnAssignment: [
                     {
                         seriesId: 'pointSeries',
@@ -157,13 +162,11 @@ async function setupDashboard() {
                         },
                         pace: {
                             headerFormat: 'Speed (km/h)',
-                            dataIndex: 'pace',
-                            cellFormat: '{value:.1f}'
+                            dataIndex: 'pace'
                         },
                         elev: {
                             headerFormat: 'Elevation (m)',
-                            dataIndex: 'elev',
-                            cellFormat: '{value:.1f}'
+                            dataIndex: 'elev'
                         },
                         hr: {
                             headerFormat: 'Heart Rate (bpm)',
@@ -177,7 +180,7 @@ async function setupDashboard() {
                 type: 'Highcharts',
 
                 connector: {
-                    id: 'all-datapoints-connector',
+                    id: 'trackpoints-connector',
                     columnAssignment: [{
                         seriesId: 'elevation-series',
                         data: ['cumulativeDistance', 'elevation']
@@ -213,49 +216,22 @@ async function setupDashboard() {
                         }
                     },
                     {
-                        title: {
-                            text: 'Heart Rate (bpm)'
-                        },
-                        opposite: true,
-                        labels: {
-                            enabled: true,
-                            formatter: function () {
-                                return this.value + ' bpm';
-                            }
-                        },
-                        offset: 80,
-                        gridLineWidth: 0,
-                        lineWidth: 1,
-                        lineColor: '#f00'
+                        // Heart rate
+                        visible: false
                     },
                     {
-                        title: {
-                            text: 'Speed (km/h)'
-                        },
-                        opposite: true,
-                        labels: {
-                            enabled: true,
-                            formatter: function () {
-                                return this.value + ' km/h';
-                            }
-                        },
-                        offset: 0,
-                        gridLineWidth: 0,
-                        lineWidth: 1,
-                        lineColor: '#00f'
-                    }
-                    ],
+                        // Speed
+                        visible: false
+                    }],
                     tooltip: {
                         shared: true,
-                        crosshairs: true,
                         formatter: function () {
                             let tooltip = '<b>Distance:</b> ' +
-                                this.x.toFixed(2) + ' km<br/>';
+                                this.x.toFixed(1) + ' km<br/>';
 
                             this.points.forEach(function (point) {
                                 tooltip += '<b>' + point.series.name +
-                                    '</b>: ' +
-                                    point.y.toFixed(2) + ' ' +
+                                    '</b>: ' + point.y + ' ' +
                                     point.series.options.tooltipValueSuffix +
                                     '<br/>';
                             });
@@ -288,18 +264,17 @@ async function setupDashboard() {
     }, true);
 
 
-    function getTrailCoordinates(data) {
+    function getTrailCoordinates(trackData) {
         const coordinateData = [];
 
-        for (let i = 1; i < data.length; i++) {
-            if (data[i].length >= 7) {
-                const lat2 = data[i][3];
-                const lon2 = data[i][4];
-                const cumulativeDistance = data[i][6];
+        trackData.forEach(data => {
+            const lat2 = data[3];
+            const lon2 = data[4];
+            const cumulativeDistance = data[6];
 
-                coordinateData.push([lon2, lat2, cumulativeDistance]);
-            }
-        }
+            coordinateData.push([lon2, lat2, cumulativeDistance]);
+        });
+
         return coordinateData;
     }
 
@@ -336,7 +311,7 @@ async function setupDashboard() {
         const trackPoints = doc.getElementsByTagName('trkpt');
 
         // Kilometer boundary points (for DataGrid only)
-        const kmPoints = [['km', 'pace', 'elev', 'hr']];
+        const kmPoints = [];
 
         let cumulativeDistance = 0;
         let prevTime = 0;
@@ -347,22 +322,19 @@ async function setupDashboard() {
         let kilometer = 0;
 
         // Array for storing parsed data
-        const allPoints = [
-            // eslint-disable-next-line max-len
-            ['time', 'elevation', 'hr', 'latitude', 'longitude', 'speed', 'cumulativeDistance']
-        ];
+        const allPoints = [];
 
         for (const point of trackPoints) {
             // Location
-            const lat = parseFloat(point.getAttribute('lat'));
-            const lon = parseFloat(point.getAttribute('lon'));
+            const lat = Number(point.getAttribute('lat'));
+            const lon = Number(point.getAttribute('lon'));
 
             // Timestamp
             const tsIso = getNodeText(point, 'time');
             const time = new Date(tsIso).getTime();
 
             // Elevation
-            const elevation = parseFloat(getNodeText(point, 'ele'));
+            const elevation = Number(getNodeText(point, 'ele'));
 
             // Heart rate
             const heartRate = Number(getNodeText(point, 'gpxtpx:hr'));
@@ -376,7 +348,8 @@ async function setupDashboard() {
                 speedSum += speed;
                 speedCount++;
 
-                const averageSpeed = speedSum / speedCount;
+                const averageSpeed =
+                    Math.round((speedSum / speedCount) * 100) / 100;
                 allPoints.push(
                     [
                         time, elevation, heartRate, lat, lon,
