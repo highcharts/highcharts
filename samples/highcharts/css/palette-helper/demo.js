@@ -1,4 +1,4 @@
-const { Color, SVGRenderer } = Highcharts;
+const { Color } = Highcharts;
 
 let topology, ohlc;
 
@@ -324,7 +324,14 @@ const generate = async () => {
 };
 
 (async () => {
+    let timer;
     [...document.querySelectorAll('input')]
-        .forEach(input => input.addEventListener('input', generate));
+        .forEach(input => input.addEventListener(
+            'input',
+            () => {
+                clearTimeout(timer);
+                timer = setTimeout(generate, 200);
+            }
+        ));
     await generate();
 })();
