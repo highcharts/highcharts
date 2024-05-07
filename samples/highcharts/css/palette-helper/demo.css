@@ -11,11 +11,17 @@ h3 {
     clear: both;
 }
 
+fieldset {
+    border: 1px solid silver;
+    border-radius: 0.3em;
+}
+
 #demo-content {
     box-shadow: none;
     background: none;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0.5em;
 }
 
 pre {
@@ -58,6 +64,7 @@ input[type="color"]::-moz-color-swatch {
     vertical-align: middle;
     border: 1px solid transparent;
     transition: background-color 250ms;
+    margin-right: -0.5em;
 }
 
 .container {
@@ -79,10 +86,12 @@ input[type="color"]::-moz-color-swatch {
 @media screen and (max-width: 600px) {
     #container-map {
         width: auto;
+        float: none;
     }
 
     #container-stock {
         width: auto;
+        float: none;
         margin: 0;
     }
 }

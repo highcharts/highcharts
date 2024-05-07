@@ -182,7 +182,10 @@ const generate = async () => {
         ).value,
         highlightColor100 = document.querySelector(
             'input[name="highlight-color"]'
-        ).value;
+        ).value,
+        dataColors = Highcharts.getOptions().colors.map((color, i) =>
+            document.querySelector(`input[name="data-color-${i}"]`).value
+        );
 
     const pre = document.getElementById('css'),
         neutralPreview = document.getElementById('neutral-preview'),
@@ -201,8 +204,15 @@ const generate = async () => {
         }
     );
 
+    // Data colors
+    pre.innerText = '/* Colors for data series and points */\n';
+    dataColors.forEach((color, i) => {
+        palette[`color${i}`] = color;
+        pre.innerText += `--highcharts-color-${i}: ${color};\n`;
+    });
+
     palette.backgroundColor = backgroundColor;
-    pre.innerText = '/* Background color */\n' +
+    pre.innerText += '\n/* Background color */\n' +
         `--highcharts-background-color: ${backgroundColor};\n\n`;
 
     const backgroundColorObj = new Color(backgroundColor),
@@ -302,6 +312,7 @@ const generate = async () => {
         return Object.keys(theme).length ? theme : undefined;
     };
     const theme = findColors(defaultOptions);
+    theme.colors = dataColors;
 
     // Further extend the theme with some colors that are computed at runtime
     // and not available through the options structure.
@@ -325,6 +336,15 @@ const generate = async () => {
 
 (async () => {
     let timer;
+
+    // Insert default data colors
+    Highcharts.getOptions().colors.forEach((color, i) => {
+        const input = document.querySelector(`input[name="data-color-${i}"]`);
+        input.value = color;
+        input.title = `Color ${i}: ${color}`;
+    });
+
+    // Activate the inputs
     [...document.querySelectorAll('input')]
         .forEach(input => input.addEventListener(
             'input',
