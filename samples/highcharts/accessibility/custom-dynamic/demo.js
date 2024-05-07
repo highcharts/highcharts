@@ -15,9 +15,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Points above 10 trigger alert by screen reader'
     },
-    caption: {
-        text: 'A test case for dynamic data in charts.'
-    },
     accessibility: {
         announceNewData: {
             enabled: true,
