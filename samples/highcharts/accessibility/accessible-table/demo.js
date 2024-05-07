@@ -24,20 +24,20 @@ Highcharts.chart('container', {
     accessibility: {
         landmarkVerobsity: 'one'
     },
+    plotOptions: {
+        column: {
+            borderWidth: 2,
+            borderColor: '#000000'
+        }
+    },
     series: [{
         name: 'John',
-        data: [5, 3, 4, 7, 2],
-        borderWidth: 2,
-        borderColor: '#000000'
+        data: [5, 3, 4, 7, 2]
     }, {
         name: 'Jane',
-        data: [2, 2, 3, 2, 1],
-        borderWidth: 2,
-        borderColor: '#000000'
+        data: [2, 2, 3, 2, 1]
     }, {
         name: 'Joe',
-        data: [3, 4, 4, 2, 5],
-        borderWidth: 2,
-        borderColor: '#000000'
+        data: [3, 4, 4, 2, 5]
     }]
 });
