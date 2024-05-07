@@ -26,9 +26,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'spline',
         events: {
-            load: function () {
-                startUpdatingData();
-            }
+            load: startUpdatingData
         }
     },
     yAxis: {
@@ -61,7 +59,6 @@ function startUpdatingData() {
         );
     }, 2000);
 }
-
 
 let isUpdating = true;
 
