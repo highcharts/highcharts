@@ -344,7 +344,7 @@ const cr = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -30,
+        y: -32,
         verticalAlign: 'bottom',
         text: 'Column Range Chart',
         style: {
@@ -505,7 +505,7 @@ const sk = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -30,
+        y: -32,
         verticalAlign: 'bottom',
         text: 'Snakey Chart',
         style: {
@@ -610,6 +610,11 @@ const str = {
         }
     },
 
+    accessibility: {
+        description: `Streamgraph chart showing the number of 
+        winter olympic medals won by country since 1924`
+    },
+
     // Make sure connected countries have similar colors
     colors: [
         strColors[0],
@@ -640,7 +645,7 @@ const str = {
     title: {
         floating: true,
         align: 'left',
-        y: -45,
+        y: -48,
         x: 10,
         verticalAlign: 'bottom',
         text: 'Streamgraph Chart',
@@ -653,7 +658,7 @@ const str = {
         useHTML: true,
         verticalAlign: 'bottom',
         align: 'left',
-        y: -30,
+        y: -28,
         x: 10,
         style: {
             fontSize: '14px'
@@ -663,6 +668,9 @@ const str = {
 
     xAxis: {
         maxPadding: 0,
+        accessibility: {
+            description: 'Countries'
+        },
         height: '75%',
         visible: false,
         type: 'category',
@@ -1060,7 +1068,7 @@ const rb = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -55,
+        y: -52,
         x: 12,
         verticalAlign: 'bottom',
         text: 'Radial Bar Chart',
@@ -1073,7 +1081,7 @@ const rb = {
         useHTML: true,
         verticalAlign: 'bottom',
         align: 'left',
-        y: -35,
+        y: -32,
         x: 12,
         style: {
             fontSize: '14px'
@@ -1204,7 +1212,7 @@ const strOld = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -30,
+        y: -32,
         verticalAlign: 'bottom',
         text: 'Streamgraph Chart',
         style: {
@@ -2446,7 +2454,7 @@ function jellypus() {
         title: {
             floating: true,
             align: 'left',
-            y: -30,
+            y: -32,
             verticalAlign: 'bottom',
             text: 'Network Graph',
             style: {
@@ -2461,7 +2469,7 @@ function jellypus() {
             style: {
                 fontSize: '14px'
             },
-            y: -15,
+            y: -12,
             text: '<a href="https://www.highcharts.com/demo/highcharts/network-graph">See full demo</a>'
         },
         plotOptions: {
@@ -3188,10 +3196,12 @@ function cs() {
     const options = {
         title: {
             floating: true,
+            useHTML: true,
             align: 'left',
             y: -30,
             verticalAlign: 'bottom',
-            text: 'Dynamic Candlestick Chart',
+            text: `<div>Dynamic Candlestick Chart&nbsp;
+            <span id="stop">(Stop animation)</span></div>`,
             style: {
                 fontSize: '14px'
             }
@@ -3201,20 +3211,12 @@ function cs() {
             useHTML: true,
             verticalAlign: 'bottom',
             align: 'left',
-            y: -15,
+            y: -12,
             style: {
                 fontSize: '14px'
             },
-            text: '<a href="https://www.highcharts.com/demo/stock/live-candlestick">See full demo</a>'
-        },
-        caption: {
-            useHTML: true,
-            text: '<div id="stop">Stop animation</div>',
-            align: 'center',
-            verticalAlign: 'middle',
-            x: 0,
-            y: 150
-
+            text: `<a href="https://www.highcharts.com/demo/stock/live-candlestick">
+            See full demo</a>`
         },
         xAxis: {
             overscroll: 500000,
@@ -4459,7 +4461,7 @@ function barchartRace() {
                 style: {
                     fontSize: '14px'
                 },
-                y: -15,
+                y: -12,
                 text: '<a href="https://www.highcharts.com/demo/highcharts/bar-race">See full demo</a>'
             },
 
@@ -4468,6 +4470,9 @@ function barchartRace() {
             },
             xAxis: {
                 type: 'category',
+                accessibility: {
+                    description: 'Country'
+                },
                 visible: false,
                 height: '75%',
                 min: 6,
@@ -4475,6 +4480,9 @@ function barchartRace() {
             },
             yAxis: {
                 visible: false,
+                accessibility: {
+                    description: 'Population'
+                },
                 opposite: true,
                 tickPixelInterval: 150,
                 title: {
@@ -4596,6 +4604,9 @@ function barchartRace() {
 
 // packed bubble chart
 const spb = {
+    accessibility: {
+        description: 'Carbon emissions around the world (2014)'
+    },
     chart: {
         type: 'packedbubble'
     },
@@ -4614,7 +4625,7 @@ const spb = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -40,
+        y: -35,
         verticalAlign: 'bottom',
         text: 'Split Packed<br>Bubble Chart',
         style: {
@@ -4629,7 +4640,7 @@ const spb = {
         style: {
             fontSize: '14px'
         },
-        y: -25,
+        y: -15,
         text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/highcharts/packed-bubble-split">See full demo</a>'
     },
     tooltip: {
@@ -5192,7 +5203,7 @@ const dw = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -30,
+        y: -32,
         verticalAlign: 'bottom',
         text: 'Dependency Wheel',
         style: {
@@ -5212,6 +5223,9 @@ const dw = {
     },
 
     accessibility: {
+        description: `Chart showing a dependency wheel, 
+        where each point consists of multiple
+        weighted links to other points.`,
         point: {
             valueDescriptionFormat: '{index}. From ' +
                 '{point.from} to {point.to}: {point.weight}.'
@@ -5435,6 +5449,16 @@ function geoHeatMap() {
             ).then(response => response.json());
 
         globe = Highcharts.mapChart('container', {
+            accessibility: {
+                description: `
+                This chart shows the density of cities in the world, 
+                plottedby their latitude and longitude. It uses the 
+                orthographic projection and
+                geoheatmap series type, which creates a grid of tiles that
+                correspond to the latitude and longitude of each data point.
+                The value of the geoheatmap is represented 
+                by the color of each tile.`
+            },
             chart: {
                 map: topology,
                 animation: {
@@ -5473,7 +5497,7 @@ function geoHeatMap() {
                 floating: true,
                 useHTML: true,
                 align: 'left',
-                y: -30,
+                y: -32,
                 verticalAlign: 'bottom',
                 text: 'GeoHeatMap',
                 style: {
@@ -5750,7 +5774,7 @@ function gantt() {
             floating: true,
             useHTML: true,
             align: 'left',
-            y: -5,
+            y: -7,
             verticalAlign: 'bottom',
             text: 'Gantt Chart',
             style: {

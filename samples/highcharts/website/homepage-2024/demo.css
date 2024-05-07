@@ -1,4 +1,4 @@
-/* @import url("http://192.168.1.176:3030/hc-styles.css"); */
+@import url("http://192.168.1.176:3030/hc-styles.css");
 
 #container {
     width: 100%;
@@ -12,6 +12,9 @@
 /* styles for testing */
 body {
     background-color: #18171c;
+
+    /* background-color: transparent; */
+
     color: white;
 
     /* margin-top: -100px; */
@@ -94,6 +97,7 @@ body {
     color: #e3e3e8;
     text-decoration: underline;
     cursor: pointer;
+    font-weight: 400;
 }
 
 #stop:hover {
@@ -176,13 +180,12 @@ body {
 #pause-bars {
     display: none;
     margin-left: -6px;
-    width: 4px;
+    width: 12px;
     height: 10px;
     border-top: 0;
     border-bottom: 0;
     border-left: 4px solid #e3e3e8;
     border-right: 4px solid #e3e3e8;
-    fill: red;
 }
 
 #play-pause-button:hover {
@@ -226,23 +229,23 @@ body {
 }
 
 .button-container .button-text {
-    border: 2px solid #474554;
-    padding-top: 4px;
+    border: 1px solid #918fa3;
+    padding-top: 2px;
     font-weight: 700;
     font-size: 12px;
     color: inherit;
-    background-color: #2f2e38;
+    background-color: transparent;
     border-radius: 5px;
     position: absolute;
     z-index: 20;
     top: 0;
     left: 0;
     width: 116px;
-    height: 18px;
+    height: 32px;
 }
 
 .button-text:hover {
-    border: 2px solid #8791ff;
+    border: 1px solid #8791ff;
     color: #e1e3ff;
     background-color: rgba(0, 0, 0, 0.7);
 }
