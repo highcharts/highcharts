@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 /* Application specific colors */
 :root {
@@ -51,7 +51,7 @@
 }
 
 /* Demo description */
-p.demo-description {
+p.highcharts-description {
     margin: 0;
     padding: 15px;
     text-align: justify;

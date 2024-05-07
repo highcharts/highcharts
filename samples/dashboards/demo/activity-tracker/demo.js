@@ -42,7 +42,7 @@ async function setupDashboard() {
                                 width: '50%'
                             }
                         },
-                        id: 'activity-map' // mapchart
+                        id: 'activity-map' // Map
                     },
                     {
                         responsive: {
@@ -56,23 +56,20 @@ async function setupDashboard() {
                                 width: '50%'
                             }
                         },
-                        id: 'activity-datagrid' // datagrid
+                        id: 'activity-datagrid'
                     }
                     ]
                 }, {
                     cells: [{
-                        id: 'activity-chart' // line and area chart
+                        id: 'activity-chart' // Line and area chart
                     }]
                 }]
             }]
         },
         components: [
             {
-                renderTo: 'activity-map', // mapchart
+                renderTo: 'activity-map', // Map
                 type: 'Highcharts',
-                sync: {
-                    highlight: true
-                },
                 chartConstructor: 'mapChart',
                 connector: 'all-datapoints-connector',
                 columnAssignment: [
@@ -106,19 +103,8 @@ async function setupDashboard() {
                         }
                     },
                     mapView: {
-                        fitToGeometry: {
-                            type: 'Polygon',
-                            coordinates: [
-                                // TBD: make scalable
-                                [
-                                    [5.3000, 60.4200],
-                                    [5.3900, 60.4200],
-                                    [5.3900, 60.3600],
-                                    [5.3000, 60.3600],
-                                    [5.3000, 60.4200]
-                                ]
-                            ]
-                        }
+                        center: gpxData.center,
+                        zoom: 12.5
                     },
                     legend: {
                         enabled: false
@@ -162,41 +148,26 @@ async function setupDashboard() {
                 connector: {
                     id: 'summary-connector'
                 },
-                sync: {
-                    // TBD: does not work.
-                    // This data connector is only used in the DataGrid
-                    highlight: true
-                },
                 dataGridOptions: {
                     editable: false,
                     columns: {
                         km: {
                             headerFormat: 'Kilometer',
-                            dataIndex: 'km',
-                            cellFormatter: function () {
-                                return this.value.toFixed(1);
-                            }
+                            dataIndex: 'km'
                         },
                         pace: {
                             headerFormat: 'Speed (km/h)',
                             dataIndex: 'pace',
-                            cellFormatter: function () {
-                                return this.value.toFixed(1);
-                            }
+                            cellFormat: '{value:.1f}'
                         },
                         elev: {
                             headerFormat: 'Elevation (m)',
                             dataIndex: 'elev',
-                            cellFormatter: function () {
-                                return this.value.toFixed(1);
-                            }
+                            cellFormat: '{value:.1f}'
                         },
                         hr: {
                             headerFormat: 'Heart Rate (bpm)',
-                            dataIndex: 'hr',
-                            cellFormatter: function () {
-                                return this.value.toFixed(1);
-                            }
+                            dataIndex: 'hr'
                         }
                     }
                 }
@@ -218,8 +189,7 @@ async function setupDashboard() {
                     {
                         seriesId: 'heartrate-series',
                         data: ['cumulativeDistance', 'hr']
-                    }
-                    ]
+                    }]
                 },
                 chartOptions: {
                     title: {
@@ -256,7 +226,7 @@ async function setupDashboard() {
                         offset: 80,
                         gridLineWidth: 0,
                         lineWidth: 1,
-                        lineColor: '#ff0000'
+                        lineColor: '#f00'
                     },
                     {
                         title: {
@@ -272,7 +242,7 @@ async function setupDashboard() {
                         offset: 0,
                         gridLineWidth: 0,
                         lineWidth: 1,
-                        lineColor: '#0000ff'
+                        lineColor: '#00f'
                     }
                     ],
                     tooltip: {
@@ -301,16 +271,16 @@ async function setupDashboard() {
                         tooltipValueSuffix: 'm'
                     },
                     {
-                        name: 'Speed',
-                        id: 'speed-series',
-                        yAxis: 2,
-                        tooltipValueSuffix: 'km/h'
-                    },
-                    {
                         name: 'Heart Rate',
                         id: 'heartrate-series',
                         yAxis: 1,
                         tooltipValueSuffix: 'bpm'
+                    },
+                    {
+                        name: 'Speed',
+                        id: 'speed-series',
+                        yAxis: 2,
+                        tooltipValueSuffix: 'km/h'
                     }]
                 }
             }
@@ -333,7 +303,7 @@ async function setupDashboard() {
         return coordinateData;
     }
 
-
+    // Get the CPX data from the server
     async function loadGpxData(url) {
         // Get the GPX data
         let response;
@@ -345,22 +315,22 @@ async function setupDashboard() {
         }
 
         if (response.ok) {
-            const data = await response.text();
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(data, 'application/xml');
+            const xmlData = await response.text();
 
-            return parseGpxData(xmlDoc);
+            return parseGpxData(xmlData);
         }
         console.error('Failed to parse GPX data');
     }
 
-
-    function parseGpxData(doc) {
+    // Parse GPX data
+    function parseGpxData(xmlData) {
         function getNodeText(node, name) {
             const el = node.getElementsByTagName(name);
 
             return el[0].textContent;
         }
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xmlData, 'application/xml');
 
         // All recorded points
         const trackPoints = doc.getElementsByTagName('trkpt');
@@ -395,7 +365,7 @@ async function setupDashboard() {
             const elevation = parseFloat(getNodeText(point, 'ele'));
 
             // Heart rate
-            const heartRate = parseInt(getNodeText(point, 'gpxtpx:hr'), 10);
+            const heartRate = Number(getNodeText(point, 'gpxtpx:hr'));
 
             if (prevTime > 0) {
                 // Create point
@@ -433,10 +403,10 @@ async function setupDashboard() {
 
         return {
             all: allPoints,
-            summary: kmPoints
+            summary: kmPoints,
+            center: [prevLon, prevLat]
         };
     }
-
 
     // Calculate distance between two points using Haversine formula
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -454,13 +424,13 @@ async function setupDashboard() {
         return R * c;
     }
 
-
     // Calculate speed in km/h
     function calculateSpeed(distance, timeDifference) {
         const timeHours = timeDifference / (1000 * 3600);
+
         return (distance / 1000) / timeHours;
     }
 }
 
-
+// Launch the application
 setupDashboard();
