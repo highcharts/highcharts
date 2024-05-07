@@ -2049,7 +2049,7 @@ module.exports = {
 
 
 /**
- * @interface ClassInfo
+ * @typedef ClassInfo
  * @property {DocletInfo} [doclet]
  * @property {string} [extends]
  * @property {Array<InfoFlag>} [flags]
@@ -2072,7 +2072,7 @@ module.exports = {
 
 
 /**
- * @interface DeconstructInfo
+ * @typedef DeconstructInfo
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
@@ -2085,7 +2085,7 @@ module.exports = {
 
 
 /**
- * @interface DocletInfo
+ * @typedef DocletInfo
  * @property {'Doclet'} kind
  * @property {MetaInfo} meta
  * @property {TS.JSDoc} [node]
@@ -2094,7 +2094,7 @@ module.exports = {
 
 
 /**
- * @interface DocletTag
+ * @typedef DocletTag
  * @property {boolean} [isOptional]
  * @property {string} [name]
  * @property {string} tag
@@ -2105,7 +2105,7 @@ module.exports = {
 
 
 /**
- * @interface ExportInfo
+ * @typedef ExportInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
@@ -2117,7 +2117,7 @@ module.exports = {
 
 
 /**
- * @interface FunctionInfo
+ * @typedef FunctionInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} [generics]
@@ -2131,7 +2131,7 @@ module.exports = {
 
 
 /**
- * @interface ImportInfo
+ * @typedef ImportInfo
  * @property {DocletInfo} [doclet]
  * @property {Record<string,string>} imports
  * @property {'Import'} kind
@@ -2149,7 +2149,7 @@ module.exports = {
 
 
 /**
- * @interface InterfaceInfo
+ * @typedef InterfaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<string>} [extends]
  * @property {Array<InfoFlag>} [flags]
@@ -2163,7 +2163,7 @@ module.exports = {
 
 
 /**
- * @interface MetaInfo
+ * @typedef MetaInfo
  * @property {number} begin
  * @property {number} end
  * @property {'Meta'} kind
@@ -2173,14 +2173,14 @@ module.exports = {
 
 
 /**
- * @interface MetaOrigin
+ * @typedef MetaOrigin
  * @property {string} parent
  * @property {string} path
  */
 
 
 /**
- * @interface NamespaceInfo
+ * @typedef NamespaceInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Module'|'Namespace'} kind
@@ -2192,7 +2192,7 @@ module.exports = {
 
 
 /**
- * @interface ObjectInfo
+ * @typedef ObjectInfo
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
  * @property {Array<(FunctionInfo|PropertyInfo)>} members
@@ -2203,7 +2203,7 @@ module.exports = {
 
 
 /**
- * @interface PropertyInfo
+ * @typedef PropertyInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {boolean} [inherited]
@@ -2217,7 +2217,7 @@ module.exports = {
 
 
 /**
- * @interface ResolvedInfo
+ * @typedef ResolvedInfo
  * @property {'Resolved'} kind
  * @property {string} path
  * @property {CodeInfo} resolvedInfo
@@ -2227,7 +2227,7 @@ module.exports = {
 
 
 /**
- * @interface SourceInfo
+ * @typedef SourceInfo
  * @property {Array<CodeInfo>} code
  * @property {'Source'} kind
  * @property {TS.SourceFile} [node]
@@ -2236,7 +2236,7 @@ module.exports = {
 
 
 /**
- * @interface VariableInfo
+ * @typedef VariableInfo
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Variable'} kind
