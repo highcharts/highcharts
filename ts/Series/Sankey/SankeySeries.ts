@@ -378,15 +378,15 @@ class SankeySeries extends ColumnSeries {
             to: nodeColumns.length - 1, // Height of the tree
             defaults: {
                 borderColor: options.borderColor,
-                borderRadius: options.borderRadius, // organization series
+                borderRadius: options.borderRadius, // Organization series
                 borderWidth: options.borderWidth,
                 color: series.color,
                 colorByPoint: options.colorByPoint,
                 // NOTE: if support for allowTraversingTree is added, then
                 // levelIsConstant should be optional.
                 levelIsConstant: true,
-                linkColor: options.linkColor, // organization series
-                linkLineWidth: options.linkLineWidth, // organization series
+                linkColor: options.linkColor, // Organization series
+                linkLineWidth: options.linkLineWidth, // Organization series
                 linkOpacity: options.linkOpacity,
                 states: options.states
             }
@@ -454,7 +454,8 @@ class SankeySeries extends ColumnSeries {
 
         let linkHeight = Math.max(
                 (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any)
+                (this.options.minLinkWidth as any
+                )
             ),
             fromY = getY(fromNode, 'linksFrom'),
             toY = getY(toNode, 'linksTo'),
@@ -892,4 +893,4 @@ export default SankeySeries;
  * @type {Highcharts.SankeyNodeObject}
  */
 
-''; // detach doclets above
+''; // Detach doclets above

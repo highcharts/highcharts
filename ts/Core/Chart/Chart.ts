@@ -268,7 +268,7 @@ class Chart {
      *
      * */
 
-    /** definitions */
+    // Definitions
     public constructor(
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
@@ -279,7 +279,7 @@ class Chart {
         callback?: Chart.CallbackFunction
     );
 
-    /** Implementation */
+    // Implementation
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Options>),
         /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -431,7 +431,7 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // do the merge
+            const options = merge(defaultOptions, userOptions), // Do the merge
                 optionsChart = options.chart;
 
             /**
@@ -856,7 +856,7 @@ class Chart {
         // Adjust title layout (reflow multiline text)
         chart.layOutTitles(false);
 
-        // link stacked series
+        // Link stacked series
         i = series.length;
         while (i--) {
             serie = series[i];
@@ -870,7 +870,7 @@ class Chart {
                 }
             }
         }
-        if (hasDirtyStacks) { // mark others as dirty
+        if (hasDirtyStacks) { // Mark others as dirty
             i = series.length;
             while (i--) {
                 serie = series[i];
@@ -903,21 +903,21 @@ class Chart {
             }
         });
 
-        // handle added or removed series
+        // Handle added or removed series
         if (redrawLegend && legend && legend.options.enabled) {
-            // draw legend graphics
+            // Draw legend graphics
             legend.render();
 
             chart.isDirtyLegend = false;
         }
 
-        // reset stacks
+        // Reset stacks
         if (hasStackedSeries) {
             chart.getStacks();
         }
 
 
-        // set axes scales
+        // Set axes scales
         axes.forEach(function (axis): void {
             axis.updateNames();
             axis.setScale();
@@ -932,7 +932,7 @@ class Chart {
             }
         });
 
-        // redraw axes
+        // Redraw axes
         axes.forEach(function (axis): void {
 
             // Fire 'afterSetExtremes' only if extremes are set
@@ -941,7 +941,7 @@ class Chart {
             if (axis.extKey !== key) { // #821, #4452
                 axis.extKey = key;
 
-                // prevent a recursive call to chart.redraw() (#1119)
+                // Prevent a recursive call to chart.redraw() (#1119)
                 afterRedraw.push(function (): void {
                     fireEvent(
                         axis,
@@ -956,7 +956,7 @@ class Chart {
             }
         });
 
-        // the plot areas size has changed
+        // The plot areas size has changed
         if (isDirtyBox) {
             chart.drawChartBox();
         }
@@ -965,7 +965,7 @@ class Chart {
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
 
-        // redraw affected series
+        // Redraw affected series
         series.forEach(function (serie): void {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
                 serie.redraw();
@@ -975,12 +975,12 @@ class Chart {
             serie.isDirtyData = false;
         });
 
-        // move tooltip or reset
+        // Move tooltip or reset
         if (pointer) {
             pointer.reset(true);
         }
 
-        // redraw if canvas
+        // Redraw if canvas
         renderer.draw();
 
         // Fire the events
@@ -1182,7 +1182,7 @@ class Chart {
         let elem = this[name];
 
         if (elem && explicitOptions) {
-            this[name] = elem = elem.destroy(); // remove old
+            this[name] = elem = elem.destroy(); // Remove old
         }
 
         if (options && !elem) {
@@ -1536,7 +1536,7 @@ class Chart {
         // Make a reference to the chart from the div
         attr(renderTo, indexAttrName, chart.index);
 
-        // remove previous chart
+        // Remove previous chart
         renderTo.innerHTML = AST.emptyHTML;
 
         // If the container doesn't have an offsetWidth, it has or is a child of
@@ -1548,7 +1548,7 @@ class Chart {
             chart.temporaryDisplay();
         }
 
-        // get the width and height
+        // Get the width and height
         chart.getChartSize();
         const chartHeight = chart.chartHeight;
         let chartWidth = chart.chartWidth;
@@ -1561,7 +1561,7 @@ class Chart {
         if (!chart.styledMode) {
             containerStyle = extend<CSSObject>({
                 position: 'relative',
-                // needed for context menu (avoidscrollbars) and content
+                // Needed for context menu (avoidscrollbars) and content
                 // overflow in IE
                 overflow: 'hidden',
                 width: chartWidth + 'px',
@@ -1606,7 +1606,7 @@ class Chart {
         }
         chart.containerBox = chart.getContainerBox();
 
-        // cache the cursor (#1650)
+        // Cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
@@ -1710,7 +1710,7 @@ class Chart {
                 });
             };
 
-        // pre-render axes to get labels offset width
+        // Pre-render axes to get labels offset width
         if (chart.hasCartesianSeries) {
             getOffset(chart.axes);
 
@@ -1929,12 +1929,13 @@ class Chart {
             // resize observer (#19027).
             setTimeout((): void => {
                 if (chart) {
-                    fireEvent(chart, 'endResize', void 0, (): void => {
-                        chart.isResizing -= 1;
-                    });
+                    fireEvent(chart, 'endResize');
                 }
             }, animObject(globalAnimation).duration);
         }
+
+        // Handle resizing counter even if we've re-rendered or not (#20548).
+        chart.isResizing -= 1;
     }
 
     /**
@@ -2097,7 +2098,7 @@ class Chart {
         marginNames.forEach(function (m: string, side: number): void {
             (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
         });
-        chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
+        chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
         chart.clipOffset = [0, 0, 0, 0];
     }
 
@@ -2291,7 +2292,7 @@ class Chart {
                 (optionsChart as any)[key] ||
                 // The default series class:
                 (klass && (klass.prototype as any)[key]);
-            // requires it
+            // Requires it
 
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
@@ -2429,6 +2430,7 @@ class Chart {
                 { labels } = options;
 
             if (
+                chart.hasCartesianSeries && // #20948
                 axis.horiz &&
                 axis.visible &&
                 labels.enabled &&
@@ -2616,7 +2618,7 @@ class Chart {
 
         let i: number;
 
-        // fire the chart.destroy event
+        // Fire the chart.destroy event
         fireEvent(chart, 'destroy');
 
         // Delete the chart from charts lookup array
@@ -2628,7 +2630,7 @@ class Chart {
         H.chartCount--;
         chart.renderTo.removeAttribute('data-highcharts-chart');
 
-        // remove events
+        // Remove events
         removeEvent(chart);
 
         // ==== Destroy collections:
@@ -2674,7 +2676,7 @@ class Chart {
 
         }
 
-        // clean it all up
+        // Clean it all up
         objectEach(chart, function (val: any, key: string): void {
             delete (chart as any)[key];
         });
@@ -2701,7 +2703,7 @@ class Chart {
         // Set the common chart properties (mainly invert) from the given series
         chart.propFromSeries();
 
-        // get axes
+        // Get axes
         chart.getAxes();
 
         // Initialize the series
@@ -2777,8 +2779,9 @@ class Chart {
 
     /**
      * Emit console warning if the a11y module is not loaded.
+     * @private
      */
-    public warnIfA11yModuleNotLoaded():void {
+    public warnIfA11yModuleNotLoaded(): void {
         const { options, title } = this;
         if (options && !this.accessibility) {
             // Make chart behave as an image with the title as alt text
@@ -2847,7 +2850,7 @@ class Chart {
         let series: (Series|undefined);
 
         if (options) { // <- not necessary
-            redraw = pick(redraw, true); // defaults to true
+            redraw = pick(redraw, true); // Defaults to true
 
             fireEvent(
                 chart,
@@ -3019,7 +3022,7 @@ class Chart {
         let loadingDiv = chart.loadingDiv,
             loadingSpan = chart.loadingSpan;
 
-        // create the layer at the first call
+        // Create the layer at the first call
         if (!loadingDiv) {
             chart.loadingDiv = loadingDiv = createElement('div', {
                 className: 'highcharts-loading highcharts-loading-hidden'
@@ -3288,7 +3291,8 @@ class Chart {
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
         objectEach(options, function (val, key): void {
-            if ((chart as any)[key] &&
+            if (
+                (chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
                 (chart as any)[key].update(val, false);
@@ -3633,7 +3637,7 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted, resetZoomButton } = this;
+            { inverted } = this;
 
         let hasZoomed = false,
             displayButton: boolean|undefined;
@@ -3651,8 +3655,8 @@ class Chart {
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
-                toLength = to[wh] || axis.len,
-                fromLength = from[wh] || axis.len,
+                toLength = pick(to[wh], axis.len),
+                fromLength = pick(from[wh], axis.len),
                 // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :
@@ -3675,16 +3679,22 @@ class Chart {
             }
 
             let newMin = axis.toValue(minPx, true) +
-                    minPointOffset * pointRangeDirection,
+                // Don't apply offset for selection (#20784)
+                    (selection ? 0 : minPointOffset * pointRangeDirection),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        (minPointOffset * pointRangeDirection) ||
-                        // Polar zoom tests failed when this was not commented:
-                        // (axis.isXAxis && axis.pointRangePadding) ||
-                        0
+                        selection ? // Don't apply offset for selection (#20784)
+                            0 :
+                            (
+                                (minPointOffset * pointRangeDirection) ||
+                                // Polar zoom tests failed when this was not
+                                // commented:
+                                // (axis.isXAxis && axis.pointRangePadding) ||
+                                0
+                            )
                     ),
                 allExtremes = axis.allExtremes;
 
@@ -3855,10 +3865,10 @@ class Chart {
             } else {
 
                 // Show or hide the Reset zoom button
-                if (displayButton && !resetZoomButton) {
+                if (displayButton && !this.resetZoomButton) {
                     this.showResetZoom();
-                } else if (!displayButton && resetZoomButton) {
-                    this.resetZoomButton = resetZoomButton.destroy();
+                } else if (!displayButton && this.resetZoomButton) {
+                    this.resetZoomButton = this.resetZoomButton.destroy();
                 }
 
                 this.redraw(
@@ -3901,7 +3911,7 @@ extend(Chart.prototype, {
      * @private
      */
     collectionsWithInit: {
-        // collectionName: [ initializingMethod, [extraArguments] ]
+        // CollectionName: [ initializingMethod, [extraArguments] ]
         xAxis: [Chart.prototype.addAxis, [true]],
         yAxis: [Chart.prototype.addAxis, [false]],
         series: [Chart.prototype.addSeries]
@@ -4210,4 +4220,4 @@ export default Chart;
  * @type {boolean|undefined}
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

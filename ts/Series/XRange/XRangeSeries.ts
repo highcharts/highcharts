@@ -128,7 +128,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Series.XRange')) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',
@@ -340,7 +340,8 @@ class XRangeSeries extends ColumnSeries {
             yAxis.categories
         ) {
             point.plotY = yAxis.translate(
-                (point.y as any),
+                (
+                    point.y as any),
                 0 as any,
                 1 as any,
                 0 as any,
@@ -356,7 +357,7 @@ class XRangeSeries extends ColumnSeries {
         const r = Math.min(
             relativeLength((
                 typeof borderRadius === 'object' ?
-                    borderRadius.radius :
+                    (borderRadius as any).radius :
                     borderRadius || 0
             ), pointHeight),
             Math.min(width, pointHeight) / 2
@@ -516,7 +517,7 @@ class XRangeSeries extends ColumnSeries {
         if (!point.isNull && point.visible !== false) {
 
             // Original graphic
-            if (graphic) { // update
+            if (graphic) { // Update
                 graphic.rect[verb](shapeArgs);
             } else {
                 point.graphic = graphic = renderer.g('point')

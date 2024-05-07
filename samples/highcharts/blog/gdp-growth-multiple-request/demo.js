@@ -55,46 +55,60 @@ fetch(urlCountry).then(function (response) {
                     arrayStringWorld.push(data.value);
                 });
 
-                // querry send string that we need to convert into numbers or null
+                // querry send string that we need to convert into numbers
+                // or null
                 for (let i = 0;
-                    i < arrayStringWorld.length; i++) { // we use world lenght since the world serie is supposed to be  the longer (the one with no missing values)
+                    i < arrayStringWorld.length; i++) { // we use world
+                    // lenght since the world serie is supposed to be  the
+                    // longer (the one with no missing values)
                     if (arrayStringCountry[i] !== null) {
                         arrayCountry.push(parseFloat(
-                            arrayStringCountry[i]));
+                            arrayStringCountry[i]
+                        )
+                        );
                     } else {
                         arrayCountry.push(null);
                     }
 
                     if (arrayStringRegion[i] !== null) {
                         arrayRegion.push(parseFloat(
-                            arrayStringRegion[i]));
+                            arrayStringRegion[i]
+                        )
+                        );
                     } else {
                         arrayRegion.push(null);
                     }
 
                     if (arrayStringIncome[i] !== null) {
                         arrayIncome.push(parseFloat(
-                            arrayStringIncome[i]));
+                            arrayStringIncome[i]
+                        )
+                        );
                     } else {
                         arrayIncome.push(null);
                     }
 
                     if (arrayStringWorld[i] !== null) {
                         arrayWorld.push(parseFloat(
-                            arrayStringWorld[i]));
+                            arrayStringWorld[i]
+                        )
+                        );
                     } else {
                         arrayWorld.push(null);
                     }
                 }
 
                 // Create the Chart
-                const chart = new Highcharts.Chart({
+                Highcharts.chart({
 
                     chart: {
                         type: 'spline',
                         renderTo: 'container'
                     },
-                    colors: ['#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e', '#00adef', '#f4bb90'],
+                    colors: [
+                        '#6e9fc5', '#ffdf51', '#a6ca6d', '#ad46d6', '#f26a2e',
+                        '#00adef', '#f4bb90'
+                    ],
                     title: {
                         text: indicatorName,
                         style: {
@@ -104,7 +118,9 @@ fetch(urlCountry).then(function (response) {
                     type: 'spline',
                     tooltip: {
                         valueDecimals: 2,
-                        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}%</b><br/>'
+                        pointFormat: '<span style="color:{point.color}">' +
+                            '\u25CF</span> {series.name}: <b>{point.y}%</b>' +
+                            '<br/>'
                     },
                     plotOptions: {
                         series: {

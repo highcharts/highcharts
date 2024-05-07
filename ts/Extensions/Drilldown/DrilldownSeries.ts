@@ -39,8 +39,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -48,7 +46,6 @@ const {
     fireEvent,
     merge,
     pick,
-    pushUnique,
     syncTimeout
 } = U;
 
@@ -199,7 +196,7 @@ function columnAnimateDrillupFrom(
 
     // Cancel mouse events on the series group (#2787)
     (series.trackerGroups || []).forEach((key: string): void => {
-        // we don't always have dataLabelsGroup
+        // We don't always have dataLabelsGroup
         if ((series as AnyRecord)[key]) {
             (series as AnyRecord)[key].on('mouseover');
         }
@@ -332,15 +329,15 @@ function compose(
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
 ): void {
+    const PointClass = SeriesClass.prototype.pointClass,
+        pointProto = PointClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const PointClass = SeriesClass.prototype.pointClass,
-            pointProto = PointClass.prototype,
-            {
-                column: ColumnSeriesClass,
-                map: MapSeriesClass,
-                pie: PieSeriesClass
-            } = seriesTypes;
+    if (!pointProto.doDrilldown) {
+        const {
+            column: ColumnSeriesClass,
+            map: MapSeriesClass,
+            pie: PieSeriesClass
+        } = seriesTypes;
 
         addEvent(PointClass, 'afterInit', onPointAfterInit);
         addEvent(PointClass, 'afterSetState', onPointAfterSetState);
@@ -456,7 +453,7 @@ function mapAnimateDrillupFrom(
     if (chart && chart.mapView) {
         chart.mapView.allowTransformAnimation = false;
     }
-    // stop duplicating and overriding animations
+    // Stop duplicating and overriding animations
     if (series.options) {
         series.options.inactiveOtherPoints = true;
     }
@@ -482,7 +479,7 @@ function mapAnimateDrillupTo(
             group.attr({
                 opacity: 0.01
             });
-            // stop duplicating and overriding animations
+            // Stop duplicating and overriding animations
             if (series.options) {
                 series.options.inactiveOtherPoints = true;
             }
@@ -675,7 +672,8 @@ function pieAnimateDrilldown(
                         start: start + i * startAngle,
                         end: start + (i + 1) * startAngle
                     }))[animationOptions ? 'animate' : 'attr'](
-                        (animateTo as any),
+                        (
+                            animateTo as any),
                         animationOptions
                     );
                 }

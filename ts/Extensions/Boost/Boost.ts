@@ -31,7 +31,6 @@ import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';
 import H from '../../Core/Globals.js';
 const {
-    composed,
     doc,
     win
 } = H;
@@ -39,8 +38,7 @@ import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    error,
-    pushUnique
+    error
 } = U;
 
 /* *
@@ -83,7 +81,7 @@ function compose(
         }
     }
 
-    if (ColorClass && pushUnique(composed, compose)) {
+    if (ColorClass && !ColorClass.names.lightgoldenrodyellow) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap
@@ -166,7 +164,7 @@ function hasWebGLSupport(): boolean {
                     return true;
                 }
             } catch (e) {
-                // silent error
+                // Silent error
             }
         }
     }
@@ -440,4 +438,4 @@ export default Boost;
  * @apioption  plotOptions.series.boostBlending
  */
 
-''; // adds doclets above to transpiled file
+''; // Adds doclets above to transpiled file

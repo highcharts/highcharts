@@ -53,6 +53,7 @@ const {
     isFunction,
     isNumber,
     isObject,
+    merge,
     pick,
     syncTimeout,
     removeEvent,
@@ -297,7 +298,7 @@ class Point {
 
         options = Point.prototype.optionsToObject.call(this, options);
 
-        // copy options directly to point
+        // Copy options directly to point
         extend(point, options as any);
 
         point.options = point.options ?
@@ -404,7 +405,7 @@ class Point {
             };
 
             if (point.legendItem) {
-                // pies have legend items
+                // Pies have legend items
                 chart.legend.destroyItem(point);
             }
 
@@ -752,7 +753,7 @@ class Point {
             ret[pointArrayMap[0]] = options;
 
         } else if (isArray(options)) {
-            // with leading x value
+            // With leading x value
             if (!keys && (options as any).length > valueCount) {
                 firstItemType = typeof (options as any)[0];
                 if (firstItemType === 'string') {
@@ -856,7 +857,7 @@ class Point {
             colorCount = optionsChart.colorCount,
             colorIndex: number;
 
-        // remove points nonZonedColor for later recalculation
+        // Remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
 
         if (series.options.colorByPoint) {
@@ -867,7 +868,7 @@ class Point {
             }
             colorIndex = series.colorCounter;
             series.colorCounter++;
-            // loop back to zero
+            // Loop back to zero
             if (series.colorCounter === colorCount) {
                 series.colorCounter = 0;
             }
@@ -976,7 +977,7 @@ class Point {
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
         (series.pointArrayMap || ['y']).forEach(function (key: string): void {
-            key = '{point.' + key; // without the closing bracket
+            key = '{point.' + key; // Without the closing bracket
             if (valuePrefix || valueSuffix) {
 
                 pointFormat = pointFormat.replace(
@@ -1077,7 +1078,7 @@ class Point {
                 }
             }
 
-            // record changes in the parallel arrays
+            // Record changes in the parallel arrays
             i = point.index as any;
             series.updateParallelArrays(point, i);
 
@@ -1091,7 +1092,7 @@ class Point {
                 point.options :
                 pick(options, (seriesOptions.data as any)[i]);
 
-            // redraw
+            // Redraw
             series.isDirty = series.isDirtyData = true;
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
                 chart.isDirtyBox = true;
@@ -1189,7 +1190,7 @@ class Point {
 
         this.selectedStaging = selected;
 
-        // fire the event with the default handler
+        // Fire the event with the default handler
         point.firePointEvent(
             selected ? 'select' : 'unselect',
             { accumulate: accumulate },
@@ -1210,7 +1211,7 @@ class Point {
 
                 point.setState((selected as any) && 'select');
 
-                // unselect all other points unless Ctrl or Cmd + click
+                // Unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
                     chart.getSelectedPoints().forEach(function (
                         loopPoint: Point
@@ -1299,7 +1300,10 @@ class Point {
      */
     public manageEvent(eventType: string): void {
         const point = this,
-            options = point.series.options.point || {},
+            options = merge(
+                point.series.options.point,
+                point.options
+            ),
             userEvent =
                 options.events?.[eventType as keyof typeof options.events];
 
@@ -1378,26 +1382,26 @@ class Point {
             stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
-        state = state || ''; // empty string
+        state = state || ''; // Empty string
 
         if (
-            // already has this state
+            // Already has this state
             (state === point.state && !move) ||
 
-            // selected points don't respond to hover
+            // Selected points don't respond to hover
             (point.selected && state !== 'select') ||
 
-            // series' state options is disabled
+            // Series' state options is disabled
             (stateOptions.enabled === false) ||
 
-            // general point marker's state options is disabled
+            // General point marker's state options is disabled
             (state && (
                 stateDisabled ||
                 (normalDisabled &&
                 (markerStateOptions as any).enabled === false)
             )) ||
 
-            // individual point marker's state options is disabled
+            // Individual point marker's state options is disabled
             (
                 state &&
                 pointMarker.states &&
@@ -1479,14 +1483,15 @@ class Point {
                 stateMarkerGraphic.hide();
             }
         } else {
-            // if a graphic is not applied to each point in the normal state,
+            // If a graphic is not applied to each point in the normal state,
             // create a shared graphic for the hover state
             if (state && markerStateOptions) {
                 newSymbol = pointMarker.symbol || series.symbol;
 
                 // If the point has another symbol than the previous one, throw
                 // away the state marker graphic and force a new one (#1459)
-                if (stateMarkerGraphic &&
+                if (
+                    stateMarkerGraphic &&
                     stateMarkerGraphic.currentSymbol !== newSymbol
                 ) {
                     stateMarkerGraphic = stateMarkerGraphic.destroy();
@@ -1518,7 +1523,8 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic &&
+                if (
+                    !chart.styledMode && stateMarkerGraphic &&
                     point.state !== 'inactive'
                 ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
@@ -1542,7 +1548,8 @@ class Point {
             markerGraphic && markerGraphic.visibility || 'inherit'
         );
 
-        if (haloOptions &&
+        if (
+            haloOptions &&
             haloOptions.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
@@ -1575,7 +1582,10 @@ class Point {
                 ));
             }
 
-        } else if (halo && halo.point && halo.point.haloPath) {
+        } else if (
+            halo?.point?.haloPath &&
+            !halo.point.destroyed
+        ) {
             // Animate back to 0 on the current halo point (#6055)
             halo.animate(
                 { d: halo.point.haloPath(0) },
@@ -1621,7 +1631,7 @@ class Point {
  * */
 
 interface Point extends PointLike {
-    // merge extensions with point class
+    // Merge extensions with point class
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
 }
 
@@ -1881,4 +1891,4 @@ export default Point;
  *        Event that occurred.
  */
 
-''; // keeps doclets above in JS file.
+''; // Keeps doclets above in JS file.

@@ -35,7 +35,8 @@ const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
-    composed
+    composed,
+    isTouchDevice
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
@@ -130,6 +131,8 @@ class Pointer {
 
     public hasPinched?: boolean;
 
+    public hasPointerCapture?: boolean;
+
     public hasZoom?: boolean;
 
     public initiated?: boolean;
@@ -141,6 +144,8 @@ class Pointer {
     public options: Options;
 
     public pinchDown?: Array<PointerEvent>;
+
+    public pointerCaptureEventsToUnbind: Array<Function> = [];
 
     public res?: boolean;
 
@@ -241,7 +246,7 @@ class Pointer {
             }
         }
 
-        // memory and CPU leak
+        // Memory and CPU leak
         clearInterval(pointer.tooltipTimeout);
 
         objectEach(pointer, function (_val, prop): void {
@@ -781,8 +786,10 @@ class Pointer {
             // Only search on hovered series if it has stickyTracking false
             [hoverSeries as any] :
             // Filter what series to look in.
-            series.filter((s): boolean => s.stickyTracking &&
-                (eventArgs.filter || filter)(s));
+            series.filter(
+                (s): boolean => s.stickyTracking &&
+                (eventArgs.filter || filter)(s)
+            );
 
         // Use existing hovered point or find the one closest to coordinates.
         const hoverPoint = useExisting || !e ?
@@ -976,7 +983,8 @@ class Pointer {
                     touches.item(0) as Touch :
                     (pick( // #13534
                         touches.changedTouches,
-                        (e as TouchEvent).changedTouches)
+                        (e as TouchEvent).changedTouches
+                    )
                     )[0] :
                 e as unknown as PointerEvent
         );
@@ -1014,7 +1022,8 @@ class Pointer {
         if (!chart.cancelClick) {
 
             // On tracker click, fire the series and point events. #783, #1583
-            if (hoverPoint &&
+            if (
+                hoverPoint &&
                 this.inClass(pEvt.target as any, 'highcharts-tracker')
             ) {
 
@@ -1616,7 +1625,7 @@ class Pointer {
         let hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries;
 
-        const // onMouseOver or already hovering a series with directTouch
+        const // `onMouseOver` or already hovering a series with directTouch
             isDirectTouch = (!e || e.type !== 'touchmove') && (
                 !!p || (
                     (hoverSeries && hoverSeries.directTouch) &&
@@ -1836,6 +1845,96 @@ class Pointer {
                 { passive: false }
             );
         }
+
+        this.setPointerCapture();
+        addEvent(this.chart, 'redraw', this.setPointerCapture.bind(this));
+    }
+
+    /**
+     * Sets, or removes on update, pointer events using pointer capture for
+     * tooltip.followTouchMove if any series has findNearestPointBy that
+     * includes the y dimension.
+     * @private
+     * @function Highcharts.Pointer#setPointerCapture
+    */
+    public setPointerCapture(): void {
+        // Only for touch
+        if (!isTouchDevice) {
+            return;
+        }
+
+        const pointer = this,
+            events = pointer.pointerCaptureEventsToUnbind,
+            chart = pointer.chart,
+            container = chart.container,
+            followTouchMove = pick(
+                chart.options.tooltip?.followTouchMove,
+                true
+            ),
+            shouldHave = followTouchMove && chart.series.some(
+                (series): boolean => (series.options.findNearestPointBy as any)
+                    .indexOf('y') > -1
+            );
+
+        if (!pointer.hasPointerCapture && shouldHave) {
+            // Add
+
+            // Bind
+            events.push(
+                addEvent(
+                    container,
+                    'pointerdown',
+                    (e: PointerEvent): void => {
+                        if (
+                            (e.target as Element)?.hasPointerCapture(
+                                e.pointerId
+                            )
+                        ) {
+                            (e.target as Element)?.releasePointerCapture(
+                                e.pointerId
+                            );
+                        }
+                    }
+                ),
+                addEvent(
+                    container,
+                    'pointermove',
+                    (e: PointerEvent): void => {
+                        chart.pointer?.getPointFromEvent(e)?.onMouseOver(e);
+                    }
+                )
+            );
+
+            if (!chart.styledMode) {
+                css(container, { 'touch-action': 'none' });
+            }
+            // Mostly for styled mode
+            container.className += ' highcharts-no-touch-action';
+
+            pointer.hasPointerCapture = true;
+        } else if (pointer.hasPointerCapture && !shouldHave) {
+            // Remove
+
+            // Unbind
+            events.forEach((e: Function): void => e());
+            events.length = 0;
+
+            if (!chart.styledMode) {
+                css(container, {
+                    'touch-action': pick(
+                        chart.options.chart.style?.['touch-action'],
+                        'manipulation'
+                    )
+                });
+            }
+            // Mostly for styled mode
+            container.className = container.className.replace(
+                ' highcharts-no-touch-action',
+                ''
+            );
+
+            pointer.hasPointerCapture = false;
+        }
     }
 
     /**
@@ -2039,7 +2138,7 @@ namespace Pointer {
      */
     export function compose(ChartClass: typeof Chart): void {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'Core.Pointer')) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch
@@ -2194,4 +2293,4 @@ export default Pointer;
  * @type {Array<Highcharts.SelectDataObject>}
  */
 
-''; // keeps doclets above in JS file
+''; // Keeps doclets above in JS file

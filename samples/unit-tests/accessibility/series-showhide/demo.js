@@ -20,7 +20,12 @@ QUnit.test(
                 return Highcharts.A11yChartUtilities.getSeriesA11yElement(
                     series
                 ).getAttribute('aria-hidden');
-            };
+            },
+            { proxyProvider, keyboardNavigation } = chart.accessibility,
+            initDomElementProviderElementsLength =
+                proxyProvider.domElementProvider.elements.length,
+            initEventRemoversLength =
+                keyboardNavigation.eventProvider.eventRemovers.length;
 
         assert.strictEqual(
             getSeriesAriaHidden(seriesA),
@@ -56,7 +61,9 @@ QUnit.test(
         });
 
         assert.notStrictEqual(
-            chart.series[0].a11yProxyElement.innerElement.getAttribute('aria-label').indexOf('Bean'),
+            chart.series[0].a11yProxyElement.innerElement.getAttribute(
+                'aria-label'
+            ).indexOf('Bean'),
             -1,
             '#15902: Proxy button aria-label should have been updated'
         );
@@ -75,6 +82,21 @@ QUnit.test(
                 .legend.proxyElements.length,
             3,
             '#15902: Proxy items should be recreated after removing legend item'
+        );
+
+        assert.strictEqual(
+            proxyProvider.domElementProvider.elements.length,
+            initDomElementProviderElementsLength,
+            `#20329: After multiple chart re-renders dom element provider
+            should'nt create detached HTML elements and remove existing old
+            ones.`
+        );
+
+        assert.strictEqual(
+            keyboardNavigation.eventProvider.eventRemovers.length,
+            initEventRemoversLength,
+            `#20329: After multiple chart re-renders event removers in keyboard
+            navigation should remove existing old ones.`
         );
     }
 );

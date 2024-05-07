@@ -22,10 +22,13 @@
  *
  * */
 
-import type ComponentType from '../ComponentType';
+import type Component from '../Component';
 
 import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
+
+import U from '../../../Core/Utilities.js';
+const { merge, isObject } = U;
 
 /* *
  *
@@ -48,15 +51,19 @@ class Sync {
      * @param component
      * The component to which the emitters and handlers are attached.
      *
-     * @param syncHandlers
-     * The emitters and handlers to use for each event.
+     * @param predefinedSyncConfig
+     * The predefined sync configuration.
      */
     constructor(
-        component: ComponentType,
-        syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
+        component: Component,
+        predefinedSyncConfig: Sync.PredefinedSyncConfig
     ) {
         this.component = component;
-        this.syncConfig = syncHandlers;
+        this.predefinedSyncConfig = predefinedSyncConfig;
+        this.syncConfig = Sync.prepareSyncConfig(
+            predefinedSyncConfig,
+            component.options.sync
+        );
         this.registeredSyncHandlers = {};
         this.registeredSyncEmitters = {};
         this.isSyncing = false;
@@ -93,8 +100,12 @@ class Sync {
     /**
      * The component to which the emitters and handlers are attached.
      */
-    public component: ComponentType;
+    public component: Component;
 
+    /**
+     * The predefined sync configuration.
+     */
+    public predefinedSyncConfig: Sync.PredefinedSyncConfig;
 
     /**
      * The emitters and handlers to use for each event
@@ -111,6 +122,63 @@ class Sync {
      *  Functions
      *
      * */
+
+    /**
+     * Method that prepares the sync configuration from the predefined config
+     * and current component options.
+     *
+     * @param predefinedConfig The predefined sync configuration.
+     * @param componentSyncOptions The current component sync options.
+     * @returns The sync configuration.
+     */
+    private static prepareSyncConfig(
+        predefinedConfig: Sync.PredefinedSyncConfig,
+        componentSyncOptions: Sync.RawOptionsRecord = {}
+    ) : Sync.OptionsRecord {
+        const {
+            defaultSyncPairs: defaultPairs,
+            defaultSyncOptions: defaultOptionsList
+        } = predefinedConfig;
+
+        return Object.keys(componentSyncOptions).reduce(
+            (acc: Sync.OptionsRecord, syncName): Sync.OptionsRecord => {
+                if (syncName) {
+                    const defaultPair = defaultPairs[syncName];
+                    const defaultOptions = defaultOptionsList[syncName];
+                    const entry = componentSyncOptions[syncName];
+
+                    const preparedOptions: Sync.OptionsEntry = merge(
+                        defaultOptions || {},
+                        { enabled: isObject(entry) ? entry.enabled : entry },
+                        isObject(entry) ? entry : {}
+                    );
+
+                    if (defaultPair && preparedOptions.enabled) {
+                        const keys: (keyof Sync.SyncPair)[] = [
+                            'emitter',
+                            'handler'
+                        ];
+
+                        for (const key of keys) {
+                            if (
+                                preparedOptions[key] === true ||
+                                preparedOptions[key] === void 0
+                            ) {
+                                preparedOptions[key] =
+                                    defaultPair[key] as any;
+                            }
+                        }
+                    }
+
+                    acc[syncName] = preparedOptions;
+                }
+
+                return acc;
+            },
+            {}
+        );
+    }
+
     /**
      * Add new emitter to the registered emitters.
      *
@@ -163,60 +231,54 @@ class Sync {
      * Registers the handlers and emitters on the component
      */
     public start(): void {
-        const { syncConfig, component } = this;
-        for (const id of Object.keys(syncConfig)) {
-            if (!syncConfig[id]) {
+        const { component } = this;
+
+        this.syncConfig = Sync.prepareSyncConfig(
+            this.predefinedSyncConfig,
+            component.options.sync
+        );
+
+        for (const id of Object.keys(this.syncConfig)) {
+            const syncOptions = this.syncConfig[id];
+            if (!syncOptions) {
                 continue;
             }
+
             let {
                 emitter: emitterConfig,
                 handler: handlerConfig
-            } = syncConfig[id];
+            } = syncOptions;
+
             if (handlerConfig) {
-                // Avoid registering the same handler multiple times
-                // i.e. panning and selection uses the same handler
-                if (typeof handlerConfig === 'boolean') {
+                if (handlerConfig === true) {
                     handlerConfig =
                         Sync.defaultHandlers[id]
                             .handler as Sync.HandlerConfig;
                 }
 
-                // Create a tuple if the handler is a function.
-                if (typeof handlerConfig === 'function') {
-                    handlerConfig = [id, handlerConfig];
-                }
-
-                const handler = new SyncHandler(...handlerConfig);
+                const handler = new SyncHandler(id, handlerConfig);
                 if (!this.isRegisteredHandler(handler.id)) {
                     this.registerSyncHandler(handler);
-
                     handler.register(component);
                 }
             }
 
             if (emitterConfig) {
-                if (typeof emitterConfig === 'boolean') {
+                if (emitterConfig === true) {
                     emitterConfig =
                         Sync.defaultHandlers[id]
                             .emitter as Sync.EmitterConfig;
                 }
 
-                // TODO: should rework the SyncHandler constructor when
-                // all handlers are updated
-                if (typeof emitterConfig === 'function') {
-                    emitterConfig = [id, emitterConfig];
-                }
-
-                const emitter = new SyncEmitter(...emitterConfig);
+                const emitter = new SyncEmitter(id, emitterConfig);
                 if (!this.isRegisteredEmitter(emitter.id)) {
                     this.registerSyncEmitter(emitter);
                     emitter.create(component);
                 }
             }
-
         }
-        this.isSyncing = true;
 
+        this.isSyncing = true;
         this.listeners.push(component.on('update', (): void => this.stop()));
     }
 
@@ -234,7 +296,6 @@ class Sync {
         Object.keys(registeredSyncHandlers).forEach((id): void => {
             registeredSyncHandlers[id].remove();
             delete registeredSyncHandlers[id];
-
         });
         Object.keys(registeredSyncEmitters).forEach((id): void => {
             registeredSyncEmitters[id].remove();
@@ -252,8 +313,6 @@ class Sync {
             this.start();
         }));
     }
-
-
 }
 
 /* *
@@ -270,26 +329,32 @@ namespace Sync {
      *
      * */
 
-    export type EventType = (
-        | 'extremes'
-        | 'visibility'
-        | 'highlight'
-    );
+    /** @internal */
+    export type EmitterConfig = SyncEmitter['func'];
 
     /** @internal */
-    export type EmitterConfig = (
-        | [SyncEmitter['id'], SyncEmitter['func']]
-        | SyncEmitter['func']
-    );
+    export type HandlerConfig = SyncHandler['func'];
 
     /** @internal */
-    export type HandlerConfig = (
-        [
-            SyncHandler['id'],
-            SyncHandler['func']
-        ] |
-        SyncHandler['func']
-    );
+    export interface SyncPair {
+        emitter?: EmitterConfig;
+        handler?: HandlerConfig;
+    }
+
+    /**
+     * The configuration used to determine the default sync options, handlers
+     * and emitters for a component.
+     */
+    export interface PredefinedSyncConfig {
+        /**
+         * The default sync pairs (emitters and handlers) for the component.
+         */
+        defaultSyncPairs: Record<string, SyncPair>;
+        /**
+         * The default sync options for the component.
+         */
+        defaultSyncOptions: Record<string, OptionsEntry>;
+    }
 
     export interface OptionsEntry {
 
@@ -310,6 +375,21 @@ namespace Sync {
         emitter?: EmitterConfig | null | boolean;
 
         /**
+         * The group in which components sharing the same connector should be
+         * synced.
+         *
+         * If `null` or `undefined` the component will be synced with all
+         * components with the same connector.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/groups | Sync groups for the same connector }
+         *
+         * @default undefined
+         */
+        group?: string;
+
+        /**
          * Responsible for _handling_ incoming action from the synced component
          * group.
          *
@@ -325,6 +405,12 @@ namespace Sync {
         Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
     );
 
+    /** @internal */
+    export type RawOptionsRecord = (
+        Record<(
+            SyncEmitter['id']|SyncHandler['id']
+        ), undefined|boolean|OptionsEntry>
+    );
 }
 /* *
  *

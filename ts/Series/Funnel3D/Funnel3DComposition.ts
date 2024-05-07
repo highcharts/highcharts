@@ -31,16 +31,12 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
-const {
-    charts,
-    composed
-} = H;
+const { charts } = H;
 import U from '../../Core/Utilities.js';
 const {
     error,
     extend,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -86,11 +82,10 @@ interface Funnel3DPathsObject extends SVGPath3D {
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
+    const rendererProto =
+        SVGRendererClass.prototype as SVGRenderer3D.Composition;
 
-    if (pushUnique(composed, compose)) {
-        const rendererProto =
-            SVGRendererClass.prototype as SVGRenderer3D.Composition;
-
+    if (!rendererProto.funnel3d) {
         rendererProto.Element3D.types.funnel3d = SVGElement3DFunnel;
 
         extend(rendererProto, {
@@ -110,13 +105,13 @@ function rendererFunnel3d(
         funnel3d: SVGElement =
             renderer.element3d('funnel3d', shapeArgs) as any,
         styledMode = renderer.styledMode,
-        // hide stroke for Firefox
+        // Hide stroke for Firefox
         strokeAttrs: SVGAttributes = {
             'stroke-width': 1,
             stroke: 'none'
         };
 
-    // create groups for sides for opacity setter
+    // Create groups for sides for opacity setter
     funnel3d.upperGroup = renderer.g('funnel3d-upper-group').attr({
         zIndex: funnel3d.frontUpper.zIndex
     }).add(funnel3d);
@@ -170,14 +165,14 @@ function rendererFunnel3dPath(
 
     const renderer = this,
         chart: Chart = charts[renderer.chartIndex] as any,
-        // adjust angles for visible edges
+        // Adjust angles for visible edges
         // based on alpha, selected through visual tests
         alphaCorrection = shapeArgs.alphaCorrection = 90 - Math.abs(
             ((chart.options.chart.options3d as any).alpha % 180) -
             90
         ),
 
-        // set zIndexes of parts based on cuboid logic, for
+        // Set zIndexes of parts based on cuboid logic, for
         // consistency
         cuboidData = this.cuboidPath.call(renderer, merge(
             shapeArgs, {
@@ -212,7 +207,7 @@ function rendererFunnel3dPath(
         middleTopArgs = bottomArgs,
         middleTop = bottom,
         middleBottom = bottom,
-        // masking for cylinders or a missing part of a side shape
+        // Masking for cylinders or a missing part of a side shape
         useAlphaCorrection;
 
     if (hasMiddle) {

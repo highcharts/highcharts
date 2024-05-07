@@ -10,7 +10,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-1',
+        renderTo: 'dashboard-1',
         elements: [{
             tagName: 'div',
             children: [{
@@ -20,7 +20,8 @@ Dashboards.board('container', {
                 }
             }, {
                 tagName: 'p',
-                textContent: 'This is a paragraph between two images. Both are in the same cell.'
+                textContent: 'This is a paragraph between two images. Both ' +
+                    'are in the same cell.'
             }, {
                 tagName: 'img',
                 attributes: {

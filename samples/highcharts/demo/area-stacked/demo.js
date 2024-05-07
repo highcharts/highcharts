@@ -20,7 +20,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         shared: true,
-        headerFormat: '<span style="font-size:12px"><b>{point.key}</b></span><br>'
+        headerFormat: '<span style="font-size:12px"><b>{point.key}</b></span>' +
+            '<br>'
     },
     plotOptions: {
         series: {

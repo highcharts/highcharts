@@ -206,7 +206,7 @@ class RowEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.row);
-            // toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
+            /// toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
 
             // @ToDo - mask is buggy - should be refactored or removed.
             // if (this.row) {
@@ -234,7 +234,7 @@ class RowEditToolbar extends EditToolbar {
     }
 
     public resetEditedRow(): void {
-        // super.resetCurrentElements(this.row as Row, true);
+        /// super.resetCurrentElements(this.row as Row, true);
         this.editedRow = void 0;
     }
 }

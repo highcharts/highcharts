@@ -90,7 +90,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @since 10.0.0
      * @product   highcharts
      * @extends   navigation.breadcrumbs
-     * @optionparent plotOptions.treemap.breadcrumbs
+     * @apioption plotOptions.treemap.breadcrumbs
      */
 
     /**
@@ -618,7 +618,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
  * @apioption series.treemap.data.parent
  */
 
-''; // keeps doclets above detached
+''; // Keeps doclets above detached
 
 /* *
  *

@@ -370,7 +370,10 @@ function gzipFile(fileSourcePath, fileTargetPath) {
 function isDirectory(
     path
 ) {
-    return FS.lstatSync(path).isDirectory();
+    return (
+        FS.existsSync(path) &&
+        FS.lstatSync(path).isDirectory()
+    );
 }
 
 /**
@@ -406,7 +409,10 @@ function isDotEntry(
 function isFile(
     path
 ) {
-    return FS.lstatSync(path).isFile();
+    return (
+        FS.existsSync(path) &&
+        FS.lstatSync(path).isFile()
+    );
 }
 
 

@@ -34,11 +34,14 @@ const {
  *
  * */
 
+/**
+ *
+ */
 function compose(
     AreaSeriesClass: typeof AreaSeries
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Area3DSeries')) {
         wrap(
             AreaSeriesClass.prototype,
             'getGraphPath',
@@ -48,6 +51,9 @@ function compose(
 
 }
 
+/**
+ *
+ */
 function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
     proceed: Function

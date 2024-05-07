@@ -519,7 +519,7 @@ class GaugeSeries extends Series {
 
             if (graphic) {
                 graphic.animate(shapeArgs);
-                shapeArgs.d = d; // animate alters it
+                shapeArgs.d = d; // Animate alters it
             } else {
                 point.graphic =
                     (renderer as any)[point.shapeType as any](shapeArgs)
@@ -576,12 +576,12 @@ class GaugeSeries extends Series {
                 const graphic = point.graphic;
 
                 if (graphic) {
-                    // start value
+                    // Start value
                     graphic.attr({
                         rotation: series.yAxis.startAngleRad * 180 / Math.PI
                     });
 
-                    // animate
+                    // Animate
                     graphic.animate({
                         rotation: point.shapeArgs.rotation
                     }, series.options.animation);
@@ -650,8 +650,8 @@ interface GaugeSeries {
 }
 
 extend(GaugeSeries.prototype, {
-    // chart.angular will be set to true when a gauge series is present,
-    // and this will be used on the axes
+    // `chart.angular` will be set to true when a gauge series is present, and
+    // this will be used on the axes
     angular: true,
     directTouch: true, // #5063
     drawGraph: noop,
@@ -749,4 +749,4 @@ export default GaugeSeries;
  * @apioption series.gauge.data
  */
 
-''; // adds the doclets above in the transpiled file
+''; // Adds the doclets above in the transpiled file

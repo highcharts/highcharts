@@ -156,6 +156,7 @@ function task() {
 
         if (
             argv.force ||
+            argv.webpack ||
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
@@ -165,7 +166,7 @@ function task() {
             gulp.series(
                 'scripts-ts',
                 'scripts-css',
-                'scripts-js'
+                argv.webpack ? 'scripts-webpack' : 'scripts-js'
             )(
                 function (error) {
 

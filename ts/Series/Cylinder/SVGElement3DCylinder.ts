@@ -63,7 +63,7 @@ class SVGElement3DCylinder extends SVGElement3D {
             bottom: color(fill).brighten(-0.1).get()
         });
 
-        // fill for animation getter (#6776)
+        // Fill for animation getter (#6776)
         this.color = this.fill = fill;
 
         return this;

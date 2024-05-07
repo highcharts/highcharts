@@ -27,10 +27,12 @@ Highcharts.ganttChart('container', {
             descriptionFormatter: function (point) {
                 const dependency = point.dependency &&
                         point.series.chart.get(point.dependency).name,
-                    dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
+                    dependsOn = dependency ?
+                        ' Depends on ' + dependency + '.' : '';
 
                 return Highcharts.format(
-                    '{point.yCategory}. Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.{dependsOn}',
+                    '{point.yCategory}. Start {point.x:%Y-%m-%d}, end ' +
+                    '{point.x2:%Y-%m-%d}.{dependsOn}',
                     { point, dependsOn }
                 );
             }
@@ -39,7 +41,8 @@ Highcharts.ganttChart('container', {
     lang: {
         accessibility: {
             axis: {
-                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+                xAxisDescriptionPlural: 'The chart has a two-part X axis ' +
+                    'showing time in both week numbers and days.'
             }
         }
     },

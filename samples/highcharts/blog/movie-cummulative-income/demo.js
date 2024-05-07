@@ -18,7 +18,8 @@ Highcharts.chart('container', {
                 formatter: function () {
                     if (this.point.x === this.series.data[
                         this.series.data.length - 1].x &
-                        this.series.options.showlabel) {
+                        this.series.options.showlabel
+                    ) {
                         return this.series.options.extra.title;
                     }
                 },
@@ -28,7 +29,9 @@ Highcharts.chart('container', {
         }
     },
     chart: {
-        zoomType: 'x',
+        zooming: {
+            type: 'x'
+        },
         marginRight: 120
     },
     tooltip: {
@@ -42,7 +45,8 @@ Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: 'Only 3 movies: Jurassic Park (497 days) ET, Gladiator and were more than a year in theaters.'
+        text: 'Only 3 movies: Jurassic Park (497 days) ET, Gladiator and ' +
+            'were more than a year in theaters.'
     },
     xAxis: {
         title: {
@@ -9735,7 +9739,8 @@ Highcharts.chart('container', {
             enabled: false
         },
         extra: {
-            title: 'The Chronicles of Narnia: The Lion, the Witch and the Wardrobe',
+            title: 'The Chronicles of Narnia: The Lion, the Witch and the ' +
+                'Wardrobe',
             genre: 'Fantasy',
 
             mpaaRating: 'PG',

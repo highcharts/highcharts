@@ -190,6 +190,9 @@ abstract class Controllable implements ControlTarget {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _parentGroup?: SVGElement
     ): void {
+        if (this.options.className && this.graphic) {
+            this.graphic.addClass(this.options.className);
+        }
         this.renderControlPoints();
     }
 
@@ -326,7 +329,7 @@ abstract class Controllable implements ControlTarget {
  * */
 
 interface Controllable extends ControllableLike, ControlTarget {
-    // placeholder for additional class members
+    // Placeholder for additional class members
 }
 
 ControlTarget.compose(Controllable);
@@ -381,4 +384,4 @@ export default Controllable;
  * @type {Array<Highcharts.Point>}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

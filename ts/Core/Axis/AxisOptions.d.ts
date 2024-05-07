@@ -111,7 +111,7 @@ export interface AxisLabelOptions {
     formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;
     indentation: number;
     overflow: OptionsOverflowValue;
-    padding: number;
+    padding?: number;
     reserveSpace?: boolean;
     rotation?: number|'auto';
     staggerLines: number;
@@ -169,7 +169,7 @@ export interface AxisOptions {
     offsets?: [number, number, number, number];
     opposite?: boolean;
     ordinal?: boolean;
-    overscroll?: number;
+    overscroll?: number | string;
     pane?: number;
     panningEnabled: boolean;
     range?: number;
@@ -259,7 +259,7 @@ export interface AxisTitleOptions {
 }
 
 export interface XAxisOptions extends AxisOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 export interface YAxisOptions extends AxisOptions {

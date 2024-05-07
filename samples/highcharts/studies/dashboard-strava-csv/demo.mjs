@@ -222,7 +222,7 @@ function generateChecks() {
 // Is a function as we have to get state after loading the connector
 const components = state => [
     {
-        cell: 'datasource',
+        renderTo: 'datasource',
         type: 'html',
         connector,
         title: "Datasource",
@@ -256,7 +256,7 @@ const components = state => [
         }
     },
     {
-        cell: 'selectors',
+        renderTo: 'selectors',
         type: 'html',
         connector,
         title: "Filters",
@@ -453,7 +453,7 @@ const components = state => [
         }
     },
     {
-        cell: 'columnchart',
+        renderTo: 'columnchart',
         type: 'Highcharts',
         connector,
         presentationModifier: new SortModifier({
@@ -494,7 +494,7 @@ const components = state => [
         }
     },
     {
-        cell: 'piechart',
+        renderTo: 'piechart',
         type: 'Highcharts',
         connector,
         presentationModifier: new GroupModifier({
@@ -528,7 +528,7 @@ const components = state => [
         }
     },
     {
-        cell: 'totals',
+        renderTo: 'totals',
         type: 'Highcharts',
         connector,
         presentationModifier: new GroupModifier({
@@ -568,7 +568,7 @@ const components = state => [
         }
     },
     {
-        cell: 'table',
+        renderTo: 'table',
         type: 'html',
         connector,
         title: 'Activities',

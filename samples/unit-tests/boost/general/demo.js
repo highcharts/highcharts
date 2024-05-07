@@ -136,7 +136,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             // which QUnit catches by itself
             assert.ok(
                 true,
-                'Removing a series before it is fully rendered should not cause error'
+                'Removing a series before it is fully rendered should not ' +
+                'cause error'
             );
             done();
         }, 1000);
@@ -286,7 +287,10 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                 Highcharts,
                 'displayError',
                 function (e) {
-                    assert.strictEqual(e.code, 12, 'Error 12 should be invoked');
+                    assert.strictEqual(
+                        e.code, 12, 'Error 12 should be ' +
+                        'invoked'
+                    );
                     remove();
                     done();
                 }
@@ -408,9 +412,48 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         assert.strictEqual(
             chart.boost.clipRect.attr('height'),
             chart.navigator.top + chart.navigator.height - chart.plotTop,
-            'Clip rect should take into account navigator boosted series, #17820.'
+            'Clip rect should take into account navigator boosted series, ' +
+            '#17820.'
         );
 
+        chart.update({
+            chart: {
+                inverted: true
+            },
+            navigator: {
+                height: 40
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('height'),
+            chart.plotHeight,
+            `Clip rect height should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('width'),
+            chart.plotWidth + chart.navigator.top + chart.navigator.height,
+            `Clip rect width should take into account navigator boosted series
+            on inverted charts, #20936.`
+        );
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.navigator.left,
+            `Clip rect 'x' should take into account navigator boosted
+            series on inverted charts, #20936.`
+        );
+
+        chart.update({
+            navigator: {
+                opposite: true
+            }
+        });
+        assert.strictEqual(
+            chart.boost.clipRect.attr('x'),
+            chart.plotLeft,
+            `Clip rect 'x' should take into account opposite navigator boosted
+            series on inverted charts, #20936.`
+        );
     }
 );
 
@@ -462,6 +505,63 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             '2',
             'The chart-level boost target should take the z-index of the ' +
             'series (#9819)'
+        );
+    }
+);
+
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Dynamic y-axis scale (#21068)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {});
+
+        chart.update({
+            yAxis: {
+                id: true
+            },
+            boost: {
+                enabled: false,
+                useGPUTranslations: true,
+                usePreallocated: true
+            },
+            series: [{
+                type: 'scatter',
+                data: [
+                    [0, 17844.9970195],
+                    [3, 0],
+                    [3, 0],
+                    [15, 0],
+                    [20, 3.251707695608],
+                    [25, 0],
+                    [48, 0],
+                    [83, 4.613364613784801],
+                    [101, 107.9853419401976],
+                    [172, 40.15339203180021],
+                    [207, 0],
+                    [358, 0],
+                    [882, 493.2697085333866],
+                    [1083, 137.5775549],
+                    [1174, 0],
+                    [1338, 1169.8349916205545],
+                    [1749, 515.4426648740781],
+                    [2932, 2222.5919712993655],
+                    [4616, 7394.206545882728],
+                    [8680, 2851.592296281099],
+                    [20078, 4845.327601560356],
+                    [20770, 88484.33223818678],
+                    [33848, 19836.59438924057],
+                    [66751, -123728.19741115364],
+                    [255763, 27663.11820818996],
+                    [332189, 205914.7489098137],
+                    [365274, 170649.91926368963]
+                ]
+            }]
+        }, true, true);
+
+        assert.notEqual(
+            chart.yAxis[0].tickPositions.length,
+            2,
+            'The y-axis should have more than two ticks'
         );
     }
 );

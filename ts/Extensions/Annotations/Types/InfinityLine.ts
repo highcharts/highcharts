@@ -61,7 +61,7 @@ class InfinityLine extends CrookedLine {
                         annotation.chart,
                         points[0].target,
                         {
-                            // add 0 or 1 to x or y depending on type
+                            // Add 0 or 1 to x or y depending on type
                             x: points[0].x + +(type === 'horizontalLine'),
                             y: points[0].y + +(type === 'verticalLine'),
                             xAxis: points[0].options.xAxis,
@@ -86,7 +86,7 @@ class InfinityLine extends CrookedLine {
     ): number {
         const xOrYOpposite: ('x'|'y') = xOrY === 'x' ? 'y' : 'x';
 
-        // solves equation for x or y
+        // Solves equation for x or y
         // y - y1 = (y2 - y1) / (x2 - x1) * (x - x1)
         return (
             (secondPoint[xOrY] - firstPoint[xOrY]) *
@@ -184,7 +184,8 @@ class InfinityLine extends CrookedLine {
         const line = this.initShape(
             merge(typeOptions.line, {
                 type: 'path',
-                points: points
+                points: points,
+                className: 'highcharts-infinity-lines'
             }),
             0
         );
@@ -262,4 +263,4 @@ export default InfinityLine;
  * @apioption annotations.infinityLine
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

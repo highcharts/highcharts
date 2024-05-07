@@ -6,7 +6,9 @@ Highcharts.chart('container', {
     chart: {
         animation: false,
         type: 'xrange',
-        zoomType: 'x'
+        zooming: {
+            type: 'x'
+        }
     },
 
     title: {
@@ -14,7 +16,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        headerFormat: '<span style="font-size: 10px">{point.yCategory}</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{point.yCategory}</span>' +
+            '<br/>',
         pointFormat: '{point.name}'
     },
 
@@ -38,12 +41,13 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     dragStart: function (e) {
-                        setDragStatus('Drag started at page coordinates ' +
-                                e.chartX + '/' + e.chartY + (
-                            e.updateProp ?
-                                '. Updating ' + e.updateProp :
-                                ''
-                        ) + '. ');
+                        setDragStatus(
+                            'Drag started at page coordinates ' +
+                            e.chartX + '/' + e.chartY + (
+                                e.updateProp ?
+                                    '. Updating ' + e.updateProp :
+                                    ''
+                            ) + '. ');
                     },
                     drag: function (e) {
                         // Returning false stops the drag and drops. Example:

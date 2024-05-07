@@ -1,6 +1,6 @@
 QUnit.module('Projection', function () {
 
-    const Projection = Highcharts._modules['Maps/Projection.js']; // eslint-disable-line no-underscore-dangle
+    const Projection = Highcharts.Projection;
 
     const testPoints = (assert, projection) => {
         [
@@ -64,6 +64,8 @@ QUnit.test('Recommend map view for map chart.', async function (assert) {
             'https://code.highcharts.com/mapdata/custom/africa.topo.json'
         ).then(response => response.json());
 
+    delete africa.objects.default['hc-recommended-mapview'];
+    delete world.objects.default['hc-recommended-mapview'];
 
     const chart = Highcharts.mapChart('container', {
         chart: {
@@ -108,4 +110,7 @@ QUnit.test('Recommend map view for map chart.', async function (assert) {
         `If chart.map is set to small mapData, but series mapData is a big map,
         then recommended projection should be EqualEarth.`
     );
+
+    delete africa.objects.default['hc-decoded-geojson'];
+    delete world.objects.default['hc-decoded-geojson'];
 });

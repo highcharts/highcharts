@@ -39,7 +39,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="font-size: 10px">{point.key} average temperature</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{point.key} average ' +
+            'temperature</span><br/>',
         valueSuffix: '°F'
     },
     plotOptions: {

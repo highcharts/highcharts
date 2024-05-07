@@ -155,7 +155,7 @@ function checkClearPoint(
         leastDistance = 16,
         boxesToAvoid = chart.boxesToAvoid;
 
-    let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+    let distToOthersSquared = Number.MAX_VALUE, // Distance to other graphs
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
@@ -363,7 +363,7 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'SeriesLabel')) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(ChartClass, 'load', onChartRedraw);
         addEvent(ChartClass, 'redraw', onChartRedraw);
@@ -385,7 +385,7 @@ function compose(
  */
 function drawSeriesLabels(chart: Chart): void {
 
-    // console.time('drawSeriesLabels');
+    // Console.time('drawSeriesLabels');
     chart.boxesToAvoid = [];
 
     const labelSeries = chart.labelSeries || [],
@@ -762,7 +762,7 @@ function drawSeriesLabels(chart: Chart): void {
     });
 
     fireEvent(chart, 'afterDrawSeriesLabels');
-    // console.timeEnd('drawSeriesLabels');
+    // Console.timeEnd('drawSeriesLabels');
 }
 
 /**
@@ -869,7 +869,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         for (i = 0; i < len; i += 1) {
 
             const point = points[i],
-                [plotX, plotY] = point.pos() || [0, 0],
+                [plotX, plotY] = point.pos() || [],
                 { plotHigh } = point;
 
             if (isNumber(plotX) && isNumber(plotY)) {
@@ -1137,4 +1137,4 @@ export default SeriesLabel;
  * @type {number}
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

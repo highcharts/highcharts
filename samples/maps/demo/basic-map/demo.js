@@ -10,14 +10,15 @@
         },
 
         title: {
-            text: 'Life expectancy by country (2021)'
+            text: 'Life expectancy by country (2021)',
+            align: 'left'
         },
 
         credits: {
             href: 'https://data.worldbank.org',
             mapText: ' Data source: The World Bank'
-
         },
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {

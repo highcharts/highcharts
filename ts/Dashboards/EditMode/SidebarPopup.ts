@@ -94,7 +94,7 @@ class SidebarPopup extends BaseForm {
                         textContent: 'Placeholder text'
                     }
                 ]
-            });
+            }, board);
 
         }
     };
@@ -192,6 +192,10 @@ class SidebarPopup extends BaseForm {
     private detectRightSidebar(context: Cell | Row): boolean {
         const editMode = this.editMode;
         const layoutWrapper = editMode.board.layoutsWrapper;
+
+        if (!layoutWrapper) {
+            return false;
+        }
 
         return GUIElement.getOffsets(
             context as Cell,
@@ -352,13 +356,6 @@ class SidebarPopup extends BaseForm {
                                 components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
-                                const mountedComponent =
-                                    newCell.mountedComponent;
-                                // skip init connector when is not defined by
-                                // options f.e HTML component.
-                                if (mountedComponent.options?.connector?.id) {
-                                    mountedComponent.initConnector();
-                                }
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
@@ -397,7 +394,7 @@ class SidebarPopup extends BaseForm {
             const options = merge(componentOptions, {
                 cell: newCell.id
             });
-            Bindings.addComponent(options, newCell);
+            Bindings.addComponent(options, sidebar.editMode.board, newCell);
             sidebar.editMode.setEditOverlay();
 
             return newCell;
@@ -412,6 +409,7 @@ class SidebarPopup extends BaseForm {
         const editCellContext = editMode.editCellContext;
 
         this.removeClassNames();
+        this.container.style.display = 'none';
 
         // Remove edit overlay if active.
         if (editMode.isEditOverlayActive) {
@@ -508,7 +506,7 @@ class SidebarPopup extends BaseForm {
     protected addCloseButton(
         className: string = EditGlobals.classNames.popupCloseButton
     ): HTMLElement {
-        // close popup when click outside the popup
+        // Close popup when click outside the popup
         addEvent(document, 'click', (event): void => {
             event.stopPropagation();
             if (

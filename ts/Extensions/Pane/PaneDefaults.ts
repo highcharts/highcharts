@@ -68,6 +68,18 @@ const background: PaneBackgroundOptions = {
     shape: 'circle',
 
     /**
+     * The border radius of the pane background when the shape is `arc`. Can be
+     * a number (pixels) or a percentage string.
+     *
+     * @since   next
+     * @sample  highcharts/series-solidgauge/pane-borderradius
+     *          Circular gauge and pane with equal border radius
+     * @product highcharts
+     * @type    {number|string}
+     */
+    borderRadius: 0,
+
+    /**
      * The pixel border width of the pane background.
      *
      * @since 2.3.0
@@ -106,7 +118,7 @@ const background: PaneBackgroundOptions = {
     },
 
     /** @ignore-option */
-    from: -Number.MAX_VALUE, // corrected to axis min
+    from: -Number.MAX_VALUE, // Corrected to axis min
 
     /**
      * The inner radius of the pane background. Can be either numeric
@@ -119,7 +131,7 @@ const background: PaneBackgroundOptions = {
     innerRadius: 0,
 
     /** @ignore-option */
-    to: Number.MAX_VALUE, // corrected to axis max
+    to: Number.MAX_VALUE, // Corrected to axis max
 
     /**
      * The outer radius of the circular pane background. Can be either

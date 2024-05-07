@@ -112,7 +112,7 @@ namespace SeriesOnPointComposition {
         ChartClass: typeof Chart
     ): (typeof SeriesComposition&T) {
 
-        if (pushUnique(composed, compose)) {
+        if (pushUnique(composed, 'SeriesOnPoint')) {
             const {
                 chartGetZData,
                 seriesAfterInit,
@@ -366,7 +366,7 @@ namespace SeriesOnPointComposition {
             const allSeries = this.chart.series;
 
             // When toggling a series visibility, loop through all points
-            this.points.forEach((point): void => {
+            this.points?.forEach((point): void => {
                 // Find all series that are on toggled points
                 const series = find(allSeries, (series): boolean => {
                     const id = ((series.onPoint || {}).options || {}).id;
@@ -547,4 +547,4 @@ export default SeriesOnPointComposition;
  * @apioption  plotOptions.series.onPoint.position.y
  */
 
-''; // keeps doclets above in transpiled file
+''; // Keeps doclets above in transpiled file

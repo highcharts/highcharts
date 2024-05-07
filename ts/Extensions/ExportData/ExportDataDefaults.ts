@@ -328,4 +328,4 @@ export default ExportDataDefaults;
  * @apioption plotOptions.series.includeInDataExport
  */
 
-(''); // keep doclets above in JS file
+(''); // Keep doclets above in JS file

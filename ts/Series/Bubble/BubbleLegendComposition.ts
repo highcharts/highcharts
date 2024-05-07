@@ -84,27 +84,30 @@ function chartDrawChartBox(
         // Create legend with bubbleLegend
         legend.render();
 
-        chart.getMargins();
+        // Calculate margins after first rendering the bubble legend
+        if (!bubbleLegendOptions.placed) {
+            chart.getMargins();
 
-        chart.axes.forEach(function (axis): void {
-            if (axis.visible) { // #11448
-                axis.render();
-            }
+            chart.axes.forEach(function (axis): void {
+                if (axis.visible) { // #11448
+                    axis.render();
+                }
 
-            if (!bubbleLegendOptions.placed) {
-                axis.setScale();
-                axis.updateNames();
-                // Disable axis animation on init
-                objectEach(axis.ticks, function (tick): void {
-                    tick.isNew = true;
-                    tick.isNewLabel = true;
-                });
-            }
-        });
+                if (!bubbleLegendOptions.placed) {
+                    axis.setScale();
+                    axis.updateNames();
+                    // Disable axis animation on init
+                    objectEach(axis.ticks, function (tick): void {
+                        tick.isNew = true;
+                        tick.isNewLabel = true;
+                    });
+                }
+            });
+
+            chart.getMargins();
+        }
+
         bubbleLegendOptions.placed = true;
-
-        // After recalculate axes, calculate margins again.
-        chart.getMargins();
 
         // Call default 'drawChartBox' method.
         proceed.call(chart, options, callback);
@@ -144,7 +147,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'Series.BubbleLegend')) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -218,7 +221,7 @@ function getLinesHeights(
         legendItem = items[i].legendItem || {};
         legendItem2 = (items[i + 1] || {}).legendItem || {};
         if (legendItem.labelHeight) {
-            // for bubbleLegend
+            // For bubbleLegend
             (items[i] as any).itemHeight = legendItem.labelHeight;
         }
         if ( // Line break
@@ -263,7 +266,8 @@ function onLegendAfterGetAllItems(
         legend.destroyItem(bubbleLegend);
     }
     // Create bubble legend
-    if (bubbleSeriesIndex >= 0 &&
+    if (
+        bubbleSeriesIndex >= 0 &&
             legendOptions.enabled &&
             (options as any).enabled
     ) {

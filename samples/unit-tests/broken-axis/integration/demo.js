@@ -23,7 +23,8 @@ QUnit.test('Axis.setBreaks', assert => {
     assert.deepEqual(
         getXValuesOfInvisiblePoints(points),
         [4, 5],
-        'Should set point.visible to false for points with x-values above 3 and below 6.'
+        'Should set point.visible to false for points with x-values above 3 ' +
+        'and below 6.'
     );
 
     series.update({
@@ -32,13 +33,15 @@ QUnit.test('Axis.setBreaks', assert => {
     assert.deepEqual(
         getXValuesOfInvisiblePoints(points),
         [5],
-        'Should set point.visible to false for points with x-values above 3 and below 6, except for null points when series connectNulls is false.'
+        'Should set point.visible to false for points with x-values above 3 ' +
+        'and below 6, except for null points when series connectNulls is false.'
     );
 
     axis.brokenAxis.setBreaks([]);
     assert.deepEqual(
         getXValuesOfInvisiblePoints(points),
         [],
-        'Should all points should have point.visible equals true after unsetting breaks. #11642'
+        'Should all points should have point.visible equals true after ' +
+        'unsetting breaks. #11642'
     );
 });

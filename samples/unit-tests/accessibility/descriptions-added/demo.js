@@ -130,11 +130,15 @@ QUnit.test('Proxy region', function (assert) {
             'There is an after proxy region' + msgAdd
         );
         assert.strictEqual(
-            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-before').length, 1,
+            chart.container.querySelectorAll(
+                '.highcharts-a11y-proxy-container-before'
+            ).length, 1,
             'The is only one before proxy region' + msgAdd
         );
         assert.strictEqual(
-            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-after').length, 1,
+            chart.container.querySelectorAll(
+                '.highcharts-a11y-proxy-container-after'
+            ).length, 1,
             'The is only one after proxy region' + msgAdd
         );
     }
@@ -150,4 +154,25 @@ QUnit.test('Proxy region', function (assert) {
     });
 
     testProxyRegions(' after update');
+});
+
+QUnit.test('Describing series which is grouped', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [
+            {
+                type: 'column',
+                data: Array.from({ length: 1000 }, () => Math.random() * 100),
+                pointInterval: 24 * 36e5,
+                dataGrouping: {
+                    enabled: true,
+                    forced: true
+                }
+            }
+        ]
+    });
+
+    assert.ok(
+        chart.series[0].group.element.getAttribute('aria-label'),
+        'Group element has ariaLabel.'
+    );
 });

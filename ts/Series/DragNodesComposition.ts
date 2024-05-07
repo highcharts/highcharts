@@ -96,7 +96,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'DragNodes')) {
         addEvent(ChartClass, 'load', onChartLoad);
     }
 
@@ -189,11 +189,10 @@ function onMouseDown(
  *
  * @private
  *
- * @param {global.Event} event
- *        Browser event, before normalization.
  * @param {Highcharts.Point} point
  *        The point that event occurred.
- *
+ * @param {global.Event} event
+ *        Browser event, before normalization.
  */
 function onMouseMove(
     this: DragNodesSeries,

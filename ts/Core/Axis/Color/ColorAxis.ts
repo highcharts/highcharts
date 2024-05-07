@@ -228,7 +228,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.init(chart, userOptions, 'colorAxis');
 
-        // Super.init saves the extended user options, now replace it with the
+        // `super.init` saves the extended user options, now replace it with the
         // originals
         this.userOptions = userOptions;
         if (isArray(chart.userOptions.colorAxis)) {
@@ -352,6 +352,13 @@ class ColorAxis extends Axis implements AxisLike {
             legend.render();
             this.chart.getMargins(true);
 
+            // If not drilling down/up
+            if (!this.chart.series.some((series): boolean | undefined =>
+                series.isDrilling
+            )) {
+                axis.isDirty = true; // Flag to fire drawChartBox
+            }
+
             // First time only
             if (!axis.added) {
 
@@ -440,7 +447,7 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz ?
                     itemDistance :
                     pick(labelOptions.x, labelOptions.distance) +
-                        this.maxLabelLength
+                        (this.maxLabelLength || 0)
             )
         );
         legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
@@ -482,7 +489,7 @@ class ColorAxis extends Axis implements AxisLike {
         this.dataMin = Infinity;
         this.dataMax = -Infinity;
 
-        while (i--) { // x, y, value, other
+        while (i--) { // X, y, value, other
             cSeries = series[i];
             colorKey = cSeries.colorKey = pick(
                 cSeries.options.colorKey,
@@ -847,10 +854,12 @@ class ColorAxis extends Axis implements AxisLike {
                 horiz
             } = axis,
             {
-                legend: legendOptions,
                 height: colorAxisHeight,
                 width: colorAxisWidth
             } = axis.options,
+            {
+                legend: legendOptions
+            } = chart.options,
             width = pick(
                 defined(colorAxisWidth) ?
                     relativeLength(colorAxisWidth, chart.chartWidth) : void 0,
@@ -956,4 +965,4 @@ export default ColorAxis;
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 
-''; // detach doclet above
+''; // Detach doclet above

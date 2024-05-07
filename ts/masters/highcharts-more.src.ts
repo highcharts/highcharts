@@ -22,8 +22,10 @@ import '../Series/Gauge/GaugeSeries.js';
 import PackedBubbleSeries from '../Series/PackedBubble/PackedBubbleSeries.js';
 import '../Series/Polygon/PolygonSeries.js';
 import PolarAdditions from '../Series/PolarComposition.js';
+import RadialAxis from '../Core/Axis/RadialAxis.js';
 import WaterfallSeries from '../Series/Waterfall/WaterfallSeries.js';
 const G: AnyRecord = Highcharts;
+G.RadialAxis = RadialAxis;
 BubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 PackedBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
 Pane.compose(G.Chart, G.Pointer);
@@ -40,3 +42,4 @@ PolarAdditions.compose(
     SeriesRegistry.seriesTypes.spline
 );
 WaterfallSeries.compose(G.Axis, G.Chart);
+export default G;

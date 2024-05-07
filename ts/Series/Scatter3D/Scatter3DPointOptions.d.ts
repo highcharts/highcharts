@@ -23,7 +23,14 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  * */
 
 export interface Scatter3DPointOptions extends ScatterPointOptions {
+
+    /**
+     * The z value for each data point.
+     *
+     * @product highcharts
+     */
     z?: number;
+
 }
 
 /* *

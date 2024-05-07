@@ -141,13 +141,10 @@ const EditGlobals: EditGlobals = {
         errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
         id: 'Id',
-        large: 'Large',
-        medium: 'Medium',
         off: 'off',
         on: 'on',
         pointFormat: 'Point format',
         settings: 'Settings',
-        small: 'Small',
         style: 'Styles',
         title: 'Title',
         viewFullscreen: 'View in full screen',
@@ -328,14 +325,6 @@ namespace EditGlobals {
          */
         id: string;
         /**
-         * @default 'Large'
-         */
-        large: string;
-        /**
-         * @default 'Medium'
-         */
-        medium: string;
-        /**
          * @default 'off'
          */
         off: string;
@@ -355,10 +344,6 @@ namespace EditGlobals {
          * Options for the sidebar and its components.
          */
         sidebar:SidebarLangOptions
-        /**
-         * @default 'Small'
-         */
-        small: string;
         /**
          * @default 'Styles'
          */

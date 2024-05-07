@@ -95,7 +95,8 @@ QUnit.test('Click to add', function (assert) {
             },
             subtitle: {
                 text:
-                    'Click the plot area to add a point. Click a point to remove it.'
+                    'Click the plot area to add a point. Click a point to ' +
+                    'remove it.'
             },
             xAxis: {
                 gridLineWidth: 1,

@@ -21,18 +21,14 @@ import type { AxisSetExtremesEventObject } from './AxisOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
-const {
-    composed,
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -157,7 +153,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (!AxisClass.keepProps.includes('navigatorAxis')) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -215,7 +211,7 @@ class NavigatorAxisAdditions {
         fixedMax?: number
     ): RangeSelector.RangeObject {
         const axis = this.axis,
-            chart = axis.chart;
+            halfPointRange = (axis.pointRange || 0) / 2;
 
         let newMin = pick<number|undefined, number>(
                 fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
@@ -224,8 +220,6 @@ class NavigatorAxisAdditions {
                 fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
             );
 
-        const fixedRange = chart && chart.fixedRange,
-            halfPointRange = (axis.pointRange || 0) / 2;
 
         // Add/remove half point range to/from the extremes (#1172)
         if (!defined(fixedMin)) {
@@ -233,17 +227,6 @@ class NavigatorAxisAdditions {
         }
         if (!defined(fixedMax)) {
             newMax = correctFloat(newMax - halfPointRange);
-        }
-
-        // Make sure panning to the edges does not decrease the zoomed range
-        if (fixedRange && axis.dataMin && axis.dataMax) {
-            if (newMax >= axis.dataMax) {
-                newMin = correctFloat(axis.dataMax - fixedRange);
-            }
-
-            if (newMin <= axis.dataMin) {
-                newMax = correctFloat(axis.dataMin + fixedRange);
-            }
         }
 
         if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411

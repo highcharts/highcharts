@@ -15,7 +15,8 @@
         },
 
         subtitle: {
-            text: 'Click small/large buttons or change window size to test responsiveness'
+            text: 'Click small/large buttons or change window size to test ' +
+                'responsiveness'
         },
 
         rangeSelector: {

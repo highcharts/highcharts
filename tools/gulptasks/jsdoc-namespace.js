@@ -52,6 +52,20 @@ async function jsDocNamespace() {
     const jsdoc = require('gulp-jsdoc3');
     const logLib = require('./lib/log');
 
+    // Make sure master is in `code/`
+    if (argv.force) {
+        await gulpLib.run('scripts');
+    } else {
+        await gulpLib.requires(
+            (
+                argv.custom ?
+                    ['code/custom.src.js'] :
+                    ['code/highcharts.src.js']
+            ),
+            ['scripts']
+        );
+    }
+
     const codeFiles = (
         argv.custom ?
             ['code/custom.src.js'] :
@@ -86,8 +100,6 @@ async function jsDocNamespace() {
     if (codeFiles.length === 0) {
         throw new Error('No master files found in code/.');
     }
-
-    await gulpLib.requires(['code/highcharts.src.js'], ['scripts']);
 
     logLib.message('Generating', TREE_FILE + '...');
 

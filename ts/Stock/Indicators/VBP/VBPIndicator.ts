@@ -46,7 +46,6 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import StockChart from '../../../Core/Chart/StockChart.js';
 const {
     addEvent,
     arrayMax,
@@ -258,15 +257,15 @@ class VBPIndicator extends SMAIndicator {
     ): VBPIndicator {
         const indicator = this;
 
-        // series.update() sends data that is not necessary
-        // as everything is calculated in getValues(), #17007
+        // Series.update() sends data that is not necessary as everything is
+        // calculated in getValues(), #17007
         delete options.data;
 
         super.init.apply(indicator, arguments);
 
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
-            StockChart,
+            this.chart.constructor,
             'afterLinkSeries',
             function (): void {
                 // Protection for a case where the indicator is being updated,
@@ -477,10 +476,14 @@ class VBPIndicator extends SMAIndicator {
             maxVolume = arrayMax(volumeDataArray);
             primalBarWidth = chart.plotWidth / 2;
             chartPlotTop = chart.plotTop;
-            barHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
-            oldBarHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
+            barHeight = abs(
+                yAxis.toPixels(yAxisMin) -
+                yAxis.toPixels(yAxisMin + indicator.rangeStep)
+            );
+            oldBarHeight = abs(
+                yAxis.toPixels(yAxisMin) -
+                yAxis.toPixels(yAxisMin + indicator.rangeStep)
+            );
 
             if (pointPadding) {
                 barHeightP = abs(barHeight * (1 - 2 * pointPadding));
@@ -526,7 +529,8 @@ class VBPIndicator extends SMAIndicator {
                     chart,
                     yAxis,
                     indicator.zoneStarts,
-                    (zoneLinesOptions.styles as any)
+                    (zoneLinesOptions.styles as any
+                    )
                 );
             }
         }
@@ -968,4 +972,4 @@ export default VBPIndicator;
  * @apioption series.vbp
  */
 
-''; // to include the above in the js output
+''; // To include the above in the js output

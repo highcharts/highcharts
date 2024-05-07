@@ -180,7 +180,7 @@ class Fx {
      */
     public update(): void {
         const elem = this.elem,
-            prop = this.prop, // if destroyed, it is null
+            prop = this.prop, // If destroyed, it is null
             now: number = this.now as any,
             step = this.options.step;
 
@@ -349,7 +349,7 @@ class Fx {
     ): [SVGPath, SVGPath] {
         const startX = elem.startX,
             endX = elem.endX,
-            end = toD.slice(), // copy
+            end = toD.slice(), // Copy
             isArea = elem.isArea,
             positionFactor = isArea ? 2 : 1;
 
@@ -357,7 +357,7 @@ class Fx {
             fullLength: number,
             i: number,
             reverse,
-            start = fromD && fromD.slice(); // copy
+            start = fromD && fromD.slice(); // Copy
 
         if (!start) {
             return [end, end];
@@ -400,7 +400,7 @@ class Fx {
                 if (isArea) {
                     const z: any = arr.pop();
 
-                    arr.push(arr[arr.length - 1], z); // append point and the Z
+                    arr.push(arr[arr.length - 1], z); // Append point and the Z
                 }
             }
         }
@@ -455,8 +455,10 @@ class Fx {
                     shift = i;
                     break;
                 // Moving right
-                } else if (startX[0] ===
-                        endX[endX.length - startX.length + i]) {
+                } else if (
+                    startX[0] ===
+                        endX[endX.length - startX.length + i]
+                ) {
                     shift = i;
                     reverse = true;
                     break;

@@ -19,8 +19,6 @@
 import type DataExtremesObject from '../Core/Series/DataExtremesObject';
 
 import Axis from '../Core/Axis/Axis.js';
-import H from '../Core/Globals.js';
-const { composed } = H;
 import Point from '../Core/Series/Point.js';
 const {
     tooltipFormatter: pointTooltipFormatter
@@ -36,8 +34,7 @@ const {
     isArray,
     isNumber,
     isString,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -79,6 +76,7 @@ declare module '../Core/Series/SeriesOptions' {
         compareBase?: (0|100);
         compareStart?: boolean;
         cumulative?: boolean;
+        cumulativeStart?: boolean;
     }
 }
 
@@ -159,19 +157,20 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
+        const axisProto = AxisClass.prototype as AxisComposition,
+            pointProto = PointClass.prototype as PointComposition,
+            seriesProto = SeriesClass.prototype as SeriesComposition;
 
-        if (pushUnique(composed, compose)) {
-            const axisProto = AxisClass.prototype as AxisComposition,
-                pointProto = PointClass.prototype as PointComposition,
-                seriesProto = SeriesClass.prototype as SeriesComposition;
-
+        if (!seriesProto.setCompare) {
             seriesProto.setCompare = seriesSetCompare;
             seriesProto.setCumulative = seriesSetCumulative;
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'afterGetExtremes', afterGetExtremes);
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
+        }
 
+        if (!axisProto.setCompare) {
             axisProto.setCompare = axisSetCompare;
             axisProto.setModifier = setModifier;
             axisProto.setCumulative = axisSetCumulative;
@@ -373,7 +372,7 @@ namespace DataModifyComposition {
         const series = this;
 
         if (
-            series.xAxis && // not pies
+            series.xAxis && // Not pies
             series.processedYData &&
             series.dataModify
         ) {
@@ -392,7 +391,7 @@ namespace DataModifyComposition {
                 );
             }
 
-            // find the first value for comparison
+            // Find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
                 const compareValue = processedYData[i] && keyIndex > -1 ?
                     (processedYData[i] as any)[keyIndex] : processedYData[i];
@@ -627,7 +626,7 @@ namespace DataModifyComposition {
                             (compareBase === 100 ? 0 : 100);
                     }
 
-                    // record for tooltip etc.
+                    // Record for tooltip etc.
                     if (typeof index !== 'undefined') {
                         const point = this.series.points[index];
 
@@ -668,8 +667,19 @@ namespace DataModifyComposition {
                     // Record for tooltip etc.
                     const point = this.series.points[index];
 
+                    const cumulativeStart =
+                            point.series.options.cumulativeStart,
+                        withinRange =
+                            point.x <= this.series.xAxis.max! &&
+                            point.x >= this.series.xAxis.min!;
+
+
                     if (point) {
-                        point.cumulativeSum = value;
+                        if (!cumulativeStart || withinRange) {
+                            point.cumulativeSum = value;
+                        } else {
+                            point.cumulativeSum = void 0;
+                        }
                     }
 
                     return value;
@@ -722,7 +732,7 @@ export default DataModifyComposition;
 
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point **before** the range.
+ * range or should start from the last point **before** the range.
  *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
@@ -775,4 +785,22 @@ export default DataModifyComposition;
  * @apioption plotOptions.series.cumulative
  */
 
-''; // keeps doclets above in transpiled file
+/**
+ * Defines if cumulation should start from the first point within the visible
+ * range or should start from the last point **before** the range.
+ *
+ * In other words, this flag determines if first point within the visible range
+ * will start at 0 (`cumulativeStart=true`) or should have been already calculated
+ * according to the previous point (`cumulativeStart=false`).
+ *
+ * @sample {highstock} stock/plotoptions/series-cumulativestart/
+ *         Cumulative Start
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since     next
+ * @product   highstock
+ * @apioption plotOptions.series.cumulativeStart
+ */
+
+''; // Keeps doclets above in transpiled file

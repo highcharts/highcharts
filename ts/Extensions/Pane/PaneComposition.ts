@@ -9,15 +9,12 @@ import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -76,10 +73,9 @@ function compose(
     ChartClass: typeof Chart,
     PointerClass: typeof Pointer
 ): void {
+    const chartProto = ChartClass.prototype as PaneChart;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype as PaneChart;
-
+    if (!chartProto.getHoverPane) {
         chartProto.collectionsWithUpdate.push('pane');
         chartProto.getHoverPane = chartGetHoverPane;
 
@@ -189,6 +185,9 @@ function onChartAfterIsInsiderPlot(
     }
 }
 
+/**
+ *
+ */
 function onPointerAfterGetHoverData(
     this: Pointer,
     eventArgs: Pointer.EventArgsObject

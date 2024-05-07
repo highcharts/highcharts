@@ -24,8 +24,9 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart.js';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
@@ -102,7 +103,7 @@ class Fullscreen {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'Fullscreen')) {
             // Initialize fullscreen
             addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         }
@@ -282,7 +283,7 @@ class Fullscreen {
             // Handle exitFullscreen() method when user clicks 'Escape' button.
             if (fullscreen.browserProps) {
                 const unbindChange = addEvent(
-                    chart.container.ownerDocument, // chart's document
+                    chart.container.ownerDocument, // Chart's document
                     fullscreen.browserProps.fullscreenChange,
                     function (): void {
                         // Handle lack of async of browser's
@@ -469,7 +470,7 @@ export default Fullscreen;
  *        The event that occurred.
  */
 
-(''); // keeps doclets above separated from following code
+(''); // Keeps doclets above separated from following code
 
 /* *
  *
@@ -506,4 +507,4 @@ export default Fullscreen;
  * @apioption chart.events.fullscreenOpen
  */
 
-(''); // keeps doclets above in transpiled file
+(''); // Keeps doclets above in transpiled file

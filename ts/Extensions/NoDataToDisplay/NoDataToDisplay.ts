@@ -26,15 +26,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-const { composed } = H;
 import NoDataDefaults from './NoDataDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -171,10 +168,9 @@ function compose(
     ChartClass: typeof Chart,
     highchartsDefaultOptions: Options
 ): void {
+    const chartProto = ChartClass.prototype;
 
-    if (pushUnique(composed, compose)) {
-        const chartProto = ChartClass.prototype;
-
+    if (!chartProto.showNoData) {
         chartProto.hasData = chartHasData;
         chartProto.hideNoData = chartHideNoData;
         chartProto.showNoData = chartShowNoData;

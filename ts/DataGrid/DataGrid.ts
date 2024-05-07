@@ -35,12 +35,9 @@ const {
     makeDiv
 } = DataGridUtils;
 import Globals from './Globals.js';
+const { isSafari, win } = Globals;
 import Templating from '../Core/Templating.js';
 import DataGridDefaults from './DataGridDefaults.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -73,6 +70,22 @@ class DataGrid {
      * Default options for all DataGrid instances.
      */
     public static readonly defaultOptions = DataGridDefaults;
+
+    /**
+     * Factory function for data grid instances.
+     *
+     * @param container
+     * Element or element ID to create the grid structure into.
+     *
+     * @param options
+     * Options to create the grid structure.
+     */
+    public static dataGrid(
+        container: (string | HTMLElement),
+        options: Globals.DeepPartial<DataGridOptions>
+    ): DataGrid {
+        return new DataGrid(container, options);
+    }
 
     /* *
      *
@@ -246,7 +259,7 @@ class DataGrid {
     ) {
         // Initialize containers
         if (typeof container === 'string') {
-            const existingContainer = doc.getElementById(container);
+            const existingContainer = win.document.getElementById(container);
             if (existingContainer) {
                 this.container = existingContainer;
             } else {
@@ -563,7 +576,7 @@ class DataGrid {
      */
     private updateVisibleCells(force: boolean = false): void {
         let scrollTop = this.outerContainer.scrollTop;
-        if (H.isSafari) {
+        if (isSafari) {
             scrollTop = clamp(
                 scrollTop,
                 0,
@@ -708,12 +721,14 @@ class DataGrid {
      */
     private handleMouseOver(e: MouseEvent): void {
         const target = e.target as HTMLElement;
-
         if (target && target.classList.contains(Globals.classNames.cell)) {
             const row = target.parentElement as HTMLElement;
             this.toggleRowHighlight(row);
             this.hoveredRow = row;
-            fireEvent(this.container, 'dataGridHover', { row });
+            fireEvent(this.container, 'dataGridHover', {
+                row,
+                columnName: target.dataset?.columnName
+            });
         } else if (this.hoveredRow) {
             this.toggleRowHighlight();
             this.hoveredRow = void 0;
@@ -836,7 +851,7 @@ class DataGrid {
             Math.ceil(
                 (
                     this.outerContainer.offsetHeight ||
-                    this.options.defaultHeight // when datagrid is hidden,
+                    this.options.defaultHeight // When datagrid is hidden,
                     // offsetHeight is 0, so we need to get defaultValue to
                     // avoid empty rows
                 ) / this.options.cellHeight

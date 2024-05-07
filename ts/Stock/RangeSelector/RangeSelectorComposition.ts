@@ -151,7 +151,7 @@ function compose(
 
     RangeSelectorConstructor = RangeSelectorClass;
 
-    if (pushUnique(composed, compose)) {
+    if (pushUnique(composed, 'RangeSelector')) {
         const chartProto = ChartClass.prototype;
 
         AxisClass.prototype.minFromRange = axisMinFromRange;
@@ -283,7 +283,7 @@ function onChartCallback(
 
         if (!events) {
             chartDestroyEvents.push([chart, [
-                // redraw the scroller on setExtremes
+                // Redraw the scroller on setExtremes
                 addEvent(
                     chart.xAxis[0],
                     'afterSetExtremes',
@@ -293,12 +293,12 @@ function onChartCallback(
                         }
                     }
                 ),
-                // redraw the scroller chart resize
+                // Redraw the scroller chart resize
                 addEvent(chart, 'redraw', redraw)
             ]]);
         }
 
-        // do it now
+        // Do it now
         redraw();
     }
 }
@@ -320,6 +320,9 @@ function onChartDestroy(
     }
 }
 
+/**
+ *
+ */
 function onChartGetMargins(
     this: Chart
 ): void {

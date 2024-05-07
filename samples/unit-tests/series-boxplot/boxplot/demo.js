@@ -240,7 +240,8 @@ QUnit.test(
         assert.strictEqual(
             secondPoint.medianShape.attr('stroke-dasharray'),
             '6,2',
-            'ShortDash dashStyle should be applied to the second point\'s median.'
+            'ShortDash dashStyle should be applied to the second point\'s ' +
+            'median.'
         );
 
         assert.strictEqual(

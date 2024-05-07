@@ -25,6 +25,7 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type {
     SunburstDataLabelOptions,
+    SunburstSeriesLevelOptions,
     SunburstSeriesOptions
 } from './SunburstSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -273,7 +274,8 @@ function getDlOptions(
             // Setting width and padding
             (options.style as any).width = Math.max(
                 (point.shapeExisting.r * 2) -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         } else if (
             point.dlOptions &&
             point.dlOptions.textPath &&
@@ -290,7 +292,8 @@ function getDlOptions(
             (options.style as any).width = Math.max(
                 ((point.outerArcLength as any) +
                 (point.innerArcLength as any)) / 2 -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         }
     }
     return options;
@@ -463,7 +466,7 @@ class SunburstSeries extends TreemapSeries {
 
     public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesLevelOptions>;
 
     public nodeMap!: Record<string, SunburstNode>;
 
@@ -637,11 +640,11 @@ class SunburstSeries extends TreemapSeries {
                 tooltipPos: [(shape as any).plotX, (shape as any).plotY],
                 drillId: getDrillId(point, idRoot, nodeMap),
                 name: '' + (point.name || point.id || point.index),
-                plotX: (shape as any).plotX, // used for data label position
-                plotY: (shape as any).plotY, // used for data label position
+                plotX: (shape as any).plotX, // Used for data label position
+                plotY: (shape as any).plotY, // Used for data label position
                 value: node.val,
                 isInside: visible,
-                isNull: !visible // used for dataLabels & point.draw
+                isNull: !visible // Used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({
                 point: point,
@@ -696,7 +699,7 @@ class SunburstSeries extends TreemapSeries {
     public layoutAlgorithm(
         parent: SunburstNode.NodeValuesObject,
         children: Array<SunburstNode>,
-        options: SunburstSeriesOptions
+        options: (SunburstSeriesOptions|SunburstSeriesLevelOptions)
     ): Array<SunburstNode.NodeValuesObject> {
         let startAngle = parent.start;
 
@@ -778,9 +781,7 @@ class SunburstSeries extends TreemapSeries {
     public setShapeArgs(
         parent: SunburstNode,
         parentValues: SunburstNode.NodeValuesObject,
-        mapOptionsToLevel: (
-            Record<string, SunburstSeriesOptions>
-        )
+        mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>
     ): void {
         const level = parent.level + 1,
             options = mapOptionsToLevel[level],
@@ -856,13 +857,13 @@ class SunburstSeries extends TreemapSeries {
             rootId = updateRootId(series);
 
         let mapIdToNode = series.nodeMap,
-            mapOptionsToLevel: Record<string, SunburstSeriesOptions>,
+            mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeIds: Record<string, boolean> = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
-        if (!series.processedXData) { // hidden series
+        if (!series.processedXData) { // Hidden series
             series.processData();
         }
         series.generatePoints();
@@ -928,11 +929,11 @@ class SunburstSeries extends TreemapSeries {
             if (nodeIds[point.id]) {
                 error(31, false, series.chart);
             }
-            // map
+            // Map
             nodeIds[point.id] = true;
         }
 
-        // reset object
+        // Reset object
         nodeIds = {};
     }
 
@@ -953,7 +954,7 @@ interface SunburstSeries {
 
 extend(SunburstSeries.prototype, {
     axisTypes: [],
-    drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    drawDataLabels: noop, // `drawDataLabels` is called in `drawPoints`
     getCenter: getCenter,
     isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.
@@ -992,7 +993,7 @@ namespace SunburstSeries {
     }
 
     export interface DlOptionsParams {
-        level: SunburstSeriesOptions;
+        level: SunburstSeriesLevelOptions;
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;

@@ -43,12 +43,12 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        cell: 'top-left',
+        renderTo: 'top-left',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Agriculture: 'y'
         },
         sync: {
@@ -61,12 +61,12 @@ Dashboards.board('container', {
             navigator: navigatorOptions
         }
     }, {
-        cell: 'top-middle',
+        renderTo: 'top-middle',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Industry: 'y'
         },
         sync: {
@@ -79,12 +79,12 @@ Dashboards.board('container', {
             navigator: navigatorOptions
         }
     }, {
-        cell: 'top-right',
+        renderTo: 'top-right',
         type: 'Navigator',
         connector: {
             id: 'Economy'
         },
-        columnAssignments: {
+        columnAssignment: {
             Services: 'y'
         },
         sync: {
@@ -97,7 +97,7 @@ Dashboards.board('container', {
             navigator: navigatorOptions
         }
     }, {
-        cell: 'bottom',
+        renderTo: 'bottom',
         type: 'DataGrid',
         connector: {
             id: 'Economy'

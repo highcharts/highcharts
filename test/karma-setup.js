@@ -95,6 +95,7 @@ Highcharts.setOptions({
     drilldown: {
         animation: false
     }
+
 });
 // Save default functions from the default options, as they are not stringified
 // to JSON
@@ -129,33 +130,8 @@ handleDefaultOptionsFunctions(true);
 */
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
-
-/*
-// Override Highcharts and jQuery ajax functions to load from local
-function ajax(proceed, attr) {
-    var success = attr.success;
-    attr.error = function (e) {
-        throw new Error('Failed to load: ' + attr.url);
-    };
-    if (attr.url && window.JSONSources[attr.url]) {
-        success.call(attr, window.JSONSources[attr.url]);
-    } else {
-        console.log('@ajax: Loading over network', attr.url);
-        attr.success = function (data) {
-            window.JSONSources[attr.url] = data;
-            success.call(this, data);
-        };
-        return proceed.call(this, attr);
-    }
-}
-Highcharts.wrap(Highcharts.HttpUtilities, 'ajax', ajax);
-Highcharts.wrap(Highcharts, 'ajax', ajax);
-if (window.$) {
-    $.getJSON = function (url, callback) { // eslint-disable-line no-undef
-        callback(window.JSONSources[url]);
-    };
-}
-*/
+Highcharts.radialDefaultOptionsRaw =
+    JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
@@ -246,6 +222,10 @@ function resetDefaultOptions(testName) {
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
     Highcharts.setOptions(defaultOptionsRaw);
+
+    // Restore radial axis defaults
+    Highcharts.RadialAxis.radialDefaultOptions =
+        JSON.parse(Highcharts.radialDefaultOptionsRaw);
 
     // Create a new Time instance to avoid state leaks related to time and the
     // legacy global options

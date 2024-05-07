@@ -1,4 +1,7 @@
-const names = ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'];
+const names = [
+    'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon',
+    'Anna', 'Tim', 'Laura'
+];
 
 function getRandomData() {
     const data = [];

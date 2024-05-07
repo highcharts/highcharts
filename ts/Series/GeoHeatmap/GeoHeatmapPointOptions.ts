@@ -25,7 +25,7 @@ import type MapPointOptions from '../Map/MapPointOptions';
  * */
 
 export interface GeoHeatmapPointOptions extends MapPointOptions {
-    // nothing here yet
+    // Nothing here yet
 }
 
 /* *

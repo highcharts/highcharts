@@ -27,7 +27,10 @@ Dashboards.board('container', {
             id: 'Population',
             type: 'JSON',
             options: {
-                columnNames: ['City', 'Population (mln)', 'Metro Area (km²)', 'Highest Elevation (m)'],
+                columnNames: [
+                    'City', 'Population (mln)', 'Metro Area (km²)',
+                    'Highest Elevation (m)'
+                ],
                 firstRowAsNames: false,
                 data
             }
@@ -37,47 +40,11 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-0',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-
-                    }
+                    id: 'dashboard-col-0'
                 }, {
-                    id: 'dashboard-col-1',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-
-
-                    }
+                    id: 'dashboard-col-1'
                 }, {
-                    id: 'dashboard-col-2',
-                    responsive: {
-                        small: {
-                            width: '100%'
-                        },
-                        medium: {
-                            width: '1/3'
-                        },
-                        large: {
-                            width: '1/3'
-                        }
-                    }
+                    id: 'dashboard-col-2'
                 }]
             }, {
                 cells: [{
@@ -94,14 +61,14 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Population'
+            id: 'Population',
+            columnAssignment: [{
+                seriesId: 'Population (mln)',
+                data: ['City', 'Population (mln)']
+            }]
         },
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         type: 'Highcharts',
-        columnAssignment: {
-            City: 'x',
-            'Population (mln)': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -119,7 +86,9 @@ Dashboards.board('container', {
             },
             chart: {
                 type: 'bar',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {
@@ -138,7 +107,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Population, Highcharts interactive chart.'
+                    chartContainerLabel: 'Population, Highcharts interactive ' +
+                        'chart.'
                 }
             },
             accessibility: {
@@ -148,7 +118,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         title: {
             text: 'Metropolitan Area'
         },
@@ -156,13 +126,13 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            id: 'Population'
+            id: 'Population',
+            columnAssignment: [{
+                seriesId: 'Metro Area (km²)',
+                data: ['City', 'Metro Area (km²)']
+            }]
         },
         type: 'Highcharts',
-        columnAssignment: {
-            City: 'x',
-            'Metro Area (km²)': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -180,7 +150,9 @@ Dashboards.board('container', {
             },
             chart: {
                 type: 'bar',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {
@@ -199,7 +171,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Metropolitan Area, Highcharts interactive chart.'
+                    chartContainerLabel: 'Metropolitan Area, Highcharts ' +
+                        'interactive chart.'
                 }
             },
             accessibility: {
@@ -209,9 +182,13 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-2',
+        renderTo: 'dashboard-col-2',
         connector: {
-            id: 'Population'
+            id: 'Population',
+            columnAssignment: [{
+                seriesId: 'Highest Elevation (m)',
+                data: ['City', 'Highest Elevation (m)']
+            }]
         },
         title: {
             text: 'Highest Elevation'
@@ -220,10 +197,6 @@ Dashboards.board('container', {
             extremes: true
         },
         type: 'Highcharts',
-        columnAssignment: {
-            City: 'x',
-            'Highest Elevation (m)': 'y'
-        },
         chartOptions: {
             xAxis: {
                 type: 'category',
@@ -241,7 +214,9 @@ Dashboards.board('container', {
             },
             chart: {
                 type: 'bar',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {
@@ -260,7 +235,8 @@ Dashboards.board('container', {
             },
             lang: {
                 accessibility: {
-                    chartContainerLabel: 'Highest Elevation, Highcharts interactive chart.'
+                    chartContainerLabel: 'Highest Elevation, Highcharts ' +
+                        'interactive chart.'
                 }
             },
             accessibility: {
@@ -270,7 +246,7 @@ Dashboards.board('container', {
         }
     },
     {
-        cell: 'dashboard-col-3',
+        renderTo: 'dashboard-col-3',
         connector: {
             id: 'Population'
         },

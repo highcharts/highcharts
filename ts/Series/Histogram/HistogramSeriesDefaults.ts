@@ -104,7 +104,7 @@ const HistogramSeriesDefaults: HistogramSeriesOptions = {
  * @apioption series.histogram.baseSeries
  */
 
-''; // keeps doclets above separate
+''; // Keeps doclets above separate
 
 /* *
  *

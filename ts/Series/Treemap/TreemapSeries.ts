@@ -32,6 +32,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type {
     TreemapSeriesLayoutAlgorithmValue,
+    TreemapSeriesLevelOptions,
     TreemapSeriesOptions
 } from './TreemapSeriesOptions';
 
@@ -116,10 +117,8 @@ function onSeriesAfterBindAxes(
                 gridLineWidth: 0,
                 lineWidth: 0,
                 min: 0,
-                // dataMin: 0,
                 minPadding: 0,
                 max: axisMax,
-                // dataMax: TreemapUtilities.AXIS_MAX,
                 maxPadding: 0,
                 startOnTick: false,
                 title: void 0,
@@ -174,7 +173,7 @@ class TreemapSeries extends ScatterSeries {
         SeriesClass: typeof Series
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'TreemapSeries')) {
             addEvent(SeriesClass, 'afterBindAxes', onSeriesAfterBindAxes);
         }
 
@@ -198,7 +197,7 @@ class TreemapSeries extends ScatterSeries {
 
     public idPreviousRoot?: string;
 
-    public mapOptionsToLevel!: Record<string, TreemapSeriesOptions>;
+    public mapOptionsToLevel!: Record<string, TreemapSeriesLevelOptions>;
 
     public nodeMap!: Record<string, TreemapNode>;
 
@@ -416,13 +415,13 @@ class TreemapSeries extends ScatterSeries {
         ) {
             dataLabel.css({
                 textOverflow: 'ellipsis',
-                // unit (px) is required when useHTML is true
+                // Unit (px) is required when useHTML is true
                 width: style.width += 'px'
             });
         }
         ColumnSeries.prototype.alignDataLabel.apply(this, arguments);
         if (point.dataLabel) {
-        // point.node.zIndex could be undefined (#6956)
+            // `point.node.zIndex` could be undefined (#6956)
             point.dataLabel.attr({ zIndex: (point.node.zIndex || 0) + 1 });
         }
     }
@@ -561,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
             });
 
         let options: DataLabelOptions,
-            level: TreemapSeriesOptions;
+            level: TreemapSeriesLevelOptions;
 
         for (const point of points) {
             level = mapOptionsToLevel[point.node.level];
@@ -716,7 +715,8 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false,
             nodeParent: TreemapNode;
 
-        if ((point.node.parent !== this.rootNode) &&
+        if (
+            (point.node.parent !== this.rootNode) &&
             point.node.isLeaf
         ) {
             nodeParent = point.node;
@@ -972,7 +972,8 @@ class TreemapSeries extends ScatterSeries {
             );
 
             series.eventsToUnbind.push(
-                addEvent(series, 'destroy',
+                addEvent(
+                    series, 'destroy',
                     function destroyEvents(e: any): void {
                         const chart = this.chart;
                         if (chart.breadcrumbs && !e.keepEventsForUpdate) {
