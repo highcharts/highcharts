@@ -71,7 +71,7 @@ Highcharts.chart('container', {
         height: 170
     },
     title: {
-        text: 'Force chart'
+        text: 'Hypothetical effect of Forces During Mars EDL sequence'
     },
     plotOptions: {
         bar: {
@@ -79,17 +79,32 @@ Highcharts.chart('container', {
             stacking: 'normal',
             dataLabels: {
                 enabled: true,
-                y: 30,
+                y: 20,
+                verticalAlign: 'bottom',
+                borderColor: '#000000',
+                borderRadius: 5,
                 format: '<span style="color:{point.color}">' +
-                    'Force: {point.y}</span>'
+                    '{point.y}</span>'
             },
-            color: 'rgb(1, 127, 250)',
-            negativeColor: 'rgb(255, 7, 77)'
+            color: 'rgb(255, 7, 77)',
+            negativeColor: 'rgb(1, 127, 250)'
         }
     },
     tooltip: {
         format: '<span style="color:{point.color}">\u25CF</span>' +
-            'Force: <b>{point.y}</b>'
+            '<b>{series.name}: {point.y}</b>',
+        stickOnContact: true
+    },
+    accessibility: {
+        typeDescription: 'Stacked bar "force" chart.',
+        point: {
+            descriptionFormat: '{series.name}, amount: {y}'
+        },
+        // Don't read the description for the series, series is equal to points
+        // in this chart.
+        series: {
+            descriptionFormat: ''
+        }
     },
     yAxis: {
         reversedStacks: false,
@@ -105,25 +120,25 @@ Highcharts.chart('container', {
     legend: {
         enabled: false
     },
-    series: [{
-        data: [2]
-    }, {
-        data: [1]
-    }, {
-        data: [1]
-    }, {
-        data: [0.5]
-    }, {
-        data: [0.5]
-    }, {
-        data: [0.1]
-    }, {
-        data: [0.1]
-    }, {
-        data: [-2]
-    }, {
-        data: [-1]
-    }, {
-        data: [-0.1]
-    }]
+    /*
+    NOTE: These data values are arbitrary, illustrative and does not reflect
+    actual forces in a Mars EDL sequence. They aim to broadly demonstrate the
+    key dynamics affecting the spacecraft during EDL.
+    */
+    series: [
+        // Unwanted/additive forces
+        { name: 'Initial Entry Speed', data: [15] },
+        { name: 'Martian Gravity', data: [3] },
+
+        // Slowing forces
+        { name: 'Atmospheric Drag', data: [-8] },
+        { name: 'Lift', data: [-1] },
+        { name: 'Peak Heating', data: [-0.5] },
+        { name: 'Parachute Drag', data: [-6] },
+        { name: 'Heat Shield Separation', data: [-0.5] },
+        // Enters free fall shortly after separation with backshell & parachute.
+        { name: 'Freefall (Backshell Separation)', data: [1] },
+        { name: 'Retro Rockets', data: [-2.5] },
+        { name: 'Sky Crane Operation', data: [-2] }
+    ]
 });
