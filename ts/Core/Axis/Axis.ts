@@ -174,6 +174,7 @@ class Axis {
         'coll',
         'extKey',
         'hcEvents',
+        'len',
         'names',
         'series',
         'userMax',
@@ -501,7 +502,7 @@ class Axis {
          * @name Highcharts.Axis#len
          * @type {number}
          */
-        axis.len = 0;
+        axis.len ??= 0;
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
         axis.offset = options.offset || 0;

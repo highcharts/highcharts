@@ -22,14 +22,16 @@ import type Legend from './Legend/Legend';
 import ChartDefaults from './Chart/ChartDefaults.js';
 import H from './Globals.js';
 const {
-    isTouchDevice,
-    svg
+    isTouchDevice
 } = H;
 import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const { merge } = U;
+const {
+    fireEvent,
+    merge
+} = U;
 
 /* *
  *
@@ -2301,11 +2303,14 @@ const defaultOptions: DefaultOptions = {
         /**
          * Enable or disable animation of the tooltip.
          *
-         * @type       {boolean}
-         * @default    true
+         * @type       {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @since      2.3.0
          */
-        animation: svg,
+        animation: {
+            duration: 300,
+            // EaseOutCirc
+            easing: (x: number): number => Math.sqrt(1 - Math.pow(x - 1, 2))
+        },
 
         /**
          * The radius of the rounded border corners.
@@ -2796,6 +2801,7 @@ function getOptions(): DefaultOptions {
 function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
+    fireEvent(H, 'setOptions', { options });
 
     // Copy in the default options
     merge(true, defaultOptions, options);
