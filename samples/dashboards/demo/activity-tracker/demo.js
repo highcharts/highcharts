@@ -1,13 +1,14 @@
 async function setupDashboard() {
+    const gpxTestUrl = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a3a4f1d2f1/samples/data/dashboards/activity.gpx';
     const gpxDataUrl = 'https://www.highcharts.com/samples/data/dashboards/activity.gpx';
 
-    // Load data from server
-    const gpxData = await loadGpxData(gpxDataUrl);
+    // Load GPX data from server
+    const gpxData = await loadGpxData(gpxTestUrl);
     if (!gpxData) {
         return;
     }
 
-    // Launch the dashboard
+    // Create the dashboard
     Dashboards.board('container', {
         dataPool: {
             connectors: [{
@@ -16,8 +17,8 @@ async function setupDashboard() {
                 options: {
                     firstRowAsNames: false,
                     columnNames: [
-                        'time', 'elevation', 'hr',
-                        'latitude', 'longitude', 'speed', 'cumulativeDistance'
+                        'time', 'elevation', 'hr', 'latitude',
+                        'longitude', 'speed', 'distance'
                     ],
                     data: gpxData.all
                 }
@@ -27,7 +28,7 @@ async function setupDashboard() {
                 type: 'JSON',
                 options: {
                     firstRowAsNames: false,
-                    columnNames: ['km', 'pace', 'elev', 'hr'],
+                    columnNames: ['distance', 'speed', 'elevation', 'hr'],
                     data: gpxData.summary
                 }
             }]
@@ -77,12 +78,6 @@ async function setupDashboard() {
                 type: 'Highcharts',
                 chartConstructor: 'mapChart',
                 connector: 'trackpoints-connector',
-                columnAssignment: [
-                    {
-                        seriesId: 'pointSeries',
-                        data: ['latitude', 'longitude']
-                    }
-                ],
                 chartOptions: {
                     title: {
                         text: ''
@@ -90,6 +85,7 @@ async function setupDashboard() {
                     styleMode: {
                         enabled: false
                     },
+                    animation: false,
                     navigation: {
                         buttonOptions: {
                             align: 'left',
@@ -108,11 +104,14 @@ async function setupDashboard() {
                         }
                     },
                     mapView: {
-                        center: gpxData.center,
+                        center: gpxData.mapCenter,
                         zoom: 12.5
                     },
                     legend: {
                         enabled: false
+                    },
+                    tooltip: {
+                        format: '{series.name}'
                     },
                     series: [
                         // Base layer map
@@ -132,8 +131,7 @@ async function setupDashboard() {
                             data: [{
                                 geometry: {
                                     type: 'LineString',
-                                    coordinates:
-                                        getTrailCoordinates(gpxData.all)
+                                    coordinates: gpxData.mapPoints
                                 }
                             }],
                             showInLegend: false
@@ -156,17 +154,17 @@ async function setupDashboard() {
                 dataGridOptions: {
                     editable: false,
                     columns: {
-                        km: {
-                            headerFormat: 'Kilometer',
-                            dataIndex: 'km'
+                        distance: {
+                            headerFormat: 'Distance (km)',
+                            dataIndex: 'distance'
                         },
-                        pace: {
+                        speed: {
                             headerFormat: 'Speed (km/h)',
-                            dataIndex: 'pace'
+                            dataIndex: 'speed'
                         },
-                        elev: {
+                        elevation: {
                             headerFormat: 'Elevation (m)',
-                            dataIndex: 'elev'
+                            dataIndex: 'elevation'
                         },
                         hr: {
                             headerFormat: 'Heart Rate (bpm)',
@@ -183,15 +181,15 @@ async function setupDashboard() {
                     id: 'trackpoints-connector',
                     columnAssignment: [{
                         seriesId: 'elevation-series',
-                        data: ['cumulativeDistance', 'elevation']
+                        data: ['distance', 'elevation']
                     },
                     {
                         seriesId: 'speed-series',
-                        data: ['cumulativeDistance', 'speed']
+                        data: ['distance', 'speed']
                     },
                     {
                         seriesId: 'heartrate-series',
-                        data: ['cumulativeDistance', 'hr']
+                        data: ['distance', 'hr']
                     }]
                 },
                 chartOptions: {
@@ -210,9 +208,7 @@ async function setupDashboard() {
                         opposite: false,
                         labels: {
                             enabled: true,
-                            formatter: function () {
-                                return this.value + ' m';
-                            }
+                            format: '{value} m'
                         }
                     },
                     {
@@ -227,7 +223,7 @@ async function setupDashboard() {
                         shared: true,
                         formatter: function () {
                             let tooltip = '<b>Distance:</b> ' +
-                                this.x.toFixed(1) + ' km<br/>';
+                                this.x.toFixed(2) + ' km<br/>';
 
                             this.points.forEach(function (point) {
                                 tooltip += '<b>' + point.series.name +
@@ -238,7 +234,6 @@ async function setupDashboard() {
                             return tooltip;
                         }
                     },
-
                     series: [{
                         name: 'Elevation',
                         id: 'elevation-series',
@@ -262,21 +257,6 @@ async function setupDashboard() {
             }
         ]
     }, true);
-
-
-    function getTrailCoordinates(trackData) {
-        const coordinateData = [];
-
-        trackData.forEach(data => {
-            const lat2 = data[3];
-            const lon2 = data[4];
-            const cumulativeDistance = data[6];
-
-            coordinateData.push([lon2, lat2, cumulativeDistance]);
-        });
-
-        return coordinateData;
-    }
 
     // Get the CPX data from the server
     async function loadGpxData(url) {
@@ -310,19 +290,22 @@ async function setupDashboard() {
         // All recorded points
         const trackPoints = doc.getElementsByTagName('trkpt');
 
-        // Kilometer boundary points (for DataGrid only)
-        const kmPoints = [];
-
-        let cumulativeDistance = 0;
+        let metersSum = 0;
         let prevTime = 0;
         let prevLat;
         let prevLon;
+        let prevWholeKm = 0;
         let speedSum = 0;
-        let speedCount = 0;
-        let kilometer = 0;
+        let cnt = 0;
 
-        // Array for storing parsed data
+        // All points in the track (for chart)
         const allPoints = [];
+
+        // Kilometer boundary points (for DataGrid)
+        const kmPoints = [];
+
+        // Map points
+        const mapPoints = [];
 
         for (const point of trackPoints) {
             // Location
@@ -339,45 +322,50 @@ async function setupDashboard() {
             // Heart rate
             const heartRate = Number(getNodeText(point, 'gpxtpx:hr'));
 
-            if (prevTime > 0) {
-                // Create point
-                const distance = calculateDistance(lat, lon, prevLat, prevLon);
-                cumulativeDistance += distance / 1000;
-                const timeDifference = time - prevTime;
-                const speed = calculateSpeed(distance, timeDifference);
-                speedSum += speed;
-                speedCount++;
+            // Create point
+            const distance = prevLat > 0 ?
+                calculateDistance(lat, lon, prevLat, prevLon) : 0; // meters
+            const speed = calculateSpeed(distance, time - prevTime);
 
-                const averageSpeed =
-                    Math.round((speedSum / speedCount) * 100) / 100;
-                allPoints.push(
-                    [
-                        time, elevation, heartRate, lat, lon,
-                        averageSpeed,
-                        cumulativeDistance
-                    ]);
+            // Points for complete trail (chart)
+            const averageSpeed =
+                Math.round((speedSum / cnt) * 100) / 100;
+            metersSum += distance;
 
-                // Kilometer boundary?
-                const currentKm = Math.trunc(cumulativeDistance);
-                if (currentKm > kilometer) {
-                    kilometer = currentKm;
-                    // eslint-disable-next-line max-len
-                    kmPoints.push([currentKm, averageSpeed, elevation, heartRate]);
-                }
-            } else {
-                allPoints.push([time, elevation, heartRate, lat, lon, 0, 0]);
+            allPoints.push(
+                [
+                    time, elevation, heartRate, lat, lon,
+                    averageSpeed,
+                    metersSum / 1000
+                ]);
+
+            // Map points
+            mapPoints.push([lon, lat]);
+
+            // Datagrid points (one per km)
+            const currentWholeKm = Math.trunc(metersSum / 1000);
+            if (currentWholeKm > prevWholeKm) {
+                prevWholeKm = currentWholeKm;
+                kmPoints.push(
+                    [currentWholeKm, averageSpeed, elevation, heartRate]
+                );
             }
 
             // Update previous values
             prevTime = time;
             prevLat = lat;
             prevLon = lon;
+
+            // Next point
+            speedSum += speed;
+            cnt++;
         }
 
         return {
             all: allPoints,
             summary: kmPoints,
-            center: [prevLon, prevLat]
+            mapPoints: mapPoints,
+            mapCenter: [prevLon, prevLat]
         };
     }
 
