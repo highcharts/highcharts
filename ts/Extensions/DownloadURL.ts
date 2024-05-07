@@ -142,6 +142,10 @@ function downloadURL(
 
     dataURL = '' + dataURL;
 
+    if (nav.userAgent.length > 1000) {
+        throw new Error('Input too long');
+    }
+
     const // Some browsers have limitations for data URL lengths. Try to convert
         // to Blob or fall back. Edge always needs that blob.
         isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
