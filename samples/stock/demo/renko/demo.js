@@ -36,7 +36,7 @@ function linearDataToRenko(data, change) {
                     y: prevPrice,
                     low: prevPrice - change,
                     high: prevPrice,
-                    color: 'black'
+                    color: '#ff0000'
                 });
                 prevPrice -= change;
             }
@@ -61,6 +61,7 @@ Highcharts.getJSON(
                 name: 'AAPL',
                 type: 'columnrange',
                 fillColor: 'transparent',
+                color: '#0000ff',
                 turboThreshold: 0,
                 groupPadding: 0,
                 pointPadding: 0,
