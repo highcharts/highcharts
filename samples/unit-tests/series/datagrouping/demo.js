@@ -84,9 +84,7 @@
             ],
             time: {
                 getTimezoneOffset: timestamp => {
-                    if (Number.isNaN(timestamp)) {
-                        calledWithNaN = true;
-                    }
+                    calledWithNaN = Number.isNaN(timestamp);
                     return new Date().getTimezoneOffset();
                 }
             }
