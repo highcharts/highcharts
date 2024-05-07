@@ -54,11 +54,11 @@ Dashboards.board('container', {
             },
             accessibility: {
                 typeDescription: 'Packed bubble chart with 5 points.',
-                description: `The chart displays points in the form of 
-                different-sized bubbles, representing types of food, the 
+                description: `The chart displays points in the form of
+                different-sized bubbles, representing types of food, the
                 size of which corresponds to their vitamin A content.`,
                 point: {
-                    descriptionFormat: `Vitamin A content in {name}: 
+                    descriptionFormat: `Vitamin A content in {name}:
                     {value} micrograms`
                 }
             },
@@ -67,9 +67,7 @@ Dashboards.board('container', {
             },
             chart: {
                 animation: false,
-                type: 'packedbubble',
-                margin: 0,
-                spacing: [0, 10, 10, 10]
+                type: 'packedbubble'
             },
             tooltip: {
                 stickOnContact: true

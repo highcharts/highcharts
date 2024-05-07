@@ -508,3 +508,60 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
     }
 );
+
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Dynamic y-axis scale (#21068)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {});
+
+        chart.update({
+            yAxis: {
+                id: true
+            },
+            boost: {
+                enabled: false,
+                useGPUTranslations: true,
+                usePreallocated: true
+            },
+            series: [{
+                type: 'scatter',
+                data: [
+                    [0, 17844.9970195],
+                    [3, 0],
+                    [3, 0],
+                    [15, 0],
+                    [20, 3.251707695608],
+                    [25, 0],
+                    [48, 0],
+                    [83, 4.613364613784801],
+                    [101, 107.9853419401976],
+                    [172, 40.15339203180021],
+                    [207, 0],
+                    [358, 0],
+                    [882, 493.2697085333866],
+                    [1083, 137.5775549],
+                    [1174, 0],
+                    [1338, 1169.8349916205545],
+                    [1749, 515.4426648740781],
+                    [2932, 2222.5919712993655],
+                    [4616, 7394.206545882728],
+                    [8680, 2851.592296281099],
+                    [20078, 4845.327601560356],
+                    [20770, 88484.33223818678],
+                    [33848, 19836.59438924057],
+                    [66751, -123728.19741115364],
+                    [255763, 27663.11820818996],
+                    [332189, 205914.7489098137],
+                    [365274, 170649.91926368963]
+                ]
+            }]
+        }, true, true);
+
+        assert.notEqual(
+            chart.yAxis[0].tickPositions.length,
+            2,
+            'The y-axis should have more than two ticks'
+        );
+    }
+);

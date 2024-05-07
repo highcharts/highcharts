@@ -235,7 +235,7 @@ function extractTypes(
 
 
 /**
- * Retrieve child informations.
+ * Retrieve child informations and doclets.
  *
  * @param {Array<TS.Node>} nodes
  * Child nodes to extract from.
@@ -280,6 +280,7 @@ function getChildInfos(
             getVariableInfo(node, includeNodes) ||
             getPropertyInfo(node, includeNodes) ||
             getObjectInfo(node, includeNodes) ||
+            getNamespaceInfo(node, includeNodes) ||
             getInterfaceInfo(node, includeNodes) ||
             getImportInfo(node, includeNodes) ||
             getFunctionInfo(node, includeNodes) ||
@@ -890,6 +891,53 @@ function getInterfaceInfo(
     if (includeNodes) {
         _info.node = node;
     }
+
+    return _info;
+}
+
+
+/**
+ * Retrieves namespace and module information from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a namespace or module.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {NamespaceInfo|undefined}
+ * Namespace, module or `undefined`.
+ */
+function getNamespaceInfo(
+    node,
+    includeNodes
+) {
+
+    if (!TS.isModuleDeclaration(node)) {
+        return void 0;
+    }
+
+    /** @type {NamespaceInfo} */
+    const _info = {
+        kind: (
+            node
+                .getChildren()
+                .some(token => token.kind === TS.SyntaxKind.ModuleKeyword) ?
+                'Module' :
+                'Namespace'
+        ),
+        name: node.name.text
+    };
+
+    if (node.body && node.body.statements) {
+        const _members = _info.members = [];
+        for (const child of getChildInfos(node.body.statements, includeNodes)) {
+            _members.push(child);
+        }
+    }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     return _info;
 }
@@ -1702,8 +1750,20 @@ module.exports = {
 
 
 /**
+ * @typedef NamespaceInfo
+ * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
+ * @property {'Module'|'Namespace'} kind
+ * @property {Array<NodeInfo>} members
+ * @property {MetaInfo} meta
+ * @property {string} name
+ * @property {TS.Node} [node]
+ */
+
+/**
  * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
- *           InterfaceInfo|ObjectInfo|PropertyInfo|SourceInfo|VariableInfo
+ *           InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|SourceInfo|
+ *           VariableInfo
  *          } NodeInfo
  */
 
