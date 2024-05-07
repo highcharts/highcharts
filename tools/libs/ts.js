@@ -40,8 +40,15 @@ const TS = require('typescript');
 const DOCLET = /\/\*\*.*?\*\//gsu;
 
 
+const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
+
+
+const DOCLET_TAG_TYPE = /^\{([^}]+)\}/su;
+
+
 const NATIVE_HELPER =
     /^(?:Array|Extract|Omit|Partial|Record|Require)(?:<|$)/su;
+
 
 const NATIVE_TYPES = [
     'Array',
@@ -335,6 +342,68 @@ function extractInfo(
             extractions :
             void 0
     );
+}
+
+
+/**
+ * Retrieves all information for the specified tag from a DocletInfo object.
+ *
+ * @param {DocletInfo} doclet
+ * Doclet information to retrieve from.
+ *
+ * @param {string} tag
+ * Tag to retrieve.
+ *
+ * @return {Array<DocletTag>}
+ * Retrieved tag informations.
+ */
+function extractTagObjects(
+    doclet,
+    tag
+) {
+    /** @type {Array<DocletTag>} */
+    const _objects = [];
+
+    /** @type {RegExpMatchArray} */
+    let _match;
+    /** @type {DocletTag} */
+    let _object;
+
+    for (let text of (doclet.tags[tag] || [])) {
+        _object = { tag };
+        _match = text.match(DOCLET_TAG_TYPE);
+        if (_match) {
+            _object.type = _match[1];
+            text = text.substring(_match[0].length).trimStart();
+        }
+        if (tag === 'param') {
+            _match = text.match(DOCLET_TAG_NAME);
+            if (_match) {
+                if (_match[1]) {
+                    _object.isOptional = true;
+                    _object.name = _match[1];
+                } else {
+                    _object.name = _match[2];
+                }
+                if (_object.name.includes('=')) {
+                    _object.value = _object.name.split('=', 2)[1];
+                    _object.name = _object.name.split('=', 2)[0];
+                }
+                text = text.substring(_match[0].length).trimStart();
+            }
+        }
+        _object.text = text;
+        _objects.push(_object);
+    }
+
+    if (
+        !_objects.length &&
+        doclet.tags[tag]
+    ) {
+        _objects.push({ tag });
+    }
+
+    return _objects;
 }
 
 
@@ -1948,6 +2017,7 @@ module.exports = {
     changeSourceNode,
     debug,
     extractInfo,
+    extractTagObjects,
     extractTagText,
     extractTypes,
     getChildInfos,
@@ -2020,6 +2090,17 @@ module.exports = {
  * @property {MetaInfo} meta
  * @property {TS.JSDoc} [node]
  * @property {Record<string,Array<string>>} tags
+ */
+
+
+/**
+ * @typedef DocletTag
+ * @property {boolean} [isOptional]
+ * @property {string} [name]
+ * @property {string} tag
+ * @property {string} [text]
+ * @property {string} [type]
+ * @property {string} [value]
  */
 
 
