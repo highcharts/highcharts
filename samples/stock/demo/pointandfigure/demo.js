@@ -202,8 +202,8 @@
         'pointandfigure',
         'scatter', {
             // Options
-            boxSize: '2%',
-            reversalAmount: 3,
+            boxSize: '1%',
+            reversalAmount: 1,
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                     ' ' +
@@ -238,7 +238,6 @@
             markerAttribs,
             generatePnfData,
             translate() {
-                console.log('translate');
                 const calculatedBoxSize = this.calculatedBoxSize;
                 this.markerHeight = this.markerWidth =
                     this.yAxis.toPixels(0) -
@@ -259,7 +258,10 @@
             text: 'AAPL stock price - Point and Figure'
         },
         rangeSelector: {
-            enabled: false
+            selected: 4
+        },
+        xAxis: {
+            overscroll: 36e5 * 31
         },
         series: [{
             name: 'AAPL',
