@@ -14,6 +14,7 @@ h3 {
 fieldset {
     border: 1px solid silver;
     border-radius: 0.3em;
+    padding: 1em;
 }
 
 #demo-content {

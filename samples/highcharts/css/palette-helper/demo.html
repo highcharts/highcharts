@@ -2,6 +2,7 @@
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/c0bra/color-scheme-js/lib/color-scheme.min.js"></script>
 
 <div class="demo-content">
     <h1>Highcharts Palette Helper</h1>
@@ -46,6 +47,8 @@
             <input type="color" value="#ffffff" name="data-color-7" />
             <input type="color" value="#ffffff" name="data-color-8" />
             <input type="color" value="#ffffff" name="data-color-9" />
+
+            <button id="randomize" class="btn btn-primary btn-sm">Randomize</button>
         </p>
 
     </fieldset>
@@ -54,7 +57,7 @@
     <div id="preview">
         <p>Neutral color variations for text and various elements.</p>
         <div id="neutral-preview"></div>
-        <p>Highlight color variations for highlighted text and selections.</p>
+        <p class="mt-4">Highlight color variations for highlighted text and selections.</p>
         <div id="highlight-preview"></div>
     </div>
 

@@ -1,6 +1,10 @@
+/* global ColorScheme */
 const { Color } = Highcharts;
+const colorScheme = new ColorScheme();
 
-let topology, ohlc;
+let topology,
+    ohlc,
+    animation = true;
 
 const rgbToHex = rgb => {
     const [r, g, b] = Color.parse(rgb).rgba;
@@ -37,6 +41,12 @@ const chartPreview = async theme => {
             height: '90%',
             title: {
                 text: 'kg'
+            }
+        },
+
+        plotOptions: {
+            series: {
+                animation
             }
         },
 
@@ -121,7 +131,8 @@ const chartPreview = async theme => {
         },
 
         series: [{
-            data: data,
+            data,
+            animation,
             name: 'Random data',
             dataLabels: {
                 enabled: true,
@@ -153,6 +164,7 @@ const chartPreview = async theme => {
             type: 'candlestick',
             name: 'AAPL Stock Price',
             data: ohlc,
+            animation,
             dataGrouping: {
                 units: [
                     [
@@ -169,6 +181,50 @@ const chartPreview = async theme => {
 };
 
 const defaultOptions = Highcharts.merge(Highcharts.defaultOptions);
+
+// Generate a random color scheme using the third-party color-scheme package
+// https://github.com/c0bra/color-scheme-js
+const getColors = () => {
+    const fromHue = Math.round(Math.random() * 256 * 256 * 256),
+        scheme = [
+            'mono',
+            'contrast',
+            'triade',
+            'tetrade',
+            'analogic'
+        ][Math.floor(Math.random() * 4.999)],
+        variation = [
+            'default',
+            'pastel',
+            'soft',
+            'light',
+            'hard',
+            'pale'
+        ][Math.floor(Math.random() * 5.999)],
+        distance = Math.random();
+
+    console.log(`
+        from_hue: ${fromHue},
+        scheme: ${scheme},
+        variation: ${variation},
+        distance: ${distance}
+    `);
+
+    colorScheme
+        .from_hue(Math.random() * 256 * 256 * 256)
+        .scheme(scheme)
+        .distance(distance)
+        .variation(variation);
+
+    const colors = colorScheme.colors();
+
+    // Various schemes produce different number of colors
+    while (colors.length < 10) {
+        colors.push.apply(colors, colors.slice(0, 4));
+    }
+
+    return colors.map(c => `#${c}`);
+};
 
 const generate = async () => {
 
@@ -332,17 +388,26 @@ const generate = async () => {
     document.getElementById('js').innerText = JSON.stringify(theme, null, '  ');
 
     await chartPreview(theme);
+
+    // Only animate the first time
+    animation = false;
 };
 
 (async () => {
     let timer;
 
-    // Insert default data colors
-    Highcharts.getOptions().colors.forEach((color, i) => {
-        const input = document.querySelector(`input[name="data-color-${i}"]`);
-        input.value = color;
-        input.title = `Color ${i}: ${color}`;
+    const populateColorInputs = colors => colors.forEach((color, i) => {
+        const input = document.querySelector(
+            `input[name="data-color-${i}"]`
+        );
+        if (input) {
+            input.value = color;
+            input.title = `Color ${i}: ${color}`;
+        }
     });
+
+    // Insert default data colors
+    populateColorInputs(Highcharts.getOptions().colors);
 
     // Activate the inputs
     [...document.querySelectorAll('input')]
@@ -353,5 +418,12 @@ const generate = async () => {
                 timer = setTimeout(generate, 200);
             }
         ));
+
+    // Activate the randomize button
+    document.getElementById('randomize').addEventListener('click', () => {
+        populateColorInputs(getColors());
+        generate();
+    });
+
     await generate();
 })();
