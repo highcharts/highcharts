@@ -672,7 +672,6 @@ class RangeSelector {
                     dropdown.options[i + 1].disabled = (state === 3);
 
                     if (state === 2) {
-                        dropdown.selectedIndex = i + 1;
 
                         if (dropdownLabel) {
                             dropdownLabel.setState(2);
@@ -680,9 +679,14 @@ class RangeSelector {
                                 text: rangeSelector.buttonOptions[i].text + ' ▾'
                             });
                         }
+                        dropdown.selectedIndex = i + 1;
                     }
+                    const bbox = dropdownLabel.getBBox();
+                    css(dropdown, {
+                        width: `${bbox.width}px`,
+                        height: `${bbox.height}px`
+                    });
                 }
-
             }
         }
     }
@@ -1953,18 +1957,15 @@ class RangeSelector {
         if (buttonGroup && dropdown) {
             const { translateX = 0, translateY = 0 } = buttonGroup,
                 left = chart.plotLeft + translateX,
-                top = translateY,
-                bBox = dropdownLabel
-                    .attr({ x: left, y: top })
-                    .show()
-                    .getBBox();
+                top = translateY;
+            dropdownLabel
+                .attr({ x: left, y: top })
+                .show();
 
             css(dropdown, {
                 left: left + 'px',
                 top: top + 'px',
-                visibility: 'inherit',
-                width: bBox.width + 'px',
-                height: bBox.height + 'px'
+                visibility: 'inherit'
             });
             this.hasVisibleDropdown = true;
         }
