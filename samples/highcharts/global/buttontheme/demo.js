@@ -29,7 +29,13 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-chart.renderer.button('General button', 100, 90)
+chart.renderer
+    .button(
+        'General button',
+        100,
+        90,
+        () => console.log('Button clicked')
+    )
     .attr({
         zIndex: 10
     })
