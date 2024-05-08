@@ -18,7 +18,7 @@ const gulp = require('gulp');
  */
 function jsDoc() {
 
-    const logLib = require('./lib/log');
+    const logLib = require('../libs/log');
 
     return new Promise(resolve => {
 

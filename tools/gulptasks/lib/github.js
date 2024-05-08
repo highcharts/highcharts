@@ -1,5 +1,5 @@
 const request = require('request');
-const logLib = require('./log');
+const logLib = require('../../libs/log');
 const argv = require('yargs').argv;
 
 const DEFAULT_OPTIONS = {

@@ -33,9 +33,9 @@ const WATCH_GLOBS = [
  */
 async function watch() {
     const argv = require('yargs').argv;
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const processLib = require('../../libs/process');
 
     if (processLib.isRunning('dashboards/scripts-watch')) {
         logLib.warn('Running watch process detected.');

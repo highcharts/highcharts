@@ -211,13 +211,14 @@ class MapNavigation {
             }
             objectEach(navOptions.buttons, (
                 buttonOptions: MapNavigationButtonOptions,
-                n: string
+                n: 'zoomIn'|'zoomOut'
             ): void => {
                 buttonOptions = merge(navOptions.buttonOptions, buttonOptions);
 
                 // Presentational
                 if (!chart.styledMode && buttonOptions.theme) {
-                    attr = buttonOptions.theme;
+                    attr = merge(buttonOptions.theme);
+                    attr.padding = buttonOptions.padding;
                     attr.style = merge(
                         buttonOptions.theme.style,
                         buttonOptions.style // #3203
@@ -252,8 +253,7 @@ class MapNavigation {
                     .attr({
                         width,
                         height,
-                        title: (chart.options.lang as any)[n],
-                        padding: buttonOptions.padding,
+                        title: chart.options.lang[n],
                         zIndex: 5
                     })
                     .add(mapNav.navButtonsGroup);

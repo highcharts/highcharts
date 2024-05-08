@@ -243,21 +243,21 @@ function extractTypes(
  * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {Array<NodeInfo>}
+ * @return {Array<CodeInfo>}
  * Retrieved child informations.
  */
 function getChildInfos(
     nodes,
     includeNodes
 ) {
-    /** @type {Array<NodeInfo>} */
+    /** @type {Array<CodeInfo>} */
     const _infos = [];
 
     /** @type {DocletInfo} */
     let _doclet;
     /** @type {Array<DocletInfo>} */
     let _doclets;
-    /** @type {NodeInfo} */
+    /** @type {CodeInfo} */
     let _child;
     /** @type {TS.Node} */
     let previousNode = nodes[0];
@@ -597,7 +597,7 @@ function getDocletsBetween(
  * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {NodeInfo|undefined}
+ * @return {CodeInfo|undefined}
  * Export information or `undefined`.
  */
 function getExportInfo(
@@ -1661,6 +1661,14 @@ module.exports = {
 
 
 /**
+ * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
+ *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
+ *           VariableInfo
+ *          } CodeInfo
+ */
+
+
+/**
  * @typedef DeconstructInfo
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
@@ -1688,7 +1696,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
  * @property {string} [name]
- * @property {NodeInfo} [object]
+ * @property {CodeInfo} [object]
  * @property {MetaInfo} meta
  * @property {TS.ImportDeclaration} [node]
  */
@@ -1754,19 +1762,11 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Module'|'Namespace'} kind
- * @property {Array<NodeInfo>} members
+ * @property {Array<CodeInfo>} members
  * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.Node} [node]
  */
-
-/**
- * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
- *           InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|SourceInfo|
- *           VariableInfo
- *          } NodeInfo
- */
-
 
 /**
  * @typedef ObjectInfo
@@ -1794,7 +1794,7 @@ module.exports = {
 
 /**
  * @typedef SourceInfo
- * @property {Array<NodeInfo>} code
+ * @property {Array<CodeInfo>} code
  * @property {'Source'} kind
  * @property {TS.SourceFile} [node]
  * @property {string} path
