@@ -40,10 +40,6 @@ import Yargs from 'yargs';
  * */
 
 
-const PRODUCT_ROOT_OPTIONS = [
-    'Board.ts',
-    'Defaults.ts'
-];
 
 const DEFAULTS: Record<string, Array<(TSLib.PropertyInfo|TSLib.VariableInfo)>> = {};
 
@@ -62,8 +58,8 @@ const TREE: TreeLib.Tree = {};
 function addDefaults(
     sourcePath: string,
     members: Array<TSLib.CodeInfo>
-) {
-    const defaults = DEFAULTS[sourcePath] = DEFAULTS[sourcePath] || [];
+): void {
+    const defaults = DEFAULTS[sourcePath] || [];
 
     let types: Array<string>;
 
@@ -79,6 +75,7 @@ function addDefaults(
             case 'Variable':
                 types = TSLib.extractTypes(member.type || '');
                 if (
+                    member.name.toLowerCase().includes('default') &&
                     types.length === 1 &&
                     types[0].endsWith('Options')
                 ) {
@@ -87,6 +84,11 @@ function addDefaults(
                 break;
         }
     }
+
+    if (defaults.length) {
+        DEFAULTS[sourcePath] = defaults;
+    }
+
 }
 
 
@@ -94,8 +96,8 @@ function addOptions(
     sourcePath: string,
     members: Array<TSLib.CodeInfo>,
     origin?: TSLib.MetaOrigin
-) {
-    const options = OPTIONS[sourcePath] = OPTIONS[sourcePath] || [];
+): void {
+    const options = OPTIONS[sourcePath] || [];
 
     for (let member of members) {
         switch (member.kind) {
@@ -108,7 +110,7 @@ function addOptions(
                 break;
             case 'Module':
                 if (
-                    member.flags.includes('declare') &&
+                    member.flags?.includes('declare') &&
                     member.name.endsWith('Options')
                 ) {
                     const path =
@@ -131,79 +133,192 @@ function addOptions(
         }
     }
 
+    if (options.length) {
+        OPTIONS[sourcePath] = options;
+    }
+
 }
 
 
-// function convertInterfaceToOptionPath(
-//     sourceInfo: TSLib.SourceInfo,
-//     interfaceInfo: TSLib.InterfaceInfo
-// ) {
-//     const sourcePath = sourceInfo.path;
-//     const interfaceName = interfaceInfo.name;
-//     const folderType = Path.dirname(sourcePath).split(Path.sep).pop();
-//     const optionName = (
-//         interfaceName.startsWith(folderType) ?
-//             interfaceName.substring(folderType.length) :
-//                 interfaceName.endsWith(`${folderType}Options`) ?
-//                     interfaceName.substring(
-//                         0,
-//                         (interfaceName.length - folderType.length - 7)
-//                     ) :
-//                     interfaceName
-//     );
+function addTreeNode(
+    sourceInfo: TSLib.SourceInfo,
+    parentNode: TreeLib.TreeNode,
+    info: (
+        | TSLib.FunctionInfo
+        | TSLib.InterfaceInfo
+        | TSLib.PropertyInfo
+        | TSLib.VariableInfo
+    )
+): void {
+    let _treeNode: (TreeLib.TreeNode|undefined);
 
-//     if (sourcePath.includes('/Series/')) {
-//         if (
-//             interfaceName.startsWith(folderType) &&
-//             interfaceName.endsWith('SeriesOptions')
-//         ) {
-//             const rest = interfaceName
-//                 .substring(folderType.length, interfaceName.length - 13);
+    if (info.doclet) {
+        const _fullName = (
+            TSLib.extractTagText(info.doclet, 'optionparent', true) ??
+            TSLib.extractTagText(info.doclet, 'apioption', true) ??
+            TSLib.extractTagText(info.doclet, 'name', true)
+        );
 
-//             return `series.${folderType}.${rest.toLowerCase()}`;
-//         }
-//     } else {
-//         if (interfaceName === '') {
-            
-//         }
-//     }
+        if (typeof _fullName === 'string') {
+            _treeNode = getTreeNode(_fullName);
+        }
 
-// }
+    }
+
+    if (!_treeNode) {
+
+        if (
+            info.kind !== 'Function' &&
+            info.kind !== 'Property'
+        ) {
+            return;
+        }
+
+        _treeNode = getTreeNode(`${parentNode.meta.fullname}.${info.name}`);
+ 
+    }
+
+    let _moreInfo: (Array<(TSLib.FunctionInfo|TSLib.PropertyInfo)>|undefined);
+
+    switch (info.kind) {
+        case 'Interface':
+            _moreInfo = info.members;
+            break;
+        case 'Property':
+        case 'Variable':
+            // use sourceInfo for type retrievement
+            if (
+                info.value &&
+                typeof info.value === 'object'
+            ) {
+                _moreInfo = info.value.members;
+            }
+            break;
+    }
+
+    if (_moreInfo) {
+        for (const _more of _moreInfo) {
+            addTreeNode(sourceInfo, _treeNode, _more);
+        }
+    }
+
+}
 
 
-async function loadSources(
-    sourcePath: string,
+function buildTree(
+    root: string
+): void {
+    const rootCode = DEFAULTS[root];
+    const rootNode = {
+        doclet: {
+
+        },
+        meta: {
+            fullname: '',
+            name: ''
+        },
+        children: TREE
+    };
+
+    for (const code of rootCode) {
+        addTreeNode(TSLib.getSourceInfo(root), rootNode, code);
+    }
+
+}
+
+
+function getTreeNode(
+    fullname: string
+): TreeLib.TreeNode {
+    let currentNode: TreeLib.TreeNode = {
+        doclet: {},
+        meta: {
+            fullname: '',
+            name: ''
+        },
+        children: TREE
+    };
+
+    for (const name of fullname.split('.')) {
+
+        if (!name) {
+            continue;
+        }
+
+        if (!currentNode.children) {
+            currentNode.children = {};
+        }
+
+        if (!currentNode.children[name]) {
+            currentNode.children[name] = {
+                doclet: {},
+                meta: {
+                    fullname: (
+                        currentNode.meta.fullname ?
+                            `${currentNode.meta.fullname}.${name}` :
+                            name
+                    ),
+                    name
+                }
+            };
+        }
+
+        currentNode = currentNode.children[name];
+
+    }
+
+    return currentNode;
+}
+
+
+function loadSource(
+    source: string,
     debug?: boolean
-) {
-    const sourceInfo = TSLib.getSourceInfo(sourcePath, void 0, debug);
+): void {
+    const filePaths = (
+        Path.extname(source) ?
+            [source] :
+            FSLib.getFilePaths(source, true)
+    );
 
-    addDefaults(sourcePath, sourceInfo.code);
-    addOptions(sourcePath, sourceInfo.code);
+    let sourceInfo: TSLib.SourceInfo;
+
+    for (const filePath of filePaths) {
+        switch (Path.extname(filePath)) {
+            case '.js':
+            case '.ts':
+                sourceInfo = TSLib.getSourceInfo(filePath, void 0, debug);
+
+                addDefaults(filePath, sourceInfo.code);
+                addOptions(filePath, sourceInfo.code);
+        }
+    }
 
 }
 
 
 async function main() {
-    const args = await Yargs.argv;
+    const args = await Yargs().argv;
     const debug = !!args.debug;
-    const source = args.source as (string|undefined) || 'ts';
+    const root = args.root as (string|undefined) || 'ts/Core/Defaults.ts';
+    const source = args.source as (string|undefined) || 'ts/Core/Defaults.ts';
 
     LogLib.warn('Loading options from', source, '...');
+    loadSource(source);
+    LogLib.success('Done.');
 
-    for (const path of FSLib.getFilePaths(source, true)) {
-        if (Path.extname(path) === '.ts') {
-            loadSources(path, debug);
-        }
-    }
+    LogLib.warn('Building tree ...');
+    buildTree(root);
+    LogLib.success('Done.');
 
-    LogLib.success('Finished loading options.');
-
-    await saveOptionsJSON(debug);
+    LogLib.warn('Saving JSON ...');
+    await saveJSON(debug);
+    LogLib.success('Done');
 
 }
 
 
-async function saveOptionsJSON(
+async function saveJSON(
     debug?: boolean
 ) {
     await FS.writeFile('tree-defaults.json', TSLib.toJSONString(DEFAULTS, 4), 'utf8');

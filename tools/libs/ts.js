@@ -431,12 +431,13 @@ function extractTagText(
 ) {
     const tagText = doclet.tags[tag];
 
-    if (tagText && tagText.length) {
-        return (
-            allText ?
-                tagText.join('\n\n') :
-                tagText[tagText.length - 1]
-        );
+    if (tagText) {
+        if (allText) {
+            return tagText.join('\n\n');
+        }
+        if (tagText.length) {
+            return tagText[tagText.length - 1];
+        }
     }
 
     return void 0;
