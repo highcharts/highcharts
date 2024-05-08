@@ -777,7 +777,7 @@ class SVGElement implements SVGElementLike {
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|this) {
-        const element = this.element,
+        const { element } = this,
             symbolCustomAttribs = SVGElement.symbolCustomAttribs;
 
         let key,

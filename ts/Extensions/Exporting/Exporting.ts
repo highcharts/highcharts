@@ -49,7 +49,6 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -330,16 +329,11 @@ namespace Exporting {
         }
 
 
-        const attr = btnOptions.theme;
+        const theme = chart.styledMode ? {} : btnOptions.theme;
         let callback: (
             EventCallback<SVGElement>|
             undefined
         );
-
-        if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
-        }
 
         if (onclick) {
             callback = function (
@@ -376,21 +370,14 @@ namespace Exporting {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 30);
+            theme.paddingLeft = pick(theme.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
-            extend(attr, {
+            extend(theme, {
                 width: btnOptions.width,
                 height: btnOptions.height,
                 padding: 0
             });
-        }
-
-
-        if (!chart.styledMode) {
-            attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
         }
 
         const button: SVGElement = renderer
@@ -399,7 +386,7 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr,
+                theme,
                 void 0,
                 void 0,
                 void 0,
