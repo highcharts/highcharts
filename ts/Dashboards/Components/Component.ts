@@ -910,6 +910,18 @@ abstract class Component {
             }
 
             result = result[propertyPath[i]];
+
+            if (
+                result === false &&
+                (
+                    propertyPath.indexOf('title') >= 0 ||
+                    propertyPath.indexOf('subtitle') >= 0 ||
+                    propertyPath.indexOf('caption') >= 0
+                )
+            ) {
+                result = '';
+            }
+
         }
 
         return result;

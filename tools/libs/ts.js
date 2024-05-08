@@ -2083,6 +2083,14 @@ module.exports = {
 
 
 /**
+ * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
+ *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
+ *           VariableInfo
+ *          } CodeInfo
+ */
+
+
+/**
  * @typedef DeconstructInfo
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
