@@ -931,7 +931,9 @@
 
 .highcharts-dashboards-edit-popup-close {
     background-repeat: no-repeat;
-    background-position: 0% 100%;
+    background-color: transparent;
+    background-position: 50% 100%;
+    border: none;
     width: 20px;
     height: 20px;
     cursor: pointer;
