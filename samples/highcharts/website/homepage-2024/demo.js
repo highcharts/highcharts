@@ -2500,6 +2500,7 @@ function jellypus() {
             }
         },
         tooltip: {
+            enabled: false,
             backgroundColor: '#474554',
             style: {
                 color: '#f0f0f0'
