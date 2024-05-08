@@ -65,6 +65,14 @@ const MapLineSeriesDefaults: MapLineSeriesOptions = {
 
 };
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default MapLineSeriesDefaults;
+
 /**
  * A `mapline` series. If the [type](#series.mapline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
@@ -148,10 +156,4 @@ const MapLineSeriesDefaults: MapLineSeriesOptions = {
  * @apioption plotOptions.mapline.states.hover
  */
 
-/* *
- *
- *  Default Export
- *
- * */
-
-export default MapLineSeriesDefaults;
+(''); // Keeps doclets above in JS file

@@ -38,6 +38,9 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
                 ],
                 time: new Highcharts.Time()
             },
+            setSelected: function (selected) {
+                this.options.selected = this.selected = selected;
+            },
             getYTDExtremes: RangeSelector.prototype.getYTDExtremes,
             options: {
                 allButtonsEnabled: undefined

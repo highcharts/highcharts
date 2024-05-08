@@ -1,6 +1,6 @@
 const gulp = require('gulp');
 const errors = require('../../errors/errors.json');
-const log = require('./lib/log');
+const log = require('../libs/log');
 const { putS3Object, startS3Session } = require('./lib/uploadS3');
 
 const bucket = 'assets.highcharts.com';
