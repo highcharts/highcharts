@@ -501,14 +501,16 @@ function getChildInfos(
     /** @type {Array<CodeInfo>} */
     const _infos = [];
 
+    /** @type {CodeInfo|undefined} */
+    let _child;
+    /** @type {Array<CodeInfo>|undefined} */
+    let _children;
     /** @type {DocletInfo} */
     let _doclet;
     /** @type {Array<DocletInfo>} */
     let _doclets;
-    /** @type {CodeInfo} */
-    let _child;
     /** @type {TS.Node} */
-    let previousNode = nodes[0];
+    let _previousNode = nodes[0];
 
     for (const node of nodes) {
 
@@ -517,40 +519,42 @@ function getChildInfos(
         }
 
         if (
-            TS.isVariableDeclarationList(node) ||
+            // TS.isVariableDeclarationList(node) ||
             TS.isVariableStatement(node)
         ) {
-            _infos.push(...getChildInfos(getNodesChildren(node), includeNodes));
-            continue;
+            _children = getChildInfos(
+                getNodesChildren(node.declarationList),
+                includeNodes
+            );
+            if (_children.length) {
+                // Take the first one out to attach leading doclet
+                _child = _children.shift();
+            }
+        } else {
+            _child = (
+                getVariableInfo(node, includeNodes) ||
+                getPropertyInfo(node, includeNodes) ||
+                getObjectInfo(node, includeNodes) ||
+                getNamespaceInfo(node, includeNodes) ||
+                getInterfaceInfo(node, includeNodes) ||
+                getImportInfo(node, includeNodes) ||
+                getFunctionInfo(node, includeNodes) ||
+                getExportInfo(node, includeNodes) ||
+                getDeconstructInfos(node, includeNodes) ||
+                getClassInfo(node, includeNodes)
+            );
         }
-
-        _child = (
-            getVariableInfo(node, includeNodes) ||
-            getPropertyInfo(node, includeNodes) ||
-            getObjectInfo(node, includeNodes) ||
-            getNamespaceInfo(node, includeNodes) ||
-            getInterfaceInfo(node, includeNodes) ||
-            getImportInfo(node, includeNodes) ||
-            getFunctionInfo(node, includeNodes) ||
-            getExportInfo(node, includeNodes) ||
-            getDeconstructInfos(node, includeNodes) ||
-            getClassInfo(node, includeNodes)
-        );
 
         // Retrieve leading doclets
 
-        _doclets = getDocletInfosBetween(previousNode, node, includeNodes);
+        _doclets = getDocletInfosBetween(_previousNode, node, includeNodes);
 
-        if (!_child) {
-            _infos.push(..._doclets);
-            continue;
-        }
-
-        // Deal with floating doclets before child doclet
+        // Deal with floating doclets before leading child doclet
 
         if (_doclets.length) {
             _doclet = _doclets[_doclets.length - 1];
             if (
+                _child &&
                 _child.kind !== 'Export' &&
                 _child.kind !== 'Import' &&
                 !_doclet.tags.apioption
@@ -560,11 +564,19 @@ function getChildInfos(
             _infos.push(..._doclets);
         }
 
-        // Finally add child
+        // Finally add child(ren)
 
-        _infos.push(_child);
+        if (_child) {
+            _infos.push(_child);
+            _child = void 0;
+        }
 
-        previousNode = node;
+        if (_children) {
+            _infos.push(..._children);
+            _children = void 0;
+        }
+
+        _previousNode = node;
 
     }
 
@@ -756,7 +768,6 @@ function getDocletInfosBetween(
                             tag.getText()
                                 .trim()
                                 .substring(_tagName.length + 1)
-                                .trim()
                                 .split(/\n *\*?/gu)
                                 .join('\n')
                                 .trim()
@@ -1985,8 +1996,8 @@ function toTypeof(
     node
 ) {
     return {
-        [TS.SyntaxKind.BigIntKeyword]: 'bigint',
-        [TS.SyntaxKind.BigIntLiteral]: 'bigint',
+        // [TS.SyntaxKind.BigIntKeyword]: 'bigint', // JSON issue
+        // [TS.SyntaxKind.BigIntLiteral]: 'bigint', // JSON issue
         [TS.SyntaxKind.FalseKeyword]: 'boolean',
         [TS.SyntaxKind.TrueKeyword]: 'boolean',
         [TS.SyntaxKind.ArrowFunction]: 'function',
@@ -2212,7 +2223,7 @@ module.exports = {
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
  * @property {string} [type]
- * @property {bigint|boolean|null|number|string|ObjectInfo} [value]
+ * @property {boolean|null|number|string|ObjectInfo} [value]
  */
 
 
@@ -2244,7 +2255,7 @@ module.exports = {
  * @property {string} name
  * @property {TS.VariableDeclaration} [node]
  * @property {string} [type]
- * @property {bigint|boolean|null|number|string|ObjectInfo} [value]
+ * @property {boolean|null|number|string|ObjectInfo} [value]
  */
 
 
