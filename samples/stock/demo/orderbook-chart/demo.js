@@ -175,8 +175,8 @@ Highcharts.chart('container', {
 
     series: [{
         dataLabels: [{
-            x: 999,
-            overflow: 'justify',
+            align: 'right',
+            alignTo: 'plotEdges',
             style: {
                 fontSize: 14,
                 textOutline: 0
@@ -196,7 +196,8 @@ Highcharts.chart('container', {
         data: asksData
     }, {
         dataLabels: [{
-            x: -999,
+            align: 'left',
+            alignTo: 'plotEdges',
             style: {
                 fontSize: 14,
                 textOutline: 0
