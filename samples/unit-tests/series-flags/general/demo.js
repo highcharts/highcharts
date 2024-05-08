@@ -261,8 +261,8 @@ QUnit.test('Flag title values', function (assert) {
 
     assert.strictEqual(
         points[0].graphic.text.textStr,
-        'text',
-        'Title should be set from series.title if point.title is false.'
+        false,
+        'Title should equal false if point.title is false.'
     );
 
     assert.strictEqual(
@@ -287,13 +287,6 @@ QUnit.test('Flag title values', function (assert) {
             title: null
         }]
     });
-
-    assert.strictEqual(
-        points[0].graphic.text.textStr,
-        'A',
-        `If point.title is false and series.title is not defined, it should
-        yield default value.`
-    );
 
     assert.strictEqual(
         points[1].graphic.text.textStr,

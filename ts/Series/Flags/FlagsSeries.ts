@@ -43,7 +43,6 @@ const {
     defined,
     extend,
     isNumber,
-    isString,
     merge,
     objectEach,
     wrap
@@ -253,8 +252,7 @@ class FlagsSeries extends ColumnSeries {
                 }
                 graphic.attr({
                     // Allow empty string as a flag title (#20549)
-                    text: isString(point.options.title) ? point.options.title :
-                        isString(options.title) ? options.title : 'A'
+                    text: point.options.title ?? options.title ?? 'A'
                 })[graphic.isNew ? 'attr' : 'animate'](attribs);
 
                 // Rig for the distribute function
