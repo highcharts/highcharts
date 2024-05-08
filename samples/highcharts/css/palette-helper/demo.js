@@ -211,7 +211,7 @@ const getColors = () => {
     `);
 
     colorScheme
-        .from_hue(Math.random() * 256 * 256 * 256)
+        .from_hue(fromHue)
         .scheme(scheme)
         .distance(distance)
         .variation(variation);
