@@ -1,6 +1,6 @@
 import type { AssertionError } from 'assert';
 import * as PosixPath from 'node:path/posix';
-import { message, failure } from '../../tools/gulptasks/lib/log.js';
+import { message, failure } from '../../tools/libs/log.js';
 
 const { argv } = process;
 
