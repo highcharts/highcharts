@@ -288,9 +288,9 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        const type = context.getType();
+        this.type = context.getType();
 
-        if (type === 'cell') {
+        if (this.type === 'cell') {
             const component = (context as Cell).mountedComponent;
             if (!component) {
                 return;
@@ -432,9 +432,15 @@ class SidebarPopup extends BaseForm {
 
     /**
      * Function called when the close button is pressed.
+     *
+     * @override BaseForm.closeButtonEvents
      */
     public closeButtonEvents(): void {
-        this.hide();
+        if (this.type === 'cell') {
+            this.accordionMenu.showCancelConfirmationPopup();
+        } else {
+            this.hide();
+        }
     }
 
     public renderHeader(title: string, iconURL: string): void {
@@ -514,7 +520,11 @@ class SidebarPopup extends BaseForm {
                 !this.container.contains(event.target) &&
                 this.container.classList.value.includes('show')
             ) {
-                this.hide();
+                if (this.type === 'cell') {
+                    this.accordionMenu.showCancelConfirmationPopup();
+                } else {
+                    this.hide();
+                }
             }
         });
 

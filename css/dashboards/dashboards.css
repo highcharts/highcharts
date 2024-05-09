@@ -924,9 +924,11 @@
     top: 5%;
     overflow: hidden;
     position: absolute;
-    z-index: 100;
+    z-index: 1000;
     border-radius: 10px;
     padding: 20px;
+    pointer-events: all;
+    border: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dashboards-edit-popup-close {

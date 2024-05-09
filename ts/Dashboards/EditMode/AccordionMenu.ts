@@ -27,6 +27,7 @@ import type Globals from '../Globals';
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
+import ConfirmationPopup from './ConfirmationPopup.js';
 const {
     createElement,
     merge,
@@ -67,7 +68,8 @@ class AccordionMenu {
     private chartOptionsJSON = {};
     private component?: Component;
     private oldOptionsBuffer: DeepPartial<Component.Options> = {};
-    private oldChartOptionsBuffer: Globals.AnyRecord = {};
+    private confirmationPopup?: ConfirmationPopup;
+    public waitingForConfirmation = false;
 
     /* *
      *
@@ -84,13 +86,22 @@ class AccordionMenu {
      * The component to render the menu for.
      */
     public renderContent(container: HTMLElement, component: Component): void {
+        const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
 
         this.component = component;
         this.oldOptionsBuffer = merge({}, component.options);
-        this.oldChartOptionsBuffer = {};
+
+        if (editMode) {
+            this.confirmationPopup = new ConfirmationPopup(
+                component.board.container,
+                editMode.iconsURLPrefix,
+                editMode,
+                { close: { icon: '' } }
+            );
+        }
 
         const accordionContainer = createElement(
             'div',
@@ -150,17 +161,8 @@ class AccordionMenu {
                 text: (component.board?.editMode || EditGlobals)
                     .lang.cancelButton,
                 className: EditGlobals.classNames.popupCancelBtn,
-                callback: async (): Promise<void> => {
-                    const oldOptions =
-                        this.oldOptionsBuffer as Partial<Component.Options>;
-
-                    await component.update(
-                        oldOptions
-                    );
-
-                    menu.changedOptions = {};
-                    menu.chartOptionsJSON = {};
-                    menu.closeSidebar();
+                callback: (): void => {
+                    this.showCancelConfirmationPopup();
                 }
             }
         );
@@ -340,6 +342,49 @@ class AccordionMenu {
 
         }
         return;
+    }
+
+    private async discardChanges(): Promise<void> {
+        await this.component?.update(
+            this.oldOptionsBuffer as Partial<Component.Options>
+        );
+
+        this.changedOptions = {};
+        this.chartOptionsJSON = {};
+    }
+
+    /**
+     * Shows a confirmation popup when the user tries to discard changes.
+     */
+    public showCancelConfirmationPopup(): void {
+        const popup = this.confirmationPopup;
+        if (!popup || this.waitingForConfirmation) {
+            return;
+        }
+
+        this.waitingForConfirmation = true;
+        popup.show({
+            text: 'Are you sure you want to discard changes?',
+            confirmButton: {
+                value: 'Yes',
+                callback: async (): Promise<void> => {
+                    await this.discardChanges();
+                    this.waitingForConfirmation = false;
+                    this.closeSidebar();
+                },
+                context: this as any
+            },
+            cancelButton: {
+                value: 'No',
+                callback: (): void => {
+                    popup.closePopup();
+
+                    setTimeout((): void => {
+                        this.waitingForConfirmation = false;
+                    }, 100);
+                }
+            }
+        });
     }
 }
 

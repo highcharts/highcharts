@@ -97,6 +97,10 @@ class ConfirmationPopup extends BaseForm {
      * Options for confirmation popup.
      */
     public options?: ConfirmationPopup.Options;
+    /**
+     * Show options for confirmation popup.
+     */
+    public contentOptions?: ConfirmationPopup.ContentOptions;
 
     /* *
     *
@@ -133,14 +137,28 @@ class ConfirmationPopup extends BaseForm {
     }
 
     /**
-     * Adds content inside the popup.
+     * Adds events to the close button.
      *
-     * @param options
-     * Options for confirmation popup.
+     * @override BaseForm.closeButtonEvents
      */
-    public renderContent(
-        options: ConfirmationPopup.ContentOptions
-    ): void {
+    public closeButtonEvents(): void {
+        const cancelCallback = this.contentOptions?.cancelButton.callback;
+        if (!cancelCallback) {
+            return;
+        }
+
+        cancelCallback();
+    }
+
+    /**
+     * Adds content inside the popup.
+     */
+    public renderContent(): void {
+        const options = this.contentOptions;
+        if (!options) {
+            return;
+        }
+
         // Render content wrapper
         this.contentContainer = createElement(
             'div', {
@@ -187,12 +205,9 @@ class ConfirmationPopup extends BaseForm {
                 text: options.confirmButton.value,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
-                    // Run callback
-                    // confirmCallback.call(context);
                     options.confirmButton.callback.call(
                         options.confirmButton.context
                     );
-                    // Hide popup
                     this.closePopup();
                 }
             }
@@ -208,8 +223,9 @@ class ConfirmationPopup extends BaseForm {
     public show(
         options: ConfirmationPopup.ContentOptions
     ): void {
+        this.contentOptions = options;
         this.showPopup();
-        this.renderContent(options);
+        this.renderContent();
         this.editMode.setEditOverlay();
     }
 
@@ -256,7 +272,7 @@ namespace ConfirmationPopup {
     export interface ConfirmButton {
         value: string;
         callback: Function;
-        context: RowEditToolbar|CellEditToolbar;
+        context?: RowEditToolbar|CellEditToolbar;
     }
 
     export interface CancelButton{
