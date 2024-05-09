@@ -1,5 +1,5 @@
 (async () => {
-    const { isNumber, relativeLength, defined } = Highcharts;
+    const { isNumber, relativeLength, defined, pick } = Highcharts;
     Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
         return [
             'M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'
@@ -204,7 +204,6 @@
             // Options
             boxSize: '1%',
             reversalAmount: 1,
-            maxPointWidth: void 0,
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                     ' ' +
@@ -248,9 +247,9 @@
                     this.yAxis.toPixels(0) -
                     this.yAxis.toPixels(calculatedBoxSize);
 
-                this.markerWidth = this.options.maxPointWidth || Math.min(
-                    this.markerHeight * 2,
-                    metrics.width + metrics.paddedWidth + metrics.offset
+                this.markerWidth = Math.min(
+                    pick(this.options.maxPointWidth, this.markerHeight * 2),
+                    metrics.width
                 );
 
                 return Highcharts.Series.prototype.translate.call(this);
