@@ -437,7 +437,7 @@ class SidebarPopup extends BaseForm {
      */
     public closeButtonEvents(): void {
         if (this.type === 'cell') {
-            this.accordionMenu.showCancelConfirmationPopup();
+            this.accordionMenu.cancelChanges();
         } else {
             this.hide();
         }
@@ -521,7 +521,7 @@ class SidebarPopup extends BaseForm {
                 this.container.classList.value.includes('show')
             ) {
                 if (this.type === 'cell') {
-                    this.accordionMenu.showCancelConfirmationPopup();
+                    this.accordionMenu.cancelChanges();
                 } else {
                     this.hide();
                 }

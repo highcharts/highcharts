@@ -162,7 +162,7 @@ class AccordionMenu {
                     .lang.cancelButton,
                 className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
-                    this.showCancelConfirmationPopup();
+                    this.cancelChanges();
                 }
             }
         );
@@ -344,6 +344,17 @@ class AccordionMenu {
         return;
     }
 
+    public cancelChanges(): void {
+        if (Object.keys(this.changedOptions).length < 1) {
+            this.closeSidebar();
+        } else {
+            this.showCancelConfirmationPopup();
+        }
+    }
+
+    /**
+     * Discards changes made in the menu.
+     */
     private async discardChanges(): Promise<void> {
         await this.component?.update(
             this.oldOptionsBuffer as Partial<Component.Options>
@@ -356,7 +367,7 @@ class AccordionMenu {
     /**
      * Shows a confirmation popup when the user tries to discard changes.
      */
-    public showCancelConfirmationPopup(): void {
+    private showCancelConfirmationPopup(): void {
         const popup = this.confirmationPopup;
         if (!popup || this.waitingForConfirmation) {
             return;
