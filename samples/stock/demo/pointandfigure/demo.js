@@ -248,11 +248,8 @@
                     this.yAxis.toPixels(0) -
                     this.yAxis.toPixels(calculatedBoxSize);
 
-                const maxPointWidth =
-                    this.options.maxPointWidth || this.markerHeight * 2;
-
-                this.markerWidth = Math.min(
-                    maxPointWidth,
+                this.markerWidth = this.options.maxPointWidth || Math.min(
+                    this.markerHeight * 2,
                     metrics.width + metrics.paddedWidth + metrics.offset
                 );
 
