@@ -344,6 +344,10 @@ class AccordionMenu {
         return;
     }
 
+    /**
+     * Closes the sidebar discarding changes. If there are any changes, it will
+     * show a confirmation popup. If no changes, it will close the sidebar.
+     */
     public cancelChanges(): void {
         if (Object.keys(this.changedOptions).length < 1) {
             this.closeSidebar();
