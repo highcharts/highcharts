@@ -204,6 +204,7 @@
             // Options
             boxSize: '1%',
             reversalAmount: 1,
+            maxPointWidth: void 0,
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                     ' ' +
@@ -235,13 +236,26 @@
         // Series prototype
             takeOrdinalPosition: true,
             finalData: [],
+            getColumnMetrics:
+                Highcharts.seriesTypes.column.prototype.getColumnMetrics,
             markerAttribs,
             generatePnfData,
             translate() {
-                const calculatedBoxSize = this.calculatedBoxSize;
-                this.markerHeight = this.markerWidth =
+                const metrics = this.getColumnMetrics(),
+                    calculatedBoxSize = this.calculatedBoxSize;
+
+                this.markerHeight =
                     this.yAxis.toPixels(0) -
                     this.yAxis.toPixels(calculatedBoxSize);
+
+                const maxPointWidth =
+                    this.options.maxPointWidth || this.markerHeight * 2;
+
+                this.markerWidth = Math.min(
+                    maxPointWidth,
+                    metrics.width + metrics.paddedWidth + metrics.offset
+                );
+
                 return Highcharts.Series.prototype.translate.call(this);
             }
         }, {
