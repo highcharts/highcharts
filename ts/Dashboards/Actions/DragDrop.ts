@@ -432,7 +432,7 @@ class DragDrop {
     /**
      * Unmounts dropped row and mounts it in a new position.
      *
-     * @fires DragDrop#layoutChange
+     * @fires DragDrop#layoutChanged
      */
     public onRowDragEnd(): void {
         const dragDrop = this,
@@ -473,7 +473,7 @@ class DragDrop {
 
         fireEvent(
             dragDrop.editMode,
-            'layoutChange',
+            'layoutChanged',
             {
                 type: 'rowDragEnd',
                 target: draggedRow,
@@ -702,7 +702,7 @@ class DragDrop {
      * @param {Cell} contextCell
      * Cell used as a dragDrop context.
      *
-     * @fires DragDrop#layoutChange
+     * @fires DragDrop#layoutChanged
      */
     public onCellDragEnd(
         contextCell?: Cell
@@ -783,7 +783,7 @@ class DragDrop {
 
         fireEvent(
             dragDrop.editMode,
-            'layoutChange',
+            'layoutChanged',
             {
                 type: 'cellDragEnd',
                 target: draggedCell,

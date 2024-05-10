@@ -87,7 +87,7 @@ class SidebarPopup extends BaseForm {
 
                 fireEvent(
                     board.editMode,
-                    'layoutChange',
+                    'layoutChanged',
                     {
                         type: 'newLayout',
                         target: layout,
@@ -418,7 +418,7 @@ class SidebarPopup extends BaseForm {
 
                 fireEvent(
                     this.editMode,
-                    'layoutChange',
+                    'layoutChanged',
                     {
                         type: 'newComponent',
                         target: component
