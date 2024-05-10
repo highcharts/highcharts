@@ -415,15 +415,16 @@ class AccordionMenu {
      */
     private showCancelConfirmationPopup(): void {
         const popup = this.confirmationPopup;
-        if (!popup || this.waitingForConfirmation) {
+        const editMode = this.component?.board?.editMode;
+        if (!popup || !editMode || this.waitingForConfirmation) {
             return;
         }
 
         this.waitingForConfirmation = true;
         popup.show({
-            text: 'Are you sure you want to discard changes?',
+            text: editMode.lang.confirmDiscardChanges,
             confirmButton: {
-                value: 'Yes',
+                value: editMode.lang.confirmButton,
                 callback: async (): Promise<void> => {
                     await this.discardChanges();
                     this.waitingForConfirmation = false;
@@ -432,7 +433,7 @@ class AccordionMenu {
                 context: this as any
             },
             cancelButton: {
-                value: 'No',
+                value: editMode.lang.cancelButton,
                 callback: (): void => {
                     popup.closePopup();
 
