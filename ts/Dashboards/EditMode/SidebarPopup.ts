@@ -34,6 +34,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    fireEvent,
     merge
 } = U;
 
@@ -83,9 +84,19 @@ class SidebarPopup extends BaseForm {
 
             if (layout) {
                 board.layouts.push(layout);
+
+                fireEvent(
+                    board.editMode,
+                    'layoutChange',
+                    {
+                        type: 'newLayout',
+                        target: layout,
+                        board
+                    }
+                );
             }
 
-            Bindings.addComponent({
+            void Bindings.addComponent({
                 type: 'HTML',
                 cell: cellName,
                 elements: [
@@ -394,8 +405,26 @@ class SidebarPopup extends BaseForm {
             const options = merge(componentOptions, {
                 cell: newCell.id
             });
-            Bindings.addComponent(options, sidebar.editMode.board, newCell);
+
+            const componentPromise =
+                Bindings.addComponent(options, sidebar.editMode.board, newCell);
             sidebar.editMode.setEditOverlay();
+
+            void (async (): Promise<void> => {
+                const component = await componentPromise;
+                if (!component) {
+                    return;
+                }
+
+                fireEvent(
+                    this.editMode,
+                    'layoutChange',
+                    {
+                        type: 'newComponent',
+                        target: component
+                    }
+                );
+            })();
 
             return newCell;
         }

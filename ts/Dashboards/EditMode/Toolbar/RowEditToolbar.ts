@@ -23,6 +23,7 @@ import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
 
 const {
+    fireEvent,
     merge,
     objectEach
 } = U;
@@ -230,6 +231,11 @@ class RowEditToolbar extends EditToolbar {
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+
+            fireEvent(toolbar.editMode, 'layoutChange', {
+                type: 'rowDestroy',
+                board: toolbar.editMode.board
+            });
         }
     }
 
