@@ -31,6 +31,7 @@ import type {
 } from '../../Stock/RangeSelector/RangeSelectorOptions';
 import type Tick from './Tick';
 import type TickPositionsArray from './TickPositionsArray';
+import type Time from '../Time';
 
 /* *
  *
@@ -91,7 +92,7 @@ AxisLabelFormatterContextObject
 export interface AxisLabelFormatterContextObject {
     axis: Axis;
     chart: Chart;
-    dateTimeLabelFormat?: string;
+    dateTimeLabelFormat?: Time.DateTimeFormat;
     isFirst: boolean;
     isLast: boolean;
     pos: number;

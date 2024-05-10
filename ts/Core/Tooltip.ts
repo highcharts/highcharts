@@ -35,6 +35,7 @@ const { format } = F;
 import H from './Globals.js';
 const {
     composed,
+    dateFormats,
     doc,
     isSafari
 } = H;
@@ -52,6 +53,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
+    isObject,
     isString,
     merge,
     pick,
@@ -1695,6 +1697,16 @@ class Tooltip {
 
             // Insert the footer date format if any
             if (dateTime && xDateFormat) {
+                if (isObject(xDateFormat)) {
+                    const format = xDateFormat;
+                    dateFormats[0] = function (timestamp): string {
+                        return new Intl.DateTimeFormat(
+                            this.options.locale,
+                            format
+                        ).format(timestamp);
+                    };
+                    xDateFormat = '%0';
+                }
                 ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
                         ['key']).forEach(
                     function (key: string): void {

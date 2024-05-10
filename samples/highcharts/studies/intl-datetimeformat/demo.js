@@ -10,68 +10,14 @@
  * - Fix the `preferredInputType` function in `rangeSelector` to handle
  *   Intl.DateTimeFormat
  * - Defaults for the data grouping `dateTimeLabelFormats`
+ * - Consistent cache for Intl.DateTimeFormat instances
+ * - Smarter object-to-key in Tooltip
  * - API to set definitions and refer to them in templating by a key character
  */
 
-(({ addEvent, Time, wrap }) => {
-    // Look for an object that is not { main, from, to }
-    const isIntlFormat = f => (
-        typeof f === 'object' &&
-        Object.keys(f).some(key => !['main', 'from', 'to'].includes(key))
-    );
-
-    wrap(
-        Time.prototype,
-        'dateFormat',
-        function (proceed, format, timestamp, capitalize) {
-            if (typeof format === 'object') {
-                const dateTimeFormat = Intl.DateTimeFormat(
-                    this.options.locale,
-                    format
-                );
-                return dateTimeFormat.format(timestamp);
-            }
-
-            return proceed(format, timestamp, capitalize);
-        }
-    );
-
-    wrap(
-        Time.prototype,
-        'resolveDTLFormat',
-        function (proceed, f) {
-            f = proceed(f);
-
-            if (isIntlFormat(f)) {
-                f.main = f;
-            }
-
-            return f;
-        }
-    );
-
-    // Pre-compile the date formats for tooltips
-    addEvent(Highcharts.Series, 'afterSetOptions', function (e) {
-        const dateTimeLabelFormats = this.tooltipOptions.dateTimeLabelFormats;
-
-        Object.keys(dateTimeLabelFormats).forEach((key, i) => {
-            const format = dateTimeLabelFormats[key];
-            if (isIntlFormat(format)) {
-                Highcharts.dateFormats[i] = function (timestamp) {
-                    return Intl.DateTimeFormat(this.options.locale, format)
-                        .format(timestamp);
-                };
-
-                dateTimeLabelFormats[key] = `%${i}`;
-            }
-        });
-    });
-})(Highcharts);
-
-
 Highcharts.setOptions({
     time: {
-        // locale: 'en-GB'
+        // locale: 'en-US'
     },
 
     tooltip: {
@@ -127,9 +73,22 @@ Highcharts.setOptions({
     },
 
     rangeSelector: {
-        // @todo: fix the preferredInputType function
-        _inputDateFormat: {
-            dateStyle: 'long'
+        inputDateFormat: {
+            dateStyle: 'long',
+            // @todo: fix the preferredInputType function to handle Intl
+            indexOf: () => {}
+        }
+    },
+
+    plotOptions: {
+        series: {
+            dataGrouping: {
+                dateTimeLabelFormats: {
+                    day: [{
+                        dateStyle: 'full'
+                    }]
+                }
+            }
         }
     },
 
@@ -199,9 +158,13 @@ Highcharts.setOptions({
             text: 'AAPL Stock Price'
         },
 
+        xAxis: {
+            type: 'datetime'
+        },
+
         series: [{
             name: 'AAPL',
-            data: data,
+            data,
             tooltip: {
                 valueDecimals: 2
             }

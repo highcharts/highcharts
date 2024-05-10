@@ -30,6 +30,7 @@ const {
     extend,
     isNumber,
     isObject,
+    isString,
     merge,
     objectEach,
     pad,
@@ -72,6 +73,12 @@ const hasOldSafariBug =
     H.isSafari &&
     win.Intl &&
     !win.Intl.DateTimeFormat.prototype.formatRange;
+
+const isDateTimeFormatOptions = (
+    obj: Intl.DateTimeFormatOptions|Time.DateTimeLabelFormatObject
+): obj is Intl.DateTimeFormatOptions =>
+    (obj as Time.DateTimeLabelFormatObject).main === void 0;
+
 
 /* *
  *
@@ -502,16 +509,12 @@ class Time {
      *         The formatted date.
      */
     public dateFormat(
-        format: string,
+        format: Time.DateTimeFormat,
         timestamp?: number,
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
-            return (
-                H.defaultOptions.lang &&
-                H.defaultOptions.lang.invalidDate ||
-                ''
-            );
+            return H.defaultOptions.lang?.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -525,7 +528,7 @@ class Time {
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
             langWeekdays = (lang && lang.weekdays as any),
-            shortWeekdays = (lang && lang.shortWeekdays),
+            shortWeekdays = lang?.shortWeekdays,
 
             // List all format keys. Custom formats can be added from the
             // outside.
@@ -594,15 +597,26 @@ class Time {
             val: (string|Function),
             key: string
         ): void {
-            // Regex would do it in one line, but this is faster
-            while (format.indexOf('%' + key) !== -1) {
-                format = format.replace(
-                    '%' + key,
-                    typeof val === 'function' ? val.call(time, timestamp) : val
-                );
+            if (isString(format)) {
+                // Regex would do it in one line, but this is faster
+                while (format.indexOf('%' + key) !== -1) {
+                    format = format.replace(
+                        '%' + key,
+                        typeof val === 'function' ?
+                            val.call(time, timestamp) :
+                            val
+                    );
+                }
             }
-
         });
+
+        if (isObject(format)) {
+            const dateTimeFormat = new Intl.DateTimeFormat(
+                this.options.locale,
+                format
+            );
+            format = dateTimeFormat.format(timestamp);
+        }
 
         // Optionally capitalize the string and return
         return capitalize ?
@@ -633,6 +647,12 @@ class Time {
                 to: f[2]
             };
         }
+
+        // Type-check DateTimeFormatOptions against DateTimeLabelFormatObject
+        if (isObject(f, true) && isDateTimeFormatOptions(f)) {
+            return { main: f };
+        }
+
         return f;
     }
 
@@ -908,7 +928,7 @@ class Time {
         timestamp: number,
         startOfWeek: number,
         dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
-    ): string|undefined {
+    ): Time.DateTimeFormat|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
             strpos = {
@@ -968,15 +988,18 @@ class Time {
  * */
 
 namespace Time {
+
+    export type DateTimeFormat = string|Intl.DateTimeFormatOptions;
     export interface DateTimeLabelFormatObject {
-        from?: string;
-        list?: string[];
-        main: string;
+        from?: DateTimeFormat;
+        list?: DateTimeFormat[];
+        main: DateTimeFormat;
         range?: boolean;
-        to?: string;
+        to?: DateTimeFormat;
     }
+
     export type DateTimeLabelFormatOption = (
-        string|
+        DateTimeFormat|
         Array<string>|
         Time.DateTimeLabelFormatObject
     );
@@ -986,12 +1009,13 @@ namespace Time {
     export interface TimeOptions {
         Date?: any;
         getTimezoneOffset?: Function;
+        locale?: string;
         timezone?: string;
         timezoneOffset?: number;
         useUTC?: boolean;
     }
     export interface TimeFormatCallbackFunction {
-        (timestamp: number): string;
+        (this: Time, timestamp: number): string;
     }
     export interface TimeNormalizedObject {
         count: number;
