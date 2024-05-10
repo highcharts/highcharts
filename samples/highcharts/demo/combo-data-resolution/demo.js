@@ -15,7 +15,17 @@ Highcharts.chart('container', {
     series: [{
         type: 'column',
         name: 'Average per thirty years',
-        data: JSON.parse(document.getElementById('columnData').textContent)
+        data: JSON.parse(document.getElementById('columnData').textContent),
+        pointRange: 30 * 365 * 24 * 36e5,
+        groupPadding: 0,
+        pointPadding: 0,
+        pointPlacement: -0.5,
+        tooltip: {
+            headerFormat: '<span>{point.x:%Y} ' +
+                '{(subtract point.x (multiply 30 ' +
+                '(multiply 60 (multiply 1000' +
+                '(multiply 60 (multiply 365.25 24)))))):%Y}</span>'
+        }
     }, {
         name: 'Monthly average',
         data: JSON.parse(document.getElementById('lineData').textContent),

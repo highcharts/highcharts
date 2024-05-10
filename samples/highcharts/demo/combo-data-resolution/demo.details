@@ -1,5 +1,5 @@
 ---
-name: 'Same data, different intervals'
+name: 'Same x-axis, different intervals'
 authors:
   - Markus Barstad
 js_wrap: b
