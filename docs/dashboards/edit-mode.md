@@ -114,7 +114,7 @@ Event listeners can be added to the `board.editMode` object, which will call cal
 The available events are:
  - `componentChanged` - fired after accepting changes in the component editing sidebar.
  - `componentChangesDiscarded` - fired after discarding changes in the component editing sidebar.
-- `layoutChanged` - called after changes to the layout are changed. It has 5 types:
+ - `layoutChanged` - called after changes to the layout are changed. It has 6 types:
     - `newLayout` - called after a new layout was added to a board,
     - `newComponent` - called after a new component was added to a board,
     - `rowDestroy` - called after a row was deleted,
