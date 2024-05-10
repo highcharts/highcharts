@@ -34,9 +34,11 @@ describe('Component events', () => {
   it('Update event should be triggered after sidebar update', () => {
     cy.get('.highcharts-dashboards-component').first().click({force: true});
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
-    cy.contains('Confirm').click();
+    cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(3).click();
+    cy.get('.highcharts-dashboards-edit-toggle-wrapper').eq(1).click();
 
     cy.get('#update').should('have.value', 'update');
+    cy.contains('Confirm').click();
   });
 
   it('Press ESC should close sidebar popup', () => {
