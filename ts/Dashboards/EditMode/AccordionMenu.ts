@@ -31,7 +31,8 @@ import ConfirmationPopup from './ConfirmationPopup.js';
 const {
     createElement,
     merge,
-    error
+    error,
+    fireEvent
 } = U;
 
 /* *
@@ -142,15 +143,7 @@ class AccordionMenu {
                     .lang.confirmButton,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: async (): Promise<void> => {
-                    if (Object.keys(this.chartOptionsJSON).length) {
-                        await component.update({
-                            chartOptions: this.chartOptionsJSON
-                        } as any);
-                    }
-
-                    menu.changedOptions = {};
-                    menu.chartOptionsJSON = {};
-                    menu.closeSidebar();
+                    await this.confirmChanges();
                 }
             }
         );
@@ -357,11 +350,60 @@ class AccordionMenu {
     }
 
     /**
-     * Discards changes made in the menu.
+     * Confirms changes made in the component.
+     *
+     * @fires EditMode#componentChanged
+     */
+    private async confirmChanges(): Promise<void> {
+        const component = this.component;
+        if (!component) {
+            return;
+        }
+
+        if (Object.keys(this.chartOptionsJSON).length) {
+            await component.update({
+                chartOptions: this.chartOptionsJSON
+            } as any);
+        }
+
+        fireEvent(
+            component.board.editMode,
+            'componentChanged',
+            {
+                target: component,
+                changedOptions: merge({}, this.changedOptions),
+                oldOptions: merge({}, this.oldOptionsBuffer)
+            }
+        );
+
+        this.changedOptions = {};
+        this.chartOptionsJSON = {};
+        this.closeSidebar();
+    }
+
+    /**
+     * Discards changes made in the component.
+     *
+     * @fires EditMode#componentChangesDiscarded
      */
     private async discardChanges(): Promise<void> {
-        await this.component?.update(
+        const component = this.component;
+        if (!component) {
+            return;
+        }
+
+        await component.update(
             this.oldOptionsBuffer as Partial<Component.Options>
+        );
+
+        fireEvent(
+            component.board.editMode,
+            'componentChangesDiscarded',
+            {
+                target: component,
+                changedOptions: merge({}, this.changedOptions),
+                oldOptions: merge({}, this.oldOptionsBuffer)
+            }
         );
 
         this.changedOptions = {};
