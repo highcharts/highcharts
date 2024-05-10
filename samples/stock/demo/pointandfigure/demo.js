@@ -12,15 +12,17 @@
             attribs = {},
             pos = point.pos();
 
-        attribs.width = series.markerWidth;
-        attribs.height = series.markerHeight;
-        attribs.x = pos[0] - Math.round(attribs.width) / 2;
-        attribs.y = pos[1] - Math.round(attribs.height) / 2;
-        if (options.crisp) {
-        // Math.floor for #1843:
-            attribs.x = Math.floor(attribs.x);
+        if (pos) {
+            attribs.width = series.markerWidth;
+            attribs.height = series.markerHeight;
+            attribs.x = pos[0] - Math.round(attribs.width) / 2;
+            attribs.y = pos[1] - Math.round(attribs.height) / 2;
+            if (options.crisp) {
+            // Math.floor for #1843:
+                attribs.x = Math.floor(attribs.x);
+            }
+            return attribs;
         }
-        return attribs;
     }
 
     function generatePnfData() {
