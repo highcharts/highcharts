@@ -84,9 +84,12 @@ function prepareRelease() {
         // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
         ChildProcess.execSync(`grep -Rl --exclude=*.bak --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+next" . | xargs ${isGNU ? '-r' : ''} sed -i'.bak' -e 's/@since *next/@since ${nextVersion}/'`);
+        // replace "next" in tag deprecated with the next version "x.y.z"
+        ChildProcess.execSync(`grep -Rl --exclude=*.bak --exclude-dir=node_modules --exclude-dir=code "@deprecated\\s\\+next" . | xargs ${isGNU ? '-r' : ''} sed -i'.bak' -e 's/@deprecated *next/@deprecated ${nextVersion}/'`);
 
-        LogLib.success('Updated version in package.json, bower.json, build-properties.json and replaced @ since next' +
-                        ' in the docs. Please review changes and commit & push when ready.');
+        LogLib.success('Updated version in package.json, bower.json, build-properties.json' +
+                        ' and replaced next in @ since and @ deprecated in the docs.' +
+                        ' Please review changes and commit & push when ready.');
         resolve();
     });
 }
