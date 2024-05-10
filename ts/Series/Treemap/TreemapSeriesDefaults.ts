@@ -539,8 +539,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @since   @next
      *
-     * @default false
-     *
      * @product highcharts
      */
     zoomToLastLeaf: false
