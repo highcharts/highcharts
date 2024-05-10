@@ -28,4 +28,43 @@ describe('Edit Mode sidebar', () => {
         // Assess
         cy.get('.highcharts-dashboards-edit-accordion-content input').should('have.value', '')
     });
+
+    it('Should be able to confirm or cancel changes, #20756.', () => {
+        cy.toggleEditMode();
+
+        // Open sidebar
+        cy.get('#dashboard-col-0').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
+
+        // Change options few times
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(0).click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(1).click();
+        cy.get('.highcharts-dashboards-edit-dropdown-button').first().click();
+        cy.get('.highcharts-dashboards-edit-custom-option-button').first().click();
+
+        cy.get('#marker-radius').should('have.value', '3');
+
+        cy.get('.highcharts-dashboards-edit-dropdown-button').first().click();
+        cy.get('.highcharts-dashboards-edit-custom-option-button').eq(1).click();
+        
+        cy.get('#marker-radius').should('have.value', '5');
+
+        // Cancel changes
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-cancel-btn').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(1).click();
+
+        cy.get('#marker-radius').should('have.value', '10');
+
+        // Open sidebar
+        cy.get('#dashboard-col-0').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
+
+        // Change option again
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(0).click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(1).click();
+        cy.get('.highcharts-dashboards-edit-dropdown-button').first().click();
+        cy.get('.highcharts-dashboards-edit-custom-option-button').first().click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').first().click();
+        cy.get('#marker-radius').should('have.value', '3');
+    });
 });
