@@ -74,9 +74,7 @@ Highcharts.setOptions({
 
     rangeSelector: {
         inputDateFormat: {
-            dateStyle: 'long',
-            // @todo: fix the preferredInputType function to handle Intl
-            indexOf: () => {}
+            dateStyle: 'long'
         }
     },
 
