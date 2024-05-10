@@ -41,7 +41,7 @@ export interface PiePointEventsOptions extends PointEventsOptions {
      * **Note:** This option is deprecated in favor of
      * Highcharts.LegendItemClickEventObject.
      *
-     * @deprecated @next
+     * @deprecated next
      *
      * @type {Highcharts.PointLegendItemClickCallbackFunction}
      *

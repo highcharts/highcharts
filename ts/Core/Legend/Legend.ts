@@ -1872,7 +1872,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickCallbackFunction.
  *
- * @deprecated @next
+ * @deprecated next
  * @callback Highcharts.PointLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Point} this
@@ -1888,7 +1888,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickEventObject.
  *
- * @deprecated @next
+ * @deprecated next
  * @interface Highcharts.PointLegendItemClickEventObject
  *//**
  * Related browser event.
@@ -1927,7 +1927,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickCallbackFunction.
  *
- * @deprecated @next
+ * @deprecated next
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
@@ -1943,7 +1943,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickEventObject.
  *
- * @deprecated @next
+ * @deprecated next
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.
