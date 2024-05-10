@@ -968,10 +968,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * **Note:** This option is deprecated in favor of
      * [legend.events.itemClick](#legend.events.itemClick).
      *
-     * @type      {Highcharts.SeriesLegendItemClickCallbackFunction}
-     * @deprecated
-     * @context   Highcharts.Series
-     * @apioption plotOptions.series.events.legendItemClick
+     * @type       {Highcharts.SeriesLegendItemClickCallbackFunction}
+     * @deprecated @next
+     * @context    Highcharts.Series
+     * @apioption  plotOptions.series.events.legendItemClick
      */
 
     /**

@@ -96,11 +96,11 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *  **Note:** This option is deprecated in favor of
      * [legend.events.itemClick](#legend.events.itemClick).
      *
-     * @deprecated
-     * @type      {Highcharts.PointLegendItemClickCallbackFunction}
-     * @since     1.2.0
-     * @product   highcharts highmaps
-     * @apioption plotOptions.pie.point.events.legendItemClick
+     * @deprecated @next
+     * @type       {Highcharts.PointLegendItemClickCallbackFunction}
+     * @since      1.2.0
+     * @product    highcharts highmaps
+     * @apioption  plotOptions.pie.point.events.legendItemClick
      */
 
     /**
