@@ -47,10 +47,10 @@ const TARGET_DIRECTORIES = [
 async function jsDocNamespace() {
 
     const argv = require('yargs').argv;
-    const fsLib = require('./lib/fs');
+    const fsLib = require('../libs/fs');
     const gulpLib = require('./lib/gulp');
     const jsdoc = require('gulp-jsdoc3');
-    const logLib = require('./lib/log');
+    const logLib = require('../libs/log');
 
     // Make sure master is in `code/`
     if (argv.force) {

@@ -4,8 +4,9 @@
 
 /* eslint no-use-before-define: 0 */
 
+const FS = require('node:fs');
 const LogLib = require('./log');
-const Path = require('path');
+const Path = require('node:path');
 
 /* *
  *
@@ -16,7 +17,7 @@ const Path = require('path');
 /**
  * Own package directory
  */
-const CPD = Path.join(__dirname, '..', '..', '..');
+const CPD = Path.join(__dirname, '..', '..');
 
 /**
  * Current working directory
@@ -27,7 +28,7 @@ const CWD = process.cwd();
  * Configuration file containing running information
  */
 const CONFIG_FILE = Path.join(
-    CPD, 'node_modules', '_gulptasks_lib_process.json'
+    CPD, 'node_modules', '_tools_libs_process.json'
 );
 
 /* *
@@ -215,8 +216,6 @@ function openAppFor(pathOrURL) {
  */
 function readConfig() {
 
-    const FS = require('fs');
-
     let config = {
         isProcessing: {},
         isRunning: {}
@@ -243,9 +242,8 @@ function readConfig() {
  */
 function writeConfig(config) {
 
-    const FS = require('fs');
-
     FS.writeFileSync(CONFIG_FILE, JSON.stringify(config));
+
 }
 
 /* *

@@ -56,6 +56,7 @@ export interface DataLabelFormatterCallback {
 export interface DataLabelOptions {
     animation?: (boolean|Partial<AnimationOptions>);
     align?: AlignValue;
+    alignTo?: 'connectors'|'plotEdges';
     allowOverlap?: boolean;
     backgroundColor?: ColorType;
     borderColor?: ColorType;

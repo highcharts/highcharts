@@ -63,7 +63,7 @@ function handleConfig(config) {
 }
 
 function copyCSS(config) {
-    const fslib = require('./lib/fs');
+    const fslib = require('../libs/fs');
     const path = require('path');
 
     config = handleConfig(config);
@@ -100,7 +100,7 @@ function copyCSS(config) {
  *         Promise to keep
  */
 function scriptCSS(argv) {
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     return new Promise(resolve => {
         log.message(`Generating css for ${argv.dashboards ? 'dashboards' : 'highcharts'} ...`);

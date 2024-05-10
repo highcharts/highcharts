@@ -11,8 +11,8 @@ const gulp = require('gulp');
  * */
 
 async function apiDocs() {
-    const fsLib = require('../lib/fs');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const processLib = require('../../libs/process');
 
     await fsLib.deleteDirectory('build/api/dashboards', true);
     await processLib.exec(

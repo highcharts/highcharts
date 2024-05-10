@@ -3655,8 +3655,8 @@ class Chart {
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
-                toLength = to[wh] || axis.len,
-                fromLength = from[wh] || axis.len,
+                toLength = pick(to[wh], axis.len),
+                fromLength = pick(from[wh], axis.len),
                 // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :

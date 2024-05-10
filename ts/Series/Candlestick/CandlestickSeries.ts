@@ -23,8 +23,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
-import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -58,7 +56,6 @@ class CandlestickSeries extends OHLCSeries {
 
     public static defaultOptions: CandlestickSeriesOptions = merge(
         OHLCSeries.defaultOptions,
-        defaultOptions.plotOptions,
         { tooltip: OHLCSeries.defaultOptions.tooltip },
         CandlestickSeriesDefaults
     );
