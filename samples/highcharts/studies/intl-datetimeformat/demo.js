@@ -7,8 +7,6 @@
  * document for discussion.
  *
  * @todo, amnong other things
- * - Fix the `preferredInputType` function in `rangeSelector` to handle
- *   Intl.DateTimeFormat
  * - Defaults for the data grouping `dateTimeLabelFormats`
  * - Consistent cache for Intl.DateTimeFormat instances
  * - Smarter object-to-key in Tooltip
@@ -18,14 +16,6 @@
 Highcharts.setOptions({
     time: {
         // locale: 'en-GB'
-    },
-
-    rangeSelector: {
-        inputDateFormat: {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        }
     },
 
     plotOptions: {
@@ -44,6 +34,10 @@ Highcharts.setOptions({
 // Legacy options
 /*
 Highcharts.setOptions({
+    rangeSelector: {
+        inputDateFormat: '%e %b %Y'
+    },
+
     tooltip: {
         dateTimeLabelFormats: {
             millisecond: '%A, %e %b, %H:%M:%S.%L',

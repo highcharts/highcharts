@@ -414,7 +414,11 @@ const rangeSelector: RangeSelectorOptions = {
      *         Milliseconds in the range selector
      *
      */
-    inputDateFormat: '%e %b %Y',
+    inputDateFormat: {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    },
 
     /**
      * A custom callback function to parse values entered in the input boxes
