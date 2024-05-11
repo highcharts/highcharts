@@ -38,55 +38,6 @@ Highcharts.setOptions({
                 }
             }
         }
-    },
-
-    xAxis: {
-        dateTimeLabelFormats: {
-            millisecond: {
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                    fractionalSecondDigits: 3
-                }
-            },
-            second: {
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric'
-                }
-            },
-            minute: {
-                main: {
-                    hour: 'numeric',
-                    minute: 'numeric'
-                }
-            },
-            day: {
-                main: {
-                    month: 'short',
-                    day: 'numeric'
-                }
-            },
-            week: {
-                main: {
-                    month: 'short',
-                    day: 'numeric'
-                }
-            },
-            month: {
-                main: {
-                    month: 'short',
-                    year: '2-digit'
-                }
-            },
-            year: {
-                main: {
-                    year: 'numeric'
-                }
-            }
-        }
     }
 });
 
@@ -103,6 +54,34 @@ Highcharts.setOptions({
             week: 'Week from %A, %e %b %Y',
             month: '%B %Y',
             year: '%Y'
+        }
+    },
+    xAxis: {
+        dateTimeLabelFormats: {
+            millisecond: {
+                main: '%H:%M:%S.%L'
+            },
+            second: {
+                main: '%H:%M:%S'
+            },
+            minute: {
+                main: '%H:%M'
+            },
+            hour: {
+                main: '%H:%M'
+            }
+            day: {
+                main: '%e %b'
+            },
+            week: {
+                main: '%e %b'
+            },
+            month: {
+                main: '%b \'%y'
+            },
+            year: {
+                main: '%Y'
+            }
         }
     }
 });
