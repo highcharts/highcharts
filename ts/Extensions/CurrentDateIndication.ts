@@ -59,7 +59,7 @@ declare module '../Core/Axis/AxisOptions' {
 
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
-    format?: string;
+    format?: string|Intl.DateTimeFormatOptions;
     formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
@@ -114,15 +114,21 @@ const defaultOptions: CurrentDateIndicatorOptions = {
      */
     label: {
         /**
-         * Format of the label. This options is passed as the fist argument to
+         * Format of the label. This options is passed as the first argument to
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat) function.
          *
-         * @type      {string}
-         * @default   %a, %b %d %Y, %H:%M
+         * @type      {string|Intl.DateTimeFormatOptions}
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */
-        format: '%a, %b %d %Y, %H:%M',
+        format: {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        },
         formatter: function (
             this: PlotLineOrBand,
             value?: number,
