@@ -659,7 +659,7 @@ namespace AxisDefaults {
                  */
                 main: {
                     month: 'short',
-                    year: '2-digit'
+                    year: 'numeric'
                 }
             },
             /**
