@@ -518,103 +518,124 @@ class Time {
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-        const time = this,
-            date = new this.Date(timestamp as any),
-            // Get the basic time values
-            hours = this.get('Hours', date),
-            day = this.get('Day', date),
-            dayOfMonth = this.get('Date', date),
-            month = this.get('Month', date),
-            fullYear = this.get('FullYear', date),
-            lang = H.defaultOptions.lang,
-            langWeekdays = (lang && lang.weekdays as any),
-            shortWeekdays = lang?.shortWeekdays,
+        if (isString(format)) {
+            const time = this,
+                date = new this.Date(timestamp as any),
+                // Get the basic time values
+                hours = this.get('Hours', date),
+                day = this.get('Day', date),
+                dayOfMonth = this.get('Date', date),
+                month = this.get('Month', date),
+                fullYear = this.get('FullYear', date),
+                lang = H.defaultOptions.lang,
+                langWeekdays = (lang && lang.weekdays as any),
+                shortWeekdays = lang?.shortWeekdays,
 
-            // List all format keys. Custom formats can be added from the
-            // outside.
-            replacements = extend(
-                {
+                // List all format keys. Custom formats can be added from the
+                // outside.
+                replacements = extend(
+                    {
 
-                    // Day
-                    // Short weekday, like 'Mon'
-                    a: shortWeekdays ?
-                        shortWeekdays[day] :
-                        langWeekdays[day].substr(0, 3),
-                    // Long weekday, like 'Monday'
-                    A: langWeekdays[day],
-                    // Two digit day of the month, 01 to 31
-                    d: pad(dayOfMonth),
-                    // Day of the month, 1 through 31
-                    e: pad(dayOfMonth, 2, ' '),
-                    // Day of the week, 0 through 6
-                    w: day,
+                        // Day
+                        // Short weekday, like 'Mon'
+                        a: shortWeekdays ?
+                            shortWeekdays[day] :
+                            langWeekdays[day].substr(0, 3),
+                        // Long weekday, like 'Monday'
+                        A: langWeekdays[day],
+                        // Two digit day of the month, 01 to 31
+                        d: pad(dayOfMonth),
+                        // Day of the month, 1 through 31
+                        e: pad(dayOfMonth, 2, ' '),
+                        // Day of the week, 0 through 6
+                        w: day,
 
-                    // Week (none implemented)
-                    // 'W': weekNumber(),
+                        // Week (none implemented)
+                        // 'W': weekNumber(),
 
-                    // Month
-                    // Short month, like 'Jan'
-                    b: lang.shortMonths[month],
-                    // Long month, like 'January'
-                    B: lang.months[month],
-                    // Two digit month number, 01 through 12
-                    m: pad(month + 1),
-                    // Month number, 1 through 12 (#8150)
-                    o: month + 1,
+                        // Month
+                        // Short month, like 'Jan'
+                        b: lang.shortMonths[month],
+                        // Long month, like 'January'
+                        B: lang.months[month],
+                        // Two digit month number, 01 through 12
+                        m: pad(month + 1),
+                        // Month number, 1 through 12 (#8150)
+                        o: month + 1,
 
-                    // Year
-                    // Two digits year, like 09 for 2009
-                    y: fullYear.toString().substr(2, 2),
-                    // Four digits year, like 2009
-                    Y: fullYear,
+                        // Year
+                        // Two digits year, like 09 for 2009
+                        y: fullYear.toString().substr(2, 2),
+                        // Four digits year, like 2009
+                        Y: fullYear,
 
-                    // Time
-                    // Two digits hours in 24h format, 00 through 23
-                    H: pad(hours),
-                    // Hours in 24h format, 0 through 23
-                    k: hours,
-                    // Two digits hours in 12h format, 00 through 11
-                    I: pad((hours % 12) || 12),
-                    // Hours in 12h format, 1 through 12
-                    l: (hours % 12) || 12,
-                    // Two digits minutes, 00 through 59
-                    M: pad(this.get('Minutes', date)),
-                    // Upper case AM or PM
-                    p: hours < 12 ? 'AM' : 'PM',
-                    // Lower case AM or PM
-                    P: hours < 12 ? 'am' : 'pm',
-                    // Two digits seconds, 00 through 59
-                    S: pad(this.get('Seconds', date)),
-                    // Milliseconds (naming from Ruby)
-                    L: pad(Math.floor((timestamp as any) % 1000), 3)
-                },
+                        // Time
+                        // Two digits hours in 24h format, 00 through 23
+                        H: pad(hours),
+                        // Hours in 24h format, 0 through 23
+                        k: hours,
+                        // Two digits hours in 12h format, 00 through 11
+                        I: pad((hours % 12) || 12),
+                        // Hours in 12h format, 1 through 12
+                        l: (hours % 12) || 12,
+                        // Two digits minutes, 00 through 59
+                        M: pad(this.get('Minutes', date)),
+                        // Upper case AM or PM
+                        p: hours < 12 ? 'AM' : 'PM',
+                        // Lower case AM or PM
+                        P: hours < 12 ? 'am' : 'pm',
+                        // Two digits seconds, 00 through 59
+                        S: pad(this.get('Seconds', date)),
+                        // Milliseconds (naming from Ruby)
+                        L: pad(Math.floor((timestamp as any) % 1000), 3)
+                    },
 
-                H.dateFormats
-            );
+                    H.dateFormats
+                );
 
-        // Do the replaces
-        objectEach(replacements, function (
-            val: (string|Function),
-            key: string
-        ): void {
-            if (isString(format)) {
-                // Regex would do it in one line, but this is faster
-                while (format.indexOf('%' + key) !== -1) {
-                    format = format.replace(
-                        '%' + key,
-                        typeof val === 'function' ?
-                            val.call(time, timestamp) :
-                            val
-                    );
+            // Do the replaces
+            objectEach(replacements, function (
+                val: (string|Function),
+                key: string
+            ): void {
+                if (isString(format)) {
+                    // Regex would do it in one line, but this is faster
+                    while (format.indexOf('%' + key) !== -1) {
+                        format = format.replace(
+                            '%' + key,
+                            typeof val === 'function' ?
+                                val.call(time, timestamp) :
+                                val
+                        );
+                    }
                 }
-            }
-        });
+            });
 
-        if (isObject(format)) {
-            const dateTimeFormat = new Intl.DateTimeFormat(
-                this.options.locale,
-                format
-            );
+        } else {
+            const tzHours = (this.getTimezoneOffset(timestamp) || 0) /
+                    (60000 * 60),
+                timeZone = this.options.timezone || (
+                    'Etc/GMT' + (tzHours >= 0 ? '+' : '') + tzHours
+                );
+
+            let dateTimeFormat: Intl.DateTimeFormat;
+
+            try {
+                dateTimeFormat = new Intl.DateTimeFormat(
+                    this.options.locale,
+                    extend({ timeZone }, format)
+                );
+            } catch (e) {
+                // @todo: This is likely to throw error 34 not only for wrong
+                // timezone, but also for wrong format options. Should be
+                // handled separately.
+                error(34);
+                dateTimeFormat = new Intl.DateTimeFormat(
+                    this.options.locale,
+                    format
+                );
+            }
+
             format = dateTimeFormat.format(timestamp);
         }
 

@@ -377,7 +377,8 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         browserConsoleLogOptions: {
             path: `${process.cwd()}/test/console.log`,
-            terminal: false
+            // Show in terminal only when running specific tests for debugging
+            terminal: Boolean(argv.tests)
         },
         browsers: browsers,
         autoWatch: false,

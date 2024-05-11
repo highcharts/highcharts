@@ -20,58 +20,6 @@ Highcharts.setOptions({
         // locale: 'en-US'
     },
 
-    tooltip: {
-        dateTimeLabelFormats: {
-            millisecond: {
-                weekday: 'long',
-                month: 'short',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                fractionalSecondDigits: 3
-            },
-            second: {
-                weekday: 'long',
-                month: 'short',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric'
-            },
-            minute: {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric'
-            },
-            hour: {
-                weekday: 'long',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric'
-            },
-            day: {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            },
-            week: {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            },
-            month: {
-                month: 'long',
-                year: 'numeric'
-            },
-            year: {
-                year: 'numeric'
-            }
-        }
-    },
-
     rangeSelector: {
         inputDateFormat: {
             dateStyle: 'long'
@@ -139,6 +87,24 @@ Highcharts.setOptions({
         }
     }
 });
+
+// Legacy options
+/*
+Highcharts.setOptions({
+    tooltip: {
+        dateTimeLabelFormats: {
+            millisecond: '%A, %e %b, %H:%M:%S.%L',
+            second: '%A, %e %b, %H:%M:%S',
+            minute: '%A, %e %b, %H:%M',
+            hour: '%A, %e %b, %H:%M',
+            day: '%A, %e %b %Y',
+            week: 'Week from %A, %e %b %Y',
+            month: '%B %Y',
+            year: '%Y'
+        }
+    }
+});
+// */
 
 (async () => {
 
