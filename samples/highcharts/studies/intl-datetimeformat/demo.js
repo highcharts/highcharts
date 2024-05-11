@@ -17,12 +17,14 @@
 
 Highcharts.setOptions({
     time: {
-        // locale: 'en-US'
+        // locale: 'en-GB'
     },
 
     rangeSelector: {
         inputDateFormat: {
-            dateStyle: 'long'
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
         }
     },
 
