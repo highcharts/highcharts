@@ -536,12 +536,12 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
-                main: ({
+                main: {
                     hour: 'numeric',
                     minute: 'numeric',
                     second: 'numeric',
                     fractionalSecondDigits: 3
-                } as any),
+                },
                 range: false
             },
             /**

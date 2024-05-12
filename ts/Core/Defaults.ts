@@ -2422,7 +2422,7 @@ const defaultOptions: DefaultOptions = {
          */
         dateTimeLabelFormats: {
             /** @internal */
-            millisecond: ({
+            millisecond: {
                 month: 'short',
                 weekday: 'long',
                 day: 'numeric',
@@ -2430,7 +2430,7 @@ const defaultOptions: DefaultOptions = {
                 minute: 'numeric',
                 second: 'numeric',
                 fractionalSecondDigits: 3
-            } as any),
+            },
             /** @internal */
             second: {
                 month: 'short',

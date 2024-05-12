@@ -1010,7 +1010,15 @@ class Time {
 
 namespace Time {
 
-    export type DateTimeFormat = string|Intl.DateTimeFormatOptions;
+    export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
+        capitalize?: boolean;
+        dateStyle?: 'full'|'long'|'medium'|'short';
+        fractionalSecondDigits?: number;
+        timeStyle?: 'full'|'long'|'medium'|'short';
+    }
+
+    export type DateTimeFormat = string|DateTimeFormatOptions;
+
     export interface DateTimeLabelFormatObject {
         from?: DateTimeFormat;
         list?: DateTimeFormat[];

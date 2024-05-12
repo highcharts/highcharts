@@ -104,7 +104,7 @@ function preferredInputType(format: Time.DateTimeFormat): string {
     const ms = isString(format) ?
         format.indexOf('%L') !== -1 :
         // Implemented but not typed as of 2024
-        (format as any).fractionalSecondDigits;
+        format.fractionalSecondDigits;
 
     if (ms) {
         return 'text';
@@ -115,19 +115,14 @@ function preferredInputType(format: Time.DateTimeFormat): string {
             .some((char: string): boolean =>
                 format.indexOf('%' + char) !== -1
             ) :
-        (format as any).dateStyle || format.day || format.month || format.year;
+        format.dateStyle || format.day || format.month || format.year;
 
     const time = isString(format) ?
         ['H', 'k', 'I', 'l', 'M', 'S']
             .some((char: string): boolean =>
                 format.indexOf('%' + char) !== -1
             ) :
-        (
-            (format as any).timeStyle ||
-            format.hour ||
-            format.minute ||
-            format.second
-        );
+        format.timeStyle || format.hour || format.minute || format.second;
 
     if (date && time) {
         return 'datetime-local';
