@@ -19,7 +19,7 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
-import { EventCallback } from '../Callback';
+import type { EventCallback } from '../Callback';
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type CSSObject from '../Renderer/CSSObject';
@@ -1872,7 +1872,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickCallbackFunction.
  *
- * @deprecated next
+ * @deprecated
  * @callback Highcharts.PointLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Point} this
@@ -1888,7 +1888,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickEventObject.
  *
- * @deprecated next
+ * @deprecated
  * @interface Highcharts.PointLegendItemClickEventObject
  *//**
  * Related browser event.
@@ -1927,7 +1927,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickCallbackFunction.
  *
- * @deprecated next
+ * @deprecated
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
@@ -1943,7 +1943,7 @@ export default Legend;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickEventObject.
  *
- * @deprecated next
+ * @deprecated
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.

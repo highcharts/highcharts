@@ -1059,7 +1059,7 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * General event handlers for the legend. These event hooks can
-         * also be attached to the series at run time using the
+         * also be attached to the legend at run time using the
          * `Highcharts.addEvent` function.
          *
          * @declare Highcharts.LegendEventsOptionsObject
