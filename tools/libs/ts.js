@@ -64,6 +64,10 @@ const NATIVE_TYPES = [
 const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
 
 
+/** @type {Record<string,SourceInfo>} */
+const SOURCE_CACHE = {};
+
+
 const TYPE_SPLIT = /[\W\.]+/gsu;
 
 
@@ -878,15 +882,19 @@ function getExportInfo(
     };
 
     if (TS.isIdentifier(node.expression)) {
+
         _info.name = node.expression.text;
+
     } else {
-        const _object = getChildInfos([node.expression], includeNodes)[0];
-        if (_object) {
-            if (_object.name) {
-                _info.name = _object.name;
+        const _value = getChildInfos([node.expression], includeNodes)[0];
+
+        if (_value) {
+            if (_value.name) {
+                _info.name = _value.name;
             }
-            _info.object = _object;
+            _info.value = _value;
         }
+
     }
 
     _info.flags = getInfoFlags(node);
@@ -1426,6 +1434,14 @@ function getSourceInfo(
     sourceText,
     includeNodes
 ) {
+
+    if (
+        !includeNodes &&
+        SOURCE_CACHE[filePath]
+    ) {
+        return SOURCE_CACHE[filePath];
+    }
+
     const sourceFile = TS.createSourceFile(
         filePath,
         (sourceText || FS.readFileSync(filePath, 'utf8')),
@@ -1443,6 +1459,8 @@ function getSourceInfo(
 
     if (includeNodes) {
         _info.node = sourceFile;
+    } else {
+        SOURCE_CACHE[filePath] = _info;
     }
 
     return _info;
@@ -2036,6 +2054,7 @@ function toTypeof(
 
 
 module.exports = {
+    SOURCE_CACHE,
     addTag,
     autoExtendInfo,
     changeSourceCode,
@@ -2097,14 +2116,6 @@ module.exports = {
 
 
 /**
- * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
- *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
- *           VariableInfo
- *          } CodeInfo
- */
-
-
-/**
  * @typedef DeconstructInfo
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
@@ -2142,10 +2153,10 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
- * @property {string} [name]
- * @property {CodeInfo} [object]
  * @property {MetaInfo} meta
+ * @property {string} [name]
  * @property {TS.ImportDeclaration} [node]
+ * @property {CodeInfo} [value]
  */
 
 
@@ -2231,6 +2242,7 @@ module.exports = {
 
 /**
  * @typedef ObjectInfo
+ * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
  * @property {Array<Member>} members
