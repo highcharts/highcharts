@@ -284,29 +284,33 @@ class Toolbar {
         );
     }
 
-    public setAriaLabelForParentButton(button: HTMLElement): void {
+    public setAriaLabelForParentButton(
+        button: HTMLElement,
+        initial = false
+    ): void {
         const selectedLabel = button.dataset.label;
+        const submenu = button.closest('.highcharts-submenu-wrapper');
+        const mainButton = submenu?.parentElement?.querySelector<HTMLElement>(
+            '.highcharts-menu-item-btn'
+        ) ?? button;
 
-        // TODO: can this be cleaned up?
-        const mainButton = button.parentElement
-            ?.parentElement?.parentElement
-            ?.querySelector<HTMLElement>('.highcharts-menu-item-btn');
+        const setLabel = (): void => {
+            if (selectedLabel) {
+                const isActive = mainButton.parentElement
+                    ?.classList.contains('highcharts-active');
 
-        // Update the aria-label of the main button
-        // when a submenu item is selected
-        if (mainButton && selectedLabel) {
-            const isActive = mainButton.parentElement
-                ?.classList.contains('highcharts-active');
+                this.setAriaLabel(
+                    mainButton,
+                    {
+                        selected: isActive ?? false,
+                        buttonLabel: selectedLabel
+                    }
+                );
+            }
+        };
 
-            this.setAriaLabel(
-                mainButton,
-                {
-                    selected: isActive ?? false,
-                    buttonLabel: selectedLabel
-                }
-            );
-
-        }
+        // Use setTimeout to ensure active class is set
+        initial ? setLabel() : setTimeout(setLabel);
     }
 
     /**
@@ -363,7 +367,7 @@ class Toolbar {
         // Replace current symbol, in main button, with submenu's button style
         this.switchSymbol(firstSubmenuItem, false);
 
-        this.setAriaLabelForParentButton(firstSubmenuItem);
+        this.setAriaLabelForParentButton(firstSubmenuItem, true);
 
     }
 
@@ -736,13 +740,7 @@ class Toolbar {
     public toggleButtonActiveClass(
         button: HTMLDOMElement
     ): void {
-        const classList = button.classList;
-
-        if (classList.contains('highcharts-active')) {
-            classList.remove('highcharts-active');
-        } else {
-            classList.add('highcharts-active');
-        }
+        button.classList.toggle('highcharts-active');
     }
 
     /**

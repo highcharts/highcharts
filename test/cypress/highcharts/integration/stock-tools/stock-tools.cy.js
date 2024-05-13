@@ -244,7 +244,7 @@ describe('Annotations popup text field', () => {
     });
 });
 
-describe.only('A11Y', ()=>{
+describe('A11Y - aria-labels', ()=>{
     before(() => {
         cy.viewport(1000, 1000);
         cy.visit('/highcharts/cypress/stock-tools-gui/');
@@ -259,15 +259,26 @@ describe.only('A11Y', ()=>{
         cy.get('.highcharts-stocktools-toolbar > li > button').should('have.attr', 'aria-label');
     });
 
-    it('Should update aria-label of main button when selecting submenu item', ()=>{
+    it('Should update aria-label of main button when selecting submenu item', () => {
         cy.get('.highcharts-label-annotation .highcharts-submenu-item-arrow').click();
 
         // Select the "circle" simple shapes tool in the submenu
         cy.get('[data-btn-name="circle"]').click();
+
+        // Main button should be in the selected state
         cy.get('[title="Simple shapes"] button').first()
-            .should('have.attr','aria-label', 'Deselect circle tool')
-            .click() // Toggle the state again
-            .should('have.attr', 'aria-label', 'Select circle tool');
+            .should('have.attr','aria-label', 'Deselect circle tool');
     });
+
+    it('Should update aria-labels when switching between tools', () => {
+        cy.get('[title="Simple shapes"] button').first().as('prevButton')
+            .should('have.attr','aria-label', 'Deselect circle tool');
+
+        cy.get('[title="Crooked lines"] button').first().click()
+            .should('have.attr','aria-label', 'Deselect crooked lines tool');
+
+        // Previous button should be in unselected state
+        cy.get('@prevButton').should('have.attr','aria-label', 'Select circle tool');
+    })
 
 });

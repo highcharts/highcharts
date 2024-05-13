@@ -310,7 +310,7 @@ class StockToolsComponent extends AccessibilityComponent {
             if (
                 button.classList.contains('highcharts-menu-item-btn')
             ) {
-                const isSubmenuButton = !!button
+                const submenu = button
                     .closest('.highcharts-submenu-wrapper');
 
                 const announcement = `${button.dataset.label} tool selected`;
@@ -318,11 +318,21 @@ class StockToolsComponent extends AccessibilityComponent {
 
                 // Handle submenu buttons ourselves to make
                 // states less confusing for screen readers
-                if (isSubmenuButton) {
+                if (submenu) {
                     // Do the main button swaperoo
                     component.chart.stockTools?.switchSymbol(button);
 
-                    // TODO: Also update dataset label of new main button
+                    const mainButton = submenu.parentElement
+                        ?.querySelector<HTMLElement>(
+                        '.highcharts-menu-item-btn'
+                    );
+
+                    if (mainButton && button.dataset.label) {
+                        mainButton.dataset.label = button.dataset.label;
+                        component.chart.stockTools?.setAriaLabelForParentButton(
+                            button
+                        );
+                    }
 
                     return component.keyboardNavigationHandler.response.success;
                 }
