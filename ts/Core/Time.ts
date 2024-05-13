@@ -502,7 +502,7 @@ class Time {
      * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
-     * @param {boolean} [capitalize=false]
+     * @param {boolean} [sentenceCase=false]
      *        Upper case first letter in the return.
      *
      * @return {string}
@@ -511,7 +511,7 @@ class Time {
     public dateFormat(
         format: Time.DateTimeFormat,
         timestamp?: number,
-        capitalize?: boolean
+        sentenceCase?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
             return H.defaultOptions.lang?.invalidDate || '';
@@ -620,6 +620,7 @@ class Time {
 
             let dateTimeFormat: Intl.DateTimeFormat;
 
+            /// sentenceCase ??= format.sentenceCase;
             try {
                 dateTimeFormat = new Intl.DateTimeFormat(
                     this.options.locale,
@@ -640,7 +641,7 @@ class Time {
         }
 
         // Optionally capitalize the string and return
-        return capitalize ?
+        return sentenceCase ?
             (
                 format.substr(0, 1).toUpperCase() +
                 format.substr(1)
@@ -1011,7 +1012,7 @@ class Time {
 namespace Time {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
-        capitalize?: boolean;
+        /// sentenceCase?: boolean;
         dateStyle?: 'full'|'long'|'medium'|'short';
         fractionalSecondDigits?: number;
         timeStyle?: 'full'|'long'|'medium'|'short';

@@ -666,7 +666,7 @@ class Axis {
             ret = `${this.value}`;
 
         } else if (dateTimeLabelFormat) { // Datetime axis
-            ret = time.dateFormat(dateTimeLabelFormat, value);
+            ret = time.dateFormat(dateTimeLabelFormat, value, true);
 
         } else if (
             i &&

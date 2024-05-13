@@ -135,7 +135,7 @@ const defaultOptions: CurrentDateIndicatorOptions = {
             value?: number,
             format?: string
         ): string {
-            return this.axis.chart.time.dateFormat(format || '', value);
+            return this.axis.chart.time.dateFormat(format || '', value, true);
         },
         rotation: 0,
         /**
