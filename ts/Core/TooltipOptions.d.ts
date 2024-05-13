@@ -14,6 +14,7 @@
  *
  * */
 
+import type AnimationOptions from './Animation/AnimationOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type F from './Templating';
@@ -41,7 +42,7 @@ declare module './Series/SeriesOptions' {
 }
 
 export interface TooltipOptions {
-    animation: boolean;
+    animation: boolean|Partial<AnimationOptions>;
     backgroundColor: ColorType;
     borderColor?: ColorType;
     borderRadius: number;

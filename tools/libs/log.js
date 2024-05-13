@@ -4,7 +4,7 @@
 
 /* eslint no-console: 0, no-use-before-define: 0 */
 
-const ChildProcess = require('child_process');
+const ChildProcess = require('node:child_process');
 const Colors = require('colors');
 const Time = require('./time');
 
