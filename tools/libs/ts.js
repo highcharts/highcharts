@@ -421,7 +421,7 @@ function extractTagObjects(
  * True, to to extract all text if tag has been found multiple times, otherwise
  * extract just the text from the last occurance.
  *
- * @return {string|undefined}
+ * @return {string|void}
  * Retrieved text or `undefined`.
  */
 function extractTagText(
@@ -633,16 +633,19 @@ function getClassInfo(
     }
 
     if (node.members) {
+        /** @type {Array<MemberInfo>} */
         const _members = _info.members = [];
-        for (const member of getChildInfos(node.members, includeNodes)) {
+
+        for (const _childInfo of getChildInfos(node.members, includeNodes)) {
             if (
-                member.kind === 'Doclet' ||
-                member.kind === 'Function' ||
-                member.kind === 'Property'
+                _childInfo.kind === 'Doclet' ||
+                _childInfo.kind === 'Function' ||
+                _childInfo.kind === 'Property'
             ) {
-                _members.push(member);
+                _members.push(_childInfo);
             }
         }
+
     }
 
     _info.flags = getInfoFlags(node);
@@ -1115,11 +1118,13 @@ function getInterfaceInfo(
 
     if (node.typeParameters) {
         const _generics = _info.generics = [];
+
         for (const parameter of getChildInfos(node.typeParameters)) {
             if (parameter.kind === 'Variable') {
                 _generics.push(parameter);
             }
         }
+
     }
 
     if (node.heritageClauses) {
@@ -1133,16 +1138,19 @@ function getInterfaceInfo(
     }
 
     if (node.members) {
+        /** @type {Array<MemberInfo>} */
         const _members = _info.members = [];
-        for (const member of getChildInfos(node.members, includeNodes)) {
+
+        for (const _childInfo of getChildInfos(node.members, includeNodes)) {
             if (
-                member.kind === 'Doclet' ||
-                member.kind === 'Interface' ||
-                member.kind === 'Property'
+                _childInfo.kind === 'Doclet' ||
+                _childInfo.kind === 'Function' ||
+                _childInfo.kind === 'Property'
             ) {
-                _members.push(member);
+                _members.push(_childInfo);
             }
         }
+
     }
 
     _info.flags = getInfoFlags(node);
@@ -1190,10 +1198,16 @@ function getNamespaceInfo(
     };
 
     if (node.body && node.body.statements) {
+        /** @type {Array<CodeInfo>} */
         const _members = _info.members = [];
-        for (const child of getChildInfos(node.body.statements, includeNodes)) {
-            _members.push(child);
+
+        for (
+            const _childInfo
+            of getChildInfos(node.body.statements, includeNodes)
+        ) {
+            _members.push(_childInfo);
         }
+
     }
 
     _info.flags = getInfoFlags(node);
@@ -1292,20 +1306,19 @@ function getObjectInfo(
     };
 
     if (node.properties) {
-        const _childInfos = getChildInfos(node.properties, includeNodes);
+        /** @type {Array<MemberInfo>} */
+        const _members = _info.members = [];
 
-        if (_childInfos.length) {
-            const _members = _info.members = [];
-
-            for (const _childInfo of _childInfos) {
-                if (
-                    _childInfo.kind === 'Doclet' ||
-                    _childInfo.kind === 'Property'
-                ) {
-                    _members.push(_childInfo);
-                }
+        for (const _childInfo of getChildInfos(node.properties, includeNodes)) {
+            if (
+                _childInfo.kind === 'Doclet' ||
+                _childInfo.kind === 'Function' ||
+                _childInfo.kind === 'Property'
+            ) {
+                _members.push(_childInfo);
             }
         }
+
     }
 
     if (_type) {
@@ -2068,7 +2081,7 @@ module.exports = {
  * @property {Array<VariableInfo>} [generics]
  * @property {Array<string>} [implements]
  * @property {'Class'} kind
- * @property {Array<(FunctionInfo|PropertyInfo)>} members
+ * @property {Array<Member>} members
  * @property {MetaInfo} meta
  * @property {string} name
  * @property {TS.ClassDeclaration} [node]
@@ -2175,10 +2188,15 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} [generics]
  * @property {'Interface'} kind
- * @property {Array<(FunctionInfo|PropertyInfo)>} members
+ * @property {Array<Member>} members
  * @property {MetaInfo} meta
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
+ */
+
+
+/**
+ * @typedef {DocletInfo|FunctionInfo|PropertyInfo} MemberInfo
  */
 
 
@@ -2215,7 +2233,7 @@ module.exports = {
  * @typedef ObjectInfo
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
- * @property {Array<(FunctionInfo|PropertyInfo)>} members
+ * @property {Array<Member>} members
  * @property {MetaInfo} meta
  * @property {TS.Node} [node]
  * @property {string} [type]
