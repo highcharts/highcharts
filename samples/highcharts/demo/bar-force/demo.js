@@ -71,7 +71,7 @@ Highcharts.chart('container', {
         height: 170
     },
     title: {
-        text: 'Hypothetical effect of Forces During Mars EDL sequence'
+        text: 'Estimated Impact of Forces in Mars EDL sequence'
     },
     plotOptions: {
         bar: {
@@ -97,13 +97,13 @@ Highcharts.chart('container', {
     },
     accessibility: {
         typeDescription: 'Stacked bar "force" chart.',
-        point: {
-            descriptionFormat: '{series.name}, amount: {y}'
-        },
-        // Don't read the description for the series, series is equal to points
-        // in this chart.
+        exposeAsGroupOnly: true,
         series: {
-            descriptionFormat: ''
+            descriptionFormatter: function (series) {
+                return series.index + 1 + ' of ' +
+                    this.chart.series.length + '. Name ' + series.name +
+                    ', value ' + series.points[0].y + '.';
+            }
         }
     },
     yAxis: {
