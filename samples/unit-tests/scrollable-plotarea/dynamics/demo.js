@@ -199,3 +199,29 @@ QUnit.test('#12517: Reset zoom button', assert => {
         'Reset zoom button should be within chart'
     );
 });
+
+
+QUnit.test(
+    'Pointer events on points outside of plotArea, #21136', assert => {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'bar',
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            controller = new TestController(chart);
+
+        controller.mouseOver(60, 330, undefined, true);
+
+        assert.ok(
+            chart.tooltip.isHidden,
+            `Tooltip should be hidden when pointer appears on point outside of
+            visible plot area, #21136.`
+        );
+    }
+);
