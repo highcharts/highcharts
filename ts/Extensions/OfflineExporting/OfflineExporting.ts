@@ -473,26 +473,21 @@ namespace OfflineExporting {
                         failCallback(e);
                     }
                 }, function (): void {
+                    if (svg.length > 1024 * 1024) {
+                        throw new Error('Input too long');
+                    }
                     // Failed due to tainted canvas
                     // Create new and untainted canvas
                     const canvas = doc.createElement('canvas'),
                         ctx = canvas.getContext('2d'),
                         matchedImageWidth = svg.match(
-                            /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
+                            /^<svg[^>]*width\s*=\s{,1000}\"?(\d+)\"?[^>]*>/
                         ),
                         matchedImageHeight = svg.match(
-                            /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+                            /^<svg[^>]*height\s*=\s{,1000}\"?(\d+)\"?[^>]*>/
                         );
 
                     if (ctx && matchedImageWidth && matchedImageHeight) {
-                        if (matchedImageWidth.length > 1000) {
-                            throw new Error('Input too long');
-                        }
-
-                        if (matchedImageHeight.length > 1000) {
-                            throw new Error('Input too long');
-                        }
-
                         const imageWidth = +matchedImageWidth[1] * scale,
                             imageHeight = +matchedImageHeight[1] * scale,
                             downloadWithCanVG = function (): void {
