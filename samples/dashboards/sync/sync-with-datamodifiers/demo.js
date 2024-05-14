@@ -7,21 +7,22 @@ Dashboards.board('container', {
                 firstRowAsNames: false,
                 columnNames: ['Col-0', 'Col-1', 'Col-2'],
                 data: [
-                    ['Row-1', 6421, 9.9],
-                    ['Row-2', 2122, 8.5],
-                    ['Row-3', 1350, 6.9],
-                    ['Row-4', 388, 3.9],
-                    ['Row-5', 214, 1.6]
+                    ['Row-0', 1349, 10],
+                    ['Row-1', 1960, 8],
+                    ['Row-2', 2024, 6],
+                    ['Row-3', 1918, 4],
+                    ['Row-4', 1792, 2]
                 ],
                 dataModifier: {
                     type: 'Range',
-                    additive: true,
+                    // additive: true,
                     ranges: [{
                         column: 'Col-1',
                         minValue: 0,
-                        maxValue: 5000
+                        maxValue: 2010
                     }]
-                }/*
+                }
+                /*
                 dataModifier: {
                     type: 'Sort',
                     direction: 'asc',
@@ -39,6 +40,8 @@ Dashboards.board('container', {
                     id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-2'
                 }]
             }]
         }]
@@ -67,6 +70,19 @@ Dashboards.board('container', {
         },
         dataGridOptions: {
             editable: true
+        }
+    }, {
+        // Mirror of editable datagrid
+        type: 'DataGrid',
+        renderTo: 'dashboard-col-2',
+        connector: {
+            id: 'micro-element'
+        },
+        sync: {
+            highlight: true
+        },
+        dataGridOptions: {
+            editable: false
         }
     }]
 });
