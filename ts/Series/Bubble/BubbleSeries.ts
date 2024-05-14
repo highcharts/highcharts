@@ -519,23 +519,32 @@ class BubbleSeries extends ScatterSeries {
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
             this.points.forEach(function (point): void {
-                const { graphic } = point;
+                const { graphic, plotX = 0, plotY = 0 } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width
 
                     // Start values
                     if (!this.hasRendered) {
                         graphic.attr({
-                            x: point.plotX,
-                            y: point.plotY,
+                            x: plotX,
+                            y: plotY,
                             width: 1,
                             height: 1
                         });
                     }
 
-                    // Run animation
+                    // Run animation. Cannot use `markerAttribs` directly
+                    // because the bubble markers are rendered into
+                    // `series.group`, which may be inverted, as opposed to the
+                    // default `series.markerGroup` (#21125).
+                    const { width = 0, height = 0 } = this.markerAttribs(point);
                     graphic.animate(
-                        this.markerAttribs(point),
+                        {
+                            x: plotX - width / 2,
+                            y: plotY - width / 2,
+                            width,
+                            height
+                        },
                         this.options.animation
                     );
                 }
