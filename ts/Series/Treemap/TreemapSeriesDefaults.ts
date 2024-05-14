@@ -530,9 +530,10 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     legendSymbol: 'rectangle',
 
     /**
-     * This option enables automatic zooming to the last child level upon node
-     * interaction. This feature simplifies navigation by immediately focusing
-     * on the deepest layer of the data structure without intermediate steps.
+     * This option enables automatic traversing to the last child level upon
+     * node interaction. This feature simplifies navigation by immediately
+     * focusing on the deepest layer of the data structure without intermediate
+     * steps.
      *
      * @sample {highcharts} highcharts/plotoptions/treemap-traverse-to-leaf/
      *         Traverse to leaf enabled
