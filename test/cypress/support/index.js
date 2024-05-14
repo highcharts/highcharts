@@ -68,6 +68,11 @@ Cypress.Commands.add('hideSidebar', () =>
     cy.get('.highcharts-dashboards-edit-popup-close:visible').click()
 );
 
+Cypress.Commands.add('openCellEditSidebar', (cellId) => {
+    cy.get(cellId).click();
+    cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
+});
+
 Cypress.Commands.add('chart', () =>
     cy.window().then(win => new Cypress.Promise((resolve, reject) => {
         const H = win.Highcharts;

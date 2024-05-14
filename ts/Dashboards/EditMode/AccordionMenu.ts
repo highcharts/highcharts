@@ -360,7 +360,10 @@ class AccordionMenu {
             return;
         }
 
-        if (Object.keys(this.chartOptionsJSON).length) {
+        if (
+            component.type === 'Highcharts' &&
+            Object.keys(this.chartOptionsJSON).length
+        ) {
             await component.update({
                 chartOptions: this.chartOptionsJSON
             } as any);
