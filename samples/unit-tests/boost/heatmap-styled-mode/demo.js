@@ -111,15 +111,18 @@ QUnit.test('Boost in styled mode', function (assert) {
             }]
         }),
         gl = chart.boost.wgl.gl,
-        firstColor = Highcharts.win.getComputedStyle(
-            chart.series[0].legendItem.symbol.element
-        ).fill,
-        secondColor = Highcharts.win.getComputedStyle(
-            chart.series[1].legendItem.symbol.element
-        ).fill,
+        firstColor = window.getComputedStyle(
+            chart.series[0].legendItem.symbol.element, null
+        ).getPropertyValue('fill'),
+        secondColor = window.getComputedStyle(
+            chart.series[1].legendItem.symbol.element, null
+        ).getPropertyValue('fill'),
         width = gl.canvas.width,
         height = gl.canvas.height,
-        colors = [],
+        colors = [
+            [-1, -1, -1],
+            [-1, -1, -1]
+        ],
         pxBuffer = new Uint8Array(width * height * 4);
 
     // Read pixel data
@@ -130,12 +133,9 @@ QUnit.test('Boost in styled mode', function (assert) {
         for (let x = 0; x < width; x++) {
             let pxIndex = (y * width + x) * 4; // RGBA format
             if (
-                pxBuffer[pxIndex] !== 0 ||
-                pxBuffer[pxIndex + 1] !== 0 ||
-                pxBuffer[pxIndex + 2] !== 0
+                pxBuffer[pxIndex + 3] !== 0
             ) {
                 // Found a non-zero pixel, but due to blending move a bit
-                console.log(pxBuffer[pxIndex]);
                 pxIndex += (5 * width + 5) * 4;
                 colors[0] = [
                     pxBuffer[pxIndex],
@@ -155,12 +155,9 @@ QUnit.test('Boost in styled mode', function (assert) {
         for (let x = width - 1; x >= 0; x--) {
             let pxIndex = (y * width + x) * 4; // RGBA format
             if (
-                pxBuffer[pxIndex] !== 0 ||
-                pxBuffer[pxIndex + 1] !== 0 ||
-                pxBuffer[pxIndex + 2] !== 0
+                pxBuffer[pxIndex + 3] !== 0
             ) {
                 // Found a non-zero pixel, but due to blending move a bit
-                console.log(pxBuffer[pxIndex]);
                 pxIndex -= (5 * width + 5) * 4;
                 colors[1] = [
                     pxBuffer[pxIndex],
@@ -173,6 +170,11 @@ QUnit.test('Boost in styled mode', function (assert) {
             }
         }
     }
+
+    assert.ok(
+        colors[0][0] !== -1 && colors[1][0] !== -1,
+        'any colors should be found in the canvas'
+    );
 
     assert.strictEqual(
         `${colors[0][0]},${colors[0][1]},${colors[0][2]}`,
