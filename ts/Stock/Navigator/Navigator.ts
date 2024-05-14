@@ -414,7 +414,7 @@ class Navigator {
     }
 
     /**
-     * Generate DOM elements for a navigator:
+     * Generate and update DOM elements for a navigator:
      *
      * - main navigator group
      *
@@ -426,8 +426,11 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#renderElements
+     *
+     * @param {boolean} isUpdated
+     *        Internal flag to determine if it's an update or initial render
      */
-    public renderElements(): void {
+    public renderElements(isUpdated = false): void {
         const navigator = this,
             navigatorOptions = navigator.navigatorOptions,
             maskInside = navigatorOptions.maskInside,
@@ -438,13 +441,14 @@ class Navigator {
                 cursor: inverted ? 'ns-resize' : 'ew-resize'
             },
             // Create the main navigator group
-            navigatorGroup: SVGElement = navigator.navigatorGroup = renderer
-                .g('navigator')
-                .attr({
-                    zIndex: 8,
-                    visibility: 'hidden'
-                })
-                .add();
+            navigatorGroup: SVGElement = isUpdated ? navigator.navigatorGroup :
+                navigator.navigatorGroup = renderer
+                    .g('navigator')
+                    .attr({
+                        zIndex: 8,
+                        visibility: 'hidden'
+                    })
+                    .add();
 
         // Create masks, each mask will get events and fill:
         [
@@ -452,31 +456,31 @@ class Navigator {
             maskInside,
             !maskInside
         ].forEach((hasMask: (boolean|undefined), index: number): void => {
-            const shade = renderer.rect()
-                .addClass(
-                    'highcharts-navigator-mask' +
-                    (index === 1 ? '-inside' : '-outside')
-                )
-                .add(navigatorGroup);
+            const shade = isUpdated ? navigator.shades[index] :
+                navigator.shades[index] = renderer.rect()
+                    .addClass(
+                        'highcharts-navigator-mask' +
+                        (index === 1 ? '-inside' : '-outside')
+                    )
+                    .add(navigatorGroup);
 
             if (!chart.styledMode) {
                 shade.attr({
-                    fill: hasMask ?
-                        (navigatorOptions.maskFill as any) :
-                        'rgba(0,0,0,0)'
+                    fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
                 });
 
                 if (index === 1) {
                     shade.css(mouseCursor);
                 }
             }
-            navigator.shades[index] = shade;
         });
 
         // Create the outline:
-        navigator.outline = renderer.path()
-            .addClass('highcharts-navigator-outline')
-            .add(navigatorGroup);
+        if (!isUpdated) {
+            navigator.outline = renderer.path()
+                .addClass('highcharts-navigator-outline')
+                .add(navigatorGroup);
+        }
 
         if (!chart.styledMode) {
             navigator.outline.attr({
@@ -486,21 +490,31 @@ class Navigator {
         }
 
         // Create the handlers:
-        if (navigatorOptions.handles && navigatorOptions.handles.enabled) {
+        if (navigatorOptions.handles?.enabled) {
             const handlesOptions =
                 navigatorOptions.handles as Required<NavigatorHandlesOptions>,
                 { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
-                navigator.handles[index] = renderer.symbol(
-                    handlesOptions.symbols[index],
-                    -width / 2 - 1,
-                    0,
-                    width,
-                    height,
-                    handlesOptions
-                );
+                if (!isUpdated) {
+                    navigator.handles[index] = renderer.symbol(
+                        handlesOptions.symbols[index],
+                        -width / 2 - 1,
+                        0,
+                        width,
+                        height,
+                        handlesOptions
+                    );
 
+                    // Z index is 6 for right handle, 7 for left. Can't be 10,
+                    // because of the tooltip in inverted chart (#2908).
+                    navigator.handles[index].attr({ zIndex: 7 - index })
+                        .addClass(
+                            'highcharts-navigator-handle ' +
+                            'highcharts-navigator-handle-' +
+                            ['left', 'right'][index]
+                        ).add(navigatorGroup);
+                }
                 if (chart.inverted) {
                     navigator.handles[index].attr({
                         rotation: 90,
@@ -509,21 +523,14 @@ class Navigator {
                     });
                 }
 
-                // Z index is 6 for right handle, 7 for left. Can't be 10,
-                // because of the tooltip in inverted chart (#2908).
-                navigator.handles[index].attr({ zIndex: 7 - index })
-                    .addClass(
-                        'highcharts-navigator-handle ' +
-                        'highcharts-navigator-handle-' +
-                        ['left', 'right'][index]
-                    ).add(navigatorGroup);
-
                 if (!chart.styledMode) {
                     navigator.handles[index]
                         .attr({
                             fill: handlesOptions.backgroundColor,
                             stroke: handlesOptions.borderColor,
-                            'stroke-width': handlesOptions.lineWidth
+                            'stroke-width': handlesOptions.lineWidth,
+                            width,
+                            height
                         })
                         .css(mouseCursor);
                 }
@@ -541,18 +548,62 @@ class Navigator {
      *        Options to merge in when updating navigator
      */
     public update(options: NavigatorOptions): void {
-        // Remove references to old navigator series in base series
-        (this.series || []).forEach((series): void => {
-            if (series.baseSeries) {
-                delete series.baseSeries.navigatorSeries;
-            }
-        });
-        // Destroy and rebuild navigator
-        this.destroy();
-        const chartOptions = this.chart.options;
+        const chart = this.chart;
 
-        merge(true, chartOptions.navigator, options);
-        this.init(this.chart);
+        merge(true, chart.options.navigator, options);
+        this.navigatorOptions = chart.options.navigator || {};
+        this.opposite = pick(
+            this.navigatorOptions.opposite,
+            Boolean(!this.navigatorEnabled && chart.inverted)
+        );
+
+        // Revert to destroy/init for navigator/scrollbar enabled toggle
+        if (defined(options.enabled)) {
+            this.destroy();
+            this.navigatorEnabled = options.enabled;
+            return this.init(chart);
+        }
+
+        if (this.navigatorEnabled) {
+            // Handle `adaptToUpdatedData` update
+            if (options.adaptToUpdatedData === false) {
+                this.baseSeries.forEach(function (series): void {
+                    removeEvent(series, 'updatedData', this.updatedDataHandler);
+                }, this);
+            }
+            if (options.adaptToUpdatedData) {
+                this.baseSeries.forEach(function (series): void {
+                    series.eventsToUnbind.push(
+                        addEvent(series, 'updatedData', this.updatedDataHandler)
+                    );
+                }, this);
+            }
+
+            // Update navigator series
+            if (options.series || options.baseSeries) {
+                this.setBaseSeries();
+            }
+
+            // Update navigator axis
+            if (options.height || options.xAxis || options.yAxis) {
+                this.height = options.height ?? this.height;
+
+                this.xAxis.update({
+                    offsets: chart.inverted ?
+                        [this.scrollButtonSize, 0, -this.scrollButtonSize, 0] :
+                        [0, -this.scrollButtonSize, 0, this.scrollButtonSize],
+                    [chart.inverted ? 'width' : 'height']: this.height,
+                    ...options.xAxis
+                });
+                this.yAxis.update({
+                    [chart.inverted ? 'width' : 'height']: this.height,
+                    ...options.yAxis
+                });
+            }
+
+            // Update DOM navigator elements
+            this.renderElements(true);
+        }
     }
 
     /**
@@ -2108,6 +2159,7 @@ class Navigator {
         ): void => {
             destroyObjectProperties(coll);
         });
+        this.navigatorEnabled = false;
     }
 }
 
