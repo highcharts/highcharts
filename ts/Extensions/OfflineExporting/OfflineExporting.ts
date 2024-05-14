@@ -169,7 +169,7 @@ namespace OfflineExporting {
     }
 
     /**
- * Get data URL to an image of an SVG and call download on it options
+     * Get data URL to an image of an SVG and call download on it options
      * object:
      * - **filename:** Name of resulting downloaded file without extension.
      * Default is `chart`.
