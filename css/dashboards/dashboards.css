@@ -693,7 +693,7 @@
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-60);
     position: absolute;
-    z-index: 1000;
+    z-index: 102;
     min-height: 300px;
     height: 100%;
     padding: 20px;
@@ -924,7 +924,7 @@
     top: 5%;
     overflow: hidden;
     position: absolute;
-    z-index: 101;
+    z-index: 103;
     border-radius: 10px;
     padding: 20px;
     pointer-events: all;
