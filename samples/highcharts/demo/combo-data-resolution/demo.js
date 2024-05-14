@@ -1,5 +1,3 @@
-const milliSecPerYear = 365.25 * 24 * 60 * 60 * 1000;
-
 Highcharts.chart('container', {
     title: {
         text: 'Annual surface temperature change from 1961 to 2021',
