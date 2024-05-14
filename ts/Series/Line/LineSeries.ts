@@ -109,7 +109,8 @@ class LineSeries extends Series {
                 graph.endX = this.preventGraphAnimation ?
                     null :
                     graphPath.xMap;
-                graph.animate({ d: graphPath });
+                graph[(graphPath as any).disableAnimation ?
+                    'attr' : 'animate']({ d: graphPath });
 
             } else if (graphPath.length) { // #1487
 
@@ -330,6 +331,13 @@ class LineSeries extends Series {
         });
 
         (graphPath as any).xMap = xMap;
+        if (
+            series.options.stacking &&
+            series.graphPath &&
+            series.graphPath.length !== graphPath.length
+        ) {
+            (graphPath as any).disableAnimation = true;
+        }
         series.graphPath = graphPath;
 
         return graphPath;

@@ -136,7 +136,8 @@ class AreaSeries extends LineSeries {
                 area.endX = this.preventGraphAnimation ?
                     null :
                     areaPath.xMap;
-                area.animate({ d: areaPath });
+                area[(this.graphPath as any).disableAnimation ?
+                    'attr' : 'animate']({ d: areaPath });
 
             } else { // Create
 
