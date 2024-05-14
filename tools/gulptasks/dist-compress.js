@@ -4,10 +4,10 @@
 
 const gulp = require('gulp');
 const fs = require('fs');
-const libFS = require('./lib/fs');
+const libFS = require('../libs/fs');
 const zlib = require('zlib');
 const glob = require('glob');
-const log = require('./lib/log');
+const log = require('../libs/log');
 const yargs = require('yargs');
 const zip = require('gulp-zip');
 const stream = require('stream');

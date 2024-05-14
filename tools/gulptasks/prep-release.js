@@ -5,7 +5,7 @@
 const Gulp = require('gulp');
 const packageJson = require('../../package.json');
 const ChildProcess = require('child_process');
-const LogLib = require('./lib/log');
+const LogLib = require('../libs/log');
 const fs = require('fs');
 
 /**

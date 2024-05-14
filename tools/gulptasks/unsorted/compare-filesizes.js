@@ -43,7 +43,7 @@ function formatColumns(obj) {
 
 // TODO: write JSDoc
 function getCompareFileSizeTable(pathOld, pathNew, out) {
-    const log = require('../lib/log');
+    const log = require('../../libs/log');
 
     const oldObj = require(path.resolve(pathOld));
     const newObj = require(path.resolve(pathNew));

@@ -83,7 +83,7 @@ function response302(response, p) {
  */
 function response404(response, uri) {
 
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     logLib.failure('404', uri);
 
@@ -107,7 +107,7 @@ function apiServer() {
 
     const fs = require('fs');
     const http = require('http');
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     return new Promise(resolve => {
 
