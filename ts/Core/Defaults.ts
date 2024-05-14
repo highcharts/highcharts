@@ -2080,20 +2080,20 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * for the whole tooltip. When format strings are a requirement, it is
-         * usually more convenient to use `headerFormat`, `pointFormat` and
-         * `footerFormat`, but the `format` option allows combining them into
-         * one setting.
+         * for the whole shared tooltip. When format strings are a requirement,
+         * it is usually more convenient to use `headerFormat`, `pointFormat`
+         * and `footerFormat`, but the `format` option allows combining them
+         * into one setting.
          *
          * The context of the format string is the same as that of the
-         * `formatter` callback.
+         * `tooltip.formatter` callback.
          *
          * @sample {highcharts} highcharts/tooltip/format-shared/
          *         Format for shared tooltip
          *
          * @type      {string}
          * @default   undefined
-         * @since 11.1.0
+         * @since     11.1.0
          * @apioption tooltip.format
          */
 
@@ -2162,7 +2162,6 @@ const defaultOptions: DefaultOptions = {
          * @apioption tooltip.formatter
          */
 
-
         /**
          * Callback function to format the text of the tooltip for
          * visible null points.
@@ -2174,7 +2173,6 @@ const defaultOptions: DefaultOptions = {
          * @type      {Highcharts.TooltipFormatterCallbackFunction}
          * @apioption tooltip.nullFormatter
          */
-
 
         /**
          * Whether to allow the tooltip to render outside the chart's SVG
