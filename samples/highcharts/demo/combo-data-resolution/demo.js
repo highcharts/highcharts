@@ -1,11 +1,11 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Annual surface temperature change from 1961 to 2021',
+        text: 'Global temperature changes from 1880 to 2021',
         align: 'left'
     },
     accessibility: {
         description: `
-            A chart of annual surface temperature change from 1961 to 2021.
+            A chart of global temperature change from 1880 to 2021.
             It employs two series, one column and one line,
             to convey the same data at different resolutions.
             There is only one column per thirty years,
@@ -27,7 +27,7 @@ Highcharts.chart('container', {
             )
         }
     }, {
-        name: 'Yearly mean',
+        name: 'Annual mean',
         data: JSON.parse(document.getElementById('lineData').textContent),
         accessibility: {
             description: `
