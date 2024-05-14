@@ -4,7 +4,7 @@ authors:
   - Markus Barstad
 js_wrap: b
 alt_text: >-
-  A chart of monthly mean temperature anomalies from 1880 to 2016,
+  A chart of annual surface temperature change from 1961 to 2022,
   employing a line and a column series which displays the same data,
   at different intervals.
 tags:
