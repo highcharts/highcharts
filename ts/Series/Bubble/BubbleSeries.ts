@@ -533,18 +533,8 @@ class BubbleSeries extends ScatterSeries {
                         });
                     }
 
-                    // Run animation. Cannot use `markerAttribs` directly
-                    // because the bubble markers are rendered into
-                    // `series.group`, which may be inverted, as opposed to the
-                    // default `series.markerGroup` (#21125).
-                    const { width = 0, height = 0 } = this.markerAttribs(point);
                     graphic.animate(
-                        {
-                            x: plotX - width / 2,
-                            y: plotY - width / 2,
-                            width,
-                            height
-                        },
+                        this.markerAttribs(point),
                         this.options.animation
                     );
                 }
@@ -688,6 +678,25 @@ class BubbleSeries extends ScatterSeries {
     /**
      * @private
      */
+    public markerAttribs(
+        point: Point,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        const attr = super.markerAttribs(point, state),
+            { height = 0, width = 0 } = attr;
+
+        // Bubble needs a specific `markerAttribs` override because the markers
+        // are rendered into the potentially inverted `series.group`. Unlike
+        // regular markers, which are rendered into the `markerGroup` (#21125).
+        return extend(attr, {
+            x: (point.plotX || 0) - width / 2,
+            y: (point.plotY || 0) - height / 2
+        });
+    }
+
+    /**
+     * @private
+     */
     public pointAttribs(
         point?: BubblePoint,
         state?: StatesOptionsKey
@@ -726,8 +735,8 @@ class BubbleSeries extends ScatterSeries {
         let i = data.length;
 
         while (i--) {
-            const point = data[i];
-            const radius = radii ? radii[i] : 0; // #1737
+            const point = data[i],
+                radius = radii ? radii[i] : 0; // #1737
 
             // Negative points means negative z values (#9728)
             if (this.zoneAxis === 'z') {
