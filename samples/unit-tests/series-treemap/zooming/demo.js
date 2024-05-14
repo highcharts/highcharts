@@ -100,7 +100,7 @@ QUnit.test(
 
         chart.series[0].update({
             interactByLeaf: true,
-            zoomToLastLeaf: true
+            traverseToLeaf: true
         });
 
         chart.series[0].points[3].onMouseOver();
