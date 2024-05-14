@@ -235,7 +235,7 @@ function extractTypes(
 
 
 /**
- * Retrieve child informations.
+ * Retrieve child informations and doclets.
  *
  * @param {Array<TS.Node>} nodes
  * Child nodes to extract from.
@@ -243,21 +243,21 @@ function extractTypes(
  * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {Array<NodeInfo>}
+ * @return {Array<CodeInfo>}
  * Retrieved child informations.
  */
 function getChildInfos(
     nodes,
     includeNodes
 ) {
-    /** @type {Array<NodeInfo>} */
+    /** @type {Array<CodeInfo>} */
     const _infos = [];
 
     /** @type {DocletInfo} */
     let _doclet;
     /** @type {Array<DocletInfo>} */
     let _doclets;
-    /** @type {NodeInfo} */
+    /** @type {CodeInfo} */
     let _child;
     /** @type {TS.Node} */
     let previousNode = nodes[0];
@@ -280,6 +280,7 @@ function getChildInfos(
             getVariableInfo(node, includeNodes) ||
             getPropertyInfo(node, includeNodes) ||
             getObjectInfo(node, includeNodes) ||
+            getNamespaceInfo(node, includeNodes) ||
             getInterfaceInfo(node, includeNodes) ||
             getImportInfo(node, includeNodes) ||
             getFunctionInfo(node, includeNodes) ||
@@ -596,7 +597,7 @@ function getDocletsBetween(
  * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {NodeInfo|undefined}
+ * @return {CodeInfo|undefined}
  * Export information or `undefined`.
  */
 function getExportInfo(
@@ -890,6 +891,53 @@ function getInterfaceInfo(
     if (includeNodes) {
         _info.node = node;
     }
+
+    return _info;
+}
+
+
+/**
+ * Retrieves namespace and module information from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a namespace or module.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {NamespaceInfo|undefined}
+ * Namespace, module or `undefined`.
+ */
+function getNamespaceInfo(
+    node,
+    includeNodes
+) {
+
+    if (!TS.isModuleDeclaration(node)) {
+        return void 0;
+    }
+
+    /** @type {NamespaceInfo} */
+    const _info = {
+        kind: (
+            node
+                .getChildren()
+                .some(token => token.kind === TS.SyntaxKind.ModuleKeyword) ?
+                'Module' :
+                'Namespace'
+        ),
+        name: node.name.text
+    };
+
+    if (node.body && node.body.statements) {
+        const _members = _info.members = [];
+        for (const child of getChildInfos(node.body.statements, includeNodes)) {
+            _members.push(child);
+        }
+    }
+
+    _info.flags = getInfoFlags(node);
+    _info.meta = getInfoMeta(node);
 
     return _info;
 }
@@ -1613,6 +1661,14 @@ module.exports = {
 
 
 /**
+ * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
+ *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
+ *           VariableInfo
+ *          } CodeInfo
+ */
+
+
+/**
  * @typedef DeconstructInfo
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
@@ -1640,7 +1696,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
  * @property {string} [name]
- * @property {NodeInfo} [object]
+ * @property {CodeInfo} [object]
  * @property {MetaInfo} meta
  * @property {TS.ImportDeclaration} [node]
  */
@@ -1702,11 +1758,15 @@ module.exports = {
 
 
 /**
- * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|ImportInfo|
- *           InterfaceInfo|ObjectInfo|PropertyInfo|SourceInfo|VariableInfo
- *          } NodeInfo
+ * @typedef NamespaceInfo
+ * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
+ * @property {'Module'|'Namespace'} kind
+ * @property {Array<CodeInfo>} members
+ * @property {MetaInfo} meta
+ * @property {string} name
+ * @property {TS.Node} [node]
  */
-
 
 /**
  * @typedef ObjectInfo
@@ -1734,7 +1794,7 @@ module.exports = {
 
 /**
  * @typedef SourceInfo
- * @property {Array<NodeInfo>} code
+ * @property {Array<CodeInfo>} code
  * @property {'Source'} kind
  * @property {TS.SourceFile} [node]
  * @property {string} path

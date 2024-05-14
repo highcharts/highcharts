@@ -77,6 +77,11 @@ export interface DataGridOptions {
     editable?: boolean;
 
     /**
+     * Events attached to the row : `click`.
+     */
+    events?: DataGridEvents
+
+    /**
      * Switch to make the column sizes editable ('true') or fixed ('false').
      *
      * @default true
@@ -84,9 +89,14 @@ export interface DataGridOptions {
     resizableColumns?: boolean;
 
     /**
-     * Events attached to the row : `click`.
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/data-grid/basic/cells-formatting | Cell with an URL to click}
+     *
+     * @default false
      */
-    events?: DataGridEvents
+    useHTML?: boolean;
 }
 
 /**

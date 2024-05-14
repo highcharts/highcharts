@@ -13,22 +13,23 @@ describe('Remove the dashboard.', () => {
         cy.get('.highcharts-datagrid-cell').eq(0).should('have.text', 'Apples No. 1');
         cy.get('.highcharts-datagrid-cell').eq(1).should('have.text', '100 kg');
         cy.get('.highcharts-datagrid-cell').eq(2).should('have.text', '1.5 $');
+        cy.get('.highcharts-datagrid-cell').eq(3).should('have.text', 'Apples URL');
     });
 
     it('The cell containing text should lose format when editing and gain back when not.', () => {
-        cy.get('.highcharts-datagrid-cell').eq(3).click();
+        cy.get('.highcharts-datagrid-cell').eq(4).click();
         cy.get('.highcharts-datagrid-cell-input').should('have.value', 'Pears');
         cy.get('.highcharts-datagrid-cell-input').type(' from the tree');
         cy.get('body').click();
-        cy.get('.highcharts-datagrid-cell').eq(3).should('have.text', 'Pears from the tree No. 1');
+        cy.get('.highcharts-datagrid-cell').eq(4).should('have.text', 'Pears from the tree No. 1');
     });
 
     it('The cell containing number should lose format when editing and gain back when not.', () => {
-        cy.get('.highcharts-datagrid-cell').eq(4).click();
+        cy.get('.highcharts-datagrid-cell').eq(5).click();
         cy.get('.highcharts-datagrid-cell-input').should('have.value', '40');
         cy.get('.highcharts-datagrid-cell-input').clear().type('300');
         cy.get('body').click();
-        cy.get('.highcharts-datagrid-cell').eq(4).should('have.text', '300 kg');
+        cy.get('.highcharts-datagrid-cell').eq(5).should('have.text', '300 kg');
     });
 
     it('The grid should adjust its width dynamically to the container width.', () => {
@@ -61,5 +62,9 @@ describe('Remove the dashboard.', () => {
 
             cy.get('.highcharts-datagrid-column-header').first().should('have.text', 'pr... na...');
         });
+    });
+
+    it('The cell should contain properly parsed and formatted HTML.', () => {
+        cy.get('.highcharts-datagrid-cell a[href="#"]').should('be.visible')
     });
 });

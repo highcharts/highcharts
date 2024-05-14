@@ -128,9 +128,8 @@ namespace BrandDarkTheme {
                 lowColor: '#f0f0f0'
             },
             map: {
-                borderColor: 'rgba(200, 200, 200, 1)',
+                borderColor: '#909090',
                 nullColor: '#78758C'
-
             }
         } as SeriesTypePlotOptions,
         drilldown: {
@@ -181,6 +180,18 @@ namespace BrandDarkTheme {
                     fontWeight: '300'
                 }
             }
+        },
+        colorAxis: {
+            gridLineColor: '#45445d',
+            labels: {
+                style: {
+                    color: '#fff',
+                    fontSize: '12px'
+                }
+            },
+            minColor: '#342f95',
+            maxColor: '#2caffe',
+            tickColor: '#45445d'
         },
         mapNavigation: {
             enabled: true,

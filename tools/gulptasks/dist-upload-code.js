@@ -6,8 +6,8 @@
 const gulp = require('gulp');
 const glob = require('glob');
 const fs = require('fs');
-const log = require('./lib/log');
-const { isDirectory, isDotEntry } = require('./lib/fs');
+const log = require('../libs/log');
+const { isDirectory, isDotEntry } = require('../libs/fs');
 const {
     uploadFiles,
     getGitIgnoreMeProperties,

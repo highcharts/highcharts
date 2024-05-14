@@ -41,7 +41,7 @@ function checkJSWrap() {
 
     const fs = require('fs');
     const glob = require('glob');
-    const logLib = require('./lib/log');
+    const logLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
@@ -94,7 +94,7 @@ function checkDemosConsistency() {
     });
 
     const glob = require('glob');
-    const logLib = require('./lib/log');
+    const logLib = require('../libs/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
@@ -182,7 +182,7 @@ function checkDemosConsistency() {
  */
 function checkDocsConsistency() {
     const FS = require('fs');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     const sidebar = require('../../docs/sidebars.js');
     const { unlisted } = require('../../docs/doc-config.js');
@@ -240,7 +240,7 @@ function checkDocsConsistency() {
 async function test() {
     const fs = require('fs');
     const argv = require('yargs').argv;
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 

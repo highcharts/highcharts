@@ -234,7 +234,7 @@ class OrganizationSeries extends SankeySeries {
             options = this.options,
             fromNode = point.fromNode,
             toNode = point.toNode,
-            linkWidth = pick(options.linkLineWidth, options.link.lineWidth),
+            linkWidth = pick(options.linkLineWidth, options.link.lineWidth, 0),
             crisp = (Math.round(linkWidth) % 2) / 2,
             factor = pick((options.link as any).offset, 0.5),
             type = pick(

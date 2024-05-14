@@ -25,6 +25,7 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SunburstPointOptions from './SunburstPointOptions';
 import type {
     SunburstDataLabelOptions,
+    SunburstSeriesLevelOptions,
     SunburstSeriesOptions
 } from './SunburstSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -465,7 +466,7 @@ class SunburstSeries extends TreemapSeries {
 
     public data!: Array<SunburstPoint>;
 
-    public mapOptionsToLevel!: Record<string, SunburstSeriesOptions>;
+    public mapOptionsToLevel!: Record<string, SunburstSeriesLevelOptions>;
 
     public nodeMap!: Record<string, SunburstNode>;
 
@@ -698,7 +699,7 @@ class SunburstSeries extends TreemapSeries {
     public layoutAlgorithm(
         parent: SunburstNode.NodeValuesObject,
         children: Array<SunburstNode>,
-        options: SunburstSeriesOptions
+        options: (SunburstSeriesOptions|SunburstSeriesLevelOptions)
     ): Array<SunburstNode.NodeValuesObject> {
         let startAngle = parent.start;
 
@@ -780,9 +781,7 @@ class SunburstSeries extends TreemapSeries {
     public setShapeArgs(
         parent: SunburstNode,
         parentValues: SunburstNode.NodeValuesObject,
-        mapOptionsToLevel: (
-            Record<string, SunburstSeriesOptions>
-        )
+        mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>
     ): void {
         const level = parent.level + 1,
             options = mapOptionsToLevel[level],
@@ -858,7 +857,7 @@ class SunburstSeries extends TreemapSeries {
             rootId = updateRootId(series);
 
         let mapIdToNode = series.nodeMap,
-            mapOptionsToLevel: Record<string, SunburstSeriesOptions>,
+            mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeIds: Record<string, boolean> = {};
 
@@ -994,7 +993,7 @@ namespace SunburstSeries {
     }
 
     export interface DlOptionsParams {
-        level: SunburstSeriesOptions;
+        level: SunburstSeriesLevelOptions;
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;
