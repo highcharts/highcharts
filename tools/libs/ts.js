@@ -425,7 +425,7 @@ function extractTagObjects(
  * True, to to extract all text if tag has been found multiple times, otherwise
  * extract just the text from the last occurance.
  *
- * @return {string|void}
+ * @return {string|undefined}
  * Retrieved text or `undefined`.
  */
 function extractTagText(
@@ -652,7 +652,10 @@ function getClassInfo(
 
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -709,7 +712,10 @@ function getDeconstructInfos(
             element.name.text;
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -897,7 +903,10 @@ function getExportInfo(
 
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -966,7 +975,10 @@ function getFunctionInfo(
         _info.return = node.type.getText();
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -1031,7 +1043,10 @@ function getImportInfo(
 
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNode) {
@@ -1057,7 +1072,7 @@ function getInfoFlags(
     /** @type {Array<InfoFlag>} */
     const _flags = [];
 
-    if (!TS.canHaveModifiers(node)) {
+    if (!node.flags) {
         return void 0;
     }
 
@@ -1161,7 +1176,10 @@ function getInterfaceInfo(
 
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -1218,7 +1236,10 @@ function getNamespaceInfo(
 
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     return _info;
@@ -1333,7 +1354,10 @@ function getObjectInfo(
         _info.type = _type;
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -1403,7 +1427,10 @@ function getPropertyInfo(
         }
     }
 
-    _info.flags = getInfoFlags(node);
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNode) {
@@ -1528,11 +1555,14 @@ function getVariableInfo(
         }
     }
 
-    _info.flags = getInfoFlags(
-        TS.isVariableDeclarationList(node.parent) ?
-            node.parent.parent :
-            node
-    );
+    if (TS.isVariableDeclarationList(node.parent)) {
+        if (node.parent.parent.flags) {
+            _info.flags = getInfoFlags(node.parent.parent);
+        }
+    } else if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
     _info.meta = getInfoMeta(node);
 
     if (includeNodes) {
@@ -1744,6 +1774,110 @@ function removeTag(
 
 
 /**
+ * Resolves reference relative to the given source information.
+ *
+ * @param {SourceInfo} sourceInfo
+ * Source information to use.
+ *
+ * @param {string} memberPath
+ * Reference path to resolve to.
+ *
+ * @return {ResolvedInfo|undefined}
+ * Resolve information.
+ */
+function resolveReference(
+    sourceInfo,
+    memberPath
+) {
+    /**
+     * Internal resolve.
+     * @param {CodeInfo} info
+     * Current info.
+     * @param {string} path
+     * Current path.
+     * @return {ResolveInfo|undefined}
+     * Result.
+     */
+    function resolve(info, path) {
+        /** @type {ResolvedInfo} */
+        const _result = {
+            kind: 'Resolved',
+            path: sourceInfo.path,
+            resolvedInfo: void 0,
+            resolvedPath: sourceInfo.path,
+            search: memberPath
+        };
+
+        const _name = path.split('.', 2)[0];
+        const _restOfPath = path.split('.', 2)[1];
+
+        switch (info.kind) {
+            case 'Class':
+            case 'Module':
+            case 'Namespace':
+                if (info.name === _name) {
+                    if (_restOfPath) {
+                        for (const _memberInfo of info.members) {
+                            const _resolvedInfo =
+                                resolve(_memberInfo, _restOfPath);
+                            if (_resolvedInfo) {
+                                _result.resolvedInfo =
+                                    _resolvedInfo.resolvedInfo;
+                                return _result;
+                            }
+                        }
+                    } else {
+                        _result.resolvedInfo = info;
+                        return _result;
+                    }
+                }
+                break;
+            case 'Function':
+                if (
+                    info.name === _name &&
+                    !_restOfPath
+                ) {
+                    _result.resolvedInfo = info;
+                    return _result;
+                }
+                break;
+            case 'Export':
+            case 'Property':
+            case 'Variable':
+                if (
+                    info.name === _name &&
+                    !_restOfPath
+                ) {
+                    if (
+                        info.value &&
+                        typeof info.value === 'object'
+                    ) {
+                        _result.resolvedInfo = info.value;
+                        return _result;
+                    }
+                    _result.resolvedInfo = info;
+                    return _result;
+                }
+                break;
+            default:
+                break;
+        }
+
+        return void 0;
+    }
+
+    for (const _codeInfo of sourceInfo.code) {
+        const _resolveInfo = resolve(_codeInfo, memberPath);
+        if (_resolveInfo) {
+            return _resolveInfo;
+        }
+    }
+
+    return void 0;
+}
+
+
+/**
  * Resolves type relative to the given source information.
  *
  * @param {SourceInfo} sourceInfo
@@ -1755,95 +1889,91 @@ function removeTag(
  * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
- * @param {Record<string,SourceInfo>} [_stack]
- * Internal stack for recursion.
- *
  * @return {ResolvedInfo|undefined}
  * Resolve information.
  */
 function resolveType(
     sourceInfo,
-    type,
-    includeNodes,
-    _stack = {}
+    searchType,
+    includeNodes
 ) {
-    /** @type {ResolvedInfo} */
-    const resolvedInfo = {
-        kind: 'Resolved',
-        path: sourceInfo.path,
-        resolvedInfo: void 0,
-        resolvedPath: sourceInfo.path,
-        type
-    };
+    /** @type {Record<string,SourceInfo>} */
+    const _stack = {};
 
-    /** @type {string} */
-    let resolvedPath;
+    /**
+     * Internal resolve.
+     * @param {CodeInfo} info
+     * Current info.
+     * @param {string} type
+     * Current type.
+     * @return {ResolveInfo|undefined}
+     * Result.
+     */
+    function resolve(info, type) {
+        /** @type {ResolvedInfo} */
+        const _result = {
+            kind: 'Resolved',
+            path: sourceInfo.path,
+            resolvedInfo: void 0,
+            resolvedPath: sourceInfo.path,
+            search: type
+        };
 
-    for (const info of sourceInfo.code) {
+        switch (info.kind) {
+            case 'Import':
+                for (const item of Object.keys(info.imports)) {
 
-        if (info.kind === 'Import') {
-            const imports = info.imports;
-
-            for (const item in imports) {
-
-                // `item` is the external name, while `type` is the local name
-                if (imports[item] === type) {
-
-                    resolvedPath =
-                        FSLib.normalizePath(sourceInfo.path, info.from, true);
-
-                    if (Path.extname(resolvedPath) === '.js') {
-                        resolvedPath = resolvedPath
-                            .substring(0, resolvedPath.length - 3);
+                    // `item` is the external name,
+                    // while `type` is the local name
+                    if (info.imports[item] !== type) {
+                        continue;
                     }
 
-                    if (!Path.extname(resolvedPath)) {
-                        if (FS.existsSync(resolvedPath + '.d.ts')) {
-                            resolvedPath += '.d.ts';
-                        } else if (FS.existsSync(resolvedPath + '.ts')) {
-                            resolvedPath += '.ts';
+                    let _resolvedPath = FSLib.normalizePath(
+                        sourceInfo.path,
+                        info.from,
+                        true
+                    );
+
+                    if (Path.extname(_resolvedPath) === '.js') {
+                        _resolvedPath = _resolvedPath
+                            .substring(0, _resolvedPath.length - 3);
+                    }
+
+                    if (!Path.extname(_resolvedPath)) {
+                        if (FS.existsSync(_resolvedPath + '.d.ts')) {
+                            _resolvedPath += '.d.ts';
+                        } else if (FS.existsSync(_resolvedPath + '.ts')) {
+                            _resolvedPath += '.ts';
                         } else {
                             continue;
                         }
                     }
 
-                    if (_stack[resolvedPath]) {
+                    if (_stack[_resolvedPath]) {
                         return void 0; // Break circular references
                     }
 
-                    const resolvedSource = getSourceInfo(
-                        resolvedPath,
-                        FS.readFileSync(resolvedPath, 'utf8'),
+                    const _resolvedSource = getSourceInfo(
+                        _resolvedPath,
+                        FS.readFileSync(_resolvedPath, 'utf8'),
                         includeNodes
                     );
 
-                    _stack[resolvedPath] = resolvedSource;
+                    _stack[_resolvedPath] = _resolvedSource;
 
-                    const resolvedImport = resolveType(
-                        resolvedSource,
-                        (
-                            item === 'default' ?
-                                type :
-                                item
-                        ),
-                        includeNodes,
-                        _stack
-                    );
-
-                    if (resolvedImport) {
-                        delete _stack[resolvedPath];
-                        resolvedInfo.resolvedInfo = resolvedImport.resolvedInfo;
-                        resolvedInfo.resolvedPath = resolvedImport.path;
-                        return resolvedInfo;
+                    for (const _codeInfo of _resolvedSource.code) {
+                        const _resolvedInfo = resolve(_codeInfo, type);
+                        if (_resolvedInfo) {
+                            delete _stack[_resolvedPath];
+                            _result.resolvedInfo = _resolvedInfo.resolvedInfo;
+                            _result.resolvedPath = _resolvedSource.path;
+                            return _result;
+                        }
                     }
 
                 }
-
-            }
-
-        }
-
-        switch (info.kind) {
+                break;
             case 'Export':
                 if (
                     info.object &&
@@ -1852,8 +1982,8 @@ function resolveType(
                         info.object.name === type
                     )
                 ) {
-                    resolvedInfo.resolvedInfo = info.object;
-                    return resolvedInfo;
+                    _result.resolvedInfo = info.object;
+                    return _result;
                 }
                 break;
             case 'Class':
@@ -1861,14 +1991,22 @@ function resolveType(
             case 'Object':
             case 'Variable':
                 if (info.name === type) {
-                    resolvedInfo.resolvedInfo = info;
-                    return resolvedInfo;
+                    _result.resolvedInfo = info;
+                    return _result;
                 }
                 break;
             default:
                 break;
         }
 
+        return void 0;
+    }
+
+    for (const _codeInfo of sourceInfo.code) {
+        const _resolveInfo = resolve(_codeInfo, searchType);
+        if (_resolveInfo) {
+            return _resolveInfo;
+        }
     }
 
     return void 0;
@@ -2077,6 +2215,7 @@ module.exports = {
     newDocletInfo,
     removeAllDoclets,
     removeTag,
+    resolveReference,
     resolveType,
     sanitizeText,
     toDocletString,
@@ -2272,7 +2411,7 @@ module.exports = {
  * @property {string} path
  * @property {CodeInfo} resolvedInfo
  * @property {string} resolvedPath
- * @property {string} type
+ * @property {string} search
  */
 
 
