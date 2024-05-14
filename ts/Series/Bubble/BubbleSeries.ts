@@ -688,10 +688,10 @@ class BubbleSeries extends ScatterSeries {
         // Bubble needs a specific `markerAttribs` override because the markers
         // are rendered into the potentially inverted `series.group`. Unlike
         // regular markers, which are rendered into the `markerGroup` (#21125).
-        return extend(attr, {
+        return this.chart.inverted ? extend(attr, {
             x: (point.plotX || 0) - width / 2,
             y: (point.plotY || 0) - height / 2
-        });
+        }) : attr;
     }
 
     /**
