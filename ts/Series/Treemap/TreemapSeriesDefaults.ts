@@ -534,14 +534,14 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * interaction. This feature simplifies navigation by immediately focusing
      * on the deepest layer of the data structure without intermediate steps.
      *
-     * @sample {highcharts} highcharts/plotoptions/treemap-zoomtolastleaf/
-     *        Zooming to last leaf enabled
+     * @sample {highcharts} highcharts/plotoptions/treemap-traverse-to-leaf/
+     *         Traverse to leaf enabled
      *
      * @since   @next
      *
      * @product highcharts
      */
-    zoomToLastLeaf: false
+    traverseToLeaf: false
 
 };
 

@@ -712,7 +712,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drillToByLeaf(point: TreemapPoint): (boolean|string) {
-        const { zoomToLastLeaf } = point.series.options;
+        const { traverseToLeaf } = point.series.options;
 
         let drillId: (boolean|string) = false,
             nodeParent: TreemapNode;
@@ -721,7 +721,7 @@ class TreemapSeries extends ScatterSeries {
             (point.node.parent !== this.rootNode) &&
             point.node.isLeaf
         ) {
-            if (zoomToLastLeaf) {
+            if (traverseToLeaf) {
                 drillId = point.id;
             } else {
                 nodeParent = point.node;
