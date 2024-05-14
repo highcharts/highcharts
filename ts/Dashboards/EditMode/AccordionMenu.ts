@@ -439,6 +439,7 @@ class AccordionMenu {
                 value: editMode.lang.cancelButton,
                 callback: (): void => {
                     popup.closePopup();
+                    editMode.setEditOverlay();
 
                     setTimeout((): void => {
                         this.waitingForConfirmation = false;
