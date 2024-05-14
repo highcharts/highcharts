@@ -117,8 +117,8 @@ The available events are:
  - `layoutChanged` - called after changes to the layout are changed. It has 6 types:
     - `newLayout` - called after a new layout was added to a board,
     - `newComponent` - called after a new component was added to a board,
-    - `rowDestroy` - called after a row was deleted,
-    - `cellDestroy` - called after a cell was deleted,
+    - `rowDestroyed` - called after a row was deleted,
+    - `cellDestroyed` - called after a cell was deleted,
     - `cellDragEnd` - called after a cell was moved,
     - `rowDragEnd` - called after a row was moved.
 

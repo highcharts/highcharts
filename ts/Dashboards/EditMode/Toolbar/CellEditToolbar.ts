@@ -243,7 +243,7 @@ class CellEditToolbar extends EditToolbar {
                 });
                 fireEvent(row, 'cellChange', { cell: row.cells[0], row });
                 fireEvent(toolbar.editMode, 'layoutChanged', {
-                    type: 'cellDestroy',
+                    type: 'cellDestroyed',
                     target: cellId,
                     board: toolbar.editMode.board
                 });

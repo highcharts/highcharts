@@ -924,7 +924,7 @@
     top: 5%;
     overflow: hidden;
     position: absolute;
-    z-index: 1000;
+    z-index: 101;
     border-radius: 10px;
     padding: 20px;
     pointer-events: all;
