@@ -50,6 +50,7 @@ const {
 } = G;
 import HU from '../../Core/HttpUtilities.js';
 import { Palette } from '../../Core/Color/Palettes.js';
+import { RegexLimits } from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -1412,7 +1413,7 @@ namespace Exporting {
 
                 i = denylist.length;
                 while (i-- && !denylisted) {
-                    if (prop.length > 1000) {
+                    if (prop.length > RegexLimits.shortLimit) {
                         throw new Error('Input too long');
                     }
                     denylisted = (
@@ -1481,7 +1482,7 @@ namespace Exporting {
                         defaults: Record<string, string> = {};
                     for (const key in s) {
                         if (
-                            key.length < 1000 &&
+                            key.length < RegexLimits.shortLimit &&
                             typeof s[key] === 'string' &&
                             !/^[0-9]+$/.test(key)
                         ) {

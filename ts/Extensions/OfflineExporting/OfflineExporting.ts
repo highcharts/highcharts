@@ -49,6 +49,7 @@ const {
     fireEvent,
     merge
 } = U;
+import { RegexLimits } from '../RegexLimits.js';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -168,7 +169,7 @@ namespace OfflineExporting {
     }
 
     /**
-     * Get data URL to an image of an SVG and call download on it options
+ * Get data URL to an image of an SVG and call download on it options
      * object:
      * - **filename:** Name of resulting downloaded file without extension.
      * Default is `chart`.
@@ -473,7 +474,7 @@ namespace OfflineExporting {
                         failCallback(e);
                     }
                 }, function (): void {
-                    if (svg.length > 1024 * 1024) {
+                    if (svg.length > RegexLimits.svgLimit) {
                         throw new Error('Input too long');
                     }
                     // Failed due to tainted canvas
@@ -481,16 +482,18 @@ namespace OfflineExporting {
                     const canvas = doc.createElement('canvas'),
                         ctx = canvas.getContext('2d'),
                         matchedImageWidth = svg.match(
-                            /^<svg[^>]*width\s*=\s{,1000}\"?(\d+)\"?[^>]*>/
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{,1000}width\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
                         ),
                         matchedImageHeight = svg.match(
-                            /^<svg[^>]*height\s*=\s{,1000}\"?(\d+)\"?[^>]*>/
+                            // eslint-disable-next-line max-len
+                            /^<svg[^>]*\s{0,1000}height\s{,1000}=\s{,1000}\"?(\d+)\"?[^>]*>/
                         );
 
                     if (ctx && matchedImageWidth && matchedImageHeight) {
                         const imageWidth = +matchedImageWidth[1] * scale,
                             imageHeight = +matchedImageHeight[1] * scale,
-                            downloadWithCanVG = function (): void {
+                            downloadWithCanVG = (): void => {
                                 const v = win.canvg.Canvg.fromString(ctx, svg);
                                 v.start();
                                 try {
@@ -521,9 +524,7 @@ namespace OfflineExporting {
                             // doing things asynchronously. A cleaner solution
                             // would be nice, but this will do for now.
                             objectURLRevoke = true;
-                            getScript(libURL + 'canvg.js', function (): void {
-                                downloadWithCanVG();
-                            });
+                            getScript(libURL + 'canvg.js', downloadWithCanVG);
                         }
                     }
                 },

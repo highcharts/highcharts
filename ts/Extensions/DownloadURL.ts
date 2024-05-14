@@ -25,6 +25,8 @@ const {
     win: { document: doc }
 } = H;
 
+import { RegexLimits } from './RegexLimits.js';
+
 /* *
  *
  *  Declarations
@@ -142,7 +144,7 @@ function downloadURL(
 
     dataURL = '' + dataURL;
 
-    if (nav.userAgent.length > 1000) {
+    if (nav.userAgent.length > RegexLimits.shortLimit) {
         throw new Error('Input too long');
     }
 
