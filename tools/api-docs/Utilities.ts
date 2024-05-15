@@ -12,7 +12,11 @@
  * */
 
 
-export const CamelCaseMap: Record<string, string> = {
+const CamelCaseMap: Record<string, string> = {
+
+};
+
+const SeriesCaseMap: Record<string, string> = {
     'abands': 'ABands',
     'ad': 'AD',
     'ao': 'AO',
@@ -88,9 +92,39 @@ export const CamelCaseMap: Record<string, string> = {
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+
+function getCamelCaseSeriesName(
+    seriesOptionName: string
+): string {
+    return (
+        SeriesCaseMap[seriesOptionName] ||
+        (seriesOptionName[0].toUpperCase() + seriesOptionName.substring(1))
+    );
+}
+
+
+function getOptionName(
+    camelCaseName: string
+): string {
+    return (
+        CamelCaseMap[camelCaseName] ||
+        (camelCaseName[0].toLowerCase() + camelCaseName.substring(1))
+    );
+}
+
+
+/* *
+ *
  *  Default Export
  *
  * */
 
 
-export default CamelCaseMap;
+export default {
+    getCamelCaseSeriesName,
+    getOptionName
+};

@@ -73,6 +73,17 @@ const TYPE_SPLIT = /[\W\.]+/gsu;
 
 /* *
  *
+ *  Variables
+ *
+ * */
+
+
+/* eslint-disable-next-line prefer-const */
+let sourceRoot = 'ts';
+
+
+/* *
+ *
  *  Functions
  *
  * */
@@ -110,6 +121,60 @@ function addTag(
 
 
 /**
+ * Complete source info with external additions.
+ *
+ * @param {SourceInfo} sourceInfoToComplete
+ * Source information to complete.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {SourceInfo}
+ * Extended class or interface information.
+ */
+function autoCompleteInfo(
+    sourceInfoToComplete,
+    includeNodes
+) {
+    const sourcePathToComplete = sourceInfoToComplete;
+
+    /** @type {string} */
+    let _modulePath;
+    /** @type {SourceInfo} */
+    let _sourceInfo;
+
+    for (const _sourcePath of FSLib.getFilePaths(sourceRoot, true)) {
+
+        _sourceInfo = getSourceInfo(_sourcePath, void 0, includeNodes);
+
+        if (_sourceInfo) {
+            for (const _codeInfo of _sourceInfo.code) {
+                if (
+                    _codeInfo.kind === 'Module' &&
+                    _codeInfo.flags.includes('declare')
+                ) {
+                    _modulePath = FSLib.normalizePath(
+                        _sourceInfo.path,
+                        _codeInfo.name,
+                        true
+                    );
+                    if (sourcePathToComplete === _modulePath) {
+                        mergeCodeInfos(
+                            sourceInfoToComplete.code,
+                            _codeInfo.members
+                        );
+                    }
+                }
+            }
+        }
+
+    }
+
+    return sourceInfoToComplete;
+}
+
+
+/**
  * Extends ClassInfo and InterfaceInfo with additional inherited members.
  *
  * @param {SourceInfo} sourceInfo
@@ -130,19 +195,19 @@ function autoExtendInfo(
     includeNodes
 ) {
     /** @type {Array<string>} */
-    const extendsToDo = [];
+    const _extendsToDo = [];
 
     if (infoToExtend.extends) {
-        const extendsTypes = (
+        const _extendsTypes = (
             typeof infoToExtend.extends === 'string' ?
                 [infoToExtend.extends] :
                 infoToExtend.extends
         );
 
-        for (const extendsType of extendsTypes) {
-            for (const extractedType of extractTypes(extendsType)) {
-                if (!extendsToDo.includes(extractedType)) {
-                    extendsToDo.push(extractedType);
+        for (const _extendsType of _extendsTypes) {
+            for (const _extractedType of extractTypes(_extendsType)) {
+                if (!_extendsToDo.includes(_extractedType)) {
+                    _extendsToDo.push(_extractedType);
                 }
             }
         }
@@ -150,51 +215,53 @@ function autoExtendInfo(
     }
 
     /** @type {CodeInfo} */
-    let resolvedInfo;
+    let _resolvedInfo;
     /** @type {string|undefined} */
-    let resolvedPath;
+    let _resolvedPath;
     /** @type {ResolvedInfo} */
-    let resolvedType;
+    let _resolvedType;
 
-    for (const extendType of extendsToDo) {
-        resolvedType = resolveType(sourceInfo, extendType, includeNodes);
+    for (const _extendType of _extendsToDo) {
+        _resolvedType = resolveType(sourceInfo, _extendType, includeNodes);
 
-        if (!resolvedType) {
-            return;
+        if (!_resolvedType) {
+            continue;
         }
 
-        resolvedInfo = resolvedType.resolvedInfo;
-        resolvedPath = FSLib.normalizePath(
-            sourceInfo.path,
-            resolvedType.resolvedPath,
-            true
+        _resolvedPath = _resolvedType.resolvedPath;
+        _resolvedInfo = autoExtendInfo(
+            getSourceInfo(_resolvedPath, void 0, includeNodes),
+            _resolvedType.resolvedInfo,
+            includeNodes
         );
 
         if (
-            resolvedInfo.kind !== 'Class' &&
-            resolvedInfo.kind !== 'Interface'
+            _resolvedInfo.kind !== 'Class' &&
+            _resolvedInfo.kind !== 'Interface'
         ) {
             continue;
         }
 
-        for (let property of resolvedInfo.members) {
+        for (let _property of _resolvedInfo.members) {
 
-            if (extractInfo(infoToExtend.members, property.name)) {
+            // Check if already defined in target
+            if (extractInfos(infoToExtend.members, _property.name)) {
                 continue;
             }
 
-            property = newCodeInfo(property);
-            property.meta.origin = {
-                parent: resolvedInfo.name,
-                path: resolvedPath
+            _property = newCodeInfo(_property);
+            _property.meta.origin = {
+                parent: _resolvedInfo.name,
+                path: _resolvedPath
             };
 
-            infoToExtend.members.push(property);
+            infoToExtend.members.push(_property);
 
         }
 
     }
 
+    return infoToExtend;
 }
 
 
@@ -315,10 +382,10 @@ function debug(
  * @param {string} name
  * Name of information to extract.
  *
- * @return {Array<CodeInfo>}
- * Extract information.
+ * @return {Array<CodeInfo>|undefined}
+ * Extracted information or `undefined`.
  */
-function extractInfo(
+function extractInfos(
     arr,
     name
 ) {
@@ -330,6 +397,8 @@ function extractInfo(
             case 'Class':
             case 'Function':
             case 'Interface':
+            case 'Module':
+            case 'Namespace':
             case 'Property':
             case 'Variable':
                 if (info.name === name) {
@@ -523,10 +592,7 @@ function getChildInfos(
             break;
         }
 
-        if (
-            // TS.isVariableDeclarationList(node) ||
-            TS.isVariableStatement(node)
-        ) {
+        if (TS.isVariableStatement(node)) {
             _children = getChildInfos(
                 getNodesChildren(node.declarationList),
                 includeNodes
@@ -981,6 +1047,16 @@ function getFunctionInfo(
 
     _info.meta = getInfoMeta(node);
 
+    if (node.body) {
+        const _bodyDoclets = getDocletInfosBetween(
+            node.body,
+            node.body.statements[node.body.statements.length - 1]
+        );
+        if (_bodyDoclets.length) {
+            _info.body = _bodyDoclets;
+        }
+    }
+
     if (includeNodes) {
         _info.node = node;
     }
@@ -1096,7 +1172,7 @@ function getInfoFlags(
  * @param {TS.Node} node
  * Node to return meta information for.
  *
- * @return {MetaInfo}
+ * @return {Meta}
  * Meta information for the given node.
  */
 function getInfoMeta(
@@ -1476,6 +1552,10 @@ function getSourceInfo(
         true
     );
 
+    if (sourceFile.path.endsWith('.d.ts')) {
+        autoCompleteInfo(sourceFile, includeNodes);
+    }
+
     /** @type {SourceInfo} */
     const _info = {
         kind: 'Source',
@@ -1614,6 +1694,84 @@ function isNativeType(
 
 
 /**
+ * Merge code information.
+ *
+ * @param {Array<CodeInfo>} targetInfos
+ * Code information to merge into.
+ *
+ * @param {Array<CodeInfo>} codeInfos
+ * Code information to merge.
+ *
+ * @return {Array<CodeInfo>}
+ * Target infos as reference.
+ */
+function mergeCodeInfos(
+    targetInfos,
+    codeInfos
+) {
+    /** @type {boolean} */
+    let _merged;
+
+    for (const _codeInfo of codeInfos) {
+        switch (_codeInfo.kind) {
+            case 'Class':
+            case 'Interface':
+            case 'Namespace':
+                _merged = false;
+                for (const _targetInfo of targetInfos) {
+                    if (
+                        _targetInfo.kind === _codeInfo.kind &&
+                        _targetInfo.name === _codeInfo.name
+                    ) {
+                        if (_targetInfo.doclet && _codeInfo.doclet) {
+                            mergeDocletInfos(
+                                _targetInfo.doclet,
+                                _codeInfo.doclet
+                            );
+                        }
+                        mergeCodeInfos(
+                            _targetInfo.members,
+                            _codeInfo.members
+                        );
+                        _merged = true;
+                    }
+                }
+                if (!_merged) {
+                    targetInfos.push(newCodeInfo(_codeInfo));
+                }
+                break;
+            case 'Function':
+            case 'Property':
+            case 'Variable':
+                _merged = false;
+                for (const _targetInfo of targetInfos) {
+                    if (
+                        _targetInfo.kind === _codeInfo.kind &&
+                        _targetInfo.name === _codeInfo.name
+                    ) {
+                        if (_targetInfo.doclet && _codeInfo.doclet) {
+                            mergeDocletInfos(
+                                _targetInfo.doclet,
+                                _codeInfo.doclet
+                            );
+                        }
+                        _merged = true;
+                    }
+                }
+                if (!_merged) {
+                    targetInfos.push(newCodeInfo(_codeInfo));
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    return targetInfos;
+}
+
+
+/**
  * Merge multiple DocletInfo objects into the first.
  *
  * @param {DocletInfo} [targetDoclet]
@@ -1659,7 +1817,7 @@ function mergeDocletInfos(
  *
  * @template {CodeInfo} T
  *
- * @param {T} template
+ * @param {T} [template]
  * Template to create from.
  *
  * @return {T}
@@ -1668,28 +1826,14 @@ function mergeDocletInfos(
 function newCodeInfo(
     template
 ) {
-    /** @type {Partial<CodeInfo>} */
-    const newInfo = {};
-
-    for (const key of Object.keys(template)) {
-        if (template[key] instanceof Array) {
-            newInfo[key] = template[key].map(item => (
-                item && typeof item === 'object' ?
-                    newCodeInfo(item) :
-                    item
-            ));
-        } else if (
-            template[key] &&
-            typeof template[key] === 'object' &&
-            template[key].kind
-        ) {
-            newInfo[key] = newCodeInfo(template[key]);
-        } else {
-            newInfo[key] = template[key];
-        }
-    }
-
-    return newInfo;
+    return (
+        typeof template === 'object' ?
+            /* eslint-disable-next-line no-undef */
+            structuredClone(template) :
+            {
+                kind: 'Object'
+            }
+    );
 }
 
 
@@ -1883,7 +2027,7 @@ function resolveReference(
  * @param {SourceInfo} sourceInfo
  * Source information to use.
  *
- * @param {string} type
+ * @param {string} searchType
  * Type to resolve to.
  *
  * @param {boolean} [includeNodes]
@@ -2193,12 +2337,13 @@ function toTypeof(
 
 module.exports = {
     SOURCE_CACHE,
+    sourceRoot,
     addTag,
     autoExtendInfo,
     changeSourceCode,
     changeSourceNode,
     debug,
-    extractInfo,
+    extractInfos,
     extractTagObjects,
     extractTagText,
     extractTypes,
@@ -2210,6 +2355,7 @@ module.exports = {
     getSourceInfo,
     isCapitalCase,
     isNativeType,
+    mergeCodeInfos,
     mergeDocletInfos,
     newCodeInfo,
     newDocletInfo,
@@ -2240,7 +2386,7 @@ module.exports = {
  * @property {Array<string>} [implements]
  * @property {'Class'} kind
  * @property {Array<Member>} members
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {string} name
  * @property {TS.ClassDeclaration} [node]
  */
@@ -2261,7 +2407,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Deconstruct'} kind
  * @property {string} [from]
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {TS.VariableDeclaration} [node]
  * @property {string} [type]
  */
@@ -2270,7 +2416,7 @@ module.exports = {
 /**
  * @typedef DocletInfo
  * @property {'Doclet'} kind
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {TS.JSDoc} [node]
  * @property {Record<string,Array<string>>} tags
  */
@@ -2292,7 +2438,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {string} [name]
  * @property {TS.ImportDeclaration} [node]
  * @property {CodeInfo} [value]
@@ -2301,12 +2447,13 @@ module.exports = {
 
 /**
  * @typedef FunctionInfo
+ * @property {Array<DocletInfo>} [body]
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} [generics]
  * @property {boolean} [inherited]
  * @property {'Function'} kind
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {string} name
  * @property {Array<VariableInfo>} [parameters]
  * @property {string} [return]
@@ -2318,7 +2465,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Record<string,string>} imports
  * @property {'Import'} kind
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {TS.ImportDeclaration} [node]
  * @property {string} from
  */
@@ -2339,7 +2486,7 @@ module.exports = {
  * @property {Array<VariableInfo>} [generics]
  * @property {'Interface'} kind
  * @property {Array<Member>} members
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
  */
@@ -2351,10 +2498,9 @@ module.exports = {
 
 
 /**
- * @typedef MetaInfo
+ * @typedef Meta
  * @property {number} begin
  * @property {number} end
- * @property {'Meta'} kind
  * @property {number} overhead
  * @property {MetaOrigin} [origin]
  */
@@ -2373,7 +2519,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Module'|'Namespace'} kind
  * @property {Array<CodeInfo>} members
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {string} name
  * @property {TS.Node} [node]
  */
@@ -2385,7 +2531,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
  * @property {Array<Member>} members
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {TS.Node} [node]
  * @property {string} [type]
  */
@@ -2397,7 +2543,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {boolean} [inherited]
  * @property {'Property'} kind
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
  * @property {string} [type]
@@ -2429,7 +2575,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Variable'} kind
- * @property {MetaInfo} meta
+ * @property {Meta} meta
  * @property {string} name
  * @property {TS.VariableDeclaration} [node]
  * @property {string} [type]
