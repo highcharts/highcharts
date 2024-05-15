@@ -32,6 +32,8 @@ export interface LangOptions {
 }
 
 export interface LangStockToolsOptions {
+    submenuToggle: string;
+    toolSelected: string;
     descriptions: Record<string, {
         mainButton: string;
         submenuToggleButton?: string;

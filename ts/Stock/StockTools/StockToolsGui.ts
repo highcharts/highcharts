@@ -63,6 +63,8 @@ declare module '../../Core/Options'{
     }
 }
 
+export type StockToolsButtonEventType = Record<string, HTMLDOMElement>;
+
 /* *
  *
  *  Functions
@@ -266,7 +268,7 @@ function onChartRender(
  */
 function onNavigationBindingsDeselectButton(
     this: NavigationBindings,
-    event: Record<string, HTMLDOMElement>
+    event: StockToolsButtonEventType
 ): void {
     const className = 'highcharts-submenu-wrapper',
         gui = this.chart.stockTools;
@@ -294,7 +296,7 @@ function onNavigationBindingsDeselectButton(
  */
 function onNavigationBindingsSelectButton(
     this: NavigationBindings,
-    event: Record<string, HTMLDOMElement>
+    event: StockToolsButtonEventType
 ): void {
     const className = 'highcharts-submenu-wrapper',
         gui = this.chart.stockTools;

@@ -6,6 +6,7 @@
  *  Imports
  *
  * */
+import type { StockToolsButtonEventType } from '../../Stock/StockTools/StockToolsGui.js';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -50,6 +51,7 @@ class StockToolsComponent extends AccessibilityComponent {
         }
     }
 
+    // Test, this should give warnings
     private setButtons(): void {
         const chart = this.chart,
             stockTools = chart.stockTools;
@@ -230,7 +232,14 @@ class StockToolsComponent extends AccessibilityComponent {
             submenu.dataset.open = 'false';
             submenu.style.display = 'none';
 
-            this.announcer.announce('Submenu closed');
+            this.announcer.announce(
+                this.chart.langFormat(
+                    'stockTools.submenuToggle',
+                    {
+                        open: false
+                    }
+                )
+            );
             this.setButtons();
         }
     }
@@ -242,6 +251,16 @@ class StockToolsComponent extends AccessibilityComponent {
         );
 
         submenus?.forEach((sub): void => this.closeSubmenu(sub));
+    }
+
+    private announceTool(buttonElement: HTMLElement): void {
+        const toolLabel = buttonElement.dataset.label ?? 'Tool changed';
+        this.announcer.announce(
+            this.chart.langFormat(
+                'stockTools.toolSelected',
+                { toolLabel }
+            )
+        );
     }
 
     private onEnterKeyPress(
@@ -295,9 +314,16 @@ class StockToolsComponent extends AccessibilityComponent {
                             });
 
                             submenu.dataset.open = 'true';
-                            component.announcer.announce('Submenu opened');
 
-                            // Re-set .highcarts-current on parent button
+                            component.announcer.announce(
+                                component.chart.langFormat(
+                                    'stockTools.submenuToggle',
+                                    {
+                                        open: true
+                                    }
+                                )
+                            );
+
                             return component.keyboardNavigationHandler
                                 .response.sucess;
                         }
@@ -312,9 +338,6 @@ class StockToolsComponent extends AccessibilityComponent {
             ) {
                 const submenu = button
                     .closest('.highcharts-submenu-wrapper');
-
-                const announcement = `${button.dataset.label} tool selected`;
-                this.announcer.announce(announcement);
 
                 // Handle submenu buttons ourselves to make
                 // states less confusing for screen readers
@@ -333,6 +356,10 @@ class StockToolsComponent extends AccessibilityComponent {
                             button
                         );
                     }
+
+                    // Announce here as 'selectButton' event is not fired and
+                    // ctrl-option-space works otherwise
+                    this.announceTool(button);
 
                     return component.keyboardNavigationHandler.response.success;
                 }
@@ -392,6 +419,19 @@ class StockToolsComponent extends AccessibilityComponent {
                             chart.navigationBindings,
                             'closePopup',
                             this.onHidePopup.bind(this)
+                        ),
+                        addEvent(
+                            chart.navigationBindings,
+                            'selectButton',
+                            (e: StockToolsButtonEventType): void => {
+                                const { button: buttonListElement } = e;
+                                const button = buttonListElement
+                                    .querySelector('button');
+
+                                if (button) {
+                                    this.announceTool(button);
+                                }
+                            }
                         )
                     );
                 }
