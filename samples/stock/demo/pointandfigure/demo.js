@@ -1,11 +1,18 @@
-(async () => {
-    const { isNumber, relativeLength, defined, pick } = Highcharts;
+/* The code below represents an experimental feature added to Higcharts library
+via a short plugin. Although it looks complicated, extending Highcharts is very
+easy and usually requires only a few minor tweaks to the original methods.
+Follow the comments below to see how the new series is added. */
+
+// Plugin responsible for adding the PNF series and its logic to the library
+(({ isNumber, relativeLength, defined, pick }) => {
+    /* Define a custom 'X' symbol path. */
     Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
         return [
             'M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'
         ];
     };
-
+    /* Overwrite built-in 'markerAttribs' function that returns marker SVG
+    attributes like width, height, x and y position. */
     function markerAttribs(point) {
         const series = this,
             options = series.options,
@@ -25,6 +32,8 @@
         }
     }
 
+    /* Loop through OHLC dataset and generate PNF data from it in a format that
+    is required by Highcharts. */
     function generatePnfData() {
         const series = this,
             options = series.options,
@@ -153,6 +162,7 @@
         };
     }
 
+    /* Wrap (extend) 'getClosest' function only for pnf series. */
     Highcharts.wrap(
         Highcharts.Axis.prototype,
         'getClosest', function (proceed) {
@@ -185,6 +195,8 @@
             return ret;
         });
 
+    /* Wrap (extend) 'groupData' function for pnf series and return the data
+    calculated in 'generatePnfData' function. */
     Highcharts.wrap(
         Highcharts.Series.prototype,
         'groupData', function (proceed) {
@@ -200,10 +212,12 @@
             );
         });
 
+    /* Create new series type 'pointandfigure' via built-in 'seriesType' method,
+    apply default options and functions modified before to its prototype. */
     Highcharts.seriesType(
         'pointandfigure',
         'scatter', {
-            // Options
+            // Default options
             boxSize: '1%',
             reversalAmount: 1,
             tooltip: {
@@ -260,7 +274,10 @@
         // Point prototype
         }
     );
+})(Highcharts);
 
+// Create the chart and use new series type 'pointandfigure'
+(async () => {
     const data = await fetch(
         'https://demo-live-data.highcharts.com/aapl-ohlc.json'
     ).then(response => response.json());
