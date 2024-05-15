@@ -118,6 +118,7 @@ const defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
     gridLineWidth: 1,
     labels: {
         align: 'right',
+        padding: 5,
         x: -3,
         y: -2
     },
