@@ -23,7 +23,9 @@ Highcharts.chart('container', {
         tooltip: {
             // Subtract 30 years from the year to get the start of the period
             headerFormat: (
-                '<span>{(subtract point.x 946684800000):%Y} - {point.x:%Y}<br>'
+                '<span style="font-size: 0.8em;">' +
+                '{(subtract point.x 946684800000):%Y} - {point.x:%Y}<br>' +
+                '</span>'
             )
         }
     }, {
