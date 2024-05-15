@@ -3,7 +3,7 @@
  */
 const enum RegexLimits {
     shortLimit = 1000,
-    svgLimit = 100000000
+    svgLimit = 1e8
 }
 
 export default RegexLimits;
