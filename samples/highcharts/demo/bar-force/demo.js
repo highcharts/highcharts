@@ -137,7 +137,7 @@ Highcharts.chart('container', {
         { name: 'Parachute Drag', data: [-6] },
         { name: 'Heat Shield Separation', data: [-0.5] },
         // Enters free fall shortly after separation with backshell & parachute.
-        { name: 'Freefall (Backshell Separation)', data: [1] },
+        { name: 'Free fall (Backshell Separation)', data: [1] },
         { name: 'Retro Rockets', data: [-2.5] },
         { name: 'Sky Crane Operation', data: [-2] }
     ]
