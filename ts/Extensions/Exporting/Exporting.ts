@@ -49,7 +49,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import { RegexLimits } from '../RegexLimits.js';
+import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

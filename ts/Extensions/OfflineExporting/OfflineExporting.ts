@@ -49,7 +49,7 @@ const {
     fireEvent,
     merge
 } = U;
-import { RegexLimits } from '../RegexLimits.js';
+import RegexLimits from '../RegexLimits.js';
 
 AST.allowedAttributes.push(
     'data-z-index',

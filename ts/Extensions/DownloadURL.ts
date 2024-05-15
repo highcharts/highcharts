@@ -25,7 +25,7 @@ const {
     win: { document: doc }
 } = H;
 
-import { RegexLimits } from './RegexLimits.js';
+import RegexLimits from './RegexLimits.js';
 
 /* *
  *
