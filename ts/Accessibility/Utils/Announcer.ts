@@ -105,21 +105,6 @@ class Announcer {
         }, 3000);
     }
 
-    public waitForAnnounce(): Promise<void> {
-        if (this.clearAnnouncementRegionTimer) {
-            return new Promise((resolve): void => {
-                const interval = setInterval((): void => {
-                    if (!this.clearAnnouncementRegionTimer) {
-                        clearInterval(interval);
-                        return resolve();
-                    }
-                });
-            });
-        }
-
-        return Promise.resolve();
-    }
-
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
         const chartContainer = (
                 this.chart.announcerContainer || this.createAnnouncerContainer()
