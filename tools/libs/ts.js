@@ -71,6 +71,9 @@ const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
 const SOURCE_CACHE = {};
 
 
+const SOURCE_EXTENSION = /(?:\.d)?\.(?:jsx?|tsx?)$/gsu;
+
+
 const TYPE_SPLIT = /[\W\.]+/gsu;
 
 
@@ -139,7 +142,7 @@ function autoCompleteInfo(
     sourceInfoToComplete,
     includeNodes
 ) {
-    const sourcePathToComplete = sourceInfoToComplete;
+    const _modulePathToComplete = sanitizeSourcePath(sourceInfoToComplete.path);
 
     /** @type {string} */
     let _modulePath;
@@ -147,6 +150,10 @@ function autoCompleteInfo(
     let _sourceInfo;
 
     for (const _sourcePath of FSLib.getFilePaths(sourceRoot, true)) {
+
+        if (!SOURCE_EXTENSION.test(_sourcePath)) {
+            continue;
+        }
 
         _sourceInfo = getSourceInfo(_sourcePath, void 0, includeNodes);
 
@@ -156,12 +163,13 @@ function autoCompleteInfo(
                     _codeInfo.kind === 'Module' &&
                     _codeInfo.flags.includes('declare')
                 ) {
-                    _modulePath = FSLib.normalizePath(
+                    _modulePath = sanitizeSourcePath(FSLib.normalizePath(
                         _sourceInfo.path,
                         _codeInfo.name,
                         true
-                    );
-                    if (sourcePathToComplete === _modulePath) {
+                    ));
+
+                    if (_modulePath === _modulePathToComplete) {
                         mergeCodeInfos(
                             sourceInfoToComplete.code,
                             _codeInfo.members
@@ -1559,10 +1567,6 @@ function getSourceInfo(
         true
     );
 
-    if (sourceFile.path.endsWith('.d.ts')) {
-        autoCompleteInfo(sourceFile, includeNodes);
-    }
-
     /** @type {SourceInfo} */
     const _info = {
         kind: 'Source',
@@ -1575,6 +1579,10 @@ function getSourceInfo(
         _info.node = sourceFile;
     } else {
         SOURCE_CACHE[filePath] = _info;
+    }
+
+    if (_info.path.endsWith('.d.ts')) {
+        autoCompleteInfo(_info, includeNodes);
     }
 
     return _info;
@@ -2228,6 +2236,22 @@ function resolveType(
 
 
 /**
+ * Sanitize source path from file extensions.
+ *
+ * @param {string} sourcePath
+ * Source path to sanitize.
+ *
+ * @return {string}
+ * Sanitized source path.
+ */
+function sanitizeSourcePath(
+    sourcePath
+) {
+    return sourcePath.replace(SOURCE_EXTENSION, '');
+}
+
+
+/**
  * Sanitize text from surrounding quote characters.
  *
  * @param {string} text
@@ -2423,6 +2447,7 @@ function toTypeof(
 
 module.exports = {
     SOURCE_CACHE,
+    SOURCE_EXTENSION,
     sourceRoot,
     addTag,
     autoExtendInfo,
@@ -2449,7 +2474,9 @@ module.exports = {
     removeTag,
     resolveReference,
     resolveType,
+    sanitizeSourcePath,
     sanitizeText,
+    sanitizeType,
     toDocletString,
     toJSONString,
     toTypeof
