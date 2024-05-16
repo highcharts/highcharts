@@ -21,8 +21,8 @@ const path = require('path');
  *         Promise to keep
  */
 async function testKarma(argv) {
-    const processLib = require('./lib/process');
-    const logLib = require('./lib/log');
+    const processLib = require('../libs/process');
+    const logLib = require('../libs/log');
     const conf = path.join('test', 'typescript-karma', 'karma-conf.js');
 
     if (argv.dashboards) {

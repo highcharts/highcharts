@@ -53,8 +53,8 @@ function scriptsCode() {
 
     const codeTool = require('../code');
     const fs = require('fs');
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
     const verbose = process.argv.includes('--verbose');
 
     const buildTool = require('../build');

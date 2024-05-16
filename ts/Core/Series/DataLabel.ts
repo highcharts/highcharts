@@ -238,9 +238,8 @@ namespace DataLabel {
         isNew?: boolean
     ): void {
         const series = this,
-            chart = this.chart,
+            { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
-            enabledDataSorting = this.enabledDataSorting,
             plotX = point.plotX,
             plotY = point.plotY,
             rotation = options.rotation || 0,
@@ -275,33 +274,33 @@ namespace DataLabel {
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         let visible =
-                this.visible &&
-                point.visible !== false &&
-                defined(plotX) &&
+            this.visible &&
+            point.visible !== false &&
+            defined(plotX) &&
+            (
+                point.series.forceDL ||
+                (enabledDataSorting && !justify) ||
+                isInsidePlot ||
                 (
-                    point.series.forceDL ||
-                    (enabledDataSorting && !justify) ||
-                    isInsidePlot ||
-                    (
-                        // If the data label is inside the align box, it is
-                        // enough that parts of the align box is inside the
-                        // plot area (#12370). When stacking, it is always
-                        // inside regardless of the option (#15148).
-                        pick(options.inside, !!this.options.stacking) &&
-                        alignTo &&
-                        chart.isInsidePlot(
-                            plotX,
-                            inverted ?
-                                alignTo.x + 1 :
-                                alignTo.y + alignTo.height - 1,
-                            {
-                                inverted,
-                                paneCoordinates: true,
-                                series
-                            }
-                        )
+                    // If the data label is inside the align box, it is enough
+                    // that parts of the align box is inside the plot area
+                    // (#12370). When stacking, it is always inside regardless
+                    // of the option (#15148).
+                    pick(options.inside, !!this.options.stacking) &&
+                    alignTo &&
+                    chart.isInsidePlot(
+                        plotX,
+                        inverted ?
+                            alignTo.x + 1 :
+                            alignTo.y + alignTo.height - 1,
+                        {
+                            inverted,
+                            paneCoordinates: true,
+                            series
+                        }
                     )
-                );
+                )
+            );
 
         const pos = point.pos();
         if (visible && pos) {
@@ -323,6 +322,12 @@ namespace DataLabel {
                 width: 0,
                 height: 0
             }, alignTo || {});
+
+            // Align to plot edges
+            if (options.alignTo === 'plotEdges' && series.isCartesian) {
+                alignTo[inverted ? 'x' : 'y'] = 0;
+                alignTo[inverted ? 'width' : 'height'] = this.yAxis?.len || 0;
+            }
 
             // Add the text size for alignment calculation
             extend<DataLabelOptions|BBoxObject>(options, {

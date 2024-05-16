@@ -25,8 +25,26 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface WordcloudPointOptions extends ColumnPointOptions {
+
+    /**
+     * The name decides the text for a word.
+     *
+     * @since 6.0.0
+     *
+     * @product highcharts
+     */
     name?: string;
+
+    /**
+     * The weighting of a word. The weight decides the relative size of a word
+     * compared to the rest of the collection.
+     *
+     * @since 6.0.0
+     *
+     * @product highcharts
+     */
     weight?: number;
+
 }
 
 /* *
