@@ -64,6 +64,9 @@ const NATIVE_TYPES = [
 const SANITIZE_TEXT = /^(['"`]?)(.*)\1$/gsu;
 
 
+const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
+
+
 /** @type {Record<string,SourceInfo>} */
 const SOURCE_CACHE = {};
 
@@ -604,6 +607,7 @@ function getChildInfos(
         } else {
             _child = (
                 getVariableInfo(node, includeNodes) ||
+                getTypeAliasInfo(node, includeNodes) ||
                 getPropertyInfo(node, includeNodes) ||
                 getObjectInfo(node, includeNodes) ||
                 getNamespaceInfo(node, includeNodes) ||
@@ -1047,7 +1051,10 @@ function getFunctionInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (node.body) {
+    if (
+        node.body &&
+        node.body.statements.length
+    ) {
         const _bodyDoclets = getDocletInfosBetween(
             node.body,
             node.body.statements[node.body.statements.length - 1]
@@ -1568,6 +1575,69 @@ function getSourceInfo(
         _info.node = sourceFile;
     } else {
         SOURCE_CACHE[filePath] = _info;
+    }
+
+    return _info;
+}
+
+
+/**
+ * Retrieves type alias information from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a type alias.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript node in the information.
+ *
+ * @return {TypeAliasInfo|undefined}
+ * Type alias information or `undefined`.
+ */
+function getTypeAliasInfo(
+    node,
+    includeNodes
+) {
+
+    if (!TS.isTypeAliasDeclaration(node)) {
+        return void 0;
+    }
+
+    /** @type {TypeAliasInfo} */
+    const _info = {
+        kind: 'TypeAlias',
+        name: node.name.text
+    };
+
+    if (node.typeParameters) {
+        const _generics = _info.generics = [];
+
+        for (const parameter of getChildInfos(node.typeParameters)) {
+            if (parameter.kind === 'Variable') {
+                _generics.push(parameter);
+            }
+        }
+
+    }
+
+    if (node.type) {
+        const _type = getChildInfos([node.type]);
+
+        if (_type.length) {
+            _info.value = _type[0];
+        } else {
+            _info.value = sanitizeType(node.type.getText());
+        }
+
+    }
+
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
+    _info.meta = getInfoMeta(node);
+
+    if (includeNodes) {
+        _info.node = node;
     }
 
     return _info;
@@ -2174,6 +2244,22 @@ function sanitizeText(
 
 
 /**
+ * Sanitize type from surrounding paranthesis characters.
+ *
+ * @param {string} type
+ * Type to sanitize.
+ *
+ * @return {string}
+ * Sanitized type.
+ */
+function sanitizeType(
+    type
+) {
+    return ('' + type).replaceAll(SANITIZE_TYPE, '$1').trim();
+}
+
+
+/**
  * Compiles doclet information into a code string.
  *
  * @see changeSourceCode
@@ -2395,7 +2481,7 @@ module.exports = {
 /**
  * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
  *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
- *           VariableInfo
+ *           TypeAliasInfo|VariableInfo
  *          } CodeInfo
  */
 
@@ -2567,6 +2653,18 @@ module.exports = {
  * @property {'Source'} kind
  * @property {TS.SourceFile} [node]
  * @property {string} path
+ */
+
+
+/**
+ * @typedef TypeAliasInfo
+ * @property {DocletInfo} [doclet]
+ * @property {'TypeAlias'} kind
+ * @property {Array<VariableInfo>} [generics]
+ * @property {Meta} meta
+ * @property {string} name
+ * @property {TS.VariableDeclaration} [node]
+ * @property {string} [value]
  */
 
 
