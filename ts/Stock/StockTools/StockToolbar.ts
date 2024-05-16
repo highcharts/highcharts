@@ -30,9 +30,6 @@ import type {
 
 import StockToolsA11YComponent from '../../Accessibility/Components/StockTools.js';
 
-import T from '../../Core/Templating.js';
-const { format } = T;
-
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -271,10 +268,10 @@ class Toolbar {
 
     public setAriaLabel(element: HTMLElement, context: {
         selected: boolean;
-        buttonLabel: string;
+        toolLabel: string;
     }): void {
-        const ariaLabel = format(
-            '{#if (selected)}Deselect{else}Select{/if} {buttonLabel} tool',
+        const ariaLabel = this.chart.langFormat(
+            'stockTools.toolAriaLabel',
             context
         );
 
@@ -303,7 +300,7 @@ class Toolbar {
                     mainButton,
                     {
                         selected: isActive ?? false,
-                        buttonLabel: selectedLabel
+                        toolLabel: selectedLabel
                     }
                 );
             }
@@ -449,8 +446,8 @@ class Toolbar {
         if (descriptions?.mainButton && !items) {
             mainButton.setAttribute(
                 'aria-label',
-                format(
-                    descriptions.mainButton,
+                this.chart.langFormat(
+                    `stockTools.descriptions.${btnName}.mainButton`,
                     {
                         selected: mainButton.dataset.selected ??
                             lang.gui[btnName]

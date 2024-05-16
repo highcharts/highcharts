@@ -42,7 +42,10 @@ const lang: LangOptions = {
      */
     stockTools: {
         submenuToggle: 'Submenu {#if open}opened{else}closed{/if}',
-        toolSelected: '{toolLabel} tool selected',
+        toolSelected:
+            '{toolLabel} tool {#if selected}selected{else}deselected{/if}',
+        toolAriaLabel:
+            '{#if selected}Deselect{else}Select{/if} {toolLabel} tool ',
         descriptions: {
             indicators: {
                 mainButton: 'Open indicators menu'
