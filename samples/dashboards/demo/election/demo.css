@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/datagrid/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 /* *
@@ -10,7 +10,7 @@
 :root {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
-    --highcharts-color-0-light: rgb(215, 227, 243);
+    --highcharts-color-0-light: #d7e3f3;
 
     /* Republican */
     --highcharts-color-1: #be2f24;
@@ -21,7 +21,7 @@
     --color-background: var(--highcharts-neutral-color-3);
     --color-link: #339;
 
-    /* components */
+    /* Components */
     --color-title: #000;
     --component-background: var(--highcharts-neutral-color-0);
     --component-background-optional: var(--highcharts-neutral-color-5);
@@ -165,8 +165,38 @@ body {
     border-radius: var(--component-rounded-corners);
 }
 
+.highcharts-map-series .highcharts-point,
+.highcharts-column-series path.highcharts-point,
+.highcharts-bar-series path.highcharts-point {
+    stroke: #fff;
+}
+
+.highcharts-data-label text,
+text.highcharts-data-label {
+    fill: #000;
+}
+
 .dataGrid-container {
     background: none;
+}
+
+.democrat {
+    color: var(--highcharts-color-0);
+    font-weight: bold;
+}
+
+.republican {
+    color: var(--highcharts-color-1);
+    font-weight: bold;
+}
+
+/* Storage for application meta data */
+#app-data {
+    display: none;
+}
+
+#demo-description {
+    padding: 15px;
 }
 
 /* *
@@ -236,6 +266,7 @@ body {
     height: var(--progress-bar-height);
     background-color: var(--highcharts-color-0);
     border-radius: 5px 0 0 5px;
+    transition: width 0.5s;
 }
 
 #bar-line {
@@ -261,6 +292,7 @@ body {
     height: var(--progress-bar-height);
     background-color: var(--highcharts-color-1);
     border-radius: 0 5px 5px 0;
+    transition: width 0.5s;
 }
 
 #election-result .info {
@@ -373,9 +405,8 @@ body {
  *
  * */
 
-#election-map .highcharts-background,
-.highcharts-background {
-    /* fill: var(--component-background); */
+#election-map {
+    height: 805px;
 }
 
 .highcharts-background {
@@ -466,17 +497,13 @@ body {
 
 /* *
  *
- *  Election chart (history)
+ *  Election chart (national and history)
  *
  * */
 
-#election-map {
-    height: 805px;
-}
-
 #election-chart-national,
 #election-chart {
-    height: 200px;
+    min-height: 200px;
 }
 
 #election-chart-national h2 {
@@ -546,9 +573,16 @@ body {
 }
 
 #election-chart-national .highcharts-axis-labels {
-    color: #000;
     font-size: 1.3em;
     font-weight: bold;
+}
+
+#election-chart .highcharts-data-label text,
+#election-chart text.highcharts-data-label {
+    paint-order: stroke;
+    stroke-width: 2px;
+    fill: #000;
+    stroke: #fff;
 }
 
 /* *
@@ -652,17 +686,6 @@ body {
     stroke-width: 2px;
 }
 
-.highcharts-map-series .highcharts-point,
-.highcharts-column-series path.highcharts-point,
-.highcharts-bar-series path.highcharts-point {
-    stroke: #fff;
-}
-
-.highcharts-data-label text,
-text.highcharts-data-label {
-    fill: #000;
-}
-
 /* Dashboards layout */
 
 /* LARGE */
@@ -757,6 +780,10 @@ text.highcharts-data-label {
         width: 100%;
     }
 
+    #election-map {
+        height: 400px;
+    }
+
     #info-dem1,
     #info-rep1 {
         font-size: 12px;
@@ -780,39 +807,32 @@ text.highcharts-data-label {
         margin-right: -20px;
     }
 
+    #info-to-win {
+        padding: 0;
+        font-size: 12px;
+    }
+
     #election-grid .highcharts-datagrid-cell {
         font-size: 12px;
         padding-left: 3px;
     }
-}
 
-/* *
- *
- *  Page-wide styles
- *
- * */
+    #election-chart-national .datalabels-wrapper {
+        font-size: 0.75em;
+        display: inline-block;
+        white-space: normal;
+        width: 100px;
+    }
 
-.democrat {
-    color: var(--highcharts-color-0);
-    font-weight: bold;
-}
+    #election-chart-national .highcharts-axis-labels {
+        font-size: 0.9em;
+    }
 
-.republican {
-    color: var(--highcharts-color-1);
-    font-weight: bold;
-}
+    #html-control-div #election-description {
+        text-align: justify;
+    }
 
-/* Storage for application meta data */
-#app-data {
-    display: none;
-}
-
-/* *
- *
- *  Demo description
- *
- * */
-
-#demo-description {
-    padding: 15px;
+    #html-control-div #election-description-container h1 {
+        font-size: 18px;
+    }
 }

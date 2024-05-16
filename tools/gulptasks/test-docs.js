@@ -12,7 +12,7 @@ const gulp = require('gulp');
 async function checkDocsConsistency() {
     const FS = require('fs');
     const glob = require('glob');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     // Check links and references to samples
     LogLib.message('Checking links to samples in *.ts files...');

@@ -24,6 +24,7 @@ import type BoxPlotPoint from '../../Series/BoxPlot/BoxPlotPoint';
 import type BulletPoint from '../../Series/Bullet/BulletPoint';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../../Series/ColumnRange/ColumnRangePoint';
+import type ErrorBarPoint from '../../Series/ErrorBar/ErrorBarPoint';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
 import type OHLCPoint from '../../Series/OHLC/OHLCPoint';
 import type Point from '../../Core/Series/Point';
@@ -299,6 +300,34 @@ const boxplot = {
         )
     }
 };
+
+// Errorbar series - move x, resize or move low/high
+const errorbar = {
+    x: column.x,
+    low: {
+        ...boxplot.low,
+        propValidate: (
+            val: number,
+            point: ErrorBarPoint
+        ): boolean => (
+            val <= point.high
+        )
+    },
+    high: {
+        ...boxplot.high,
+        propValidate: (
+            val: number,
+            point: ErrorBarPoint
+        ): boolean => (
+            val >= point.low
+        )
+    }
+};
+
+/**
+ * @exclude      draggableQ1, draggableQ3
+ * @optionparent plotOptions.errorbar.dragDrop
+ */
 
 // Bullet graph, x/y same as column, but also allow target to be dragged.
 const bullet = {
@@ -813,6 +842,7 @@ const DragDropProps = {
     bullet,
     column,
     columnrange,
+    errorbar,
     flags,
     gantt,
     line,

@@ -1,4 +1,8 @@
-<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/c0bra/color-scheme-js/lib/color-scheme.min.js"></script>
 
 <div class="demo-content">
     <h1>Highcharts Palette Helper</h1>
@@ -15,24 +19,63 @@
         documents where the different variations are used.
     </p>
 
-    <label>
-        <input type="color" value="#ffffff" name="background-color" />
-        Background color
-    </label>
-    <label>
-        <input type="color" value="#000000" name="neutral-color" />
-        Neutral color
-    </label>
-    <label>
-        <input type="color" value="#003399" name="highlight-color" />
-        Highlight color
-    </label>
+    <fieldset>
+        <p>
+            <label>
+                <input type="color" value="#ffffff" name="background-color" />
+                Background color
+            </label>
+            <label>
+                <input type="color" value="#000000" name="neutral-color" />
+                Neutral color
+            </label>
+            <label>
+                <input type="color" value="#003399" name="highlight-color" />
+                Highlight color
+            </label>
+        </p>
 
+        Data colors:
+        <p>
+            <input type="color" value="#ffffff" name="data-color-0" />
+            <input type="color" value="#ffffff" name="data-color-1" />
+            <input type="color" value="#ffffff" name="data-color-2" />
+            <input type="color" value="#ffffff" name="data-color-3" />
+            <input type="color" value="#ffffff" name="data-color-4" />
+            <input type="color" value="#ffffff" name="data-color-5" />
+            <input type="color" value="#ffffff" name="data-color-6" />
+            <input type="color" value="#ffffff" name="data-color-7" />
+            <input type="color" value="#ffffff" name="data-color-8" />
+            <input type="color" value="#ffffff" name="data-color-9" />
 
-    <pre id="container"></pre>
+            <button id="randomize" class="btn btn-primary btn-sm">Randomize</button>
+        </p>
 
+    </fieldset>
+
+    <h3>Palette preview</h3>
     <div id="preview">
+        <p>Neutral color variations for text and various elements.</p>
         <div id="neutral-preview"></div>
+        <p class="mt-4">Highlight color variations for highlighted text and selections.</p>
         <div id="highlight-preview"></div>
     </div>
+
+    <h3>Chart preview</h3>
+    <div id="container-chart" class="container"></div>
+    <div id="container-map" class="container"></div>
+    <div id="container-stock" class="container"></div>
+    <div class="clear"></div>
+
+    <h3>CSS output</h3>
+    <p>If you're using <a href="https://api.highcharts.com/highcharts/chart.styledMode">
+        styled mode</a>, this CSS can be pasted into your style sheet.
+        Remember that the <a href="https://code.highcharts.com/css/highcharts.css">
+        highcharts.css</a> file must be imported first.</p>
+    <pre id="css"></pre>
+    <h3>JavaScript output</h3>
+    <p>If you're <em>not</em> using styled mode, this JSON structure can be
+    applied using <a href="https://api.highcharts.com/class-reference/Highcharts#.setOptions">
+    Highcharts.setOptions</a> to set the global theme.</p>
+    <pre id="js"></pre>
 </div>

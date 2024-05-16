@@ -51,6 +51,9 @@ const syncPair: Sync.SyncPair = {
         const { chart, board } = component;
         const connector = component.connectorHandlers?.[0]?.connector;
         const table = connector && connector.table;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ?
+            ':' + syncOptions.group : '';
 
         const { dataCursor: cursor } = board;
 
@@ -81,12 +84,12 @@ const syncPair: Sync.SyncPair = {
 
                         const minCursorData: DataCursor.Type = {
                             type: 'position',
-                            state: `${axis.coll}.extremes.min`
+                            state: `${axis.coll}.extremes.min${groupKey}`
                         };
 
                         const maxCursorData: DataCursor.Type = {
                             type: 'position',
-                            state: `${axis.coll}.extremes.max`
+                            state: `${axis.coll}.extremes.max${groupKey}`
                         };
 
                         if (
@@ -180,7 +183,7 @@ const syncPair: Sync.SyncPair = {
                         table,
                         {
                             type: 'position',
-                            state: 'chart.zoomOut'
+                            state: 'chart.zoomOut' + groupKey
                         },
                         e
                     );
@@ -201,11 +204,11 @@ const syncPair: Sync.SyncPair = {
             cleanupCallbacks.push((): void => {
                 cursor.remitCursor(table.id, {
                     type: 'position',
-                    state: 'xAxis.extremes.min'
+                    state: 'xAxis.extremes.min' + groupKey
                 });
                 cursor.remitCursor(table.id, {
                     type: 'position',
-                    state: 'xAxis.extremes.max'
+                    state: 'xAxis.extremes.max' + groupKey
                 });
 
                 resetExtremesEvent();
@@ -225,6 +228,9 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as HighchartsComponent;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ?
+            ':' + syncOptions.group : '';
 
         const { chart, board } = component;
 
@@ -285,12 +291,12 @@ const syncPair: Sync.SyncPair = {
                         const { table } = connector;
                         cursor.addListener(
                             table.id,
-                            `${dimension}.extremes.min`,
+                            `${dimension}.extremes.min${groupKey}`,
                             handleUpdateExtremes
                         );
                         cursor.addListener(
                             table.id,
-                            `${dimension}.extremes.max`,
+                            `${dimension}.extremes.max${groupKey}`,
                             handleUpdateExtremes
                         );
 
@@ -319,17 +325,17 @@ const syncPair: Sync.SyncPair = {
                             (): void => {
                                 cursor.removeListener(
                                     table.id,
-                                    `${dimension}.extremes.min`,
+                                    `${dimension}.extremes.min${groupKey}`,
                                     handleUpdateExtremes
                                 );
                                 cursor.removeListener(
                                     table.id,
-                                    `${dimension}.extremes.max`,
+                                    `${dimension}.extremes.max${groupKey}`,
                                     handleUpdateExtremes
                                 );
                                 cursor.removeListener(
                                     table.id,
-                                    'chart.zoomOut',
+                                    'chart.zoomOut' + groupKey,
                                     handleChartZoomOut
                                 );
                             }

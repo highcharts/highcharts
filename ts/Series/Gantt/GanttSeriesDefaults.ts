@@ -58,8 +58,8 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
 
         pointFormat: null as any,
 
-        pointFormatter: function (this: GanttPoint): string {
-            const point = this,
+        pointFormatter: function (this): string {
+            const point = this as GanttPoint,
                 series = point.series,
                 xAxis = series.xAxis,
                 formats = series.tooltipOptions.dateTimeLabelFormats,

@@ -508,7 +508,7 @@ export default NetworkgraphSeriesDefaults;
  *
  * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
- * @excluding drilldown,marker,x,y,draDrop
+ * @excluding drilldown,marker,x,y,dragDrop
  * @sample    {highcharts} highcharts/chart/reflow-true/
  *            Numerical values
  * @sample    {highcharts} highcharts/series/data-array-of-arrays/

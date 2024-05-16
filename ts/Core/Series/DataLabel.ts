@@ -238,9 +238,8 @@ namespace DataLabel {
         isNew?: boolean
     ): void {
         const series = this,
-            chart = this.chart,
+            { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
-            enabledDataSorting = this.enabledDataSorting,
             plotX = point.plotX,
             plotY = point.plotY,
             rotation = options.rotation || 0,
@@ -275,33 +274,33 @@ namespace DataLabel {
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         let visible =
-                this.visible &&
-                point.visible !== false &&
-                defined(plotX) &&
+            this.visible &&
+            point.visible !== false &&
+            defined(plotX) &&
+            (
+                point.series.forceDL ||
+                (enabledDataSorting && !justify) ||
+                isInsidePlot ||
                 (
-                    point.series.forceDL ||
-                    (enabledDataSorting && !justify) ||
-                    isInsidePlot ||
-                    (
-                        // If the data label is inside the align box, it is
-                        // enough that parts of the align box is inside the
-                        // plot area (#12370). When stacking, it is always
-                        // inside regardless of the option (#15148).
-                        pick(options.inside, !!this.options.stacking) &&
-                        alignTo &&
-                        chart.isInsidePlot(
-                            plotX,
-                            inverted ?
-                                alignTo.x + 1 :
-                                alignTo.y + alignTo.height - 1,
-                            {
-                                inverted,
-                                paneCoordinates: true,
-                                series
-                            }
-                        )
+                    // If the data label is inside the align box, it is enough
+                    // that parts of the align box is inside the plot area
+                    // (#12370). When stacking, it is always inside regardless
+                    // of the option (#15148).
+                    pick(options.inside, !!this.options.stacking) &&
+                    alignTo &&
+                    chart.isInsidePlot(
+                        plotX,
+                        inverted ?
+                            alignTo.x + 1 :
+                            alignTo.y + alignTo.height - 1,
+                        {
+                            inverted,
+                            paneCoordinates: true,
+                            series
+                        }
                     )
-                );
+                )
+            );
 
         const pos = point.pos();
         if (visible && pos) {
@@ -323,6 +322,12 @@ namespace DataLabel {
                 width: 0,
                 height: 0
             }, alignTo || {});
+
+            // Align to plot edges
+            if (options.alignTo === 'plotEdges' && series.isCartesian) {
+                alignTo[inverted ? 'x' : 'y'] = 0;
+                alignTo[inverted ? 'width' : 'height'] = this.yAxis?.len || 0;
+            }
 
             // Add the text size for alignment calculation
             extend<DataLabelOptions|BBoxObject>(options, {
@@ -846,14 +851,20 @@ namespace DataLabel {
         const chart = this.chart,
             align = options.align,
             verticalAlign = options.verticalAlign,
-            padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
+            padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
+            horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
+            horizontalAxisShift = horizontalAxis ?
+                horizontalAxis.left - chart.plotLeft : 0,
+            verticalAxis = chart.inverted ? this.xAxis : this.yAxis,
+            verticalAxisShift = verticalAxis ?
+                verticalAxis.top - chart.plotTop : 0;
 
         let { x = 0, y = 0 } = options,
             off,
             justified;
 
         // Off left
-        off = (alignAttr.x || 0) + padding;
+        off = (alignAttr.x || 0) + padding + horizontalAxisShift;
         if (off < 0) {
             if (align === 'right' && x >= 0) {
                 options.align = 'left';
@@ -865,7 +876,7 @@ namespace DataLabel {
         }
 
         // Off right
-        off = (alignAttr.x || 0) + bBox.width - padding;
+        off = (alignAttr.x || 0) + bBox.width - padding + horizontalAxisShift;
         if (off > chart.plotWidth) {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';
@@ -877,7 +888,7 @@ namespace DataLabel {
         }
 
         // Off top
-        off = alignAttr.y + padding;
+        off = alignAttr.y + padding + verticalAxisShift;
         if (off < 0) {
             if (verticalAlign === 'bottom' && y >= 0) {
                 options.verticalAlign = 'top';
@@ -889,7 +900,7 @@ namespace DataLabel {
         }
 
         // Off bottom
-        off = (alignAttr.y || 0) + bBox.height - padding;
+        off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
         if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';

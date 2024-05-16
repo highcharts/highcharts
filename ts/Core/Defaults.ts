@@ -22,14 +22,16 @@ import type Legend from './Legend/Legend';
 import ChartDefaults from './Chart/ChartDefaults.js';
 import H from './Globals.js';
 const {
-    isTouchDevice,
-    svg
+    isTouchDevice
 } = H;
 import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-const { merge } = U;
+const {
+    fireEvent,
+    merge
+} = U;
 
 /* *
  *
@@ -294,90 +296,170 @@ const defaultOptions: DefaultOptions = {
      * ```js
      * Highcharts.setOptions({
      *     global: {
-     *         useUTC: false
+     *         buttonTheme: {
+     *             fill: '#d0d0d0'
+     *         }
      *     }
      * });
      * ```
      */
+    global: {
+        /**
+         * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
+         * Use the [libURL](#exporting.libURL) option to configure exporting._
+         *
+         * The URL to the additional file to lazy load for Android 2.x devices.
+         * These devices don't support SVG, so we download a helper file that
+         * contains [canvg](https://github.com/canvg/canvg), its dependency
+         * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
+         * our site, you can install canvas-tools.js on your own server and
+         * change this option accordingly.
+         *
+         * @deprecated
+         *
+         * @type      {string}
+         * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
+         * @product   highcharts highmaps
+         * @apioption global.canvasToolsURL
+         */
 
-    /**
-     * _Canvg rendering for Android 2.x is removed as of Highcharts 5.0\.
-     * Use the [libURL](#exporting.libURL) option to configure exporting._
-     *
-     * The URL to the additional file to lazy load for Android 2.x devices.
-     * These devices don't support SVG, so we download a helper file that
-     * contains [canvg](https://github.com/canvg/canvg), its dependency
-     * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
-     * our site, you can install canvas-tools.js on your own server and
-     * change this option accordingly.
-     *
-     * @deprecated
-     *
-     * @type      {string}
-     * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
-     * @product   highcharts highmaps
-     * @apioption global.canvasToolsURL
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.useUTC](#time.useUTC) that supports individual time settings
+         * per chart.
+         *
+         * @deprecated
+         *
+         * @type      {boolean}
+         * @apioption global.useUTC
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.useUTC](#time.useUTC) that supports individual time settings
-     * per chart.
-     *
-     * @deprecated
-     *
-     * @type      {boolean}
-     * @apioption global.useUTC
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.Date](#time.Date) that supports individual time settings
+         * per chart.
+         *
+         * @deprecated
+         *
+         * @type      {Function}
+         * @product   highcharts highstock
+         * @apioption global.Date
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.Date](#time.Date) that supports individual time settings
-     * per chart.
-     *
-     * @deprecated
-     *
-     * @type      {Function}
-     * @product   highcharts highstock
-     * @apioption global.Date
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
+         * individual time settings per chart.
+         *
+         * @deprecated
+         *
+         * @type      {Function}
+         * @product   highcharts highstock
+         * @apioption global.getTimezoneOffset
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.getTimezoneOffset](#time.getTimezoneOffset) that supports
-     * individual time settings per chart.
-     *
-     * @deprecated
-     *
-     * @type      {Function}
-     * @product   highcharts highstock
-     * @apioption global.getTimezoneOffset
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.timezone](#time.timezone) that supports individual time
+         * settings per chart.
+         *
+         * @deprecated
+         *
+         * @type      {string}
+         * @product   highcharts highstock
+         * @apioption global.timezone
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.timezone](#time.timezone) that supports individual time
-     * settings per chart.
-     *
-     * @deprecated
-     *
-     * @type      {string}
-     * @product   highcharts highstock
-     * @apioption global.timezone
-     */
+        /**
+         * This option is deprecated since v6.0.5. Instead, use
+         * [time.timezoneOffset](#time.timezoneOffset) that supports individual
+         * time settings per chart.
+         *
+         * @deprecated
+         *
+         * @type      {number}
+         * @product   highcharts highstock
+         * @apioption global.timezoneOffset
+         */
 
-    /**
-     * This option is deprecated since v6.0.5. Instead, use
-     * [time.timezoneOffset](#time.timezoneOffset) that supports individual
-     * time settings per chart.
-     *
-     * @deprecated
-     *
-     * @type      {number}
-     * @product   highcharts highstock
-     * @apioption global.timezoneOffset
-     */
-    global: {},
+        /**
+         * General theme for buttons. This applies to the zoom button, exporting
+         * context menu, map navigation, range selector buttons and custom
+         * buttons generated using the `SVGRenderer.button` function. However,
+         * each of these may be overridden with more specific options.
+         *
+         * @sample highcharts/global/buttontheme
+         *         General button theme
+         * @since next
+         */
+        buttonTheme: {
+            /**
+             * The fill color for buttons
+             */
+            fill: Palette.neutralColor3,
+            /**
+             * The padding of buttons
+             */
+            padding: 8,
+            /**
+             * The border radius for buttons
+             */
+            r: 2,
+            /**
+             * The stroke color for buttons
+             */
+            stroke: Palette.neutralColor20,
+            /**
+             * The stroke width for buttons
+             */
+            'stroke-width': 1,
+            /**
+             * CSS styling for the buttons' text
+             */
+            style: {
+                color: Palette.neutralColor80,
+                cursor: 'pointer',
+                fontSize: '0.8em',
+                fontWeight: 'normal'
+            },
+            /**
+             * State overrides for the buttons
+             */
+            states: {
+                /**
+                 * Hover state overrides for the buttons are applied in addition
+                 * to the normal state options
+                 */
+                hover: {
+                    fill: Palette.neutralColor10
+                },
+                /**
+                 * Select state overrides for the buttons are applied in
+                 * addition to the normal state options
+                 */
+                select: {
+                    fill: Palette.highlightColor10,
+                    style: {
+                        color: Palette.neutralColor100,
+                        fontWeight: 'bold'
+                    }
+                },
+                /**
+                 * Disabled state overrides for the buttons are applied in
+                 * addition to the normal state options
+                 */
+                disabled: {
+                    /**
+                     * Disabled state CSS style overrides for the buttons' text
+                     */
+                    style: {
+                        color: Palette.neutralColor20
+                    }
+                }
+            }
+        }
+
+    },
 
     /**
      * Time options that can apply globally or to individual charts. These
@@ -1447,7 +1529,7 @@ const defaultOptions: DefaultOptions = {
          *         Item text styles
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.75em", "fontWeight": "bold", "textOverflow": "ellipsis"}
+         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.8em", "fontWeight": "bold", "textOverflow": "ellipsis"}
          */
         itemStyle: {
             /**
@@ -1778,7 +1860,7 @@ const defaultOptions: DefaultOptions = {
              *      `.highcharts-legend-title` class.
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"fontSize": "0.75em", "fontWeight": "bold"}
+             * @default {"fontSize": "0.8em", "fontWeight": "bold"}
              * @since   3.0
              */
             style: {
@@ -1998,20 +2080,20 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * for the whole tooltip. When format strings are a requirement, it is
-         * usually more convenient to use `headerFormat`, `pointFormat` and
-         * `footerFormat`, but the `format` option allows combining them into
-         * one setting.
+         * for the whole shared tooltip. When format strings are a requirement,
+         * it is usually more convenient to use `headerFormat`, `pointFormat`
+         * and `footerFormat`, but the `format` option allows combining them
+         * into one setting.
          *
          * The context of the format string is the same as that of the
-         * `formatter` callback.
+         * `tooltip.formatter` callback.
          *
          * @sample {highcharts} highcharts/tooltip/format-shared/
          *         Format for shared tooltip
          *
          * @type      {string}
          * @default   undefined
-         * @since 11.1.0
+         * @since     11.1.0
          * @apioption tooltip.format
          */
 
@@ -2080,7 +2162,6 @@ const defaultOptions: DefaultOptions = {
          * @apioption tooltip.formatter
          */
 
-
         /**
          * Callback function to format the text of the tooltip for
          * visible null points.
@@ -2092,7 +2173,6 @@ const defaultOptions: DefaultOptions = {
          * @type      {Highcharts.TooltipFormatterCallbackFunction}
          * @apioption tooltip.nullFormatter
          */
-
 
         /**
          * Whether to allow the tooltip to render outside the chart's SVG
@@ -2301,11 +2381,14 @@ const defaultOptions: DefaultOptions = {
         /**
          * Enable or disable animation of the tooltip.
          *
-         * @type       {boolean}
-         * @default    true
+         * @type       {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @since      2.3.0
          */
-        animation: svg,
+        animation: {
+            duration: 300,
+            // EaseOutCirc
+            easing: (x: number): number => Math.sqrt(1 - Math.pow(x - 1, 2))
+        },
 
         /**
          * The radius of the rounded border corners.
@@ -2796,6 +2879,7 @@ function getOptions(): DefaultOptions {
 function setOptions(
     options: DeepPartial<DefaultOptions>
 ): Options {
+    fireEvent(H, 'setOptions', { options });
 
     // Copy in the default options
     merge(true, defaultOptions, options);
