@@ -1,9 +1,7 @@
 Highcharts.Templating.helpers.sum = function () {
-    return this.series.points.reduce((sum, point) => sum + point.y, 0);
-};
-
-Highcharts.Templating.helpers.max = function () {
-    return this.series.points.reduce((max, point) => Math.max(max, point.y), 0);
+    return this.series.chart.series[0].points.reduce(
+        (sum, point) => sum + point.y, 0
+    );
 };
 
 Highcharts.chart('container', {
@@ -14,7 +12,10 @@ Highcharts.chart('container', {
         text: 'Daily Steps Count'
     },
     xAxis: {
-        categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        categories: [
+            'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+            'Saturday', 'Sunday'
+        ],
         accessibility: {
             description: 'Day of the week'
         }
@@ -24,31 +25,42 @@ Highcharts.chart('container', {
             text: 'Steps'
         }
     },
-    tooltip: {
-        valueSuffix: ' steps'
-    },
     series: [{
         name: 'Emma',
-        data: [9438, 10439, 11023, 13204, 10392, 9201, 12039],
+        data: [9438, 4201, 10023, 9204, 10392, 7201, 8039],
         color: '#3A3691',
-        accessibility: {
-            descriptionFormat: '{series.name} walked the most in total ' +
-            'during the week with {sum} steps.',
-            exposeAsGroupOnly: true
+        dataLabels: {
+            enabled: true
         }
     }, {
-        name: 'John',
-        data: [10200, 6243, 9472, 6311, 7901, 11320, 8032],
-        color: '#009AFA'
-    }, {
-        name: 'Alex',
-        data: [9029, 5532, 7632, 10320, 6210, 13209, 3052],
-        color: '#00A855',
+        type: 'xrange',
+        showInLegend: false,
         accessibility: {
-            descriptionFormat: '{series.name} had the highest number of ' +
-                'steps in a day during the week on Saturday. ' +
-                'He walked {max} steps that day.',
-            exposeAsGroupOnly: true
+            exposeAsGroupOnly: true,
+            descriptionFormat: 'Emma did not reach her step goal which was ' +
+                '70000 steps in one week. She walked {sum} steps.'
+        },
+        name: 'Total step count',
+        color: '#009AFA',
+        data: [{
+            x: 0,
+            x2: 6,
+            y: 17000,
+            partialFill: 0.83
+        }],
+        tooltip: {
+            headerFormat: void 0,
+            pointFormat: '<b>Steps walked this week:</b> {sum}/70000'
+        },
+        dataLabels: {
+            color: '#ffffff',
+            enabled: true,
+            format: '{sum} / 70000 steps this week.',
+            verticalAlign: 'top',
+            style: {
+                fontSize: '12px',
+                fontWeight: 'bold'
+            }
         }
     }]
 });
