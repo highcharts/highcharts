@@ -56,15 +56,12 @@ Highcharts.chart('container', {
             'to visualize a neural network.'
     },
     tooltip: {
-        formatter() {
-            return `<span style="font-weight: bold">
-                Activation function:
-                </span> ${activations[this.point.x]}<br>
-                <span style="font-weight: bold">
-                Number of nodes in the layer:
-                </span> ${layers[this.point.x]}
-                `;
-        }
+        format: `<span style="font-weight: bold">
+            Activation function:
+            </span> {series.xAxis.options.custom.activations.(point.x)}<br>
+            <span style="font-weight: bold">
+            Number of nodes in the layer:
+            </span> {series.xAxis.options.custom.layers.(point.x)}`
     },
     colors: ['#a752d1'],
     plotOptions: {
@@ -95,6 +92,10 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
+        custom: {
+            activations,
+            layers
+        },
         categories
     },
     yAxis: Array.from({ length: layers.length }, () => ({
