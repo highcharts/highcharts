@@ -101,5 +101,20 @@ Highcharts.chart('container', {
         type: 'category',
         visible: false
     })),
-    series: generateData()
+    series: generateData(),
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                xAxis: {
+                    categories: Array.from(
+                        { length: layers.length },
+                        (_, i) => activations[i]
+                    )
+                }
+            }
+        }]
+    }
 });
