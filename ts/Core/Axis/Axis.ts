@@ -3076,7 +3076,14 @@ class Axis {
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * (labelOptions.padding || 0))
+                Math.round(slotWidth - (
+                    horiz ?
+                        2 * (labelOptions.padding || 0) :
+                        // #21172. Can't figure out where the constant 5 comes
+                        // from, but it's needed to make the labels render at
+                        // the `chart.spacing`.
+                        (labelOptions.distance || 0) - 5
+                ))
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
