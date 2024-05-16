@@ -3079,10 +3079,7 @@ class Axis {
                 Math.round(slotWidth - (
                     horiz ?
                         2 * (labelOptions.padding || 0) :
-                        // #21172. Can't figure out where the constant 5 comes
-                        // from, but it's needed to make the labels render at
-                        // the `chart.spacing`.
-                        (labelOptions.distance || 0) - 5
+                        labelOptions.distance || 0 // #21172
                 ))
             ),
             attr: SVGAttributes = {},
