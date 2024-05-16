@@ -162,7 +162,6 @@ class Accessibility {
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
         );
-
     }
 
 
