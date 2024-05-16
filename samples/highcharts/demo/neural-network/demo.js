@@ -1,6 +1,10 @@
+// Define the number of nodes per layer for the neural network
 const layers = [1, 6, 6, 6, 2];
+
+// Define the activation function for each layer
 const activations = ['tanh', 'tanh', 'ReLU', 'tanh', 'sigmoid'];
 
+// This array will be used to define the labels for each layer
 const categories = Array.from({ length: layers.length }, (_, i) => {
     if (i === 0) {
         return `Input Layer (${activations[i]})`;
