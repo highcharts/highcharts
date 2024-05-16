@@ -33,6 +33,7 @@ export interface LangOptions {
 
 export interface LangStockToolsOptions {
     submenuToggle: string;
+    toolChanged: string;
     toolSelected: string;
     toolAriaLabel: string;
     descriptions: Record<string, {

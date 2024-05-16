@@ -235,9 +235,7 @@ class StockToolsComponent extends AccessibilityComponent {
             this.announcer.announce(
                 this.chart.langFormat(
                     'stockTools.submenuToggle',
-                    {
-                        open: false
-                    }
+                    { open: false }
                 )
             );
             this.setButtons();
@@ -253,14 +251,37 @@ class StockToolsComponent extends AccessibilityComponent {
         submenus?.forEach((sub): void => this.closeSubmenu(sub));
     }
 
-    private announceTool(buttonElement: HTMLElement): void {
-        const toolLabel = buttonElement.dataset.label ?? 'Tool changed';
-        this.announcer.announce(
-            this.chart.langFormat(
-                'stockTools.toolSelected',
-                { toolLabel }
-            )
-        );
+    private announceTool(
+        buttonElement: HTMLElement
+    ): void {
+        const toolLabel = buttonElement.dataset.label;
+
+        if (toolLabel) {
+            const submenu = buttonElement
+                .closest('.highcharts-submenu-wrapper');
+
+            // If we are in a submenu, announce change of tool
+            if (submenu) {
+                const toolType = submenu.parentElement?.querySelector('button')
+                    ?.dataset.btnName;
+
+                this.announcer.announce(
+                    this.chart.langFormat(
+                        'stockTools.toolChanged',
+                        { toolLabel, toolType }
+                    )
+                );
+                return;
+            }
+
+            // Otherwise, announce that the tool is selected
+            this.announcer.announce(
+                this.chart.langFormat(
+                    'stockTools.toolSelected',
+                    { toolLabel }
+                )
+            );
+        }
     }
 
     private onEnterKeyPress(
@@ -365,6 +386,7 @@ class StockToolsComponent extends AccessibilityComponent {
                 }
 
                 this.closeOpenSubmenus();
+                return component.keyboardNavigationHandler.response.noHandler;
             }
         }
 
@@ -429,7 +451,9 @@ class StockToolsComponent extends AccessibilityComponent {
                                     .querySelector('button');
 
                                 if (button) {
-                                    this.announceTool(button);
+                                    this.announceTool(
+                                        button
+                                    );
                                 }
                             }
                         )
