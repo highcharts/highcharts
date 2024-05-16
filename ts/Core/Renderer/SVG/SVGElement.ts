@@ -1465,7 +1465,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // No cache found
-        if (!bBox) {
+        if (!bBox || bBox.polygon) {
 
             // SVG elements
             if (isSVG || renderer.forExport) {
