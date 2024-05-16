@@ -169,11 +169,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.mountedComponents = [];
 
         this.initContainer(renderTo);
-
-        // Init edit mode.
-        if (this.guiEnabled) {
-            this.initEditMode();
-        }
+        this.initEditMode();
 
         // Add table cursors support.
         this.dataCursor = new DataCursor();
