@@ -368,63 +368,6 @@ div#connect-bar button:hover {
 
 /* *
  *
- *  Authentication dialog, normally hidden
- *
- * */
-
-/* Dialog background */
-#auth-dialog {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    padding-top: 100px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-/* Dialog content */
-#auth-content {
-    background-color: #a2c7f6;
-    border: thick double #666;
-    border-radius: 10px;
-    color: blue;
-    margin: 0 auto;
-    padding: 15px;
-    width: 200px;
-
-    & label {
-        font-size: 18px;
-    }
-
-    & input {
-        margin: 0 0 15px;
-    }
-}
-
-/* Submit button */
-#auth-submit {
-    padding: 5px;
-    border: 1px outset #666;
-    border-radius: 5px;
-    background-color: #dbe3e8;
-    width: 60%;
-    cursor: pointer;
-}
-
-/* Close button */
-#auth-close {
-    color: #c33;
-    float: right;
-    font-size: 36px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* *
- *
  *  KPI
  *
  * */

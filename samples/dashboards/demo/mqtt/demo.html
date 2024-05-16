@@ -24,17 +24,6 @@
                 <input id="connect-toggle" type="checkbox" accesskey="k" onclick="onConnectClicked()"></input>
                 <label for="connect-toggle"></label>
             </div>
-            <!-- Dialog for entering credentials, hidden at start-up -->
-            <div id="auth-dialog">
-                <div id="auth-content">
-                    <label for="username" id="user-label"></label>
-                    <input type="text" id="username" name="username" />
-                    <label for="pass" id="pass-label"></label>
-                    <input type="password" id="password" name="password" minlength="8" required />
-                    <input id="auth-submit" type="submit" />
-                    <span id="auth-close">&times;</span>
-                </div>
-            </div>
             <!-- Dropdown for selecting power station -->
             <div id="dropdown-container">
                 <button onclick="onStationSelectClicked()" id="dropdown-button"></button>

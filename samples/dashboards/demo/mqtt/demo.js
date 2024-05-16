@@ -761,9 +761,9 @@ const port = 8083;
 let mqttActiveTopic = null;
 const mqttQos = 0;
 
-// Authentication (from popup dialog)
-let user = null;
-let password = null;
+// Authentication
+let user = 'highsoft';
+let password = 'Qs0URPjxnWlcuYBmFWNK';
 
 // Connection status
 let mqttConnected;
@@ -779,26 +779,8 @@ const connectBar = {
 
 // Overview of power stations, as MQTT topic.
 const powerStationLookup = {
-    'Årøy I': {
-        topic: 'prod/SOG/aaroy_I/overview'
-    },
-    'Årøy II': {
-        topic: 'prod/SOG/aaroy_II/overview'
-    },
-    Mundalselvi: {
-        topic: 'prod/SOG/mundalselvi/overview'
-    },
-    Dyrnesli: {
-        topic: 'prod/VAD/dyrnesli/overview'
-    },
-    Leikanger: {
-        topic: 'prod/LEIK/leikanger/overview'
-    },
-    Fosseteigen: {
-        topic: 'prod/KUV/fosseteigen/overview'
-    },
-    Nydalselva: {
-        topic: 'prod/NYD/nydalselva/overview'
+    Kråkeelvi: {
+        topic: 'prod/DEMO_Highsoft/kraftverk_1/overview'
     }
 };
 
@@ -826,22 +808,6 @@ window.onload = () => {
     document.getElementById('pass-label').innerText = lang.tr('Password');
     document.getElementById('auth-submit').value = lang.tr('Apply');
 
-    // Authentication dialog
-    const authDialog = document.getElementById('auth-dialog');
-    document.getElementById('auth-submit').onclick = () => {
-        user = document.getElementById('username').value;
-        password = document.getElementById('password').value;
-
-        mqttConnect();
-        authDialog.style.display = 'none';
-    };
-
-    // Get the element that closes the authentication popup
-    const authClose = document.getElementById('auth-close');
-
-    // When the user clicks on (x), close the authentication popup
-    authClose.onclick = onConnectCancel;
-
     // Populate power station selection menu
     const dropdownDiv = document.getElementById('dropdownContent');
     for (const key of Object.keys(powerStationLookup)) {
@@ -867,11 +833,6 @@ window.onload = () => {
                     item.classList.remove('show');
                 }
             }
-
-            // Close authentication dialog
-            if (event.target === authDialog) {
-                onConnectCancel();
-            }
         }
     };
 
@@ -890,18 +851,12 @@ function onConnectClicked() {
     if (mqttConnected) {
         mqttDisconnect();
     } else {
-        if (user === null) {
-            // Show authentication dialog
-            document.getElementById('auth-dialog').style.display = 'block';
-        } else {
-            mqttConnect();
-        }
+        mqttConnect();
     }
 }
 
 
 function onConnectCancel() {
-    document.getElementById('auth-dialog').style.display = 'none';
     document.getElementById('connect-toggle').checked = false;
     user = null;
     password = null;
