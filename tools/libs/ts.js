@@ -1059,15 +1059,22 @@ function getFunctionInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (
-        node.body &&
-        node.body.statements.length
-    ) {
-        const _bodyDoclets = getDocletInfosBetween(
-            node.body,
-            node.body.statements[node.body.statements.length - 1]
-        );
-        if (_bodyDoclets.length) {
+    if (node.body) {
+        /** @type {Array<DocletInfo>} */
+        let _bodyDoclets;
+
+        if (TS.isConstructorDeclaration(node)) {
+            _bodyDoclets = getDocletInfosBetween(
+                getNodesFirstChild(node.body),
+                getNodesLastChild(node.body)
+            );
+        } else if (node.body.statements.length) {
+            _bodyDoclets = getDocletInfosBetween(
+                node.body,
+                node.body.statements[node.body.statements.length - 1]
+            );
+        }
+        if (_bodyDoclets && _bodyDoclets.length) {
             _info.body = _bodyDoclets;
         }
     }
