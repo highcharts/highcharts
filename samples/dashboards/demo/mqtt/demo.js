@@ -5,7 +5,7 @@
 //
 
 // Support for Nynorsk (nn) and English (en)
-const lang = getLanguageSupport('en');
+const lang = languageSupport('nn');
 
 // Configuration for power generator
 const stationConfig = {
@@ -377,7 +377,7 @@ async function dashboardUpdate(powerStationData) {
     await dataPoolReset();
 
     // Update all generators of the power station
-    for (let i = 0; i < powerStationData.nGenerators; i++) {
+    for (let i = 0; i < powerStationData.aggs.length; i++) {
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
 
@@ -415,15 +415,11 @@ async function dashboardUpdate(powerStationData) {
 }
 
 // The dashboard is created when the first MQTT message arrives.
-// (at this stage we know how many generators ech power station has).
+// (at this stage we know how many generators each power station has).
 async function dashboardConnect(powerStationData) {
     // Launch  Dashboard
-    if (dashboard === null) {
-        dashboard = await dashboardCreate();
-    }
-
     const dataPool = dashboard.dataPool;
-    for (let i = 0; i < powerStationData.nGenerators; i++) {
+    for (let i = 0; i < powerStationData.aggs.length; i++) {
         const puId = i + 1;
         const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
@@ -489,7 +485,7 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 
     function getIntakeHtml(powerStationData) {
-        if (powerStationData.nIntakes === 0) {
+        if (powerStationData.intakes.length === 0) {
             const str = lang.tr('No intakes');
 
             return `<h3 class="intake">${str}</h3>`;
@@ -514,20 +510,20 @@ async function dashboardsComponentUpdate(powerStationData) {
             <tr><th>${name}</th>${colHtml}</tr>
             <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
-        for (let i = 0; i < powerStationData.nIntakes; i++) {
-            const item = powerStationData.intakes[i];
+        // Populate fields
+        powerStationData.intakes.forEach(item => {
             const name = item.name.replace('_', ' ');
 
             colHtml = getDataFields(item, fields);
             html += `<tr><td>${name}</td>${colHtml}</tr>`;
-        }
+        });
         html += '</table>';
 
         return html;
     }
 
-    function getReservoirHtml(powerStationData) {
-        if (powerStationData.nReservoirs === 0) {
+    function getReservoirHtml(data) {
+        if (data.reservoirs.length === 0) {
             const str = lang.tr('No connected reservoirs');
 
             return `<h3 class="intake">${str}</h3>`;
@@ -544,54 +540,48 @@ async function dashboardsComponentUpdate(powerStationData) {
             <tr><th>${name}</th>${colHtml}</tr>
             <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
-        for (let i = 0; i < powerStationData.nReservoirs; i++) {
-            const item = powerStationData.reservoirs[i];
+        // Populate fields
+        data.reservoirs.forEach(item => {
             colHtml = getDataFields(item, fields);
 
             html += `<tr><td>${item.name}</td>${colHtml}</tr>`;
-        }
+        });
         html += '</table>';
 
         return html;
     }
 
-    async function addIntakeMarkers(mapComp, powerStationData) {
-        for (let i = 0; i < powerStationData.nIntakes; i++) {
-            const item = powerStationData.intakes[i];
-            if (item.location === null) {
-                continue;
+    async function addIntakeMarkers(mapComp, data) {
+        data.intakes.forEach(item => {
+            if (item.location) {
+                // Add intake to map
+                mapComp.addPoint({
+                    name: item.name.replace('_', ' '),
+                    lon: item.location.lon,
+                    lat: item.location.lat,
+                    marker: intakeConfig.mapMarker,
+                    info: getInfoRecord(item, intakeConfig.infoFields)
+                });
             }
-
-            // Add reservoir to map
-            await mapComp.addPoint({
-                name: item.name.replace('_', ' '),
-                lon: item.location.lon,
-                lat: item.location.lat,
-                marker: intakeConfig.mapMarker,
-                info: getInfoRecord(item, intakeConfig.infoFields)
-            });
-        }
+        });
     }
 
-    async function addReservoirMarkers(mapComp, powerStationData) {
-        for (let i = 0; i < powerStationData.nReservoirs; i++) {
-            const item = powerStationData.reservoirs[i];
-            if (item.location === null) {
-                continue;
+    async function addReservoirMarkers(mapComp, data) {
+        data.reservoirs.forEach(item => {
+            if (item.location) {
+                // Add reservoir to map
+                mapComp.addPoint({
+                    name: item.name,
+                    lon: item.location.lon,
+                    lat: item.location.lat,
+                    marker: reservoirConfig.mapMarker,
+                    info: getInfoRecord(item, reservoirConfig.tooltipFields)
+                });
             }
-
-            // Add reservoir to map
-            await mapComp.addPoint({
-                name: item.name,
-                lon: item.location.lon,
-                lat: item.location.lat,
-                marker: reservoirConfig.mapMarker,
-                info: getInfoRecord(item, reservoirConfig.tooltipFields)
-            });
-        }
+        });
     }
 
-    async function updateMap(powerStationData) {
+    async function updateMap(data) {
         // Map
         const mapComp = getComponent(dashboard, 'el-map');
         const mapPoints = mapComp.chart.series[1];
@@ -601,23 +591,23 @@ async function dashboardsComponentUpdate(powerStationData) {
             await mapPoints.data[0].remove();
         }
 
-        if (!powerStationData.location) {
+        if (!data.location) {
             // No location data available
             return;
         }
 
         // Create tooltip content for power station
         let infoItems = [];
-        powerStationData.aggs.forEach(item => {
+        data.aggs.forEach(item => {
             infoItems = infoItems.concat(
                 getInfoRecord(item, stationConfig.infoFields)
             );
         });
 
         // Add power station map point
-        const location = powerStationData.location;
+        const location = data.location;
         await mapPoints.addPoint({
-            name: powerStationData.name,
+            name: data.name,
             lon: location.lon,
             lat: location.lat,
             marker: stationConfig.mapMarker,
@@ -625,10 +615,10 @@ async function dashboardsComponentUpdate(powerStationData) {
         });
 
         // Add reservoir map points if applicable
-        await addReservoirMarkers(mapPoints, powerStationData);
+        await addReservoirMarkers(mapPoints, data);
 
         // Add intake map points if applicable
-        await addIntakeMarkers(mapPoints, powerStationData);
+        await addIntakeMarkers(mapPoints, data);
 
         // Center map at the new power station location
         const mapView = mapComp.chart.mapView;
@@ -676,7 +666,8 @@ async function dashboardsComponentUpdate(powerStationData) {
     await updateInfoHtml(powerStationData);
 
     // Update KPI, chart and datagrid (one per power generator)
-    for (let i = 0; i < powerStationData.nGenerators; i++) {
+    const numGenerators = powerStationData.aggs.length;
+    for (let i = 0; i < numGenerators; i++) {
         const aggInfo = powerStationData.aggs[i];
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
@@ -693,7 +684,7 @@ async function dashboardsComponentUpdate(powerStationData) {
 
         // Add generator name only if the station has multiple generators
         let aggName = powerStationData.name;
-        if (powerStationData.nGenerators > 1) {
+        if (numGenerators > 1) {
             aggName += ` "${aggInfo.name}"`;
         }
 
@@ -849,23 +840,23 @@ window.onload = () => {
 };
 
 
-// Populate power station selection menu
-function updatePowerStationSelection(data, topic) {
+// Maintain power station list and selection menu
+function updatePowerStationList(data, topic) {
     const stationName = data.name;
     if (stationName in powerStationLookup) {
         return;
     }
 
-    // Update station list (only stations with location data)
-    if (!(stationName in powerStationLookup) && data.location) {
-        if (data.location.lon && data.aggs.length > 0) {
-            powerStationLookup[stationName] = {
-                topic: topic
-            };
-        }
+    // Add station if these conditions are satisfied:
+    // - valid location data
+    // - valid generator data
+    if (data.location && data.location.lon && data.aggs.length > 0) {
+        powerStationLookup[stationName] = {
+            topic: topic
+        };
     }
 
-    // Populate dropdown
+    // Update dropdown
     const dropdownDiv = document.getElementById('dropdownContent');
     dropdownDiv.innerHTML = '';
     for (const key of Object.keys(powerStationLookup)) {
@@ -1036,29 +1027,31 @@ function onFailure(resp) {
 
 
 async function onMessageArrived(mqttPacket) {
+    // Maintain the list of power stations
     const powerStationData = JSON.parse(mqttPacket.payloadString);
     const topic = mqttPacket.destinationName;
-    updatePowerStationSelection(powerStationData, topic);
+    updatePowerStationList(powerStationData, topic);
 
     if (mqttActiveTopic !== topic) {
-        console.log('Topic ignored: ' + topic);
+        // Ignore packets for stations that are not selected
         return;
     }
 
-    // Process incoming active topic
-    powerStationData.nGenerators = powerStationData.aggs.length;
-    powerStationData.nIntakes = powerStationData.intakes.length;
-    powerStationData.nReservoirs = powerStationData.reservoirs.length;
-
     if (nMqttPackets === 0) {
-        // Connect and create the Dashboard when the first packet arrives
+        // Create the Dashboard when the first packet arrives
+        if (dashboard === null) {
+            dashboard = await dashboardCreate();
+        }
+
+        // Connect power generation data to dashboard
         await dashboardConnect(powerStationData);
     }
 
     // Has a power generator been added or removed?
-    if (nGenerators !== powerStationData.nGenerators) {
-        nGenerators = powerStationData.nGenerators;
-        uiSetComponentVisibility(true, powerStationData.nGenerators);
+    const nGenLatest = powerStationData.aggs.length;
+    if (nGenerators !== nGenLatest) {
+        nGenerators = nGenLatest;
+        uiSetComponentVisibility(true, nGenerators);
     }
 
     // Update Dashboard
@@ -1076,7 +1069,7 @@ async function onConnect() {
     mqttConnected = true;
     nGenerators = 0;
 
-    console.log('Connected to ' + host + ' on port ' + port);
+    // Update status information
     uiSetConnectStatus(true);
     uiShowStatus('numStation', '0');
 
@@ -1134,7 +1127,7 @@ function uiShowError(msg) {
 //
 // Language support
 //
-function getLanguageSupport(lang) {
+function languageSupport(lang) {
     return {
         // Selected language
         current: lang,
