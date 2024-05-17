@@ -80,3 +80,33 @@
     --highcharts-highlight-color-20: rgb(65, 74, 92);
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
+
+.highcharts-datagrid-table {
+    height: 200px;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #f00;
+}
+
+.highcharts-datagrid-table thead {
+    background-color: var(--highcharts-neutral-color-20);
+    display: block;
+    min-height: 41px;
+}
+
+.highcharts-datagrid-table tbody {
+    overflow: auto;
+    display: block;
+    position: relative;
+}
+
+.highcharts-datagrid-table tr {
+    border-bottom: 1px solid #00f;
+    position: absolute;
+}
+
+.highcharts-datagrid-table td {
+    height: inherit;
+    border-right: 1px solid #0f0;
+}

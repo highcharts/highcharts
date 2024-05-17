@@ -22,10 +22,11 @@
  * */
 
 import DataTable from '../../Data/DataTable.js';
-import DataGridUtils from '../DataGridUtils.js';
+import Utils from './Utils.js';
 import Globals from '../Globals.js';
+import DataGridTable from './DataGridTable.js';
 
-const { makeDiv } = DataGridUtils;
+const { makeDiv } = Utils;
 const { win } = Globals;
 
 
@@ -48,6 +49,7 @@ class DataGrid {
 
     public container: HTMLElement;
     public dataTable: DataTable;
+    public viewport: DataGridTable;
 
 
     /* *
@@ -61,13 +63,28 @@ class DataGrid {
 
         this.dataTable = new DataTable({
             columns: {
-                product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-                weight: [100, 40, 0.5, 200],
-                price: [1.5, 2.53, 5, 4.5],
-                metaData: ['a', 'b', 'c', 'd'],
-                icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
+                product: [
+                    'Apples', 'Pears', 'Plums', 'Bananas', 'Apples', 'Pears',
+                    'Plums', 'Bananas', 'Apples', 'Pears', 'Plums', 'Bananas'
+                ],
+                weight: [
+                    100, 40, 0.5, 200, 100, 40, 0.5, 200, 100, 40, 0.5, 200
+                ],
+                price: [
+                    1.5, 2.53, 5, 4.5, 1.5, 2.53, 5, 4.5, 1.5, 2.53, 5, 4.5
+                ],
+                metaData: [
+                    'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'
+                ],
+                icon: [
+                    'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
+                    'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
+                    'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL'
+                ]
             }
         });
+
+        this.viewport = new DataGridTable(this.dataTable, this.container);
     }
 
     /* *
