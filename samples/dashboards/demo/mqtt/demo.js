@@ -143,13 +143,7 @@ async function dashboardCreate() {
                     // TBD: to be removed. For now the table doesn't get
                     // populated unless the first row is present at start-up.
                     [Date.UTC(2024, 0, 1), 0]
-                ],
-                dataModifier: {
-                    // The incoming data must be sorted in ascending order
-                    // for the 'spline' chart to work correctly.
-                    type: 'Sort',
-                    orderByColumn: 'time'
-                }
+                ]
             }
         };
     }
@@ -249,12 +243,12 @@ async function dashboardCreate() {
                 ...commonChartOptions,
                 chart: {
                     type: 'solidgauge',
-                    styledMode: true
+                    styledMode: false
                 },
                 pane: {
                     background: {
                         innerRadius: '80%',
-                        outerRadius: '130%',
+                        outerRadius: '120%',
                         shape: 'arc'
                     },
                     center: ['50%', '70%'],
@@ -267,7 +261,7 @@ async function dashboardCreate() {
                         y: -80
                     },
                     labels: {
-                        distance: '105%',
+                        distance: '100%',
                         y: 5,
                         align: 'auto'
                     },
@@ -283,7 +277,7 @@ async function dashboardCreate() {
                     name: lang.tr('P_gen'),
                     enableMouseTracking: true,
                     innerRadius: '80%',
-                    radius: '130%'
+                    radius: '120%'
                 }],
                 tooltip: {
                     valueSuffix: ' ' + powerUnit
@@ -304,6 +298,12 @@ async function dashboardCreate() {
                     seriesId: lang.tr('P_gen'),
                     data: ['time', 'power']
                 }]
+            },
+            sync: {
+                highlight: {
+                    enabled: true,
+                    autoScroll: true
+                }
             },
             chartOptions: {
                 ...commonChartOptions,
@@ -339,6 +339,12 @@ async function dashboardCreate() {
             renderTo: 'data-grid-' + pgIdx,
             connector: {
                 id: connId
+            },
+            sync: {
+                highlight: {
+                    enabled: true,
+                    autoScroll: true
+                }
             },
             dataGridOptions: {
                 editable: false,
@@ -758,17 +764,16 @@ let mqtt = null;
 // MQTT connection parameters
 const host = 'mqtt.sognekraft.no';
 const port = 8083;
-let mqttActiveTopic = null;
 const mqttQos = 0;
 
 // Authentication
-let user = 'highsoft';
-let password = 'Qs0URPjxnWlcuYBmFWNK';
+const user = 'highsoft';
+const password = 'Qs0URPjxnWlcuYBmFWNK';
 
 // Connection status
+let mqttActiveTopic = 'prod/DEMO_Highsoft/+/overview';
 let mqttConnected;
 let nMqttPackets;
-let nGenerators;
 
 // Connection status UI
 const connectBar = {
@@ -783,6 +788,10 @@ const powerStationLookup = {
         topic: 'prod/DEMO_Highsoft/kraftverk_1/overview'
     }
 };
+
+// Number of generators in currently selected power station
+let nGenerators;
+
 
 /*
  *  Application interface
@@ -804,9 +813,6 @@ window.onload = () => {
     // Language dependencies
     dropDownButton.title = lang.tr('powerStationHelp');
     dropDownButton.innerHTML = lang.tr('Power station') + '&nbsp;&#9662;';
-    document.getElementById('user-label').innerText = lang.tr('Username');
-    document.getElementById('pass-label').innerText = lang.tr('Password');
-    document.getElementById('auth-submit').value = lang.tr('Apply');
 
     // Populate power station selection menu
     const dropdownDiv = document.getElementById('dropdownContent');
@@ -858,8 +864,6 @@ function onConnectClicked() {
 
 function onConnectCancel() {
     document.getElementById('connect-toggle').checked = false;
-    user = null;
-    password = null;
 }
 
 
