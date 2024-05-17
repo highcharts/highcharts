@@ -130,7 +130,6 @@ namespace EditableOptions {
      */
     export type ElementType =
         | 'input'
-        | 'text'
         | 'textarea'
         | 'toggle'
         | 'select'
