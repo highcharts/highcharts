@@ -1,21 +1,26 @@
-// Define the number of nodes per layer for the neural network
-const layers = [1, 6, 6, 6, 2];
-
-// Define the activation function for each layer
-const activations = ['tanh', 'tanh', 'ReLU', 'tanh', 'sigmoid'];
-
-// This array will be used to define the labels for each layer
-const categories = Array.from({ length: layers.length }, (_, i) => {
-    if (i === 0) {
-        return `Input Layer (${activations[i]})`;
-    }
-
-    if (i === layers.length - 1) {
-        return `Output Layer (${activations[i]})`;
-    }
-
-    return `Hidden Layer #${i} (${activations[i]})`;
-});
+// Define an array of layers, where each layer is an object
+// with the number of nodes and the activation function
+const layers = [{
+    nodes: 1,
+    activation: 'tanh',
+    label: 'Input Layer (#0)'
+}, {
+    nodes: 6,
+    activation: 'tanh',
+    label: 'Hidden Layer #1 (tanh)'
+}, {
+    nodes: 6,
+    activation: 'ReLU',
+    label: 'Hidden Layer #2 (ReLU)'
+}, {
+    nodes: 6,
+    activation: 'ReLU',
+    label: 'Hidden Layer #3 (ReLU)'
+}, {
+    nodes: 2,
+    activation: 'sigmoid',
+    label: 'Output Layer (sigmoid)'
+}];
 
 function generateData() {
     if (layers.length === 0) {
@@ -33,7 +38,7 @@ function generateData() {
         }
 
         const dimensionIndex = currentIndices.length;
-        for (let i = 0; i < layers[dimensionIndex]; i++) {
+        for (let i = 0; i < layers[dimensionIndex].nodes; i++) {
             generate([...currentIndices, i]);
         }
     }
@@ -93,10 +98,9 @@ Highcharts.chart('container', {
     },
     xAxis: {
         custom: {
-            activations,
             layers
         },
-        categories
+        categories: layers.map(layer => layer.label)
     },
     yAxis: Array.from({ length: layers.length }, () => ({
         type: 'category',
@@ -110,10 +114,7 @@ Highcharts.chart('container', {
             },
             chartOptions: {
                 xAxis: {
-                    categories: Array.from(
-                        { length: layers.length },
-                        (_, i) => activations[i]
-                    )
+                    categories: layers.map(layer => layer.activation)
                 }
             }
         }]
