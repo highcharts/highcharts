@@ -601,6 +601,11 @@ async function dashboardsComponentUpdate(powerStationData) {
             await mapPoints.data[0].remove();
         }
 
+        if (!powerStationData.location) {
+            // No location data available
+            return;
+        }
+
         // Create tooltip content for power station
         let infoItems = [];
         powerStationData.aggs.forEach(item => {
@@ -636,9 +641,6 @@ async function dashboardsComponentUpdate(powerStationData) {
     async function updateInfoHtml(data) {
         // Information
         const stationName = data.name;
-        const location = data.location;
-
-        const posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
 
         const infoComp = getComponent(dashboard, 'el-info');
         await infoComp.update({
@@ -651,6 +653,13 @@ async function dashboardsComponentUpdate(powerStationData) {
         const el = document.querySelector(
             'div#el-info .highcharts-dashboards-component-content'
         );
+
+        let posInfo = '';
+        if (data.location) {
+            const location = data.location;
+            posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
+        }
+
         el.innerHTML = `<div id="info-container">
     <h3>${posInfo}</h3>
     ${intakeHtml}
@@ -771,7 +780,7 @@ const user = 'highsoft';
 const password = 'Qs0URPjxnWlcuYBmFWNK';
 
 // Connection status
-let mqttActiveTopic = 'prod/DEMO_Highsoft/+/overview';
+let mqttActiveTopic = 'prod/+/+/overview';
 let mqttConnected;
 let nMqttPackets;
 
@@ -782,14 +791,11 @@ const connectBar = {
     errColor: '#c33'
 };
 
-// Overview of power stations, as MQTT topic.
-const powerStationLookup = {
-    Kråkeelvi: {
-        topic: 'prod/DEMO_Highsoft/kraftverk_1/overview'
-    }
-};
+// Power stations: Name indexes topic and traffic stats.
+// Dynamically updated by incoming messages.
+const powerStationLookup = {};
 
-// Number of generators in currently selected power station
+// Number of generators
 let nGenerators;
 
 
@@ -813,12 +819,6 @@ window.onload = () => {
     // Language dependencies
     dropDownButton.title = lang.tr('powerStationHelp');
     dropDownButton.innerHTML = lang.tr('Power station') + '&nbsp;&#9662;';
-
-    // Populate power station selection menu
-    const dropdownDiv = document.getElementById('dropdownContent');
-    for (const key of Object.keys(powerStationLookup)) {
-        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
-    }
 
     // Custom click handler
     window.onclick = event => {
@@ -847,6 +847,33 @@ window.onload = () => {
         uiSetLogoVisibility(mqttConnected);
     };
 };
+
+
+// Populate power station selection menu
+function updatePowerStationSelection(data, topic) {
+    const stationName = data.name;
+    if (stationName in powerStationLookup) {
+        return;
+    }
+
+    // Update station list (only stations with location data)
+    if (!(stationName in powerStationLookup) && data.location) {
+        if (data.location.lon && data.aggs.length > 0) {
+            powerStationLookup[stationName] = {
+                topic: topic
+            };
+        }
+    }
+
+    // Populate dropdown
+    const dropdownDiv = document.getElementById('dropdownContent');
+    dropdownDiv.innerHTML = '';
+    for (const key of Object.keys(powerStationLookup)) {
+        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
+    }
+
+    uiShowStatus('numStation', Object.keys(powerStationLookup).length.toString());
+}
 
 
 /*
@@ -1009,13 +1036,16 @@ function onFailure(resp) {
 
 
 async function onMessageArrived(mqttPacket) {
-    if (mqttActiveTopic !== mqttPacket.destinationName) {
-        console.log('Topic ignored: ' + mqttPacket.destinationName);
+    const powerStationData = JSON.parse(mqttPacket.payloadString);
+    const topic = mqttPacket.destinationName;
+    updatePowerStationSelection(powerStationData, topic);
+
+    if (mqttActiveTopic !== topic) {
+        console.log('Topic ignored: ' + topic);
         return;
     }
 
     // Process incoming active topic
-    const powerStationData = JSON.parse(mqttPacket.payloadString);
     powerStationData.nGenerators = powerStationData.aggs.length;
     powerStationData.nIntakes = powerStationData.intakes.length;
     powerStationData.nReservoirs = powerStationData.reservoirs.length;
@@ -1048,7 +1078,7 @@ async function onConnect() {
 
     console.log('Connected to ' + host + ' on port ' + port);
     uiSetConnectStatus(true);
-    uiShowStatus('noStation');
+    uiShowStatus('numStation', '0');
 
     // Subscribe if a topic exists
     if (mqttActiveTopic !== null) {
@@ -1077,7 +1107,7 @@ function uiSetConnectStatus(connected) {
 function uiSetLogoVisibility(connected) {
     // Use logo image only when connected and on a wider screen,
     // otherwise text only.
-    let el = document.getElementById('logo-img');
+    let el = document.getElementById('logo-img-1');
     if (el) {
         const showLogo = (window.innerWidth > 576) && connected;
         el.style.display = showLogo ? 'inline' : 'none';
@@ -1088,8 +1118,8 @@ function uiSetLogoVisibility(connected) {
 }
 
 
-function uiShowStatus(msg) {
-    document.getElementById('connect-status').innerHTML = lang.tr(msg);
+function uiShowStatus(msg, arg = '') {
+    document.getElementById('connect-status').innerHTML = lang.tr(msg) + arg;
 }
 
 
@@ -1110,12 +1140,6 @@ function getLanguageSupport(lang) {
         current: lang,
 
         // Translations, fixed strings
-        Username: {
-            nn: 'Brukarnamn'
-        },
-        Password: {
-            nn: 'Passord'
-        },
         Apply: {
             nn: 'Bruk'
         },
@@ -1136,11 +1160,11 @@ function getLanguageSupport(lang) {
         },
         mapTitle: {
             nn: 'Kraftverk med magasin og inntak',
-            en: 'Power station with water reservoirs and intake'
+            en: 'Power station with water reservoirs and intakes'
         },
-        noStation: {
-            nn: 'Ingen kraftverk valgd',
-            en: 'No power station selected'
+        numStation: {
+            nn: 'Tilgjengelege: ',
+            en: 'Available: '
         },
         powerStationHelp: {
             en: 'Click to select a power station',
@@ -1235,7 +1259,7 @@ function getLanguageSupport(lang) {
         tr: function (str) {
             const item = str in this ? this[str] : null;
             if (item === null) {
-                // No translation exists, return original
+                // No translation exists, return original string
                 return str;
             }
 
