@@ -33,7 +33,7 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
 import BoostChart from './BoostChart.js';
@@ -71,6 +71,12 @@ import WGLRenderer from './WGLRenderer.js';
  *  Declarations
  *
  * */
+
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        lineWidthFilter: SVGElement | null
+    }
+}
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike extends BoostTargetObject {
@@ -199,10 +205,15 @@ function boostEnabled(chart: Chart): boolean {
  * @private
  */
 function compose<T extends typeof Series>(
+    ChartClass: typeof Chart,
     SeriesClass: T,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
+
+    if (!ChartClass.prototype.lineWidthFilter) {
+        ChartClass.prototype.lineWidthFilter = null;
+    }
 
     if (pushUnique(composed, 'Boost.Series')) {
         const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
@@ -1050,7 +1061,8 @@ function seriesRenderCanvas(this: Series): void {
             this.options.xData ||
             this.processedXData ||
             false
-        );
+        ),
+        lineWidth = pick(options.lineWidth, 1);
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1174,6 +1186,28 @@ function seriesRenderCanvas(this: Series): void {
     this.buildKDTree = noop;
 
     fireEvent(this, 'renderCanvas');
+
+    if (lineWidth > 1 && !chart.lineWidthFilter && this.boost?.target) {
+        chart.lineWidthFilter = chart.renderer.definition({
+            tagName: 'filter',
+            children: [
+                {
+                    tagName: 'feMorphology',
+                    attributes: {
+                        operator: 'dilate',
+                        radius: 0.25 * lineWidth
+                    }
+                }
+            ],
+            attributes: {
+                id: 'linewidth'
+            }
+        });
+
+        this.boost.target.attr({
+            filter: 'url(#linewidth)'
+        });
+    }
 
     if (renderer) {
         allocateIfNotSeriesBoosting(renderer, this);
