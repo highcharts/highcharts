@@ -148,7 +148,7 @@ async function dashboardCreate() {
         };
     }
 
-    // Custom HTML component for displaying power station, reservoirs and
+    // Custom HTML component for displaying power station, reservoir and
     // water intake parameters. If a description of the power station
     // is available, it is also described here.
     function createInfoComponent() {
@@ -238,7 +238,6 @@ async function dashboardCreate() {
         return {
             type: 'KPI',
             renderTo: 'kpi-agg-' + pgIdx,
-            title: '',
             chartOptions: {
                 ...commonChartOptions,
                 chart: {
@@ -265,10 +264,8 @@ async function dashboardCreate() {
                         y: 5,
                         align: 'auto'
                     },
-                    lineWidth: 2,
                     minorTicks: false,
-                    tickWidth: 2,
-                    tickAmount: 2,
+                    tickAmount: 1,
                     visible: true,
                     min: 0,
                     max: 0 // Populated at update
@@ -286,7 +283,7 @@ async function dashboardCreate() {
         };
     }
 
-    // Spline chart for displaying the history of generated power
+    // Chart for displaying the history of generated power
     // over the last 'n' hours. Latest measurement to the right.
     function createChartComponent(connId, pgIdx) {
         return {
@@ -332,7 +329,7 @@ async function dashboardCreate() {
     }
 
     // Datagrid displaying the history of generated power
-    // over the last 'n' hours.
+    // over the last 'n' hours. Oldest measurements at the top.
     function createDatagridComponent(connId, pgIdx) {
         return {
             type: 'DataGrid',
@@ -485,6 +482,9 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 
     function createInfoTable(header, fields, data) {
+        if (Object.keys(data).length === 0) {
+            return '';
+        }
         const caption = lang.tr(header);
         const name = lang.tr('Name');
 
