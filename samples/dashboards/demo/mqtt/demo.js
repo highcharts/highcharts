@@ -10,7 +10,7 @@ const lang = languageSupport('nn');
 // Configuration for power generator
 const stationConfig = {
     // Fields to display in tooltip and info table
-    infoFields: ['q_turb', 'P_gen'],
+    infoFields: ['q_turb', 'q_min', 'q_max', 'P_gen', 'P_max'],
 
     // Visual appearance on map
     mapMarker: {
@@ -509,42 +509,6 @@ async function dashboardsComponentUpdate(powerStationData) {
         return html;
     }
 
-    function createPowerStationTable(data) {
-        // Description
-        let html = '';
-        if (data.description !== null) {
-            html = `<span class="pw-descr">
-            ${data.description}</span>`;
-        }
-        html += createInfoTable(
-            'Power station', stationConfig.infoFields, data.aggs
-        );
-        return html;
-    }
-
-    function createIntakeTable(data) {
-        if (data.intakes.length === 0) {
-            const str = lang.tr('No intakes');
-
-            return `<h3 class="info-field">${str}</h3>`;
-        }
-        return createInfoTable(
-            'intakes', intakeConfig.infoFields, data.intakes
-        );
-    }
-
-    function createReservoirTable(data) {
-        if (data.reservoirs.length === 0) {
-            const str = lang.tr('No connected reservoirs');
-
-            return `<h3 class="info-field">${str}</h3>`;
-        }
-
-        return createInfoTable(
-            'reservoirs', reservoirConfig.infoFields, data.reservoirs
-        );
-    }
-
     async function addIntakeMarkers(mapComp, data) {
         data.intakes.forEach(item => {
             if (item.location) {
@@ -623,33 +587,45 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 
     async function updateInfoHtml(data) {
-        // Component title
+        // HTML component title
         const infoComp = getComponent(dashboard, 'el-info');
         await infoComp.update({
             title: data.name
         });
 
-        // Location info
-        let posInfo = '';
-        if (data.location) {
-            const loc = data.location;
-            posInfo = `${loc.lon} (lon.), ${loc.lat} (lat.)`;
+        // Description of power station (if available)
+        let html = '';
+        if (data.description !== null) {
+            html = `<span class="pw-descr">
+                ${data.description}</span>`;
         }
 
-        // Information tables
-        const powerStHtml = createPowerStationTable(data);
-        const intakeHtml = createIntakeTable(data);
-        const reservoirHtml = createReservoirTable(data);
+        // Location info
+        if (data.location) {
+            const loc = data.location;
+            html += `<h3>${loc.lon} (lon.), ${loc.lat} (lat.)</h3>`;
+        }
+
+        // Power station info
+        html += createInfoTable(
+            'Power station', stationConfig.infoFields, data.aggs
+        );
+
+        // Intakes info
+        html += createInfoTable(
+            'intakes', intakeConfig.infoFields, data.intakes
+        );
+
+        // Reservoir info
+        html += createInfoTable(
+            'reservoirs', reservoirConfig.infoFields, data.reservoirs
+        );
 
         // Render HTML
         const el = document.querySelector(
             'div#el-info .highcharts-dashboards-component-content'
         );
-        el.innerHTML = `<div id="info-container">
-    <h3>${posInfo}</h3>
-    ${powerStHtml}${intakeHtml}${reservoirHtml}
-    </div>`;
-
+        el.innerHTML = '<div id="info-container">' + html + '</div';
     }
 
     // Update map component
@@ -1138,12 +1114,6 @@ function languageSupport(lang) {
         'Location unknown': {
             nn: 'Ukjend plassering'
         },
-        'No connected reservoirs': {
-            nn: 'Ingen tilknyta magasin'
-        },
-        'No intakes': {
-            nn: 'Ingen inntak'
-        },
         mapTitle: {
             nn: 'Kraftverk med magasin og inntak',
             en: 'Power station with water reservoirs and intakes'
@@ -1167,9 +1137,24 @@ function languageSupport(lang) {
             en: 'Generated power',
             unit: 'MW'
         },
+        P_max: {
+            nn: 'Effekt (maks.)',
+            en: 'Generated power (max.)',
+            unit: 'MW'
+        },
         q_turb: {
             nn: 'Vassforbruk',
             en: 'Water usage',
+            unit: 'm3/sek'
+        },
+        q_min: {
+            nn: 'Vassforbruk (min.)',
+            en: 'Water usage (min.)',
+            unit: 'm3/sek'
+        },
+        q_max: {
+            nn: 'Vassforbruk (maks.)',
+            en: 'Water usage (max.)',
             unit: 'm3/sek'
         },
         h: {
