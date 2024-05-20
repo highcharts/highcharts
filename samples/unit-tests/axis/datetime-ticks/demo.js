@@ -1,20 +1,9 @@
 QUnit.test(
-    'getTimezoneOffset is negative, crossing midnight (#5935)',
+    'Time zone is negative, crossing midnight (#5935)',
     function (assert) {
         Highcharts.setOptions({
             global: {
-                /**
-                 * Use moment-timezone.js to return the timezone offset
-                 * for individual timestamps, used in the X axis labels and
-                 * the tooltip header.
-                 */
-                getTimezoneOffset: function (timestamp) {
-                    var zone = 'US/Pacific';
-                    var timezoneOffset = -moment
-                        .tz(timestamp, zone)
-                        .utcOffset();
-                    return timezoneOffset;
-                }
+                timezone: 'US/Pacific'
             }
         });
 
@@ -50,26 +39,16 @@ QUnit.test(
         // Reset
         Highcharts.setOptions({
             global: {
-                getTimezoneOffset: undefined
+                timezone: undefined
             }
         });
     }
 );
 
-QUnit.test('getTimezoneOffset with small interval (#4951)', function (assert) {
+QUnit.test('Time zone with small interval (#4951)', function (assert) {
     Highcharts.setOptions({
         global: {
-            /**
-             * Use moment-timezone.js to return the timezone offset
-             * for individual timestamps, used in the X axis labels and the
-             * tooltip header.
-             */
-            getTimezoneOffset: function (timestamp) {
-                var zone = 'America/New_York',
-                    timezoneOffset = -moment.tz(timestamp, zone).utcOffset();
-
-                return timezoneOffset;
-            }
+            timezone: 'America/New_York'
         }
     });
 
@@ -110,22 +89,15 @@ QUnit.test('getTimezoneOffset with small interval (#4951)', function (assert) {
     // Reset
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: undefined
+            timezone: undefined
         }
     });
 });
 
-QUnit.test('getTimezoneOffset with bigger interval (#4951)', function (assert) {
+QUnit.test('Time zone with bigger interval (#4951)', function (assert) {
     Highcharts.setOptions({
         global: {
-            useUTC: true,
-
-            getTimezoneOffset: function (timestamp) {
-                var zone = 'Europe/Lisbon';
-                var date = moment.tz(timestamp, zone);
-
-                return -date.utcOffset();
-            }
+            timezone: 'Europe/Lisbon'
         }
     });
     var chart = Highcharts.chart('container', {
@@ -188,7 +160,7 @@ QUnit.test('getTimezoneOffset with bigger interval (#4951)', function (assert) {
     // Reset
     Highcharts.setOptions({
         global: {
-            getTimezoneOffset: undefined
+            timezone: undefined
         }
     });
 });

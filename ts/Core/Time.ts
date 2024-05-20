@@ -33,7 +33,6 @@ const {
     merge,
     objectEach,
     pad,
-    pick,
     splat,
     timeUnits
 } = U;
@@ -124,7 +123,7 @@ const hasOldSafariBug =
  */
 class Time {
 
-    public static formatCache: Record<string, Intl.DateTimeFormat> = {};
+    public dTLCache!: Record<string, Intl.DateTimeFormat>;
 
     /* *
      *
@@ -135,20 +134,6 @@ class Time {
     public constructor(
         options?: Time.TimeOptions
     ) {
-        /**
-         * Get the time zone offset based on the current timezone information as
-         * set in the global options.
-         *
-         * @function Highcharts.Time#getTimezoneOffset
-         *
-         * @param {number} timestamp
-         *        The JavaScript timestamp to inspect.
-         *
-         * @return {number}
-         *         The timezone offset in minutes compared to UTC.
-         */
-        this.getTimezoneOffset = this.timezoneOffsetFunction();
-
         this.update(options);
     }
 
@@ -160,15 +145,13 @@ class Time {
 
     public options: Time.TimeOptions = {};
 
-    public timezoneOffset?: number;
+    public timezone?: string;
 
     public useUTC: boolean = false;
 
     public variableTimezone: boolean = false;
 
     public Date: typeof Date = win.Date;
-
-    public getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
 
     /* *
      *
@@ -198,7 +181,7 @@ class Time {
      *        The given time unit
      */
     public get(unit: Time.TimeUnitValue, date: Date): number {
-        if (this.variableTimezone || this.timezoneOffset) {
+        if (this.variableTimezone) {
             const realMs = date.getTime();
             const ms = realMs - this.getTimezoneOffset(date);
 
@@ -235,7 +218,7 @@ class Time {
      */
     public set(unit: Time.TimeUnitValue, date: Date, value: number): number {
         // UTC time with timezone handling
-        if (this.variableTimezone || this.timezoneOffset) {
+        if (this.variableTimezone) {
             // For lower order time units, just set it directly using UTC
             // time
             if (
@@ -291,26 +274,85 @@ class Time {
     public update(
         options: Time.TimeOptions = {}
     ): void {
-        const useUTC = pick(options.useUTC, true);
-
+        this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
+
+        const { timezoneOffset, useUTC = true } = options;
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
         this.useUTC = useUTC;
-        this.timezoneOffset = (useUTC && options.timezoneOffset) || void 0;
+        this.timezone = options.timezone || (
+            useUTC ? 'UTC' : void 0
+        );
 
-        this.getTimezoneOffset = this.timezoneOffsetFunction();
+        // The Etc/GMT time zones do not support offsets with half-hour
+        // resolutions
+        if (timezoneOffset && timezoneOffset % 60 === 0) {
+            this.timezone = 'Etc/GMT' + (
+                (timezoneOffset > 0 ? '+' : '')
+            ) + timezoneOffset / 60;
+        }
 
         /*
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
          */
         this.variableTimezone = useUTC && !!(
-            options.getTimezoneOffset ||
+            /// options.getTimezoneOffset ||
             options.timezone
         );
+    }
+
+    private dateAsNumbers(timestamp?: number): number[] {
+        const parts: (number|string)[] = this.dateTimeFormat({
+            weekday: 'short',
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        }, timestamp, 'en-GB')
+            .split(/(?:, |\/|:)/g);
+        parts[0] = ([
+            'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+        ] as (number|string)[]).indexOf(parts[0]);
+        parts[2] = +parts[2] - 1;
+        return parts.map(Number);
+    }
+
+    /**
+     * Shorthand to get a cached `Intl.DateTimeFormat` instance.
+     */
+    private dateTimeFormat(
+        options: Intl.DateTimeFormatOptions,
+        timestamp?: number|Date,
+        locale?: string
+    ): string {
+        const cacheKey = JSON.stringify(options) + locale;
+
+        let dTL = this.dTLCache[cacheKey];
+
+        if (!dTL) {
+            options = extend({
+                timeZone: this.timezone
+            }, options);
+            try {
+                dTL = new Intl.DateTimeFormat(locale, options);
+            } catch (e) {
+                if (/Invalid time zone/i.test((e as Error).message)) {
+                    error(34);
+                    options.timeZone = 'UTC';
+                }
+                dTL = new Intl.DateTimeFormat(locale, options);
+            }
+        }
+
+        this.dTLCache[cacheKey] = dTL;
+
+        return dTL.format(timestamp);
     }
 
     /**
@@ -347,111 +389,69 @@ class Time {
         date?: number,
         hours?: number,
         minutes?: number,
-        seconds?: number
+        seconds?: number,
+        milliseconds?: number
     ): number {
-        let d, offset, newOffset;
+        // eslint-disable-next-line new-cap
+        let d = this.Date.UTC(
+            year,
+            month || 0,
+            date || 1,
+            hours || 0,
+            minutes || 0,
+            seconds || 0,
+            milliseconds || 0
+        );
+        const offset = this.getTimezoneOffset(d);
+        d += offset;
+        const newOffset = this.getTimezoneOffset(d);
 
-        if (this.useUTC) {
-            d = this.Date.UTC.apply(0, arguments);
-            offset = this.getTimezoneOffset(d);
-            d += offset;
-            newOffset = this.getTimezoneOffset(d);
+        if (offset !== newOffset) {
+            d += newOffset - offset;
 
-            if (offset !== newOffset) {
-                d += newOffset - offset;
-
-            // A special case for transitioning from summer time to winter time.
-            // When the clock is set back, the same time is repeated twice, i.e.
-            // 02:30 am is repeated since the clock is set back from 3 am to
-            // 2 am. We need to make the same time as local Date does.
-            } else if (
-                offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
-                !hasOldSafariBug
-            ) {
-                d -= 36e5;
-            }
-
-        } else {
-            d = new this.Date(
-                year,
-                month,
-                pick(date, 1),
-                pick(hours, 0),
-                pick(minutes, 0),
-                pick(seconds, 0)
-            ).getTime();
+        // A special case for transitioning from summer time to winter time.
+        // When the clock is set back, the same time is repeated twice, i.e.
+        // 02:30 am is repeated since the clock is set back from 3 am to 2 am.
+        // We need to make the same time as local Date does.
+        } else if (
+            offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
+            !hasOldSafariBug
+        ) {
+            d -= 36e5;
         }
         return d;
     }
 
+
     /**
-     * Sets the getTimezoneOffset function. If the `timezone` option is set, a
-     * default getTimezoneOffset function with that timezone is returned. If
-     * a `getTimezoneOffset` option is defined, it is returned. If neither are
-     * specified, the function using the `timezoneOffset` option or 0 offset is
-     * returned.
+     * Get the time zone offset based on the current timezone information as
+     * set in the global options.
      *
-     * @private
-     * @function Highcharts.Time#timezoneOffsetFunction
+     * @function Highcharts.Time#getTimezoneOffset
      *
-     * @return {Function}
-     *         A getTimezoneOffset function
+     * @param {number} timestamp
+     *        The JavaScript timestamp to inspect.
+     *
+     * @return {number}
+     *         The timezone offset in minutes compared to UTC.
      */
-    public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
-        const time = this,
-            options = this.options,
-            getTimezoneOffset = options.getTimezoneOffset;
+    public getTimezoneOffset(timestamp: number|Date): number {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [date, gmt, hours, colon, minutes = 0] =
+            this.dateTimeFormat(
+                { timeZoneName: 'shortOffset' },
+                timestamp,
+                'en'
+            )
+                .split(/(GMT|:)/)
+                .map(Number),
+            offset = -(hours + minutes / 60) * 60 * 60000;
 
-        if (!this.useUTC) {
-            return (timestamp: (number|Date)): number => new Date(
-                timestamp.toString()
-            ).getTimezoneOffset() * 60000;
+        // Possible future NaNs stop here
+        if (isNumber(offset)) {
+            return offset;
         }
-
-        if (options.timezone) {
-            return (timestamp: number | Date): number => {
-
-                try {
-                    // Cache the DateTimeFormat instances for performance
-                    // (#20720)
-                    const cacheKey = `shortOffset,${options.timezone || ''}`,
-                        dateTimeFormat = Time.formatCache[cacheKey] = (
-                            Time.formatCache[cacheKey] ||
-                            // eslint-disable-next-line new-cap
-                            Intl.DateTimeFormat('en', {
-                                timeZone: options.timezone,
-                                timeZoneName: 'shortOffset'
-                            })
-                        );
-
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const [date, gmt, hours, colon, minutes = 0] =
-                        dateTimeFormat
-                            .format(timestamp)
-                            .split(/(GMT|:)/)
-                            .map(Number),
-                        offset = -(hours + minutes / 60) * 60 * 60000;
-
-                    // Possible future NaNs stop here
-                    if (isNumber(offset)) {
-                        return offset;
-                    }
-                } catch (e) {
-                    error(34);
-                }
-                return 0;
-
-            };
-        }
-
-        // If not timezone is set, look for the getTimezoneOffset callback
-        if (this.useUTC && getTimezoneOffset) {
-            return (timestamp: (number|Date)): number =>
-                getTimezoneOffset(timestamp.valueOf()) * 60000;
-        }
-
-        // Last, use the `timezoneOffset` option if set
-        return (): number => (time.timezoneOffset || 0) * 60000;
+        return 0;
     }
 
     /**
@@ -507,22 +507,13 @@ class Time {
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
-            return (
-                H.defaultOptions.lang &&
-                H.defaultOptions.lang.invalidDate ||
-                ''
-            );
+            return H.defaultOptions.lang?.invalidDate || '';
         }
-        format = pick(format, '%Y-%m-%d %H:%M:%S');
+        format = format ?? '%Y-%m-%d %H:%M:%S';
 
         const time = this,
-            date = new this.Date(timestamp as any),
-            // Get the basic time values
-            hours = this.get('Hours', date),
-            day = this.get('Day', date),
-            dayOfMonth = this.get('Date', date),
-            month = this.get('Month', date),
-            fullYear = this.get('FullYear', date),
+            [weekday, dayOfMonth, month, fullYear, hours, minutes, seconds] =
+                this.dateAsNumbers(timestamp),
             lang = H.defaultOptions.lang,
             langWeekdays = (lang && lang.weekdays as any),
             shortWeekdays = (lang && lang.shortWeekdays),
@@ -535,16 +526,16 @@ class Time {
                     // Day
                     // Short weekday, like 'Mon'
                     a: shortWeekdays ?
-                        shortWeekdays[day] :
-                        langWeekdays[day].substr(0, 3),
+                        shortWeekdays[weekday] :
+                        langWeekdays[weekday].substr(0, 3),
                     // Long weekday, like 'Monday'
-                    A: langWeekdays[day],
+                    A: langWeekdays[weekday],
                     // Two digit day of the month, 01 to 31
                     d: pad(dayOfMonth),
                     // Day of the month, 1 through 31
                     e: pad(dayOfMonth, 2, ' '),
                     // Day of the week, 0 through 6
-                    w: day,
+                    w: weekday,
 
                     // Week (none implemented)
                     // 'W': weekNumber(),
@@ -575,15 +566,15 @@ class Time {
                     // Hours in 12h format, 1 through 12
                     l: (hours % 12) || 12,
                     // Two digits minutes, 00 through 59
-                    M: pad(this.get('Minutes', date)),
+                    M: pad(minutes),
                     // Upper case AM or PM
                     p: hours < 12 ? 'AM' : 'PM',
                     // Lower case AM or PM
                     P: hours < 12 ? 'am' : 'pm',
                     // Two digits seconds, 00 through 59
-                    S: pad(this.get('Seconds', date)),
+                    S: pad(seconds),
                     // Milliseconds (naming from Ruby)
-                    L: pad(Math.floor((timestamp as any) % 1000), 3)
+                    L: pad(Math.floor(timestamp % 1000), 3)
                 },
 
                 H.dateFormats
@@ -664,120 +655,94 @@ class Time {
         startOfWeek?: number
     ): TickPositionsArray {
         const time = this,
-            Date = time.Date,
             tickPositions = [] as TickPositionsArray,
             higherRanks = {} as Record<string, string>,
-            // When crossing DST, use the max. Resolves #6278.
-            minDate = new Date(min as any),
-            interval = normalizedInterval.unitRange,
-            count = normalizedInterval.count || 1;
+            { count = 1, unitRange } = normalizedInterval;
 
-        let i,
-            minYear: any, // Used in months and years as a basis for Date.UTC()
-            variableDayLength,
-            minDay;
+        let [
+                /* eslint-disable-next-line */
+                weekday,
+                dayOfMonth,
+                month,
+                year,
+                hours,
+                minutes,
+                seconds
+            ] = time.dateAsNumbers(min),
+            milliseconds = (min || 0) % 1000,
+            variableDayLength: boolean|undefined;
 
-        startOfWeek = pick(startOfWeek, 1);
+        startOfWeek ??= 1;
 
         if (defined(min)) { // #1300
-            time.set(
-                'Milliseconds',
-                minDate,
-                interval >= timeUnits.second ?
+            milliseconds = unitRange >= timeUnits.second ?
+                0 : // #3935
+                count * Math.floor(milliseconds / count);
+
+            if (unitRange >= timeUnits.second) { // Second
+                seconds = unitRange >= timeUnits.minute ?
                     0 : // #3935
-                    count * Math.floor(
-                        time.get('Milliseconds', minDate) / count
-                    )
-            ); // #3652, #3654
-
-            if (interval >= timeUnits.second) { // Second
-                time.set(
-                    'Seconds',
-                    minDate,
-                    interval >= timeUnits.minute ?
-                        0 : // #3935
-                        count * Math.floor(time.get('Seconds', minDate) / count)
-                );
+                    count * Math.floor(seconds / count);
             }
 
-            if (interval >= timeUnits.minute) { // Minute
-                time.set(
-                    'Minutes',
-                    minDate,
-                    interval >= timeUnits.hour ?
-                        0 :
-                        count * Math.floor(time.get('Minutes', minDate) / count)
-                );
+
+            if (unitRange >= timeUnits.minute) { // Minute
+                minutes = unitRange >= timeUnits.hour ?
+                    0 :
+                    count * Math.floor(minutes / count);
             }
 
-            if (interval >= timeUnits.hour) { // Hour
-                time.set(
-                    'Hours',
-                    minDate,
-                    interval >= timeUnits.day ?
-                        0 :
-                        count * Math.floor(
-                            time.get('Hours', minDate) / count
-                        )
-                );
+            if (unitRange >= timeUnits.hour) { // Hour
+                hours = unitRange >= timeUnits.day ?
+                    0 :
+                    count * Math.floor(hours / count);
             }
 
-            if (interval >= timeUnits.day) { // Day
-                time.set(
-                    'Date',
-                    minDate,
-                    interval >= timeUnits.month ?
-                        1 :
-                        Math.max(
-                            1,
-                            count * Math.floor(
-                                time.get('Date', minDate) / count
-                            )
-                        )
-                );
+            if (unitRange >= timeUnits.day) { // Day
+                dayOfMonth = unitRange >= timeUnits.month ?
+                    1 :
+                    Math.max(
+                        1,
+                        count * Math.floor(dayOfMonth / count)
+                    );
             }
 
-            if (interval >= timeUnits.month) { // Month
-                time.set(
-                    'Month',
-                    minDate,
-                    interval >= timeUnits.year ? 0 :
-                        count * Math.floor(time.get('Month', minDate) / count)
-                );
-                minYear = time.get('FullYear', minDate);
+            if (unitRange >= timeUnits.month) { // Month
+                month = unitRange >= timeUnits.year ? 0 :
+                    count * Math.floor(month / count);
             }
 
-            if (interval >= timeUnits.year) { // Year
-                minYear -= minYear % count;
-                time.set('FullYear', minDate, minYear);
+            if (unitRange >= timeUnits.year) { // Year
+                year -= year % count;
             }
 
             // Week is a special case that runs outside the hierarchy
-            if (interval === timeUnits.week) {
+            if (unitRange === timeUnits.week) {
                 // Get start of current week, independent of count
-                minDay = time.get('Day', minDate);
-                time.set(
-                    'Date',
-                    minDate,
-                    (
-                        time.get('Date', minDate) -
-                        minDay + startOfWeek +
-                        // We don't want to skip days that are before
-                        // startOfWeek (#7051)
-                        (minDay < startOfWeek ? -7 : 0)
-                    )
-                );
+                const weekday = new Intl.DateTimeFormat('en-GB', {
+                        timeZone: this.timezone,
+                        weekday: 'short'
+                    }).format(min),
+                    weekdayNo = [
+                        'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+                    ].indexOf(weekday);
+
+                dayOfMonth += -weekdayNo + startOfWeek +
+                    // We don't want to skip days that are before
+                    // startOfWeek (#7051)
+                    (weekdayNo < startOfWeek ? -7 : 0);
+
             }
 
-
-            // Get basics for variable time spans
-            minYear = time.get('FullYear', minDate);
-            const minMonth = time.get('Month', minDate),
-                minDateDate = time.get('Date', minDate),
-                minHours = time.get('Hours', minDate);
-
-            // Redefine min to the floored/rounded minimum time (#7432)
-            min = minDate.getTime();
+            min = time.makeTime(
+                year,
+                month,
+                dayOfMonth,
+                hours,
+                minutes,
+                seconds,
+                milliseconds
+            );
 
             // Handle local timezone offset
             if ((time.variableTimezone || !time.useUTC) && defined(max)) {
@@ -797,50 +762,51 @@ class Time {
             }
 
             // Iterate and add tick positions at appropriate values
-            let t = minDate.getTime();
-
-            i = 1;
+            let t = min,
+                i = 1;
             while (t < (max as any)) {
                 tickPositions.push(t);
 
-                // If the interval is years, use Date.UTC to increase years
-                if (interval === timeUnits.year) {
-                    t = time.makeTime(minYear + i * count, 0);
+                // Increase the years
+                if (unitRange === timeUnits.year) {
+                    t = time.makeTime(year + i * count, 0);
 
-                // If the interval is months, use Date.UTC to increase months
-                } else if (interval === timeUnits.month) {
-                    t = time.makeTime(minYear, minMonth + i * count);
+                // Increase the months
+                } else if (unitRange === timeUnits.month) {
+                    t = time.makeTime(year, month + i * count);
 
-                // If we're using global time, the interval is not fixed as it
+                // If we're using local time, the interval is not fixed as it
                 // jumps one hour at the DST crossover
                 } else if (
-                    variableDayLength &&
-                    (interval === timeUnits.day || interval === timeUnits.week)
+                    variableDayLength && (
+                        unitRange === timeUnits.day ||
+                        unitRange === timeUnits.week
+                    )
                 ) {
                     t = time.makeTime(
-                        minYear,
-                        minMonth,
-                        minDateDate +
-                            i * count * (interval === timeUnits.day ? 1 : 7)
+                        year,
+                        month,
+                        dayOfMonth +
+                            i * count * (unitRange === timeUnits.day ? 1 : 7)
                     );
 
                 } else if (
                     variableDayLength &&
-                    interval === timeUnits.hour &&
+                    unitRange === timeUnits.hour &&
                     count > 1
                 ) {
                     // Make sure higher ranks are preserved across DST (#6797,
                     // #7621)
                     t = time.makeTime(
-                        minYear,
-                        minMonth,
-                        minDateDate,
-                        minHours + i * count
+                        year,
+                        month,
+                        dayOfMonth,
+                        hours + i * count
                     );
 
                 // Else, the interval is fixed and we use simple addition
                 } else {
-                    t += interval * count;
+                    t += unitRange * count;
                 }
 
                 i++;
@@ -853,8 +819,8 @@ class Time {
             // Handle higher ranks. Mark new days if the time is on midnight
             // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
             // to prevent looping over dense data grouping (#6156).
-            if (interval <= timeUnits.hour && tickPositions.length < 10000) {
-                tickPositions.forEach(function (t: number): void {
+            if (unitRange <= timeUnits.hour && tickPositions.length < 10000) {
+                tickPositions.forEach((t: number): void => {
                     if (
                         // Speed optimization, no need to run dateFormat unless
                         // we're on a full or half hour
@@ -874,7 +840,7 @@ class Time {
             normalizedInterval,
             {
                 higherRanks,
-                totalRange: interval * count
+                totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
 
@@ -985,7 +951,7 @@ namespace Time {
     );
     export interface TimeOptions {
         Date?: any;
-        getTimezoneOffset?: Function;
+        /// getTimezoneOffset?: Function;
         timezone?: string;
         timezoneOffset?: number;
         useUTC?: boolean;

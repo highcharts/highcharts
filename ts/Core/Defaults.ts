@@ -539,7 +539,7 @@ const defaultOptions: DefaultOptions = {
          * @since     4.1.0
          * @product   highcharts highstock gantt
          */
-        getTimezoneOffset: void 0,
+        /// getTimezoneOffset: void 0,
 
         /**
          * A named time zone. Supported time zone names rely on the browser
