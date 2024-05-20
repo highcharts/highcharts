@@ -63,10 +63,13 @@ Highcharts.chart('container', {
     tooltip: {
         format: `<span style="font-weight: bold">
             Activation function:
-            </span> {series.xAxis.options.custom.activations.(point.x)}<br>
+            </span>
+            {series.xAxis.options.custom.layers.(point.x).activation}
+            <br>
             <span style="font-weight: bold">
             Number of nodes in the layer:
-            </span> {series.xAxis.options.custom.layers.(point.x)}`
+            </span>
+            {series.xAxis.options.custom.layers.(point.x).nodes}`
     },
     colors: ['#a752d1'],
     plotOptions: {
