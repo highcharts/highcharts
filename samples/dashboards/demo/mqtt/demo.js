@@ -332,7 +332,7 @@ async function dashboardCreate() {
     }
 
     // Datagrid displaying the history of generated power
-    // over the last 'n' hours. Latest measurement at the top.
+    // over the last 'n' hours.
     function createDatagridComponent(connId, pgIdx) {
         return {
             type: 'DataGrid',
@@ -484,34 +484,21 @@ async function dashboardsComponentUpdate(powerStationData) {
         return colHtml;
     }
 
-    function getIntakeHtml(powerStationData) {
-        if (powerStationData.intakes.length === 0) {
-            const str = lang.tr('No intakes');
-
-            return `<h3 class="intake">${str}</h3>`;
-        }
-
-        // Description
-        let html = '';
-        if (powerStationData.description !== null) {
-            html = `<span class="pw-descr">
-            ${powerStationData.description}</span>`;
-
-        }
-        const intake = lang.tr('intakes');
+    function createInfoTable(header, fields, data) {
+        const caption = lang.tr(header);
         const name = lang.tr('Name');
 
         // Fields to display
-        const fields = intakeConfig.infoFields;
+        // const fields = stationConfig.infoFields;
         let colHtml = getHeaderFields(fields);
         const colHtmlUnit = getUnitFields(fields);
 
-        html += `<table class="intake"><caption>${intake}</caption>
+        let html = `<table class="info-field"><caption>${caption}</caption>
             <tr><th>${name}</th>${colHtml}</tr>
             <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
 
         // Populate fields
-        powerStationData.intakes.forEach(item => {
+        data.forEach(item => {
             const name = item.name.replace('_', ' ');
 
             colHtml = getDataFields(item, fields);
@@ -522,33 +509,40 @@ async function dashboardsComponentUpdate(powerStationData) {
         return html;
     }
 
-    function getReservoirHtml(data) {
+    function createPowerStationTable(data) {
+        // Description
+        let html = '';
+        if (data.description !== null) {
+            html = `<span class="pw-descr">
+            ${data.description}</span>`;
+        }
+        html += createInfoTable(
+            'Power station', stationConfig.infoFields, data.aggs
+        );
+        return html;
+    }
+
+    function createIntakeTable(data) {
+        if (data.intakes.length === 0) {
+            const str = lang.tr('No intakes');
+
+            return `<h3 class="info-field">${str}</h3>`;
+        }
+        return createInfoTable(
+            'intakes', intakeConfig.infoFields, data.intakes
+        );
+    }
+
+    function createReservoirTable(data) {
         if (data.reservoirs.length === 0) {
             const str = lang.tr('No connected reservoirs');
 
-            return `<h3 class="intake">${str}</h3>`;
+            return `<h3 class="info-field">${str}</h3>`;
         }
 
-        // Fields to display in table
-        const fields = reservoirConfig.infoFields;
-        let colHtml = getHeaderFields(fields);
-        const colHtmlUnit = getUnitFields(fields);
-        const name = lang.tr('Name');
-        const res = lang.tr('reservoirs');
-
-        let html = `<table class="intake"><caption>${res}</caption>
-            <tr><th>${name}</th>${colHtml}</tr>
-            <tr class="unit"><th></th>${colHtmlUnit}</tr>`;
-
-        // Populate fields
-        data.reservoirs.forEach(item => {
-            colHtml = getDataFields(item, fields);
-
-            html += `<tr><td>${item.name}</td>${colHtml}</tr>`;
-        });
-        html += '</table>';
-
-        return html;
+        return createInfoTable(
+            'reservoirs', reservoirConfig.infoFields, data.reservoirs
+        );
     }
 
     async function addIntakeMarkers(mapComp, data) {
@@ -629,33 +623,32 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 
     async function updateInfoHtml(data) {
-        // Information
-        const stationName = data.name;
-
+        // Component title
         const infoComp = getComponent(dashboard, 'el-info');
         await infoComp.update({
-            title: stationName
+            title: data.name
         });
 
-        const intakeHtml = getIntakeHtml(data);
-        const reservoirHtml = getReservoirHtml(data);
+        // Location info
+        let posInfo = '';
+        if (data.location) {
+            const loc = data.location;
+            posInfo = `${loc.lon} (lon.), ${loc.lat} (lat.)`;
+        }
 
+        // Information tables
+        const powerStHtml = createPowerStationTable(data);
+        const intakeHtml = createIntakeTable(data);
+        const reservoirHtml = createReservoirTable(data);
+
+        // Render HTML
         const el = document.querySelector(
             'div#el-info .highcharts-dashboards-component-content'
         );
-
-        let posInfo = '';
-        if (data.location) {
-            const location = data.location;
-            posInfo = `${location.lon} (lon.), ${location.lat} (lat.)`;
-        }
-
         el.innerHTML = `<div id="info-container">
     <h3>${posInfo}</h3>
-    ${intakeHtml}
-    ${reservoirHtml}
-    </div>
-    `;
+    ${powerStHtml}${intakeHtml}${reservoirHtml}
+    </div>`;
 
     }
 

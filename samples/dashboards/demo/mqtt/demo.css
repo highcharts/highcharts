@@ -444,7 +444,7 @@ div#connect-bar button:hover {
     text-align: justify;
 }
 
-#el-info table.intake {
+#el-info table.info-field {
     margin-top: 10px;
     background-color: var(--color-table-bg);
     width: 100%;
@@ -484,9 +484,14 @@ div#connect-bar button:hover {
         background-color: var(--color-table-td);
         color: var(--color-text);
     }
+
+    & td:first-of-type {
+        color: var(--color-table-caption);
+        text-transform: capitalize;
+    }
 }
 
-#el-info h3.intake {
+#el-info h3.info-field {
     padding: 10px;
     color: var(--color-custom);
     font-size: var(--text-font-size);
