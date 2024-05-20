@@ -305,7 +305,11 @@ class Time {
         );
     }
 
-    private dateAsNumbers(timestamp?: number): number[] {
+    /**
+     * Get a date in terms of numbers (year, month, day etc) for further
+     * processing
+     */
+    public dateAsNumbers(timestamp?: number): number[] {
         const parts: (number|string)[] = this.dateTimeFormat({
             weekday: 'short',
             day: 'numeric',
@@ -316,10 +320,15 @@ class Time {
             second: 'numeric'
         }, timestamp, 'en-GB')
             .split(/(?:, |\/|:)/g);
+
+        // Weekday index
         parts[0] = ([
             'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
         ] as (number|string)[]).indexOf(parts[0]);
+
+        // Zero-based month
         parts[2] = +parts[2] - 1;
+
         return parts.map(Number);
     }
 

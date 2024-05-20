@@ -703,13 +703,10 @@ class Series {
         const options = this.options,
             pointIntervalUnit = options.pointIntervalUnit,
             relativeXValue = options.relativeXValue,
-            time = this.chart.time;
+            time = this.chart.time,
+            xIncrement = this.xIncrement ?? options.pointStart ?? 0;
 
-        let xIncrement = this.xIncrement,
-            date,
-            pointInterval: number;
-
-        xIncrement = pick(xIncrement, options.pointStart, 0);
+        let pointInterval: number;
 
         this.pointInterval = pointInterval = pick(
             this.pointInterval,
@@ -723,29 +720,35 @@ class Series {
 
         // Added code for pointInterval strings
         if (pointIntervalUnit) {
-            date = new time.Date(xIncrement);
+            let [
+                /* eslint-disable-next-line */
+                weekday,
+                dayOfMonth,
+                month,
+                year,
+                hour,
+                minute,
+                second,
+                millisecond
+            ] = time.dateAsNumbers(xIncrement);
 
             if (pointIntervalUnit === 'day') {
-                time.set(
-                    'Date',
-                    date,
-                    time.get('Date', date) + pointInterval
-                );
+                dayOfMonth += pointInterval;
             } else if (pointIntervalUnit === 'month') {
-                time.set(
-                    'Month',
-                    date,
-                    time.get('Month', date) + pointInterval
-                );
+                month += pointInterval;
             } else if (pointIntervalUnit === 'year') {
-                time.set(
-                    'FullYear',
-                    date,
-                    time.get('FullYear', date) + pointInterval
-                );
+                year += pointInterval;
             }
 
-            pointInterval = date.getTime() - xIncrement;
+            pointInterval = time.makeTime(
+                year,
+                month,
+                dayOfMonth,
+                hour,
+                minute,
+                second,
+                millisecond
+            ) - xIncrement;
 
         }
 
