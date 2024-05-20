@@ -25,6 +25,8 @@ import Globals from './Globals.js';
 import Utils from './Utils.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
+import DataGridColumn from './DataGridColumn.js';
+import DataGridTableHead from './DataGridTableHead.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -45,11 +47,14 @@ class DataGridTable {
     *
     * */
 
-    private dataTable: DataTable;
-    private tableElement: HTMLElement;
-    private theadElement: HTMLElement;
-    private tbodyElement: HTMLElement;
-    private rows: DataGridRow[] = [];
+    public dataTable: DataTable;
+    public tableElement: HTMLElement;
+    public theadElement: HTMLElement;
+    public tbodyElement: HTMLElement;
+    public head?: DataGridTableHead;
+    public columns: DataGridColumn[] = [];
+    public rows: DataGridRow[] = [];
+    public resizeObserver: ResizeObserver;
 
 
     /* *
@@ -68,6 +73,9 @@ class DataGridTable {
         this.tbodyElement = makeHTMLElement('tbody', {}, this.tableElement);
 
         this.render();
+
+        this.resizeObserver = new ResizeObserver(this.resize);
+        this.resizeObserver.observe(renderTo);
     }
 
     /* *
@@ -77,40 +85,47 @@ class DataGridTable {
     * */
 
     public render(): void {
-        this.renderHead();
-        this.renderBody();
-    }
-
-    public renderHead(): void {
         const columnNames = this.dataTable.getColumnNames();
-
-        this.theadElement.innerHTML = '';
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            makeHTMLElement('th', {
-                innerText: columnNames[i]
-            }, this.theadElement);
-        }
-    }
-
-    public renderBody(): void {
         const rowCount = this.dataTable.getRowCount();
 
-        this.tbodyElement.innerHTML = '';
-        this.refreshViewportHeight();
+        // Load columns
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            this.columns.push(
+                new DataGridColumn(this, columnNames[i])
+            );
+        }
 
+        // Load & render head
+        this.head = new DataGridTableHead(this.theadElement, this.columns);
+        this.head.render();
+
+        // Load & render rows
         for (let i = 0; i < rowCount; ++i) {
             const row = new DataGridRow(this.dataTable, i);
-            this.rows.push(row);
+            row.render(this);
+        }
 
-            if (row.htmlElement) {
-                this.tbodyElement.appendChild(row.htmlElement);
-            }
+        this.reflow();
+    }
+
+    public reflow(): void {
+        // Set the width of the visible part of the scrollable area.
+        this.tbodyElement.style.height =
+            `calc(100% - ${this.theadElement.offsetHeight}px)`;
+
+        // Reflow the head
+        if (this.head) {
+            this.head.reflow();
+        }
+
+        // Reflow rows
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            this.rows[i].reflow();
         }
     }
 
-    public refreshViewportHeight(): void {
-        this.tbodyElement.style.height = `calc(100% - ${this.theadElement.offsetHeight}px)`;
+    private resize(entries: ResizeObserverEntry[]): void {
+
     }
 
     /* *

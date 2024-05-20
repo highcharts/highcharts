@@ -90,9 +90,12 @@
 }
 
 .highcharts-datagrid-table thead {
-    background-color: var(--highcharts-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-60);
     display: block;
-    min-height: 41px;
+}
+
+.highcharts-datagrid-table thead th {
+    border-right: 1px solid #0f0;
 }
 
 .highcharts-datagrid-table tbody {

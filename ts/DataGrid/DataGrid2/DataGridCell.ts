@@ -21,6 +21,9 @@
  *
  * */
 
+import DataGridColumn from './DataGridColumn';
+import DataGridRow from './DataGridRow';
+
 
 /* *
  *
@@ -39,6 +42,10 @@ class DataGridCell {
     *
     * */
 
+    public htmlElement: HTMLElement;
+    public column: DataGridColumn;
+    public row: DataGridRow;
+
 
     /* *
     *
@@ -46,12 +53,37 @@ class DataGridCell {
     *
     * */
 
+    constructor(column: DataGridColumn, row: DataGridRow) {
+        this.htmlElement = document.createElement('td');
+
+        this.column = column;
+        this.column.registerCell(this);
+
+        this.row = row;
+        this.row.registerCell(this);
+    }
+
 
     /* *
     *
     *  Methods
     *
     * */
+
+    public render(): void {
+        if (!this.column.data) {
+            return;
+        }
+
+        const cellData = this.column.data[this.row.index];
+
+        this.htmlElement.innerText = '' + cellData;
+        this.row.htmlElement.appendChild(this.htmlElement);
+    }
+
+    public reflow(): void {
+        this.htmlElement.style.width = this.column.getWidth() + 'px';
+    }
 
 
     /* *

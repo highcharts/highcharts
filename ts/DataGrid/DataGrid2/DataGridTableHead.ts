@@ -21,6 +21,12 @@
  *
  * */
 
+import Utils from './Utils.js';
+import DataGridColumn from './DataGridColumn.js';
+import DataGridTable from './DataGridTable.js';
+
+const { makeHTMLElement } = Utils;
+
 
 /* *
  *
@@ -39,6 +45,9 @@ class DataGridTableHead {
     *
     * */
 
+    public columns: DataGridColumn[] = [];
+    public container: HTMLElement;
+
 
     /* *
     *
@@ -46,16 +55,45 @@ class DataGridTableHead {
     *
     * */
 
-    constructor() {
-        const test = 1;
-        test;
+    constructor(container: HTMLElement, columns: DataGridColumn[]) {
+        this.container = container;
+        this.columns = columns;
     }
+
 
     /* *
     *
     *  Methods
     *
     * */
+
+    public render(): void {
+        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+            const element = makeHTMLElement('th', {
+                innerText: this.columns[i].name
+            }, this.container);
+
+            this.columns[i].headElement = element;
+        }
+    }
+
+    public reflow(): void {
+        let width = 0;
+
+        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+            const column = this.columns[i];
+            if (!column.headElement) {
+                continue;
+            }
+
+            const columnWidth = column.getWidth();
+            column.headElement.style.width = columnWidth + 'px';
+            width += columnWidth;
+        }
+
+        this.container.style.paddingRight =
+            this.container.offsetWidth - width + 'px';
+    }
 
 
     /* *

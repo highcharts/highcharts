@@ -32,6 +32,7 @@ namespace DataGridUtils {
         className?: string;
         id?: string;
         innerText?: string;
+        style?: Partial<CSSStyleDeclaration>;
     }
 
 
@@ -65,7 +66,11 @@ namespace DataGridUtils {
                 const value = params[key];
 
                 if (value !== void 0) {
-                    element[key] = value;
+                    if (key === 'style') {
+                        Object.assign(element.style, value);
+                    } else {
+                        element[key] = value as string;
+                    }
                 }
             }
         }
