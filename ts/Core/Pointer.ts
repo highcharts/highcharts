@@ -1300,6 +1300,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
+            chart.mouseDownX = e.chartX;
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {

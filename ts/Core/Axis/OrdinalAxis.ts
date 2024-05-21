@@ -169,6 +169,7 @@ namespace OrdinalAxis {
             );
 
             addEvent(ChartClass, 'pan', onChartPan);
+            addEvent(ChartClass, 'touchpan', onChartPan);
 
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
