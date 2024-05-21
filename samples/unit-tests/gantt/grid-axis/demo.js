@@ -248,7 +248,7 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
     assert.close(
         axes[1].x + axes[1].width,
         axes[0].x,
-        0.1,
+        0.6,
         'Left outer linear axis horizontal placement'
     );
 
@@ -462,7 +462,7 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
     axes[3] = chart.xAxis[3].axisGroup.getBBox();
 
-    error = 0.00001;
+    error = 0.6; // Room for crisping
 
     assert.close(
         axes[1].y,
@@ -586,7 +586,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
     axes[3] = chart.xAxis[3].axisGroup.getBBox();
 
-    error = 0.00001;
+    error = 0.500001; // Room for crisping
 
     assert.close(
         axes[1].y,
@@ -700,22 +700,19 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
                 leftTick = ticks[0].getBBox(),
                 rightTick = ticks.slice(-1)[0].getBBox();
 
-            assert.equal(
+            assert.close(
                 leftTick.x,
                 axisGroupBox.x,
-                type +
-                    ' chart, ' +
-                    axis.coll +
-                    ', leftmost tick is placed correctly'
+                0.51,
+                `Chart type = ${type}, axis type = ${axis.coll}, leftmost tick
+                    should be placed at the start of the axis`
             );
 
             assert.equal(
                 type === 'bar' ? rightTick.x + rightTick.width : rightTick.x,
                 axisGroupBox.x + axisGroupBox.width,
-                type +
-                    ' chart, ' +
-                    axis.coll +
-                    ', rightmost tick is placed correctly'
+                `Chart type = ${type}, axis type = ${axis.coll}, rightmost tick
+                    should be placed at the end of the axis`
             );
         }
     });
@@ -1591,9 +1588,10 @@ QUnit.test('Reversed axis', function (assert) {
 
     // TODO: extend test to check all tick labels
     // #6754
-    assert.strictEqual(
+    assert.close(
         +tickLabel.element.getAttribute('x'),
         center,
+        1.1,
         'Last tick label is centered in its grid'
     );
 });
