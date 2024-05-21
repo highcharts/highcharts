@@ -194,13 +194,11 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         reversed: false
     });
 
-    /* Fails after crisp refactor, but it's not a clear bug
     result = checkLabelsVisibility(chart, 'hide');
     assert.ok(
         result,
         'All data labels should be hidden when chart is inverted (#12370).'
     );
-    */
 
     result = checkLabelsVisibility(chart, 'show');
     assert.ok(
