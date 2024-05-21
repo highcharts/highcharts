@@ -33,7 +33,7 @@ const productBundles = [
 function jsDocESMDTS() {
 
     const fs = require('fs');
-    const fsLib = require('./lib/fs');
+    const fsLib = require('../libs/fs');
     const dtsFiles = fsLib
         .getFilePaths('code', true)
         .filter(file => (

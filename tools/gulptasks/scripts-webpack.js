@@ -21,9 +21,9 @@ const path = require('node:path');
 async function scriptsWebpack() {
 
     const argv = require('yargs').argv;
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     logLib.message('Packing code...');
 

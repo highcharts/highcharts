@@ -369,11 +369,12 @@ class TreegraphSeries extends TreemapSeries {
     public translateLink(link: TreegraphLink): void {
         const fromNode = link.fromNode,
             toNode = link.toNode,
-            linkWidth = this.options.link.lineWidth,
-            factor = pick(this.options.link.curveFactor, 0.5),
+            linkWidth = this.options.link?.lineWidth || 0,
+            factor = pick(this.options.link?.curveFactor, 0.5),
             type = pick(
-                link.options.link && link.options.link.type,
-                this.options.link.type
+                link.options.link?.type,
+                this.options.link?.type,
+                'default'
             );
 
         if (fromNode.shapeArgs && toNode.shapeArgs) {
@@ -422,7 +423,7 @@ class TreegraphSeries extends TreemapSeries {
                     offset,
                     inverted,
                     parentVisible: toNode.visible,
-                    radius: this.options.link.radius
+                    radius: this.options.link?.radius
                 })
             };
 

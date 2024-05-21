@@ -516,7 +516,7 @@ const createBoard = async () => {
                         minWidth: 3000,
                         scrollPositionX: date.getHours() / 23
                     },
-                    margin: [0, 0, 60, 0],
+                    margin: [0, 0, 0, 0],
                     events: {
                         render() {
                             colorize(this);
@@ -538,11 +538,24 @@ const createBoard = async () => {
                     text: null
                 },
                 xAxis: {
-                    tickInterval: 30,
+                    tickInterval: 45,
                     minPadding: 0,
                     maxPadding: 0,
                     labels: {
-                        format: '{value}°'
+                        format: `
+                        {#eq value 0}N{/eq}
+                        {#eq value 45}NE{/eq}
+                        {#eq value 90}E{/eq}
+                        {#eq value 135}SE{/eq}
+                        {#eq value 180}S{/eq}
+                        {#eq value 225}SW{/eq}
+                        {#eq value 270}W{/eq}
+                        {#eq value 315}NW{/eq}
+                        `,
+                        distance: -110,
+                        style: {
+                            color: '#cccccc'
+                        }
                     }
                 },
                 yAxis: {
@@ -563,7 +576,8 @@ const createBoard = async () => {
                             text: 'Nautical twilight',
                             align: 'center',
                             style: {
-                                color: '#cccccc'
+                                color: '#cccccc',
+                                fontWeight: 'bold'
                             }
                         },
                         color: Highcharts.color(skyColor).brighten(-0.6).get()
@@ -573,8 +587,11 @@ const createBoard = async () => {
                         label: {
                             text: 'Civil twilight',
                             align: 'center',
+                            verticalAlign: 'bottom',
+                            y: -10,
                             style: {
-                                color: '#cccccc'
+                                color: '#cccccc',
+                                fontWeight: 'bold'
                             }
                         },
                         color: Highcharts.color(skyColor).brighten(-0.3).get()

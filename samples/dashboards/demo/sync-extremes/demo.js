@@ -86,7 +86,9 @@ Dashboards.board('container', {
             },
             chart: {
                 type: 'bar',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {
@@ -148,7 +150,9 @@ Dashboards.board('container', {
             },
             chart: {
                 type: 'bar',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {
@@ -210,7 +214,9 @@ Dashboards.board('container', {
             },
             chart: {
                 type: 'bar',
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             plotOptions: {
                 series: {

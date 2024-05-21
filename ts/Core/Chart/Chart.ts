@@ -2427,6 +2427,7 @@ class Chart {
                 { labels } = options;
 
             if (
+                chart.hasCartesianSeries && // #20948
                 axis.horiz &&
                 axis.visible &&
                 labels.enabled &&
@@ -3651,8 +3652,8 @@ class Chart {
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
-                toLength = to[wh] || axis.len,
-                fromLength = from[wh] || axis.len,
+                toLength = pick(to[wh], axis.len),
+                fromLength = pick(from[wh], axis.len),
                 // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :
@@ -3675,16 +3676,22 @@ class Chart {
             }
 
             let newMin = axis.toValue(minPx, true) +
-                    minPointOffset * pointRangeDirection,
+                // Don't apply offset for selection (#20784)
+                    (selection ? 0 : minPointOffset * pointRangeDirection),
                 newMax =
                     axis.toValue(
                         minPx + len / scale, true
                     ) -
                     (
-                        (minPointOffset * pointRangeDirection) ||
-                        // Polar zoom tests failed when this was not commented:
-                        // (axis.isXAxis && axis.pointRangePadding) ||
-                        0
+                        selection ? // Don't apply offset for selection (#20784)
+                            0 :
+                            (
+                                (minPointOffset * pointRangeDirection) ||
+                                // Polar zoom tests failed when this was not
+                                // commented:
+                                // (axis.isXAxis && axis.pointRangePadding) ||
+                                0
+                            )
                     ),
                 allExtremes = axis.allExtremes;
 

@@ -50,7 +50,7 @@ function createApiDocumentation() {
         ).ApiDocs,
         argv = require('yargs').argv,
         fs = require('fs'),
-        log = require('./lib/log');
+        log = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 
@@ -82,7 +82,7 @@ function createTreeJson(
     globs = SOURCE_GLOBS
 ) {
     const jsdoc = require('gulp-jsdoc3');
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 

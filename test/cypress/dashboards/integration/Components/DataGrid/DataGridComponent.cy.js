@@ -93,7 +93,7 @@ describe('layout resize on window changes', () => {
             points[lastPointIndex].update(2000);
             // datagrid component
             try {
-                board.mountedComponents[1].component.connector.table.emit({
+                board.mountedComponents[1].component.connectorHandlers[0].connector.table.emit({
                     type: 'afterSetCell'
                 });
             }

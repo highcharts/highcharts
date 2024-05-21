@@ -70,6 +70,7 @@ const {
     objectEach,
     pick,
     pInt,
+    pushUnique,
     replaceNested,
     syncTimeout,
     uniqueKey
@@ -156,8 +157,8 @@ class SVGElement implements SVGElementLike {
     public added?: boolean;
     // @todo public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
-    // @todo public alignOptions?: AlignObject;
-    public alignTo?: string;
+    public alignOptions?: AlignObject;
+    public alignTo?: BBoxObject|string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
     // @todo public d?: number;
@@ -394,7 +395,7 @@ class SVGElement implements SVGElementLike {
      * @param {boolean} [alignByTranslate]
      *        Align element by translation.
      *
-     * @param {string|Highcharts.BBoxObject} [box]
+     * @param {string|Highcharts.BBoxObject} [alignTo]
      *        The box to align to, needs a width and height. When the box is a
      *        string, it refers to an object in the Renderer. For example, when
      *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
@@ -409,51 +410,57 @@ class SVGElement implements SVGElementLike {
     public align(
         alignOptions?: AlignObject,
         alignByTranslate?: boolean,
-        box?: (string|BBoxObject),
+        alignTo?: (string|BBoxObject),
         redraw: boolean = true
     ): this {
-        const attribs = {} as SVGAttributes,
+        const attribs: SVGAttributes = {},
             renderer = this.renderer,
-            alignedObjects: Array<SVGElement> = renderer.alignedObjects as any;
+            alignedObjects = renderer.alignedObjects,
+            initialAlignment = Boolean(alignOptions);
 
-        let x,
-            y,
-            alignTo: (string|undefined),
-            alignFactor,
-            vAlignFactor;
+        let x: number,
+            y: number,
+            alignFactor: number|undefined,
+            vAlignFactor: number|undefined;
 
         // First call on instanciate
         if (alignOptions) {
             this.alignOptions = alignOptions;
             this.alignByTranslate = alignByTranslate;
-            if (!box || isString(box)) {
-                this.alignTo = alignTo = box || 'renderer';
-                // Prevent duplicates, like legendGroup after resize
-                erase(alignedObjects, this);
-                alignedObjects.push(this);
-                box = void 0; // Reassign it below
-            }
+            this.alignTo = alignTo;
 
         // When called on resize, no arguments are supplied
         } else {
-            alignOptions = this.alignOptions;
+            alignOptions = this.alignOptions || {};
             alignByTranslate = this.alignByTranslate;
             alignTo = this.alignTo;
         }
 
-        box = pick(
-            box,
-            (renderer as any)[alignTo as any],
-            renderer as any
+        const alignToKey = !alignTo || isString(alignTo) ?
+            alignTo || 'renderer' :
+            void 0;
+        // When aligned to a key, automatically re-align on redraws
+        if (alignToKey) {
+            // Prevent duplicates, like legendGroup after resize
+            if (initialAlignment) {
+                pushUnique(alignedObjects, this);
+            }
+            alignTo = void 0; // Do not use the box
+        }
+
+        const alignToBox: BBoxObject = pick(
+            alignTo,
+            (renderer as any)[alignToKey as any],
+            renderer
         );
 
         // Assign variables
-        const align = (alignOptions as any).align,
-            vAlign = (alignOptions as any).verticalAlign;
+        const align = alignOptions.align,
+            vAlign = alignOptions.verticalAlign;
         // Default: left align
-        x = ((box as any).x || 0) + ((alignOptions as any).x || 0);
+        x = (alignToBox.x || 0) + (alignOptions.x || 0);
         // Default: top align
-        y = ((box as any).y || 0) + ((alignOptions as any).y || 0);
+        y = (alignToBox.y || 0) + (alignOptions.y || 0);
 
         // Align
         if (align === 'right') {
@@ -462,7 +469,7 @@ class SVGElement implements SVGElementLike {
             alignFactor = 2;
         }
         if (alignFactor) {
-            x += ((box as any).width - ((alignOptions as any).width || 0)) /
+            x += ((alignToBox.width || 0) - (alignOptions.width || 0)) /
                 alignFactor;
         }
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
@@ -475,7 +482,7 @@ class SVGElement implements SVGElementLike {
             vAlignFactor = 2;
         }
         if (vAlignFactor) {
-            y += ((box as any).height - ((alignOptions as any).height || 0)) /
+            y += ((alignToBox.height || 0) - (alignOptions.height || 0)) /
                 vAlignFactor;
         }
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
@@ -486,7 +493,6 @@ class SVGElement implements SVGElementLike {
             this.placed = true;
         }
         this.alignAttr = attribs;
-
         return this;
     }
 
@@ -765,7 +771,7 @@ class SVGElement implements SVGElementLike {
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|this) {
-        const element = this.element,
+        const { element } = this,
             symbolCustomAttribs = SVGElement.symbolCustomAttribs;
 
         let key,
@@ -1281,7 +1287,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // Remove from alignObjects
-        if (wrapper.alignTo) {
+        if (wrapper.alignOptions) {
             erase(renderer.alignedObjects, wrapper);
         }
 
@@ -1806,6 +1812,21 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
+     * Re-align an aligned text or label after setting the text.
+     *
+     * @private
+     * @function Highcharts.SVGElement#reAlign
+     *
+     */
+    protected reAlign(): void {
+        if (this.alignOptions?.width && this.alignOptions.align !== 'left') {
+            this.alignOptions.width = this.getBBox().width;
+            this.placed = false; // Block animation
+            this.align();
+        }
+    }
+
+    /**
      * Remove a class name from the element.
      *
      * @function Highcharts.SVGElement#removeClass
@@ -2181,8 +2202,10 @@ class SVGElement implements SVGElementLike {
 
             this.textStr = value;
             if (this.added) {
-                this.renderer.buildText(this as any);
+                this.renderer.buildText(this);
             }
+
+            this.reAlign();
         }
     }
 

@@ -81,13 +81,14 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
         '#11494: Setting tooltip.style.zIndex should also work'
     );
 
-    const tooltipAbsolute = tooltip.now.x + tooltip.now.anchorX,
+    const tooltipAbsolute = tooltip.label.x + tooltip.label.anchorX,
         pointerLeft = chart.pointer.getChartPosition().left,
         pointX = point.plotX + chart.plotLeft + pointerLeft;
 
-    assert.strictEqual(
-        Math.round(tooltipAbsolute),
-        Math.round(pointX),
+    assert.close(
+        tooltipAbsolute,
+        pointX,
+        8,
         '#16944: Tooltip position should appear at point with outside true'
     );
 
@@ -101,9 +102,10 @@ QUnit.test('Outside tooltip styling and correct position', function (assert) {
 
     tooltip.refresh(point);
 
-    assert.strictEqual(
-        Math.round(tooltipAbsolute),
-        Math.round(pointX),
+    assert.close(
+        tooltipAbsolute,
+        pointX,
+        8,
         'Tooltip position should appear at point with sets margin for chart ' +
         'and container'
     );

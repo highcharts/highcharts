@@ -36,6 +36,9 @@ Alternatively, the color of the dot can be changed via:
 *   **fillColor** `series.marker.fillColor` - color for the upper dot.
 *   **lowColor** `series.lowColor` - color for the lower dot.
 
+The upper color of the dot and connector can changed via:
+*   **color** `series.color`
+
 The connector line can be customized by:
 *   **connectorColor** `series.connectorColor` - color for the connector line.
 *   **connectorWidth** `series.connectorWidth` - width of the connector line.

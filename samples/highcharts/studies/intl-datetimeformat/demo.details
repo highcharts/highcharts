@@ -1,0 +1,6 @@
+---
+ name: Intl.DateTimeFormat study
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

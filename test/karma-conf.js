@@ -4,7 +4,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
-const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getLatestCommitShaSync } = require('../tools/libs/git');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -74,7 +74,7 @@ function getHTML(path) {
  *         JavaScript extended with the sample data.
  */
 function resolveJSON(js) {
-    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \n]*'([^']+)/g;
+    const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
     let match;
     const codeblocks = [];
 

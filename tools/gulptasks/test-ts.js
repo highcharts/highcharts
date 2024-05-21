@@ -54,7 +54,7 @@ async function testTS() {
     const argv = yargs(process.argv).argv;
     const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
     const gulpLib = require('./lib/gulp');
-    const log = require('./lib/log');
+    const log = require('../libs/log');
     const { shouldRun, saveRun } = require('./lib/test');
 
     if (argv.help || argv.helpme) {

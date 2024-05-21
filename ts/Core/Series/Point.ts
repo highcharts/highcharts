@@ -1583,7 +1583,10 @@ class Point {
                 ));
             }
 
-        } else if (halo && halo.point && halo.point.haloPath) {
+        } else if (
+            halo?.point?.haloPath &&
+            !halo.point.destroyed
+        ) {
             // Animate back to 0 on the current halo point (#6055)
             halo.animate(
                 { d: halo.point.haloPath(0) },

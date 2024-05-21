@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
-        zoomType: 'xy'
+        zooming: {
+            type: 'xy'
+        }
     },
     title: {
         HTML: true,
