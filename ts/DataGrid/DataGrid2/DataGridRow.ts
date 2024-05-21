@@ -48,7 +48,7 @@ class DataGridRow {
     public static defaultHeight = 41;
 
     public cells: DataGridCell[] = [];
-    public htmlElement: HTMLElement;
+    public htmlElement: HTMLTableRowElement;
     public dataTable: DataTable;
     public index: number;
     public destroyed: boolean = false;
@@ -68,9 +68,13 @@ class DataGridRow {
         this.htmlElement = makeHTMLElement('tr', {
             style: {
                 height: DataGridRow.defaultHeight + 'px',
-                top: index * DataGridRow.defaultHeight + 'px'
+                transform: `translateY(${index * DataGridRow.defaultHeight}px)`
             }
         });
+
+        this.htmlElement.setAttribute('row-index', index);
+        this.htmlElement.setAttribute('aria-rowindex', index);
+        this.htmlElement.setAttribute('row-id', index);
     }
 
 

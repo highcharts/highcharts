@@ -63,12 +63,12 @@ class DataGrid {
 
         this.dataTable = new DataTable({
             columns: {
-                a: Array.from({ length: 10e5 }, (_, i): string => `A${i}`),
-                b: Array.from({ length: 10e5 }, (_, i): string => `B${i}`),
-                c: Array.from({ length: 10e5 }, (_, i): string => `C${i}`),
-                d: Array.from({ length: 10e5 }, (_, i): string => `D${i}`),
-                e: Array.from({ length: 10e5 }, (_, i): string => `E${i}`),
-                f: Array.from({ length: 10e5 }, (_, i): string => `F${i}`)
+                a: Array.from({ length: 10e4 }, (_, i): string => `A${i}`),
+                b: Array.from({ length: 10e4 }, (_, i): string => `B${i}`),
+                c: Array.from({ length: 10e4 }, (_, i): string => `C${i}`),
+                d: Array.from({ length: 10e4 }, (_, i): string => `D${i}`),
+                e: Array.from({ length: 10e4 }, (_, i): string => `E${i}`),
+                f: Array.from({ length: 10e4 }, (_, i): string => `F${i}`)
             }
         });
 

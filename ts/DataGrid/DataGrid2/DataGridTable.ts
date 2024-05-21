@@ -129,6 +129,13 @@ class DataGridTable {
         }
     }
 
+    /**
+     * Renders rows in the specified range. Removes rows that are out of the
+     * range except the last row.
+     *
+     * @param from first row index
+     * @param to last row index (excluding the last row)
+     */
     private renderRows(from: number, to: number): void {
         const rows = this.rows;
 
@@ -151,10 +158,38 @@ class DataGridTable {
         const startOffset = rows[0].index;
         const endOffset = rows[rows.length - 2].index;
 
+        from = Math.max(from, 0);
         to = Math.min(to, rows[rows.length - 1].index);
 
         const start = Math.min(startOffset, from);
         const end = Math.max(endOffset, to);
+
+        // Swap all rows if the range is outside the current range
+        if (to < startOffset || from > endOffset) {
+            const alwaysLastRow = rows.pop();
+
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                rows[i].destroy();
+            }
+            rows.length = 0;
+
+            for (let i = from; i <= to; ++i) {
+                const newRow = new DataGridRow(this.dataTable, i);
+                newRow.render(this);
+                this.tbodyElement.insertBefore(
+                    newRow.htmlElement,
+                    this.tbodyElement.lastChild
+                );
+
+                rows.push(newRow);
+            }
+
+            if (alwaysLastRow) {
+                rows.push(alwaysLastRow);
+            }
+
+            return;
+        }
 
         // Add rows at the beginning
         for (let i = startOffset - 1; i >= start; --i) {
@@ -202,11 +237,12 @@ class DataGridTable {
     }
 
     private onScroll(): void {
-        const rowHeight = DataGridRow.defaultHeight;
-        const body = this.tbodyElement;
-        const rowsPerPage = Math.ceil(body.offsetHeight / rowHeight);
-        const rowCursor = Math.floor(body.scrollTop / rowHeight);
+        const target = this.tbodyElement;
 
+        // Vertical virtual scrolling
+        const rowHeight = DataGridRow.defaultHeight;
+        const rowsPerPage = Math.ceil(target.offsetHeight / rowHeight);
+        const rowCursor = Math.floor(target.scrollTop / rowHeight);
         this.renderRows(
             rowCursor - 5,
             rowCursor + rowsPerPage + 5
