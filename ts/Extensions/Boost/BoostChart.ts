@@ -27,6 +27,7 @@ import type {
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
@@ -47,6 +48,7 @@ const {
 interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
+    lineWidthFilter?: SVGElement;
 }
 
 export declare class BoostChartComposition extends Chart {

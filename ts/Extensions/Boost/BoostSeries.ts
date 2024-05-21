@@ -33,7 +33,6 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
 import BoostChart from './BoostChart.js';
@@ -71,12 +70,6 @@ import WGLRenderer from './WGLRenderer.js';
  *  Declarations
  *
  * */
-
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
-        lineWidthFilter: SVGElement | null
-    }
-}
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike extends BoostTargetObject {
@@ -205,16 +198,10 @@ function boostEnabled(chart: Chart): boolean {
  * @private
  */
 function compose<T extends typeof Series>(
-    ChartClass: typeof Chart,
     SeriesClass: T,
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
-
-    if (!ChartClass.prototype.lineWidthFilter) {
-        ChartClass.prototype.lineWidthFilter = null;
-    }
-
     if (pushUnique(composed, 'Boost.Series')) {
         const plotOptions = getOptions().plotOptions as SeriesTypePlotOptions,
             seriesProto = SeriesClass.prototype as BoostSeriesComposition;
@@ -1190,10 +1177,11 @@ function seriesRenderCanvas(this: Series): void {
     if (
         this.is('line') &&
         lineWidth > 1 &&
-        !chart.lineWidthFilter &&
-        this.boost?.target
+        chart.boost &&
+        this.boost?.target &&
+        !chart.boost.lineWidthFilter
     ) {
-        chart.lineWidthFilter = chart.renderer.definition({
+        chart.boost.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
             children: [
                 {

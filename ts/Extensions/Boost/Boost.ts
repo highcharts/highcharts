@@ -91,7 +91,7 @@ function compose(
     // WebGL support is alright, and we're good to go.
 
     BoostChart.compose(ChartClass, wglMode);
-    BoostSeries.compose(ChartClass, SeriesClass, seriesTypes, wglMode);
+    BoostSeries.compose(SeriesClass, seriesTypes, wglMode);
 
     // Handle zooming by touch/pinch or mouse wheel. Assume that boosted charts
     // are too slow for a live preview while dragging. Instead, just scale the
