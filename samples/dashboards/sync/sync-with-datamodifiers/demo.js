@@ -7,29 +7,28 @@ Dashboards.board('container', {
                 firstRowAsNames: false,
                 columnNames: ['Col-0', 'Col-1', 'Col-2'],
                 data: [
-                    ['Row-0', 1349, 10],
-                    ['Row-1', 1960, 8],
-                    ['Row-2', 2024, 6],
-                    ['Row-3', 1918, 4],
-                    ['Row-4', 1792, 2]
+                    ['Row-0', 1349, 5],
+                    ['Row-1', 1960, 4],
+                    ['Row-2', 2024, 3],
+                    ['Row-3', 1918, 2],
+                    ['Row-4', 1792, 1]
                 ],
+                /*
                 dataModifier: {
                     type: 'Range',
-                    // additive: true,
+                    additive: true,
                     ranges: [{
                         column: 'Col-1',
                         minValue: 0,
                         maxValue: 2010
                     }]
                 }
-                /*
+                */
                 dataModifier: {
                     type: 'Sort',
                     direction: 'asc',
-                    orderByColumn: 'Iron',
-                    orderInColumn: 'Test'
+                    orderByColumn: 'Col-1'
                 }
-                */
             }
         }]
     },
