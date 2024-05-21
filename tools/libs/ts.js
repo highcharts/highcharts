@@ -171,8 +171,8 @@ function autoCompleteInfo(
 
                     if (_modulePath === _modulePathToComplete) {
                         mergeCodeInfos(
-                            sourceInfoToComplete.code,
-                            _codeInfo.members
+                            sourceInfoToComplete,
+                            _codeInfo
                         );
                     }
                 }
@@ -248,25 +248,24 @@ function autoExtendInfo(
 
         if (
             _resolvedInfo.kind !== 'Class' &&
+            _resolvedInfo.kind !== 'Namespace' &&
             _resolvedInfo.kind !== 'Interface'
         ) {
             continue;
         }
 
-        for (let _property of _resolvedInfo.members) {
+        for (const _member of _resolvedInfo.members) {
 
             // Check if already defined in target
-            if (extractInfos(infoToExtend.members, _property.name)) {
+            if (extractInfos(infoToExtend.members, _member.name)) {
                 continue;
             }
 
-            _property = newCodeInfo(_property);
-            _property.meta.origin = {
-                parent: _resolvedInfo.name,
-                path: _resolvedPath
-            };
+            const _newMember = newCodeInfo(_member);
 
-            infoToExtend.members.push(_property);
+            _newMember.meta.merged = true;
+
+            infoToExtend.members.push(_newMember);
 
         }
 
@@ -385,6 +384,49 @@ function debug(
 
 
 /**
+ * Extracts the entity name from the given code information.
+ *
+ * @param {CodeInfo|SourceInfo} codeInfo
+ * Code information to extract from.
+ *
+ * @return {string|undefined}
+ * Extracted name or `undefined`.
+ */
+function extractInfoName(
+    codeInfo
+) {
+    /** @type {string} */
+    let _name;
+
+    switch (codeInfo.kind) {
+        case 'Class':
+        case 'Function':
+        case 'Interface':
+        case 'Module':
+        case 'Namespace':
+        case 'Property':
+        case 'TypeAlias':
+        case 'Variable':
+            return codeInfo.name;
+        case 'Doclet':
+            _name = extractTagText(codeInfo, 'optionparent');
+            if (typeof _name === 'string') {
+                return _name;
+            }
+            return (
+                extractTagText(codeInfo, 'apioption') ||
+                extractTagText(codeInfo, 'name') ||
+                extractTagText(codeInfo, 'function')
+            );
+        case 'Source':
+            return codeInfo.path;
+        default:
+            return void 0;
+    }
+}
+
+
+/**
  * Extracts information from an array of CodeInfo types.
  *
  * @param {Array<CodeInfo>} arr
@@ -400,6 +442,11 @@ function extractInfos(
     arr,
     name
 ) {
+
+    if (typeof name !== 'string') {
+        return void 0;
+    }
+
     /** @type {Array<CodeInfo>} */
     const extractions = [];
 
@@ -1204,6 +1251,7 @@ function getInfoMeta(
         begin: node.getStart(),
         end: node.getEnd(),
         overhead: node.getLeadingTriviaWidth(),
+        source: node.getSourceFile().fileName,
         syntax: node.kind
     };
 }
@@ -1781,78 +1829,142 @@ function isNativeType(
 /**
  * Merge code information.
  *
- * @param {Array<CodeInfo>} targetInfos
- * Code information to merge into.
+ * @template {CodeInfo|SourceInfo} T
  *
- * @param {Array<CodeInfo>} codeInfos
- * Code information to merge.
+ * @param {T} targetInfo
+ * Target information to merge into.
  *
- * @return {Array<CodeInfo>}
+ * @param {CodeInfo|SourceInfo} sourceInfo
+ * Source information to merge.
+ *
+ * @return {T}
  * Target infos as reference.
  */
 function mergeCodeInfos(
-    targetInfos,
-    codeInfos
+    targetInfo,
+    sourceInfo
 ) {
-    /** @type {boolean} */
-    let _merged;
+    /** @type {Array<CodeInfo>} */
+    let _targetMembers;
+    /** @type {Array<CodeInfo>} */
+    let _sourceMembers;
 
-    for (const _codeInfo of codeInfos) {
-        switch (_codeInfo.kind) {
-            case 'Class':
-            case 'Interface':
-            case 'Namespace':
-                _merged = false;
-                for (const _targetInfo of targetInfos) {
-                    if (
-                        _targetInfo.kind === _codeInfo.kind &&
-                        _targetInfo.name === _codeInfo.name
-                    ) {
-                        if (_targetInfo.doclet && _codeInfo.doclet) {
-                            mergeDocletInfos(
-                                _targetInfo.doclet,
-                                _codeInfo.doclet
-                            );
-                        }
-                        mergeCodeInfos(
-                            _targetInfo.members,
-                            _codeInfo.members
-                        );
-                        _merged = true;
-                    }
-                }
-                if (!_merged) {
-                    targetInfos.push(newCodeInfo(_codeInfo));
-                }
-                break;
-            case 'Function':
-            case 'Property':
-            case 'Variable':
-                _merged = false;
-                for (const _targetInfo of targetInfos) {
-                    if (
-                        _targetInfo.kind === _codeInfo.kind &&
-                        _targetInfo.name === _codeInfo.name
-                    ) {
-                        if (_targetInfo.doclet && _codeInfo.doclet) {
-                            mergeDocletInfos(
-                                _targetInfo.doclet,
-                                _codeInfo.doclet
-                            );
-                        }
-                        _merged = true;
-                    }
-                }
-                if (!_merged) {
-                    targetInfos.push(newCodeInfo(_codeInfo));
-                }
-                break;
-            default:
-                break;
-        }
+    switch (targetInfo.kind) {
+        default:
+            return targetInfo;
+        case 'Class':
+        case 'Interface':
+        case 'Namespace':
+        case 'Object':
+            _targetMembers = targetInfo.members;
+            break;
+        case 'Source':
+            _targetMembers = targetInfo.code;
+            break;
     }
 
-    return targetInfos;
+    switch (sourceInfo.kind) {
+        default:
+            return targetInfo;
+        case 'Class':
+        case 'Interface':
+        case 'Module':
+        case 'Namespace':
+        case 'Object':
+            _sourceMembers = sourceInfo.members;
+            break;
+        case 'Source':
+            _sourceMembers = sourceInfo.code;
+            break;
+    }
+
+    if (
+        targetInfo.kind !== sourceInfo.kind &&
+        (
+            targetInfo.kind !== 'Source' ||
+            sourceInfo.kind !== 'Module'
+        )
+    ) {
+        return targetInfo;
+    }
+
+    /** @type {boolean} */
+    let _merged;
+    /** @type {CodeInfo} */
+    let _mergedMember;
+    /** @type {string} */
+    let _name;
+
+    for (const _sourceMember of _sourceMembers) {
+
+        _merged = false;
+        _name = extractInfoName(_sourceMember);
+
+        for (
+            const _targetMember
+            of (extractInfos(_targetMembers, _name) || [])
+        ) {
+            if (_targetMember.kind === _sourceMember.kind) {
+                switch (_sourceMember.kind) {
+                    default:
+                        continue;
+                    case 'Class':
+                    case 'Interface':
+                    case 'Namespace':
+                    case 'Object':
+                        mergeCodeInfos(_targetMember, _sourceMember);
+                        break;
+                    case 'Doclet':
+                        mergeDocletInfos(
+                            _targetMember,
+                            _sourceMember
+                        );
+                        break;
+                    case 'Function':
+                        _mergedMember = newCodeInfo(_sourceMember);
+                        _mergedMember.meta.merged = true;
+                        _targetMembers.push(_mergedMember);
+                        break;
+                    case 'Property':
+                        if (_sourceMember.doclet) {
+                            if (_targetMember.doclet) {
+                                mergeDocletInfos(
+                                    _targetMember.doclet,
+                                    _sourceMember.doclet
+                                );
+                            } else {
+                                _mergedMember =
+                                    newDocletInfo(_sourceMember.doclet);
+                                _mergedMember.meta.merged = true;
+                                _targetMember.doclet = _mergedMember;
+                            }
+                        }
+                        if (
+                            _targetMember.value &&
+                            typeof _targetMember.value === 'object' &&
+                            _sourceMember.value &&
+                            typeof _sourceMember.value === 'object'
+                        ) {
+                            mergeCodeInfos(
+                                _targetMember,
+                                _sourceMember
+                            );
+                        }
+                        break;
+                }
+                _merged = true;
+            }
+        }
+
+        if (!_merged) {
+            _mergedMember = newCodeInfo(_sourceMember);
+            _mergedMember.meta.merged = true;
+            _targetMembers.push(_mergedMember);
+        }
+
+    }
+
+    return targetInfo;
 }
 
 
@@ -1893,6 +2005,8 @@ function mergeDocletInfos(
         }
     }
 
+    targetDoclet.meta.merged = true;
+
     return targetDoclet;
 }
 
@@ -1900,7 +2014,7 @@ function mergeDocletInfos(
 /**
  * Creates a new CodeInfo object from a template.
  *
- * @template {CodeInfo} T
+ * @template {CodeInfo|SourceInfo} T
  *
  * @param {T} [template]
  * Template to create from.
@@ -1911,10 +2025,16 @@ function mergeDocletInfos(
 function newCodeInfo(
     template
 ) {
+    // if (template) {
+    //     console.log('CLONE', template.kind, extractInfoName(template));
+    // }
     return (
         typeof template === 'object' ?
             /* eslint-disable-next-line no-undef */
-            structuredClone(template) :
+            structuredClone({
+                ...template,
+                node: void 0 // Avoid clone of native TSNode.
+            }) :
             {
                 kind: 'Object'
             }
@@ -2461,6 +2581,7 @@ module.exports = {
     changeSourceCode,
     changeSourceNode,
     debug,
+    extractInfoName,
     extractInfos,
     extractTagObjects,
     extractTagText,
@@ -2505,7 +2626,7 @@ module.exports = {
  * @property {Array<VariableInfo>} [generics]
  * @property {Array<string>} [implements]
  * @property {'Class'} kind
- * @property {Array<Member>} members
+ * @property {Array<MemberInfo>} members
  * @property {Meta} meta
  * @property {string} name
  * @property {TS.ClassDeclaration} [node]
@@ -2605,7 +2726,7 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {Array<VariableInfo>} [generics]
  * @property {'Interface'} kind
- * @property {Array<Member>} members
+ * @property {Array<MemberInfo>} members
  * @property {Meta} meta
  * @property {TS.InterfaceDeclaration} [node]
  * @property {string} name
@@ -2621,15 +2742,10 @@ module.exports = {
  * @typedef Meta
  * @property {number} begin
  * @property {number} end
+ * @property {boolean} [merged]
  * @property {number} overhead
- * @property {MetaOrigin} [origin]
- */
-
-
-/**
- * @typedef MetaOrigin
- * @property {string} parent
- * @property {string} path
+ * @property {string} source
+ * @property {number} syntax
  */
 
 
@@ -2650,7 +2766,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
  * @property {'Object'} kind
- * @property {Array<Member>} members
+ * @property {Array<MemberInfo>} members
  * @property {Meta} meta
  * @property {TS.Node} [node]
  * @property {string} [type]
