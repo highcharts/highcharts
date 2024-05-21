@@ -27,8 +27,8 @@ const gulp = require('gulp');
  */
 function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     const fs = require('fs'),
-        fsLib = require('./lib/fs'),
-        logLib = require('./lib/log'),
+        fsLib = require('../libs/fs'),
+        logLib = require('../libs/log'),
         path = require('path'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;

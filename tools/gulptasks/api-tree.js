@@ -30,9 +30,9 @@ const INFO = `
 npx gulp api-tree [OPTIONS]
 
 OPTIONS:
-  --info            This information.
-  --debug           Includes source code of the related node.
-  --sources [path]  Only loads source files from the given path. (recursive)
+  --info           This information.
+  --debug          Includes source code of the related node.
+  --source [path]  Only loads source files from the given path. (recursive)
 `;
 
 
@@ -51,10 +51,10 @@ OPTIONS:
  * @return {Promise}
  * Promise to keep.
  */
-async function apiTree() {
-    const FSLib = require('./lib/fs');
-    const TSLib = require('../lib/ts');
-    const LogLib = require('./lib/log');
+async function apiTree(_, source) {
+    const FSLib = require('../libs/fs');
+    const TSLib = require('../libs/ts');
+    const LogLib = require('../libs/log');
     const argv = require('yargs').argv;
 
     if (argv.info) {
@@ -62,16 +62,16 @@ async function apiTree() {
         return;
     }
 
-    const sources = argv.sources;
+    source = argv.source || source;
 
     let singleFile = false;
     let moduleSource = Path.join('ts', 'Core');
     let optionSource = 'ts';
 
-    if (sources) {
-        singleFile = FSLib.isFile(sources);
-        moduleSource = sources;
-        optionSource = sources;
+    if (source) {
+        singleFile = FSLib.isFile(source);
+        moduleSource = source;
+        optionSource = source;
     }
 
     const moduleFiles = (

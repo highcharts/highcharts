@@ -1,7 +1,7 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
-import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
+import { starting, finished, success, warn } from '../../tools/libs/log.js';
 
 import { Worker } from 'node:worker_threads';
 import { argv } from 'node:process';

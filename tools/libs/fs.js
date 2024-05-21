@@ -4,9 +4,9 @@
 
 /* eslint-disable no-shadow, no-use-before-define */
 
-const Crypto = require('crypto');
-const FS = require('fs');
-const Path = require('path');
+const Crypto = require('node:crypto');
+const FS = require('node:fs');
+const Path = require('node:path');
 
 /* *
  *

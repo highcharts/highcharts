@@ -776,7 +776,7 @@ class MapView {
      *
      * @function Highcharts.MapView#recommendMapView
      *
-     * @since @next
+     * @since 11.4.0
      *
      * @param {Highcharts.Chart} chart
      *        Chart object

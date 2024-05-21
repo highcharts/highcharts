@@ -3076,7 +3076,11 @@ class Axis {
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * (labelOptions.padding || 0))
+                Math.round(slotWidth - (
+                    horiz ?
+                        2 * (labelOptions.padding || 0) :
+                        labelOptions.distance || 0 // #21172
+                ))
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),

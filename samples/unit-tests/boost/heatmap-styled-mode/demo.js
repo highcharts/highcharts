@@ -86,3 +86,105 @@ QUnit.test('Boosted heatmap with styled mode (#6650)', function (assert) {
         ]
     });
 });
+
+QUnit.test('Boost in styled mode', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                styledMode: true
+            },
+            series: [{
+                marker: {
+                    radius: 30,
+                    enabled: true,
+                    symbol: 'square'
+                },
+                data: [1, 2, 1, 2],
+                boostThreshold: 1
+            }, {
+                marker: {
+                    radius: 60,
+                    enabled: true,
+                    symbol: 'square'
+                },
+                data: [9, 8, 9, 8],
+                boostThreshold: 1
+            }]
+        }),
+        gl = chart.boost.wgl.gl,
+        firstColor = window.getComputedStyle(
+            chart.series[0].legendItem.symbol.element, null
+        ).getPropertyValue('fill'),
+        secondColor = window.getComputedStyle(
+            chart.series[1].legendItem.symbol.element, null
+        ).getPropertyValue('fill'),
+        width = gl.canvas.width,
+        height = gl.canvas.height,
+        colors = [
+            [-1, -1, -1],
+            [-1, -1, -1]
+        ],
+        pxBuffer = new Uint8Array(width * height * 4);
+
+    // Read pixel data
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pxBuffer);
+
+    // Loop from the start - canvas bottom - find 1st series color
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let pxIndex = (y * width + x) * 4; // RGBA format
+            if (
+                pxBuffer[pxIndex + 3] !== 0
+            ) {
+                // Found a non-zero pixel, but due to blending move a bit
+                pxIndex += (5 * width + 5) * 4;
+                colors[0] = [
+                    pxBuffer[pxIndex],
+                    pxBuffer[pxIndex + 1],
+                    pxBuffer[pxIndex + 2]
+                ];
+
+                // Quit the loops
+                x = width;
+                y = height;
+            }
+        }
+    }
+
+    // Loop from the end - canvas top - find 2nd series color
+    for (let y = height - 1; y >= 0; y--) {
+        for (let x = width - 1; x >= 0; x--) {
+            let pxIndex = (y * width + x) * 4; // RGBA format
+            if (
+                pxBuffer[pxIndex + 3] !== 0
+            ) {
+                // Found a non-zero pixel, but due to blending move a bit
+                pxIndex -= (5 * width + 5) * 4;
+                colors[1] = [
+                    pxBuffer[pxIndex],
+                    pxBuffer[pxIndex + 1],
+                    pxBuffer[pxIndex + 2]
+                ];
+
+                // Quit the loops
+                x = y = 0;
+            }
+        }
+    }
+
+    assert.ok(
+        colors[0][0] !== -1 && colors[1][0] !== -1,
+        'any colors should be found in the canvas'
+    );
+
+    assert.strictEqual(
+        `${colors[0][0]},${colors[0][1]},${colors[0][2]}`,
+        firstColor.split('rgb(')[1].split(')')[0].replace(/\s/g, ''),
+        '1st series should be colored correctly'
+    );
+
+    assert.strictEqual(
+        `${colors[1][0]},${colors[1][1]},${colors[1][2]}`,
+        secondColor.split('rgb(')[1].split(')')[0].replace(/\s/g, ''),
+        '2nd series should be colored correctly'
+    );
+});
