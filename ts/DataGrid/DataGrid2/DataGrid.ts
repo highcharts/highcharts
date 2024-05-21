@@ -63,24 +63,12 @@ class DataGrid {
 
         this.dataTable = new DataTable({
             columns: {
-                product: [
-                    'Apples', 'Pears', 'Plums', 'Bananas', 'Apples', 'Pears',
-                    'Plums', 'Bananas', 'Apples', 'Pears', 'Plums', 'Bananas'
-                ],
-                weight: [
-                    100, 40, 0.5, 200, 100, 40, 0.5, 200, 100, 40, 0.5, 200
-                ],
-                price: [
-                    1.5, 2.53, 5, 4.5, 1.5, 2.53, 5, 4.5, 1.5, 2.53, 5, 4.5
-                ],
-                metaData: [
-                    'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'
-                ],
-                icon: [
-                    'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
-                    'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
-                    'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL'
-                ]
+                a: Array.from({ length: 10e5 }, (_, i): string => `A${i}`),
+                b: Array.from({ length: 10e5 }, (_, i): string => `B${i}`),
+                c: Array.from({ length: 10e5 }, (_, i): string => `C${i}`),
+                d: Array.from({ length: 10e5 }, (_, i): string => `D${i}`),
+                e: Array.from({ length: 10e5 }, (_, i): string => `E${i}`),
+                f: Array.from({ length: 10e5 }, (_, i): string => `F${i}`)
             }
         });
 

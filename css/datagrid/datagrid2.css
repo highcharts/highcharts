@@ -81,12 +81,17 @@
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
+.highcharts-datagrid-table * {
+    box-sizing: border-box;
+}
+
 .highcharts-datagrid-table {
     height: 200px;
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     border-spacing: 0;
-    border: 1px solid #f00;
+    border: 1px solid #ff0000;
 }
 
 .highcharts-datagrid-table thead {
@@ -95,7 +100,7 @@
 }
 
 .highcharts-datagrid-table thead th {
-    border-right: 1px solid #0f0;
+    border-right: 1px solid #00ff00;
 }
 
 .highcharts-datagrid-table tbody {
@@ -105,11 +110,14 @@
 }
 
 .highcharts-datagrid-table tr {
-    border-bottom: 1px solid #00f;
+    border-bottom: 1px solid #0000ff;
     position: absolute;
+    overflow: hidden;
 }
 
 .highcharts-datagrid-table td {
     height: inherit;
-    border-right: 1px solid #0f0;
+    border-right: 1px solid #00ff00;
+    white-space: nowrap;
+    padding: 5px;
 }

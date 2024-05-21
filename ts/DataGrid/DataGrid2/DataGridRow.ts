@@ -90,8 +90,7 @@ class DataGridRow {
             cell.render();
         }
 
-        viewport.rows.push(this);
-        viewport.tbodyElement.appendChild(this.htmlElement);
+        this.reflow();
     }
 
     public reflow(): void {

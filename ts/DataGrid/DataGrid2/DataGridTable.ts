@@ -47,6 +47,7 @@ class DataGridTable {
     *
     * */
 
+    public container: HTMLElement;
     public dataTable: DataTable;
     public tableElement: HTMLElement;
     public theadElement: HTMLElement;
@@ -55,6 +56,7 @@ class DataGridTable {
     public columns: DataGridColumn[] = [];
     public rows: DataGridRow[] = [];
     public resizeObserver: ResizeObserver;
+    public rowCursor?: number;
 
 
     /* *
@@ -64,6 +66,7 @@ class DataGridTable {
     * */
 
     constructor(dataTable: DataTable, renderTo: HTMLElement) {
+        this.container = renderTo;
         this.dataTable = dataTable;
 
         this.tableElement = makeHTMLElement('table', {
@@ -72,10 +75,12 @@ class DataGridTable {
         this.theadElement = makeHTMLElement('thead', {}, this.tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, this.tableElement);
 
-        this.render();
+        this.init();
 
-        this.resizeObserver = new ResizeObserver(this.resize);
+        this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
         this.resizeObserver.observe(renderTo);
+
+        this.tbodyElement.addEventListener('scroll', this.onScroll.bind(this));
     }
 
     /* *
@@ -84,9 +89,8 @@ class DataGridTable {
     *
     * */
 
-    public render(): void {
+    private init(): void {
         const columnNames = this.dataTable.getColumnNames();
-        const rowCount = this.dataTable.getRowCount();
 
         // Load columns
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -100,11 +104,12 @@ class DataGridTable {
         this.head.render();
 
         // Load & render rows
-        for (let i = 0; i < rowCount; ++i) {
-            const row = new DataGridRow(this.dataTable, i);
-            row.render(this);
-        }
+        const rowsPerPage = Math.ceil(
+            this.container.offsetHeight / DataGridRow.defaultHeight
+        );
+        this.renderRows(0, rowsPerPage);
 
+        // Refresh element dimensions
         this.reflow();
     }
 
@@ -124,8 +129,88 @@ class DataGridTable {
         }
     }
 
-    private resize(entries: ResizeObserverEntry[]): void {
+    private renderRows(from: number, to: number): void {
+        const rows = this.rows;
 
+        if (!rows.length) {
+            const first = new DataGridRow(this.dataTable, 0);
+            const last = new DataGridRow(
+                this.dataTable,
+                this.dataTable.getRowCount() - 1
+            );
+
+            first.render(this);
+            rows.push(first);
+            this.tbodyElement.appendChild(first.htmlElement);
+
+            last.render(this);
+            rows.push(last);
+            this.tbodyElement.appendChild(last.htmlElement);
+        }
+
+        const startOffset = rows[0].index;
+        const endOffset = rows[rows.length - 2].index;
+
+        to = Math.min(to, rows[rows.length - 1].index);
+
+        const start = Math.min(startOffset, from);
+        const end = Math.max(endOffset, to);
+
+        // Add rows at the beginning
+        for (let i = startOffset - 1; i >= start; --i) {
+            const newRow = new DataGridRow(this.dataTable, i);
+            newRow.render(this);
+            this.tbodyElement.insertBefore(
+                newRow.htmlElement,
+                this.tbodyElement.firstChild
+            );
+            rows.unshift(newRow);
+        }
+
+        // Add rows at the end
+        for (let i = endOffset + 1; i <= end; ++i) {
+            const newRow = new DataGridRow(this.dataTable, i);
+            newRow.render(this);
+            this.tbodyElement.insertBefore(
+                newRow.htmlElement,
+                this.tbodyElement.lastChild
+            );
+            const alwaysLastRow = rows.pop();
+            rows.push(newRow);
+            if (alwaysLastRow) {
+                rows.push(alwaysLastRow);
+            }
+        }
+
+        // Delete first rows if there are too many
+        for (let i = 0; i < from - startOffset; i++) {
+            rows.shift()?.destroy();
+        }
+
+        // Delete last rows if there are too many
+        for (let i = endOffset - to - 1; i >= 0; i--) {
+            const alwaysLastRow = rows.pop();
+            rows.pop()?.destroy();
+            if (alwaysLastRow) {
+                rows.push(alwaysLastRow);
+            }
+        }
+    }
+
+    private onResize(): void {
+        this.reflow();
+    }
+
+    private onScroll(): void {
+        const rowHeight = DataGridRow.defaultHeight;
+        const body = this.tbodyElement;
+        const rowsPerPage = Math.ceil(body.offsetHeight / rowHeight);
+        const rowCursor = Math.floor(body.scrollTop / rowHeight);
+
+        this.renderRows(
+            rowCursor - 5,
+            rowCursor + rowsPerPage + 5
+        );
     }
 
     /* *
