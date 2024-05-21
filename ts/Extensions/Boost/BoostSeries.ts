@@ -1187,7 +1187,12 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (lineWidth > 1 && !chart.lineWidthFilter && this.boost?.target) {
+    if (
+        this.is('line') &&
+        lineWidth > 1 &&
+        !chart.lineWidthFilter &&
+        this.boost?.target
+    ) {
         chart.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
             children: [
