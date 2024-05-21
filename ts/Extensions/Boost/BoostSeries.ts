@@ -1020,6 +1020,8 @@ function scatterProcessData(
 function seriesRenderCanvas(this: Series): void {
     const options = this.options || {},
         chart = this.chart,
+        chartBoost = chart.boost,
+        seriesBoost = this.boost,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         xData = options.xData || this.processedXData,
@@ -1088,8 +1090,8 @@ function seriesRenderCanvas(this: Series): void {
         // If all series were boosting, but are not anymore
         // restore private markerGroup
         if (
-            chart.boost &&
-            this.markerGroup === chart.boost.markerGroup
+            chartBoost &&
+            this.markerGroup === chartBoost.markerGroup
         ) {
             this.markerGroup = void 0;
         }
@@ -1106,17 +1108,21 @@ function seriesRenderCanvas(this: Series): void {
         // and use common markerGroup
         if (
             this.markerGroup &&
-            this.markerGroup !== chart.boost.markerGroup
+            this.markerGroup !== chartBoost?.markerGroup
         ) {
             this.markerGroup.destroy();
         }
         // Use a single group for the markers
-        this.markerGroup = chart.boost.markerGroup;
+        this.markerGroup = chartBoost?.markerGroup;
 
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
-        if (this.boost && this.boost.target) {
-            this.renderTarget = this.boost.target = this.boost.target.destroy();
+        if (seriesBoost && seriesBoost.target) {
+            (
+                this.renderTarget =
+                seriesBoost.target =
+                seriesBoost.target.destroy()
+            );
         }
     }
 
@@ -1177,11 +1183,11 @@ function seriesRenderCanvas(this: Series): void {
     if (
         this.is('line') &&
         lineWidth > 1 &&
-        chart.boost &&
-        this.boost?.target &&
-        !chart.boost.lineWidthFilter
+        chartBoost &&
+        seriesBoost?.target &&
+        !chartBoost.lineWidthFilter
     ) {
-        chart.boost.lineWidthFilter = chart.renderer.definition({
+        chartBoost.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
             children: [
                 {
@@ -1192,12 +1198,10 @@ function seriesRenderCanvas(this: Series): void {
                     }
                 }
             ],
-            attributes: {
-                id: 'linewidth'
-            }
+            attributes: { id: 'linewidth' }
         });
 
-        this.boost.target.attr({
+        seriesBoost.target.attr({
             filter: 'url(#linewidth)'
         });
     }
