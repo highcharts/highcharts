@@ -479,7 +479,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      *            Percentage width and pixel height for color axis
      *
      * @type      {number|string}
-     * @since     @next
+     * @since     11.3.0
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.width
      */
@@ -495,7 +495,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      *            Percentage width and pixel height for color axis
      *
      * @type      {number|string}
-     * @since     @next
+     * @since     11.3.0
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.height
      */
