@@ -28,10 +28,12 @@ import type {
 } from './StockToolsOptions';
 
 import U from '../../Core/Utilities.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
 const {
     addEvent,
     createElement,
     css,
+    defined,
     fireEvent,
     getStyle,
     isArray,
@@ -81,17 +83,19 @@ class Toolbar {
         this.guiEnabled = options.enabled;
         this.visible = pick(options.visible, true);
         this.placed = pick(options.placed, false);
+        this.guiClassName = options.className;
+        this.toolbarClassName = options.toolbarClassName;
 
         // General events collection which should be removed upon
         // destroy/update:
         this.eventsToUnbind = [];
 
         if (this.guiEnabled) {
-            this.createHTML();
+            this.createContainer();
 
-            this.init();
+            this.createButtons();
 
-            this.showHideNavigatorion();
+            this.showHideNavigation();
         }
 
         fireEvent(this, 'afterInit');
@@ -120,6 +124,10 @@ class Toolbar {
     public toolbar!: HTMLDOMElement;
     public visible: boolean;
     public wrapper!: HTMLDOMElement;
+    public guiClassName?: string;
+    public toolbarClassName?: string;
+    public buttonList?: Array<string>;
+    public width = 0;
 
     /* *
      *
@@ -132,7 +140,7 @@ class Toolbar {
      * defined in `stockTools.gui`.
      * @private
      */
-    public init(): void {
+    public createButtons(): void {
         const lang = this.lang,
             guiOptions = this.options,
             toolbar = this.toolbar,
@@ -140,6 +148,8 @@ class Toolbar {
             defs: StockToolsGuiDefinitionsOptions =
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes;
+
+        this.buttonList = buttons;
 
         // Create buttons
         buttons.forEach((btnName: string): void => {
@@ -472,12 +482,13 @@ class Toolbar {
      * Create stockTools HTML main elements.
      *
      */
-    public createHTML(): void {
+    public createContainer(): void {
         const chart = this.chart,
             guiOptions = this.options,
             container = chart.container,
             navigation = chart.options.navigation,
-            bindingsClassName = navigation && navigation.bindingsClassName;
+            bindingsClassName = navigation && navigation.bindingsClassName,
+            self = this;
         let listWrapper,
             toolbar;
 
@@ -486,7 +497,27 @@ class Toolbar {
             className: 'highcharts-stocktools-wrapper ' +
                 guiOptions.className + ' ' + bindingsClassName
         });
+
         container.appendChild(wrapper);
+
+        this.showhideBtn = createElement('div', {
+            className: 'highcharts-toggle-toolbar highcharts-arrow-left'
+        }, void 0, wrapper);
+
+        // Toggle menu
+        this.eventsToUnbind.push(
+            addEvent(this.showhideBtn, 'click', (): void => {
+                chart.update({
+                    stockTools: {
+                        gui: {
+                            visible: !self.visible,
+                            placed: true
+                        }
+                    }
+                });
+            })
+        );
+
 
         // Mimic event behaviour of being outside chart.container
         [
@@ -526,7 +557,7 @@ class Toolbar {
      * Function called in redraw verifies if the navigation should be visible.
      * @private
      */
-    public showHideNavigatorion(): void {
+    public showHideNavigation(): void {
         // Arrows
         // 50px space for arrows
         if (
@@ -547,15 +578,11 @@ class Toolbar {
      * @private
      */
     public showHideToolbar(): void {
-        const chart = this.chart,
-            wrapper = this.wrapper,
+        const wrapper = this.wrapper,
             toolbar = this.listWrapper,
             submenu = this.submenu,
             // Show hide toolbar
-            showhideBtn = this.showhideBtn = createElement('div', {
-                className: 'highcharts-toggle-toolbar highcharts-arrow-left'
-            }, void 0, wrapper);
-
+            showhideBtn = this.showhideBtn;
         let visible = this.visible;
 
         showhideBtn.style.backgroundImage =
@@ -568,11 +595,11 @@ class Toolbar {
             }
             showhideBtn.style.left = '0px';
             visible = this.visible = false;
-            toolbar.classList.add('highcharts-hide');
-            showhideBtn.classList.toggle('highcharts-arrow-right');
+            showhideBtn.classList.add('highcharts-arrow-right');
             wrapper.style.height = showhideBtn.offsetHeight + 'px';
         } else {
             wrapper.style.height = '100%';
+            showhideBtn.classList.remove('highcharts-arrow-right');
             showhideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = (
                 wrapper.offsetWidth +
@@ -580,19 +607,6 @@ class Toolbar {
             ) + 'px';
         }
 
-        // Toggle menu
-        this.eventsToUnbind.push(
-            addEvent(showhideBtn, 'click', (): void => {
-                chart.update({
-                    stockTools: {
-                        gui: {
-                            visible: !visible,
-                            placed: true
-                        }
-                    }
-                });
-            })
-        );
     }
     /*
      * In main GUI button, replace icon and class with submenu button's
@@ -675,9 +689,8 @@ class Toolbar {
         redraw?: boolean
     ): void {
         merge(true, this.chart.options.stockTools, options);
-        this.destroy();
-        this.chart.setStockTools(options);
-
+        merge(true, this.options, options.gui);
+        this.visible = pick(this.options.visible && this.options.enabled, true);
         // If Stock Tools are updated, then bindings should be updated too:
         if (this.chart.navigationBindings) {
             this.chart.navigationBindings.update();
@@ -711,7 +724,63 @@ class Toolbar {
      * @private
      */
     public redraw(): void {
-        this.showHideNavigatorion();
+        if (this.options.enabled !== this.guiEnabled) {
+            if (this.options.enabled === false) {
+                this.destroy();
+                this.guiEnabled = false;
+                this.visible = false;
+            }
+
+            if (this.options.enabled === true) {
+                this.createContainer();
+                this.createButtons();
+            }
+
+            this.guiEnabled = this.options.enabled;
+        } else {
+            if (!this.guiEnabled) {
+                return;
+            }
+
+            if (this.options.className !== this.guiClassName) {
+                if (this.guiClassName) {
+                    this.wrapper.classList.remove(this.guiClassName);
+                }
+                if (this.options.className) {
+                    this.wrapper.classList.add(this.options.className);
+                }
+                this.guiClassName = this.options.className;
+            }
+
+            if (this.options.toolbarClassName !== this.toolbarClassName) {
+                if (this.toolbarClassName) {
+                    this.toolbar.classList.remove(this.toolbarClassName);
+                }
+                if (this.options.toolbarClassName) {
+                    this.toolbar.classList.add(this.options.toolbarClassName);
+                }
+                this.toolbarClassName = this.options.toolbarClassName;
+            }
+
+            if (
+                JSON.stringify(this.options.buttons) !==
+                JSON.stringify(this.buttonList)
+            ) {
+                this.toolbar.innerHTML = AST.emptyHTML;
+                this.createButtons();
+            }
+
+            if (this.options.enabled === false) {
+                this.destroy();
+            }
+
+            if (defined(this.options.visible)) {
+                this.visible = this.options.visible;
+            }
+
+            this.showHideNavigation();
+            this.showHideToolbar();
+        }
     }
 
     /**

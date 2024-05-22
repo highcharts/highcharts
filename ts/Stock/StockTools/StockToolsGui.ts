@@ -107,7 +107,6 @@ function compose(
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
         addEvent(ChartClass, 'destroy', onChartDestroy);
         addEvent(ChartClass, 'getMargins', onChartGetMargins, { order: 0 });
-        addEvent(ChartClass, 'redraw', onChartRedraw);
         addEvent(ChartClass, 'render', onChartRender);
 
         chartProto.setStockTools = chartSetStockTools;
@@ -144,20 +143,29 @@ function onChartAfterGetContainer(
 function onChartBeforeRedraw(
     this: Chart
 ): void {
-    if (this.stockTools) {
+    onChartRedraw.call(this);
+    if (this.stockTools && this.stockTools.guiEnabled) {
         const optionsChart = this.options.chart as ChartOptions;
-        const listWrapper = this.stockTools.listWrapper,
-            offsetWidth = listWrapper && (
-                (
-                    (listWrapper as any).startWidth +
-                    getStyle(listWrapper, 'padding-left') +
-                    getStyle(listWrapper, 'padding-right')
-                ) || listWrapper.offsetWidth
-            );
+        const listWrapper = this.stockTools.listWrapper;
+        if (this.stockTools.visible) {
+            this.stockTools.listWrapper.classList.remove('highcharts-hide');
+        } else {
+            this.stockTools.listWrapper.classList.add('highcharts-hide');
+        }
+        const offsetWidth = listWrapper && (
+
+            (
+                (listWrapper as any).startWidth +
+                getStyle(listWrapper, 'padding-left') +
+                getStyle(listWrapper, 'padding-right')
+            ) || listWrapper.offsetWidth
+        );
+
+        this.stockTools.width = offsetWidth;
 
         let dirty = false;
 
-        if (offsetWidth && offsetWidth < this.plotWidth) {
+        if (offsetWidth < this.plotWidth) {
             const nextX = pick(
                 optionsChart.spacingLeft,
                 optionsChart.spacing && optionsChart.spacing[3],
@@ -197,14 +205,8 @@ function onChartDestroy(
 function onChartGetMargins(
     this: Chart
 ): void {
-    const listWrapper = this.stockTools && this.stockTools.listWrapper,
-        offsetWidth = listWrapper && (
-            (
-                (listWrapper as any).startWidth +
-                getStyle(listWrapper, 'padding-left') +
-                getStyle(listWrapper, 'padding-right')
-            ) || listWrapper.offsetWidth
-        );
+    const offsetWidth = this.stockTools?.visible && this.stockTools.guiEnabled ?
+        this.stockTools.width : 0;
 
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
@@ -218,7 +220,7 @@ function onChartGetMargins(
 function onChartRedraw(
     this: Chart
 ): void {
-    if (this.stockTools && this.stockTools.guiEnabled) {
+    if (this.stockTools) {
         this.stockTools.redraw();
     }
 }
