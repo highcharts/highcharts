@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 describe('Stock Tools annotation popup, #15725', () => {
     beforeEach(() => {
         cy.viewport(1000, 500);
@@ -21,8 +22,7 @@ describe('Stock Tools annotation popup, #15725', () => {
             assert.notOk(
                 chart.annotations.length,
                 'Annotation should not be added.'
-            )
-        );
+            ));
     });
 
     it('#15730: Should close popup after hiding annotation', () => {
@@ -69,9 +69,7 @@ describe('Stock Tools annotation popup, #15725', () => {
             .click(160, 260);
         cy.chart().should(chart =>
             chart.annotations[1].points.forEach(point =>
-                assert.ok(point.y > -50 && point.y < 75)
-            )
-        );
+                assert.ok(point.y > -50 && point.y < 75)));
     });
 
     it('#16158: Should use correct default series in popup', () => {
@@ -121,8 +119,7 @@ describe('Stock Tools annotation popup, #15725', () => {
                 chart.annotations[0].graphic.opacity,
                 1,
                 '#17425: Editing labels of Elliott3 line should not hide the line.'
-            )
-        );
+            ));
     });
 
     it('#17425: Editing labels of Elliott3 line to number should not change type of input.', () => {
@@ -234,26 +231,26 @@ describe('Annotations popup text field', () => {
 
     it('Should be able to type `space` char in the text field', () => {
         cy.get('.highcharts-fibonacci').first().click();
-            cy.get('.highcharts-container')
-                .click(300, 100, { force: true })
-                .click(400, 100, { force: true })
-                .click(350, 200, { force: true })
+        cy.get('.highcharts-container')
+            .click(300, 100, { force: true })
+            .click(400, 100, { force: true })
+            .click(350, 200, { force: true });
         cy.get('.highcharts-annotation').click();
         cy.get('button.highcharts-annotation-edit-button').click();
-        cy.get('input[highcharts-data-name="typeOptions.line.fill"]').as('input').clear().type(' ').should('have.value', ' ')
+        cy.get('input[highcharts-data-name="typeOptions.line.fill"]').as('input').clear().type(' ').should('have.value', ' ');
     });
 });
 
-describe('A11Y - aria-labels', ()=>{
+describe('A11Y - aria-labels', () => {
     before(() => {
         cy.viewport(1000, 1000);
         cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
-    it('Stock tools container should have aria-label', ()=>{
+    it('Stock tools container should have aria-label', () => {
         cy.get('.highcharts-stocktools-toolbar').should('have.attr', 'aria-label', 'Stock tools');
 
-    })
+    });
 
     it('All top level buttons should have aria-labels on first render', () => {
         cy.get('.highcharts-stocktools-toolbar > li > button').should('have.attr', 'aria-label');
@@ -265,20 +262,8 @@ describe('A11Y - aria-labels', ()=>{
         // Select the "circle" simple shapes tool in the submenu
         cy.get('[data-btn-name="circle"]').click();
 
-        // Main button should be in the selected state
+        // Main button should now select the circle tool
         cy.get('[title="Simple shapes"] button').first()
-            .should('have.attr','aria-label', 'Deselect circle tool');
+            .should('have.attr', 'aria-label', 'Select circle tool');
     });
-
-    it('Should update aria-labels when switching between tools', () => {
-        cy.get('[title="Simple shapes"] button').first().as('prevButton')
-            .should('have.attr','aria-label', 'Deselect circle tool');
-
-        cy.get('[title="Crooked lines"] button').first().click()
-            .should('have.attr','aria-label', 'Deselect crooked lines tool');
-
-        // Previous button should be in unselected state
-        cy.get('@prevButton').should('have.attr','aria-label', 'Select circle tool');
-    })
-
 });

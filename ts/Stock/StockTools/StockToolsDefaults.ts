@@ -48,7 +48,7 @@ const lang: LangOptions = {
             'Selected {toolLabel} tool.' +
             '{#if submenuClosed} Opened submenus have been closed.{/if}',
         toolAriaLabel:
-            'Select {toolLabel} tool ',
+            'Select {toolLabel} tool',
         descriptions: {
             indicators: {
                 mainButton: 'Open indicators menu'
