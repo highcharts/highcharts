@@ -21,6 +21,8 @@
  *
  * */
 
+import type DataGridOptions from '../DataGridOptions';
+
 import DataTable from '../../Data/DataTable.js';
 import Utils from './Utils.js';
 import Globals from '../Globals.js';
@@ -58,20 +60,9 @@ class DataGrid {
     *
     * */
 
-    constructor(renderTo: string|HTMLElement) {
+    constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
         this.container = DataGrid.initContainer(renderTo);
-
-        this.dataTable = new DataTable({
-            columns: {
-                a: Array.from({ length: 10e4 }, (_, i): string => `A${i}`),
-                b: Array.from({ length: 10e4 }, (_, i): string => `B${i}`),
-                c: Array.from({ length: 10e4 }, (_, i): string => `C${i}`),
-                d: Array.from({ length: 10e4 }, (_, i): string => `D${i}`),
-                e: Array.from({ length: 10e4 }, (_, i): string => `E${i}`),
-                f: Array.from({ length: 10e4 }, (_, i): string => `F${i}`)
-            }
-        });
-
+        this.dataTable = options.dataTable ?? new DataTable();
         this.viewport = new DataGridTable(this.dataTable, this.container);
     }
 
