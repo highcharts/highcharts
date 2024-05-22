@@ -28,6 +28,9 @@ namespace DataGridUtils {
     *
     * */
 
+    /**
+     * Parameters for the makeHTMLElement utils function.
+     */
     export interface MakeHTMLElementParameters {
         className?: string;
         id?: string;

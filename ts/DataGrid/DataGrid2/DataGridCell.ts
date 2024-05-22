@@ -42,8 +42,19 @@ class DataGridCell {
     *
     * */
 
-    public htmlElement: HTMLElement;
+    /**
+     * The HTML element of the cell.
+     */
+    public htmlElement: HTMLTableCellElement;
+
+    /**
+     * The column of the cell.
+     */
     public column: DataGridColumn;
+
+    /**
+     * The row of the cell.
+     */
     public row: DataGridRow;
 
 
@@ -53,6 +64,12 @@ class DataGridCell {
     *
     * */
 
+    /**
+     * Constructs a cell in the data grid.
+     *
+     * @param column The column of the cell.
+     * @param row The row of the cell.
+     */
     constructor(column: DataGridColumn, row: DataGridRow) {
         this.htmlElement = document.createElement('td');
 
@@ -70,6 +87,9 @@ class DataGridCell {
     *
     * */
 
+    /**
+     * Renders the cell.
+     */
     public render(): void {
         if (!this.column.data) {
             return;
@@ -81,6 +101,9 @@ class DataGridCell {
         this.row.htmlElement.appendChild(this.htmlElement);
     }
 
+    /**
+     * Reflows the cell dimensions.
+     */
     public reflow(): void {
         this.htmlElement.style.width = this.column.getWidth() + 'px';
     }

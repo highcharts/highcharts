@@ -45,13 +45,40 @@ class DataGridRow {
     *
     * */
 
+    /**
+     * The default height of the row. To be changed in the future, has to be
+     * taken from the user options or preferably from the CSS.
+     */
     public static defaultHeight = 41;
 
+    /**
+     * The cells of the row.
+     */
     public cells: DataGridCell[] = [];
+
+    /**
+     * The HTML element of the row.
+     */
     public htmlElement: HTMLTableRowElement;
+
+    /**
+     * The data for the viewport.
+     */
     public dataTable: DataTable;
+
+    /**
+     * The index of the row in the data table.
+     */
     public index: number;
+
+    /**
+     * Whether the row is destroyed.
+     */
     public destroyed: boolean = false;
+
+    /**
+     * The viewport the row belongs to.
+     */
     public viewport?: DataGridTable;
 
 
@@ -61,6 +88,12 @@ class DataGridRow {
     *
     * */
 
+    /**
+     * Constructs a row in the data grid.
+     *
+     * @param dataTable The data for the viewport.
+     * @param index The index of the row in the data table.
+     */
     constructor(dataTable: DataTable, index: number) {
         this.dataTable = dataTable;
         this.index = index;
@@ -84,6 +117,12 @@ class DataGridRow {
     *
     * */
 
+    /**
+     * Renders the row's content. It does not attach the row element to the
+     * viewport nor pushes the rows to the viewport.rows array.
+     *
+     * @param viewport The viewport of the data grid.
+     */
     public render(viewport: DataGridTable): void {
         const columns = viewport.columns;
 
@@ -97,12 +136,18 @@ class DataGridRow {
         this.reflow();
     }
 
+    /**
+     * Reflows the row's content dimensions.
+     */
     public reflow(): void {
         for (let j = 0, jEnd = this.cells.length; j < jEnd; ++j) {
             this.cells[j].reflow();
         }
     }
 
+    /**
+     * Destroys the row.
+     */
     public destroy(): void {
         if (!this.htmlElement) {
             return;
@@ -112,6 +157,9 @@ class DataGridRow {
         this.destroyed = true;
     }
 
+    /**
+     * Registers a cell in the row.
+     */
     public registerCell(cell: DataGridCell): void {
         this.cells.push(cell);
     }

@@ -49,8 +49,19 @@ class DataGrid {
     *
     * */
 
+    /**
+     * The container of the data grid.
+     */
     public container: HTMLElement;
+
+    /**
+     * The data source of the data grid.
+     */
     public dataTable: DataTable;
+
+    /**
+     * The table (viewport) element of the data grid.
+     */
     public viewport: DataGridTable;
 
 
@@ -60,6 +71,12 @@ class DataGrid {
     *
     * */
 
+    /**
+     * Constructs a new data grid.
+     *
+     * @param renderTo The render target (container) of the data grid.
+     * @param options The options of the data grid.
+     */
     constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
         this.container = DataGrid.initContainer(renderTo);
         this.dataTable = options.dataTable ?? new DataTable();
@@ -79,6 +96,12 @@ class DataGrid {
     *
     * */
 
+    /**
+     * Initializes the container of the data grid.
+     *
+     * @param renderTo The render target (html element or id) of the data grid.
+     * @returns The container element of the data grid.
+     */
     private static initContainer(renderTo: string|HTMLElement): HTMLElement {
         if (typeof renderTo === 'string') {
             const existingContainer = win.document.getElementById(renderTo);

@@ -23,7 +23,6 @@
 
 import Utils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
-import DataGridTable from './DataGridTable.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -45,7 +44,14 @@ class DataGridTableHead {
     *
     * */
 
+    /**
+     * The visible columns of the table.
+     */
     public columns: DataGridColumn[] = [];
+
+    /**
+     * The container of the table head.
+     */
     public container: HTMLElement;
 
 
@@ -55,6 +61,12 @@ class DataGridTableHead {
     *
     * */
 
+    /**
+     * Constructs a new table head.
+     *
+     * @param container The container of the table head.
+     * @param columns The columns of the table.
+     */
     constructor(container: HTMLElement, columns: DataGridColumn[]) {
         this.container = container;
         this.columns = columns;
@@ -67,6 +79,9 @@ class DataGridTableHead {
     *
     * */
 
+    /**
+     * Renders the table head.
+     */
     public render(): void {
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const element = makeHTMLElement('th', {
@@ -77,6 +92,9 @@ class DataGridTableHead {
         }
     }
 
+    /**
+     * Reflows the table head's content dimensions.
+     */
     public reflow(): void {
         let width = 0;
 

@@ -47,16 +47,50 @@ class DataGridTable {
     *
     * */
 
+    /**
+     * The container of the data grid table (viewport).
+     */
     public container: HTMLElement;
+
+    /**
+     * The data source of the data grid.
+     */
     public dataTable: DataTable;
+
+    /**
+     * The HTML element of the table.
+     */
     public tableElement: HTMLElement;
+
+    /**
+     * The HTML element of the table head.
+     */
     public theadElement: HTMLElement;
+
+    /**
+     * The HTML element of the table body.
+     */
     public tbodyElement: HTMLElement;
+
+    /**
+     * The head of the table.
+     */
     public head?: DataGridTableHead;
+
+    /**
+     * The visible columns of the table.
+     */
     public columns: DataGridColumn[] = [];
+
+    /**
+     * The visible rows of the table.
+     */
     public rows: DataGridRow[] = [];
+
+    /**
+     * The resize observer for the table container.
+     */
     public resizeObserver: ResizeObserver;
-    public rowCursor?: number;
 
 
     /* *
@@ -65,6 +99,12 @@ class DataGridTable {
     *
     * */
 
+    /**
+     * Constructs a new data grid table.
+     *
+     * @param dataTable The data for the viewport.
+     * @param renderTo The render target (container) of the viewport.
+     */
     constructor(dataTable: DataTable, renderTo: HTMLElement) {
         this.container = renderTo;
         this.dataTable = dataTable;
@@ -89,6 +129,9 @@ class DataGridTable {
     *
     * */
 
+    /**
+     * Initializes the data grid table.
+     */
     private init(): void {
         const columnNames = this.dataTable.getColumnNames();
 
@@ -113,6 +156,9 @@ class DataGridTable {
         this.reflow();
     }
 
+    /**
+     * Reflows the table's content dimensions.
+     */
     public reflow(): void {
         // Set the width of the visible part of the scrollable area.
         this.tbodyElement.style.height =
@@ -232,10 +278,16 @@ class DataGridTable {
         }
     }
 
+    /**
+     * Handles the resize event.
+     */
     private onResize(): void {
         this.reflow();
     }
 
+    /**
+     * Handles the scroll event.
+     */
     private onScroll(): void {
         const target = this.tbodyElement;
 
