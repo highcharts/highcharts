@@ -13,7 +13,6 @@ Dashboards.board('container', {
                     ['Row-3', 1918, 2],
                     ['Row-4', 1792, 1]
                 ],
-                /*
                 dataModifier: {
                     type: 'Range',
                     additive: true,
@@ -23,12 +22,13 @@ Dashboards.board('container', {
                         maxValue: 2010
                     }]
                 }
-                */
+                /*
                 dataModifier: {
                     type: 'Sort',
                     direction: 'asc',
                     orderByColumn: 'Col-1'
                 }
+                */
             }
         }]
     },
