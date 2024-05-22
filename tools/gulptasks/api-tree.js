@@ -109,7 +109,7 @@ async function apiTree(_, source) {
         moduleTree[file] = TSLib.getSourceInfo(
             file,
             await FS.readFile(file, 'utf8'),
-            argv.debug
+            { includeNodes: argv.debug }
         );
     }
 
@@ -139,7 +139,7 @@ async function apiTree(_, source) {
         optionTree[file] = TSLib.getSourceInfo(
             file,
             await FS.readFile(file, 'utf8'),
-            argv.debug
+            { includeNodes: argv.debug }
         );
     }
 
