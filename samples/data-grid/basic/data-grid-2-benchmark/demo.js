@@ -13,17 +13,23 @@ const dataTable = new DataGrid.DataTable({
 });
 
 const startOldTime = new Date().getTime();
+var t0 = performance.now();
 // eslint-disable-next-line
 const grid = new DataGrid.DataGrid('datagrid-old', {
     dataTable: dataTable
 });
+var t1 = performance.now();
 const endOldTime = new Date().getTime();
-oldDatagridTimer.innerHTML = endOldTime - startOldTime;
+oldDatagridTimer.innerHTML =
+    'Time: ' + (endOldTime - startOldTime) + ' Perf: ' + (t1 - t0);
 
 // NEW
 const startNewTime = new Date().getTime();
+var t2 = performance.now();
 const newgrid = new DataGrid.DataGrid2('container', {
     dataTable: dataTable
 });
+var t3 = performance.now();
 const endNewTime = new Date().getTime();
-newDatagridTimer.innerHTML = endNewTime - startNewTime;
+newDatagridTimer.innerHTML =
+    'Time: ' + (endNewTime - startNewTime) + ' Perf: ' + (t3 - t2);
