@@ -45,7 +45,8 @@ const lang: LangOptions = {
         toolChanged:
             'Changed {toolType} tool to {toolLabel}',
         toolSelected:
-            'Selected {toolLabel} tool',
+            'Selected {toolLabel} tool.' +
+            '{#if submenuClosed} Opened submenus have been closed.{/if}',
         toolAriaLabel:
             'Select {toolLabel} tool ',
         descriptions: {

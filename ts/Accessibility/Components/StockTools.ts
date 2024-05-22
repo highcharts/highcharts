@@ -227,43 +227,58 @@ class StockToolsComponent extends AccessibilityComponent {
         return this.keyboardNavigationHandler.response.noHandler;
     }
 
-    private closeSubmenu(submenu: HTMLElement | null | undefined): void {
+    private closeSubmenu(
+        submenu: HTMLElement | null | undefined,
+        announce = false
+    ): void {
         if (submenu && submenu.dataset.open !== 'false') {
             submenu.dataset.open = 'false';
             submenu.style.display = 'none';
 
-            this.announcer.announce(
-                this.chart.langFormat(
-                    'stockTools.submenuToggle',
-                    { open: false }
-                )
-            );
+            if (announce) {
+                this.announcer.announce(
+                    this.chart.langFormat(
+                        'stockTools.submenuToggle',
+                        { open: false }
+                    )
+                );
+            }
+
             this.setButtons();
         }
     }
 
-    private closeOpenSubmenus(): void {
+    private closeOpenSubmenus(): boolean {
         const submenus = this.chart.stockTools
             ?.toolbar.querySelectorAll<HTMLElement>(
             '.highcharts-submenu-wrapper[data-open="true"]'
         );
 
-        submenus?.forEach((sub): void => this.closeSubmenu(sub));
+
+        if (submenus?.length) {
+            submenus?.forEach((sub): void => this.closeSubmenu(sub));
+
+            return true;
+        }
+
+        return false;
+
     }
 
     private announceTool(
-        buttonElement: HTMLElement
+        buttonElement: HTMLElement,
+        submenuClosed: boolean = false
     ): void {
         const toolLabel = buttonElement.dataset.label;
-
         if (toolLabel) {
             const submenu = buttonElement
                 .closest('.highcharts-submenu-wrapper');
 
             // If we are in a submenu, announce change of tool
             if (submenu) {
-                const toolType = submenu.parentElement?.querySelector('button')
-                    ?.dataset.btnName;
+                const toolType =
+                        submenu.parentElement?.querySelector('button')
+                            ?.dataset.btnName;
 
                 this.announcer.announce(
                     this.chart.langFormat(
@@ -278,9 +293,13 @@ class StockToolsComponent extends AccessibilityComponent {
             this.announcer.announce(
                 this.chart.langFormat(
                     'stockTools.toolSelected',
-                    { toolLabel }
+                    {
+                        toolLabel,
+                        submenuClosed
+                    }
                 )
             );
+
         }
     }
 
@@ -290,6 +309,7 @@ class StockToolsComponent extends AccessibilityComponent {
         const component = this;
         if (!component.focusInPopup) {
             const button = component.buttons[component.focusedButtonIndex];
+
             const submenu = button.parentElement
                 ?.querySelector<HTMLElement>(
                 '.highcharts-submenu-wrapper'
@@ -298,7 +318,7 @@ class StockToolsComponent extends AccessibilityComponent {
             if (button.classList.contains('highcharts-submenu-item-arrow')) {
                 if (submenu) {
                     if (submenu.dataset.open === 'true') {
-                        this.closeSubmenu(submenu);
+                        this.closeSubmenu(submenu, true);
                         // Add the class to the list item to trigger
                         // event listener
                         // logic in StockToolbar.ts
@@ -385,8 +405,17 @@ class StockToolsComponent extends AccessibilityComponent {
                     return component.keyboardNavigationHandler.response.success;
                 }
 
-                this.closeOpenSubmenus();
-                return component.keyboardNavigationHandler.response.noHandler;
+                if (component.chart.navigationBindings) {
+                    fireEvent(
+                        component.chart.navigationBindings,
+                        'selectButton',
+                        {
+                            button: button.parentElement
+                        }
+                    );
+                }
+
+                return component.keyboardNavigationHandler.response.success;
             }
         }
 
@@ -451,9 +480,14 @@ class StockToolsComponent extends AccessibilityComponent {
                                     .querySelector('button');
 
                                 if (button) {
+                                    const didCloseSubmenus =
+                                        this.closeOpenSubmenus();
+
                                     this.announceTool(
-                                        button
+                                        button,
+                                        didCloseSubmenus
                                     );
+
                                 }
                             }
                         )
