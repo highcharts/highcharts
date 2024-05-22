@@ -21,7 +21,7 @@ const grid = new DataGrid.DataGrid('datagrid-old', {
 var t1 = performance.now();
 const endOldTime = new Date().getTime();
 oldDatagridTimer.innerHTML =
-    'Time: ' + (endOldTime - startOldTime) + ' Perf: ' + (t1 - t0);
+    'Time: ' + (endOldTime - startOldTime) + ' Perf: ' + (t1 - t0).toFixed(2);
 
 // NEW
 const startNewTime = new Date().getTime();
@@ -32,4 +32,4 @@ const newgrid = new DataGrid.DataGrid2('container', {
 var t3 = performance.now();
 const endNewTime = new Date().getTime();
 newDatagridTimer.innerHTML =
-    'Time: ' + (endNewTime - startNewTime) + ' Perf: ' + (t3 - t2);
+    'Time: ' + (endNewTime - startNewTime) + ' Perf: ' + (t3 - t2).toFixed(2);

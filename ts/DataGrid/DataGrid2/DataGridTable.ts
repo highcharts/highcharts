@@ -205,7 +205,7 @@ class DataGridTable {
         const endOffset = rows[rows.length - 2].index;
 
         from = Math.max(from, 0);
-        to = Math.min(to, rows[rows.length - 1].index);
+        to = Math.min(to, rows[rows.length - 1].index - 1);
 
         const start = Math.min(startOffset, from);
         const end = Math.max(endOffset, to);
