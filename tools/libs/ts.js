@@ -74,7 +74,7 @@ const SOURCE_CACHE = {};
 const SOURCE_EXTENSION = /(?:\.d)?\.(?:jsx?|tsx?)$/gsu;
 
 
-const TYPE_SPLIT = /[\W\.]+/gsu;
+const TYPE_SPLIT = /[^\w\.]+/gsu;
 
 
 /* *
@@ -954,23 +954,30 @@ function getDocletsBetween(
             startNode.getFullStart() :
             startNode.getEnd()
     );
+    const sourceFile = startNode.getSourceFile();
+    const snippets = Array.from(
+        sourceFile
+            .getFullText()
+            .substring(start, end)
+            .matchAll(DOCLET)
+    );
+
+    // Restore original position range in snap
+    let lastIndex = 0;
+    let snap = ''.padStart(start, '\n');
+
+    for (const snippet of snippets) {
+        snap += snippet[0].padStart(snippet.index - lastIndex, '\n');
+        lastIndex = snippet.index;
+    }
 
     /** @type {ReturnType<TS.getJSDocCommentsAndTags>} */
     let parts;
 
     TS.forEachChild(
         TS.createSourceFile(
-            'doclets.ts',
-            Array
-                .from(
-                    startNode
-                        .getSourceFile()
-                        .getFullText()
-                        .substring(start, end)
-                        .matchAll(DOCLET)
-                )
-                .map(match => match[0] + '\n\'\';\n')
-                .join(''),
+            sourceFile.fileName,
+            snap + '\n\'\';\n',
             TS.ScriptTarget.Latest,
             true
         ),
@@ -2246,7 +2253,7 @@ function resolveType(
     searchType,
     includeNodes
 ) {
-    /** @type {Record<string,SourceInfo>} */
+    /** @type {Record<string,boolean>} */
     const _stack = {};
 
     /**
@@ -2303,13 +2310,10 @@ function resolveType(
                         return void 0; // Break circular references
                     }
 
-                    const _resolvedSource = getSourceInfo(
-                        _resolvedPath,
-                        FS.readFileSync(_resolvedPath, 'utf8'),
-                        includeNodes
-                    );
+                    _stack[_resolvedPath] = true;
 
-                    _stack[_resolvedPath] = _resolvedSource;
+                    const _resolvedSource =
+                        getSourceInfo(_resolvedPath, void 0, includeNodes);
 
                     for (const _codeInfo of _resolvedSource.code) {
                         const _resolvedInfo = resolve(_codeInfo, type);
