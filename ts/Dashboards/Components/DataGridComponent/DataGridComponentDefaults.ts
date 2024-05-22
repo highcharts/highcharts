@@ -53,8 +53,6 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                 .closest('.highcharts-datagrid-row');
             const cell = inputElement.closest('.highcharts-datagrid-cell');
 
-            const converter = new DataConverter();
-
             if (
                 parentRow &&
                 parentRow instanceof HTMLElement &&
@@ -71,8 +69,11 @@ const DataGridComponentDefaults: Globals.DeepPartial<Options> = {
                     const table = connector.table;
 
                     if (table) {
+                        const converter = new DataConverter();
                         let rowIndex;
-                        if (table.getModifier()) {
+                        const modifier = table.getModifier();
+
+                        if (modifier && modifier.options.type === 'Range') {
                             // If the table uses a modifier that may alter
                             // the order of rows it is not safe to assume that
                             // the DataGrid and DataTable indexes align.
