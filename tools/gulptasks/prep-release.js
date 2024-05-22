@@ -81,12 +81,18 @@ function prepareRelease() {
         buildProperties.date = new Date().toISOString().split('T')[0];
         fs.writeFileSync('build-properties.json', JSON.stringify(buildProperties, null, 2));
 
-        // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
+        // replace occurences of @ since next in docs with @ since x.y.z, and the same for @ deprecated,
+        // first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
-        ChildProcess.execSync(`grep -Rl --exclude=*.bak --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+next" . | xargs ${isGNU ? '-r' : ''} sed -i'.bak' -e 's/@since *next/@since ${nextVersion}/'`);
+        ChildProcess.execSync(
+            'grep -Rl --exclude=*.bak --exclude-dir=node_modules --exclude-dir=code -e "@since\\s\\+next" -e "@deprecated\\s\\+next" . | ' +
+            `xargs ${isGNU ? '-r' : ''} ` +
+            `sed -i'.bak' -e 's/@since *next/@since ${nextVersion}/; s/@deprecated *next/@deprecated ${nextVersion}/'`
+        );
 
-        LogLib.success('Updated version in package.json, bower.json, build-properties.json and replaced @ since next' +
-                        ' in the docs. Please review changes and commit & push when ready.');
+        LogLib.success('Updated version in package.json, bower.json, build-properties.json' +
+                        ' and replaced next in @ since and @ deprecated in the docs.' +
+                        ' Please review changes and commit & push when ready.');
         resolve();
     });
 }

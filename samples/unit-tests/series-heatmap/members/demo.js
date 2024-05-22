@@ -208,10 +208,10 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
             .pointClass.prototype.setState;
 
     setState.call(point, '');
-    assert.strictEqual(
-        point.graphic.zIndex,
-        0,
-        'When state:normal zIndex is 0'
+    assert.notEqual(
+        point.series.stateMarkerGraphic.element.getAttribute('href'),
+        `${chart.renderer.url}#${point.graphic.element.id}`,
+        'State is normal, state marker graphic should not refer to the point'
     );
     assert.strictEqual(
         point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
@@ -221,7 +221,11 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
     );
 
     setState.call(point, 'hover');
-    assert.strictEqual(point.graphic.zIndex, 1, 'When state:hover zIndex is 1');
+    assert.strictEqual(
+        point.series.stateMarkerGraphic.attr('href'),
+        `${chart.renderer.url}#${point.graphic.element.id}`,
+        'State is hover, state marker graphic should refer to the point'
+    );
     assert.strictEqual(
         point.graphic.d.split(' ')[1] - point.graphic.getBBox().x,
         point.series.options.borderRadius,
@@ -230,10 +234,10 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
     );
 
     setState.call(point, 'select');
-    assert.strictEqual(
-        point.graphic.zIndex,
-        0,
-        'When state:select zIndex is 0'
+    assert.notEqual(
+        point.series.stateMarkerGraphic.element.getAttribute('href'),
+        `${chart.renderer.url}#${point.graphic.element.id}`,
+        'State is select, state marker graphic should not refer to the point'
     );
 
     setState.call(point, '');

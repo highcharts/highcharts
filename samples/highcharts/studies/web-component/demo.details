@@ -2,6 +2,7 @@
  name: Web component study
  authors:
    - Torstein Hønsi
+ requiresManualTesting: true
  js_wrap: b
  applyCSP: false
 ...
