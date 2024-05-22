@@ -2,27 +2,21 @@
 
 const path = require('path');
 const projectPath = path.resolve(__dirname, '..', '..');
-const ResolveTypeScriptPlugin = require("resolve-typescript-plugin").default;
 
 module.exports = {
-    devtool: false,
-    entry: path.resolve(projectPath, 'ts', 'masters.off', 'dashboards.src.ts'),
+    entry: path.resolve(projectPath, 'ts', 'masters-dashboards', 'dashboards.src.ts'),
     mode: 'development',
+    resolve: {
+        extensions: ['.ts', '.js']
+    },
     module: {
         rules: [
             {
-                test: /\.[jt]s$/,
+                test: /\.ts$/,
                 use: 'ts-loader',
-                exclude: /node_modules/,
-            },
-        ],
-    },
-    resolve: {
-        plugins: [
-            new ResolveTypeScriptPlugin({
-                includeNodeModules: false,
-            })
-        ],
+                exclude: /node_modules/
+            }
+        ]
     },
     output: {
         chunkFormat: 'module',
@@ -31,7 +25,7 @@ module.exports = {
         uniqueName: 'dashboards',
         library: {
             name: 'Dashboards',
-            type: 'umd',
+            type: 'umd'
         }
-    },
+    }
 };
