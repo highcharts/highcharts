@@ -301,6 +301,15 @@ class DataGridTable {
         );
     }
 
+    /**
+     * Scrolls the table to the specified row.
+     *
+     * @param index The index of the row to scroll to.
+     */
+    public scrollToRow(index: number): void {
+        this.tbodyElement.scrollTop = index * DataGridRow.defaultHeight;
+    }
+
     /* *
     *
     *  Static Methods

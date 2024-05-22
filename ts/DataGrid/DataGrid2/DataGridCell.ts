@@ -116,13 +116,13 @@ class DataGridCell {
     }
 
     private onMouseEnter(): void {
-        this.row.setHovered(true);
-        this.column.setHovered(true);
+        this.row.setHover(true);
+        this.column.setHover(true);
     }
 
     private onMouseOut(): void {
-        this.row.setHovered(false);
-        this.column.setHovered(false);
+        this.row.setHover(false);
+        this.column.setHover(false);
     }
 
     /* *

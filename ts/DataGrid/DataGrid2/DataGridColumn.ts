@@ -130,7 +130,7 @@ class DataGridColumn {
      *
      * @param hovered Whether the column should be hovered.
      */
-    public setHovered(hovered: boolean): void {
+    public setHover(hovered: boolean): void {
         this.headElement?.classList[hovered ? 'add' : 'remove'](
             Globals.classNames.hoveredColumn
         );
