@@ -270,15 +270,20 @@ class Toolbar {
         selected: boolean;
         toolLabel: string;
     }): void {
-        const ariaLabel = this.chart.langFormat(
-            'stockTools.toolAriaLabel',
-            context
-        );
+        if (
+            typeof this.chart.options === 'object' &&
+            'lang' in this.chart.options
+        ) {
+            const ariaLabel = this.chart.langFormat(
+                'stockTools.toolAriaLabel',
+                context
+            );
 
-        element.setAttribute(
-            'aria-label',
-            ariaLabel
-        );
+            element.setAttribute(
+                'aria-label',
+                ariaLabel
+            );
+        }
     }
 
     public setAriaLabelForParentButton(
