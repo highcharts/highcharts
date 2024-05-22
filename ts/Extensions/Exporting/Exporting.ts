@@ -410,8 +410,12 @@ namespace Exporting {
             symbol = renderer
                 .symbol(
                     btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    Math.round(
+                        (btnOptions.symbolX || 0) - (symbolSize / 2)
+                    ),
+                    Math.round(
+                        (btnOptions.symbolY || 0) - (symbolSize / 2)
+                    ),
                     symbolSize,
                     symbolSize
                     // If symbol is an image, scale it (#7957)

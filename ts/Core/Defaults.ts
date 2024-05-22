@@ -530,13 +530,16 @@ const defaultOptions: DefaultOptions = {
          * for drawing time based charts in specific time zones using their
          * local DST crossover dates, with the help of external libraries.
          *
-         * @see [global.timezoneOffset](#global.timezoneOffset)
+         * This option is deprecated as of v11.4.1 and will be removed in a
+         * future release. Use the [time.timezone](#time.timezone) option
+         * instead.
          *
          * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
          *         Use moment.js to draw Oslo time regardless of browser locale
          *
          * @type      {Highcharts.TimezoneOffsetCallbackFunction}
          * @since     4.1.0
+         * @deprecated next
          * @product   highcharts highstock gantt
          */
         getTimezoneOffset: void 0,
@@ -547,11 +550,9 @@ const defaultOptions: DefaultOptions = {
          * docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
          * If the given time zone is not recognized by the browser, Highcharts
          * provides a warning and falls back to returning a 0 offset,
-         * corresponding to the UCT time zone.
+         * corresponding to the UTC time zone.
          *
          * Until v11.2.0, this option depended on moment.js.
-         *
-         * @see [getTimezoneOffset](#time.getTimezoneOffset)
          *
          * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
          *
@@ -567,12 +568,17 @@ const defaultOptions: DefaultOptions = {
          * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
          * method. Use this to display UTC based data in a predefined time zone.
          *
+         * This option is deprecated as of v11.4.1 and will be removed in a
+         * future release. Use the [time.timezone](#time.timezone) option
+         * instead.
+         *
          * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
          *
          * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
          *         Timezone offset
          *
          * @since     3.0.8
+         * @deprecated next
          * @product   highcharts highstock gantt
          */
         timezoneOffset: 0,

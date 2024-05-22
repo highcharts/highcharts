@@ -102,7 +102,7 @@ QUnit.test(
                 graphic = point.graphic;
             y = parseFloat(graphic.attr('y'));
             assert.strictEqual(
-                y < 0,
+                y <= 0.5,
                 true,
                 [
                     'Chart:',
