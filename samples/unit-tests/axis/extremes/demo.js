@@ -685,7 +685,8 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         xAxis: {
             type: 'datetime',
             ordinal: true,
-            range: 5
+            min: 0,
+            max: 5
         },
         tooltip: {
             followTouchMove: false
@@ -698,8 +699,6 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
                 [5, 4],
                 [6, 5],
                 [7, 5],
-                [8, 4],
-                [9, 1],
                 [10, 4],
                 [11, 5],
                 [12, 5],
