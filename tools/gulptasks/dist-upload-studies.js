@@ -5,7 +5,7 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const glob = require('glob');
-const { isDirectory, isDotEntry } = require('./lib/fs');
+const { isDirectory, isDotEntry } = require('../libs/fs');
 const { uploadFiles, toS3Path } = require('./lib/uploadS3');
 
 
@@ -31,7 +31,7 @@ async function distUploadStudies() {
     const sourceFiles = glob
         .sync(`${sourceDir}/**/*`)
         .filter(file => !isDirectory(file) && !isDotEntry(file));
-    const rootFiles = sourceFiles.map(file => toS3Path(file, sourceDir + '/', S3_DEST_PATH));
+    const rootFiles = sourceFiles.map(file => toS3Path(file, void 0, S3_DEST_PATH));
 
     return uploadFiles({
         files: [...rootFiles],

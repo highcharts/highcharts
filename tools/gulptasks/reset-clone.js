@@ -44,8 +44,8 @@ const TO_DELETE = [
  *         Promise to keep.
  */
 async function resetClone(argv) {
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+    const fsLib = require('../libs/fs');
+    const logLib = require('../libs/log');
 
     logLib.message('Delete files & folders...');
 

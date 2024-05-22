@@ -83,10 +83,16 @@ QUnit.test('Point hidden from AT', function (assert) {
 });
 
 QUnit.test('Keyboard navigation', function (assert) {
+    let eventProps;
     const
         chart = Highcharts.chart('container', {
             series: [
                 {
+                    events: {
+                        click: function (e) {
+                            eventProps = e;
+                        }
+                    },
                     data: [0]
                 },
                 {
@@ -102,6 +108,15 @@ QUnit.test('Keyboard navigation', function (assert) {
             const event = new KeyboardEvent('keydown', { keyCode });
             keyboardNavigation.onKeydown(event);
         };
+
+    eventDispatcher(36);
+    eventDispatcher(13);
+
+    assert.strictEqual(
+        chart.series[0].data[0].graphic.element,
+        eventProps.target,
+        'Event target should be first points graphic'
+    );
 
     eventDispatcher(9);
     eventDispatcher(37);
@@ -141,6 +156,9 @@ QUnit.test('Keyboard navigation', function (assert) {
         'First legend item should still be highlighted when wrapAround is off.'
     );
 
+    eventDispatcher(13);
+    eventDispatcher(36);
+
     chart.update({
         accessibility: {
             keyboardNavigation: {
@@ -173,7 +191,6 @@ QUnit.test('Keyboard navigation', function (assert) {
         3,
         'The colors array should be updated with high contrast colors.'
     );
-
 });
 
 QUnit.test('No data', function (assert) {
