@@ -1089,10 +1089,7 @@ function seriesRenderCanvas(this: Series): void {
     if (!isChartSeriesBoosting(chart)) {
         // If all series were boosting, but are not anymore
         // restore private markerGroup
-        if (
-            chartBoost &&
-            this.markerGroup === chartBoost.markerGroup
-        ) {
+        if (this.markerGroup === chartBoost?.markerGroup) {
             this.markerGroup = void 0;
         }
 
@@ -1118,11 +1115,9 @@ function seriesRenderCanvas(this: Series): void {
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
         if (seriesBoost && seriesBoost.target) {
-            (
-                this.renderTarget =
-                seriesBoost.target =
-                seriesBoost.target.destroy()
-            );
+            this.renderTarget =
+            seriesBoost.target =
+            seriesBoost.target.destroy();
         }
     }
 
@@ -1183,8 +1178,8 @@ function seriesRenderCanvas(this: Series): void {
     if (
         this.is('line') &&
         lineWidth > 1 &&
-        chartBoost &&
         seriesBoost?.target &&
+        chartBoost &&
         !chartBoost.lineWidthFilter
     ) {
         chartBoost.lineWidthFilter = chart.renderer.definition({
