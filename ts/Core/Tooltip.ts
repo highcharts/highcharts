@@ -520,23 +520,20 @@ class Tooltip {
             // container.
             if (tooltip.outside) {
                 const label = this.label;
-                const { xSetter, ySetter } = label;
-                label.xSetter = function (
-                    value: string
-                ): void {
-                    xSetter.call(label, tooltip.distance);
-                    if (container) {
-                        container.style.left = value + 'px';
-                    }
-                };
-                label.ySetter = function (
-                    value: string
-                ): void {
-                    ySetter.call(label, tooltip.distance);
-                    if (container) {
-                        container.style.top = value + 'px';
-                    }
-                };
+                [label.xSetter, label.ySetter].forEach((
+                    setter: (value: number) => void,
+                    i: number
+                ): void => {
+                    label[i ? 'ySetter' : 'xSetter'] = (
+                        value: number
+                    ): void => {
+                        setter.call(label, tooltip.distance);
+                        label[i ? 'y' : 'x'] = value;
+                        if (container) {
+                            container.style[i ? 'top' : 'left'] = `${value}px`;
+                        }
+                    };
+                });
             }
 
             this.label
