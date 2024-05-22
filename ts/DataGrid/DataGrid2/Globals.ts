@@ -58,7 +58,10 @@ namespace Globals {
     export const classNames = {
         tableElement: classNamePrefix + 'table',
         theadElement: classNamePrefix + 'thead',
-        tbodyElement: classNamePrefix + 'tbody'
+        tbodyElement: classNamePrefix + 'tbody',
+        hoveredCell: classNamePrefix + 'hovered-cell',
+        hoveredColumn: classNamePrefix + 'hovered-column',
+        hoveredRow: classNamePrefix + 'hovered-row'
     };
 
     export const win = window;

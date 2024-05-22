@@ -78,6 +78,13 @@ class DataGridCell {
 
         this.row = row;
         this.row.registerCell(this);
+
+        this.htmlElement.addEventListener(
+            'mouseenter', this.onMouseEnter.bind(this)
+        );
+        this.htmlElement.addEventListener(
+            'mouseout', this.onMouseOut.bind(this)
+        );
     }
 
 
@@ -108,6 +115,15 @@ class DataGridCell {
         this.htmlElement.style.width = this.column.getWidth() + 'px';
     }
 
+    private onMouseEnter(): void {
+        this.row.setHovered(true);
+        this.column.setHovered(true);
+    }
+
+    private onMouseOut(): void {
+        this.row.setHovered(false);
+        this.column.setHovered(false);
+    }
 
     /* *
     *

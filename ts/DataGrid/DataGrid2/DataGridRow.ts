@@ -22,9 +22,10 @@
  * */
 
 import DataGridCell from './DataGridCell.js';
-import DataTable from '../../Data/DataTable.js';
-import Utils from './Utils.js';
 import DataGridTable from './DataGridTable.js';
+import DataTable from '../../Data/DataTable.js';
+import Globals from './Globals.js';
+import Utils from './Utils.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -162,6 +163,17 @@ class DataGridRow {
      */
     public registerCell(cell: DataGridCell): void {
         this.cells.push(cell);
+    }
+
+    /**
+     * Sets the row hover state.
+     *
+     * @param hovered Whether the row should be hovered.
+     */
+    public setHovered(hovered: boolean): void {
+        this.htmlElement.classList[hovered ? 'add' : 'remove'](
+            Globals.classNames.hoveredRow
+        );
     }
 
 

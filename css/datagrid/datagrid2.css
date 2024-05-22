@@ -121,3 +121,19 @@
     white-space: nowrap;
     padding: 5px;
 }
+
+.highcharts-datagrid-hovered-column {
+    background-color: #0000ff07;
+}
+
+.highcharts-datagrid-hovered-row {
+    background-color: #0000ff07;
+}
+
+.highcharts-datagrid-hovered-row td.highcharts-datagrid-hovered-column {
+    background-color: #ffff0030;
+}
+
+.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column {
+    background-color: #0000ff30;
+}

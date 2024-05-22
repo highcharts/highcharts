@@ -22,8 +22,9 @@
  * */
 
 import DataGridCell from './DataGridCell.js';
-import DataTable from '../../Data/DataTable.js';
 import DataGridTable from './DataGridTable.js';
+import DataTable from '../../Data/DataTable.js';
+import Globals from './Globals.js';
 
 
 /* *
@@ -124,6 +125,22 @@ class DataGridColumn {
         ) * this.widthRatio;
     }
 
+    /**
+     * Sets the column hover state.
+     *
+     * @param hovered Whether the column should be hovered.
+     */
+    public setHovered(hovered: boolean): void {
+        this.headElement?.classList[hovered ? 'add' : 'remove'](
+            Globals.classNames.hoveredColumn
+        );
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            this.cells[i].htmlElement.classList[hovered ? 'add' : 'remove'](
+                Globals.classNames.hoveredColumn
+            );
+        }
+    }
 
     /* *
     *
