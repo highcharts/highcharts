@@ -390,7 +390,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @sample highcharts/global/buttontheme
          *         General button theme
-         * @since next
+         * @since 11.4.2
          */
         buttonTheme: {
             /**
@@ -539,7 +539,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type      {Highcharts.TimezoneOffsetCallbackFunction}
          * @since     4.1.0
-         * @deprecated next
+         * @deprecated 11.4.2
          * @product   highcharts highstock gantt
          */
         getTimezoneOffset: void 0,
@@ -578,7 +578,7 @@ const defaultOptions: DefaultOptions = {
          *         Timezone offset
          *
          * @since     3.0.8
-         * @deprecated next
+         * @deprecated 11.4.2
          * @product   highcharts highstock gantt
          */
         timezoneOffset: 0,

@@ -71,7 +71,7 @@ const background: PaneBackgroundOptions = {
      * The border radius of the pane background when the shape is `arc`. Can be
      * a number (pixels) or a percentage string.
      *
-     * @since   next
+     * @since 11.4.2
      * @sample  highcharts/series-solidgauge/pane-borderradius
      *          Circular gauge and pane with equal border radius
      * @product highcharts
