@@ -71,7 +71,10 @@ Highcharts.setOptions({
         },
         maskFill: 'rgba(181, 145, 143, 0.2)',
         handles: {
-            backgroundColor: '#5f5959'
+            backgroundColor: '#5f5959',
+            borderRadius: '50%',
+            width: 20,
+            height: 20
         }
     },
 
