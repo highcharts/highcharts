@@ -121,6 +121,7 @@ Highcharts.setOptions({
                     }
                 },
                 hover: {
+                    fill: '#f23644',
                     style: {
                         color: '#000000'
                     }
