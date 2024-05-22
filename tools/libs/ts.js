@@ -132,7 +132,7 @@ function addTag(
  * @param {SourceInfo} sourceInfoToComplete
  * Source information to complete.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {SourceInfo}
@@ -140,7 +140,7 @@ function addTag(
  */
 function autoCompleteInfo(
     sourceInfoToComplete,
-    infoOptions = {}
+    includeNodes
 ) {
     const _modulePathToComplete = sanitizeSourcePath(sourceInfoToComplete.path);
 
@@ -155,7 +155,7 @@ function autoCompleteInfo(
             continue;
         }
 
-        _sourceInfo = getSourceInfo(_sourcePath, void 0, infoOptions);
+        _sourceInfo = getSourceInfo(_sourcePath, void 0, includeNodes);
 
         if (_sourceInfo) {
             for (const _codeInfo of _sourceInfo.code) {
@@ -194,7 +194,7 @@ function autoCompleteInfo(
  * @param {ClassInfo|InterfaceInfo} infoToExtend
  * Class or interface information to extend.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ClassInfo|InterfaceInfo}
@@ -203,7 +203,7 @@ function autoCompleteInfo(
 function autoExtendInfo(
     sourceInfo,
     infoToExtend,
-    infoOptions = {}
+    includeNodes
 ) {
     /** @type {Array<string>} */
     const _extendsToDo = [];
@@ -227,17 +227,24 @@ function autoExtendInfo(
 
     /** @type {CodeInfo} */
     let _resolvedInfo;
+    /** @type {string|undefined} */
+    let _resolvedPath;
     /** @type {ResolvedInfo} */
     let _resolvedType;
 
     for (const _extendType of _extendsToDo) {
-        _resolvedType = resolveType(sourceInfo, _extendType, infoOptions);
+        _resolvedType = resolveType(sourceInfo, _extendType, includeNodes);
 
         if (!_resolvedType) {
             continue;
         }
 
-        _resolvedInfo = _resolvedType.resolvedInfo;
+        _resolvedPath = _resolvedType.resolvedPath;
+        _resolvedInfo = autoExtendInfo(
+            getSourceInfo(_resolvedPath, void 0, includeNodes),
+            _resolvedType.resolvedInfo,
+            includeNodes
+        );
 
         if (
             _resolvedInfo.kind !== 'Class' &&
@@ -613,7 +620,7 @@ function extractTypes(
  * @param {Array<TS.Node>} nodes
  * Child nodes to extract from.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {Array<CodeInfo>}
@@ -621,7 +628,7 @@ function extractTypes(
  */
 function getChildInfos(
     nodes,
-    infoOptions = {}
+    includeNodes
 ) {
     /** @type {Array<CodeInfo>} */
     const _infos = [];
@@ -646,7 +653,7 @@ function getChildInfos(
         if (TS.isVariableStatement(node)) {
             _children = getChildInfos(
                 getNodesChildren(node.declarationList),
-                infoOptions
+                includeNodes
             );
             if (_children.length) {
                 // Take the first one out to attach leading doclet
@@ -654,23 +661,23 @@ function getChildInfos(
             }
         } else {
             _child = (
-                getVariableInfo(node, infoOptions) ||
-                getTypeAliasInfo(node, infoOptions) ||
-                getPropertyInfo(node, infoOptions) ||
-                getObjectInfo(node, infoOptions) ||
-                getNamespaceInfo(node, infoOptions) ||
-                getInterfaceInfo(node, infoOptions) ||
-                getImportInfo(node, infoOptions) ||
-                getFunctionInfo(node, infoOptions) ||
-                getExportInfo(node, infoOptions) ||
-                getDeconstructInfos(node, infoOptions) ||
-                getClassInfo(node, infoOptions)
+                getVariableInfo(node, includeNodes) ||
+                getTypeAliasInfo(node, includeNodes) ||
+                getPropertyInfo(node, includeNodes) ||
+                getObjectInfo(node, includeNodes) ||
+                getNamespaceInfo(node, includeNodes) ||
+                getInterfaceInfo(node, includeNodes) ||
+                getImportInfo(node, includeNodes) ||
+                getFunctionInfo(node, includeNodes) ||
+                getExportInfo(node, includeNodes) ||
+                getDeconstructInfos(node, includeNodes) ||
+                getClassInfo(node, includeNodes)
             );
         }
 
         // Retrieve leading doclets
 
-        _doclets = getDocletInfosBetween(_previousNode, node, infoOptions);
+        _doclets = getDocletInfosBetween(_previousNode, node, includeNodes);
 
         // Deal with floating doclets before leading child doclet
 
@@ -713,7 +720,7 @@ function getChildInfos(
  * @param {TS.Node} node
  * Node that might be a class.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ClassInfo|undefined}
@@ -721,7 +728,7 @@ function getChildInfos(
  */
 function getClassInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (!TS.isClassDeclaration(node)) {
@@ -758,7 +765,7 @@ function getClassInfo(
         /** @type {Array<MemberInfo>} */
         const _members = _info.members = [];
 
-        for (const _childInfo of getChildInfos(node.members, infoOptions)) {
+        for (const _childInfo of getChildInfos(node.members, includeNodes)) {
             if (
                 _childInfo.kind === 'Doclet' ||
                 _childInfo.kind === 'Function' ||
@@ -776,16 +783,8 @@ function getClassInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNode) {
+    if (includeNodes) {
         _info.node = node;
-    }
-
-    if (infoOptions.autoExtend) {
-        autoExtendInfo(
-            getSourceInfo(node.getSourceFile().fileName, void 0, infoOptions),
-            _info,
-            infoOptions
-        );
     }
 
     return _info;
@@ -798,7 +797,7 @@ function getClassInfo(
  * @param {TS.Node} node
  * Node that might be a deconstruct.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript node in the information.
  *
  * @return {DeconstructInfo|undefined}
@@ -806,7 +805,7 @@ function getClassInfo(
  */
 function getDeconstructInfos(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (
@@ -844,7 +843,7 @@ function getDeconstructInfos(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -861,7 +860,7 @@ function getDeconstructInfos(
  * @param {TS.Node} endNode
  * Node that comes after doclets.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {Array<DocletInfo>}
@@ -870,7 +869,7 @@ function getDeconstructInfos(
 function getDocletInfosBetween(
     startNode,
     endNode,
-    infoOptions = {}
+    includeNodes
 ) {
     /** @type {Array<DocletInfo>} */
     const _doclets = [];
@@ -900,7 +899,6 @@ function getDocletInfosBetween(
                     );
                 }
                 if (node.tags) {
-
                     for (const tag of node.tags) {
                         _tagName = tag.tagName.text;
                         addTag(
@@ -914,13 +912,10 @@ function getDocletInfosBetween(
                                 .trim()
                         );
                     }
-
                     _doclet.meta = getInfoMeta(node);
-
-                    if (infoOptions.includeNodes) {
+                    if (includeNodes) {
                         _doclet.node = node;
                     }
-
                 }
             }
         }
@@ -1004,7 +999,7 @@ function getDocletsBetween(
  * @param {TS.Node} node
  * Node that might be an export.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ExportInfo|undefined}
@@ -1012,7 +1007,7 @@ function getDocletsBetween(
  */
 function getExportInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (!TS.isExportAssignment(node)) {
@@ -1029,7 +1024,7 @@ function getExportInfo(
         _info.name = node.expression.text;
 
     } else {
-        const _value = getChildInfos([node.expression], infoOptions)[0];
+        const _value = getChildInfos([node.expression], includeNodes)[0];
 
         if (_value) {
             if (_value.name) {
@@ -1046,7 +1041,7 @@ function getExportInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -1060,7 +1055,7 @@ function getExportInfo(
  * @param {TS.Node} node
  * Node that might be an import.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ImportInfo|undefined}
@@ -1068,7 +1063,7 @@ function getExportInfo(
  */
 function getFunctionInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (
@@ -1101,7 +1096,7 @@ function getFunctionInfo(
 
     if (node.parameters) {
         const _parameters = _info.parameters = [];
-        for (const parameter of getChildInfos(node.parameters, infoOptions)) {
+        for (const parameter of getChildInfos(node.parameters, includeNodes)) {
             if (parameter.kind === 'Variable') {
                 _parameters.push(parameter);
             }
@@ -1138,7 +1133,7 @@ function getFunctionInfo(
         }
     }
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -1152,7 +1147,7 @@ function getFunctionInfo(
  * @param {TS.Node} node
  * Node that might be an import.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNode
  * Whether to include the TypeScript node in the information.
  *
  * @return {ImportInfo|undefined}
@@ -1160,7 +1155,7 @@ function getFunctionInfo(
  */
 function getImportInfo(
     node,
-    infoOptions = {}
+    includeNode
 ) {
 
     if (!TS.isImportDeclaration(node)) {
@@ -1206,7 +1201,7 @@ function getImportInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNode) {
         _info.node = node;
     }
 
@@ -1275,7 +1270,7 @@ function getInfoMeta(
  * @param {TS.Node} node
  * Node that might be an interface.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {InterfaceInfo|undefined}
@@ -1283,7 +1278,7 @@ function getInfoMeta(
  */
 function getInterfaceInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (!TS.isInterfaceDeclaration(node)) {
@@ -1322,7 +1317,7 @@ function getInterfaceInfo(
         /** @type {Array<MemberInfo>} */
         const _members = _info.members = [];
 
-        for (const _childInfo of getChildInfos(node.members, infoOptions)) {
+        for (const _childInfo of getChildInfos(node.members, includeNodes)) {
             if (
                 _childInfo.kind === 'Doclet' ||
                 _childInfo.kind === 'Function' ||
@@ -1340,16 +1335,8 @@ function getInterfaceInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
-    }
-
-    if (infoOptions.autoExtend) {
-        autoExtendInfo(
-            getSourceInfo(node.getSourceFile().fileName, void 0, infoOptions),
-            _info,
-            infoOptions
-        );
     }
 
     return _info;
@@ -1362,7 +1349,7 @@ function getInterfaceInfo(
  * @param {TS.Node} node
  * Node that might be a namespace or module.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {NamespaceInfo|undefined}
@@ -1370,7 +1357,7 @@ function getInterfaceInfo(
  */
 function getNamespaceInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (!TS.isModuleDeclaration(node)) {
@@ -1395,7 +1382,7 @@ function getNamespaceInfo(
 
         for (
             const _childInfo
-            of getChildInfos(node.body.statements, infoOptions)
+            of getChildInfos(node.body.statements, includeNodes)
         ) {
             _members.push(_childInfo);
         }
@@ -1407,10 +1394,6 @@ function getNamespaceInfo(
     }
 
     _info.meta = getInfoMeta(node);
-
-    if (infoOptions.includeNodes) {
-        _info.node = node;
-    }
 
     return _info;
 }
@@ -1477,7 +1460,7 @@ function getNodesLastChild(
  * @param {TS.Node} node
  * Node that might be an object literal.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ObjectInfo}
@@ -1485,7 +1468,7 @@ function getNodesLastChild(
  */
 function getObjectInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
     /** @type {string|undefined} */
     let _type;
@@ -1508,7 +1491,7 @@ function getObjectInfo(
         /** @type {Array<MemberInfo>} */
         const _members = _info.members = [];
 
-        for (const _childInfo of getChildInfos(node.properties, infoOptions)) {
+        for (const _childInfo of getChildInfos(node.properties, includeNodes)) {
             if (
                 _childInfo.kind === 'Doclet' ||
                 _childInfo.kind === 'Function' ||
@@ -1530,7 +1513,7 @@ function getObjectInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -1620,7 +1603,7 @@ function getPropertyInfo(
  * @param {string} [sourceText]
  * Text of source file.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {SourceInfo}
@@ -1629,11 +1612,11 @@ function getPropertyInfo(
 function getSourceInfo(
     filePath,
     sourceText,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (
-        !infoOptions &&
+        !includeNodes &&
         SOURCE_CACHE[filePath]
     ) {
         return SOURCE_CACHE[filePath];
@@ -1652,19 +1635,16 @@ function getSourceInfo(
         path: filePath
     };
 
-    _info.code = getChildInfos(getNodesChildren(sourceFile), infoOptions);
+    _info.code = getChildInfos(getNodesChildren(sourceFile), includeNodes);
 
-    if (infoOptions) {
+    if (includeNodes) {
         _info.node = sourceFile;
     } else {
         SOURCE_CACHE[filePath] = _info;
     }
 
-    if (
-        infoOptions.autoComplete &&
-        _info.path.endsWith('.d.ts')
-    ) {
-        autoCompleteInfo(_info, infoOptions);
+    if (_info.path.endsWith('.d.ts')) {
+        autoCompleteInfo(_info, includeNodes);
     }
 
     return _info;
@@ -1677,7 +1657,7 @@ function getSourceInfo(
  * @param {TS.Node} node
  * Node that might be a type alias.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript node in the information.
  *
  * @return {TypeAliasInfo|undefined}
@@ -1685,7 +1665,7 @@ function getSourceInfo(
  */
 function getTypeAliasInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (!TS.isTypeAliasDeclaration(node)) {
@@ -1726,7 +1706,7 @@ function getTypeAliasInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -1740,7 +1720,7 @@ function getTypeAliasInfo(
  * @param {TS.Node} node
  * Node that might be a variable or assignment.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} includeNodes
  * Whether to include the TypeScript node in the information.
  *
  * @return {VariableInfo|undefined}
@@ -1748,7 +1728,7 @@ function getTypeAliasInfo(
  */
 function getVariableInfo(
     node,
-    infoOptions = {}
+    includeNodes
 ) {
 
     if (
@@ -1805,7 +1785,7 @@ function getVariableInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (infoOptions.includeNodes) {
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -2262,7 +2242,7 @@ function resolveReference(
  * @param {string} searchType
  * Type to resolve to.
  *
- * @param {InfoOptions} [infoOptions]
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ResolvedInfo|undefined}
@@ -2271,7 +2251,7 @@ function resolveReference(
 function resolveType(
     sourceInfo,
     searchType,
-    infoOptions = {}
+    includeNodes
 ) {
     /** @type {Record<string,boolean>} */
     const _stack = {};
@@ -2333,7 +2313,7 @@ function resolveType(
                     _stack[_resolvedPath] = true;
 
                     const _resolvedSource =
-                        getSourceInfo(_resolvedPath, void 0, infoOptions);
+                        getSourceInfo(_resolvedPath, void 0, includeNodes);
 
                     for (const _codeInfo of _resolvedSource.code) {
                         const _resolvedInfo = resolve(_codeInfo, type);
@@ -2740,14 +2720,6 @@ module.exports = {
  * @typedef {'async'|'abstract'|'declare'|'default'|'export'|'private'|
  *           'protected'|'static'
  *          } InfoFlag
- */
-
-
-/**
- * @typedef InfoOptions
- * @property {boolean} [autoComplete]
- * @property {boolean} [autoExtend]
- * @property {boolean} [includeNodes]
  */
 
 
