@@ -133,11 +133,11 @@ Highcharts.chart('container', {
         // Slowing forces
         { name: 'Atmospheric Drag', data: [-8] },
         { name: 'Lift', data: [-1] },
-        { name: 'Peak Heating', data: [-0.5] },
-        { name: 'Parachute Drag', data: [-6] },
+        { name: 'Peak Heating', data: [-0.25] },
+        { name: 'Parachute Drag', data: [-6.75] },
         { name: 'Heat Shield Separation', data: [-0.5] },
         // Enters free fall shortly after separation with backshell & parachute.
-        { name: 'Free fall (Backshell Separation)', data: [1] },
+        { name: 'Backshell Separation (Free fall)', data: [0.5] },
         { name: 'Retro Rockets', data: [-2.5] },
         { name: 'Sky Crane Operation', data: [-2] }
     ]
