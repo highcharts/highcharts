@@ -337,6 +337,31 @@ if (window.QUnit) {
         });
     };
 
+    function addTestCallbacks(){
+        const testStylesID = 'test-styles';
+
+        QUnit.testStart(()=>{
+            const currentChart = Highcharts.charts[Highcharts.charts.length - 1];
+
+            if (currentChart && currentChart.styledMode) {
+                const styleElement = document.querySelector(testStylesID) ??
+                    document.createElement('style');
+
+                styleElement.id = testStylesID;
+                styleElement.appendChild(document.createTextNode(document.highchartsCSS));
+
+                document.head.append(styleElement);
+            }
+
+        });
+
+        QUnit.testDone(()=>{
+            document.querySelector(testStylesID)?.remove();
+        });
+    }
+
+    addTestCallbacks();
+
     QUnit.module('Highcharts', {
         beforeEach: function (test) {
             if (VERBOSE) {
