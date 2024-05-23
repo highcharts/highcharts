@@ -81,12 +81,12 @@
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
-.highcharts-datagrid-table * {
+.highcharts-dg-container * {
     box-sizing: border-box;
 }
 
-.highcharts-datagrid-table {
-    height: 200px;
+.highcharts-dg-table {
+    height: 100%;
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
@@ -94,46 +94,46 @@
     border: 1px solid #ff0000;
 }
 
-.highcharts-datagrid-table thead {
+.highcharts-dg-table thead {
     background-color: var(--highcharts-neutral-color-60);
     display: block;
 }
 
-.highcharts-datagrid-table thead th {
+.highcharts-dg-table thead th {
     border-right: 1px solid #00ff00;
 }
 
-.highcharts-datagrid-table tbody {
+.highcharts-dg-table tbody {
     overflow: auto;
     display: block;
     position: relative;
 }
 
-.highcharts-datagrid-table tr {
+.highcharts-dg-table tr {
     border-bottom: 1px solid #0000ff;
     position: absolute;
     overflow: hidden;
 }
 
-.highcharts-datagrid-table td {
+.highcharts-dg-table td {
     height: inherit;
     border-right: 1px solid #00ff00;
     white-space: nowrap;
     padding: 5px;
 }
 
-.highcharts-datagrid-hovered-column {
+.highcharts-dg-hovered-column {
     background-color: #0000ff07;
 }
 
-.highcharts-datagrid-hovered-row {
+.highcharts-dg-hovered-row {
     background-color: #0000ff07;
 }
 
-.highcharts-datagrid-hovered-row td.highcharts-datagrid-hovered-column {
-    background-color: #ffff0030;
+.highcharts-dg-hovered-row td.highcharts-dg-hovered-column {
+    background-color: #ffff0020;
 }
 
-.highcharts-datagrid-table thead th.highcharts-datagrid-hovered-column {
+.highcharts-dg-table thead th.highcharts-dg-hovered-column {
     background-color: #0000ff30;
 }

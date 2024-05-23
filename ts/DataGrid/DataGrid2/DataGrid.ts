@@ -25,7 +25,7 @@ import type DataGridOptions from '../DataGridOptions';
 
 import DataTable from '../../Data/DataTable.js';
 import Utils from './Utils.js';
-import Globals from '../Globals.js';
+import Globals from './Globals.js';
 import DataGridTable from './DataGridTable.js';
 
 const { makeDiv } = Utils;
@@ -106,10 +106,12 @@ class DataGrid {
         if (typeof renderTo === 'string') {
             const existingContainer = win.document.getElementById(renderTo);
             if (existingContainer) {
+                existingContainer.classList.add(Globals.classNames.container);
                 return existingContainer;
             }
-            return makeDiv(Globals.classNames.gridContainer, renderTo);
+            return makeDiv(Globals.classNames.container, renderTo);
         }
+        renderTo.classList.add(Globals.classNames.container);
         return renderTo;
     }
 }

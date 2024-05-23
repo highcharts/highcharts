@@ -53,9 +53,10 @@ namespace Globals {
      *
      * */
 
-    export const classNamePrefix = 'highcharts-datagrid-';
+    export const classNamePrefix = 'highcharts-dg-';
 
     export const classNames = {
+        container: classNamePrefix + 'container',
         tableElement: classNamePrefix + 'table',
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
