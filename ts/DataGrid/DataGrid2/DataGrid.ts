@@ -23,13 +23,16 @@
 
 import type DataGridOptions from '../DataGridOptions';
 
-import DataTable from '../../Data/DataTable.js';
-import Utils from './Utils.js';
-import Globals from './Globals.js';
+import DataGridDefaultOptions from './DataGridDefaultOptions.js';
 import DataGridTable from './DataGridTable.js';
+import DataGridUtils from './Utils.js';
+import DataTable from '../../Data/DataTable.js';
+import Globals from './Globals.js';
+import U from '../../Core/Utilities.js';
 
-const { makeDiv } = Utils;
+const { makeDiv, makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
+const { merge } = U;
 
 
 /* *
@@ -50,14 +53,34 @@ class DataGrid {
     * */
 
     /**
+     * Default options for all DataGrid instances.
+     */
+    public static readonly defaultOptions = DataGridDefaultOptions;
+
+    /**
      * The container of the data grid.
      */
     public container: HTMLElement;
 
     /**
+     * The HTML element of the table.
+     */
+    public tableElement: HTMLTableElement;
+
+    /**
      * The data source of the data grid.
      */
     public dataTable: DataTable;
+
+    /**
+     * The options of the data grid.
+     */
+    public options: DataGridOptions;
+
+    /**
+     * The user options of the data grid.
+     */
+    public userOptions: DataGridOptions;
 
     /**
      * The table (viewport) element of the data grid.
@@ -78,9 +101,16 @@ class DataGrid {
      * @param options The options of the data grid.
      */
     constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
+        this.userOptions = options;
+        this.options = merge(DataGrid.defaultOptions, options);
+
         this.container = DataGrid.initContainer(renderTo);
+
+        this.tableElement = makeHTMLElement('table', {
+            className: Globals.classNames.tableElement
+        }, this.container);
         this.dataTable = options.dataTable ?? new DataTable();
-        this.viewport = new DataGridTable(this.dataTable, this.container);
+        this.viewport = new DataGridTable(this);
     }
 
     /* *

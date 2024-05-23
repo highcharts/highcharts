@@ -21,12 +21,12 @@
  *
  * */
 
-import Globals from './Globals.js';
 import Utils from './Utils.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTableHead from './DataGridTableHead.js';
+import DataGrid from './DataGrid.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -48,19 +48,19 @@ class DataGridTable {
     * */
 
     /**
-     * The container of the data grid table (viewport).
+     * The data grid instance which the table (viewport) belongs to.
      */
-    public container: HTMLElement;
+    public dataGrid: DataGrid;
+
+    /**
+     * The HTML element of the table.
+     */
+    public container: HTMLTableElement;
 
     /**
      * The data source of the data grid.
      */
     public dataTable: DataTable;
-
-    /**
-     * The HTML element of the table.
-     */
-    public tableElement: HTMLElement;
 
     /**
      * The HTML element of the table head.
@@ -102,23 +102,22 @@ class DataGridTable {
     /**
      * Constructs a new data grid table.
      *
-     * @param dataTable The data for the viewport.
-     * @param renderTo The render target (container) of the viewport.
+     * @param dataGrid The data grid instance which the table (viewport) belongs to.
      */
-    constructor(dataTable: DataTable, renderTo: HTMLElement) {
-        this.container = renderTo;
-        this.dataTable = dataTable;
+    constructor(dataGrid: DataGrid) {
+        this.dataGrid = dataGrid;
+        this.container = dataGrid.tableElement;
+        this.dataTable = dataGrid.dataTable;
 
-        this.tableElement = makeHTMLElement('table', {
-            className: Globals.classNames.tableElement
-        }, renderTo);
-        this.theadElement = makeHTMLElement('thead', {}, this.tableElement);
-        this.tbodyElement = makeHTMLElement('tbody', {}, this.tableElement);
+        const { tableElement } = dataGrid;
+
+        this.theadElement = makeHTMLElement('thead', {}, tableElement);
+        this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.init();
 
         this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
-        this.resizeObserver.observe(renderTo);
+        this.resizeObserver.observe(tableElement);
 
         this.tbodyElement.addEventListener('scroll', this.onScroll.bind(this));
     }
