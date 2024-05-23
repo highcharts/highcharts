@@ -272,7 +272,8 @@ class Toolbar {
     }): void {
         if (
             typeof this.chart.options === 'object' &&
-            'lang' in this.chart.options
+            'lang' in this.chart.options &&
+            this.chart.langFormat // Might not be defined
         ) {
             const ariaLabel = this.chart.langFormat(
                 'stockTools.toolAriaLabel',
@@ -448,7 +449,11 @@ class Toolbar {
         const descriptions = lang.descriptions[btnName];
 
         // Set the default aria label
-        if (descriptions?.mainButton && !items) {
+        if (
+            descriptions?.mainButton &&
+            !items &&
+            this.chart.langFormat
+        ) {
             mainButton.setAttribute(
                 'aria-label',
                 this.chart.langFormat(

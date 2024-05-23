@@ -54,45 +54,36 @@ const lang: LangOptions = {
                 mainButton: 'Open indicators menu'
             },
             simpleShapes: {
-                mainButton: 'Add a {selected} to the chart',
                 submenuToggleButton: 'Open labels submenu'
             },
             lines: {
-                mainButton: 'Add a {selected} line',
                 submenuToggleButton: 'Open lines submenu'
             },
             crookedLines: {
-                mainButton: 'Add "{selected}" crooked line',
                 submenuToggleButton: 'Open crooked lines submenu'
             },
             measure: {
-                mainButton: 'Select "{selected}" measure tool',
                 submenuToggleButton: 'Open measure submenu'
             },
             advanced: {
-                mainButton: 'Add "{selected}" advanced shape',
                 submenuToggleButton: 'Open advanced shapes submenu'
             },
             toggleAnnotations: {
                 mainButton: 'Toggle annotations'
             },
             verticalLabels: {
-                mainButton: 'Add a vertical label',
                 submenuToggleButton: 'Open vertical labels submenu'
             },
             flags: {
-                mainButton: 'Add a flag',
                 submenuToggleButton: 'Open flags submenu'
             },
             zoomChange: {
-                mainButton: 'Zoom change',
                 submenuToggleButton: 'Open zoom change submenu'
             },
             fullScreen: {
                 mainButton: 'Fullscreen'
             },
             typeChange: {
-                mainButton: 'Change chart type',
                 submenuToggleButton: 'Open chart type submenu'
             },
             saveChart: {

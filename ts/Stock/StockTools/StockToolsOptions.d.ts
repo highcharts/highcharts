@@ -37,7 +37,7 @@ export interface LangStockToolsOptions {
     toolSelected: string;
     toolAriaLabel: string;
     descriptions: Record<string, {
-        mainButton: string;
+        mainButton?: string;
         submenuToggleButton?: string;
     }>;
     gui: Record<string, string>;
