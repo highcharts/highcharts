@@ -1098,11 +1098,16 @@ class Pointer {
      * @function Highcharts.Pointer#onContainerMouseLeave
      */
     public onContainerMouseLeave(e: MouseEvent): void {
-        const { pointer } = charts[pick(Pointer.hoverChartIndex, -1)] || {};
+        const {
+            pointer,
+            tooltip
+        } = charts[pick(Pointer.hoverChartIndex, -1)] || {};
 
         e = this.normalize(e);
 
-        this.onContainerMouseMove(e);
+        if (tooltip && !tooltip.isHidden) {
+            this.onContainerMouseMove(e);
+        }
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
