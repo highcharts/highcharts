@@ -494,7 +494,10 @@ module.exports = function (config) {
                     // Replace external data sources with internal data samples
                     js = resolveJSON(js);
 
-                    js += `document.highchartsCSS = \`${highchartsCSS}\`;`;
+
+                    if(/styledMode:.*true/.test(js)){
+                        js += `document.highchartsCSS = \`${highchartsCSS}\`;`;
+                    }
 
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
