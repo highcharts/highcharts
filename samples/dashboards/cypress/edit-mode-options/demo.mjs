@@ -40,6 +40,11 @@ Dashboards.board('container', {
             renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             editableOptions: [{
+                isStandalone: true,
+                name: 'Title',
+                propertyPath: ['title'],
+                type: 'input'
+            }, {
                 name: 'chartOptions',
                 type: 'nested',
                 nestedOptions: [{

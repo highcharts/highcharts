@@ -91,6 +91,10 @@ namespace EditableOptions {
          */
         type: ElementType;
         /**
+         * Whether render it as a standalone element without a group.
+         */
+        isStandalone?: boolean;
+        /**
          * Detailed options that should be included in the accordion menu.
          * Available for `nested` type.
          */
@@ -126,7 +130,6 @@ namespace EditableOptions {
      */
     export type ElementType =
         | 'input'
-        | 'text'
         | 'textarea'
         | 'toggle'
         | 'select'
