@@ -140,6 +140,12 @@ function resolveJSON(js) {
     }
     codeblocks.push(js);
 
+    if (/styledMode:.*true/.test(js)) {
+        codeblocks.push(
+            `window.JSONSources['highchartsCSS'] = \`${highchartsCSS}\`;`
+        );
+    }
+
     // Add some files that are referenced by variables in the demos, so we're
     // not able to parse the static file name.
     if (js.indexOf('fetch') !== -1) {
@@ -495,12 +501,9 @@ module.exports = function (config) {
                     js = resolveJSON(js);
 
 
-                    if(/styledMode:.*true/.test(js)){
-                        js += `document.highchartsCSS = \`${highchartsCSS}\`;`;
-                    }
-
                     // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
+
                         done(js);
                         return;
                     }

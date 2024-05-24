@@ -348,7 +348,9 @@ if (window.QUnit) {
                     document.createElement('style');
 
                 styleElement.id = testStylesID;
-                styleElement.appendChild(document.createTextNode(document.highchartsCSS));
+                styleElement.appendChild(
+                    document.createTextNode(window.JSONSources['highchartsCSS'])
+                );
 
                 document.head.append(styleElement);
             }
