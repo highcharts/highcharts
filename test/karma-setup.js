@@ -344,7 +344,7 @@ if (window.QUnit) {
             const currentChart = Highcharts.charts[Highcharts.charts.length - 1];
 
             if (currentChart && currentChart.styledMode) {
-                const styleElement = document.querySelector(testStylesID) ??
+                const styleElement = document.getElementById(testStylesID) ??
                     document.createElement('style');
 
                 styleElement.id = testStylesID;
@@ -358,7 +358,7 @@ if (window.QUnit) {
         });
 
         QUnit.testDone(()=>{
-            document.querySelector(testStylesID)?.remove();
+            document.getElementById(testStylesID)?.remove();
         });
     }
 
