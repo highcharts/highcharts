@@ -80,6 +80,7 @@ const {
     arrayMin,
     clamp,
     correctFloat,
+    crisp,
     defined,
     destroyObjectProperties,
     diffObjects,
@@ -2823,13 +2824,19 @@ class Series {
 
         const pos = point.pos();
         if (isNumber(radius) && pos) {
+            if (seriesOptions.crisp) {
+                pos[0] = crisp(
+                    pos[0],
+                    point.hasImage ?
+                        0 :
+                        symbol === 'rect' ?
+                            // Rectangle symbols need crisp edges, others don't
+                            seriesMarkerOptions?.lineWidth || 0 :
+                            1
+                );
+            }
             attribs.x = pos[0] - radius;
             attribs.y = pos[1] - radius;
-
-            if (seriesOptions.crisp) {
-                // Math.floor for #1843:
-                attribs.x = Math.floor(attribs.x);
-            }
         }
 
         if (radius) {

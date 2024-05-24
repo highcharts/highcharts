@@ -39,9 +39,9 @@ QUnit.test('Center the halo on the point(#4689)', function (assert) {
 
     function getCenter(box) {
         return [
-            (box.x + box.width / 2).toFixed(0),
-            (box.y + box.height / 2).toFixed(0)
-        ].join(',');
+            (box.x + box.width / 2).toFixed(1),
+            (box.y + box.height / 2).toFixed(1)
+        ];
     }
 
     // Non-inverted chart
@@ -49,7 +49,7 @@ QUnit.test('Center the halo on the point(#4689)', function (assert) {
 
     for (var i = 0; i < chart.series[0].points.length; i++) {
         chart.series[0].points[i].onMouseOver();
-        assert.strictEqual(
+        assert.deepEqual(
             getCenter(chart.series[0].points[i].graphic.getBBox()),
             getCenter(chart.series[0].halo.getBBox()),
             'Point ' + i + ' and halo has the same center'

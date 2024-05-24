@@ -54,8 +54,8 @@ QUnit.test(
             yAxis = chart.yAxis[0];
 
         assert.strictEqual(
-            10,
             parseInt(points[0].graphic.attr('height'), 10),
+            10,
             'First point has proper height'
         );
 
@@ -65,15 +65,17 @@ QUnit.test(
             'Third point has proper height'
         );
 
-        assert.strictEqual(
-            Math.round(yAxis.toPixels(0) - yAxis.toPixels(points[3].y)),
+        assert.close(
+            yAxis.toPixels(0) - yAxis.toPixels(points[3].y),
             parseInt(points[3].graphic.attr('height'), 10),
+            1,
             'isIntermediateSum point has proper height'
         );
 
-        assert.strictEqual(
-            Math.round(yAxis.toPixels(0) - yAxis.toPixels(points[6].y)),
+        assert.close(
+            yAxis.toPixels(0) - yAxis.toPixels(points[6].y),
             parseInt(points[6].graphic.attr('height'), 10),
+            1,
             'isSum point has proper height'
         );
 
