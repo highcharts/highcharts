@@ -12,3 +12,7 @@
 #container {
     height: 400px;
 }
+
+.highcharts-dg-table thead th {
+    height: 49px;
+}

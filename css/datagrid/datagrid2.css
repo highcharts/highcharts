@@ -101,6 +101,7 @@
 
 .highcharts-dg-table thead th {
     border-right: 1px solid #00ff00;
+    height: 30px;
 }
 
 .highcharts-dg-table tbody {
@@ -119,7 +120,7 @@
     height: inherit;
     border-right: 1px solid #00ff00;
     white-space: nowrap;
-    padding: 5px;
+    padding-left: 4px;
 }
 
 .highcharts-dg-hovered-column {

@@ -9,7 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Øystein Moseng
  *  - Dawid Dragula
  *
  * */
@@ -22,7 +21,7 @@
  *
  * */
 
-import type DataGridOptions from '../DataGridOptions';
+import type DataGridOptions from './DataGridOptions';
 
 /* *
  *
@@ -30,8 +29,11 @@ import type DataGridOptions from '../DataGridOptions';
  *
  * */
 
-const DataGridDefaultOptions: DataGridOptions = {
-    enableColumnResize: true
+const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
+    rowOptions: {
+        bufferSize: 5,
+        height: 36
+    }
 };
 
 /* *

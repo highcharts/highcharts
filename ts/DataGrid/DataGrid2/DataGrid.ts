@@ -21,7 +21,7 @@
  *
  * */
 
-import type DataGridOptions from '../DataGridOptions';
+import type DataGridOptions from './DataGridOptions';
 
 import DataGridDefaultOptions from './DataGridDefaultOptions.js';
 import DataGridTable from './DataGridTable.js';

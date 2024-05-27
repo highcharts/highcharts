@@ -92,6 +92,11 @@ class DataGridTable {
      */
     public resizeObserver: ResizeObserver;
 
+    /**
+     * The default height of a row.
+     */
+    public defaultRowHeight: number;
+
 
     /* *
     *
@@ -108,6 +113,8 @@ class DataGridTable {
         this.dataGrid = dataGrid;
         this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
+
+        this.defaultRowHeight = dataGrid.options.rowOptions?.height as number;
 
         const { tableElement } = dataGrid;
 
@@ -133,6 +140,7 @@ class DataGridTable {
      */
     private init(): void {
         const columnNames = this.dataTable.getColumnNames();
+        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
 
         // Load columns
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -146,10 +154,9 @@ class DataGridTable {
         this.head.render();
 
         // Load & render rows
-        const rowsPerPage = Math.ceil(
-            this.container.offsetHeight / DataGridRow.defaultHeight
-        );
-        this.renderRows(0, rowsPerPage);
+        this.renderRows(0, Math.ceil(
+            this.container.offsetHeight / this.defaultRowHeight
+        ) + buffer);
 
         // Refresh element dimensions
         this.reflow();
@@ -185,9 +192,9 @@ class DataGridTable {
         const rows = this.rows;
 
         if (!rows.length) {
-            const first = new DataGridRow(this.dataTable, 0);
+            const first = new DataGridRow(this.dataGrid, 0);
             const last = new DataGridRow(
-                this.dataTable,
+                this.dataGrid,
                 this.dataTable.getRowCount() - 1
             );
 
@@ -219,7 +226,7 @@ class DataGridTable {
             rows.length = 0;
 
             for (let i = from; i <= to; ++i) {
-                const newRow = new DataGridRow(this.dataTable, i);
+                const newRow = new DataGridRow(this.dataGrid, i);
                 newRow.render(this);
                 this.tbodyElement.insertBefore(
                     newRow.htmlElement,
@@ -238,7 +245,7 @@ class DataGridTable {
 
         // Add rows at the beginning
         for (let i = startOffset - 1; i >= start; --i) {
-            const newRow = new DataGridRow(this.dataTable, i);
+            const newRow = new DataGridRow(this.dataGrid, i);
             newRow.render(this);
             this.tbodyElement.insertBefore(
                 newRow.htmlElement,
@@ -249,7 +256,7 @@ class DataGridTable {
 
         // Add rows at the end
         for (let i = endOffset + 1; i <= end; ++i) {
-            const newRow = new DataGridRow(this.dataTable, i);
+            const newRow = new DataGridRow(this.dataGrid, i);
             newRow.render(this);
             this.tbodyElement.insertBefore(
                 newRow.htmlElement,
@@ -289,14 +296,16 @@ class DataGridTable {
      */
     private onScroll(): void {
         const target = this.tbodyElement;
+        const { defaultRowHeight: rowHeight } = this;
 
         // Vertical virtual scrolling
-        const rowHeight = DataGridRow.defaultHeight;
         const rowsPerPage = Math.ceil(target.offsetHeight / rowHeight);
         const rowCursor = Math.floor(target.scrollTop / rowHeight);
+        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
+
         this.renderRows(
-            rowCursor - 5,
-            rowCursor + rowsPerPage + 5
+            rowCursor - buffer,
+            rowCursor + rowsPerPage + buffer
         );
     }
 
@@ -306,7 +315,7 @@ class DataGridTable {
      * @param index The index of the row to scroll to.
      */
     public scrollToRow(index: number): void {
-        this.tbodyElement.scrollTop = index * DataGridRow.defaultHeight;
+        this.tbodyElement.scrollTop = index * this.defaultRowHeight;
     }
 
     /* *

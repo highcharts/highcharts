@@ -23,9 +23,9 @@
 
 import DataGridCell from './DataGridCell.js';
 import DataGridTable from './DataGridTable.js';
-import DataTable from '../../Data/DataTable.js';
 import Globals from './Globals.js';
 import Utils from './Utils.js';
+import DataGrid from './DataGrid.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -47,12 +47,6 @@ class DataGridRow {
     * */
 
     /**
-     * The default height of the row. To be changed in the future, has to be
-     * taken from the user options or preferably from the CSS.
-     */
-    public static defaultHeight = 41;
-
-    /**
      * The cells of the row.
      */
     public cells: DataGridCell[] = [];
@@ -63,9 +57,9 @@ class DataGridRow {
     public htmlElement: HTMLTableRowElement;
 
     /**
-     * The data for the viewport.
+     * The dataGrid instance which the row belongs to.
      */
-    public dataTable: DataTable;
+    public dataGrid: DataGrid;
 
     /**
      * The index of the row in the data table.
@@ -92,17 +86,18 @@ class DataGridRow {
     /**
      * Constructs a row in the data grid.
      *
-     * @param dataTable The data for the viewport.
+     * @param dataGrid The data grid instance which the row belongs to.
      * @param index The index of the row in the data table.
      */
-    constructor(dataTable: DataTable, index: number) {
-        this.dataTable = dataTable;
+    constructor(dataGrid: DataGrid, index: number) {
+        this.dataGrid = dataGrid;
         this.index = index;
 
+        const rowHeight = dataGrid.options.rowOptions?.height as number;
         this.htmlElement = makeHTMLElement('tr', {
             style: {
-                height: DataGridRow.defaultHeight + 'px',
-                transform: `translateY(${index * DataGridRow.defaultHeight}px)`
+                height: rowHeight + 'px',
+                transform: `translateY(${index * rowHeight}px)`
             }
         });
 

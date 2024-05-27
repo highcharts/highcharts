@@ -27,7 +27,11 @@ oldDatagridTimer.innerHTML =
 const startNewTime = new Date().getTime();
 var t2 = performance.now();
 const newgrid = new DataGrid.DataGrid2('container', {
-    dataTable: dataTable
+    dataTable: dataTable,
+    rowOptions: {
+        height: 49,
+        bufferSize: 2
+    }
 });
 var t3 = performance.now();
 const endNewTime = new Date().getTime();
