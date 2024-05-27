@@ -2497,45 +2497,6 @@ function toDocletString(
 
 
 /**
- * Converts any tree to a JSON string, while converting TypeScript nodes to raw
- * code.
- *
- * @param {unknown} jsonTree
- * Tree to convert.
- *
- * @param {number|string} [indent]
- * Indent option.
- *
- * @return {string}
- * Converted JSON string.
- */
-function toJSONString(
-    jsonTree,
-    indent
-) {
-
-    if (typeof indent === 'number') {
-        indent = ''.padEnd(indent, ' ');
-    }
-
-    return JSON.stringify(
-        jsonTree,
-        (_key, value) => (
-            (
-                value &&
-                typeof value === 'object' &&
-                typeof value.kind === 'number' &&
-                typeof value.getText === 'function'
-            ) ?
-                value.getText() :
-                value
-        ),
-        indent
-    );
-}
-
-
-/**
  * [TS] Reflects a node kind to a primitive type.
  *
  * @param {TS.Node} node
@@ -2607,7 +2568,6 @@ module.exports = {
     sanitizeText,
     sanitizeType,
     toDocletString,
-    toJSONString,
     toTypeof
 };
 

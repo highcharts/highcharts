@@ -1,6 +1,6 @@
 /* *
  *
- *  Handles old option structure.
+ *  Handles tree structure and old options structure.
  *
  *  Copyright (C) Highsoft AS
  *
@@ -34,7 +34,7 @@ const FS = require('node:fs');
  * Valid properties in a node doclet.
  * @type {Array<string>}
  */
-const DOCLET_PROPERTIES = [
+const OPTION_DOCLET_PROPERTIES = [
     'defaultByProduct',
     'defaultvalue',
     'deprecated',
@@ -84,27 +84,82 @@ function assignFullNames(node, fullname) {
 
 
 /**
+ * Removes empty children and sort keys.
+ *
+ * @template {Options} T
+ *
+ * @param {T} tree
+ * Options tree to clean up.
+ *
+ * @return {T}
+ * Cleaned options tree.
+ */
+function cleanUpChildren(
+    tree
+) {
+    const sortedKeys = Object.keys(tree).sort();
+    const sortedChildren = {};
+
+    /** @type {TreeNode} */
+    let node;
+
+    for (const name of sortedKeys) {
+        node = tree[name];
+        if (node.doclet) {
+            const sortedDoclet = {};
+            for (const property of Object.keys(node.doclet).sort()) {
+                if (property !== 'exclude') {
+                    sortedDoclet[property] = node.doclet[property];
+                }
+                delete node.doclet[property];
+            }
+            node.doclet = sortedDoclet;
+        }
+        if (node.meta) {
+            const sortedMeta = {};
+            for (const property of Object.keys(node.meta).sort()) {
+                sortedMeta[property] = node.meta[property];
+                delete node.meta[property];
+            }
+            node.meta = sortedMeta;
+        }
+        if (node.children) {
+            if (!Object.keys(node.children).length) {
+                delete node.children;
+            } else {
+                node.children = cleanUpChildren(node.children);
+            }
+        }
+        sortedChildren[name] = node;
+        delete tree[name];
+    }
+
+    return sortedChildren;
+}
+
+
+/**
  * Create a clone of option node.
  *
- * @param {TreeNode} sourceNode
+ * @param {Option} sourceOption
  * Option node to clone.
  *
  * @param {string} fullname
  * Full name of clone.
  *
- * @return {TreeNode}
+ * @return {Option}
  * Clone of option node.
  */
-function cloneTreeNode(sourceNode, fullname) {
-    const sourceChildren = sourceNode.children;
-    const sourceDoclet = sourceNode.doclet;
-    const sourceMeta = sourceNode.meta;
-    /** @type {TreeNodeDoclet} */
+function cloneTreeNode(sourceOption, fullname) {
+    const sourceChildren = sourceOption.children;
+    const sourceDoclet = sourceOption.doclet;
+    const sourceMeta = sourceOption.meta;
+    /** @type {OptionDoclet} */
     const targetDoclet = {};
-    /** @type {TreeNodeMeta} */
+    /** @type {OptionMeta} */
     const targetMeta = {};
-    /** @type {TreeNode} */
-    const targetNode = {
+    /** @type {Option} */
+    const targetOption = {
         doclet: targetDoclet,
         meta: targetMeta
     };
@@ -139,7 +194,7 @@ function cloneTreeNode(sourceNode, fullname) {
         Object.keys(sourceChildren).length
     ) {
         /** @type {Record<string,TreeNode>} */
-        const targetChildren = targetNode.children = {};
+        const targetChildren = targetOption.children = {};
 
         for (const child of Object.keys(sourceChildren)) {
             targetChildren[child] = cloneTreeNode(
@@ -149,28 +204,28 @@ function cloneTreeNode(sourceNode, fullname) {
         }
     }
 
-    return targetNode;
+    return targetOption;
 }
 
 
 /**
  * Extend target option with information from source option.
  *
- * @param {TreeNode} sourceNode
+ * @param {Option} sourceOption
  * Source option node.
  *
- * @param {TreeNode} targetNode
+ * @param {Option} targetOption
  * Target option node.
  */
-function extendTreeNode(sourceNode, targetNode) {
+function extendTreeNode(sourceOption, targetOption) {
 
-    if (!sourceNode || !targetNode) {
+    if (!sourceOption || !targetOption) {
         return;
     }
 
-    const sourceDoclet = sourceNode.doclet;
-    const sourceName = sourceNode.meta.fullname;
-    const targetDoclet = targetNode.doclet;
+    const sourceDoclet = sourceOption.doclet;
+    const sourceName = sourceOption.meta.fullname;
+    const targetDoclet = targetOption.doclet;
 
     if (
         !sourceDoclet ||
@@ -180,7 +235,7 @@ function extendTreeNode(sourceNode, targetNode) {
         return;
     }
 
-    for (const property of DOCLET_PROPERTIES) {
+    for (const property of OPTION_DOCLET_PROPERTIES) {
         if (
             !sourceDoclet[property] ||
             property === 'defaultByProduct' ||
@@ -223,14 +278,14 @@ function extendTreeNode(sourceNode, targetNode) {
     }
 
     if (
-        !sourceNode.children ||
-        !Object.keys(sourceNode.children).length
+        !sourceOption.children ||
+        !Object.keys(sourceOption.children).length
     ) {
         return;
     }
 
-    const sourceChildren = sourceNode.children || {};
-    const targetChildren = targetNode.children = targetNode.children || {};
+    const sourceChildren = sourceOption.children || {};
+    const targetChildren = targetOption.children = targetOption.children || {};
     const targetExclude = targetDoclet.exclude || [];
 
     for (const name in sourceChildren) {
@@ -245,7 +300,7 @@ function extendTreeNode(sourceNode, targetNode) {
         } else {
             targetChildren[name] = cloneTreeNode(
                 sourceChildren[name],
-                `${targetNode.meta.fullname}.${name}`
+                `${targetOption.meta.fullname}.${name}`
             );
         }
     }
@@ -256,27 +311,27 @@ function extendTreeNode(sourceNode, targetNode) {
 /**
  * Extend tree node based on `extends` information.
  *
- * @param {Tree} tree
+ * @param {Options} tree
  * Option tree to extend from.
  *
- * @param {TreeNode} node
+ * @param {Option} option
  * Option node to extend.
  */
 function extendTreeNodes(
     tree,
-    node
+    option
 ) {
-    const doclet = node.doclet;
+    const doclet = option.doclet;
 
     if (doclet.extends) {
         for (const ext of doclet.extends.split(',')) {
             doclet.extends = doclet.extends.substring(ext + 1);
-            extendTreeNode(getTreeNode(tree, ext.trim()), node);
+            extendTreeNode(getTreeNode(tree, ext.trim()), option);
         }
         delete doclet.extends;
     }
 
-    const children = node.children;
+    const children = option.children;
 
     if (children) {
         for (const child of Object.keys(children)) {
@@ -289,14 +344,14 @@ function extendTreeNodes(
 /**
  * Retrieves a node from the tree.
  *
- * @param {Record<string,TreeNode>} tree
+ * @param {Options} tree
  * Tree root to walk on.
  *
  * @param {string} nodePath
  * Node path to retrieve.
  *
- * @return {TreeNode|undefined}
- * TreeNode or `undefined`, if not found.
+ * @return {Option|undefined}
+ * Option or `undefined`, if not found.
  */
 function getTreeNode(
     tree,
@@ -349,11 +404,11 @@ function getTreeNode(
 /**
  * Loads and autocompletes the options tree.
  *
- * @return {Tree}
+ * @return {Options}
  * Option tree.
  */
 function loadOptionsTree() {
-    /** @type {Tree} */
+    /** @type {Options} */
     const tree = JSON.parse(FS.readFileSync('tree.json', 'utf8'));
 
     /* eslint-disable-next-line no-underscore-dangle */
@@ -372,55 +427,84 @@ function loadOptionsTree() {
 
 
 /**
- * Removes empty children and sort keys.
+ * Sorts tree nodes in alphabetical order except for arrays, which follow last.
  *
- * @param {Tree} tree
- * Option tree to clean up.
+ * @template {*} T
  *
- * @return {Tree}
- * Cleaned option tree.
+ * @param {T} jsonTree
+ * Tree to sort.
+ *
+ * @return {T}
+ * New sorted tree.
  */
-function cleanUpChildren(
-    tree
+function sortJSONTree(
+    jsonTree
 ) {
-    const sortedKeys = Object.keys(tree).sort();
-    const sortedChildren = {};
+    const newTree = {};
+    const follows = {};
 
-    /** @type {TreeNode} */
-    let node;
-
-    for (const name of sortedKeys) {
-        node = tree[name];
-        if (node.doclet) {
-            const sortedDoclet = {};
-            for (const property of Object.keys(node.doclet).sort()) {
-                if (property !== 'exclude') {
-                    sortedDoclet[property] = node.doclet[property];
-                }
-                delete node.doclet[property];
-            }
-            node.doclet = sortedDoclet;
-        }
-        if (node.meta) {
-            const sortedMeta = {};
-            for (const property of Object.keys(node.meta).sort()) {
-                sortedMeta[property] = node.meta[property];
-                delete node.meta[property];
-            }
-            node.meta = sortedMeta;
-        }
-        if (node.children) {
-            if (!Object.keys(node.children).length) {
-                delete node.children;
+    for (const key of Object.keys(jsonTree).sort()) {
+        if (typeof jsonTree[key] === 'object') {
+            if (jsonTree[key] instanceof Array) {
+                follows[key] = jsonTree[key];
+            } else if (jsonTree[key] === null) {
+                newTree[key] = null;
             } else {
-                node.children = cleanUpChildren(node.children);
+                newTree[key] = (
+                    jsonTree[key].prototype === Object ?
+                        sortJSONTree(jsonTree[key]) :
+                        jsonTree[key]
+                );
             }
+        } else {
+            newTree[key] = jsonTree[key];
         }
-        sortedChildren[name] = node;
-        delete tree[name];
     }
 
-    return sortedChildren;
+    for (const key of Object.keys(follows)) {
+        newTree[key] = follows[key];
+    }
+
+    return newTree;
+}
+
+
+/**
+ * Converts any tree to a JSON string, while converting TypeScript nodes to raw
+ * code.
+ *
+ * @param {*} jsonTree
+ * Tree to convert.
+ *
+ * @param {number|string} [indent]
+ * Indent option.
+ *
+ * @return {string}
+ * Converted JSON string.
+ */
+function toJSONString(
+    jsonTree,
+    indent
+) {
+
+    if (typeof indent === 'number') {
+        indent = ''.padEnd(indent, ' ');
+    }
+
+    return JSON.stringify(
+        jsonTree,
+        (_key, value) => (
+            (
+                value &&
+                typeof value === 'object' &&
+                typeof value.kind === 'number' &&
+                typeof value.getText === 'function'
+            ) ?
+                value.getText() :
+                value
+        ),
+        indent
+    );
 }
 
 
@@ -433,7 +517,9 @@ function cleanUpChildren(
 
 module.exports = {
     getTreeNode,
-    loadOptionsTree
+    loadOptionsTree,
+    sortJSONTree,
+    toJSONString
 };
 
 
@@ -444,25 +530,25 @@ module.exports = {
  * */
 
 /**
- * @typedef {Record<string,TreeNode>} Tree
+ * @typedef {Record<string,Option>} Options
  */
 
 /**
- * @typedef TreeNode
- * @property {Tree} [children]
- * @property {TreeNodeDoclet} doclet
- * @property {TreeNodeMeta} meta
+ * @typedef Option
+ * @property {Options} [children]
+ * @property {OptionDoclet} doclet
+ * @property {OptionMeta} meta
  */
 
 /**
- * @typedef TreeNodeMeta
+ * @typedef OptionMeta
  * @property {string} [default]
  * @property {string} fullname
  * @property {string} name
  */
 
 /**
- * @typedef TreeNodeDoclet
+ * @typedef OptionDoclet
  * @property {string} [declare]
  * @property {boolean|null|number|string} [defaultvalue]
  * @property {string} [description]

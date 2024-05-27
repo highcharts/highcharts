@@ -50,7 +50,7 @@ interface Args {
  * */
 
 
-const TREE: TreeLib.Tree = {};
+const TREE: TreeLib.Options = {};
 
 
 /* *
@@ -62,7 +62,7 @@ const TREE: TreeLib.Tree = {};
 
 function addTreeNode(
     sourceInfo: TSLib.SourceInfo,
-    parentNode: TreeLib.TreeNode,
+    parentNode: TreeLib.Option,
     info: TSLib.CodeInfo,
     debug?: boolean
 ): void {
@@ -70,10 +70,10 @@ function addTreeNode(
 
     const add = (
         _sourceInfo: TSLib.SourceInfo,
-        _parentNode: TreeLib.TreeNode,
+        _parentNode: TreeLib.Option,
         _info: TSLib.CodeInfo
     ) => {
-        let _treeNode: (TreeLib.TreeNode|undefined);
+        let _treeNode: (TreeLib.Option|undefined);
 
         if (
             _info.kind === 'Doclet' ||
@@ -277,8 +277,8 @@ function buildTree(
 
 function getTreeNode(
     fullname: string
-): TreeLib.TreeNode {
-    let _currentNode: TreeLib.TreeNode = {
+): TreeLib.Option {
+    let _currentNode: TreeLib.Option = {
         doclet: {},
         meta: {
             fullname: '',
@@ -348,7 +348,11 @@ function main() {
 
 function saveJSON() {
     const save = (filePath, obj) => {
-        FS.writeFileSync(filePath, TSLib.toJSONString(obj, 4), 'utf8');
+        FS.writeFileSync(
+            filePath,
+            TreeLib.toJSONString(TreeLib.sortJSONTree(obj), 4),
+            'utf8'
+        );
         LogLib.message('Saved', filePath, '.');
     };
 
