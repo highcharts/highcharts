@@ -44,11 +44,38 @@ Highcharts.chart('container', {
         marginTop: 70,
         events: {
             load() {
-                setInterval(() => {
-                    if (this.series) {
-                        updateData(this);
+                const chart = this;
+                let intervalId = null;
+                const toggleInterval = () => {
+                    if (intervalId) {
+                        chart.update({
+                            accessibility: {
+                                enabled: true
+                            }
+                        });
+                        clearInterval(intervalId);
+                        intervalId = null;
+                    } else {
+                        chart.update({
+                            accessibility: {
+                                enabled: false
+                            }
+                        });
+                        intervalId = setInterval(() => {
+                            if (this.series) {
+                                updateData(this);
+                            }
+                        }, 200);
                     }
-                }, 200);
+                };
+                chart.renderer.button(
+                    'Start/Stop animation',
+                    10,
+                    10,
+                    toggleInterval
+                ).add();
+
+                toggleInterval();
             }
         }
     },
@@ -192,7 +219,7 @@ Highcharts.chart('container', {
             format: '{point.price:,.1f}'
         }],
         name: 'Asks',
-        color: '#d76769',
+        color: '#ce4548',
         data: asksData
     }, {
         dataLabels: [{
@@ -213,7 +240,7 @@ Highcharts.chart('container', {
             format: '{point.price:,.1f}'
         }],
         name: 'Bids',
-        color: '#42b3f0',
+        color: '#107db7',
         data: bidsData,
         yAxis: 1
     }]
