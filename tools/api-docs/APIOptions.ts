@@ -50,10 +50,6 @@ interface Args {
  * */
 
 
-const DEFAULTS: Record<string, Array<(TSLib.PropertyInfo|TSLib.VariableInfo)>> = {};
-
-const OPTIONS: Record<string, Array<TSLib.InterfaceInfo>> = {};
-
 const TREE: TreeLib.Tree = {};
 
 
@@ -101,6 +97,7 @@ function addTreeNode(
         switch (_info.kind) {
             case 'Class':
             case 'Interface':
+                TSLib.autoExtendInfo(_sourceInfo, _info, debug);
                 _moreInfos.push(..._info.members);
                 break;
             case 'Function':
@@ -241,7 +238,7 @@ function addTreeNode(
             _stack.push(_moreInfo);
 
             add(
-                TSLib.getSourceInfo(_moreInfo.meta.source, void 0, debug),
+                TSLib.getSourceInfo(_moreInfo.meta.file, void 0, debug),
                 (_treeNode || _parentNode),
                 _moreInfo
             );
@@ -261,7 +258,7 @@ function buildTree(
     rootPath: string,
     debug?: boolean
 ): void {
-    const _rootSource = TSLib.getSourceInfo(rootPath, void 0, debug);
+    const _rootInfo = TSLib.getSourceInfo(rootPath, void 0, debug);
     const _rootNode = {
         doclet: {},
         meta: {
@@ -271,8 +268,8 @@ function buildTree(
         children: TREE
     };
 
-    for (const _codeInfo of _rootSource.code) {
-        addTreeNode(_rootSource, _rootNode, _codeInfo, debug);
+    for (const _codeInfo of _rootInfo.code) {
+        addTreeNode(_rootInfo, _rootNode, _codeInfo, debug);
     }
 
 }

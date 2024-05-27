@@ -1257,8 +1257,8 @@ function getInfoMeta(
     return {
         begin: node.getStart(),
         end: node.getEnd(),
+        file: node.getSourceFile().fileName,
         overhead: node.getLeadingTriviaWidth(),
-        source: node.getSourceFile().fileName,
         syntax: node.kind
     };
 }
@@ -1614,17 +1614,18 @@ function getSourceInfo(
     sourceText,
     includeNodes
 ) {
+    const _cacheKey = `${filePath}:${includeNodes}`;
 
-    if (
-        !includeNodes &&
-        SOURCE_CACHE[filePath]
-    ) {
-        return SOURCE_CACHE[filePath];
+    if (!sourceText) {
+        if (SOURCE_CACHE[_cacheKey]) {
+            return SOURCE_CACHE[_cacheKey];
+        }
+        sourceText = FS.readFileSync(filePath, 'utf8');
     }
 
-    const sourceFile = TS.createSourceFile(
+    const _sourceFile = TS.createSourceFile(
         filePath,
-        (sourceText || FS.readFileSync(filePath, 'utf8')),
+        sourceText,
         TS.ScriptTarget.Latest,
         true
     );
@@ -1635,13 +1636,9 @@ function getSourceInfo(
         path: filePath
     };
 
-    _info.code = getChildInfos(getNodesChildren(sourceFile), includeNodes);
+    _info.code = getChildInfos(getNodesChildren(_sourceFile), includeNodes);
 
-    if (includeNodes) {
-        _info.node = sourceFile;
-    } else {
-        SOURCE_CACHE[filePath] = _info;
-    }
+    SOURCE_CACHE[_cacheKey] = _info;
 
     if (_info.path.endsWith('.d.ts')) {
         autoCompleteInfo(_info, includeNodes);
@@ -2746,9 +2743,9 @@ module.exports = {
  * @typedef Meta
  * @property {number} begin
  * @property {number} end
+ * @property {string} file
  * @property {boolean} [merged]
  * @property {number} overhead
- * @property {string} source
  * @property {number} syntax
  */
 
