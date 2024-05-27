@@ -128,6 +128,7 @@ class Toolbar {
     public toolbarClassName?: string;
     public buttonList?: Array<string>;
     public width = 0;
+    public isDirty = false;
 
     /* *
      *
@@ -688,6 +689,7 @@ class Toolbar {
         options: StockToolsOptions,
         redraw?: boolean
     ): void {
+        this.isDirty = !!options.gui.definitions;
         merge(true, this.chart.options.stockTools, options);
         merge(true, this.options, options.gui);
         this.visible = pick(this.options.visible && this.options.enabled, true);
@@ -764,7 +766,8 @@ class Toolbar {
 
             if (
                 JSON.stringify(this.options.buttons) !==
-                JSON.stringify(this.buttonList)
+                JSON.stringify(this.buttonList) ||
+                this.isDirty
             ) {
                 this.toolbar.innerHTML = AST.emptyHTML;
                 this.createButtons();
