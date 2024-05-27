@@ -321,12 +321,26 @@ namespace ScrollbarAxis {
                 isNaN(scrollMax) ||
                 !defined(axis.min) ||
                 !defined(axis.max) ||
-                axis.min === axis.max // #10733
+                axis.dataMin === axis.dataMax // #10733
             ) {
-                // Default action: when extremes are the same or there is
+                // Default action: when data extremes are the same or there is
                 // not extremes on the axis, but scrollbar exists, make it
                 // full size
+
                 scrollbar.setRange(0, 1);
+            } else if (axis.min === axis.max) { // #20359
+                // When the extremes are the same, set the scrollbar to a point
+                // within the extremes range. Utilize pointRange to perform the
+                // calculations. (#20359)
+
+                const interval: number = axis.pointRange / (
+                    axis.dataMax as number +
+                    1
+                );
+                from = interval * axis.min;
+                to = interval * (axis.max + 1);
+
+                scrollbar.setRange(from, to);
             } else {
                 from = (
                     ((axis.min as any) - scrollMin) /
