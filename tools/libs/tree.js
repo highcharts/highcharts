@@ -541,13 +541,6 @@ module.exports = {
  */
 
 /**
- * @typedef OptionMeta
- * @property {string} [default]
- * @property {string} fullname
- * @property {string} name
- */
-
-/**
  * @typedef OptionDoclet
  * @property {string} [declare]
  * @property {boolean|null|number|string} [defaultvalue]
@@ -559,6 +552,13 @@ module.exports = {
  * @property {Array<string>} [see]
  * @property {string} [since]
  * @property {Record<string,Array<string>>} [type]
+ */
+
+/**
+ * @typedef OptionMeta
+ * @property {string} [default]
+ * @property {string} fullname
+ * @property {string} name
  */
 
 ('');

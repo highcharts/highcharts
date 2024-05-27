@@ -19,10 +19,23 @@ const PORCELAN_REGEXP = /([ACDMRU\?\! ])([ACDMRU\?\! ]) ([\.\/\w]+)/;
  * */
 
 /**
+ * Returns the local branch name.
+ *
+ * @return {Promise<string>}
+ * Promise of the local branch name.
+ */
+async function getBranch() {
+    const ProcessLib = require('../libs/process.js');
+    const result = await ProcessLib.exec('git rev-parse --abbrev-ref HEAD');
+
+    return result.toString().trim();
+}
+
+/**
  * Returns the list of modified files, that are either staged or unstaged.
  *
  * @return {Promise<Array<[string,string,string]>>}
- *         Promise to keep with results
+ *         Promise of the status results.
  */
 function getStatus() {
 
@@ -64,7 +77,7 @@ function getStatus() {
  */
 function getLatestCommitShaSync(useShortVersion = false) {
     const ChildProcess = require('child_process');
-    return ChildProcess.execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString();
+    return ChildProcess.execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString().trim();
 }
 
 /**
@@ -85,6 +98,7 @@ function getFilesChanged() {
  * */
 
 module.exports = {
+    getBranch,
     getStatus,
     getLatestCommitShaSync,
     getFilesChanged

@@ -2274,7 +2274,7 @@ function resolveType(
 
         switch (info.kind) {
             case 'Import':
-                for (const item of Object.keys(info.imports)) {
+                for (const item of Object.keys(info.imports || {})) {
 
                     // `item` is the external name,
                     // while `type` is the local name
@@ -2665,7 +2665,7 @@ module.exports = {
 /**
  * @typedef ImportInfo
  * @property {DocletInfo} [doclet]
- * @property {Record<string,string>} imports
+ * @property {Record<string,string>} [imports]
  * @property {'Import'} kind
  * @property {Meta} meta
  * @property {TS.ImportDeclaration} [node]
