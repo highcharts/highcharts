@@ -169,6 +169,28 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      */
     visibility?: boolean|Sync.OptionsEntry;
 }
+
+/**
+ * Datagrid component highlight sync options.
+ *
+ * Example:
+ * ```
+ * {
+ *     enabled: true,
+ *     autoScroll: true
+ * }
+ * ```
+ */
+export interface DataGridHighlightSyncOptions extends Sync.OptionsEntry {
+    /**
+     * Whether to scroll the data grid to the highlighted row automatically.
+     *
+     * @default false
+     */
+    autoScroll?: boolean;
+}
+
+
 /* *
  *
  *  Default Export

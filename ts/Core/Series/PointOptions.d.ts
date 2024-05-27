@@ -64,6 +64,7 @@ export interface PointMarkerOptions {
     enabled?: boolean;
     enabledThreshold?: number;
     fillColor?: ColorType;
+    fillOpacity?: number;
     height?: number;
     lineColor?: ColorType;
     lineWidth?: number;

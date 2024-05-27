@@ -6,9 +6,6 @@ const data = [
 ];
 
 Highcharts.stockChart('container', {
-    rangeSelector: {
-        selected: 1
-    },
     navigator: {
         series: {
             color: Highcharts.getOptions().colors[0]

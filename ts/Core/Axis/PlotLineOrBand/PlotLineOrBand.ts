@@ -504,7 +504,7 @@ export default PlotLineOrBand;
  * value or a percentage, for example `50%`.
  *
  * @type      {number|string}
- * @since     next
+ * @since 11.4.2
  * @sample    {highcharts} highcharts/xaxis/plotbands-gauge-borderradius
  *            Angular gauge with rounded plot bands
  * @apioption xAxis.plotBands.borderRadius

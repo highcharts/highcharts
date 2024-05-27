@@ -2472,10 +2472,10 @@ export default Data;
  * @sample {highmaps} highcharts/data/column-types-map/
  *         Map chart created with fips from CSV
  *
- * @type      {Array<'string'|'number'|'float'|'date'>}
- * @since     @next
+ * @type       {Array<'string'|'number'|'float'|'date'>}
+ * @since      11.3.0
  * @validvalue ["string", "number", "float", "date"]
- * @apioption data.columnTypes
+ * @apioption  data.columnTypes
  */
 
 /**

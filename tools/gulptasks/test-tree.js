@@ -3,7 +3,7 @@
  */
 
 const gulp = require('gulp');
-const log = require('./lib/log.js');
+const log = require('../libs/log.js');
 
 /* eslint-disable no-use-before-define */
 

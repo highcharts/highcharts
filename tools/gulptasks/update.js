@@ -28,8 +28,8 @@ const CONFIGURATION_FILE = path.join('node_modules', '_gulptasks_update.json');
 function task() {
 
     const fs = require('fs');
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     return new Promise((resolve, reject) => {
 

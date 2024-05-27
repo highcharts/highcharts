@@ -51,14 +51,16 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
-            const { readFileSync } = require('node:fs')
+            if (github.head_ref !== github.base_ref) {
+              const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+              const { readFileSync } = require('node:fs')
 
-            const failed = (readFileSync('./test/console.log') || '').includes('FAILED');
+              const failed = (readFileSync('./test/console.log') || '').includes('FAILED');
 
-            await createOrUpdateComment(github, context, 'Webpack monitoring',
-              failed ?
-                ':rotating_light: Webpack tests failed.' +
-                ' Check demos and masters with `npx gulp test --webpack`.' :
-                'LGTM :+1:'
-            );
+              await createOrUpdateComment(github, context, 'Webpack monitoring',
+                failed ?
+                  ':x: Webpack tests failed.' +
+                  ' Check demos and masters with `npx gulp test --webpack`.' :
+                  ':white_check_mark: Webpack tests succeeded.'
+              );
+            }

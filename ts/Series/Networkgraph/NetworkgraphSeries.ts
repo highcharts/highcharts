@@ -200,7 +200,7 @@ class NetworkgraphSeries extends Series {
         if (this.layout) {
             this.layout.removeElementFromCollection(
                 this,
-                this.layout.series
+                this.layout.series as Array<this>
             );
         }
         NodesComposition.destroy.call(this);
