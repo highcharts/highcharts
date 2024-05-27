@@ -359,7 +359,10 @@ class Fx {
             reverse,
             start = fromD && fromD.slice(); // Copy
 
-        if (!start) {
+        if (
+            !start ||
+            fromD && toD.length > fromD.length // #16925
+        ) {
             return [end, end];
         }
 
