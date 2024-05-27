@@ -102,14 +102,31 @@ QUnit.test('Hiding overlapping textPath labels', function (assert) {
     });
 
     assert.equal(
-        chart.series[0].links[0].dataLabels[0].text.visibility,
+        chart.series[0]
+            .links[0]
+            .dataLabels[0]
+            .text
+            .element
+            .className
+            .baseVal,
         undefined,
-        'TextPath label should be visible'
+        'highcharts-label' +
+        'highcharts-data-label ' +
+        'highcharts-data-label-color-0 '
     );
 
     assert.equal(
-        chart.series[0].links[5].dataLabels[0].text.visibility,
-        'hidden',
+        chart.series[0]
+            .links[5]
+            .dataLabels[0]
+            .text
+            .parentGroup
+            .element
+            .className
+            .baseVal,
+        'highcharts-label highcharts-data-label ' +
+        'highcharts-data-label-color-0 ' +
+        'highcharts-data-label-hidden ',
         'TextPath label should be hidden'
     );
 });
