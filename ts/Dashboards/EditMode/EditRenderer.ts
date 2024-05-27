@@ -137,6 +137,7 @@ function renderCollapseHeader(
         onchange,
         isEnabled,
         isNested,
+        isStandalone,
         lang
     } = options;
 
@@ -160,12 +161,15 @@ function renderCollapseHeader(
         accordion
     );
 
-    const headerBtn = createElement(
-        'button',
-        { className: EditGlobals.classNames.accordionHeaderBtn },
-        {},
-        header
-    );
+    let headerBtn;
+    if (!isStandalone) {
+        headerBtn = createElement(
+            'button',
+            { className: EditGlobals.classNames.accordionHeaderBtn },
+            {},
+            header
+        );
+    }
 
     createElement(
         'span',
@@ -203,13 +207,16 @@ function renderCollapseHeader(
         {
             className:
                 EditGlobals.classNames.accordionContent + ' ' +
-                EditGlobals.classNames.hiddenElement
+                (isStandalone ?
+                    EditGlobals.classNames.standaloneElement :
+                    EditGlobals.classNames.hiddenElement
+                )
         },
         {},
         accordion
     );
 
-    headerBtn.addEventListener('click', function (): void {
+    headerBtn?.addEventListener('click', function (): void {
         content.classList.toggle(EditGlobals.classNames.hiddenElement);
         headerIcon.classList.toggle(EditGlobals.classNames.collapsedElement);
     });
@@ -875,6 +882,7 @@ export interface ToggleFormFieldOptions {
 export interface NestedHeaderFormFieldOptions {
     name: string;
     showToggle?: boolean;
+    isStandalone?: boolean;
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;

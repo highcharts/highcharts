@@ -56,6 +56,7 @@ const {
     addEvent,
     attr,
     createElement,
+    crisp,
     css,
     defined,
     erase,
@@ -900,21 +901,26 @@ class SVGElement implements SVGElementLike {
         rect: RectangleObject,
         strokeWidth?: number
     ): RectangleObject {
-        const wrapper = this;
-
-        strokeWidth = strokeWidth || rect.strokeWidth || 0;
         // Math.round because strokeWidth can sometimes have roundoff errors
-        const normalizer = Math.round(strokeWidth) % 2 / 2;
+        strokeWidth = Math.round(strokeWidth || rect.strokeWidth || 0);
 
-        // Normalize for crisp edges
-        rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
-        rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
-        rect.width = Math.floor(
-            (rect.width || wrapper.width || 0) - 2 * normalizer
-        );
-        rect.height = Math.floor(
-            (rect.height || wrapper.height || 0) - 2 * normalizer
-        );
+        const x1 = rect.x || this.x || 0,
+            y1 = rect.y || this.y || 0,
+            x2 = (rect.width || this.width || 0) + x1,
+            y2 = (rect.height || this.height || 0) + y1,
+            // Find all the rounded coordinates for corners
+            x = crisp(x1, strokeWidth),
+            y = crisp(y1, strokeWidth),
+            x2Crisp = crisp(x2, strokeWidth),
+            y2Crisp = crisp(y2, strokeWidth);
+
+        extend(rect, {
+            x,
+            y,
+            width: x2Crisp - x,
+            height: y2Crisp - y
+        });
+
         if (defined(rect.strokeWidth)) {
             rect.strokeWidth = strokeWidth;
         }

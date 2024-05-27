@@ -798,7 +798,7 @@ export default DataModifyComposition;
  *
  * @type      {boolean}
  * @default   false
- * @since     next
+ * @since 11.4.2
  * @product   highstock
  * @apioption plotOptions.series.cumulativeStart
  */
