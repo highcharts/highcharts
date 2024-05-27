@@ -6,15 +6,6 @@ Highcharts.chart('container', {
         csv: document.getElementById('csv').innerHTML,
         parsed: function () {
             start = +new Date();
-        },
-        complete(options) {
-            options.series.forEach(series => {
-                const turboData = [];
-                series.data.forEach(data => {
-                    turboData.push([data.x, data.y, data.value]);
-                });
-                series.data = turboData;
-            });
         }
     },
 
@@ -83,6 +74,10 @@ Highcharts.chart('container', {
         }
     },
 
+    boost: {
+        useGPUTranslations: true
+    },
+
     series: [{
         boostThreshold: 100,
         borderWidth: 0,
@@ -92,8 +87,9 @@ Highcharts.chart('container', {
             headerFormat: 'Temperature<br/>',
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
                 '℃</b>'
-        }
+        },
+        turboThreshold: Number.MAX_VALUE
     }]
 });
 
-console.log('Rendered in ' + (new Date() - start) + ' ms');
+console.log(new Date(1995, 2, 5).getTime());
