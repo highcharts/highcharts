@@ -29,6 +29,7 @@ import type {
 
 import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
+import StockToolsUtilities from './StockToolsUtilities.js';
 const {
     addEvent,
     createElement,
@@ -40,6 +41,9 @@ const {
     merge,
     pick
 } = U;
+const {
+    shallowArraysEqual
+} = StockToolsUtilities;
 
 /* *
  *
@@ -722,7 +726,7 @@ class Toolbar {
     }
 
     /**
-     * Redraw, GUI requires to verify if the navigation should be visible.
+     * Redraws the toolbar based on the current state of the options.
      * @private
      */
     public redraw(): void {
@@ -765,8 +769,7 @@ class Toolbar {
             }
 
             if (
-                JSON.stringify(this.options.buttons) !==
-                JSON.stringify(this.buttonList) ||
+                !shallowArraysEqual(this.options.buttons, this.buttonList) ||
                 this.isDirty
             ) {
                 this.toolbar.innerHTML = AST.emptyHTML;
