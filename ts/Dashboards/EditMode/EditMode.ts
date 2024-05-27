@@ -116,7 +116,10 @@ class EditMode {
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
 
-        this.initLayout();
+        board.boardWrapper = board.container;
+        if (board.guiEnabled) {
+            this.initLayout();
+        }
 
         this.isInitialized = false;
         this.isContextDetectionActive = false;
@@ -410,9 +413,6 @@ class EditMode {
 
         // Clear the container from any content.
         board.container.innerHTML = '';
-
-        // Set the main wrapper container.
-        board.boardWrapper = board.container;
 
         // Add container for the board.
         board.container = createElement(
@@ -777,21 +777,30 @@ class EditMode {
      */
     public createTools(): void {
         const editMode = this;
-        const options = this.options;
+        const { board, options, tools } = editMode;
 
         // Create tools container
-        this.tools.container = document.createElement('div');
-        this.tools.container.classList.add(EditGlobals.classNames.editTools);
+        tools.container = document.createElement('div');
+        tools.container.classList.add(EditGlobals.classNames.editTools);
 
-        this.board.layoutsWrapper?.parentNode.insertBefore(
-            this.tools.container,
-            this.board.layoutsWrapper
-        );
+        if (board.layoutsWrapper) {
+            // For the generated layout
+            board.layoutsWrapper.parentNode.insertBefore(
+                tools.container,
+                board.layoutsWrapper
+            );
+        } else {
+            // For the custom layout
+            board.container.insertBefore(
+                tools.container,
+                board.container.firstChild
+            );
+        }
 
         // Create context menu button
         if (options.contextMenu && options.contextMenu.enabled) {
-            this.tools.contextButtonElement = EditRenderer.renderContextButton(
-                this.tools.container,
+            tools.contextButtonElement = EditRenderer.renderContextButton(
+                tools.container,
                 editMode
             );
 
@@ -813,7 +822,7 @@ class EditMode {
             const addIconURL = options.tools.addComponentBtn.icon;
 
             this.addComponentBtn = EditRenderer.renderButton(
-                this.tools.container,
+                tools.container,
                 {
                     className: EditGlobals.classNames.editToolsBtn,
                     icon: addIconURL,

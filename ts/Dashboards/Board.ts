@@ -382,13 +382,13 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      */
     private initEditMode():void {
-        if (!Dashboards.EditMode) {
-            throw new Error('Missing layout.js module');
-        } else {
+        if (Dashboards.EditMode) {
             this.editMode = new Dashboards.EditMode(
                 this,
                 this.options.editMode
             );
+        } else if (this.editModeEnabled) {
+            throw new Error('Missing layout.js module');
         }
     }
 
