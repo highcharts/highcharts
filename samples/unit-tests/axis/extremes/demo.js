@@ -192,7 +192,9 @@ QUnit.test(
             chart = new Highcharts.StockChart({
                 chart: {
                     renderTo: 'container',
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 },
 
                 series: [
@@ -331,7 +333,9 @@ QUnit.test('getSeriesExtremes', function (assert) {
 QUnit.test('Zooming', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 minRange: 0.5
@@ -525,7 +529,9 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
         'highcharts/area',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
 
             xAxis: {
@@ -613,7 +619,9 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         'container',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 min: 0,
@@ -676,7 +684,9 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
 
     chart.update({
         chart: {
-            zoomType: '',
+            zooming: {
+                type: ''
+            },
             panning: {
                 enabled: true,
                 type: 'x'
