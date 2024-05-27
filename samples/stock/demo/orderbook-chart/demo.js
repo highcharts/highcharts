@@ -1,3 +1,7 @@
+Highcharts.Templating.helpers.log = function () {
+    console.log(arguments[0].ctx);
+};
+
 function getRandomNumber(min, max) {
     return Math.round(Math.random() * (max - min)) + min;
 }
@@ -44,7 +48,9 @@ Highcharts.chart('container', {
         marginTop: 70,
         events: {
             load() {
-                const chart = this;
+                const chart = this,
+                    toggleButton = document.getElementById('animation-toggle');
+
                 let intervalId = null;
                 const toggleInterval = () => {
                     if (intervalId) {
@@ -55,6 +61,7 @@ Highcharts.chart('container', {
                         });
                         clearInterval(intervalId);
                         intervalId = null;
+                        toggleButton.innerText = 'Start animation';
                     } else {
                         chart.update({
                             accessibility: {
@@ -66,17 +73,20 @@ Highcharts.chart('container', {
                                 updateData(this);
                             }
                         }, 200);
+                        toggleButton.innerText = 'Stop animation';
                     }
                 };
-                chart.renderer.button(
-                    'Start/Stop animation',
-                    10,
-                    10,
-                    toggleInterval
-                ).add();
 
+                toggleButton.addEventListener('click', toggleInterval);
                 toggleInterval();
             }
+        }
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormat: 'Price: {log}{price:.1f}USD, ' +
+                '{series.name}: {y}'
         }
     },
 
@@ -107,12 +117,18 @@ Highcharts.chart('container', {
         visible: false,
         title: {
             text: 'Market depth / price'
+        },
+        accessibility: {
+            description: 'Bid orders'
         }
     }, {
         opposite: true,
         visible: false,
         title: {
             text: 'Market depth / price'
+        },
+        accessibility: {
+            description: 'Ask orders'
         }
     }],
 
