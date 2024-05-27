@@ -101,26 +101,27 @@ QUnit.test('Hiding overlapping textPath labels', function (assert) {
         }]
     });
 
-    let visible, hidden;
+    let visible = 0,
+        hidden = 0;
 
     for (const link of chart.series[0].links) {
         const visibility = link.dataLabels[0].text.visibility;
         if (visibility === 'hidden') {
-            hidden = true;
+            hidden++;
         } else if (!visibility) {
-            visible = true;
+            visible++;
         }
     }
 
     assert.equal(
         visible,
-        true,
-        'Some labels should be visible'
+        2,
+        '2 labels should be visible'
     );
 
     assert.equal(
         hidden,
-        true,
-        'Some labels should be hidden'
+        7,
+        '7 labels should be hidden'
     );
 });
