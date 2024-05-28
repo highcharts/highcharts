@@ -33,7 +33,6 @@ import EditContextMenu from './EditContextMenu.js';
 import DragDrop from '../Actions/DragDrop.js';
 import Resizer from '../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
-import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Globals from '../Globals.js';
 import Layout from '../Layout/Layout.js';
@@ -172,6 +171,10 @@ class EditMode {
      */
     private active: boolean = false;
     /**
+     * Whether the board is generated with custom HTML.
+     */
+    public customHTMLMode: boolean = false;
+    /**
      * Edit mode options.
      */
     public options: EditMode.Options;
@@ -305,7 +308,9 @@ class EditMode {
     public init(): void {
         const editMode = this;
 
-        if (this.options.resize?.enabled) {
+        this.customHTMLMode = !this.board.layoutsWrapper;
+
+        if (this.options.resize?.enabled && !editMode.customHTMLMode) {
             editMode.resizer = new Resizer(editMode, editMode.options.resize);
         }
 
@@ -344,8 +349,16 @@ class EditMode {
         const editMode = this,
             board = editMode.board;
 
-        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-            editMode.setLayoutEvents(board.layouts[i]);
+        if (this.customHTMLMode) {
+            const length = board.mountedComponents.length;
+
+            for (let i = 0, iEnd = length; i < iEnd; ++i) {
+                editMode.setCellEvents(board.mountedComponents[i].cell as any);
+            }
+        } else {
+            for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+                editMode.setLayoutEvents(board.layouts[i]);
+            }
         }
 
         if (editMode.cellToolbar) {
@@ -386,7 +399,18 @@ class EditMode {
             );
         }
 
-        if (board.layoutsWrapper) {
+        if (this.customHTMLMode) {
+            addEvent(
+                board.container,
+                'mousemove',
+                editMode.onDetectContext.bind(editMode)
+            );
+            addEvent(
+                board.container,
+                'click',
+                editMode.onContextConfirm.bind(editMode)
+            );
+        } else {
             addEvent(
                 board.layoutsWrapper,
                 'mousemove',
@@ -844,46 +868,46 @@ class EditMode {
 
     /**
      * Event fired when detecting context on drag&drop.
-     *
-     * @param e
-     * Mouse pointer event.
      */
-    public onDetectContext(e: PointerEvent): void {
-        const editMode = this,
-            offset = 50; // TODO - add it from options.
+    public onDetectContext(): void {
+        const editMode = this;
 
         if (
-            editMode.isActive() &&
-            editMode.isContextDetectionActive &&
-            (editMode.mouseCellContext || editMode.mouseRowContext) &&
-            !(editMode.dragDrop || {}).isActive
+            !editMode.isActive() ||
+            !editMode.isContextDetectionActive ||
+            (!editMode.mouseCellContext && !editMode.mouseRowContext) ||
+            (editMode.dragDrop || {}).isActive
         ) {
-            let cellContext,
-                rowContext;
+            return;
+        }
 
-            if (editMode.mouseCellContext) {
-                cellContext = ContextDetection
-                    .getContext(editMode.mouseCellContext, e, offset).cell;
-            } else if (editMode.mouseRowContext) {
-                rowContext = editMode.mouseRowContext;
-                cellContext = rowContext.layout.parentCell;
-            }
+        let cellContext: Cell|undefined;
+        let rowContext: Row|undefined;
 
-            this.potentialCellContext = cellContext;
+        if (editMode.mouseCellContext) {
+            cellContext = editMode.mouseCellContext;
+        } else if (editMode.mouseRowContext) {
+            rowContext = editMode.mouseRowContext;
+            cellContext = rowContext.layout.parentCell;
+        }
 
-            if (cellContext) {
-                const cellContextOffsets = GUIElement
-                    .getOffsets(cellContext, editMode.board.container);
-                const { width, height } = GUIElement
-                    .getDimFromOffsets(cellContextOffsets);
+        this.potentialCellContext = cellContext;
 
-                editMode.showContextPointer(
-                    cellContextOffsets.left,
-                    cellContextOffsets.top,
-                    width,
-                    height
-                );
-            }
+        if (cellContext) {
+            const referenceElement = editMode.customHTMLMode ?
+                void 0 : editMode.board.container;
+
+            const cellContextOffsets = GUIElement
+                .getOffsets(cellContext, referenceElement);
+            const { width, height } = GUIElement
+                .getDimFromOffsets(cellContextOffsets);
+
+            editMode.showContextPointer(
+                cellContextOffsets.left,
+                cellContextOffsets.top,
+                width,
+                height
+            );
         }
     }
 
@@ -937,7 +961,9 @@ class EditMode {
             }
 
             // Add highlight to the context row.
-            editCellContext.row.setHighlight();
+            if (editCellContext.row) {
+                editCellContext.row.setHighlight();
+            }
         }
 
         if (editMode.resizer) {

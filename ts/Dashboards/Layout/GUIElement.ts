@@ -14,6 +14,7 @@
  *
  * */
 
+import type Cell from './Cell';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
@@ -21,6 +22,7 @@ import type {
     CSSObject
 } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+
 import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
 
@@ -43,24 +45,26 @@ abstract class GUIElement {
     // Get offsets of the guiElement relative to
     // the referenceElement or the Viewport.
     public static getOffsets(
-        guiElement: GUIElement,
+        guiElement: Cell|GUIElement|any,
         referenceElement?: HTMLDOMElement
     ): Record<string, number> {
         const offset = { left: 0, top: 0, right: 0, bottom: 0 };
 
-        if (guiElement.container) {
-            const guiElementClientRect =
-                guiElement.container.getBoundingClientRect();
-            const referenceClientRect = referenceElement ?
-                referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
-
-            offset.left = guiElementClientRect.left - referenceClientRect.left;
-            offset.top = guiElementClientRect.top - referenceClientRect.top;
-            offset.right =
-                guiElementClientRect.right - referenceClientRect.left;
-            offset.bottom =
-                guiElementClientRect.bottom - referenceClientRect.top;
+        if (!guiElement.container) {
+            return offset;
         }
+
+        const guiElementClientRect =
+            guiElement.container.getBoundingClientRect();
+        const referenceClientRect = referenceElement ?
+            referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
+
+        offset.left = guiElementClientRect.left - referenceClientRect.left;
+        offset.top = guiElementClientRect.top - referenceClientRect.top;
+        offset.right =
+            guiElementClientRect.right - referenceClientRect.left;
+        offset.bottom =
+            guiElementClientRect.bottom - referenceClientRect.top;
 
         return offset;
     }

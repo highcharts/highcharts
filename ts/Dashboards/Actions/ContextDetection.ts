@@ -134,6 +134,7 @@ class ContextDetection {
 
         // Nested layouts.
         if (
+            mouseCellContext.row &&
             mouseCellContext.row.layout.level !== 0 &&
             side &&
             ContextDetection.isGUIElementOnParentEdge(mouseCellContext, side) &&

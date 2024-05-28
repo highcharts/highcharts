@@ -16,6 +16,13 @@ Dashboards.board('container', {
             }
         }]
     },
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true,
+            items: ['editMode']
+        }
+    },
     components: [{
         type: 'KPI',
         renderTo: 'kpi-vitamin-a',
@@ -203,4 +210,6 @@ Dashboards.board('container', {
             visibility: true
         }
     }]
-}, true);
+}, true).then(dash => {
+    dash.editMode.activate();
+});
