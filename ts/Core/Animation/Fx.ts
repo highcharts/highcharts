@@ -357,12 +357,26 @@ class Fx {
             fullLength: number,
             i: number,
             reverse,
+            disableAnimation = false, // #16925
             start = fromD && fromD.slice(); // Copy
 
-        if (
-            !start ||
-            fromD && toD.length > fromD.length // #16925
-        ) {
+        if (fromD && toD.length > fromD.length) {
+            const endXpx = end.map((el): number | undefined => el[1]);
+
+            endXpx.forEach(
+                function (el, i): void {
+                    // Do not waste time if animation already disabled
+                    if (endXpx.indexOf(el) !== i && !disableAnimation) {
+                        // Disable animation if duplicates include M -> cliff
+                        disableAnimation = end.filter((endEl): boolean =>
+                            endEl[1] === el
+                        ).map((el): string => el[0]).includes('M');
+                    }
+                }
+            );
+        }
+
+        if (!start || disableAnimation) {
             return [end, end];
         }
 
