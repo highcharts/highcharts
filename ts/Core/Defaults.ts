@@ -1143,6 +1143,34 @@ const defaultOptions: DefaultOptions = {
         className: 'highcharts-no-tooltip',
 
         /**
+         * General event handlers for the legend. These event hooks can
+         * also be attached to the legend at run time using the
+         * `Highcharts.addEvent` function.
+         *
+         * @declare Highcharts.LegendEventsOptionsObject
+         *
+         * @private
+         */
+        events: {},
+
+        /**
+         * Fires when the legend item belonging to the series is clicked. One
+         * parameter, `event`, is passed to the function. The default action
+         * is to toggle the visibility of the series, point or data class. This
+         * can be prevented by returning `false` or calling
+         * `event.preventDefault()`.
+         *
+         * @sample {highcharts} highcharts/legend/series-legend-itemclick/
+         *         Confirm hiding and showing
+         * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
+         *         Confirm toggle visibility of pie slices
+         *
+         * @type      {Highcharts.LegendItemClickCallbackFunction}
+         * @context   Highcharts.Legend
+         * @apioption legend.events.itemClick
+         */
+
+        /**
          * When the legend is floating, the plot area ignores it and is allowed
          * to be placed below it.
          *

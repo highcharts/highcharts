@@ -19,6 +19,7 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
+import type { EventCallback } from '../Callback';
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type CSSObject from '../Renderer/CSSObject';
@@ -26,7 +27,6 @@ import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendLike from './LegendLike';
 import type LegendOptions from './LegendOptions';
-import type Series from '../Series/Series';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -36,16 +36,19 @@ const {
     animObject,
     setAnimation
 } = A;
-import F from '../Templating.js';
-const { format } = F;
+import F from '../Foundation.js';
+const { registerEventOptions } = F;
 import H from '../Globals.js';
 const {
     composed,
     marginNames
 } = H;
+import Series from '../Series/Series.js';
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
 const { distribute } = R;
+import T from '../Templating.js';
+const { format } = T;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -138,6 +141,8 @@ class Legend {
     public down?: SVGElement;
 
     public downTracker?: SVGElement;
+
+    public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
     public fontMetrics?: FontMetricsObject;
 
@@ -241,6 +246,8 @@ class Legend {
             // Render it
             this.render();
 
+            registerEventOptions(this, options);
+
             // Move checkboxes
             addEvent(this.chart, 'endResize', function (): void {
                 this.legend.positionCheckboxes();
@@ -318,6 +325,12 @@ class Legend {
         const chart = this.chart;
 
         this.setOptions(merge(true, this.options, options));
+
+        if ('events' in this.options) {
+            // Legend event handlers
+            registerEventOptions(this, this.options);
+        }
+
         this.destroy();
         chart.isDirtyLegend = chart.isDirtyBox = true;
         if (pick(redraw, true)) {
@@ -1558,8 +1571,7 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendLabel
      * @param {boolean} [useHTML=false]
-     * @emits Highcharts.Point#event:legendItemClick
-     * @emits Highcharts.Series#event:legendItemClick
+     * @emits Highcharts.Legend#event:itemClick
      */
     public setItemEvents(
         item: Legend.Item,
@@ -1570,6 +1582,7 @@ class Legend {
             legendItem = item.legendItem || {},
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
+            isSeries = item instanceof Series,
             activeClass = 'highcharts-legend-' +
                 (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode,
@@ -1634,40 +1647,48 @@ class Legend {
                         item.setState();
                     })
                     .on('click', function (event: PointerEvent): void {
-                        const strLegendItemClick = 'legendItemClick',
-                            fnLegendItemClick = function (): void {
-                                if ((item as any).setVisible) {
-                                    (item as any).setVisible();
-                                }
-                                // Reset inactive state
-                                setOtherItemsState(
-                                    item.visible ? 'inactive' : ''
-                                );
-                            };
+                        const defaultItemClick = function (): void {
+                            if ((item as any).setVisible) {
+                                (item as any).setVisible();
+                            }
+                            // Reset inactive state
+                            setOtherItemsState(
+                                item.visible ? 'inactive' : ''
+                            );
+                        };
 
                         // A CSS class to dim or hide other than the hovered
                         // series. Event handling in iOS causes the activeClass
                         // to be added prior to click in some cases (#7418).
                         boxWrapper.removeClass(activeClass);
 
-                        // Pass over the click/touch event. #4.
-                        event = {
-                            browserEvent: event
-                        } as any;
+                        fireEvent(
+                            legend,
+                            'itemClick',
+                            {
+                                // Pass over the click/touch event. #4.
+                                browserEvent: event,
+                                legendItem: item
+                            },
+                            defaultItemClick
+                        );
 
+                        // Deprecated logic
                         // Click the name or symbol
-                        if ((item as any).firePointEvent) { // Point
-                            (item as any).firePointEvent(
-                                strLegendItemClick,
-                                event,
-                                fnLegendItemClick
+                        if (isPoint) {
+                            item.firePointEvent(
+                                'legendItemClick',
+                                {
+                                    browserEvent: event
+                                }
                             );
-                        } else {
+                        } else if (isSeries) {
                             fireEvent(
                                 item,
-                                strLegendItemClick,
-                                event,
-                                fnLegendItemClick
+                                'legendItemClick',
+                                {
+                                    browserEvent: event
+                                }
                             );
                         }
                     });
@@ -1803,10 +1824,55 @@ export default Legend;
  */
 
 /**
+ * Gets fired when the legend item is clicked. The default
+ * action is to toggle the visibility of the series or point. This can be
+ * prevented by returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.LegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Legend} this
+ *        The legend on which the event occurred.
+ *
+ * @param {Highcharts.LegendItemClickEventObject} event
+ *        The event that occurred.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.LegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.LegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the series or point.
+ * @name Highcharts.LegendItemClickEventObject#preventDefault
+ * @type {Function}
+ * *//**
+ * Related legend item, it can be series, point, color axis or data class from
+ * color axis.
+ * @name Highcharts.LegendItemClickEventObject#legendItem
+ * @type {Highcharts.Series|Highcharts.Point|Highcharts.LegendItemObject}
+ * *//**
+ * Related legend.
+ * @name Highcharts.LegendItemClickEventObject#target
+ * @type {Highcharts.Legend}
+ *//**
+ * Event type.
+ * @name Highcharts.LegendItemClickEventObject#type
+ * @type {"itemClick"}
+ */
+
+/**
  * Gets fired when the legend item belonging to a point is clicked. The default
  * action is to toggle the visibility of the point. This can be prevented by
  * returning `false` or calling `event.preventDefault()`.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickCallbackFunction.
+ *
+ * @deprecated
  * @callback Highcharts.PointLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Point} this
@@ -1819,6 +1885,10 @@ export default Legend;
 /**
  * Information about the legend click event.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickEventObject.
+ *
+ * @deprecated
  * @interface Highcharts.PointLegendItemClickEventObject
  *//**
  * Related browser event.
@@ -1854,6 +1924,10 @@ export default Legend;
  * action is to toggle the visibility of the series. This can be prevented by
  * returning `false` or calling `event.preventDefault()`.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickCallbackFunction.
+ *
+ * @deprecated
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
@@ -1866,6 +1940,10 @@ export default Legend;
 /**
  * Information about the legend click event.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickEventObject.
+ *
+ * @deprecated
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.

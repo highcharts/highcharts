@@ -965,12 +965,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * is to toggle the visibility of the series. This can be prevented
      * by returning `false` or calling `event.preventDefault()`.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-events-legenditemclick/
-     *         Confirm hiding and showing
+     * **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
      *
-     * @type      {Highcharts.SeriesLegendItemClickCallbackFunction}
-     * @context   Highcharts.Series
-     * @apioption plotOptions.series.events.legendItemClick
+     * @type       {Highcharts.SeriesLegendItemClickCallbackFunction}
+     * @deprecated
+     * @context    Highcharts.Series
+     * @apioption  plotOptions.series.events.legendItemClick
      */
 
     /**

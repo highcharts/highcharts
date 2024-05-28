@@ -38,8 +38,10 @@ export interface PiePointEventsOptions extends PointEventsOptions {
      * event information. The default action is to toggle the visibility of
      * the point. This can be prevented by calling `event.preventDefault()`.
      *
-     * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
-     *         Confirm toggle visibility
+     * **Note:** This option is deprecated in favor of
+     * Highcharts.LegendItemClickEventObject.
+     *
+     * @deprecated
      *
      * @type {Highcharts.PointLegendItemClickCallbackFunction}
      *
