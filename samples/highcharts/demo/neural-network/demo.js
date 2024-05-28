@@ -60,6 +60,9 @@ Highcharts.chart('container', {
         text: 'You can use the parallel-coordinates module ' +
             'to visualize a neural network.'
     },
+    accessibility: {
+        typeDescription: 'Neural network chart'
+    },
     tooltip: {
         format: `<span style="font-weight: bold">
             Activation function:
@@ -96,18 +99,27 @@ Highcharts.chart('container', {
                     lineColor: '#7f30a6',
                     lineWidthPlus: 0
                 }
-            }
+            },
+            pointDescriptionFormat:
+                'Node in the {series.xAxis.options.custom.layers.(point.x).label}'
         }
     },
     xAxis: {
         custom: {
             layers
         },
-        categories: layers.map(layer => layer.label)
+        categories: layers.map(layer => layer.label),
+        accessibility: {
+            description: 'Layers of a neural network.'
+        }
     },
-    yAxis: Array.from({ length: layers.length }, () => ({
+    yAxis: Array.from({ length: layers.length }, (_, i) => ({
         type: 'category',
-        visible: false
+        visible: false,
+        accessibility: {
+            description:
+                `Axis for the nodes contained the layer ${layers[i].label}.`
+        }
     })),
     series: generateData(),
     responsive: {
