@@ -1473,23 +1473,23 @@ dateFormats.E = function (this: Time, timestamp: number): string {
 // Adds week date format
 dateFormats.W = function (this: Time, timestamp: number): string {
     const d = this.dateAsNumbers(timestamp),
-        firstDay = (d[0] + 6) % 7,
+        firstDay = (d[7] + 6) % 7,
         thursday = d.slice(0);
 
-    thursday[1] = d[1] - firstDay + 3;
+    thursday[2] = d[2] - firstDay + 3;
 
-    const firstThursday = this.dateAsNumbers(this.makeTime(thursday[3], 0, 1));
+    const firstThursday = this.dateAsNumbers(this.makeTime(thursday[0], 0, 1));
 
-    if (firstThursday[0] !== 4) {
-        d[2] = 0; // Set month to January
-        d[1] = 1 + (11 - firstThursday[0]) % 7;
+    if (firstThursday[7] !== 4) {
+        d[1] = 0; // Set month to January
+        d[2] = 1 + (11 - firstThursday[7]) % 7;
     }
 
-    const thursdayTS = this.makeTime(thursday[3], thursday[2], thursday[1]),
+    const thursdayTS = this.makeTime(thursday[0], thursday[1], thursday[2]),
         firstThursdayTS = this.makeTime(
-            firstThursday[3],
-            firstThursday[2],
-            firstThursday[1]
+            firstThursday[0],
+            firstThursday[1],
+            firstThursday[2]
         );
 
     return (

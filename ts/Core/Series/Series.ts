@@ -721,34 +721,19 @@ class Series {
 
         // Added code for pointInterval strings
         if (pointIntervalUnit) {
-            let [
-                /* eslint-disable-next-line */
-                weekday,
-                dayOfMonth,
-                month,
-                year,
-                hour,
-                minute,
-                second,
-                millisecond
-            ] = time.dateAsNumbers(xIncrement);
+            const d = time.dateAsNumbers(xIncrement);
 
             if (pointIntervalUnit === 'day') {
-                dayOfMonth += pointInterval;
+                d[2] += pointInterval;
             } else if (pointIntervalUnit === 'month') {
-                month += pointInterval;
+                d[1] += pointInterval;
             } else if (pointIntervalUnit === 'year') {
-                year += pointInterval;
+                d[0] += pointInterval;
             }
 
-            pointInterval = time.makeTime(
-                year,
-                month,
-                dayOfMonth,
-                hour,
-                minute,
-                second,
-                millisecond
+            pointInterval = time.makeTime.apply(
+                time,
+                d as [number, number, number, number, number, number]
             ) - xIncrement;
 
         }

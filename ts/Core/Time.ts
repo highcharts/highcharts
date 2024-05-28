@@ -307,10 +307,28 @@ class Time {
 
     /**
      * Get a date in terms of numbers (year, month, day etc) for further
-     * processing
+     * processing. The date is returned in array format with the following
+     * indices:
+     *
+     * 0: year,
+     * 1: month (zero based),
+     * 2: day,
+     * 3: hours,
+     * 4: minutes,
+     * 5: seconds,
+     * 6: milliseconds,
+     * 7: weekday (Sunday as 0)
      */
     public dateAsNumbers(timestamp?: number): number[] {
-        const parts: (number|string)[] = this.dateTimeFormat({
+        const [
+            weekday,
+            dayOfMonth,
+            month,
+            year,
+            hours,
+            minutes,
+            seconds
+        ]: (number|string)[] = this.dateTimeFormat({
             weekday: 'short',
             day: 'numeric',
             month: 'numeric',
@@ -321,15 +339,20 @@ class Time {
         }, timestamp, 'en-GB')
             .split(/(?:, |\/|:)/g);
 
-        // Weekday index
-        parts[0] = ([
-            'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
-        ] as (number|string)[]).indexOf(parts[0]);
-
-        // Zero-based month
-        parts[2] = +parts[2] - 1;
-
-        return parts.map(Number);
+        return [
+            year,
+            +month - 1,
+            dayOfMonth,
+            hours,
+            minutes,
+            seconds,
+            // Milliseconds
+            Math.floor(timestamp || 0) % 1000,
+            // Weekday index
+            ([
+                'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+            ] as (number|string)[]).indexOf(weekday)
+        ].map(Number);
     }
 
     /**
@@ -521,8 +544,16 @@ class Time {
         format = format ?? '%Y-%m-%d %H:%M:%S';
 
         const time = this,
-            [weekday, dayOfMonth, month, fullYear, hours, minutes, seconds] =
-                this.dateAsNumbers(timestamp),
+            [
+                fullYear,
+                month,
+                dayOfMonth,
+                hours,
+                minutes,
+                seconds,
+                milliseconds,
+                weekday
+            ] = this.dateAsNumbers(timestamp),
             lang = H.defaultOptions.lang,
             langWeekdays = (lang && lang.weekdays as any),
             shortWeekdays = (lang && lang.shortWeekdays),
@@ -583,7 +614,7 @@ class Time {
                     // Two digits seconds, 00 through 59
                     S: pad(seconds),
                     // Milliseconds (naming from Ruby)
-                    L: pad(Math.floor(timestamp % 1000), 3)
+                    L: pad(milliseconds, 3)
                 },
 
                 H.dateFormats
@@ -669,11 +700,9 @@ class Time {
             { count = 1, unitRange } = normalizedInterval;
 
         let [
-                /* eslint-disable-next-line */
-                weekday,
-                dayOfMonth,
-                month,
                 year,
+                month,
+                dayOfMonth,
                 hours,
                 minutes,
                 seconds
