@@ -1,4 +1,4 @@
-// Data retrieved from https://tinyurl.com/54aw67sv
+// Data retrieved from https://fas.org/issues/nuclear-weapons/status-world-nuclear-forces/
 Highcharts.chart('container', {
     chart: {
         type: 'area'
@@ -25,10 +25,10 @@ Highcharts.chart('container', {
             'weapons compared to Russia’s 4,500.'
     },
     title: {
-        text: 'Area chart'
+        text: 'US and USSR nuclear stockpiles'
     },
     subtitle: {
-        text: 'Source: <a href="https://tinyurl.com/54aw67sv" ' +
+        text: 'Source: <a href="https://fas.org/issues/nuclear-weapons/status-world-nuclear-forces/" ' +
             'target="_blank">FAS</a>'
     },
     xAxis: {
