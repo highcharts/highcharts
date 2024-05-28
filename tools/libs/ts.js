@@ -962,32 +962,38 @@ function getDocletsBetween(
             .matchAll(DOCLET)
     );
 
-    // Restore original position range in snap
-    let lastIndex = 0;
-    let snap = ''.padStart(start, '\n');
+    if (snippets.length) {
+        // Restore original position range in snap
+        let lastIndex = 0;
+        let snap = '';
 
-    for (const snippet of snippets) {
-        snap += snippet[0].padStart(snippet.index - lastIndex, '\n');
-        lastIndex = snippet.index;
-    }
-
-    /** @type {ReturnType<TS.getJSDocCommentsAndTags>} */
-    let parts;
-
-    TS.forEachChild(
-        TS.createSourceFile(
-            sourceFile.fileName,
-            snap + '\n\'\';\n',
-            TS.ScriptTarget.Latest,
-            true
-        ),
-        node => {
-            parts = TS.getJSDocCommentsAndTags(node);
-            if (parts.length) {
-                doclets.push(parts);
-            }
+        for (const snippet of snippets) {
+            snap += (
+                '\n\'' + ''.padEnd(snippet.index - lastIndex - 5, '_') +
+                '\';\n' +
+                snippet
+            );
+            lastIndex = snippet.index;
         }
-    );
+
+        /** @type {ReturnType<TS.getJSDocCommentsAndTags>} */
+        let parts;
+
+        TS.forEachChild(
+            TS.createSourceFile(
+                sourceFile.fileName,
+                snap + '\n\'\';\n',
+                TS.ScriptTarget.Latest,
+                true
+            ),
+            node => {
+                parts = TS.getJSDocCommentsAndTags(node);
+                if (parts.length) {
+                    doclets.push(parts);
+                }
+            }
+        );
+    }
 
     return doclets;
 }
@@ -1113,24 +1119,19 @@ function getFunctionInfo(
 
     _info.meta = getInfoMeta(node);
 
-    if (node.body) {
-        /** @type {Array<DocletInfo>} */
-        let _bodyDoclets;
+    if (
+        node.body &&
+        node.body.getFirstToken()
+    ) {
+        const _bodyDoclets = getDocletInfosBetween(
+            node.body.getFirstToken(),
+            node.body.getLastToken()
+        );
 
-        if (TS.isConstructorDeclaration(node)) {
-            _bodyDoclets = getDocletInfosBetween(
-                getNodesFirstChild(node.body),
-                getNodesLastChild(node.body)
-            );
-        } else if (node.body.statements.length) {
-            _bodyDoclets = getDocletInfosBetween(
-                node.body,
-                node.body.statements[node.body.statements.length - 1]
-            );
-        }
         if (_bodyDoclets && _bodyDoclets.length) {
             _info.body = _bodyDoclets;
         }
+
     }
 
     if (includeNodes) {
@@ -2029,9 +2030,6 @@ function mergeDocletInfos(
 function newCodeInfo(
     template
 ) {
-    // if (template) {
-    //     console.log('CLONE', template.kind, extractInfoName(template));
-    // }
     return (
         typeof template === 'object' ?
             /* eslint-disable-next-line no-undef */

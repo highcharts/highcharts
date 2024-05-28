@@ -80,9 +80,13 @@ async function apiTree(_, source) {
             [moduleSource] :
             FSLib
                 .getFilePaths(moduleSource, true)
-                .filter(path => !(
-                    path.endsWith('Options.d.ts') ||
-                    path.endsWith('Options.ts')
+                .filter(path => (
+                    path.endsWith('.ts') &&
+                    !(
+                        path.endsWith('.src.ts') ||
+                        path.endsWith('Options.d.ts') ||
+                        path.endsWith('Options.ts')
+                    )
                 ))
     );
     const optionFiles = (
