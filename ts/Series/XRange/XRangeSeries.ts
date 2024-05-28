@@ -230,7 +230,7 @@ class XRangeSeries extends ColumnSeries {
         const { id } = options;
         let pointIndex: (number|undefined);
 
-        if (id) {
+        if (id && this.yAxis.options.uniqueNames) {
             const point = find(points, (point): boolean => point.id === id);
             pointIndex = point ? point.index : void 0;
         }
