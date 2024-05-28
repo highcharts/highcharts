@@ -31,8 +31,7 @@ import type DataGridOptions from './DataGridOptions';
 
 const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
     rowOptions: {
-        bufferSize: 5,
-        height: 36
+        bufferSize: 5
     }
 };
 

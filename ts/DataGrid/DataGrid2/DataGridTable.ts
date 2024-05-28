@@ -21,14 +21,17 @@
  *
  * */
 
-import Utils from './Utils.js';
+import DGUtils from './Utils.js';
+import Utils from '../../Core/Utilities.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTableHead from './DataGridTableHead.js';
 import DataGrid from './DataGrid.js';
+import Globals from './Globals.js';
 
-const { makeHTMLElement } = Utils;
+const { makeHTMLElement } = DGUtils;
+const { getStyle } = Utils;
 
 /* *
  *
@@ -114,12 +117,12 @@ class DataGridTable {
         this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
 
-        this.defaultRowHeight = dataGrid.options.rowOptions?.height as number;
-
         const { tableElement } = dataGrid;
 
         this.theadElement = makeHTMLElement('thead', {}, tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+
+        this.defaultRowHeight = this.getDefaultRowHeight();
 
         this.init();
 
@@ -192,96 +195,41 @@ class DataGridTable {
         const rows = this.rows;
 
         if (!rows.length) {
-            const first = new DataGridRow(this.dataGrid, 0);
             const last = new DataGridRow(
-                this.dataGrid,
+                this,
                 this.dataTable.getRowCount() - 1
             );
-
-            first.render(this);
-            rows.push(first);
-            this.tbodyElement.appendChild(first.htmlElement);
-
             last.render(this);
             rows.push(last);
             this.tbodyElement.appendChild(last.htmlElement);
         }
 
-        const startOffset = rows[0].index;
-        const endOffset = rows[rows.length - 2].index;
-
         from = Math.max(from, 0);
         to = Math.min(to, rows[rows.length - 1].index - 1);
 
-        const start = Math.min(startOffset, from);
-        const end = Math.max(endOffset, to);
+        const alwaysLastRow = rows.pop();
 
-        // Swap all rows if the range is outside the current range
-        if (to < startOffset || from > endOffset) {
-            const alwaysLastRow = rows.pop();
-
-            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                rows[i].destroy();
-            }
-            rows.length = 0;
-
-            for (let i = from; i <= to; ++i) {
-                const newRow = new DataGridRow(this.dataGrid, i);
-                newRow.render(this);
-                this.tbodyElement.insertBefore(
-                    newRow.htmlElement,
-                    this.tbodyElement.lastChild
-                );
-
-                rows.push(newRow);
-            }
-
-            if (alwaysLastRow) {
-                rows.push(alwaysLastRow);
-            }
-
-            return;
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            rows[i].destroy();
         }
+        rows.length = 0;
 
-        // Add rows at the beginning
-        for (let i = startOffset - 1; i >= start; --i) {
-            const newRow = new DataGridRow(this.dataGrid, i);
-            newRow.render(this);
-            this.tbodyElement.insertBefore(
-                newRow.htmlElement,
-                this.tbodyElement.firstChild
-            );
-            rows.unshift(newRow);
-        }
-
-        // Add rows at the end
-        for (let i = endOffset + 1; i <= end; ++i) {
-            const newRow = new DataGridRow(this.dataGrid, i);
+        for (let i = from; i <= to; ++i) {
+            const newRow = new DataGridRow(this, i);
             newRow.render(this);
             this.tbodyElement.insertBefore(
                 newRow.htmlElement,
                 this.tbodyElement.lastChild
             );
-            const alwaysLastRow = rows.pop();
+
             rows.push(newRow);
-            if (alwaysLastRow) {
-                rows.push(alwaysLastRow);
-            }
         }
 
-        // Delete first rows if there are too many
-        for (let i = 0; i < from - startOffset; i++) {
-            rows.shift()?.destroy();
+        if (alwaysLastRow) {
+            rows.push(alwaysLastRow);
         }
 
-        // Delete last rows if there are too many
-        for (let i = endOffset - to - 1; i >= 0; i--) {
-            const alwaysLastRow = rows.pop();
-            rows.pop()?.destroy();
-            if (alwaysLastRow) {
-                rows.push(alwaysLastRow);
-            }
-        }
+        this.adjustRowDimensions();
     }
 
     /**
@@ -316,6 +264,27 @@ class DataGridTable {
      */
     public scrollToRow(index: number): void {
         this.tbodyElement.scrollTop = index * this.defaultRowHeight;
+    }
+
+    public getDefaultRowHeight(): number {
+        const mockRow = makeHTMLElement('tr', {
+            className: Globals.classNames.rowElement
+        }, this.tbodyElement);
+
+        const defaultRowHeight = getStyle(mockRow, 'height', true) as number;
+        mockRow.remove();
+
+        return defaultRowHeight;
+    }
+
+    public adjustRowDimensions(): void {
+        let translateBuffer = this.rows[0].getDefaultTopOffset();
+
+        for (let i = 1, iEnd = this.rows.length - 1; i < iEnd; ++i) {
+            translateBuffer += this.rows[i - 1].getHeight();
+            this.rows[i].htmlElement.style.transform =
+                `translateY(${translateBuffer}px)`;
+        }
     }
 
     /* *

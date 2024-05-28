@@ -20,7 +20,7 @@
  * */
 
 import type DataTable from '../../Data/DataTable';
-import type DataGridRow from './DataGridRow';
+
 
 /* *
  *
@@ -58,22 +58,6 @@ export interface RowOptions {
      */
     bufferSize?: number;
 
-    /**
-     * Default height of each row in pixels. This is used to calculate the
-     * amount of visible rows in a container and the size of the scrollbar.
-     *
-     * @default 36
-     */
-    height?: number;
-
-    /**
-     * Calls to set the height of a row in render time. This is useful for
-     * dynamic row heights. If set, the height option is ignored.
-     *
-     * @param row The row to set height for.
-     * @returns The height of the row in pixels or undefined if the default height should be used.
-     */
-    setHeight?: ((row: DataGridRow) => number | undefined);
 }
 
 

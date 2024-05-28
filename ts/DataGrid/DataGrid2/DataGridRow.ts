@@ -24,10 +24,9 @@
 import DataGridCell from './DataGridCell.js';
 import DataGridTable from './DataGridTable.js';
 import Globals from './Globals.js';
-import Utils from './Utils.js';
-import DataGrid from './DataGrid.js';
+import DGUtils from './Utils.js';
 
-const { makeHTMLElement } = Utils;
+const { makeHTMLElement } = DGUtils;
 
 /* *
  *
@@ -57,11 +56,6 @@ class DataGridRow {
     public htmlElement: HTMLTableRowElement;
 
     /**
-     * The dataGrid instance which the row belongs to.
-     */
-    public dataGrid: DataGrid;
-
-    /**
      * The index of the row in the data table.
      */
     public index: number;
@@ -74,7 +68,7 @@ class DataGridRow {
     /**
      * The viewport the row belongs to.
      */
-    public viewport?: DataGridTable;
+    public viewport: DataGridTable;
 
 
     /* *
@@ -86,18 +80,20 @@ class DataGridRow {
     /**
      * Constructs a row in the data grid.
      *
-     * @param dataGrid The data grid instance which the row belongs to.
-     * @param index The index of the row in the data table.
+     * @param viewport
+     * The Data Grid Table instance which the row belongs to.
+     *
+     * @param index
+     * The index of the row in the data table.
      */
-    constructor(dataGrid: DataGrid, index: number) {
-        this.dataGrid = dataGrid;
+    constructor(viewport: DataGridTable, index: number) {
+        this.viewport = viewport;
         this.index = index;
 
-        const rowHeight = dataGrid.options.rowOptions?.height as number;
         this.htmlElement = makeHTMLElement('tr', {
+            className: Globals.classNames.rowElement,
             style: {
-                height: rowHeight + 'px',
-                transform: `translateY(${index * rowHeight}px)`
+                transform: `translateY(${this.getDefaultTopOffset()}px)`
             }
         });
 
@@ -169,6 +165,14 @@ class DataGridRow {
         this.htmlElement.classList[hovered ? 'add' : 'remove'](
             Globals.classNames.hoveredRow
         );
+    }
+
+    public getHeight(): number {
+        return this.htmlElement.offsetHeight;
+    }
+
+    public getDefaultTopOffset(): number {
+        return this.index * this.viewport.defaultRowHeight;
     }
 
 

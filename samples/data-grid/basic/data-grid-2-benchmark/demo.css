@@ -16,3 +16,7 @@
 .highcharts-dg-table thead th {
     height: 49px;
 }
+
+.highcharts-dg-row {
+    height: 49px;
+}

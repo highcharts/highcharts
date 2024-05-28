@@ -8,3 +8,13 @@
     margin-bottom: 15px;
     height: 400px;
 }
+
+.highcharts-dg-row[row-index="1"] {
+    background-color: #afa;
+    height: 100px;
+}
+
+.highcharts-dg-row[row-index="100"] {
+    background-color: #f0a;
+    height: 200px;
+}

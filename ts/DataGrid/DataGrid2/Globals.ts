@@ -68,6 +68,7 @@ namespace Globals {
         tableElement: classNamePrefix + 'table',
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
+        rowElement: classNamePrefix + 'row',
         hoveredCell: classNamePrefix + 'hovered-cell',
         hoveredColumn: classNamePrefix + 'hovered-column',
         hoveredRow: classNamePrefix + 'hovered-row'
