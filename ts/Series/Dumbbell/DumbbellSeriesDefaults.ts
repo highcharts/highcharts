@@ -199,6 +199,17 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  */
 
 /**
+ * Color of the start markers in a dumbbell graph. This option takes
+ * priority over the series color. To avoid this, set `lowColor` to
+ * `undefined`.
+ *
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @since     8.0.0
+ * @product   highcharts highstock
+ * @apioption  series.dumbbell.lowColor
+ */
+
+/**
  * Options for the lower markers of the dumbbell-like series. When `lowMarker`
  * is not defined, options inherit form the marker.
  *

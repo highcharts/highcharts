@@ -51,7 +51,7 @@
     );
 
     // Pre-compile the date formats for tooltips
-    addEvent(Highcharts.Series, 'afterSetOptions', function (e) {
+    addEvent(Highcharts.Series, 'afterSetOptions', function () {
         const dateTimeLabelFormats = this.tooltipOptions.dateTimeLabelFormats;
 
         Object.keys(dateTimeLabelFormats).forEach((key, i) => {

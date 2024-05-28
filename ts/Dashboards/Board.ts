@@ -792,7 +792,7 @@ namespace Board {
                 return Serializable
                     .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
-                // Nothing to do
+                throw new Error(`${e}`);
             }
         }
     }
