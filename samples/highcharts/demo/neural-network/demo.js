@@ -61,9 +61,14 @@ Highcharts.chart('container', {
             'to visualize a neural network.'
     },
     accessibility: {
-        typeDescription: 'Neural network chart'
+        typeDescription: 'Neural network chart',
+        point: {
+            descriptionFormat:
+                'node on {point.xAxis.options.custom.layers.{point.x}.label}'
+        }
     },
     tooltip: {
+        stickOnContact: true,
         format: `<span style="font-weight: bold">
             Activation function:
             </span>
@@ -99,9 +104,7 @@ Highcharts.chart('container', {
                     lineColor: '#7f30a6',
                     lineWidthPlus: 0
                 }
-            },
-            pointDescriptionFormat:
-                'node on {series.xAxis.options.custom.layers.(point.x).label}'
+            }
         }
     },
     xAxis: {
