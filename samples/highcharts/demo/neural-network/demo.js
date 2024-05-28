@@ -101,7 +101,7 @@ Highcharts.chart('container', {
                 }
             },
             pointDescriptionFormat:
-                'Node in the {series.xAxis.options.custom.layers.(point.x).label}'
+                'node on {series.xAxis.options.custom.layers.(point.x).label}'
         }
     },
     xAxis: {
