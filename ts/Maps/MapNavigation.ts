@@ -183,8 +183,7 @@ class MapNavigation {
                 stopEvent(e as any); // Stop default click event (#4444)
             };
 
-        let navOptions = chart.options.mapNavigation as MapNavigationOptions,
-            attr: ButtonThemeObject;
+        let navOptions = chart.options.mapNavigation as MapNavigationOptions;
 
         // Merge in new options in case of update, and register back to chart
         // options.
@@ -215,10 +214,13 @@ class MapNavigation {
             ): void => {
                 buttonOptions = merge(navOptions.buttonOptions, buttonOptions);
 
+                const attr: ButtonThemeObject = {
+                    padding: buttonOptions.padding
+                };
+
                 // Presentational
                 if (!chart.styledMode && buttonOptions.theme) {
-                    attr = merge(buttonOptions.theme);
-                    attr.padding = buttonOptions.padding;
+                    extend(attr, buttonOptions.theme);
                     attr.style = merge(
                         buttonOptions.theme.style,
                         buttonOptions.style // #3203

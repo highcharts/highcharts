@@ -1569,7 +1569,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Align to plot edges
          *
          * @type      {string}
-         * @since     next
+         * @since 11.4.2
          * @apioption plotOptions.series.dataLabels.alignTo
          */
 

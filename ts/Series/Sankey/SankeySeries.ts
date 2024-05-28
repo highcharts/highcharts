@@ -46,6 +46,7 @@ const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    crisp,
     extend,
     isObject,
     merge,
@@ -625,24 +626,23 @@ class SankeySeries extends ColumnSeries {
                 this.options.minLinkWidth as any
             ),
             nodeWidth = Math.round(this.nodeWidth),
-            crisp = Math.round(borderWidth) % 2 / 2,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeTop = Math.floor(pick(
+            fromNodeTop = crisp(pick(
                 (nodeOffset as any).absoluteTop,
                 (
                     column.sankeyColumn.top(translationFactor) +
                     (nodeOffset as any).relativeTop
                 )
-            )) + crisp,
-            left = Math.floor(
+            ), borderWidth),
+            left = crisp(
                 this.colDistance * (node.column as any) +
-                borderWidth / 2
+                    borderWidth / 2,
+                borderWidth
             ) + relativeLength(node.options[
                 chart.inverted ?
                     'offsetVertical' :
                     'offsetHorizontal'
-            ] || 0, nodeWidth) +
-            crisp,
+            ] || 0, nodeWidth),
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
                 left;

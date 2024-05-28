@@ -15,7 +15,9 @@ function toast(chart, text) {
         .add();
 
     setTimeout(function () {
-        chart.toast.fadeOut();
+        chart.toast.animate({
+            opacity: 0
+        });
     }, 2000);
     setTimeout(function () {
         chart.toast = chart.toast.destroy();

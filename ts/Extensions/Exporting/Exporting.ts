@@ -49,6 +49,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
+import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -409,8 +410,12 @@ namespace Exporting {
             symbol = renderer
                 .symbol(
                     btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    Math.round(
+                        (btnOptions.symbolX || 0) - (symbolSize / 2)
+                    ),
+                    Math.round(
+                        (btnOptions.symbolY || 0) - (symbolSize / 2)
+                    ),
                     symbolSize,
                     symbolSize
                     // If symbol is an image, scale it (#7957)
@@ -1399,6 +1404,9 @@ namespace Exporting {
 
                 i = denylist.length;
                 while (i-- && !denylisted) {
+                    if (prop.length > RegexLimits.shortLimit) {
+                        throw new Error('Input too long');
+                    }
                     denylisted = (
                         denylist[i].test(prop) ||
                         typeof val === 'function'
@@ -1465,6 +1473,7 @@ namespace Exporting {
                         defaults: Record<string, string> = {};
                     for (const key in s) {
                         if (
+                            key.length < RegexLimits.shortLimit &&
                             typeof s[key] === 'string' &&
                             !/^[0-9]+$/.test(key)
                         ) {

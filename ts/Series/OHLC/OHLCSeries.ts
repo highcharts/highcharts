@@ -37,6 +37,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    crisp,
     extend,
     merge,
     pushUnique
@@ -159,15 +160,11 @@ class OHLCSeries extends HLCSeries {
     public getPointPath(point: OHLCPoint, graphic: SVGElement): SVGPath {
         const path = super.getPointPath(point, graphic),
             strokeWidth = graphic.strokeWidth(),
-            crispCorr = (strokeWidth % 2) / 2,
-            crispX = Math.round(point.plotX as any) - crispCorr,
+            crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
-        let plotOpen = point.plotOpen;
-        // Crisp vector coordinates
-
         if (point.open !== null) {
-            plotOpen = Math.round(point.plotOpen) + crispCorr;
+            const plotOpen = crisp(point.plotOpen, strokeWidth);
             path.push(
                 ['M', crispX, plotOpen],
                 ['L', crispX - halfWidth, plotOpen]
