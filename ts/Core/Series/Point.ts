@@ -1319,6 +1319,12 @@ class Point {
                     .indexOf(userEvent) === -1
             )
         ) {
+            // While updating the existing callback event the old one should be
+            // removed
+            if (point.hasImportedEvents) {
+                removeEvent(point, eventType);
+            }
+
             addEvent(point, eventType, userEvent);
             point.hasImportedEvents = true;
         } else if (
