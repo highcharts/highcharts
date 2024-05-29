@@ -45,6 +45,10 @@ export interface DataTableOptions {
     id?: string;
 
 
+    /**
+     * "Column" identifier for the row IDs (keys).
+     */
+    rowKeysId?: string;
 }
 
 

@@ -176,6 +176,12 @@ class DataGrid {
     private columnNames: Array<string> = [];
 
     /**
+     * A lookup table for row IDs (keys). Keys -> row indexes.
+     * @internal
+     */
+    private rowIdLookup: DataTable.Column | undefined;
+
+    /**
      * The dragging placeholder.
      * @internal
      */
@@ -285,6 +291,13 @@ class DataGrid {
 
         // Init data table
         this.dataTable = this.initDataTable();
+
+        // Create lookup table for row indexes (optional)
+        const rowKeysId = this.dataTable.getRowKeysId();
+        if (rowKeysId) {
+            // Get row ID (invisible column)
+            this.rowIdLookup = this.dataTable.getColumn(rowKeysId);
+        }
 
         this.rowElements = [];
         this.draggedResizeHandle = null;
@@ -455,7 +468,10 @@ class DataGrid {
             tableColumns = this.dataTable.modified.getColumnNames(),
             filteredColumns = [];
 
-        for (let i = 0; i < tableColumns.length; i++) {
+        // Key ID column hidden (last column)
+        const nColumns = this.rowIdLookup ? tableColumns.length: tableColumns.length;
+
+        for (let i = 0; i < nColumns; i++) {
             const columnName = tableColumns[i];
             const column = columnsOptions[columnName];
             if (column && defined(column.show)) {
@@ -503,6 +519,26 @@ class DataGrid {
             return this.options.dataTable;
         }
         return new DataTable();
+    }
+
+
+    /**
+     * Get the row index in the original data table.
+     *
+     * @internal
+     *
+     * @param idx
+     * Row index in the modified table.
+     * 
+     * @return
+     * Row index in the original data table.
+     */
+    private getRowIndex(idx:number): string {
+        if (this.rowIdLookup) {
+            const id = this.rowIdLookup[idx] as string;
+            return id.split('_')[1];
+        }
+        return String(idx);
     }
 
 
@@ -598,10 +634,9 @@ class DataGrid {
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
-            rowElement.dataset.rowIndex = String(i);
+            rowElement.dataset.rowIndex = this.getRowIndex(i);
 
             const cellElements = rowElement.childNodes;
-
 
             for (
                 let k = 0, kEnd = columnsInPresentationOrder.length;

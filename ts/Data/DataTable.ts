@@ -182,7 +182,7 @@ class DataTable implements DataEvent.Emitter {
         this.columns = {};
 
         /**
-         * ID of the table for indentification purposes.
+         * ID of the table for identification purposes.
          *
          * @name Highcharts.DataTable#id
          * @type {string}
@@ -191,9 +191,11 @@ class DataTable implements DataEvent.Emitter {
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
+        this.rowKeysId = options.rowKeysId;
 
-        const columns = options.columns || {},
-            columnNames = Object.keys(columns),
+        const columns = options.columns || {};
+
+        const columnNames = Object.keys(columns),
             thisColumns = this.columns;
 
         let rowCount = 0;
@@ -256,6 +258,7 @@ class DataTable implements DataEvent.Emitter {
 
     private versionTag: string;
 
+    private rowKeysId: string | undefined;
     /* *
      *
      *  Functions
@@ -297,6 +300,10 @@ class DataTable implements DataEvent.Emitter {
 
         if (!table.autoId) {
             tableOptions.id = table.id;
+        }
+
+        if (table.rowKeysId) {
+            tableOptions.rowKeysId = table.rowKeysId;
         }
 
         const tableClone: DataTable = new DataTable(tableOptions);
@@ -880,6 +887,17 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
+     * Retrieves the "column ID" of the row keys
+     * @private
+     *
+     * @return {string | undefined}
+     * Returns the identifier (key) or undefined.
+     */
+    public getRowKeysId(): (string | undefined) {
+        return this.rowKeysId;
+    }
+
+    /**
      * Retrieves the row at a given index. This function is a simplified wrap of
      * {@link getRows}.
      *
@@ -1428,7 +1446,7 @@ class DataTable implements DataEvent.Emitter {
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
-     * Resolves to this table if successfull, or rejects on failure.
+     * Resolves to this table if successful, or rejects on failure.
      *
      * @emits #setModifier
      * @emits #afterSetModifier

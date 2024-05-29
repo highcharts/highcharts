@@ -142,7 +142,17 @@ class JSONConnector extends DataConnector {
                     // If already loaded, clear the current rows
                     table.deleteColumns();
                     converter.parse({ data });
-                    table.setColumns(converter.getTable().getColumns());
+
+                    const rowKeysId = table.getRowKeysId();
+                    const columns = converter.getTable().getColumns();
+                    if (rowKeysId) {
+                        columns[rowKeysId] = [];
+                        for (let i = 0; i < data.length; i++) {
+                            columns[rowKeysId][i] = rowKeysId + '_' + String(i);
+                        }
+                    }
+                    table.setColumns(columns);
+
                 }
                 return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })

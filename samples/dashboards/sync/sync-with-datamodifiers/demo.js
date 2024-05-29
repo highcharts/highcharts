@@ -5,30 +5,33 @@ Dashboards.board('container', {
             type: 'JSON',
             options: {
                 firstRowAsNames: false,
-                columnNames: ['Col-0', 'Col-1', 'Col-2'],
+                columnNames: ['Col-A', 'Col-B', 'Col-C'],
                 data: [
-                    ['Row-0', 1349, 5],
-                    ['Row-1', 1960, 4],
-                    ['Row-2', 2024, 3],
-                    ['Row-3', 1918, 2],
-                    ['Row-4', 1792, 1]
+                    ['Row-1', 1349, 5],
+                    ['Row-2', 1960, 4],
+                    ['Row-3', 2024, 3],
+                    ['Row-4', 1914, 9],
+                    ['Row-5', 1789, 6]
                 ],
+                dataTable: {
+                    rowKeysId: 'rkey'
+                },
+                /*
                 dataModifier: {
                     type: 'Range',
                     additive: true,
                     ranges: [{
-                        column: 'Col-1',
+                        column: 'Col-B',
                         minValue: 0,
                         maxValue: 2010
                     }]
                 }
-                /*
+                */
                 dataModifier: {
                     type: 'Sort',
                     direction: 'asc',
-                    orderByColumn: 'Col-1'
+                    orderByColumn: 'Col-B'
                 }
-                */
             }
         }]
     },
@@ -51,8 +54,8 @@ Dashboards.board('container', {
         connector: {
             id: 'micro-element',
             columnAssignment: [{
-                seriesId: 'Col-2',
-                data: ['Col-0', 'Col-2']
+                seriesId: 'Col-C',
+                data: ['Col-A', 'Col-C']
             }]
         },
         sync: {
