@@ -51,7 +51,6 @@ import MU from './MapUtilities.js';
 const { boundsFromPath } = MU;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-
 const {
     addEvent,
     clamp,

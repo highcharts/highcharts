@@ -110,6 +110,7 @@ function chartHideOverlappingLabels(
                     y: label.attr('y')
                 },
                 bBox = label.getBBox();
+
             label.width = bBox.width;
             label.height = bBox.height;
 
@@ -136,7 +137,6 @@ function chartHideOverlappingLabels(
 
     for (let i = 0; i < len; i++) {
         label = labels[i];
-
         if (label) {
 
             // Mark with initial opacity
@@ -197,7 +197,6 @@ function chartHideOverlappingLabels(
             }
         }
     }
-
 
     // Hide or show
     for (const label of labels) {
