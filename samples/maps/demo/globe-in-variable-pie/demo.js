@@ -155,11 +155,11 @@ Highcharts.getJSON(
             },
 
             caption: {
-                text: `Interactive variable pie chart indicating the top ten 
-                countries in terms of tourist arrivals in 2022. <strong>Click 
-                a slice to rotate the globe to the corresponding country
-                </strong>. Slice heights indicate tourist arrivals in millions
-                , while widths indicate arrivals per capita.`,
+                text: `Interactive variable pie chart indicating the top ten
+                countries in terms of tourist arrivals in 2022. <strong>Click
+                a slice to rotate the globe to the corresponding
+                country</strong>. Slice heights indicate tourist arrivals in
+                millions, while widths indicate arrivals per capita.`,
                 align: 'center',
                 margin: 0
             },
