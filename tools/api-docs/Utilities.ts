@@ -13,7 +13,6 @@
 
 
 const CamelCaseMap: Record<string, string> = {
-
 };
 
 const SeriesCaseMap: Record<string, string> = {
@@ -110,6 +109,18 @@ function getCamelCaseSeriesName(
 function getOptionName(
     camelCaseName: string
 ): string {
+
+    if (camelCaseName.endsWith('SeriesOptions')) {
+
+        if (camelCaseName === 'SeriesOptions') {
+            return 'plotOptions.series';
+        } else {
+            return 'plotOptions.' + camelCaseName
+                .substring(0, camelCaseName.length - 13)
+                .toLowerCase();
+        }
+    }
+
     return (
         CamelCaseMap[camelCaseName] ||
         (camelCaseName[0].toLowerCase() + camelCaseName.substring(1))

@@ -20,11 +20,19 @@
 
 import FS from 'node:fs';
 
+import FSLib from '../libs/fs.js';
+
+import GitLib from '../libs/git.js';
+
 import LogLib from '../libs/log.js';
+
+import Path from 'node:path';
 
 import TreeLib from '../libs/tree.js';
 
 import TSLib from '../libs/ts.js';
+
+import Utilities from './Utilities';
 
 import Yargs from 'yargs';
 
@@ -50,6 +58,15 @@ interface Args {
  * */
 
 
+const DEFAULT_ROOT = FSLib.path('ts/Core/Defaults.ts');
+
+
+const DEFAULT_SOURCE = FSLib.path('ts/');
+
+
+const SERIES_ROOT = FSLib.path('ts/Series/');
+
+
 const TREE: TreeLib.Options = {};
 
 
@@ -73,17 +90,22 @@ function addTreeNode(
         _parentNode: TreeLib.Option,
         _info: TSLib.CodeInfo
     ) => {
-        let _treeNode: (TreeLib.Option|undefined);
+        const _infoDoclet = (_info.kind === 'Doclet' ? _info : _info.doclet);
 
-        if (
-            _info.kind === 'Doclet' ||
-            _info.doclet
-        ) {
-            const _doclet = (_info.kind === 'Doclet' ? _info : _info.doclet);
-            const _fullname = (
-                TSLib.extractTagText(_doclet, 'optionparent', true) ??
-                TSLib.extractTagText(_doclet, 'apioption', true)
+        let _treeNode: (TreeLib.Option|undefined);
+        let _fullname: (string|undefined);
+        if (_infoDoclet) {
+            _fullname = (
+                TSLib.extractTagText(_infoDoclet, 'optionparent', true) ??
+                TSLib.extractTagText(_infoDoclet, 'apioption', true)
             );
+
+            if (
+                typeof _fullname === 'undefined' &&
+                _info.kind === 'Interface'
+            ) {
+                _fullname = Utilities.getOptionName(_info.name);
+            }
 
             if (typeof _fullname === 'string') {
                 _treeNode = getTreeNode(_fullname);
@@ -95,24 +117,17 @@ function addTreeNode(
         let _referenceInfo: TSLib.ResolvedInfo;
 
         switch (_info.kind) {
+
             case 'Class':
             case 'Interface':
                 TSLib.autoExtendInfo(_sourceInfo, _info, debug);
                 _moreInfos.push(..._info.members);
                 break;
-            case 'Function':
-                if (_parentNode.meta.fullname) {
-                    _treeNode = (
-                        _treeNode ||
-                        getTreeNode(
-                            `${_parentNode.meta.fullname}.${_info.name}`
-                        )
-                    );
-                }
-                break;
+
             case 'Namespace':
                 _moreInfos.push(..._info.members);
                 break;
+
             case 'Property':
             case 'Variable':
                 if (_info.kind === 'Property') {
@@ -123,7 +138,6 @@ function addTreeNode(
                         )
                     );
                 }
-
                 if (_info.type) {
                     for (const type of TSLib.extractTypes(_info.type)) {
                         if (type.endsWith('Options')) {
@@ -161,70 +175,64 @@ function addTreeNode(
                     }
                 }
                 break;
+
+            default:
+                break;
+
         }
 
-        if (_treeNode) {
-            if (
-                _info.kind === 'Doclet' ||
-                _info.doclet
-            ) {
-                const _infoDoclet = (
-                    _info.kind === 'Doclet' ?
-                    _info :
-                    _info.doclet
-                );
-                const _nodeDoclet = _treeNode.doclet;
+        if (_infoDoclet && _treeNode) {
+            const _nodeDoclet = _treeNode.doclet;
 
-                let _array: Array<Record<string, (string|Array<string>)>>;
-                let _split: Array<string>;
+            let _array: Array<Record<string, (string|Array<string>)>>;
+            let _split: Array<string>;
 
-                // TODO: Use TSLib.extractTagObjects
-                for (const _tag of Object.keys(_infoDoclet.tags)) {
-                    switch (_tag) {
+            // TODO: Use TSLib.extractTagObjects
+            for (const _tag of Object.keys(_infoDoclet.tags)) {
+                switch (_tag) {
 
-                        case 'description': 
+                    case 'description': 
+                        _nodeDoclet[_tag] =
+                            TSLib.extractTagText(_infoDoclet, _tag, true);
+                        break;
+
+                    case 'productdesc':
+                        _array = _nodeDoclet[`${_tag}s`] = [];
+                        for (const _text of _infoDoclet.tags[_tag]) {
+                            _split = _text.split(/\s+/u, );
+                            if (_split.length === 2) {
+                                _array.push({
+                                    products: _split[0]
+                                        .replace(/[{}]/gu, '')
+                                        .split('|'),
+                                    value: _split[1]
+                                });
+                            }
+                        }
+                        break;
+
+                    case 'sample':
+                        _array = _nodeDoclet[`${_tag}s`] = [];
+                        for (const _text of _infoDoclet.tags[_tag]) {
+                            _split = _text.split(/\s+/u, 2);
+                            if (_split.length === 2) {
+                                _array.push({
+                                    name: _split[0],
+                                    value: _split[1]
+                                });
+                            }
+                        }
+                        break;
+
+                    default:
+                        if (_infoDoclet.tags[_tag].length > 1) {
                             _nodeDoclet[_tag] =
-                                TSLib.extractTagText(_infoDoclet, _tag, true);
-                            break;
+                                _infoDoclet.tags[_tag].slice();
+                        } else {
+                            _nodeDoclet[_tag] = _infoDoclet.tags[_tag][0];
+                        }
+                        break;
 
-                        case 'productdesc':
-                            _array = _nodeDoclet[`${_tag}s`] = [];
-                            for (const _text of _infoDoclet.tags[_tag]) {
-                                _split = _text.split(/\s+/u, );
-                                if (_split.length === 2) {
-                                    _array.push({
-                                        products: _split[0]
-                                            .replace(/[{}]/gu, '')
-                                            .split('|'),
-                                        value: _split[1]
-                                    });
-                                }
-                            }
-                            break;
-
-                        case 'sample':
-                            _array = _nodeDoclet[`${_tag}s`] = [];
-                            for (const _text of _infoDoclet.tags[_tag]) {
-                                _split = _text.split(/\s+/u, 2);
-                                if (_split.length === 2) {
-                                    _array.push({
-                                        name: _split[0],
-                                        value: _split[1]
-                                    });
-                                }
-                            }
-                            break;
-
-                        default:
-                            if (_infoDoclet.tags[_tag].length > 1) {
-                                _nodeDoclet[_tag] =
-                                    _infoDoclet.tags[_tag].slice();
-                            } else {
-                                _nodeDoclet[_tag] = _infoDoclet.tags[_tag][0];
-                            }
-                            break;
-
-                    }
                 }
             }
         }
@@ -270,6 +278,27 @@ function buildTree(
 
     for (const _codeInfo of _rootInfo.code) {
         addTreeNode(_rootInfo, _rootNode, _codeInfo, debug);
+    }
+
+}
+
+
+function buildTreeSeries(
+    sourceRootPath: string,
+    debug?: boolean
+): void {
+    const _rootNode = getTreeNode('series');
+
+    let _sourceInfo: TSLib.SourceInfo;
+
+    for (const _path of FSLib.getFilePaths(sourceRootPath, true)) {
+        if (_path.split(Path.sep).includes('Series')) {
+            _sourceInfo = TSLib.getSourceInfo(_path, void 0, debug);
+
+            for (const _codeInfo of _sourceInfo.code) {
+                addTreeNode(_sourceInfo, _rootNode, _codeInfo);
+            }
+        }
     }
 
 }
@@ -323,12 +352,13 @@ function getTreeNode(
 }
 
 
-function main() {
+async function main() {
     const args = Yargs.parseSync(process.argv) as Args;
     const debug = !!args.debug;
-    const root = args.root as (string|undefined) || 'ts/Core/Defaults.ts';
+    const root = args.root as (string|undefined) || DEFAULT_ROOT;
+    const source = args.source as (string|undefined) || DEFAULT_SOURCE;
 
-    TSLib.sourceRoot = args.source as (string|undefined) || 'ts';
+    TSLib.sourceRoot = source;
 
     let timer: number;
 
@@ -336,17 +366,26 @@ function main() {
     buildTree(root, debug);
     LogLib.finished(`Building tree from ${root}`, timer);
 
+    if (
+        root === DEFAULT_ROOT &&
+        SERIES_ROOT.startsWith(source)
+    ) {
+        timer = LogLib.starting(`Building series tree from ${SERIES_ROOT}`);
+        buildTreeSeries(SERIES_ROOT, debug);
+        LogLib.finished(`Building series tree from ${SERIES_ROOT}`, timer);
+    }
+
     LogLib.message(`Found ${Object.keys(TREE).length} root options:`);
     LogLib.message(Object.keys(TREE).sort().join(', '));
 
     LogLib.warn('Saving JSON ...');
-    saveJSON();
+    await saveJSON();
     LogLib.success('Done');
 
 }
 
 
-function saveJSON() {
+async function saveJSON() {
     const save = (filePath, obj) => {
         FS.writeFileSync(
             filePath,
@@ -355,6 +394,12 @@ function saveJSON() {
         );
         LogLib.message('Saved', filePath, '.');
     };
+
+    TREE._meta = {
+        branch: await GitLib.getBranch(),
+        commit: await GitLib.getLatestCommitShaSync(),
+        version: JSON.parse(FS.readFileSync('package.json', 'utf8')).version
+    } as any;
 
     // await save('tree-defaults.json', DEFAULTS);
     save('tree-cache.json', TSLib.SOURCE_CACHE);
