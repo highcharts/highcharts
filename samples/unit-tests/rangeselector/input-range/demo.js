@@ -560,8 +560,8 @@ QUnit.test('#13205, #14544: Timezone issues', assert => {
     assert.ok(
         chart.xAxis[0].min > min,
         `New min should be less than the old min.
-        Old: ${new Date(chart.xAxis[0].min)},
-        New: ${new Date(min)},
+        Old: ${new Date(min)},
+        New: ${new Date(chart.xAxis[0].min)},
         Time zone offset: ${new Date().getTimezoneOffset()}`
     );
 });

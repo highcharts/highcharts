@@ -911,12 +911,16 @@ class RangeSelector {
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
-        input += 'Z';
-        if (H.isSafari && !hasTimezone(input)) {
-            const offset = new Date(input).getTimezoneOffset() / 60;
-            input += offset <= 0 ? `+${pad(-offset)}:00` : `-${pad(offset)}:00`;
-        }
         let date = Date.parse(input);
+
+        if (!hasTimezone(input) && isNumber(date)) {
+            const offset = time?.getTimezoneOffset(date) || 0,
+                hours = Math.floor(offset / 36e5),
+                minutes = Math.abs(Math.round((offset % 36e5) / 6e4));
+
+            input += (offset <= 0 ? '+' : '') + `${pad(hours)}:${pad(minutes)}`;
+            date = Date.parse(input);
+        }
 
         // If the value isn't parsed directly to a value by the
         // browser's Date.parse method, try
