@@ -318,6 +318,9 @@ Highcharts.getJSON(
                                     chart.rotateToCountry(countryName);
                                 }
                             },
+                            mouseOver() {
+                                return false;
+                            },
                             select() {
                                 chart.update({
                                     tooltip: {
