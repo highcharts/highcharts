@@ -138,20 +138,26 @@ class TreegraphSeries extends TreemapSeries {
 
         // Register the link data labels in the label collector for overlap
         // detection.
-        this.chart.labelCollectors.push((): Array<SVGElement> => {
-            const linkLabels = [];
+        const collectors = this.chart.labelCollectors,
+            collectorFunc = (): Array<SVGElement> => {
+                const linkLabels = [];
 
-            // Check links for overlap
-            if (!splat(this.options.dataLabels)[0].allowOverlap) {
+                // Check links for overlap
+                if (!splat(this.options.dataLabels)[0].allowOverlap) {
 
-                for (const link of this.links) {
-                    if (link.dataLabel) {
-                        linkLabels.push(link.dataLabel);
+                    for (const link of this.links) {
+                        if (link.dataLabel) {
+                            linkLabels.push(link.dataLabel);
+                        }
                     }
                 }
-            }
-            return linkLabels;
-        });
+                return linkLabels;
+            };
+
+        // Only add the collector function if it is not present
+        if (collectors.indexOf(collectorFunc) !== -1) {
+            collectors.push(collectorFunc);
+        }
     }
 
     /**
