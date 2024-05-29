@@ -759,6 +759,18 @@ class Time {
 
             // Week is a special case that runs outside the hierarchy
             if (unitRange === timeUnits.week) {
+                if (count) {
+                    min = time.makeTime(
+                        year,
+                        month,
+                        dayOfMonth,
+                        hours,
+                        minutes,
+                        seconds,
+                        milliseconds
+                    );
+                }
+
                 // Get start of current week, independent of count
                 const weekday = this.dateTimeFormat({
                         timeZone: this.timezone,
