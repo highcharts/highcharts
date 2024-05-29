@@ -613,7 +613,7 @@ class Tick {
         y: number,
         tickLength: number,
         tickWidth: number,
-        horiz: boolean,
+        horiz: boolean = false,
         renderer: SVGRenderer
     ): SVGPath {
         return renderer.crispLine([[
@@ -822,10 +822,6 @@ class Tick {
             y = xy.y,
             axisStart = axis.pos,
             axisEnd = axisStart + axis.len,
-            reverseCrisp = (
-                (horiz && x === axisEnd) ||
-                (!horiz && y === axisStart)
-            ) ? -1 : 1, // #1480, #1687
             pxPos = horiz ? x : y;
 
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
@@ -848,10 +844,10 @@ class Tick {
         this.isActive = true;
 
         // Create the grid line
-        this.renderGridLine(old, opacity, reverseCrisp);
+        this.renderGridLine(old, opacity);
 
         // Create the tick mark
-        this.renderMark(xy, opacity, reverseCrisp);
+        this.renderMark(xy, opacity);
 
         // The label is created on init - now move it into place
         this.renderLabel(xy, old, labelOpacity, index);
@@ -868,12 +864,10 @@ class Tick {
      * @function Highcharts.Tick#renderGridLine
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the grid line
-     * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      */
     public renderGridLine(
         old: boolean|undefined,
-        opacity: number,
-        reverseCrisp: number
+        opacity: number
     ): void {
         const tick = this,
             axis = tick.axis,
@@ -926,7 +920,7 @@ class Tick {
             gridLinePath = axis.getPlotLinePath(
                 {
                     value: pos + tickmarkOffset,
-                    lineWidth: gridLine.strokeWidth() * reverseCrisp,
+                    lineWidth: gridLine.strokeWidth(),
                     force: 'pass',
                     old: old,
                     acrossPanes: false // #18025
@@ -951,12 +945,10 @@ class Tick {
      * @function Highcharts.Tick#renderMark
      * @param {Highcharts.PositionObject} xy  The position vector of the mark
      * @param {number} opacity  The opacity of the mark
-     * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      */
     public renderMark(
         xy: PositionObject,
-        opacity: number,
-        reverseCrisp: number
+        opacity: number
     ): void {
         const tick = this,
             axis = tick.axis,
@@ -1009,8 +1001,8 @@ class Tick {
                     x,
                     y,
                     tickSize[0],
-                    mark.strokeWidth() * reverseCrisp,
-                    axis.horiz as any,
+                    mark.strokeWidth(),
+                    axis.horiz,
                     renderer
                 ),
                 opacity: opacity

@@ -26,6 +26,7 @@ import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
     column: { prototype: columnProto }
 } = SeriesRegistry.seriesTypes;
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -136,12 +137,37 @@ namespace ColorMapComposition {
         this: Point,
         e?: Record<string, any>
     ): void {
-        const point = this as PointComposition;
+        const point = this as PointComposition,
+            series = point.series,
+            renderer = series.chart.renderer;
 
         if (point.moveToTopOnHover && point.graphic) {
-            point.graphic.attr({
-                zIndex: e && e.state === 'hover' ? 1 : 0
-            });
+            if (!series.stateMarkerGraphic) {
+                // Create a `use` element and add it to the end of the group,
+                // which would make it appear on top of the other elements. This
+                // deals with z-index without reordering DOM elements (#13049).
+                series.stateMarkerGraphic = new SVGElement(renderer, 'use')
+                    .css({
+                        pointerEvents: 'none'
+                    })
+                    .add(point.graphic.parentGroup);
+            }
+            if (e?.state === 'hover') {
+                // Give the graphic DOM element the same id as the Point
+                // instance
+                point.graphic.attr({
+                    id: this.id
+                });
+
+                series.stateMarkerGraphic.attr({
+                    href: `${renderer.url}#${this.id}`,
+                    visibility: 'visible'
+                });
+            } else {
+                series.stateMarkerGraphic.attr({
+                    href: ''
+                });
+            }
         }
     }
 

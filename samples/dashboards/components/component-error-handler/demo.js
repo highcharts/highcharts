@@ -62,5 +62,13 @@ Dashboards.board('container', {
                 data: [1, 2, 3]
             }]
         }
+    }, {
+        // renderTo is missing
+        type: 'Highcharts',
+        chartOptions: {
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }
     }]
 });
