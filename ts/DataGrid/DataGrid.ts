@@ -469,7 +469,8 @@ class DataGrid {
             filteredColumns = [];
 
         // Key ID column hidden (last column)
-        const nColumns = this.rowIdLookup ? tableColumns.length - 1: tableColumns.length;
+        const nColumns = this.rowIdLookup ?
+            tableColumns.length - 1 : tableColumns.length;
 
         for (let i = 0; i < nColumns; i++) {
             const columnName = tableColumns[i];
@@ -523,13 +524,13 @@ class DataGrid {
 
 
     /**
-     * Get the row index in the original data table.
+     * Get the row index in the unmodified data table.
      *
      * @internal
      *
      * @param idx
      * Row index in the modified table.
-     * 
+     *
      * @return
      * Row index in the original data table.
      */
