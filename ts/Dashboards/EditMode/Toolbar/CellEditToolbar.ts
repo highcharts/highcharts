@@ -145,6 +145,10 @@ class CellEditToolbar extends EditToolbar {
             )
         );
 
+        if (editMode.customHTMLMode) {
+            this.filterOptionsAvailableInCustomHTMLMode();
+        }
+
         this.menu.initItems({});
     }
 
@@ -213,16 +217,19 @@ class CellEditToolbar extends EditToolbar {
         }
     }
 
+    /**
+     * When options icon is clicked, show sidebar with options.
+     */
     public onCellOptions(): void {
         const toolbar = this;
+        const editMode = toolbar.editMode;
 
-        if (toolbar.editMode.sidebar) {
-            toolbar.editMode.sidebar.show(toolbar.cell);
-
-            if (this.cell) {
-                this.cell.setHighlight();
-            }
+        if (!editMode.sidebar) {
+            return;
         }
+
+        editMode.sidebar.show(toolbar.cell);
+        toolbar.highlightCell();
     }
 
     public onCellDestroy(): void {
@@ -250,6 +257,43 @@ class CellEditToolbar extends EditToolbar {
 
     public resetEditedCell(): void {
         this.editedCell = void 0;
+    }
+
+    /**
+     * Filter options available in custom HTML mode, only settings available.
+     */
+    private filterOptionsAvailableInCustomHTMLMode(): void {
+        this.options.menu.items = this.options.menu.items?.filter(
+            (item): boolean => {
+                if (typeof item === 'string') {
+                    return false;
+                }
+
+                return item.id === 'settings';
+            }
+        );
+    }
+
+    /**
+     * Highlight cell and gray out the rest of the dashboard.
+     */
+    private highlightCell(): void {
+        const toolbar = this;
+
+        if (!toolbar.cell) {
+            return;
+        }
+
+        if (toolbar.cell.setHighlight) {
+            toolbar.cell.setHighlight();
+        } else {
+            toolbar.cell.container.classList.add(
+                EditGlobals.classNames.cellEditHighlight
+            );
+            toolbar.editMode.board.container.classList.add(
+                EditGlobals.classNames.dashboardCellEditHighlightActive
+            );
+        }
     }
 }
 

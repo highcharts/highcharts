@@ -288,7 +288,7 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        const type = context.getType();
+        const type = context.getType ? context.getType() : 'cell';
 
         if (type === 'cell') {
             const component = (context as Cell).mountedComponent;

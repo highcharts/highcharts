@@ -485,9 +485,7 @@ class Cell extends GUIElement {
         }
     }
 
-    public setHighlight(
-        remove?: boolean
-    ): void {
+    public setHighlight(remove?: boolean): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
 
