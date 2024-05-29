@@ -16,7 +16,6 @@ Dashboards.board('container', {
                 dataTable: {
                     rowKeysId: 'rkey'
                 },
-                /*
                 dataModifier: {
                     type: 'Range',
                     additive: true,
@@ -26,12 +25,13 @@ Dashboards.board('container', {
                         maxValue: 2010
                     }]
                 }
-                */
+                /*
                 dataModifier: {
                     type: 'Sort',
                     direction: 'asc',
                     orderByColumn: 'Col-B'
                 }
+                */
             }
         }]
     },
