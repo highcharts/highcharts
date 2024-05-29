@@ -354,6 +354,7 @@ namespace Accessibility {
     export declare class ChartComposition extends Chart {
         options: Required<Options>;
         series: Array<SeriesComposition>;
+        wasAccessibilityEnabled?: boolean;
     }
 
     export declare class PointComposition extends Point {
@@ -459,7 +460,8 @@ namespace Accessibility {
         this: ChartComposition
     ): void {
         let a11y = this.accessibility;
-        const accessibilityOptions = this.options.accessibility;
+        const accessibilityOptions = this.options.accessibility,
+            svg = this.renderer.boxWrapper.element;
 
         if (accessibilityOptions && accessibilityOptions.enabled) {
             if (a11y && !a11y.zombie) {
@@ -469,6 +471,9 @@ namespace Accessibility {
                 if (a11y && !a11y.zombie) {
                     a11y.update();
                 }
+                // If a11y has been enabled = false, and is now enabled = true
+                svg.removeAttribute('role');
+                this.wasAccessibilityEnabled = true;
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -479,7 +484,13 @@ namespace Accessibility {
         } else {
             // Just hide container
             this.renderTo.setAttribute('aria-hidden', true);
+
+            // If a11y has been enabled = true, and is now enabled = false
+            if (this.wasAccessibilityEnabled === false) {
+                svg.setAttribute('role', 'img');
+            }
         }
+        this.wasAccessibilityEnabled = false;
     }
 
     /**

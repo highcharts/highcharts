@@ -56,6 +56,29 @@ QUnit.test('Accessibility disabled', function (assert) {
         'img',
         'SVG root has img role'
     );
+
+    chart.update({
+        accessibility: {
+            enabled: true
+        }
+    });
+
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('role'),
+        null,
+        'SVG root has no role after enabling a11y'
+    );
+
+    chart.update({
+        accessibility: {
+            enabled: false
+        }
+    });
+    assert.strictEqual(
+        chart.renderer.box.getAttribute('role'),
+        'img',
+        'SVG root has no img role after disabling a11y'
+    );
 });
 
 QUnit.test('Point hidden from AT', function (assert) {
