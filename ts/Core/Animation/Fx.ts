@@ -351,30 +351,16 @@ class Fx {
             endX = elem.endX,
             end = toD.slice(), // Copy
             isArea = elem.isArea,
-            positionFactor = isArea ? 2 : 1;
+            positionFactor = isArea ? 2 : 1,
+            disableAnimation = fromD &&
+                toD.length > fromD.length &&
+                toD.hasCliffs; // #16925
 
         let shift,
             fullLength: number,
             i: number,
             reverse,
-            disableAnimation = false, // #16925
             start = fromD && fromD.slice(); // Copy
-
-        if (fromD && toD.length > fromD.length) {
-            const endXpx = end.map((el): number | undefined => el[1]);
-
-            endXpx.forEach(
-                function (el, i): void {
-                    // Do not waste time if animation already disabled
-                    if (endXpx.indexOf(el) !== i && !disableAnimation) {
-                        // Disable animation if duplicates include M -> cliff
-                        disableAnimation = end.filter((endEl): boolean =>
-                            endEl[1] === el
-                        ).map((el): string => el[0]).includes('M');
-                    }
-                }
-            );
-        }
 
         if (!start || disableAnimation) {
             return [end, end];

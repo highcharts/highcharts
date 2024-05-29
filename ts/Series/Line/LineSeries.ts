@@ -198,7 +198,7 @@ class LineSeries extends Series {
         const series = this,
             options = series.options,
             graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>;
+            xMap: Array<(number|null)> = [];
         let gap: boolean,
             step = options.step as any;
 
@@ -329,7 +329,7 @@ class LineSeries extends Series {
             }
         });
 
-        (graphPath as any).xMap = xMap;
+        graphPath.xMap = xMap;
         series.graphPath = graphPath;
 
         return graphPath;

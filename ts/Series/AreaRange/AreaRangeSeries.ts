@@ -362,7 +362,7 @@ class AreaRangeSeries extends AreaSeries {
         options.step = step;
 
         // Create a line on both top and bottom of the range
-        const linePath = ([] as SVGPath).concat(lowerPath, higherPath);
+        const linePath: SVGPath = ([] as SVGPath).concat(lowerPath, higherPath);
 
         // For the area path, we need to change the 'move' statement into
         // 'lineTo'
@@ -383,8 +383,8 @@ class AreaRangeSeries extends AreaSeries {
         this.areaPath = lowerPath.concat(higherAreaPath);
 
         // Prepare for sideways animation
-        (linePath as any).isArea = true;
-        (linePath as any).xMap = lowerPath.xMap;
+        linePath.isArea = true;
+        linePath.xMap = lowerPath.xMap;
         this.areaPath.xMap = lowerPath.xMap;
 
         return linePath;
