@@ -158,6 +158,7 @@ class Navigator {
     public hasDragged?: boolean;
     public hasNavigatorData?: boolean;
     public height!: number;
+    public isDirty!: boolean;
     public left!: number;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
@@ -428,12 +429,10 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#renderElements
-     *
-     * @param {boolean} isUpdated
-     *        Internal flag to determine if it's an update or initial render
      */
-    public renderElements(isUpdated = false): void {
+    public renderElements(): void {
         const navigator = this,
+            isDirty = navigator.isDirty,
             navigatorOptions = navigator.navigatorOptions,
             maskInside = navigatorOptions.maskInside,
             chart = navigator.chart,
@@ -443,7 +442,7 @@ class Navigator {
                 cursor: inverted ? 'ns-resize' : 'ew-resize'
             },
             // Create the main navigator group
-            navigatorGroup: SVGElement = isUpdated ? navigator.navigatorGroup :
+            navigatorGroup: SVGElement = isDirty ? navigator.navigatorGroup :
                 navigator.navigatorGroup = renderer
                     .g('navigator')
                     .attr({
@@ -458,7 +457,7 @@ class Navigator {
             maskInside,
             !maskInside
         ].forEach((hasMask: (boolean|undefined), index: number): void => {
-            const shade = isUpdated ? navigator.shades[index] :
+            const shade = isDirty ? navigator.shades[index] :
                 navigator.shades[index] = renderer.rect()
                     .addClass(
                         'highcharts-navigator-mask' +
@@ -478,7 +477,7 @@ class Navigator {
         });
 
         // Create the outline:
-        if (!isUpdated) {
+        if (!isDirty) {
             navigator.outline = renderer.path()
                 .addClass('highcharts-navigator-outline')
                 .add(navigatorGroup);
@@ -504,7 +503,7 @@ class Navigator {
                     handlesOptions
                 );
 
-                if (!isUpdated) {
+                if (!isDirty) {
                     navigator.handles[index] = renderer.symbol(
                         handlesOptions.symbols[index],
                         -width / 2 - 1,
@@ -581,6 +580,8 @@ class Navigator {
         }
 
         if (this.navigatorEnabled) {
+            this.isDirty = true;
+
             // Handle `adaptToUpdatedData` update
             if (options.adaptToUpdatedData === false) {
                 this.baseSeries.forEach(function (series): void {
@@ -597,7 +598,7 @@ class Navigator {
 
             // Update navigator series
             if (options.series || options.baseSeries) {
-                this.setBaseSeries();
+                this.setBaseSeries(void 0, false);
             }
 
             // Update navigator axis
@@ -605,20 +606,17 @@ class Navigator {
                 this.height = options.height ?? this.height;
 
                 this.xAxis.update({
+                    ...options.xAxis,
                     offsets: chart.inverted ?
                         [this.scrollButtonSize, 0, -this.scrollButtonSize, 0] :
                         [0, -this.scrollButtonSize, 0, this.scrollButtonSize],
-                    [chart.inverted ? 'width' : 'height']: this.height,
-                    ...options.xAxis
-                });
+                    [chart.inverted ? 'width' : 'height']: this.height
+                }, false);
                 this.yAxis.update({
-                    [chart.inverted ? 'width' : 'height']: this.height,
-                    ...options.yAxis
-                });
+                    ...options.yAxis,
+                    [chart.inverted ? 'width' : 'height']: this.height
+                }, false);
             }
-
-            // Update DOM navigator elements
-            this.renderElements(true);
         }
     }
 
@@ -665,7 +663,11 @@ class Navigator {
         if (this.hasDragged && !defined(pxMin)) {
             return;
         }
-
+        if (this.isDirty) {
+            // Update DOM navigator elements
+            this.renderElements();
+            this.isDirty = false;
+        }
         min = correctFloat(min - pointRange / 2);
         max = correctFloat(max + pointRange / 2);
 
