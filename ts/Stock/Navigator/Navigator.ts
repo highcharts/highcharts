@@ -40,6 +40,8 @@ const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -496,6 +498,12 @@ class Navigator {
                 { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
+                merge(
+                    true,
+                    navigator.handles[index] as NavigatorHandlesOptions,
+                    handlesOptions
+                );
+
                 if (!isUpdated) {
                     navigator.handles[index] = renderer.symbol(
                         handlesOptions.symbols[index],
@@ -524,13 +532,21 @@ class Navigator {
                 }
 
                 if (!chart.styledMode) {
+                    const symbolFn = symbols[handlesOptions.symbols[index]],
+                        path = symbolFn.call(
+                            symbols,
+                            -width / 2 - 1,
+                            0,
+                            width,
+                            height
+                        );
+
                     navigator.handles[index]
                         .attr({
                             fill: handlesOptions.backgroundColor,
                             stroke: handlesOptions.borderColor,
                             'stroke-width': handlesOptions.lineWidth,
-                            width,
-                            height
+                            d: path
                         })
                         .css(mouseCursor);
                 }
