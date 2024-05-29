@@ -138,14 +138,15 @@ class TreegraphSeries extends TreemapSeries {
 
         // Register the link data labels in the label collector for overlap
         // detection.
-        const collectors = this.chart.labelCollectors,
-            collectorFunc = (): Array<SVGElement> => {
+        const series = this,
+            collectors = this.chart.labelCollectors,
+            collectorFunc = function (): Array<SVGElement> {
                 const linkLabels = [];
 
                 // Check links for overlap
-                if (!splat(this.options.dataLabels)[0].allowOverlap) {
+                if (!splat(series.options.dataLabels)[0].allowOverlap) {
 
-                    for (const link of this.links) {
+                    for (const link of series.links) {
                         if (link.dataLabel) {
                             linkLabels.push(link.dataLabel);
                         }
@@ -155,7 +156,7 @@ class TreegraphSeries extends TreemapSeries {
             };
 
         // Only add the collector function if it is not present
-        if (collectors.indexOf(collectorFunc) !== -1) {
+        if (!collectors.some((f): boolean => f.name === 'collectorFunc')) {
             collectors.push(collectorFunc);
         }
     }
