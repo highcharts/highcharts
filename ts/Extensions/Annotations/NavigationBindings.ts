@@ -699,7 +699,7 @@ class NavigationBindings {
             }
         } else {
             chart.stockTools &&
-                chart.stockTools.toggleButtonActiveClass(button);
+                chart.stockTools.removeButtonActiveClass(button);
             svgContainer.removeClass('highcharts-draw-mode');
             navigation.nextEvent = false;
             navigation.mouseMoveEvent = false;

@@ -275,7 +275,7 @@ function onNavigationBindingsDeselectButton(
             button = button.parentNode.parentNode;
         }
         // Set active class on the current button
-        gui.toggleButtonActiveClass(button);
+        gui.removeButtonActiveClass(button);
     }
 }
 
