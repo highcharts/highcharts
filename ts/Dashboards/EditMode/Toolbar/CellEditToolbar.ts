@@ -162,26 +162,29 @@ class CellEditToolbar extends EditToolbar {
      *
      * */
 
+    /**
+     * Show toolbar for given cell.
+     *
+     * @param cell
+     * Cell to show toolbar for.
+     */
     public showToolbar(cell: Cell): void {
-        const toolbar = this,
-            cellCnt = cell.container,
-            toolbarWidth = 30,
-            toolbarMargin = 10;
-
-        let x, y;
+        const toolbar = this;
+        const cellCnt = cell.container;
+        const customHTMLMode = toolbar.editMode.customHTMLMode;
+        const toolbarWidth = 30;
+        const toolbarMargin = 10;
 
         if (
-            cellCnt &&
-            toolbar.editMode.isActive() &&
+            cellCnt && toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
             const cellOffsets = GUIElement.getOffsets(
                 cell,
-                toolbar.editMode.board.container
+                customHTMLMode ? void 0 : toolbar.editMode.board.container
             );
-
-            x = cellOffsets.right - toolbarWidth - toolbarMargin;
-            y = cellOffsets.top + toolbarMargin;
+            const x = cellOffsets.right - toolbarWidth - toolbarMargin;
+            const y = cellOffsets.top + toolbarMargin;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
