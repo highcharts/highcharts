@@ -885,6 +885,7 @@ function getDocletInfosBetween(
 
         for (const node of doclet) {
             if (TS.isJSDoc(node)) {
+
                 if (node.comment) {
                     addTag(
                         _doclet,
@@ -898,6 +899,7 @@ function getDocletInfosBetween(
                                 .trim()
                     );
                 }
+
                 if (node.tags) {
                     for (const tag of node.tags) {
                         _tagName = tag.tagName.text;
@@ -912,11 +914,14 @@ function getDocletInfosBetween(
                                 .trim()
                         );
                     }
-                    _doclet.meta = getInfoMeta(node);
-                    if (includeNodes) {
-                        _doclet.node = node;
-                    }
                 }
+
+                _doclet.meta = getInfoMeta(node);
+
+                if (includeNodes) {
+                    _doclet.node = node;
+                }
+
             }
         }
 
@@ -965,13 +970,12 @@ function getDocletsBetween(
     if (snippets.length) {
         // Restore original position range in snap
         let lastIndex = 0;
-        let snap = '';
+        let snap = ''.padEnd(start, ' ');
 
         for (const snippet of snippets) {
             snap += (
                 '\n\'' + ''.padEnd(snippet.index - lastIndex - 5, '_') +
-                '\';\n' +
-                snippet
+                '\';\n' + snippet
             );
             lastIndex = snippet.index;
         }
