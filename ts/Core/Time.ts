@@ -72,6 +72,11 @@ const hasOldSafariBug =
     win.Intl &&
     !win.Intl.DateTimeFormat.prototype.formatRange;
 
+// We use the Spanish locale for internal weekday handling because it uses
+// unique letters for narrow weekdays
+const spanishWeekdayIndex = (weekday: string): number =>
+    ['D', 'L', 'M', 'X', 'J', 'V', 'S'].indexOf(weekday);
+
 /* *
  *
  *  Class
@@ -329,14 +334,14 @@ class Time {
             minutes,
             seconds
         ]: (number|string)[] = this.dateTimeFormat({
-            weekday: 'short',
+            weekday: 'narrow',
             day: 'numeric',
             month: 'numeric',
             year: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
             second: 'numeric'
-        }, timestamp, 'en-GB')
+        }, timestamp, 'es')
             .split(/(?:, |\/|:)/g);
 
         return [
@@ -349,9 +354,7 @@ class Time {
             // Milliseconds
             Math.floor(timestamp || 0) % 1000,
             // Weekday index
-            ([
-                'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
-            ] as (number|string)[]).indexOf(weekday)
+            spanishWeekdayIndex(weekday)
         ].map(Number);
     }
 
@@ -757,13 +760,11 @@ class Time {
             // Week is a special case that runs outside the hierarchy
             if (unitRange === timeUnits.week) {
                 // Get start of current week, independent of count
-                const weekday = new Intl.DateTimeFormat('en-GB', {
+                const weekday = this.dateTimeFormat({
                         timeZone: this.timezone,
-                        weekday: 'short'
-                    }).format(min),
-                    weekdayNo = [
-                        'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
-                    ].indexOf(weekday);
+                        weekday: 'narrow'
+                    }, min, 'es'),
+                    weekdayNo = spanishWeekdayIndex(weekday);
 
                 dayOfMonth += -weekdayNo + startOfWeek +
                     // We don't want to skip days that are before
