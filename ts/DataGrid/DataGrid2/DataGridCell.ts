@@ -79,12 +79,8 @@ class DataGridCell {
         this.row = row;
         this.row.registerCell(this);
 
-        this.htmlElement.addEventListener(
-            'mouseenter', this.onMouseEnter.bind(this)
-        );
-        this.htmlElement.addEventListener(
-            'mouseout', this.onMouseOut.bind(this)
-        );
+        this.htmlElement.addEventListener('mouseenter', this.onMouseEnter);
+        this.htmlElement.addEventListener('mouseout', this.onMouseOut);
     }
 
 
@@ -115,14 +111,29 @@ class DataGridCell {
         this.htmlElement.style.width = this.column.getWidth() + 'px';
     }
 
-    private onMouseEnter(): void {
+    /**
+     * Sets the hover state of the cell and its row and column.
+     */
+    private readonly onMouseEnter = (): void => {
         this.row.setHover(true);
         this.column.setHover(true);
-    }
+    };
 
-    private onMouseOut(): void {
+    /**
+     * Unsets the hover state of the cell and its row and column.
+     */
+    private readonly onMouseOut = (): void => {
         this.row.setHover(false);
         this.column.setHover(false);
+    };
+
+    /**
+     * Destroys the cell.
+     */
+    public destroy(): void {
+        this.htmlElement.removeEventListener('mouseenter', this.onMouseEnter);
+        this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
+        this.htmlElement.remove();
     }
 
     /* *

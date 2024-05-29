@@ -149,6 +149,10 @@ class DataGridRow {
             return;
         }
 
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            this.cells[i].destroy();
+        }
+
         this.htmlElement.remove();
         this.destroyed = true;
     }
@@ -176,7 +180,7 @@ class DataGridRow {
     }
 
     public getDefaultTopOffset(): number {
-        return this.index * this.viewport.defaultRowHeight;
+        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
 
 
