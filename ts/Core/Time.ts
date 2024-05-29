@@ -431,7 +431,7 @@ class Time {
         let d = this.Date.UTC(
             year,
             month || 0,
-            date || 1,
+            date ?? 1,
             hours || 0,
             minutes || 0,
             seconds || 0,
