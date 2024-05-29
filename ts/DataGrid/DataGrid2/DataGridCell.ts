@@ -112,7 +112,8 @@ class DataGridCell {
      * Reflows the cell dimensions.
      */
     public reflow(): void {
-        this.htmlElement.style.width = this.column.getWidth() + 'px';
+        this.htmlElement.style.width = this.htmlElement.style.maxWidth
+            = this.column.getWidth() + 'px';
     }
 
     private onMouseEnter(): void {

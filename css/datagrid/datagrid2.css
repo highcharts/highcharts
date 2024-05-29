@@ -126,6 +126,8 @@
     border-right: 1px solid #00ff00;
     white-space: nowrap;
     padding-left: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .highcharts-dg-hovered-column {
