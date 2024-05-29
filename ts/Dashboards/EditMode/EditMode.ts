@@ -399,32 +399,26 @@ class EditMode {
             );
         }
 
-        if (this.customHTMLMode) {
-            addEvent(
-                board.container,
-                'mousemove',
-                editMode.onDetectContext.bind(editMode)
-            );
-            addEvent(
-                board.container,
-                'click',
-                editMode.onContextConfirm.bind(editMode)
-            );
-        } else {
-            addEvent(
-                board.layoutsWrapper,
-                'mousemove',
-                editMode.onDetectContext.bind(editMode)
-            );
-            addEvent(
-                board.layoutsWrapper,
-                'click',
-                editMode.onContextConfirm.bind(editMode)
-            );
-            addEvent(board.layoutsWrapper, 'mouseleave', (): void => {
+        const elementForEvents = this.customHTMLMode ?
+            board.container : board.layoutsWrapper;
+
+        addEvent(
+            elementForEvents,
+            'mousemove',
+            editMode.onDetectContext.bind(editMode)
+        );
+        addEvent(
+            elementForEvents,
+            'click',
+            editMode.onContextConfirm.bind(editMode)
+        );
+        addEvent(
+            elementForEvents,
+            'mouseleave',
+            (): void => {
                 editMode.hideContextPointer();
-            });
-        }
+            }
+        );
     }
 
     /**
