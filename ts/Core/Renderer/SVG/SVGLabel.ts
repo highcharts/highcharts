@@ -273,7 +273,6 @@ class SVGLabel extends SVGElement {
         if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
             this.updateBoxSize();
         }
-
         const {
                 padding,
                 height = 0,
