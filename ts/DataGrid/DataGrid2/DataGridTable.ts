@@ -22,7 +22,6 @@
  * */
 
 import DGUtils from './Utils.js';
-import Utils from '../../Core/Utilities.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
@@ -31,7 +30,6 @@ import DataGrid from './DataGrid.js';
 import Globals from './Globals.js';
 
 const { makeHTMLElement } = DGUtils;
-const { getStyle } = Utils;
 
 /* *
  *
@@ -100,6 +98,16 @@ class DataGridTable {
      */
     public defaultRowHeight: number;
 
+    /**
+     * The index of the first visible row.
+     */
+    public rowCursor: number = 0;
+
+    /**
+     * The initial height of the top row.
+     */
+    private topRowInitialHeight?: number;
+
 
     /* *
     *
@@ -143,7 +151,6 @@ class DataGridTable {
      */
     private init(): void {
         const columnNames = this.dataTable.getColumnNames();
-        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
 
         // Load columns
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -156,12 +163,14 @@ class DataGridTable {
         this.head = new DataGridTableHead(this.theadElement, this.columns);
         this.head.render();
 
-        // Load & render rows
-        this.renderRows(0, Math.ceil(
-            this.container.offsetHeight / this.defaultRowHeight
-        ) + buffer);
+        // Initial reflow to set the viewport height
+        this.reflow();
 
-        // Refresh element dimensions
+        // Load & render rows
+        this.renderRows(this.rowCursor);
+        this.adjustRowDimensions();
+
+        // Refresh element dimensions after initial rendering
         this.reflow();
     }
 
@@ -188,10 +197,15 @@ class DataGridTable {
      * Renders rows in the specified range. Removes rows that are out of the
      * range except the last row.
      *
-     * @param from first row index
-     * @param to last row index (excluding the last row)
+     * @param rowCursor
+     * The index of the first visible row.
      */
-    private renderRows(from: number, to: number): void {
+    private renderRows(rowCursor: number): void {
+        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
+        const rowsPerPage = Math.ceil(
+            this.tbodyElement.offsetHeight / this.defaultRowHeight
+        );
+
         const rows = this.rows;
 
         if (!rows.length) {
@@ -204,8 +218,11 @@ class DataGridTable {
             this.tbodyElement.appendChild(last.htmlElement);
         }
 
-        from = Math.max(from, 0);
-        to = Math.min(to, rows[rows.length - 1].index - 1);
+        const from = Math.max(rowCursor - buffer, 0);
+        const to = Math.min(
+            rowCursor + rowsPerPage + buffer,
+            rows[rows.length - 1].index - 1
+        );
 
         const alwaysLastRow = rows.pop();
 
@@ -229,7 +246,9 @@ class DataGridTable {
             rows.push(alwaysLastRow);
         }
 
-        this.adjustRowDimensions();
+        const bof = rowCursor - buffer < 0 ? buffer - rowCursor : 0;
+        this.topRowInitialHeight =
+            this.rows[buffer - bof].htmlElement.clientHeight;
     }
 
     /**
@@ -247,14 +266,13 @@ class DataGridTable {
         const { defaultRowHeight: rowHeight } = this;
 
         // Vertical virtual scrolling
-        const rowsPerPage = Math.ceil(target.offsetHeight / rowHeight);
         const rowCursor = Math.floor(target.scrollTop / rowHeight);
-        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
+        if (this.rowCursor !== rowCursor) {
+            this.renderRows(rowCursor);
+        }
+        this.rowCursor = rowCursor;
 
-        this.renderRows(
-            rowCursor - buffer,
-            rowCursor + rowsPerPage + buffer
-        );
+        this.adjustRowDimensions();
     }
 
     /**
@@ -271,7 +289,7 @@ class DataGridTable {
             className: Globals.classNames.rowElement
         }, this.tbodyElement);
 
-        const defaultRowHeight = getStyle(mockRow, 'height', true) as number;
+        const defaultRowHeight = mockRow.clientHeight;
         mockRow.remove();
 
         return defaultRowHeight;
@@ -279,11 +297,47 @@ class DataGridTable {
 
     public adjustRowDimensions(): void {
         let translateBuffer = this.rows[0].getDefaultTopOffset();
+        const rowLen = this.rows.length;
 
-        for (let i = 1, iEnd = this.rows.length - 1; i < iEnd; ++i) {
-            translateBuffer += this.rows[i - 1].getHeight();
+        for (let i = 0; i < rowLen; ++i) {
+            const row = this.rows[i];
+            const cursor = this.rowCursor;
+
+            if (row.index > cursor) {
+                break;
+            }
+
+            const element = row.htmlElement;
+            const defaultH = this.defaultRowHeight;
+            const borderH = element.offsetHeight - element.clientHeight;
+
+            if (row.index < cursor) {
+                row.htmlElement.style.height = defaultH + borderH + 'px';
+            } else if (
+                row.getCurrentHeight() > defaultH &&
+                this.topRowInitialHeight
+            ) {
+                const ratio = this.tbodyElement.scrollTop / defaultH - cursor;
+                const diff = this.topRowInitialHeight - defaultH;
+
+                row.htmlElement.style.height =
+                    this.topRowInitialHeight - diff * ratio + 'px';
+            }
+        }
+
+        for (let i = 1, iEnd = rowLen - 1; i < iEnd; ++i) {
+            translateBuffer += this.rows[i - 1].getCurrentHeight();
             this.rows[i].htmlElement.style.transform =
                 `translateY(${translateBuffer}px)`;
+        }
+
+        if (this.rows[rowLen - 2].index + 1 === this.rows[rowLen - 1].index) {
+            translateBuffer += this.rows[rowLen - 2].getCurrentHeight();
+            this.rows[rowLen - 1].htmlElement.style.transform =
+                `translateY(${translateBuffer}px)`;
+        } else {
+            this.rows[rowLen - 1].htmlElement.style.transform =
+                `translateY(${this.rows[rowLen - 1].getDefaultTopOffset()}px)`;
         }
     }
 

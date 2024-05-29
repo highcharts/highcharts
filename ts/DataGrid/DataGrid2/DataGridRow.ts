@@ -100,6 +100,10 @@ class DataGridRow {
         this.htmlElement.setAttribute('row-index', index);
         this.htmlElement.setAttribute('aria-rowindex', index);
         this.htmlElement.setAttribute('row-id', index);
+
+        if (index % 2 === 1) {
+            this.htmlElement.classList.add(Globals.classNames.odd);
+        }
     }
 
 
@@ -167,8 +171,8 @@ class DataGridRow {
         );
     }
 
-    public getHeight(): number {
-        return this.htmlElement.offsetHeight;
+    public getCurrentHeight(): number {
+        return this.htmlElement.clientHeight;
     }
 
     public getDefaultTopOffset(): number {

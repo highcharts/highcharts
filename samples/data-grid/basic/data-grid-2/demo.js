@@ -1,14 +1,17 @@
 const dg = new DataGrid.DataGrid2('container', {
     dataTable: new DataGrid.DataTable({
         columns: {
-            a: Array.from({ length: 10e4 }, (_, i) => `A${i}`),
-            b: Array.from({ length: 10e4 }, (_, i) => `B${i}`),
-            c: Array.from({ length: 10e4 }, (_, i) => `C${i}`),
-            d: Array.from({ length: 10e4 }, (_, i) => `D${i}`),
-            e: Array.from({ length: 10e4 }, (_, i) => `E${i}`),
-            f: Array.from({ length: 10e4 }, (_, i) => `F${i}`)
+            a: Array.from({ length: 1000 }, (_, i) => `A${i}`),
+            b: Array.from({ length: 1000 }, (_, i) => `B${i}`),
+            c: Array.from({ length: 1000 }, (_, i) => `C${i}`),
+            d: Array.from({ length: 1000 }, (_, i) => `D${i}`),
+            e: Array.from({ length: 1000 }, (_, i) => `E${i}`),
+            f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
-    })
+    }),
+    rowOptions: {
+        bufferSize: 5
+    }
 });
 
 document.getElementById('scroll').addEventListener('submit', e => {

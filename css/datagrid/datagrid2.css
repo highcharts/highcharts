@@ -117,6 +117,10 @@
     height: 36px;
 }
 
+.highcharts-dg-row.highcharts-dg-odd {
+    background-color: #fafafa;
+}
+
 .highcharts-dg-table td {
     height: inherit;
     border-right: 1px solid #00ff00;
