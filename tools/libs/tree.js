@@ -445,13 +445,11 @@ function sortJSONTree(
 
     for (const key of Object.keys(jsonTree).sort()) {
         if (typeof jsonTree[key] === 'object') {
-            if (jsonTree[key] instanceof Array) {
-                follows[key] = jsonTree[key];
-            } else if (jsonTree[key] === null) {
+            if (jsonTree[key] === null) {
                 newTree[key] = null;
             } else {
-                newTree[key] = (
-                    jsonTree[key].prototype === Object ?
+                follows[key] = (
+                    jsonTree[key].constructor === Object ?
                         sortJSONTree(jsonTree[key]) :
                         jsonTree[key]
                 );

@@ -26,7 +26,8 @@ const PORCELAN_REGEXP = /([ACDMRU\?\! ])([ACDMRU\?\! ]) ([\.\/\w]+)/;
  */
 async function getBranch() {
     const ProcessLib = require('../libs/process.js');
-    const result = await ProcessLib.exec('git rev-parse --abbrev-ref HEAD');
+    const result =
+        await ProcessLib.exec('git rev-parse --abbrev-ref HEAD', { silent: 2 });
 
     return result.toString().trim();
 }
