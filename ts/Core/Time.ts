@@ -61,11 +61,6 @@ declare module './Axis/TickPositionsArray'{
  *
  * */
 
-const hasNewSafariBug =
-    H.isSafari &&
-    win.Intl &&
-    win.Intl.DateTimeFormat.prototype.formatRange;
-
 // To do: Remove this when we no longer need support for Safari < v14.1
 const hasOldSafariBug =
     H.isSafari &&
@@ -163,107 +158,6 @@ class Time {
      *  Functions
      *
      * */
-
-    /**
-     * Time units used in `Time.get` and `Time.set`
-     *
-     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnitValue
-     */
-
-    /**
-     * Get the value of a date object in given units, and subject to the Time
-     * object's current timezone settings. This function corresponds directly to
-     * JavaScripts `Date.getXXX / Date.getUTCXXX`, so instead of calling
-     * `date.getHours()` or `date.getUTCHours()` we will call
-     * `time.get('Hours')`.
-     *
-     * @function Highcharts.Time#get
-     *
-     * @param {Highcharts.TimeUnitValue} unit
-     * @param {Date} date
-     *
-     * @return {number}
-     *        The given time unit
-     */
-    public get(unit: Time.TimeUnitValue, date: Date): number {
-        if (this.variableTimezone) {
-            const realMs = date.getTime();
-            const ms = realMs - this.getTimezoneOffset(date);
-
-            date.setTime(ms); // Temporary adjust to timezone
-            const ret = (date as any)['getUTC' + unit]();
-            date.setTime(realMs); // Reset
-            return ret;
-        }
-
-        // UTC time with no timezone handling
-        if (this.useUTC) {
-            return (date as any)['getUTC' + unit]();
-        }
-
-        // Else, local time
-        return (date as any)['get' + unit]();
-    }
-
-    /**
-     * Set the value of a date object in given units, and subject to the Time
-     * object's current timezone settings. This function corresponds directly to
-     * JavaScripts `Date.setXXX / Date.setUTCXXX`, so instead of calling
-     * `date.setHours(0)` or `date.setUTCHours(0)` we will call
-     * `time.set('Hours', 0)`.
-     *
-     * @function Highcharts.Time#set
-     *
-     * @param {Highcharts.TimeUnitValue} unit
-     * @param {Date} date
-     * @param {number} value
-     *
-     * @return {number}
-     *        The epoch milliseconds of the updated date
-     */
-    public set(unit: Time.TimeUnitValue, date: Date, value: number): number {
-        // UTC time with timezone handling
-        if (this.variableTimezone) {
-            // For lower order time units, just set it directly using UTC
-            // time
-            if (
-                unit === 'Milliseconds' ||
-                unit === 'Seconds' ||
-                (
-                    unit === 'Minutes' &&
-                    this.getTimezoneOffset(date) % 3600000 === 0
-                ) // #13961
-            ) {
-                return (date as any)['setUTC' + unit](value);
-            }
-
-            // Higher order time units need to take the time zone into
-            // account
-
-            // Adjust by timezone
-            const offset = this.getTimezoneOffset(date);
-            let ms = date.getTime() - offset;
-            date.setTime(ms);
-
-            (date as any)['setUTC' + unit](value);
-            const newOffset = this.getTimezoneOffset(date);
-
-            ms = date.getTime() + newOffset;
-            return date.setTime(ms);
-        }
-
-        // UTC time with no timezone handling
-        if (
-            this.useUTC ||
-            // Leap calculation in UTC only
-            (hasNewSafariBug && unit === 'FullYear')
-        ) {
-            return (date as any)['setUTC' + unit](value);
-        }
-
-        // Else, local time
-        return (date as any)['set' + unit](value);
-    }
 
     /**
      * Update the Time object with current options. It is called internally on
