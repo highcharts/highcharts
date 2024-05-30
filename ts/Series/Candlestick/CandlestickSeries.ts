@@ -29,7 +29,7 @@ const {
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { crisp, merge } = U;
 
 /* *
  *
@@ -137,7 +137,6 @@ class CandlestickSeries extends OHLCSeries {
                 bottomBox,
                 hasTopWhisker,
                 hasBottomWhisker,
-                crispCorr,
                 crispX,
                 path: SVGPath,
                 halfWidth;
@@ -163,9 +162,9 @@ class CandlestickSeries extends OHLCSeries {
                 }
 
                 // Crisp vector coordinates
-                crispCorr = (graphic.strokeWidth() % 2) / 2;
+                const strokeWidth = graphic.strokeWidth();
                 // #2596:
-                crispX = Math.round(point.plotX as any) - crispCorr;
+                crispX = crisp(point.plotX || 0, strokeWidth);
                 plotOpen = point.plotOpen;
                 plotClose = point.plotClose;
                 topBox = Math.min(plotOpen, plotClose);
@@ -174,13 +173,13 @@ class CandlestickSeries extends OHLCSeries {
                 hasTopWhisker = reversedYAxis ?
                     bottomBox !== point.yBottom :
                     Math.round(topBox) !==
-                    Math.round(point.plotHigh as any);
+                    Math.round(point.plotHigh || 0);
                 hasBottomWhisker = reversedYAxis ?
                     Math.round(topBox) !==
-                    Math.round(point.plotHigh as any) :
+                    Math.round(point.plotHigh || 0) :
                     bottomBox !== point.yBottom;
-                topBox = Math.round(topBox) + crispCorr;
-                bottomBox = Math.round(bottomBox) + crispCorr;
+                topBox = crisp(topBox, strokeWidth);
+                bottomBox = crisp(bottomBox, strokeWidth);
 
                 // Create the path. Due to a bug in Chrome 49, the path is
                 // first instantiated with no values, then the values

@@ -290,7 +290,7 @@
         click(chart.yAxis[0].ticks['0'].label.element);
 
         spaceCollapsed = getSpacing(chart);
-        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height + 1;
+        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height;
 
         assert.equal(
             axisLineLength,

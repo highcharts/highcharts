@@ -94,7 +94,7 @@ namespace ColumnDataLabel {
                 // If parts of the box overshoots outside the plot area, modify
                 // the box to center the label inside
                 const overshoot = alignTo.y + alignTo.height - yLen;
-                if (overshoot > 0 && overshoot < alignTo.height) {
+                if (overshoot > 0 && overshoot < alignTo.height - 1) {
                     alignTo.height -= overshoot;
                 }
             }

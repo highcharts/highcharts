@@ -272,7 +272,7 @@ namespace SeriesOnPointComposition {
                     d: SVGRenderer.prototype.crispLine([
                         ['M', xFrom, yFrom],
                         ['L', xTo, yTo]
-                    ], width, 'ceil'),
+                    ], width),
                     'stroke-width': width
                 };
 
