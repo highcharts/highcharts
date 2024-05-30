@@ -18,6 +18,17 @@ body {
     /* margin-top: -100px; */
 }
 
+#chart-description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+
 #demo-content {
     background-color: transparent;
     margin: 0;
@@ -249,7 +260,7 @@ body {
 }
 
 .chart-button:disabled .button-text {
-    border: 3px solid #5e5c70;
+    border: 1px solid #5e5c70;
     color: #75738c;
 }
 

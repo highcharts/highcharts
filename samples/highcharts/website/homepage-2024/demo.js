@@ -57,6 +57,8 @@ function changeOpacity(elements, opacity, transition) {
     });
 }
 
+let chartNum = 0;
+
 // arc
 const arc = {
     chart: {
@@ -105,14 +107,9 @@ const arc = {
     },
 
     accessibility: {
-        description:
-            'Arc diagram chart with circles of different sizes along the X ' +
-            'axis, and connections drawn as arcs between them. From the ' +
-            'chart we can see that Paris is the city with the most ' +
-            'connections to other cities.',
-        point: {
-            valueDescriptionFormat:
-                'Connection from {point.from} to {point.to}.'
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
         },
         keyboardNavigation: {
             enabled: false
@@ -337,6 +334,15 @@ const cr = {
             }
         }
     },
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
+        }
+    },
     credits: {
         enabled: false
     },
@@ -449,23 +455,12 @@ const cr = {
 // sankey
 const sk = {
     accessibility: {
-        description:
-            'Sankey chart that shows the total funding for Fintech companies ' +
-            'in the internet software & services through 2022.',
-        point: {
-            descriptionFormatter: function (point) {
-                const nodeFrom = point.fromNode.name,
-                    nodeTo = point.toNode.name,
-                    nodeWeight = point.weight;
-                return (
-                    'From: ' +
-                    nodeFrom +
-                    ', to: ' +
-                    nodeTo +
-                    ', weight: ' +
-                    nodeWeight
-                );
-            }
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
         }
     },
     chart: {
@@ -611,8 +606,13 @@ const str = {
     },
 
     accessibility: {
-        description: `Streamgraph chart showing the number of 
-        winter olympic medals won by country since 1924`
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
+        }
     },
 
     // Make sure connected countries have similar colors
@@ -1057,6 +1057,15 @@ const rb = {
             }
         }
     },
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
+        }
+    },
     colors: colors,
     legend: {
         enabled: false
@@ -1134,6 +1143,7 @@ const rb = {
 };
 
 // original streamgraph
+let strInterval;
 const strOld = {
     chart: {
         type: 'streamgraph',
@@ -1152,7 +1162,7 @@ const strOld = {
                 const chart = this;
                 let count = 0;
                 setTimeout(function () {
-                    setInterval(function () {
+                    strInterval = setInterval(function () {
                         if (count < chart.series.length) {
                             chart.series[count].update({
                                 fillOpacity: 0.85
@@ -2416,9 +2426,19 @@ const strOld = {
     }
 };
 
+
 // jellypus
 function jellypus() {
     Highcharts.chart('container', {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '',
+                afterChartFormat: ''
+            },
+            keyboardNavigation: {
+                enabled: false
+            }
+        },
         chart: {
             type: 'networkgraph',
             margin: 0,
@@ -3195,6 +3215,15 @@ function cs() {
     };
 
     const options = {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '',
+                afterChartFormat: ''
+            },
+            keyboardNavigation: {
+                enabled: false
+            }
+        },
         title: {
             floating: true,
             useHTML: true,
@@ -4435,9 +4464,19 @@ function barchartRace() {
                         setTimeout(() => {
                             // eslint-disable-next-line max-len
                             document.getElementById('play-pause-button').click();
+                            getChartDescription(chartNum);
                         }, 10);
 
                     }
+                }
+            },
+            accessibility: {
+                screenReaderSection: {
+                    beforeChartFormat: '',
+                    afterChartFormat: ''
+                },
+                keyboardNavigation: {
+                    enabled: false
                 }
             },
             colors: colors,
@@ -4606,7 +4645,13 @@ function barchartRace() {
 // packed bubble chart
 const spb = {
     accessibility: {
-        description: 'Carbon emissions around the world (2014)'
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
+        }
     },
     chart: {
         type: 'packedbubble'
@@ -5222,14 +5267,13 @@ const dw = {
         y: -15,
         text: '<a href="https://www.highcharts.com/demo/highcharts/dependency-wheel">See full demo</a>'
     },
-
     accessibility: {
-        description: `Chart showing a dependency wheel, 
-        where each point consists of multiple
-        weighted links to other points.`,
-        point: {
-            valueDescriptionFormat: '{index}. From ' +
-                '{point.from} to {point.to}: {point.weight}.'
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
         }
     },
     credits: {
@@ -5330,6 +5374,15 @@ const fc = {
                     });
                 }, 1000);
             }
+        }
+    },
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
         }
     },
     colors: colors,
@@ -5451,14 +5504,13 @@ function geoHeatMap() {
 
         globe = Highcharts.mapChart('container', {
             accessibility: {
-                description: `
-                This chart shows the density of cities in the world, 
-                plottedby their latitude and longitude. It uses the 
-                orthographic projection and
-                geoheatmap series type, which creates a grid of tiles that
-                correspond to the latitude and longitude of each data point.
-                The value of the geoheatmap is represented 
-                by the color of each tile.`
+                screenReaderSection: {
+                    beforeChartFormat: '',
+                    afterChartFormat: ''
+                },
+                keyboardNavigation: {
+                    enabled: false
+                }
             },
             chart: {
                 map: topology,
@@ -5473,6 +5525,8 @@ function geoHeatMap() {
                         );
                         const stop = 2;
                         let start = 0;
+
+                        getChartDescription(chartNum);
 
                         setTimeout(() => {
                             viewLinks[0].click();
@@ -5828,32 +5882,12 @@ function gantt() {
             }
         },
         accessibility: {
-            keyboardNavigation: {
-                seriesNavigation: {
-                    mode: 'serialize'
-                }
+            screenReaderSection: {
+                beforeChartFormat: '',
+                afterChartFormat: ''
             },
-            point: {
-                descriptionFormatter: function (point) {
-                    const completedValue = point.completed ?
-                            point.completed.amount || point.completed : null,
-                        completed = completedValue ?
-                            ' Task ' + Math.round(completedValue * 1000) / 10 +
-                            '% completed.' :
-                            '',
-                        dependency = point.dependency &&
-                            point.series.chart.get(point.dependency).name,
-                        dependsOn = dependency ? ' Depends on ' +
-                        dependency + '.' : '';
-                    return Highcharts.format(
-                        point.milestone ?
-                            // eslint-disable-next-line max-len
-                            '{point.yCategory}. Milestone at {point.x:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}' :
-                            // eslint-disable-next-line max-len
-                            '{point.yCategory}.{completed} Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}. Owner: {point.owner}.{dependsOn}',
-                        { point, completed, dependsOn }
-                    );
-                }
+            keyboardNavigation: {
+                enabled: false
             }
         },
         lang: {
@@ -5919,27 +5953,135 @@ const charts = [
     sk, cr
 ];
 
+const chartDescriptions = [
+    // jellypus
+    `<p>Network Graph</p><div>A network graph with 
+    linked nodes where one node is larger and has more mass
+    than the other nodes. This chart illustrates how mass affects
+    the network graph's layout alogirthm, as the smaller, lighter 
+    nodes are simultaneously attracted and 
+    repulsed by the larger, heavier node.</div>`,
+    // streamgraph
+    `<p>Streamgraph Chart</p>
+    <div>Streamgraphs are a type of stacked area 
+    charts where the areas are displaced around a central axis.
+    It is often used for displaying compound volume across 
+    different categories or over time. This demo visualizes 
+    the number of medals earned in the Winter Olympic Games 
+    for each participating country since 1924, using a relative scale. </div>`,
+    // candlestick
+    `<p>Dynamic Candlestick Chart</p>
+    <div>Combination chart with 2 data series.</div>
+    <div>The chart has 2 X axes displaying 
+    Time, and navigator-x-axis.</div>
+    <div>The chart has 2 Y axes displaying 
+    values, and navigator-y-axis.</div>`,
+    // bar chart race
+    `<p>Bar Chart Race</p>
+    <div> An animated bar chart showing the growth in world 
+    population by country over the
+    course of 58 years, from 1960 to 2018. </div>`,
+    // split packed bubble
+    `<p>Split PackedBubble Chart</p>
+    <div> This chart shows carbon emissions around the world from 2014.
+     In the chart, smaller bubbles that represent countries are grouped 
+    inside larger bubbles that represent geographical regions.</div>`,
+    // dependency wheel
+    `<p>Dependency Wheel</p>
+    <div>Chart showing a dependency wheel, where each point consists 
+    of multiple weighted links to other points. This chart 
+    type is often used to visualize data flow, and can 
+    be a striking way to illustrate relationships in data.</div>`,
+    // funnel
+    `<p>Funnel Chart</p>
+    <div>This chart shows a sales funnel. A funnel chart is 
+    often used to visualize data from stages of a 
+    process. Readers can quickly identify bottlenecks 
+    in the process by comparing the area size 
+    variation of each stage. </div>`,
+    // geo heatmap
+    `<p>GeoHeatMap</p>
+    <div>Map of World</div>
+    <div>This chart shows the density of cities in the world, 
+    plotted by their latitude and longitude. It uses the 
+    orthographic projection and
+    geoheatmap series type, which creates a grid of tiles that
+    correspond to the latitude and longitude of each data point.
+    The value of the geoheatmap is represented 
+    by the color of each tile.</div>`,
+    // gantt
+    `<p>Project Management Gantt Chart with 8 data points.</p>
+    <div>This gantt chart visualizes project tasks and their dependencies. 
+    The breakdown of the project is described in tasks which are listed on 
+    the vertical axis where the duration of the tasks is offset 
+    against the horizontal axis.</div>`,
+    // streamgraph
+    `<p>Streamgraph Chart with 5 data series.</p>
+    <div>Streamgraphs are a type of stacked area charts where 
+    the areas are displaced around a central axis. This 
+    chart is showing price indices for air freight, 
+    importing and exporting.</div>`,
+    // arc
+    `<p>Arc Diagram</p>
+    <div>Chart with 2 data series.</div>
+    <div>Arc diagram chart with circles of different 
+    sizes along the X axis, and connections drawn as 
+    arcs between them. From the chart we can see 
+    that Paris is the city with the most connections to other cities.</div>`,
+    // radial bar
+    `<p>Radial Bar Chart with 12 bars.</div>
+    <div>A radial bar chart is similar to a bar chart, 
+    but the y-axis is circular.</div>`,
+    // sankey
+    `<p>Snakey Chart with 16 data points.</div>
+    <div>Sankey chart that shows 
+    the total funding for Fintech companies in the 
+    internet software &amp; services through 2022.</div>`,
+    // column range
+    `<p>Column Range Chart with 12 data points.</p>
+    <div>Columnrange charts are column charts displaying a range 
+    between a lower and higher value for each point.</div>`
+];
 
-let chartNum = 0;
+
+function getChartDescription(num) {
+
+    const container = document.getElementById('container');
+
+    const description = document.createElement('div');
+    description.setAttribute('aria-hidden', 'false');
+    description.setAttribute('id', 'chart-description');
+    description.innerHTML = chartDescriptions[num];
+
+    // Append the new div to the container
+    container.appendChild(description);
+    container.setAttribute('aria-describedby', 'chart-description');
+
+    chartNum = chartNum + 1;
+
+}
 
 function makeChart() {
 
     document.getElementById('play-controls').style.visibility = 'hidden';
     clearInterval(barInterval);
     clearInterval(csInterval);
+    clearInterval(strInterval);
 
-    const chartToMake = charts[chartNum];
-
-    if (chartNum < charts.length - 1) {
-        chartNum = chartNum + 1;
-    } else {
+    if (chartNum > charts.length - 1) {
         chartNum = 0;
     }
+
+    const chartToMake = charts[chartNum];
 
     if (typeof chartToMake === 'function') {
         chartToMake();
     } else {
         Highcharts.chart('container', chartToMake);
+    }
+
+    if (chartToMake !== geoHeatMap && chartToMake !== barchartRace) {
+        getChartDescription(chartNum);
     }
 }
 
@@ -5947,172 +6089,15 @@ makeChart();
 
 // button
 document.addEventListener('DOMContentLoaded', function () {
-    // const container = document.querySelector('.button-container');
     const button = document.querySelector('.chart-button');
-    // let confetti = []; // Array to hold confetti elements
-    // let exploding = false;
-
-    // fillButton(80); // Initially fill the button with 40 confetti pieces
 
     button.addEventListener('click', function () {
         makeChart();
-        // explodeConfetti(); // Explode confetti on click
-        // this.disabled = true;
-        // setTimeout(function () {
-        //     button.disabled = false;
-        // }, 3000);
+        this.disabled = true;
+        setTimeout(function () {
+            button.disabled = false;
+        }, 3000);
     });
 
-    // button.addEventListener('mouseenter', function () {
-    //     hoverEffect(true); // Apply hover effect
-    // });
 
-    // button.addEventListener('mouseleave', function () {
-    //     hoverEffect(false); // Remove hover effect
-    // });
-
-    // function fillButton(num) {
-    //     clearConfetti(); // Clear existing confetti first
-    //     for (let i = 0; i < num; i++) {
-    //         const confettiPiece = createConfetti(false);
-    //         confetti.push(confettiPiece);
-    //         container.appendChild(confettiPiece);
-    //         placeConfetti(confettiPiece);
-    //     }
-    // }
-
-    // function createConfetti() {
-    //     const confettiPiece = document.createElement('div');
-    //     confettiPiece.className = 'confetti';
-    //     // Random size between 8px and 3px
-    //     let size = Math.random() * (8 - 3) + 5;
-    //     const shapeType = Math.floor(Math.random() * 3);
-    //     let borderColor;
-    //     // 0 = triangle, 1 = circle, 2 = square
-    //     switch (shapeType) {
-    //     case 0: // Triangle
-    //         // eslint-disable-next-line max-len
-    //         borderColor = colors[Math.floor(Math.random() * colors.length)];
-    //         size = Math.random() * (8 - 3) + 2;
-    //         confettiPiece.style.borderLeft = `${size}px solid transparent`;
-    //         confettiPiece.style.borderRight = `${size}px solid transparent`;
-    //         confettiPiece.style.borderBottom =
-    //             `${size * 2}px ${borderColor} solid`;
-    //         break;
-    //     case 1: // Circle
-    //         confettiPiece.style.width = `${size}px`;
-    //         confettiPiece.style.height = `${size}px`;
-    //         confettiPiece.style.borderRadius = '50%';
-    //         confettiPiece.style.opacity = 0.5;
-    //         confettiPiece.style.backgroundColor =
-    //         colors[Math.floor(Math.random() * colors.length)];
-    //         break;
-    //     case 2: // Square
-    //         confettiPiece.style.width = `${size}px`;
-    //         confettiPiece.style.height = `${size}px`;
-    //         confettiPiece.style.opacity = 0.5;
-    //         confettiPiece.style.backgroundColor =
-    //         colors[Math.floor(Math.random() * colors.length)];
-    //         break;
-    //     default: // Default case
-    //         break;
-    //     }
-    //     confettiPiece.style.position = 'absolute';
-    //     confettiPiece.style.opacity = 0;
-
-    //     return confettiPiece;
-    // }
-
-    // function placeConfetti(confettiPiece) {
-    //     const horizontalPadding = 16; // 16px padding on left and right
-    //     const verticalPadding = 8; // 8px padding on top and bottom
-    //     let posX, posY;
-
-    //     if (Math.random() < 0.3) {
-    //         posX = Math.random() * button.offsetWidth  + horizontalPadding;
-    //         posY = Math.random() * button.offsetHeight;
-    //     } else {
-    //         posX = Math.random() * button.offsetWidth;
-    //         posY = Math.random() * button.offsetHeight + verticalPadding;
-    //     }
-
-    //     const distance = 10; // Small movement range
-    //     const angle = Math.random() * 360;
-    //     const deltaX = distance * Math.cos(angle * Math.PI / 180);
-    //     const deltaY = distance * Math.sin(angle * Math.PI / 180);
-    //     confettiPiece.style.left = `${posX}px`;
-    //     confettiPiece.style.top = `${posY}px`;
-
-    //     confettiPiece.style.transform
-    // = `translate(${deltaX}px, ${deltaY}px)`;
-
-
-    //     confettiPiece.style.transition = 'all 0.5s ease';
-    //     confettiPiece.style.opacity = 0;
-
-
-    // }
-
-    // function hoverEffect(apply) {
-    //     confetti.forEach(piece => {
-
-    //         let distance = 25; // Small movement range
-    //         const angle = Math.random() * 360;
-    //         const deltaX = distance * Math.cos(angle * Math.PI / 180);
-    //         const deltaY = distance * Math.sin(angle * Math.PI / 180);
-    //         if (apply) {
-    //             piece.style.transition = 'all 0.5s ease';
-    //             piece.style.opacity = 0.4;
-    //             piece.style.transform
-    //              = `translate(${deltaX}px, ${deltaY}px)`;
-    //         } else {
-    //             if (!exploding) {
-    //                 distance = 10;
-    //                 piece.style.transform =
-    //                     `translate(${deltaX}px, ${deltaY}px)`;
-    //                 piece.style.transition = 'all 0.5s ease';
-    //                 piece.style.opacity = 0;
-
-    //             }
-    //         }
-    //     });
-    // }
-
-    // function explodeConfetti() {
-    //     exploding = true;
-    //     confetti.forEach(piece => {
-    //         animateConfetti(piece);
-    //     });
-
-    //     makeChart();
-
-    //     // Refill the button with confetti after explosion
-
-    //     fillButton(80);
-    //     exploding = false;
-    //     // }, 3000);
-    // }
-
-    // function clearConfetti() {
-    //     confetti.forEach(piece => piece.remove());
-    //     confetti = [];
-    // }
-
-    // function animateConfetti(confettiPiece) {
-    //     const angle = Math.random() * 360; // Explode in all directions
-    //     const distance = Math.random() * 150;
-    //     const finalX = parseFloat(confettiPiece.style.left) +
-    //     distance * Math.sin(angle * Math.PI / 180);
-    //     const finalY = parseFloat(confettiPiece.style.top) -
-    //     distance * Math.cos(angle * Math.PI / 180);
-
-    //     confettiPiece.style.transition = 'all 1s ease-out';
-    //     confettiPiece.style.left = `${finalX}px`;
-    //     confettiPiece.style.top = `${finalY}px`;
-    //     confettiPiece.style.opacity = 0;
-
-    //     setTimeout(() => {
-    //         confettiPiece.remove();
-    //     }, 1000);
-    // }
 });
