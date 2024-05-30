@@ -609,9 +609,6 @@ const str = {
         screenReaderSection: {
             beforeChartFormat: '',
             afterChartFormat: ''
-        },
-        keyboardNavigation: {
-            enabled: false
         }
     },
 
@@ -2434,9 +2431,6 @@ function jellypus() {
             screenReaderSection: {
                 beforeChartFormat: '',
                 afterChartFormat: ''
-            },
-            keyboardNavigation: {
-                enabled: false
             }
         },
         chart: {
@@ -6054,7 +6048,7 @@ function getChartDescription(num) {
     description.innerHTML = chartDescriptions[num];
 
     // Append the new div to the container
-    container.appendChild(description);
+    container.prepend(description);
     container.setAttribute('aria-describedby', 'chart-description');
 
     chartNum = chartNum + 1;
