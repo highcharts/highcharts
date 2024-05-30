@@ -171,15 +171,6 @@ class DataGridTableHead {
             className: 'highcharts-dg-col-resizer'
         }, headElement);
 
-        this.addHandlesEvents(column, handle);
-
-        return handle;
-    }
-
-    private addHandlesEvents(
-        column: DataGridColumn,
-        handle: HTMLElement
-    ): void {
         handle.addEventListener(
             'mousedown',
             (e: MouseEvent): void => {
@@ -187,7 +178,10 @@ class DataGridTableHead {
                 this.draggedColumn = column;
             }
         );
+
+        return handle;
     }
+
 
     /* *
     *
