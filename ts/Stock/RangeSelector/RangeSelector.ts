@@ -325,8 +325,7 @@ class RangeSelector {
                 }
                 ytdExtremes = rangeSelector.getYTDExtremes(
                     dataMax,
-                    dataMin,
-                    chart.time.useUTC
+                    dataMin
                 );
                 newMin = rangeMin = ytdExtremes.min;
                 newMax = ytdExtremes.max;
@@ -522,8 +521,7 @@ class RangeSelector {
             dataMax = unionExtremes.dataMax,
             ytdExtremes = rangeSelector.getYTDExtremes(
                 dataMax as any,
-                dataMin as any,
-                chart.time.useUTC
+                dataMin as any
             ),
             ytdMin = ytdExtremes.min,
             ytdMax = ytdExtremes.max,
@@ -1175,21 +1173,15 @@ class RangeSelector {
      */
     public getYTDExtremes(
         dataMax: number,
-        dataMin: number,
-        useUTC?: boolean
+        dataMin: number
     ): RangeSelector.RangeObject {
         const time = this.chart.time,
-            now = new time.Date(dataMax),
-            year = time.get('FullYear', now),
-            startOfYear = useUTC ?
-                time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
-                +new time.Date(year, 0, 1),
-            min = Math.max(dataMin, startOfYear),
-            ts = now.getTime();
+            year = time.dateAsNumbers(dataMax)[0],
+            startOfYear = time.makeTime(year, 0);
 
         return {
-            max: Math.min(dataMax || ts, ts),
-            min
+            max: dataMax,
+            min: Math.max(dataMin, startOfYear)
         };
     }
 
