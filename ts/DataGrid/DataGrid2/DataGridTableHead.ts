@@ -60,6 +60,17 @@ class DataGridTableHead {
      */
     public draggedResizeHandle?: HTMLElement;
 
+    /*
+    * The start position of dragging.
+    * @internal
+    */
+    private dragStartX?: number;
+    /*
+    * The column when dragging.
+    * @internal
+    */
+    private draggedColumn?: DataGridColumn;
+
 
     /* *
     *
@@ -95,8 +106,38 @@ class DataGridTableHead {
             }, this.container);
 
             this.columns[i].headElement = element;
-            this.draggedResizeHandle = this.renderColumnDragHandles(element);
+            this.draggedResizeHandle = this.renderColumnDragHandles(
+                this.columns[i],
+                element
+            );
         }
+
+        document.addEventListener('mousemove', (e: MouseEvent): void => {
+            if (this.draggedResizeHandle && this.draggedColumn) {
+                const diff = e.pageX - (this.dragStartX || 0);
+                const column = this.draggedColumn;
+                const initWidth = (column?.getWidth() || 0);
+                const columnsDOM = column.viewport.container.querySelectorAll(
+                    'th:nth-child(' + (column.index + 1) + '),' +
+                    'td:nth-child(' + (column.index + 1) + ')'
+                );
+
+                if (column?.headElement) {
+                    columnsDOM.forEach((el): void => {
+                        const element = (el as HTMLElement);
+                        element.style.width = element.style.maxWidth =
+                            (initWidth + diff) + 'px';
+                    });
+                }
+
+            }
+        });
+
+        document.addEventListener('mouseup', (): void => {
+            if (this.draggedResizeHandle) {
+                this.draggedColumn = void 0;
+            }
+        });
     }
 
     /**
@@ -123,12 +164,29 @@ class DataGridTableHead {
      * Render the drag handle for resizing columns.
      * @internal
      */
-    private renderColumnDragHandles(headElement: HTMLElement): HTMLElement {
-        const element = makeHTMLElement('div', {
+    private renderColumnDragHandles(
+        column: DataGridColumn, headElement: HTMLElement
+    ): HTMLElement {
+        const handle = makeHTMLElement('div', {
             className: 'highcharts-dg-col-resizer'
         }, headElement);
 
-        return element;
+        this.addHandlesEvents(column, handle);
+
+        return handle;
+    }
+
+    private addHandlesEvents(
+        column: DataGridColumn,
+        handle: HTMLElement
+    ): void {
+        handle.addEventListener(
+            'mousedown',
+            (e: MouseEvent): void => {
+                this.dragStartX = e.pageX;
+                this.draggedColumn = column;
+            }
+        );
     }
 
     /* *

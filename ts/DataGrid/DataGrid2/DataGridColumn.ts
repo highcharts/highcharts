@@ -79,6 +79,11 @@ class DataGridColumn {
      */
     public headElement?: HTMLElement;
 
+    /**
+     * The head element of the column.
+     */
+    public index: number;
+
 
     /* *
     *
@@ -92,10 +97,11 @@ class DataGridColumn {
      * @param viewport The viewport (table) the column belongs to.
      * @param name The name of the column.
      */
-    constructor(viewport: DataGridTable, name: string) {
+    constructor(viewport: DataGridTable, name: string, index: number) {
         this.name = name;
         this.viewport = viewport;
         this.data = viewport.dataTable.getColumn(name);
+        this.index = index;
     }
 
 

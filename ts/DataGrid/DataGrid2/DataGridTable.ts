@@ -155,7 +155,7 @@ class DataGridTable {
         // Load columns
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
             this.columns.push(
-                new DataGridColumn(this, columnNames[i])
+                new DataGridColumn(this, columnNames[i], i)
             );
         }
 
