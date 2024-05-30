@@ -54,6 +54,12 @@ class DataGridTableHead {
      */
     public container: HTMLElement;
 
+    /**
+     * The element when dragging.
+     * @internal
+     */
+    public draggedResizeHandle?: HTMLElement;
+
 
     /* *
     *
@@ -89,6 +95,7 @@ class DataGridTableHead {
             }, this.container);
 
             this.columns[i].headElement = element;
+            this.draggedResizeHandle = this.renderColumnDragHandles(element);
         }
     }
 
@@ -112,7 +119,17 @@ class DataGridTableHead {
         this.container.style.paddingRight =
             this.container.offsetWidth - width + 'px';
     }
+    /**
+     * Render the drag handle for resizing columns.
+     * @internal
+     */
+    private renderColumnDragHandles(headElement: HTMLElement): HTMLElement {
+        const element = makeHTMLElement('div', {
+            className: 'highcharts-dg-col-resizer'
+        }, headElement);
 
+        return element;
+    }
 
     /* *
     *

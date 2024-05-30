@@ -102,6 +102,7 @@
 .highcharts-dg-table thead th {
     border-right: 1px solid #00ff00;
     height: 30px;
+    position: relative;
 }
 
 .highcharts-dg-table tbody {
@@ -144,4 +145,18 @@
 
 .highcharts-dg-table thead th.highcharts-dg-hovered-column {
     background-color: #0000ff30;
+}
+
+.highcharts-dg-col-resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+}
+
+.highcharts-dg-col-resizer:hover {
+    border-right: 2px solid blue;
 }
