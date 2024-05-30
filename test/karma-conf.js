@@ -9,7 +9,6 @@ const { getLatestCommitShaSync } = require('../tools/libs/git');
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
 
-
 const highchartsCSS = fs.readFileSync(
     path.join(__dirname, '../code/css/highcharts.css'),
     'utf8'
@@ -129,7 +128,6 @@ function resolveJSON(js) {
         }
 
         if (data) {
-
             if (/json$/.test(filename)) {
                 codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
             }
@@ -138,6 +136,13 @@ function resolveJSON(js) {
             }
         }
     }
+
+
+    if (/styledMode:\s+true/.test(js)) {
+        codeblocks.push(`window.highchartsCSS = \`${highchartsCSS}\`;`)
+        // codeblocks.push(`window.setHCStyles();`);
+    }
+
     codeblocks.push(js);
 
     if (/styledMode:.*true/.test(js)) {

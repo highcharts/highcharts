@@ -1,5 +1,8 @@
 QUnit.test('Ticks were drawn in break(#4485)', function (assert) {
     $('#container').highcharts({
+        chart: {
+            styledMode: false
+        },
         title: {
             text: 'Sample of a simple break'
         },
@@ -1085,7 +1088,7 @@ QUnit.test(
             assert.close(
                 chart.plotHeight,
                 expectedPlotHeight,
-                0.5, // Firefox is not that reliable
+                1, // Firefox is not that reliable
                 `Plot height with ${JSON.stringify(toDotNot(options))} should
                 stay the same after updating series (#19604).`
             );

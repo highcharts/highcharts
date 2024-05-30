@@ -35,7 +35,17 @@ Highcharts.useSerialIds(true);
 // Disable animation over all.
 Highcharts.setOptions({
     chart: {
-        animation: false
+        animation: false,
+        events: {
+        load: function(){
+            if (this.styledMode) {
+                console.log('a chart with styledmode was loaded')
+                window.setHCStyles();
+            } else {
+                document.querySelector('#test-hc-styles')?.remove();
+            }
+        }
+        }
     },
     plotOptions: {
         series: {
@@ -336,39 +346,32 @@ if (window.QUnit) {
             message: message
         });
     };
+    window.setHCStyles = function (){
+        const styleElementID = 'test-hc-styles';
+        let styleElement = document.getElementById(styleElementID);
 
-    function addTestCallbacks(){
-        const testStylesID = 'test-styles';
+        if (!styleElement && 'highchartsCSS' in window ) {
+            console.log('injecting HC styles')
+            styleElement = document.createElement('style');
+            styleElement.id = styleElementID;
 
-        QUnit.testStart(()=>{
-            const currentChart = Highcharts.charts[Highcharts.charts.length - 1];
+            styleElement.appendChild(
+                document.createTextNode(
+                    window.highchartsCSS
+                )
+            );
 
-            if (currentChart && currentChart.styledMode) {
-                const styleElement = document.getElementById(testStylesID) ??
-                    document.createElement('style');
-
-                styleElement.id = testStylesID;
-                styleElement.appendChild(
-                    document.createTextNode(window.JSONSources['highchartsCSS'])
-                );
-
-                document.head.append(styleElement);
-            }
-
-        });
-
-        QUnit.testDone(()=>{
-            document.getElementById(testStylesID)?.remove();
-        });
-    }
-
-    addTestCallbacks();
+            document.head.append(styleElement);
+        }
+    };
 
     QUnit.module('Highcharts', {
         beforeEach: function (test) {
             if (VERBOSE) {
                 console.log('Start "' + test.test.testName + '"');
             }
+
+
             currentTests.push(test.test.testName);
 
             // Reset container size that some tests may have modified
