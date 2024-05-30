@@ -110,15 +110,28 @@ function getOptionName(
     camelCaseName: string
 ): string {
 
+    if (camelCaseName.endsWith('IndicatorOptions')) {
+        return 'plotOptions.' + camelCaseName
+                .substring(0, camelCaseName.length - 13)
+                .toLowerCase();
+    }
+
     if (camelCaseName.endsWith('SeriesOptions')) {
 
         if (camelCaseName === 'SeriesOptions') {
             return 'plotOptions.series';
-        } else {
-            return 'plotOptions.' + camelCaseName
+        }
+
+        return 'plotOptions.' + camelCaseName
                 .substring(0, camelCaseName.length - 13)
                 .toLowerCase();
-        }
+    }
+
+    if (
+        camelCaseName.endsWith('Options') &&
+        camelCaseName !== 'PlotOptions'
+    ) {
+        camelCaseName = camelCaseName.substring(0, camelCaseName.length - 7);
     }
 
     return (

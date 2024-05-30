@@ -64,6 +64,9 @@ const DEFAULT_ROOT = FSLib.path('ts/Core/Defaults.ts');
 const DEFAULT_SOURCE = FSLib.path('ts/');
 
 
+const INDICATORS_ROOT = FSLib.path('ts/Stock/Indicators/');
+
+
 const SERIES_ROOT = FSLib.path('ts/Series/');
 
 
@@ -196,6 +199,11 @@ function addTreeNode(
                             TSLib.extractTagText(_infoDoclet, _tag, true);
                         break;
 
+                    case 'extends':
+                        _nodeDoclet[_tag] =
+                            TSLib.extractTagText(_infoDoclet, _tag);
+                        break;
+
                     case 'productdesc':
                         _array = _nodeDoclet[`${_tag}s`] = [];
                         for (const _text of _infoDoclet.tags[_tag]) {
@@ -211,6 +219,11 @@ function addTreeNode(
                         }
                         break;
 
+                    case 'requires':
+                    case 'see':
+                        _nodeDoclet[_tag] = _infoDoclet.tags[_tag].slice();
+                        break;
+
                     case 'sample':
                         _array = _nodeDoclet[`${_tag}s`] = [];
                         for (const _text of _infoDoclet.tags[_tag]) {
@@ -222,6 +235,12 @@ function addTreeNode(
                                 });
                             }
                         }
+                        break;
+
+                    case 'type':
+                        _nodeDoclet.type = {
+                            names: _infoDoclet.tags.type.slice()
+                        };
                         break;
 
                     default:
@@ -283,20 +302,75 @@ function buildTree(
 }
 
 
+function buildTreeIndicators(
+    sourceRootPath: string,
+    debug?: boolean
+): void {
+    const _rootNode = getTreeNode('plotOptions');
+
+    let _filePath: string;
+    let _sourceInfo: (TSLib.SourceInfo|undefined);
+
+    for (const _path of FSLib.getDirectoryPaths(sourceRootPath, true)) {
+        if (_path.split(Path.sep).includes('Indicators')) {
+            _sourceInfo = void 0;
+            _filePath =
+                FSLib.path(`${_path}/${Path.basename(_path)}Indicator.ts`);
+
+            if (FSLib.isFile(_filePath)) {
+                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+            }
+
+            if (_sourceInfo) {
+                console.log(_filePath);
+                for (const _codeInfo of _sourceInfo.code) {
+                    addTreeNode(_sourceInfo, _rootNode, _codeInfo);
+                }
+            }
+        }
+    }
+
+}
+
+
 function buildTreeSeries(
     sourceRootPath: string,
     debug?: boolean
 ): void {
-    const _rootNode = getTreeNode('series');
+    const _rootNode = getTreeNode('plotOptions');
 
-    let _sourceInfo: TSLib.SourceInfo;
+    let _filePath: string;
+    let _sourceInfo: (TSLib.SourceInfo|undefined);
 
-    for (const _path of FSLib.getFilePaths(sourceRootPath, true)) {
+    for (const _path of FSLib.getDirectoryPaths(sourceRootPath, true)) {
         if (_path.split(Path.sep).includes('Series')) {
-            _sourceInfo = TSLib.getSourceInfo(_path, void 0, debug);
+            _sourceInfo = void 0;
+            _filePath =
+                FSLib.path(`${_path}/${Path.basename(_path)}Defaults.ts`);
 
-            for (const _codeInfo of _sourceInfo.code) {
-                addTreeNode(_sourceInfo, _rootNode, _codeInfo);
+            if (FSLib.isFile(_filePath)) {
+                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+            }
+
+            _filePath =
+                FSLib.path(`${_path}/${Path.basename(_path)}Options.d.ts`);
+
+            if (FSLib.isFile(_filePath)) {
+                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+            }
+
+            _filePath =
+                FSLib.path(`${_path}/${Path.basename(_path)}Series.ts`);
+
+            if (FSLib.isFile(_filePath)) {
+                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+            }
+
+            if (_sourceInfo) {
+                console.log(_filePath);
+                for (const _codeInfo of _sourceInfo.code) {
+                    addTreeNode(_sourceInfo, _rootNode, _codeInfo);
+                }
             }
         }
     }
@@ -340,7 +414,8 @@ function getTreeNode(
                 meta: {
                     fullname: _fullname,
                     name: _name
-                }
+                },
+                children: {}
             };
         }
 
@@ -366,13 +441,22 @@ async function main() {
     buildTree(root, debug);
     LogLib.finished(`Building tree from ${root}`, timer);
 
-    if (
-        root === DEFAULT_ROOT &&
-        SERIES_ROOT.startsWith(source)
-    ) {
-        timer = LogLib.starting(`Building series tree from ${SERIES_ROOT}`);
-        buildTreeSeries(SERIES_ROOT, debug);
-        LogLib.finished(`Building series tree from ${SERIES_ROOT}`, timer);
+    if (root === DEFAULT_ROOT) {
+        if (INDICATORS_ROOT.startsWith(source)) {
+            timer = LogLib.starting(
+                `Building indicator tree from ${INDICATORS_ROOT}`
+            );
+            buildTreeIndicators(INDICATORS_ROOT, debug);
+            LogLib.finished(
+                `Building indicator tree from ${INDICATORS_ROOT}`,
+                timer
+            );
+        }
+        if (SERIES_ROOT.startsWith(source)) {
+            timer = LogLib.starting(`Building series tree from ${SERIES_ROOT}`);
+            buildTreeSeries(SERIES_ROOT, debug);
+            LogLib.finished(`Building series tree from ${SERIES_ROOT}`, timer);
+        }
     }
 
     LogLib.message(`Found ${Object.keys(TREE).length} root options:`);
@@ -403,7 +487,11 @@ async function saveJSON() {
 
     // await save('tree-defaults.json', DEFAULTS);
     save('tree-cache.json', TSLib.SOURCE_CACHE);
-    save('tree-v2.json', TREE);
+    save('tree-v2.json', {
+        _meta: TREE._meta,
+        plotOptions: TREE.plotOptions,
+        series: TREE.series
+    });
 }
 
 

@@ -445,8 +445,11 @@ function sortJSONTree(
 
     for (const key of Object.keys(jsonTree).sort()) {
         if (typeof jsonTree[key] === 'object') {
-            if (jsonTree[key] === null) {
-                newTree[key] = null;
+            if (
+                key === 'children' ||
+                jsonTree[key] === null
+            ) {
+                newTree[key] = jsonTree[key];
             } else {
                 follows[key] = (
                     jsonTree[key].constructor === Object ?
@@ -545,6 +548,7 @@ module.exports = {
  * @property {string} [description]
  * @property {Array<string>} [exclude]
  * @property {string} [extends]
+ * @property {Array<Record<string,string>>} [productdescs]
  * @property {Array<string>} [requires]
  * @property {Array<Record<string,string>>} [samples]
  * @property {Array<string>} [see]
