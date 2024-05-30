@@ -165,7 +165,7 @@ class DataPool implements DataEvent.Emitter {
             const connectorOptions = this.getConnectorOptions(connectorId);
 
             if (!connectorOptions) {
-                throw new Error(`Connector not found. (${connectorId})`);
+                throw new Error(`Connector '${connectorId}' not found.`);
             }
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises

@@ -947,7 +947,7 @@ QUnit.test('Axis breaks with categories', function (assert) {
     var gridBox = chart.xAxis[0].gridGroup.getBBox();
 
     assert.strictEqual(
-        gridBox.x + 0.5,
+        gridBox.x - 0.5,
         chart.plotLeft,
         'Left tick is left of plot area'
     );

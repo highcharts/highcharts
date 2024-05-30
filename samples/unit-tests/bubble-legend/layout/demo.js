@@ -1,26 +1,24 @@
 QUnit.test('Bubble legend ranges', function (assert) {
-    var bubbleLegendItem,
-        seriesItem,
-        chart = Highcharts.chart('container', {
-            legend: {
-                align: 'right',
-                layout: 'vertical',
-                bubbleLegend: {
-                    enabled: true,
-                    legendIndex: 0
-                }
-            },
+    const chart = Highcharts.chart('container', {
+        legend: {
+            align: 'right',
+            layout: 'vertical',
+            bubbleLegend: {
+                enabled: true,
+                legendIndex: 0
+            }
+        },
 
-            series: [
-                {
-                    type: 'bubble',
-                    data: [
-                        [1, 1, 1],
-                        [2, 2, 2]
-                    ]
-                }
-            ]
-        });
+        series: [
+            {
+                type: 'bubble',
+                data: [
+                    [1, 1, 1],
+                    [2, 2, 2]
+                ]
+            }
+        ]
+    });
 
     // Check if there is only one bubble-legend
     assert.strictEqual(
@@ -41,8 +39,8 @@ QUnit.test('Bubble legend ranges', function (assert) {
         'Bubble legend was properly positioned'
     );
 
-    bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group;
-    seriesItem = chart.legend.allItems[0].legendItem.group;
+    const bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group,
+        seriesItem = chart.legend.allItems[0].legendItem.group;
 
     assert.strictEqual(
         bubbleLegendItem.translateY > seriesItem.translateY &&
@@ -86,17 +84,19 @@ QUnit.test('Bubble legend ranges', function (assert) {
         data: [
             [1, 4, 4],
             [2, 5, 5]
-        ],
-        events: {
-            legendItemClick(e) {
-                e.preventDefault();
-            }
-        }
+        ]
     }, false);
 
     chart.legend.update({
         enabled: true,
-        floating: false
+        floating: false,
+        events: {
+            itemClick(e) {
+                if (e.legendItem.index === 1) {
+                    e.preventDefault();
+                }
+            }
+        }
     });
 
     chart.series[1].legendItem.group.element.dispatchEvent(new Event('click'));
