@@ -21,14 +21,15 @@
  *
  * */
 
-import Utils from './Utils.js';
+import DGUtils from './Utils.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTableHead from './DataGridTableHead.js';
 import DataGrid from './DataGrid.js';
+import RowsVirtualizer from './Virtualization/RowsVirtualizer.js';
 
-const { makeHTMLElement } = Utils;
+const { makeHTMLElement } = DGUtils;
 
 /* *
  *
@@ -93,9 +94,10 @@ class DataGridTable {
     public resizeObserver: ResizeObserver;
 
     /**
-     * The default height of a row.
+     * The rows virtualizer instance that handles the rows rendering &
+     * dimensioning logic.
      */
-    public defaultRowHeight: number;
+    public rowsVirtualizer: RowsVirtualizer;
 
 
     /* *
@@ -114,18 +116,18 @@ class DataGridTable {
         this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
 
-        this.defaultRowHeight = dataGrid.options.rowOptions?.height as number;
-
         const { tableElement } = dataGrid;
 
         this.theadElement = makeHTMLElement('thead', {}, tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
+        this.rowsVirtualizer = new RowsVirtualizer(this);
+
         this.init();
 
+        // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
         this.resizeObserver.observe(tableElement);
-
         this.tbodyElement.addEventListener('scroll', this.onScroll.bind(this));
     }
 
@@ -140,7 +142,6 @@ class DataGridTable {
      */
     private init(): void {
         const columnNames = this.dataTable.getColumnNames();
-        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
 
         // Load columns
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -153,12 +154,9 @@ class DataGridTable {
         this.head = new DataGridTableHead(this.theadElement, this.columns);
         this.head.render();
 
-        // Load & render rows
-        this.renderRows(0, Math.ceil(
-            this.container.offsetHeight / this.defaultRowHeight
-        ) + buffer);
+        this.rowsVirtualizer.initialRender();
 
-        // Refresh element dimensions
+        // Refresh element dimensions after initial rendering
         this.reflow();
     }
 
@@ -176,112 +174,7 @@ class DataGridTable {
         }
 
         // Reflow rows
-        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-            this.rows[i].reflow();
-        }
-    }
-
-    /**
-     * Renders rows in the specified range. Removes rows that are out of the
-     * range except the last row.
-     *
-     * @param from first row index
-     * @param to last row index (excluding the last row)
-     */
-    private renderRows(from: number, to: number): void {
-        const rows = this.rows;
-
-        if (!rows.length) {
-            const first = new DataGridRow(this.dataGrid, 0);
-            const last = new DataGridRow(
-                this.dataGrid,
-                this.dataTable.getRowCount() - 1
-            );
-
-            first.render(this);
-            rows.push(first);
-            this.tbodyElement.appendChild(first.htmlElement);
-
-            last.render(this);
-            rows.push(last);
-            this.tbodyElement.appendChild(last.htmlElement);
-        }
-
-        const startOffset = rows[0].index;
-        const endOffset = rows[rows.length - 2].index;
-
-        from = Math.max(from, 0);
-        to = Math.min(to, rows[rows.length - 1].index - 1);
-
-        const start = Math.min(startOffset, from);
-        const end = Math.max(endOffset, to);
-
-        // Swap all rows if the range is outside the current range
-        if (to < startOffset || from > endOffset) {
-            const alwaysLastRow = rows.pop();
-
-            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                rows[i].destroy();
-            }
-            rows.length = 0;
-
-            for (let i = from; i <= to; ++i) {
-                const newRow = new DataGridRow(this.dataGrid, i);
-                newRow.render(this);
-                this.tbodyElement.insertBefore(
-                    newRow.htmlElement,
-                    this.tbodyElement.lastChild
-                );
-
-                rows.push(newRow);
-            }
-
-            if (alwaysLastRow) {
-                rows.push(alwaysLastRow);
-            }
-
-            return;
-        }
-
-        // Add rows at the beginning
-        for (let i = startOffset - 1; i >= start; --i) {
-            const newRow = new DataGridRow(this.dataGrid, i);
-            newRow.render(this);
-            this.tbodyElement.insertBefore(
-                newRow.htmlElement,
-                this.tbodyElement.firstChild
-            );
-            rows.unshift(newRow);
-        }
-
-        // Add rows at the end
-        for (let i = endOffset + 1; i <= end; ++i) {
-            const newRow = new DataGridRow(this.dataGrid, i);
-            newRow.render(this);
-            this.tbodyElement.insertBefore(
-                newRow.htmlElement,
-                this.tbodyElement.lastChild
-            );
-            const alwaysLastRow = rows.pop();
-            rows.push(newRow);
-            if (alwaysLastRow) {
-                rows.push(alwaysLastRow);
-            }
-        }
-
-        // Delete first rows if there are too many
-        for (let i = 0; i < from - startOffset; i++) {
-            rows.shift()?.destroy();
-        }
-
-        // Delete last rows if there are too many
-        for (let i = endOffset - to - 1; i >= 0; i--) {
-            const alwaysLastRow = rows.pop();
-            rows.pop()?.destroy();
-            if (alwaysLastRow) {
-                rows.push(alwaysLastRow);
-            }
-        }
+        this.rowsVirtualizer.reflowRows();
     }
 
     /**
@@ -295,18 +188,7 @@ class DataGridTable {
      * Handles the scroll event.
      */
     private onScroll(): void {
-        const target = this.tbodyElement;
-        const { defaultRowHeight: rowHeight } = this;
-
-        // Vertical virtual scrolling
-        const rowsPerPage = Math.ceil(target.offsetHeight / rowHeight);
-        const rowCursor = Math.floor(target.scrollTop / rowHeight);
-        const buffer = this.dataGrid.options.rowOptions?.bufferSize as number;
-
-        this.renderRows(
-            rowCursor - buffer,
-            rowCursor + rowsPerPage + buffer
-        );
+        this.rowsVirtualizer.scroll();
     }
 
     /**
@@ -315,26 +197,9 @@ class DataGridTable {
      * @param index The index of the row to scroll to.
      */
     public scrollToRow(index: number): void {
-        this.tbodyElement.scrollTop = index * this.defaultRowHeight;
+        this.tbodyElement.scrollTop =
+            index * this.rowsVirtualizer.defaultRowHeight;
     }
-
-    /* *
-    *
-    *  Static Methods
-    *
-    * */
-
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace DataGridTable {
-
 }
 
 

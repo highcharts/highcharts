@@ -29,7 +29,6 @@ var t2 = performance.now();
 const newgrid = new DataGrid.DataGrid2('container', {
     dataTable: dataTable,
     rowOptions: {
-        height: 49,
         bufferSize: 2
     }
 });

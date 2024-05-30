@@ -110,10 +110,15 @@
     position: relative;
 }
 
-.highcharts-dg-table tr {
-    border-bottom: 1px solid #0000ff;
+.highcharts-dg-row {
+    border-top: 1px solid #0000ff;
     position: absolute;
     overflow: hidden;
+    height: 36px;
+}
+
+.highcharts-dg-row.highcharts-dg-odd {
+    background-color: #fafafa;
 }
 
 .highcharts-dg-table td {
