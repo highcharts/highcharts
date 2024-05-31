@@ -154,8 +154,6 @@ class Time {
 
     public timezone?: string;
 
-    public useUTC: boolean = false;
-
     public variableTimezone: boolean = false;
 
     public Date: typeof Date = win.Date;
@@ -180,6 +178,9 @@ class Time {
     public update(
         options: Time.TimeOptions = {}
     ): void {
+
+        let timezone = options.timezone;
+
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
@@ -188,15 +189,12 @@ class Time {
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
-        this.useUTC = useUTC;
-        this.timezone = options.timezone || (
-            useUTC ? 'UTC' : void 0
-        );
+        timezone ??= useUTC ? 'UTC' : void 0;
 
         // The Etc/GMT time zones do not support offsets with half-hour
         // resolutions
         if (timezoneOffset && timezoneOffset % 60 === 0) {
-            this.timezone = 'Etc/GMT' + (
+            timezone = 'Etc/GMT' + (
                 (timezoneOffset > 0 ? '+' : '')
             ) + timezoneOffset / 60;
         }
@@ -205,10 +203,10 @@ class Time {
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
          */
-        this.variableTimezone = useUTC && !!(
-            /// options.getTimezoneOffset ||
-            options.timezone
-        );
+        this.variableTimezone = timezone !== 'UTC' &&
+            timezone?.indexOf('Etc/GMT') !== 0;
+
+        this.timezone = timezone;
     }
 
     /**
@@ -705,7 +703,7 @@ class Time {
             );
 
             // Handle local timezone offset
-            if ((time.variableTimezone || !time.useUTC) && defined(max)) {
+            if (time.variableTimezone && defined(max)) {
                 // Detect whether we need to take the DST crossover into
                 // consideration. If we're crossing over DST, the day length may
                 // be 23h or 25h and we need to compute the exact clock time for

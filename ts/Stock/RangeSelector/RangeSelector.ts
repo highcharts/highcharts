@@ -745,7 +745,7 @@ class RangeSelector {
             return (
                 (input.type === 'text' && options.inputDateParser) ||
                 this.defaultInputDateParser
-            )(input.value, time.useUTC, time);
+            )(input.value, time.timezone === 'UTC', time);
         }
         return 0;
     }

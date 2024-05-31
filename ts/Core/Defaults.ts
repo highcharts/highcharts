@@ -559,6 +559,13 @@ const defaultOptions: DefaultOptions = {
          * in real time or when correct Daylight Saving Time transitions are
          * required.
          *
+         * Setting `useUTC` to true is equivalent to setting `time.timezone` to
+         * `"UTC"`. Setting `useUTC` to false is equivalent to setting
+         * `time.timezone` to `undefined`. Since v12, The `timezone` option
+         * takes precedence.
+         *
+         * @see [time.timezone](#timezone)
+         *
          * @sample {highcharts} highcharts/time/useutc-true/
          *         True by default
          * @sample {highcharts} highcharts/time/useutc-false/
