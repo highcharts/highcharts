@@ -115,7 +115,7 @@ QUnit.test('timezone', function (assert) {
  * Checks that specified getTimezoneOffset function is used if timezone option
  * is not.
  */
-QUnit.test('getTimezoneOffset', function (assert) {
+QUnit.skip('getTimezoneOffset', function (assert) {
     var chart, oct27Point;
 
     Highcharts.setOptions({

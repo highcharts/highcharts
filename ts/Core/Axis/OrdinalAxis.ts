@@ -1512,18 +1512,18 @@ namespace OrdinalAxis {
             // altered.
             const ordinal = this,
                 axis = ordinal.axis,
-                ordinalSlope = ordinal.slope;
+                ordinalSlope = ordinal.slope,
+                closestPointRange = axis.closestPointRange;
             let ret;
 
-
-            if (ordinalSlope) {
+            if (ordinalSlope && closestPointRange) {
                 if (!axis.options.breaks) {
                     ret = (
                         tickInterval /
-                        (ordinalSlope / axis.closestPointRange)
+                        (ordinalSlope / closestPointRange)
                     );
                 } else {
-                    ret = axis.closestPointRange || tickInterval; // #7275
+                    ret = closestPointRange || tickInterval; // #7275
                 }
             } else {
                 ret = tickInterval;
