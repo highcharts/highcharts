@@ -19,7 +19,7 @@
  * */
 
 import type PositionObject from '../Core/Renderer/PositionObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
