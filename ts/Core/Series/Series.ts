@@ -721,7 +721,7 @@ class Series {
 
         // Added code for pointInterval strings
         if (pointIntervalUnit) {
-            const d = time.dateAsNumbers(xIncrement);
+            const d = time.toParts(xIncrement);
 
             if (pointIntervalUnit === 'day') {
                 d[2] += pointInterval;

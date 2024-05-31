@@ -1176,7 +1176,7 @@ class RangeSelector {
         dataMin: number
     ): RangeSelector.RangeObject {
         const time = this.chart.time,
-            year = time.dateAsNumbers(dataMax)[0],
+            year = time.toParts(dataMax)[0],
             startOfYear = time.makeTime(year, 0);
 
         return {

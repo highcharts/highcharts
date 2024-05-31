@@ -78,7 +78,7 @@ function axisMinFromRange(
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
 
-            const original = time.dateAsNumbers(base),
+            const original = time.toParts(base),
                 modified = original.slice();
 
             type MakeTimeArgs = [
@@ -92,7 +92,7 @@ function axisMinFromRange(
             }
 
             let d = time.makeTime.apply(time, modified as MakeTimeArgs);
-            const numbers = time.dateAsNumbers(d);
+            const numbers = time.toParts(d);
             // When subtracting a month still places us in the same month, like
             // subtracting one month from March 31 places us on February 31,
             // which translates to March 3 (#6537)

@@ -98,7 +98,7 @@ const spanishWeekdayIndex = (weekday: string): number =>
  * });
  *
  * // Apply time settings by instance
- * let chart = Highcharts.chart('container', {
+ * const chart = Highcharts.chart('container', {
  *     time: {
  *         timezone: 'America/New_York'
  *     },
@@ -107,11 +107,18 @@ const spanishWeekdayIndex = (weekday: string): number =>
  *     }]
  * });
  *
- * // Use the Time object
+ * // Use the Time object of a chart instance
  * console.log(
  *        'Current time in New York',
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
+ *
+ * // Standalone use
+ * const time = new Highcharts.Time({
+ *    timezone: 'America/New_York'
+ * });
+ * const s = time.dateFormat('%Y-%m-%d %H:%M:%S', Date.UTC(2020, 0, 1));
+ * console.log(s); // => 2019-12-31 19:00:00
  *
  * @since 6.0.5
  *
@@ -206,8 +213,10 @@ class Time {
 
     /**
      * Get a date in terms of numbers (year, month, day etc) for further
-     * processing. The date is returned in array format with the following
-     * indices:
+     * processing. Takes the current `timezone` setting into account. Inverse
+     * of `makeTime`.
+     *
+     * The date is returned in array format with the following indices:
      *
      * 0: year,
      * 1: month (zero based),
@@ -217,8 +226,15 @@ class Time {
      * 5: seconds,
      * 6: milliseconds,
      * 7: weekday (Sunday as 0)
+     *
+     * @function Highcharts.Time#toParts
+     *
+     * @param {number} [timestamp]
+     *                 The timestamp in milliseconds since January 1st 1970.
+     *
+     * @return {Array<number>} The date parts array format.
      */
-    public dateAsNumbers(timestamp?: number): number[] {
+    public toParts(timestamp?: number): number[] {
         const [
             weekday,
             dayOfMonth,
@@ -285,9 +301,8 @@ class Time {
     }
 
     /**
-     * Make a time and returns milliseconds. Interprets the inputs as UTC time,
-     * local time or a specific timezone time depending on the current time
-     * settings.
+     * Make a time and returns milliseconds. Similar to `Date.UTC`, but takes
+     * the current `timezone` setting into account.
      *
      * @function Highcharts.Time#makeTime
      *
@@ -450,7 +465,7 @@ class Time {
                 seconds,
                 milliseconds,
                 weekday
-            ] = this.dateAsNumbers(timestamp),
+            ] = this.toParts(timestamp),
             lang = H.defaultOptions.lang,
             langWeekdays = (lang && lang.weekdays as any),
             shortWeekdays = (lang && lang.shortWeekdays),
@@ -603,7 +618,7 @@ class Time {
                 hours,
                 minutes,
                 seconds
-            ] = time.dateAsNumbers(min),
+            ] = time.toParts(min),
             milliseconds = (min || 0) % 1000,
             variableDayLength: boolean|undefined;
 
