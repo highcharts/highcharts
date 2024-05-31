@@ -356,8 +356,24 @@ class Point {
             } else {
                 point.x = x;
             }
+
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
+
+        // If x is a string, try to parse it to a datetime
+        } else if (typeof point.x === 'string') {
+            x = Date.parse(point.x);
+            if (isNumber(x)) {
+                // Unless the string contains time zone information, convert
+                // from the local time result of `Date.parse` via UTC into the
+                // current timezone of the time object.
+                if (!/[+-][0-9]{2}:[0-9]{2}|Z$/.test(point.x)) {
+                    const tsUTC = x - new Date(x).getTimezoneOffset() * 60000;
+
+                    x = tsUTC + series.chart.time.getTimezoneOffset(tsUTC);
+                }
+                point.x = x;
+            }
         }
 
         point.isNull = this.isValid && !this.isValid();
