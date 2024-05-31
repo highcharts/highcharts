@@ -46,7 +46,7 @@ export interface DataTableOptions {
 
 
     /**
-     * "Column" identifier for the row IDs (keys).
+     * Name of the (invisible) column that contains all row keys.
      */
     rowKeysId?: string;
 }

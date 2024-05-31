@@ -12,6 +12,7 @@
  *  - Øystein Moseng
  *  - Ken-Håvard Lieng
  *  - Sebastian Bochan
+ *  - Jomar Hønsi
  *
  * */
 
@@ -179,7 +180,7 @@ class DataGrid {
      * A lookup table for row IDs (keys). Keys -> row indexes.
      * @internal
      */
-    private rowIdLookup: DataTable.Column | undefined;
+    private rowKeyLookup: DataTable.Column | undefined;
 
     /**
      * The dragging placeholder.
@@ -296,7 +297,7 @@ class DataGrid {
         const rowKeysId = this.dataTable.getRowKeysId();
         if (rowKeysId) {
             // Get row ID (invisible column)
-            this.rowIdLookup = this.dataTable.getColumn(rowKeysId);
+            this.rowKeyLookup = this.dataTable.getColumn(rowKeysId);
         }
 
         this.rowElements = [];
@@ -469,7 +470,7 @@ class DataGrid {
             filteredColumns = [];
 
         // Key ID column hidden (last column)
-        const nColumns = this.rowIdLookup ?
+        const nColumns = this.rowKeyLookup ?
             tableColumns.length - 1 : tableColumns.length;
 
         for (let i = 0; i < nColumns; i++) {
@@ -524,19 +525,19 @@ class DataGrid {
 
 
     /**
-     * Get the row index in the unmodified data table.
+     * Get the row index in the original (unmodified) data table.
      *
      * @internal
      *
      * @param idx
-     * Row index in the modified table.
+     * Row index in the modified data table.
      *
      * @return
      * Row index in the original data table.
      */
     private getRowIndex(idx:number): string {
-        if (this.rowIdLookup) {
-            const id = this.rowIdLookup[idx] as string;
+        if (this.rowKeyLookup) {
+            const id = '' + this.rowKeyLookup[idx];
             return id.split('_')[1];
         }
         return String(idx);
