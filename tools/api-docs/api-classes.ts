@@ -9,22 +9,18 @@
  *
  * */
 
-
 /* *
  *
  *  Imports
  *
  * */
 
-
 import FS from 'node:fs/promises';
-
 import FSLib from '../libs/fs.js';
-
 import TSLib from '../libs/ts.js';
-
+import TreeLib from '../libs/tree.js';
+const { toJSONString } = TreeLib;
 import Yargs from 'yargs';
-
 
 /* *
  *
@@ -38,45 +34,46 @@ import Yargs from 'yargs';
 
 async function main() {
     const args = await Yargs.argv;
-    const debug = !!args.debug;
     const source = args.source as string || 'ts';
     const classes: Record<string, TSLib.SourceInfo> = {};
 
-    const filteredClassCodeInfo: Array<TSLib.CodeInfo> = [];
-    const filteredInterfaceCodeInfo: Array<TSLib.CodeInfo> = [];
+    const filteredClassCodeInfo: Array<TSLib.ClassInfo> = [];
+    // const filteredInterfaceCodeInfo: Array<TSLib.CodeInfo> = [];
     const allClassNames: Array<string> = [];
-    const allInterfaceNames: Array<string> = [];
+    // const allInterfaceNames: Array<string> = [];
 
     let content: string;
-    let filteredOutCounter = 0;
 
     for (const path of FSLib.getFilePaths(source, true)) {
         if (
             !path.endsWith('Defaults.ts') &&
             !path.endsWith('Options.d.ts') &&
             !path.endsWith('Options.ts') &&
+            !path.endsWith('.json') &&
+            !path.endsWith('.d.ts') &&
             // Ignore some like Dashboards
-            !path.includes('ts\\Dashboards') &&
+            !path.includes(FSLib.path('ts\\Dashboards')) &&
             !path.includes('ts\\DataGrid') &&
             !path.includes('ts\\Data')
         ) {
             content = await FS.readFile(path, 'utf8');
             if (content.includes('/**')) {
-                classes[path] = TSLib.getSourceInfo(path, content, debug);
+                classes[path] = TSLib
+                    .getSourceInfo(path, content, !!args.debug);
                 classes[path].code.forEach((code: TSLib.CodeInfo): void => {
                     if (
                         code.kind === 'Class' &&
                         // Must have doclet
                         code.doclet &&
                         // Must have description
-                        code.doclet.tags?.description &&
+                        code.doclet.tags.description &&
                         // Ignore private
-                        code.doclet.tags?.private === void 0
+                        code.doclet.tags.private === void 0
                     ) {
                         filteredClassCodeInfo.push(code);
                         (code as any).parentPath = path;
 
-                        filterProperties(code);
+                        filterMembers(code);
 
                         // Doclet's name tag is more important than code's name
                         if (code.doclet?.tags?.name) {
@@ -84,7 +81,7 @@ async function main() {
                                 .replace(/Highcharts./g, '');
                         }
                         allClassNames.push(code.name);
-                    } else if (
+                    } /*else if (
 
                         // "kind": "Doclet",
                         // "tags": {
@@ -100,78 +97,395 @@ async function main() {
                         filteredInterfaceCodeInfo.push(code);
                         (code as any).parentPath = path;
 
-                        //filterProperties(code);
+                        //filterMembers(code);
 
                         allInterfaceNames.push(code.tags.interface[0]);
                     } else {
                         filteredOutCounter++;
-                    }
+                    }*/
                 });
             }
         }
     }
 
-    console.log('Old interfaces: 109; classes: 29. Total: 138');
+    //console.log('Old interfaces: 109; classes: 29. Total: 138');
     // Found +1 (missing PlotLineOrBand that should be added), so all good.
     console.log('classes found: ', filteredClassCodeInfo.length);
 
     // TODO: Check if all interfaces are found.
     // 7 missing, +12 extra
-    console.log('interfaces found: ', allInterfaceNames.length);
+    // console.log('interfaces found: ', allInterfaceNames.length);
 
     filteredClassCodeInfo.sort((a, b) => {
         return a.name.localeCompare(b.name);
     });
 
-    console.log('--- Classes: ---');
+    //console.log('--- Classes: ---');
     allClassNames.sort(
         (a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'})
     );
-    console.log(allClassNames.join('\n'));
+    // console.log(allClassNames.join('\n'));
 
-    console.log('--- Interfaces: ---');
+    /*console.log('--- Interfaces: ---');
     allInterfaceNames.sort(
         (a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'})
     );
-    console.log(allInterfaceNames.join('\n'));
+    console.log(allInterfaceNames.join('\n'));*/
+
+    
+    const Handlebars = require('handlebars'),
+        mainHbs = Handlebars.compile(await FS.readFile(
+            'tools/api-docs/templates/main.handlebars',
+            'utf8'
+        ));
+
+    // Some constants for the template
+    const exec = require('child_process').execSync,
+        hcRoot = process.cwd(),
+        packageJson = require('../../package.json'),
+        product = 'highcharts',
+        productName = 'Highcharts',
+        version = packageJson.version,
+        versionProps = {
+            commit: exec(
+                'git rev-parse --short HEAD',
+                {cwd: process.cwd()}
+            ).toString().trim(),
+            branch: exec(
+                'git rev-parse --abbrev-ref HEAD',
+                {cwd: process.cwd()}
+            ).toString().trim(),
+            version: require(hcRoot  + '/package.json').version
+        },
+        urlRoot = 'https://api.highcharts.com/',
+        defaultHbsConfig = {
+            date: new Date(),
+            includeClassReference: true,
+            platforms: {
+                'JS': '/highcharts/',
+                'iOS': '/ios/highcharts/',
+                'Android': '/android/highcharts/'
+            },
+            platform: 'JS',
+            toc: {
+                highcharts: {
+                    displayName: 'Highcharts',
+                    versions: {
+                        current: '../highcharts'
+                    }
+                },
+                highstock: {
+                    displayName: 'Highcharts Stock',
+                    versions: {
+                        current: '../highstock'
+                    }
+                },
+                highmaps: {
+                    displayName: 'Highcharts Maps',
+                    versions: {
+                        current: '../highmaps'
+                    }
+                },
+                gantt: {
+                    displayName: 'Highcharts Gantt',
+                    versions: {
+                        current: '../gantt'
+                    }
+                }
+            },
+            twitter: {
+                card: 'summary',
+                creator: '@highcharts',
+                site: '@highcharts'
+            },
+            version,
+            versionProps,
+            year: (new Date()).getFullYear(),
+            opengraph: {
+                // TODO?: Add opengraph data based on the class
+                description: 'Interactive charts for your web pages.',
+                determiner: '',
+                image: (urlRoot + product + '/mstile-310x310.png'),
+                sitename: 'Highcharts',
+                title: (productName + ' API Options'),
+                type: 'website',
+                url: (urlRoot + product + '/')
+            },
+            productModule: product,
+            productName,
+            productVersionStr: product + '-' + version,
+            searchBoost: 0, // (getSearchBoost(name) * 100),
+            searchTitle: 'Overview', // getSearchTitle(node),
+        };
+
+    // Make directories
+    await FS.mkdir('build/api/class-reference/nav', {recursive: true});
+
+    // Make HTML and JSON for each class and its children
+    filteredClassCodeInfo.forEach(async (info: TSLib.ClassInfo) => {
+        info.doclet.tags.description.push('Src: ' + info.doclet.meta?.file);
+
+        const name = info.name,
+            fullName = 'Highcharts.' + name,
+            description = getHTMLDescription(info.doclet.tags.description),
+            html = mainHbs({
+                ...defaultHbsConfig,
+
+                name: fullName,
+                node: {
+                    meta: {
+                        fullname: fullName,
+                        name,
+                        hasChildren: true
+                    },
+                    doclet: {
+                        description
+                    },
+                    children: info.members.map((member: any) => {
+                        return {
+                            name: 'Highcharts.' + name + '.' + member.name,
+                            shortName: member.name,
+                            node: {
+                                doclet: {
+                                    defaultvalue: member.value || member.kind
+                                }
+                            },
+                            type: member.kind === 'Function' ?
+                                'method' : 'member'
+                        };
+                    }).sort((a, b) => {
+                        if (a.type !== b.type) {
+                            return a.type === 'member' ? -1 : 1;
+                        }
+                        return a.name.localeCompare(b.name, undefined, {
+                            sensitivity: 'base'
+                        });
+                    })
+                }
+            }),
+            dataJSON = {
+                ignoreDefault: true,
+                typeList: {
+                    names: ['*']
+                },
+                description,
+                requires: info.doclet.tags.requires?.map((req: string) => {
+                    return req.replace(/module:/g, '');
+                }) || void 0,
+                samples: getSamples(info.doclet.tags.sample),
+                children: info.members.map((member: any) => {
+                    // Temporarly add not yet supported info into description
+                    if (member.parameters) {
+                        member.parameters.forEach((param: any) => {
+                            if (param.name !== 'this') {
+                                member.doclet.tags.description.push(
+                                    '<b>Parameter:</b> ' + sanitize(
+                                        param.name + ': ' + param.type
+                                    )
+                                );
+                            } else {
+                                member.doclet.tags.description.push(
+                                    '<b>Ctx:</b> ' + sanitize(param.type)
+                                );
+                            }
+                        });
+                    }
+                    if (member.doclet.tags.param) {
+                        member.doclet.tags.param.forEach((param: string) => {
+                            member.doclet.tags.description.push(
+                                '<b>Doclet.param:</b> ' + sanitize(param)
+                            );
+                        });
+                    }
+                    if (member.return) {
+                        member.doclet.tags.description.push(
+                            '<b>Returns:</b> ' + sanitize(member.return)
+                        );
+                    }
+                    if (member.body) {
+                        member.doclet.tags.description.push(
+                            '<b>Extra:</b> ' + sanitize(
+                                JSON.stringify(member.body)
+                            )
+                        );
+                    }
+
+                    return {
+                        ignoreDefault: member.kind === 'Function',
+                        description: getHTMLDescription(
+                            member.doclet.tags.description),
+                        filename: member.meta?.source ||
+                            member.doclet?.meta?.source,
+                        fullname: fullName + '.' + member.name,
+
+                        isLeaf: true,
+                        // line: 000,
+                        // lineEnd: 000,
+                        name: member.name,
+
+                        samples: getSamples(member.doclet.tags.sample),
+                        typeList: {
+                            names: [
+                                member.value || member.kind
+                            ]
+                        },
+                        type: member.kind === 'Function' ?
+                            'method' : 'member',
+                        version: versionProps.version
+                    };
+                // Sort by name a-z
+                }).sort((a, b) => {
+                    if (a.type !== b.type) {
+                        return a.type === 'member' ? -1 : 1;
+                    }
+                    return a.name.localeCompare(b.name, undefined, {
+                        sensitivity: 'base'
+                    });
+                })
+            };
+
+        // For the class itself
+        await FS.writeFile(
+            `build/api/class-reference/nav/${fullName}.json`,
+            JSON.stringify(dataJSON),
+            'utf8'
+        );
+
+        // Make HTML for each child
+        dataJSON.children.forEach(async (child: any) => {
+            const childRes = mainHbs({
+                ...defaultHbsConfig,
+
+                name: child.fullname,
+                node: child,
+                description: child.description
+                // TODO: add more to work without JS, handlebars only
+            });
+
+            await FS.writeFile(
+                `build/api/class-reference/${child.fullname}.html`,
+                childRes,
+                'utf8'
+            );
+        });
+
+        // Make the main HTML
+        await FS.writeFile(
+            `build/api/class-reference/${fullName}.html`,
+            html,
+            'utf8'
+        );
+    });
+
+    // Global
+    await FS.writeFile(
+        `build/api/class-reference/nav/index.json`,
+        JSON.stringify({
+            children: allClassNames.map(name => {
+                return {
+                    name: 'Highcharts.' + name,
+                    // Full path like chart.a.b.${name}
+                    fullname: 'Highcharts.' + name
+                };
+            })
+        }),
+        'utf8'
+    );
 
     await FS.writeFile(
         'api-docs/api-classes.json',
-        TSLib.toJSONString(filteredClassCodeInfo, '    '),
+        toJSONString(filteredClassCodeInfo, '    '),
         'utf8'
     );
 
-    await FS.writeFile(
+    /*await FS.writeFile(
         'api-docs/api-interfaces.json',
-        TSLib.toJSONString(filteredClassCodeInfo, '    '),
+        toJSONString(filteredClassCodeInfo, '    '),
         'utf8'
-    );
+    );*/
 
+    // TODO: This is used for debugging, remove later
     await FS.writeFile(
         'api-docs/api-all.json',
-        TSLib.toJSONString(classes, '    '),
+        toJSONString(classes, '    '),
         'utf8'
     );
 
 }
 
-function filterProperties(code: TSLib.CodeInfo): void {
-    const filteredProperties: Array<TSLib.CodeInfo> = [];
-    for(const property of code.properties) {
-        // Ignore private
-        if (property.doclet?.tags?.private === void 0) {
-            filteredProperties.push(property);
-        }
-    }
-    code.properties = filterProperties;
+// Sanitize HTML
+function sanitize(text: string): string {
+    return text
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
+// Convert description to HTML
+function parseLine(line: string): string {
+    return line
+        // TODO: is this line break Windows specific?
+        .replace(/\r\n\r\n/g, '</p><p>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>');
+    // TODO: process formatting using markdown
+}
+function getHTMLDescription(description: string[]) {
+    let html: string = '';
+    description.forEach((line: string) => {
+        html += '<p>' + parseLine(line) + '</p>';
+    });
+    return html;
+}
+
+// Map from strings to objects as expected by hapijs api (api.js).
+function getSamples(
+    samples: Array<string>|void
+): Array<{name: string, value: string}>|void {
+    if (!samples) {
+        return void 0;
+    }
+
+    const samplesObjects: Array<{name: string, value: string}> = samples.map(
+        (sample: string) => {
+            let parts = sample.match(/^(\S+)\s+(.+?)\s*$/);
+
+            if (!parts) {
+                parts = ['', sample, sample];
+            }
+
+            return parts.length === 3 ? {
+                value: parts[1],
+                name: parts[2]
+            } : null;
+        }).reduce((acc, item) => {
+            if (item) {
+                acc.push(item);
+            }
+            return acc;
+        }, []);
+
+    return samplesObjects.length ? samplesObjects : void 0;
+}
+
+// Filter members by doclet
+function filterMembers(code: TSLib.ClassInfo): void {
+    const filteredMembers: Array<TSLib.MemberInfo> = [];
+    for(const member of code.members) {
+        if (
+            // Allow only if has doclet
+            (member as any).doclet &&
+            // Ignore private
+            (member as any).doclet.tags?.private === void 0
+        ) {
+            filteredMembers.push(member);
+        }
+    }
+    code.members = filteredMembers;
+}
 
 /* *
  *
  *  Runtime
  *
  * */
-
 
 main();
