@@ -364,6 +364,27 @@ class Time {
         return d;
     }
 
+    /**
+     * Parse a datetime string. Unless the string contains time zone
+     * information, apply the current `timezone` from options.
+     *
+     * @function Highcharts.Time#parse
+     * @param    {string} s         The datetime string to parse
+     * @return   {number|undefined} Parsed JavaScript timestamp
+     */
+    public parse(s: string): number|undefined {
+        const ts = Date.parse(s);
+        if (isNumber(ts)) {
+            // Unless the string contains time zone information, convert from
+            // the local time result of `Date.parse` via UTC into the current
+            // timezone of the time object.
+            if (!/[+-][0-9]{2}:[0-9]{2}|Z$/.test(s)) {
+                const tsUTC = ts - new Date(ts).getTimezoneOffset() * 60000;
+                return tsUTC + this.getTimezoneOffset(tsUTC);
+            }
+            return ts;
+        }
+    }
 
     /**
      * Get the time zone offset based on the current timezone information as
