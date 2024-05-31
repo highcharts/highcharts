@@ -114,6 +114,7 @@ class EditMode {
 
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
+        this.customHTMLMode = !this.board.layoutsWrapper;
 
         board.boardWrapper = board.container;
         if (board.guiEnabled) {
@@ -123,6 +124,7 @@ class EditMode {
         this.isInitialized = false;
         this.isContextDetectionActive = false;
         this.tools = {};
+
 
         if (board.editModeEnabled) {
             this.contextPointer = {
@@ -307,8 +309,6 @@ class EditMode {
      */
     public init(): void {
         const editMode = this;
-
-        this.customHTMLMode = !this.board.layoutsWrapper;
 
         if (this.options.resize?.enabled && !editMode.customHTMLMode) {
             editMode.resizer = new Resizer(editMode, editMode.options.resize);
@@ -835,7 +835,8 @@ class EditMode {
         // Create add component button
         if (
             options.tools?.addComponentBtn?.enabled &&
-            options.toolbars?.cell?.enabled
+            options.toolbars?.cell?.enabled &&
+            !this.customHTMLMode
         ) {
             const addIconURL = options.tools.addComponentBtn.icon;
 
