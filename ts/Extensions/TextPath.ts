@@ -19,11 +19,11 @@
  * */
 
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import SVGElement from '../Core/Renderer/SVG/SVGElement';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-import DataLabelOptions from '../Core/Series/DataLabelOptions';
 import Point from '../Core/Series/Point';
 import BBoxObject from '../Core/Renderer/BBoxObject';
 const { deg2rad } = H;
