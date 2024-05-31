@@ -354,7 +354,7 @@ class Fx {
             positionFactor = isArea ? 2 : 1,
             disableAnimation = fromD &&
                 toD.length > fromD.length &&
-                toD.hasCliffs; // #16925
+                toD.hasStackedCliffs; // #16925
 
         let shift,
             fullLength: number,
