@@ -379,7 +379,14 @@ class Time {
             // the local time result of `Date.parse` via UTC into the current
             // timezone of the time object.
             if (!/[+-][0-9]{2}:[0-9]{2}|Z$/.test(s)) {
-                const tsUTC = ts - new Date(ts).getTimezoneOffset() * 60000;
+                // MMMM-YY-DD is parsed as UTC, all other formats are local
+                // unless a time zone is specified
+                const parsedAsUTC = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s),
+                    tsUTC = ts - (
+                        parsedAsUTC ?
+                            0 :
+                            new Date(ts).getTimezoneOffset() * 60000
+                    );
                 return tsUTC + this.getTimezoneOffset(tsUTC);
             }
             return ts;
@@ -399,20 +406,22 @@ class Time {
      *         The timezone offset in minutes compared to UTC.
      */
     public getTimezoneOffset(timestamp: number|Date): number {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [date, gmt, hours, colon, minutes = 0] =
-            this.dateTimeFormat(
-                { timeZoneName: 'shortOffset' },
-                timestamp,
-                'en'
-            )
-                .split(/(GMT|:)/)
-                .map(Number),
-            offset = -(hours + minutes / 60) * 60 * 60000;
+        if (this.timezone !== 'UTC') {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [date, gmt, hours, colon, minutes = 0] =
+                this.dateTimeFormat(
+                    { timeZoneName: 'shortOffset' },
+                    timestamp,
+                    'en'
+                )
+                    .split(/(GMT|:)/)
+                    .map(Number),
+                offset = -(hours + minutes / 60) * 60 * 60000;
 
-        // Possible future NaNs stop here
-        if (isNumber(offset)) {
-            return offset;
+            // Possible future NaNs stop here
+            if (isNumber(offset)) {
+                return offset;
+            }
         }
         return 0;
     }
