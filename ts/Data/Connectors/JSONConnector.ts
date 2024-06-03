@@ -147,7 +147,7 @@ class JSONConnector extends DataConnector {
                     const columns = converter.getTable().getColumns();
                     if (rowKeysId) {
                         columns[rowKeysId] = [];
-                        for (let i = 0; i < data.length; i++) {
+                        for (let i = 0, iEnd = data.length; i < iEnd; i++) {
                             columns[rowKeysId][i] = rowKeysId + '_' + String(i);
                         }
                     }
