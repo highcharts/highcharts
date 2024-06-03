@@ -77,13 +77,15 @@ class AccordionMenu {
      *
      * @param container
      * The HTML Element to render the menu in.
+     *
      * @param component
      * The component to render the menu for.
      */
     public renderContent(container: HTMLElement, component: Component): void {
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
-        let option, content;
+        let options: EditableOptions.Options;
+        let content: HTMLElement;
 
         const accordionContainer = createElement(
             'div',
@@ -95,17 +97,19 @@ class AccordionMenu {
         );
 
         for (let i = 0, end = editableOptions.length; i < end; i++) {
-            option = editableOptions[i];
+            options = editableOptions[i];
             content = EditRenderer.renderCollapseHeader(
                 accordionContainer,
-                {
-                    name: option.name,
-                    iconsURLPrefix: menu.iconsURLPrefix,
-                    lang: (component.board?.editMode || EditGlobals).lang
-                }
+                merge(
+                    {
+                        iconsURLPrefix: menu.iconsURLPrefix,
+                        lang: (component.board?.editMode || EditGlobals).lang
+                    },
+                    options
+                )
             ).content;
 
-            this.renderAccordion(option, content, component);
+            this.renderAccordion(options, content, component);
         }
 
         const buttonContainer = createElement(
@@ -163,6 +167,7 @@ class AccordionMenu {
      * @param propertyPath
      * Path of the property for which the value should be updated.
      * Example: ```['chartOptions', 'chart', 'type']```
+     *
      * @param value
      * New value of the property.
      */
@@ -200,13 +205,15 @@ class AccordionMenu {
     }
 
     /**
-     * Renders either a basic or nested element. This function can be recursivly
-     * called, if there are multiple nested options.
+     * Renders either a basic or nested element. This function can be
+     * recursively called, if there are multiple nested options.
      *
      * @param options
      * Configuration object of the Component options.
+     *
      * @param parentNode
      * A container where the accordion is rendered.
+     *
      * @param component
      * the component for which the menu should be rendered.
      */
@@ -242,8 +249,10 @@ class AccordionMenu {
      *
      * @param parentElement
      * HTML element to which the nested structure should be rendered to
+     *
      * @param options
      * configuration object for the options
+     *
      * @param component
      * The component instance for the options should be rendered
      */
