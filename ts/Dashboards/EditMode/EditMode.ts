@@ -114,7 +114,6 @@ class EditMode {
 
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
-        this.customHTMLMode = !this.board.layoutsWrapper;
 
         board.boardWrapper = board.container;
         if (board.guiEnabled) {
@@ -125,8 +124,9 @@ class EditMode {
         this.isContextDetectionActive = false;
         this.tools = {};
 
-
         if (board.editModeEnabled) {
+            this.customHTMLMode = !this.board.layoutsWrapper;
+
             this.contextPointer = {
                 isVisible: false,
                 element: createElement(
