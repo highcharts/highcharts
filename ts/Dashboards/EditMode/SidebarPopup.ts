@@ -34,6 +34,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    fireEvent,
     merge
 } = U;
 
@@ -83,9 +84,19 @@ class SidebarPopup extends BaseForm {
 
             if (layout) {
                 board.layouts.push(layout);
+
+                fireEvent(
+                    board.editMode,
+                    'layoutChanged',
+                    {
+                        type: 'newLayout',
+                        target: layout,
+                        board
+                    }
+                );
             }
 
-            Bindings.addComponent({
+            void Bindings.addComponent({
                 type: 'HTML',
                 cell: cellName,
                 elements: [
@@ -288,9 +299,9 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        const type = context.getType ? context.getType() : 'cell';
+        this.type = context.getType ? context.getType() : 'cell';
 
-        if (type === 'cell') {
+        if (this.type === 'cell') {
             const component = (context as Cell).mountedComponent;
             if (!component) {
                 return;
@@ -394,8 +405,26 @@ class SidebarPopup extends BaseForm {
             const options = merge(componentOptions, {
                 cell: newCell.id
             });
-            Bindings.addComponent(options, sidebar.editMode.board, newCell);
+
+            const componentPromise =
+                Bindings.addComponent(options, sidebar.editMode.board, newCell);
             sidebar.editMode.setEditOverlay();
+
+            void (async (): Promise<void> => {
+                const component = await componentPromise;
+                if (!component) {
+                    return;
+                }
+
+                fireEvent(
+                    this.editMode,
+                    'layoutChanged',
+                    {
+                        type: 'newComponent',
+                        target: component
+                    }
+                );
+            })();
 
             return newCell;
         }
@@ -435,9 +464,15 @@ class SidebarPopup extends BaseForm {
 
     /**
      * Function called when the close button is pressed.
+     *
+     * @override BaseForm.closeButtonEvents
      */
     public closeButtonEvents(): void {
-        this.hide();
+        if (this.type === 'cell') {
+            this.accordionMenu.cancelChanges();
+        } else {
+            this.hide();
+        }
     }
 
     public renderHeader(title: string, iconURL: string): void {
@@ -517,7 +552,11 @@ class SidebarPopup extends BaseForm {
                 !this.container.contains(event.target) &&
                 this.container.classList.value.includes('show')
             ) {
-                this.hide();
+                if (this.type === 'cell') {
+                    this.accordionMenu.cancelChanges();
+                } else {
+                    this.hide();
+                }
             }
         });
 

@@ -237,6 +237,7 @@ class CellEditToolbar extends EditToolbar {
 
         if (toolbar.cell) {
             const row = toolbar.cell.row;
+            const cellId = toolbar.cell.id;
 
             toolbar.resetEditedCell();
             toolbar.cell.destroy();
@@ -251,6 +252,11 @@ class CellEditToolbar extends EditToolbar {
                     cell: row.cells[0]
                 });
                 fireEvent(row, 'cellChange', { cell: row.cells[0], row });
+                fireEvent(toolbar.editMode, 'layoutChanged', {
+                    type: 'cellDestroyed',
+                    target: cellId,
+                    board: toolbar.editMode.board
+                });
             }
         }
     }
