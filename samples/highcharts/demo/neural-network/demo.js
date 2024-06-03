@@ -91,10 +91,10 @@ Highcharts.chart('container', {
             </span>
             {series.xAxis.options.custom.layers.(point.x).nodes}`
     },
-    colors: ['#a752d1'],
     plotOptions: {
         line: {
             lineWidth: 0.5,
+            color: '#a752d115',
             marker: {
                 symbol: 'circle',
                 enabled: true,
