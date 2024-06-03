@@ -9,7 +9,7 @@ const dg = new DataGrid.DataGrid2('container', {
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
     }),
-    rowOptions: {
+    rows: {
         bufferSize: 5
     }
 });

@@ -28,7 +28,7 @@ const startNewTime = new Date().getTime();
 var t2 = performance.now();
 const newgrid = new DataGrid.DataGrid2('container', {
     dataTable: dataTable,
-    rowOptions: {
+    rows: {
         bufferSize: 2
     }
 });
