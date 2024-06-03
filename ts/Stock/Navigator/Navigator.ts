@@ -503,9 +503,11 @@ class Navigator {
                     handlesOptions
                 );
 
+                const symbolName = handlesOptions.symbols[index];
+
                 if (!isDirty) {
                     navigator.handles[index] = renderer.symbol(
-                        handlesOptions.symbols[index],
+                        symbolName,
                         -width / 2 - 1,
                         0,
                         width,
@@ -521,6 +523,21 @@ class Navigator {
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
+                // If the navigator symbol changed, update its path and name
+                } else if (symbolName !== navigator.handles[index].symbolName) {
+                    const symbolFn = symbols[symbolName],
+                        path = symbolFn.call(
+                            symbols,
+                            -width / 2 - 1,
+                            0,
+                            width,
+                            height
+                        );
+
+                    navigator.handles[index].attr({
+                        d: path
+                    });
+                    navigator.handles[index].symbolName = symbolName;
                 }
                 if (chart.inverted) {
                     navigator.handles[index].attr({
@@ -531,21 +548,11 @@ class Navigator {
                 }
 
                 if (!chart.styledMode) {
-                    const symbolFn = symbols[handlesOptions.symbols[index]],
-                        path = symbolFn.call(
-                            symbols,
-                            -width / 2 - 1,
-                            0,
-                            width,
-                            height
-                        );
-
                     navigator.handles[index]
                         .attr({
                             fill: handlesOptions.backgroundColor,
                             stroke: handlesOptions.borderColor,
-                            'stroke-width': handlesOptions.lineWidth,
-                            d: path
+                            'stroke-width': handlesOptions.lineWidth
                         })
                         .css(mouseCursor);
                 }
