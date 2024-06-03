@@ -18,7 +18,6 @@
  *  Imports
  *
  * */
-import type Cell from '../Layout/Cell';
 import type ComponentType from '../Components/ComponentType';
 import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
@@ -26,6 +25,7 @@ import type Row from '../Layout/Row';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
 import Bindings from '../Actions/Bindings.js';
+import Cell from '../Layout/Cell.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
@@ -424,6 +424,9 @@ class SidebarPopup extends BaseForm {
             if (editCellContext.isHighlighted) {
                 editCellContext.setHighlight(true);
             }
+        } else if(editCellContext) {
+            editMode.showToolbars(['cell'], editCellContext);
+            Cell.setCellHighlight(editCellContext);
         }
 
         editMode.isContextDetectionActive = true;
