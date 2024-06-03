@@ -48,7 +48,7 @@
                 </div>
                 <div id="highcharts-logo" class="cell">
                     <a href="https://www.highcharts.com/" title="Highcharts Home Page">
-                        <img alt="Highcharts Home Page" src="highcharts.svg" border="0">
+                        <img alt="Highcharts Home Page" src="../highcharts/highcharts.svg" border="0">
                     </a>
                 </div>
                 <div id="page-title" class="cell">
@@ -117,8 +117,11 @@
                     <ul class="results" style="display: none;"></ul>
                 </div>
                 <div id="option-trees-wrapper">
+                {{#if downloadUrl}}
                     <h3 id="options-header">Configuration options</h3>
                     <p>For initial declarative chart setup. Download as <a href="{{downloadUrl}}">ZIP</a> or <a href="tree.json">JSON</a>.</p>
+                {{/if}}
+                {{#if constr}}
                     <div class="global-options options-tree">
                         <code>Highcharts.setOptions({</code>
                         <div id="global-options" class="tree"></div>
@@ -165,6 +168,50 @@
                         </div>
                         <code>});</code>
                     </div>
+                {{else}}
+                    <p id="global-options" style="display: none;">I'm here just to make hapi happy.</p>
+                    <div class="options-tree">
+                        <h3>Highcharts' Classes: </h3>
+                        <div id="options" class="tree">
+                            {{#if node.meta.name}}
+                                <div class="node expanded option-{{node.meta.name}} parent">
+                                    <a class="title" href=".">
+                                        {{node.meta.name}}:{{#if node.children}}<i class="fa fa-caret-right"></i>{{/if}}
+                                    </a>
+                                    {{#if node.children}}
+                                        <span class="bracket start">{</span>
+                                        <span class="dots">...</span>
+                                        <div class="children" style="max-height:none;">
+                                    {{/if}}
+                            {{/if}}
+                            {{#if node.children}}
+                                {{#each node.children}}
+                                    <div class="node collapsed option-{{this.shortName}} {{#if node.meta.name}}leaf{{else}}parent{{/if}}">
+                                        <a class="title" href="{{this.name}}">
+                                            {{this.shortName}}:{{#if this.node.children}}<i class="fa fa-caret-right"></i>{{/if}}
+                                        </a>
+                                        {{#if this.node.children}}
+                                            <span class="bracket start">{</span>
+                                            <span class="dots">...</span>
+                                            <span class="bracket end first">}</span>
+                                        {{else}}
+                                            <span class="default type-undefined">{{#if this.node.doclet.defaultvalue}}{{this.node.doclet.defaultvalue}}{{else}}null{{/if}}</span>
+                                        {{/if}}
+                                    </div>
+                                {{/each}}
+                            {{else}}
+                                <span class="default type-undefined">{{#if node.doclet.defaultvalue}}{{node.doclet.defaultvalue}}{{else}}null{{/if}}</span>
+                            {{/if}}
+                            {{#if node.meta.name}}
+                                    {{#if node.children}}
+                                        </div>
+                                        <span class="bracket end second">}</span>
+                                    {{/if}}
+                                </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                {{/if}}
                 </div>
                 {{#if includeClassReference }}
                     <div id="members-wrapper">
