@@ -1400,8 +1400,9 @@ class Series {
                     lastPoint = series.getFirstValidPoint(
                         data, dataLength - 1, -1
                     ),
-                    isNumericArray = (a: unknown): a is Array<number> =>
-                        isArray(a) && isNumber(a[0]);
+                    isShortArray = (a: unknown): a is Array<unknown> => Boolean(
+                        isArray(a) && (keys || isNumber(a[0]))
+                    );
 
                 // Assume all points are numbers
                 if (isNumber(firstPoint) && isNumber(lastPoint)) {
@@ -1412,8 +1413,8 @@ class Series {
 
                 // Assume all points are arrays when first point is
                 } else if (
-                    isNumericArray(firstPoint) &&
-                    isNumericArray(lastPoint)
+                    isShortArray(firstPoint) &&
+                    isShortArray(lastPoint)
                 ) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
                         if (firstPoint.length === valueCount) {
