@@ -1218,7 +1218,8 @@
     flex-direction: column;
 }
 
-.highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-content:not(.highcharts-dashboards-edit-standalone-element) > .highcharts-dashboards-edit-label-text {
     display: none;
 }
 

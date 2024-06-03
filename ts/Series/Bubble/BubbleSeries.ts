@@ -21,7 +21,6 @@ import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
-import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -464,10 +463,9 @@ class BubbleSeries extends ScatterSeries {
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        LegendClass: typeof Legend,
-        SeriesClass: typeof SeriesType
+        LegendClass: typeof Legend
     ): void {
-        BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
+        BubbleLegendComposition.compose(ChartClass, LegendClass);
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
@@ -519,21 +517,20 @@ class BubbleSeries extends ScatterSeries {
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
             this.points.forEach(function (point): void {
-                const { graphic } = point;
+                const { graphic, plotX = 0, plotY = 0 } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width
 
                     // Start values
                     if (!this.hasRendered) {
                         graphic.attr({
-                            x: point.plotX,
-                            y: point.plotY,
+                            x: plotX,
+                            y: plotY,
                             width: 1,
                             height: 1
                         });
                     }
 
-                    // Run animation
                     graphic.animate(
                         this.markerAttribs(point),
                         this.options.animation
@@ -679,6 +676,25 @@ class BubbleSeries extends ScatterSeries {
     /**
      * @private
      */
+    public markerAttribs(
+        point: Point,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        const attr = super.markerAttribs(point, state),
+            { height = 0, width = 0 } = attr;
+
+        // Bubble needs a specific `markerAttribs` override because the markers
+        // are rendered into the potentially inverted `series.group`. Unlike
+        // regular markers, which are rendered into the `markerGroup` (#21125).
+        return this.chart.inverted ? extend(attr, {
+            x: (point.plotX || 0) - width / 2,
+            y: (point.plotY || 0) - height / 2
+        }) : attr;
+    }
+
+    /**
+     * @private
+     */
     public pointAttribs(
         point?: BubblePoint,
         state?: StatesOptionsKey
@@ -717,8 +733,8 @@ class BubbleSeries extends ScatterSeries {
         let i = data.length;
 
         while (i--) {
-            const point = data[i];
-            const radius = radii ? radii[i] : 0; // #1737
+            const point = data[i],
+                radius = radii ? radii[i] : 0; // #1737
 
             // Negative points means negative z values (#9728)
             if (this.zoneAxis === 'z') {

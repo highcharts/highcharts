@@ -447,7 +447,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type      {number}
      * @default   2
-     * @since     @next
+     * @since     11.3.0
      * @apioption chart.axisLayoutRuns
      */
 
@@ -1240,13 +1240,15 @@ const ChartDefaults: ChartOptions = {
      * element's height is 0.
      *
      * @sample {highcharts} highcharts/chart/height/
-     *         500px height
+     *         Forced 200px height
      * @sample {highstock} stock/chart/height/
      *         300px height
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
      * @sample highcharts/chart/height-percent/
      *         Highcharts with percentage height
+     * @sample highcharts/chart/height-inherited/
+     *         Chart with inherited height
      *
      * @type {null|number|string}
      */

@@ -10,7 +10,7 @@
 :root {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
-    --highcharts-color-0-light: rgb(215, 227, 243);
+    --highcharts-color-0-light: #d7e3f3;
 
     /* Republican */
     --highcharts-color-1: #be2f24;

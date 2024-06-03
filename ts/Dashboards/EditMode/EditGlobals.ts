@@ -105,6 +105,7 @@ const EditGlobals: EditGlobals = {
         accordionMenuButton: PREFIX + 'accordion-menu-button',
         hiddenElement: PREFIX + 'hidden-element',
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
+        standaloneElement: PREFIX + 'standalone-element',
 
         // Custom dropdown with icons
         collapsedElement: PREFIX + 'collapsed-element',
@@ -244,6 +245,7 @@ namespace EditGlobals {
         separator: string;
         sidebarCloseButton: string;
         sidebarNavButton: string;
+        standaloneElement: string;
         toggleContainer: string;
         toggleLabels: string;
         toggleSlider: string;

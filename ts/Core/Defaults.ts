@@ -390,7 +390,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @sample highcharts/global/buttontheme
          *         General button theme
-         * @since next
+         * @since 11.4.2
          */
         buttonTheme: {
             /**
@@ -530,13 +530,16 @@ const defaultOptions: DefaultOptions = {
          * for drawing time based charts in specific time zones using their
          * local DST crossover dates, with the help of external libraries.
          *
-         * @see [global.timezoneOffset](#global.timezoneOffset)
+         * This option is deprecated as of v11.4.1 and will be removed in a
+         * future release. Use the [time.timezone](#time.timezone) option
+         * instead.
          *
          * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
          *         Use moment.js to draw Oslo time regardless of browser locale
          *
          * @type      {Highcharts.TimezoneOffsetCallbackFunction}
          * @since     4.1.0
+         * @deprecated 11.4.2
          * @product   highcharts highstock gantt
          */
         getTimezoneOffset: void 0,
@@ -547,11 +550,9 @@ const defaultOptions: DefaultOptions = {
          * docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#timezone).
          * If the given time zone is not recognized by the browser, Highcharts
          * provides a warning and falls back to returning a 0 offset,
-         * corresponding to the UCT time zone.
+         * corresponding to the UTC time zone.
          *
          * Until v11.2.0, this option depended on moment.js.
-         *
-         * @see [getTimezoneOffset](#time.getTimezoneOffset)
          *
          * @sample {highcharts|highstock} highcharts/time/timezone/ Europe/Oslo
          *
@@ -567,12 +568,17 @@ const defaultOptions: DefaultOptions = {
          * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
          * method. Use this to display UTC based data in a predefined time zone.
          *
+         * This option is deprecated as of v11.4.1 and will be removed in a
+         * future release. Use the [time.timezone](#time.timezone) option
+         * instead.
+         *
          * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
          *
          * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
          *         Timezone offset
          *
          * @since     3.0.8
+         * @deprecated 11.4.2
          * @product   highcharts highstock gantt
          */
         timezoneOffset: 0,
@@ -1135,6 +1141,34 @@ const defaultOptions: DefaultOptions = {
          * A CSS class name to apply to the legend group.
          */
         className: 'highcharts-no-tooltip',
+
+        /**
+         * General event handlers for the legend. These event hooks can
+         * also be attached to the legend at run time using the
+         * `Highcharts.addEvent` function.
+         *
+         * @declare Highcharts.LegendEventsOptionsObject
+         *
+         * @private
+         */
+        events: {},
+
+        /**
+         * Fires when the legend item belonging to the series is clicked. One
+         * parameter, `event`, is passed to the function. The default action
+         * is to toggle the visibility of the series, point or data class. This
+         * can be prevented by returning `false` or calling
+         * `event.preventDefault()`.
+         *
+         * @sample {highcharts} highcharts/legend/series-legend-itemclick/
+         *         Confirm hiding and showing
+         * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
+         *         Confirm toggle visibility of pie slices
+         *
+         * @type      {Highcharts.LegendItemClickCallbackFunction}
+         * @context   Highcharts.Legend
+         * @apioption legend.events.itemClick
+         */
 
         /**
          * When the legend is floating, the plot area ignores it and is allowed
@@ -2080,20 +2114,20 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * for the whole tooltip. When format strings are a requirement, it is
-         * usually more convenient to use `headerFormat`, `pointFormat` and
-         * `footerFormat`, but the `format` option allows combining them into
-         * one setting.
+         * for the whole shared tooltip. When format strings are a requirement,
+         * it is usually more convenient to use `headerFormat`, `pointFormat`
+         * and `footerFormat`, but the `format` option allows combining them
+         * into one setting.
          *
          * The context of the format string is the same as that of the
-         * `formatter` callback.
+         * `tooltip.formatter` callback.
          *
          * @sample {highcharts} highcharts/tooltip/format-shared/
          *         Format for shared tooltip
          *
          * @type      {string}
          * @default   undefined
-         * @since 11.1.0
+         * @since     11.1.0
          * @apioption tooltip.format
          */
 
@@ -2162,7 +2196,6 @@ const defaultOptions: DefaultOptions = {
          * @apioption tooltip.formatter
          */
 
-
         /**
          * Callback function to format the text of the tooltip for
          * visible null points.
@@ -2174,7 +2207,6 @@ const defaultOptions: DefaultOptions = {
          * @type      {Highcharts.TooltipFormatterCallbackFunction}
          * @apioption tooltip.nullFormatter
          */
-
 
         /**
          * Whether to allow the tooltip to render outside the chart's SVG

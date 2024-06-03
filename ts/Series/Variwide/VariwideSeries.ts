@@ -31,6 +31,7 @@ import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    crisp,
     extend,
     merge,
     pick
@@ -239,8 +240,7 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
 
     // Temporarily disable crisping when computing original shapeArgs
     const xAxis = this.xAxis,
-        inverted = this.chart.inverted,
-        crisp = this.borderWidth % 2 / 2;
+        inverted = this.chart.inverted;
 
     let i = -1;
 
@@ -266,8 +266,8 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
         }
 
         if (this.crispOption) {
-            left = Math.round(left) - crisp;
-            right = Math.round(right) - crisp;
+            left = crisp(left, this.borderWidth);
+            right = crisp(right, this.borderWidth);
         }
 
         shapeArgs.x = left;

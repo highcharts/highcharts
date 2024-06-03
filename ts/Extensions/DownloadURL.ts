@@ -25,6 +25,8 @@ const {
     win: { document: doc }
 } = H;
 
+import RegexLimits from './RegexLimits.js';
+
 /* *
  *
  *  Declarations
@@ -141,6 +143,10 @@ function downloadURL(
     }
 
     dataURL = '' + dataURL;
+
+    if (nav.userAgent.length > RegexLimits.shortLimit) {
+        throw new Error('Input too long');
+    }
 
     const // Some browsers have limitations for data URL lengths. Try to convert
         // to Blob or fall back. Edge always needs that blob.

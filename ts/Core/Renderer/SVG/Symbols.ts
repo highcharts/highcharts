@@ -51,13 +51,17 @@ function arc(
         const start = options.start || 0,
             rx = pick(options.r, w),
             ry = pick(options.r, h || w),
-            proximity = 0.001,
+            // Subtract a small number to prevent cos and sin of start and end
+            // from becoming equal on 360 arcs (#1561). The size of the circle
+            // affects the constant, therefore the division by `rx`. If the
+            // proximity is too small, the arc disappears. If it is too great, a
+            // gap appears. This can be seen in the animation of the official
+            // bubble demo (#20586).
+            proximity = 0.0002 / Math.max(rx, 1),
             fullCircle = (
                 Math.abs((options.end || 0) - start - 2 * Math.PI) <
                 proximity
             ),
-            // Subtract a small number to prevent cos and sin of start
-            // and end from becoming equal on 360 arcs (related: #1561)
             end = (options.end || 0) - proximity,
             innerRadius = options.innerR,
             open = pick(options.open, fullCircle),

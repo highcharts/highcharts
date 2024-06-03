@@ -484,7 +484,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * Layout for the node's children. If `hanging`, this node's children will hang
  * below their parent, allowing a tighter packing of nodes in the diagram.
  *
- * Note: Since @next version, the `hanging` layout is set by default for
+ * Note: Since version 10.0.0, the `hanging` layout is set by default for
  * children of a parent using `hanging` layout.
  *
  * @sample highcharts/demo/organization-chart
