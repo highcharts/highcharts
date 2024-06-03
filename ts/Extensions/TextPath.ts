@@ -19,7 +19,7 @@
  * */
 
 import type PositionObject from '../Core/Renderer/PositionObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions.js';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import SVGElement from '../Core/Renderer/SVG/SVGElement';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
@@ -292,14 +292,8 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
  *
  * @function Highcharts.SVGElement#setTextPath
  *
- * @param {Highcharts.SVGElement} dataLabel
- *        The label in question.
- *
- * @param {DataLabelOptions} labelOptions
- *        Datalabel options to check for textPath options.
- *
- * @param {Highcharts.Point} point
- *        The point which the datalabel belongs to.
+ * @param {any} event
+ *        An event containing label options
  *
  * @return {void}
  */
