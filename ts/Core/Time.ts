@@ -373,7 +373,10 @@ class Time {
      * @return   {number|undefined} Parsed JavaScript timestamp
      */
     public parse(s: string): number|undefined {
-        const ts = Date.parse(s);
+        const ts = Date.parse(
+            // Firefox fails on YYYY/MM/DD
+            s.replace(/\//g, '-')
+        );
         if (isNumber(ts)) {
             // Unless the string contains time zone information, convert from
             // the local time result of `Date.parse` via UTC into the current
