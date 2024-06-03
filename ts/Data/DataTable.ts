@@ -1436,6 +1436,28 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
+     * Sets the row key column. This column is invisible and the cells
+     * serves as identifiers to the rows they are contained in. Accessing
+     * rows by keys instead of indexes is necessary in cases where rows
+     * are rearranged by a DataModifier (e.g. SortModifier or RangeModifier).
+     *
+     * @function Highcharts.DataTable#setRowKeysColumn
+     *     *
+     * @param {number} nRows
+     * Number of rows to add the column to.
+     *
+     */
+    public setRowKeysColumn(nRows: number): void {
+        const id = this.rowKeysId;
+        if (id) {
+            this.columns[id] = [];
+            for (let i = 0; i < nRows; i++) {
+                this.columns[id][i] = id + '_' + String(i);
+            }
+        }
+    }
+
+    /**
      * Sets or unsets the modifier for the table.
      * @private
      *
@@ -1535,7 +1557,7 @@ class DataTable implements DataEvent.Emitter {
      * Row values to set.
      *
      * @param {number} [rowIndex]
-     * Index of the first row to set. Leave `undefind` to add as new rows.
+     * Index of the first row to set. Leave `undefined` to add as new rows.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
@@ -1604,6 +1626,10 @@ class DataTable implements DataEvent.Emitter {
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
                 columns[columnNames[i]].length = indexRowCount;
             }
+        }
+
+        if (this.rowKeysId && !columnNames.includes(this.rowKeysId)) {
+            this.setRowKeysColumn(rowCount);
         }
 
         if (modifier) {

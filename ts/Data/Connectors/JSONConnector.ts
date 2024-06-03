@@ -143,16 +143,8 @@ class JSONConnector extends DataConnector {
                     table.deleteColumns();
                     converter.parse({ data });
 
-                    const rowKeysId = table.getRowKeysId();
-                    const columns = converter.getTable().getColumns();
-                    if (rowKeysId) {
-                        columns[rowKeysId] = [];
-                        for (let i = 0, iEnd = data.length; i < iEnd; i++) {
-                            columns[rowKeysId][i] = rowKeysId + '_' + String(i);
-                        }
-                    }
-                    table.setColumns(columns);
-
+                    table.setColumns(converter.getTable().getColumns());
+                    table.setRowKeysColumn(data.length);
                 }
                 return connector.setModifierOptions(dataModifier).then((): Array<Array<number|string>> => data);
             })
