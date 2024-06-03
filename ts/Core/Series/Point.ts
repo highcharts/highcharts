@@ -362,7 +362,7 @@ class Point {
 
         // If x is a string, try to parse it to a datetime
         } else if (typeof point.x === 'string') {
-            x = series.chart.time.parse(point.x);
+            x ??= series.chart.time.parse(point.x);
             if (isNumber(x)) {
                 point.x = x;
             }
