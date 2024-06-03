@@ -424,7 +424,7 @@ class SidebarPopup extends BaseForm {
             if (editCellContext.isHighlighted) {
                 editCellContext.setHighlight(true);
             }
-        } else if(editCellContext) {
+        } else if (editCellContext) {
             editMode.showToolbars(['cell'], editCellContext);
             Cell.setCellHighlight(editCellContext);
         }

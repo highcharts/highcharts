@@ -564,14 +564,16 @@ class EditMode {
      * Set events for the cell.
      * @internal
      */
-    public setCellEvents(
-        cell: Cell
-    ): void {
+    public setCellEvents(cell: Cell): void {
         const editMode = this;
 
         if (cell.nestedLayout) {
             editMode.setLayoutEvents(cell.nestedLayout);
-        } else if (editMode.cellToolbar && cell.container) {
+        } else if (
+            editMode.cellToolbar &&
+            cell.container &&
+            !editMode.customHTMLMode
+        ) {
             // Init dragDrop cell events.
             if (editMode.dragDrop || editMode.resizer) {
                 const dragDrop = editMode.dragDrop;
