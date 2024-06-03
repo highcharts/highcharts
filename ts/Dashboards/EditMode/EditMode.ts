@@ -569,24 +569,23 @@ class EditMode {
 
         if (cell.nestedLayout) {
             editMode.setLayoutEvents(cell.nestedLayout);
-        } else if (
-            editMode.cellToolbar &&
-            cell.container &&
-            !editMode.customHTMLMode
-        ) {
-            // Init dragDrop cell events.
-            if (editMode.dragDrop || editMode.resizer) {
-                const dragDrop = editMode.dragDrop;
-
-                addEvent(
-                    cell.container,
-                    'mouseenter',
-                    function (): void {
-                        if (editMode.isContextDetectionActive) {
-                            editMode.mouseCellContext = cell;
-                        }
+        } else if (editMode.cellToolbar && cell.container) {
+            addEvent(
+                cell.container,
+                'mouseenter',
+                function (): void {
+                    if (editMode.isContextDetectionActive) {
+                        editMode.mouseCellContext = cell;
                     }
-                );
+                }
+            );
+
+            // Init dragDrop cell events only when using layouts.
+            if (
+                !editMode.customHTMLMode &&
+                (editMode.dragDrop || editMode.resizer)
+            ) {
+                const dragDrop = editMode.dragDrop;
 
                 addEvent(
                     cell.container,
@@ -603,19 +602,23 @@ class EditMode {
                     }
                 );
 
-                addEvent(cell.container, 'mouseleave', function (): void {
-                    if (
-                        dragDrop &&
-                        dragDrop.isActive &&
-                        dragDrop.mouseCellContext === cell
-                    ) {
-                        dragDrop.mouseCellContext = void 0;
-                    }
+                addEvent(
+                    cell.container,
+                    'mouseleave',
+                    function (): void {
+                        if (
+                            dragDrop &&
+                            dragDrop.isActive &&
+                            dragDrop.mouseCellContext === cell
+                        ) {
+                            dragDrop.mouseCellContext = void 0;
+                        }
 
-                    if (editMode.isContextDetectionActive) {
-                        editMode.mouseCellContext = void 0;
+                        if (editMode.isContextDetectionActive) {
+                            editMode.mouseCellContext = void 0;
+                        }
                     }
-                });
+                );
             }
         }
     }
