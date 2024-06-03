@@ -19,7 +19,6 @@ declare global {
 }
 const G: AnyRecord = Highcharts;
 if (MSPointer.isRequired()) {
-    G.Pointer.dissolve();
     G.Pointer = MSPointer;
     MSPointer.compose(G.Chart);
 }

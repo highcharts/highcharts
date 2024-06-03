@@ -54,7 +54,8 @@ const {
     offset,
     pick,
     pushUnique,
-    splat
+    splat,
+    defined
 } = U;
 
 /* *
@@ -918,7 +919,19 @@ class Pointer {
                     return false;
                 }
             }
-            elem = elem.parentElement;
+            // #21098 IE11 compatibility
+            elem = elem.parentNode;
+            if (
+                elem && (
+                    // HTMLElement
+                    elem === document.documentElement ||
+                    // Document
+                    defined(elem.nodeType) &&
+                    elem.nodeType === document.nodeType
+                )
+            ) {
+                elem = null;
+            }
         }
     }
 
