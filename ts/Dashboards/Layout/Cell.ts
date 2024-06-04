@@ -489,7 +489,7 @@ class Cell extends GUIElement {
         cell.container.classList.toggle(
             EditGlobals.classNames.cellEditHighlight
         );
-        cell.container.classList.toggle(
+        cell.mountedComponent?.board.container.classList.toggle(
             EditGlobals.classNames.dashboardCellEditHighlightActive
         );
     }
