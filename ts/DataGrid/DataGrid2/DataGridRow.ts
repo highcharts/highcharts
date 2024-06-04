@@ -98,7 +98,7 @@ class DataGridRow {
         });
 
         this.htmlElement.setAttribute('row-index', index);
-        this.htmlElement.setAttribute('aria-rowindex', index);
+        this.htmlElement.setAttribute('aria-rowindex', index + 2); // 1 - index of the head, 1 to avoid indexing from 0
         this.htmlElement.setAttribute('row-id', index);
 
         if (index % 2 === 1) {

@@ -68,8 +68,9 @@ class DataGridTableHead {
      * @param columns The columns of the table.
      */
     constructor(container: HTMLElement, columns: DataGridColumn[]) {
-        this.container = container;
         this.columns = columns;
+        this.container = makeHTMLElement('tr', {}, container);
+        this.container.setAttribute('aria-rowindex', 1);
     }
 
 
@@ -83,10 +84,13 @@ class DataGridTableHead {
      * Renders the table head.
      */
     public render(): void {
+
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const element = makeHTMLElement('th', {
                 innerText: this.columns[i].name
             }, this.container);
+
+            element.setAttribute('scope', 'col');
 
             this.columns[i].headElement = element;
         }
