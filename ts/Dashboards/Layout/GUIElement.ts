@@ -45,7 +45,7 @@ abstract class GUIElement {
     // Get offsets of the guiElement relative to
     // the referenceElement or the Viewport.
     public static getOffsets(
-        guiElement: Cell|GUIElement|any,
+        guiElement: Cell|Cell.DOMCell,
         referenceElement?: HTMLDOMElement
     ): Record<string, number> {
         const offset = { left: 0, top: 0, right: 0, bottom: 0 };
