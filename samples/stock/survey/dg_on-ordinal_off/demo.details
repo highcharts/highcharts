@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock
+ authors:
+   - Kamil Musialowski
+ js_wrap: b
+...
