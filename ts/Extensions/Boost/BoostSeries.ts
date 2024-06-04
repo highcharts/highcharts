@@ -61,8 +61,7 @@ const {
     pick,
     pushUnique,
     wrap,
-    defined,
-    merge
+    defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 
@@ -210,17 +209,15 @@ function compose<T extends typeof Series>(
         addEvent(SeriesClass, 'destroy', onSeriesDestroy);
         addEvent(SeriesClass, 'hide', onSeriesHide);
         addEvent(SeriesClass, 'show', function (this: Series): void {
-            if (!this.boosted) {
-                this.update(
-                    merge(true, this.options, {
-                        marker: {
-                            enabled: pick(
-                                this.userOptions?.marker?.enabled,
-                                true
-                            )
-                        }
-                    })
-                );
+            if (
+                this.markerGroup &&
+                (
+                    this.userOptions.marker?.enabled ||
+                    !defined(this.userOptions.marker)
+                )
+            ) {
+                this.markerGroup.attr({ opacity: 1 });
+                this.redraw();
             }
         });
 
@@ -816,14 +813,15 @@ function onSeriesHide(
 ): void {
     const boost = this.boost;
 
-    if (!this.boosted) {
-        this.update(
-            merge(true, this.options, {
-                marker: {
-                    enabled: false
-                }
-            })
-        );
+    if (
+        this.markerGroup &&
+        (
+            this.userOptions.marker?.enabled ||
+            !defined(this.userOptions.marker)
+        )
+    ) {
+        this.markerGroup.attr({ opacity: 0 });
+        this.redraw();
     }
 
     if (boost && boost.canvas && boost.target) {
