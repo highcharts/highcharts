@@ -650,20 +650,6 @@ class Toolbar {
     }
 
     /**
-     * Remove highcharts-active class from button.
-     * @private
-     */
-    public removeButtonActiveClass(
-        button: HTMLDOMElement
-    ): void {
-        const classList = button.classList;
-
-        if (classList.contains('highcharts-active')) {
-            classList.remove('highcharts-active');
-        }
-    }
-
-    /**
      * Remove active class from all buttons except defined.
      * @private
      */

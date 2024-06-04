@@ -275,7 +275,7 @@ function onNavigationBindingsDeselectButton(
             button = button.parentNode.parentNode;
         }
 
-        gui.removeButtonActiveClass(button);
+        button.classList.remove('highcharts-active');
     }
 }
 
