@@ -217,7 +217,7 @@ function compose<T extends typeof Series>(
                 )
             ) {
                 this.markerGroup.attr({ opacity: 1 });
-                this.redraw();
+                this.update({}, false);
             }
         });
 
@@ -821,7 +821,7 @@ function onSeriesHide(
         )
     ) {
         this.markerGroup.attr({ opacity: 0 });
-        this.redraw();
+        this.update({}, false);
     }
 
     if (boost && boost.canvas && boost.target) {
