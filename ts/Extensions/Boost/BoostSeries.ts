@@ -212,6 +212,8 @@ function compose<T extends typeof Series>(
             if (
                 this.markerGroup &&
                 (
+                    // If user has explicitly enabled markers
+                    // or if user has not turned markers off
                     this.userOptions.marker?.enabled ||
                     !defined(this.userOptions.marker)
                 )
@@ -816,6 +818,8 @@ function onSeriesHide(
     if (
         this.markerGroup &&
         (
+            // If user has explicitly enabled markers
+            // or if user has not turned markers off
             this.userOptions.marker?.enabled ||
             !defined(this.userOptions.marker)
         )
