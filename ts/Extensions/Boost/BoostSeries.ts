@@ -1119,7 +1119,7 @@ function seriesRenderCanvas(this: Series): void {
         this.markerGroup = this.plotGroup(
             'markerGroup',
             'markers',
-            'hidden',
+            'visible',
             1,
             chart.seriesGroup
         ).addClass('highcharts-tracker');
