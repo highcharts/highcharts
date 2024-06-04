@@ -19,10 +19,10 @@
 
 
 import FS from 'node:fs';
-import FSLib from './gulptasks/lib/fs.js';
+import FSLib from './libs/fs.js';
 import Path from 'node:path';
 import TS from 'typescript';
-import TSLib from './lib/ts.js';
+import TSLib from './libs/ts.js';
 import Yargs from 'yargs';
 
 

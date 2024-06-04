@@ -290,7 +290,7 @@
         click(chart.yAxis[0].ticks['0'].label.element);
 
         spaceCollapsed = getSpacing(chart);
-        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height + 1;
+        axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height;
 
         assert.equal(
             axisLineLength,
@@ -823,6 +823,49 @@
             assert.ok(
                 true,
                 'There should be no errors in the console.'
+            );
+        });
+
+    QUnit.test(
+        'Gantt rangeSelector with scrollablePlotArea is fixed, #20940',
+        function (assert) {
+
+            const chart = Highcharts.ganttChart('container', {
+                chart: {
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                rangeSelector: {
+                    enabled: true
+                },
+                series: [
+                    {
+                        data: [
+                            {
+                                name: 'Task 1',
+                                start: 2,
+                                end: 3
+                            },
+                            {
+                                name: 'Task 2',
+                                start: 3,
+                                end: 4
+                            },
+                            {
+                                name: 'Task 3',
+                                start: 1,
+                                end: 2
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            assert.ok(
+                chart.rangeSelector.buttonGroup
+                    .element.closest('.highcharts-fixed'),
+                'rangeSelector is a part of fixed elements.'
             );
         });
 }());

@@ -16,6 +16,7 @@
  *
  * */
 
+import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type GlobalsLike from './GlobalsLike';
 
 /* *
@@ -132,6 +133,7 @@ declare global {
     }
 
     interface Window {
+        chrome?: unknown;
         /** @deprecated */
         opera?: unknown;
         /** @deprecated */
@@ -141,6 +143,7 @@ declare global {
     }
 
     interface GlobalOptions {
+        buttonTheme: ButtonThemeObject;
         /** @deprecated */
         canvasToolsURL?: string;
         /** @deprecated */
@@ -202,7 +205,7 @@ namespace Globals {
             ).createSVGRect
         ),
         userAgent = (win.navigator && win.navigator.userAgent) || '',
-        isChrome = userAgent.indexOf('Chrome') !== -1,
+        isChrome = win.chrome,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
         isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
         isSafari = !isChrome && userAgent.indexOf('Safari') !== -1,

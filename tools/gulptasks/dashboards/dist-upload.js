@@ -146,7 +146,7 @@ async function uploadFile(
     targetFolder,
     maxAge = HTTP_MAX_AGE.oneDay
 ) {
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
     const fileContent = fs.readFileSync(sourceFile);
     const isGzip = Buffer.from(fileContent).readUInt16BE() === 8075;
 
@@ -202,8 +202,8 @@ async function uploadFolder(
     targetFolder,
     maxAge
 ) {
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
 
     logLib.warn(`Start upload of "${sourceFolder}"...`);
 
@@ -253,8 +253,8 @@ async function uploadZips(
     targetFolder
 ) {
 
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
 
     logLib.warn(`Start upload of "${sourceFolder}"...`);
 
@@ -298,7 +298,7 @@ async function distUpload() {
 
     const aws = require('@aws-sdk/client-s3');
     const { fromIni } = require('@aws-sdk/credential-providers');
-    const logLib = require('../lib/log');
+    const logLib = require('../../libs/log');
 
     const {
             bucket,

@@ -1,0 +1,12 @@
+---
+name: Order book chart
+authors:
+  - Kamil Musialowski
+js_wrap: b
+new_until: 2024-06-19
+tags:
+  - Highcharts Stock demo
+categories:
+  - Chart types:
+      priority: 6
+...

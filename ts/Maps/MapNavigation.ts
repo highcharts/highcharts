@@ -183,8 +183,7 @@ class MapNavigation {
                 stopEvent(e as any); // Stop default click event (#4444)
             };
 
-        let navOptions = chart.options.mapNavigation as MapNavigationOptions,
-            attr: ButtonThemeObject;
+        let navOptions = chart.options.mapNavigation as MapNavigationOptions;
 
         // Merge in new options in case of update, and register back to chart
         // options.
@@ -211,13 +210,17 @@ class MapNavigation {
             }
             objectEach(navOptions.buttons, (
                 buttonOptions: MapNavigationButtonOptions,
-                n: string
+                n: 'zoomIn'|'zoomOut'
             ): void => {
                 buttonOptions = merge(navOptions.buttonOptions, buttonOptions);
 
+                const attr: ButtonThemeObject = {
+                    padding: buttonOptions.padding
+                };
+
                 // Presentational
                 if (!chart.styledMode && buttonOptions.theme) {
-                    attr = buttonOptions.theme;
+                    extend(attr, buttonOptions.theme);
                     attr.style = merge(
                         buttonOptions.theme.style,
                         buttonOptions.style // #3203
@@ -252,8 +255,7 @@ class MapNavigation {
                     .attr({
                         width,
                         height,
-                        title: (chart.options.lang as any)[n],
-                        padding: buttonOptions.padding,
+                        title: chart.options.lang[n],
                         zIndex: 5
                     })
                     .add(mapNav.navButtonsGroup);

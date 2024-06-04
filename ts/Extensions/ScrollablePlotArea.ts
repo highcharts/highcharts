@@ -186,6 +186,25 @@ class ScrollablePlotArea {
         }
     }
 
+    static fixedSelectors: string[] = [
+        '.highcharts-breadcrumbs-group',
+        '.highcharts-contextbutton',
+        '.highcharts-caption',
+        '.highcharts-credits',
+        '.highcharts-drillup-button',
+        '.highcharts-legend',
+        '.highcharts-legend-checkbox',
+        '.highcharts-navigator-series',
+        '.highcharts-navigator-xaxis',
+        '.highcharts-navigator-yaxis',
+        '.highcharts-navigator',
+        '.highcharts-range-selector-group',
+        '.highcharts-reset-zoom',
+        '.highcharts-scrollbar',
+        '.highcharts-subtitle',
+        '.highcharts-title'
+    ];
+
     public chart: Chart;
     public fixedDiv: HTMLDOMElement;
     public fixedRenderer: SVGRenderer;
@@ -425,23 +444,7 @@ class ScrollablePlotArea {
                 scrollablePixelsY
             } = this.chart,
             fixedRenderer = this.fixedRenderer,
-            fixedSelectors = [
-                '.highcharts-breadcrumbs-group',
-                '.highcharts-contextbutton',
-                '.highcharts-caption',
-                '.highcharts-credits',
-                '.highcharts-legend',
-                '.highcharts-legend-checkbox',
-                '.highcharts-navigator-series',
-                '.highcharts-navigator-xaxis',
-                '.highcharts-navigator-yaxis',
-                '.highcharts-navigator',
-                '.highcharts-reset-zoom',
-                '.highcharts-drillup-button',
-                '.highcharts-scrollbar',
-                '.highcharts-subtitle',
-                '.highcharts-title'
-            ];
+            fixedSelectors = ScrollablePlotArea.fixedSelectors;
 
         let axisClass: (string|undefined);
 

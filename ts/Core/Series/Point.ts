@@ -46,6 +46,7 @@ const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
+    crisp,
     erase,
     extend,
     fireEvent,
@@ -351,11 +352,7 @@ class Point {
             point.x = series.xAxis.nameToX(point);
         }
         if (typeof point.x === 'undefined' && series) {
-            if (typeof x === 'undefined') {
-                point.x = series.autoIncrement();
-            } else {
-                point.x = x;
-            }
+            point.x = x ?? series.autoIncrement();
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }
@@ -1621,7 +1618,7 @@ class Point {
         const pos = this.pos();
 
         return pos ? this.series.chart.renderer.symbols.circle(
-            Math.floor(pos[0]) - size,
+            crisp(pos[0], 1) - size,
             pos[1] - size,
             size * 2,
             size * 2

@@ -2,6 +2,7 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'bubble',
+        inverted: true,
         plotBorderWidth: 1,
         zooming: {
             type: 'xy'

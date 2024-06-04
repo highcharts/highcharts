@@ -4,7 +4,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
-const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getLatestCommitShaSync } = require('../tools/libs/git');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;

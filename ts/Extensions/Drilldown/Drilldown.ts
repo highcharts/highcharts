@@ -857,6 +857,7 @@ class ChartAdditions {
                                         }
                                     }
                                 );
+                                newSeries._hasTracking = false;
                             } else {
                                 // When user don't want to zoom into region only
                                 // fade out

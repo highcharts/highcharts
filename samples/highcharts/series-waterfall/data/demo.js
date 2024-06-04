@@ -12,7 +12,10 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'category'
+        type: 'category',
+        labels: {
+            padding: 0
+        }
     },
 
     yAxis: {
