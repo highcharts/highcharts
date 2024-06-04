@@ -745,61 +745,86 @@ class Toolbar {
      */
     public redraw(): void {
         if (this.options.enabled !== this.guiEnabled) {
-            if (this.options.enabled === false) {
-                this.destroy();
-                this.guiEnabled = false;
-                this.visible = false;
-            }
-
-            if (this.options.enabled === true) {
-                this.createContainer();
-                this.createButtons();
-            }
-
-            this.guiEnabled = this.options.enabled;
+            this.handleGuiEnabledChange();
         } else {
             if (!this.guiEnabled) {
                 return;
             }
 
-            if (this.options.className !== this.guiClassName) {
-                if (this.guiClassName) {
-                    this.wrapper.classList.remove(this.guiClassName);
-                }
-                if (this.options.className) {
-                    this.wrapper.classList.add(this.options.className);
-                }
-                this.guiClassName = this.options.className;
-            }
-
-            if (this.options.toolbarClassName !== this.toolbarClassName) {
-                if (this.toolbarClassName) {
-                    this.toolbar.classList.remove(this.toolbarClassName);
-                }
-                if (this.options.toolbarClassName) {
-                    this.toolbar.classList.add(this.options.toolbarClassName);
-                }
-                this.toolbarClassName = this.options.toolbarClassName;
-            }
-
-            if (
-                !shallowArraysEqual(this.options.buttons, this.buttonList) ||
-                this.isDirty
-            ) {
-                this.toolbar.innerHTML = AST.emptyHTML;
-                this.createButtons();
-            }
-
-            if (this.options.enabled === false) {
-                this.destroy();
-            }
-
-            if (defined(this.options.visible)) {
-                this.visible = this.options.visible;
-            }
-
+            this.updateClassNames();
+            this.updateButtons();
+            this.updateVisibility();
             this.showHideNavigation();
             this.showHideToolbar();
+        }
+    }
+
+    /**
+     * Hadles the change of the `enabled` option.
+     * @private
+     */
+    private handleGuiEnabledChange(): void {
+        if (this.options.enabled === false) {
+            this.destroy();
+            this.guiEnabled = false;
+            this.visible = false;
+        }
+
+        if (this.options.enabled === true) {
+            this.createContainer();
+            this.createButtons();
+        }
+
+        this.guiEnabled = this.options.enabled;
+    }
+
+    /**
+     * Updates the class names of the GUI and toolbar elements.
+     * @private
+     */
+    private updateClassNames(): void {
+        if (this.options.className !== this.guiClassName) {
+            if (this.guiClassName) {
+                this.wrapper.classList.remove(this.guiClassName);
+            }
+            if (this.options.className) {
+                this.wrapper.classList.add(this.options.className);
+            }
+            this.guiClassName = this.options.className;
+        }
+
+        if (this.options.toolbarClassName !== this.toolbarClassName) {
+            if (this.toolbarClassName) {
+                this.toolbar.classList.remove(this.toolbarClassName);
+            }
+            if (this.options.toolbarClassName) {
+                this.toolbar.classList.add(this.options.toolbarClassName);
+            }
+            this.toolbarClassName = this.options.toolbarClassName;
+        }
+    }
+
+    /**
+     * Updates the buttons in the toolbar if the button options have changed.
+     * @private
+     */
+    private updateButtons(): void {
+        if (
+            !shallowArraysEqual(this.options.buttons, this.buttonList) ||
+            this.isDirty
+        ) {
+            this.toolbar.innerHTML = AST.emptyHTML;
+            this.createButtons();
+        }
+    }
+
+    /**
+     * Updates visibility based on current options.
+     * @private
+     */
+    private updateVisibility(): void {
+        if (defined(this.options.visible)) {
+            this.visible = this.options.visible;
         }
     }
 
