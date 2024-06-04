@@ -141,14 +141,8 @@ class DataGridTable {
      * Initializes the data grid table.
      */
     private init(): void {
-        const columnNames = this.dataTable.getColumnNames();
-
         // Load columns
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            this.columns.push(
-                new DataGridColumn(this, columnNames[i], i)
-            );
-        }
+        this.loadColumns();
 
         // Load & render head
         this.head = new DataGridTableHead(this.theadElement, this.columns);
@@ -158,6 +152,39 @@ class DataGridTable {
 
         // Refresh element dimensions after initial rendering
         this.reflow();
+    }
+
+    private loadColumns(): void {
+        const columnNames = this.dataTable.getColumnNames();
+        const columnAssignment =
+            this.dataGrid.options.columns?.columnAssignment;
+
+        if (columnAssignment) {
+            for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
+                const idOrOptions = columnAssignment[i];
+
+                if (typeof idOrOptions === 'string') {
+                    this.columns.push(
+                        new DataGridColumn(this, idOrOptions)
+                    );
+                    continue;
+                }
+
+                this.columns.push(new DataGridColumn(
+                    this,
+                    idOrOptions.columnId,
+                    idOrOptions.options
+                ));
+            }
+
+            return;
+        }
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            this.columns.push(
+                new DataGridColumn(this, columnNames[i])
+            );
+        }
     }
 
     /**

@@ -34,8 +34,7 @@ const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
         bufferSize: 5
     },
     columns: {
-        distribution: 'fill',
-        columnAssignment: 'all'
+        distribution: 'full'
     }
 };
 

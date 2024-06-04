@@ -21,10 +21,15 @@
  *
  * */
 
+import type { ColumnOptions } from './DataGridOptions';
+
 import DataGridCell from './DataGridCell.js';
 import DataGridTable from './DataGridTable.js';
 import DataTable from '../../Data/DataTable.js';
 import Globals from './Globals.js';
+import Utils from '../../Core/Utilities.js';
+
+const { merge } = Utils;
 
 
 /* *
@@ -45,6 +50,12 @@ class DataGridColumn {
     * */
 
     /**
+     * The default options of the column.
+     */
+    public static defaultOptions = {};
+
+
+    /**
      * The viewport (table) the column belongs to.
      */
     public viewport: DataGridTable;
@@ -60,9 +71,9 @@ class DataGridColumn {
     public cells: DataGridCell[] = [];
 
     /**
-     * The name of the column.
+     * The id of the column (`name` in the Data Table).
      */
-    public name: string;
+    public id: string;
 
     /**
      * The data of the column.
@@ -80,9 +91,14 @@ class DataGridColumn {
     public headElement?: HTMLElement;
 
     /**
-     * The head element of the column.
+     * The user options of the column.
      */
-    public index: number;
+    public userOptions: ColumnOptions;
+
+    /**
+     * The options of the column.
+     */
+    public options: ColumnOptions;
 
 
     /* *
@@ -95,13 +111,23 @@ class DataGridColumn {
      * Constructs a column in the data grid.
      *
      * @param viewport The viewport (table) the column belongs to.
-     * @param name The name of the column.
+     * @param id The id of the column (`name` in the Data Table).
+     * @param options The options of the column.
      */
-    constructor(viewport: DataGridTable, name: string, index: number) {
-        this.name = name;
+    constructor(
+        viewport: DataGridTable,
+        id: string,
+        options?: ColumnOptions
+    ) {
+        this.userOptions = merge(
+            viewport.dataGrid.options.columns?.options ?? {},
+            options ?? {}
+        );
+        this.options = merge(DataGridColumn.defaultOptions, options);
+
+        this.id = id;
         this.viewport = viewport;
-        this.data = viewport.dataTable.getColumn(name);
-        this.index = index;
+        this.data = viewport.dataTable.getColumn(id);
     }
 
 
@@ -117,6 +143,8 @@ class DataGridColumn {
      * @param cell The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
+        cell.htmlElement.setAttribute('column-id', this.id);
+
         this.cells.push(cell);
     }
 

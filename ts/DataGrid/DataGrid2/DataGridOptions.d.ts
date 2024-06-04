@@ -69,53 +69,61 @@ export interface RowsOptions {
  * Column options that can be shared between columns but can be set for each
  * column individually.
  */
-export interface SharedColumnOptions {
+export interface ColumnOptions {
     /**
      * The title of the column to display in the grid structure.
      * @unimplemented
      */
-    headFormat?: string;
+    name?: string;
 
     /**
      * The format of the cell content.
      * @unimplemented
      */
-    cellFormat?: string;
+    format?: string;
 }
 
 /**
  * Options for columns.
  */
-export interface ColumnsOptions extends SharedColumnOptions {
+export interface ColumnsOptions {
 
     /**
-     * The distribution of the columns. If `fill`, the columns will be
+     * The distribution of the columns. If `full`, the columns will be
      * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixedWidth`, the columns will have a fixed width in pixels.
+     * the grid. If `fixed`, the columns will have a fixed width in pixels.
      *
-     * @default 'fill'
+     * @default 'full'
      */
-    distribution: 'fill' | 'fixedWidth'
+    distribution: 'full' | 'fixed'
 
     /**
      * The columns to display in the grid structure. Can be a list of column
-     * names or a list of objects with options for individual columns.
-     * Ultimately it can be set to `all` to display all columns from the data
-     * table with default options.
-     *
-     * @default 'all'
+     * IDs (data table column names) or a list of objects with options for
+     * individual columns. If not defined, all columns from the data table will
+     * be displayed with default options.
      */
-    columnAssignment: Array<string | ColumnAssignmentOptions> | 'all';
+    columnAssignment?: Array<string | ColumnAssignmentOptions>;
+
+    /**
+     * Column options that will be shared between all columns.
+     */
+    options?: ColumnOptions;
 }
 
 /**
  * Options for column assignment for individual columns.
  */
-export interface ColumnAssignmentOptions extends SharedColumnOptions {
+export interface ColumnAssignmentOptions {
     /**
-     * The name of the column in the data table.
+     * The id of the affected column (the name of the column in the data table).
      */
-    name: string;
+    columnId: string;
+
+    /**
+     * Options for the column.
+     */
+    options: ColumnOptions;
 }
 
 

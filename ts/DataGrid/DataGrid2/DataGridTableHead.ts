@@ -102,7 +102,7 @@ class DataGridTableHead {
     public render(): void {
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const element = makeHTMLElement('th', {
-                innerText: this.columns[i].name
+                innerText: this.columns[i].id
             }, this.container);
 
             this.columns[i].headElement = element;
@@ -112,7 +112,8 @@ class DataGridTableHead {
             );
         }
 
-        document.addEventListener('mousemove', (e: MouseEvent): void => {
+        document.addEventListener('mousemove', (): void => {
+            /* TODO(DD)
             if (this.draggedResizeHandle && this.draggedColumn) {
                 const diff = e.pageX - (this.dragStartX || 0);
                 const column = this.draggedColumn;
@@ -129,8 +130,8 @@ class DataGridTableHead {
                             (initWidth + diff) + 'px';
                     });
                 }
-
             }
+            */
         });
 
         document.addEventListener('mouseup', (): void => {
