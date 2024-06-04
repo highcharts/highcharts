@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/na/na-all.topo.json">Namibia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/na/na-all.topo.json">Namibia</a>'
         },
 
         mapNavigation: {

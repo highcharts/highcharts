@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-fl-all.topo.json">Flevoland</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-fl-all.topo.json">Flevoland</a>'
         },
 
         mapNavigation: {

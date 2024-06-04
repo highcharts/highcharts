@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-az-congress-113.topo.json">Arizona congressional districts</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-az-congress-113.topo.json">Arizona congressional districts</a>'
         },
 
         mapNavigation: {

@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json">Nordic Countries without Greenland, Svalbard, and Jan Mayen</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json">Nordic Countries without Greenland, Svalbard, and Jan Mayen</a>'
         },
 
         mapNavigation: {
