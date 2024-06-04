@@ -3634,7 +3634,7 @@ class Chart {
                 to = {},
                 trigger
             } = params,
-            { inverted } = this;
+            { inverted, time } = this;
 
         let hasZoomed = false,
             displayButton: boolean|undefined;
@@ -3740,9 +3740,12 @@ class Chart {
                     allExtremes || {}
                 ),
 
+                optionsMin = time.parse(options.min),
+                optionsMax = time.parse(options.max),
+
                 // For boosted chart where data extremes are skipped
-                safeDataMin = dataMin ?? options.min,
-                safeDataMax = dataMax ?? options.max,
+                safeDataMin = dataMin ?? optionsMin,
+                safeDataMax = dataMax ?? optionsMax,
 
                 range = newMax - newMin,
                 padRange = axis.categories ? 0 : Math.min(
@@ -3750,10 +3753,10 @@ class Chart {
                     safeDataMax - safeDataMin
                 ),
                 paddedMin = safeDataMin - padRange * (
-                    defined(options.min) ? 0 : options.minPadding
+                    defined(optionsMin) ? 0 : options.minPadding
                 ),
                 paddedMax = safeDataMax + padRange * (
-                    defined(options.max) ? 0 : options.maxPadding
+                    defined(optionsMax) ? 0 : options.maxPadding
                 ),
 
                 // We're allowed to zoom outside the data extremes if we're
@@ -3765,12 +3768,12 @@ class Chart {
 
                 // Calculate the floor and the ceiling
                 floor = Math.min(
-                    options.min ?? paddedMin,
+                    optionsMin ?? paddedMin,
                     paddedMin,
                     allowZoomOutside ? min : paddedMin
                 ),
                 ceiling = Math.max(
-                    options.max ?? paddedMax,
+                    optionsMax ?? paddedMax,
                     paddedMax,
                     allowZoomOutside ? max : paddedMax
                 );

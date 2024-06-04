@@ -402,7 +402,7 @@ function onBeforeRender(
             const options = axis.options || {},
                 labelOptions = options.labels,
                 uniqueNames = options.uniqueNames,
-                max = options.max,
+                max = chart.time.parse(options.max),
                 // Check whether any of series is rendering for the first
                 // time, visibility has changed, or its data is dirty, and
                 // only then update. #10570, #10580. Also check if
@@ -789,14 +789,15 @@ function wrapSetTickInterval(
 ): void {
     const axis = this,
         options = axis.options,
+        time = axis.chart.time,
         linkedParent = typeof options.linkedTo === 'number' ?
             this.chart[axis.coll]?.[options.linkedTo] :
             void 0,
         isTreeGrid = options.type === 'treegrid';
 
     if (isTreeGrid) {
-        axis.min = pick(axis.userMin, options.min, axis.dataMin);
-        axis.max = pick(axis.userMax, options.max, axis.dataMax);
+        axis.min = axis.userMin ?? time.parse(options.min) ?? axis.dataMin;
+        axis.max = axis.userMax ?? time.parse(options.max) ?? axis.dataMax;
 
         fireEvent(axis, 'foundExtremes');
 

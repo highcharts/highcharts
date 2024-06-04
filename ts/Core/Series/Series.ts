@@ -704,13 +704,11 @@ class Series {
         const options = this.options,
             {
                 pointIntervalUnit,
-                pointStart,
                 relativeXValue
             } = this.options,
             time = this.chart.time,
             xIncrement = this.xIncrement ??
-                (isString(pointStart) ? time.parse(pointStart) : void 0) ??
-                options.pointStart ??
+                time.parse(options.pointStart) ??
                 0;
 
         let pointInterval: number;

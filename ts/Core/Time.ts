@@ -30,6 +30,7 @@ const {
     extend,
     isNumber,
     isObject,
+    isString,
     merge,
     objectEach,
     pad,
@@ -366,13 +367,17 @@ class Time {
 
     /**
      * Parse a datetime string. Unless the string contains time zone
-     * information, apply the current `timezone` from options.
+     * information, apply the current `timezone` from options. If the argument
+     * is a number, return it.
      *
      * @function Highcharts.Time#parse
-     * @param    {string} s         The datetime string to parse
-     * @return   {number|undefined} Parsed JavaScript timestamp
+     * @param    {string|number|undefined} s The datetime string to parse
+     * @return   {number|undefined}          Parsed JavaScript timestamp
      */
-    public parse(s: string): number|undefined {
+    public parse(s: string|number|undefined|null): number|undefined {
+        if (!isString(s)) {
+            return s ?? void 0;
+        }
         const ts = Date.parse(
             // Firefox fails on YYYY/MM/DD
             s.replace(/\//g, '-')

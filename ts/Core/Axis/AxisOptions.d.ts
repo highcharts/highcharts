@@ -147,11 +147,11 @@ export interface AxisOptions {
     lineWidth: number;
     linkedTo?: number;
     margin?: number;
-    max?: (null|number);
+    max?: (null|number|string);
     maxPadding: number;
     maxRange?: number;
     maxZoom?: number;
-    min?: (null|number);
+    min?: (null|number|string);
     minorGridLineColor: ColorType;
     minorGridLineDashStyle: DashStyleValue;
     minorGridLineWidth: number;
