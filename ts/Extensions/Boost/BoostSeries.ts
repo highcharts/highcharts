@@ -61,7 +61,8 @@ const {
     pick,
     pushUnique,
     wrap,
-    defined
+    defined,
+    merge
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 
@@ -208,6 +209,17 @@ function compose<T extends typeof Series>(
 
         addEvent(SeriesClass, 'destroy', onSeriesDestroy);
         addEvent(SeriesClass, 'hide', onSeriesHide);
+        addEvent(SeriesClass, 'show', function (this: Series): void {
+            if (!this.boosted) {
+                this.update(
+                    merge(true, this.options, {
+                        marker: {
+                            enabled: true
+                        }
+                    })
+                );
+            }
+        });
 
         if (wglMode) {
             seriesProto.renderCanvas = seriesRenderCanvas;
@@ -801,6 +813,16 @@ function onSeriesHide(
 ): void {
     const boost = this.boost;
 
+    if (!this.boosted) {
+        this.update(
+            merge(true, this.options, {
+                marker: {
+                    enabled: false
+                }
+            })
+        );
+    }
+
     if (boost && boost.canvas && boost.target) {
         if (boost.wgl) {
             boost.wgl.clear();
@@ -1096,7 +1118,7 @@ function seriesRenderCanvas(this: Series): void {
         this.markerGroup = this.plotGroup(
             'markerGroup',
             'markers',
-            'visible',
+            this.visible ? 'visible' : 'hidden',
             1,
             chart.seriesGroup
         ).addClass('highcharts-tracker');
