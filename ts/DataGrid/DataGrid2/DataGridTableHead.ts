@@ -23,6 +23,7 @@
 
 import Utils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
+import DataGridTable from './DataGridTable.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -60,16 +61,24 @@ class DataGridTableHead {
      */
     public draggedResizeHandle?: HTMLElement;
 
-    /*
-    * The start position of dragging.
-    * @internal
-    */
+    /**
+     * The start position of dragging.
+     * @internal
+     */
     private dragStartX?: number;
-    /*
-    * The column when dragging.
-    * @internal
-    */
+
+    /**
+     * The column when dragging.
+     * @internal
+     */
     private draggedColumn?: DataGridColumn;
+
+    /**
+     * The viewport (table) the table head belongs to.
+     */
+    public viewport: DataGridTable;
+
+    private initColumnWidths?: [number, number];
 
 
     /* *
@@ -81,12 +90,13 @@ class DataGridTableHead {
     /**
      * Constructs a new table head.
      *
-     * @param container The container of the table head.
-     * @param columns The columns of the table.
+     * @param viewport
+     * The viewport (table) the table head belongs to.
      */
-    constructor(container: HTMLElement, columns: DataGridColumn[]) {
-        this.container = container;
-        this.columns = columns;
+    constructor(viewport: DataGridTable) {
+        this.viewport = viewport;
+        this.container = viewport.theadElement;
+        this.columns = viewport.columns;
     }
 
 
@@ -112,31 +122,41 @@ class DataGridTableHead {
             );
         }
 
-        document.addEventListener('mousemove', (): void => {
-            /* TODO(DD)
-            if (this.draggedResizeHandle && this.draggedColumn) {
-                const diff = e.pageX - (this.dragStartX || 0);
-                const column = this.draggedColumn;
-                const initWidth = (column?.getWidth() || 0);
-                const columnsDOM = column.viewport.container.querySelectorAll(
-                    'th:nth-child(' + (column.index + 1) + '),' +
-                    'td:nth-child(' + (column.index + 1) + ')'
-                );
-
-                if (column?.headElement) {
-                    columnsDOM.forEach((el): void => {
-                        const element = (el as HTMLElement);
-                        element.style.width = element.style.maxWidth =
-                            (initWidth + diff) + 'px';
-                    });
-                }
+        document.addEventListener('mousemove', (e: MouseEvent): void => {
+            if (!this.draggedResizeHandle || !this.draggedColumn) {
+                return;
             }
-            */
+
+            const diff = e.pageX - (this.dragStartX || 0);
+            const column = this.draggedColumn;
+            const nextColumn = this.columns[column.index + 1];
+
+            if (!nextColumn) {
+                return;
+            }
+
+            if (this.initColumnWidths === void 0) {
+                this.initColumnWidths = [
+                    column.getWidth(),
+                    nextColumn.getWidth()
+                ];
+            }
+
+            column.widthRatio = this.viewport.getRatioFromWidth(
+                this.initColumnWidths[0] + diff
+            );
+
+            nextColumn.widthRatio = this.viewport.getRatioFromWidth(
+                this.initColumnWidths[1] - diff
+            );
+
+            this.viewport.reflow();
         });
 
         document.addEventListener('mouseup', (): void => {
             if (this.draggedResizeHandle) {
                 this.draggedColumn = void 0;
+                this.initColumnWidths = void 0;
             }
         });
     }
@@ -161,6 +181,7 @@ class DataGridTableHead {
         this.container.style.paddingRight =
             this.container.offsetWidth - width + 'px';
     }
+
     /**
      * Render the drag handle for resizing columns.
      * @internal

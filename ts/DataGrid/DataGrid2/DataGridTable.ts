@@ -21,6 +21,8 @@
  *
  * */
 
+import type { ColumnDistribution } from './DataGridOptions';
+
 import DGUtils from './Utils.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
@@ -99,6 +101,11 @@ class DataGridTable {
      */
     public rowsVirtualizer: RowsVirtualizer;
 
+    /**
+     * The column distribution.
+     */
+    public columnDistribution: ColumnDistribution;
+
 
     /* *
     *
@@ -115,6 +122,8 @@ class DataGridTable {
         this.dataGrid = dataGrid;
         this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
+        this.columnDistribution =
+            dataGrid.options.columns?.distribution as ColumnDistribution;
 
         const { tableElement } = dataGrid;
 
@@ -145,7 +154,7 @@ class DataGridTable {
         this.loadColumns();
 
         // Load & render head
-        this.head = new DataGridTableHead(this.theadElement, this.columns);
+        this.head = new DataGridTableHead(this);
         this.head.render();
 
         this.rowsVirtualizer.initialRender();
@@ -165,7 +174,7 @@ class DataGridTable {
 
                 if (typeof idOrOptions === 'string') {
                     this.columns.push(
-                        new DataGridColumn(this, idOrOptions)
+                        new DataGridColumn(this, idOrOptions, i)
                     );
                     continue;
                 }
@@ -173,6 +182,7 @@ class DataGridTable {
                 this.columns.push(new DataGridColumn(
                     this,
                     idOrOptions.columnId,
+                    i,
                     idOrOptions.options
                 ));
             }
@@ -182,7 +192,7 @@ class DataGridTable {
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
             this.columns.push(
-                new DataGridColumn(this, columnNames[i])
+                new DataGridColumn(this, columnNames[i], i)
             );
         }
     }
@@ -226,6 +236,32 @@ class DataGridTable {
     public scrollToRow(index: number): void {
         this.tbodyElement.scrollTop =
             index * this.rowsVirtualizer.defaultRowHeight;
+    }
+
+    /**
+     * Get the widthRatio value from the width in pixels. The widthRatio is
+     * calculated based on the width of the viewport and the columns count.
+     *
+     * @param width
+     *        The width in pixels.
+     *
+     * @return The width ratio.
+     */
+    public getRatioFromWidth(width: number): number {
+        return width * this.columns.length / this.tbodyElement.clientWidth;
+    }
+
+    /**
+     * Get the width in pixels from the widthRatio value. The width is
+     * calculated based on the width of the viewport and the columns count.
+     *
+     * @param ratio
+     *       The width ratio.
+     *
+     * @returns The width in pixels.
+     */
+    public getWithFromRatio(ratio: number): number {
+        return this.tbodyElement.clientWidth / this.columns.length * ratio;
     }
 }
 

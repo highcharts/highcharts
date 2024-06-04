@@ -150,13 +150,20 @@
 .highcharts-dg-col-resizer {
     position: absolute;
     top: 0;
-    right: 0;
-    width: 5px;
+    right: -4px;
+    width: 8px;
     height: 100%;
     cursor: col-resize;
     user-select: none;
+    z-index: 10;
 }
 
-.highcharts-dg-col-resizer:hover {
-    border-right: 2px solid blue;
+.highcharts-dg-col-resizer:hover::after {
+    content: "";
+    height: 100%;
+    display: block;
+    left: 0;
+    width: 3px;
+    position: absolute;
+    border-right: 3px solid blue;
 }

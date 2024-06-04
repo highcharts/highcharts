@@ -29,6 +29,12 @@ import type DataTable from '../../Data/DataTable';
  * */
 
 /**
+ * The distribution of the columns in the grid structure.
+ */
+export type ColumnDistribution = 'full' | 'fixed';
+
+
+/**
  * Options to control the content and the user experience of a grid structure.
  */
 export interface DataGridOptions {
@@ -95,7 +101,7 @@ export interface ColumnsOptions {
      *
      * @default 'full'
      */
-    distribution: 'full' | 'fixed'
+    distribution: ColumnDistribution;
 
     /**
      * The columns to display in the grid structure. Can be a list of column

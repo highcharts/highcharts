@@ -100,6 +100,8 @@ class DataGridColumn {
      */
     public options: ColumnOptions;
 
+    public index: number;
+
 
     /* *
     *
@@ -112,11 +114,13 @@ class DataGridColumn {
      *
      * @param viewport The viewport (table) the column belongs to.
      * @param id The id of the column (`name` in the Data Table).
+     * @param index The index of the column.
      * @param options The options of the column.
      */
     constructor(
         viewport: DataGridTable,
         id: string,
+        index: number,
         options?: ColumnOptions
     ) {
         this.userOptions = merge(
@@ -126,6 +130,7 @@ class DataGridColumn {
         this.options = merge(DataGridColumn.defaultOptions, options);
 
         this.id = id;
+        this.index = index;
         this.viewport = viewport;
         this.data = viewport.dataTable.getColumn(id);
     }
@@ -151,13 +156,13 @@ class DataGridColumn {
     /**
      * Calculates the width of the column. The width is based on the width of
      * the viewport, the number of columns and the width ratio of the column.
+     *
+     * @return The width of the column in pixels.
      */
     public getWidth(): number {
-        const { viewport } = this;
-        return (
-            viewport.tbodyElement.clientWidth / viewport.columns.length
-        ) * this.widthRatio;
+        return this.viewport.getWithFromRatio(this.widthRatio);
     }
+
 
     /**
      * Sets the column hover state.
