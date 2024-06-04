@@ -214,7 +214,10 @@ function compose<T extends typeof Series>(
                 this.update(
                     merge(true, this.options, {
                         marker: {
-                            enabled: true
+                            enabled: pick(
+                                this.userOptions?.marker?.enabled,
+                                true
+                            )
                         }
                     })
                 );
