@@ -236,4 +236,6 @@ Dashboards.board('container', {
             visibility: true
         }
     }]
-}, true);
+}, true).then(dash => {
+    dash.editMode.activate();
+});

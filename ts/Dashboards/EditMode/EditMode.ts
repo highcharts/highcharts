@@ -894,11 +894,8 @@ class EditMode {
         this.potentialCellContext = cellContext;
 
         if (cellContext) {
-            const referenceElement = editMode.customHTMLMode ?
-                void 0 : editMode.board.container;
-
             const cellContextOffsets = GUIElement
-                .getOffsets(cellContext, referenceElement);
+                .getOffsets(cellContext, editMode.board.container);
             const { width, height } = GUIElement
                 .getDimFromOffsets(cellContextOffsets);
 

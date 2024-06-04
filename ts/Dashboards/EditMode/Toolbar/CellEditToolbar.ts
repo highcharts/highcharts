@@ -185,7 +185,7 @@ class CellEditToolbar extends EditToolbar {
         ) {
             const cellOffsets = GUIElement.getOffsets(
                 cell,
-                customHTMLMode ? void 0 : toolbar.editMode.board.container
+                toolbar.editMode.board.container
             );
             const x = cellOffsets.right - toolbarWidth - toolbarMargin;
             const y = cellOffsets.top + toolbarMargin;

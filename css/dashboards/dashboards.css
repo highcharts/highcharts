@@ -303,6 +303,10 @@
 }
 
 /* Edit mode */
+.highcharts-dashboards-edit-enabled {
+    position: relative;
+}
+
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-enabled.highcharts-dashboards-edit-cell-highlight-active {
     pointer-events: none;
