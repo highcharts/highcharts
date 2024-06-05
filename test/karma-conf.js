@@ -137,19 +137,8 @@ function resolveJSON(js) {
         }
     }
 
-
-    if (/styledMode:\s+true/.test(js)) {
-        codeblocks.push(`window.highchartsCSS = \`${highchartsCSS}\`;`)
-        // codeblocks.push(`window.setHCStyles();`);
-    }
-
+    codeblocks.push();
     codeblocks.push(js);
-
-    if (/styledMode:.*true/.test(js)) {
-        codeblocks.push(
-            `window.JSONSources['highchartsCSS'] = \`${highchartsCSS}\`;`
-        );
-    }
 
     // Add some files that are referenced by variables in the demos, so we're
     // not able to parse the static file name.
@@ -507,7 +496,32 @@ module.exports = function (config) {
 
 
                     // unit tests
-                    if (path.indexOf('unit-tests') !== -1) {
+                    if (path.includes('unit-tests')) {
+                        if (/styledMode:\s+true/.test(js)) {
+                            js =`window.highchartsCSS = \`${highchartsCSS}\`;`
+                            + `
+                            QUnit.testStart(()=>{
+                                document.querySelector("#test-hc-styles")?.remove();
+                                Highcharts.setOptions({
+                                    chart: {
+                                        events: {
+                                            load: function (){
+                                                if (this.styledMode) {
+                                                    window.setHCStyles();
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                            });
+                            QUnit.testDone(()=>{});
+                            `
+                                + js;
+
+
+
+                            console.log(js);
+                        }
 
                         done(js);
                         return;

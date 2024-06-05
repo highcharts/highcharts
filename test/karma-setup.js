@@ -37,14 +37,16 @@ Highcharts.setOptions({
     chart: {
         animation: false,
         events: {
-        load: function(){
-            if (this.styledMode) {
-                console.log('a chart with styledmode was loaded')
-                window.setHCStyles();
-            } else {
-                document.querySelector('#test-hc-styles')?.remove();
-            }
-        }
+        // load: function() {
+        //     if (this.styledMode) {
+        //         console.log('a chart with styledmode was loaded');
+        //         window.setHCStyles();
+        //
+        //         console.log(window.currentTests);
+        //     } else {
+        //         document.querySelector('#test-hc-styles')?.remove();
+        //     }
+        // }
         }
     },
     plotOptions: {
