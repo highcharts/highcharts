@@ -146,7 +146,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-st-all-all.topo.json">Sachsen-Anhalt</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-st-all-all.topo.json">Sachsen-Anhalt</a>'
         },
 
         mapNavigation: {

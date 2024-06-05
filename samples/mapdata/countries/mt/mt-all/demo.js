@@ -38,7 +38,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mt/mt-all.topo.json">Malta</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mt/mt-all.topo.json">Malta</a>'
         },
 
         mapNavigation: {

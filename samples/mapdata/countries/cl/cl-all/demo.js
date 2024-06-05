@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cl/cl-all.topo.json">Chile</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cl/cl-all.topo.json">Chile</a>'
         },
 
         mapNavigation: {

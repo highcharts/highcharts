@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bn/bn-all.topo.json">Brunei</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bn/bn-all.topo.json">Brunei</a>'
         },
 
         mapNavigation: {
