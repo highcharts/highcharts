@@ -85,7 +85,8 @@ QUnit.test('DataTableRowKey.modifyCell', function (assert) {
             columns: {
                 x: [ -2, -1, 0, 1, 2 ],
                 y: [ 'a', 'b', 'c', 'd', 'e' ]
-            }
+            },
+            rowKeysId: 'rkey'
         });
 
     table
@@ -114,3 +115,56 @@ QUnit.test('DataTableRowKey.modifyCell', function (assert) {
             done()
         );
 });
+
+/*
+QUnit.test('DataTableRowKey.modifyColumns', function (assert) {
+
+    const done = assert.async(),
+        modifier = new RangeModifier({
+            additive: true,
+            ranges: [{
+                column: 'x',
+                minValue: -10,
+                maxValue: -2
+            }, {
+                column: 'y',
+                minValue: 'e',
+                maxValue: 'z'
+            }]
+        }),
+        table = new DataTable({
+            columns: {
+                x: [ -2, -1, 0, 1, 2 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            },
+            rowKeysId: 'rkey'
+        });
+
+    table
+        .setModifier(modifier)
+        .then((table) => {
+
+            assert.deepEqual(
+                table.modified.getRowObjects(),
+                [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
+                'Modified table should contain two rows.'
+            );
+
+            table.setColumns({ x: [-3, -2, 0] });
+
+            assert.deepEqual(
+                table.modified.getRowObjects(),
+                [{ x: -3, y: 'a' }, { x: -2, y: 'b' }],
+                'Modified table should contain two rows with valid values.'
+            );
+
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
+
+});
+*/

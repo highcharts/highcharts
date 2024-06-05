@@ -136,10 +136,10 @@
       "npm run lint"
     ],
     "./ts/Dashboards/**/*.ts": [
-      "cd ts/Dashboards && npx eslint"
+      "pwd && cd ts/Dashboards && npx eslint"
     ],
     "./ts/DataGrid/**/*.ts": [
-      "cd ts/DataGrid && npx eslint"
+      "pwd && cd ts/DataGrid && npx eslint"
     ],
     "*.css": [
       "stylelint"
