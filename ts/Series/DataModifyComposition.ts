@@ -76,6 +76,7 @@ declare module '../Core/Series/SeriesOptions' {
         compareBase?: (0|100);
         compareStart?: boolean;
         cumulative?: boolean;
+        cumulativeStart?: boolean;
     }
 }
 
@@ -666,8 +667,19 @@ namespace DataModifyComposition {
                     // Record for tooltip etc.
                     const point = this.series.points[index];
 
+                    const cumulativeStart =
+                            point.series.options.cumulativeStart,
+                        withinRange =
+                            point.x <= this.series.xAxis.max! &&
+                            point.x >= this.series.xAxis.min!;
+
+
                     if (point) {
-                        point.cumulativeSum = value;
+                        if (!cumulativeStart || withinRange) {
+                            point.cumulativeSum = value;
+                        } else {
+                            point.cumulativeSum = void 0;
+                        }
                     }
 
                     return value;
@@ -720,7 +732,7 @@ export default DataModifyComposition;
 
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point **before** the range.
+ * range or should start from the last point **before** the range.
  *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
@@ -771,6 +783,24 @@ export default DataModifyComposition;
  * @since 9.3.0
  * @product   highstock
  * @apioption plotOptions.series.cumulative
+ */
+
+/**
+ * Defines if cumulation should start from the first point within the visible
+ * range or should start from the last point **before** the range.
+ *
+ * In other words, this flag determines if first point within the visible range
+ * will start at 0 (`cumulativeStart=true`) or should have been already calculated
+ * according to the previous point (`cumulativeStart=false`).
+ *
+ * @sample {highstock} stock/plotoptions/series-cumulativestart/
+ *         Cumulative Start
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since 11.4.2
+ * @product   highstock
+ * @apioption plotOptions.series.cumulativeStart
  */
 
 ''; // Keeps doclets above in transpiled file

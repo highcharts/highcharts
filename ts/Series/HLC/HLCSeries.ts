@@ -30,6 +30,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
+    crisp,
     extend,
     merge
 } = U;
@@ -123,12 +124,9 @@ class HLCSeries extends ColumnSeries {
         // Crisp vector coordinates
         const strokeWidth = graphic.strokeWidth(),
             series = point.series,
-            crispCorr = (strokeWidth % 2) / 2,
             // #2596:
-            crispX = Math.round(point.plotX as any) - crispCorr,
+            crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
-
-        let plotClose = point.plotClose;
 
         // The vertical stem
         const path: SVGPath = [
@@ -138,7 +136,7 @@ class HLCSeries extends ColumnSeries {
 
         // Close
         if (point.close !== null) {
-            plotClose = Math.round(point.plotClose) + crispCorr;
+            const plotClose = crisp(point.plotClose, strokeWidth);
             path.push(
                 ['M', crispX, plotClose],
                 ['L', crispX + halfWidth, plotClose]

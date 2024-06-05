@@ -43,6 +43,7 @@ const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
+    crisp,
     extend,
     merge,
     pick,
@@ -368,12 +369,12 @@ class TreegraphSeries extends TreemapSeries {
     public translateLink(link: TreegraphLink): void {
         const fromNode = link.fromNode,
             toNode = link.toNode,
-            linkWidth = this.options.link.lineWidth,
-            crisp = (Math.round(linkWidth) % 2) / 2,
-            factor = pick(this.options.link.curveFactor, 0.5),
+            linkWidth = this.options.link?.lineWidth || 0,
+            factor = pick(this.options.link?.curveFactor, 0.5),
             type = pick(
-                link.options.link && link.options.link.type,
-                this.options.link.type
+                link.options.link?.type,
+                this.options.link?.type,
+                'default'
             );
 
         if (fromNode.shapeArgs && toNode.shapeArgs) {
@@ -381,19 +382,23 @@ class TreegraphSeries extends TreemapSeries {
             const fromNodeWidth = (fromNode.shapeArgs.width || 0),
                 inverted = this.chart.inverted,
 
-                y1 = Math.floor(
+                y1 = crisp(
                     (fromNode.shapeArgs.y || 0) +
-                    (fromNode.shapeArgs.height || 0) / 2
-                ) + crisp,
+                        (fromNode.shapeArgs.height || 0) / 2,
+                    linkWidth
+                ),
 
-                y2 = Math.floor(
+                y2 = crisp(
                     (toNode.shapeArgs.y || 0) +
-                    (toNode.shapeArgs.height || 0) / 2
-                ) + crisp;
+                        (toNode.shapeArgs.height || 0) / 2,
+                    linkWidth
+                );
 
-            let x1 = Math.floor((fromNode.shapeArgs.x || 0) + fromNodeWidth) +
-                crisp,
-                x2 = Math.floor(toNode.shapeArgs.x || 0) + crisp;
+            let x1 = crisp(
+                    (fromNode.shapeArgs.x || 0) + fromNodeWidth,
+                    linkWidth
+                ),
+                x2 = crisp(toNode.shapeArgs.x || 0, linkWidth);
 
             if (inverted) {
                 x1 -= fromNodeWidth;
@@ -404,7 +409,7 @@ class TreegraphSeries extends TreemapSeries {
             const fullWidth = Math.abs(x2 - x1) + fromNodeWidth,
                 width = (fullWidth / diff) - fromNodeWidth,
                 offset = width * factor * (inverted ? -1 : 1);
-            const xMiddle = Math.floor((x2 + x1) / 2) + crisp;
+            const xMiddle = crisp((x2 + x1) / 2, linkWidth);
             link.plotX = xMiddle;
             link.plotY = y2;
 
@@ -418,7 +423,7 @@ class TreegraphSeries extends TreemapSeries {
                     offset,
                     inverted,
                     parentVisible: toNode.visible,
-                    radius: this.options.link.radius
+                    radius: this.options.link?.radius
                 })
             };
 

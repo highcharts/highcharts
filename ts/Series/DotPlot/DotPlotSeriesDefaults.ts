@@ -27,14 +27,15 @@ import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
  * */
 
 const DotPlotSeriesDefaults: DotPlotSeriesOptions = {
-    itemPadding: 0.2,
+    itemPadding: 0.1,
     marker: {
         symbol: 'circle',
         states: {
             hover: {},
             select: {}
         }
-    }
+    },
+    slotsPerBar: void 0
 };
 
 /* *

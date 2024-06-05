@@ -73,7 +73,7 @@ async function setupDashboard() {
                     type: 'map',
                     map: mapData,
                     styledMode: false,
-                    animation: false,
+                    animation: true,
                     events: {
                         click: function () {
                             // Clicked outside map
@@ -209,7 +209,7 @@ async function setupDashboard() {
                             useHTML: true,
                             enabled: true,
                             inside: true,
-                            format: '{point.votes}'
+                            format: '<span class="datalabels-wrapper">{point.votes}</span>'
                         }
                     }
                 },
@@ -263,8 +263,7 @@ async function setupDashboard() {
                 },
                 legend: {
                     enabled: true,
-                    floating: true,
-                    verticalAlign: 'top',
+                    verticalAlign: 'bottom',
                     align: 'right'
                 },
                 tooltip: {
@@ -320,7 +319,7 @@ async function setupDashboard() {
             },
             dataGridOptions: {
                 cellHeight: 38,
-                editable: false, // TBD: enable
+                editable: false,
                 columns: {
                     state: {
                         headerFormat: 'State'
@@ -379,7 +378,7 @@ async function setupDashboard() {
 
 
     //
-    // Data set pre-processing (TBD: consider external script)
+    // Data set pre-processing
     //
     async function loadAndParseCsv(url, parser) {
         const data = await fetch(url)
@@ -622,8 +621,10 @@ function resetMap(mapChart) {
 }
 
 
-function formatVotes(votes, percent) {
-    return `${votes.toLocaleString('en-US')} (${percent}%) Total Votes`;
+function formatVotes(votes, percent, text = 'Votes') {
+    const voteStr = votes.toLocaleString('en-US');
+
+    return `${voteStr} (${percent}%) ${text}`;
 }
 
 
@@ -710,12 +711,12 @@ async function updateResultComponent(electionTable, year) {
     let el = document.getElementById('info-dem1');
     el.innerHTML = `${candDem}: ${demColVotes}`;
     el = document.getElementById('info-dem2');
-    el.innerHTML = formatVotes(demVotes, demPercent);
+    el.innerHTML = formatVotes(demVotes, demPercent, 'Total Votes');
 
     el = document.getElementById('info-rep1');
     el.innerHTML = `${candRep}: ${repColVotes}`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = formatVotes(repVotes, repPercent);
+    el.innerHTML = formatVotes(repVotes, repPercent, 'Total Votes');
 
     // Result bar
     el = document.getElementById('bar-dem');

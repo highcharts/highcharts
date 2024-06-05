@@ -22,6 +22,7 @@
 
 import type Sync from '../../Sync/Sync';
 import type DataGridComponent from '../DataGridComponent.js';
+import type { DataGridHighlightSyncOptions } from '../DataGridComponentOptions';
 
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
@@ -35,7 +36,9 @@ const { addEvent, removeEvent } = U;
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: DataGridHighlightSyncOptions = {
+    autoScroll: false
+};
 
 const syncPair: Sync.SyncPair = {
     emitter: function (this: Component): (() => void) | void {
@@ -46,6 +49,8 @@ const syncPair: Sync.SyncPair = {
 
         const { dataGrid, board } = component;
         const highlightOptions = this.sync.syncConfig.highlight;
+        const groupKey = highlightOptions.group ?
+            ':' + highlightOptions.group : '';
 
         if (!board || !dataGrid || !highlightOptions?.enabled) {
             return;
@@ -62,7 +67,7 @@ const syncPair: Sync.SyncPair = {
                     type: 'position',
                     row: parseInt(row.dataset.rowIndex, 10),
                     column: e.columnName,
-                    state: 'dataGrid.hoverRow'
+                    state: 'dataGrid.hoverRow' + groupKey
                 });
             }
         };
@@ -72,7 +77,7 @@ const syncPair: Sync.SyncPair = {
             if (table) {
                 cursor.emitCursor(table, {
                     type: 'position',
-                    state: 'dataGrid.hoverOut'
+                    state: 'dataGrid.hoverOut' + groupKey
                 });
             }
         };
@@ -101,29 +106,47 @@ const syncPair: Sync.SyncPair = {
         const component = this as DataGridComponent;
 
         const { board } = component;
-        const highlightOptions = component.sync.syncConfig.highlight;
+        const highlightOptions =
+            component.sync.syncConfig.highlight as DataGridHighlightSyncOptions;
+        const groupKey = highlightOptions.group ?
+            ':' + highlightOptions.group : '';
 
         if (!highlightOptions?.enabled) {
             return;
         }
 
+        let highlightTimeout: number | undefined;
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;
-            if (cursor.type === 'position') {
-                const { row } = cursor;
-                const { dataGrid } = component;
-
-                if (row !== void 0 && dataGrid) {
-                    const highlightedDataRow = dataGrid.container
-                        .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
-
-                    if (highlightedDataRow) {
-                        dataGrid.toggleRowHighlight(highlightedDataRow);
-                        dataGrid.hoveredRow = highlightedDataRow;
-                    }
-                }
+            if (cursor.type !== 'position') {
+                return;
             }
 
+            const { row } = cursor;
+            const { dataGrid } = component;
+
+            if (row === void 0 || !dataGrid) {
+                return;
+            }
+
+            if (highlightOptions.autoScroll) {
+                dataGrid.scrollToRow(
+                    row - Math.round(dataGrid.rowElements.length / 2) + 1
+                );
+            }
+
+            if (highlightTimeout) {
+                clearTimeout(highlightTimeout);
+            }
+            highlightTimeout = setTimeout((): void => {
+                const highlightedDataRow = dataGrid.container
+                    .querySelector<HTMLElement>(`.highcharts-datagrid-row[data-row-index="${row}"]`);
+
+                if (highlightedDataRow) {
+                    dataGrid.toggleRowHighlight(highlightedDataRow);
+                    dataGrid.hoveredRow = highlightedDataRow;
+                }
+            }, highlightOptions.autoScroll ? 10 : 0);
         };
 
         const handleCursorOut = (): void => {
@@ -131,7 +154,6 @@ const syncPair: Sync.SyncPair = {
             if (dataGrid) {
                 dataGrid.toggleRowHighlight(void 0);
             }
-
         };
 
         const registerCursorListeners = (): void => {
@@ -144,8 +166,16 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            cursor.addListener(table.id, 'point.mouseOver', handleCursor);
-            cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+            cursor.addListener(
+                table.id,
+                'point.mouseOver' + groupKey,
+                handleCursor
+            );
+            cursor.addListener(
+                table.id,
+                'point.mouseOut' + groupKey,
+                handleCursorOut
+            );
         };
 
         const unregisterCursorListeners = (): void => {
@@ -155,8 +185,16 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            cursor.removeListener(table.id, 'point.mouseOver', handleCursor);
-            cursor.removeListener(table.id, 'point.mouseOut', handleCursorOut);
+            cursor.removeListener(
+                table.id,
+                'point.mouseOver' + groupKey,
+                handleCursor
+            );
+            cursor.removeListener(
+                table.id,
+                'point.mouseOut' + groupKey,
+                handleCursorOut
+            );
         };
 
         if (board) {

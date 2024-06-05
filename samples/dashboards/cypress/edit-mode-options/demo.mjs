@@ -39,10 +39,47 @@ Dashboards.board('container', {
         {
             renderTo: 'dashboard-col-0',
             type: 'Highcharts',
+            editableOptions: [{
+                isStandalone: true,
+                name: 'Title',
+                propertyPath: ['title'],
+                type: 'input'
+            }, {
+                name: 'chartOptions',
+                type: 'nested',
+                nestedOptions: [{
+                    name: 'line chart',
+                    options: [{
+                        name: 'Marker Radius',
+                        propertyPath: [
+                            'chartOptions',
+                            'plotOptions',
+                            'series',
+                            'marker',
+                            'radius'
+                        ],
+                        type: 'select',
+                        selectOptions: [{
+                            name: 3
+                        }, {
+                            name: 5
+                        }]
+                    }]
+                }]
+            }],
             chartOptions: {
                 plotOptions: {
                     series: {
-                        animation: false
+                        animation: false,
+                        marker: {
+                            radius: 10
+                        },
+                        events: {
+                            update: function () {
+                                document.getElementById('marker-radius').value =
+                                    this.options.marker.radius;
+                            }
+                        }
                     }
                 },
                 chart: {

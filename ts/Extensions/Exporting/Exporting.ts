@@ -49,7 +49,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import { Palette } from '../../Core/Color/Palettes.js';
+import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -330,16 +330,11 @@ namespace Exporting {
         }
 
 
-        const attr = btnOptions.theme;
+        const theme = chart.styledMode ? {} : btnOptions.theme;
         let callback: (
             EventCallback<SVGElement>|
             undefined
         );
-
-        if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
-        }
 
         if (onclick) {
             callback = function (
@@ -376,21 +371,14 @@ namespace Exporting {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 30);
+            theme.paddingLeft = pick(theme.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
-            extend(attr, {
+            extend(theme, {
                 width: btnOptions.width,
                 height: btnOptions.height,
                 padding: 0
             });
-        }
-
-
-        if (!chart.styledMode) {
-            attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, Palette.backgroundColor);
-            attr.stroke = pick(attr.stroke, 'none');
         }
 
         const button: SVGElement = renderer
@@ -399,7 +387,7 @@ namespace Exporting {
                 0,
                 0,
                 callback as any,
-                attr,
+                theme,
                 void 0,
                 void 0,
                 void 0,
@@ -422,8 +410,12 @@ namespace Exporting {
             symbol = renderer
                 .symbol(
                     btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    Math.round(
+                        (btnOptions.symbolX || 0) - (symbolSize / 2)
+                    ),
+                    Math.round(
+                        (btnOptions.symbolY || 0) - (symbolSize / 2)
+                    ),
                     symbolSize,
                     symbolSize
                     // If symbol is an image, scale it (#7957)
@@ -1412,6 +1404,9 @@ namespace Exporting {
 
                 i = denylist.length;
                 while (i-- && !denylisted) {
+                    if (prop.length > RegexLimits.shortLimit) {
+                        throw new Error('Input too long');
+                    }
                     denylisted = (
                         denylist[i].test(prop) ||
                         typeof val === 'function'
@@ -1478,6 +1473,7 @@ namespace Exporting {
                         defaults: Record<string, string> = {};
                     for (const key in s) {
                         if (
+                            key.length < RegexLimits.shortLimit &&
                             typeof s[key] === 'string' &&
                             !/^[0-9]+$/.test(key)
                         ) {

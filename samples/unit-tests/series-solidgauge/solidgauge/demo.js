@@ -7,7 +7,7 @@ QUnit.test('tooltip', function (assert) {
 });
 
 QUnit.test('Solid gauge yAxis.update (#5895)', function (assert) {
-    var gaugeOptions = {
+    const gaugeOptions = {
         chart: {
             type: 'solidgauge',
             animation: false
@@ -49,7 +49,7 @@ QUnit.test('Solid gauge yAxis.update (#5895)', function (assert) {
     };
 
     // The speed gauge
-    var chart = Highcharts.chart(
+    const chart = Highcharts.chart(
         'container',
         Highcharts.merge(gaugeOptions, {
             yAxis: {
@@ -113,9 +113,9 @@ QUnit.test('Solid gauge yAxis.update (#5895)', function (assert) {
 });
 
 QUnit.test('Solid gauge animated color', function (assert) {
-    var clock = TestUtilities.lolexInstall();
+    const clock = TestUtilities.lolexInstall();
     try {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
                 chart: {
                     type: 'solidgauge',
                     animation: {
@@ -167,7 +167,7 @@ QUnit.test('Solid gauge animated color', function (assert) {
 });
 
 QUnit.test('Solid gauge: legend', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'solidgauge'
         },
@@ -188,7 +188,7 @@ QUnit.test('Solid gauge: legend', function (assert) {
 });
 
 QUnit.test('Solid gauge null point (#10630)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         accessibility: {
             enabled: false
         },
@@ -210,10 +210,16 @@ QUnit.test('Solid gauge null point (#10630)', function (assert) {
 });
 
 QUnit.test('Solid gauge updates', function (assert) {
-    const resetTo = Highcharts.defaultOptions.yAxis.labels.style.color;
+    const resetTo = Highcharts.defaultOptions.yAxis.labels.style.color,
+        tickLength = 0,
+        minorTickLength = 0,
+        distance = 20;
     Highcharts.setOptions({
         yAxis: {
+            tickLength,
+            minorTickLength,
             labels: {
+                distance,
                 style: {
                     color: 'red'
                 }
@@ -221,7 +227,7 @@ QUnit.test('Solid gauge updates', function (assert) {
         }
     });
 
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
             chart: {
                 type: 'solidgauge'
             },
@@ -241,10 +247,20 @@ QUnit.test('Solid gauge updates', function (assert) {
         point = chart.series[0].points[0],
         yAxis = chart.yAxis[0];
 
-    assert.strictEqual(
-        yAxis.options.labels.style.color,
-        'red',
-        '#16112: Axis options set by setOptions should be picked up'
+    assert.deepEqual(
+        [
+            yAxis.options.labels.style.color,
+            yAxis.options.tickLength,
+            yAxis.options.minorTickLength,
+            yAxis.options.labels.distance
+        ], [
+            'red',
+            tickLength,
+            minorTickLength,
+            distance
+        ],
+        `Axis options set by setOptions should overwrite defaults, #16112 and 
+        #20804.`
     );
 
     chart.series[0].update({

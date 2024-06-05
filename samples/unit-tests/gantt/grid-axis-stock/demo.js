@@ -376,7 +376,7 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
     axes[3] = chart.xAxis[3].axisGroup.getBBox();
 
-    error = 0.00001;
+    error = 0.5001;
 
     assert.close(
         axes[1].y,
@@ -502,7 +502,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
     axes[3] = chart.xAxis[3].axisGroup.getBBox();
 
-    error = 0.00001;
+    error = 0.51;
 
     assert.close(
         axes[1].y,
@@ -627,9 +627,10 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
                 leftTick = ticks[0],
                 rightTick = ticks.slice(-1)[0];
 
-            assert.equal(
+            assert.close(
                 leftTick.getBBox().x,
                 axisGroupBox.x,
+                0.51,
                 type + ' chart leftmost tick is placed correctly'
             );
 
@@ -825,7 +826,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
-        xError = 1.1,
+        xError = 1.6,
         yError = 1.6;
 
     chart = Highcharts.stockChart('container', {

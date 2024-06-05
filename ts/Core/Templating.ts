@@ -311,7 +311,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
             // Block helpers may return true or false. They may also return a
             // string, like the `each` helper.
             if (match.isBlock && typeof replacement === 'boolean') {
-                replacement = format(replacement ? body : elseBody, ctx);
+                replacement = format(replacement ? body : elseBody, ctx, chart);
             }
 
 
@@ -458,6 +458,8 @@ function numberFormat(
     if (decimals) {
         // Get the decimal component
         ret += decimalPoint + roundedNumber.slice(-decimals);
+    } else if (+ret === 0) { // Remove signed minus #20564
+        ret = '0';
     }
 
     if (exponent[1] && +ret !== 0) {

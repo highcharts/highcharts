@@ -169,6 +169,7 @@ namespace OrdinalAxis {
             );
 
             addEvent(ChartClass, 'pan', onChartPan);
+            addEvent(ChartClass, 'touchpan', onChartPan);
 
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
@@ -340,7 +341,7 @@ namespace OrdinalAxis {
                 }
                 translatedArr[i] = lastTranslated = translated;
             }
-            distances.sort();
+            distances.sort((a, b): number => a - b);
             medianDistance = distances[Math.floor(distances.length / 2)];
             if (medianDistance < (tickPixelIntervalOption as any) * 0.6) {
                 medianDistance = null;

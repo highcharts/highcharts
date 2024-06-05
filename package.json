@@ -1,6 +1,7 @@
 {
   "name": "highcharts",
-  "version": "11.4.1",
+  "version": "11.4.3",
+  "private": true,
   "description": "JavaScript charting framework",
   "module": "es-modules/masters/highcharts.src.js",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",

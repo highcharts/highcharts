@@ -42,7 +42,7 @@ function getProducts(logPaths) {
 
     // Logging for testing and debugging
     if (logPaths) {
-        const log = require('./log');
+        const log = require('../../libs/log');
         log.message('paths: ', paths);
     }
 
@@ -108,8 +108,8 @@ async function shouldRun({
 }) {
 
     const fs = require('fs');
-    const fsLib = require('./fs');
-    const logLib = require('./log');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
     const stringLib = require('./string');
 
     let configuration = {
@@ -171,7 +171,7 @@ function saveRun({
 }) {
 
     const FS = require('fs');
-    const FSLib = require('./fs');
+    const FSLib = require('../../libs/fs');
     const StringLib = require('./string');
 
     const latestCodeHash = FSLib.getDirectoryHash(
@@ -197,7 +197,7 @@ function handleProductArgs() {
     const process = require('node:process');
     const yargs = require('yargs/yargs');
     const { argv } = yargs(process.argv);
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     if (process.env.DEBUG) {
         log.message(argv);
@@ -215,7 +215,7 @@ function handleProductArgs() {
 }
 
 function getProductTests() {
-    const log = require('./log');
+
     const productTestsMap = require('../../../test/karma-product-tests.js');
 
     const products = handleProductArgs();

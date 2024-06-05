@@ -98,7 +98,7 @@ const TEMPLATE_DIRECTORY = Path.join(
 function jsDocClasses() {
 
     const gulpJSDoc = require('gulp-jsdoc3');
-    const LogLib = require('./lib/log');
+    const LogLib = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 

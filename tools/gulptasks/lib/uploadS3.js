@@ -109,7 +109,7 @@ async function deleteS3Object(
     session
 ) {
     if (session.dryrun) {
-        const fsLib = require('./fs');
+        const fsLib = require('../../libs/fs');
 
         path = Path.join(
             'tmp',
@@ -264,7 +264,7 @@ async function putS3Object(
     session = defaultSession
 ) {
     if (session.dryrun) {
-        const fsLib = require('./fs');
+        const fsLib = require('../../libs/fs');
 
         path = Path.join('tmp', 's3', session.bucket, path);
 
@@ -365,9 +365,9 @@ async function synchronizeDirectory(
     session = defaultSession,
     filterCallback = void 0
 ) {
-    const fsLib = require('./fs');
+    const fsLib = require('../../libs/fs');
     const glob = require('glob');
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     log.warn(`Start synchronization of "${sourcePath}"...`);
 
@@ -468,7 +468,10 @@ async function synchronizeDirectory(
 function toS3Path(fromPath, removeFromDestPath, prefix) {
     return {
         from: fromPath,
-        to: Path.join(prefix || '', Path.relative(removeFromDestPath, fromPath))
+        to: Path.join(
+            prefix || '',
+            Path.relative(removeFromDestPath || '', fromPath)
+        )
     };
 }
 
@@ -497,9 +500,9 @@ async function uploadDirectory(
     session = defaultSession,
     filterCallback = void 0
 ) {
-    const fsLib = require('./fs');
+    const fsLib = require('../../libs/fs');
     const glob = require('glob');
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     log.warn(`Start upload of "${sourcePath}"...`);
 
@@ -562,7 +565,7 @@ async function uploadFile(
     filterCallback = void 0,
     s3Params = {}
 ) {
-    const log = require('./log');
+    const log = require('../../libs/log');
 
     let fileContent = FS.readFileSync(sourcePath);
 
@@ -571,7 +574,7 @@ async function uploadFile(
     }
 
     if (session.dryrun) {
-        const fsLib = require('./fs');
+        const fsLib = require('../../libs/fs');
 
         targetPath = Path.join('tmp', 's3', session.bucket, targetPath);
 
@@ -656,7 +659,7 @@ function getVersionPaths(version) {
  * Promise to keep
  */
 async function uploadFiles(params) {
-    const log = require('./log');
+    const log = require('../../libs/log');
     const { files, name, bucket, s3Params } = params;
 
     params = Object.assign(

@@ -39,7 +39,7 @@ QUnit.test(
         chart.tooltip.refresh(chart.series[0].points[0]);
 
         assert.strictEqual(
-            chart.tooltip.now.anchorY,
+            chart.tooltip.label.anchorY,
             Math.round(chart.series[0].points[0].plotY) + chart.plotTop,
             'Tooltip points to the middle of the top side of fist column ' +
             '(#7242)'
@@ -50,7 +50,7 @@ QUnit.test(
         chart.tooltip.refresh(chart.series[0].points[5]);
 
         assert.strictEqual(
-            chart.tooltip.now.anchorY,
+            chart.tooltip.label.anchorY,
             Math.round(chart.series[0].points[5].plotY) + chart.plotTop,
             'Tooltip points to the middle of the top side of last column ' +
             '(#7242)'
@@ -71,14 +71,15 @@ QUnit.test(
         );
 
         chart.tooltip.refresh(chart.series[1].points[0]);
-        const distanceBefore = chart.tooltip.now.x - chart.tooltip.now.anchorX;
+        const distanceBefore = chart.tooltip.label.x -
+            chart.tooltip.label.anchorX;
 
         chart.renderTo.style.transform = 'scale(1.5)';
         chart.reflow();
 
         chart.tooltip.refresh(chart.series[1].points[0]);
         assert.strictEqual(
-            chart.tooltip.now.x - chart.tooltip.now.anchorX,
+            chart.tooltip.label.x - chart.tooltip.label.anchorX,
             distanceBefore,
             '#12031: Distance should be the same before and after scaling'
         );
@@ -183,9 +184,9 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         (barSpace * 3) / 2 +
         point1.shapeArgs.width / 2;
 
-    controller.moveTo(chart.plotLeft + 1, tooltipYPos);
+    controller.moveTo(chart.plotLeft + 2, tooltipYPos);
     assert.close(
-        chart.tooltip.now.anchorY,
+        chart.tooltip.label.anchorY,
         Math.round(tooltipYPos),
         1.1,
         'Tooltip position should be correct when bar chart xAxis has top and ' +
@@ -212,7 +213,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
 
     controller.moveTo(chart.plotLeft + 1, tooltipYPos);
     assert.close(
-        chart.tooltip.now.anchorY,
+        chart.tooltip.label.anchorY,
         Math.round(tooltipYPos),
         1.1,
         'Tooltip position should be correct when bar chart xAxis has top and ' +
@@ -311,7 +312,7 @@ QUnit.test('Tooltip position with inverted multiple axes', assert => {
 
     point1.onMouseOver();
     assert.close(
-        chart.tooltip.now.anchorX,
+        chart.tooltip.label.anchorX,
         chart.series[0].yAxis.width + chart.plotLeft - point1.plotY,
         0.5,
         'Tooltip position on inverted chart with multiple axes should appear ' +
@@ -334,13 +335,13 @@ QUnit.test('Tooltip position for inverted polar chart.', assert => {
     point1.onMouseOver();
 
     assert.equal(
-        chart.tooltip.now.anchorX,
+        chart.tooltip.label.anchorX,
         Math.round(point1.plotX + chart.plotLeft),
         'Tooltip x position should be valid.'
     );
 
     assert.equal(
-        chart.tooltip.now.anchorY,
+        chart.tooltip.label.anchorY,
         Math.round(point1.plotY + chart.plotTop),
         'Tooltip y position should be valid.'
     );

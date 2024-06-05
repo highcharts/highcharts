@@ -298,11 +298,15 @@ class SVGLabel extends SVGElement {
     }
 
     private getCrispAdjust(): number {
-        return this.renderer.styledMode && this.box ?
-            this.box.strokeWidth() % 2 / 2 :
-            (
-                this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0
-            ) % 2 / 2;
+        return (
+            this.renderer.styledMode && this.box ?
+                this.box.strokeWidth() :
+                (
+                    this['stroke-width'] ?
+                        parseInt(this['stroke-width'], 10) :
+                        0
+                )
+        ) % 2 / 2;
     }
 
     public heightSetter(value: number): void {
@@ -380,6 +384,8 @@ class SVGLabel extends SVGElement {
             this.text.attr({ text });
         }
         this.updateTextPadding();
+
+        this.reAlign();
     }
 
     /*

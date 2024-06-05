@@ -80,6 +80,7 @@ const {
     arrayMin,
     clamp,
     correctFloat,
+    crisp,
     defined,
     destroyObjectProperties,
     diffObjects,
@@ -1336,7 +1337,6 @@ class Series {
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
-            firstPoint = null,
             copiedData;
 
         if (!chart.options.chart.allowMutatingData) { // #4259
@@ -1388,23 +1388,34 @@ class Series {
                 (series as any)[key + 'Data'].length = 0;
             });
 
-            // In turbo mode, only one- or twodimensional arrays of numbers
-            // are allowed. The first value is tested, and we assume that
-            // all the rest are defined the same way. Although the 'for'
-            // loops are similar, they are repeated inside each if-else
-            // conditional for max performance.
-            if (turboThreshold && dataLength > turboThreshold) {
+            // In turbo mode, look for one- or twodimensional arrays of numbers.
+            // The first and the last valid value are tested, and we assume that
+            // all the rest are defined the same way. Although the 'for' loops
+            // are similar, they are repeated inside each if-else conditional
+            // for max performance.
+            let runTurbo = turboThreshold && dataLength > turboThreshold;
+            if (runTurbo) {
 
-                firstPoint = series.getFirstValidPoint(data);
+                const firstPoint = series.getFirstValidPoint(data),
+                    lastPoint = series.getFirstValidPoint(
+                        data, dataLength - 1, -1
+                    ),
+                    isShortArray = (a: unknown): a is Array<unknown> => Boolean(
+                        isArray(a) && (keys || isNumber(a[0]))
+                    );
 
-                if (isNumber(firstPoint)) { // Assume all points are numbers
+                // Assume all points are numbers
+                if (isNumber(firstPoint) && isNumber(lastPoint)) {
                     for (i = 0; i < dataLength; i++) {
                         (xData as any)[i] = this.autoIncrement();
                         (yData as any)[i] = data[i];
                     }
 
                 // Assume all points are arrays when first point is
-                } else if (isArray(firstPoint)) {
+                } else if (
+                    isShortArray(firstPoint) &&
+                    isShortArray(lastPoint)
+                ) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
                         if (firstPoint.length === valueCount) {
                             for (i = 0; i < dataLength; i++) {
@@ -1448,9 +1459,11 @@ class Series {
                 } else {
                     // Highcharts expects configs to be numbers or arrays in
                     // turbo mode
-                    error(12, false, chart);
+                    runTurbo = false;
                 }
-            } else {
+            }
+
+            if (!runTurbo) {
                 for (i = 0; i < dataLength; i++) {
                     pt = { series: series };
                     series.pointClass.prototype.applyOptions.apply(
@@ -2090,26 +2103,31 @@ class Series {
     }
 
     /**
-     * Find and return the first non null point in the data
+     * Find and return the first non nullish point in the data
      *
      * @private
      * @function Highcharts.Series.getFirstValidPoint
      * @param {Array<Highcharts.PointOptionsType>} data
-     * Array of options for points
+     *        Array of options for points
+     * @param {number} [start=0]
+     *        Index to start searching from
+     * @param {number} [increment=1]
+     *        Index increment, set -1 to search backwards
      */
     public getFirstValidPoint(
-        data: Array<(PointOptions|PointShortOptions)>
-    ): (PointOptions|PointShortOptions) {
+        data: Array<(PointOptions|PointShortOptions)>,
+        start = 0,
+        increment = 1
+    ): (PointOptions|PointShortOptions|undefined) {
         const dataLength = data.length;
-        let i = 0,
-            firstPoint = null;
+        let i = start;
 
-        while (firstPoint === null && i < dataLength) {
-            firstPoint = data[i];
-            i++;
+        while (i >= 0 && i < dataLength) {
+            if (defined(data[i])) {
+                return data[i];
+            }
+            i += increment;
         }
-
-        return firstPoint;
     }
 
     /**
@@ -2820,13 +2838,19 @@ class Series {
 
         const pos = point.pos();
         if (isNumber(radius) && pos) {
+            if (seriesOptions.crisp) {
+                pos[0] = crisp(
+                    pos[0],
+                    point.hasImage ?
+                        0 :
+                        symbol === 'rect' ?
+                            // Rectangle symbols need crisp edges, others don't
+                            seriesMarkerOptions?.lineWidth || 0 :
+                            1
+                );
+            }
             attribs.x = pos[0] - radius;
             attribs.y = pos[1] - radius;
-
-            if (seriesOptions.crisp) {
-                // Math.floor for #1843:
-                attribs.x = Math.floor(attribs.x);
-            }
         }
 
         if (radius) {
@@ -5123,6 +5147,10 @@ export default Series;
  * default action is to toggle the visibility of the series. This can be
  * prevented by returning `false` or calling `event.preventDefault()`.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickCallbackFunction.
+ *
+ * @deprecated
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
@@ -5135,6 +5163,10 @@ export default Series;
 /**
  * Information about the event.
  *
+ * **Note:** This option is deprecated in favor of
+ * Highcharts.LegendItemClickEventObject.
+ *
+ * @deprecated
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.

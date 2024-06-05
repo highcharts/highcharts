@@ -240,9 +240,9 @@ QUnit.test(
         assert.ok(
             !chart.tooltip.isHidden &&
         Math.round(point.plotX + chart.plotLeft) ===
-        chart.tooltip.now.anchorX &&
+        chart.tooltip.label.anchorX &&
         Math.round(point.plotY + chart.plotTop) ===
-        chart.tooltip.now.anchorY,
+        chart.tooltip.label.anchorY,
             'Tooltip should be visible and in the correct position'
         );
 
@@ -258,9 +258,9 @@ QUnit.test(
         assert.ok(
             !chart.tooltip.isHidden &&
         Math.round(point.plotX + chart.plotLeft) ===
-        chart.tooltip.now.anchorX &&
+        chart.tooltip.label.anchorX &&
         Math.round(point.plotY + chart.plotTop) ===
-        chart.tooltip.now.anchorY,
+        chart.tooltip.label.anchorY,
             'Tooltip should be visible and in the correct position'
         );
 

@@ -26,6 +26,26 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * */
 
+
+/**
+ * The dumbbell series is a cartesian series with higher and lower values
+ * for each point along an X axis, connected with a line between the
+ * values.
+ *
+ * Requires `highcharts-more.js` and `modules/dumbbell.js`.
+ *
+ * @sample {highcharts} highcharts/demo/dumbbell/
+ *         Dumbbell chart
+ * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
+ *         Styled mode
+ *
+ * @extends      plotOptions.arearange
+ * @product      highcharts highstock
+ * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
+ *               stickyTracking, trackByArea, boostThreshold, boostBlending
+ * @since 8.0.0
+ * @optionparent plotOptions.dumbbell
+ */
 const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
 
     /** @ignore-option */
@@ -176,6 +196,17 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  * @extends   series.arearange.data
  * @product   highcharts highstock
  * @apioption series.dumbbell.data
+ */
+
+/**
+ * Color of the start markers in a dumbbell graph. This option takes
+ * priority over the series color. To avoid this, set `lowColor` to
+ * `undefined`.
+ *
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @since     8.0.0
+ * @product   highcharts highstock
+ * @apioption  series.dumbbell.lowColor
  */
 
 /**

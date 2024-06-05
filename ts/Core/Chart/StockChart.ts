@@ -52,6 +52,7 @@ import U from '../Utilities.js';
 const {
     addEvent,
     clamp,
+    crisp,
     defined,
     extend,
     find,
@@ -980,15 +981,11 @@ namespace StockChart {
             const start = points[i],
                 end = points[i + 1];
 
-            if (start[1] === end[1]) {
-                // Subtract due to #1129. Now bottom and left axis gridlines
-                // behave the same.
-                start[1] = end[1] =
-                    Math.round(start[1]) - (width % 2 / 2);
+            if (defined(start[1]) && start[1] === end[1]) {
+                start[1] = end[1] = crisp(start[1], width);
             }
-            if (start[2] === end[2]) {
-                start[2] = end[2] =
-                    Math.round(start[2]) + (width % 2 / 2);
+            if (defined(start[2]) && start[2] === end[2]) {
+                start[2] = end[2] = crisp(start[2], width);
             }
         }
 

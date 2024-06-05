@@ -19,7 +19,6 @@
  *  Imports
  *
  * */
-import type Layout from '../Layout/Layout';
 import type Cell from '../Layout/Cell';
 import type Row from '../Layout/Row';
 import type Board from '../Board';
@@ -36,6 +35,8 @@ import Resizer from '../Actions/Resizer.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
 import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
+import Globals from '../Globals.js';
+import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -115,37 +116,46 @@ class EditMode {
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
 
-        this.contextPointer = {
-            isVisible: false,
-            element: createElement(
-                'div',
-                { className: EditGlobals.classNames.contextDetectionPointer },
-                {},
-                this.board.container
-            )
-        };
+        this.initLayout();
 
         this.isInitialized = false;
         this.isContextDetectionActive = false;
         this.tools = {};
 
-        this.createTools();
+        if (board.editModeEnabled) {
+            this.contextPointer = {
+                isVisible: false,
+                element: createElement(
+                    'div',
+                    {
+                        className:
+                            EditGlobals.classNames.contextDetectionPointer
+                    },
+                    {},
+                    board.container
+                )
+            };
 
-        this.confirmationPopup = new ConfirmationPopup(
-            board.container,
-            this.iconsURLPrefix,
-            this,
-            this.options.confirmationPopup
-        );
+            this.createTools();
 
-        // Create edit overlay.
-        this.editOverlay = createElement(
-            'div', {
-                className: EditGlobals.classNames.editOverlay
-            }, {},
-            board.container
-        );
-        this.isEditOverlayActive = false;
+            this.confirmationPopup = new ConfirmationPopup(
+                board.container,
+                this.iconsURLPrefix,
+                this,
+                this.options.confirmationPopup
+            );
+
+            // Create edit overlay.
+            this.editOverlay = createElement(
+                'div', {
+                    className: EditGlobals.classNames.editOverlay
+                }, {},
+                board.container
+            );
+            this.isEditOverlayActive = false;
+
+            board.fullscreen = new Dashboards.FullScreen(board);
+        }
     }
 
     /* *
@@ -236,15 +246,15 @@ class EditMode {
     /**
      * @internal
      */
-    public contextPointer: EditMode.ContextPointer;
+    public contextPointer?: EditMode.ContextPointer;
     /**
      * @internal
      */
-    public editOverlay: HTMLDOMElement;
+    public editOverlay?: HTMLDOMElement;
     /**
      * @internal
      */
-    public isEditOverlayActive: boolean;
+    public isEditOverlayActive?: boolean;
 
     /* *
     *
@@ -390,6 +400,87 @@ class EditMode {
         }
     }
 
+    /**
+     * Initialize the container for the layouts.
+     * @internal
+     *
+     */
+    private initLayout(): void {
+        const board = this.board;
+
+        // Clear the container from any content.
+        board.container.innerHTML = '';
+
+        // Set the main wrapper container.
+        board.boardWrapper = board.container;
+
+        // Add container for the board.
+        board.container = createElement(
+            'div', {
+                className: Globals.classNames.boardContainer
+            }, {},
+            board.boardWrapper
+        );
+
+        // Create layouts wrapper.
+        board.layoutsWrapper = createElement(
+            'div', {
+                className: Globals.classNames.layoutsWrapper
+            }, {},
+            board.container
+        );
+
+        if (board.options.gui) {
+            this.setLayouts(board.options.gui);
+        }
+
+        if (board.options.layoutsJSON && !board.layouts.length) {
+            this.setLayoutsFromJSON(board.options.layoutsJSON);
+        }
+    }
+
+    /**
+     * Creates a new layouts and adds it to the dashboard based on the options.
+     * @internal
+     *
+     * @param guiOptions
+     * The GUI options for the layout.
+     *
+     */
+    private setLayouts(guiOptions: Board.GUIOptions): void {
+        const board = this.board,
+            layoutsOptions = guiOptions.layouts;
+
+        for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
+            board.layouts.push(
+                new Layout(
+                    board,
+                    merge({}, guiOptions.layoutOptions, layoutsOptions[i])
+                )
+            );
+        }
+    }
+    /**
+     * Set the layouts from JSON.
+     * @internal
+     *
+     * @param json
+     * An array of layout JSON objects.
+     *
+     */
+    private setLayoutsFromJSON(json: Array<Layout.JSON>): void {
+        const board = this.board;
+
+        let layout;
+
+        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
+            layout = Layout.fromJSON(json[i], board);
+
+            if (layout) {
+                board.layouts.push(layout);
+            }
+        }
+    }
     /**
      * Set events for the layout.
      * @internal
@@ -855,6 +946,10 @@ class EditMode {
         width: number,
         height: number
     ): void {
+        if (!this.contextPointer) {
+            return;
+        }
+
         this.contextPointer.isVisible = true;
 
         css(this.contextPointer.element, {
@@ -871,7 +966,7 @@ class EditMode {
      * @internal
      */
     public hideContextPointer(): void {
-        if (this.contextPointer.isVisible) {
+        if (this.contextPointer?.isVisible) {
             this.contextPointer.isVisible = false;
             this.contextPointer.element.style.display = 'none';
         }
@@ -890,15 +985,15 @@ class EditMode {
     ): void {
         const editMode = this,
             cnt = editMode.editOverlay,
-            isSet = cnt.classList.contains(
+            isSet = cnt?.classList.contains(
                 EditGlobals.classNames.editOverlayActive
             );
 
         if (!remove && !isSet) {
-            cnt.classList.add(EditGlobals.classNames.editOverlayActive);
+            cnt?.classList.add(EditGlobals.classNames.editOverlayActive);
             editMode.isEditOverlayActive = true;
         } else if (remove && isSet) {
-            cnt.classList.remove(EditGlobals.classNames.editOverlayActive);
+            cnt?.classList.remove(EditGlobals.classNames.editOverlayActive);
             editMode.isEditOverlayActive = false;
         }
     }

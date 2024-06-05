@@ -41,6 +41,9 @@ const syncPair: Sync.SyncPair = {
             return;
         }
         const component = this as DataGridComponent;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ?
+            ':' + syncOptions.group : '';
 
         const { board } = component;
 
@@ -70,7 +73,9 @@ const syncPair: Sync.SyncPair = {
             }
 
             cursor.addListener(
-                table.id, 'xAxis.extremes.min', handleChangeExtremes
+                table.id,
+                'xAxis.extremes.min' + groupKey,
+                handleChangeExtremes
             );
         };
 
@@ -83,7 +88,9 @@ const syncPair: Sync.SyncPair = {
             }
 
             cursor.removeListener(
-                table.id, 'xAxis.extremes.min', handleChangeExtremes
+                table.id,
+                'xAxis.extremes.min' + groupKey,
+                handleChangeExtremes
             );
         };
 

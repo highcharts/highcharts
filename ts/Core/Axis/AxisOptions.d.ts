@@ -111,7 +111,7 @@ export interface AxisLabelOptions {
     formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;
     indentation: number;
     overflow: OptionsOverflowValue;
-    padding: number;
+    padding?: number;
     reserveSpace?: boolean;
     rotation?: number|'auto';
     staggerLines: number;

@@ -7,7 +7,7 @@
  */
 
 const fs = require('fs');
-const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const { getLatestCommitShaSync } = require('../tools/libs/git');
 const version = require('../package.json').version;
 
 /* eslint-disable require-jsdoc */

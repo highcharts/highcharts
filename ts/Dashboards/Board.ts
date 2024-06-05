@@ -47,8 +47,7 @@ const {
     addEvent,
     error,
     objectEach,
-    uniqueKey,
-    createElement
+    uniqueKey
 } = U;
 
 /* *
@@ -173,7 +172,7 @@ class Board implements Serializable<Board, Board.JSON> {
 
         // Init edit mode.
         if (this.guiEnabled) {
-            this.initLayout();
+            this.initEditMode();
         }
 
         // Add table cursors support.
@@ -250,7 +249,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * Flag to determine if the EditMode is enabled.
      * @internal
      * */
-    private editModeEnabled?: boolean;
+    public editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
@@ -289,6 +288,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      */
     private resizeObserver?: ResizeObserver;
+
 
     /* *
      *
@@ -377,23 +377,7 @@ class Board implements Serializable<Board, Board.JSON> {
             error(13, true);
         }
 
-        // Clear the container from any content.
-        if (this.guiEnabled) {
-            renderTo.innerHTML = '';
-
-            // Set the main wrapper container.
-            board.boardWrapper = renderTo;
-
-            // Add container for the board.
-            board.container = createElement(
-                'div', {
-                    className: Globals.classNames.boardContainer
-                }, {},
-                this.boardWrapper
-            );
-        } else {
-            board.container = renderTo;
-        }
+        board.container = renderTo;
     }
 
     /**
@@ -401,83 +385,14 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      *
      */
-    private initLayout():void {
-        const options = this.options;
-
+    private initEditMode():void {
         if (!Dashboards.EditMode) {
             throw new Error('Missing layout.js module');
         } else {
-
-            // Create layouts wrapper.
-            this.layoutsWrapper = createElement(
-                'div', {
-                    className: Globals.classNames.layoutsWrapper
-                }, {},
-                this.container
+            this.editMode = new Dashboards.EditMode(
+                this,
+                this.options.editMode
             );
-
-            if (options.gui) {
-                this.setLayouts(options.gui);
-            }
-
-            // Init layouts from JSON.
-            if (options.layoutsJSON && !this.layouts.length) {
-                this.setLayoutsFromJSON(options.layoutsJSON);
-            }
-
-            if (this.editModeEnabled) {
-                this.editMode = new Dashboards.EditMode(
-                    this,
-                    this.options.editMode
-                );
-
-                // Add fullscreen support.
-                this.fullscreen = new Dashboards.FullScreen(this);
-            }
-        }
-    }
-
-    /**
-     * Creates a new layouts and adds it to the dashboard based on the options.
-     * @internal
-     *
-     * @param guiOptions
-     * The GUI options for the layout.
-     *
-     */
-    private setLayouts(guiOptions: Board.GUIOptions): void {
-        const board = this,
-            layoutsOptions = guiOptions.layouts;
-
-        for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-            board.layouts.push(
-                new Layout(
-                    board,
-                    merge({}, guiOptions.layoutOptions, layoutsOptions[i])
-                )
-            );
-        }
-    }
-
-    /**
-     * Set the layouts from JSON.
-     * @internal
-     *
-     * @param json
-     * An array of layout JSON objects.
-     *
-     */
-    private setLayoutsFromJSON(json: Array<Layout.JSON>): void {
-        const board = this;
-
-        let layout;
-
-        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            layout = Layout.fromJSON(json[i], board);
-
-            if (layout) {
-                board.layouts.push(layout);
-            }
         }
     }
 
@@ -881,7 +796,7 @@ namespace Board {
                 return Serializable
                     .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
-                // Nothing to do
+                throw new Error(`${e}`);
             }
         }
     }

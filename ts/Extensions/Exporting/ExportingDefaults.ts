@@ -855,22 +855,25 @@ const navigation: NavigationOptions = {
              * The default fill exists only to capture hover events.
              *
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   ${palette.backgroundColor}
-             * @apioption navigation.buttonOptions.theme.fill
              */
+            fill: Palette.backgroundColor,
+
+            /**
+             * Padding for the button.
+             */
+            padding: 5,
 
             /**
              * Default stroke for the buttons.
              *
              * @type      {Highcharts.ColorString}
-             * @default   none
-             * @apioption navigation.buttonOptions.theme.stroke
              */
+            stroke: 'none',
 
             /**
-             * Padding for the button.
+             * Default stroke linecap for the buttons.
              */
-            padding: 5
+            'stroke-linecap': 'round'
 
         }
 
