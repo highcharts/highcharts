@@ -1,7 +1,3 @@
-Highcharts.Templating.helpers.log = function () {
-    console.log(arguments[0].ctx);
-};
-
 function getRandomNumber(min, max) {
     return Math.round(Math.random() * (max - min)) + min;
 }
@@ -85,7 +81,7 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormat: 'Price: {log}{price:.1f}USD, ' +
+            descriptionFormat: 'Price: {price:.1f}USD, ' +
                 '{series.name}: {y}'
         }
     },
