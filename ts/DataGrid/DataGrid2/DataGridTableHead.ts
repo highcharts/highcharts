@@ -95,8 +95,9 @@ class DataGridTableHead {
      */
     constructor(viewport: DataGridTable) {
         this.viewport = viewport;
-        this.container = viewport.theadElement;
         this.columns = viewport.columns;
+        this.container = makeHTMLElement('tr', {}, viewport.theadElement);
+        this.container.setAttribute('aria-rowindex', 1);
     }
 
 
@@ -110,10 +111,13 @@ class DataGridTableHead {
      * Renders the table head.
      */
     public render(): void {
+
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const element = makeHTMLElement('th', {
                 innerText: this.columns[i].id
             }, this.container);
+
+            element.setAttribute('scope', 'col');
 
             this.columns[i].headElement = element;
             this.draggedResizeHandle = this.renderColumnDragHandles(
