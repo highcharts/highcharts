@@ -16,12 +16,4 @@ const dg = new DataGrid.DataGrid2('container', {
     }
 });
 
-document.getElementById('scroll').addEventListener('submit', e => {
-    e.preventDefault();
-    const value = +e.target.elements['row-to-scroll'].value;
-    if (!isNaN(value)) {
-        dg.viewport.scrollToRow(value);
-    }
-});
-
 console.log(dg);
