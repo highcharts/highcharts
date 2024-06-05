@@ -112,10 +112,9 @@ QUnit.test(
 
         tooltip.refresh(point);
 
-        assert.strictEqual(
-            chart.tooltip.label.className,
-            'tooltip custom',
-            'Provided className is added to the tooltip label, #20459.'
+        assert.ok(
+            chart.tooltip.label.hasClass('custom'),
+            'Provided className should be added to the tooltip label, #20459.'
         );
 
         assert.strictEqual(

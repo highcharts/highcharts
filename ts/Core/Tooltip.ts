@@ -493,9 +493,7 @@ class Tooltip {
                         void 0,
                         options.useHTML,
                         void 0,
-                        // Add custom `className` to tooltip label (#20459)
-                        options.className ?
-                            `tooltip ${options.className}` : 'tooltip'
+                        'tooltip'
                     )
                     .attr({
                         padding: options.padding,
@@ -1070,14 +1068,15 @@ class Tooltip {
                         });
                     }
 
+                    // Set the stroke color of the box to reflect the point
+                    // Add class before the label BBox is calculated (#21035)
+                    label.addClass(tooltip.getClassName(point), true);
+
                     label.attr({
                         text: text && (text as any).join ?
                             (text as any).join('') :
                             text
                     });
-
-                    // Set the stroke color of the box to reflect the point
-                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({
