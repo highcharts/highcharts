@@ -103,6 +103,10 @@
     border-right: 1px solid #00ff00;
     height: 30px;
     position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
 }
 
 .highcharts-dg-table tbody {
@@ -150,20 +154,26 @@
 .highcharts-dg-col-resizer {
     position: absolute;
     top: 0;
-    right: -4px;
-    width: 8px;
+    width: 10px;
+    right: 0;
     height: 100%;
     cursor: col-resize;
     user-select: none;
     z-index: 10;
 }
 
-.highcharts-dg-col-resizer:hover::after {
+.highcharts-dg-col-resizer::after {
     content: "";
-    height: 100%;
-    display: block;
-    left: 0;
-    width: 3px;
     position: absolute;
-    border-right: 3px solid blue;
+    display: block;
+    height: 20px;
+    width: 4px;
+    margin-top: -10px;
+    top: 50%;
+    left: 0;
+    border-right: 2px solid #898989;
+}
+
+.highcharts-dg-col-resizer:hover::after {
+    border-color: blue;
 }

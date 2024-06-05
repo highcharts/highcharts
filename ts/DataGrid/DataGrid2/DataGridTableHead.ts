@@ -131,6 +131,8 @@ class DataGridTableHead {
                 return;
             }
 
+            const MIN_WIDTH = 20;
+
             const diff = e.pageX - (this.dragStartX || 0);
             const column = this.draggedColumn;
             const nextColumn = this.columns[column.index + 1];
@@ -146,13 +148,24 @@ class DataGridTableHead {
                 ];
             }
 
-            column.widthRatio = this.viewport.getRatioFromWidth(
-                this.initColumnWidths[0] + diff
-            );
+            const leftColW = this.initColumnWidths[0];
+            const rightColW = this.initColumnWidths[1];
 
-            nextColumn.widthRatio = this.viewport.getRatioFromWidth(
-                this.initColumnWidths[1] - diff
-            );
+            let newLeftW = leftColW + diff;
+            let newRightW = rightColW - diff;
+
+            if (newLeftW < MIN_WIDTH) {
+                newLeftW = MIN_WIDTH;
+                newRightW = leftColW + rightColW - MIN_WIDTH;
+            }
+
+            if (newRightW < MIN_WIDTH) {
+                newRightW = MIN_WIDTH;
+                newLeftW = leftColW + rightColW - MIN_WIDTH;
+            }
+
+            column.widthRatio = this.viewport.getRatioFromWidth(newLeftW);
+            nextColumn.widthRatio = this.viewport.getRatioFromWidth(newRightW);
 
             this.viewport.reflow();
         });
@@ -178,7 +191,8 @@ class DataGridTableHead {
             }
 
             const columnWidth = column.getWidth();
-            column.headElement.style.width = columnWidth + 'px';
+            column.headElement.style.width =
+                column.headElement.style.maxWidth = columnWidth + 'px';
             width += columnWidth;
         }
 
