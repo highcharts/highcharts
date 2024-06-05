@@ -1953,7 +1953,7 @@ class Pointer {
             const relatedTargetObj = { relatedTarget: chart.container };
 
             if (e && !e?.relatedTarget) {
-                e = { ...e, ...relatedTargetObj };
+                e = { ...relatedTargetObj, ...e };
             }
 
             hoverChart.pointer?.onContainerMouseLeave(
