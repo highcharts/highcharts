@@ -71,25 +71,20 @@ namespace Bindings {
         idOrElement: string,
         parentElement?: HTMLElement
     ): (GUIElement|undefined) {
-        let container;
         let guiElement;
 
-        if (typeof idOrElement === 'string') {
-            if (document.querySelectorAll('#' + idOrElement).length > 1) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
-                    'font-weight: bold',
-                    ''
-                );
-            }
-
-            container = parentElement ?
-                parentElement.querySelector('#' + idOrElement) :
-                document.getElementById(idOrElement);
-        } else {
-            container = idOrElement;
+        if (document.querySelectorAll('#' + idOrElement).length > 1) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
+                'font-weight: bold',
+                ''
+            );
         }
+
+        const container = parentElement ?
+            parentElement.querySelector('#' + idOrElement) :
+            document.getElementById(idOrElement);
 
         if (container !== null) {
             fireEvent(container, 'bindedGUIElement', {}, function (
