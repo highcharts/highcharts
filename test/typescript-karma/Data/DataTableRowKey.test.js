@@ -12,6 +12,7 @@ QUnit.test('DataTableRowKey.modify', async function (assert) {
             rowKeysId: 'rkey'
         }),
         modifier = new RangeModifier();
+        modifier.options.ranges.length = 0;
 
     const rowKeysId = table.getRowKeysId();
     assert.equal(rowKeysId, 'rkey', 'Row key column should be set');
@@ -63,9 +64,53 @@ QUnit.test('DataTableRowKey.modify', async function (assert) {
         },
         'Filtered table should contain intersective reduction of rows.'
     );
-
-    // Range modifier default options are static.
-    // Clear in order not to wreck other tests
-    modifier.options.ranges.length = 0;
 });
 
+QUnit.test('DataTableRowKey.modifyCell', function (assert) {
+
+    const done = assert.async(),
+        modifier = new RangeModifier({
+            additive: true,
+            ranges: [{
+                column: 'x',
+                minValue: -10,
+                maxValue: -2
+            }, {
+                column: 'y',
+                minValue: 'e',
+                maxValue: 'z'
+            }]
+        }),
+        table = new DataTable({
+            columns: {
+                x: [ -2, -1, 0, 1, 2 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            }
+        });
+
+    table
+        .setModifier(modifier)
+        .then((table) => {
+
+            assert.deepEqual(
+                table.modified.getRowObjects(),
+                [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
+                'Modified table should contain two rows.'
+            );
+
+            table.setCell('x', 0, -1.5);
+
+            assert.deepEqual(
+                table.modified.getRowObjects(),
+                [{ x: 2, y: 'e' }],
+                'Modified table should contain one row.'
+            );
+
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() => 
+            done()
+        );
+});
