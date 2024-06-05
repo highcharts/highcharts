@@ -93,8 +93,13 @@ abstract class GUIElement {
         };
     }
 
-    // Method for element id generation.
-    public static createElementId(
+    /**
+     * Based on the element provided, generate an unique id.
+     *
+     * @param elementType
+     * Type of the element.
+     */
+    public static getElementId(
         elementType: 'col' | 'row' | 'layout' | 'col-nested' | 'cell'
     ): string {
         return (

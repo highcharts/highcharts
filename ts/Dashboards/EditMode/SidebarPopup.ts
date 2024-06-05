@@ -68,15 +68,15 @@ class SidebarPopup extends BaseForm {
                         (dropContext as Row)
                 ),
                 board = row.layout.board,
-                newLayoutName = GUIElement.createElementId('layout'),
-                cellName = GUIElement.createElementId('cell'),
+                newLayoutId = GUIElement.getElementId('layout'),
+                cellId = GUIElement.getElementId('cell'),
                 layout = new Layout(board, {
-                    id: newLayoutName,
+                    id: newLayoutId,
                     copyId: '',
                     parentContainerId: board.container.id,
                     rows: [{
                         cells: [{
-                            id: cellName
+                            id: cellId
                         }]
                     }],
                     style: {}
@@ -98,7 +98,7 @@ class SidebarPopup extends BaseForm {
 
             void Bindings.addComponent({
                 type: 'HTML',
-                cell: cellName,
+                cell: cellId,
                 elements: [
                     {
                         tagName: 'div',
@@ -347,10 +347,10 @@ class SidebarPopup extends BaseForm {
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
                                 const board = this.editMode.board,
-                                    newLayoutName =
-                                        GUIElement.createElementId('layout'),
+                                    newLayoutId =
+                                        GUIElement.getElementId('layout'),
                                     layout = new Layout(board, {
-                                        id: newLayoutName,
+                                        id: newLayoutId,
                                         copyId: '',
                                         parentContainerId: board.container.id,
                                         rows: [{}],
@@ -398,7 +398,7 @@ class SidebarPopup extends BaseForm {
                         (dropContext as Row)
                 ),
                 newCell = row.addCell({
-                    id: GUIElement.createElementId('col')
+                    id: GUIElement.getElementId('col')
                 });
 
             dragDrop.onCellDragEnd(newCell);

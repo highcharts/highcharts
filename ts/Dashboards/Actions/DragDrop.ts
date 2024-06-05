@@ -745,7 +745,7 @@ class DragDrop {
                 row.unmountCell(dropContextCell);
 
                 const newCell = row.addCell({
-                    id: GUIElement.createElementId('col-nested'),
+                    id: GUIElement.getElementId('col-nested'),
                     layout: {
                         rows: [{}, {}]
                     }
