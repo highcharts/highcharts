@@ -51,6 +51,9 @@ abstract class GUIElement {
      *
      * @param referenceElement
      * The element to get the offsets relative to.
+     *
+     * @returns
+     * The offsets of the guiElement.
      */
     public static getOffsets(
         guiElement: Cell|GUIElement,
@@ -83,6 +86,9 @@ abstract class GUIElement {
      *
      * @param offsets
      * The offsets of the guiElement container.
+     *
+     * @returns
+     * The dimensions of the guiElement container.
      */
     public static getDimFromOffsets(
         offsets: GUIElement.Offset
@@ -98,6 +104,9 @@ abstract class GUIElement {
      *
      * @param elementType
      * Type of the element.
+     *
+     * @returns
+     * The unique id.
      */
     public static getElementId(
         elementType: 'col' | 'row' | 'layout' | 'col-nested' | 'cell'
@@ -108,12 +117,17 @@ abstract class GUIElement {
         );
     }
 
-    // Get width in percentages (0% - 100%).
-    public static getPercentageWidth(
-        width: string // Supported formats '50%' or '1/2'
-    ): string | undefined {
+    /**
+     * Get width in percentages (0% - 100%).
+     *
+     * @param width
+     * The width of the element. Supported formats '50%' or '1/2'.
+     *
+     * @returns
+     * The width in percentages.
+     */
+    public static getPercentageWidth(width: string): string | undefined {
         const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/;
-
         let result;
 
         if (fractionRegEx.test(width)) {
@@ -171,6 +185,9 @@ abstract class GUIElement {
      *
      * @param {GUIElement.ContainerOptions} options
      * Options.
+     *
+     * @returns
+     * The HTML element for the element container.
      */
     protected getElementContainer(
         options: GUIElement.GetElementContainerOptions
@@ -217,8 +234,7 @@ abstract class GUIElement {
     }
 
     /**
-     * Destroy the element, its container, event hooks
-     * and all properties.
+     * Destroy the element, its container, event hooks and all properties.
      */
     protected destroy(): void {
         const guiElement = this;
@@ -241,7 +257,8 @@ abstract class GUIElement {
 
     /**
      * Return the GUIElement instance type.
-     * @return {GUIElement.GUIElementType|undefined}
+     *
+     * @returns
      * The GUIElement instance type
      */
     public getType(): GUIElement.GUIElementType|undefined {
