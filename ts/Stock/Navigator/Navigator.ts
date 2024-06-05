@@ -569,7 +569,7 @@ class Navigator {
      * @param {Highcharts.NavigatorOptions} options
      *        Options to merge in when updating navigator
      */
-    public update(options: NavigatorOptions): void {
+    public update(options: NavigatorOptions, redraw = false): void {
         const chart = this.chart;
 
         merge(true, chart.options.navigator, options);
@@ -624,6 +624,10 @@ class Navigator {
                     [chart.inverted ? 'width' : 'height']: this.height
                 }, false);
             }
+        }
+
+        if (redraw) {
+            this.chart.redraw();
         }
     }
 
