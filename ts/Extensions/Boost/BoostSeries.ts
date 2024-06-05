@@ -208,20 +208,6 @@ function compose<T extends typeof Series>(
 
         addEvent(SeriesClass, 'destroy', onSeriesDestroy);
         addEvent(SeriesClass, 'hide', onSeriesHide);
-        addEvent(SeriesClass, 'show', function (this: Series): void {
-            if (
-                this.markerGroup &&
-                (
-                    // If user has explicitly enabled markers
-                    // or if user has not turned markers off
-                    this.userOptions.marker?.enabled ||
-                    !defined(this.userOptions.marker)
-                )
-            ) {
-                this.markerGroup.attr({ opacity: 1 });
-                this.update({}, false);
-            }
-        });
 
         if (wglMode) {
             seriesProto.renderCanvas = seriesRenderCanvas;
@@ -815,19 +801,6 @@ function onSeriesHide(
 ): void {
     const boost = this.boost;
 
-    if (
-        this.markerGroup &&
-        (
-            // If user has explicitly enabled markers
-            // or if user has not turned markers off
-            this.userOptions.marker?.enabled ||
-            !defined(this.userOptions.marker)
-        )
-    ) {
-        this.markerGroup.attr({ opacity: 0 });
-        this.update({}, false);
-    }
-
     if (boost && boost.canvas && boost.target) {
         if (boost.wgl) {
             boost.wgl.clear();
@@ -1128,17 +1101,6 @@ function seriesRenderCanvas(this: Series): void {
             chart.seriesGroup
         ).addClass('highcharts-tracker');
     } else {
-        // If series has a private markerGroup, remove that
-        // and use common markerGroup
-        if (
-            this.markerGroup &&
-            this.markerGroup !== chartBoost?.markerGroup
-        ) {
-            this.markerGroup.destroy();
-        }
-        // Use a single group for the markers
-        this.markerGroup = chartBoost?.markerGroup;
-
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
         if (seriesBoost && seriesBoost.target) {
