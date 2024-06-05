@@ -294,11 +294,7 @@ class DataGrid {
         this.dataTable = this.initDataTable();
 
         // Create lookup table for row indexes (optional)
-        const rowKeysId = this.dataTable.getRowKeysId();
-        if (rowKeysId) {
-            // Get row ID (invisible column)
-            this.rowKeyLookup = this.dataTable.getColumn(rowKeysId);
-        }
+        this.rowKeyLookup = this.dataTable.getRowKeysColumn();
 
         this.rowElements = [];
         this.draggedResizeHandle = null;

@@ -234,6 +234,8 @@ class DataTable implements DataEvent.Emitter {
             alias = aliasKeys[i];
             thisAliases[alias] = aliases[alias];
         }
+
+        this.setRowKeysColumn(rowCount);
     }
 
     /* *
@@ -856,6 +858,11 @@ class DataTable implements DataEvent.Emitter {
             columnNamesOrAliases || Object.keys(tableColumns)
         );
 
+        if (this.rowKeysId) {
+            columnNamesOrAliases =
+                // eslint-disable-next-line max-len
+                columnNamesOrAliases.filter((val: string): Boolean => val !== this.rowKeysId);
+        }
         for (
             let i = 0,
                 iEnd = columnNamesOrAliases.length,
@@ -1454,6 +1461,21 @@ class DataTable implements DataEvent.Emitter {
             for (let i = 0; i < nRows; i++) {
                 this.columns[id][i] = id + '_' + String(i);
             }
+        }
+    }
+
+    /**
+     * Get the row key column.
+     *
+     * @function Highcharts.DataTable#getRowKeysColumn
+     *     *
+     * @return {DataTable.Column|undefined}
+     * Returns row keys if rowKeysId s defined, else undefined.
+     */
+    public getRowKeysColumn(): DataTable.Column|undefined {
+        const id = this.rowKeysId;
+        if (id) {
+            return this.columns[id];
         }
     }
 
