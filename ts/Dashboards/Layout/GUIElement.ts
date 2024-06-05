@@ -42,13 +42,22 @@ abstract class GUIElement {
     *
     * */
 
-    // Get offsets of the guiElement relative to
-    // the referenceElement or the Viewport.
+    /**
+     * Get offsets of the guiElement relative to the referenceElement or the
+     * Viewport.
+     *
+     * @param guiElement
+     * The element to get the offsets from.
+     *
+     * @param referenceElement
+     * The element to get the offsets relative to.
+     */
     public static getOffsets(
-        guiElement: Cell|Cell.DOMCell,
+        guiElement: Cell|GUIElement,
         referenceElement?: HTMLDOMElement
-    ): Record<string, number> {
-        const offset = { left: 0, top: 0, right: 0, bottom: 0 };
+    ): GUIElement.Offset {
+        const offset =
+            { left: 0, top: 0, right: 0, bottom: 0 }as GUIElement.Offset;
 
         if (!guiElement.container) {
             return offset;
@@ -69,10 +78,15 @@ abstract class GUIElement {
         return offset;
     }
 
-    // Get dimensions of the guiElement container from offsets.
+    /**
+     * Get dimensions of the guiElement container from offsets.
+     *
+     * @param offsets
+     * The offsets of the guiElement container.
+     */
     public static getDimFromOffsets(
-        offsets: Record<string, number>
-    ): Record<string, number> {
+        offsets: GUIElement.Offset
+    ): GUIElement.Dimensions {
         return {
             width: offsets.right - offsets.left,
             height: offsets.bottom - offsets.top
@@ -81,7 +95,7 @@ abstract class GUIElement {
 
     // Method for element id generation.
     public static createElementId(
-        elementType: string // 'col', 'row', 'layout'
+        elementType: 'col' | 'row' | 'layout' | 'col-nested' | 'cell'
     ): string {
         return (
             Globals.classNamePrefix + elementType + '-' +
@@ -272,6 +286,18 @@ namespace GUIElement {
     }
 
     export type GUIElementType = 'row'|'cell'|'layout';
+
+    export interface Offset {
+        left: number;
+        top: number;
+        right: number;
+        bottom: number;
+    }
+
+    export interface Dimensions {
+        width: number;
+        height: number;
+    }
 }
 
 export default GUIElement;

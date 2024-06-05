@@ -175,7 +175,6 @@ class CellEditToolbar extends EditToolbar {
     public showToolbar(cell: Cell): void {
         const toolbar = this;
         const cellCnt = cell.container;
-        const customHTMLMode = toolbar.editMode.customHTMLMode;
         const toolbarWidth = 30;
         const toolbarMargin = 10;
 

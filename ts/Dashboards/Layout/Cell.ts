@@ -394,7 +394,7 @@ class Cell extends GUIElement {
 
     // Method to get array of overlapping levels.
     public getOverlappingLevels(
-        align: string, // 'left', 'right', 'top', 'bottom'
+        align: 'left' | 'right' |'top' |'bottom',
         levelMaxGap: number, // Max distance between levels
         offset?: number // Analyzed cell offset
     ): Array<number> {

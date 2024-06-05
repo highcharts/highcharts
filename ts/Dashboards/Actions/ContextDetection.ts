@@ -52,7 +52,7 @@ class ContextDetection {
         mouseContext: Cell,
         offset: number,
         sideOffset: number,
-        side: string
+        side: 'right' | 'left' | 'top' | 'bottom'
     ): number {
         // Array of overlapped levels.
         const overlappedLevels =
