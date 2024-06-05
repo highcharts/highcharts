@@ -56,24 +56,6 @@ class DataGridTableHead {
     public container: HTMLElement;
 
     /**
-     * The element when dragging.
-     * @internal
-     */
-    public draggedResizeHandle?: HTMLElement;
-
-    /**
-     * The start position of dragging.
-     * @internal
-     */
-    private dragStartX?: number;
-
-    /**
-     * The column when dragging.
-     * @internal
-     */
-    private draggedColumn?: DataGridColumn;
-
-    /**
      * The viewport (table) the table head belongs to.
      */
     public viewport: DataGridTable;
@@ -108,74 +90,26 @@ class DataGridTableHead {
     * */
 
     /**
-     * Renders the table head.
+     * Renders the table head content.
      */
     public render(): void {
-
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const element = makeHTMLElement('th', {
                 innerText: this.columns[i].id
             }, this.container);
 
+            // Set the scope attribute to 'col' for accessibility.
             element.setAttribute('scope', 'col');
 
+            // Set the column's head element.
             this.columns[i].headElement = element;
-            this.draggedResizeHandle = this.renderColumnDragHandles(
+
+            // Render the drag handle for resizing columns.
+            this.renderColumnDragHandles(
                 this.columns[i],
                 element
             );
         }
-
-        document.addEventListener('mousemove', (e: MouseEvent): void => {
-            if (!this.draggedResizeHandle || !this.draggedColumn) {
-                return;
-            }
-
-            const MIN_WIDTH = 20;
-
-            const diff = e.pageX - (this.dragStartX || 0);
-            const column = this.draggedColumn;
-            const nextColumn = this.columns[column.index + 1];
-
-            if (!nextColumn) {
-                return;
-            }
-
-            if (this.initColumnWidths === void 0) {
-                this.initColumnWidths = [
-                    column.getWidth(),
-                    nextColumn.getWidth()
-                ];
-            }
-
-            const leftColW = this.initColumnWidths[0];
-            const rightColW = this.initColumnWidths[1];
-
-            let newLeftW = leftColW + diff;
-            let newRightW = rightColW - diff;
-
-            if (newLeftW < MIN_WIDTH) {
-                newLeftW = MIN_WIDTH;
-                newRightW = leftColW + rightColW - MIN_WIDTH;
-            }
-
-            if (newRightW < MIN_WIDTH) {
-                newRightW = MIN_WIDTH;
-                newLeftW = leftColW + rightColW - MIN_WIDTH;
-            }
-
-            column.widthRatio = this.viewport.getRatioFromWidth(newLeftW);
-            nextColumn.widthRatio = this.viewport.getRatioFromWidth(newRightW);
-
-            this.viewport.reflow();
-        });
-
-        document.addEventListener('mouseup', (): void => {
-            if (this.draggedResizeHandle) {
-                this.draggedColumn = void 0;
-                this.initColumnWidths = void 0;
-            }
-        });
     }
 
     /**
@@ -191,8 +125,12 @@ class DataGridTableHead {
             }
 
             const columnWidth = column.getWidth();
+
+            // Set the width of the column. Max width is needed for the
+            // overflow: hidden to work.
             column.headElement.style.width =
                 column.headElement.style.maxWidth = columnWidth + 'px';
+
             width += columnWidth;
         }
 
@@ -211,13 +149,7 @@ class DataGridTableHead {
             className: 'highcharts-dg-col-resizer'
         }, headElement);
 
-        handle.addEventListener(
-            'mousedown',
-            (e: MouseEvent): void => {
-                this.dragStartX = e.pageX;
-                this.draggedColumn = column;
-            }
-        );
+        this.viewport.columnsResizer.addHandleListeners(handle, column);
 
         return handle;
     }

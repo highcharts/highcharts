@@ -29,7 +29,8 @@ import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTableHead from './DataGridTableHead.js';
 import DataGrid from './DataGrid.js';
-import RowsVirtualizer from './Virtualization/RowsVirtualizer.js';
+import RowsVirtualizer from './Actions/RowsVirtualizer.js';
+import ColumnsResizer from './Actions/ColumnsResizer.js';
 
 const { makeHTMLElement } = DGUtils;
 
@@ -106,6 +107,11 @@ class DataGridTable {
      */
     public columnDistribution: ColumnDistribution;
 
+    /**
+     * The columns resizer instance that handles the columns resizing logic.
+     */
+    public columnsResizer: ColumnsResizer;
+
 
     /* *
     *
@@ -131,6 +137,7 @@ class DataGridTable {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
+        this.columnsResizer = new ColumnsResizer(this);
 
         this.init();
 
