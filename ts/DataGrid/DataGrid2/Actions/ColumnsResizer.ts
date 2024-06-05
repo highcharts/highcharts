@@ -112,20 +112,14 @@ class ColumnsResizer {
      * */
 
     /**
-     * Handles the mouse move event on the document.
+     * Resizes the columns in the full distribution mode.
      *
-     * @param e
-     *        The mouse event.
+     * @param diff
+     *        The X position difference in pixels.
      */
-    private onDocumentMouseMove = (e: MouseEvent): void => {
-        if (!this.draggedResizeHandle || !this.draggedColumn) {
-            return;
-        }
-
-        const diff = e.pageX - (this.dragStartX || 0);
+    private fullDistributionResize(diff: number): void {
         const { draggedColumn: column, nextColumn } = this;
-
-        if (!nextColumn) {
+        if (!column || !nextColumn) {
             return;
         }
 
@@ -146,8 +140,51 @@ class ColumnsResizer {
             newLeftW = leftColW + rightColW - MIN_WIDTH;
         }
 
-        column.widthRatio = this.viewport.getRatioFromWidth(newLeftW);
-        nextColumn.widthRatio = this.viewport.getRatioFromWidth(newRightW);
+        column.width = this.viewport.getRatioFromWidth(newLeftW);
+        nextColumn.width = this.viewport.getRatioFromWidth(newRightW);
+    }
+
+    /**
+     * Resizes the columns in the fixed distribution mode.
+     *
+     * @param diff
+     *        The X position difference in pixels.
+     */
+    private fixedDistributionResize(diff: number): void {
+        const column = this.draggedColumn;
+        if (!column) {
+            return;
+        }
+
+        const colW = this.columnStartWidth ?? 0;
+        const MIN_WIDTH = ColumnsResizer.MIN_COLUMN_WIDTH;
+
+        let newW = colW + diff;
+        if (newW < MIN_WIDTH) {
+            newW = MIN_WIDTH;
+        }
+
+        column.width = newW;
+    }
+
+    /**
+     * Handles the mouse move event on the document.
+     *
+     * @param e
+     *        The mouse event.
+     */
+    private onDocumentMouseMove = (e: MouseEvent): void => {
+        if (!this.draggedResizeHandle || !this.draggedColumn) {
+            return;
+        }
+
+        const diff = e.pageX - (this.dragStartX || 0);
+
+        if (this.viewport.columnDistribution === 'full') {
+            this.fullDistributionResize(diff);
+        } else {
+            this.fixedDistributionResize(diff);
+        }
 
         this.viewport.reflow();
     };

@@ -61,9 +61,12 @@ class DataGridColumn {
     public viewport: DataGridTable;
 
     /**
-     * The width ratio of the column.
+     * The width of the column in the viewport. The interpretation of the
+     * value depends on the `columns.distribution` option:
+     * - `full`: The width is a ratio of the viewport width.
+     * - `fixed`: The width is a fixed number of pixels.
      */
-    public widthRatio: number = 1;
+    public width: number;
 
     /**
      * The cells of the column.
@@ -100,6 +103,9 @@ class DataGridColumn {
      */
     public options: ColumnOptions;
 
+    /**
+     * The index of the column in the viewport.
+     */
     public index: number;
 
 
@@ -129,6 +135,10 @@ class DataGridColumn {
         );
         this.options = merge(DataGridColumn.defaultOptions, options);
 
+        // Set the initial width of the column.
+        // TODO(DD): Get the initial width from the CSS.
+        this.width = viewport.columnDistribution === 'full' ? 1 : 100;
+
         this.id = id;
         this.index = index;
         this.viewport = viewport;
@@ -154,13 +164,14 @@ class DataGridColumn {
     }
 
     /**
-     * Calculates the width of the column. The width is based on the width of
-     * the viewport, the number of columns and the width ratio of the column.
-     *
-     * @return The width of the column in pixels.
+     * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        return this.viewport.getWithFromRatio(this.widthRatio);
+        const vp = this.viewport;
+
+        return vp.columnDistribution === 'full' ?
+            vp.getWithFromRatio(this.width) :
+            this.width;
     }
 
 
