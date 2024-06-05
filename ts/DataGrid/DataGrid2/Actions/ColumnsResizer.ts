@@ -1,6 +1,6 @@
 /* *
  *
- *  Data Grid Rows Renderer class.
+ *  Data Grid Columns Resizer class.
  *
  *  (c) 2020-2024 Highsoft AS
  *
@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -33,7 +34,7 @@ import DataGridColumn from '../DataGridColumn.js';
  * */
 
 /**
- * Represents a virtualized rows renderer for the data grid.
+ * The class that handles the resizing of columns in the data grid.
  */
 class ColumnsResizer {
 
@@ -84,6 +85,11 @@ class ColumnsResizer {
      */
     private nextColumnStartWidth?: number;
 
+    /**
+     * The handles and their mouse down event listeners.
+     */
+    private handles: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
+
 
     /* *
      *
@@ -105,6 +111,12 @@ class ColumnsResizer {
      *
      * */
 
+    /**
+     * Handles the mouse move event on the document.
+     *
+     * @param e
+     *        The mouse event.
+     */
     private onDocumentMouseMove = (e: MouseEvent): void => {
         if (!this.draggedResizeHandle || !this.draggedColumn) {
             return;
@@ -140,6 +152,9 @@ class ColumnsResizer {
         this.viewport.reflow();
     };
 
+    /**
+     * Handles the mouse up event on the document.
+     */
     private onDocumentMouseUp = (): void => {
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
@@ -149,18 +164,43 @@ class ColumnsResizer {
         this.nextColumnStartWidth = void 0;
     };
 
+    /**
+     * Adds event listeners to the handle.
+     *
+     * @param handle
+     *        The handle element.
+     * @param column
+     *        The column the handle belongs to.
+     */
     public addHandleListeners(
         handle: HTMLElement,
         column: DataGridColumn
     ): void {
-        handle.addEventListener('mousedown', (e: MouseEvent): void => {
+        const onHandleMouseDown = (e: MouseEvent): void => {
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
             this.nextColumn = this.viewport.columns[column.index + 1];
             this.draggedResizeHandle = handle;
             this.columnStartWidth = column.getWidth();
             this.nextColumnStartWidth = this.nextColumn?.getWidth();
-        });
+        };
+
+        this.handles.push([handle, onHandleMouseDown]);
+        handle.addEventListener('mousedown', onHandleMouseDown);
+    }
+
+    /**
+     * Removes all added event listeners from the document and handles. This
+     * should be called on the destroy of the data grid.
+     */
+    public removeEventListeners(): void {
+        document.removeEventListener('mousemove', this.onDocumentMouseMove);
+        document.removeEventListener('mouseup', this.onDocumentMouseUp);
+
+        for (let i = 0, iEnd = this.handles.length; i < iEnd; i++) {
+            const [handle, listener] = this.handles[i];
+            handle.removeEventListener('mousedown', listener);
+        }
     }
 }
 

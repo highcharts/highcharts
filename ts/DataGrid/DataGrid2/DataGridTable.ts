@@ -170,6 +170,9 @@ class DataGridTable {
         this.reflow();
     }
 
+    /**
+     * Loads the columns of the table.
+     */
     private loadColumns(): void {
         const columnNames = this.dataTable.getColumnNames();
         const columnAssignment =

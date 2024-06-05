@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -113,7 +114,7 @@ class DataGrid {
         this.dataTable = options.dataTable ?? new DataTable();
         this.viewport = new DataGridTable(this);
 
-        // a11y
+        // Accessibility
         this.tableElement.setAttribute(
             'aria-rowcount',
             this.dataTable.getRowCount()
