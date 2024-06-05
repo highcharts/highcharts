@@ -431,6 +431,8 @@ class DragDrop {
 
     /**
      * Unmounts dropped row and mounts it in a new position.
+     *
+     * @fires DragDrop#layoutChanged
      */
     public onRowDragEnd(): void {
         const dragDrop = this,
@@ -468,6 +470,16 @@ class DragDrop {
 
         dragDrop.hideDropPointer();
         draggedRow.show();
+
+        fireEvent(
+            dragDrop.editMode,
+            'layoutChanged',
+            {
+                type: 'rowDragEnd',
+                target: draggedRow,
+                board: dragDrop.editMode.board
+            }
+        );
     }
 
     /**
@@ -689,6 +701,8 @@ class DragDrop {
      *
      * @param {Cell} contextCell
      * Cell used as a dragDrop context.
+     *
+     * @fires DragDrop#layoutChanged
      */
     public onCellDragEnd(
         contextCell?: Cell
@@ -766,6 +780,16 @@ class DragDrop {
 
         dragDrop.hideDropPointer();
         draggedCell.show();
+
+        fireEvent(
+            dragDrop.editMode,
+            'layoutChanged',
+            {
+                type: 'cellDragEnd',
+                target: draggedCell,
+                board: dragDrop.editMode.board
+            }
+        );
     }
 }
 

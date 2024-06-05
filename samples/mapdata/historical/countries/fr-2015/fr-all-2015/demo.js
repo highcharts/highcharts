@@ -27,7 +27,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-all-2015.topo.json">France (2015)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-all-2015.topo.json">France (2015)</a>'
         },
 
         mapNavigation: {

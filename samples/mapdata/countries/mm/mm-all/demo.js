@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mm/mm-all.topo.json">Myanmar</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mm/mm-all.topo.json">Myanmar</a>'
         },
 
         mapNavigation: {

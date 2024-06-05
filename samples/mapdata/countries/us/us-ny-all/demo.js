@@ -42,7 +42,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ny-all.topo.json">New York</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ny-all.topo.json">New York</a>'
         },
 
         mapNavigation: {

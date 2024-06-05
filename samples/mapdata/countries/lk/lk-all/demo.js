@@ -28,7 +28,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lk/lk-all.topo.json">Sri Lanka</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/lk/lk-all.topo.json">Sri Lanka</a>'
         },
 
         mapNavigation: {

@@ -33,7 +33,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/dz/dz-all.topo.json">Algeria</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/dz/dz-all.topo.json">Algeria</a>'
         },
 
         mapNavigation: {

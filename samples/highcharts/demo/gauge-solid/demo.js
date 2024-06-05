@@ -12,7 +12,8 @@ const gaugeOptions = {
         endAngle: 90,
         background: {
             backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
+                Highcharts.defaultOptions.legend.backgroundColor || '#fafafa',
+            borderRadius: 5,
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'
@@ -48,6 +49,7 @@ const gaugeOptions = {
 
     plotOptions: {
         solidgauge: {
+            borderRadius: 3,
             dataLabels: {
                 y: 5,
                 borderWidth: 0,
