@@ -61,8 +61,6 @@ class DataGridTableHead {
      */
     public viewport: DataGridTable;
 
-    private initColumnWidths?: [number, number];
-
 
     /* *
     *
@@ -99,7 +97,7 @@ class DataGridTableHead {
                 innerText: this.columns[i].id
             }, this.container);
 
-            // Set the scope attribute to 'col' for accessibility.
+            // Set the accessibility attributes.
             element.setAttribute('scope', 'col');
 
             // Set the column's head element.
@@ -117,11 +115,10 @@ class DataGridTableHead {
      * Reflows the table head's content dimensions.
      */
     public reflow(): void {
-        let width = 0;
-
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const column = this.columns[i];
-            if (!column.headElement) {
+            const td = column.headElement;
+            if (!td) {
                 continue;
             }
 
@@ -129,19 +126,19 @@ class DataGridTableHead {
 
             // Set the width of the column. Max width is needed for the
             // overflow: hidden to work.
-            column.headElement.style.width =
-                column.headElement.style.maxWidth = columnWidth + 'px';
-
-            width += columnWidth;
+            td.style.width = td.style.maxWidth = columnWidth + 'px';
         }
 
-        this.container.style.paddingRight =
-            this.container.offsetWidth - width + 'px';
+        const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
+        const vp = this.viewport;
+        if (vp.rowsWidth) {
+            vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
+                offsetWidth - clientWidth + 'px';
+        }
     }
 
     /**
      * Render the drag handle for resizing columns.
-     * @internal
      */
     private renderColumnDragHandles(
         column: DataGridColumn, headElement: HTMLElement
@@ -153,6 +150,17 @@ class DataGridTableHead {
         this.viewport.columnsResizer.addHandleListeners(handle, column);
 
         return handle;
+    }
+
+    /**
+     * Scrolls the table head horizontally.
+     *
+     * @param scrollLeft
+     *        The left scroll position.
+     */
+    public scrollHorizontally(scrollLeft: number): void {
+        this.viewport.theadElement.style.transform =
+            `translateX(${-scrollLeft}px)`;
     }
 
 

@@ -143,7 +143,7 @@ class RowsVirtualizer {
 
         if (!rows.length) {
             const last = new DataGridRow(vp, vp.dataTable.getRowCount() - 1);
-            last.render(vp);
+            last.render();
             rows.push(last);
             vp.tbodyElement.appendChild(last.htmlElement);
         }
@@ -163,7 +163,7 @@ class RowsVirtualizer {
 
         for (let i = from; i <= to; ++i) {
             const newRow = new DataGridRow(vp, i);
-            newRow.render(vp);
+            newRow.render();
             vp.tbodyElement.insertBefore(
                 newRow.htmlElement,
                 vp.tbodyElement.lastChild

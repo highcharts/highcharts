@@ -112,6 +112,12 @@ class DataGridTable {
      */
     public columnsResizer: ColumnsResizer;
 
+    /**
+     * The width of each row in the table. Each of the rows has the same width.
+     * Only for the `fixed` column distribution.
+     */
+    public rowsWidth?: number;
+
 
     /* *
     *
@@ -142,9 +148,9 @@ class DataGridTable {
         this.init();
 
         // Add event listeners
-        this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
+        this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-        this.tbodyElement.addEventListener('scroll', this.onScroll.bind(this));
+        this.tbodyElement.addEventListener('scroll', this.onScroll);
     }
 
     /* *
@@ -215,28 +221,38 @@ class DataGridTable {
         this.tbodyElement.style.height =
             `calc(100% - ${this.theadElement.offsetHeight}px)`;
 
+        // Get the width of the rows
+        if (this.columnDistribution === 'fixed') {
+            let rowsWidth = 0;
+            for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+                rowsWidth += this.columns[i].width;
+            }
+            this.rowsWidth = rowsWidth;
+        }
+
         // Reflow the head
         if (this.head) {
             this.head.reflow();
         }
 
-        // Reflow rows
+        // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
     }
 
     /**
      * Handles the resize event.
      */
-    private onResize(): void {
+    private onResize = (): void => {
         this.reflow();
-    }
+    };
 
     /**
      * Handles the scroll event.
      */
-    private onScroll(): void {
+    private onScroll = (): void => {
         this.rowsVirtualizer.scroll();
-    }
+        this.head?.scrollHorizontally(this.tbodyElement.scrollLeft);
+    };
 
     /**
      * Scrolls the table to the specified row.

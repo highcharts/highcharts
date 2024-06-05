@@ -92,6 +92,7 @@
     border-collapse: collapse;
     border-spacing: 0;
     border: 1px solid #ff0000;
+    overflow: hidden;
 }
 
 .highcharts-dg-table thead {
