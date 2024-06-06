@@ -183,6 +183,7 @@ class AccessibilityComponent {
     /**
      * Fire a fake click event on an element. It is useful to have this on
      * AccessibilityComponent for users of custom components.
+     * @private
      */
     public fakeClickEvent(
         el: (HTMLElement|SVGElement|DOMElementType)
