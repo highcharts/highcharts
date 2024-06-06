@@ -510,7 +510,7 @@ module.exports = function (config) {
                                             }
                                         }
                                     }
-                                })
+                                });
                             });
 
                             QUnit.testDone(()=>{

@@ -341,13 +341,17 @@ if (window.QUnit) {
         const styleElementID = 'test-hc-styles';
         let styleElement = document.getElementById(styleElementID);
 
+        if (!chart.styledMode) {
+            styleElement?.remove();
+            return;
+        }
+
         // TODO: Investigate unit-tests/boost/heatmap-styled-mode
         if (chart.boosted) return;
 
         if (
             !styleElement &&
-            'highchartsCSS' in window &&
-            chart.styledMode
+            'highchartsCSS' in window
         ) {
             styleElement = document.createElement('style');
             styleElement.id = styleElementID;
