@@ -21,10 +21,15 @@
  *
  * */
 
+import type { ColumnOptions } from './DataGridOptions';
+
 import DataGridCell from './DataGridCell.js';
 import DataGridTable from './DataGridTable.js';
 import DataTable from '../../Data/DataTable.js';
 import Globals from './Globals.js';
+import Utils from '../../Core/Utilities.js';
+
+const { merge } = Utils;
 
 
 /* *
@@ -45,14 +50,23 @@ class DataGridColumn {
     * */
 
     /**
+     * The default options of the column.
+     */
+    public static defaultOptions = {};
+
+
+    /**
      * The viewport (table) the column belongs to.
      */
     public viewport: DataGridTable;
 
     /**
-     * The width ratio of the column.
+     * The width of the column in the viewport. The interpretation of the
+     * value depends on the `columns.distribution` option:
+     * - `full`: The width is a ratio of the viewport width.
+     * - `fixed`: The width is a fixed number of pixels.
      */
-    public widthRatio: number = 1;
+    public width: number;
 
     /**
      * The cells of the column.
@@ -60,9 +74,9 @@ class DataGridColumn {
     public cells: DataGridCell[] = [];
 
     /**
-     * The name of the column.
+     * The id of the column (`name` in the Data Table).
      */
-    public name: string;
+    public id: string;
 
     /**
      * The data of the column.
@@ -79,6 +93,21 @@ class DataGridColumn {
      */
     public headElement?: HTMLElement;
 
+    /**
+     * The user options of the column.
+     */
+    public userOptions: ColumnOptions;
+
+    /**
+     * The options of the column.
+     */
+    public options: ColumnOptions;
+
+    /**
+     * The index of the column in the viewport.
+     */
+    public index: number;
+
 
     /* *
     *
@@ -90,12 +119,30 @@ class DataGridColumn {
      * Constructs a column in the data grid.
      *
      * @param viewport The viewport (table) the column belongs to.
-     * @param name The name of the column.
+     * @param id The id of the column (`name` in the Data Table).
+     * @param index The index of the column.
+     * @param options The options of the column.
      */
-    constructor(viewport: DataGridTable, name: string) {
-        this.name = name;
+    constructor(
+        viewport: DataGridTable,
+        id: string,
+        index: number,
+        options?: ColumnOptions
+    ) {
+        this.userOptions = merge(
+            viewport.dataGrid.options.columns?.options ?? {},
+            options ?? {}
+        );
+        this.options = merge(DataGridColumn.defaultOptions, options);
+
+        // Set the initial width of the column.
+        // TODO(DD): Get the initial width from the CSS.
+        this.width = viewport.columnDistribution === 'full' ? 1 : 100;
+
+        this.id = id;
+        this.index = index;
         this.viewport = viewport;
-        this.data = viewport.dataTable.getColumn(name);
+        this.data = viewport.dataTable.getColumn(id);
     }
 
 
@@ -111,19 +158,22 @@ class DataGridColumn {
      * @param cell The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
+        cell.htmlElement.setAttribute('column-id', this.id);
+
         this.cells.push(cell);
     }
 
     /**
-     * Calculates the width of the column. The width is based on the width of
-     * the viewport, the number of columns and the width ratio of the column.
+     * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        const { viewport } = this;
-        return (
-            viewport.tbodyElement.clientWidth / viewport.columns.length
-        ) * this.widthRatio;
+        const vp = this.viewport;
+
+        return vp.columnDistribution === 'full' ?
+            vp.getWithFromRatio(this.width) :
+            this.width;
     }
+
 
     /**
      * Sets the column hover state.

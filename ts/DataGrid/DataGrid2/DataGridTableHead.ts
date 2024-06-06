@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -23,6 +24,7 @@
 
 import Utils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
+import DataGridTable from './DataGridTable.js';
 
 const { makeHTMLElement } = Utils;
 
@@ -54,6 +56,11 @@ class DataGridTableHead {
      */
     public container: HTMLElement;
 
+    /**
+     * The viewport (table) the table head belongs to.
+     */
+    public viewport: DataGridTable;
+
 
     /* *
     *
@@ -64,12 +71,14 @@ class DataGridTableHead {
     /**
      * Constructs a new table head.
      *
-     * @param container The container of the table head.
-     * @param columns The columns of the table.
+     * @param viewport
+     * The viewport (table) the table head belongs to.
      */
-    constructor(container: HTMLElement, columns: DataGridColumn[]) {
-        this.container = container;
-        this.columns = columns;
+    constructor(viewport: DataGridTable) {
+        this.viewport = viewport;
+        this.columns = viewport.columns;
+        this.container = makeHTMLElement('tr', {}, viewport.theadElement);
+        this.container.setAttribute('aria-rowindex', 1);
     }
 
 
@@ -80,15 +89,25 @@ class DataGridTableHead {
     * */
 
     /**
-     * Renders the table head.
+     * Renders the table head content.
      */
     public render(): void {
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const element = makeHTMLElement('th', {
-                innerText: this.columns[i].name
+                innerText: this.columns[i].id
             }, this.container);
 
+            // Set the accessibility attributes.
+            element.setAttribute('scope', 'col');
+
+            // Set the column's head element.
             this.columns[i].headElement = element;
+
+            // Render the drag handle for resizing columns.
+            this.renderColumnDragHandles(
+                this.columns[i],
+                element
+            );
         }
     }
 
@@ -96,21 +115,52 @@ class DataGridTableHead {
      * Reflows the table head's content dimensions.
      */
     public reflow(): void {
-        let width = 0;
-
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const column = this.columns[i];
-            if (!column.headElement) {
+            const td = column.headElement;
+            if (!td) {
                 continue;
             }
 
             const columnWidth = column.getWidth();
-            column.headElement.style.width = columnWidth + 'px';
-            width += columnWidth;
+
+            // Set the width of the column. Max width is needed for the
+            // overflow: hidden to work.
+            td.style.width = td.style.maxWidth = columnWidth + 'px';
         }
 
-        this.container.style.paddingRight =
-            this.container.offsetWidth - width + 'px';
+        const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
+        const vp = this.viewport;
+        if (vp.rowsWidth) {
+            vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
+                offsetWidth - clientWidth + 'px';
+        }
+    }
+
+    /**
+     * Render the drag handle for resizing columns.
+     */
+    private renderColumnDragHandles(
+        column: DataGridColumn, headElement: HTMLElement
+    ): HTMLElement {
+        const handle = makeHTMLElement('div', {
+            className: 'highcharts-dg-col-resizer'
+        }, headElement);
+
+        this.viewport.columnsResizer.addHandleListeners(handle, column);
+
+        return handle;
+    }
+
+    /**
+     * Scrolls the table head horizontally.
+     *
+     * @param scrollLeft
+     *        The left scroll position.
+     */
+    public scrollHorizontally(scrollLeft: number): void {
+        this.viewport.theadElement.style.transform =
+            `translateX(${-scrollLeft}px)`;
     }
 
 

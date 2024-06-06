@@ -92,6 +92,7 @@
     border-collapse: collapse;
     border-spacing: 0;
     border: 1px solid #ff0000;
+    overflow: hidden;
 }
 
 .highcharts-dg-table thead {
@@ -102,6 +103,12 @@
 .highcharts-dg-table thead th {
     border-right: 1px solid #00ff00;
     height: 30px;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+    padding-left: 3px;
 }
 
 .highcharts-dg-table tbody {
@@ -126,6 +133,8 @@
     border-right: 1px solid #00ff00;
     white-space: nowrap;
     padding-left: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .highcharts-dg-hovered-column {
@@ -142,4 +151,31 @@
 
 .highcharts-dg-table thead th.highcharts-dg-hovered-column {
     background-color: #0000ff30;
+}
+
+.highcharts-dg-col-resizer {
+    position: absolute;
+    top: 0;
+    width: 10px;
+    right: 0;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    z-index: 10;
+}
+
+.highcharts-dg-col-resizer::after {
+    content: "";
+    position: absolute;
+    display: block;
+    height: 20px;
+    width: 4px;
+    margin-top: -10px;
+    top: 50%;
+    left: 0;
+    border-right: 2px solid #898989;
+}
+
+.highcharts-dg-col-resizer:hover::after {
+    border-color: blue;
 }

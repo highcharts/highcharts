@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -109,8 +110,15 @@ class DataGrid {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.classNames.tableElement
         }, this.container);
+
         this.dataTable = options.dataTable ?? new DataTable();
         this.viewport = new DataGridTable(this);
+
+        // Accessibility
+        this.tableElement.setAttribute(
+            'aria-rowcount',
+            this.dataTable.getRowCount()
+        );
     }
 
     /* *

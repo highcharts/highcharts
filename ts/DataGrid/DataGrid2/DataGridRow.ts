@@ -98,7 +98,10 @@ class DataGridRow {
         });
 
         this.htmlElement.setAttribute('row-index', index);
-        this.htmlElement.setAttribute('aria-rowindex', index);
+
+        // 1 - index of the head, 1 to avoid indexing from 0
+        this.htmlElement.setAttribute('aria-rowindex', index + 2);
+
         this.htmlElement.setAttribute('row-id', index);
 
         if (index % 2 === 1) {
@@ -116,16 +119,12 @@ class DataGridRow {
     /**
      * Renders the row's content. It does not attach the row element to the
      * viewport nor pushes the rows to the viewport.rows array.
-     *
-     * @param viewport The viewport of the data grid.
      */
-    public render(viewport: DataGridTable): void {
-        const columns = viewport.columns;
+    public render(): void {
+        const columns = this.viewport.columns;
 
-        this.viewport = viewport;
-
-        for (let j = 0, jEnd = columns.length; j < jEnd; ++j) {
-            const cell = new DataGridCell(columns[j], this);
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            const cell = new DataGridCell(columns[i], this);
             cell.render();
         }
 
@@ -138,6 +137,11 @@ class DataGridRow {
     public reflow(): void {
         for (let j = 0, jEnd = this.cells.length; j < jEnd; ++j) {
             this.cells[j].reflow();
+        }
+
+        const vp = this.viewport;
+        if (vp.rowsWidth) {
+            this.htmlElement.style.width = vp.rowsWidth + 'px';
         }
     }
 

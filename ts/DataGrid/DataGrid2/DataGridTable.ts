@@ -21,13 +21,16 @@
  *
  * */
 
+import type { ColumnDistribution } from './DataGridOptions';
+
 import DGUtils from './Utils.js';
 import DataTable from '../../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTableHead from './DataGridTableHead.js';
 import DataGrid from './DataGrid.js';
-import RowsVirtualizer from './Virtualization/RowsVirtualizer.js';
+import RowsVirtualizer from './Actions/RowsVirtualizer.js';
+import ColumnsResizer from './Actions/ColumnsResizer.js';
 
 const { makeHTMLElement } = DGUtils;
 
@@ -99,6 +102,22 @@ class DataGridTable {
      */
     public rowsVirtualizer: RowsVirtualizer;
 
+    /**
+     * The column distribution.
+     */
+    public columnDistribution: ColumnDistribution;
+
+    /**
+     * The columns resizer instance that handles the columns resizing logic.
+     */
+    public columnsResizer: ColumnsResizer;
+
+    /**
+     * The width of each row in the table. Each of the rows has the same width.
+     * Only for the `fixed` column distribution.
+     */
+    public rowsWidth?: number;
+
 
     /* *
     *
@@ -115,6 +134,8 @@ class DataGridTable {
         this.dataGrid = dataGrid;
         this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
+        this.columnDistribution =
+            dataGrid.options.columns?.distribution as ColumnDistribution;
 
         const { tableElement } = dataGrid;
 
@@ -122,13 +143,14 @@ class DataGridTable {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
+        this.columnsResizer = new ColumnsResizer(this);
 
         this.init();
 
         // Add event listeners
-        this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
+        this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
-        this.tbodyElement.addEventListener('scroll', this.onScroll.bind(this));
+        this.tbodyElement.addEventListener('scroll', this.onScroll);
     }
 
     /* *
@@ -141,23 +163,54 @@ class DataGridTable {
      * Initializes the data grid table.
      */
     private init(): void {
-        const columnNames = this.dataTable.getColumnNames();
-
         // Load columns
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            this.columns.push(
-                new DataGridColumn(this, columnNames[i])
-            );
-        }
+        this.loadColumns();
 
         // Load & render head
-        this.head = new DataGridTableHead(this.theadElement, this.columns);
+        this.head = new DataGridTableHead(this);
         this.head.render();
 
         this.rowsVirtualizer.initialRender();
 
         // Refresh element dimensions after initial rendering
         this.reflow();
+    }
+
+    /**
+     * Loads the columns of the table.
+     */
+    private loadColumns(): void {
+        const columnNames = this.dataTable.getColumnNames();
+        const columnAssignment =
+            this.dataGrid.options.columns?.columnAssignment;
+
+        if (columnAssignment) {
+            for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
+                const idOrOptions = columnAssignment[i];
+
+                if (typeof idOrOptions === 'string') {
+                    this.columns.push(
+                        new DataGridColumn(this, idOrOptions, i)
+                    );
+                    continue;
+                }
+
+                this.columns.push(new DataGridColumn(
+                    this,
+                    idOrOptions.columnId,
+                    i,
+                    idOrOptions.options
+                ));
+            }
+
+            return;
+        }
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            this.columns.push(
+                new DataGridColumn(this, columnNames[i], i)
+            );
+        }
     }
 
     /**
@@ -168,28 +221,38 @@ class DataGridTable {
         this.tbodyElement.style.height =
             `calc(100% - ${this.theadElement.offsetHeight}px)`;
 
+        // Get the width of the rows
+        if (this.columnDistribution === 'fixed') {
+            let rowsWidth = 0;
+            for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+                rowsWidth += this.columns[i].width;
+            }
+            this.rowsWidth = rowsWidth;
+        }
+
         // Reflow the head
         if (this.head) {
             this.head.reflow();
         }
 
-        // Reflow rows
+        // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
     }
 
     /**
      * Handles the resize event.
      */
-    private onResize(): void {
+    private onResize = (): void => {
         this.reflow();
-    }
+    };
 
     /**
      * Handles the scroll event.
      */
-    private onScroll(): void {
+    private onScroll = (): void => {
         this.rowsVirtualizer.scroll();
-    }
+        this.head?.scrollHorizontally(this.tbodyElement.scrollLeft);
+    };
 
     /**
      * Scrolls the table to the specified row.
@@ -199,6 +262,32 @@ class DataGridTable {
     public scrollToRow(index: number): void {
         this.tbodyElement.scrollTop =
             index * this.rowsVirtualizer.defaultRowHeight;
+    }
+
+    /**
+     * Get the widthRatio value from the width in pixels. The widthRatio is
+     * calculated based on the width of the viewport and the columns count.
+     *
+     * @param width
+     *        The width in pixels.
+     *
+     * @return The width ratio.
+     */
+    public getRatioFromWidth(width: number): number {
+        return width * this.columns.length / this.tbodyElement.clientWidth;
+    }
+
+    /**
+     * Get the width in pixels from the widthRatio value. The width is
+     * calculated based on the width of the viewport and the columns count.
+     *
+     * @param ratio
+     *       The width ratio.
+     *
+     * @returns The width in pixels.
+     */
+    public getWithFromRatio(ratio: number): number {
+        return this.tbodyElement.clientWidth / this.columns.length * ratio;
     }
 }
 
