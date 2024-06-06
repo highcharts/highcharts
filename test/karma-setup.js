@@ -349,14 +349,11 @@ if (window.QUnit) {
             'highchartsCSS' in window &&
             chart.styledMode
         ) {
-            console.log('injecting HC styles')
             styleElement = document.createElement('style');
             styleElement.id = styleElementID;
 
             styleElement.appendChild(
-                document.createTextNode(
-                    window.highchartsCSS
-                )
+                document.createTextNode(window.highchartsCSS)
             );
 
             document.head.append(styleElement);

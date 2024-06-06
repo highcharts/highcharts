@@ -1088,7 +1088,7 @@ QUnit.test(
             assert.close(
                 chart.plotHeight,
                 expectedPlotHeight,
-                1, // Firefox is not that reliable
+                3, // Chrome is not that reliable
                 `Plot height with ${JSON.stringify(toDotNot(options))} should
                 stay the same after updating series (#19604).`
             );

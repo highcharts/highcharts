@@ -497,12 +497,11 @@ module.exports = function (config) {
 
                     // unit tests
                     if (path.includes('unit-tests')) {
+                        // Inject css for
                         if (/styledMode:\s+true/.test(js)) {
                             js =`window.highchartsCSS = \`${highchartsCSS}\`;`
                             + `
                             QUnit.testStart(()=>{
-                                document.querySelector("#test-hc-styles")?.remove();
-
                                 Highcharts.setOptions({
                                     chart: {
                                         events: {
@@ -513,6 +512,7 @@ module.exports = function (config) {
                                     }
                                 })
                             });
+
                             QUnit.testDone(()=>{
                                 document.querySelector("#test-hc-styles")?.remove();
                             });
