@@ -9,6 +9,7 @@
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
+ *  - Jomar Hønsi
  *
  * */
 
@@ -820,6 +821,12 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             columnNames = Object.keys(table.columns);
 
+        if (this.rowKeysId) {
+            return columnNames.filter((val: string): Boolean =>
+                val !== this.rowKeysId
+            );
+        }
+
         return columnNames;
     }
 
@@ -861,8 +868,9 @@ class DataTable implements DataEvent.Emitter {
 
         if (this.rowKeysId) {
             columnNamesOrAliases =
-                // eslint-disable-next-line max-len
-                columnNamesOrAliases.filter((val: string): Boolean => val !== this.rowKeysId);
+                columnNamesOrAliases.filter((val: string): Boolean =>
+                    val !== this.rowKeysId
+                );
         }
         for (
             let i = 0,
@@ -1472,6 +1480,28 @@ class DataTable implements DataEvent.Emitter {
         if (id) {
             return this.columns[id];
         }
+    }
+
+    /**
+     * Get the row index in the original (unmodified) data table.
+     *
+     * @function Highcharts.DataTable#getRowIndexOriginal
+     *
+     * @param {number} idx
+     * Row index in the modified data table.
+     *
+     * @return {string}
+     * Row index in the original data table.
+     */
+    public getRowIndexOriginal(idx: number): string {
+        const id = this.rowKeysId;
+        if (id) {
+            const rowKeyCol = this.columns[id];
+            const idxOrig = '' + rowKeyCol[idx];
+
+            return idxOrig.split('_')[1];
+        }
+        return String(idx);
     }
 
     /**
