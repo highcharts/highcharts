@@ -779,14 +779,12 @@ class EditMode {
             switch (toolbarsToShow[i]) {
                 case 'cell': {
                     if (currentCell && editMode.cellToolbar) {
-                        editMode.cellToolbar.isVisible = true;
                         editMode.cellToolbar.showToolbar(currentCell);
                     }
                     break;
                 }
                 case 'row': {
                     if (currentCell && currentCell.row && editMode.rowToolbar) {
-                        editMode.rowToolbar.isVisible = true;
                         editMode.rowToolbar.showToolbar(currentCell.row);
                     }
                     break;

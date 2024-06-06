@@ -201,7 +201,7 @@ class SidebarPopup extends BaseForm {
      * @returns
      * Whether the sidebar should be on the right side of the screen.
      */
-    private detectRightSidebar(context: Cell | Row): boolean {
+    private detectRightSidebar(context: Cell | CellHTML | Row): boolean {
         const editMode = this.editMode;
         const layoutWrapper = editMode.board.layoutsWrapper;
 
@@ -261,7 +261,7 @@ class SidebarPopup extends BaseForm {
      * @param context
      * The cell or row which is the context of the sidebar.
      */
-    public show(context?: Cell | Row): void {
+    public show(context?: Cell | CellHTML | Row): void {
         const editMode = this.editMode,
             isRightSidebar = !!(context && this.detectRightSidebar(context));
 
@@ -460,11 +460,13 @@ class SidebarPopup extends BaseForm {
 
             // Remove cell highlight if active.
             if (editCellContext.isHighlighted) {
-                editCellContext.setHighlight(true);
+                editCellContext.setHighlight();
             }
-        } else if (editCellContext instanceof CellHTML) {
-            editMode.showToolbars(['cell'], editCellContext as any);
-            editCellContext.setCellHighlight(editCellContext);
+        } else if (
+            editCellContext instanceof CellHTML && editMode.cellToolbar
+        ) {
+            editMode.cellToolbar.showToolbar(editCellContext);
+            editCellContext.setHighlight();
         }
 
         editMode.isContextDetectionActive = true;

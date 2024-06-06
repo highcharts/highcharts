@@ -14,14 +14,15 @@
  *
  * */
 
+import type CellHTML from '../../Layout/CellHTML';
+
 import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
 import Cell from '../../Layout/Cell.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
-
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     fireEvent,
@@ -67,7 +68,11 @@ class CellEditToolbar extends EditToolbar {
                             .parent as CellEditToolbar;
                         const dragDrop = cellEditToolbar.editMode.dragDrop;
 
-                        if (dragDrop && cellEditToolbar.cell) {
+                        if (
+                            dragDrop &&
+                            cellEditToolbar.cell &&
+                            cellEditToolbar.cell instanceof Cell
+                        ) {
                             dragDrop.onDragStart(e, cellEditToolbar.cell);
                         }
                     }
@@ -157,8 +162,8 @@ class CellEditToolbar extends EditToolbar {
      *  Properties
      *
      * */
-    public cell?: Cell;
-    public editedCell?: Cell;
+    public cell?: Cell|CellHTML;
+    public editedCell?: Cell|CellHTML;
 
     /* *
      *
@@ -172,11 +177,16 @@ class CellEditToolbar extends EditToolbar {
      * @param cell
      * Cell to show toolbar for.
      */
-    public showToolbar(cell: Cell): void {
+    public showToolbar(cell: Cell|CellHTML): void {
         const toolbar = this;
         const cellCnt = cell.container;
         const toolbarWidth = 30;
         const toolbarMargin = 10;
+        const cellToolbar = toolbar.editMode.cellToolbar;
+
+        if (!cellToolbar) {
+            return;
+        }
 
         if (
             cellCnt && toolbar.editMode.isActive() &&
@@ -197,8 +207,10 @@ class CellEditToolbar extends EditToolbar {
             toolbar.setPosition(x, y);
             toolbar.cell = cell;
             toolbar.refreshOutline();
+            cellToolbar.isVisible = true;
         } else if (toolbar.isVisible) {
             toolbar.hide();
+            cellToolbar.isVisible = false;
         }
     }
 
@@ -234,7 +246,7 @@ class CellEditToolbar extends EditToolbar {
     public onCellDestroy(): void {
         const toolbar = this;
 
-        if (toolbar.cell) {
+        if (toolbar.cell && toolbar.cell instanceof Cell) {
             const row = toolbar.cell.row;
             const cellId = toolbar.cell.id;
 

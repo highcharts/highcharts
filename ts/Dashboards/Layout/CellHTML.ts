@@ -112,7 +112,9 @@ class CellHTML extends GUIElement {
      * @param cell
      * The cell to highlight.
      */
-    public setCellHighlight(cell: CellHTML): void {
+    public setHighlight(): void {
+        const cell = this;
+
         cell.container.classList.toggle(
             EditGlobals.classNames.cellEditHighlight
         );

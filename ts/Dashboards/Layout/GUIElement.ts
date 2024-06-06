@@ -14,7 +14,6 @@
  *
  * */
 
-import type Cell from './Cell';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type { CSSObject } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
@@ -51,7 +50,7 @@ abstract class GUIElement {
      * The offsets of the guiElement.
      */
     public static getOffsets(
-        guiElement: Cell|GUIElement,
+        guiElement: GUIElement,
         referenceElement?: HTMLDOMElement
     ): GUIElement.Offset {
         const offset =

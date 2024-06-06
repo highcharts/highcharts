@@ -485,32 +485,14 @@ class Cell extends GUIElement {
         }
     }
 
-    public setHighlight(remove?: boolean): void {
-        const cell = this,
-            editMode = cell.row.layout.board.editMode;
+    public setHighlight(): void {
+        const cell = this;
+        const container = cell.container;
 
-        if (cell.container && editMode) {
-            const cnt = cell.container,
-                isSet = cnt.classList.contains(
-                    EditGlobals.classNames.cellEditHighlight
-                );
-
-            if (!remove && !isSet) {
-                cnt.classList.add(EditGlobals.classNames.cellEditHighlight);
-                cell.row.layout.board.container.classList.add(
-                    EditGlobals.classNames.dashboardCellEditHighlightActive
-                );
-
-                cell.isHighlighted = true;
-            } else if (remove && isSet) {
-                cnt.classList.remove(EditGlobals.classNames.cellEditHighlight);
-                cell.row.layout.board.container.classList.remove(
-                    EditGlobals.classNames.dashboardCellEditHighlightActive
-                );
-
-                cell.isHighlighted = false;
-            }
-        }
+        container.classList.toggle(EditGlobals.classNames.cellEditHighlight);
+        cell.isHighlighted = cell.row.layout.board.container.classList.toggle(
+            EditGlobals.classNames.dashboardCellEditHighlightActive
+        );
     }
 
     public setActiveState(): void {
