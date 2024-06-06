@@ -281,12 +281,14 @@ function onChartGetMargins(
     if (rangeSelector) {
         const rangeSelectorHeight = rangeSelector.getHeight();
 
-        if (this.extraTopMargin) {
-            this.plotTop += rangeSelectorHeight;
-        }
+        const verticalAlign = rangeSelector.options.verticalAlign;
 
-        if (this.extraBottomMargin) {
-            (this.marginBottom as any) += rangeSelectorHeight;
+        if (!rangeSelector.options.floating) {
+            if (verticalAlign === 'bottom') {
+                (this.marginBottom as any) += rangeSelectorHeight;
+            } else if (verticalAlign !== 'middle') {
+                this.plotTop += rangeSelectorHeight;
+            }
         }
     }
 }

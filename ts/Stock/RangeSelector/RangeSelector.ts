@@ -28,6 +28,7 @@ import type {
     RangeSelectorPositionOptions
 } from './RangeSelectorOptions';
 import type Time from '../../Core/Time';
+import type { ButtonThemeStatesObject } from '../../Core/Renderer/SVG/ButtonThemeObject';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -45,6 +46,7 @@ const {
     css,
     defined,
     destroyObjectProperties,
+    diffObjects,
     discardElement,
     extend,
     fireEvent,
@@ -138,6 +140,7 @@ function preferredInputType(format: string): string {
  * @param {Highcharts.Chart} chart
  */
 class RangeSelector {
+    public isDirty: boolean = false;
 
     /* *
      *
@@ -768,6 +771,10 @@ class RangeSelector {
             dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
 
         if (input) {
+            input.setAttribute(
+                'type',
+                preferredInputType(options.inputDateFormat || '%e %b %Y')
+            );
             const hcTimeAttr = input.getAttribute('data-hc-time');
             let updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
 
@@ -1270,10 +1277,29 @@ class RangeSelector {
         }
 
         if (inputEnabled) {
+            if (!this.inputGroup) {
+
+                this.inputGroup = chart.renderer.g('input-group')
+                    .add(this.group);
+
+                const minElems = this.drawInput('min');
+                this.minDateBox = minElems.dateBox;
+                this.minLabel = minElems.label;
+                this.minInput = minElems.input;
+
+                const maxElems = this.drawInput('max');
+                this.maxDateBox = maxElems.dateBox;
+                this.maxLabel = maxElems.label;
+                this.maxInput = maxElems.input;
+            }
             // Set or reset the input values
             this.setInputValue('min', min);
             this.setInputValue('max', max);
 
+            if (!this.chart.styledMode) {
+                this.maxLabel?.css(options.labelStyle);
+                this.minLabel?.css(options.labelStyle);
+            }
             const unionExtremes = (
                 chart.scroller && chart.scroller.getUnionExtremes()
             ) || chart.xAxis[0] || {};
@@ -1320,6 +1346,17 @@ class RangeSelector {
                     }
                 });
             }
+        } else {
+            if (this.inputGroup) {
+                this.inputGroup.destroy();
+                delete this.inputGroup;
+            }
+        }
+
+        if (!this.chart.styledMode) {
+            if (this.zoomText) {
+                this.zoomText.css(options.labelStyle);
+            }
         }
 
         this.alignElements();
@@ -1335,7 +1372,6 @@ class RangeSelector {
      */
     public renderButtons(): void {
         const {
-            buttons,
             chart,
             options
         } = this;
@@ -1348,7 +1384,6 @@ class RangeSelector {
         // Prevent the button from resetting the width when the button state
         // changes since we need more control over the width when collapsing
         // the buttons
-        const width = buttonTheme.width || 28;
         delete buttonTheme.width;
         delete buttonTheme.states;
 
@@ -1430,54 +1465,85 @@ class RangeSelector {
             disabled: true
         }, void 0, dropdown);
 
+        this.createButtons();
+    }
+
+    private createButtons(): void {
+        const { options } = this;
+        const buttonTheme = merge(options.buttonTheme);
+        const states = buttonTheme && buttonTheme.states;
+
+        // Prevent the button from resetting the width when the button state
+        // changes since we need more control over the width when collapsing
+        // the buttons
+        const width = buttonTheme.width || 28;
+        delete buttonTheme.width;
+        delete buttonTheme.states;
+
+
         this.buttonOptions.forEach((
             rangeOptions: RangeSelectorButtonOptions,
             i: number
         ): void => {
+            this.createButton(rangeOptions, i, width, states);
+        });
+    }
+
+    private createButton(
+        rangeOptions: RangeSelectorButtonOptions,
+        i: number,
+        width: number,
+        states?: ButtonThemeStatesObject
+    ): void {
+        const { dropdown, buttons, chart, options } = this;
+        const renderer = chart.renderer;
+        const buttonTheme = merge(options.buttonTheme);
+        dropdown?.add(
             createElement('option', {
                 textContent: rangeOptions.title || rangeOptions.text
-            }, void 0, dropdown);
+            }) as HTMLOptionElement,
+            i + 2
+        );
 
-            buttons[i] = renderer
-                .button(
-                    rangeOptions.text,
-                    0,
-                    0,
-                    (e: (Event|AnyRecord)): void => {
+        buttons[i] = renderer
+            .button(
+                rangeOptions.text,
+                0,
+                0,
+                (e: (Event | AnyRecord)): void => {
 
-                        // Extract events from button object and call
-                        const buttonEvents = (
-                            rangeOptions.events && rangeOptions.events.click
-                        );
+                    // Extract events from button object and call
+                    const buttonEvents = (
+                        rangeOptions.events && rangeOptions.events.click
+                    );
 
-                        let callDefaultEvent;
+                    let callDefaultEvent;
 
-                        if (buttonEvents) {
-                            callDefaultEvent =
-                                buttonEvents.call(rangeOptions, e as any);
-                        }
+                    if (buttonEvents) {
+                        callDefaultEvent =
+                            buttonEvents.call(rangeOptions, e as any);
+                    }
 
-                        if (callDefaultEvent !== false) {
-                            this.clickButton(i);
-                        }
+                    if (callDefaultEvent !== false) {
+                        this.clickButton(i);
+                    }
 
-                        this.isActive = true;
-                    },
-                    buttonTheme,
-                    states && states.hover,
-                    states && states.select,
-                    states && states.disabled
-                )
-                .attr({
-                    'text-align': 'center',
-                    width
-                })
-                .add(this.buttonGroup);
+                    this.isActive = true;
+                },
+                buttonTheme,
+                states && states.hover,
+                states && states.select,
+                states && states.disabled
+            )
+            .attr({
+                'text-align': 'center',
+                width
+            })
+            .add(this.buttonGroup);
 
-            if (rangeOptions.title) {
-                buttons[i].attr('title', rangeOptions.title);
-            }
-        });
+        if (rangeOptions.title) {
+            buttons[i].attr('title', rangeOptions.title);
+        }
     }
 
     /**
@@ -1506,8 +1572,88 @@ class RangeSelector {
         const {
             buttonPosition,
             inputPosition,
-            verticalAlign
+            verticalAlign,
+            inputBoxHeight,
+            inputBoxBorderColor
         } = options;
+
+        this.maxDateBox?.attr({
+            stroke: inputBoxBorderColor,
+            height: inputBoxHeight
+        });
+
+        this.minDateBox?.attr({
+            stroke: inputBoxBorderColor,
+            height: inputBoxHeight
+        });
+
+        if (this.isDirty) {
+
+            this.isDirty = false;
+            const newButtonsOptions = this.options.buttons ?? [];
+            const btnLength = Math.min(
+                newButtonsOptions.length,
+                this.buttonOptions.length
+            );
+            const { dropdown, options } = this;
+            const buttonTheme = merge(options.buttonTheme);
+            const states = buttonTheme && buttonTheme.states;
+
+            // Prevent the button from resetting the width when the button state
+            // changes since we need more control over the width when collapsing
+            // the buttons
+            const width = buttonTheme.width || 28;
+            for (let i = 0; i < btnLength; i++) {
+                // Compare the options, and if they are different, update
+                const diff = diffObjects(
+                    newButtonsOptions[i],
+                    this.buttonOptions[i]
+                );
+
+                if (Object.keys(diff).length !== 0) {
+                    const rangeOptions = newButtonsOptions[i];
+                    this.buttons[i].destroy();
+                    dropdown!.options.remove(i + 1);
+                    this.createButton(rangeOptions, i, width, states);
+                    this.computeButtonRange(rangeOptions);
+
+                }
+
+            }
+
+            if (newButtonsOptions.length > this.buttonOptions.length) {
+
+                // Create missing buttons
+                for (
+                    let i = this.buttonOptions.length;
+                    i < newButtonsOptions.length;
+                    i++
+                ) {
+                    this.createButton(newButtonsOptions[i], i, width, states);
+                    this.computeButtonRange(newButtonsOptions[i]);
+                }
+            } else if (newButtonsOptions.length < this.buttonOptions.length) {
+                // Destroy additional buttons
+                for (
+                    let i = this.buttonOptions.length - 1;
+                    i >= newButtonsOptions.length;
+                    i--
+                ) {
+                    const btn = this.buttons.pop();
+                    btn!.destroy();
+                    this.dropdown!.options.remove(i + 1);
+                }
+
+            }
+
+            this.buttonOptions = this.options.buttons ?? [];
+
+            if (defined(this.options.selected)) {
+                this.clickButton(this.options.selected);
+            }
+
+        }
+
 
         // Get the X offset required to avoid overlapping with the exporting
         // button. This is used both by the buttonGroup and the inputGroup.
@@ -2069,9 +2215,13 @@ class RangeSelector {
     ): void {
         const chart = this.chart;
         merge(true, chart.options.rangeSelector, options);
+        merge(true, this.options, options);
+        if (!defined(options.selected)) {
+            this.options.selected = void 0;
+            chart.options.rangeSelector!.selected = void 0;
+        }
 
-        this.destroy();
-        this.init(chart);
+        this.isDirty = !!options.buttons;
 
         if (redraw) {
             this.render();
@@ -2124,6 +2274,8 @@ class RangeSelector {
                 (rSelector as any)[key] = null;
             }
         }, this);
+
+        this.buttons = [];
     }
 }
 
