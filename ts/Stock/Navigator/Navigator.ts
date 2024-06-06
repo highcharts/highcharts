@@ -158,7 +158,7 @@ class Navigator {
     public hasDragged?: boolean;
     public hasNavigatorData?: boolean;
     public height!: number;
-    public isDirty!: boolean;
+    public isDirty = false;
     public left!: number;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
@@ -589,7 +589,6 @@ class Navigator {
         if (this.navigatorEnabled) {
             this.isDirty = true;
 
-            // Handle `adaptToUpdatedData` update
             if (options.adaptToUpdatedData === false) {
                 this.baseSeries.forEach(function (series): void {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
