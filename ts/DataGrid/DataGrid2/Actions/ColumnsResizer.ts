@@ -61,11 +61,6 @@ class ColumnsResizer {
     private draggedColumn?: DataGridColumn;
 
     /**
-     * The column right next to the dragged column.
-     */
-    private nextColumn?: DataGridColumn;
-
-    /**
      * The start X position of the drag.
      */
     private dragStartX?: number;
@@ -118,8 +113,15 @@ class ColumnsResizer {
      *        The X position difference in pixels.
      */
     private fullDistributionResize(diff: number): void {
-        const { draggedColumn: column, nextColumn } = this;
-        if (!column || !nextColumn) {
+        const vp = this.viewport;
+
+        const column = this.draggedColumn;
+        if (!column) {
+            return;
+        }
+
+        const nextColumn = vp.columns[column.index + 1];
+        if (!nextColumn) {
             return;
         }
 
@@ -140,8 +142,8 @@ class ColumnsResizer {
             newLeftW = leftColW + rightColW - MIN_WIDTH;
         }
 
-        column.width = this.viewport.getRatioFromWidth(newLeftW);
-        nextColumn.width = this.viewport.getRatioFromWidth(newRightW);
+        column.width = vp.getRatioFromWidth(newLeftW);
+        nextColumn.width = vp.getRatioFromWidth(newRightW);
     }
 
     /**
@@ -195,7 +197,6 @@ class ColumnsResizer {
     private onDocumentMouseUp = (): void => {
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
-        this.nextColumn = void 0;
         this.draggedResizeHandle = void 0;
         this.columnStartWidth = void 0;
         this.nextColumnStartWidth = void 0;
@@ -216,10 +217,10 @@ class ColumnsResizer {
         const onHandleMouseDown = (e: MouseEvent): void => {
             this.dragStartX = e.pageX;
             this.draggedColumn = column;
-            this.nextColumn = this.viewport.columns[column.index + 1];
             this.draggedResizeHandle = handle;
             this.columnStartWidth = column.getWidth();
-            this.nextColumnStartWidth = this.nextColumn?.getWidth();
+            this.nextColumnStartWidth =
+                this.viewport.columns[column.index + 1]?.getWidth();
         };
 
         this.handles.push([handle, onHandleMouseDown]);

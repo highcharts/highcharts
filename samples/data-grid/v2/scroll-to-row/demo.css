@@ -10,46 +10,37 @@
 }
 
 .highcharts-dg-row[row-index="1"] {
-    background-color: #afa;
     height: 100px;
 }
 
 .highcharts-dg-row[row-index="3"] {
-    background-color: #afa;
     height: 100px;
 }
 
 .highcharts-dg-row[row-index="6"] {
-    background-color: #afa;
     height: 100px;
 }
 
 .highcharts-dg-row[row-index="100"] {
-    background-color: #f0a;
     height: 200px;
 }
 
 .highcharts-dg-row[row-index="150"] {
-    background-color: #aff;
     height: 10px;
 }
 
 .highcharts-dg-row[row-index="152"] {
-    background-color: #aff;
     height: 10px;
 }
 
 .highcharts-dg-row[row-index="154"] {
-    background-color: #aff;
     height: 10px;
 }
 
 .highcharts-dg-row[row-index="6"] {
-    background-color: #afa;
     height: 100px;
 }
 
 .highcharts-dg-row[row-index="99999"] {
-    background-color: #ff0;
     height: 200px;
 }

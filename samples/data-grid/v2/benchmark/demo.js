@@ -26,6 +26,7 @@ oldDatagridTimer.innerHTML =
 // NEW
 const startNewTime = new Date().getTime();
 var t2 = performance.now();
+// eslint-disable-next-line no-unused-vars
 const newgrid = new DataGrid.DataGrid2('container', {
     dataTable: dataTable,
     rows: {

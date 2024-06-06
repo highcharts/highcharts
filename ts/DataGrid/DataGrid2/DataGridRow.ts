@@ -180,7 +180,7 @@ class DataGridRow {
     }
 
     public getCurrentHeight(): number {
-        return this.htmlElement.clientHeight;
+        return this.htmlElement.offsetHeight;
     }
 
     public getDefaultTopOffset(): number {
