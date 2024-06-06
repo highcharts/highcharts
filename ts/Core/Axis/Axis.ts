@@ -1260,7 +1260,8 @@ class Axis {
     public adjustForMinRange(): void {
         const axis = this,
             options = axis.options,
-            logarithmic = axis.logarithmic;
+            logarithmic = axis.logarithmic,
+            time = axis.chart.time;
 
         let { max, min, minRange } = axis,
             zoomOffset,
@@ -1322,7 +1323,7 @@ class Axis {
             // If min and max options have been set, don't go beyond it
             minArgs = [
                 min - zoomOffset,
-                pick(options.min, min - zoomOffset)
+                time.parse(options.min) ?? (min - zoomOffset)
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
@@ -1334,7 +1335,7 @@ class Axis {
 
             maxArgs = [
                 min + minRange,
-                pick(options.max, min + minRange)
+                time.parse(options.max) ?? (min + minRange)
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
@@ -1348,7 +1349,7 @@ class Axis {
             // Now if the max is adjusted, adjust the min back
             if (max - min < minRange) {
                 minArgs[0] = max - minRange;
-                minArgs[1] = pick(options.min, max - minRange);
+                minArgs[1] = time.parse(options.min) ?? (max - minRange);
                 min = arrayMax(minArgs);
             }
         }
@@ -1670,6 +1671,7 @@ class Axis {
                 options,
                 softThreshold
             } = axis,
+            time = chart.time,
             threshold = isNumber(axis.threshold) ? axis.threshold : void 0,
             minRange = axis.minRange || 0,
             { ceiling, floor, linkedTo, softMax, softMin } = options,
@@ -1694,8 +1696,8 @@ class Axis {
         }
 
         // Min or max set either by zooming/setExtremes or initial options
-        hardMin = pick(axis.userMin, options.min);
-        hardMax = pick(axis.userMax, options.max);
+        hardMin = pick(axis.userMin, time.parse(options.min));
+        hardMax = pick(axis.userMax, time.parse(options.max));
 
         // Linked axis gets the extremes from the parent axis
         if (linkedParent) {

@@ -702,10 +702,14 @@ class Series {
     public autoIncrement(x?: number): number {
 
         const options = this.options,
-            pointIntervalUnit = options.pointIntervalUnit,
-            relativeXValue = options.relativeXValue,
+            {
+                pointIntervalUnit,
+                relativeXValue
+            } = this.options,
             time = this.chart.time,
-            xIncrement = this.xIncrement ?? options.pointStart ?? 0;
+            xIncrement = this.xIncrement ??
+                time.parse(options.pointStart) ??
+                0;
 
         let pointInterval: number;
 

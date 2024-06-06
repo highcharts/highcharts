@@ -30,6 +30,7 @@ const {
     extend,
     isNumber,
     isObject,
+    isString,
     merge,
     objectEach,
     pad,
@@ -364,6 +365,41 @@ class Time {
         return d;
     }
 
+    /**
+     * Parse a datetime string. Unless the string contains time zone
+     * information, apply the current `timezone` from options. If the argument
+     * is a number, return it.
+     *
+     * @function Highcharts.Time#parse
+     * @param    {string|number|undefined} s The datetime string to parse
+     * @return   {number|undefined}          Parsed JavaScript timestamp
+     */
+    public parse(s: string|number|undefined|null): number|undefined {
+        if (!isString(s)) {
+            return s ?? void 0;
+        }
+        const ts = Date.parse(
+            // Firefox fails on YYYY/MM/DD
+            s.replace(/\//g, '-')
+        );
+        if (isNumber(ts)) {
+            // Unless the string contains time zone information, convert from
+            // the local time result of `Date.parse` via UTC into the current
+            // timezone of the time object.
+            if (!/[+-][0-9]{2}:[0-9]{2}|Z$/.test(s)) {
+                // MMMM-YY-DD is parsed as UTC, all other formats are local
+                // unless a time zone is specified
+                const parsedAsUTC = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s),
+                    tsUTC = ts - (
+                        parsedAsUTC ?
+                            0 :
+                            new Date(ts).getTimezoneOffset() * 60000
+                    );
+                return tsUTC + this.getTimezoneOffset(tsUTC);
+            }
+            return ts;
+        }
+    }
 
     /**
      * Get the time zone offset based on the current timezone information as
@@ -378,20 +414,22 @@ class Time {
      *         The timezone offset in minutes compared to UTC.
      */
     public getTimezoneOffset(timestamp: number|Date): number {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [date, gmt, hours, colon, minutes = 0] =
-            this.dateTimeFormat(
-                { timeZoneName: 'shortOffset' },
-                timestamp,
-                'en'
-            )
-                .split(/(GMT|:)/)
-                .map(Number),
-            offset = -(hours + minutes / 60) * 60 * 60000;
+        if (this.timezone !== 'UTC') {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [date, gmt, hours, colon, minutes = 0] =
+                this.dateTimeFormat(
+                    { timeZoneName: 'shortOffset' },
+                    timestamp,
+                    'en'
+                )
+                    .split(/(GMT|:)/)
+                    .map(Number),
+                offset = -(hours + minutes / 60) * 60 * 60000;
 
-        // Possible future NaNs stop here
-        if (isNumber(offset)) {
-            return offset;
+            // Possible future NaNs stop here
+            if (isNumber(offset)) {
+                return offset;
+            }
         }
         return 0;
     }

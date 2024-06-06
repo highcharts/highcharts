@@ -1448,6 +1448,7 @@ class Navigator {
         returnFalseOnNoBaseSeries?: boolean
     ): (Record<string, (number|undefined)>|undefined) {
         const baseAxis = this.chart.xAxis[0],
+            time = this.chart.time,
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
             baseAxisOptions = baseAxis.options;
@@ -1457,20 +1458,20 @@ class Navigator {
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
             ret = {
                 dataMin: pick( // #4053
-                    navAxisOptions && navAxisOptions.min,
+                    time.parse(navAxisOptions?.min),
                     numExt(
                         'min',
-                        baseAxisOptions.min as any,
+                        time.parse(baseAxisOptions.min) as any,
                         baseAxis.dataMin as any,
                         navAxis.dataMin as any,
                         navAxis.min as any
                     )
                 ),
                 dataMax: pick(
-                    navAxisOptions && navAxisOptions.max,
+                    time.parse(navAxisOptions?.max),
                     numExt(
                         'max',
-                        baseAxisOptions.max as any,
+                        time.parse(baseAxisOptions.max) as any,
                         baseAxis.dataMax as any,
                         navAxis.dataMax as any,
                         navAxis.max as any

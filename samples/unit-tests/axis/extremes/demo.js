@@ -707,3 +707,50 @@ QUnit.test(
         assert.ok(chart, 'The chart exist ');
     }
 );
+
+
+QUnit.test('Date string extremes', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [
+                ['2024-06-04', 1],
+                ['2024-06-05', 2],
+                ['2024-06-06', 3],
+                ['2024-06-07', 4],
+                ['2024-06-08', 5],
+                ['2024-06-09', 6],
+                ['2024-06-10', 7],
+                ['2024-06-11', 8],
+                ['2024-06-12', 9],
+                ['2024-06-13', 10],
+                ['2024-06-14', 11],
+                ['2024-06-15', 12]
+            ],
+            keys: ['x', 'y']
+        }],
+        xAxis: {
+            type: 'datetime',
+            min: '2024-06-10',
+            max: '2024-06-12',
+            minPadding: 0,
+            maxPadding: 0
+        }
+    });
+
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [Date.UTC(2024, 5, 10), Date.UTC(2024, 5, 12)],
+        'Min and max should be parsed as UTC time'
+    );
+
+    chart.xAxis[0].update({
+        minRange: 5 * 24 * 3600 * 1000
+    });
+
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [Date.UTC(2024, 5, 10), Date.UTC(2024, 5, 12)],
+        'Min and max should override minRange'
+    );
+
+});
