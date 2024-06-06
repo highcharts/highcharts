@@ -137,7 +137,6 @@ function resolveJSON(js) {
         }
     }
 
-    codeblocks.push();
     codeblocks.push(js);
 
     // Add some files that are referenced by variables in the demos, so we're

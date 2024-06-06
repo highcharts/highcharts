@@ -370,7 +370,6 @@ if (window.QUnit) {
                 console.log('Start "' + test.test.testName + '"');
             }
 
-
             currentTests.push(test.test.testName);
 
             // Reset container size that some tests may have modified
