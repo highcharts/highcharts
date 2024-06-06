@@ -1,14 +1,6 @@
 @import url("https://code.highcharts.com/datagrid/css/datagrid2.css");
 @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 
-.flex {
-    display: flex;
-}
-
-.flex-1 {
-    flex: 1 1 50%;
-}
-
 #container {
     height: 400px;
 }

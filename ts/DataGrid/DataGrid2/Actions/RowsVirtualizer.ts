@@ -199,12 +199,10 @@ class RowsVirtualizer {
                 break;
             }
 
-            const element = row.htmlElement;
             const defaultH = this.defaultRowHeight;
-            const borderH = element.offsetHeight - element.clientHeight;
 
             if (row.index < cursor) {
-                row.htmlElement.style.height = defaultH + borderH + 'px';
+                row.htmlElement.style.height = defaultH + 'px';
             } else if (
                 row.getCurrentHeight() > defaultH &&
                 this.topRowInitialHeight
@@ -253,7 +251,7 @@ class RowsVirtualizer {
             className: Globals.classNames.rowElement
         }, this.viewport.tbodyElement);
 
-        const defaultRowHeight = mockRow.clientHeight;
+        const defaultRowHeight = mockRow.offsetHeight;
         mockRow.remove();
 
         return defaultRowHeight;
