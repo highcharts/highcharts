@@ -97,23 +97,39 @@ function addTreeNode(
 
         let _treeNode: (TreeLib.Option|undefined);
         let _fullname: (string|undefined);
+
         if (_infoDoclet) {
             _fullname = (
                 TSLib.extractTagText(_infoDoclet, 'optionparent', true) ??
                 TSLib.extractTagText(_infoDoclet, 'apioption', true)
             );
+        }
 
-            if (
-                typeof _fullname === 'undefined' &&
-                _info.kind === 'Interface'
-            ) {
-                _fullname = Utilities.getOptionName(_info.name);
+        if (
+            typeof _fullname === 'undefined' &&
+            (
+                _info.kind === 'Interface' ||
+                _info.kind === 'Property' ||
+                _info.kind === 'Variable'
+            ) &&
+            !_info.name.startsWith('_')
+        ) {
+            if (_info.name.toLowerCase().startsWith('area')) {
+                console.log(_info);
             }
+            _fullname = Utilities.getOptionName(_info.name);
+        }
 
-            if (typeof _fullname === 'string') {
-                _treeNode = getTreeNode(_fullname);
-            }
+        if (_fullname === 'series') {
+            _fullname = 'plotOptions.series';
+        }
 
+        if (!_fullname?.includes('column')) {
+            return;
+        }
+
+        if (typeof _fullname === 'string') {
+            _treeNode = getTreeNode(_fullname);
         }
 
         let _moreInfos: Array<TSLib.CodeInfo> = [];
@@ -122,13 +138,29 @@ function addTreeNode(
         switch (_info.kind) {
 
             case 'Class':
-            case 'Interface':
-                TSLib.autoExtendInfo(_sourceInfo, _info, debug);
-                _moreInfos.push(..._info.members);
+            case 'Namespace':
+                for (const _memberInfo of _info.members) {
+                    if (
+                        (
+                            _memberInfo.kind === 'Property' ||
+                            _memberInfo.kind === 'Variable'
+                        ) &&
+                        _memberInfo.name === 'defaultOptions'
+                    ) {
+                        _moreInfos.push(_memberInfo);
+                        break;
+                    }
+                }
                 break;
 
-            case 'Namespace':
-                _moreInfos.push(..._info.members);
+            case 'Interface':
+                if (
+                    _info.name.endsWith('Options') ||
+                    _info.name.endsWith('OptionsObject')
+                ) {
+                    TSLib.autoExtendInfo(_sourceInfo, _info, debug);
+                    _moreInfos.push(..._info.members);
+                }
                 break;
 
             case 'Property':
@@ -226,20 +258,32 @@ function addTreeNode(
 
                     case 'sample':
                         _array = _nodeDoclet[`${_tag}s`] = [];
-                        for (const _text of _infoDoclet.tags[_tag]) {
-                            _split = _text.split(/\s+/u, 2);
-                            if (_split.length === 2) {
-                                _array.push({
-                                    name: _split[0],
-                                    value: _split[1]
-                                });
+                        for (let _text of _infoDoclet.tags[_tag]) {
+                            const _sample: TreeLib.OptionDocletSample = {
+                                name: '',
+                                value: _text
+                            };
+                            const _insets = TSLib.extractTagInsets(_text);
+                            if (_insets.length) {
+                                _text = _text
+                                    .substring(_insets[0].length + 2)
+                                    .trim();
+                                _sample.products = _insets[0].split('|');
                             }
+                            _split = _text.split(/\s+/gsu, 1);
+                            if (_split.length) {
+                                _sample.name =
+                                    _text.substring(_split[0].length).trim();
+                                _sample.value = _split[0];
+                            }
+                            _array.push(_sample);
                         }
                         break;
 
                     case 'type':
                         _nodeDoclet.type = {
-                            names: _infoDoclet.tags.type.slice()
+                            names: _infoDoclet.tags.type
+                                .map(type => type.replace(/\{([^\}]+)\}/, '$1'))
                         };
                         break;
 
@@ -322,7 +366,6 @@ function buildTreeIndicators(
             }
 
             if (_sourceInfo) {
-                console.log(_filePath);
                 for (const _codeInfo of _sourceInfo.code) {
                     addTreeNode(_sourceInfo, _rootNode, _codeInfo);
                 }
@@ -367,7 +410,6 @@ function buildTreeSeries(
             }
 
             if (_sourceInfo) {
-                console.log(_filePath);
                 for (const _codeInfo of _sourceInfo.code) {
                     addTreeNode(_sourceInfo, _rootNode, _codeInfo);
                 }

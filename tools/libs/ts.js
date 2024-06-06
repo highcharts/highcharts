@@ -40,10 +40,10 @@ const TS = require('typescript');
 const DOCLET = /\/\*\*.*?\*\//gsu;
 
 
+const DOCLET_TAG_INSET = /\{([^}]+)\}/gsu;
+
+
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
-
-
-const DOCLET_TAG_TYPE = /^\{([^}]+)\}/su;
 
 
 const NATIVE_HELPER =
@@ -477,6 +477,24 @@ function extractInfos(
 
 
 /**
+ * Retrieves curly bracket insets from the given tag text.
+ *
+ * @param {string} text
+ * Tag text to get insets from.
+ *
+ * @return {Array<string>}
+ * Retrieved curly bracket insets.
+ */
+function extractTagInsets(
+    text
+) {
+    return Array
+        .from(text.matchAll(DOCLET_TAG_INSET))
+        .map(inset => inset[1]);
+}
+
+
+/**
  * Retrieves all information for the specified tag from a DocletInfo object.
  *
  * @param {DocletInfo} doclet
@@ -502,8 +520,8 @@ function extractTagObjects(
 
     for (let text of (doclet.tags[tag] || [])) {
         _object = { tag };
-        _match = text.match(DOCLET_TAG_TYPE);
-        if (_match) {
+        _match = text.match(DOCLET_TAG_INSET);
+        if (_match && _match.index === 0) {
             _object.type = _match[1];
             text = text.substring(_match[0].length).trimStart();
         }
@@ -2547,6 +2565,7 @@ module.exports = {
     debug,
     extractInfoName,
     extractInfos,
+    extractTagInsets,
     extractTagObjects,
     extractTagText,
     extractTypes,

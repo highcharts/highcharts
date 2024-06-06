@@ -550,10 +550,17 @@ module.exports = {
  * @property {string} [extends]
  * @property {Array<Record<string,string>>} [productdescs]
  * @property {Array<string>} [requires]
- * @property {Array<Record<string,string>>} [samples]
+ * @property {Array<OptionDocletSample>} [samples]
  * @property {Array<string>} [see]
  * @property {string} [since]
  * @property {Record<string,Array<string>>} [type]
+ */
+
+/**
+ * @typedef OptionDocletSample
+ * @property {string} name
+ * @property {string} value
+ * @property {Array<string>} [products]
  */
 
 /**

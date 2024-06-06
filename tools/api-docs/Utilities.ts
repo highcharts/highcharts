@@ -129,7 +129,7 @@ function getOptionName(
 
     if (
         camelCaseName.endsWith('Options') &&
-        camelCaseName !== 'PlotOptions'
+        camelCaseName !== 'Options'
     ) {
         camelCaseName = camelCaseName.substring(0, camelCaseName.length - 7);
     }
