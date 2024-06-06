@@ -185,7 +185,7 @@ class AccessibilityComponent {
      * AccessibilityComponent for users of custom components.
      *
      * @function Highcharts.AccessibilityComponent#fakeClickEvent
-     * @param {Highcharts.SVGElement|Highcharts.HTMLDOMElement|DOMElementType} el The element to click on.
+     * @param {Highcharts.SVGElement|Highcharts.DOMElementType} el The element to click on.
      */
     public fakeClickEvent(
         el: (HTMLElement|SVGElement|DOMElementType)
