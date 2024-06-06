@@ -15,7 +15,7 @@ const dg = new DataGrid.DataGrid2('container', {
     columns: {
         options: {
             name: 'General: ',
-            format: 'Value: {this.value}'
+            cellFormat: 'Value: {this.value}'
         },
         columnAssignment: [{
             columnId: 'a'
@@ -23,7 +23,7 @@ const dg = new DataGrid.DataGrid2('container', {
             columnId: 'b',
             options: {
                 name: 'column B',
-                format: '{this.value}%'
+                cellFormat: '{this.value}%'
             }
         }]
     }

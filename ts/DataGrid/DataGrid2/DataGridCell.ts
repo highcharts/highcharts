@@ -100,7 +100,7 @@ class DataGridCell {
             return;
         }
 
-        const formatString = this.column.userOptions.format;
+        const formatString = this.column.userOptions.cellFormat;
         const cellData = this.column.data[this.row.index];
 
         this.htmlElement.innerText = 

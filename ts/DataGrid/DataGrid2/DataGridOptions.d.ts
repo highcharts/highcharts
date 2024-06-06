@@ -86,7 +86,7 @@ export interface ColumnOptions {
      * The format of the cell content.
      * @unimplemented
      */
-    format?: string;
+    cellFormat?: string;
 }
 
 /**
