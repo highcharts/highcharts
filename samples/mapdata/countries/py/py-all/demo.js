@@ -26,7 +26,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/py/py-all.topo.json">Paraguay</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/py/py-all.topo.json">Paraguay</a>'
         },
 
         mapNavigation: {

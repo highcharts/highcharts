@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nr/nr-all.topo.json">Nauru</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nr/nr-all.topo.json">Nauru</a>'
         },
 
         mapNavigation: {

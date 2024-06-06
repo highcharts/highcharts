@@ -27,7 +27,6 @@
                 type: 'treemap',
                 layoutAlgorithm: 'squarified',
                 allowDrillToNode: true,
-                turboThreshold: dataJson.length,
                 dataLabels: {
                     enabled: false
                 },

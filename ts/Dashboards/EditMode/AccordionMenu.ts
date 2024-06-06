@@ -27,10 +27,12 @@ import type Globals from '../Globals';
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
+import ConfirmationPopup from './ConfirmationPopup.js';
 const {
     createElement,
     merge,
-    error
+    error,
+    fireEvent
 } = U;
 
 /* *
@@ -65,6 +67,10 @@ class AccordionMenu {
     private closeSidebar: Function;
     private changedOptions: DeepPartial<Component.Options> = {};
     private chartOptionsJSON = {};
+    private component?: Component;
+    private oldOptionsBuffer: DeepPartial<Component.Options> = {};
+    private confirmationPopup?: ConfirmationPopup;
+    public waitingForConfirmation = false;
 
     /* *
      *
@@ -82,10 +88,23 @@ class AccordionMenu {
      * The component to render the menu for.
      */
     public renderContent(container: HTMLElement, component: Component): void {
+        const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
         let options: EditableOptions.Options;
         let content: HTMLElement;
+
+        this.component = component;
+        this.oldOptionsBuffer = merge({}, component.options);
+
+        if (editMode) {
+            this.confirmationPopup = new ConfirmationPopup(
+                component.board.container,
+                editMode.iconsURLPrefix,
+                editMode,
+                { close: { icon: '' } }
+            );
+        }
 
         const accordionContainer = createElement(
             'div',
@@ -128,18 +147,7 @@ class AccordionMenu {
                     .lang.confirmButton,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: async (): Promise<void> => {
-                    const changedOptions = this
-                        .changedOptions as Partial<Component.Options>;
-
-                    await component.update(
-                        merge(changedOptions, {
-                            chartOptions: this.chartOptionsJSON
-                        })
-                    );
-
-                    menu.changedOptions = {};
-                    menu.chartOptionsJSON = {};
-                    menu.closeSidebar();
+                    await this.confirmChanges();
                 }
             }
         );
@@ -151,9 +159,7 @@ class AccordionMenu {
                     .lang.cancelButton,
                 className: EditGlobals.classNames.popupCancelBtn,
                 callback: (): void => {
-                    menu.changedOptions = {};
-                    menu.chartOptionsJSON = {};
-                    menu.closeSidebar();
+                    this.cancelChanges();
                 }
             }
         );
@@ -178,6 +184,8 @@ class AccordionMenu {
         const pathLength = propertyPath.length - 1;
 
         let currentLevel = this.changedOptions as Globals.AnyRecord;
+        let currentChartOptionsLevel;
+        let currentOldChartOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -189,8 +197,8 @@ class AccordionMenu {
                     `Dashboards Error: Wrong JSON config structure passed as a chart options. \n____________\n${e}`
                 );
             }
-
         }
+
         for (let i = 0; i < pathLength; i++) {
             const key = propertyPath[i];
 
@@ -199,9 +207,49 @@ class AccordionMenu {
             }
 
             currentLevel = currentLevel[key];
+
+            if (key === 'chartOptions') {
+                const realChartOptions = (this.component as any).chart?.options;
+
+                if (realChartOptions) {
+                    const oldOptionsBuffer =
+                        this.oldOptionsBuffer as Globals.AnyRecord;
+                    if (!oldOptionsBuffer.chartOptions) {
+                        oldOptionsBuffer.chartOptions = {};
+                    }
+                    currentOldChartOptionsBufferLevel =
+                        oldOptionsBuffer.chartOptions as Globals.AnyRecord;
+                    currentChartOptionsLevel = realChartOptions;
+                }
+            } else if (
+                currentChartOptionsLevel &&
+                currentOldChartOptionsBufferLevel
+            ) {
+                currentChartOptionsLevel = currentChartOptionsLevel[key];
+
+                if (currentOldChartOptionsBufferLevel[key] === void 0) {
+                    currentOldChartOptionsBufferLevel[key] = {};
+                }
+
+                currentOldChartOptionsBufferLevel =
+                    currentOldChartOptionsBufferLevel[key];
+            }
         }
 
-        currentLevel[propertyPath[pathLength]] = value;
+        const lastKey = propertyPath[pathLength];
+        currentLevel[lastKey] = value;
+
+        if (currentOldChartOptionsBufferLevel && currentChartOptionsLevel) {
+            currentOldChartOptionsBufferLevel[lastKey] = (
+                currentOldChartOptionsBufferLevel[lastKey] ??
+                currentChartOptionsLevel[lastKey]
+            );
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.component?.update(
+            this.changedOptions as Partial<Component.Options>
+        );
     }
 
     /**
@@ -295,6 +343,118 @@ class AccordionMenu {
 
         }
         return;
+    }
+
+    /**
+     * Closes the sidebar discarding changes. If there are any changes, it will
+     * show a confirmation popup. If no changes, it will close the sidebar.
+     */
+    public cancelChanges(): void {
+        if (Object.keys(this.changedOptions).length < 1) {
+            this.closeSidebar();
+        } else {
+            this.showCancelConfirmationPopup();
+        }
+    }
+
+    /**
+     * Confirms changes made in the component.
+     *
+     * @fires EditMode#componentChanged
+     */
+    private async confirmChanges(): Promise<void> {
+        const component = this.component;
+        if (!component) {
+            return;
+        }
+
+        if (
+            component.type === 'Highcharts' &&
+            Object.keys(this.chartOptionsJSON).length
+        ) {
+            await component.update({
+                chartOptions: this.chartOptionsJSON
+            } as any);
+        }
+
+        fireEvent(
+            component.board.editMode,
+            'componentChanged',
+            {
+                target: component,
+                changedOptions: merge({}, this.changedOptions),
+                oldOptions: merge({}, this.oldOptionsBuffer)
+            }
+        );
+
+        this.changedOptions = {};
+        this.chartOptionsJSON = {};
+        this.closeSidebar();
+    }
+
+    /**
+     * Discards changes made in the component.
+     *
+     * @fires EditMode#componentChangesDiscarded
+     */
+    private async discardChanges(): Promise<void> {
+        const component = this.component;
+        if (!component) {
+            return;
+        }
+
+        await component.update(
+            this.oldOptionsBuffer as Partial<Component.Options>
+        );
+
+        fireEvent(
+            component.board.editMode,
+            'componentChangesDiscarded',
+            {
+                target: component,
+                changedOptions: merge({}, this.changedOptions),
+                oldOptions: merge({}, this.oldOptionsBuffer)
+            }
+        );
+
+        this.changedOptions = {};
+        this.chartOptionsJSON = {};
+    }
+
+    /**
+     * Shows a confirmation popup when the user tries to discard changes.
+     */
+    private showCancelConfirmationPopup(): void {
+        const popup = this.confirmationPopup;
+        const editMode = this.component?.board?.editMode;
+        if (!popup || !editMode || this.waitingForConfirmation) {
+            return;
+        }
+
+        this.waitingForConfirmation = true;
+        popup.show({
+            text: editMode.lang.confirmDiscardChanges,
+            confirmButton: {
+                value: editMode.lang.confirmButton,
+                callback: async (): Promise<void> => {
+                    await this.discardChanges();
+                    this.waitingForConfirmation = false;
+                    this.closeSidebar();
+                },
+                context: this as any
+            },
+            cancelButton: {
+                value: editMode.lang.cancelButton,
+                callback: (): void => {
+                    popup.closePopup();
+                    editMode.setEditOverlay();
+
+                    setTimeout((): void => {
+                        this.waitingForConfirmation = false;
+                    }, 100);
+                }
+            }
+        });
     }
 }
 

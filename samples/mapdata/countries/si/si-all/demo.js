@@ -70,7 +70,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/si/si-all.topo.json">Slovenia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/si/si-all.topo.json">Slovenia</a>'
         },
 
         mapNavigation: {
