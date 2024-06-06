@@ -141,7 +141,7 @@
     QUnit.test(
         'Boost module should zoom scatter without min/max',
         function (assert) {
-            var chart = Highcharts.chart('container', {
+            const chart = Highcharts.chart('container', {
                     chart: {
                         height: 450,
                         width: 450,
@@ -210,6 +210,16 @@
                 'Scatter should have 16 boosted points. (#20433)'
             );
 
+            chart.addSeries({
+                data: [
+                    [4, 4], [4, 3], [4, 1], [4, 2],
+                    [3, 4], [3, 3], [3, 1], [3, 2],
+                    [1, 4], [1, 3], [1, 1], [1, 2],
+                    [2, 4], [2, 3], [2, 1], [2, 2]
+                ],
+                boostThreshold: 16
+            });
+
             controller.pan([150, 150], [300, 300]);
 
             assert.deepEqual(
@@ -219,6 +229,12 @@
                 ],
                 [1.75, 3.25],
                 'Scatter yAxis should have zoomed min/max.'
+            );
+
+            assert.strictEqual(
+                document.getElementsByClassName('highcharts-markers').length,
+                2,
+                'There should be two markerGroups when zoomed in'
             );
 
         }
