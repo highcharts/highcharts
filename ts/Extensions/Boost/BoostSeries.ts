@@ -690,6 +690,24 @@ function exitBoost(
     series: Series
 ): void {
     const boost = series.boost;
+    const chart = series.chart;
+    const chartBoost = chart.boost;
+
+    if (chartBoost?.markerGroup) {
+        chartBoost.markerGroup.destroy();
+        chartBoost.markerGroup = void 0;
+
+        for (const s of chart.series) {
+            s.markerGroup = void 0;
+            s.markerGroup = s.plotGroup(
+                'markerGroup',
+                'markers',
+                'visible',
+                1,
+                chart.seriesGroup
+            ).addClass('highcharts-tracker');
+        }
+    }
 
     // Reset instance properties and/or delete instance properties and go back
     // to prototype
@@ -1101,6 +1119,17 @@ function seriesRenderCanvas(this: Series): void {
             chart.seriesGroup
         ).addClass('highcharts-tracker');
     } else {
+        // If series has a private markerGroup, remove that
+        // and use common markerGroup
+        if (
+            this.markerGroup &&
+            this.markerGroup !== chartBoost?.markerGroup
+        ) {
+            this.markerGroup.destroy();
+        }
+        // Use a single group for the markers
+        this.markerGroup = chartBoost?.markerGroup;
+
         // When switching from chart boosting mode, destroy redundant
         // series boosting targets
         if (seriesBoost && seriesBoost.target) {
