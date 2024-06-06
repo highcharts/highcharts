@@ -28,7 +28,7 @@ Dashboards.board('container', {
                     additive: true,
                     ranges: [{
                         column: 'Col-B',
-                        minValue: 0,
+                        minValue: 500,
                         maxValue: 2010
                     }]
                 }
@@ -90,7 +90,7 @@ Dashboards.board('container', {
             }
         },
         dataGridOptions: {
-            editable: false
+            editable: true
         }
     }]
 });
