@@ -502,6 +502,7 @@ module.exports = function (config) {
                             + `
                             QUnit.testStart(()=>{
                                 document.querySelector("#test-hc-styles")?.remove();
+
                                 Highcharts.setOptions({
                                     chart: {
                                         events: {
@@ -514,13 +515,11 @@ module.exports = function (config) {
                                     }
                                 })
                             });
-                            QUnit.testDone(()=>{});
+                            QUnit.testDone(()=>{
+                                document.querySelector("#test-hc-styles")?.remove();
+                            });
                             `
                                 + js;
-
-
-
-                            console.log(js);
                         }
 
                         done(js);
