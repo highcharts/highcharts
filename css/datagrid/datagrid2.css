@@ -98,7 +98,6 @@
 
 .highcharts-dg-table thead {
     background-color: var(--highcharts-neutral-color-5);
-    /* border-bottom: 1px solid var(--highcharts-neutral-color-20); */
     display: block;
 }
 
