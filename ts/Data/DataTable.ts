@@ -261,6 +261,7 @@ class DataTable implements DataEvent.Emitter {
     private versionTag: string;
 
     private rowKeysId: string | undefined;
+
     /* *
      *
      *  Functions
@@ -894,17 +895,6 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Retrieves the "column ID" of the row keys
-     * @private
-     *
-     * @return {string | undefined}
-     * Returns the identifier (key) or undefined.
-     */
-    public getRowKeysId(): (string | undefined) {
-        return this.rowKeysId;
-    }
-
-    /**
      * Retrieves the row at a given index. This function is a simplified wrap of
      * {@link getRows}.
      *
@@ -1029,6 +1019,11 @@ class DataTable implements DataEvent.Emitter {
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
         columnNamesOrAliases = (columnNamesOrAliases || Object.keys(columns));
+        if (this.rowKeysId) {
+            columnNamesOrAliases =
+                // eslint-disable-next-line max-len
+                columnNamesOrAliases.filter((val: string): Boolean => val !== this.rowKeysId);
+        }
 
         for (
             let i = rowIndex,

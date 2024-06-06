@@ -14,9 +14,6 @@ QUnit.test('DataTableRowKey.modify', async function (assert) {
         modifier = new RangeModifier();
         modifier.options.ranges.length = 0;
 
-    const rowKeysId = table.getRowKeysId();
-    assert.equal(rowKeysId, 'rkey', 'Row key column should be set');
-
     const rowKeys = table.getRowKeysColumn();
     assert.equal(rowKeys.length, table.columns.x.length,
         'The number of row keys should equal the number of rows');
@@ -116,7 +113,7 @@ QUnit.test('DataTableRowKey.modifyCell', function (assert) {
         );
 });
 
-/*
+
 QUnit.test('DataTableRowKey.modifyColumns', function (assert) {
 
     const done = assert.async(),
@@ -167,4 +164,4 @@ QUnit.test('DataTableRowKey.modifyColumns', function (assert) {
         );
 
 });
-*/
+
