@@ -17,6 +17,7 @@
 
 import FS from 'node:fs/promises';
 import FSLib from '../libs/fs.js';
+import Path from 'node:path';
 import TSLib from '../libs/ts.js';
 import TreeLib from '../libs/tree.js';
 const { toJSONString } = TreeLib;
@@ -227,7 +228,7 @@ async function main() {
 
         const name = info.name,
             fullName = 'Highcharts.' + name,
-            description = getHTMLDescription(info.doclet.tags.description),
+            description = getHTMLDescription(info.doclet.tags.description || []),
             html = mainHbs({
                 ...defaultHbsConfig,
 
@@ -275,6 +276,8 @@ async function main() {
                 samples: getSamples(info.doclet.tags.sample),
                 children: info.members.map((member: any) => {
                     // Temporarly add not yet supported info into description
+                    member.doclet.tags.description =
+                        member.doclet.tags.description || [];
                     if (member.parameters) {
                         member.parameters.forEach((param: any) => {
                             if (param.name !== 'this') {
@@ -313,7 +316,8 @@ async function main() {
                     return {
                         ignoreDefault: member.kind === 'Function',
                         description: getHTMLDescription(
-                            member.doclet.tags.description),
+                            member.doclet.tags.description || []
+                        ),
                         filename: member.meta?.source ||
                             member.doclet?.meta?.source,
                         fullname: fullName + '.' + member.name,
@@ -393,20 +397,20 @@ async function main() {
     );
 
     await FS.writeFile(
-        'api-docs/api-classes.json',
+        'tree-api-classes.json',
         toJSONString(filteredClassCodeInfo, '    '),
         'utf8'
     );
 
     /*await FS.writeFile(
-        'api-docs/api-interfaces.json',
+        'tree-api-interfaces.json',
         toJSONString(filteredClassCodeInfo, '    '),
         'utf8'
     );*/
 
     // TODO: This is used for debugging, remove later
     await FS.writeFile(
-        'api-docs/api-all.json',
+        'tree-api-all.json',
         toJSONString(classes, '    '),
         'utf8'
     );
