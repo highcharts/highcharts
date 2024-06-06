@@ -273,7 +273,8 @@ class SidebarPopup extends BaseForm {
         }
 
         // Remove highlight from the row.
-        if (editMode.editCellContext &&
+        if (
+            editMode.editCellContext &&
             editMode.editCellContext instanceof Cell &&
             editMode.editCellContext.row
         ) {
@@ -449,7 +450,8 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext &&
+        if (
+            editCellContext &&
             editCellContext instanceof Cell &&
             editCellContext.row
         ) {
