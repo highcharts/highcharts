@@ -114,9 +114,6 @@ function addTreeNode(
             ) &&
             !_info.name.startsWith('_')
         ) {
-            if (_info.name.toLowerCase().startsWith('area')) {
-                console.log(_info);
-            }
             _fullname = Utilities.getOptionName(_info.name);
         }
 
@@ -237,15 +234,14 @@ function addTreeNode(
                         break;
 
                     case 'productdesc':
-                        _array = _nodeDoclet[`${_tag}s`] = [];
-                        for (const _text of _infoDoclet.tags[_tag]) {
-                            _split = _text.split(/\s+/u, );
-                            if (_split.length === 2) {
+                        _array = _nodeDoclet.productdescs = [];
+                        for (const _text of _infoDoclet.tags.productdesc) {
+                            _split = TSLib.extractTagInsets(_text);
+                            if (_split.length) {
                                 _array.push({
-                                    products: _split[0]
-                                        .replace(/[{}]/gu, '')
-                                        .split('|'),
-                                    value: _split[1]
+                                    products: _split[0].split('|'),
+                                    value: _text
+                                        .substring(_split[0].length).trim()
                                 });
                             }
                         }
@@ -258,32 +254,27 @@ function addTreeNode(
 
                     case 'sample':
                         _array = _nodeDoclet[`${_tag}s`] = [];
-                        for (let _text of _infoDoclet.tags[_tag]) {
+                        for (
+                            const _object
+                            of TSLib.extractTagObjects(_infoDoclet, 'sample')
+                        ) {
                             const _sample: TreeLib.OptionDocletSample = {
-                                name: '',
-                                value: _text
+                                name: _object.name || _object.text,
+                                value: _object.value || ''
                             };
-                            const _insets = TSLib.extractTagInsets(_text);
-                            if (_insets.length) {
-                                _text = _text
-                                    .substring(_insets[0].length + 2)
-                                    .trim();
-                                _sample.products = _insets[0].split('|');
-                            }
-                            _split = _text.split(/\s+/gsu, 1);
-                            if (_split.length) {
-                                _sample.name =
-                                    _text.substring(_split[0].length).trim();
-                                _sample.value = _split[0];
+                            if (_object.products) {
+                                _sample.products = _object.products;
                             }
                             _array.push(_sample);
                         }
                         break;
 
                     case 'type':
+                        console.log(_infoDoclet.tags.type);
                         _nodeDoclet.type = {
-                            names: _infoDoclet.tags.type
-                                .map(type => type.replace(/\{([^\}]+)\}/, '$1'))
+                            names: TSLib.extractTagInsets(
+                                _infoDoclet.tags.type.join('\n')
+                            )
                         };
                         break;
 

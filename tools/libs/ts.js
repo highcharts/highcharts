@@ -513,35 +513,65 @@ function extractTagObjects(
     /** @type {Array<DocletTag>} */
     const _objects = [];
 
+    /** @type {Array<string>} */
+    let _array;
     /** @type {RegExpMatchArray} */
     let _match;
     /** @type {DocletTag} */
     let _object;
 
-    for (let text of (doclet.tags[tag] || [])) {
+    for (let _text of (doclet.tags[tag] || [])) {
         _object = { tag };
-        _match = text.match(DOCLET_TAG_INSET);
+        _match = _text.match(DOCLET_TAG_INSET);
+
         if (_match && _match.index === 0) {
             _object.type = _match[1];
-            text = text.substring(_match[0].length).trimStart();
+            _text = _text.substring(_match[0].length).trimStart();
         }
-        if (tag === 'param') {
-            _match = text.match(DOCLET_TAG_NAME);
-            if (_match) {
-                if (_match[1]) {
-                    _object.isOptional = true;
-                    _object.name = _match[1];
-                } else {
-                    _object.name = _match[2];
+
+        switch (tag) {
+
+            default:
+                break;
+
+            case 'param':
+                _match = _text.match(DOCLET_TAG_NAME);
+                if (_match) {
+                    if (_match[1]) {
+                        _object.isOptional = true;
+                        _object.name = _match[1];
+                    } else {
+                        _object.name = _match[2];
+                    }
+                    if (_object.name.includes('=')) {
+                        _object.value = _object.name.split('=', 2)[1];
+                        _object.name = _object.name.split('=', 2)[0];
+                    }
+                    _text = _text.substring(_match[0].length).trimStart();
                 }
-                if (_object.name.includes('=')) {
-                    _object.value = _object.name.split('=', 2)[1];
-                    _object.name = _object.name.split('=', 2)[0];
+                break;
+
+            case 'sample':
+            case 'samples':
+                _array = extractTagInsets(_text);
+                if (_array.length) {
+                    _text = _text
+                        .substring(_array[0].length + 2)
+                        .trim();
+                    _object.products = _array[0].split('|');
                 }
-                text = text.substring(_match[0].length).trimStart();
-            }
+                _match = _text.match(/^\S+/gsu);
+                if (_match) {
+                    _object.name = _text.substring(_match[0].length).trim();
+                    _object.value = _match[0];
+                    _text = '';
+                }
+                break;
+
         }
-        _object.text = text;
+        if (_text) {
+            _object.text = _text;
+        }
         _objects.push(_object);
     }
 
@@ -2649,6 +2679,7 @@ module.exports = {
  * @typedef DocletTag
  * @property {boolean} [isOptional]
  * @property {string} [name]
+ * @property {Array<string>} [products]
  * @property {string} tag
  * @property {string} [text]
  * @property {string} [type]
