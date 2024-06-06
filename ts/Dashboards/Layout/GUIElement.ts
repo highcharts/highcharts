@@ -15,17 +15,12 @@
  * */
 
 import type Cell from './Cell';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type { CSSObject } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 
-import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
-
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -108,9 +103,7 @@ abstract class GUIElement {
      * @returns
      * The unique id.
      */
-    public static getElementId(
-        elementType: 'col' | 'row' | 'layout' | 'col-nested' | 'cell'
-    ): string {
+    public static getElementId(elementType: GUIElement.GUIElementType): string {
         return (
             Globals.classNamePrefix + elementType + '-' +
             uniqueKey().slice(11)
@@ -307,7 +300,8 @@ namespace GUIElement {
         guiElement: GUIElement;
     }
 
-    export type GUIElementType = 'row'|'cell'|'layout'|'cell-html';
+    export type GUIElementType =
+        'row'|'cell'|'layout'|'cell-html'|'col-nested'|'col';
 
     export interface Offset {
         left: number;
