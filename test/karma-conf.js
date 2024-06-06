@@ -506,10 +506,8 @@ module.exports = function (config) {
                                 Highcharts.setOptions({
                                     chart: {
                                         events: {
-                                            load: function (){
-                                                if (this.styledMode) {
-                                                    window.setHCStyles();
-                                                }
+                                            load: function () {
+                                                window.setHCStyles(this);
                                             }
                                         }
                                     }

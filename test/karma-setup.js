@@ -35,19 +35,7 @@ Highcharts.useSerialIds(true);
 // Disable animation over all.
 Highcharts.setOptions({
     chart: {
-        animation: false,
-        events: {
-        // load: function() {
-        //     if (this.styledMode) {
-        //         console.log('a chart with styledmode was loaded');
-        //         window.setHCStyles();
-        //
-        //         console.log(window.currentTests);
-        //     } else {
-        //         document.querySelector('#test-hc-styles')?.remove();
-        //     }
-        // }
-        }
+        animation: false
     },
     plotOptions: {
         series: {
@@ -348,11 +336,19 @@ if (window.QUnit) {
             message: message
         });
     };
-    window.setHCStyles = function (){
+
+    window.setHCStyles = function (chart){
         const styleElementID = 'test-hc-styles';
         let styleElement = document.getElementById(styleElementID);
 
-        if (!styleElement && 'highchartsCSS' in window ) {
+        // TODO: Investigate unit-tests/boost/heatmap-styled-mode
+        if (chart.boosted) return;
+
+        if (
+            !styleElement &&
+            'highchartsCSS' in window &&
+            chart.styledMode
+        ) {
             console.log('injecting HC styles')
             styleElement = document.createElement('style');
             styleElement.id = styleElementID;
