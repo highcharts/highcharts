@@ -347,12 +347,12 @@ class DragDrop {
                 if (dragDrop.editMode.editCellContext) {
                     dragDrop.editMode.showToolbars(
                         ['row', 'cell'],
-                        dragDrop.editMode.editCellContext
+                        dragDrop.editMode.editCellContext as Cell
                     );
 
                     if (dragDrop.editMode.resizer) {
                         dragDrop.editMode.resizer.setSnapPositions(
-                            dragDrop.editMode.editCellContext
+                            dragDrop.editMode.editCellContext as Cell
                         );
                     }
                 }

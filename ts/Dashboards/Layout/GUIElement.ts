@@ -307,7 +307,7 @@ namespace GUIElement {
         guiElement: GUIElement;
     }
 
-    export type GUIElementType = 'row'|'cell'|'layout';
+    export type GUIElementType = 'row'|'cell'|'layout'|'cell-html';
 
     export interface Offset {
         left: number;

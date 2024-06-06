@@ -485,15 +485,6 @@ class Cell extends GUIElement {
         }
     }
 
-    public static setCellHighlight(cell: Cell): void {
-        cell.container.classList.toggle(
-            EditGlobals.classNames.cellEditHighlight
-        );
-        cell.mountedComponent?.board.container.classList.toggle(
-            EditGlobals.classNames.dashboardCellEditHighlightActive
-        );
-    }
-
     public setHighlight(remove?: boolean): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
@@ -669,13 +660,6 @@ namespace Cell {
         style?: CSSJSONObject;
         layoutJSON?: LayoutType.JSON;
     }
-
-    export interface DOMCell {
-        id: string;
-        container: HTMLElement;
-        mountedComponent: Component
-    }
-
 }
 
 /* *

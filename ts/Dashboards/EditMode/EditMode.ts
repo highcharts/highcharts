@@ -19,11 +19,12 @@
  *  Imports
  *
  * */
-import type Cell from '../Layout/Cell';
 import type Row from '../Layout/Row';
 import type Board from '../Board';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
+import Cell from '../Layout/Cell.js';
+import CellHTML from '../Layout/CellHTML.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
@@ -238,7 +239,7 @@ class EditMode {
     /**
      * @internal
      */
-    public mouseCellContext?: Cell;
+    public mouseCellContext?: Cell|CellHTML;
     /**
      * @internal
      */
@@ -246,11 +247,11 @@ class EditMode {
     /**
      * @internal
      */
-    public potentialCellContext?: Cell;
+    public potentialCellContext?: Cell|CellHTML;
     /**
      * @internal
      */
-    public editCellContext?: Cell;
+    public editCellContext?: Cell|CellHTML;
     /**
      * @internal
      */
@@ -353,7 +354,7 @@ class EditMode {
             const length = board.mountedComponents.length;
 
             for (let i = 0, iEnd = length; i < iEnd; ++i) {
-                editMode.setCellEvents(board.mountedComponents[i].cell as any);
+                editMode.setCellEvents(board.mountedComponents[i].cell);
             }
         } else {
             for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
@@ -564,12 +565,10 @@ class EditMode {
      * Set events for the cell.
      * @internal
      */
-    public setCellEvents(cell: Cell): void {
+    public setCellEvents(cell: Cell|CellHTML): void {
         const editMode = this;
 
-        if (cell.nestedLayout) {
-            editMode.setLayoutEvents(cell.nestedLayout);
-        } else if (editMode.cellToolbar && cell.container) {
+        if (cell instanceof CellHTML) {
             addEvent(
                 cell.container,
                 'mouseenter',
@@ -579,48 +578,60 @@ class EditMode {
                     }
                 }
             );
-
-            // Init dragDrop cell events only when using layouts.
-            if (
-                !editMode.customHTMLMode &&
-                (editMode.dragDrop || editMode.resizer)
-            ) {
-                const dragDrop = editMode.dragDrop;
-
+        } else {
+            if (cell.nestedLayout) {
+                editMode.setLayoutEvents(cell.nestedLayout);
+            } else if (editMode.cellToolbar && cell.container) {
                 addEvent(
                     cell.container,
-                    'mousemove',
-                    function (e: PointerEvent): void {
-                        if (
-                            dragDrop &&
-                            dragDrop.isActive &&
-                            e.target === cell.container
-                        ) {
-                            dragDrop.mouseCellContext = cell;
-                            dragDrop.mouseRowContext = void 0;
-                        }
-                    }
-                );
-
-                addEvent(
-                    cell.container,
-                    'mouseleave',
+                    'mouseenter',
                     function (): void {
-                        if (
-                            dragDrop &&
-                            dragDrop.isActive &&
-                            dragDrop.mouseCellContext === cell
-                        ) {
-                            dragDrop.mouseCellContext = void 0;
-                        }
-
                         if (editMode.isContextDetectionActive) {
-                            editMode.mouseCellContext = void 0;
+                            editMode.mouseCellContext = cell;
                         }
                     }
                 );
+
+                // Init dragDrop cell events only when using layouts.
+                if ((editMode.dragDrop || editMode.resizer)) {
+                    const dragDrop = editMode.dragDrop;
+
+                    addEvent(
+                        cell.container,
+                        'mousemove',
+                        function (e: PointerEvent): void {
+                            if (
+                                dragDrop &&
+                                dragDrop.isActive &&
+                                e.target === cell.container
+                            ) {
+                                dragDrop.mouseCellContext = cell;
+                                dragDrop.mouseRowContext = void 0;
+                            }
+                        }
+                    );
+
+                    addEvent(
+                        cell.container,
+                        'mouseleave',
+                        function (): void {
+                            if (
+                                dragDrop &&
+                                dragDrop.isActive &&
+                                dragDrop.mouseCellContext === cell
+                            ) {
+                                dragDrop.mouseCellContext = void 0;
+                            }
+
+                            if (editMode.isContextDetectionActive) {
+                                editMode.mouseCellContext = void 0;
+                            }
+                        }
+                    );
+                }
             }
         }
+
     }
     /**
      * Activate the edit mode.
@@ -665,7 +676,7 @@ class EditMode {
         editMode.hideToolbars();
 
         // Remove highlight from the context row if exists.
-        if (this.editCellContext) {
+        if (this.editCellContext && this.editCellContext instanceof Cell) {
             this.editCellContext.row?.setHighlight(true);
         }
 
@@ -881,7 +892,7 @@ class EditMode {
             return;
         }
 
-        let cellContext: Cell|undefined;
+        let cellContext: Cell|CellHTML|undefined;
         let rowContext: Row|undefined;
 
         if (editMode.mouseCellContext) {
@@ -931,8 +942,8 @@ class EditMode {
             this.editCellContext !== this.potentialCellContext
         ) {
             this.setEditCellContext(
-                this.potentialCellContext,
-                this.editCellContext
+                this.potentialCellContext as any,
+                this.editCellContext as any
             );
         }
     }

@@ -22,6 +22,7 @@ import type ComponentType from '../Components/ComponentType';
 import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
 
+import CellHTML from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
 import Bindings from '../Actions/Bindings.js';
@@ -272,7 +273,10 @@ class SidebarPopup extends BaseForm {
         }
 
         // Remove highlight from the row.
-        if (editMode.editCellContext && editMode.editCellContext.row) {
+        if (editMode.editCellContext &&
+            editMode.editCellContext instanceof Cell &&
+            editMode.editCellContext.row
+        ) {
             editMode.editCellContext.row.setHighlight(true);
         }
 
@@ -284,7 +288,7 @@ class SidebarPopup extends BaseForm {
         this.generateContent(context);
     }
 
-    public generateContent(context?: Cell | Row): void {
+    public generateContent(context?: Cell | Row | CellHTML): void {
 
         // Title
         this.renderHeader(
@@ -299,10 +303,10 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        this.type = context.getType ? context.getType() : 'cell';
+        this.type = context.getType();
 
-        if (this.type === 'cell') {
-            const component = (context as Cell).mountedComponent;
+        if (this.type === 'cell-html' || this.type === 'cell') {
+            const component = (context as Cell|CellHTML).mountedComponent;
             if (!component) {
                 return;
             }
@@ -445,7 +449,10 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext && editCellContext.row) {
+        if (editCellContext &&
+            editCellContext instanceof Cell &&
+            editCellContext.row
+        ) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
 
@@ -453,9 +460,9 @@ class SidebarPopup extends BaseForm {
             if (editCellContext.isHighlighted) {
                 editCellContext.setHighlight(true);
             }
-        } else if (editCellContext) {
-            editMode.showToolbars(['cell'], editCellContext);
-            Cell.setCellHighlight(editCellContext);
+        } else if (editCellContext instanceof CellHTML) {
+            editMode.showToolbars(['cell'], editCellContext as any);
+            editCellContext.setCellHighlight(editCellContext);
         }
 
         editMode.isContextDetectionActive = true;
