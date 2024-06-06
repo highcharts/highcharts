@@ -11,6 +11,21 @@ const dg = new DataGrid.DataGrid2('container', {
     }),
     rows: {
         bufferSize: 5
+    },
+    columns: {
+        options: {
+            name: 'General: ',
+            format: 'Value: {this.value}'
+        },
+        columnAssignment: [{
+            columnId: 'a'
+        }, {
+            columnId: 'b',
+            options: {
+                name: 'column B',
+                format: '{this.value}%'
+            }
+        }]
     }
 });
 

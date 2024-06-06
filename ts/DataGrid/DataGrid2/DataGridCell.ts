@@ -23,6 +23,8 @@
 
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
+import F from '../../Core/Templating.js';
+const { format } = F;
 
 
 /* *
@@ -98,9 +100,16 @@ class DataGridCell {
             return;
         }
 
+        const formatString = this.column.userOptions.format;
         const cellData = this.column.data[this.row.index];
 
-        this.htmlElement.innerText = '' + cellData;
+        this.htmlElement.innerText = 
+            (
+                formatString ?
+                    format(formatString, cellData) :
+                    cellData
+            ) as string;
+
         this.row.htmlElement.appendChild(this.htmlElement);
     }
 

@@ -183,7 +183,6 @@ class DataGridTable {
         const columnNames = this.dataTable.getColumnNames();
         const columnAssignment =
             this.dataGrid.options.columns?.columnAssignment;
-
         if (columnAssignment) {
             for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
                 const idOrOptions = columnAssignment[i];
@@ -194,7 +193,6 @@ class DataGridTable {
                     );
                     continue;
                 }
-
                 this.columns.push(new DataGridColumn(
                     this,
                     idOrOptions.columnId,

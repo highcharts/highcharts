@@ -92,20 +92,22 @@ class DataGridTableHead {
      * Renders the table head content.
      */
     public render(): void {
+        let column;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+            column = this.columns[i];
             const element = makeHTMLElement('th', {
-                innerText: this.columns[i].id
+                innerText: column.userOptions.name || column.id
             }, this.container);
 
             // Set the accessibility attributes.
             element.setAttribute('scope', 'col');
 
             // Set the column's head element.
-            this.columns[i].headElement = element;
+            column.headElement = element;
 
             // Render the drag handle for resizing columns.
             this.renderColumnDragHandles(
-                this.columns[i],
+                column,
                 element
             );
         }
