@@ -91,17 +91,20 @@
     table-layout: fixed;
     border-collapse: collapse;
     border-spacing: 0;
-    border: 1px solid #ff0000;
+    color: var(--highcharts-neutral-color-100);
+    border: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
 }
 
 .highcharts-dg-table thead {
-    background-color: var(--highcharts-neutral-color-60);
+    background-color: var(--highcharts-neutral-color-5);
+    /* border-bottom: 1px solid var(--highcharts-neutral-color-20); */
     display: block;
 }
 
 .highcharts-dg-table thead th {
-    border-right: 1px solid #00ff00;
+    color: var(--highcharts-neutral-color-100);
+    border-left: 1px solid var(--highcharts-neutral-color-20);
     height: 30px;
     position: relative;
     white-space: nowrap;
@@ -118,39 +121,46 @@
 }
 
 .highcharts-dg-row {
-    border-top: 1px solid #0000ff;
+    background: var(--highcharts-background-color);
+    border-top: 1px solid var(--highcharts-neutral-color-20);
     position: absolute;
     overflow: hidden;
     height: 36px;
 }
 
 .highcharts-dg-row.highcharts-dg-odd {
-    background-color: #fafafa;
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 .highcharts-dg-table td {
     height: inherit;
-    border-right: 1px solid #00ff00;
+    border-left: 1px solid var(--highcharts-neutral-color-20);
     white-space: nowrap;
     padding-left: 4px;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
+.highcharts-dg-table td:first-child,
+.highcharts-dg-table thead th:first-child {
+    border-left: none;
+}
+
 .highcharts-dg-hovered-column {
     background-color: #0000ff07;
 }
 
-.highcharts-dg-hovered-row {
-    background-color: #0000ff07;
+.highcharts-dg-hovered-row,
+.highcharts-dg-row.highcharts-dg-odd.highcharts-dg-hovered-row {
+    background-color: var(--highcharts-highlight-color-10);
 }
 
 .highcharts-dg-hovered-row td.highcharts-dg-hovered-column {
-    background-color: #ffff0020;
+    background-color: var(--highcharts-highlight-color-10);
 }
 
 .highcharts-dg-table thead th.highcharts-dg-hovered-column {
-    background-color: #0000ff30;
+    background-color: var(--highcharts-highlight-color-10);
 }
 
 .highcharts-dg-col-resizer {
@@ -177,5 +187,5 @@
 }
 
 .highcharts-dg-col-resizer:hover::after {
-    border-color: blue;
+    border-color: var(--highcharts-highlight-color-80);
 }
