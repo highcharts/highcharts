@@ -1461,8 +1461,9 @@ class DataTable implements DataEvent.Emitter {
         const id = this.rowKeysId;
         if (id) {
             this.columns[id] = [];
+            const keysArray = this.columns[id];
             for (let i = 0; i < nRows; i++) {
-                this.columns[id][i] = id + '_' + String(i);
+                keysArray.push(id + '_' + String(i));
             }
         }
     }
