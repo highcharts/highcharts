@@ -1456,9 +1456,9 @@ class RangeSelector {
 
         if (!this.chart.styledMode) {
             this.zoomText.css(options.labelStyle);
-
-            buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
+            options.buttonTheme['stroke-width'] ??= 0;
         }
+
 
         createElement('option', {
             textContent: this.zoomText.textStr,
@@ -1590,6 +1590,8 @@ class RangeSelector {
         if (this.isDirty) {
 
             this.isDirty = false;
+            // Reset this prop to force redrawing collapse of buttons
+            this.isCollapsed = void 0;
             const newButtonsOptions = this.options.buttons ?? [];
             const btnLength = Math.min(
                 newButtonsOptions.length,
@@ -1603,8 +1605,23 @@ class RangeSelector {
             // changes since we need more control over the width when collapsing
             // the buttons
             const width = buttonTheme.width || 28;
-            for (let i = 0; i < btnLength; i++) {
-                // Compare the options, and if they are different, update
+
+
+            if (newButtonsOptions.length < this.buttonOptions.length) {
+                // Destroy additional buttons
+                for (
+                    let i = this.buttonOptions.length - 1;
+                    i >= newButtonsOptions.length;
+                    i--
+                ) {
+                    const btn = this.buttons.pop();
+                    btn!.destroy();
+                    this.dropdown!.options.remove(i + 1);
+                }
+            }
+
+            // Update current buttons
+            for (let i = btnLength - 1; i >= 0; i--) {
                 const diff = diffObjects(
                     newButtonsOptions[i],
                     this.buttonOptions[i]
@@ -1618,12 +1635,10 @@ class RangeSelector {
                     this.computeButtonRange(rangeOptions);
 
                 }
-
             }
 
+            // Create missing buttons
             if (newButtonsOptions.length > this.buttonOptions.length) {
-
-                // Create missing buttons
                 for (
                     let i = this.buttonOptions.length;
                     i < newButtonsOptions.length;
@@ -1632,20 +1647,7 @@ class RangeSelector {
                     this.createButton(newButtonsOptions[i], i, width, states);
                     this.computeButtonRange(newButtonsOptions[i]);
                 }
-            } else if (newButtonsOptions.length < this.buttonOptions.length) {
-                // Destroy additional buttons
-                for (
-                    let i = this.buttonOptions.length - 1;
-                    i >= newButtonsOptions.length;
-                    i--
-                ) {
-                    const btn = this.buttons.pop();
-                    btn!.destroy();
-                    this.dropdown!.options.remove(i + 1);
-                }
-
             }
-
             this.buttonOptions = this.options.buttons ?? [];
 
             if (defined(this.options.selected)) {
