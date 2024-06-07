@@ -223,7 +223,7 @@ async function main() {
     await FS.mkdir('build/api/class-reference/nav', {recursive: true});
 
     // Make HTML and JSON for each class and its children
-    filteredClassCodeInfo.forEach(async (info: TSLib.ClassInfo) => {
+    async function processParent(info: TSLib.ClassInfo) {
         info.doclet.tags.description.push('Src: ' + info.doclet.meta?.file);
 
         const name = info.name,
@@ -275,6 +275,16 @@ async function main() {
                 }) || void 0,
                 samples: getSamples(info.doclet.tags.sample),
                 children: info.members.map((member: any) => {
+                    if (!member.doclet) {
+                        member.doclet = {
+                            tags: {
+                                description: [
+                                    '!! No doclet !!'
+                                ]
+                            }
+                        };
+                    }
+
                     // Temporarly add not yet supported info into description
                     member.doclet.tags.description =
                         member.doclet.tags.description || [];
@@ -313,6 +323,32 @@ async function main() {
                         );
                     }
 
+                    // Nested from value
+                    if (member.value) {
+                        member.doclet.tags.description.push(
+                            '<b>Value:</b> ' + sanitize(
+                                JSON.stringify(member.value)
+                            )
+                        );
+                    }
+
+                    let typeListNames = member.doclet.tags.type ||
+                        (typeof member.value === 'object' ?
+                        '*' :
+                        typeof member.value === 'string' ?
+                            member.value : member.kind);
+
+                    if (typeListNames === '*') {
+                        processParent({
+                            _printMe: true,
+                            name: info.name + '.' + member.name,
+                            doclet: member.doclet,
+                            members: member.value?.members,
+                            meta: member.meta,
+                            parentPath: (info as any).parentPath
+                        } as unknown as TSLib.ClassInfo);
+                    }
+
                     return {
                         ignoreDefault: member.kind === 'Function',
                         description: getHTMLDescription(
@@ -322,16 +358,14 @@ async function main() {
                             member.doclet?.meta?.source,
                         fullname: fullName + '.' + member.name,
 
-                        isLeaf: true,
+                        isLeaf: typeof member.value !== 'object',
                         // line: 000,
                         // lineEnd: 000,
                         name: member.name,
 
                         samples: getSamples(member.doclet.tags.sample),
                         typeList: {
-                            names: [
-                                member.value || member.kind
-                            ]
+                            names: [typeListNames]
                         },
                         type: member.kind === 'Function' ?
                             'method' : 'member',
@@ -379,7 +413,8 @@ async function main() {
             html,
             'utf8'
         );
-    });
+    }
+    filteredClassCodeInfo.forEach(processParent);
 
     // Global
     await FS.writeFile(
