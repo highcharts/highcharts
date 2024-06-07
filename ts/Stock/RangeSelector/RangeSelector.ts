@@ -1607,8 +1607,8 @@ class RangeSelector {
             const width = buttonTheme.width || 28;
 
 
+            // Destroy additional buttons
             if (newButtonsOptions.length < this.buttonOptions.length) {
-                // Destroy additional buttons
                 for (
                     let i = this.buttonOptions.length - 1;
                     i >= newButtonsOptions.length;
@@ -1733,7 +1733,7 @@ class RangeSelector {
 
             let xOffsetForExportButton = 0;
 
-            if (inputGroup) {
+            if (options.inputEnabled && inputGroup) {
                 // Detect collision between the input group and exporting button
                 xOffsetForExportButton = getXOffsetForExportButton(
                     inputGroup,
@@ -1760,9 +1760,9 @@ class RangeSelector {
 
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
+                this.handleCollision(xOffsetForExportButton);
             }
 
-            this.handleCollision(xOffsetForExportButton);
 
             // Vertical align
             group.align({
