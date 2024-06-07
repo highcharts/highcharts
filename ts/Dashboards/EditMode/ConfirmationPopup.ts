@@ -234,7 +234,7 @@ class ConfirmationPopup extends BaseForm {
      */
     public closePopup(): void {
         super.closePopup();
-        this.editMode.setEditOverlay(true);
+        this.editMode.setEditOverlay();
     }
 }
 

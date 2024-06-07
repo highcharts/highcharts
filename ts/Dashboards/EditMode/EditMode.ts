@@ -651,7 +651,6 @@ class EditMode {
             EditGlobals.classNames.editModeEnabled
         );
 
-        // TODO all buttons should be activated, add some wrapper?
         if (this.addComponentBtn) {
             this.addComponentBtn.style.display = 'block';
         }
@@ -677,7 +676,7 @@ class EditMode {
 
         // Remove highlight from the context row if exists.
         if (this.editCellContext && this.editCellContext instanceof Cell) {
-            this.editCellContext.row?.setHighlight(true);
+            this.editCellContext.row?.setHighlight();
         }
 
         // TODO all buttons should be deactivated.
@@ -940,8 +939,8 @@ class EditMode {
             this.editCellContext !== this.potentialCellContext
         ) {
             this.setEditCellContext(
-                this.potentialCellContext as any,
-                this.editCellContext as any
+                this.potentialCellContext,
+                this.editCellContext
             );
         }
     }
@@ -951,30 +950,42 @@ class EditMode {
      * @internal
      */
     public setEditCellContext(
-        editCellContext: Cell,
-        oldEditCellContext?: Cell
+        editCellContext: Cell|CellHTML,
+        oldEditCellContext?: Cell|CellHTML
     ): void {
-        const editMode = this,
-            oldContextRow = oldEditCellContext && oldEditCellContext.row;
+        const editMode = this;
+        const oldContext = oldEditCellContext;
 
-        editMode.editCellContext = editCellContext;
-        editMode.showToolbars(['row', 'cell'], editCellContext);
+        if (
+            editCellContext instanceof CellHTML ||
+            oldContext instanceof CellHTML
+        ) {
+            editMode.editCellContext = editCellContext;
+            editMode.cellToolbar?.showToolbar(editCellContext);
 
-        if (!oldContextRow || oldContextRow !== editCellContext.row) {
-            if (oldContextRow) {
-                // Remove highlight from the previous row.
-                oldContextRow.setHighlight(true);
+        } else {
+            const oldContextRow = oldContext?.row;
+
+            editMode.editCellContext = editCellContext;
+            editMode.showToolbars(['row', 'cell'], editCellContext);
+
+            if (!oldContextRow || oldContextRow !== editCellContext.row) {
+                if (oldContextRow) {
+                    // Remove highlight from the previous row.
+                    oldContextRow.setHighlight();
+                }
+
+                // Add highlight to the context row.
+                if (editCellContext.row) {
+                    editCellContext.row.setHighlight();
+                }
             }
 
-            // Add highlight to the context row.
-            if (editCellContext.row) {
-                editCellContext.row.setHighlight();
+            if (editMode.resizer) {
+                editMode.resizer.setSnapPositions(editCellContext);
             }
         }
 
-        if (editMode.resizer) {
-            editMode.resizer.setSnapPositions(editCellContext);
-        }
     }
 
     /**
@@ -1017,26 +1028,13 @@ class EditMode {
     /**
      * Adds/Removes the edit mode overlay.
      * @internal
-     *
-     * @param remove
-     * Whether the edit overlay should be removed.
      */
-    public setEditOverlay(
-        remove?: boolean
-    ): void {
-        const editMode = this,
-            cnt = editMode.editOverlay,
-            isSet = cnt?.classList.contains(
-                EditGlobals.classNames.editOverlayActive
-            );
+    public setEditOverlay(): void {
+        const editMode = this;
+        const container = editMode.editOverlay;
 
-        if (!remove && !isSet) {
-            cnt?.classList.add(EditGlobals.classNames.editOverlayActive);
-            editMode.isEditOverlayActive = true;
-        } else if (remove && isSet) {
-            cnt?.classList.remove(EditGlobals.classNames.editOverlayActive);
-            editMode.isEditOverlayActive = false;
-        }
+        container?.classList.toggle(EditGlobals.classNames.editOverlayActive);
+        editMode.isEditOverlayActive = !editMode.isEditOverlayActive;
     }
 }
 

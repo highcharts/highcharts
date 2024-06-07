@@ -278,7 +278,7 @@ class SidebarPopup extends BaseForm {
             editMode.editCellContext instanceof Cell &&
             editMode.editCellContext.row
         ) {
-            editMode.editCellContext.row.setHighlight(true);
+            editMode.editCellContext.row.setHighlight();
         }
 
         editMode.hideToolbars(['cell', 'row']);
@@ -447,7 +447,7 @@ class SidebarPopup extends BaseForm {
 
         // Remove edit overlay if active.
         if (editMode.isEditOverlayActive) {
-            editMode.setEditOverlay(true);
+            editMode.setEditOverlay();
         }
 
         if (
@@ -457,11 +457,7 @@ class SidebarPopup extends BaseForm {
         ) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
-
-            // Remove cell highlight if active.
-            if (editCellContext.isHighlighted) {
-                editCellContext.setHighlight();
-            }
+            editCellContext.setHighlight();
         } else if (
             editCellContext instanceof CellHTML && editMode.cellToolbar
         ) {

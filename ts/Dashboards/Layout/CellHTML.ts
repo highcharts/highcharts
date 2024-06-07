@@ -108,9 +108,6 @@ class CellHTML extends GUIElement {
 
     /**
      * Highlight the cell.
-     *
-     * @param cell
-     * The cell to highlight.
      */
     public setHighlight(): void {
         const cell = this;
