@@ -1265,16 +1265,16 @@ class RangeSelector {
         max?: number
     ): void {
 
+        if (this.options.enabled === false) {
+            return;
+        }
+
         const chart = this.chart,
             chartOptions = chart.options,
             options =
-                chartOptions.rangeSelector as RangeSelectorOptions,
+            chartOptions.rangeSelector as RangeSelectorOptions,
             // Place inputs above the container
             inputEnabled = options.inputEnabled;
-
-        if (options.enabled === false) {
-            return;
-        }
 
         if (inputEnabled) {
             if (!this.inputGroup) {
@@ -2169,6 +2169,7 @@ class RangeSelector {
         // between wrapped and non-wrapped layout
         this.alignElements();
 
+
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
             (rangeSelectorGroup.getBBox(true).height) + 13 +
@@ -2222,6 +2223,10 @@ class RangeSelector {
             this.options.selected = void 0;
             chart.options.rangeSelector!.selected = void 0;
         }
+        if (defined(options.enabled)) {
+            this.destroy();
+            return this.init(chart);
+        }
 
         this.isDirty = !!options.buttons;
 
@@ -2265,12 +2270,14 @@ class RangeSelector {
                 if (val instanceof SVGElement) {
                     // SVGElement
                     val.destroy();
+
                 } else if (
                     val instanceof window.HTMLElement
                 ) {
                     // HTML element
                     discardElement(val);
                 }
+                delete rSelector[key];
             }
             if (val !== RangeSelector.prototype[key]) {
                 (rSelector as any)[key] = null;

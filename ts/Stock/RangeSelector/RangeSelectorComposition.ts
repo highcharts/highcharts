@@ -278,7 +278,7 @@ function onChartGetMargins(
 ): void {
     const rangeSelector = this.rangeSelector;
 
-    if (rangeSelector) {
+    if (rangeSelector && rangeSelector.options?.enabled) {
         const rangeSelectorHeight = rangeSelector.getHeight();
 
         const verticalAlign = rangeSelector.options.verticalAlign;
