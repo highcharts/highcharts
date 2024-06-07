@@ -210,6 +210,4 @@ Dashboards.board('container', {
             visibility: true
         }
     }]
-}, true).then(dash => {
-    dash.editMode.activate();
-});
+}, true);
