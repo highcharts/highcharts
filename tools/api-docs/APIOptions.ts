@@ -17,7 +17,6 @@
  * */
 
 
-
 import FS from 'node:fs';
 
 import FSLib from '../libs/fs.js';
@@ -95,42 +94,10 @@ function addTreeNode(
     ) => {
         const _infoDoclet = (_info.kind === 'Doclet' ? _info : _info.doclet);
 
-        let _treeNode: (TreeLib.Option|undefined);
         let _fullname: (string|undefined);
-
-        if (_infoDoclet) {
-            _fullname = (
-                TSLib.extractTagText(_infoDoclet, 'optionparent', true) ??
-                TSLib.extractTagText(_infoDoclet, 'apioption', true)
-            );
-        }
-
-        if (
-            typeof _fullname === 'undefined' &&
-            (
-                _info.kind === 'Interface' ||
-                _info.kind === 'Property' ||
-                _info.kind === 'Variable'
-            ) &&
-            !_info.name.startsWith('_')
-        ) {
-            _fullname = Utilities.getOptionName(_info.name);
-        }
-
-        if (_fullname === 'series') {
-            _fullname = 'plotOptions.series';
-        }
-
-        if (!_fullname?.includes('column')) {
-            return;
-        }
-
-        if (typeof _fullname === 'string') {
-            _treeNode = getTreeNode(_fullname);
-        }
-
         let _moreInfos: Array<TSLib.CodeInfo> = [];
         let _referenceInfo: TSLib.ResolvedInfo;
+        let _treeNode: (TreeLib.Option|undefined);
 
         switch (_info.kind) {
 
@@ -144,6 +111,7 @@ function addTreeNode(
                         ) &&
                         _memberInfo.name === 'defaultOptions'
                     ) {
+                        console.log('DEFAULTS', TreeLib.toJSONString(_memberInfo, 2));
                         _moreInfos.push(_memberInfo);
                         break;
                     }
@@ -151,6 +119,7 @@ function addTreeNode(
                 break;
 
             case 'Interface':
+                console.log(_parentNode.meta.fullname, _info.name);
                 if (
                     _info.name.endsWith('Options') ||
                     _info.name.endsWith('OptionsObject')
@@ -162,16 +131,15 @@ function addTreeNode(
 
             case 'Property':
             case 'Variable':
-                if (_info.kind === 'Property') {
-                    _treeNode = (
-                        _treeNode ||
-                        getTreeNode(
-                            `${_parentNode.meta.fullname}.${_info.name}`
-                        )
-                    );
+                if (_info.name.startsWith('_')) {
+                    return;
                 }
+                console.log(_parentNode.meta.fullname, _info.name);
                 if (_info.type) {
-                    for (const type of TSLib.extractTypes(_info.type)) {
+                    if (_infoDoclet && !_infoDoclet.tags.type) {
+                        _infoDoclet.tags.type = [_info.type];
+                    }
+                    for (const type of TSLib.extractTypes(_info.type, true)) {
                         if (type.endsWith('Options')) {
                             _referenceInfo =
                                 TSLib.resolveType(_sourceInfo, type);
@@ -192,7 +160,7 @@ function addTreeNode(
                     _moreInfos.push(..._info.value.members);
                     for (
                         const type
-                        of TSLib.extractTypes(_info.value.type || '')
+                        of TSLib.extractTypes( _info.value.type || '')
                     ) {
                         if (type.endsWith('Options')) {
                             _referenceInfo =
@@ -213,7 +181,40 @@ function addTreeNode(
 
         }
 
-        if (_infoDoclet && _treeNode) {
+        if (_infoDoclet) {
+            _fullname = (
+                TSLib.extractTagText(_infoDoclet, 'optionparent', true) ??
+                TSLib.extractTagText(_infoDoclet, 'apioption', true)
+            );
+        }
+
+        if (
+            typeof _fullname === 'undefined' &&
+            (
+                _info.kind === 'Interface' ||
+                _info.kind === 'Property' ||
+                _info.kind === 'Variable'
+            ) &&
+            !_info.name.startsWith('_')
+        ) {
+            _fullname = Utilities.getOptionName(_info.name);
+            if (_info.kind === 'Property') {
+                _fullname = `${_parentNode.meta.fullname}.${_fullname}`
+            }
+            console.log(_info.name, '>>>', _fullname);
+        }
+
+        if (_fullname === 'series') {
+            _fullname = 'plotOptions.series';
+        }
+
+        if (typeof _fullname !== 'string') {
+            return;
+        }
+
+        _treeNode = getTreeNode(_fullname);
+
+        if (_infoDoclet) {
             const _nodeDoclet = _treeNode.doclet;
 
             let _array: Array<Record<string, (string|Array<string>)>>;
@@ -270,7 +271,6 @@ function addTreeNode(
                         break;
 
                     case 'type':
-                        console.log(_infoDoclet.tags.type);
                         _nodeDoclet.type = {
                             names: TSLib.extractTagInsets(
                                 _infoDoclet.tags.type.join('\n')
@@ -301,7 +301,7 @@ function addTreeNode(
 
             add(
                 TSLib.getSourceInfo(_moreInfo.meta.file, void 0, debug),
-                (_treeNode || _parentNode),
+                _treeNode,
                 _moreInfo
             );
 
@@ -374,33 +374,45 @@ function buildTreeSeries(
     const _rootNode = getTreeNode('plotOptions');
 
     let _filePath: string;
-    let _sourceInfo: (TSLib.SourceInfo|undefined);
+    let _sourceInfos: Array<TSLib.SourceInfo> = [];
 
     for (const _path of FSLib.getDirectoryPaths(sourceRootPath, true)) {
+        if (!_path.endsWith('/Line')) {
+            continue;
+        }
         if (_path.split(Path.sep).includes('Series')) {
-            _sourceInfo = void 0;
-            _filePath =
-                FSLib.path(`${_path}/${Path.basename(_path)}Defaults.ts`);
+            _sourceInfos.length = 0;
 
+            _filePath =
+                FSLib.path(`${_path}/${Path.basename(_path)}PointOptions.d.ts`);
             if (FSLib.isFile(_filePath)) {
-                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+                _sourceInfos
+                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
             }
 
             _filePath =
-                FSLib.path(`${_path}/${Path.basename(_path)}Options.d.ts`);
-
+                FSLib.path(`${_path}/${Path.basename(_path)}SeriesDefaults.ts`);
             if (FSLib.isFile(_filePath)) {
-                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+                _sourceInfos
+                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
             }
 
-            _filePath =
-                FSLib.path(`${_path}/${Path.basename(_path)}Series.ts`);
-
+            _filePath = FSLib.path(
+                `${_path}/${Path.basename(_path)}SeriesOptions.d.ts`
+            );
             if (FSLib.isFile(_filePath)) {
-                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
+                _sourceInfos
+                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
             }
 
-            if (_sourceInfo) {
+            _filePath = FSLib.path(`${_path}/${Path.basename(_path)}Series.ts`);
+            if (FSLib.isFile(_filePath)) {
+                _sourceInfos
+                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
+            }
+
+            for (const _sourceInfo of _sourceInfos) {
+                console.log(_path, _filePath);
                 for (const _codeInfo of _sourceInfo.code) {
                     addTreeNode(_sourceInfo, _rootNode, _codeInfo);
                 }
@@ -470,21 +482,21 @@ async function main() {
 
     let timer: number;
 
-    timer = LogLib.starting(`Building tree from ${root}`);
-    buildTree(root, debug);
-    LogLib.finished(`Building tree from ${root}`, timer);
+    // timer = LogLib.starting(`Building tree from ${root}`);
+    // buildTree(root, debug);
+    // LogLib.finished(`Building tree from ${root}`, timer);
 
     if (root === DEFAULT_ROOT) {
-        if (INDICATORS_ROOT.startsWith(source)) {
-            timer = LogLib.starting(
-                `Building indicator tree from ${INDICATORS_ROOT}`
-            );
-            buildTreeIndicators(INDICATORS_ROOT, debug);
-            LogLib.finished(
-                `Building indicator tree from ${INDICATORS_ROOT}`,
-                timer
-            );
-        }
+        // if (INDICATORS_ROOT.startsWith(source)) {
+        //     timer = LogLib.starting(
+        //         `Building indicator tree from ${INDICATORS_ROOT}`
+        //     );
+        //     buildTreeIndicators(INDICATORS_ROOT, debug);
+        //     LogLib.finished(
+        //         `Building indicator tree from ${INDICATORS_ROOT}`,
+        //         timer
+        //     );
+        // }
         if (SERIES_ROOT.startsWith(source)) {
             timer = LogLib.starting(`Building series tree from ${SERIES_ROOT}`);
             buildTreeSeries(SERIES_ROOT, debug);

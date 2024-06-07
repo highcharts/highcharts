@@ -112,19 +112,26 @@ function getOptionName(
 
     if (camelCaseName.endsWith('IndicatorOptions')) {
         return 'plotOptions.' + camelCaseName
-                .substring(0, camelCaseName.length - 13)
-                .toLowerCase();
+            .substring(0, camelCaseName.length - 16)
+            .toLowerCase();
+    }
+
+    if (camelCaseName.endsWith('PointOptions')) {
+        if (camelCaseName === 'PointOptions') {
+            return 'series.line.data';
+        }
+        return 'series.' + camelCaseName
+            .substring(0, camelCaseName.length - 12)
+            .toLowerCase() + '.data';
     }
 
     if (camelCaseName.endsWith('SeriesOptions')) {
-
         if (camelCaseName === 'SeriesOptions') {
             return 'plotOptions.series';
         }
-
         return 'plotOptions.' + camelCaseName
-                .substring(0, camelCaseName.length - 13)
-                .toLowerCase();
+            .substring(0, camelCaseName.length - 13)
+            .toLowerCase();
     }
 
     if (

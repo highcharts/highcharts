@@ -522,16 +522,17 @@ function extractTagObjects(
 
     for (let _text of (doclet.tags[tag] || [])) {
         _object = { tag };
-        _match = _text.match(DOCLET_TAG_INSET);
-
-        if (_match && _match.index === 0) {
-            _object.type = _match[1];
-            _text = _text.substring(_match[0].length).trimStart();
-        }
 
         switch (tag) {
 
             default:
+                if (_text.startsWith('{')) {
+                    _array = extractTagInsets(_text);
+                    if (_array.length) {
+                        _object.type = _array[0];
+                        _text = _text.replace(`{${_array[0]}}`, '').trimStart();
+                    }
+                }
                 break;
 
             case 'param':
@@ -555,9 +556,7 @@ function extractTagObjects(
             case 'samples':
                 _array = extractTagInsets(_text);
                 if (_array.length) {
-                    _text = _text
-                        .substring(_array[0].length + 2)
-                        .trim();
+                    _text = _text.replace(`{${_array[0]}}`, '').trimStart();
                     _object.products = _array[0].split('|');
                 }
                 _match = _text.match(/^\S+/gsu);
@@ -1612,7 +1611,7 @@ function getPropertyInfo(
         !TS.isShorthandPropertyAssignment(node) &&
         node.type
     ) {
-        _info.type = node.type.getText();
+        _info.type = trimBetween(node.type.getText());
     }
 
     if (!TS.isPropertySignature(node)) {
@@ -2458,6 +2457,22 @@ function sanitizeType(
     type
 ) {
     return ('' + type).replaceAll(SANITIZE_TYPE, '$1').trim();
+}
+
+
+/**
+ * Removes all spaces in the given text.
+ *
+ * @param {string} text
+ * Text to trim.
+ *
+ * @return {string}
+ * Trimmed text.
+ */
+function trimBetween(
+    text
+) {
+    return text.replace(/\s+/gsu, '');
 }
 
 
