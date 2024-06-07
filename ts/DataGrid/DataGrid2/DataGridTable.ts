@@ -57,11 +57,6 @@ class DataGridTable {
     public dataGrid: DataGrid;
 
     /**
-     * The HTML element of the table.
-     */
-    public container: HTMLTableElement;
-
-    /**
      * The data source of the data grid.
      */
     public dataTable: DataTable;
@@ -132,7 +127,6 @@ class DataGridTable {
      */
     constructor(dataGrid: DataGrid) {
         this.dataGrid = dataGrid;
-        this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
         this.columnDistribution =
             dataGrid.options.columns?.distribution as ColumnDistribution;
@@ -218,10 +212,10 @@ class DataGridTable {
      */
     public reflow(): void {
         // Set the width of the visible part of the scrollable area.
-        this.tbodyElement.style.height =
-            (
-                this.container.offsetHeight - this.theadElement.offsetHeight
-            ) + 'px';
+        this.tbodyElement.style.height = `${
+            this.dataGrid.container.clientHeight -
+            this.theadElement.offsetHeight
+        }px`;
 
 
         // Get the width of the rows

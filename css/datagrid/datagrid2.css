@@ -85,6 +85,11 @@
     box-sizing: border-box;
 }
 
+.highcharts-dg-container {
+    border: 1px solid var(--highcharts-neutral-color-20);
+    overflow: hidden;
+}
+
 .highcharts-dg-table {
     height: 100%;
     width: 100%;
@@ -92,7 +97,6 @@
     border-collapse: collapse;
     border-spacing: 0;
     color: var(--highcharts-neutral-color-100);
-    border: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
 }
 
