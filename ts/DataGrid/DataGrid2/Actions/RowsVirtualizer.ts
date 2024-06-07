@@ -177,6 +177,7 @@ class RowsVirtualizer {
         }
 
         const bof = buffer - (rowCursor - buffer < 0 ? buffer - rowCursor : 0);
+        console.log(vp.rows);
         this.topRowInitialHeight = vp.rows[bof].htmlElement.clientHeight;
     }
 

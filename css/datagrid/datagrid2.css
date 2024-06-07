@@ -104,9 +104,9 @@
 .highcharts-dg-table thead th {
     color: var(--highcharts-neutral-color-100);
     border-left: 1px solid var(--highcharts-neutral-color-20);
-    height: 30px;
+    /* height: 30px; */
     position: relative;
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 10px;
@@ -123,8 +123,8 @@
     background: var(--highcharts-background-color);
     border-top: 1px solid var(--highcharts-neutral-color-20);
     position: absolute;
-    overflow: hidden;
-    height: 36px;
+    overflow-y: hidden;
+    /* height: 36px; */
 }
 
 .highcharts-dg-row.highcharts-dg-odd {
@@ -134,9 +134,9 @@
 .highcharts-dg-table td {
     height: inherit;
     border-left: 1px solid var(--highcharts-neutral-color-20);
-    white-space: nowrap;
+    /* white-space: nowrap; */
     padding-left: 4px;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
     overflow: hidden;
 }
 
