@@ -185,6 +185,8 @@ class Annotation extends EventEmitter implements ControlTarget {
      * An object uses for mapping between a shape type and a constructor.
      * To add a new shape type extend this object with type name as a key
      * and a constructor as its value.
+     *
+     * @private
      */
     public static readonly shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
