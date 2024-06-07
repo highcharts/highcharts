@@ -1068,11 +1068,9 @@ class Tooltip {
                         });
                     }
 
-                    // Set the stroke color of the box to reflect the point
-                    // Add class before the label BBox is calculated (#21035)
-                    label.addClass(tooltip.getClassName(point), true);
-
                     label.attr({
+                        // Add class before the label BBox calculation (#21035)
+                        'class': tooltip.getClassName(point),
                         text: text && (text as any).join ?
                             (text as any).join('') :
                             text
