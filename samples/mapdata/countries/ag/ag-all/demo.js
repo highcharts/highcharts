@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ag/ag-all.topo.json">Antigua and Barbuda</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ag/ag-all.topo.json">Antigua and Barbuda</a>'
         },
 
         mapNavigation: {

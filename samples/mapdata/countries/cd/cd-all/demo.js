@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cd/cd-all.topo.json">Democratic Republic of the Congo</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cd/cd-all.topo.json">Democratic Republic of the Congo</a>'
         },
 
         mapNavigation: {

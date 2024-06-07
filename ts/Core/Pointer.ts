@@ -1232,8 +1232,10 @@ class Pointer {
             !(
                 tooltip &&
                 tooltip.shouldStickOnContact(pEvt)
-            ) &&
-            !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            ) && (
+                pEvt.target === chart.container.ownerDocument ||
+                !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            )
         ) {
             this.reset();
         }
@@ -1300,6 +1302,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
+            chart.mouseDownX = e.chartX;
 
         // Optionally move the tooltip on touchmove
         } else if (followTouchMove) {

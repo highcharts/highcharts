@@ -37,7 +37,7 @@ G.geojson = GeoJSONComposition.geojson;
 G.topo2geo = GeoJSONComposition.topo2geo;
 // Compositions
 GeoJSONComposition.compose(G.Chart);
-MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);
+MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend);
 MapNavigation.compose(MapChart, G.Pointer, G.SVGRenderer);
 MapView.compose(MapChart);
 // Default Export

@@ -27,7 +27,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gt/gt-all.topo.json">Guatemala</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gt/gt-all.topo.json">Guatemala</a>'
         },
 
         mapNavigation: {

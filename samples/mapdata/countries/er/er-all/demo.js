@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/er/er-all.topo.json">Eritrea</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/er/er-all.topo.json">Eritrea</a>'
         },
 
         mapNavigation: {

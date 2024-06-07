@@ -65,6 +65,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,
+    crisp,
     defined,
     error,
     extend,
@@ -712,6 +713,8 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public drillToByLeaf(point: TreemapPoint): (boolean|string) {
+        const { traverseToLeaf } = point.series.options;
+
         let drillId: (boolean|string) = false,
             nodeParent: TreemapNode;
 
@@ -719,11 +722,17 @@ class TreemapSeries extends ScatterSeries {
             (point.node.parent !== this.rootNode) &&
             point.node.isLeaf
         ) {
-            nodeParent = point.node;
-            while (!drillId) {
-                nodeParent = this.nodeMap[nodeParent.parent as any];
-                if (nodeParent.parent === this.rootNode) {
-                    drillId = nodeParent.id;
+            if (traverseToLeaf) {
+                drillId = point.id;
+            } else {
+                nodeParent = point.node;
+                while (!drillId) {
+                    if (typeof nodeParent.parent !== 'undefined') {
+                        nodeParent = this.nodeMap[nodeParent.parent];
+                    }
+                    if (nodeParent.parent === this.rootNode) {
+                        drillId = nodeParent.id;
+                    }
                 }
             }
         }
@@ -1150,10 +1159,10 @@ class TreemapSeries extends ScatterSeries {
         // using point.graphic.strokeWidth(), then modify and apply the
         // shapeArgs. This applies also to column series, but the
         // downside is performance and code complexity.
-        const getCrispCorrection = (point: TreemapPoint): number => (
+        const getStrokeWidth = (point: TreemapPoint): number => (
             styledMode ?
                 0 :
-                ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2
+                (series.pointAttribs(point)['stroke-width'] || 0)
         );
 
         for (const point of points) {
@@ -1162,15 +1171,19 @@ class TreemapSeries extends ScatterSeries {
             // Points which is ignored, have no values.
             if (values && visible) {
                 const { height, width, x, y } = values;
-                const crispCorr = getCrispCorrection(point);
-                const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                const x2 = Math.round(
-                    xAxis.toPixels(x + width, true)
-                ) - crispCorr;
-                const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                const y2 = Math.round(
-                    yAxis.toPixels(y + height, true)
-                ) - crispCorr;
+                const strokeWidth = getStrokeWidth(point);
+                const x1 = crisp(xAxis.toPixels(x, true), strokeWidth, true);
+                const x2 = crisp(
+                    xAxis.toPixels(x + width, true),
+                    strokeWidth,
+                    true
+                );
+                const y1 = crisp(yAxis.toPixels(y, true), strokeWidth, true);
+                const y2 = crisp(
+                    yAxis.toPixels(y + height, true),
+                    strokeWidth,
+                    true
+                );
 
                 // Set point values
                 const shapeArgs = {
@@ -1385,7 +1398,7 @@ class TreemapSeries extends ScatterSeries {
 
         if (
             rootId !== '' &&
-            (!rootNode || !rootNode.children.length)
+            (!rootNode)
         ) {
             series.setRootNode('', false);
             rootId = series.rootNode;

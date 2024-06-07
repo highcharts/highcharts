@@ -235,8 +235,7 @@ class HTMLComponent extends Component {
 
         if (isError) {
             throw new Error(
-                'Missing tagName param in component: ' +
-                options.cell
+                `Missing tagName param in component: ${options.renderTo}`
             );
         }
 

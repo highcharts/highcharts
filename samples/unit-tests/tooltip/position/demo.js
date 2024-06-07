@@ -184,7 +184,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         (barSpace * 3) / 2 +
         point1.shapeArgs.width / 2;
 
-    controller.moveTo(chart.plotLeft + 1, tooltipYPos);
+    controller.moveTo(chart.plotLeft + 2, tooltipYPos);
     assert.close(
         chart.tooltip.label.anchorY,
         Math.round(tooltipYPos),

@@ -447,7 +447,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type      {number}
      * @default   2
-     * @since     @next
+     * @since     11.3.0
      * @apioption chart.axisLayoutRuns
      */
 

@@ -463,9 +463,13 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * Fires when the legend item belonging to the colorAxis is clicked.
      * One parameter, `event`, is passed to the function.
      *
-     * @type      {Function}
-     * @product   highcharts highstock highmaps
-     * @apioption colorAxis.events.legendItemClick
+     * **Note:** This option is deprecated in favor of
+     * [legend.events.itemClick](#legend.events.itemClick).
+     *
+     * @deprecated
+     * @type       {Function}
+     * @product    highcharts highstock highmaps
+     * @apioption  colorAxis.events.legendItemClick
      */
 
     /**
@@ -479,7 +483,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      *            Percentage width and pixel height for color axis
      *
      * @type      {number|string}
-     * @since     @next
+     * @since     11.3.0
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.width
      */
@@ -495,7 +499,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      *            Percentage width and pixel height for color axis
      *
      * @type      {number|string}
-     * @since     @next
+     * @since     11.3.0
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.height
      */
