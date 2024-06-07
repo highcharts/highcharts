@@ -1028,13 +1028,26 @@ class EditMode {
     /**
      * Adds/Removes the edit mode overlay.
      * @internal
+     *
+     * @param remove
+     * Whether the edit overlay should be removed.
      */
-    public setEditOverlay(): void {
-        const editMode = this;
-        const container = editMode.editOverlay;
+    public setEditOverlay(
+        remove?: boolean
+    ): void {
+        const editMode = this,
+            cnt = editMode.editOverlay,
+            isSet = cnt?.classList.contains(
+                EditGlobals.classNames.editOverlayActive
+            );
 
-        container?.classList.toggle(EditGlobals.classNames.editOverlayActive);
-        editMode.isEditOverlayActive = !editMode.isEditOverlayActive;
+        if (!remove && !isSet) {
+            cnt?.classList.add(EditGlobals.classNames.editOverlayActive);
+            editMode.isEditOverlayActive = true;
+        } else if (remove && isSet) {
+            cnt?.classList.remove(EditGlobals.classNames.editOverlayActive);
+            editMode.isEditOverlayActive = false;
+        }
     }
 }
 

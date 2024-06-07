@@ -447,7 +447,7 @@ class SidebarPopup extends BaseForm {
 
         // Remove edit overlay if active.
         if (editMode.isEditOverlayActive) {
-            editMode.setEditOverlay();
+            editMode.setEditOverlay(true);
         }
 
         if (
@@ -457,7 +457,7 @@ class SidebarPopup extends BaseForm {
         ) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
-            editCellContext.setHighlight();
+            editCellContext.setHighlight(true);
         } else if (
             editCellContext instanceof CellHTML && editMode.cellToolbar
         ) {
