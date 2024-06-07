@@ -559,7 +559,7 @@ class SidebarPopup extends BaseForm {
                 !this.container.contains(event.target) &&
                 this.container.classList.value.includes('show')
             ) {
-                if (this.type === 'cell') {
+                if (this.type === 'cell' || this.type === 'cell-html') {
                     this.accordionMenu.cancelChanges();
                 } else {
                     this.hide();
