@@ -99,32 +99,37 @@
 .highcharts-dg-table thead {
     background-color: var(--highcharts-neutral-color-5);
     display: block;
+    border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dg-table thead th {
     color: var(--highcharts-neutral-color-100);
-    border-left: 1px solid var(--highcharts-neutral-color-20);
+
     /* height: 30px; */
     position: relative;
+
     /* white-space: nowrap; */
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 10px;
     padding-left: 3px;
+    border-left: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dg-table tbody {
     overflow: auto;
     display: block;
     position: relative;
+    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-row {
     background: var(--highcharts-background-color);
-    border-top: 1px solid var(--highcharts-neutral-color-20);
     position: absolute;
-    overflow-y: hidden;
+
     /* height: 36px; */
+    overflow: hidden;
+    border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dg-row.highcharts-dg-odd {
@@ -134,8 +139,10 @@
 .highcharts-dg-table td {
     height: inherit;
     border-left: 1px solid var(--highcharts-neutral-color-20);
+
     /* white-space: nowrap; */
     padding-left: 4px;
+
     /* text-overflow: ellipsis; */
     overflow: hidden;
 }
@@ -182,7 +189,7 @@
     margin-top: -10px;
     top: 50%;
     left: 0;
-    border-right: 2px solid #898989;
+    border-right: 2px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dg-col-resizer:hover::after {
