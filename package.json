@@ -69,7 +69,7 @@
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
     "cypress": "^13.11.0",
-    "cypress-visual-regression": "^5.0.1",
+    "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
     "eslint-config-eslint": "7.0.0",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.0.9",
