@@ -114,6 +114,8 @@
 
 .highcharts-dg-table tbody {
     overflow: auto;
+    height: 100%;
+    min-height: 100%;
     display: block;
     position: relative;
     background-color: var(--highcharts-background-color);

@@ -219,7 +219,10 @@ class DataGridTable {
     public reflow(): void {
         // Set the width of the visible part of the scrollable area.
         this.tbodyElement.style.height =
-            `calc(100% - ${this.theadElement.offsetHeight}px)`;
+            (
+                this.container.offsetHeight - this.theadElement.offsetHeight
+            ) + 'px';
+
 
         // Get the width of the rows
         if (this.columnDistribution === 'fixed') {
