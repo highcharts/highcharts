@@ -38,9 +38,7 @@ Highcharts.chart('container', {
         series: {
             dataLabels: {
                 enabled: true,
-                formatter: function () {
-                    return `<span style="color:${this.color}">${this.y}</span>`;
-                },
+                format: '<span style="color:{point.color}">{point.y}</span>',
                 style: {
                     fontWeight: 'normal'
                 }
