@@ -39,7 +39,7 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 formatter: function () {
-                    return '<span style="color:' + this.color + '">' +  this.y + '</span>';
+                    return `<span style="color:${this.color}">${this.y}</span>`;
                 },
                 style: {
                     fontWeight: 'normal'
