@@ -53,7 +53,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bi/bi-all-all.topo.json">Burundi, admin2</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bi/bi-all-all.topo.json">Burundi, admin2</a>'
         },
 
         mapNavigation: {

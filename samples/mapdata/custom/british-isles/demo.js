@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/british-isles.topo.json">British Isles</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/british-isles.topo.json">British Isles</a>'
         },
 
         mapNavigation: {

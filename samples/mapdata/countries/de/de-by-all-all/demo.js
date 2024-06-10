@@ -1146,7 +1146,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-by-all-all.topo.json">Bayern</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-by-all-all.topo.json">Bayern</a>'
         },
 
         mapNavigation: {

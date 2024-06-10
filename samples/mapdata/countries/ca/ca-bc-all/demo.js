@@ -31,7 +31,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-bc-all.topo.json">British Columbia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-bc-all.topo.json">British Columbia</a>'
         },
 
         mapNavigation: {

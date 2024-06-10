@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ne/ne-all.topo.json">Niger</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ne/ne-all.topo.json">Niger</a>'
         },
 
         mapNavigation: {

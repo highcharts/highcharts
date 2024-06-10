@@ -1245,8 +1245,10 @@ class Pointer {
             !(
                 tooltip &&
                 tooltip.shouldStickOnContact(pEvt)
-            ) &&
-            !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            ) && (
+                pEvt.target === chart.container.ownerDocument ||
+                !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            )
         ) {
             this.reset();
         }
