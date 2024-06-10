@@ -431,9 +431,7 @@ class RangeSelector {
             options = (
                 chart.options.rangeSelector as RangeSelectorOptions
             ),
-            buttonOptions = (
-                options.buttons || rangeSelector.defaultButtons.slice()
-            ),
+            buttonOptions = options.buttons,
             selectedOption = options.selected,
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
@@ -2219,7 +2217,10 @@ class RangeSelector {
         const chart = this.chart;
         merge(true, chart.options.rangeSelector, options);
         merge(true, this.options, options);
-        if (!defined(options.selected)) {
+        if (
+            this.options.selected &&
+            this.options.selected >= this.options.buttons!.length
+        ) {
             this.options.selected = void 0;
             chart.options.rangeSelector!.selected = void 0;
         }
@@ -2300,39 +2301,6 @@ interface RangeSelector {
 }
 
 extend(RangeSelector.prototype, {
-    /**
-     * The default buttons for pre-selecting time frames.
-     * @private
-     */
-    defaultButtons: [{
-        type: 'month',
-        count: 1,
-        text: '1m',
-        title: 'View 1 month'
-    }, {
-        type: 'month',
-        count: 3,
-        text: '3m',
-        title: 'View 3 months'
-    }, {
-        type: 'month',
-        count: 6,
-        text: '6m',
-        title: 'View 6 months'
-    }, {
-        type: 'ytd',
-        text: 'YTD',
-        title: 'View year to date'
-    }, {
-        type: 'year',
-        count: 1,
-        text: '1y',
-        title: 'View 1 year'
-    }, {
-        type: 'all',
-        text: 'All',
-        title: 'View all'
-    }],
     /**
      * The date formats to use when setting min, max and value on date inputs.
      * @private
