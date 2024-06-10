@@ -73,7 +73,11 @@ Highcharts.chart('container', {
             'to visualize a neural network.'
     },
     accessibility: {
-        typeDescription: 'Neural network chart'
+        typeDescription: 'Neural network chart',
+        point: {
+            descriptionFormat:
+                'node on {series.xAxis.options.custom.layers.(x).label}'
+        }
     },
     tooltip: {
         stickOnContact: true,
