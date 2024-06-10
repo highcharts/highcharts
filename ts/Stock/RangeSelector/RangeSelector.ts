@@ -1576,14 +1576,22 @@ class RangeSelector {
         } = options;
 
         this.maxDateBox?.attr({
-            stroke: inputBoxBorderColor,
             height: inputBoxHeight
         });
 
         this.minDateBox?.attr({
-            stroke: inputBoxBorderColor,
             height: inputBoxHeight
         });
+
+        if (!chart.styledMode) {
+            this.maxDateBox?.attr({
+                stroke: inputBoxBorderColor
+            });
+
+            this.minDateBox?.attr({
+                stroke: inputBoxBorderColor
+            });
+        }
 
         if (this.isDirty) {
 
