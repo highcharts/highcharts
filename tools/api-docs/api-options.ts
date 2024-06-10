@@ -152,6 +152,7 @@ function addTreeNode(
                 if (
                     _info.value &&
                     typeof _info.value === 'object' &&
+                    _info.value.kind === 'Object' &&
                     (
                         _info.doclet ||
                         _info.kind === 'Property'

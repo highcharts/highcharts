@@ -2691,6 +2691,7 @@ module.exports = {
 /**
  * @typedef FunctionCallInfo
  * @property {Array<CodeInfo>} [arguments]
+ * @property {DocletInfo} [doclet]
  * @property {'FunctionCall'} kind
  * @property {Meta} meta
  * @property {string} name
