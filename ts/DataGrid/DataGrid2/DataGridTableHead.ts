@@ -99,6 +99,7 @@ class DataGridTableHead {
 
             // Set the accessibility attributes.
             element.setAttribute('scope', 'col');
+            element.setAttribute('data-column-id', this.columns[i].id);
 
             // Set the column's head element.
             this.columns[i].headElement = element;

@@ -138,7 +138,6 @@ class DataGridColumn {
         // Set the initial width of the column.
         // TODO(DD): Get the initial width from the CSS.
         this.width = viewport.columnDistribution === 'full' ? 1 : 100;
-
         this.id = id;
         this.index = index;
         this.viewport = viewport;
@@ -158,7 +157,7 @@ class DataGridColumn {
      * @param cell The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
-        cell.htmlElement.setAttribute('column-id', this.id);
+        cell.htmlElement.setAttribute('data-column-id', this.id);
 
         this.cells.push(cell);
     }

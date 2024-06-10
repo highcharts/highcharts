@@ -9,11 +9,18 @@
     height: 400px;
 }
 
-/*
+
 .highcharts-dg-row[data-row-index="1"] {
     height: 100px;
 }
 
+table td[data-column-id="c"],
+table th[data-column-id="c"] {
+    width: 20px;
+    max-width: 20px;
+}
+
+/*
 .highcharts-dg-row[data-row-index="3"] {
     height: 100px;
 }
