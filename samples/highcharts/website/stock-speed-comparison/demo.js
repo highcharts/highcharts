@@ -3,12 +3,19 @@ Highcharts.chart('container', {
         type: 'column'
     },
     legend: {
-        align: 'center',
-        verticalAlign: 'top'
-
+        align: 'left',
+        verticalAlign: 'top',
+        floating: true,
+        x: 20,
+        y: 100,
+        width: '50%'
     },
     title: {
-        text: 'Point Pushing Comparison'
+        text: 'Point Pushing Comparison',
+        align: 'left',
+        floating: true,
+        x: 30,
+        y: 60
     },
     xAxis: {
         title: {
@@ -22,7 +29,8 @@ Highcharts.chart('container', {
         startOnTick: false,
         title: {
             text: 'Time (ms)'
-        }
+        },
+        opposite: true
 
 
     },
