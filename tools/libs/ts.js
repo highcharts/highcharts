@@ -716,6 +716,7 @@ function getChildInfos(
                 getInterfaceInfo(node, includeNodes) ||
                 getImportInfo(node, includeNodes) ||
                 getFunctionInfo(node, includeNodes) ||
+                getFunctionCallInfo(node, includeNodes) ||
                 getExportInfo(node, includeNodes) ||
                 getDeconstructInfos(node, includeNodes) ||
                 getClassInfo(node, includeNodes)
@@ -1107,6 +1108,85 @@ function getExportInfo(
 
 
 /**
+ * Retrieves function call info from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a function call.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {FunctionCallInfo|undefined}
+ * Function call information or `undefined`.
+ */
+function getFunctionCallInfo(
+    node,
+    includeNodes
+) {
+
+    if (!TS.isCallExpression(node)) {
+        return void 0;
+    }
+
+    /** @type {FunctionCallInfo} */
+    const _info = {
+        kind: 'FunctionCall',
+        name: ''
+    };
+
+    if (TS.isIdentifier(node.expression)) {
+        _info.name = node.expression.text;
+    }
+
+    if (node.arguments) {
+        const _arguments = _info.arguments = [];
+
+        /** @type {CodeInfo|undefined} */
+        let _childInfo;
+
+        for (const _child of getNodesChildren(node)) {
+
+            if (_child === node.expression) {
+                continue;
+            }
+
+            _childInfo = getChildInfos([_child], includeNodes);
+
+            if (_childInfo.length) {
+
+                _arguments.push(..._childInfo);
+
+            } else if (TS.isIdentifier(_child)) {
+
+                _childInfo = {
+                    kind: 'Variable',
+                    name: _child.text
+                };
+
+                _childInfo.meta = getInfoMeta(_child);
+
+                if (includeNodes) {
+                    _childInfo.node = _child;
+                }
+
+                _arguments.push(_childInfo);
+
+            }
+
+        }
+    }
+
+    _info.meta = getInfoMeta(node);
+
+    if (includeNodes) {
+        _info.node = node;
+    }
+
+    return _info;
+}
+
+
+/**
  * Retrieves import information from the given node.
  *
  * @param {TS.Node} node
@@ -1133,14 +1213,13 @@ function getFunctionInfo(
 
     /** @type {FunctionInfo} */
     const _info = {
-        kind: 'Function'
+        kind: 'Function',
+        name: (
+            TS.isConstructorDeclaration(node) ?
+                'constructor' :
+                ((node.name && node.name.text) || '')
+        )
     };
-
-    _info.name = (
-        TS.isConstructorDeclaration(node) ?
-            'constructor' :
-            ((node.name && node.name.text) || '')
-    );
 
     if (node.typeParameters) {
         const _generics = _info.generics = [];
@@ -2176,110 +2255,6 @@ function removeTag(
 
 
 /**
- * Resolves reference relative to the given source information.
- *
- * @param {SourceInfo} sourceInfo
- * Source information to use.
- *
- * @param {string} memberPath
- * Reference path to resolve to.
- *
- * @return {ResolvedInfo|undefined}
- * Resolve information.
- */
-function resolveReference(
-    sourceInfo,
-    memberPath
-) {
-    /**
-     * Internal resolve.
-     * @param {CodeInfo} info
-     * Current info.
-     * @param {string} path
-     * Current path.
-     * @return {ResolveInfo|undefined}
-     * Result.
-     */
-    function resolve(info, path) {
-        /** @type {ResolvedInfo} */
-        const _result = {
-            kind: 'Resolved',
-            path: sourceInfo.path,
-            resolvedInfo: void 0,
-            resolvedPath: sourceInfo.path,
-            search: memberPath
-        };
-
-        const _name = path.split('.', 2)[0];
-        const _restOfPath = path.split('.', 2)[1];
-
-        switch (info.kind) {
-            case 'Class':
-            case 'Module':
-            case 'Namespace':
-                if (info.name === _name) {
-                    if (_restOfPath) {
-                        for (const _memberInfo of info.members) {
-                            const _resolvedInfo =
-                                resolve(_memberInfo, _restOfPath);
-                            if (_resolvedInfo) {
-                                _result.resolvedInfo =
-                                    _resolvedInfo.resolvedInfo;
-                                return _result;
-                            }
-                        }
-                    } else {
-                        _result.resolvedInfo = info;
-                        return _result;
-                    }
-                }
-                break;
-            case 'Function':
-                if (
-                    info.name === _name &&
-                    !_restOfPath
-                ) {
-                    _result.resolvedInfo = info;
-                    return _result;
-                }
-                break;
-            case 'Export':
-            case 'Property':
-            case 'Variable':
-                if (
-                    info.name === _name &&
-                    !_restOfPath
-                ) {
-                    if (
-                        info.value &&
-                        typeof info.value === 'object'
-                    ) {
-                        _result.resolvedInfo = info.value;
-                        return _result;
-                    }
-                    _result.resolvedInfo = info;
-                    return _result;
-                }
-                break;
-            default:
-                break;
-        }
-
-        return void 0;
-    }
-
-    for (const _codeInfo of sourceInfo.code) {
-        const _resolveInfo = resolve(_codeInfo, memberPath);
-        if (_resolveInfo) {
-            return _resolveInfo;
-        }
-    }
-
-    return void 0;
-}
-
-
-/**
  * Resolves type relative to the given source information.
  *
  * @param {SourceInfo} sourceInfo
@@ -2628,7 +2603,6 @@ module.exports = {
     newDocletInfo,
     removeAllDoclets,
     removeTag,
-    resolveReference,
     resolveType,
     sanitizeSourcePath,
     sanitizeText,
@@ -2661,9 +2635,9 @@ module.exports = {
 
 
 /**
- * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionInfo|
- *           ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|PropertyInfo|
- *           TypeAliasInfo|VariableInfo
+ * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionCallInfo|
+ *           FunctionInfo|ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|
+ *           PropertyInfo|TypeAliasInfo|VariableInfo
  *          } CodeInfo
  */
 
@@ -2715,6 +2689,16 @@ module.exports = {
 
 
 /**
+ * @typedef FunctionCallInfo
+ * @property {Array<CodeInfo>} [arguments]
+ * @property {'FunctionCall'} kind
+ * @property {Meta} meta
+ * @property {string} name
+ * @property {TS.ImportDeclaration} [node]
+ */
+
+
+/**
  * @typedef FunctionInfo
  * @property {Array<DocletInfo>} [body]
  * @property {DocletInfo} [doclet]
@@ -2724,6 +2708,7 @@ module.exports = {
  * @property {'Function'} kind
  * @property {Meta} meta
  * @property {string} name
+ * @property {TS.ImportDeclaration} [node]
  * @property {Array<VariableInfo>} [parameters]
  * @property {string} [return]
  */
@@ -2811,7 +2796,7 @@ module.exports = {
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
  * @property {string} [type]
- * @property {boolean|null|number|string|ObjectInfo} [value]
+ * @property {boolean|null|number|string|FunctionCallInfo|ObjectInfo} [value]
  */
 
 
@@ -2855,7 +2840,7 @@ module.exports = {
  * @property {string} name
  * @property {TS.VariableDeclaration} [node]
  * @property {string} [type]
- * @property {boolean|null|number|string|ObjectInfo} [value]
+ * @property {boolean|null|number|string|FunctionCallInfo|ObjectInfo} [value]
  */
 
 
