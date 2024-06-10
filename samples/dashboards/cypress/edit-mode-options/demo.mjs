@@ -73,6 +73,12 @@ Dashboards.board('container', {
                         animation: false,
                         marker: {
                             radius: 10
+                        },
+                        events: {
+                            update: function () {
+                                document.getElementById('marker-radius').value =
+                                    this.options.marker.radius;
+                            }
                         }
                     }
                 },

@@ -61,7 +61,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ky-all.topo.json">Kentucky</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ky-all.topo.json">Kentucky</a>'
         },
 
         mapNavigation: {

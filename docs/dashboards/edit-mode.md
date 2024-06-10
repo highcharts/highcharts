@@ -156,3 +156,36 @@ items: [{
 
 Use the context menu on the upper-right corner to enable and explore the edit mode.
 <iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled" allow="fullscreen"></iframe>
+
+
+## Edit mode events
+
+Event listeners can be added to the `board.editMode` object, which will call callback functions when editing the layout or any component.
+
+The available events are:
+ - `componentChanged` - fired after accepting changes in the component editing sidebar.
+ - `componentChangesDiscarded` - fired after discarding changes in the component editing sidebar.
+ - `layoutChanged` - called after changes to the layout are changed. It has 6 types:
+    - `newLayout` - called after a new layout was added to a board,
+    - `newComponent` - called after a new component was added to a board,
+    - `rowDestroyed` - called after a row was deleted,
+    - `cellDestroyed` - called after a cell was deleted,
+    - `cellDragEnd` - called after a cell was moved,
+    - `rowDragEnd` - called after a row was moved.
+
+Example:
+```js
+U.addEvent(editMode, 'componentChanged', e => {
+    console.log('Component Changed', e);
+});
+
+U.addEvent(editMode, 'componentChangesDiscarded', e => {
+    console.log('Component Changes Discarded', e);
+});
+
+U.addEvent(editMode, 'layoutChanged', e => {
+    console.log('Layout Changed', e);
+});
+```
+
+See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/).

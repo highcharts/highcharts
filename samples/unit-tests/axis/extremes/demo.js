@@ -192,7 +192,9 @@ QUnit.test(
             chart = new Highcharts.StockChart({
                 chart: {
                     renderTo: 'container',
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 },
 
                 series: [
@@ -331,7 +333,9 @@ QUnit.test('getSeriesExtremes', function (assert) {
 QUnit.test('Zooming', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 minRange: 0.5
@@ -525,7 +529,9 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
         'highcharts/area',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
 
             xAxis: {
@@ -613,7 +619,9 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         'container',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 min: 0,
@@ -637,11 +645,30 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
         touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
 
+    function slide(xAxis, x, y) {
+        const extremes = xAxis.getExtremes();
+
+        controller.slide(
+            [x + 200, y],
+            [x - 100, y]
+        );
+
+        assert.notStrictEqual(
+            extremes.min,
+            xAxis.min,
+            'Ordinal xAxis min should change after touch sliding (#20877).'
+        );
+
+        assert.notStrictEqual(
+            extremes.max,
+            xAxis.max,
+            'Ordinal xAxis max should change after touch sliding (#20877).'
+        );
+    }
+
     controller.slide(
         [touchPointX, touchPointY],
-        [touchPointX + 100, touchPointY],
-        undefined,
-        true
+        [touchPointX + 100, touchPointY]
     );
 
     var tickPositionsAfterSlide = chart.axes[0].tickPositions;
@@ -651,6 +678,49 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         tickPositionsAfterSlide,
         'Tick positions has changed after touch sliding'
     );
+
+    // Reset user-extremes
+    chart.xAxis[0].setExtremes();
+
+    chart.update({
+        chart: {
+            zooming: {
+                type: ''
+            },
+            panning: {
+                enabled: true,
+                type: 'x'
+            }
+        },
+        xAxis: {
+            type: 'datetime',
+            ordinal: true,
+            min: 0,
+            max: 5
+        },
+        tooltip: {
+            followTouchMove: false
+        },
+        series: [{
+            data: [
+                [0, 1],
+                [1, 4],
+                [4, 1],
+                [5, 4],
+                [6, 5],
+                [7, 5],
+                [10, 4],
+                [11, 5],
+                [12, 5],
+                [13, 4]
+            ]
+        }]
+    });
+
+    // First slide: test if panning + ordinal works
+    slide(chart.xAxis[0], touchPointX, touchPointY);
+    // Second slide: test if we zoom into different range
+    slide(chart.xAxis[0], touchPointX, touchPointY);
 });
 
 QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {

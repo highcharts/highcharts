@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-all.topo.json">Germany</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-all.topo.json">Germany</a>'
         },
 
         mapNavigation: {

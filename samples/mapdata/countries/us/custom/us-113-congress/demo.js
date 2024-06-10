@@ -159,7 +159,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-113-congress.topo.json">United States of America, congressional districts (113th)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-113-congress.topo.json">United States of America, congressional districts (113th)</a>'
         },
 
         mapNavigation: {

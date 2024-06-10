@@ -137,6 +137,7 @@ const EditGlobals: EditGlobals = {
         confirmButton: 'Confirm',
         confirmDestroyCell: 'Do you really want to destroy the cell?',
         confirmDestroyRow: 'Do you really want to destroy the row?',
+        confirmDiscardChanges: 'Do you really want to discard the changes?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
@@ -306,6 +307,10 @@ namespace EditGlobals {
          * @default 'Do you really want to destroy the row?'
          */
         confirmDestroyRow: string;
+        /**
+         * @default 'Do you really want to discard the changes?'
+         */
+        confirmDiscardChanges: string;
         /**
          * @default 'Data labels'
          */
