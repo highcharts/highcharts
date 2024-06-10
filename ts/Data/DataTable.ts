@@ -141,7 +141,6 @@ class DataTable implements DataEvent.Emitter {
         return true;
     }
 
-
     /* *
      *
      *  Constructor
@@ -659,7 +658,7 @@ class DataTable implements DataEvent.Emitter {
                 return (isNaN(cellValue) && !useNaN ? null : cellValue);
         }
 
-        cellValue = parseFloat(`${cellValue}`);
+        cellValue = parseFloat(`${cellValue ?? ''}`);
 
         return (isNaN(cellValue) && !useNaN ? null : cellValue);
     }
@@ -691,6 +690,7 @@ class DataTable implements DataEvent.Emitter {
 
         const column = table.columns[columnNameOrAlias];
 
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         return `${(column && column[rowIndex])}`;
     }
 
@@ -820,11 +820,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             columnNames = Object.keys(table.columns);
 
-        if (this.rowKeysId) {
-            return columnNames.filter((val: string): Boolean =>
-                val !== this.rowKeysId
-            );
-        }
+        this.removeKeyIdColumn(columnNames);
 
         return columnNames;
     }
@@ -864,13 +860,8 @@ class DataTable implements DataEvent.Emitter {
         columnNamesOrAliases = (
             columnNamesOrAliases || Object.keys(tableColumns)
         );
+        this.removeKeyIdColumn(columnNamesOrAliases);
 
-        if (this.rowKeysId) {
-            columnNamesOrAliases =
-                columnNamesOrAliases.filter((val: string): Boolean =>
-                    val !== this.rowKeysId
-                );
-        }
         for (
             let i = 0,
                 iEnd = columnNamesOrAliases.length,
@@ -1026,11 +1017,7 @@ class DataTable implements DataEvent.Emitter {
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
         columnNamesOrAliases = (columnNamesOrAliases || Object.keys(columns));
-        if (this.rowKeysId) {
-            columnNamesOrAliases =
-                // eslint-disable-next-line max-len
-                columnNamesOrAliases.filter((val: string): Boolean => val !== this.rowKeysId);
-        }
+        this.removeKeyIdColumn(columnNamesOrAliases);
 
         for (
             let i = rowIndex,
@@ -1693,7 +1680,17 @@ class DataTable implements DataEvent.Emitter {
         });
     }
 
+    private removeKeyIdColumn(columnNamesOrAliases: Array<string>): void {
+        if (this.rowKeysId) {
+            const pos = columnNamesOrAliases.indexOf(this.rowKeysId);
+            if (pos !== -1) {
+                // Alays the last column
+                columnNamesOrAliases.pop();
+            }
+        }
+    }
 }
+
 
 /* *
  *
