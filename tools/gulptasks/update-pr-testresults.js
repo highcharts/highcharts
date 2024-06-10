@@ -144,7 +144,7 @@ function createMarkdownLink(link, message = 'link') {
 function createTemplateForChangedSamples() {
     let gitChangedFiles = getFilesChanged();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
+    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/u.test(line));
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
         samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
@@ -200,6 +200,7 @@ async function fetchExistingReview(pr) {
     } catch (err) {
         logLib.message('No existing review found or error occured: ' + err);
     }
+
     return existingReview;
 }
 
@@ -228,8 +229,8 @@ async function fetchAllReviewsForVersion(version) {
  * and then the pr changes so that the sample no longer is diffing we
  * need to remove the approval.
  *
- * @param diffingSampleEntries
- * @param pr
+ * @param {*} diffingSampleEntries Diffing samples
+ * @param {number} pr PR number
  * @return {Promise<void>}
  */
 async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
@@ -265,8 +266,8 @@ async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
  * the visual review tool application. It will check for an existing
  * review for the given pr an merge any already approved samples given
  * that the diffing value is the same.
- * @param testResults
- * @param pr
+ * @param {*} testResults test results JSON
+ * @param {number} pr PR number
  */
 async function createPRReviewFile(testResults, pr) {
     const samplesWithDiffs = Object.entries(testResults).filter(
@@ -316,7 +317,11 @@ async function createPRReviewFile(testResults, pr) {
  * @param {boolean} includeReview file
  * @return {object|undefined} result of upload or undefined
  */
-async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
+async function uploadVisualTestFiles(
+    diffingSamples,
+    pr,
+    includeReview = true
+) {
     let result;
     if (diffingSamples.length > 0) {
         const files = diffingSamples.reduce((resultingFiles, sample) => {
@@ -406,8 +411,16 @@ async function commentOnPR() {
         return typeof value === 'number' && value > 0;
     });
 
+    const existingReview = await fetchExistingReview(prNumber);
+    const hasExistingDiffs = existingReview && existingReview.samples.length;
+
     const newReview = await createPRReviewFile(testResults, prNumber);
-    await uploadVisualTestFiles(diffingSamples, prNumber, newReview.samples.length > 0);
+
+    await uploadVisualTestFiles(
+        diffingSamples,
+        prNumber,
+        newReview.samples.length > 0 || hasExistingDiffs
+    );
     await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
     await postGitCommitStatusUpdate(pr, newReview);
 
