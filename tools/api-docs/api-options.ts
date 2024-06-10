@@ -31,7 +31,7 @@ import TreeLib from '../libs/tree.js';
 
 import TSLib from '../libs/ts.js';
 
-import Utilities from './utilities.js';
+import Utilities from './utilities';
 
 import Yargs from 'yargs';
 
@@ -417,6 +417,20 @@ function buildTreeSeries(
                     addTreeNode(_sourceInfo, _rootNode, _codeInfo);
                 }
             }
+        }
+    }
+
+    if (_rootNode.children?.plotOptions?.children) {
+        const _plotOptions = _rootNode.children.plotOptions.children;
+
+        let _seriesOptions: TreeLib.Option;
+
+        for (const _seriesType of Object.keys(_plotOptions.children)) {
+            _seriesOptions = TreeLib.getTreeNode(_plotOptions, _seriesType);
+            TreeLib.extendTreeNode(
+                _plotOptions.children[_seriesType],
+                _seriesOptions
+            );
         }
     }
 

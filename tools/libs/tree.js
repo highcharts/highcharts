@@ -517,6 +517,7 @@ function toJSONString(
 
 
 module.exports = {
+    extendTreeNode,
     getTreeNode,
     loadOptionsTree,
     sortJSONTree,
