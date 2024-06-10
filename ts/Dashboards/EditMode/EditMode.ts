@@ -160,6 +160,12 @@ class EditMode {
             this.isEditOverlayActive = false;
 
             board.fullscreen = new Dashboards.FullScreen(board);
+
+            if (this.customHTMLMode) {
+                board.container.classList.add(
+                    Globals.classNames.boardContainer
+                );
+            }
         }
     }
 
