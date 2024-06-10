@@ -496,12 +496,6 @@ class Navigator {
                 { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
-                merge(
-                    true,
-                    navigator.handles[index] as NavigatorHandlesOptions,
-                    handlesOptions
-                );
-
                 const symbolName = handlesOptions.symbols[index];
 
                 if (!navigator.handles[index]) {
@@ -551,7 +545,11 @@ class Navigator {
                         .attr({
                             fill: handlesOptions.backgroundColor,
                             stroke: handlesOptions.borderColor,
-                            'stroke-width': handlesOptions.lineWidth
+                            'stroke-width': handlesOptions.lineWidth,
+                            width: handlesOptions.width,
+                            height: handlesOptions.height,
+                            x: -width / 2 - 1,
+                            y: 0
                         })
                         .css(mouseCursor);
                 }
