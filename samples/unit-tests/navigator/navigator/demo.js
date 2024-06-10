@@ -334,6 +334,31 @@ QUnit.test('General Navigator tests', function (assert) {
         'Navigator position should be updated when scrollbar ' +
             'disabled and navigator.baseSeries not set (#13114).'
     );
+
+    chart = Highcharts.stockChart('container', {
+        xAxis: {
+            ordinal: false,
+            minPadding: 0.05,
+            maxPadding: 0.05
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+    assert.strictEqual(
+        chart.navigator.xAxis.options.minPadding,
+        chart.xAxis[0].options.minPadding,
+        'Navigator should inherit the minPadding property from the main axis.'
+    );
+
+    assert.strictEqual(
+        chart.navigator.xAxis.options.maxPadding,
+        chart.xAxis[0].options.maxPadding,
+        'Navigator should inherit the maxPadding property from the main axis.'
+    );
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {

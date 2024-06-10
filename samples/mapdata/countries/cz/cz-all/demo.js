@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cz/cz-all.topo.json">Czech Republic</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cz/cz-all.topo.json">Czech Republic</a>'
         },
 
         mapNavigation: {

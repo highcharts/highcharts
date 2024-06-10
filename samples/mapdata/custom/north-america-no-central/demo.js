@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json">North America without central</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/north-america-no-central.topo.json">North America without central</a>'
         },
 
         mapNavigation: {
