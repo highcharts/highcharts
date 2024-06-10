@@ -10,39 +10,39 @@
 }
 
 /*
-.highcharts-dg-row[row-index="1"] {
+.highcharts-dg-row[data-row-index="1"] {
     height: 100px;
 }
 
-.highcharts-dg-row[row-index="3"] {
+.highcharts-dg-row[data-row-index="3"] {
     height: 100px;
 }
 
-.highcharts-dg-row[row-index="6"] {
+.highcharts-dg-row[data-row-index="6"] {
     height: 100px;
 }
 
-.highcharts-dg-row[row-index="100"] {
+.highcharts-dg-row[data-row-index="100"] {
     height: 200px;
 }
 
-.highcharts-dg-row[row-index="150"] {
+.highcharts-dg-row[data-row-index="150"] {
     height: 10px;
 }
 
-.highcharts-dg-row[row-index="152"] {
+.highcharts-dg-row[data-row-index="152"] {
     height: 10px;
 }
 
-.highcharts-dg-row[row-index="154"] {
+.highcharts-dg-row[data-row-index="154"] {
     height: 10px;
 }
 
-.highcharts-dg-row[row-index="6"] {
+.highcharts-dg-row[data-row-index="6"] {
     height: 100px;
 }
 
-.highcharts-dg-row[row-index="99999"] {
+.highcharts-dg-row[data-row-index="99999"] {
     height: 200px;
 }
 */
