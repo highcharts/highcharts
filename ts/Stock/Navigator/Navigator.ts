@@ -432,7 +432,6 @@ class Navigator {
      */
     public renderElements(): void {
         const navigator = this,
-            isDirty = navigator.isDirty,
             navigatorOptions = navigator.navigatorOptions,
             maskInside = navigatorOptions.maskInside,
             chart = navigator.chart,
@@ -442,14 +441,14 @@ class Navigator {
                 cursor: inverted ? 'ns-resize' : 'ew-resize'
             },
             // Create the main navigator group
-            navigatorGroup: SVGElement = isDirty ? navigator.navigatorGroup :
-                navigator.navigatorGroup = renderer
+            navigatorGroup: SVGElement = navigator.navigatorGroup ??
+                (navigator.navigatorGroup = renderer
                     .g('navigator')
                     .attr({
                         zIndex: 8,
                         visibility: 'hidden'
                     })
-                    .add();
+                    .add());
 
         // Create masks, each mask will get events and fill:
         [
@@ -457,13 +456,13 @@ class Navigator {
             maskInside,
             !maskInside
         ].forEach((hasMask: (boolean|undefined), index: number): void => {
-            const shade = isDirty ? navigator.shades[index] :
-                navigator.shades[index] = renderer.rect()
+            const shade = navigator.shades[index] ??
+                (navigator.shades[index] = renderer.rect()
                     .addClass(
                         'highcharts-navigator-mask' +
                         (index === 1 ? '-inside' : '-outside')
                     )
-                    .add(navigatorGroup);
+                    .add(navigatorGroup));
 
             if (!chart.styledMode) {
                 shade.attr({
@@ -477,7 +476,7 @@ class Navigator {
         });
 
         // Create the outline:
-        if (!isDirty) {
+        if (!navigator.outline) {
             navigator.outline = renderer.path()
                 .addClass('highcharts-navigator-outline')
                 .add(navigatorGroup);
@@ -505,7 +504,7 @@ class Navigator {
 
                 const symbolName = handlesOptions.symbols[index];
 
-                if (!isDirty) {
+                if (!navigator.handles[index]) {
                     navigator.handles[index] = renderer.symbol(
                         symbolName,
                         -width / 2 - 1,
@@ -574,10 +573,8 @@ class Navigator {
 
         merge(true, chart.options.navigator, options);
         this.navigatorOptions = chart.options.navigator || {};
-        this.opposite = pick(
-            this.navigatorOptions.opposite,
-            Boolean(!this.navigatorEnabled && chart.inverted)
-        );
+
+        this.setNavigatorOpposite();
 
         // Revert to destroy/init for navigator/scrollbar enabled toggle
         if (defined(options.enabled)) {
@@ -590,12 +587,12 @@ class Navigator {
             this.isDirty = true;
 
             if (options.adaptToUpdatedData === false) {
-                this.baseSeries.forEach(function (series): void {
+                this.baseSeries.forEach((series): void => {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
                 }, this);
             }
             if (options.adaptToUpdatedData) {
-                this.baseSeries.forEach(function (series): void {
+                this.baseSeries.forEach((series): void => {
                     series.eventsToUnbind.push(
                         addEvent(series, 'updatedData', this.updatedDataHandler)
                     );
@@ -610,23 +607,22 @@ class Navigator {
             // Update navigator axis
             if (options.height || options.xAxis || options.yAxis) {
                 this.height = options.height ?? this.height;
+                const { offsets, height } = this.getXAxisOffsetAndHeight();
 
                 this.xAxis.update({
                     ...options.xAxis,
-                    offsets: chart.inverted ?
-                        [this.scrollButtonSize, 0, -this.scrollButtonSize, 0] :
-                        [0, -this.scrollButtonSize, 0, this.scrollButtonSize],
-                    [chart.inverted ? 'width' : 'height']: this.height
+                    offsets,
+                    [chart.inverted ? 'width' : 'height']: height
                 }, false);
                 this.yAxis.update({
                     ...options.yAxis,
-                    [chart.inverted ? 'width' : 'height']: this.height
+                    [chart.inverted ? 'width' : 'height']: height
                 }, false);
             }
         }
 
         if (redraw) {
-            this.chart.redraw();
+            chart.redraw();
         }
     }
 
@@ -676,7 +672,6 @@ class Navigator {
         if (this.isDirty) {
             // Update DOM navigator elements
             this.renderElements();
-            this.isDirty = false;
         }
         min = correctFloat(min - pointRange / 2);
         max = correctFloat(max + pointRange / 2);
@@ -824,6 +819,7 @@ class Navigator {
             );
         }
         navigator.rendered = true;
+        this.isDirty = false;
         fireEvent(this, 'afterRender');
     }
 
@@ -1297,6 +1293,20 @@ class Navigator {
             }
         }
     }
+    /**
+     * Calculate the navigator xAxis offset and height
+     *
+     * @private
+     */
+    public getXAxisOffsetAndHeight(): DeepPartial<AxisOptions> {
+        const chart = this.chart;
+        return {
+            offsets: chart.inverted ?
+                [this.scrollButtonSize, 0, -this.scrollButtonSize, 0] :
+                [0, -this.scrollButtonSize, 0, this.scrollButtonSize],
+            [chart.inverted ? 'width' : 'height']: this.height
+        };
+    }
 
     /**
      * Initialize the Navigator object
@@ -1331,10 +1341,7 @@ class Navigator {
         this.navigatorOptions = navigatorOptions;
         this.scrollbarOptions = scrollbarOptions;
 
-        this.opposite = pick(
-            navigatorOptions.opposite,
-            Boolean(!navigatorEnabled && chart.inverted)
-        ); // #6262
+        this.setNavigatorOpposite();
 
         const navigator = this,
             baseSeries = navigator.baseSeries,
@@ -1347,6 +1354,7 @@ class Navigator {
 
 
         if (navigator.navigatorEnabled) {
+            const { offsets, height } = this.getXAxisOffsetAndHeight();
             // An x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
                 // Inherit base xAxis' break, ordinal options and overscroll
@@ -1365,11 +1373,11 @@ class Navigator {
                 maxPadding: 0,
                 zoomEnabled: false
             }, chart.inverted ? {
-                offsets: [scrollButtonSize, 0, -scrollButtonSize, 0],
+                offsets,
                 width: height
             } : {
-                offsets: [0, -scrollButtonSize, 0, scrollButtonSize],
-                height: height
+                offsets,
+                height
             }), 'xAxis') as NavigatorAxisComposition;
 
             navigator.yAxis = new Axis(chart, merge(
@@ -1514,6 +1522,20 @@ class Navigator {
         navigator.addBaseSeriesEvents();
         // Add redraw events
         navigator.addChartEvents();
+    }
+    /**
+     * Set the opposite property on navigator
+     *
+     * @private
+     */
+    public setNavigatorOpposite(): void {
+        const navigatorOptions = this.navigatorOptions,
+            navigatorEnabled = this.navigatorEnabled,
+            chart = this.chart;
+        this.opposite = pick(
+            navigatorOptions.opposite,
+            Boolean(!navigatorEnabled && chart.inverted)
+        ); // #6262
     }
 
     /**
