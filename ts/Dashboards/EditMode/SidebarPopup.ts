@@ -203,7 +203,8 @@ class SidebarPopup extends BaseForm {
      */
     private detectRightSidebar(context: Cell | CellHTML | Row): boolean {
         const editMode = this.editMode;
-        const layoutWrapper = editMode.board.layoutsWrapper;
+        const layoutWrapper = editMode.customHTMLMode ?
+            editMode.board.container : editMode.board.layoutsWrapper;
 
         if (!layoutWrapper) {
             return false;
