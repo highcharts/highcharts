@@ -31,7 +31,7 @@ import TreeLib from '../libs/tree.js';
 
 import TSLib from '../libs/ts.js';
 
-import Utilities from './Utilities';
+import Utilities from './utilities.js';
 
 import Yargs from 'yargs';
 

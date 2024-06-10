@@ -72,7 +72,7 @@ async function apiDocs() {
     );
 
     await ProcessLib.exec(
-        'npx ts-node tools/api-docs/APIOptions.ts' +
+        'npx ts-node tools/api-docs/api-options.ts' +
             ` --source "${source}"`
     );
 
