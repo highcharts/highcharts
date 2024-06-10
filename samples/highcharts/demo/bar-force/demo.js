@@ -68,7 +68,40 @@
 Highcharts.chart('container', {
     chart: {
         type: 'bar',
-        height: 170
+        height: 170,
+        events: {
+            render: function () {
+                const chart = this,
+                    renderer = chart.renderer,
+                    top = chart.plotTop,
+                    left = chart.plotLeft,
+                    yAxis = chart.yAxis[0];
+
+                if (!this.minDataLabel) {
+                    this.minDataLabel = renderer.label(
+                        'Min: ' + yAxis.dataMin
+                    ).attr({ zIndex: 4 }).css({ fontWeight: 'bold' }).add();
+                }
+                if (!this.maxDataLabel) {
+                    this.maxDataLabel = renderer.label(
+                        'Max: ' + yAxis.dataMax
+                    ).attr({ zIndex: 4 }).css({ fontWeight: 'bold' }).add();
+                }
+
+                this.minDataLabel.attr({
+                    x: left +
+                        yAxis.toPixels(yAxis.dataMin, true) -
+                        (this.minDataLabel.width / 2),
+                    y: top
+                });
+                this.maxDataLabel.attr({
+                    x: left +
+                        yAxis.toPixels(yAxis.dataMax, true) -
+                        (this.maxDataLabel.width / 2),
+                    y: top
+                });
+            }
+        }
     },
     title: {
         text: 'Estimated Impact of Forces in Mars EDL sequence'
@@ -80,30 +113,27 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 y: 20,
-                verticalAlign: 'bottom',
-                borderColor: '#000000',
-                borderRadius: 5,
-                format: '<span style="color:{point.color}">' +
-                    '{point.y}</span>'
+                verticalAlign: 'bottom'
             },
             color: 'rgb(255, 7, 77)',
-            negativeColor: 'rgb(1, 127, 250)'
+            negativeColor: 'rgb(1, 127, 250)',
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         }
     },
     tooltip: {
-        format: '<span style="color:{point.color}">\u25CF</span>' +
+        format: '<span style="color:{point.color}">\u25CF</span> ' +
             '<b>{series.name}: {point.y}</b>',
         stickOnContact: true
     },
     accessibility: {
-        typeDescription: 'Stacked bar "force" chart.',
-        exposeAsGroupOnly: true,
+        typeDescription: 'Stacked bar "force" chart. Positive forces ' +
+            'are shown on the right side and negative on the left.',
         series: {
-            descriptionFormatter: function (series) {
-                return series.index + 1 + ' of ' +
-                    this.chart.series.length + '. Name ' + series.name +
-                    ', value ' + series.points[0].y + '.';
-            }
+            descriptionFormat: 'Series {add series.index 1} of ' +
+            '{chart.series.length}, Name: {series.name}, value ' +
+            '{series.points.0.y}.'
         }
     },
     yAxis: {
@@ -112,18 +142,25 @@ Highcharts.chart('container', {
         labels: {
             enabled: false
         },
-        title: ''
+        title: '',
+        accessibility: {
+            description: ''
+        }
     },
     xAxis: {
-        visible: false
+        visible: false,
+        title: '',
+        accessibility: {
+            description: ''
+        }
     },
     legend: {
         enabled: false
     },
     /*
     NOTE: These data values are arbitrary, illustrative and does not reflect
-    actual forces in a Mars EDL sequence. They aim to broadly demonstrate the
-    key dynamics affecting the spacecraft during EDL.
+    the strength of actual forces in a Mars EDL sequence. They aim to broadly
+    demonstrate the key dynamics affecting the spacecraft during EDL.
     */
     series: [
         // Unwanted/additive forces
@@ -131,14 +168,10 @@ Highcharts.chart('container', {
         { name: 'Martian Gravity', data: [3] },
 
         // Slowing forces
-        { name: 'Atmospheric Drag', data: [-8] },
-        { name: 'Lift', data: [-1] },
-        { name: 'Peak Heating', data: [-0.25] },
-        { name: 'Parachute Drag', data: [-6.75] },
+        { name: 'Atmospheric Drag (Re-entry)', data: [-9] },
+        { name: 'Parachute Drag', data: [-7] },
         { name: 'Heat Shield Separation', data: [-0.5] },
-        // Enters free fall shortly after separation with backshell & parachute.
-        { name: 'Backshell Separation (Free fall)', data: [0.5] },
-        { name: 'Retro Rockets', data: [-2.5] },
-        { name: 'Sky Crane Operation', data: [-2] }
+        { name: 'Retro Rockets (Powered decent)', data: [-1.5] },
+        { name: 'Sky Crane Operation', data: [-1] }
     ]
 });
