@@ -289,20 +289,16 @@ class DataTableCore implements DataEvent.Emitter {
      * Event object with event information.
      */
     public emit<E extends DataEvent>(e: E): void {
-        const table = this;
-
-        switch (e.type) {
-            case 'afterDeleteColumns':
-            case 'afterDeleteRows':
-            case 'afterSetCell':
-            case 'afterSetColumns':
-            case 'afterSetRows':
-                table.versionTag = uniqueKey();
-                break;
-            default:
+        if ([
+            'afterDeleteColumns',
+            'afterDeleteRows',
+            'afterSetCell',
+            'afterSetColumns',
+            'afterSetRows'
+        ].includes(e.type)) {
+            this.versionTag = uniqueKey();
         }
-
-        fireEvent(table, e.type, e);
+        fireEvent(this, e.type, e);
     }
 
     public getColumn(
