@@ -570,22 +570,13 @@ class DataTableCore implements DataEvent.Emitter {
         rowIndex: number = this.rowCount
     ): void {
         const { aliases, columns } = this,
-            indexRowCount = rowIndex + 1,
-            rowColumnNames = Object.keys(row);
-        for (
-            let j = 0,
-                jEnd = rowColumnNames.length,
-                rowColumnName: string;
-            j < jEnd;
-            ++j
-        ) {
-            rowColumnName = rowColumnNames[j];
-            rowColumnName = (aliases[rowColumnName] || rowColumnName);
-            if (!columns[rowColumnName]) {
-                columns[rowColumnName] = new Array(indexRowCount);
-            }
-            columns[rowColumnName][rowIndex] = row[rowColumnName];
-        }
+            indexRowCount = rowIndex + 1;
+
+        objectEach(row, (cellValue, columnName): void => {
+            columnName = aliases[columnName] || columnName;
+            columns[columnName] ??= new Array(indexRowCount);
+            columns[columnName][rowIndex] = cellValue;
+        });
 
         if (indexRowCount > this.rowCount) {
             this.applyRowCount(indexRowCount);
