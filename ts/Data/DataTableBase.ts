@@ -173,6 +173,21 @@ class DataTableBase implements DataEvent.Emitter {
      *
      * */
 
+
+    /**
+     * Applies a row count to the table by setting the `rowCount` property and
+     * adjusting the length of all columns.
+     * @param {number} rowCount The new row count.
+     */
+    private applyRowCount(
+        rowCount: number
+    ): void {
+        this.rowCount = rowCount;
+        objectEach(this.columns, (column): void => {
+            column.length = rowCount;
+        });
+    }
+
     /**
      * Deletes rows in this table.
      *
@@ -534,6 +549,8 @@ class DataTableBase implements DataEvent.Emitter {
             reset = (typeof rowIndex === 'undefined'),
             columnNames = Object.keys(columns);
 
+        let rowCount = table.rowCount;
+
         table.emit({
             type: 'setColumns',
             columns,
@@ -559,7 +576,7 @@ class DataTableBase implements DataEvent.Emitter {
 
             if (reset) {
                 tableColumns[columnName] = column.slice();
-                table.rowCount = column.length;
+                rowCount = column.length;
             } else {
                 const tableColumn: DataTable.Column = (
                     tableColumns[columnName] ?
@@ -576,15 +593,11 @@ class DataTableBase implements DataEvent.Emitter {
                     tableColumn[i] = column[i];
                 }
 
-                table.rowCount = Math.max(table.rowCount, tableColumn.length);
+                rowCount = Math.max(rowCount, tableColumn.length);
             }
         }
 
-        const tableColumnNames = Object.keys(tableColumns);
-
-        for (let i = 0, iEnd = tableColumnNames.length; i < iEnd; ++i) {
-            tableColumns[tableColumnNames[i]].length = table.rowCount;
-        }
+        this.applyRowCount(rowCount);
 
         if (tableModifier) {
             tableModifier.modifyColumns(
@@ -629,10 +642,7 @@ class DataTableBase implements DataEvent.Emitter {
         }
 
         if (indexRowCount > this.rowCount) {
-            this.rowCount = indexRowCount;
-            objectEach(columns, (column): void => {
-                column.length = indexRowCount;
-            });
+            this.applyRowCount(indexRowCount);
         }
     }
 }
