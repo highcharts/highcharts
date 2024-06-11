@@ -179,7 +179,7 @@ class DataTableBase implements DataEvent.Emitter {
      * adjusting the length of all columns.
      * @param {number} rowCount The new row count.
      */
-    private applyRowCount(
+    protected applyRowCount(
         rowCount: number
     ): void {
         this.rowCount = rowCount;
@@ -520,8 +520,8 @@ class DataTableBase implements DataEvent.Emitter {
     }
 
     /**
-     * Sets cell values for multiple columns. Will insert new columns, if not
-     * found.
+     * The simplified version of the full `setColumns`, limited to full
+     * replacement of the columns (undefined `rowIndex`)
      *
      * @function Highcharts.DataTable#setColumns
      *
@@ -538,81 +538,27 @@ class DataTableBase implements DataEvent.Emitter {
      * @emits #afterSetColumns
      */
     public setColumns(
-        this: DataTableBase|DataTable,
         columns: DataTable.ColumnCollection,
         rowIndex?: number,
         eventDetail?: DataEvent.Detail
     ): void {
-        const table = this,
-            tableColumns = (table as DataTableBase).columns,
-            tableModifier = (table as DataTable).modifier,
-            reset = (typeof rowIndex === 'undefined'),
-            columnNames = Object.keys(columns);
+        let rowCount = this.rowCount;
 
-        let rowCount = table.rowCount;
-
-        table.emit({
-            type: 'setColumns',
-            columns,
-            columnNames,
-            detail: eventDetail,
-            rowIndex
+        objectEach(columns, (column, columnName): void => {
+            this.columns[
+                this.aliases[columnName] || columnName
+            ] = column.slice();
+            rowCount = column.length;
         });
-
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            column = columns[columnName];
-            columnName = (
-                table.aliases[columnName] ||
-                columnName
-            );
-
-            if (reset) {
-                tableColumns[columnName] = column.slice();
-                rowCount = column.length;
-            } else {
-                const tableColumn: DataTable.Column = (
-                    tableColumns[columnName] ?
-                        tableColumns[columnName] :
-                        tableColumns[columnName] = new Array(table.rowCount)
-                );
-
-                for (
-                    let i = (rowIndex || 0),
-                        iEnd = column.length;
-                    i < iEnd;
-                    ++i
-                ) {
-                    tableColumn[i] = column[i];
-                }
-
-                rowCount = Math.max(rowCount, tableColumn.length);
-            }
-        }
 
         this.applyRowCount(rowCount);
 
-        if (tableModifier) {
-            tableModifier.modifyColumns(
-                table as DataTable,
-                columns,
-                rowIndex || 0
-            );
-        }
-
-        table.emit({
+        this.emit({
             type: 'afterSetColumns',
             columns,
-            columnNames,
+            columnNames: Object.keys(columns),
             detail: eventDetail,
-            rowIndex
+            rowIndex: void 0
         });
     }
 

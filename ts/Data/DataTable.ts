@@ -897,6 +897,97 @@ class DataTable extends DataTableBase {
     }
 
     /**
+     * Sets cell values for multiple columns. Will insert new columns, if not
+     * found.
+     *
+     * @function Highcharts.DataTable#setColumns
+     *
+     * @param {Highcharts.DataTableColumnCollection} columns
+     * Columns as a collection, where the keys are the column names or aliases.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first row to change. Keep undefined to reset.
+     *
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @emits #setColumns
+     * @emits #afterSetColumns
+     */
+    public setColumns(
+        columns: DataTable.ColumnCollection,
+        rowIndex?: number,
+        eventDetail?: DataEvent.Detail
+    ): void {
+        const table = this,
+            tableColumns = table.columns,
+            tableModifier = table.modifier,
+            columnNames = Object.keys(columns);
+
+        let rowCount = table.rowCount;
+
+        table.emit({
+            type: 'setColumns',
+            columns,
+            columnNames,
+            detail: eventDetail,
+            rowIndex
+        });
+
+        if (typeof rowIndex === 'undefined') {
+            super.setColumns(columns, rowIndex, eventDetail);
+        } else {
+
+            for (
+                let i = 0,
+                    iEnd = columnNames.length,
+                    column: DataTable.Column,
+                    columnName: string;
+                i < iEnd;
+                ++i
+            ) {
+                columnName = columnNames[i];
+                column = columns[columnName];
+                columnName = (
+                    table.aliases[columnName] ||
+                    columnName
+                );
+
+                const tableColumn: DataTable.Column = (
+                    tableColumns[columnName] ?
+                        tableColumns[columnName] :
+                        tableColumns[columnName] = new Array(table.rowCount)
+                );
+
+                for (
+                    let i = (rowIndex || 0),
+                        iEnd = column.length;
+                    i < iEnd;
+                    ++i
+                ) {
+                    tableColumn[i] = column[i];
+                }
+
+                rowCount = Math.max(rowCount, tableColumn.length);
+            }
+
+            this.applyRowCount(rowCount);
+        }
+
+        if (tableModifier) {
+            tableModifier.modifyColumns(table, columns, rowIndex || 0);
+        }
+
+        table.emit({
+            type: 'afterSetColumns',
+            columns,
+            columnNames,
+            detail: eventDetail,
+            rowIndex
+        });
+    }
+
+    /**
      * Sets or unsets the modifier for the table.
      * @private
      *
