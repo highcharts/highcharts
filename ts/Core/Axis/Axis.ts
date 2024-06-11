@@ -1499,11 +1499,12 @@ class Axis {
                     series.generatePoints();
                 }
 
-                series.data.forEach(function (
-                    point: Point,
+                const xData = series.getColumn('x').slice();
+                series.data.forEach((
+                    point,
                     i: number
-                ): void { // #9487
-                    let x;
+                ): void => { // #9487
+                    let x = xData[i];
 
                     if (
                         point?.options &&
@@ -1511,11 +1512,11 @@ class Axis {
                     ) {
                         x = axis.nameToX(point);
                         if (typeof x !== 'undefined' && x !== point.x) {
-                            point.x = x;
-                            series.table.setCell('x', i, x);
+                            xData[i] = point.x = x;
                         }
                     }
                 });
+                series.table.setColumn('x', xData);
             });
         }
     }

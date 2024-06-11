@@ -48,7 +48,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import DataTable from '../../Data/DataTable.js';
+import DataTableBase from '../../Data/DataTableBase.js';
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
 import U from '../../Core/Utilities.js';
@@ -1076,7 +1076,7 @@ function seriesGeneratePoints(
 
         if (clusteredData) {
 
-            series.table.modified = new DataTable({
+            series.table.modified = new DataTableBase({
                 columns: {
                     x: clusteredData.groupedXData,
                     y: clusteredData.groupedYData

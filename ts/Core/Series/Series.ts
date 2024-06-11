@@ -23,6 +23,7 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import type Legend from '../Legend/Legend';
@@ -59,7 +60,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import DataTable from '../../Data/DataTable.js';
+import DataTableBase from '../../Data/DataTableBase.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
@@ -146,12 +147,12 @@ export interface DataColumns extends DataTable.ColumnCollection{
     // x?: Array<number>|TypedArray;
 }
 
-export interface DataTableLightModified extends DataTable {
+export interface DataTableLightModified extends DataTableBase {
     /// columns: DataColumns;
     // rowCount: number;
 }
 
-export interface DataTableLight extends DataTable {
+export interface DataTableLight extends DataTableBase {
     /// modified?: DataTableLightModified;
 }
 
@@ -369,7 +370,7 @@ class Series {
 
     public symbolIndex?: number;
 
-    public table!: DataTable;
+    public table!: DataTableBase;
 
     public tooltipOptions!: TooltipOptions;
 
@@ -405,7 +406,7 @@ class Series {
         fireEvent(this, 'init', { options: userOptions });
 
         // Create the data table
-        this.table ??= new DataTable();
+        this.table ??= new DataTableBase();
 
         const series = this,
             chartSeries = chart.series;
@@ -634,7 +635,7 @@ class Series {
             typeof this.dataMin !== 'undefined'
         ) || ( // #3703
             this.visible &&
-            this.table.getRowCount() > 0 // #9758
+            this.table.rowCount > 0 // #9758
         ));
     }
 
@@ -1648,7 +1649,7 @@ class Series {
             max,
             processedXData: Array<number>|TypedArray = series.getColumn('x'),
             processedYData = series.getColumn('y'),
-            modified: DataTable|undefined,
+            modified: DataTableBase|undefined,
             updatingNames = false;
 
         if (xAxis) {
@@ -1679,7 +1680,7 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
-                modified = new DataTable();
+                modified = new DataTableBase();
 
             // Only crop if it's actually spilling out
             } else if (
@@ -1837,7 +1838,7 @@ class Series {
             yData: yData?.slice(start, end),
             start,
             end,
-            modified: new DataTable({ columns })
+            modified: new DataTableBase({ columns })
         };
     }
 
@@ -5009,7 +5010,7 @@ namespace Series {
 
     export interface CropDataObject {
         end: number;
-        modified?: DataTable;
+        modified?: DataTableBase;
         start: number;
         /* @deprecated */
         xData: Array<number>|TypedArray;
