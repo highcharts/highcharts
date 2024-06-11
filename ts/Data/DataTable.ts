@@ -578,6 +578,28 @@ class DataTable extends DataTableCore {
     }
 
     /**
+     * Retrieves the row at a given index. This function is a simplified wrap of
+     * {@link getRows}.
+     *
+     * @function Highcharts.DataTable#getRow
+     *
+     * @param {number} rowIndex
+     * Row index to retrieve. First row has index 0.
+     *
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases in order to retrieve.
+     *
+     * @return {Highcharts.DataTableRow}
+     * Returns the row values, or `undefined` if not found.
+     */
+    public getRow(
+        rowIndex: number,
+        columnNamesOrAliases?: Array<string>
+    ): (DataTable.Row|undefined) {
+        return this.getRows(rowIndex, 1, columnNamesOrAliases)[0];
+    }
+
+    /**
      * Returns the number of rows in this table.
      *
      * @function Highcharts.DataTable#getRowCount
@@ -699,6 +721,59 @@ class DataTable extends DataTableCore {
             for (const columnName of columnNamesOrAliases) {
                 column = columns[(aliases[columnName] || columnName)];
                 row[columnName] = (column ? column[i] : void 0);
+            }
+        }
+
+        return rows;
+    }
+
+    /**
+     * Fetches all or a number of rows.
+     *
+     * @function Highcharts.DataTable#getRows
+     *
+     * @param {number} [rowIndex]
+     * Index of the first row to fetch. Defaults to first row at index `0`.
+     *
+     * @param {number} [rowCount]
+     * Number of rows to fetch. Defaults to maximal number of rows.
+     *
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases and their order to retrieve.
+     *
+     * @return {Highcharts.DataTableRow}
+     * Returns retrieved rows.
+     */
+    public getRows(
+        rowIndex: number = 0,
+        rowCount: number = (this.rowCount - rowIndex),
+        columnNamesOrAliases?: Array<string>
+    ): (Array<DataTable.Row>) {
+        const table = this,
+            aliases = table.aliases,
+            columns = table.columns,
+            rows: Array<DataTable.Row> = new Array(rowCount);
+
+        columnNamesOrAliases = (columnNamesOrAliases || Object.keys(columns));
+
+        for (
+            let i = rowIndex,
+                i2 = 0,
+                iEnd = Math.min(
+                    table.rowCount,
+                    (rowIndex + rowCount
+                    )
+                ),
+                column: DataTable.Column,
+                row: DataTable.Row;
+            i < iEnd;
+            ++i, ++i2
+        ) {
+            row = rows[i2] = [];
+
+            for (const columnName of columnNamesOrAliases) {
+                column = columns[(aliases[columnName] || columnName)];
+                row.push(column ? column[i] : void 0);
             }
         }
 
