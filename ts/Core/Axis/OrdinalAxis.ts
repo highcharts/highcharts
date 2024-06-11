@@ -24,7 +24,7 @@ import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
-import DataTableBase from '../../Data/DataTableBase.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
@@ -1275,7 +1275,7 @@ namespace OrdinalAxis {
                                 []
                         )
                     ];
-                    fakeSeries.table = new DataTableBase({
+                    fakeSeries.table = new DataTableCore({
                         columns: {
                             x: xData
                         }

@@ -26,7 +26,7 @@ import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
 
-import DataTableBase from './DataTableBase.js';
+import DataTableCore from './DataTableCore.js';
 
 
 /* *
@@ -47,7 +47,7 @@ import DataTableBase from './DataTableBase.js';
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
  */
-class DataTable extends DataTableBase {
+class DataTable extends DataTableCore {
 
 
     /* *

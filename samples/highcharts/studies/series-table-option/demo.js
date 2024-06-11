@@ -1,4 +1,4 @@
-const { DataTableBase, Series } = Highcharts;
+const { DataTableCore, Series } = Highcharts;
 const setData = Series.prototype.setData;
 
 Series.prototype.setData = function (
@@ -9,8 +9,8 @@ Series.prototype.setData = function (
 ) {
     const table = this.options.table;
     if (table) {
-        this.table = table instanceof DataTableBase ?
-            table : new DataTableBase(table);
+        this.table = table instanceof DataTableCore ?
+            table : new DataTableCore(table);
         this.isDirty = this.chart.isDirtyBox = true;
         this.isDirtyData = true;
 
@@ -41,7 +41,7 @@ Highcharts.chart('container', {
         }
     }, {
         name: 'Instance + array',
-        table: new DataTableBase({
+        table: new DataTableCore({
             columns: {
                 x: [0, 1, 3, 4],
                 y: [3, 6, 5, 7]
@@ -57,7 +57,7 @@ Highcharts.chart('container', {
         }
     }, {
         name: 'Instance + typed array',
-        table: new DataTableBase({
+        table: new DataTableCore({
             columns: {
                 x: new Uint8Array([0, 1, 3, 4]),
                 y: new Uint8Array([9, 5, 9, 4])

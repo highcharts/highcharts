@@ -22,10 +22,10 @@
  * */
 
 
-import type DataEvent from './DataEvent';
-import type DataModifier from './Modifiers/DataModifier';
-import type DataTable from './DataTable';
-import type DataTableOptions from './DataTableOptions';
+import type DataEvent from './DataEvent.js';
+import type DataModifier from './Modifiers/DataModifier.js';
+import type DataTable from './DataTable.js';
+import type DataTableOptions from './DataTableOptions.js';
 
 import U from '../Core/Utilities.js';
 const {
@@ -55,7 +55,7 @@ const {
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
  */
-class DataTableBase implements DataEvent.Emitter {
+class DataTableCore implements DataEvent.Emitter {
 
     /**
      * Constructs an instance of the DataTable class.
@@ -159,7 +159,7 @@ class DataTableBase implements DataEvent.Emitter {
 
     public readonly id: string;
 
-    public modified: DataTableBase;
+    public modified: DataTableCore;
 
     // @note Made this public because we're using it for quick checks in
     // Highcharts
@@ -210,7 +210,7 @@ class DataTableBase implements DataEvent.Emitter {
      * @emits #afterDeleteRows
      */
     public deleteRows(
-        this: DataTableBase|DataTable,
+        this: DataTableCore|DataTable,
         rowIndex?: number,
         rowCount: number = 1,
         eventDetail?: DataEvent.Detail
@@ -233,7 +233,7 @@ class DataTableBase implements DataEvent.Emitter {
         }
 
         if (rowCount > 0 && rowIndex < table.rowCount) {
-            const columns = (table as DataTableBase).columns,
+            const columns = (table as DataTableCore).columns,
                 columnNames = Object.keys(columns);
 
             for (
@@ -602,7 +602,7 @@ class DataTableBase implements DataEvent.Emitter {
 /**
  * Additionally it provides necessary types for events.
  */
-namespace DataTableBase {
+namespace DataTableCore {
 
     /* *
      *
@@ -634,7 +634,7 @@ namespace DataTableBase {
         readonly type: (
             'cloneTable'|'afterCloneTable'
         );
-        readonly tableClone?: DataTableBase;
+        readonly tableClone?: DataTableCore;
     }
 
     /**
@@ -730,7 +730,7 @@ namespace DataTableBase {
         );
         readonly error?: unknown;
         readonly modifier?: DataModifier;
-        readonly modified?: DataTableBase;
+        readonly modified?: DataTableCore;
     }
 
 
@@ -744,4 +744,4 @@ namespace DataTableBase {
  * */
 
 
-export default DataTableBase;
+export default DataTableCore;

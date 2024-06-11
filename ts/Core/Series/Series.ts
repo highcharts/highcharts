@@ -60,7 +60,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import DataTableBase from '../../Data/DataTableBase.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
@@ -147,12 +147,12 @@ export interface DataColumns extends DataTable.ColumnCollection{
     // x?: Array<number>|TypedArray;
 }
 
-export interface DataTableLightModified extends DataTableBase {
+export interface DataTableLightModified extends DataTableCore {
     /// columns: DataColumns;
     // rowCount: number;
 }
 
-export interface DataTableLight extends DataTableBase {
+export interface DataTableLight extends DataTableCore {
     /// modified?: DataTableLightModified;
 }
 
@@ -370,7 +370,7 @@ class Series {
 
     public symbolIndex?: number;
 
-    public table!: DataTableBase;
+    public table!: DataTableCore;
 
     public tooltipOptions!: TooltipOptions;
 
@@ -406,7 +406,7 @@ class Series {
         fireEvent(this, 'init', { options: userOptions });
 
         // Create the data table
-        this.table ??= new DataTableBase();
+        this.table ??= new DataTableCore();
 
         const series = this,
             chartSeries = chart.series;
@@ -1649,7 +1649,7 @@ class Series {
             max,
             processedXData: Array<number>|TypedArray = series.getColumn('x'),
             processedYData = series.getColumn('y'),
-            modified: DataTableBase|undefined,
+            modified: DataTableCore|undefined,
             updatingNames = false;
 
         if (xAxis) {
@@ -1680,7 +1680,7 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
-                modified = new DataTableBase();
+                modified = new DataTableCore();
 
             // Only crop if it's actually spilling out
             } else if (
@@ -1838,7 +1838,7 @@ class Series {
             yData: yData?.slice(start, end),
             start,
             end,
-            modified: new DataTableBase({ columns })
+            modified: new DataTableCore({ columns })
         };
     }
 
@@ -5010,7 +5010,7 @@ namespace Series {
 
     export interface CropDataObject {
         end: number;
-        modified?: DataTableBase;
+        modified?: DataTableCore;
         start: number;
         /* @deprecated */
         xData: Array<number>|TypedArray;
