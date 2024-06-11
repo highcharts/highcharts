@@ -301,92 +301,47 @@ class DataTableCore implements DataEvent.Emitter {
         fireEvent(this, e.type, e);
     }
 
-    public getColumn(
-        columnNameOrAlias: string,
-        asReference?: boolean
-    ): (DataTable.Column|undefined);
-    public getColumn(
-        columnNameOrAlias: string,
-        asReference: true
-    ): (DataTable.Column|undefined);
     /**
-     * Fetches the given column by the canonical column name or by an alias.
-     * This function is a simplified wrap of {@link getColumns}.
+     * Simplified version of the full `getRow` method, not supporting aliases,
+     * and always returning by reference.
      *
-     * @function Highcharts.DataTable#getColumn
-     *
-     * @param {string} columnNameOrAlias
-     * Name or alias of the column to get, alias takes precedence.
-     *
-     * @param {boolean} [asReference]
-     * Whether to return the column as a readonly reference.
+     * @param {string} columnName
+     * Name of the column to get, alias takes precedence.
      *
      * @return {Highcharts.DataTableColumn|undefined}
      * A copy of the column, or `undefined` if not found.
      */
     public getColumn(
-        columnNameOrAlias: string,
-        asReference?: boolean
+        columnName: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        asReference?: true
     ): (DataTable.Column|undefined) {
-        return this.getColumns(
-            [columnNameOrAlias],
-            asReference
-        )[columnNameOrAlias];
+        return this.columns[columnName];
     }
 
-    public getColumns(
-        columnNamesOrAliases?: Array<string>,
-        asReference?: boolean
-    ): DataTable.ColumnCollection;
-    public getColumns(
-        columnNamesOrAliases: (Array<string>|undefined),
-        asReference: true
-    ): Record<string, DataTable.Column>;
     /**
-     * Retrieves all or the given columns.
+     * Simplified version of the full `getColumns` method, not supporting
+     * aliases, and always returning by reference.
      *
-     * @function Highcharts.DataTable#getColumns
-     *
-     * @param {Array<string>} [columnNamesOrAliases]
-     * Column names or aliases to retrieve. Aliases taking precedence.
-     *
-     * @param {boolean} [asReference]
-     * Whether to return columns as a readonly reference.
+     * @param {Array<string>} [columnNames]
+     * Column names to retrieve.
      *
      * @return {Highcharts.DataTableColumnCollection}
      * Collection of columns. If a requested column was not found, it is
      * `undefined`.
      */
     public getColumns(
-        columnNamesOrAliases?: Array<string>,
-        asReference?: boolean
+        columnNames?: Array<string>,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        asReference?: true
     ): DataTable.ColumnCollection {
-        const table = this,
-            tableAliasMap = table.aliases,
-            tableColumns = table.columns,
-            columns: DataTable.ColumnCollection = {};
-
-        columnNamesOrAliases = (
-            columnNamesOrAliases || Object.keys(tableColumns)
+        return (columnNames || Object.keys(this.columns)).reduce(
+            (columns, columnName): DataTable.ColumnCollection => {
+                columns[columnName] = this.columns[columnName];
+                return columns;
+            },
+            {} as DataTable.ColumnCollection
         );
-
-        for (
-            let i = 0,
-                iEnd = columnNamesOrAliases.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNamesOrAliases[i];
-            column = tableColumns[(tableAliasMap[columnName] || columnName)];
-
-            if (column) {
-                columns[columnName] = (asReference ? column : column.slice());
-            }
-        }
-
-        return columns;
     }
 
     /**

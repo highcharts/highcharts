@@ -552,6 +552,31 @@ class DataTable extends DataTableCore {
     }
 
     /**
+     * Fetches the given column by the canonical column name or by an alias.
+     * This function is a simplified wrap of {@link getColumns}.
+     *
+     * @function Highcharts.DataTable#getColumn
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to get, alias takes precedence.
+     *
+     * @param {boolean} [asReference]
+     * Whether to return the column as a readonly reference.
+     *
+     * @return {Highcharts.DataTableColumn|undefined}
+     * A copy of the column, or `undefined` if not found.
+     */
+    public getColumn(
+        columnNameOrAlias: string,
+        asReference?: boolean
+    ): (DataTable.Column|undefined) {
+        return this.getColumns(
+            [columnNameOrAlias],
+            asReference
+        )[columnNameOrAlias];
+    }
+
+    /**
      * Fetches all column names.
      *
      * @function Highcharts.DataTable#getColumnNames
@@ -564,6 +589,53 @@ class DataTable extends DataTableCore {
             columnNames = Object.keys(table.columns);
 
         return columnNames;
+    }
+
+    /**
+     * Retrieves all or the given columns.
+     *
+     * @function Highcharts.DataTable#getColumns
+     *
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases to retrieve. Aliases taking precedence.
+     *
+     * @param {boolean} [asReference]
+     * Whether to return columns as a readonly reference.
+     *
+     * @return {Highcharts.DataTableColumnCollection}
+     * Collection of columns. If a requested column was not found, it is
+     * `undefined`.
+     */
+    public getColumns(
+        columnNamesOrAliases?: Array<string>,
+        asReference?: boolean
+    ): DataTable.ColumnCollection {
+        const table = this,
+            tableAliasMap = table.aliases,
+            tableColumns = table.columns,
+            columns: DataTable.ColumnCollection = {};
+
+        columnNamesOrAliases = (
+            columnNamesOrAliases || Object.keys(tableColumns)
+        );
+
+        for (
+            let i = 0,
+                iEnd = columnNamesOrAliases.length,
+                column: DataTable.Column,
+                columnName: string;
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNamesOrAliases[i];
+            column = tableColumns[(tableAliasMap[columnName] || columnName)];
+
+            if (column) {
+                columns[columnName] = (asReference ? column : column.slice());
+            }
+        }
+
+        return columns;
     }
 
     /**
