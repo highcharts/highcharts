@@ -132,8 +132,9 @@ Highcharts.chart('container', {
             'are shown on the right side and negative on the left.',
         series: {
             descriptionFormat: 'Series {add series.index 1} of ' +
-            '{chart.series.length}, Name: {series.name}, value ' +
-            '{series.points.0.y}.'
+            '{chart.series.length}, Name: {series.name}, ' +
+            '{#if (gt series.points.0.y 0)}accelerating' +
+            '{else}decelerating{/if} value of {series.points.0.y}.'
         }
     },
     yAxis: {
