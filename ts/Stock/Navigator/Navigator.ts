@@ -512,7 +512,7 @@ class Navigator {
                     // because of the tooltip in inverted chart (#2908).
                     navigator.handles[index].attr({ zIndex: 7 - index })
                         .addClass(
-                            'highcharts-navigator-handle ' +
+                            'highcharts-navigator-handle- ' +
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
