@@ -476,7 +476,7 @@ class SidebarPopup extends BaseForm {
      * @override BaseForm.closeButtonEvents
      */
     public closeButtonEvents(): void {
-        if (this.type === 'cell') {
+        if (this.type === 'cell' || this.type === 'cell-html') {
             this.accordionMenu.cancelChanges();
         } else {
             this.hide();

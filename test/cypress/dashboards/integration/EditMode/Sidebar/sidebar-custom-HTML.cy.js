@@ -43,5 +43,10 @@ describe('Edit Mode sidebar', () => {
         cy.board().then((board) => {
             assert.notOk(board.mountedComponents[0].component.chart.legend.display, 'Legend should be hidden');
         });
+
+        // Close sidebar and try to discard changes
+        cy.get('.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-popup-close').click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup').should('be.visible');
+        cy.get('.highcharts-dashboards-edit-overlay-active').should('be.visible');
     });
 });
