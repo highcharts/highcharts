@@ -140,9 +140,8 @@ class ControlPoint extends EventEmitter {
      * @param {boolean} [animation]
      */
     public redraw(animation?: boolean): void {
-        this.graphic[animation ? 'animate' : 'attr'](
-            this.options.positioner.call(this, this.target)
-        );
+        let smth = this.options.positioner.call(this, this.target)
+        this.graphic[animation ? 'animate' : 'attr'](smth);
     }
 
     /**

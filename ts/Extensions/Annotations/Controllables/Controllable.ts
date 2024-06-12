@@ -300,7 +300,8 @@ abstract class Controllable implements ControlTarget {
      * @private
      */
     public update(
-        newOptions: DeepPartial<ControllableOptions>
+        newOptions: DeepPartial<ControllableOptions>,
+        redraw: boolean = true
     ): void {
         const annotation = this.annotation,
             options = merge(true, this.options, newOptions),
@@ -314,7 +315,9 @@ abstract class Controllable implements ControlTarget {
         );
         merge(true, this as Controllable, newControllable);
 
-        this.redraw();
+        if (redraw) {
+            this.redraw();
+        }
     }
 
 }

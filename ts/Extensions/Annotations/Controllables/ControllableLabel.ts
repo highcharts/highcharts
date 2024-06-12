@@ -421,7 +421,8 @@ class ControllableLabel extends Controllable {
             chart = this.annotation.chart;
 
         if (!label) {
-            this.redraw(animation);
+            // create label?
+            // this.redraw(animation);
             return;
         }
 

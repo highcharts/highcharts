@@ -345,8 +345,19 @@ class ControllablePath extends Controllable {
                 action = animation ? 'animate' : 'attr';
 
             if (d) {
-                this.graphic[action]({ d: d });
-                this.tracker[action]({ d: d });
+                this.graphic[action]({
+                    d: d,
+                    stroke: this.options.stroke,
+                    strokeWidth: this.options.strokeWidth
+                    // TODO: add all of the options (maybe in the super call? )
+
+                });
+                this.tracker[action]({ 
+                    d: d,
+                    stroke: this.options.stroke,
+                    strokeWidth: this.options.strokeWidth
+                    // TODO: add all of the options (maybe in the super call? )
+                 });
             } else {
                 this.graphic.attr({ d: 'M 0 ' + -9e9 });
                 this.tracker.attr({ d: 'M 0 ' + -9e9 });
