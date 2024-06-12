@@ -382,7 +382,7 @@ class DataTable extends DataTableCore {
         const table = this,
             deletedRows: Array<DataTable.Row> = [],
             modifiedRows: Array<DataTable.Row> = [],
-            modifier = (table as DataTable).modifier;
+            modifier = table.modifier;
 
         table.emit({
             type: 'deleteRows',
@@ -591,6 +591,38 @@ class DataTable extends DataTableCore {
         return `${(column && column[rowIndex])}`;
     }
 
+    public getColumn(
+        columnNameOrAlias: string,
+        asReference?: boolean
+    ): (DataTable.Column|undefined);
+    public getColumn(
+        columnNameOrAlias: string,
+        asReference: true
+    ): (DataTable.Column|undefined);
+    /**
+     * Fetches the given column by the canonical column name or by an alias.
+     * This function is a simplified wrap of {@link getColumns}.
+     *
+     * @function Highcharts.DataTable#getColumn
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to get, alias takes precedence.
+     *
+     * @param {boolean} [asReference]
+     * Whether to return the column as a readonly reference.
+     *
+     * @return {Highcharts.DataTableColumn|undefined}
+     * A copy of the column, or `undefined` if not found.
+     */
+    public getColumn(
+        columnNameOrAlias: string,
+        asReference?: boolean
+    ): (DataTable.Column|undefined) {
+        return this.getColumns(
+            [columnNameOrAlias],
+            asReference
+        )[columnNameOrAlias];
+    }
 
     public getColumnAsNumbers(
         columnNameOrAlias: string,
@@ -674,31 +706,6 @@ class DataTable extends DataTableCore {
     }
 
     /**
-     * Fetches the given column by the canonical column name or by an alias.
-     * This function is a simplified wrap of {@link getColumns}.
-     *
-     * @function Highcharts.DataTable#getColumn
-     *
-     * @param {string} columnNameOrAlias
-     * Name or alias of the column to get, alias takes precedence.
-     *
-     * @param {boolean} [asReference]
-     * Whether to return the column as a readonly reference.
-     *
-     * @return {Highcharts.DataTableColumn|undefined}
-     * A copy of the column, or `undefined` if not found.
-     */
-    public getColumn(
-        columnNameOrAlias: string,
-        asReference?: boolean
-    ): (DataTable.Column|undefined) {
-        return this.getColumns(
-            [columnNameOrAlias],
-            asReference
-        )[columnNameOrAlias];
-    }
-
-    /**
      * Fetches all column names.
      *
      * @function Highcharts.DataTable#getColumnNames
@@ -713,6 +720,14 @@ class DataTable extends DataTableCore {
         return columnNames;
     }
 
+    public getColumns(
+        columnNamesOrAliases?: Array<string>,
+        asReference?: boolean
+    ): DataTable.ColumnCollection;
+    public getColumns(
+        columnNamesOrAliases: (Array<string>|undefined),
+        asReference: true
+    ): Record<string, DataTable.Column>;
     /**
      * Retrieves all or the given columns.
      *
