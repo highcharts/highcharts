@@ -108,13 +108,12 @@ class DataGridCell {
      * Reflows the cell dimensions.
      */
     public reflow(): void {
-        const clientWidth = this.row.viewport.tbodyElement.clientWidth,
-            column = this.column;
+        const column = this.column;
 
         this.htmlElement.style.width = this.htmlElement.style.maxWidth =
             column.staticWidth ?
                 (column.getWidth() + 'px') :
-                (column.getWidth() / clientWidth * 100) + '%';
+                column.viewport.getPercentWidth(column.getWidth()) + '%';
     }
 
     /**

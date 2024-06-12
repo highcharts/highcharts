@@ -146,8 +146,18 @@ class DataGridColumn {
         mock.setAttribute('data-column-id', id);
 
         if (viewport.columnDistribution === 'full') {
-            this.width = viewport.getRatioFromWidth(mock.offsetWidth) || 1;
             this.staticWidth = !!getStyle(mock, 'width');
+            // this.width =
+            //     this.staticWidth ?
+            //         getStyle(mock, 'width', true) || 0 :
+            //         viewport.getRatioFromWidth(mock.offsetWidth) || 1;
+            if (this.staticWidth) {
+                this.width = getStyle(mock, 'width', true) || 0;
+            } else {
+                this.width = viewport.getRatioFromWidth(mock.offsetWidth) || 1;
+            }
+
+            console.log('oooo', this.width);
         } else {
             this.width = mock.offsetWidth || 100;
         }

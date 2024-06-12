@@ -295,6 +295,18 @@ class DataGridTable {
         const filteredColumns = this.columns.filter(col => !col.staticWidth);
         return this.tbodyElement.clientWidth / filteredColumns.length * ratio;
     }
+
+    public getPercentWidth(width: number): number {
+        const clientWidth = this.tbodyElement.clientWidth;
+        let fullPercentWidth = 100;
+
+        this.columns.forEach(column => {
+            if (column.staticWidth) {
+                fullPercentWidth -= ((column.width / clientWidth) * 100);
+            }
+        });
+        return (width / clientWidth) * fullPercentWidth;
+    }
 }
 
 

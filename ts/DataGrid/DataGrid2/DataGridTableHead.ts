@@ -129,9 +129,10 @@ class DataGridTableHead {
             }
             // Set the width of the column. Max width is needed for the
             // overflow: hidden to work.
-
             td.style.width = td.style.maxWidth =
-                column.staticWidth ? (column.getWidth() + 'px') : (column.getWidth() / clientWidth * 100) + '%';
+                column.staticWidth ?
+                    column.width + 'px' :
+                    vp.getPercentWidth(column.getWidth()) + '%';
         }
 
         if (vp.rowsWidth) {

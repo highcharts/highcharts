@@ -9,6 +9,10 @@
     height: 400px;
 }
 
+.highcharts-dg-table {
+    width: 1000px;
+}
+
 .highcharts-dg-row {
     width: 100%;
 }
@@ -25,6 +29,11 @@
     width: 50px;
     max-width: 50px;
 }
+
+/* .highcharts-dg-column[data-column-id="e"] {
+    width: 50px;
+    max-width: 50px;
+} */
 
 /*
 .highcharts-dg-row[data-row-index="3"] {
