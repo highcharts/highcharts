@@ -1269,8 +1269,7 @@ class RangeSelector {
 
         const chart = this.chart,
             chartOptions = chart.options,
-            options =
-            chartOptions.rangeSelector as RangeSelectorOptions,
+            options = chartOptions.rangeSelector as RangeSelectorOptions,
             // Place inputs above the container
             inputEnabled = options.inputEnabled;
 
@@ -1621,8 +1620,8 @@ class RangeSelector {
                     i--
                 ) {
                     const btn = this.buttons.pop();
-                    btn!.destroy();
-                    this.dropdown!.options.remove(i + 1);
+                    btn?.destroy();
+                    this.dropdown?.options.remove(i + 1);
                 }
             }
 
@@ -1636,7 +1635,7 @@ class RangeSelector {
                 if (Object.keys(diff).length !== 0) {
                     const rangeOptions = newButtonsOptions[i];
                     this.buttons[i].destroy();
-                    dropdown!.options.remove(i + 1);
+                    dropdown?.options.remove(i + 1);
                     this.createButton(rangeOptions, i, width, states);
                     this.computeButtonRange(rangeOptions);
 
