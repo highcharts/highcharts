@@ -689,9 +689,9 @@ function enterBoost(
 function exitBoost(
     series: Series
 ): void {
-    const boost = series.boost;
-    const chart = series.chart;
-    const chartBoost = chart.boost;
+    const boost = series.boost,
+        chart = series.chart,
+        chartBoost = chart.boost;
 
     if (chartBoost?.markerGroup) {
         chartBoost.markerGroup.destroy();
