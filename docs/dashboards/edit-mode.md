@@ -1,8 +1,11 @@
 Edit mode
 ===
 
-Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
-To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.
+Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).  
+When dashboard is declared with custom HTML structure, the edit mode is limited to the component settings only.
+
+## Introduction
+To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.  
 The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
 
 ```html
@@ -37,8 +40,7 @@ In addition, this option has to be enabled in the dashboard config:
 editMode: {
     enabled: true,
     contextMenu: {
-        enabled: true,
-        items: ['editMode']
+        enabled: true
     }
 },
 ```
@@ -51,10 +53,13 @@ When edit mode is enabled, the appearance of the dashboard changes. When hoverin
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 
+Note that when dashboard is declared with custom HTML structure, only the component setting can be edited. The layout cannot be changed.
+
 Next to the burger menu, the [Add Component](#add-component) button is added.
 
-
 ## Add Component
+
+Available only when dashboard is declared with the layout system- using the `gui` configuration.
 
 The `Add Component` button allows the user to add a new component. When clicked, a sidebar appears, which lets you choose the type of component you want to add and then by drag&drop component type can be selected and dragged to the correct place, which is also indicated by the drop marker.
 
