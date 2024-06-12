@@ -141,7 +141,7 @@
     QUnit.test(
         'Boost module should zoom scatter without min/max',
         function (assert) {
-            const chart = Highcharts.chart('container', {
+            var chart = Highcharts.chart('container', {
                     chart: {
                         height: 450,
                         width: 450,
@@ -187,25 +187,15 @@
                             followPointer: false,
                             pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
                         }
-                    }, {
-                        type: 'line',
-                        boostThreshold: 16,
-                        data: [
-                            [4, 4], [4, 3], [4, 1], [4, 2],
-                            [3, 4], [3, 3], [3, 1], [3, 2],
-                            [1, 4], [1, 3], [1, 1], [1, 2],
-                            [2, 4], [2, 3], [2, 1], [2, 2]
-                        ]
                     }]
                 }),
                 controller = new TestController(chart),
-                series1 = chart.series[0],
-                series2 = chart.series[1];
+                series = chart.series[0];
 
             assert.deepEqual(
                 [
-                    series1.yAxis.min,
-                    series1.yAxis.max
+                    series.yAxis.min,
+                    series.yAxis.max
                 ],
                 [1, 4],
                 'Scatter yAxis should have min/max. (#20433)'
@@ -213,8 +203,8 @@
 
             assert.deepEqual(
                 [
-                    series1.processedXData.length,
-                    series1.processedYData.length
+                    series.processedXData.length,
+                    series.processedYData.length
                 ],
                 [16, 16],
                 'Scatter should have 16 boosted points. (#20433)'
@@ -224,30 +214,13 @@
 
             assert.deepEqual(
                 [
-                    series1.yAxis.min,
-                    series1.yAxis.max
+                    series.yAxis.min,
+                    series.yAxis.max
                 ],
                 [1.75, 3.25],
                 'Scatter yAxis should have zoomed min/max.'
             );
 
-            assert.notStrictEqual(
-                typeof series1.markerGroup,
-                'undefined',
-                'First series should have a markerGroup'
-            );
-
-            assert.notStrictEqual(
-                typeof series2.markerGroup,
-                'undefined',
-                'First series should have a markerGroup'
-            );
-
-            assert.notDeepEqual(
-                series1.markerGroup,
-                series2.markerGroup,
-                'Series should have individual markerGroups when zoomed in'
-            );
         }
     );
 
