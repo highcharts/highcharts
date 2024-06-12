@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-hb-all.topo.json">Bremen</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-hb-all.topo.json">Bremen</a>'
         },
 
         mapNavigation: {

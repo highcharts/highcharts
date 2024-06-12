@@ -13,7 +13,7 @@
         ['ec-eo', 18], ['ec-lj', 19], ['ec-zc', 20], ['ec-cn', 21],
         ['ec-bo', 22], ['ec-ct', 23], ['ec-lr', 24], ['ec-mn', 25],
         ['ec-cb', 26], ['ec-ms', 27], ['ec-pi', 28], ['ec-pa', 29],
-        ['ec-1076', 30], ['ec-na', 31], ['ec-tu', 32], ['ec-ga', 33]
+        ['ec-tu', 30], ['ec-na', 31], ['ec-1076', 32], ['ec-ga', 33]
     ];
 
     // Create the chart
@@ -27,7 +27,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ec/ec-all.topo.json">Ecuador</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ec/ec-all.topo.json">Ecuador</a>'
         },
 
         mapNavigation: {

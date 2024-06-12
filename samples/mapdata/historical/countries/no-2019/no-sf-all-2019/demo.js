@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-sf-all-2019.topo.json">Sogn og Fjordane (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-sf-all-2019.topo.json">Sogn og Fjordane (2019)</a>'
         },
 
         mapNavigation: {

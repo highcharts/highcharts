@@ -28,7 +28,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-nj-all.topo.json">New Jersey</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-nj-all.topo.json">New Jersey</a>'
         },
 
         mapNavigation: {

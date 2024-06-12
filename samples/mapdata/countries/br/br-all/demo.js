@@ -28,7 +28,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/br/br-all.topo.json">Brazil</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/br/br-all.topo.json">Brazil</a>'
         },
 
         mapNavigation: {
