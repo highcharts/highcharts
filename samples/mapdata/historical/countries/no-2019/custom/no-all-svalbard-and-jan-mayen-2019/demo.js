@@ -27,7 +27,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/custom/no-all-svalbard-and-jan-mayen-2019.topo.json">Norway with Svalbard and Jan Mayen (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/custom/no-all-svalbard-and-jan-mayen-2019.topo.json">Norway with Svalbard and Jan Mayen (2019)</a>'
         },
 
         mapNavigation: {

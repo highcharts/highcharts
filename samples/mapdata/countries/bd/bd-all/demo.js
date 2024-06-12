@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bd/bd-all.topo.json">Bangladesh</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bd/bd-all.topo.json">Bangladesh</a>'
         },
 
         mapNavigation: {

@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sy/sy-all.topo.json">Syria</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sy/sy-all.topo.json">Syria</a>'
         },
 
         mapNavigation: {

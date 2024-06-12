@@ -1,0 +1,12 @@
+---
+name: Point and figure series
+authors:
+  - Kamil Musialowski
+new_until: 2024-08-05
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Chart types:
+      priority: 0
+...

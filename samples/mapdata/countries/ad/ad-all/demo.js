@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ad/ad-all.topo.json">Andorra</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ad/ad-all.topo.json">Andorra</a>'
         },
 
         mapNavigation: {
