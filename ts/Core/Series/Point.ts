@@ -351,11 +351,7 @@ class Point {
             point.x = series.xAxis.nameToX(point);
         }
         if (typeof point.x === 'undefined' && series) {
-            if (typeof x === 'undefined') {
-                point.x = series.autoIncrement();
-            } else {
-                point.x = x;
-            }
+            point.x = x ?? series.autoIncrement();
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
         }

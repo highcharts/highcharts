@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-ut-all.topo.json">Utrecht</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-ut-all.topo.json">Utrecht</a>'
         },
 
         mapNavigation: {

@@ -39,8 +39,7 @@
         series: [{
             name: 'AAPL Stock Price',
             data: data,
-            threshold: null,
-            turboThreshold: 2000 // to accept point object configuration
+            threshold: null
         }]
     });
 
