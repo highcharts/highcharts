@@ -29,7 +29,6 @@ import type DataTableOptions from './DataTableOptions.js';
 
 import U from '../Core/Utilities.js';
 const {
-    addEvent,
     fireEvent,
     isArray,
     objectEach,
@@ -55,7 +54,7 @@ const {
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
  */
-class DataTableCore implements DataEvent.Emitter {
+class DataTableCore {
 
     /**
      * Constructs an instance of the DataTable class.
@@ -148,27 +147,6 @@ class DataTableCore implements DataEvent.Emitter {
     }
 
     /**
-     * Emits an event on this table to all registered callbacks of the given
-     * event.
-     * @private
-     *
-     * @param {DataTable.Event} e
-     * Event object with event information.
-     */
-    public emit<E extends DataEvent>(e: E): void {
-        if ([
-            'afterDeleteColumns',
-            'afterDeleteRows',
-            'afterSetCell',
-            'afterSetColumns',
-            'afterSetRows'
-        ].includes(e.type)) {
-            this.versionTag = uniqueKey();
-        }
-        fireEvent(this, e.type, e);
-    }
-
-    /**
      * Simplified version of the full `getRow` method, not supporting aliases,
      * and always returning by reference.
      *
@@ -233,28 +211,6 @@ class DataTableCore implements DataEvent.Emitter {
     }
 
     /**
-     * Registers a callback for a specific event.
-     *
-     * @function Highcharts.DataTable#on
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {Highcharts.EventCallbackFunction<Highcharts.DataTable>} callback
-     * Function to register for an event callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the event.
-     */
-    public on<E extends DataEvent>(
-        type: E['type'],
-        callback: DataEvent.Callback<this, E>
-    ): Function {
-        return addEvent(this, type, callback);
-    }
-
-
-    /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
      * @function Highcharts.DataTable#setColumn
@@ -315,13 +271,10 @@ class DataTableCore implements DataEvent.Emitter {
 
         this.applyRowCount(rowCount);
 
-        this.emit({
-            type: 'afterSetColumns',
-            columns,
-            columnNames: Object.keys(columns),
-            detail: eventDetail,
-            rowIndex: void 0
-        });
+        if (!eventDetail?.silent) {
+            fireEvent(this, 'afterSetColumns');
+            this.versionTag = uniqueKey();
+        }
     }
 
     /**

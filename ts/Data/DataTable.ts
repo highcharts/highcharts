@@ -27,6 +27,13 @@ import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
 
 import DataTableCore from './DataTableCore.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    fireEvent,
+    extend,
+    uniqueKey
+} = U;
 
 
 /* *
@@ -47,7 +54,7 @@ import DataTableCore from './DataTableCore.js';
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
  */
-class DataTable extends DataTableCore {
+class DataTable extends DataTableCore implements DataEvent.Emitter {
 
 
     /* *
@@ -442,6 +449,27 @@ class DataTable extends DataTableCore {
         });
 
         return deletedRows;
+    }
+
+    /**
+     * Emits an event on this table to all registered callbacks of the given
+     * event.
+     * @private
+     *
+     * @param {DataTable.Event} e
+     * Event object with event information.
+     */
+    public emit<E extends DataEvent>(e: E): void {
+        if ([
+            'afterDeleteColumns',
+            'afterDeleteRows',
+            'afterSetCell',
+            'afterSetColumns',
+            'afterSetRows'
+        ].includes(e.type)) {
+            this.versionTag = uniqueKey();
+        }
+        fireEvent(this, e.type, e);
     }
 
     /**
@@ -1068,6 +1096,27 @@ class DataTable extends DataTableCore {
     }
 
     /**
+     * Registers a callback for a specific event.
+     *
+     * @function Highcharts.DataTable#on
+     *
+     * @param {string} type
+     * Event type as a string.
+     *
+     * @param {Highcharts.EventCallbackFunction<Highcharts.DataTable>} callback
+     * Function to register for an event callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the event.
+     */
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
+    ): Function {
+        return addEvent(this, type, callback);
+    }
+
+    /**
      * Renames a column of cell values.
      *
      * @function Highcharts.DataTable#renameColumn
@@ -1219,7 +1268,11 @@ class DataTable extends DataTableCore {
         });
 
         if (typeof rowIndex === 'undefined') {
-            super.setColumns(columns, rowIndex, eventDetail);
+            super.setColumns(
+                columns,
+                rowIndex,
+                extend(eventDetail, { silent: true })
+            );
         } else {
 
             for (
