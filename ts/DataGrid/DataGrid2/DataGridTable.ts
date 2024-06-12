@@ -278,11 +278,8 @@ class DataGridTable {
                 dgOptions.dataTable.getColumnNames().length
             )
          ) / this.tbodyElement.clientWidth;
-console.log(columnWidthPx, this.dataGrid.container.clientWidth);
+
         return columnWidthPx;
-        // return isPercent ? (
-        //     (columnWidthPx / this.dataGrid.container.clientWidth) * 100
-        // ) : columnWidthPx;
     }
 
     /**
