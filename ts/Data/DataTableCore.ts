@@ -283,7 +283,8 @@ class DataTableCore {
     public setRow(
         row: DataTable.RowObject,
         rowIndex: number = this.rowCount,
-        insert?: boolean
+        insert?: boolean,
+        eventDetail?: DataEvent.Detail
     ): void {
         const { columns } = this,
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
@@ -300,6 +301,11 @@ class DataTableCore {
 
         if (indexRowCount > this.rowCount) {
             this.applyRowCount(indexRowCount);
+        }
+
+        if (!eventDetail?.silent) {
+            fireEvent(this, 'afterSetRows');
+            this.versionTag = uniqueKey();
         }
     }
 }

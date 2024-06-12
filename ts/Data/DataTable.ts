@@ -1480,7 +1480,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter {
                     columns[columnNames[j]][i2] = row[j];
                 }
             } else {
-                super.setRow(row, i2);
+                super.setRow(row, i2, void 0, { silent: true });
             }
         }
 
