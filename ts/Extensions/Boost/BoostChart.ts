@@ -25,6 +25,7 @@ import type {
     BoostTargetObject
 } from './BoostTargetObject';
 import type Chart from '../../Core/Chart/Chart';
+import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -323,29 +324,40 @@ function onChartCallback(
     let prevX = -1;
     let prevY = -1;
 
-    addEvent(chart.pointer, 'afterGetHoverData', (): void => {
-        const series = chart.hoverSeries;
+    addEvent(
+        chart.pointer,
+        'afterGetHoverData',
+        (e: Pointer.EventArgsObject): void => {
+            const series = e.hoverPoint?.series;
 
-        chart.boost = chart.boost || {};
+            chart.boost = chart.boost || {};
 
-        if (chart.boost.markerGroup && series) {
-            const xAxis = chart.inverted ? series.yAxis : series.xAxis;
-            const yAxis = chart.inverted ? series.xAxis : series.yAxis;
+            if (chart.boost.markerGroup && series) {
+                const xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                const yAxis = chart.inverted ? series.xAxis : series.yAxis;
 
-            if (
-                (xAxis && xAxis.pos !== prevX) ||
-                (yAxis && yAxis.pos !== prevY)
-            ) {
-                // #10464: Keep the marker group position in sync with the
-                // position of the hovered series axes since there is only
-                // one shared marker group when boosting.
-                chart.boost.markerGroup.translate(xAxis.pos, yAxis.pos);
+                if (
+                    (xAxis && xAxis.pos !== prevX) ||
+                    (yAxis && yAxis.pos !== prevY)
+                ) {
+                    // #21176: If the axis is changed, hide teh halo without
+                    // animation  to prevent flickering of halos sharing the
+                    // same marker group
+                    chart.series.forEach((s): void => {
+                        s.halo?.hide();
+                    });
 
-                prevX = xAxis.pos;
-                prevY = yAxis.pos;
+                    // #10464: Keep the marker group position in sync with the
+                    // position of the hovered series axes since there is only
+                    // one shared marker group when boosting.
+                    chart.boost.markerGroup.translate(xAxis.pos, yAxis.pos);
+
+                    prevX = xAxis.pos;
+                    prevY = yAxis.pos;
+                }
             }
         }
-    });
+    );
 }
 
 /**

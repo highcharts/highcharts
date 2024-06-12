@@ -563,5 +563,64 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             2,
             'The y-axis should have more than two ticks'
         );
+
+        chart.update({
+            chart: {
+                animation: true
+            },
+            boost: {
+                enabled: true,
+                useGPUTranslations: false,
+                usePreallocated: false
+            },
+            yAxis: [{
+                id: 'a'
+            }, {
+                id: 'b',
+                height: '10%',
+                top: '90%'
+            }],
+            plotOptions: {
+                series: {
+                    animation: true,
+                    states: {
+                        hover: {
+                            halo: {
+                                size: 50
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'line',
+                yAxis: 'a',
+                data: [8, 6, 4],
+                boostThreshold: 1,
+                stickyTracking: false
+            }, {
+                data: [4, 5, 7],
+                yAxis: 'b',
+                boostThreshold: 1,
+                stickyTracking: false
+            }]
+        }, true, true);
+
+        const controller = new TestController(chart);
+        controller.moveTo(
+            chart.plotLeft + chart.series[1].points[1].plotX,
+            chart.plotTop + chart.plotHeight - chart.series[1].points[1].plotY
+        );
+        controller.moveTo(
+            chart.plotLeft + chart.series[0].points[1].plotX,
+            chart.plotTop + chart.plotHeight - chart.series[0].points[1].plotY
+        );
+
+        assert.strictEqual(
+            chart.series[1].halo.visibility,
+            'hidden',
+            `Halo shouldn't be rendered in wrong position between hovering
+            points from multiple series on multiple y-axes, #21176.`
+        );
     }
 );
