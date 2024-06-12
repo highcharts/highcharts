@@ -270,8 +270,19 @@ class DataGridTable {
      *
      * @return The width ratio.
      */
-    public getRatioFromWidth(width: number): number {
-        return width * this.columns.length / this.tbodyElement.clientWidth;
+    public getRatioFromWidth(width: number, isPercent?: boolean): number {
+        const dgOptions = this.dataGrid.options;
+        const columnWidthPx = (
+            width * (
+                dgOptions.columns?.columnAssignment?.length ||
+                dgOptions.dataTable.getColumnNames().length
+            )
+         ) / this.tbodyElement.clientWidth;
+console.log(columnWidthPx, this.dataGrid.container.clientWidth);
+        return columnWidthPx;
+        // return isPercent ? (
+        //     (columnWidthPx / this.dataGrid.container.clientWidth) * 100
+        // ) : columnWidthPx;
     }
 
     /**
@@ -284,7 +295,8 @@ class DataGridTable {
      * @returns The width in pixels.
      */
     public getWithFromRatio(ratio: number): number {
-        return this.tbodyElement.clientWidth / this.columns.length * ratio;
+        const filteredColumns = this.columns.filter(col => !col.staticWidth);
+        return this.tbodyElement.clientWidth / filteredColumns.length * ratio;
     }
 }
 

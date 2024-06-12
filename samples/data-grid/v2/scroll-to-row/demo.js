@@ -11,6 +11,9 @@ const dg = new DataGrid.DataGrid2('container', {
     }),
     rows: {
         bufferSize: 5
+    },
+    columns: {
+        // distribution: 'fixed'
     }
 });
 

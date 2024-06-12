@@ -9,15 +9,21 @@
     height: 400px;
 }
 
+.highcharts-dg-row {
+    width: 100%;
+}
 
 .highcharts-dg-row[data-row-index="1"] {
     height: 100px;
 }
 
-table td[data-column-id="c"],
-table th[data-column-id="c"] {
-    width: 20px;
-    max-width: 20px;
+.highcharts-dg-column {
+    width: 0px;
+}
+
+.highcharts-dg-column[data-column-id="c"] {
+    width: 50px;
+    max-width: 50px;
 }
 
 /*

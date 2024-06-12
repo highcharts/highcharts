@@ -28,8 +28,10 @@ import DataGridTable from './DataGridTable.js';
 import DataTable from '../../Data/DataTable.js';
 import Globals from './Globals.js';
 import Utils from '../../Core/Utilities.js';
+import DGUtils from './Utils.js';
 
-const { merge } = Utils;
+const { merge, getStyle } = Utils;
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -67,6 +69,8 @@ class DataGridColumn {
      * - `fixed`: The width is a fixed number of pixels.
      */
     public width: number;
+
+    public staticWidth?: boolean;
 
     /**
      * The cells of the column.
@@ -136,8 +140,19 @@ class DataGridColumn {
         this.options = merge(DataGridColumn.defaultOptions, options);
 
         // Set the initial width of the column.
-        // TODO(DD): Get the initial width from the CSS.
-        this.width = viewport.columnDistribution === 'full' ? 1 : 100;
+        const mock = makeHTMLElement('div', {
+            className: Globals.classNames.columnElement
+        }, viewport.dataGrid.container);
+        mock.setAttribute('data-column-id', id);
+
+        if (viewport.columnDistribution === 'full') {
+            this.width = viewport.getRatioFromWidth(mock.offsetWidth) || 1;
+            this.staticWidth = !!getStyle(mock, 'width');
+        } else {
+            this.width = mock.offsetWidth || 100;
+        }
+        mock.remove();
+
         this.id = id;
         this.index = index;
         this.viewport = viewport;
@@ -158,7 +173,6 @@ class DataGridColumn {
      */
     public registerCell(cell: DataGridCell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
-
         this.cells.push(cell);
     }
 

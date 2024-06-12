@@ -22,11 +22,13 @@
  *
  * */
 
-import Utils from './Utils.js';
+import DGUtils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
+import Utils from '../../Core/Utilities.js';
 
-const { makeHTMLElement } = Utils;
+const { getStyle } = Utils;
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -116,22 +118,22 @@ class DataGridTableHead {
      * Reflows the table head's content dimensions.
      */
     public reflow(): void {
+        const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
+        const vp = this.viewport;
+
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             const column = this.columns[i];
             const td = column.headElement;
             if (!td) {
                 continue;
             }
-
-            const columnWidth = column.getWidth();
-
             // Set the width of the column. Max width is needed for the
             // overflow: hidden to work.
-            td.style.width = td.style.maxWidth = columnWidth + 'px';
+
+            td.style.width = td.style.maxWidth =
+                column.staticWidth ? (column.getWidth() + 'px') : (column.getWidth() / clientWidth * 100) + '%';
         }
 
-        const { clientWidth, offsetWidth } = this.viewport.tbodyElement;
-        const vp = this.viewport;
         if (vp.rowsWidth) {
             vp.theadElement.style.width = Math.max(vp.rowsWidth, clientWidth) +
                 offsetWidth - clientWidth + 'px';
