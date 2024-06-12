@@ -1518,7 +1518,6 @@ function getName(
         case 'Function':
         case 'FunctionCall':
         case 'Interface':
-        case 'Module':
         case 'Namespace':
         case 'Property':
         case 'TypeAlias':
