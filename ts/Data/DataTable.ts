@@ -146,6 +146,35 @@ class DataTable extends DataTableCore {
     ) {
         super(options);
         this.modified = this;
+
+        /**
+         * Dictionary of all column aliases and their mapped column. If a column
+         * for one of the get-methods matches an column alias, this column will
+         * be replaced with the mapped column by the column alias.
+         *
+         * @name Highcharts.DataTable#aliases
+         * @type {Highcharts.Dictionary<string>}
+         */
+        this.aliases = (
+            options.aliases ?
+                JSON.parse(JSON.stringify(options.aliases)) :
+                {}
+        );
+
+        const aliases = options.aliases || {},
+            aliasKeys = Object.keys(aliases),
+            thisAliases = this.aliases;
+
+        for (
+            let i = 0,
+                iEnd = aliasKeys.length,
+                alias: string;
+            i < iEnd;
+            ++i
+        ) {
+            alias = aliasKeys[i];
+            thisAliases[alias] = aliases[alias];
+        }
     }
 
     /* *
@@ -153,6 +182,8 @@ class DataTable extends DataTableCore {
      *  Properties
      *
      * */
+    public readonly aliases: DataTable.ColumnAliases;
+
     public modified: DataTable;
 
     public modifier?: DataModifier;

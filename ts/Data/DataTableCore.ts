@@ -66,20 +66,7 @@ class DataTableCore implements DataEvent.Emitter {
     public constructor(
         options: DataTableOptions = {}
     ) {
-
-        /**
-         * Dictionary of all column aliases and their mapped column. If a column
-         * for one of the get-methods matches an column alias, this column will
-         * be replaced with the mapped column by the column alias.
-         *
-         * @name Highcharts.DataTable#aliases
-         * @type {Highcharts.Dictionary<string>}
-         */
-        this.aliases = (
-            options.aliases ?
-                JSON.parse(JSON.stringify(options.aliases)) :
-                {}
-        );
+        const columns: Record<string, DataTable.Column> = {};
 
         /**
          * Whether the ID was automatic generated or given in the constructor.
@@ -101,48 +88,22 @@ class DataTableCore implements DataEvent.Emitter {
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
-        const columns = options.columns || {},
-            columnNames = Object.keys(columns),
-            thisColumns = this.columns;
-
         let rowCount = 0;
 
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            column = columns[columnName].slice();
-            thisColumns[columnName] = column;
+        objectEach(options.columns || {}, (column, columnName): void => {
+            columns[columnName] = column.slice();
             rowCount = Math.max(rowCount, column.length);
-        }
+        });
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            if (isArray(thisColumns[columnNames[i]])) { // Not on typed array
-                thisColumns[columnNames[i]].length = rowCount;
+        objectEach(columns, (column): void => {
+            if (isArray(column)) { // Not on typed array
+                column.length = rowCount;
             }
-        }
+        });
 
+        this.columns = columns;
         this.rowCount = rowCount;
 
-        const aliases = options.aliases || {},
-            aliasKeys = Object.keys(aliases),
-            thisAliases = this.aliases;
-
-        for (
-            let i = 0,
-                iEnd = aliasKeys.length,
-                alias: string;
-            i < iEnd;
-            ++i
-        ) {
-            alias = aliasKeys[i];
-            thisAliases[alias] = aliases[alias];
-        }
     }
 
     /* *
@@ -150,8 +111,6 @@ class DataTableCore implements DataEvent.Emitter {
      *  Properties
      *
      * */
-
-    public readonly aliases: DataTable.ColumnAliases;
 
     public readonly autoId: boolean;
 
@@ -350,9 +309,7 @@ class DataTableCore implements DataEvent.Emitter {
         let rowCount = this.rowCount;
 
         objectEach(columns, (column, columnName): void => {
-            this.columns[
-                this.aliases[columnName] || columnName
-            ] = column.slice();
+            this.columns[columnName] = column.slice();
             rowCount = column.length;
         });
 
@@ -374,11 +331,10 @@ class DataTableCore implements DataEvent.Emitter {
         row: DataTable.RowObject,
         rowIndex: number = this.rowCount
     ): void {
-        const { aliases, columns } = this,
+        const { columns } = this,
             indexRowCount = rowIndex + 1;
 
         objectEach(row, (cellValue, columnName): void => {
-            columnName = aliases[columnName] || columnName;
             columns[columnName] ??= new Array(indexRowCount);
             columns[columnName][rowIndex] = cellValue;
         });
