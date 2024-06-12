@@ -1384,9 +1384,6 @@ class Series {
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-            // Clear data table
-            table.deleteRows(0, table.rowCount);
-
             // In turbo mode, look for one- or twodimensional arrays of numbers.
             // The first and the last valid value are tested, and we assume that
             // all the rest are defined the same way. Although the 'for' loops
@@ -4054,9 +4051,15 @@ class Series {
             if (data[0] && !!data[0].remove) {
                 data[0].remove(false);
             } else {
-                data.shift();
-                series.table.deleteRows(0);
-                dataOptions?.shift();
+                [
+                    data,
+                    dataOptions,
+                    ...Object.values(table.getColumns())
+                ].filter(defined).forEach((coll): void => {
+                    coll.shift();
+                });
+                table.rowCount -= 1;
+                fireEvent(table, 'afterDeleteRows');
             }
         }
 
@@ -4108,19 +4111,24 @@ class Series {
     ): void {
 
         const series = this,
-            data = series.data,
+            { chart, data, points, table } = series,
             point = data[i],
-            points = series.points,
-            chart = series.chart,
             remove = function (): void {
+                // Splice out the point's data from all parallel arrays
+                [
+                    // #4935
+                    points?.length === data.length ? points : void 0,
+                    data,
+                    series.options.data,
+                    ...Object.values(table.getColumns())
+                ].filter(defined).forEach((coll): void => {
+                    coll.splice(i, 1);
+                });
 
-                if (points && points.length === data.length) { // #4935
-                    points.splice(i, 1);
-                }
-                data.splice(i, 1);
-                series.options.data?.splice(i, 1);
-
-                series.table.deleteRows(i);
+                // Shorthand row deletion in order to avoid including the whole
+                // `deleteRows` function in the DataTableCore module.
+                table.rowCount -= 1;
+                fireEvent(table, 'afterDeleteRows');
 
                 point?.destroy();
 
