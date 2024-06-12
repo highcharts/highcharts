@@ -329,14 +329,20 @@ class DataTableCore implements DataEvent.Emitter {
      */
     public setRow(
         row: DataTable.RowObject,
-        rowIndex: number = this.rowCount
+        rowIndex: number = this.rowCount,
+        insert?: boolean
     ): void {
         const { columns } = this,
-            indexRowCount = rowIndex + 1;
+            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
 
         objectEach(row, (cellValue, columnName): void => {
-            columns[columnName] ??= new Array(indexRowCount);
-            columns[columnName][rowIndex] = cellValue;
+            const column = columns[columnName] || new Array(indexRowCount);
+            if (insert) {
+                column.splice(rowIndex, 0, cellValue);
+            } else {
+                column[rowIndex] = cellValue;
+            }
+            columns[columnName] = column;
         });
 
         if (indexRowCount > this.rowCount) {

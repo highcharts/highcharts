@@ -4009,22 +4009,14 @@ class Series {
             }
         }
 
-        if (isInTheMiddle) {
-            // @todo The DataTable currently doesn't have an `insertRow` method
-            // or other capabilites of splicing the rows (except `deleteRow`).
-            // If we get that, we can probably combine this with the below.
-            const columns = table.getColumns(dataColumnKeys);
-            objectEach(columns, (column, key): void => {
-                column.splice(i, 0, point[key]);
-            });
-            table.setColumns(columns);
-        } else {
-            const row: DataTable.RowObject = {};
-            for (const key of dataColumnKeys) {
-                row[key] = point[key];
-            }
-            table.setRow(row);
-        }
+        // Insert the row at the given index
+        table.setRow(dataColumnKeys.reduce(
+            (acc: DataTable.RowObject, key: string): DataTable.RowObject => {
+                acc[key] = point[key];
+                return acc;
+            },
+            {} as DataTable.RowObject
+        ), i, true);
 
         if (names && point.name) {
             names[x as any] = point.name;

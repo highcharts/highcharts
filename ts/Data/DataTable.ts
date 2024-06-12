@@ -1346,6 +1346,9 @@ class DataTable extends DataTableCore {
      * @param {number} [rowIndex]
      * Index of the row to set. Leave `undefind` to add as a new row.
      *
+     * @param {boolean} [insert]
+     * Whether to insert the row at the given index, or to overwrite the row.
+     *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -1355,9 +1358,10 @@ class DataTable extends DataTableCore {
     public setRow(
         row: (DataTable.Row|DataTable.RowObject),
         rowIndex?: number,
+        insert?: boolean,
         eventDetail?: DataEvent.Detail
     ): void {
-        this.setRows([row], rowIndex, eventDetail);
+        this.setRows([row], rowIndex, insert, eventDetail);
     }
 
     /**
@@ -1373,6 +1377,9 @@ class DataTable extends DataTableCore {
      * @param {number} [rowIndex]
      * Index of the first row to set. Leave `undefined` to add as new rows.
      *
+     * @param {boolean} [insert]
+     * Whether to insert the row at the given index, or to overwrite the row.
+     *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -1382,6 +1389,7 @@ class DataTable extends DataTableCore {
     public setRows(
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
+        insert?: boolean,
         eventDetail?: DataEvent.Detail
     ): void {
         const table = this,
@@ -1408,7 +1416,11 @@ class DataTable extends DataTableCore {
             row = rows[i];
             if (row === DataTable.NULL) {
                 for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
-                    columns[columnNames[j]][i2] = null;
+                    if (insert) {
+                        columns[columnNames[j]].splice(i2, 0, null);
+                    } else {
+                        columns[columnNames[j]][i2] = null;
+                    }
                 }
             } else if (row instanceof Array) {
                 for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
@@ -1419,7 +1431,9 @@ class DataTable extends DataTableCore {
             }
         }
 
-        const indexRowCount = (rowIndex + rowCount);
+        const indexRowCount = insert ?
+            rowCount + rows.length :
+            rowIndex + rowCount;
         if (indexRowCount > table.rowCount) {
             table.rowCount = indexRowCount;
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
