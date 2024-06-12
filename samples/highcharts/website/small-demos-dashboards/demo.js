@@ -567,8 +567,7 @@ function minimal() {
         editMode: {
             enabled: false,
             contextMenu: {
-                enabled: true,
-                items: ['editMode']
+                enabled: true
             }
         },
         gui: {
