@@ -327,7 +327,11 @@ class EditMode {
         );
 
         // Init rowToolbar.
-        if (editMode.options.toolbars?.row?.enabled && !editMode.rowToolbar) {
+        if (
+            editMode.options.toolbars?.row?.enabled &&
+            !editMode.rowToolbar &&
+            !editMode.customHTMLMode
+        ) {
             editMode.rowToolbar = new RowEditToolbar(editMode);
         }
 
