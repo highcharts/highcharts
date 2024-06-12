@@ -186,7 +186,7 @@ class DataTable extends DataTableCore {
 
     public modified: DataTable;
 
-    public modifier?: DataModifier;
+    private modifier?: DataModifier;
 
     /* *
      *
