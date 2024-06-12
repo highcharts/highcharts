@@ -1475,6 +1475,64 @@ function getInterfaceInfo(
 
 
 /**
+ * Retrieves the name of the given code information.
+ *
+ * @param {CodeInfo} info
+ * Code information to get name for.
+ *
+ * @param {string} [namespace]
+ * Space of name.
+ *
+ * @return {string|undefined}
+ * Name or `undefined`.
+ */
+function getName(
+    info,
+    namespace
+) {
+    /** @type {DocletInfo|undefined} */
+    const _doclet = (info.kind === 'Doclet' ? info : info.doclet);
+
+    /** @type {string|undefined} */
+    let _name;
+
+    if (_doclet) {
+        _name = extractTagText(_doclet, 'optionparent', true);
+
+        if (typeof _name !== 'string') {
+            _name = extractTagText(_doclet, 'apioption', true);
+        }
+
+        if (typeof _name === 'string') {
+            return _name;
+        }
+
+    }
+
+    switch (info.kind) {
+
+        default:
+            return void 0;
+
+        case 'Class':
+        case 'Function':
+        case 'FunctionCall':
+        case 'Interface':
+        case 'Module':
+        case 'Namespace':
+        case 'Property':
+        case 'TypeAlias':
+        case 'Variable':
+            _name = info.name;
+            break;
+
+    }
+
+    return (namespace ? `${namespace}.${_name}` : _name);
+}
+
+
+/**
  * Retrieves namespace and module information from the given node.
  *
  * @param {TS.Node} node
@@ -2591,6 +2649,7 @@ module.exports = {
     extractTypes,
     getChildInfos,
     getDocletInfosBetween,
+    getName,
     getNodesChildren,
     getNodesFirstChild,
     getNodesLastChild,
@@ -2650,7 +2709,7 @@ module.exports = {
  * @property {'Deconstruct'} kind
  * @property {string} [from]
  * @property {Meta} meta
- * @property {TS.VariableDeclaration} [node]
+ * @property {TS.ParameterDeclaration|TS.VariableDeclaration} [node]
  * @property {string} [type]
  */
 
@@ -2683,7 +2742,7 @@ module.exports = {
  * @property {'Export'} kind
  * @property {Meta} meta
  * @property {string} [name]
- * @property {TS.ImportDeclaration} [node]
+ * @property {TS.ExportDeclaration} [node]
  * @property {CodeInfo} [value]
  */
 
@@ -2695,7 +2754,7 @@ module.exports = {
  * @property {'FunctionCall'} kind
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.ImportDeclaration} [node]
+ * @property {TS.CallExpression} [node]
  */
 
 
@@ -2709,7 +2768,7 @@ module.exports = {
  * @property {'Function'} kind
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.ImportDeclaration} [node]
+ * @property {TS.ConstructorDeclaration|TS.FunctionDeclaration|TS.MethodDeclaration} [node]
  * @property {Array<VariableInfo>} [parameters]
  * @property {string} [return]
  */
@@ -2771,7 +2830,7 @@ module.exports = {
  * @property {Array<CodeInfo>} members
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.Node} [node]
+ * @property {TS.ModuleDeclaration} [node]
  */
 
 
@@ -2782,7 +2841,7 @@ module.exports = {
  * @property {'Object'} kind
  * @property {Array<MemberInfo>} members
  * @property {Meta} meta
- * @property {TS.Node} [node]
+ * @property {TS.ObjectLiteralExpression} [node]
  * @property {string} [type]
  */
 
@@ -2795,7 +2854,7 @@ module.exports = {
  * @property {'Property'} kind
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature} [node]
+ * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature|TS.ShorthandPropertyAssignment} [node]
  * @property {string} [type]
  * @property {boolean|null|number|string|FunctionCallInfo|ObjectInfo} [value]
  */
@@ -2827,7 +2886,7 @@ module.exports = {
  * @property {Array<VariableInfo>} [generics]
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.VariableDeclaration} [node]
+ * @property {TS.TypeAliasDeclaration} [node]
  * @property {string} [value]
  */
 
@@ -2839,7 +2898,7 @@ module.exports = {
  * @property {'Variable'} kind
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.VariableDeclaration} [node]
+ * @property {TS.ParameterDeclaration|TS.TypeParameterDeclaration|TS.VariableDeclaration} [node]
  * @property {string} [type]
  * @property {boolean|null|number|string|FunctionCallInfo|ObjectInfo} [value]
  */
