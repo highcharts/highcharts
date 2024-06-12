@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/do/do-all.topo.json">Dominican Republic</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/do/do-all.topo.json">Dominican Republic</a>'
         },
 
         mapNavigation: {

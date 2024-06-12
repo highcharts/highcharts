@@ -1232,8 +1232,10 @@ class Pointer {
             !(
                 tooltip &&
                 tooltip.shouldStickOnContact(pEvt)
-            ) &&
-            !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            ) && (
+                pEvt.target === chart.container.ownerDocument ||
+                !this.inClass(pEvt.target as any, 'highcharts-tracker')
+            )
         ) {
             this.reset();
         }
@@ -1978,9 +1980,9 @@ class Pointer {
 
         this.setHoverChartIndex();
 
-        if ((e as any).touches.length === 1) {
+        e = this.normalize(e);
 
-            e = this.normalize(e);
+        if ((e as any).touches.length === 1) {
 
             isInside = chart.isInsidePlot(
                 e.chartX - chart.plotLeft,

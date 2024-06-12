@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-os-all-2019.topo.json">Oslo (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-os-all-2019.topo.json">Oslo (2019)</a>'
         },
 
         mapNavigation: {

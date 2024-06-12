@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mu/mu-all.topo.json">Mauritius</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mu/mu-all.topo.json">Mauritius</a>'
         },
 
         mapNavigation: {

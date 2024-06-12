@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pr/pr-all.topo.json">Puerto Rico</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pr/pr-all.topo.json">Puerto Rico</a>'
         },
 
         mapNavigation: {

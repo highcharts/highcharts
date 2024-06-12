@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nc/nc-all.topo.json">New Caledonia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nc/nc-all.topo.json">New Caledonia</a>'
         },
 
         mapNavigation: {
