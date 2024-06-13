@@ -15,7 +15,10 @@ Highcharts.chart('container', {
         align: 'left',
         floating: true,
         x: 30,
-        y: 60
+        y: 60,
+        style: {
+            textOutline: '2px white'
+        }
     },
     xAxis: {
         title: {
@@ -40,6 +43,7 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '<span style="color:{point.color}">{point.y}</span>',
                 style: {
+                    color: '#000000',
                     fontWeight: 'normal'
                 }
             }
