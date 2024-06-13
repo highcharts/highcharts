@@ -277,18 +277,23 @@ QUnit.test('Update options', function (assert) {
         'Navigator has one series with changed color'
     );
 
+    // 3 updates and redraws are here on purpose to get the navigator working
     chart.update({
         chart: {
             inverted: true
         },
         navigator: {
-            enabled: false,
-            height: 200
+            enabled: false
         }
     });
     chart.update({
         navigator: {
             enabled: true // Recreate navigator
+        }
+    });
+    chart.update({
+        navigator: {
+            height: 200
         }
     });
     assert.strictEqual(
