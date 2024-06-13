@@ -1321,9 +1321,7 @@ class Point {
         ) {
             // While updating the existing callback event the old one should be
             // removed
-            if (point.importedUserEvent) {
-                point.importedUserEvent();
-            }
+            point.importedUserEvent?.();
 
             point.importedUserEvent = addEvent(point, eventType, userEvent);
         } else if (
