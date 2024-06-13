@@ -111,9 +111,7 @@ class DataGridCell {
         const column = this.column;
 
         this.htmlElement.style.width = this.htmlElement.style.maxWidth =
-            column.staticWidth ?
-                (column.getWidth() + 'px') :
-                column.viewport.getPercentWidth(column.getWidth()) + '%';
+            (column.getWidth() + 'px');
     }
 
     /**

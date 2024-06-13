@@ -193,7 +193,7 @@ class DataGridColumn {
         const vp = this.viewport;
 
         return (vp.columnDistribution === 'full' && !this.staticWidth) ?
-            vp.getWithFromRatio(this.width) :
+            vp.getWidthFromRatio(this.width) :
             this.width;
     }
 
