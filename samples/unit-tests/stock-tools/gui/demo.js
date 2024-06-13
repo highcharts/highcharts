@@ -279,4 +279,18 @@ QUnit.test('Stocktools GUI update', function (assert) {
         2,
         'Stock Tools should have correct number of buttons after update.'
     );
+
+    chart.update({
+        stockTools: {
+            gui: {
+                enabled: false
+            }
+        }
+    });
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-stocktools-wrapper'),
+        null,
+        'Stock Tools should be destroyed after disabling.'
+    );
 });
