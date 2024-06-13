@@ -25,9 +25,7 @@
 import DGUtils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
-import Utils from '../../Core/Utilities.js';
 
-const { getStyle } = Utils;
 const { makeHTMLElement } = DGUtils;
 
 
@@ -106,11 +104,16 @@ class DataGridTableHead {
             // Set the column's head element.
             this.columns[i].headElement = element;
 
-            // Render the drag handle for resizing columns.
-            this.renderColumnDragHandles(
-                this.columns[i],
-                element
-            );
+            if (
+                this.viewport.columnDistribution !== 'full' ||
+                i < this.viewport.allColumnsCount - 1
+            ) {
+                // Render the drag handle for resizing columns.
+                this.renderColumnDragHandles(
+                    this.columns[i],
+                    element
+                );
+            }
         }
     }
 

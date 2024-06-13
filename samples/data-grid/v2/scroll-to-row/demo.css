@@ -9,16 +9,8 @@
     height: 400px;
 }
 
-.highcharts-dg-row {
-    width: 100%;
-}
-
 .highcharts-dg-row[data-row-index="1"] {
     height: 100px;
-}
-
-.highcharts-dg-column {
-    width: 0px;
 }
 
 .highcharts-dg-column[data-column-id="b"] {
@@ -30,37 +22,3 @@
     width: 5%;
     max-width: 5%;
 }
-
-/*
-.highcharts-dg-row[data-row-index="3"] {
-    height: 100px;
-}
-
-.highcharts-dg-row[data-row-index="6"] {
-    height: 100px;
-}
-
-.highcharts-dg-row[data-row-index="100"] {
-    height: 200px;
-}
-
-.highcharts-dg-row[data-row-index="150"] {
-    height: 10px;
-}
-
-.highcharts-dg-row[data-row-index="152"] {
-    height: 10px;
-}
-
-.highcharts-dg-row[data-row-index="154"] {
-    height: 10px;
-}
-
-.highcharts-dg-row[data-row-index="6"] {
-    height: 100px;
-}
-
-.highcharts-dg-row[data-row-index="99999"] {
-    height: 200px;
-}
-*/

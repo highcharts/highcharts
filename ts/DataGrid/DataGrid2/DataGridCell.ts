@@ -109,9 +109,9 @@ class DataGridCell {
      */
     public reflow(): void {
         const column = this.column;
+        const elementStyle = this.htmlElement.style;
 
-        this.htmlElement.style.width = this.htmlElement.style.maxWidth =
-            (column.getWidth() + 'px');
+        elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
     }
 
     /**
