@@ -223,7 +223,7 @@ module.exports = function (config) {
         argv.browsers.split(',') :
         // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
         // Chrome 109
-        [getProperties()['karma.defaultbrowser'] || 'FirefoxHeadless'];
+        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
