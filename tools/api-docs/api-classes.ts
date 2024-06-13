@@ -22,6 +22,8 @@ import TSLib from '../libs/ts.js';
 import TreeLib from '../libs/tree.js';
 const { toJSONString } = TreeLib;
 import Yargs from 'yargs';
+import markdownit from 'markdown-it';
+const md = markdownit();
 
 /* *
  *
@@ -33,9 +35,17 @@ import Yargs from 'yargs';
 // - Check doclets that are matching the name with classes and interfaces.
 // - Include kind=Doclet with matching tags.
 
+/**
+ * Main function
+ *
+ * @param [args.source='ts'] {string} Source directory.
+ */
 async function main() {
     const args = await Yargs.argv;
     const source = args.source as string || 'ts';
+
+    await buildStructure();
+
     const classes: Record<string, TSLib.SourceInfo> = {};
 
     const filteredClassCodeInfo: Array<TSLib.ClassInfo> = [];
@@ -236,7 +246,7 @@ async function main() {
                 node: {
                     meta: {
                         fullname: fullName,
-                        name,
+                        name: fullName,
                         hasChildren: true
                     },
                     doclet: {
@@ -283,6 +293,8 @@ async function main() {
                                 ]
                             }
                         };
+                        console.warn('No doclet found for ' + fullName +
+                            '.' + member.name);
                     }
 
                     // Temporarly add not yet supported info into description
@@ -292,13 +304,13 @@ async function main() {
                         member.parameters.forEach((param: any) => {
                             if (param.name !== 'this') {
                                 member.doclet.tags.description.push(
-                                    '<b>Parameter:</b> ' + sanitize(
+                                    '**Parameter:** ' + sanitize(
                                         param.name + ': ' + param.type
                                     )
                                 );
                             } else {
                                 member.doclet.tags.description.push(
-                                    '<b>Ctx:</b> ' + sanitize(param.type)
+                                    '**Ctx:** ' + sanitize(param.type)
                                 );
                             }
                         });
@@ -306,18 +318,18 @@ async function main() {
                     if (member.doclet.tags.param) {
                         member.doclet.tags.param.forEach((param: string) => {
                             member.doclet.tags.description.push(
-                                '<b>Doclet.param:</b> ' + sanitize(param)
+                                '**Doclet.param:** ' + sanitize(param)
                             );
                         });
                     }
                     if (member.return) {
                         member.doclet.tags.description.push(
-                            '<b>Returns:</b> ' + sanitize(member.return)
+                            '**Returns:** ' + sanitize(member.return)
                         );
                     }
                     if (member.body) {
                         member.doclet.tags.description.push(
-                            '<b>Extra:</b> ' + sanitize(
+                            '**Extra:** ' + sanitize(
                                 JSON.stringify(member.body)
                             )
                         );
@@ -326,21 +338,21 @@ async function main() {
                     // Nested from value
                     if (member.value) {
                         member.doclet.tags.description.push(
-                            '<b>Value:</b> ' + sanitize(
+                            '**Value:** ' + sanitize(
                                 JSON.stringify(member.value)
                             )
                         );
                     }
 
-                    let typeListNames = member.doclet.tags.type ||
+                    let typeListNames = member.doclet.tags.type?.join(', ') ||
                         (typeof member.value === 'object' ?
                         '*' :
                         typeof member.value === 'string' ?
                             member.value : member.kind);
 
                     if (typeListNames === '*') {
+                        // Nested type shows as collapsible. Add children.
                         processParent({
-                            _printMe: true,
                             name: info.name + '.' + member.name,
                             doclet: member.doclet,
                             members: member.value?.members,
@@ -354,8 +366,10 @@ async function main() {
                         description: getHTMLDescription(
                             member.doclet.tags.description || []
                         ),
-                        filename: member.meta?.source ||
-                            member.doclet?.meta?.source,
+                        filename: member.meta?.file ||
+                            member.doclet?.meta?.file ||
+                            info.meta?.file ||
+                            info.doclet?.meta?.file,
                         fullname: fullName + '.' + member.name,
 
                         isLeaf: typeof member.value !== 'object',
@@ -461,16 +475,12 @@ function sanitize(text: string): string {
 
 // Convert description to HTML
 function parseLine(line: string): string {
-    return line
-        // TODO: is this line break Windows specific?
-        .replace(/\r\n\r\n/g, '</p><p>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>');
-    // TODO: process formatting using markdown
+    return md.render(line);
 }
 function getHTMLDescription(description: string[]) {
     let html: string = '';
     description.forEach((line: string) => {
-        html += '<p>' + parseLine(line) + '</p>';
+        html += parseLine(line);
     });
     return html;
 }
@@ -519,6 +529,17 @@ function filterMembers(code: TSLib.ClassInfo): void {
         }
     }
     code.members = filteredMembers;
+}
+
+/**
+ * Build structure. Create directories and copy files.
+ */
+async function buildStructure() {
+    const buildPath = 'build/api/class-reference';
+
+    await FS.mkdir(buildPath, {recursive: true});
+
+    // TODO: move more relevent files and paths
 }
 
 /* *
