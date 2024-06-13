@@ -23,6 +23,7 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
+import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
 import type Legend from '../Legend/Legend';
@@ -59,7 +60,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import DataTable from '../../Data/DataTable.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
@@ -146,12 +147,12 @@ export interface DataColumns extends DataTable.ColumnCollection{
     // x?: Array<number>|TypedArray;
 }
 
-export interface DataTableLightModified extends DataTable {
+export interface DataTableLightModified extends DataTableCore {
     /// columns: DataColumns;
     // rowCount: number;
 }
 
-export interface DataTableLight extends DataTable {
+export interface DataTableLight extends DataTableCore {
     /// modified?: DataTableLightModified;
 }
 
@@ -369,7 +370,7 @@ class Series {
 
     public symbolIndex?: number;
 
-    public table!: DataTable;
+    public table!: DataTableCore;
 
     public tooltipOptions!: TooltipOptions;
 
@@ -405,7 +406,7 @@ class Series {
         fireEvent(this, 'init', { options: userOptions });
 
         // Create the data table
-        this.table ??= new DataTable();
+        this.table ??= new DataTableCore();
 
         const series = this,
             chartSeries = chart.series;
@@ -634,7 +635,7 @@ class Series {
             typeof this.dataMin !== 'undefined'
         ) || ( // #3703
             this.visible &&
-            this.table.getRowCount() > 0 // #9758
+            this.table.rowCount > 0 // #9758
         ));
     }
 
@@ -1383,9 +1384,6 @@ class Series {
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-            // Clear data table
-            table.deleteRows(0, table.rowCount);
-
             // In turbo mode, look for one- or twodimensional arrays of numbers.
             // The first and the last valid value are tested, and we assume that
             // all the rest are defined the same way. Although the 'for' loops
@@ -1648,7 +1646,7 @@ class Series {
             max,
             processedXData: Array<number>|TypedArray = series.getColumn('x'),
             processedYData = series.getColumn('y'),
-            modified: DataTable|undefined,
+            modified: DataTableCore|undefined,
             updatingNames = false;
 
         if (xAxis) {
@@ -1679,7 +1677,7 @@ class Series {
                 processedXData = [];
                 processedYData = [];
 
-                modified = new DataTable();
+                modified = new DataTableCore();
 
             // Only crop if it's actually spilling out
             } else if (
@@ -1837,7 +1835,7 @@ class Series {
             yData: yData?.slice(start, end),
             start,
             end,
-            modified: new DataTable({ columns })
+            modified: new DataTableCore({ columns })
         };
     }
 
@@ -4011,22 +4009,14 @@ class Series {
             }
         }
 
-        if (isInTheMiddle) {
-            // @todo The DataTable currently doesn't have an `insertRow` method
-            // or other capabilites of splicing the rows (except `deleteRow`).
-            // If we get that, we can probably combine this with the below.
-            const columns = table.getColumns(dataColumnKeys);
-            objectEach(columns, (column, key): void => {
-                column.splice(i, 0, point[key]);
-            });
-            table.setColumns(columns);
-        } else {
-            const row: DataTable.RowObject = {};
-            for (const key of dataColumnKeys) {
-                row[key] = point[key];
-            }
-            table.setRow(row);
-        }
+        // Insert the row at the given index
+        table.setRow(dataColumnKeys.reduce(
+            (acc: DataTable.RowObject, key: string): DataTable.RowObject => {
+                acc[key] = point[key];
+                return acc;
+            },
+            {} as DataTable.RowObject
+        ), i, true);
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -4053,9 +4043,15 @@ class Series {
             if (data[0] && !!data[0].remove) {
                 data[0].remove(false);
             } else {
-                data.shift();
-                series.table.deleteRows(0);
-                dataOptions?.shift();
+                [
+                    data,
+                    dataOptions,
+                    ...Object.values(table.getColumns())
+                ].filter(defined).forEach((coll): void => {
+                    coll.shift();
+                });
+                table.rowCount -= 1;
+                fireEvent(table, 'afterDeleteRows');
             }
         }
 
@@ -4107,19 +4103,24 @@ class Series {
     ): void {
 
         const series = this,
-            data = series.data,
+            { chart, data, points, table } = series,
             point = data[i],
-            points = series.points,
-            chart = series.chart,
             remove = function (): void {
+                // Splice out the point's data from all parallel arrays
+                [
+                    // #4935
+                    points?.length === data.length ? points : void 0,
+                    data,
+                    series.options.data,
+                    ...Object.values(table.getColumns())
+                ].filter(defined).forEach((coll): void => {
+                    coll.splice(i, 1);
+                });
 
-                if (points && points.length === data.length) { // #4935
-                    points.splice(i, 1);
-                }
-                data.splice(i, 1);
-                series.options.data?.splice(i, 1);
-
-                series.table.deleteRows(i);
+                // Shorthand row deletion in order to avoid including the whole
+                // `deleteRows` function in the DataTableCore module.
+                table.rowCount -= 1;
+                fireEvent(table, 'afterDeleteRows');
 
                 point?.destroy();
 
@@ -5009,7 +5010,7 @@ namespace Series {
 
     export interface CropDataObject {
         end: number;
-        modified?: DataTable;
+        modified?: DataTableCore;
         start: number;
         /* @deprecated */
         xData: Array<number>|TypedArray;
