@@ -143,48 +143,47 @@ function onChartAfterGetContainer(
 function onChartBeforeRedraw(
     this: Chart
 ): void {
-    onChartRedraw.call(this);
-    if (this.stockTools && this.stockTools.guiEnabled) {
-        const optionsChart = this.options.chart as ChartOptions;
-        const listWrapper = this.stockTools.listWrapper;
-        if (this.stockTools.visible) {
-            this.stockTools.listWrapper.classList.remove('highcharts-hide');
-        } else {
-            this.stockTools.listWrapper.classList.add('highcharts-hide');
-        }
-        const offsetWidth = listWrapper && (
+    if (this.stockTools) {
+        this.stockTools.redraw();
 
-            (
-                (listWrapper as any).startWidth +
-                getStyle(listWrapper, 'padding-left') +
-                getStyle(listWrapper, 'padding-right')
-            ) || listWrapper.offsetWidth
-        );
+        if (this.stockTools.guiEnabled) {
 
-        this.stockTools.width = offsetWidth;
+            const optionsChart = this.options.chart as ChartOptions;
+            const listWrapper = this.stockTools.listWrapper;
+            const offsetWidth = listWrapper && (
+                (
+                    (listWrapper as any).startWidth +
+                    getStyle(listWrapper, 'padding-left') +
+                    getStyle(listWrapper, 'padding-right')
+                ) || listWrapper.offsetWidth
+            );
 
-        let dirty = false;
+            this.stockTools.width = offsetWidth;
 
-        if (offsetWidth < this.plotWidth) {
-            const nextX = pick(
-                optionsChart.spacingLeft,
-                optionsChart.spacing && optionsChart.spacing[3],
-                0
-            ) + offsetWidth;
-            const diff = nextX - this.spacingBox.x;
-            this.spacingBox.x = nextX;
-            this.spacingBox.width -= diff;
-            dirty = true;
-        } else if (offsetWidth === 0) {
-            dirty = true;
-        }
+            let dirty = false;
 
-        if (offsetWidth !== this.stockTools.prevOffsetWidth) {
-            this.stockTools.prevOffsetWidth = offsetWidth;
-            if (dirty) {
-                this.isDirtyLegend = true;
+            if (offsetWidth < this.plotWidth) {
+                const nextX = pick(
+                    optionsChart.spacingLeft,
+                    optionsChart.spacing && optionsChart.spacing[3],
+                    0
+                ) + offsetWidth;
+                const diff = nextX - this.spacingBox.x;
+                this.spacingBox.x = nextX;
+                this.spacingBox.width -= diff;
+                dirty = true;
+            } else if (offsetWidth === 0) {
+                dirty = true;
+            }
+
+            if (offsetWidth !== this.stockTools.prevOffsetWidth) {
+                this.stockTools.prevOffsetWidth = offsetWidth;
+                if (dirty) {
+                    this.isDirtyLegend = true;
+                }
             }
         }
+
     }
 }
 
@@ -211,17 +210,6 @@ function onChartGetMargins(
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
-    }
-}
-
-/**
- * @private
- */
-function onChartRedraw(
-    this: Chart
-): void {
-    if (this.stockTools) {
-        this.stockTools.redraw();
     }
 }
 

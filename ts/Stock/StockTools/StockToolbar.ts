@@ -86,7 +86,6 @@ class Toolbar {
         this.iconsURL = this.getIconsURL();
         this.guiEnabled = options.enabled;
         this.visible = pick(options.visible, true);
-        this.placed = pick(options.placed, false);
         this.guiClassName = options.className;
         this.toolbarClassName = options.toolbarClassName;
 
@@ -121,9 +120,8 @@ class Toolbar {
     public lang: (Record<string, string>|undefined);
     public listWrapper!: HTMLDOMElement;
     public options: StockToolsGuiOptions;
-    public placed: boolean;
     public prevOffsetWidth: (number|undefined);
-    public showhideBtn!: HTMLDOMElement;
+    public showHideBtn!: HTMLDOMElement;
     public submenu!: HTMLDOMElement;
     public toolbar!: HTMLDOMElement;
     public visible: boolean;
@@ -141,8 +139,7 @@ class Toolbar {
      * */
 
     /**
-     * Initialize the toolbar. Create buttons and submenu for each option
-     * defined in `stockTools.gui`.
+     * Create and set up stockTools buttons with their events and submenus.
      * @private
      */
     public createButtons(): void {
@@ -484,7 +481,7 @@ class Toolbar {
         );
     }
     /*
-     * Create stockTools HTML main elements.
+     * Create the stockTools container and sets up event bindings.
      *
      */
     public createContainer(): void {
@@ -492,7 +489,7 @@ class Toolbar {
             guiOptions = this.options,
             container = chart.container,
             navigation = chart.options.navigation,
-            bindingsClassName = navigation && navigation.bindingsClassName,
+            bindingsClassName = navigation?.bindingsClassName,
             self = this;
         let listWrapper,
             toolbar;
@@ -505,19 +502,16 @@ class Toolbar {
 
         container.appendChild(wrapper);
 
-        this.showhideBtn = createElement('div', {
+        this.showHideBtn = createElement('div', {
             className: 'highcharts-toggle-toolbar highcharts-arrow-left'
         }, void 0, wrapper);
 
         // Toggle menu
         this.eventsToUnbind.push(
-            addEvent(this.showhideBtn, 'click', (): void => {
-                chart.update({
-                    stockTools: {
-                        gui: {
-                            visible: !self.visible,
-                            placed: true
-                        }
+            addEvent(this.showHideBtn, 'click', (): void => {
+                this.update({
+                    gui: {
+                        visible: !self.visible
                     }
                 });
             })
@@ -587,10 +581,10 @@ class Toolbar {
             toolbar = this.listWrapper,
             submenu = this.submenu,
             // Show hide toolbar
-            showhideBtn = this.showhideBtn;
+            showHideBtn = this.showHideBtn;
         let visible = this.visible;
 
-        showhideBtn.style.backgroundImage =
+        showHideBtn.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
         if (!visible) {
@@ -598,15 +592,17 @@ class Toolbar {
             if (submenu) {
                 submenu.style.display = 'none';
             }
-            showhideBtn.style.left = '0px';
+            showHideBtn.style.left = '0px';
             visible = this.visible = false;
-            showhideBtn.classList.add('highcharts-arrow-right');
-            wrapper.style.height = showhideBtn.offsetHeight + 'px';
+            toolbar.classList.add('highcharts-hide');
+            showHideBtn.classList.add('highcharts-arrow-right');
+            wrapper.style.height = showHideBtn.offsetHeight + 'px';
         } else {
             wrapper.style.height = '100%';
-            showhideBtn.classList.remove('highcharts-arrow-right');
-            showhideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
-            showhideBtn.style.left = (
+            toolbar.classList.remove('highcharts-hide');
+            showHideBtn.classList.remove('highcharts-arrow-right');
+            showHideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
+            showHideBtn.style.left = (
                 wrapper.offsetWidth +
                 (getStyle(toolbar, 'padding-left') as any)
             ) + 'px';
@@ -665,20 +661,6 @@ class Toolbar {
             classList.remove('highcharts-active');
         } else {
             classList.add('highcharts-active');
-        }
-    }
-
-    /**
-     * Remove highcharts-active class from button.
-     * @private
-     */
-    public removeButtonActiveClass(
-        button: HTMLDOMElement
-    ): void {
-        const classList = button.classList;
-
-        if (classList.contains('highcharts-active')) {
-            classList.remove('highcharts-active');
         }
     }
 
@@ -766,7 +748,6 @@ class Toolbar {
     private handleGuiEnabledChange(): void {
         if (this.options.enabled === false) {
             this.destroy();
-            this.guiEnabled = false;
             this.visible = false;
         }
 

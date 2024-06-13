@@ -1260,9 +1260,9 @@ const stockTools: StockToolsOptions = {
             }
         },
         /**
-         * Wether the stock tools toolbar is visible.
+         * Whether the stock tools toolbar is visible.
          *
-         * @type {boolean}
+         * @since next
          */
         visible: true
     }
