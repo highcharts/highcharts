@@ -141,7 +141,8 @@ class ColumnsResizer {
             newRightW = MIN_WIDTH;
             newLeftW = leftColW + rightColW - MIN_WIDTH;
         }
-
+        // column.width = column.staticWidth ? newLeftW : vp.getRatioFromWidth(newLeftW);
+        // nextColumn.width = nextColumn.staticWidth ? newRightW : vp.getRatioFromWidth(newRightW);
         column.width = vp.getRatioFromWidth(newLeftW);
         nextColumn.width = vp.getRatioFromWidth(newRightW);
     }

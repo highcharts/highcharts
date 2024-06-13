@@ -21,15 +21,19 @@
     width: 0px;
 }
 
-.highcharts-dg-column[data-column-id="c"] {
-    width: 50px;
-    max-width: 50px;
-}
-
+/* .highcharts-dg-column[data-column-id="b"],
+.highcharts-dg-column[data-column-id="c"],
 .highcharts-dg-column[data-column-id="d"] {
-    width: 50px;
-    max-width: 50px;
-}
+    width: 5%;
+    max-width: 5%;
+} */
+
+/* .highcharts-dg-column[data-column-id="b"],
+.highcharts-dg-column[data-column-id="c"],
+.highcharts-dg-column[data-column-id="d"] {
+    width: 20%;
+    max-width: 20%;
+} */
 
 /*
 .highcharts-dg-row[data-row-index="3"] {

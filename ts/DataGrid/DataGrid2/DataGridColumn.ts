@@ -147,10 +147,12 @@ class DataGridColumn {
 
         if (viewport.columnDistribution === 'full') {
             this.staticWidth = !!getStyle(mock, 'width');
+            // console.log('init', getStyle(mock, 'width'), mock.style.width);
             this.width =
                 this.staticWidth ?
                     getStyle(mock, 'width', true) || 0 :
                     viewport.getRatioFromWidth(mock.offsetWidth) || 1;
+            
             // if (this.staticWidth) {
             //     this.width = getStyle(mock, 'width', true) || 0;
             // } else {
@@ -190,7 +192,7 @@ class DataGridColumn {
     public getWidth(): number {
         const vp = this.viewport;
 
-        return vp.columnDistribution === 'full' ?
+        return (vp.columnDistribution === 'full' && !this.staticWidth) ?
             vp.getWithFromRatio(this.width) :
             this.width;
     }
