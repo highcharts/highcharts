@@ -9,6 +9,7 @@
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
+ *  - Torstein Hønsi
  *
  * */
 
@@ -64,8 +65,6 @@ class DataTableCore {
     public constructor(
         options: DataTableOptions = {}
     ) {
-        this.columns = {};
-
         /**
          * Whether the ID was automatic generated or given in the constructor.
          *
