@@ -23,7 +23,6 @@
 
 
 import type DataEvent from './DataEvent.js';
-import type DataModifier from './Modifiers/DataModifier.js';
 import type DataTable from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
 
@@ -65,7 +64,7 @@ class DataTableCore {
     public constructor(
         options: DataTableOptions = {}
     ) {
-        const columns: Record<string, DataTable.Column> = {};
+        this.columns = {};
 
         /**
          * Whether the ID was automatic generated or given in the constructor.
@@ -90,18 +89,11 @@ class DataTableCore {
         let rowCount = 0;
 
         objectEach(options.columns || {}, (column, columnName): void => {
-            columns[columnName] = column.slice();
+            this.columns[columnName] = column.slice();
             rowCount = Math.max(rowCount, column.length);
         });
 
-        objectEach(columns, (column): void => {
-            if (isArray(column)) { // Not on typed array
-                column.length = rowCount;
-            }
-        });
-
-        this.columns = columns;
-        this.rowCount = rowCount;
+        this.applyRowCount(rowCount);
 
     }
 
@@ -142,7 +134,9 @@ class DataTableCore {
     ): void {
         this.rowCount = rowCount;
         objectEach(this.columns, (column): void => {
-            column.length = rowCount;
+            if (isArray(column)) { // Not on typed array
+                column.length = rowCount;
+            }
         });
     }
 
@@ -328,31 +322,9 @@ namespace DataTableCore {
      * */
 
     /**
-     * Event object for cell-related events.
-     */
-    export interface CellEvent extends DataEvent {
-        readonly type: (
-            'setCell'|'afterSetCell'
-        );
-        readonly cellValue: CellType;
-        readonly columnName: string;
-        readonly rowIndex: number;
-    }
-
-    /**
      * Possible value types for a table cell.
      */
     export type CellType = (boolean|number|null|string|undefined);
-
-    /**
-     * Event object for clone-related events.
-     */
-    export interface CloneEvent extends DataEvent {
-        readonly type: (
-            'cloneTable'|'afterCloneTable'
-        );
-        readonly tableClone?: DataTableCore;
-    }
 
     /**
      * Array of table cells in vertical expansion.
@@ -360,11 +332,6 @@ namespace DataTableCore {
     export interface Column extends Array<DataTable.CellType> {
         [index: number]: CellType;
     }
-
-    /**
-     * Map of column alias to column name.
-     */
-    export type ColumnAliases = Record<string, string>;
 
     /**
      * Collection of columns, where the key is the column name (or alias) and
@@ -391,22 +358,9 @@ namespace DataTableCore {
      * All information objects of DataTable events.
      */
     export type Event = (
-        CellEvent|
-        CloneEvent|
         ColumnEvent|
-        SetModifierEvent|
         RowEvent
     );
-
-    /**
-     * Event object for modifier-related events.
-     */
-    export interface ModifierEvent extends DataEvent {
-        readonly type: (
-            'setModifier'|'afterSetModifier'
-        );
-        readonly modifier: (DataModifier|undefined);
-    }
 
     /**
      * Array of table cells in horizontal expansion. Index of the array is the
@@ -435,22 +389,6 @@ namespace DataTableCore {
     export interface RowObject extends Record<string, CellType> {
         [column: string]: CellType;
     }
-
-
-    /**
-    * Event object for the setModifier events.
-    */
-    export interface SetModifierEvent extends DataEvent {
-        readonly type: (
-            'setModifier'|'afterSetModifier'|
-            'setModifierError'
-        );
-        readonly error?: unknown;
-        readonly modifier?: DataModifier;
-        readonly modified?: DataTableCore;
-    }
-
-
 }
 
 
