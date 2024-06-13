@@ -46,8 +46,13 @@ const DOCLET_TAG_INSET = /\{([^}]+)\}/gsu;
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
 
 
-const NATIVE_HELPER =
-    /^(?:Array|Extract|Omit|Partial|Record|Require)(?:<|$)/su;
+const NATIVE_HELPER = new RegExp(
+    '^(?:' + [
+        'Array', 'Extract', 'Omit', 'Partial', 'Readonly', 'ReadonlyArray',
+        'Record', 'Require'
+    ].join('|') + ')(?:<|$)',
+    'su'
+);
 
 
 const NATIVE_TYPES = [
@@ -1240,11 +1245,18 @@ function getFunctionInfo(
     }
 
     if (node.type) {
-        _info.return = node.type.getText();
+        const _return = sanitizeType(node.type.getText());
+        if (_return !== 'void') {
+            _info.return = _return;
+        }
     }
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
+        if (node.questionToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('optional');
+        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -1766,6 +1778,14 @@ function getPropertyInfo(
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
+        if (node.exclamationToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('assured');
+        }
+        if (node.questionToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('optional');
+        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -2512,7 +2532,13 @@ function sanitizeText(
 function sanitizeType(
     type
 ) {
-    return ('' + type).replaceAll(SANITIZE_TYPE, '$1').trim();
+    type = `${type}`.replaceAll(/\s+/gsu, ' ');
+
+    if (type.includes('=>')) {
+        return type.trim();
+    }
+
+    return type.replaceAll(SANITIZE_TYPE, '$1').trim();
 }
 
 
