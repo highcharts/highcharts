@@ -152,12 +152,6 @@ class DataGridColumn {
                 this.staticWidth ?
                     getStyle(mock, 'width', true) || 0 :
                     viewport.getRatioFromWidth(mock.offsetWidth) || 1;
-            
-            // if (this.staticWidth) {
-            //     this.width = getStyle(mock, 'width', true) || 0;
-            // } else {
-            //     this.width = viewport.getRatioFromWidth(mock.offsetWidth) || 1;
-            // }
         } else {
             this.width = mock.offsetWidth || 100;
         }
