@@ -71,7 +71,7 @@ const background: PaneBackgroundOptions = {
      * The border radius of the pane background when the shape is `arc`. Can be
      * a number (pixels) or a percentage string.
      *
-     * @since   next
+     * @since 11.4.2
      * @sample  highcharts/series-solidgauge/pane-borderradius
      *          Circular gauge and pane with equal border radius
      * @product highcharts
@@ -149,12 +149,13 @@ const background: PaneBackgroundOptions = {
  * The pane serves as a container for axes and backgrounds for circular
  * gauges and polar charts.
  *
+ * @type         {*|Array<*>}
  * @since        2.3.0
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent pane
  */
-const pane: PaneOptions = {
+const pane: PaneOptions|Array<PaneOptions> = {
 
     /**
      * The end angle of the polar X axis or gauge value axis, given in

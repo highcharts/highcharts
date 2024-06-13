@@ -47,8 +47,8 @@ const {
 
 declare module '../../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
-        xMap?: number;
         isArea?: boolean;
+        hasStackedCliffs?: boolean;
     }
 }
 
@@ -323,6 +323,15 @@ class AreaSeries extends LineSeries {
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         const graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);
+
+        if (
+            this.chart.series.length > 1 &&
+            stacking &&
+            graphPoints.some((point): boolean | undefined => point.isCliff)
+        ) {
+            areaPath.hasStackedCliffs = graphPath.hasStackedCliffs = true;
+        }
+
         areaPath.xMap = topPath.xMap;
         this.areaPath = areaPath;
 

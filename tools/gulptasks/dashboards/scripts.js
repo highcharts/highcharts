@@ -20,9 +20,9 @@ const gulp = require('gulp');
 async function dashboardsScripts() {
     const argv = require('yargs').argv;
     const buildTool = require('../../build');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const processLib = require('../../libs/process');
 
     const {
         bundleTargetFolder,
@@ -76,9 +76,9 @@ async function dashboardsScripts() {
 async function dataGridScripts() {
     const argv = require('yargs').argv;
     const buildTool = require('../../build');
-    const fsLib = require('../lib/fs');
-    const logLib = require('../lib/log');
-    const processLib = require('../lib/process');
+    const fsLib = require('../../libs/fs');
+    const logLib = require('../../libs/log');
+    const processLib = require('../../libs/process');
 
     const {
         bundleTargetFolderDataGrid,
@@ -127,7 +127,7 @@ async function dataGridScripts() {
  * code.highcharts.com
  */
 async function copyDataGrid() {
-    const fsLib = require('../lib/fs');
+    const fsLib = require('../../libs/fs');
     const {
         bundleTargetFolderDataGrid,
         bundleTargetFolder,

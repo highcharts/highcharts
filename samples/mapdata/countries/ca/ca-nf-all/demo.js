@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-nf-all.topo.json">Newfoundland and Labrador</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-nf-all.topo.json">Newfoundland and Labrador</a>'
         },
 
         mapNavigation: {

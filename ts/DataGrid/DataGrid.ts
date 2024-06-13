@@ -27,10 +27,10 @@ import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
 import type JSON from '../Core/JSON';
 
+import AST from '../Core/Renderer/HTML/AST.js';
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
 const {
-    dataTableCellToString,
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
@@ -611,9 +611,14 @@ class DataGrid {
                 const cell = cellElements[k] as HTMLElement,
                     column = columnsInPresentationOrder[k],
                     value = this.dataTable.modified
-                        .getCell(columnsInPresentationOrder[k], i);
+                        .getCell(columnsInPresentationOrder[k], i),
+                    formattedContent = this.formatCell(value, column);
 
-                cell.textContent = this.formatCell(value, column);
+                if (this.options.useHTML) {
+                    this.renderHTMLCellContent(formattedContent, cell);
+                } else {
+                    cell.textContent = formattedContent;
+                }
 
                 // TODO: consider adding these dynamically to the input element
                 cell.dataset.originalData = '' + value;
@@ -790,7 +795,6 @@ class DataGrid {
      * @internal
      */
     private updateScrollingLength(): void {
-        const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.modified.getRowCount() - 1;
         let height = 0;
         const top = i - this.getNumRowsToDraw();
@@ -799,20 +803,6 @@ class DataGrid {
         // Explicit height is needed for overflow: hidden to work, to make sure
         // innerContainer is not scrollable by user input
         this.innerContainer.style.height = outerHeight + 'px';
-
-        // Calculate how many of the bottom rows is needed to potentially
-        // overflow innerContainer and use it to add extra rows to scrollHeight
-        // to ensure it is possible to scroll to the last row when rows have
-        // variable heights
-        for (let j = 0; j < this.rowElements.length; j++) {
-            const cellElements = this.rowElements[j].childNodes;
-            for (let k = 0; k < columnsInPresentationOrder.length; k++) {
-                cellElements[k].textContent = dataTableCellToString(
-                    this.dataTable.modified
-                        .getCell(columnsInPresentationOrder[k], i - j)
-                );
-            }
-        }
 
         this.scrollContainer.appendChild(this.innerContainer);
 
@@ -984,6 +974,25 @@ class DataGrid {
         }
 
         return formattedCell.toString();
+    }
+
+    /**
+     * When useHTML enabled, parse the syntax and render HTML.
+     *
+     * @param cellContent
+     * Content to render.
+     *
+     * @param parentElement
+     * Parent element where the content should be.
+     *
+     */
+    private renderHTMLCellContent(
+        cellContent: string,
+        parentElement: HTMLElement
+    ): void {
+        const formattedNodes = new AST(cellContent);
+
+        formattedNodes.addToDOM(parentElement);
     }
 
     /**

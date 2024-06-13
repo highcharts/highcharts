@@ -1,0 +1,11 @@
+---
+name: Neural Network
+authors:
+  - Jakub Szumiński
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+new_until: 2024-08-15
+...

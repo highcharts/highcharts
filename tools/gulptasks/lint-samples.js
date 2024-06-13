@@ -43,7 +43,7 @@ const IGNORE_GLOBS = [
 function task() {
 
     const eslint = require('eslint');
-    const log = require('./lib/log');
+    const log = require('../libs/log');
 
     return new Promise(resolve => {
 

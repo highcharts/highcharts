@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gl/gl-all.topo.json">Greenland</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gl/gl-all.topo.json">Greenland</a>'
         },
 
         mapNavigation: {

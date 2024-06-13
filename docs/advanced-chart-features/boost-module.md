@@ -79,7 +79,6 @@ The boost module contains a WebGL renderer that replaces parts of the SVG render
 * Dash style for lines is not supported
 * Stacking, and negative colors are not supported.
 * Line width is limited to 1px.
-* Point click handlers are not supported in boost mode.
 
 The intended way of using the module, is to set thresholds in such a way that the SVG-renderer “takes over” rendering when zooming in. This approach gives the expected interactivity when the points are less dense, coupled with high performance when the point density is high.
 

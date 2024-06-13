@@ -29,9 +29,9 @@ const TEST_FOLDER = path.join('test', 'typescript-dts');
  *         Promise to keep
  */
 function lintDTS(argv) {
-    const fsLib = require('./lib/fs');
-    const processLib = require('./lib/process');
-    const logLib = require('./lib/log');
+    const fsLib = require('../libs/fs');
+    const processLib = require('../libs/process');
+    const logLib = require('../libs/log');
 
     return new Promise((resolve, reject) => {
 

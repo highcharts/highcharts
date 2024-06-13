@@ -407,10 +407,6 @@ class ControllableLabel extends Controllable {
                 .shadow(options.shadow);
         }
 
-        if (options.className) {
-            this.graphic.addClass(options.className);
-        }
-
         this.graphic.labelrank = (options as any).labelrank;
 
         super.render();

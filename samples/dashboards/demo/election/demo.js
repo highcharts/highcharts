@@ -319,7 +319,7 @@ async function setupDashboard() {
             },
             dataGridOptions: {
                 cellHeight: 38,
-                editable: false, // TBD: enable
+                editable: false,
                 columns: {
                     state: {
                         headerFormat: 'State'
@@ -378,7 +378,7 @@ async function setupDashboard() {
 
 
     //
-    // Data set pre-processing (TBD: consider external script)
+    // Data set pre-processing
     //
     async function loadAndParseCsv(url, parser) {
         const data = await fetch(url)

@@ -31,4 +31,3 @@ describe('dashboards/dist', async () => {
         ok(await stat('build/dist/dashboards/examples/minimal/index.html'));
     });
 });
-

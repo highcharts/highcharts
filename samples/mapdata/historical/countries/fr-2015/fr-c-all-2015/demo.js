@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-c-all-2015.topo.json">Auvergne (2015)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/fr-2015/fr-c-all-2015.topo.json">Auvergne (2015)</a>'
         },
 
         mapNavigation: {

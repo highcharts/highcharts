@@ -28,6 +28,8 @@ import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
+import A from './Animation/AnimationUtilities.js';
+const { animObject } = A;
 import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';
@@ -166,8 +168,6 @@ class Tooltip {
 
     public len?: number;
 
-    public now: Record<string, number> = {};
-
     public options: TooltipOptions = {} as any;
 
     public outside: boolean = false;
@@ -179,8 +179,6 @@ class Tooltip {
     public shared?: boolean;
 
     public split?: boolean;
-
-    public tooltipTimeout?: number;
 
     public tracker?: SVGElement;
 
@@ -294,7 +292,6 @@ class Tooltip {
             discardElement(this.container);
         }
         U.clearTimeout(this.hideTimer as any);
-        U.clearTimeout(this.tooltipTimeout as any);
     }
 
     /**
@@ -523,23 +520,20 @@ class Tooltip {
             // container.
             if (tooltip.outside) {
                 const label = this.label;
-                const { xSetter, ySetter } = label;
-                label.xSetter = function (
-                    value: string
-                ): void {
-                    xSetter.call(label, tooltip.distance);
-                    if (container) {
-                        container.style.left = value + 'px';
-                    }
-                };
-                label.ySetter = function (
-                    value: string
-                ): void {
-                    ySetter.call(label, tooltip.distance);
-                    if (container) {
-                        container.style.top = value + 'px';
-                    }
-                };
+                [label.xSetter, label.ySetter].forEach((
+                    setter: (value: number) => void,
+                    i: number
+                ): void => {
+                    label[i ? 'ySetter' : 'xSetter'] = (
+                        value: number
+                    ): void => {
+                        setter.call(label, tooltip.distance);
+                        label[i ? 'y' : 'x'] = value;
+                        if (container) {
+                            container.style[i ? 'top' : 'left'] = `${value}px`;
+                        }
+                    };
+                });
             }
 
             this.label
@@ -868,16 +862,6 @@ class Tooltip {
         this.crosshairs = [];
 
         /**
-         * Current values of x and y when animating.
-         *
-         * @private
-         * @readonly
-         * @name Highcharts.Tooltip#now
-         * @type {Highcharts.PositionObject}
-         */
-        this.now = { x: 0, y: 0 };
-
-        /**
          * Tooltips are initially hidden.
          *
          * @private
@@ -955,46 +939,20 @@ class Tooltip {
      */
     public move(x: number, y: number, anchorX: number, anchorY: number): void {
         const tooltip = this,
-            now = tooltip.now,
-            animate = tooltip.options.animation !== false &&
-                !tooltip.isHidden &&
-                // When we get close to the target position, abort animation and
-                // land on the right place (#3056)
-                (Math.abs(x - now.x) > 1 || Math.abs(y - now.y) > 1),
-            skipAnchor = tooltip.followPointer || (tooltip.len as any) > 1;
+            animation = animObject(
+                !tooltip.isHidden && tooltip.options.animation
+            ),
+            skipAnchor = tooltip.followPointer || (tooltip.len || 0) > 1,
+            attr: SVGAttributes = { x, y };
 
-        // Get intermediate values for animation
-        extend(now, {
-            x: animate ? (2 * now.x + x) / 3 : x,
-            y: animate ? (now.y + y) / 2 : y,
-            anchorX: skipAnchor ?
-                void 0 :
-                animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-            anchorY: skipAnchor ?
-                void 0 :
-                animate ? (now.anchorY + anchorY) / 2 : anchorY
-        });
-
-        // Move to the intermediate value
-        tooltip.getLabel().attr(now);
-        tooltip.drawTracker();
-
-        // Run on next tick of the mouse tracker
-        if (animate) {
-
-            // Never allow two timeouts
-            U.clearTimeout(this.tooltipTimeout as any);
-
-            // Set the fixed interval ticking for the smooth tooltip
-            this.tooltipTimeout = setTimeout(function (): void {
-                // The interval function may still be running during destroy,
-                // so check that the chart is really there before calling.
-                if (tooltip) {
-                    tooltip.move(x, y, anchorX, anchorY);
-                }
-            }, 32) as any;
-
+        if (!skipAnchor) {
+            attr.anchorX = anchorX;
+            attr.anchorY = anchorY;
         }
+
+        animation.step = (): void => tooltip.drawTracker();
+
+        tooltip.getLabel().animate(attr, animation);
     }
 
     /**
@@ -1111,13 +1069,12 @@ class Tooltip {
                     }
 
                     label.attr({
+                        // Add class before the label BBox calculation (#21035)
+                        'class': tooltip.getClassName(point),
                         text: text && (text as any).join ?
                             (text as any).join('') :
                             text
                     });
-
-                    // Set the stroke color of the box to reflect the point
-                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({

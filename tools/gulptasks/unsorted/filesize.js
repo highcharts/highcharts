@@ -1,7 +1,7 @@
 /* eslint func-style: 0, no-console: 0 */
 const { randomUUID } = require('crypto');
-const processLib = require('../lib/process');
-const logLib = require('../lib/log');
+const processLib = require('../../libs/process');
+const logLib = require('../../libs/log');
 
 const gulp = require('gulp');
 /**
@@ -74,7 +74,7 @@ const filesize = async () => {
     };
 
     const runFileSize = async (obj, key) => {
-        const fsLib = require('./../lib/fs');
+        const fsLib = require('../../libs/fs');
         try {
             // deleting invalid masters DTS
             fsLib

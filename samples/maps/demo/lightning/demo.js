@@ -163,7 +163,6 @@ const displayTime = time => {
             name: 'Lightning strike',
             id: 'lightnings',
             type: 'mapbubble',
-            turboThreshold: Infinity,
             animation: false,
             data: getInitialData(currentTime),
             tooltip: {

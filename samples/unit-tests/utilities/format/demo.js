@@ -314,6 +314,11 @@ QUnit.module('Format', () => {
             '',
             'Division by zero'
         );
+        assert.strictEqual(
+            Highcharts.numberFormat(-0.4999999, 0, '.', ''),
+            '0',
+            'numberFormat should return zero without singed minus, #20564.'
+        );
     });
 
     QUnit.test('Relational helpers', assert => {

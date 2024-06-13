@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sg/sg-all.topo.json">Singapore</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sg/sg-all.topo.json">Singapore</a>'
         },
 
         mapNavigation: {

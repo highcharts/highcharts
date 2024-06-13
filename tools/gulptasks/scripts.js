@@ -37,7 +37,7 @@ const TS_DIRECTORY = 'ts';
 function saveRun() {
 
     const fs = require('fs');
-    const fslib = require('./lib/fs');
+    const fslib = require('../libs/fs');
     const stringlib = require('./lib/string');
 
     const latestCodeHash = fslib.getDirectoryHash(
@@ -72,8 +72,8 @@ function saveRun() {
 function shouldRun() {
 
     const fs = require('fs');
-    const fslib = require('./lib/fs');
-    const log = require('./lib/log');
+    const fslib = require('../libs/fs');
+    const log = require('../libs/log');
     const stringlib = require('./lib/string');
 
     let configuration = {
@@ -135,8 +135,8 @@ function shouldRun() {
 function task() {
 
     const argv = require('yargs').argv;
-    const logLib = require('./lib/log');
-    const processLib = require('./lib/process');
+    const logLib = require('../libs/log');
+    const processLib = require('../libs/process');
 
     if (processLib.isRunning('scripts-watch')) {
         logLib.warn('Running watch process detected. Skipping task...');
