@@ -546,9 +546,8 @@ class BubbleSeries extends ScatterSeries {
      * @private
      */
     public getRadii(): void {
-        const columns = this.table.getColumns(['y', 'z'], true),
-            zData = columns.z as Array<number|undefined>,
-            yData = columns.y as Array<number|undefined>,
+        const zData = this.getColumn('z'),
+            yData = this.getColumn('y'),
             radii = [] as Array<(number|null)>;
 
         let len: number,

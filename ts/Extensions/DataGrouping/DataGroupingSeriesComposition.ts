@@ -39,7 +39,7 @@ import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import DataTable from '../../Data/DataTable.js';
+import DataTableCore from '../../Data/DataTableCore.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -639,7 +639,7 @@ function groupData(
         dataOptions = series.options && series.options.data,
         groupedXData = [],
         groupedYData = [],
-        modified = new DataTable(),
+        modified = new DataTableCore(),
         groupMap = [],
         dataLength = table.rowCount,
         // When grouping the fake extended axis for panning, we don't need to
@@ -804,7 +804,7 @@ function groupData(
         }
     }
 
-    const columns: DataTable.ColumnCollection = {
+    const columns: DataTableCore.ColumnCollection = {
         x: groupedXData
     };
     (pointArrayMap || ['y']).forEach((key, i): void => {
