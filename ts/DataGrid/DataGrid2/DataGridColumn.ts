@@ -47,7 +47,7 @@ class DataGridColumn {
 
     /* *
     *
-    *  Properties
+    *  Static Properties
     *
     * */
 
@@ -56,12 +56,17 @@ class DataGridColumn {
      */
     public static readonly MIN_COLUMN_WIDTH = 20;
 
-
     /**
      * The default options of the column.
      */
     public static readonly defaultOptions = {};
 
+
+    /* *
+    *
+    *  Properties
+    *
+    * */
 
     /**
      * The viewport (table) the column belongs to.
