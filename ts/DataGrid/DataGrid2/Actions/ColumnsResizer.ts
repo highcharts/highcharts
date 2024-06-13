@@ -45,12 +45,6 @@ class ColumnsResizer {
     * */
 
     /**
-     * The minimum width of a column.
-     */
-    private static readonly MIN_COLUMN_WIDTH = 20;
-
-
-    /**
      * The viewport of the data grid.
      */
     private viewport: DataGridTable;
@@ -127,7 +121,7 @@ class ColumnsResizer {
 
         const leftColW = this.columnStartWidth ?? 0;
         const rightColW = this.nextColumnStartWidth ?? 0;
-        const MIN_WIDTH = ColumnsResizer.MIN_COLUMN_WIDTH;
+        const MIN_WIDTH = DataGridColumn.MIN_COLUMN_WIDTH;
 
         let newLeftW = leftColW + diff;
         let newRightW = rightColW - diff;
@@ -159,7 +153,7 @@ class ColumnsResizer {
         }
 
         const colW = this.columnStartWidth ?? 0;
-        const MIN_WIDTH = ColumnsResizer.MIN_COLUMN_WIDTH;
+        const MIN_WIDTH = DataGridColumn.MIN_COLUMN_WIDTH;
 
         let newW = colW + diff;
         if (newW < MIN_WIDTH) {

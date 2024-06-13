@@ -191,3 +191,7 @@
 .highcharts-dg-col-resizer:hover::after {
     border-color: var(--highcharts-highlight-color-80);
 }
+
+.highcharts-dg-column {
+    width: 0;
+}

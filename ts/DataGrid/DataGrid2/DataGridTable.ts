@@ -100,7 +100,7 @@ class DataGridTable {
     /**
      * The column distribution.
      */
-    public columnDistribution: ColumnDistribution;
+    public readonly columnDistribution: ColumnDistribution;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -112,6 +112,11 @@ class DataGridTable {
      * Only for the `fixed` column distribution.
      */
     public rowsWidth?: number;
+
+    /**
+     * The number of visible columns in the data grid.
+     */
+    public readonly allColumnsCount: number;
 
 
     /* *
@@ -128,8 +133,15 @@ class DataGridTable {
     constructor(dataGrid: DataGrid) {
         this.dataGrid = dataGrid;
         this.dataTable = dataGrid.dataTable;
+
+        const dgOptions = dataGrid.options;
+
         this.columnDistribution =
-            dataGrid.options.columns?.distribution as ColumnDistribution;
+            dgOptions.columns?.distribution as ColumnDistribution;
+
+        this.allColumnsCount =
+            dgOptions.columns?.columnAssignment?.length ||
+            dgOptions.dataTable.getColumnNames().length;
 
         const { tableElement } = dataGrid;
 
@@ -263,7 +275,7 @@ class DataGridTable {
 
     /**
      * Get the widthRatio value from the width in pixels. The widthRatio is
-     * calculated based on the width of the viewport and the columns count.
+     * calculated based on the width of the viewport.
      *
      * @param width
      *        The width in pixels.
@@ -271,20 +283,20 @@ class DataGridTable {
      * @return The width ratio.
      */
     public getRatioFromWidth(width: number): number {
-        return width * this.columns.length / this.tbodyElement.clientWidth;
+        return width / this.tbodyElement.clientWidth;
     }
 
     /**
      * Get the width in pixels from the widthRatio value. The width is
-     * calculated based on the width of the viewport and the columns count.
+     * calculated based on the width of the viewport.
      *
      * @param ratio
      *       The width ratio.
      *
      * @returns The width in pixels.
      */
-    public getWithFromRatio(ratio: number): number {
-        return this.tbodyElement.clientWidth / this.columns.length * ratio;
+    public getWidthFromRatio(ratio: number): number {
+        return this.tbodyElement.clientWidth * ratio;
     }
 }
 
