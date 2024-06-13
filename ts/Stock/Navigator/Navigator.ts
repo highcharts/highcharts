@@ -572,7 +572,7 @@ class Navigator {
         merge(true, chart.options.navigator, options);
         this.navigatorOptions = chart.options.navigator || {};
 
-        this.setNavigatorOpposite();
+        this.setOpposite();
 
         // Revert to destroy/init for navigator/scrollbar enabled toggle
         if (defined(options.enabled)) {
@@ -605,16 +605,16 @@ class Navigator {
             // Update navigator axis
             if (options.height || options.xAxis || options.yAxis) {
                 this.height = options.height ?? this.height;
-                const { offsets, height } = this.getXAxisOffsetAndHeight();
+                const offsets = this.getXAxisOffsets();
 
                 this.xAxis.update({
                     ...options.xAxis,
                     offsets,
-                    [chart.inverted ? 'width' : 'height']: height
+                    [chart.inverted ? 'width' : 'height']: this.height
                 }, false);
                 this.yAxis.update({
                     ...options.yAxis,
-                    [chart.inverted ? 'width' : 'height']: height
+                    [chart.inverted ? 'width' : 'height']: this.height
                 }, false);
             }
         }
@@ -1292,18 +1292,14 @@ class Navigator {
         }
     }
     /**
-     * Calculate the navigator xAxis offset and height
+     * Calculate the navigator xAxis offsets
      *
      * @private
      */
-    public getXAxisOffsetAndHeight(): DeepPartial<AxisOptions> {
-        const chart = this.chart;
-        return {
-            offsets: chart.inverted ?
-                [this.scrollButtonSize, 0, -this.scrollButtonSize, 0] :
-                [0, -this.scrollButtonSize, 0, this.scrollButtonSize],
-            [chart.inverted ? 'width' : 'height']: this.height
-        };
+    public getXAxisOffsets(): [number, number, number, number] {
+        return (this.chart.inverted ?
+            [this.scrollButtonSize, 0, -this.scrollButtonSize, 0] :
+            [0, -this.scrollButtonSize, 0, this.scrollButtonSize]);
     }
 
     /**
@@ -1339,7 +1335,7 @@ class Navigator {
         this.navigatorOptions = navigatorOptions;
         this.scrollbarOptions = scrollbarOptions;
 
-        this.setNavigatorOpposite();
+        this.setOpposite();
 
         const navigator = this,
             baseSeries = navigator.baseSeries,
@@ -1352,7 +1348,7 @@ class Navigator {
 
 
         if (navigator.navigatorEnabled) {
-            const { offsets, height } = this.getXAxisOffsetAndHeight();
+            const offsets = this.getXAxisOffsets();
             // An x axis is required for scrollbar also
             navigator.xAxis = new Axis(chart, merge<DeepPartial<AxisOptions>>({
                 // Inherit base xAxis' break, ordinal options and overscroll
@@ -1526,7 +1522,7 @@ class Navigator {
      *
      * @private
      */
-    public setNavigatorOpposite(): void {
+    public setOpposite(): void {
         const navigatorOptions = this.navigatorOptions,
             navigatorEnabled = this.navigatorEnabled,
             chart = this.chart;
