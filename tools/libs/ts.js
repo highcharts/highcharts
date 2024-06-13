@@ -46,8 +46,13 @@ const DOCLET_TAG_INSET = /\{([^}]+)\}/gsu;
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
 
 
-const NATIVE_HELPER =
-    /^(?:Array|Extract|Omit|Partial|Record|Require)(?:<|$)/su;
+const NATIVE_HELPER = new RegExp(
+    '^(?:' + [
+        'Array', 'Extract', 'Omit', 'Partial', 'Readonly', 'ReadonlyArray',
+        'Record', 'Require'
+    ].join('|') + ')(?:<|$)',
+    'su'
+);
 
 
 const NATIVE_TYPES = [
@@ -1240,11 +1245,18 @@ function getFunctionInfo(
     }
 
     if (node.type) {
-        _info.return = node.type.getText();
+        const _return = sanitizeType(node.type.getText());
+        if (_return !== 'void') {
+            _info.return = _return;
+        }
     }
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
+        if (node.questionToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('optional');
+        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -1480,15 +1492,11 @@ function getInterfaceInfo(
  * @param {CodeInfo} info
  * Code information to get name for.
  *
- * @param {string} [namespace]
- * Space of name.
- *
  * @return {string|undefined}
  * Name or `undefined`.
  */
 function getName(
-    info,
-    namespace
+    info
 ) {
     /** @type {DocletInfo|undefined} */
     const _doclet = (info.kind === 'Doclet' ? info : info.doclet);
@@ -1527,7 +1535,7 @@ function getName(
 
     }
 
-    return (namespace ? `${namespace}.${_name}` : _name);
+    return _name;
 }
 
 
@@ -1770,6 +1778,14 @@ function getPropertyInfo(
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
+        if (node.exclamationToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('assured');
+        }
+        if (node.questionToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('optional');
+        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -1943,19 +1959,37 @@ function getVariableInfo(
         }
     } else {
         if (node.type) {
-            _info.type = node.type.getText();
+            _info.type = sanitizeType(node.type.getText());
         }
         if (node.initializer) {
             const _initializer = getChildInfos([node.initializer]);
-
             if (!_info.type) {
                 _info.type = toTypeof(node.initializer);
             }
-
             if (_initializer.length) {
                 _info.value = _initializer[0];
             } else {
-                _info.value = sanitizeText(node.initializer.getText());
+                const _value = node.initializer.getText();
+                if (sanitizeText(_value) !== _value) {
+                    _info.value = sanitizeText(_value);
+                } else if (!isNaN(Number(_value))) {
+                    _info.value = Number(_value);
+                } else {
+                    switch (_value) {
+                        default:
+                            _info.value = _value;
+                            break;
+                        case 'false':
+                            _info.value = false;
+                            break;
+                        case 'null':
+                            _info.value = null;
+                            break;
+                        case 'true':
+                            _info.value = true;
+                            break;
+                    }
+                }
             }
         }
     }
@@ -1966,6 +2000,16 @@ function getVariableInfo(
         }
     } else if (node.flags) {
         _info.flags = getInfoFlags(node);
+    }
+    if (TS.isParameter(node)) {
+        if (node.dotDotDotToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('rest');
+        }
+        if (node.questionToken) {
+            _info.flags = _info.flags || [];
+            _info.flags.push('optional');
+        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -2488,7 +2532,13 @@ function sanitizeText(
 function sanitizeType(
     type
 ) {
-    return ('' + type).replaceAll(SANITIZE_TYPE, '$1').trim();
+    type = `${type}`.replaceAll(/\s+/gsu, ' ');
+
+    if (type.includes('=>')) {
+        return type.trim();
+    }
+
+    return type.replaceAll(SANITIZE_TYPE, '$1').trim();
 }
 
 
