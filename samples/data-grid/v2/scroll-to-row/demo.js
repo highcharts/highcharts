@@ -14,14 +14,14 @@ const dg = new DataGrid.DataGrid2('container', {
     },
     defaults: {
         columns: {
-            headFormat: 'Col-{this}',
-            cellFormat: 'V: {this}'
+            headFormat: 'Col-{id}',
+            cellFormat: 'V: {value}'
         }
     },
     columns: {
         d: {
             headFormat: 'Col D',
-            cellFormat: '{this}%'
+            cellFormat: '{row.index}%'
         }
     }
 });

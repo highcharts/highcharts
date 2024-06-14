@@ -25,8 +25,10 @@
 import DGUtils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
+import F from '../../Core/Templating.js';
 
 const { makeHTMLElement } = DGUtils;
+const { format } = F;
 
 
 /* *
@@ -92,11 +94,13 @@ class DataGridTableHead {
      * Renders the table head content.
      */
     public render(): void {
-        let column;
+        let column: DataGridColumn;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             column = this.columns[i];
             const element = makeHTMLElement('th', {
-                innerText: column.userOptions.headFormat || column.id
+                innerText: column.userOptions.headFormat ? (
+                    format(column.userOptions.headFormat, column)
+                ) : column.id
             }, this.container);
 
             // Set the accessibility attributes.

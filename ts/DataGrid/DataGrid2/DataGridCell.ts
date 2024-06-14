@@ -21,9 +21,12 @@
  *
  * */
 
+import type DataTable from '../../Data/DataTable';
+
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
+
 const { format } = F;
 
 
@@ -58,6 +61,11 @@ class DataGridCell {
      * The row of the cell.
      */
     public row: DataGridRow;
+
+    /**
+     * The raw value of the cell.
+     */
+    public value: DataTable.CellType;
 
 
     /* *
@@ -101,13 +109,11 @@ class DataGridCell {
         }
 
         const formatString = this.column.userOptions.cellFormat;
-        const cellData = this.column.data[this.row.index];
+        this.value = this.column.data[this.row.index];
 
         this.htmlElement.innerText =
             (
-                formatString ?
-                    format(formatString, cellData) :
-                    cellData
+                formatString ? format(formatString, this) : this.value
             ) as string;
 
         this.row.htmlElement.appendChild(this.htmlElement);
