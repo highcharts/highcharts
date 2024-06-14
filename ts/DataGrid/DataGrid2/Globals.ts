@@ -73,7 +73,8 @@ namespace Globals {
         hoveredCell: classNamePrefix + 'hovered-cell',
         hoveredColumn: classNamePrefix + 'hovered-column',
         hoveredRow: classNamePrefix + 'hovered-row',
-        odd: classNamePrefix + 'odd'
+        odd: classNamePrefix + 'odd',
+        noResultColumn: classNamePrefix + 'no-result-column'
     };
 
     export const win = window;
