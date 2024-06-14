@@ -1,5 +1,5 @@
 const dg = new DataGrid.DataGrid2('container', {
-    dataTable: new DataGrid.DataTable({
+    table: {
         columns: {
             a: Array.from({ length: 1000 }, (_, i) => `A${i} loreum ipsum et`),
             b: Array.from({ length: 1000 }, (_, i) => `B${i} long text test loreum ipsum et omnia dolores test width and height`), // eslint-disable-line
@@ -8,9 +8,21 @@ const dg = new DataGrid.DataGrid2('container', {
             'loreum ipsum': Array.from({ length: 1000 }, (_, i) => `E${i}`), // eslint-disable-line
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
-    }),
-    rows: {
-        bufferSize: 5
+    },
+    settings: {
+        rowBufferSize: 5
+    },
+    defaults: {
+        columns: {
+            headFormat: 'Col-{id}',
+            cellFormat: 'V: {value}'
+        }
+    },
+    columns: {
+        d: {
+            headFormat: 'Col D',
+            cellFormat: '{row.index}%'
+        }
     }
 });
 

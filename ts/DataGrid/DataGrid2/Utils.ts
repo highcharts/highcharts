@@ -36,7 +36,6 @@ namespace DataGridUtils {
         id?: string;
         innerText?: string;
         style?: Partial<CSSStyleDeclaration>;
-        // scope?: string;
     }
 
 

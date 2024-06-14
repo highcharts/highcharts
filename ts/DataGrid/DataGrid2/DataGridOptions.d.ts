@@ -20,6 +20,7 @@
  * */
 
 import type DataTable from '../../Data/DataTable';
+import type DataTableOptions from '../../Data/DataTableOptions';
 
 
 /* *
@@ -42,57 +43,33 @@ export interface DataGridOptions {
     /**
      * Data table to display in the grid structure.
      */
-    dataTable: DataTable;
+    table: DataTable | DataTableOptions;
 
     /**
-     * Contains options for rows.
+     * Options to control the way DataGrid is rendered.
      */
-    rows?: RowsOptions;
+    settings?: DataGridSettings;
 
     /**
-     * Contains options for columns.
+     * Default options for the rows and columns.
      */
-    columns?: ColumnsOptions;
+    defaults?: DataGridDefaults;
+
+    /**
+     * Columns included in the grid structure.
+     */
+    columnsIncluded?: Array<string>;
+
+    /**
+     * Columns excluded from the grid structure.
+     */
+    columns?: Record<string, ColumnOptions>;
 }
 
 /**
- * Options for rows.
+ * Options to control the way DataGrid is rendered.
  */
-export interface RowsOptions {
-
-    /**
-     * Buffer of rows to render outside the visible area from the top and from
-     * the bottom while scrolling. The bigger the buffer, the less flicker will
-     * be seen while scrolling, but the more rows will have to be rendered.
-     *
-     * @default 5
-     */
-    bufferSize?: number;
-
-}
-
-/**
- * Column options that can be shared between columns but can be set for each
- * column individually.
- */
-export interface ColumnOptions {
-    /**
-     * The title of the column to display in the grid structure.
-     * @unimplemented
-     */
-    name?: string;
-
-    /**
-     * The format of the cell content.
-     * @unimplemented
-     */
-    format?: string;
-}
-
-/**
- * Options for columns.
- */
-export interface ColumnsOptions {
+export interface DataGridSettings {
 
     /**
      * The distribution of the columns. If `full`, the columns will be
@@ -101,35 +78,50 @@ export interface ColumnsOptions {
      *
      * @default 'full'
      */
-    distribution: ColumnDistribution;
+    columnDistribution?: ColumnDistribution;
 
     /**
-     * The columns to display in the grid structure. Can be a list of column
-     * IDs (data table column names) or a list of objects with options for
-     * individual columns. If not defined, all columns from the data table will
-     * be displayed with default options.
+     * Buffer of rows to render outside the visible area from the top and from
+     * the bottom while scrolling. The bigger the buffer, the less flicker will
+     * be seen while scrolling, but the more rows will have to be rendered.
+     *
+     * @default 5
      */
-    columnAssignment?: Array<string | ColumnAssignmentOptions>;
-
-    /**
-     * Column options that will be shared between all columns.
-     */
-    options?: ColumnOptions;
+    rowBufferSize?: number;
 }
 
 /**
- * Options for column assignment for individual columns.
+ * Default options for the rows and columns.
  */
-export interface ColumnAssignmentOptions {
-    /**
-     * The id of the affected column (the name of the column in the data table).
-     */
-    columnId: string;
+export interface DataGridDefaults {
 
     /**
-     * Options for the column.
+     * Default options for the columns.
      */
-    options: ColumnOptions;
+    columns?: ColumnOptions;
+}
+
+/**
+ * Column options that can be shared between columns but can be set for each
+ * column individually.
+ */
+export interface ColumnOptions {
+
+    /**
+     * The format of the cell content.
+     */
+    cellFormat?: string;
+
+    /**
+     * Whether the column is enabled and should be displayed.
+     * @unimplemented
+     */
+    enabled?: boolean;
+
+    /**
+     * The format of the column header.
+     */
+    headFormat?: string;
 }
 
 

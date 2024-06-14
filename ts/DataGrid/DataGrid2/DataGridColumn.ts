@@ -134,19 +134,17 @@ class DataGridColumn {
      * @param viewport The viewport (table) the column belongs to.
      * @param id The id of the column (`name` in the Data Table).
      * @param index The index of the column.
-     * @param options The options of the column.
      */
     constructor(
         viewport: DataGridTable,
         id: string,
-        index: number,
-        options?: ColumnOptions
+        index: number
     ) {
         this.userOptions = merge(
-            viewport.dataGrid.options.columns?.options ?? {},
-            options ?? {}
+            viewport.dataGrid.options.defaults?.columns ?? {},
+            viewport.dataGrid.options.columns?.[id] ?? {}
         );
-        this.options = merge(DataGridColumn.defaultOptions, options);
+        this.options = merge(DataGridColumn.defaultOptions, this.userOptions);
 
         this.id = id;
         this.index = index;

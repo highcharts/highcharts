@@ -89,7 +89,8 @@ class RowsVirtualizer {
     constructor(viewport: DataGridTable) {
         this.viewport = viewport;
         this.defaultRowHeight = this.getDefaultRowHeight();
-        this.buffer = viewport.dataGrid.options.rows?.bufferSize as number;
+        this.buffer =
+            viewport.dataGrid.options.settings?.rowBufferSize as number;
     }
 
 

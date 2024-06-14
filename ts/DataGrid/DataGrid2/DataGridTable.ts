@@ -138,11 +138,11 @@ class DataGridTable {
         const dgOptions = dataGrid.options;
 
         this.columnDistribution =
-            dgOptions.columns?.distribution as ColumnDistribution;
+            dgOptions.settings?.columnDistribution as ColumnDistribution;
 
         this.allColumnsCount =
-            dgOptions.columns?.columnAssignment?.length ||
-            dgOptions.dataTable?.getColumnNames().length;
+            dgOptions.columnsIncluded?.length ||
+            this.dataTable.getColumnNames().length;
 
         const { tableElement } = dataGrid;
 
@@ -177,8 +177,10 @@ class DataGridTable {
         this.head = new DataGridTableHead(this);
         this.head.render();
 
-        if (this.dataTable.getRowCount() > 0) {
+        if (this.allColumnsCount > 0) {
             this.rowsVirtualizer.initialRender();
+        } else {
+            this.renderNoResultRow();
         }
 
         // Refresh element dimensions after initial rendering
@@ -189,39 +191,13 @@ class DataGridTable {
      * Loads the columns of the table.
      */
     private loadColumns(): void {
-        const columnNames = this.dataTable.getColumnNames();
-        const columnAssignment =
-            this.dataGrid.options.columns?.columnAssignment;
+        const columnsIncluded =
+            this.dataGrid.options.columnsIncluded ??
+            this.dataTable.getColumnNames();
 
-        if (this.dataTable.getRowCount() === 0) {
-            this.renderNoResultRow();
-        }
-
-        if (columnAssignment) {
-            for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
-                const idOrOptions = columnAssignment[i];
-
-                if (typeof idOrOptions === 'string') {
-                    this.columns.push(
-                        new DataGridColumn(this, idOrOptions, i)
-                    );
-                    continue;
-                }
-
-                this.columns.push(new DataGridColumn(
-                    this,
-                    idOrOptions.columnId,
-                    i,
-                    idOrOptions.options
-                ));
-            }
-
-            return;
-        }
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
             this.columns.push(
-                new DataGridColumn(this, columnNames[i], i)
+                new DataGridColumn(this, columnsIncluded[i], i)
             );
         }
     }
@@ -306,7 +282,7 @@ class DataGridTable {
         return this.tbodyElement.clientWidth * ratio;
     }
 
-    private renderNoResultRow(isHeader: boolean = false): void {
+    private renderNoResultRow(): void {
         const row = makeHTMLElement('tr', {
             className: Globals.classNames.rowElement
         }, this.tbodyElement);
