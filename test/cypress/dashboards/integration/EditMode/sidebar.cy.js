@@ -89,4 +89,18 @@ describe('Edit Mode sidebar', () => {
         cy.get('#marker-radius').should('have.value', '3');
         cy.get('.highcharts-dashboards-edit-overlay-active').should('not.exist');
     });
+
+    it('Labels should be displayed only for nested components.', () => {
+        cy.toggleEditMode();
+        cy.openCellEditSidebar('#dashboard-col-0');
+
+        // Open chart options
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(0).click();
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(1).click();
+        cy.get('label.highcharts-dashboards-edit-label-text').contains('Marker Radius').should('be.visible');
+
+        // Open connector options
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn').eq(2).click();
+        cy.get('label.highcharts-dashboards-edit-label-text').contains('connectorName').should('be.not.visible');
+    });
 });
