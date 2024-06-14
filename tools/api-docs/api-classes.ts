@@ -305,12 +305,12 @@ async function main() {
                             if (param.name !== 'this') {
                                 member.doclet.tags.description.push(
                                     '**Parameter:** ' + sanitize(
-                                        param.name + ': ' + param.type
+                                        param.name + ': ' + param.type.join('|')
                                     )
                                 );
                             } else {
                                 member.doclet.tags.description.push(
-                                    '**Ctx:** ' + sanitize(param.type)
+                                    '**Ctx:** ' + sanitize(param.type.join('|'))
                                 );
                             }
                         });
@@ -324,7 +324,7 @@ async function main() {
                     }
                     if (member.return) {
                         member.doclet.tags.description.push(
-                            '**Returns:** ' + sanitize(member.return)
+                            '**Returns:** ' + sanitize(member.return.join('|'))
                         );
                     }
                     if (member.body) {

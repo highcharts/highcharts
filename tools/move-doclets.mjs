@@ -376,8 +376,8 @@ function decorateType(
             }
 
             optionType = (
-                TSLib.toTypeof(child) ||
-                TSLib.toTypeof(TSLib.getNodesFirstChild(node))
+                getTypeOf(child) ||
+                getTypeOf(TSLib.getNodesFirstChild(node))
             );
 
         }
@@ -391,7 +391,7 @@ function decorateType(
         if (node.type) {
             optionType = node.type.getText();
         } else {
-            optionType = TSLib.toTypeof(node.getLastToken());
+            optionType = getTypeOf(node.getLastToken());
         }
     }
 
@@ -764,6 +764,40 @@ function getPropertyName(
         branch.fullName?.split('.').pop() ||
         ''
     );
+}
+
+
+/**
+ * @param {TS.Node} node
+ * @return {InfoType|undefined}
+ */
+function getTypeOf(
+    node
+) {
+    const _type = {
+        // [TS.SyntaxKind.BigIntKeyword]: 'bigint', // JSON issue
+        // [TS.SyntaxKind.BigIntLiteral]: 'bigint', // JSON issue
+        [TS.SyntaxKind.FalseKeyword]: 'boolean',
+        [TS.SyntaxKind.TrueKeyword]: 'boolean',
+        [TS.SyntaxKind.ArrowFunction]: 'function',
+        [TS.SyntaxKind.FunctionDeclaration]: 'function',
+        [TS.SyntaxKind.FunctionExpression]: 'function',
+        [TS.SyntaxKind.FunctionKeyword]: 'function',
+        [TS.SyntaxKind.NumberKeyword]: 'number',
+        [TS.SyntaxKind.NumericLiteral]: 'number',
+        [TS.SyntaxKind.ObjectKeyword]: '*',
+        [TS.SyntaxKind.ObjectLiteralExpression]: '*',
+        [TS.SyntaxKind.StringKeyword]: 'string',
+        [TS.SyntaxKind.StringLiteral]: 'string'
+    }[node.kind];
+
+    if (!_type) {
+        return void 0;
+    }
+
+    return [{
+        type: _type
+    }];
 }
 
 
