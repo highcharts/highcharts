@@ -11,7 +11,9 @@
  * */
 
 
-/* eslint-disable no-console, no-underscore-dangle, no-unused-expressions, no-use-before-define */
+/* eslint-disable
+   no-console, no-undef, no-underscore-dangle, no-unused-expressions,
+   no-use-before-define */
 
 
 /* *
@@ -2248,61 +2250,73 @@ function mergeDocletInfos(
 
 
 /**
- * Creates a new CodeInfo object from a template.
+ * Creates a new code or source information object.
  *
  * @template {CodeInfo|SourceInfo} T
  *
- * @param {T} [template]
- * Template to create from.
+ * @param {Partial<T>} [template]
+ * Information to apply.
  *
  * @return {T}
- * Template copy.
+ * New information.
  */
 function newCodeInfo(
-    template
+    template = {}
 ) {
-    return (
-        typeof template === 'object' ?
-            /* eslint-disable-next-line no-undef */
-            structuredClone({
-                ...template,
-                node: void 0 // Avoid clone of native TSNode.
-            }) :
-            {
-                kind: 'Object'
-            }
-    );
+    return {
+        kind: 'Object',
+        meta: newMeta(),
+        ...structuredClone({
+            ...template,
+            node: void 0 // Avoid clone of native TSNode.
+        })
+    };
+}
+
+
+/**
+ * Creates a new Meta object.
+ *
+ * @param {Partial<Meta>} [template]
+ * Meta to apply.
+ *
+ * @return {Meta}
+ * New meta.
+ */
+function newMeta(
+    template = {}
+) {
+    return {
+        begin: 0,
+        end: 0,
+        file: '',
+        overhead: 0,
+        syntax: 0,
+        ...structuredClone(template)
+    };
 }
 
 
 /**
  * Creates a new DocletInfo object.
  *
- * @param {DocletInfo} [template]
+ * @param {Partial<DocletInfo>} [template]
  * Doclet information to apply.
  *
  * @return {DocletInfo}
  * The new doclet information.
  */
 function newDocletInfo(
-    template
+    template = {}
 ) {
-    /** @type {DocletInfo} */
-    const doclet = {
+    return {
         kind: 'Doclet',
-        tags: {}
+        tags: {},
+        ...structuredClone({
+            ...template,
+            node: void 0 // Avoid clone of native TSNode.
+        })
     };
-
-    if (template) {
-        const newTags = doclet.tags;
-        const tags = template.tags;
-
-        for (const tag of Object.keys(tags)) {
-            newTags[tag] = tags[tag].slice();
-        }
-    }
-
-    return doclet;
 }
 
 

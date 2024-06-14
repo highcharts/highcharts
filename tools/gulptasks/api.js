@@ -58,4 +58,4 @@ function jsDocWatch() {
 require('./api-docs');
 require('./api-server');
 
-Gulp.task('api', Gulp.series('api-docs', jsDocWatch));
+Gulp.task('api', Gulp.series('api-tree', 'api-docs', jsDocWatch));
