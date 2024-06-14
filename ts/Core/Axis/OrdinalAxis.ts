@@ -1275,14 +1275,11 @@ namespace OrdinalAxis {
                         visible: series.visible
                     } as any;
 
-                    const xData = [
-                        ...series.getColumn('x'),
-                        ...(
-                            withOverscroll ?
-                                ordinal.getOverscrollPositions() :
-                                []
-                        )
-                    ];
+                    const xData = series.getColumn('x').concat(
+                        withOverscroll ?
+                            ordinal.getOverscrollPositions() :
+                            []
+                    );
                     fakeSeries.table = new DataTableCore({
                         columns: {
                             x: xData
