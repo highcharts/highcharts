@@ -460,18 +460,14 @@ function applyGrouping(
             }
 
             croppedData = series.cropData(
-                groupedXData as any,
-                groupedYData as any,
+                modified,
                 xAxis.min as any,
-                xAxis.max as any,
-                1,
-                modified
+                xAxis.max as any
             );
-            groupedXData = croppedData.xData;
-            groupedYData = croppedData.yData as any;
-            if (croppedData.modified) {
-                modified = croppedData.modified;
-            }
+            modified = croppedData.modified;
+            groupedXData = modified.getColumn('x') as Array<number>;
+            groupedYData = modified.getColumn('y') as Array<number>;
+
             series.cropStart = croppedData.start; // #15005
         }
         // Set the modified table

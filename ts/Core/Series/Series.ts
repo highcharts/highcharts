@@ -1639,55 +1639,49 @@ class Series {
             min = xExtremes.min;
             max = xExtremes.max;
             updatingNames = !!(xAxis.categories && !xAxis.names.length);
-        }
 
-        // Optionally filter out points outside the plot area
-        if (
-            isCartesian &&
-            series.sorted &&
-            !forceExtremesFromAll &&
-            (
-                !cropThreshold ||
-                dataLength > cropThreshold ||
-                series.forceCrop
-            )
-        ) {
-
-            // It's outside current extremes
+            // Optionally filter out points outside the plot area
             if (
-                (processedXData as any)[dataLength - 1] < (min as any) ||
-                (processedXData as any)[0] > (max as any)
-            ) {
-                processedXData = [];
-                processedYData = [];
-
-                modified = new DataTableCore();
-
-            // Only crop if it's actually spilling out
-            } else if (
-                // Don't understand why this condition is needed
-                series.getColumn(series.pointValKey || 'y').length && (
-                    (processedXData as any)[0] < (min as any) ||
-                    (processedXData as any)[dataLength - 1] > (max as any)
+                isCartesian &&
+                series.sorted &&
+                !forceExtremesFromAll &&
+                (
+                    !cropThreshold ||
+                    dataLength > cropThreshold ||
+                    series.forceCrop
                 )
             ) {
-                croppedData = this.cropData(
-                    series.getColumn('x'),
-                    series.getColumn('y'),
-                    min as any,
-                    max as any,
-                    void 0,
-                    table
-                );
 
-                processedXData = croppedData.xData;
-                processedYData = croppedData.yData as any;
-                modified = croppedData.modified;
-                cropStart = croppedData.start;
-                cropped = true;
+                // It's outside current extremes
+                if (
+                    processedXData[dataLength - 1] < min ||
+                    processedXData[0] > max
+                ) {
+                    processedXData = [];
+                    processedYData = [];
+
+                    modified = new DataTableCore();
+
+                // Only crop if it's actually spilling out
+                } else if (
+                    // Don't understand why this condition is needed
+                    series.getColumn(series.pointValKey || 'y').length && (
+                        processedXData[0] < min ||
+                        processedXData[dataLength - 1] > max
+                    )
+                ) {
+                    croppedData = this.cropData(table, min, max);
+
+                    modified = croppedData.modified;
+                    processedXData = modified.getColumn('x') as
+                        Array<number> || [];
+                    processedYData = modified.getColumn('y') as
+                        Array<number> || [];
+                    cropStart = croppedData.start;
+                    cropped = true;
+                }
             }
         }
-
 
         // Find the closest distance between processed points
         const closestPointRange = getClosestDistance(
@@ -1767,22 +1761,15 @@ class Series {
      * @function Highcharts.Series#cropData
      */
     public cropData(
-        xData: Array<number>|TypedArray,
-        yData: (
-            Array<(number|null)>|
-            Array<Array<(number|null)>>|
-            TypedArray
-        ),
+        table: DataTableCore,
         min: number,
-        max: number,
-        cropShoulder?: number,
-        table?: DataTableCore
+        max: number
     ): Series.CropDataObject {
-        if (table) {
-            xData = table.getColumn('x', true) as Array<number> || [];
-        }
+        const xData = table.getColumn('x', true) as Array<number> || [],
+            dataLength = xData.length,
+            dataColumnKeys = ['x', ...(this.pointArrayMap || ['y'])],
+            columns: DataTable.ColumnCollection = {};
 
-        const dataLength = xData.length;
         let i,
             j,
             start = 0,
@@ -1804,22 +1791,16 @@ class Series {
             }
         }
 
-        const dataColumnKeys = ['x', ...(this.pointArrayMap || ['y'])],
-            columns: DataTable.ColumnCollection = {};
-        if (table) {
-            for (const key of dataColumnKeys) {
-                const column = table.getColumn(key, true);
-                if (column) {
-                    columns[key] = column.slice(start, end);
-                }
+        for (const key of dataColumnKeys) {
+            const column = table.getColumn(key, true);
+            if (column) {
+                columns[key] = column.slice(start, end);
             }
         }
         return {
-            xData: xData.slice(start, end),
-            yData: yData?.slice(start, end),
+            modified: new DataTableCore({ columns }),
             start,
-            end,
-            modified: new DataTableCore({ columns })
+            end
         };
     }
 
@@ -4994,16 +4975,8 @@ namespace Series {
 
     export interface CropDataObject {
         end: number;
-        modified?: DataTableCore;
+        modified: DataTableCore;
         start: number;
-        /* @deprecated */
-        xData: Array<number>|TypedArray;
-        /* @deprecated */
-        yData: (
-            Array<(number|null)>|
-            Array<Array<(number|null)>>|
-            TypedArray
-        );
     }
 
     export interface PlotBoxTransform extends SVGAttributes {

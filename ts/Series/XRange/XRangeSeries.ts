@@ -20,6 +20,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type DataTableCore from '../../Data/DataTableCore';
 import type SeriesClass from '../../Core/Series/Series';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type {
@@ -197,24 +198,27 @@ class XRangeSeries extends ColumnSeries {
      * @private
      */
     public cropData(
-        xData: Array<number>,
-        yData: Array<number>,
+        table: DataTableCore,
         min: number,
         max: number
     ): SeriesClass.CropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        const crop = super.cropData(
-            this.x2Data as any,
-            yData,
-            min,
-            max
-        );
+        const xData = table.getColumn('x') || [],
+            x2Data = table.getColumn('x2');
+
+        table.setColumn('x', x2Data, void 0, { silent: true });
+        const croppedData = super.cropData(table, min, max);
 
         // Re-insert the cropped xData
-        crop.xData = xData.slice(crop.start, crop.end);
+        table.setColumn(
+            'x',
+            xData.slice(croppedData.start, croppedData.end),
+            void 0,
+            { silent: true }
+        );
 
-        return crop;
+        return croppedData;
     }
 
     /**
