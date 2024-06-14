@@ -97,11 +97,9 @@ declare module '../../Core/Series/SeriesLike' {
         generatePoints(): void;
         getDGApproximation(): ApproximationKeyValue;
         groupData(
-            xData: Array<number>|TypedArray,
-            yData: (Array<number>|Array<Array<number>>),
+            table: DataTableCore,
             groupPosition: Array<number>,
-            approximation: (string|Function),
-            table: DataTableCore
+            approximation: (string|Function)
         ): DataGroupingResultObject;
     }
 }
@@ -116,12 +114,6 @@ export interface DataGroupingInfoObject {
 }
 
 export interface DataGroupingResultObject {
-    groupedXData: Array<number>|TypedArray;
-    groupedYData: (
-        Array<(number|null|undefined)>|
-        Array<Array<(number|null|undefined)>>|
-        TypedArray
-    );
     modified: DataTableCore;
     groupMap: Array<DataGroupingInfoObject>;
 }
@@ -339,7 +331,6 @@ function applyGrouping(
             series.table :
             series.table.modified || series.table,
         processedXData = series.getColumn('x', !dataGroupingOptions.groupAll),
-        processedYData = series.getColumn('y', !dataGroupingOptions.groupAll),
         xData = processedXData,
         plotSizeX = chart.plotSizeX,
         xAxis = series.xAxis,
@@ -392,11 +383,9 @@ function applyGrouping(
             groupedData = seriesProto.groupData.apply(
                 series,
                 [
-                    xData,
-                    processedYData,
+                    table,
                     groupPositions,
-                    (dataGroupingOptions as any).approximation,
-                    table
+                    (dataGroupingOptions as any).approximation
                 ]
             );
 
@@ -600,10 +589,8 @@ function getDGApproximation(
  * @product highstock
  *
  * @function Highcharts.Series#groupData
- * @param {Array<number>} xData
- *        Parallel array of x data.
- * @param {Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>} yData
- *        Parallel array of y data.
+ * @param {Highcharts.DataTable} table
+ *        The series data table.
  * @param {Array<number>} groupPositions
  *        Group positions.
  * @param {string|Function} [approximation]
@@ -613,24 +600,16 @@ function getDGApproximation(
  */
 function groupData(
     this: Series,
-    xData: Array<number>|TypedArray,
-    yData: (
-        Array<(number|null|undefined)>|
-        Array<Array<(number|null|undefined)>>|
-        TypedArray
-    ),
+    table: DataTableCore,
     groupPositions: Array<number>,
-    approximation: (ApproximationKeyValue|Function),
-    table: DataTableCore
+    approximation: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
-    xData = table.getColumn('x', true) as Array<number> || [];
-    yData = table.getColumn('y', true) as Array<number>;
-
-    const series = this,
+    const xData = table.getColumn('x', true) as Array<number> || [],
+        yData = table.getColumn('y', true) as Array<number>,
+        series = this,
         data = series.data,
         dataOptions = series.options && series.options.data,
         groupedXData = [],
-        groupedYData = [],
         modified = new DataTableCore(),
         groupMap = [],
         dataLength = table.rowCount,
@@ -730,7 +709,6 @@ function groupData(
             // Push the grouped data
             if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
-                groupedYData.push(groupedY);
 
                 // Push the grouped values to the parallel columns
                 const groupedValuesArr = splat(groupedY);
@@ -764,11 +742,7 @@ function groupData(
         // For each raw data point, push it to an array that contains all values
         // for this specific group
         if (pointArrayMap) {
-            const index = (
-                    series.options.dataGrouping &&
-                    series.options.dataGrouping.groupAll ?
-                        i : (series.cropStart as any) + i
-                ),
+            const index = groupAll ? i : (series.cropStart as any) + i,
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
@@ -805,8 +779,6 @@ function groupData(
     modified.setColumns(columns);
 
     return {
-        groupedXData,
-        groupedYData,
         groupMap,
         modified
     };
