@@ -96,7 +96,7 @@ class DataGridTableHead {
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             column = this.columns[i];
             const element = makeHTMLElement('th', {
-                innerText: column.userOptions.name || column.id
+                innerText: column.userOptions.headFormat || column.id
             }, this.container);
 
             // Set the accessibility attributes.

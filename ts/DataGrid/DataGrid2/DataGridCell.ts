@@ -103,7 +103,7 @@ class DataGridCell {
         const formatString = this.column.userOptions.cellFormat;
         const cellData = this.column.data[this.row.index];
 
-        this.htmlElement.innerText = 
+        this.htmlElement.innerText =
             (
                 formatString ?
                     format(formatString, cellData) :
