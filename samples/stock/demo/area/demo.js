@@ -115,15 +115,17 @@ Highcharts.setOptions({
             },
             states: {
                 select: {
-                    fill: '#f23644',
+                    fill: '#f96772',
                     style: {
-                        color: '#ffffff'
+                        color: '#000000'
                     }
                 },
                 hover: {
-                    fill: '#f23644',
+                    fill: 'none',
+                    stroke: '#f96772',
+                    'stroke-width': 1,
                     style: {
-                        color: '#000000'
+                        color: '#ffffff'
                     }
                 }
             }
@@ -154,7 +156,7 @@ Highcharts.setOptions({
 });
 
 // Configuring the chart.
-Highcharts.stockChart('container', {
+const chart = Highcharts.stockChart('container', {
 
     title: {
         text: 'BTCETH',
@@ -187,6 +189,7 @@ Highcharts.stockChart('container', {
     },
 
     navigator: {
+        enabled: false,
         xAxis: {
             gridLineWidth: 0
         },
@@ -205,8 +208,16 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{xDescription}, price {point.y:.2f}'
+        }
+    },
+
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e5fcf4/samples/data/btc-eth.csv'
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e5fcf4/samples/data/btc-eth.csv',
+        firstRowAsNames: false,
+        startRow: 1
     },
 
     tooltip: {
@@ -216,6 +227,7 @@ Highcharts.stockChart('container', {
     },
 
     series: [{
+        name: '',
         type: 'area',
         tooltip: {
             valueDecimals: 4,
