@@ -1628,9 +1628,8 @@ class Series {
             xExtremes,
             min,
             max,
-            processedXData: Array<number>|TypedArray = series.getColumn('x'),
-            processedYData = series.getColumn('y'),
-            modified: DataTableCore|undefined,
+            xData: Array<number>|TypedArray = series.getColumn('x'),
+            modified = table,
             updatingNames = false;
 
         if (xAxis) {
@@ -1654,29 +1653,22 @@ class Series {
 
                 // It's outside current extremes
                 if (
-                    processedXData[dataLength - 1] < min ||
-                    processedXData[0] > max
+                    xData[dataLength - 1] < min ||
+                    xData[0] > max
                 ) {
-                    processedXData = [];
-                    processedYData = [];
-
                     modified = new DataTableCore();
 
                 // Only crop if it's actually spilling out
                 } else if (
                     // Don't understand why this condition is needed
                     series.getColumn(series.pointValKey || 'y').length && (
-                        processedXData[0] < min ||
-                        processedXData[dataLength - 1] > max
+                        xData[0] < min ||
+                        xData[dataLength - 1] > max
                     )
                 ) {
                     croppedData = this.cropData(table, min, max);
 
                     modified = croppedData.modified;
-                    processedXData = modified.getColumn('x') as
-                        Array<number> || [];
-                    processedYData = modified.getColumn('y') as
-                        Array<number> || [];
                     cropStart = croppedData.start;
                     cropped = true;
                 }
@@ -1684,11 +1676,12 @@ class Series {
         }
 
         // Find the closest distance between processed points
+        xData = modified.getColumn('x') as Array<number> || [];
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
-                    processedXData.map(logarithmic.log2lin) :
-                    processedXData
+                    xData.map(logarithmic.log2lin) :
+                    xData
             ],
 
             // Unsorted data is not supported by the line tooltip, as well as
@@ -1703,12 +1696,10 @@ class Series {
         );
 
         return {
-            xData: processedXData,
-            yData: processedYData,
             modified,
-            cropped: cropped,
-            cropStart: cropStart,
-            closestPointRange: closestPointRange
+            cropped,
+            cropStart,
+            closestPointRange
         };
     }
 
@@ -1742,7 +1733,7 @@ class Series {
         const processedData = series.getProcessedData();
 
         // Record the properties
-        table.modified = processedData.modified || table;
+        table.modified = processedData.modified;
         series.cropped = processedData.cropped; // Undefined or true
         series.cropStart = processedData.cropStart;
         series.closestPointRange = (
@@ -4987,16 +4978,10 @@ namespace Series {
     }
 
     export interface ProcessedDataObject {
-        xData: Array<number>|TypedArray;
-        yData: (
-            Array<(number|null)>|
-            Array<Array<(number|null)>>|
-            TypedArray
-        );
         cropped: (boolean|undefined);
         cropStart: number;
         closestPointRange: (number|undefined);
-        modified?: DataTableCore
+        modified: DataTableCore
     }
 
     export interface ZoneObject extends SeriesZonesOptions {
