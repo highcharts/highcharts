@@ -100,7 +100,7 @@ class DataGridCell {
 
         const cellData = this.column.data[this.row.index];
 
-        this.htmlElement.innerText = '' + cellData;
+        this.htmlElement.innerText = cellData?.toString() || '';
         this.row.htmlElement.appendChild(this.htmlElement);
     }
 

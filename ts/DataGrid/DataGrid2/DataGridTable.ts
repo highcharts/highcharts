@@ -31,6 +31,7 @@ import DataGridTableHead from './DataGridTableHead.js';
 import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
+import Globals from './Globals.js';
 
 const { makeHTMLElement } = DGUtils;
 
@@ -141,7 +142,7 @@ class DataGridTable {
 
         this.allColumnsCount =
             dgOptions.columns?.columnAssignment?.length ||
-            dgOptions.dataTable.getColumnNames().length;
+            dgOptions.dataTable?.getColumnNames().length;
 
         const { tableElement } = dataGrid;
 
@@ -176,7 +177,9 @@ class DataGridTable {
         this.head = new DataGridTableHead(this);
         this.head.render();
 
-        this.rowsVirtualizer.initialRender();
+        if (this.dataTable.getRowCount() > 0) {
+            this.rowsVirtualizer.initialRender();
+        }
 
         // Refresh element dimensions after initial rendering
         this.reflow();
@@ -189,6 +192,10 @@ class DataGridTable {
         const columnNames = this.dataTable.getColumnNames();
         const columnAssignment =
             this.dataGrid.options.columns?.columnAssignment;
+
+        if (this.dataTable.getRowCount() === 0) {
+            this.renderNoResultRow();
+        }
 
         if (columnAssignment) {
             for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
@@ -297,6 +304,18 @@ class DataGridTable {
      */
     public getWidthFromRatio(ratio: number): number {
         return this.tbodyElement.clientWidth * ratio;
+    }
+
+    private renderNoResultRow(isHeader: boolean = false): void {
+        const row = makeHTMLElement('tr', {
+            className: Globals.classNames.rowElement
+        }, this.tbodyElement);
+
+        const cell = makeHTMLElement('td', {
+            className: Globals.classNames.noResultColumn
+        }, row);
+
+        cell.innerHTML = 'No data';
     }
 }
 
