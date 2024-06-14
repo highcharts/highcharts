@@ -64,8 +64,6 @@ async function apiDocs() {
 
     const source = (args.source || 'ts');
 
-    await Gulp.task('api-tree')();
-
     await ProcessLib.exec(
         'npx ts-node tools/api-docs/api-classes.ts' +
             ` --source "${source}"`

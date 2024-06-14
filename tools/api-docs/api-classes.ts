@@ -63,9 +63,9 @@ async function main() {
             !path.endsWith('.json') &&
             !path.endsWith('.d.ts') &&
             // Ignore some like Dashboards
-            !path.includes(FSLib.path('ts\\Dashboards')) &&
-            !path.includes('ts\\DataGrid') &&
-            !path.includes('ts\\Data')
+            !path.includes(FSLib.path('ts/Dashboards')) &&
+            !path.includes(FSLib.path('ts/DataGrid')) &&
+            !path.includes(FSLib.path('ts/Data'))
         ) {
             content = await FS.readFile(path, 'utf8');
             if (content.includes('/**')) {
