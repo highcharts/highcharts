@@ -29,10 +29,6 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type {
-    DataTableLight,
-    DataTableLightModified
-} from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { TypedArray } from '../../Core/Series/SeriesOptions';
@@ -85,7 +81,7 @@ declare module '../../Core/Series/SeriesLike' {
             Array<Array<(number|null|undefined)>>|
             TypedArray
         );
-        allGroupedTable?: DataTableLightModified;
+        allGroupedTable?: DataTableCore;
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: DataGroupingInfoObject;
@@ -105,7 +101,7 @@ declare module '../../Core/Series/SeriesLike' {
             yData: (Array<number>|Array<Array<number>>),
             groupPosition: Array<number>,
             approximation: (string|Function),
-            table: DataTableLight
+            table: DataTableCore
         ): DataGroupingResultObject;
     }
 }
@@ -126,7 +122,7 @@ export interface DataGroupingResultObject {
         Array<Array<(number|null|undefined)>>|
         TypedArray
     );
-    modified: DataTableLightModified;
+    modified: DataTableCore;
     groupMap: Array<DataGroupingInfoObject>;
 }
 
@@ -629,7 +625,7 @@ function groupData(
     ),
     groupPositions: Array<number>,
     approximation: (ApproximationKeyValue|Function),
-    table: DataTableLight
+    table: DataTableCore
 ): DataGroupingResultObject {
     xData = table.getColumn('x', true) as Array<number> || [];
     yData = table.getColumn('y', true) as Array<number>;

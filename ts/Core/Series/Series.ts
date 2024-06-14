@@ -140,22 +140,6 @@ declare module './SeriesLike' {
     }
 }
 
-export type DataColumn = Array<number|null>|TypedArray;
-
-export interface DataColumns extends DataTable.ColumnCollection{
-    // [key: string]: DataColumn|undefined;
-    // x?: Array<number>|TypedArray;
-}
-
-export interface DataTableLightModified extends DataTableCore {
-    /// columns: DataColumns;
-    // rowCount: number;
-}
-
-export interface DataTableLight extends DataTableCore {
-    /// modified?: DataTableLightModified;
-}
-
 interface KDNode {
     [side: string]: (KDNode|Point|undefined);
     left?: KDNode;
@@ -1792,7 +1776,7 @@ class Series {
         min: number,
         max: number,
         cropShoulder?: number,
-        table?: DataTableLight
+        table?: DataTableCore
     ): Series.CropDataObject {
         if (table) {
             xData = table.getColumn('x', true) as Array<number> || [];
@@ -5039,7 +5023,7 @@ namespace Series {
         cropped: (boolean|undefined);
         cropStart: number;
         closestPointRange: (number|undefined);
-        modified?: DataTableLightModified;
+        modified?: DataTableCore
     }
 
     export interface ZoneObject extends SeriesZonesOptions {
