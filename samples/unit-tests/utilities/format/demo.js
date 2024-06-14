@@ -183,7 +183,7 @@ QUnit.module('Format', () => {
         assert.strictEqual(
             format('{value:%b \u2019%y}', { value: 1706745600000 }),
             'Feb ’24',
-            `Right single quotation mar shouldn't disable the format method,
+            `Right single quotation mark shouldn't disable the format method,
             #21124.`
         );
 
