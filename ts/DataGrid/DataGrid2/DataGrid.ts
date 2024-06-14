@@ -58,6 +58,7 @@ class DataGrid {
      */
     public static readonly defaultOptions = DataGridDefaultOptions;
 
+
     /**
      * The container of the data grid.
      */
@@ -111,7 +112,12 @@ class DataGrid {
             className: Globals.classNames.tableElement
         }, this.container);
 
-        this.dataTable = options.dataTable ?? new DataTable();
+        if (options.table instanceof DataTable) {
+            this.dataTable = options.table;
+        } else {
+            this.dataTable = new DataTable(options.table);
+        }
+
         this.viewport = new DataGridTable(this);
 
         // Accessibility

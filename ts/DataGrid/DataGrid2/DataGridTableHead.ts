@@ -25,8 +25,10 @@
 import DGUtils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
+import F from '../../Core/Templating.js';
 
 const { makeHTMLElement } = DGUtils;
+const { format } = F;
 
 
 /* *
@@ -92,9 +94,13 @@ class DataGridTableHead {
      * Renders the table head content.
      */
     public render(): void {
+        let column: DataGridColumn;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
+            column = this.columns[i];
             const element = makeHTMLElement('th', {
-                innerText: this.columns[i].id
+                innerText: column.userOptions.headFormat ? (
+                    format(column.userOptions.headFormat, column)
+                ) : column.id
             }, this.container);
 
             // Set the accessibility attributes.
@@ -102,7 +108,7 @@ class DataGridTableHead {
             element.setAttribute('data-column-id', this.columns[i].id);
 
             // Set the column's head element.
-            this.columns[i].headElement = element;
+            column.headElement = element;
 
             if (
                 this.viewport.columnDistribution !== 'full' ||
@@ -110,7 +116,7 @@ class DataGridTableHead {
             ) {
                 // Render the drag handle for resizing columns.
                 this.renderColumnDragHandles(
-                    this.columns[i],
+                    column,
                     element
                 );
             }
