@@ -2,7 +2,7 @@
  * Highcharts plugin to allow alignment of margins across several charts.
  *
  * Author:  Torstein Hønsi
- * Version: 2024-06-13
+ * Version: 2024-06-14
  */
 (({ addEvent, Chart, charts, wrap }) => {
     let redrawTimeout;
@@ -29,6 +29,7 @@
                     chart.plotTop < this.plotTop ||
                     chart.marginBottom < this.marginBottom
                 ) {
+                    chart.isDirtyBox = true;
                     chart.redraw();
                 }
             }
