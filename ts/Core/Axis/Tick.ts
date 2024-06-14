@@ -475,8 +475,7 @@ class Tick {
                                 ) :
                                 0
                         )
-                    ),
-
+                    ) - Math.max(((this.axis.labelOffset || 0)) - 14, 0),
                 y: horiz ?
                     (
                         (cHeight as any) -
@@ -492,7 +491,6 @@ class Tick {
                         axis.transB
                     )
             };
-
         // Chrome workaround for #10516
         pos.y = clamp(pos.y, -1e5, 1e5);
 
