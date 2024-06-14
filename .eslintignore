@@ -12,6 +12,7 @@ test/cypress
 test/test-*.*
 test/*.ts
 test/typescript-karma
+tools/api-docs/static/**/*
 tools/eslint-plugin-highcharts/node_modules/**
 tools/gulptasks/dashboards/api-docs/**/*.js
 tools/jsdoc/storage/**/*.js

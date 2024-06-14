@@ -536,10 +536,8 @@ function filterMembers(code: TSLib.ClassInfo): void {
  */
 async function buildStructure() {
     const buildPath = 'build/api/class-reference';
-
-    await FS.mkdir(buildPath, {recursive: true});
-
-    // TODO: move more relevent files and paths
+    await FS.mkdir(buildPath, { recursive: true });
+    FS.cp('tools/api-docs/static', buildPath, { recursive: true });
 }
 
 /* *
