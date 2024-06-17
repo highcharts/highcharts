@@ -23,7 +23,7 @@
                         cutLeft = idx !== 0,
                         cutRight = point.stackY !== point.y || !cutLeft;
 
-                    var len = options.headSize; // in pixels
+                    let len = options.headSize; // in pixels
 
                     if (point.y < 0) {
                         len *= -1;
@@ -68,43 +68,10 @@
 Highcharts.chart('container', {
     chart: {
         type: 'bar',
-        height: 170,
-        events: {
-            render: function () {
-                const chart = this,
-                    renderer = chart.renderer,
-                    top = chart.plotTop,
-                    left = chart.plotLeft,
-                    yAxis = chart.yAxis[0];
-
-                if (!this.minDataLabel) {
-                    this.minDataLabel = renderer.label(
-                        'Min: ' + yAxis.dataMin
-                    ).attr({ zIndex: 4 }).css({ fontWeight: 'bold' }).add();
-                }
-                if (!this.maxDataLabel) {
-                    this.maxDataLabel = renderer.label(
-                        'Max: ' + yAxis.dataMax
-                    ).attr({ zIndex: 4 }).css({ fontWeight: 'bold' }).add();
-                }
-
-                this.minDataLabel.attr({
-                    x: left +
-                        yAxis.toPixels(yAxis.dataMin, true) -
-                        (this.minDataLabel.width / 2),
-                    y: top
-                });
-                this.maxDataLabel.attr({
-                    x: left +
-                        yAxis.toPixels(yAxis.dataMax, true) -
-                        (this.maxDataLabel.width / 2),
-                    y: top
-                });
-            }
-        }
+        height: 170
     },
     title: {
-        text: 'Estimated Impact of Forces in Mars EDL sequence'
+        text: 'Mars EDL forces comparison'
     },
     plotOptions: {
         bar: {
@@ -123,9 +90,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        format: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<b>{series.name}: {point.y}</b>',
-        stickOnContact: true
+        enabled: false
     },
     accessibility: {
         typeDescription: 'Stacked bar "force" chart. Positive forces ' +
@@ -146,7 +111,17 @@ Highcharts.chart('container', {
         title: '',
         accessibility: {
             description: ''
-        }
+        },
+        stackLabels: {
+            enabled: true,
+            verticalAlign: 'top',
+            style: {
+                fontSize: '1.2em'
+            },
+            format: '{#if isNegative}Min{else}Max{/if}: {total}'
+        },
+        startOnTick: false,
+        endOnTick: false
     },
     xAxis: {
         visible: false,
