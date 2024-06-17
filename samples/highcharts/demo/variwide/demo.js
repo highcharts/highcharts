@@ -22,7 +22,10 @@ Highcharts.chart('container', {
     },
 
     legend: {
-        enabled: false
+        enabled: false,
+        labels: {
+            padding: -5
+        }
     },
 
     series: [{
