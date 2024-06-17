@@ -1656,7 +1656,7 @@ class RangeSelector {
             this.buttonOptions = this.options.buttons ?? [];
 
             if (defined(this.options.selected)) {
-                this.clickButton(this.options.selected);
+                this.clickButton(this.options.selected, false);
             }
 
         }
