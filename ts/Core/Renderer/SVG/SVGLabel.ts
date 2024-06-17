@@ -283,7 +283,7 @@ class SVGLabel extends SVGElement {
             paddingLeft = pick(this.paddingLeft, padding),
             rotation = rot ?? (this.rotation || 0);
 
-        let bBox = {
+        let bBox: BBoxObject = {
             width,
             height,
             x: translateX + this.bBox.x - paddingLeft,
