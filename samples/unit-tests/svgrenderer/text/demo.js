@@ -888,11 +888,12 @@ QUnit.test('textPath', assert => {
 
     const text = ren
         .text('Hello path', 20, 20)
-        .setTextPath(path, {})
-        .add();
+        .add()
+        .setTextPath(path, {});
 
     const textPathHref = text.element.querySelector('textPath')
         .getAttribute('href');
+
     assert.ok(
         textPathHref,
         'A `textPath` element should be present'

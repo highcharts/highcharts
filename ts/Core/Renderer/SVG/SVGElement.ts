@@ -91,11 +91,6 @@ declare module '../CSSObject' {
     }
 }
 
-interface TextPathObject {
-    path: SVGElement;
-    undo: Function;
-}
-
 /* *
  *
  *  Class
@@ -198,7 +193,6 @@ class SVGElement implements SVGElementLike {
     public text?: SVGElement;
     public textStr?: string;
     public textWidth?: number;
-    public textPath?: TextPathObject;
     // @todo public textPxLength?: number;
     public translateX?: number;
     public translateY?: number;
@@ -1470,7 +1464,7 @@ class SVGElement implements SVGElementLike {
         }
 
         // No cache found
-        if (!bBox) {
+        if (!bBox || bBox.polygon) {
 
             // SVG elements
             if (isSVG || renderer.forExport) {
@@ -1559,6 +1553,14 @@ class SVGElement implements SVGElementLike {
             if (rotation) {
                 bBox = this.getRotatedBox(bBox, rotation);
             }
+
+            // Create a reference to catch changes to bBox
+            const e = { bBox };
+
+            fireEvent(this, 'afterGetBBox', e);
+
+            // Pick up any changes after the fired event
+            bBox = e.bBox;
         }
 
         // Cache it. When loading a chart in a hidden iframe in Firefox and
@@ -1575,6 +1577,7 @@ class SVGElement implements SVGElementLike {
             }
             cache[cacheKey] = bBox;
         }
+
         return bBox;
     }
 
@@ -1656,7 +1659,13 @@ class SVGElement implements SVGElementLike {
             x,
             y,
             width: boxWidth,
-            height: boxHeight
+            height: boxHeight,
+            polygon: [
+                [aX, aY],
+                [bX, bY],
+                [cX, cY],
+                [dX, dY]
+            ]
         };
     }
 
@@ -1914,123 +1923,6 @@ class SVGElement implements SVGElementLike {
                     existingGradient.radAttr
                 )
             );
-        }
-
-        return this;
-    }
-
-    /**
-     * Set a text path for a `text` or `label` element, allowing the text to
-     * flow along a path.
-     *
-     * In order to unset the path for an existing element, call `setTextPath`
-     * with `{ enabled: false }` as the second argument.
-     *
-     * @sample highcharts/members/renderer-textpath/ Text path demonstrated
-     *
-     * @function Highcharts.SVGElement#setTextPath
-     *
-     * @param {Highcharts.SVGElement|undefined} path
-     *        Path to follow. If undefined, it allows changing options for the
-     *        existing path.
-     *
-     * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
-     *        Options.
-     *
-     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
-     */
-    public setTextPath(
-        path: SVGElement|undefined,
-        textPathOptions: AnyRecord
-    ): this {
-
-        // Defaults
-        textPathOptions = merge(true, {
-            enabled: true,
-            attributes: {
-                dy: -5,
-                startOffset: '50%',
-                textAnchor: 'middle'
-            }
-        }, textPathOptions);
-
-        const url = this.renderer.url,
-            textWrapper = this.text || this,
-            textPath = textWrapper.textPath,
-            { attributes, enabled } = textPathOptions;
-
-        path = path || (textPath && textPath.path);
-
-        // Remove previously added event
-        if (textPath) {
-            textPath.undo();
-        }
-
-        if (path && enabled) {
-            const undo = addEvent(textWrapper, 'afterModifyTree', (
-                e: AnyRecord
-            ): void => {
-
-                if (path && enabled) {
-
-                    // Set ID for the path
-                    let textPathId = path.attr('id');
-                    if (!textPathId) {
-                        path.attr('id', textPathId = uniqueKey());
-                    }
-
-                    // Set attributes for the <text>
-                    const textAttribs: SVGAttributes = {
-                        // `dx`/`dy` options must by set on <text> (parent), the
-                        // rest should be set on <textPath>
-                        x: 0,
-                        y: 0
-                    };
-
-                    if (defined(attributes.dx)) {
-                        textAttribs.dx = attributes.dx;
-                        delete attributes.dx;
-                    }
-                    if (defined(attributes.dy)) {
-                        textAttribs.dy = attributes.dy;
-                        delete attributes.dy;
-                    }
-                    textWrapper.attr(textAttribs);
-
-
-                    // Handle label properties
-                    this.attr({ transform: '' });
-                    if (this.box) {
-                        this.box = this.box.destroy();
-                    }
-
-                    // Wrap the nodes in a textPath
-                    const children = e.nodes.slice(0);
-                    e.nodes.length = 0;
-                    e.nodes[0] = {
-                        tagName: 'textPath',
-                        attributes: extend(attributes, {
-                            'text-anchor': attributes.textAnchor,
-                            href: `${url}#${textPathId}`
-                        }),
-                        children
-                    };
-                }
-            });
-
-            // Set the reference
-            textWrapper.textPath = { path, undo };
-
-        } else {
-            textWrapper.attr({ dx: 0, dy: 0 });
-            delete textWrapper.textPath;
-        }
-
-        if (this.added) {
-
-            // Rebuild text after added
-            textWrapper.textCache = '';
-            this.renderer.buildText(textWrapper);
         }
 
         return this;
