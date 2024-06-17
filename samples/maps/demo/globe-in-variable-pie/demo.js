@@ -130,6 +130,66 @@ Highcharts.getJSON(
                                 p => p.name === countryName
                             );
                         };
+                    },
+                    render() {
+                        // Adding "axes" to indicate what type
+                        // of data is in the variable pie series
+                        const chart = this,
+                            renderer = chart.renderer,
+                            pieSeries = chart.series[2],
+                            point = pieSeries.points[0],
+                            shapeArgs = point.shapeArgs,
+                            { innerR, r } = shapeArgs,
+                            [centerX, centerY] = pieSeries.center,
+                            cx = centerX + chart.plotLeft,
+                            cy = centerY + chart.plotTop;
+
+                        if (chart.customAxes) {
+                            chart.customAxes.destroy();
+                        }
+
+                        chart.customAxes = renderer.g().addClass('custom-axes')
+                            .add().toFront();
+
+                        // Radial axis
+                        const radialAxis = renderer.path([
+                            'M', cx - 1, cy - innerR, 'L', cx - 1, cy - r
+                        ]).attr({
+                            stroke: '#071436',
+                            'stroke-width': 2
+                        }).add(chart.customAxes);
+
+                        // Radial axis title
+                        renderer.text(
+                            'Arrivals'
+                        ).setTextPath(radialAxis, {
+                            attributes: {
+                                dy: -7
+                            }
+                        }).add(chart.customAxes);
+
+                        // Angular axis
+                        const AngularAxisR = innerR + 1;
+                        renderer.path([
+                            'M', cx - AngularAxisR, cy, 'A', AngularAxisR,
+                            AngularAxisR, 0, 0, 1, cx, cy - AngularAxisR
+                        ]).attr({
+                            'stroke-width': 2,
+                            stroke: '#071436'
+                        }).add(chart.customAxes);
+
+                        // Angular axis title
+                        const AngularAxisTitleR = AngularAxisR + 2;
+                        const AngularAxisTitlePath = renderer.path([
+                            'M', cx - AngularAxisTitleR, cy, 'A',
+                            AngularAxisTitleR, AngularAxisTitleR,
+                            0, 0, 1, cx, cy - AngularAxisTitleR
+                        ]).add(chart.customAxes);
+
+                        renderer.text('Arrivals per Capita')
+                            .setTextPath(AngularAxisTitlePath, {
+                            })
+                            .add(chart.customAxes);
                     }
                 }
             },
@@ -160,8 +220,7 @@ Highcharts.getJSON(
                 a slice to rotate the globe to the corresponding
                 country</strong>. Slice heights indicate tourist arrivals in
                 millions, while widths indicate arrivals per capita.`,
-                align: 'center',
-                margin: 0
+                align: 'center'
             },
 
             legend: {
@@ -190,22 +249,13 @@ Highcharts.getJSON(
             },
 
             tooltip: {
-                enabled: false,
-                backgroundColor: 'none',
-                shadow: false,
                 headerFormat:
-                    `<span style="font-size: 24px; font-weight: 600; 
-                    color: #071436">{point.key}</span><br/><br/>`,
+                    `<span style="font-weight: bold; 
+                    color: #071436">{point.key}</span><br/>`,
                 pointFormat:
-                    `<span style="font-size: 16px; font-weight: 600; 
-                    color: #071436">Arrivals: <b>{point.z}M</b><br/>
-                    Arrivals per capita: <b>{point.y}</b></span>`,
-                positioner: function (labelWidth) {
-                    return {
-                        x: chart.plotBox.width / 2 - labelWidth * 1.1,
-                        y: 120
-                    };
-                }
+                    `<span style="font-weight: normal;
+                    color: #071436">Arrivals: <b>{point.z}M</b>
+                    <br/>Arrivals per capita: <b>{point.y}</b></span>`
             },
 
             series: [
@@ -260,10 +310,10 @@ Highcharts.getJSON(
                     cursor: 'pointer',
                     innerSize: '50%',
                     center: ['50%', '50%'],
-                    borderColor: '#000',
+                    borderColor: '#071436',
                     endAngle: 270,
                     zMin: 25,
-                    borderRadius: 3,
+                    borderRadius: 5,
                     data: data.map(c => ({
                         ...c,
                         y: Math.round((100 * c.z) / c.y) / 100
@@ -292,17 +342,24 @@ Highcharts.getJSON(
                     point: {
                         events: {
                             click() {
-                                const point = this;
+                                const point = this,
+                                    countryName = point.name,
+                                    renderer = chart.renderer,
+                                    x = chart.plotLeft,
+                                    y = 120;
 
-                                if (point.selected) {
-                                    point.series.chart.tooltip.refresh(point);
+                                // Add sticky label to show data for
+                                // currently selected data
+                                if (!chart.sticky) {
+                                    chart.sticky = renderer
+                                        .label(countryName, x, y).add();
+                                } else {
+                                    chart.sticky.attr({
+                                        text: countryName
+                                    });
                                 }
-                                chart.tooltip.refresh(
-                                    chart.series[2].points[point.index]
-                                );
 
-                                const countryName = point.name;
-
+                                // Rotate to selected country
                                 if (countryName !== chart.selectedCountry) {
                                     const mapPoint =
                                         chart.findCountry(countryName);
@@ -318,24 +375,13 @@ Highcharts.getJSON(
                                     chart.rotateToCountry(countryName);
                                 }
                             },
-                            mouseOver() {
-                                return false;
-                            },
-                            select() {
-                                chart.update({
-                                    tooltip: {
-                                        enabled: true,
-                                        hideDelay: 9999999999
-                                    }
-                                });
-                            },
-                            unselect(e) {
-                                if (chart.selectedCountry === e.target.name) {
-                                    chart.update({
-                                        tooltip: {
-                                            enabled: false
-                                        }
-                                    });
+
+                            unselect() {
+                                const point = this,
+                                    countryName = point.name;
+
+                                if (countryName === chart.selectedCountry) {
+                                    chart.sticky = chart.sticky.destroy();
                                 }
                             }
                         }

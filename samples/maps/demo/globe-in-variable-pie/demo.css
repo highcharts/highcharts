@@ -26,6 +26,11 @@ a {
     font-weight: bold;
 }
 
+.custom-axes {
+    font-weight: 600;
+    color: #071436;
+}
+
 a:hover,
 a:active {
     text-decoration: underline;
