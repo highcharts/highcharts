@@ -200,7 +200,7 @@ QUnit.test('#12517: Reset zoom button', assert => {
     );
 });
 
-QUnit.test('Navigator grid lines height in scrollablePlotArea chart.', assert => {
+QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
     const chart = Highcharts.stockChart('container', {
         chart: {
             scrollablePlotArea: {
