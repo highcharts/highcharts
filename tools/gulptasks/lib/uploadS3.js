@@ -660,7 +660,7 @@ function getVersionPaths(version) {
  */
 async function uploadFiles(params) {
     const log = require('../../libs/log');
-    const { files, name, bucket, s3Params } = params;
+    const { files, name, bucket, s3Params, region } = params;
 
     params = Object.assign(
         {
@@ -672,7 +672,8 @@ async function uploadFiles(params) {
             callback: (from, to) => {
                 log.message(`Uploaded ${from} --> ${to}`);
             },
-            region: 'eu-west-1'
+            region: region ||
+                bucket.startsWith('staging') ? 'eu-central-1' : 'eu-west-1'
         },
         params
     );

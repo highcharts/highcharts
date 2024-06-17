@@ -154,9 +154,17 @@ function uploadProductPackage(productProps, options = {}) {
         gfxFilesToVersionedDir = [...gfxFilesToVersionedDir, ...gfxFiles.map(file => toS3FilePath(file, localPath, cdnpath, versionPath))];
     });
 
+    // eslint-disable-next-line no-undef
+    const zipWithoutVersion = structuredClone(zipFile);
+    zipWithoutVersion.to =
+        zipWithoutVersion.to.replace('-' + version, '-latest');
+
     promises.push(uploadFiles({
         bucket: options.bucket,
-        files: [zipFile],
+        files: [
+            zipFile,
+            zipWithoutVersion
+        ],
         name: prettyName
     }));
 
