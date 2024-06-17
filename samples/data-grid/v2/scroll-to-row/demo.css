@@ -9,8 +9,8 @@
     height: 400px;
 }
 
-.highcharts-dg-row[data-row-index="1"] {
-    height: 100px;
+.highcharts-dg-row[data-row-index="1"] td {
+    height: 150px;
 }
 
 .highcharts-dg-column[data-column-id="b"] {

@@ -91,7 +91,6 @@
 }
 
 .highcharts-dg-table {
-    height: 100%;
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
@@ -104,6 +103,10 @@
     background-color: var(--highcharts-neutral-color-5);
     display: block;
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
+}
+
+.highcharts-dg-table thead tr {
+    height: 32px;
 }
 
 .highcharts-dg-table thead th {
@@ -128,7 +131,8 @@
 .highcharts-dg-row {
     background: var(--highcharts-background-color);
     position: absolute;
-    min-height: 36px;
+    height: 36px;
+    overflow: hidden;
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
 }
 

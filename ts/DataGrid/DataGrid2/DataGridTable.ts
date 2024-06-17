@@ -202,7 +202,7 @@ class DataGridTable {
      */
     public reflow(): void {
         // Set the width of the visible part of the scrollable area.
-        this.tbodyElement.style.height = `${
+        this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
             this.dataGrid.container.clientHeight -
             this.theadElement.offsetHeight
         }px`;

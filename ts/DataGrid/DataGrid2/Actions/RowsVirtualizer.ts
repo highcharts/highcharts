@@ -63,11 +63,6 @@ class RowsVirtualizer {
     public viewport: DataGridTable;
 
     /**
-     * The initial height of the top row.
-     */
-    private topRowInitialHeight?: number;
-
-    /**
      * Size of the row buffer - how many rows should be rendered outside of the
      * viewport from the top and the bottom.
      */
@@ -177,8 +172,7 @@ class RowsVirtualizer {
             rows.push(alwaysLastRow);
         }
 
-        const bof = buffer - (rowCursor - buffer < 0 ? buffer - rowCursor : 0);
-        this.topRowInitialHeight = vp.rows[bof].htmlElement.clientHeight;
+        /// this.topRowInitialHeight = vp.rows[bof].htmlElement.clientHeight;
     }
 
     /**
@@ -187,6 +181,7 @@ class RowsVirtualizer {
      * the default height.
      */
     public adjustRowHeights(): void {
+        const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
 
@@ -194,42 +189,63 @@ class RowsVirtualizer {
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
-            const cursor = this.rowCursor;
 
-            if (row.index > cursor) {
-                break;
+            // Reset row height and cell transforms
+            row.htmlElement.style.height = '';
+            if (row.cells[0].htmlElement.style.transform) {
+                for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
+                    const cell = row.cells[j];
+                    cell.htmlElement.style.transform = '';
+                }
             }
 
-            const defaultH = this.defaultRowHeight;
-
+            // Rows above the first visible row
             if (row.index < cursor) {
                 row.htmlElement.style.height = defaultH + 'px';
-            } else if (
-                row.getCurrentHeight() > defaultH &&
-                this.topRowInitialHeight
-            ) {
-                const ratio = tbodyElement.scrollTop / defaultH - cursor;
-                const diff = this.topRowInitialHeight - defaultH;
+                continue;
+            }
 
-                row.htmlElement.style.height =
-                    this.topRowInitialHeight - diff * ratio + 'px';
+            const cellHeight = row.cells[0].htmlElement.offsetHeight;
+            row.htmlElement.style.height = cellHeight + 'px';
+
+            // Rows below the first visible row
+            if (row.index > cursor) {
+                continue;
+            }
+
+            // First visible row
+            if (row.htmlElement.offsetHeight > defaultH) {
+                const newHeight = cellHeight - (cellHeight - defaultH) * (
+                    tbodyElement.scrollTop / defaultH - cursor
+                );
+
+                row.htmlElement.style.height = newHeight + 'px';
+
+                for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
+                    const cell = row.cells[j];
+                    cell.htmlElement.style.transform = `translateY(${
+                        newHeight - cellHeight
+                    }px)`;
+                }
             }
         }
 
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].getCurrentHeight();
+            translateBuffer += rows[i - 1].htmlElement.offsetHeight;
             rows[i].htmlElement.style.transform =
                 `translateY(${translateBuffer}px)`;
         }
 
+        /* Last row position handling
         if (rows[rowsLn - 2].index + 1 === rows[rowsLn - 1].index) {
-            translateBuffer += rows[rowsLn - 2].getCurrentHeight();
+            translateBuffer += rows[rowsLn - 2].htmlElement.offsetHeight;
             rows[rowsLn - 1].htmlElement.style.transform =
                 `translateY(${translateBuffer}px)`;
         } else {
             rows[rowsLn - 1].htmlElement.style.transform =
                 `translateY(${rows[rowsLn - 1].getDefaultTopOffset()}px)`;
         }
+        */
     }
 
     /**
@@ -238,9 +254,15 @@ class RowsVirtualizer {
     public reflowRows(): void {
         const rows = this.viewport.rows;
 
+        if (rows.length < 1) {
+            return;
+        }
+
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             rows[i].reflow();
         }
+
+        this.adjustRowHeights();
     }
 
     /**

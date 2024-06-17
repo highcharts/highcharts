@@ -183,6 +183,7 @@ class ColumnsResizer {
         }
 
         this.viewport.reflow();
+        this.viewport.rowsVirtualizer.adjustRowHeights();
     };
 
     /**

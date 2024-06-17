@@ -177,10 +177,9 @@ class DataGridRow {
         );
     }
 
-    public getCurrentHeight(): number {
-        return this.htmlElement.offsetHeight;
-    }
-
+    /**
+     * Returns the default top offset of the row (before adjusting row heights).
+     */
     public getDefaultTopOffset(): number {
         return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
