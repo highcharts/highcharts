@@ -199,3 +199,25 @@ QUnit.test('#12517: Reset zoom button', assert => {
         'Reset zoom button should be within chart'
     );
 });
+
+QUnit.test('Navigator grid lines height in scrollablePlotArea chart.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minHeight: 500
+            }
+        },
+        navigator: {
+            enabled: true
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[1].gridGroup.getBBox().height,
+        chart.yAxis[1].height,
+        'Grid lines should not exceed navigator height, #20354'
+    );
+});
