@@ -1781,6 +1781,9 @@ class Navigator {
                 base,
                 'remove',
                 function (): void {
+                    if (baseSeries) {
+                        erase(baseSeries, base); // #21043
+                    }
                     if (this.navigatorSeries) {
                         erase(navigator.series as any, this.navigatorSeries);
                         if (defined(this.navigatorSeries.options)) {
