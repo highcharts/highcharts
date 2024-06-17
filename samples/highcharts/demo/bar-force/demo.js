@@ -90,7 +90,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        enabled: false
+        format: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<b>{series.name}: {point.y}</b>'
     },
     accessibility: {
         typeDescription: 'Stacked bar "force" chart. Positive forces ' +
