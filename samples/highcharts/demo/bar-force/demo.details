@@ -16,6 +16,7 @@ alt_text: >-
   Mars entry, descent, and landing (EDL) sequence. The force distribution
   is not to scale and is only meant to illustrate the concept of a stacked
   bar 'force' chart.
+new_until: 2024-10-01
 tags:
   - Highcharts demo
 categories:
