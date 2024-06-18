@@ -1,0 +1,23 @@
+#container {
+    max-width: 800px;
+    height: 400px;
+    margin: 1em auto;
+}
+
+#demo-content button {
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    margin: 10px;
+}
+
+#data-table {
+    border-collapse: collapse;
+    margin: 10px;
+}
+
+#data-table td,
+#data-table th {
+    border: 1px solid silver;
+    padding: 0.125rem 1em;
+}
