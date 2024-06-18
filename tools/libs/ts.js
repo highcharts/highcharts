@@ -48,6 +48,9 @@ const DOCLET_TAG_INSET = /\{([^}]+)\}/gsu;
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
 
 
+const GENERIC = /^[\w\.]*<[\s\w\.\[\],|()]+>$/su;
+
+
 const NATIVE_HELPER = new RegExp(
     '^(?:' + [
         'Array', 'Extract', 'Omit', 'Partial', 'Promise', 'Readonly',
@@ -388,6 +391,51 @@ function debug(
 
 
 /**
+ * Extracts the arguments of the generic name or type.
+ *
+ * @param {string} nameOrTypeString
+ * Name or type to extract from.
+ *
+ * @return {Array<string>|undefined}
+ * Extracted generic arguments.
+ */
+function extractGenericArguments(
+    nameOrTypeString
+) {
+
+    if (!GENERIC.test(nameOrTypeString)) {
+        return void 0;
+    }
+
+    /** @type {Array<string>} */
+    const types = [];
+
+    let sublevel = 0;
+
+    for (let part of nameOrTypeString.split(',')) {
+
+        part = part.trim();
+
+        if (sublevel) {
+            types.push(`${types.pop()},${part}`);
+        } else {
+            types.push(part);
+        }
+
+        if (part.includes('<')) {
+            ++sublevel;
+        }
+        if (part.includes('>')) {
+            --sublevel;
+        }
+
+    }
+
+    return types;
+}
+
+
+/**
  * Extracts the entity name from the given code information.
  *
  * @param {CodeInfo|SourceInfo} codeInfo
@@ -652,7 +700,7 @@ function extractTypes(
 
     let sublevel = 0;
 
-    for (const part of typeString.split('|')) {
+    for (let part of typeString.split('|')) {
 
         if (
             !includeNativeTypes &&
@@ -660,6 +708,8 @@ function extractTypes(
         ) {
             continue;
         }
+
+        part = part.trim();
 
         if (sublevel) {
             types.push(`${types.pop()}|${part}`);
@@ -2098,21 +2148,21 @@ function isCapitalCase(
 /**
  * Tests if a type is integrated into TypeScript.
  *
- * @param {string} type
+ * @param {string} typeString
  * Type to test.
  *
  * @return {boolean}
  * `true`, if type is integrated into TypeScript.
  */
 function isNativeType(
-    type
+    typeString
 ) {
     return (
-        type.length < 2 ||
-        !isCapitalCase(type) ||
-        NATIVE_TYPES.includes(type) ||
-        NATIVE_HELPER.test(type) ||
-        TS.SyntaxKind[type] > 0
+        typeString.length < 2 ||
+        !isCapitalCase(typeString) ||
+        NATIVE_TYPES.includes(typeString) ||
+        NATIVE_HELPER.test(typeString) ||
+        TS.SyntaxKind[typeString] > 0
     );
 }
 
@@ -2730,6 +2780,7 @@ module.exports = {
     changeSourceCode,
     changeSourceNode,
     debug,
+    extractGenericArguments,
     extractInfoName,
     extractInfos,
     extractTagInsets,
