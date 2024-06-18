@@ -31,36 +31,3 @@ Beginning with Highcharts v11, legacy browsers must load Highcharts from the `es
 ```
 
 One of the legacy browsers requiring the files from the `es5` folder is QtWeb (wkhtmltopdf's QT Webkit rendering engine is based on this browser).
-
-Other possible adjustments needed:
-
-- Tooltip might not show:
-
-    Because [IE11 does not support SVG element feDropShadow](https://caniuse.com/mdn-svg_elements_fedropshadow), the tooltip might not appear. A possible solution is to turn shadows off and style the tooltip manually like the example below.
-
-    Tooltip configuration:
-
-    ```javascript
-    tooltip: {
-        enabled: true,
-        backgroundColor: null,
-        borderWidth: 0,
-        shadow: false,
-        useHTML: true,
-        style: {
-            padding: 0
-        }
-    },
-    ```
-
-    CSS styling:
-
-    ```css
-    .highcharts-tooltip > span {
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid silver;
-        border-radius: 3px;
-        box-shadow: 1px 1px 2px #888;
-        padding: 8px;
-    }
-    ```
