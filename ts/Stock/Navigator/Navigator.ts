@@ -571,7 +571,9 @@ class Navigator {
      *        Options to merge in when updating navigator
      */
     public update(options: NavigatorOptions, redraw = false): void {
-        const chart = this.chart;
+        const chart = this.chart,
+            invertedUpdate = chart.options.chart.inverted !==
+                chart.scrollbar?.options.vertical;
 
         merge(true, chart.options.navigator, options);
         this.navigatorOptions = chart.options.navigator || {};
@@ -579,9 +581,9 @@ class Navigator {
         this.setOpposite();
 
         // Revert to destroy/init for navigator/scrollbar enabled toggle
-        if (defined(options.enabled)) {
+        if (defined(options.enabled) || invertedUpdate) {
             this.destroy();
-            this.navigatorEnabled = options.enabled;
+            this.navigatorEnabled = options.enabled || this.navigatorEnabled;
             return this.init(chart);
         }
 
