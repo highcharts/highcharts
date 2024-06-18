@@ -17,6 +17,7 @@ const global = [
     ];
 
 // Highcharts plugin that synchronizes axes and tooltips between charts
+// Updated 2024-06-18
 (() => {
 
     const shouldAxesSync = (axis1, axis2) => (
@@ -101,7 +102,7 @@ const global = [
         if (!btn.classList.contains('initialized')) {
             btn.addEventListener('click', () => {
                 Highcharts.charts.forEach(chart => chart.zoomOut());
-                alignToUnionDataExtremes();
+                alignToUnionDataExtremes.call(Highcharts.charts.at(-1));
                 btn.classList.remove('visible');
             });
         }
