@@ -1,101 +1,21 @@
-id,name,points
-fernando-alonso,"Fernando Alonso",10
-jenson-button,"Jenson Button",25
-kimi-raikkonen,"Kimi Räikkönen",6
-lewis-hamilton,"Lewis Hamilton",15
-sebastian-vettel,"Sebastian Vettel",18
-fernando-alonso,"Fernando Alonso",35
-jenson-button,"Jenson Button",25
-kimi-raikkonen,"Kimi Räikkönen",16
-lewis-hamilton,"Lewis Hamilton",30
-sebastian-vettel,"Sebastian Vettel",18
-fernando-alonso,"Fernando Alonso",37
-jenson-button,"Jenson Button",43
-kimi-raikkonen,"Kimi Räikkönen",16
-lewis-hamilton,"Lewis Hamilton",45
-sebastian-vettel,"Sebastian Vettel",28
-fernando-alonso,"Fernando Alonso",43
-jenson-button,"Jenson Button",43
-kimi-raikkonen,"Kimi Räikkönen",34
-lewis-hamilton,"Lewis Hamilton",49
-sebastian-vettel,"Sebastian Vettel",53
-fernando-alonso,"Fernando Alonso",61
-jenson-button,"Jenson Button",45
-kimi-raikkonen,"Kimi Räikkönen",49
-lewis-hamilton,"Lewis Hamilton",53
-sebastian-vettel,"Sebastian Vettel",61
-fernando-alonso,"Fernando Alonso",76
-jenson-button,"Jenson Button",45
-kimi-raikkonen,"Kimi Räikkönen",51
-lewis-hamilton,"Lewis Hamilton",63
-sebastian-vettel,"Sebastian Vettel",73
-fernando-alonso,"Fernando Alonso",86
-jenson-button,"Jenson Button",45
-kimi-raikkonen,"Kimi Räikkönen",55
-lewis-hamilton,"Lewis Hamilton",88
-sebastian-vettel,"Sebastian Vettel",85
-fernando-alonso,"Fernando Alonso",111
-jenson-button,"Jenson Button",49
-kimi-raikkonen,"Kimi Räikkönen",73
-lewis-hamilton,"Lewis Hamilton",88
-sebastian-vettel,"Sebastian Vettel",85
-fernando-alonso,"Fernando Alonso",129
-jenson-button,"Jenson Button",50
-kimi-raikkonen,"Kimi Räikkönen",83
-lewis-hamilton,"Lewis Hamilton",92
-sebastian-vettel,"Sebastian Vettel",100
-fernando-alonso,"Fernando Alonso",154
-jenson-button,"Jenson Button",68
-kimi-raikkonen,"Kimi Räikkönen",98
-lewis-hamilton,"Lewis Hamilton",92
-sebastian-vettel,"Sebastian Vettel",110
-fernando-alonso,"Fernando Alonso",164
-jenson-button,"Jenson Button",76
-kimi-raikkonen,"Kimi Räikkönen",116
-lewis-hamilton,"Lewis Hamilton",117
-sebastian-vettel,"Sebastian Vettel",122
-fernando-alonso,"Fernando Alonso",164
-jenson-button,"Jenson Button",101
-kimi-raikkonen,"Kimi Räikkönen",131
-lewis-hamilton,"Lewis Hamilton",117
-sebastian-vettel,"Sebastian Vettel",140
-fernando-alonso,"Fernando Alonso",179
-jenson-button,"Jenson Button",101
-kimi-raikkonen,"Kimi Räikkönen",141
-lewis-hamilton,"Lewis Hamilton",142
-sebastian-vettel,"Sebastian Vettel",140
-fernando-alonso,"Fernando Alonso",194
-jenson-button,"Jenson Button",119
-kimi-raikkonen,"Kimi Räikkönen",149
-lewis-hamilton,"Lewis Hamilton",142
-sebastian-vettel,"Sebastian Vettel",165
-fernando-alonso,"Fernando Alonso",194
-jenson-button,"Jenson Button",131
-kimi-raikkonen,"Kimi Räikkönen",157
-lewis-hamilton,"Lewis Hamilton",152
-sebastian-vettel,"Sebastian Vettel",190
-fernando-alonso,"Fernando Alonso",209
-jenson-button,"Jenson Button",131
-kimi-raikkonen,"Kimi Räikkönen",167
-lewis-hamilton,"Lewis Hamilton",153
-sebastian-vettel,"Sebastian Vettel",215
-fernando-alonso,"Fernando Alonso",227
-jenson-button,"Jenson Button",141
-kimi-raikkonen,"Kimi Räikkönen",173
-lewis-hamilton,"Lewis Hamilton",165
-sebastian-vettel,"Sebastian Vettel",240
-fernando-alonso,"Fernando Alonso",245
-jenson-button,"Jenson Button",153
-kimi-raikkonen,"Kimi Räikkönen",198
-lewis-hamilton,"Lewis Hamilton",165
-sebastian-vettel,"Sebastian Vettel",255
-fernando-alonso,"Fernando Alonso",260
-jenson-button,"Jenson Button",163
-kimi-raikkonen,"Kimi Räikkönen",206
-lewis-hamilton,"Lewis Hamilton",190
-sebastian-vettel,"Sebastian Vettel",273
-fernando-alonso,"Fernando Alonso",278
-jenson-button,"Jenson Button",188
-kimi-raikkonen,"Kimi Räikkönen",207
-lewis-hamilton,"Lewis Hamilton",190
-sebastian-vettel,"Sebastian Vettel",281
+round,Sebastian_Vettel,Fernando_Alonso,"Kimi_Räikkönen",Lewis_Hamilton,Jenson_button
+1,18,10,6,15,25
+2,18,35,16,30,25
+3,28,37,16,45,43
+4,53,43,34,49,43
+5,61,61,49,53,45
+6,73,76,51,63,45
+7,85,86,55,88,45
+8,85,111,73,88,49
+9,100,129,83,92,50
+10,110,154,98,92,68
+11,122,164,116,117,76
+12,140,164,131,117,101
+13,140,179,141,142,101
+14,165,194,149,142,119
+15,190,194,157,152,131
+16,215,209,167,153,131
+17,240,227,173,165,141
+18,255,245,198,165,153
+19,273,260,206,190,163
+20,281,278,207,190,188
