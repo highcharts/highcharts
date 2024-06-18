@@ -475,7 +475,7 @@ class Tick {
                                 ) :
                                 0
                         )
-                    ) - Math.max(((this.axis.labelOffset || 0)) - 14, 0),
+                    ),
                 y: horiz ?
                     (
                         (cHeight as any) -

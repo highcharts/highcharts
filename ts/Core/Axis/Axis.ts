@@ -3191,8 +3191,8 @@ class Axis {
         }
 
         // Set the explicit or automatic label alignment
-        this.labelAlign = labelOptions.align ||
-            this.autoLabelAlign(this.labelRotation as any);
+        this.labelAlign = (labelOptions.align ||
+            this.autoLabelAlign(this.labelRotation as any));
         if (this.labelAlign) {
             attr.align = this.labelAlign;
         }
@@ -3441,6 +3441,8 @@ class Axis {
             hasData = axis.hasData(),
             axisTitleOptions = options.title,
             labelOptions = options.labels,
+            labelOptionsAlign = labelOptions.align,
+            labelOptionsReserveSpace = labelOptions.reserveSpace,
             hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
@@ -3478,6 +3480,12 @@ class Axis {
                 side === 2 ||
                 ({ 1: 'left', 3: 'right' } as any)[side] === axis.labelAlign
             );
+
+            labelOptions.reserveSpace = !labelOptionsReserveSpace && (
+                (side === 3 && labelOptionsAlign === 'left') ||
+                (side === 1 && labelOptionsAlign === 'right')
+            ) || labelOptionsReserveSpace;
+
             if (pick(
                 labelOptions.reserveSpace,
                 hasCrossing ? false : null,
