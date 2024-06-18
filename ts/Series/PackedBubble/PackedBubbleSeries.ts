@@ -29,7 +29,6 @@ import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -66,6 +65,9 @@ const {
     merge,
     pick
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *
