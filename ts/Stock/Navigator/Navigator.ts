@@ -538,6 +538,10 @@ class Navigator {
                         rotationOriginX: Math.floor(-width / 2),
                         rotationOriginY: (height + width) / 2
                     });
+                } else {
+                    navigator.handles[index].attr({
+                        rotation: 0
+                    });
                 }
 
                 if (!chart.styledMode) {
@@ -610,7 +614,8 @@ class Navigator {
                 this.xAxis.update({
                     ...options.xAxis,
                     offsets,
-                    [chart.inverted ? 'width' : 'height']: this.height
+                    [chart.inverted ? 'width' : 'height']: this.height,
+                    [chart.inverted ? 'height' : 'width']: void 0
                 }, false);
                 this.yAxis.update({
                     ...options.yAxis,

@@ -277,29 +277,23 @@ QUnit.test('Update options', function (assert) {
         'Navigator has one series with changed color'
     );
 
-    // 3 updates and redraws are here on purpose to get the navigator working
     chart.update({
         chart: {
             inverted: true
         },
         navigator: {
-            enabled: false
-        }
-    });
-    chart.update({
-        navigator: {
-            enabled: true // Recreate navigator
-        }
-    });
-    chart.update({
-        navigator: {
-            height: 200
+            height: 100
         }
     });
     assert.strictEqual(
         chart.navigator.navigatorGroup.getBBox().width,
-        200,
+        100,
         'Height of navigator should be correct in inverted charts.'
+    );
+    assert.strictEqual(
+        chart.navigator.shades[1].getBBox().height,
+        chart.plotSizeX,
+        'Width of navigator should be correct in inverted charts.'
     );
 });
 
