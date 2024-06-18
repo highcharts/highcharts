@@ -1655,7 +1655,7 @@ class RangeSelector {
             }
             this.buttonOptions = this.options.buttons ?? [];
 
-            if (defined(this.options.selected)) {
+            if (defined(this.options.selected) && this.buttons.length) {
                 this.clickButton(this.options.selected, false);
             }
 
@@ -2222,7 +2222,6 @@ class RangeSelector {
         redraw: boolean = true
     ): void {
         const chart = this.chart;
-        merge(true, chart.options.rangeSelector, options);
         merge(true, this.options, options);
         if (
             this.options.selected &&
