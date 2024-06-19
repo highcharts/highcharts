@@ -24,11 +24,7 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: [
-            'Belgium', 'China', 'Denmark', 'Falkland Islands', 'Germany',
-            'Netherlands', 'Russia', 'Sweden', 'Turkey', 'United States',
-            'Unspecified', 'Vietnam'
-        ],
+        type: 'category',
         labels: {
             skew3d: true,
             style: {
@@ -48,8 +44,18 @@ Highcharts.chart('container', {
     series: [{
         name: 'Total imports',
         data: [
-            21956, 114358, 47726, 0, 116128,
-            48957, 3046, 110695, 10399, 76285, null, 10014
+            ['Belgium', 21956],
+            ['China', 114358],
+            ['Denmark', 47726],
+            ['Falkland Islands', 0],
+            ['Germany', 116128],
+            ['Netherlands', 48957],
+            ['Russia', 3046],
+            ['Sweden', 110695],
+            ['Turkey', 10399],
+            ['United States', 76285],
+            ['Unspecified', null],
+            ['Vietnam', 10014]
         ]
     }]
 });
