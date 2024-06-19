@@ -246,7 +246,7 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
     let entryPath;
     let entryStat;
 
-    if (FS.existsSync(directoryPath)) {
+    if (isDirectory(directoryPath)) {
         FS.readdirSync(directoryPath).forEach(entry => {
 
             entryPath = Path.join(directoryPath, entry);
@@ -310,7 +310,7 @@ function getFilePaths(directoryPath, includeSubDirectories) {
     let entryPath;
     let entryStat;
 
-    if (FS.existsSync(directoryPath)) {
+    if (isDirectory(directoryPath)) {
         FS.readdirSync(directoryPath).forEach(entry => {
 
             entryPath = Path.join(directoryPath, entry);

@@ -1783,10 +1783,14 @@ function getObjectInfo(
         kind: 'Object'
     };
 
-    _info.type = (
+    _type = (
         _type ||
         getInfoType(TS.getJSDocType(node))
     );
+
+    if (typeof _type !== 'object') {
+        _info.type = _type;
+    }
 
     if (node.properties) {
         /** @type {Array<MemberInfo>} */
@@ -2366,7 +2370,7 @@ function mergeDocletInfos(
 function newCodeInfo(
     template = {}
 ) {
-    return {
+    const clone = {
         kind: 'Object',
         meta: newMeta(),
         ...structuredClone({
@@ -2374,6 +2378,37 @@ function newCodeInfo(
             node: void 0 // Avoid clone of native TSNode.
         })
     };
+
+    delete clone.node; // Clean-up
+
+    return clone;
+}
+
+
+/**
+ * Creates a new DocletInfo object.
+ *
+ * @param {Partial<DocletInfo>} [template]
+ * Doclet information to apply.
+ *
+ * @return {DocletInfo}
+ * The new doclet information.
+ */
+function newDocletInfo(
+    template = {}
+) {
+    const clone = {
+        kind: 'Doclet',
+        tags: {},
+        ...structuredClone({
+            ...template,
+            node: void 0 // Avoid clone of native TSNode.
+        })
+    };
+
+    delete clone.node; // Clean-up
+
+    return clone;
 }
 
 
@@ -2396,29 +2431,6 @@ function newMeta(
         overhead: 0,
         syntax: 0,
         ...structuredClone(template)
-    };
-}
-
-
-/**
- * Creates a new DocletInfo object.
- *
- * @param {Partial<DocletInfo>} [template]
- * Doclet information to apply.
- *
- * @return {DocletInfo}
- * The new doclet information.
- */
-function newDocletInfo(
-    template = {}
-) {
-    return {
-        kind: 'Doclet',
-        tags: {},
-        ...structuredClone({
-            ...template,
-            node: void 0 // Avoid clone of native TSNode.
-        })
     };
 }
 
