@@ -17,7 +17,6 @@
 
 import FS from 'node:fs/promises';
 import FSLib from '../libs/fs.js';
-import Path from 'node:path';
 import TSLib from '../libs/ts.js';
 import TreeLib from '../libs/tree.js';
 const { toJSONString } = TreeLib;
@@ -46,8 +45,8 @@ async function main() {
 
     await buildStructure();
 
+    const searchJSON: Array<string> = [];
     const classes: Record<string, TSLib.SourceInfo> = {};
-
     const filteredClassCodeInfo: Array<TSLib.ClassInfo> = [];
     // const filteredInterfaceCodeInfo: Array<TSLib.CodeInfo> = [];
     const allClassNames: Array<string> = [];
@@ -229,13 +228,8 @@ async function main() {
             searchTitle: 'Overview', // getSearchTitle(node),
         };
 
-    // Make directories
-    await FS.mkdir('build/api/class-reference/nav', {recursive: true});
-
     // Make HTML and JSON for each class and its children
     async function processParent(info: TSLib.ClassInfo) {
-        info.doclet.tags.description.push('Src: ' + info.doclet.meta?.file);
-
         const name = info.name,
             fullName = 'Highcharts.' + name,
             description = getHTMLDescription(info.doclet.tags.description || []),
@@ -253,8 +247,11 @@ async function main() {
                         description
                     },
                     children: info.members.map((member: any) => {
+                        const memberFullName = fullName + '.' + member.name;
+                        searchJSON.push(memberFullName);
+
                         return {
-                            name: 'Highcharts.' + name + '.' + member.name,
+                            name: memberFullName,
                             shortName: member.name,
                             node: {
                                 doclet: {
@@ -336,11 +333,9 @@ async function main() {
                     }
 
                     // Nested from value
-                    if (member.value) {
+                    if (member.value && typeof member.value === 'string') {
                         member.doclet.tags.description.push(
-                            '**Value:** ' + sanitize(
-                                JSON.stringify(member.value)
-                            )
+                            '**Value:** ' + sanitize(member.value)
                         );
                     }
 
@@ -352,6 +347,7 @@ async function main() {
 
                     if (typeListNames === '*') {
                         // Nested type shows as collapsible. Add children.
+                        // TODO: Doesn't happen for classes - not fully tested.
                         processParent({
                             name: info.name + '.' + member.name,
                             doclet: member.doclet,
@@ -372,7 +368,8 @@ async function main() {
                             info.doclet?.meta?.file,
                         fullname: fullName + '.' + member.name,
 
-                        isLeaf: typeof member.value !== 'object',
+                        isLeaf: !!member.doclet.tags.type ||
+                            typeof member.value !== 'object',
                         // line: 000,
                         // lineEnd: 000,
                         name: member.name,
@@ -396,6 +393,8 @@ async function main() {
                 })
             };
 
+        searchJSON.push(fullName);
+
         // For the class itself
         await FS.writeFile(
             `build/api/class-reference/nav/${fullName}.json`,
@@ -409,9 +408,15 @@ async function main() {
                 ...defaultHbsConfig,
 
                 name: child.fullname,
-                node: child,
-                description: child.description
-                // TODO: add more to work without JS, handlebars only
+                node: {
+                    meta: {
+                        fullname: child.fullname,
+                        name: child.fullname
+                    },
+                    doclet: {
+                        description: child.description
+                    }
+                }
             });
 
             await FS.writeFile(
@@ -445,6 +450,21 @@ async function main() {
         'utf8'
     );
 
+    // Search
+    await FS.writeFile(
+        `build/api/class-reference/search.json`,
+        JSON.stringify(searchJSON),
+        'utf8'
+    );
+
+    // Creat the main site for backwards compatibility
+    await FS.writeFile(
+        `build/api/class-reference/classes.list.html`,
+        mainHbs({ ...defaultHbsConfig }),
+        'utf8'
+    );
+
+    // Store results
     await FS.writeFile(
         'tree-api-classes.json',
         toJSONString(filteredClassCodeInfo, '    '),
@@ -468,6 +488,9 @@ async function main() {
 
 // Sanitize HTML
 function sanitize(text: string): string {
+    if(typeof text.replace !== 'function') {
+        text = JSON.stringify(text);
+    }
     return text
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
@@ -536,7 +559,7 @@ function filterMembers(code: TSLib.ClassInfo): void {
  */
 async function buildStructure() {
     const buildPath = 'build/api/class-reference';
-    await FS.mkdir(buildPath, { recursive: true });
+    await FS.mkdir(buildPath + '/nav', {recursive: true});
     FS.cp('tools/api-docs/static', buildPath, { recursive: true });
 }
 
