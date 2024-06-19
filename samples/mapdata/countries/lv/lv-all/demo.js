@@ -51,7 +51,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lv/lv-all.topo.json">Latvia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/lv/lv-all.topo.json">Latvia</a>'
         },
 
         mapNavigation: {

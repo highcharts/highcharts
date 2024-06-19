@@ -61,7 +61,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-highres3.topo.json">World, ultra high resolution</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-highres3.topo.json">World, ultra high resolution</a>'
         },
 
         mapNavigation: {

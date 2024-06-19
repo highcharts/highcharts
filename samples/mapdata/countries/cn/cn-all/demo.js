@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/cn-all.topo.json">China</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cn/cn-all.topo.json">China</a>'
         },
 
         mapNavigation: {

@@ -40,6 +40,11 @@ Dashboards.board('container', {
             renderTo: 'dashboard-col-0',
             type: 'Highcharts',
             editableOptions: [{
+                isStandalone: true,
+                name: 'Title',
+                propertyPath: ['title'],
+                type: 'input'
+            }, {
                 name: 'chartOptions',
                 type: 'nested',
                 nestedOptions: [{
@@ -61,6 +66,10 @@ Dashboards.board('container', {
                         }]
                     }]
                 }]
+            }, {
+                name: 'connectorName',
+                propertyPath: ['connector', 'id'],
+                type: 'select'
             }],
             chartOptions: {
                 plotOptions: {
@@ -68,6 +77,12 @@ Dashboards.board('container', {
                         animation: false,
                         marker: {
                             radius: 10
+                        },
+                        events: {
+                            update: function () {
+                                document.getElementById('marker-radius').value =
+                                    this.options.marker.radius;
+                            }
                         }
                     }
                 },

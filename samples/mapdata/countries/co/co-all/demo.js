@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/co/co-all.topo.json">Colombia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/co/co-all.topo.json">Colombia</a>'
         },
 
         mapNavigation: {

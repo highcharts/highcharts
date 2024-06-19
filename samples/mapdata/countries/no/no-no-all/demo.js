@@ -8,20 +8,19 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['no-no-1875', 10], ['no-no-1806', 11], ['no-no-1836', 12],
-        ['no-no-1837', 13], ['no-no-1834', 14], ['no-no-1835', 15],
-        ['no-no-1838', 16], ['no-no-1827', 17], ['no-no-1848', 18],
-        ['no-no-1865', 19], ['no-no-1815', 20], ['no-no-1812', 21],
-        ['no-no-1818', 22], ['no-no-1856', 23], ['no-no-1804', 24],
-        ['no-no-1860', 25], ['no-no-1867', 26], ['no-no-1866', 27],
-        ['no-no-1870', 28], ['no-no-1841', 29], ['no-no-1840', 30],
-        ['no-no-1845', 31], ['no-no-1820', 32], ['no-no-1824', 33],
-        ['no-no-1868', 34], ['no-no-1813', 35], ['no-no-1811', 36],
-        ['no-no-1851', 37], ['no-no-1853', 38], ['no-no-1832', 39],
-        ['no-no-1828', 40], ['no-no-1833', 41], ['no-no-1839', 42],
-        ['no-no-1871', 43], ['no-no-1874', 44], ['no-no-1825', 45],
-        ['no-no-1826', 46], ['no-no-1822', 47], ['no-no-1816', 48],
-        ['no-no-1859', 49], ['no-no-1857', 50]
+        ['no-no-1871', 10], ['no-no-1826', 11], ['no-no-1832', 12],
+        ['no-no-1833', 13], ['no-no-1840', 14], ['no-no-1841', 15],
+        ['no-no-1845', 16], ['no-no-1848', 17], ['no-no-1825', 18],
+        ['no-no-1811', 19], ['no-no-1812', 20], ['no-no-1813', 21],
+        ['no-no-1824', 22], ['no-no-1816', 23], ['no-no-1815', 24],
+        ['no-no-1820', 25], ['no-no-1822', 26], ['no-no-1827', 27],
+        ['no-no-1828', 28], ['no-no-1834', 29], ['no-no-1836', 30],
+        ['no-no-1874', 31], ['no-no-1859', 32], ['no-no-1860', 33],
+        ['no-no-1865', 34], ['no-no-1867', 35], ['no-no-1868', 36],
+        ['no-no-1870', 37], ['no-no-1857', 38], ['no-no-1866', 39],
+        ['no-no-1853', 40], ['no-no-1804', 41], ['no-no-1838', 42],
+        ['no-no-1839', 43], ['no-no-1837', 44], ['no-no-1851', 45],
+        ['no-no-1806', 46], ['no-no-1875', 47]
     ];
 
     // Create the chart
@@ -35,7 +34,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-no-all.topo.json">Nordland</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-no-all.topo.json">Nordland</a>'
         },
 
         mapNavigation: {

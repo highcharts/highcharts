@@ -52253,8 +52253,7 @@ Highcharts.ganttChart('container', {
 
     plotOptions: {
         series: {
-            grouping: false,
-            turboThreshold: 0
+            grouping: false
         }
     },
 

@@ -31,7 +31,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/africa.topo.json">Africa</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/africa.topo.json">Africa</a>'
         },
 
         mapNavigation: {

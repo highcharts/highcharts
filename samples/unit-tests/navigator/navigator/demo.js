@@ -344,6 +344,31 @@ QUnit.test('General Navigator tests', function (assert) {
         outlinePathArray[5][2], // Upper right of navigator outline
         'Upper part of navigator outline should be a straight line.'
     );
+
+    chart = Highcharts.stockChart('container', {
+        xAxis: {
+            ordinal: false,
+            minPadding: 0.05,
+            maxPadding: 0.05
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+    assert.strictEqual(
+        chart.navigator.xAxis.options.minPadding,
+        chart.xAxis[0].options.minPadding,
+        'Navigator should inherit the minPadding property from the main axis.'
+    );
+
+    assert.strictEqual(
+        chart.navigator.xAxis.options.maxPadding,
+        chart.xAxis[0].options.maxPadding,
+        'Navigator should inherit the maxPadding property from the main axis.'
+    );
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {
