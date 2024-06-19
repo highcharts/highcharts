@@ -1,0 +1,15 @@
+---
+name: Line chart race
+authors:
+  - Tord Vikestad
+js_wrap: b
+alt_text: >-
+  Highcharts basic animated line chart JavaScript example displays graph plot of solar
+  employment growth areas over time.
+tags:
+  - Highcharts demo
+  - Annotations
+categories:
+  - Line charts:
+      priority: 1
+...
