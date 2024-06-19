@@ -12,10 +12,7 @@ const chart = new Highcharts.Chart({
         }
     },
     xAxis: {
-        categories: [
-            'Toyota', 'Volkswagen', 'Volvo', 'Tesla', 'Hyundai', 'MG',
-            'Skoda', 'BMW', 'Ford', 'Nissan'
-        ]
+        type: 'category'
     },
     yAxis: {
         title: {
@@ -45,7 +42,18 @@ const chart = new Highcharts.Chart({
         }
     },
     series: [{
-        data: [1795, 1242, 1074, 832, 593, 509, 471, 442, 385, 371],
+        data: [
+            ['Toyota', 1795],
+            ['Volkswagen', 1242],
+            ['Volvo', 1074],
+            ['Tesla', 832],
+            ['Hyundai', 593],
+            ['MG', 509],
+            ['Skoda', 471],
+            ['BMW', 442],
+            ['Ford', 385],
+            ['Nissan', 371]
+        ],
         colorByPoint: true
     }]
 });
