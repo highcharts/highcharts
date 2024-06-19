@@ -1231,19 +1231,27 @@ class RangeSelector {
             container.parentNode.insertBefore(this.div, container);
         }
         if (inputEnabled) {
-            // Create the group to keep the inputs
-            this.inputGroup = renderer.g('input-group').add(this.group);
-
-            const minElems = this.drawInput('min');
-            this.minDateBox = minElems.dateBox;
-            this.minLabel = minElems.label;
-            this.minInput = minElems.input;
-
-            const maxElems = this.drawInput('max');
-            this.maxDateBox = maxElems.dateBox;
-            this.maxLabel = maxElems.label;
-            this.maxInput = maxElems.input;
+            this.createInputs();
         }
+
+    }
+
+    /**
+     * Create the input elements and its group.
+     *
+     */
+    public createInputs(): void {
+        this.inputGroup = this.chart.renderer.g('input-group').add(this.group);
+
+        const minElems = this.drawInput('min');
+        this.minDateBox = minElems.dateBox;
+        this.minLabel = minElems.label;
+        this.minInput = minElems.input;
+
+        const maxElems = this.drawInput('max');
+        this.maxDateBox = maxElems.dateBox;
+        this.maxLabel = maxElems.label;
+        this.maxInput = maxElems.input;
 
     }
     /**
@@ -1276,18 +1284,7 @@ class RangeSelector {
         if (inputEnabled) {
             if (!this.inputGroup) {
 
-                this.inputGroup = chart.renderer.g('input-group')
-                    .add(this.group);
-
-                const minElems = this.drawInput('min');
-                this.minDateBox = minElems.dateBox;
-                this.minLabel = minElems.label;
-                this.minInput = minElems.input;
-
-                const maxElems = this.drawInput('max');
-                this.maxDateBox = maxElems.dateBox;
-                this.maxLabel = maxElems.label;
-                this.maxInput = maxElems.input;
+                this.createInputs();
             }
             // Set or reset the input values
             this.setInputValue('min', min);
