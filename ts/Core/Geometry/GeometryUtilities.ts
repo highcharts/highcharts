@@ -94,6 +94,40 @@ namespace GeometryUtilities {
         return Math.atan2(p2.x - p1.x, p2.y - p1.y);
     }
 
+    /**
+     * Test for point in polygon. Polygon defined as array of [x,y] points.
+     * @private
+     * @param {PositionObject} point The point potentially within a polygon.
+     * @param {Array<Array<number>>} polygon The polygon potentially containing the point.
+     */
+    export function pointInPolygon(
+        { x, y }: PositionObject,
+        polygon: Array<Array<number>>
+    ): boolean {
+        const len = polygon.length;
+        let i,
+            j,
+            inside = false;
+
+        for (i = 0, j = len - 1; i < len; j = i++) {
+            const [x1, y1] = polygon[i],
+                [x2, y2] = polygon[j];
+
+            if (
+                y1 > y !== y2 > y &&
+                (
+                    x < (x2 - x1) *
+                    (y - y1) /
+                    (y2 - y1) +
+                    x1
+                )
+            ) {
+                inside = !inside;
+            }
+        }
+
+        return inside;
+    }
 }
 
 /* *
