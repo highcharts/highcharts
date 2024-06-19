@@ -499,7 +499,7 @@ const sk = {
         align: 'left',
         y: -32,
         verticalAlign: 'bottom',
-        text: 'Snakey Chart',
+        text: 'Sankey Chart',
         style: {
             fontSize: '14px'
         }
@@ -3200,6 +3200,58 @@ function jellypus() {
 
 // live candlestick
 let csInterval;
+let stopped = false;
+let csSeries;
+
+// Imitate getting point from backend
+function getNewPoint(i, data) {
+    const lastPoint = data[data.length - 1];
+
+    // Add new point
+    if (i === 0 || i % 10 === 0) {
+        return [
+            lastPoint[0] + 60000,
+            lastPoint[4],
+            lastPoint[4],
+            lastPoint[4],
+            lastPoint[4]
+        ];
+    }
+    const updatedLastPoint = data[data.length - 1],
+        newClose = Highcharts.correctFloat(
+            lastPoint[4] + Highcharts.correctFloat(Math.random() - 0.5, 2),
+            4
+        );
+
+    // Modify last data point
+    return [
+        updatedLastPoint[0],
+        data[data.length - 2][4],
+        newClose >= updatedLastPoint[2] ? newClose : updatedLastPoint[2],
+        newClose <= updatedLastPoint[3] ? newClose : updatedLastPoint[3],
+        newClose
+    ];
+}
+
+function animateCS() {
+    let i = 0;
+    csInterval = setInterval(() => {
+        const data = csSeries.options.data,
+            newPoint = getNewPoint(i, data),
+            lastPoint = data[data.length - 1];
+
+        // Different x-value, we need to add a new point
+        if (lastPoint[0] !== newPoint[0]) {
+            csSeries.addPoint(newPoint);
+        } else {
+        // Existing point, update it
+            csSeries.options.data[data.length - 1] = newPoint;
+
+            csSeries.setData(data);
+        }
+        i++;
+    }, 100);
+}
 function cs() {
 
     // Define a custom symbol path
@@ -3362,61 +3414,14 @@ function cs() {
         }]
     };
 
-    // Imitate getting point from backend
-    function getNewPoint(i, data) {
-        const lastPoint = data[data.length - 1];
-
-        // Add new point
-        if (i === 0 || i % 10 === 0) {
-            return [
-                lastPoint[0] + 60000,
-                lastPoint[4],
-                lastPoint[4],
-                lastPoint[4],
-                lastPoint[4]
-            ];
-        }
-        const updatedLastPoint = data[data.length - 1],
-            newClose = Highcharts.correctFloat(
-                lastPoint[4] + Highcharts.correctFloat(Math.random() - 0.5, 2),
-                4
-            );
-
-        // Modify last data point
-        return [
-            updatedLastPoint[0],
-            data[data.length - 2][4],
-            newClose >= updatedLastPoint[2] ? newClose : updatedLastPoint[2],
-            newClose <= updatedLastPoint[3] ? newClose : updatedLastPoint[3],
-            newClose
-        ];
-    }
 
     // On load, start the interval that adds points
     options.chart = {
         events: {
             load() {
-                const chart = this,
-                    series = chart.series[0];
-
-                let i = 0;
-
-                csInterval = setInterval(() => {
-                    const data = series.options.data,
-                        newPoint = getNewPoint(i, data),
-                        lastPoint = data[data.length - 1];
-
-                    // Different x-value, we need to add a new point
-                    if (lastPoint[0] !== newPoint[0]) {
-                        series.addPoint(newPoint);
-                    } else {
-                    // Existing point, update it
-                        series.options.data[data.length - 1] = newPoint;
-
-                        series.setData(data);
-                    }
-                    i++;
-                }, 100);
+                const chart = this;
+                csSeries = chart.series[0];
+                animateCS();
             }
         },
         marginTop: 50
@@ -4340,7 +4345,15 @@ function cs() {
     Highcharts.stockChart('container', options);
 
     document.getElementById('stop').addEventListener('click', () => {
-        clearInterval(csInterval);
+        if (stopped === false) {
+            clearInterval(csInterval);
+            stopped = true;
+            document.getElementById('stop').innerHTML = '(Start animation)';
+        } else {
+            animateCS();
+            stopped = false;
+            document.getElementById('stop').innerHTML = '(Stop animation)';
+        }
     });
 
 }
