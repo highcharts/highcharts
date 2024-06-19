@@ -66,6 +66,10 @@ Dashboards.board('container', {
                         }]
                     }]
                 }]
+            }, {
+                name: 'connectorName',
+                propertyPath: ['connector', 'id'],
+                type: 'select'
             }],
             chartOptions: {
                 plotOptions: {
