@@ -27,7 +27,7 @@ import DGUtils from '../Utils.js';
 import Globals from '../Globals.js';
 import DataGridRow from '../DataGridRow.js';
 
-const { makeHTMLElement } = DGUtils;
+const { makeHTMLElement, getTranslateY } = DGUtils;
 
 
 /* *
@@ -67,6 +67,12 @@ class RowsVirtualizer {
      * viewport from the top and the bottom.
      */
     private buffer: number;
+
+    // Uncomment when needed.
+    // /**
+    //  * Flag indicating if the last row is visible in the viewport.
+    //  */
+    // private lastRowVisible: boolean = false;
 
 
     /* *
@@ -111,6 +117,15 @@ class RowsVirtualizer {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
 
+        /* Uncomment when needed.
+        const rows = this.viewport.rows;
+        this.lastRowVisible =
+            target.clientHeight + target.scrollTop >=
+            getTranslateY(rows[rows.length - 1].htmlElement);
+        */
+
+        const lastScrollTop = target.scrollTop;
+
         // Do vertical virtual scrolling
         const rowCursor = Math.floor(target.scrollTop / rowHeight);
         if (this.rowCursor !== rowCursor) {
@@ -120,6 +135,10 @@ class RowsVirtualizer {
         // -----------------------------
 
         this.adjustRowHeights();
+
+        if (lastScrollTop > target.scrollTop) {
+            target.scrollTop = lastScrollTop;
+        }
     }
 
     /**
@@ -144,7 +163,10 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
         }
 
-        const from = Math.max(rowCursor - buffer, 0);
+        const from = Math.min(
+            Math.max(rowCursor - buffer, 0),
+            vp.dataTable.getRowCount() - rowsPerPage
+        );
         const to = Math.min(
             rowCursor + rowsPerPage + buffer,
             rows[rows.length - 1].index - 1
@@ -171,8 +193,6 @@ class RowsVirtualizer {
         if (alwaysLastRow) {
             rows.push(alwaysLastRow);
         }
-
-        /// this.topRowInitialHeight = vp.rows[bof].htmlElement.clientHeight;
     }
 
     /**
@@ -215,8 +235,10 @@ class RowsVirtualizer {
 
             // First visible row
             if (row.htmlElement.offsetHeight > defaultH) {
-                const newHeight = cellHeight - (cellHeight - defaultH) * (
-                    tbodyElement.scrollTop / defaultH - cursor
+                const newHeight = Math.floor(
+                    cellHeight - (cellHeight - defaultH) * (
+                        tbodyElement.scrollTop / defaultH - cursor
+                    )
                 );
 
                 row.htmlElement.style.height = newHeight + 'px';
@@ -236,16 +258,15 @@ class RowsVirtualizer {
                 `translateY(${translateBuffer}px)`;
         }
 
-        /* Last row position handling
-        if (rows[rowsLn - 2].index + 1 === rows[rowsLn - 1].index) {
-            translateBuffer += rows[rowsLn - 2].htmlElement.offsetHeight;
-            rows[rowsLn - 1].htmlElement.style.transform =
-                `translateY(${translateBuffer}px)`;
-        } else {
-            rows[rowsLn - 1].htmlElement.style.transform =
-                `translateY(${rows[rowsLn - 1].getDefaultTopOffset()}px)`;
+        // Set the proper offset for the last row
+        const lastRow = rows[rowsLn - 1];
+        const preLastRow = rows[rowsLn - 2];
+        if (preLastRow && preLastRow.index === lastRow.index - 1) {
+            lastRow.htmlElement.style.transform = `translateY(${
+                preLastRow.htmlElement.offsetHeight +
+                getTranslateY(preLastRow.htmlElement)
+            }px)`;
         }
-        */
     }
 
     /**
