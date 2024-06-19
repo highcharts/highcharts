@@ -704,13 +704,10 @@ class Series {
         const options = this.options,
             pointIntervalUnit = options.pointIntervalUnit,
             relativeXValue = options.relativeXValue,
-            time = this.chart.time;
+            time = this.chart.time,
+            xIncrement = this.xIncrement ?? options.pointStart ?? 0;
 
-        let xIncrement = this.xIncrement,
-            date,
-            pointInterval: number;
-
-        xIncrement = pick(xIncrement, options.pointStart, 0);
+        let pointInterval: number;
 
         this.pointInterval = pointInterval = pick(
             this.pointInterval,
@@ -724,29 +721,20 @@ class Series {
 
         // Added code for pointInterval strings
         if (pointIntervalUnit) {
-            date = new time.Date(xIncrement);
+            const d = time.toParts(xIncrement);
 
             if (pointIntervalUnit === 'day') {
-                time.set(
-                    'Date',
-                    date,
-                    time.get('Date', date) + pointInterval
-                );
+                d[2] += pointInterval;
             } else if (pointIntervalUnit === 'month') {
-                time.set(
-                    'Month',
-                    date,
-                    time.get('Month', date) + pointInterval
-                );
+                d[1] += pointInterval;
             } else if (pointIntervalUnit === 'year') {
-                time.set(
-                    'FullYear',
-                    date,
-                    time.get('FullYear', date) + pointInterval
-                );
+                d[0] += pointInterval;
             }
 
-            pointInterval = date.getTime() - xIncrement;
+            pointInterval = time.makeTime.apply(
+                time,
+                d as [number, number, number, number, number, number]
+            ) - xIncrement;
 
         }
 

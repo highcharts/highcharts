@@ -82,13 +82,19 @@ QUnit.test('Updating from global to instance time', assert => {
         ]
     });
 
-    assert.strictEqual(chart.time.useUTC, true, 'Initial useUTC setting');
+    assert.strictEqual(chart.time.timezone, 'UTC', 'Initial useUTC setting');
 
     chart.update({
         time: {
             useUTC: false
         }
     });
+
+    assert.strictEqual(
+        chart.time.timezone,
+        undefined,
+        'The time zone should be undefined when useUTC is false'
+    );
 
     chart = Highcharts.chart('container', {
         series: [
@@ -99,8 +105,8 @@ QUnit.test('Updating from global to instance time', assert => {
     });
 
     assert.strictEqual(
-        chart.time.useUTC,
-        true,
+        chart.time.timezone,
+        'UTC',
         'Second chart useUTC should not be affected by chart.update (#10536)'
     );
 });

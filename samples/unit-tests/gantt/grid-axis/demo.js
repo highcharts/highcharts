@@ -106,35 +106,22 @@ QUnit.test('dateFormats', function (assert) {
         { date: new Date(2020, 1, 29), expectedWeek: 9, expectedDay: 'S' }
     ];
 
-    Highcharts.setOptions({
-        global: {
-            useUTC: false,
-            timezone: undefined
-        }
-    });
+    const timeLocal = new Highcharts.Time({ useUTC: false });
 
     dates.forEach(function (dateObject) {
         const { date, expectedWeek, expectedDay } = dateObject;
 
         assert.equal(
-            Highcharts.dateFormat('%W', date.valueOf()),
+            timeLocal.dateFormat('%W', date.valueOf()),
             expectedWeek,
             `Week format produces correct output for ${date}`
         );
 
         assert.equal(
-            Highcharts.dateFormat('%E', date.valueOf()),
+            timeLocal.dateFormat('%E', date.valueOf()),
             expectedDay,
             'Single character week day format produces correct output'
         );
-    });
-
-    /* Teardown */
-    Highcharts.setOptions({
-        global: {
-            timezone: undefined,
-            useUTC: undefined
-        }
     });
 
     const UTCDates = [
@@ -143,17 +130,12 @@ QUnit.test('dateFormats', function (assert) {
         { date: Date.UTC(2020, 1, 29), expectedWeek: 9, expectedDay: 'S' }
     ];
 
-    Highcharts.setOptions({
-        global: {
-            useUTC: true,
-            timezone: undefined
-        }
-    });
+    const timeUTC = new Highcharts.Time({ useUTC: true });
 
     UTCDates.forEach(function (dateObject) {
         const { date, expectedWeek, expectedDay } = dateObject;
         assert.equal(
-            Highcharts.dateFormat('%W', date),
+            timeUTC.dateFormat('%W', date),
             expectedWeek,
             `Week format produces correct output when using UTC for ${new Date(
                 date
@@ -161,19 +143,11 @@ QUnit.test('dateFormats', function (assert) {
         );
 
         assert.equal(
-            Highcharts.dateFormat('%E', date),
+            timeUTC.dateFormat('%E', date),
             expectedDay,
             'Single character week day format produces correct output when ' +
             'using UTC'
         );
-    });
-
-    /* Teardown */
-    Highcharts.setOptions({
-        global: {
-            timezone: undefined,
-            useUTC: undefined
-        }
     });
 });
 

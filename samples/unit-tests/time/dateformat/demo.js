@@ -159,3 +159,39 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
         );
     }
 );
+
+QUnit.test(
+    'Week formats in general',
+    function (assert) {
+        // UTC
+        const tUTC = new Highcharts.Time();
+        const resUTC = new Array(200).fill(0).map(
+            (_, i) => tUTC.dateFormat('%W', Date.UTC(2023, 11, 31, i))
+        );
+        assert.deepEqual([
+            resUTC.filter(v => v === '52').length,
+            resUTC.filter(v => v === '1').length,
+            resUTC.filter(v => v === '2').length
+        ], [
+            24,
+            7 * 24,
+            8
+        ], 'Week should be correct for every hour in UTC');
+
+
+        // Non-UTC time zone
+        const tTZ = new Highcharts.Time({ timezone: 'America/New_York' });
+        const resTZ = new Array(200).fill(0).map(
+            (_, i) => tTZ.dateFormat('%W', Date.UTC(2023, 11, 31, i))
+        );
+        assert.deepEqual([
+            resTZ.filter(v => v === '52').length,
+            resTZ.filter(v => v === '1').length,
+            resTZ.filter(v => v === '2').length
+        ], [
+            29,
+            7 * 24,
+            3
+        ], 'Week should be correct for every hour in local time zone');
+    }
+);

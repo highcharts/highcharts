@@ -325,8 +325,7 @@ class RangeSelector {
                 }
                 ytdExtremes = rangeSelector.getYTDExtremes(
                     dataMax,
-                    dataMin,
-                    chart.time.useUTC
+                    dataMin
                 );
                 newMin = rangeMin = ytdExtremes.min;
                 newMax = ytdExtremes.max;
@@ -522,8 +521,7 @@ class RangeSelector {
             dataMax = unionExtremes.dataMax,
             ytdExtremes = rangeSelector.getYTDExtremes(
                 dataMax as any,
-                dataMin as any,
-                chart.time.useUTC
+                dataMin as any
             ),
             ytdMin = ytdExtremes.min,
             ytdMax = ytdExtremes.max,
@@ -747,7 +745,7 @@ class RangeSelector {
             return (
                 (input.type === 'text' && options.inputDateParser) ||
                 this.defaultInputDateParser
-            )(input.value, time.useUTC, time);
+            )(input.value, time.timezone === 'UTC', time);
         }
         return 0;
     }
@@ -911,13 +909,16 @@ class RangeSelector {
         if (input.indexOf('T') === -1) {
             input += 'T00:00';
         }
-        if (useUTC) {
-            input += 'Z';
-        } else if (H.isSafari && !hasTimezone(input)) {
-            const offset = new Date(input).getTimezoneOffset() / 60;
-            input += offset <= 0 ? `+${pad(-offset)}:00` : `-${pad(offset)}:00`;
-        }
         let date = Date.parse(input);
+
+        if (!hasTimezone(input) && isNumber(date)) {
+            const offset = time?.getTimezoneOffset(date) || 0,
+                hours = Math.floor(offset / 36e5),
+                minutes = Math.abs(Math.round((offset % 36e5) / 6e4));
+
+            input += (offset <= 0 ? '+' : '') + `${pad(hours)}:${pad(minutes)}`;
+            date = Date.parse(input);
+        }
 
         // If the value isn't parsed directly to a value by the
         // browser's Date.parse method, try
@@ -931,7 +932,7 @@ class RangeSelector {
             );
         }
 
-        if (time && useUTC && isNumber(date)) {
+        if (time && isNumber(date)) {
             date += time.getTimezoneOffset(date);
         }
 
@@ -1172,21 +1173,15 @@ class RangeSelector {
      */
     public getYTDExtremes(
         dataMax: number,
-        dataMin: number,
-        useUTC?: boolean
+        dataMin: number
     ): RangeSelector.RangeObject {
         const time = this.chart.time,
-            now = new time.Date(dataMax),
-            year = time.get('FullYear', now),
-            startOfYear = useUTC ?
-                time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
-                +new time.Date(year, 0, 1),
-            min = Math.max(dataMin, startOfYear),
-            ts = now.getTime();
+            year = time.toParts(dataMax)[0],
+            startOfYear = time.makeTime(year, 0);
 
         return {
-            max: Math.min(dataMax || ts, ts),
-            min
+            max: dataMax,
+            min: Math.max(dataMin, startOfYear)
         };
     }
 
