@@ -311,6 +311,16 @@ class SVGLabel extends SVGElement {
 
     public heightSetter(value: number): void {
         this.heightSetting = value;
+        this.doUpdate = true;
+    }
+
+
+    public afterSetters(): void {
+        super.afterSetters();
+        if (this.doUpdate) {
+            this.updateBoxSize();
+            this.doUpdate = false;
+        }
     }
 
     /*
