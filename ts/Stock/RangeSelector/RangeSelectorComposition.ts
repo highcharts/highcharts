@@ -209,7 +209,7 @@ function onChartBeforeRender(
         if (!rangeSelector.options.floating) {
             if (verticalAlign === 'bottom') {
                 this.extraBottomMargin = true;
-            } else if (verticalAlign !== 'middle') {
+            } else if (verticalAlign === 'top') {
                 this.extraTopMargin = true;
             }
         }
