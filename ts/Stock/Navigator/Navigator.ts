@@ -538,10 +538,6 @@ class Navigator {
                         rotationOriginX: Math.floor(-width / 2),
                         rotationOriginY: (height + width) / 2
                     });
-                } else {
-                    navigator.handles[index].attr({
-                        rotation: 0
-                    });
                 }
 
                 if (!chart.styledMode) {
