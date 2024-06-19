@@ -27,7 +27,7 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            animation: false,
+            animation: true,
 
             // With the series label pointIndex feature
             label: {
@@ -43,7 +43,7 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '{series.name}: {point.y}',
                 keyPoints: {
-                    last: true
+                    last: false
                 },
                 overflow: 'allow',
                 crop: false
@@ -66,6 +66,12 @@ Highcharts.chart('container', {
         name: 'Jenson Button'
     }]
 });
+
+let i = 0;
+let n = 0;
+const timeBetweenPoints = 500;
+
+
 function loadfunc() {
     for (let j = 0; j < 5; j++) {
         Highcharts.charts[0].series[j].data.forEach(point => {
@@ -75,27 +81,39 @@ function loadfunc() {
         });
     }
 
+    Highcharts.charts[0].update({
+        plotOptions: {
+            series: {
+                animation: {
+                    duration: timeBetweenPoints * 10
+                }
+            }
+        }
+    });
 }
 
-let i = 0;
-let n = 0;
 
 const increment = series => {
     const last = series.points.at(n - 1);
 
     series.points.at(n).update({
         visible: true
+        //marker: {
+        //    enabled: true
+        //}
     });
+
     if (last) {
         last.update({
             dataLabels: {
                 enabled: false
-            },
-            marker: {
-                enabled: false
             }
-        }, false);
+            //marker: {
+            //    enabled: false
+            //}
+        }, true);
     }
+
     console.log(n);
 };
 
@@ -111,10 +129,10 @@ const timer = setInterval(() => {
     for (let j = 0; j < 5; j++) {
         increment(chart.series[j]);
     }
-    chart.redraw(false);
+    chart.redraw();
     n++;
 
     if (i++ > chart.series[0].data.length - 2) {
         clearInterval(timer);
     }
-}, 1000);
+}, timeBetweenPoints);
