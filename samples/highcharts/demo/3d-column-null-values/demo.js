@@ -9,7 +9,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'External trade in goods by country, Norway 2021',
+        text: 'External trade in goods by country, Norway 2023',
         align: 'left'
     },
     subtitle: {
@@ -25,9 +25,9 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'Belgium', 'China', 'Denmark', 'Fiji', 'Germany', 'Netherlands',
-            'Russia', 'Sweden', 'Turkey', 'United States', 'Unspecified',
-            'Vietnam'
+            'Belgium', 'China', 'Denmark', 'Falkland Islands', 'Germany',
+            'Netherlands', 'Russia', 'Sweden', 'Turkey', 'United States',
+            'Unspecified', 'Vietnam'
         ],
         labels: {
             skew3d: true,
@@ -48,8 +48,8 @@ Highcharts.chart('container', {
     series: [{
         name: 'Total imports',
         data: [
-            16076, 112688, 39452, 0, 94352,
-            30495, 21813, 95908, 11596, 53771, null, 8270
+            21956, 114358, 47726, 0, 116128,
+            48957, 3046, 110695, 10399, 76285, null, 10014
         ]
     }]
 });
