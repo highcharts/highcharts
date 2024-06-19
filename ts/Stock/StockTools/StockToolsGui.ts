@@ -140,50 +140,53 @@ function onChartAfterGetContainer(
  * Handle beforeRedraw and beforeRender
  * @private
  */
-function onChartBeforeRedraw(
-    this: Chart
-): void {
+function onChartBeforeRedraw(this: Chart): void {
     if (this.stockTools) {
         this.stockTools.redraw();
+        setOffset(this);
+    }
+}
 
-        if (this.stockTools.guiEnabled) {
+/**
+ * Function to calculate and set the offset width for stock tools.
+ * @private
+ */
+function setOffset(chart: Chart): void {
+    if (chart.stockTools?.guiEnabled) {
+        const optionsChart = chart.options.chart as ChartOptions;
+        const listWrapper = chart.stockTools.listWrapper;
+        const offsetWidth = listWrapper && (
+            (
+                (listWrapper as any).startWidth +
+                getStyle(listWrapper, 'padding-left') +
+                getStyle(listWrapper, 'padding-right')
+            ) || listWrapper.offsetWidth
+        );
 
-            const optionsChart = this.options.chart as ChartOptions;
-            const listWrapper = this.stockTools.listWrapper;
-            const offsetWidth = listWrapper && (
-                (
-                    (listWrapper as any).startWidth +
-                    getStyle(listWrapper, 'padding-left') +
-                    getStyle(listWrapper, 'padding-right')
-                ) || listWrapper.offsetWidth
-            );
+        chart.stockTools.width = offsetWidth;
 
-            this.stockTools.width = offsetWidth;
+        let dirty = false;
 
-            let dirty = false;
-
-            if (offsetWidth < this.plotWidth) {
-                const nextX = pick(
-                    optionsChart.spacingLeft,
-                    optionsChart.spacing && optionsChart.spacing[3],
-                    0
-                ) + offsetWidth;
-                const diff = nextX - this.spacingBox.x;
-                this.spacingBox.x = nextX;
-                this.spacingBox.width -= diff;
-                dirty = true;
-            } else if (offsetWidth === 0) {
-                dirty = true;
-            }
-
-            if (offsetWidth !== this.stockTools.prevOffsetWidth) {
-                this.stockTools.prevOffsetWidth = offsetWidth;
-                if (dirty) {
-                    this.isDirtyLegend = true;
-                }
-            }
+        if (offsetWidth < chart.plotWidth) {
+            const nextX = pick(
+                optionsChart.spacingLeft,
+                optionsChart.spacing && optionsChart.spacing[3],
+                0
+            ) + offsetWidth;
+            const diff = nextX - chart.spacingBox.x;
+            chart.spacingBox.x = nextX;
+            chart.spacingBox.width -= diff;
+            dirty = true;
+        } else if (offsetWidth === 0) {
+            dirty = true;
         }
 
+        if (offsetWidth !== chart.stockTools.prevOffsetWidth) {
+            chart.stockTools.prevOffsetWidth = offsetWidth;
+            if (dirty) {
+                chart.isDirtyLegend = true;
+            }
+        }
     }
 }
 
