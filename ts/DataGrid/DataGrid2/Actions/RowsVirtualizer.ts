@@ -69,10 +69,15 @@ class RowsVirtualizer {
     private buffer: number;
 
     /**
-     * Flag indicating if the last row is visible in the viewport.
+     * Flag indicating if the rows should have strict heights (no custom or
+     * dynamic heights allowed).
      */
-    private lastRowVisible: boolean = false;
+    private strictRowHeights: boolean;
 
+    /**
+     * Flag indicating if the scrolling handler should be prevented to avoid
+     * flickering loops when scrolling to the last row.
+     */
     private preventScroll: boolean = false;
 
 
@@ -90,9 +95,17 @@ class RowsVirtualizer {
      */
     constructor(viewport: DataGridTable) {
         this.viewport = viewport;
-        this.defaultRowHeight = this.getDefaultRowHeight();
+        this.strictRowHeights =
+            viewport.dataGrid.options.settings?.strictRowHeights as boolean;
         this.buffer =
             viewport.dataGrid.options.settings?.rowBufferSize as number;
+        this.defaultRowHeight = this.getDefaultRowHeight();
+
+        if (this.strictRowHeights) {
+            viewport.tbodyElement.classList.add(
+                Globals.classNames.rowsContentNowrap
+            );
+        }
     }
 
 
@@ -115,18 +128,15 @@ class RowsVirtualizer {
     }
 
     public scroll(): void {
-
-
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
-        const rows = this.viewport.rows;
         const lastScrollTop = target.scrollTop;
 
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {
                 this.preventScroll = false;
             }
-            this.bottomAdjust();
+            this.adjustBottomRowHeights();
             return;
         }
 
@@ -139,13 +149,20 @@ class RowsVirtualizer {
         // -----------------------------
 
         this.adjustRowHeights();
-        if (lastScrollTop > target.scrollTop && !this.preventScroll) {
+        if (
+            !this.strictRowHeights &&
+            lastScrollTop > target.scrollTop &&
+            !this.preventScroll
+        ) {
             target.scrollTop = lastScrollTop;
             this.preventScroll = true;
         }
     }
 
-    private bottomAdjust(): void {
+    /**
+     * Adjusts the visible row heights from the bottom of the viewport.
+     */
+    private adjustBottomRowHeights(): void {
         const rows = this.viewport.rows;
         const rowsLn = rows.length;
 
@@ -236,6 +253,10 @@ class RowsVirtualizer {
      * the default height.
      */
     public adjustRowHeights(): void {
+        if (this.strictRowHeights) {
+            return;
+        }
+
         const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;

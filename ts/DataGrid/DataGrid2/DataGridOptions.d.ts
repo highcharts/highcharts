@@ -88,6 +88,19 @@ export interface DataGridSettings {
      * @default 5
      */
     rowBufferSize?: number;
+
+    /**
+     * Whether the height of the rows should be calculated automatically based
+     * on the content of the cells. If `true`, the ellipsis will be used to
+     * indicate that the content is too long to fit in the cell.
+     *
+     * When there is no need to have different row heights, it is recommended
+     * to set this option to `true` for the performance reasons, to avoid the
+     * unnecessary calculations.
+     *
+     * @default false
+     */
+    strictRowHeights?: boolean;
 }
 
 /**

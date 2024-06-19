@@ -207,3 +207,8 @@
     width: 100%;
     display: inline-block;
 }
+
+.highcharts-dg-rows-content-nowrap td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
