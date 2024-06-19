@@ -68,11 +68,12 @@ class RowsVirtualizer {
      */
     private buffer: number;
 
-    // Uncomment when needed.
-    // /**
-    //  * Flag indicating if the last row is visible in the viewport.
-    //  */
-    // private lastRowVisible: boolean = false;
+    /**
+     * Flag indicating if the last row is visible in the viewport.
+     */
+    private lastRowVisible: boolean = false;
+
+    private preventScroll: boolean = false;
 
 
     /* *
@@ -114,15 +115,19 @@ class RowsVirtualizer {
     }
 
     public scroll(): void {
+        if (this.preventScroll) {
+            this.preventScroll = false;
+            this.bottomAdjust();
+            return;
+        }
+
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
-
-        /* Uncomment when needed.
         const rows = this.viewport.rows;
+
         this.lastRowVisible =
             target.clientHeight + target.scrollTop >=
             getTranslateY(rows[rows.length - 1].htmlElement);
-        */
 
         const lastScrollTop = target.scrollTop;
 
@@ -138,6 +143,38 @@ class RowsVirtualizer {
 
         if (lastScrollTop > target.scrollTop) {
             target.scrollTop = lastScrollTop;
+            this.preventScroll = true;
+        }
+    }
+
+    private bottomAdjust(): void {
+        const rows = this.viewport.rows;
+        const rowsLn = rows.length;
+
+        const lastRow = rows[rowsLn - 1];
+
+        let rowTop = getTranslateY(lastRow.htmlElement);
+        const rowBottom = rowTop + lastRow.htmlElement.offsetHeight;
+        let newHeight = lastRow.cells[0].htmlElement.offsetHeight;
+        rowTop = rowBottom - newHeight;
+
+        lastRow.htmlElement.style.height = newHeight + 'px';
+        lastRow.htmlElement.style.transform = `translateY(${rowTop}px)`;
+        for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
+            lastRow.cells[j].htmlElement.style.transform = '';
+        }
+
+        for (let i = rowsLn - 2; i >= 0; i--) {
+            const row = rows[i];
+
+            newHeight = row.cells[0].htmlElement.offsetHeight;
+            rowTop -= newHeight;
+
+            row.htmlElement.style.height = newHeight + 'px';
+            row.htmlElement.style.transform = `translateY(${rowTop}px)`;
+            for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
+                row.cells[j].htmlElement.style.transform = '';
+            }
         }
     }
 
