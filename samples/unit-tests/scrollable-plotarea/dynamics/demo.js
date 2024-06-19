@@ -207,9 +207,6 @@ QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
                 minHeight: 500
             }
         },
-        navigator: {
-            enabled: true
-        },
         series: [{
             data: [1, 2, 3, 4, 5]
         }]
