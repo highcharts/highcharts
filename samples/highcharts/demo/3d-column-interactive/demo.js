@@ -13,8 +13,8 @@ const chart = new Highcharts.Chart({
     },
     xAxis: {
         categories: [
-            'Toyota', 'BMW', 'Volvo', 'Audi', 'Peugeot', 'Mercedes-Benz',
-            'Volkswagen', 'Polestar', 'Kia', 'Nissan'
+            'Toyota', 'Volkswagen', 'Volvo', 'Tesla', 'Hyundai', 'MG',
+            'Skoda', 'BMW', 'Ford', 'Nissan'
         ]
     },
     yAxis: {
@@ -27,7 +27,7 @@ const chart = new Highcharts.Chart({
         pointFormat: 'Cars sold: {point.y}'
     },
     title: {
-        text: 'Sold passenger cars in Norway by brand, January 2021',
+        text: 'Sold passenger cars in Norway by brand, May 2024',
         align: 'left'
     },
     subtitle: {
@@ -45,7 +45,7 @@ const chart = new Highcharts.Chart({
         }
     },
     series: [{
-        data: [1318, 1073, 1060, 813, 775, 745, 537, 444, 416, 395],
+        data: [1795, 1242, 1074, 832, 593, 509, 471, 442, 385, 371],
         colorByPoint: true
     }]
 });
