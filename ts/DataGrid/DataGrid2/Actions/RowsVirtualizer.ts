@@ -115,21 +115,20 @@ class RowsVirtualizer {
     }
 
     public scroll(): void {
-        if (this.preventScroll) {
-            this.preventScroll = false;
-            this.bottomAdjust();
-            return;
-        }
+
 
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const rows = this.viewport.rows;
-
-        this.lastRowVisible =
-            target.clientHeight + target.scrollTop >=
-            getTranslateY(rows[rows.length - 1].htmlElement);
-
         const lastScrollTop = target.scrollTop;
+
+        if (this.preventScroll) {
+            if (lastScrollTop <= target.scrollTop) {
+                this.preventScroll = false;
+            }
+            this.bottomAdjust();
+            return;
+        }
 
         // Do vertical virtual scrolling
         const rowCursor = Math.floor(target.scrollTop / rowHeight);
@@ -140,8 +139,7 @@ class RowsVirtualizer {
         // -----------------------------
 
         this.adjustRowHeights();
-
-        if (lastScrollTop > target.scrollTop) {
+        if (lastScrollTop > target.scrollTop && !this.preventScroll) {
             target.scrollTop = lastScrollTop;
             this.preventScroll = true;
         }
