@@ -32,6 +32,11 @@ const md = markdownit();
 
 // TODO:
 // - Check doclets that are matching the name with classes and interfaces.
+// - Links in docs like "{@link Highcharts#chart}".
+// - Smart link to other docs for types.
+// - Style, for readablity, tabels with funciton parameters.
+// - api.js doesn't open the tree when full name has a dot.
+// - Check if all statick files are really needed (copied in buildStructure).
 // - Include kind=Doclet with matching tags.
 
 /**
@@ -232,7 +237,9 @@ async function main() {
     async function processParent(info: TSLib.ClassInfo) {
         const name = info.name,
             fullName = 'Highcharts.' + name,
-            description = getHTMLDescription(info.doclet.tags.description || []),
+            description = getHTMLDescription(
+                descriptionFromTags(info.doclet.tags)
+            ),
             html = mainHbs({
                 ...defaultHbsConfig,
 
@@ -281,27 +288,17 @@ async function main() {
                     return req.replace(/module:/g, '');
                 }) || void 0,
                 samples: getSamples(info.doclet.tags.sample),
-                children: info.members.map((member: any) => {
-                    if (!member.doclet) {
-                        member.doclet = {
-                            tags: {
-                                description: [
-                                    '!! No doclet !!'
-                                ]
-                            }
-                        };
-                        console.warn('No doclet found for ' + fullName +
-                            '.' + member.name);
-                    }
+                children: info.members.map((member: any|TSLib.PropertyInfo) => {
+                    const description: string[] =
+                        descriptionFromTags(member.doclet.tags);
 
-                    // Temporarly add not yet supported info into description
-                    member.doclet.tags.description =
-                        member.doclet.tags.description || [];
+                    // Use parameters for description instead
+                    /*
                     if (member.parameters) {
                         member.parameters.forEach((param: any) => {
                             if (param.name !== 'this') {
-                                member.doclet.tags.description.push(
-                                    '**Parameter:** ' + sanitize(
+                                description.push(
+                                    '**Param:** ' + sanitize(
                                         param.name + ': ' + param.type.join('|')
                                     )
                                 );
@@ -311,30 +308,26 @@ async function main() {
                                 );
                             }
                         });
-                    }
-                    if (member.doclet.tags.param) {
-                        member.doclet.tags.param.forEach((param: string) => {
-                            member.doclet.tags.description.push(
-                                '**Doclet.param:** ' + sanitize(param)
-                            );
-                        });
-                    }
+                    }*/
+
                     if (member.return) {
-                        member.doclet.tags.description.push(
-                            '**Returns:** ' + sanitize(member.return.join('|'))
-                        );
-                    }
-                    if (member.body) {
-                        member.doclet.tags.description.push(
-                            '**Extra:** ' + sanitize(
-                                JSON.stringify(member.body)
-                            )
+                        description.push(
+                            '**Return type:** ' + sanitize(member.return.join('|'))
                         );
                     }
 
+                    // TODO: Replace with proper body handling
+                    /*if (member.body) {
+                        description.push(
+                            '**Body:** ' + sanitize(
+                                JSON.stringify(member.body)
+                            )
+                        );
+                    }*/
+
                     // Nested from value
                     if (member.value && typeof member.value === 'string') {
-                        member.doclet.tags.description.push(
+                        description.push(
                             '**Value:** ' + sanitize(member.value)
                         );
                     }
@@ -359,9 +352,7 @@ async function main() {
 
                     return {
                         ignoreDefault: member.kind === 'Function',
-                        description: getHTMLDescription(
-                            member.doclet.tags.description || []
-                        ),
+                        description: getHTMLDescription(description),
                         filename: member.meta?.file ||
                             member.doclet?.meta?.file ||
                             info.meta?.file ||
@@ -563,6 +554,55 @@ async function buildStructure() {
     FS.cp('tools/api-docs/static', buildPath, { recursive: true });
 }
 
+/**
+ * Gathers description from doclet tags.
+ *
+ * @param tags Doclet tags
+ */
+function descriptionFromTags(tags: Record<string,Array<string>>): string[] {
+    const description: string[] = [];
+
+    if (tags.description) {
+        description.push(...tags.description);
+    }
+
+    if (tags.param) {
+        const params = [];
+        tags.param.forEach((param: string) => {
+            const paramRegex = /{([^}]+)}\s+(\S+)\s*(.*)/,
+                parts = param.match(paramRegex) || [],
+                paramInfo = parts.length < 2 ? void 0 :
+                    [
+                        '| `' + parts[2] + '`', // Name
+                        parts[1], // Type
+                        parts[3] // Description
+                    ].join(' | ') + ' |';
+
+            if (!paramInfo) {
+                console.warn('Regex failed for param: ', param);
+            }
+
+            params.push(paramInfo || sanitize(param));
+        });
+        description.push(
+            '**Parameters:**\n',
+            '| Name | Type | Description |\n' +
+            '| --- | --- | --- |\n' +
+            params.join('\n')
+        );
+    }
+    if (tags.example) {
+        tags.example.forEach((example: string) => {
+            description.push(
+                '**Example:** \n\n```\n' + sanitize(example) +
+                '\n```'
+            );
+        });
+    }
+
+    return description;
+}
+
 /* *
  *
  *  Runtime
@@ -570,3 +610,4 @@ async function buildStructure() {
  * */
 
 main();
+
