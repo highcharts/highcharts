@@ -166,7 +166,7 @@ function dateFormat(
  */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= #\(\)]+)\}/g,
+    const regex = /\{([a-zA-Z0-9\:\.\,;\-\/<>%_@"'’= #\(\)]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
