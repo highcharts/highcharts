@@ -411,7 +411,14 @@ class DataTable implements DataEvent.Emitter {
                 delete columns[columnName];
             }
 
-            if (!Object.keys(columns).length) {
+            let nColumns = Object.keys(columns).length;
+            if (table.rowKeysId && nColumns === 1) {
+                // All columns deleted, remove row keys column
+                delete columns[table.rowKeysId];
+                nColumns = 0;
+            }
+
+            if (!nColumns) {
                 table.rowCount = 0;
             }
 
@@ -1224,9 +1231,11 @@ class DataTable implements DataEvent.Emitter {
                 if (aliases[newColumnName]) {
                     delete aliases[newColumnName];
                 }
-
                 columns[newColumnName] = columns[columnName];
                 delete columns[columnName];
+                if (table.rowKeysId) {
+                    // Ensure that the row keys column is always last
+                }
             }
 
             return true;
@@ -1422,6 +1431,10 @@ class DataTable implements DataEvent.Emitter {
             tableModifier.modifyColumns(table, columns, (rowIndex || 0));
         }
 
+        if (table.rowKeysId) {
+            // Ensure that the row keys column is always last
+        }
+
         table.emit({
             type: 'afterSetColumns',
             columns,
@@ -1461,7 +1474,7 @@ class DataTable implements DataEvent.Emitter {
      * @function Highcharts.DataTable#getRowKeysColumn
      *     *
      * @return {DataTable.Column|undefined}
-     * Returns row keys if rowKeysId s defined, else undefined.
+     * Returns row keys if rowKeysId is defined, else undefined.
      */
     public getRowKeysColumn(): DataTable.Column|undefined {
         const id = this.rowKeysId;
@@ -1684,7 +1697,7 @@ class DataTable implements DataEvent.Emitter {
         if (this.rowKeysId) {
             const pos = columnNamesOrAliases.indexOf(this.rowKeysId);
             if (pos !== -1) {
-                // Alays the last column
+                // Always the last column
                 columnNamesOrAliases.pop();
             }
         }
