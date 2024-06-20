@@ -1,7 +1,8 @@
 @import url("https://code.highcharts.com/datagrid/css/datagrid2.css");
 @import url("https://code.highcharts.com/datagrid/css/datagrid.css");
 
-#container {
+#container-ah,
+#container-sh {
     height: 400px;
 }
 
