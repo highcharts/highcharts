@@ -89,7 +89,6 @@ class DataGrid {
      */
     public viewport: DataGridTable;
 
-
     /* *
     *
     *  Constructor

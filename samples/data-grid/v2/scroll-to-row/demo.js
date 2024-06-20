@@ -9,6 +9,12 @@ const dg = new DataGrid.DataGrid2('container', {
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
     },
+    rows: {
+        bufferSize: 5
+    },
+    title: {
+        text: 'Title of the new Datagrid. Loreum ipsum et omnia dolores, loreum ipsum et omnia dolores, loreum ipsum et omnia dolores, loreum ipsum et omnia dolores' // eslint-disable-line
+    },
     settings: {
         rowBufferSize: 5
     },

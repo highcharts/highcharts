@@ -66,6 +66,7 @@ namespace Globals {
     export const classNames = {
         container: classNamePrefix + 'container',
         tableElement: classNamePrefix + 'table',
+        titleElement: classNamePrefix + 'title',
         theadElement: classNamePrefix + 'thead',
         tbodyElement: classNamePrefix + 'tbody',
         rowElement: classNamePrefix + 'row',
