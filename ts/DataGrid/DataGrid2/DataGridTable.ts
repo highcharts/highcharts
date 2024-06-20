@@ -225,7 +225,7 @@ class DataGridTable {
 
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
             this.dataGrid.container.clientHeight -
-            this.theadElement.offsetHeight - 
+            this.theadElement.offsetHeight -
             (this.titleElement?.offsetHeight || 0)
         }px`;
 
