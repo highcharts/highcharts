@@ -24,10 +24,7 @@ Highcharts.chart('container', {
         }
     },
     chart: {
-        type: 'spline',
-        events: {
-            load: startUpdatingData
-        }
+        type: 'spline'
     },
     yAxis: {
         min: 0,
@@ -60,7 +57,7 @@ function startUpdatingData() {
     }, 2000);
 }
 
-let isUpdating = true;
+let isUpdating = false;
 
 const toggleButton = document.getElementById('toggle-announce');
 toggleButton.addEventListener('click', function () {
