@@ -13,7 +13,7 @@ const dg = new DataGrid.DataGrid2('container', {
         bufferSize: 5
     },
     title: {
-        text: 'Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores' // eslint-disable-line
+        text: 'Title of the new Datagrid. Loreum ipsum et omnia dolores, loreum ipsum et omnia dolores, loreum ipsum et omnia dolores, loreum ipsum et omnia dolores' // eslint-disable-line
     },
     settings: {
         rowBufferSize: 5
