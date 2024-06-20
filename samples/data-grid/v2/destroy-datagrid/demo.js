@@ -12,4 +12,10 @@ const dg = new DataGrid.DataGrid2('container', {
 
 document.getElementById('destroy-btn').addEventListener('click', () => {
     dg.destroy();
+    console.log(dg);
+});
+
+document.getElementById('load-btn').addEventListener('click', () => {
+    dg.load();
+    console.log(dg);
 });
