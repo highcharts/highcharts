@@ -134,11 +134,22 @@ class DataGridTable {
     /**
      * Constructs a new data grid table.
      *
-     * @param dataGrid The data grid instance which the table (viewport) belongs to.
+     * @param dataGrid
+     * The data grid instance which the table (viewport) belongs to.
+     *
+     * @param dataTable
+     * The data source of the data grid.
+     *
+     * @param tableElement
+     * The HTML table element of the data grid.
      */
-    constructor(dataGrid: DataGrid) {
+    constructor(
+        dataGrid: DataGrid,
+        dataTable: DataTable,
+        tableElement: HTMLTableElement
+    ) {
         this.dataGrid = dataGrid;
-        this.dataTable = dataGrid.dataTable;
+        this.dataTable = dataTable;
 
         const dgOptions = dataGrid.options;
 
@@ -148,8 +159,6 @@ class DataGridTable {
         this.allColumnsCount =
             dgOptions.columnsIncluded?.length ||
             this.dataTable.getColumnNames().length;
-
-        const { tableElement } = dataGrid;
 
         this.renderTitle();
 
@@ -289,6 +298,9 @@ class DataGridTable {
         return this.tbodyElement.clientWidth * ratio;
     }
 
+    /**
+     * Renders the no result row.
+     */
     private renderNoResultRow(): void {
         const row = makeHTMLElement('tr', {
             className: Globals.classNames.rowElement
@@ -305,15 +317,27 @@ class DataGridTable {
      * Render title above the datagrid
      */
     public renderTitle(): void {
-
-        if (!this.dataGrid.userOptions.title) {
+        if (!this.dataGrid.options.title) {
             return;
         }
 
         this.titleElement = makeHTMLElement('caption', {
-            innerText: this.dataGrid.userOptions.title.text,
+            innerText: this.dataGrid.options.title.text,
             className: Globals.classNames.titleElement
         }, this.dataGrid.tableElement);
+    }
+
+    /**
+     * Destroys the data grid table.
+     */
+    public destroy(): void {
+        this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        this.resizeObserver.disconnect();
+        this.columnsResizer.removeEventListeners();
+
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            this.rows[i].destroy();
+        }
     }
 }
 
