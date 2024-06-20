@@ -52,3 +52,10 @@ th {
     letter-spacing: 0.01em;
     padding: 8px 16px;
 }
+
+#toggle-announce:hover {
+    background: #00766f;
+    opacity: 0.8;
+    text-decoration: underline;
+    cursor: pointer;
+}
