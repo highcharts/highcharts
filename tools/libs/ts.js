@@ -27,8 +27,6 @@ const FS = require('node:fs');
 
 const FSLib = require('./fs');
 
-const Path = require('node:path');
-
 const TS = require('typescript');
 
 
@@ -81,7 +79,7 @@ const SANITIZE_TYPE = /\(\s*(.*)\s*\)/gsu;
 const SOURCE_CACHE = {};
 
 
-const SOURCE_EXTENSION = /(?:\.d)?\.(?:jsx?|tsx?)$/gsu;
+const SOURCE_EXTENSION = /(?:\.d)?\.[jt]sx?$/gsu;
 
 
 /* *
@@ -134,61 +132,44 @@ function addTag(
 
 
 /**
- * Complete source info with external additions.
- *
- * @param {SourceInfo} sourceInfoToComplete
- * Source information to complete.
- *
- * @param {boolean} includeNodes
- * Whether to include the TypeScript nodes in the information.
- *
- * @return {SourceInfo}
- * Extended class or interface information.
+ * Complete cached source infos with external additions from DTS files.
  */
-function autoCompleteInfo(
-    sourceInfoToComplete,
-    includeNodes
-) {
-    const _modulePathToComplete = sanitizeSourcePath(sourceInfoToComplete.path);
-
+function autoCompleteInfos() {
     /** @type {string} */
     let _modulePath;
     /** @type {SourceInfo} */
     let _sourceInfo;
 
-    for (const _sourcePath of FSLib.getFilePaths(sourceRoot, true)) {
+    for (const _sourcePath of Object.keys(SOURCE_CACHE)) {
 
-        if (!SOURCE_EXTENSION.test(_sourcePath)) {
+        _sourceInfo = SOURCE_CACHE[_sourcePath];
+
+        if (!_sourceInfo) {
             continue;
         }
 
-        _sourceInfo = getSourceInfo(_sourcePath, void 0, includeNodes);
+        for (const _info of _sourceInfo.code) {
+            if (
+                _info.kind === 'Module' &&
+                _info.flags.includes('declare')
+            ) {
+                _modulePath = sanitizeSourcePath(FSLib.normalizePath(
+                    _sourcePath,
+                    _info.name,
+                    true
+                ));
 
-        if (_sourceInfo) {
-            for (const _codeInfo of _sourceInfo.code) {
-                if (
-                    _codeInfo.kind === 'Module' &&
-                    _codeInfo.flags.includes('declare')
-                ) {
-                    _modulePath = sanitizeSourcePath(FSLib.normalizePath(
-                        _sourceInfo.path,
-                        _codeInfo.name,
-                        true
-                    ));
-
-                    if (_modulePath === _modulePathToComplete) {
-                        mergeCodeInfos(
-                            sourceInfoToComplete,
-                            _codeInfo
-                        );
-                    }
+                if (SOURCE_CACHE[`${_modulePath}.d.ts`]) {
+                    mergeCodeInfos(
+                        SOURCE_CACHE[`${_modulePath}.d.ts`],
+                        _info
+                    );
                 }
             }
         }
 
     }
 
-    return sourceInfoToComplete;
 }
 
 
@@ -240,7 +221,7 @@ function autoExtendInfo(
     let _resolvedType;
 
     for (const _extendType of _extendsToDo) {
-        _resolvedType = resolveType(sourceInfo, _extendType, includeNodes);
+        _resolvedType = resolveReference(sourceInfo, _extendType, includeNodes);
 
         if (!_resolvedType) {
             continue;
@@ -1208,40 +1189,24 @@ function getFunctionCallInfo(
     }
 
     if (node.arguments) {
+        /** @type {Array<Value>} */
         const _arguments = _info.arguments = [];
 
-        /** @type {CodeInfo|undefined} */
-        let _childInfo;
+        for (const _child of node.arguments) {
+            _arguments.push(getInfoValue(_child));
+        }
 
-        for (const _child of getNodesChildren(node)) {
+        if (!_info.arguments.length) {
+            delete _info.arguments;
+        }
+    }
 
-            if (_child === node.expression) {
-                continue;
-            }
+    if (node.typeArguments) {
+        /** @type {Array<string>} */
+        const _genericArguments = _info.genericArguments = [];
 
-            _childInfo = getChildInfos([_child], includeNodes);
-
-            if (_childInfo.length) {
-
-                _arguments.push(..._childInfo);
-
-            } else if (TS.isIdentifier(_child)) {
-
-                _childInfo = {
-                    kind: 'Variable',
-                    name: _child.text
-                };
-
-                _childInfo.meta = getInfoMeta(_child);
-
-                if (includeNodes) {
-                    _childInfo.node = _child;
-                }
-
-                _arguments.push(_childInfo);
-
-            }
-
+        for (const _child of node.typeArguments) {
+            _genericArguments.push(getInfoType(_child));
         }
     }
 
@@ -1293,20 +1258,18 @@ function getFunctionInfo(
     if (node.typeParameters) {
         /** @type {Array<VariableInfo>} */
         const _generics = _info.generics = [];
-        for (const parameter of getChildInfos(node.typeParameters)) {
-            if (parameter.kind === 'Variable') {
-                _generics.push(parameter);
-            }
+
+        for (const _typeParameter of node.typeParameters) {
+            _generics.push(getTypeAliasInfo(_typeParameter, includeNodes));
         }
     }
 
     if (node.parameters) {
         /** @type {Array<VariableInfo>} */
         const _parameters = _info.parameters = [];
-        for (const parameter of getChildInfos(node.parameters, includeNodes)) {
-            if (parameter.kind === 'Variable') {
-                _parameters.push(parameter);
-            }
+
+        for (const parameter of node.parameters) {
+            _parameters.push(getPropertyInfo(parameter));
         }
     }
 
@@ -1317,10 +1280,6 @@ function getFunctionInfo(
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
-        if (node.questionToken) {
-            _info.flags = _info.flags || [];
-            _info.flags.push('optional');
-        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -1435,10 +1394,25 @@ function getInfoFlags(
         return void 0;
     }
 
-    for (const modifier of (TS.getModifiers(node) || [])) {
-        if (!TS.isDecorator(modifier)) {
-            _flags.push(modifier.getText());
+    for (const _modifier of (TS.getModifiers(node) || [])) {
+        if (!TS.isDecorator(_modifier)) {
+            _flags.push(_modifier.getText());
         }
+    }
+
+    if (node.dotDotDotToken) {
+        _flags.push('rest');
+    }
+
+    if (node.exclamationToken) {
+        _flags.push('assured');
+    }
+
+    if (
+        node.questionDotToken ||
+        node.questionToken
+    ) {
+        _flags.push('optional');
     }
 
     if (!_flags.length) {
@@ -1510,6 +1484,54 @@ function getInfoType(
 
 
 /**
+ * Retrieves value information for a given expression.
+ *
+ * @param {TS.Expression} node
+ * Expression to return a value for.
+ *
+ * @param {boolean} [includeNodes]
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {Value}
+ * Value or `undefined`.
+ */
+function getInfoValue(
+    node,
+    includeNodes
+) {
+    /** @type {Value} */
+    let _value = (
+        getDeconstructInfos(node, includeNodes) ||
+        getFunctionCallInfo(node, includeNodes) ||
+        getFunctionInfo(node, includeNodes) ||
+        getObjectInfo(node, includeNodes) ||
+        getReferenceInfo(node, includeNodes) ||
+        getVariableInfo(node, includeNodes)
+    );
+
+    if (_value) {
+        return _value;
+    }
+
+    _value = node.getText();
+
+    if (sanitizeText(_value) !== _value) {
+        return sanitizeText(_value);
+    }
+
+    if (!isNaN(Number(_value))) {
+        return Number(_value);
+    }
+
+    return {
+        false: false,
+        null: null,
+        true: true
+    }[_value] || _value;
+}
+
+
+/**
  * Retrieves interface information from the given node.
  *
  * @param {TS.Node} node
@@ -1538,12 +1560,10 @@ function getInterfaceInfo(
     _info.name = node.name.text;
 
     if (node.typeParameters) {
-        /** @type {Array<VariableInfo>} */
-        const _generics = _info.generics = [];
-        for (const parameter of getChildInfos(node.typeParameters)) {
-            if (parameter.kind === 'Variable') {
-                _generics.push(parameter);
-            }
+        /** @type {Array<TypeAliasInfo>} */
+        const _generics = [];
+        for (const parameter of node.typeParameters) {
+            _generics.push(getTypeAliasInfo(parameter));
         }
     }
 
@@ -1873,31 +1893,66 @@ function getPropertyInfo(
         );
 
         if (_initializer) {
-            const expression = getChildInfos([_initializer]);
-
-            if (expression.length) {
-                _info.value = expression[0];
-            } else {
-                _info.value = node.initializer.getText();
-            }
+            _info.value = getInfoValue(_initializer);
         }
     }
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
-        if (node.exclamationToken) {
-            _info.flags = _info.flags || [];
-            _info.flags.push('assured');
-        }
-        if (node.questionToken) {
-            _info.flags = _info.flags || [];
-            _info.flags.push('optional');
-        }
     }
 
     _info.meta = getInfoMeta(node);
 
     if (includeNode) {
+        _info.node = node;
+    }
+
+    return _info;
+}
+
+
+/**
+ * Retrieves reference information from the current node.
+ *
+ * @param {TS.Node} node
+ * Node that might be a reference like an intendifier.
+ *
+ * @param {boolean} includeNodes
+ * Whether to include the TypeScript node in the information.
+ *
+ * @return {ReferenceInfo|undefined}
+ * Reference information or `undefined`.
+ */
+function getReferenceInfo(
+    node,
+    includeNodes
+) {
+
+    if (
+        !TS.isIdentifier(node) &&
+        !TS.isParameter(node) &&
+        !TS.isPropertyAccessExpression(node)
+    ) {
+        return void 0;
+    }
+
+    /** @type {ReferenceInfo} */
+    const _info = {
+        kind: 'Reference',
+        name: (
+            TS.isParameter(node) ?
+                node.name.text :
+                node.getText()
+        )
+    };
+
+    if (node.flags) {
+        _info.flags = getInfoFlags(node);
+    }
+
+    _info.meta = getInfoMeta(node);
+
+    if (includeNodes) {
         _info.node = node;
     }
 
@@ -1917,7 +1972,7 @@ function getPropertyInfo(
  * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
- * @return {SourceInfo}
+ * @return {SourceInfo|undefined}
  * Source information.
  */
 function getSourceInfo(
@@ -1951,10 +2006,6 @@ function getSourceInfo(
 
     SOURCE_CACHE[_cacheKey] = _info;
 
-    if (_info.path.endsWith('.d.ts')) {
-        autoCompleteInfo(_info, includeNodes);
-    }
-
     return _info;
 }
 
@@ -1976,7 +2027,10 @@ function getTypeAliasInfo(
     includeNodes
 ) {
 
-    if (!TS.isTypeAliasDeclaration(node)) {
+    if (
+        !TS.isTypeAliasDeclaration(node) &&
+        !TS.isTypeParameterDeclaration(node)
+    ) {
         return void 0;
     }
 
@@ -1986,21 +2040,34 @@ function getTypeAliasInfo(
         name: node.name.text
     };
 
-    if (node.typeParameters) {
-        const _generics = _info.generics = [];
-
-        for (const parameter of getChildInfos(node.typeParameters)) {
-            if (parameter.kind === 'Variable') {
-                _generics.push(parameter);
+    if (TS.isTypeParameterDeclaration(node)) {
+        if (node.constraint) {
+            _info.value = (
+                getInfoType(node.constraint) ||
+                getInfoType(
+                    TS.getJSDocParameterTags(node)
+                        .filter(_parameter => _parameter.name === _info.name)[0]
+                )
+            );
+        }
+        if (node.default) {
+            _info.value = _info.value || [];
+            _info.value = getInfoType(node.default);
+        }
+    } else {
+        _info.value = (
+            getInfoType(node.type) ||
+            getInfoType(TS.getJSDocType(node))
+        );
+        if (node.typeParameters) {
+            /** @type {Array<TypeAliasInfo>} */
+            const _generics = _info.generics = [];
+            for (const parameter of node.typeParameters) {
+                _generics.push(getTypeAliasInfo(parameter));
             }
         }
 
     }
-
-    _info.value = (
-        getInfoType(node.type) ||
-        getInfoType(TS.getJSDocType(node))
-    );
 
     if (node.flags) {
         _info.flags = getInfoFlags(node);
@@ -2034,12 +2101,8 @@ function getVariableInfo(
 ) {
 
     if (
-        (
-            !TS.isTypeParameterDeclaration(node) &&
-            !TS.isParameter(node) &&
-            !TS.isVariableDeclaration(node)
-        ) ||
-        TS.isArrayBindingPattern(node.name) ||
+        !TS.isVariableDeclaration(node) ||
+        TS.isArrayBindingPattern(node.name) || // See getDeconstructInfo
         TS.isObjectBindingPattern(node.name)
     ) {
         return void 0;
@@ -2048,59 +2111,19 @@ function getVariableInfo(
     /** @type {VariableInfo} */
     const _info = {
         kind: 'Variable',
-        name: node.name.getText()
+        name: node.name.text
     };
 
-    if (TS.isTypeParameterDeclaration(node)) {
-        if (node.constraint) {
-            _info.type = (
-                getInfoType(node.constraint) ||
-                getInfoType(
-                    TS.getJSDocParameterTags(node)
-                        .filter(_parameter => _parameter.name === _info.name)[0]
-                )
-            );
-        }
-        if (node.default) {
-            _info.value = node.default.getText();
-        }
-    } else {
+    _info.type = (
+        getInfoType(node.type) ||
+        getInfoType(TS.getJSDocType(node))
+    );
+    if (node.initializer) {
         _info.type = (
-            getInfoType(node.type) ||
-            getInfoType(TS.getJSDocType(node))
+            _info.type ||
+            getInfoType(node.initializer)
         );
-        if (node.initializer) {
-            const _initializer = getChildInfos([node.initializer]);
-            _info.type = (
-                _info.type ||
-                getInfoType(node.initializer)
-            );
-            if (_initializer.length) {
-                _info.value = _initializer[0];
-            } else {
-                const _value = node.initializer.getText();
-                if (sanitizeText(_value) !== _value) {
-                    _info.value = sanitizeText(_value);
-                } else if (!isNaN(Number(_value))) {
-                    _info.value = Number(_value);
-                } else {
-                    switch (_value) {
-                        default:
-                            _info.value = _value;
-                            break;
-                        case 'false':
-                            _info.value = false;
-                            break;
-                        case 'null':
-                            _info.value = null;
-                            break;
-                        case 'true':
-                            _info.value = true;
-                            break;
-                    }
-                }
-            }
-        }
+        _info.value = getInfoValue(node.initializer, includeNodes);
     }
 
     if (TS.isVariableDeclarationList(node.parent)) {
@@ -2109,16 +2132,6 @@ function getVariableInfo(
         }
     } else if (node.flags) {
         _info.flags = getInfoFlags(node);
-    }
-    if (TS.isParameter(node)) {
-        if (node.dotDotDotToken) {
-            _info.flags = _info.flags || [];
-            _info.flags.push('rest');
-        }
-        if (node.questionToken) {
-            _info.flags = _info.flags || [];
-            _info.flags.push('optional');
-        }
     }
 
     _info.meta = getInfoMeta(node);
@@ -2400,6 +2413,7 @@ function newDocletInfo(
     const clone = {
         kind: 'Doclet',
         tags: {},
+        meta: newMeta(),
         ...structuredClone({
             ...template,
             node: void 0 // Avoid clone of native TSNode.
@@ -2485,131 +2499,98 @@ function removeTag(
 
 
 /**
- * Resolves type relative to the given source information.
+ * Resolves a reference name relative to the given source information.
  *
  * @param {SourceInfo} sourceInfo
  * Source information to use.
  *
- * @param {string} searchType
- * Type to resolve to.
+ * @param {string|ReferenceInfo} reference
+ * Reference name or information to resolve.
  *
- * @param {boolean} [includeNodes]
- * Whether to include the TypeScript nodes in the information.
- *
- * @return {ResolvedInfo|undefined}
- * Resolve information.
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
  */
-function resolveType(
+function resolveReference(
     sourceInfo,
-    searchType,
-    includeNodes
+    reference
 ) {
-    /** @type {Record<string,boolean>} */
-    const _stack = {};
+    const _referenceParts = (
+        typeof reference === 'string' ?
+            reference :
+            reference.name
+    ).split(/[!?]?\./gsu);
 
-    /**
-     * Internal resolve.
-     * @param {CodeInfo} info
-     * Current info.
-     * @param {string} type
-     * Current type.
-     * @return {ResolveInfo|undefined}
-     * Result.
-     */
-    function resolve(info, type) {
-        /** @type {ResolvedInfo} */
-        const _result = {
-            kind: 'Resolved',
-            path: sourceInfo.path,
-            resolvedInfo: void 0,
-            resolvedPath: sourceInfo.path,
-            search: type
-        };
-
-        switch (info.kind) {
-            case 'Import':
-                for (const item of Object.keys(info.imports || {})) {
-
-                    // `item` is the external name,
-                    // while `type` is the local name
-                    if (info.imports[item] !== type) {
-                        continue;
+    for (const _name of _referenceParts) {
+        for (const _info of sourceInfo.code) {
+            if (_info.kind === 'Deconstruct') {
+                for (const _original of Object.keys(_info.deconstructs)) {
+                    if (_info.deconstructs[_original] === _name) {
+                        return _info;
                     }
-
-                    let _resolvedPath = FSLib.normalizePath(
-                        sourceInfo.path,
-                        info.from,
-                        true
-                    );
-
-                    if (Path.extname(_resolvedPath) === '.js') {
-                        _resolvedPath = _resolvedPath
-                            .substring(0, _resolvedPath.length - 3);
-                    }
-
-                    if (!Path.extname(_resolvedPath)) {
-                        if (FS.existsSync(_resolvedPath + '.d.ts')) {
-                            _resolvedPath += '.d.ts';
-                        } else if (FS.existsSync(_resolvedPath + '.ts')) {
-                            _resolvedPath += '.ts';
-                        } else {
-                            continue;
-                        }
-                    }
-
-                    if (_stack[_resolvedPath]) {
-                        return void 0; // Break circular references
-                    }
-
-                    _stack[_resolvedPath] = true;
-
-                    const _resolvedSource =
-                        getSourceInfo(_resolvedPath, void 0, includeNodes);
-
-                    for (const _codeInfo of _resolvedSource.code) {
-                        const _resolvedInfo = resolve(_codeInfo, type);
-                        if (_resolvedInfo) {
-                            delete _stack[_resolvedPath];
-                            _result.resolvedInfo = _resolvedInfo.resolvedInfo;
-                            _result.resolvedPath = _resolvedSource.path;
-                            return _result;
-                        }
-                    }
-
                 }
-                break;
-            case 'Export':
+            } else if (_info.kind === 'Export') {
+                if (_info.name === _name) {
+                    return _info;
+                }
                 if (
-                    info.object &&
-                    (
-                        info.name === type ||
-                        info.object.name === type
-                    )
+                    typeof _info.value === 'object' &&
+                    _info.value.kind !== 'Deconstruct' &&
+                    _info.value.kind !== 'Doclet' &&
+                    _info.value.kind !== 'Import' &&
+                    _info.value.kind !== 'Object' &&
+                    _info.value.name === _name
                 ) {
-                    _result.resolvedInfo = info.object;
-                    return _result;
+                    return _info.value;
                 }
-                break;
-            case 'Class':
-            case 'Interface':
-            case 'Object':
-            case 'Variable':
-                if (info.name === type) {
-                    _result.resolvedInfo = info;
-                    return _result;
+            } else if (
+                _info.kind === 'Import'
+            ) {
+                if (_info.imports) {
+                    /** @type {string|undefined} */
+                    let found;
+
+                    for (const _original of Object.keys(_info.imports)) {
+                        if (_info.imports[_original] === _name) {
+                            found = _original;
+                            break;
+                        }
+                    }
+
+                    if (found) {
+                        if (SOURCE_EXTENSION.test(_info.from)) {
+                            sourceInfo = SOURCE_CACHE[
+                                _info.from.replace(/\.j(sx)?$/su, '\.t$1')
+                            ];
+                            if (sourceInfo) {
+                                break; // continue with parts in new sourceInfo
+                            }
+                        } else if (
+                            FSLib.isFile(FSLib.path(`${_info.from}.ts`))
+                        ) {
+                            sourceInfo = SOURCE_CACHE[`${_info.from}.ts`];
+                            if (sourceInfo) {
+                                break; // continue with parts in new sourceInfo
+                            }
+                        } else if (
+                            FSLib.isFile(FSLib.path(`${_info.from}.d.ts`))
+                        ) {
+                            sourceInfo = SOURCE_CACHE[`${_info.from}.d.ts`];
+                            if (sourceInfo) {
+                                break; // continue with parts in new sourceInfo
+                            }
+                        }
+                        return _info;
+                    }
                 }
-                break;
-            default:
-                break;
-        }
-
-        return void 0;
-    }
-
-    for (const _codeInfo of sourceInfo.code) {
-        const _resolveInfo = resolve(_codeInfo, searchType);
-        if (_resolveInfo) {
-            return _resolveInfo;
+            } else if (
+                _info.kind !== 'Decostruct' &&
+                _info.kind !== 'Doclet' &&
+                _info.kind !== 'Object'
+            ) {
+                if (_info.name === _name) {
+                    return _info;
+                }
+            }
         }
     }
 
@@ -2788,6 +2769,7 @@ module.exports = {
     SOURCE_EXTENSION,
     sourceRoot,
     addTag,
+    autoCompleteInfos,
     autoExtendInfo,
     changeSourceCode,
     changeSourceNode,
@@ -2814,7 +2796,7 @@ module.exports = {
     newDocletInfo,
     removeAllDoclets,
     removeTag,
-    resolveType,
+    resolveReference,
     sanitizeSourcePath,
     sanitizeText,
     sanitizeType,
@@ -2834,7 +2816,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {string} [extends]
  * @property {Array<InfoFlag>} [flags]
- * @property {Array<VariableInfo>} [generics]
+ * @property {Array<TypeAliasInfo>} [generics]
  * @property {Array<string>} [implements]
  * @property {'Class'} kind
  * @property {Array<MemberInfo>} members
@@ -2900,8 +2882,9 @@ module.exports = {
 
 /**
  * @typedef FunctionCallInfo
- * @property {Array<CodeInfo>} [arguments]
+ * @property {Array<Value>} [arguments]
  * @property {DocletInfo} [doclet]
+ * @property {Array<string>} [genericArguments]
  * @property {'FunctionCall'} kind
  * @property {Meta} meta
  * @property {string} name
@@ -2914,7 +2897,7 @@ module.exports = {
  * @property {Array<DocletInfo>} [body]
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
- * @property {Array<VariableInfo>} [generics]
+ * @property {Array<TypeAliasInfo>} [generics]
  * @property {boolean} [inherited]
  * @property {'Function'} kind
  * @property {Meta} meta
@@ -2948,7 +2931,7 @@ module.exports = {
  * @property {DocletInfo} [doclet]
  * @property {Array<string>} [extends]
  * @property {Array<InfoFlag>} [flags]
- * @property {Array<VariableInfo>} [generics]
+ * @property {Array<TypeAliasInfo>} [generics]
  * @property {'Interface'} kind
  * @property {Array<MemberInfo>} members
  * @property {Meta} meta
@@ -3007,17 +2990,17 @@ module.exports = {
  * @property {string} name
  * @property {TS.PropertyAssignment|TS.PropertyDeclaration|TS.PropertySignature|TS.ShorthandPropertyAssignment} [node]
  * @property {Array<string>} [type]
- * @property {boolean|null|number|string|FunctionCallInfo|ObjectInfo} [value]
+ * @property {Value} [value]
  */
 
 
 /**
- * @typedef ResolvedInfo
- * @property {'Resolved'} kind
- * @property {string} path
- * @property {CodeInfo} resolvedInfo
- * @property {string} resolvedPath
- * @property {string} search
+ * @typedef ReferenceInfo
+ * @property {DocletInfo} [doclet]
+ * @property {'Reference'} kind
+ * @property {Meta} meta
+ * @property {string} name
+ * @property {TS.Identifier|TS.PropertyAccessExpression} node
  */
 
 
@@ -3034,11 +3017,18 @@ module.exports = {
  * @typedef TypeAliasInfo
  * @property {DocletInfo} [doclet]
  * @property {'TypeAlias'} kind
- * @property {Array<VariableInfo>} [generics]
+ * @property {Array<TypeAliasInfo>} [generics]
  * @property {Meta} meta
  * @property {string} name
- * @property {TS.TypeAliasDeclaration} [node]
+ * @property {TS.TypeAliasDeclaration|TS.TypeParameterDeclaration} [node]
  * @property {Array<string>} [value]
+ */
+
+
+/**
+ * @typedef {boolean|null|number|string|FunctionCallInfo|FunctionInfo|
+ *           ObjectInfo|ReferenceInfo
+ *          } Value
  */
 
 
@@ -3051,7 +3041,7 @@ module.exports = {
  * @property {string} name
  * @property {TS.ParameterDeclaration|TS.TypeParameterDeclaration|TS.VariableDeclaration} [node]
  * @property {Array<string>} [type]
- * @property {boolean|null|number|string|FunctionCallInfo|ObjectInfo} [value]
+ * @property {Value} [value]
  */
 
 

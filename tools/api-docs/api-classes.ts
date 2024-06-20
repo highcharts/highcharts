@@ -344,7 +344,7 @@ async function main() {
                         processParent({
                             name: info.name + '.' + member.name,
                             doclet: member.doclet,
-                            members: member.value?.members,
+                            members: member.value?.members || [],
                             meta: member.meta,
                             parentPath: (info as any).parentPath
                         } as unknown as TSLib.ClassInfo);
