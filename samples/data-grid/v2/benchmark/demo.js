@@ -28,9 +28,9 @@ const startNewTime = new Date().getTime();
 var t2 = performance.now();
 // eslint-disable-next-line no-unused-vars
 const newgrid = new DataGrid.DataGrid2('container', {
-    dataTable: dataTable,
-    rows: {
-        bufferSize: 2
+    table: dataTable,
+    settings: {
+        rowBufferSize: 5
     }
 });
 var t3 = performance.now();

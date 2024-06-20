@@ -28,8 +28,10 @@ import DataGridTable from './DataGridTable.js';
 import DataTable from '../../Data/DataTable.js';
 import Globals from './Globals.js';
 import Utils from '../../Core/Utilities.js';
+import DGUtils from './Utils.js';
 
 const { merge } = Utils;
+const { makeHTMLElement } = DGUtils;
 
 
 /* *
@@ -45,20 +47,31 @@ class DataGridColumn {
 
     /* *
     *
+    *  Static Properties
+    *
+    * */
+
+    /**
+     * The minimum width of a column.
+     */
+    public static readonly MIN_COLUMN_WIDTH = 20;
+
+    /**
+     * The default options of the column.
+     */
+    public static readonly defaultOptions = {};
+
+
+    /* *
+    *
     *  Properties
     *
     * */
 
     /**
-     * The default options of the column.
-     */
-    public static defaultOptions = {};
-
-
-    /**
      * The viewport (table) the column belongs to.
      */
-    public viewport: DataGridTable;
+    public readonly viewport: DataGridTable;
 
     /**
      * The width of the column in the viewport. The interpretation of the
@@ -76,7 +89,7 @@ class DataGridColumn {
     /**
      * The id of the column (`name` in the Data Table).
      */
-    public id: string;
+    public readonly id: string;
 
     /**
      * The data of the column.
@@ -96,17 +109,17 @@ class DataGridColumn {
     /**
      * The user options of the column.
      */
-    public userOptions: ColumnOptions;
+    public readonly userOptions: ColumnOptions;
 
     /**
      * The options of the column.
      */
-    public options: ColumnOptions;
+    public readonly options: ColumnOptions;
 
     /**
      * The index of the column in the viewport.
      */
-    public index: number;
+    public readonly index: number;
 
 
     /* *
@@ -121,28 +134,35 @@ class DataGridColumn {
      * @param viewport The viewport (table) the column belongs to.
      * @param id The id of the column (`name` in the Data Table).
      * @param index The index of the column.
-     * @param options The options of the column.
      */
     constructor(
         viewport: DataGridTable,
         id: string,
-        index: number,
-        options?: ColumnOptions
+        index: number
     ) {
         this.userOptions = merge(
-            viewport.dataGrid.options.columns?.options ?? {},
-            options ?? {}
+            viewport.dataGrid.options.defaults?.columns ?? {},
+            viewport.dataGrid.options.columns?.[id] ?? {}
         );
-        this.options = merge(DataGridColumn.defaultOptions, options);
-
-        // Set the initial width of the column.
-        // TODO(DD): Get the initial width from the CSS.
-        this.width = viewport.columnDistribution === 'full' ? 1 : 100;
+        this.options = merge(DataGridColumn.defaultOptions, this.userOptions);
 
         this.id = id;
         this.index = index;
         this.viewport = viewport;
         this.data = viewport.dataTable.getColumn(id);
+
+        // Set the initial width of the column.
+        const mock = makeHTMLElement('div', {
+            className: Globals.classNames.columnElement
+        }, viewport.dataGrid.container);
+        mock.setAttribute('data-column-id', id);
+
+        if (viewport.columnDistribution === 'full') {
+            this.width = this.getInitialFullDistWidth(mock);
+        } else {
+            this.width = mock.offsetWidth || 100;
+        }
+        mock.remove();
     }
 
 
@@ -158,8 +178,7 @@ class DataGridColumn {
      * @param cell The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
-        cell.htmlElement.setAttribute('column-id', this.id);
-
+        cell.htmlElement.setAttribute('data-column-id', this.id);
         this.cells.push(cell);
     }
 
@@ -170,7 +189,7 @@ class DataGridColumn {
         const vp = this.viewport;
 
         return vp.columnDistribution === 'full' ?
-            vp.getWithFromRatio(this.width) :
+            vp.getWidthFromRatio(this.width) :
             this.width;
     }
 
@@ -190,6 +209,38 @@ class DataGridColumn {
                 Globals.classNames.hoveredColumn
             );
         }
+    }
+
+    /**
+     * The initial width of the column in the full distribution mode. The last
+     * column in the viewport will have to fill the remaining space.
+     *
+     * @param mock The mock element to measure the width.
+     */
+    private getInitialFullDistWidth(mock: HTMLElement): number {
+        const vp = this.viewport;
+
+        if (this.index < vp.allColumnsCount - 1) {
+            return (
+                vp.getRatioFromWidth(mock.offsetWidth) ||
+                1 / vp.allColumnsCount
+            );
+        }
+
+        let allPreviousWidths = 0;
+        for (let i = 0, iEnd = vp.allColumnsCount - 1; i < iEnd; i++) {
+            allPreviousWidths += vp.columns[i].width;
+        }
+
+        const result = 1 - allPreviousWidths;
+
+        if (result < 0) {
+            throw new Error('The sum of the columns\' widths ' +
+                'exceeds the viewport width. It is not allowed in the ' +
+                'full distribution mode.');
+        }
+
+        return result;
     }
 
     /* *

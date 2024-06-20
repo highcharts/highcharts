@@ -30,11 +30,10 @@ import type DataGridOptions from './DataGridOptions';
  * */
 
 const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
-    rows: {
-        bufferSize: 5
-    },
-    columns: {
-        distribution: 'full'
+    settings: {
+        columnDistribution: 'full',
+        rowBufferSize: 10,
+        strictRowHeights: false
     }
 };
 
