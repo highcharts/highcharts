@@ -36,7 +36,6 @@ namespace DataGridUtils {
         id?: string;
         innerText?: string;
         style?: Partial<CSSStyleDeclaration>;
-        // scope?: string;
     }
 
 
@@ -94,6 +93,29 @@ namespace DataGridUtils {
      */
     export function makeDiv(className: string, id?: string): HTMLElement {
         return makeHTMLElement('div', { className, id });
+    }
+
+    /**
+     * Gets the translateY value of an element.
+     *
+     * @param element
+     * The element to get the translateY value from.
+     *
+     * @returns
+     * The translateY value of the element.
+     */
+    export function getTranslateY(element: HTMLElement): number {
+        const transform = element.style.transform;
+
+        if (transform) {
+            const match = transform.match(/translateY\(([^)]+)\)/);
+
+            if (match) {
+                return parseFloat(match[1]);
+            }
+        }
+
+        return 0;
     }
 }
 

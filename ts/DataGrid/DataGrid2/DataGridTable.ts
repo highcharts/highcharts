@@ -58,11 +58,6 @@ class DataGridTable {
     public dataGrid: DataGrid;
 
     /**
-     * The HTML element of the table.
-     */
-    public container: HTMLTableElement;
-
-    /**
      * The data source of the data grid.
      */
     public dataTable: DataTable;
@@ -106,7 +101,7 @@ class DataGridTable {
     /**
      * The column distribution.
      */
-    public columnDistribution: ColumnDistribution;
+    public readonly columnDistribution: ColumnDistribution;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -118,6 +113,11 @@ class DataGridTable {
      * Only for the `fixed` column distribution.
      */
     public rowsWidth?: number;
+
+    /**
+     * The number of visible columns in the data grid.
+     */
+    public readonly allColumnsCount: number;
 
     /**
      * Title of data grid
@@ -138,10 +138,16 @@ class DataGridTable {
      */
     constructor(dataGrid: DataGrid) {
         this.dataGrid = dataGrid;
-        this.container = dataGrid.tableElement;
         this.dataTable = dataGrid.dataTable;
+
+        const dgOptions = dataGrid.options;
+
         this.columnDistribution =
-            dataGrid.options.columns?.distribution as ColumnDistribution;
+            dgOptions.settings?.columnDistribution as ColumnDistribution;
+
+        this.allColumnsCount =
+            dgOptions.columnsIncluded?.length ||
+            this.dataTable.getColumnNames().length;
 
         const { tableElement } = dataGrid;
 
@@ -178,7 +184,11 @@ class DataGridTable {
         this.head = new DataGridTableHead(this);
         this.head.render();
 
-        this.rowsVirtualizer.initialRender();
+        if (this.allColumnsCount > 0) {
+            this.rowsVirtualizer.initialRender();
+        } else {
+            this.renderNoResultRow();
+        }
 
         // Refresh element dimensions after initial rendering
         this.reflow();
@@ -188,35 +198,13 @@ class DataGridTable {
      * Loads the columns of the table.
      */
     private loadColumns(): void {
-        const columnNames = this.dataTable.getColumnNames();
-        const columnAssignment =
-            this.dataGrid.options.columns?.columnAssignment;
+        const columnsIncluded =
+            this.dataGrid.options.columnsIncluded ??
+            this.dataTable.getColumnNames();
 
-        if (columnAssignment) {
-            for (let i = 0, iEnd = columnAssignment.length; i < iEnd; ++i) {
-                const idOrOptions = columnAssignment[i];
-
-                if (typeof idOrOptions === 'string') {
-                    this.columns.push(
-                        new DataGridColumn(this, idOrOptions, i)
-                    );
-                    continue;
-                }
-
-                this.columns.push(new DataGridColumn(
-                    this,
-                    idOrOptions.columnId,
-                    i,
-                    idOrOptions.options
-                ));
-            }
-
-            return;
-        }
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
             this.columns.push(
-                new DataGridColumn(this, columnNames[i], i)
+                new DataGridColumn(this, columnsIncluded[i], i)
             );
         }
     }
@@ -225,14 +213,12 @@ class DataGridTable {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        // Set the width of the visible part of the scrollable area.
-        this.tbodyElement.style.height =
-            `calc(100% - ${(this.theadElement?.offsetHeight)}px)`;
 
-        // Fix default CSS issue with wrong calculating height in percents,
-        // when the caption is.
-        this.container.style.height = 
-            `calc(100% - ${(this.titleElement?.offsetHeight)}px)`;
+        this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
+            this.dataGrid.container.clientHeight -
+            this.theadElement.offsetHeight - 
+            (this.titleElement?.offsetHeight || 0)
+        }px`;
 
         // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
@@ -279,7 +265,7 @@ class DataGridTable {
 
     /**
      * Get the widthRatio value from the width in pixels. The widthRatio is
-     * calculated based on the width of the viewport and the columns count.
+     * calculated based on the width of the viewport.
      *
      * @param width
      *        The width in pixels.
@@ -287,20 +273,32 @@ class DataGridTable {
      * @return The width ratio.
      */
     public getRatioFromWidth(width: number): number {
-        return width * this.columns.length / this.tbodyElement.clientWidth;
+        return width / this.tbodyElement.clientWidth;
     }
 
     /**
      * Get the width in pixels from the widthRatio value. The width is
-     * calculated based on the width of the viewport and the columns count.
+     * calculated based on the width of the viewport.
      *
      * @param ratio
      *       The width ratio.
      *
      * @returns The width in pixels.
      */
-    public getWithFromRatio(ratio: number): number {
-        return this.tbodyElement.clientWidth / this.columns.length * ratio;
+    public getWidthFromRatio(ratio: number): number {
+        return this.tbodyElement.clientWidth * ratio;
+    }
+
+    private renderNoResultRow(): void {
+        const row = makeHTMLElement('tr', {
+            className: Globals.classNames.rowElement
+        }, this.tbodyElement);
+
+        const cell = makeHTMLElement('td', {
+            className: Globals.classNames.noResultColumn
+        }, row);
+
+        cell.innerHTML = 'No data';
     }
 
     /**
@@ -315,7 +313,7 @@ class DataGridTable {
         this.titleElement = makeHTMLElement('caption', {
             innerText: this.dataGrid.userOptions.title.text,
             className: Globals.classNames.titleElement
-        }, this.container);
+        }, this.dataGrid.tableElement);
     }
 }
 

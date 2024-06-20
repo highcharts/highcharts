@@ -97,12 +97,10 @@ class DataGridRow {
             }
         });
 
-        this.htmlElement.setAttribute('row-index', index);
+        this.htmlElement.setAttribute('data-row-index', index);
 
         // 1 - index of the head, 1 to avoid indexing from 0
         this.htmlElement.setAttribute('aria-rowindex', index + 2);
-
-        this.htmlElement.setAttribute('row-id', index);
 
         if (index % 2 === 1) {
             this.htmlElement.classList.add(Globals.classNames.odd);
@@ -179,10 +177,9 @@ class DataGridRow {
         );
     }
 
-    public getCurrentHeight(): number {
-        return this.htmlElement.offsetHeight;
-    }
-
+    /**
+     * Returns the default top offset of the row (before adjusting row heights).
+     */
     public getDefaultTopOffset(): number {
         return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
