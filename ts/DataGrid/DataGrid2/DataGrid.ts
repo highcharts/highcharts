@@ -133,6 +133,15 @@ class DataGrid {
     *
     * */
 
+    /**
+     * Destroys the data grid.
+     */
+    public destroy(): void {
+        this.viewport.destroy();
+        this.tableElement.remove();
+        this.container.classList.remove(Globals.classNames.container);
+    }
+
 
     /* *
     *

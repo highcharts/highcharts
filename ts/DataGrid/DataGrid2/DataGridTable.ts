@@ -282,6 +282,9 @@ class DataGridTable {
         return this.tbodyElement.clientWidth * ratio;
     }
 
+    /**
+     * Renders the no result row.
+     */
     private renderNoResultRow(): void {
         const row = makeHTMLElement('tr', {
             className: Globals.classNames.rowElement
@@ -292,6 +295,24 @@ class DataGridTable {
         }, row);
 
         cell.innerHTML = 'No data';
+    }
+
+    /**
+     * Destroys the data grid table.
+     */
+    public destroy(): void {
+        this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        this.resizeObserver.disconnect();
+        this.columnsResizer.removeEventListeners();
+
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            this.rows[i].destroy();
+        }
+        this.rows.length = 0;
+        this.head?.destroy();
+
+        this.theadElement.remove();
+        this.tbodyElement.remove();
     }
 }
 
