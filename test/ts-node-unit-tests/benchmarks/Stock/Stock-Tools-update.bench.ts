@@ -26,6 +26,7 @@ export default async function benchmarkTest(
 ): Promise<BenchmarkResult> {
   const { win, el } = setupDOM();
   const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
+  require(join(CODE_PATH, '/module/stock-tools.src.js'))(hc);
 
   const chart = hc.stockChart(el, {
     chart: {
@@ -56,9 +57,11 @@ export default async function benchmarkTest(
 
   for (let i = 0; i < 250; i++) {
     chart.update({
-      series: [{
-        type: i % 2 === 0 ? 'candlestick' : 'line',
-      }]
+        stockTools: {
+            gui: {
+                buttons: i % 2 === 0 ? ['indicators'] : ['simpleShapes']
+            }
+        },
     });
   };
 

@@ -56,9 +56,19 @@ export default async function benchmarkTest(
 
   for (let i = 0; i < 250; i++) {
     chart.update({
-      series: [{
-        type: i % 2 === 0 ? 'candlestick' : 'line',
-      }]
+      rangeSelector: {
+        buttons: i % 2 === 0 ? [{
+          type: 'month',
+          count: 1,
+          text: '1m',
+          title: 'View 1 month'
+        }] : [{
+          type: 'month',
+          count: 3,
+          text: '3m',
+          title: 'View 3 months'
+        }]
+      }
     });
   };
 

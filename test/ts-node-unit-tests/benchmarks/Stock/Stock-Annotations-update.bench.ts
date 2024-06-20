@@ -29,20 +29,43 @@ export default async function benchmarkTest(
 
   const chart = hc.stockChart(el, {
     chart: {
-        height: 400,
-        width: 800
+      height: 400,
+      width: 800
     },
     accessibility: {
       enabled: false
     },
     plotOptions: {
-        series: {
-            animation: false,
-            dataLabels: {
-                defer: false
-            }
+      series: {
+        animation: false,
+        dataLabels: {
+          defer: false
         }
+      }
     },
+    annotations: [{
+      type: 'fibonacci',
+      typeOptions: {
+        points: [{
+          x: data[0][0],
+          y: data[0][4]
+        }, {
+          x: data[100][0],
+          y: data[100][4]
+        }],
+      }
+    }, {
+      type: 'crookedLine',
+      typeOptions: {
+        points: [{
+          x: data[0][0],
+          y: data[0][4]
+        }, {
+          x: data[100][0],
+          y: data[100][4]
+        }],
+      }
+    }],
     series: [{
       data: data,
       type: 'candlestick',
@@ -55,10 +78,10 @@ export default async function benchmarkTest(
   performance.mark('Start');
 
   for (let i = 0; i < 250; i++) {
+    const visible = i % 2 === 0;
+
     chart.update({
-      series: [{
-        type: i % 2 === 0 ? 'candlestick' : 'line',
-      }]
+      annotations: [{ visible }, { visible }]
     });
   };
 

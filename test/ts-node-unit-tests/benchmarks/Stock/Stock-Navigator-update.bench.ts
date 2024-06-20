@@ -56,9 +56,9 @@ export default async function benchmarkTest(
 
   for (let i = 0; i < 250; i++) {
     chart.update({
-      series: [{
-        type: i % 2 === 0 ? 'candlestick' : 'line',
-      }]
+      navigator: {
+        maskInside: i % 2 === 0 ? false : true
+      }
     });
   };
 
