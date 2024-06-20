@@ -98,6 +98,12 @@
     border-spacing: 0;
     color: var(--highcharts-neutral-color-100);
     overflow: hidden;
+    background-color: var(--highcharts-background-color);
+}
+
+.highcharts-dg-title {
+    padding-bottom: 5px;
+    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-table thead {
@@ -126,7 +132,6 @@
     min-height: 100%;
     display: block;
     position: relative;
-    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-row {

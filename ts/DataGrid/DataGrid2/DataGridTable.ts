@@ -119,6 +119,11 @@ class DataGridTable {
      */
     public readonly allColumnsCount: number;
 
+    /**
+     * Title of data grid
+     */
+    public titleElement?: HTMLElement;
+
 
     /* *
     *
@@ -154,6 +159,8 @@ class DataGridTable {
         this.allColumnsCount =
             dgOptions.columnsIncluded?.length ||
             this.dataTable.getColumnNames().length;
+
+        this.renderTitle();
 
         this.theadElement = makeHTMLElement('thead', {}, tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
@@ -215,14 +222,14 @@ class DataGridTable {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        // Set the width of the visible part of the scrollable area.
+
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
             this.dataGrid.container.clientHeight -
-            this.theadElement.offsetHeight
+            this.theadElement.offsetHeight - 
+            (this.titleElement?.offsetHeight || 0)
         }px`;
 
-
-        // Get the width of the rows
+        // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
             let rowsWidth = 0;
             for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
@@ -307,6 +314,20 @@ class DataGridTable {
     }
 
     /**
+     * Render title above the datagrid
+     */
+    public renderTitle(): void {
+        if (!this.dataGrid.options.title) {
+            return;
+        }
+
+        this.titleElement = makeHTMLElement('caption', {
+            innerText: this.dataGrid.options.title.text,
+            className: Globals.classNames.titleElement
+        }, this.dataGrid.tableElement);
+    }
+
+    /**
      * Destroys the data grid table.
      */
     public destroy(): void {
@@ -317,7 +338,6 @@ class DataGridTable {
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }
-        this.rows.length = 0;
     }
 }
 

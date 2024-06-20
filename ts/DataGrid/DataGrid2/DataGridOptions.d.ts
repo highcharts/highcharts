@@ -64,6 +64,11 @@ export interface DataGridOptions {
      * Columns excluded from the grid structure.
      */
     columns?: Record<string, ColumnOptions>;
+
+    /**
+     * Contains options for title
+     */
+    title?: TitleOptions;
 }
 
 /**
@@ -135,6 +140,13 @@ export interface ColumnOptions {
      * The format of the column header.
      */
     headFormat?: string;
+}
+
+export interface TitleOptions {
+    /**
+     * The title of the datagrid grid.
+     */
+    text: string;
 }
 
 
