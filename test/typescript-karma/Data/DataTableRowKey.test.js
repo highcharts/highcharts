@@ -172,7 +172,7 @@ QUnit.test('DataTableRowKey.renameColumn', function (assert) {
             ranges: [{
                 column: 'x',
                 minValue: -10,
-                maxValue: -2    
+                maxValue: -2
             }, {
                 column: 'y',
                 minValue: 'e',
@@ -193,7 +193,7 @@ QUnit.test('DataTableRowKey.renameColumn', function (assert) {
             assert.deepEqual(
                 table.getColumns(),
                 { x: [-2, -1, 0, 1, 2], y: ['a', 'b', 'c', 'd', 'e'] },
-                'The original table should contain two rows with 5 cells each.'
+                'The original table should contain two columns with 5 rows.'
             );
 
             assert.ok(
@@ -204,7 +204,7 @@ QUnit.test('DataTableRowKey.renameColumn', function (assert) {
             assert.deepEqual(
                 table.modified.getRowObjects(),
                 [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
-                'Modified table should contain two rows.'
+                'Modified table should now contain only two rows.'
             );
 
             table.setColumns({ x: [-3, -2, 0] });
@@ -230,6 +230,229 @@ QUnit.test('DataTableRowKey.renameColumn', function (assert) {
                 table.modified.getColumns(),
                 { x: [-3, -2], z: ['a', 'b'] },
                 'Modified table hould contain column z instead of y.'
+            );
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
+});
+
+QUnit.test('DataTableRowKey.deleteColumns', function (assert) {
+    const done = assert.async(),
+        modifier = new RangeModifier({
+            additive: true,
+            ranges: [{
+                column: 'x',
+                minValue: -10,
+                maxValue: -2
+            }, {
+                column: 'y',
+                minValue: 'e',
+                maxValue: 'z'
+            }]
+        }),
+        table = new DataTable({
+            columns: {
+                x: [-2, -1, 0, 1, 2],
+                y: ['a', 'b', 'c', 'd', 'e']
+            },
+            rowKeysId: 'rkey'
+        });
+
+    table
+        .setModifier(modifier)
+        .then((table) => {
+            assert.deepEqual(
+                table.modified.getRowObjects(),
+                [{ x: -2, y: 'a' }, { x: 2, y: 'e' }],
+                'Modified table should contain only two rows.'
+            );
+
+            table.setColumns({ x: [-3, -2, 0] });
+
+            assert.deepEqual(
+                table.modified.getRowObjects(),
+                [{ x: -3, y: 'a' }, { x: -2, y: 'b' }],
+                'Modified table should contain two rows with valid values.'
+            );
+
+            assert.deepEqual(
+                table.modified.getColumns(),
+                { x: [-3, -2], y: ['a', 'b'] },
+                'Modified table should contain two rows with valid values.'
+            );
+
+            assert.ok(
+                table.modified.deleteColumns(['y']),
+                'Modified table should delete a column.'
+            );
+
+            assert.deepEqual(
+                table.modified.getColumns(),
+                { x: [-3, -2] },
+                'Modified table should contain one row with valid values.'
+            );
+
+            assert.ok(
+                table.modified.deleteColumns(['x']),
+                'Table should delete a column.'
+            );
+
+            assert.deepEqual(
+                table.modified.getColumns(),
+                {},
+                'Modified table should be empty.'
+            );
+
+            const rowCount = table.modified.getRowCount();
+            assert.equal(
+                rowCount,
+                0,
+                'Modified table row count should be zero.'
+            );
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
+});
+
+QUnit.test('DataTableRowKey.setColumns', function (assert) {
+    const done = assert.async(),
+        modifier = new RangeModifier({
+            additive: true,
+            ranges: [{
+                column: 'x',
+                minValue: -10,
+                maxValue: -2
+            }, {
+                column: 'y',
+                minValue: 'e',
+                maxValue: 'z'
+            }]
+        }),
+        table = new DataTable({
+            columns: {
+                x: [-2, -1, 0, 1, 2],
+                y: ['a', 'b', 'c', 'd', 'e']
+            },
+            rowKeysId: 'rkey'
+        });
+
+    table
+        .setModifier(undefined)
+        .then((table) => {
+            assert.deepEqual(
+                table.getColumns(),
+                { x: [-2, -1, 0, 1, 2], y: ['a', 'b', 'c', 'd', 'e'] },
+                'The original table should contain 2 columns, 5 rows.'
+            );
+
+            table.setColumns({ z: [1, 2, 3, 4, 5] });
+
+            assert.deepEqual(
+                table.getColumns(),
+                { x: [-2, -1, 0, 1, 2], y: ['a', 'b', 'c', 'd', 'e'], z: [1, 2, 3, 4, 5] },
+                'Modified table should contain 3 columns, 5 rows.'
+            );
+
+            assert.ok(
+                table.setModifier(modifier),
+                'Setting the modifier should pass.'
+            );
+
+            assert.deepEqual(
+                table.modified.getColumns(),
+                { x: [-2, 2], y: ['a', 'e'], z: [1, 5] },
+                'Modified table should contain 3 columns, 2 rows.'
+            );
+        })
+        .catch((e) =>
+            assert.notOk(true, e)
+        )
+        .then(() =>
+            done()
+        );
+});
+
+
+QUnit.test('DataTableRowKey.columnAlias', function (assert) {
+    const done = assert.async(),
+        modifier = new RangeModifier({
+            additive: true,
+            ranges: [{
+                column: 'x',
+                minValue: -10,
+                maxValue: -2
+            }, {
+                column: 'y',
+                minValue: 'e',
+                maxValue: 'z'
+            }]
+        }),
+        table = new DataTable({
+            columns: {
+                x: [-2, -1, 0, 1, 2],
+                y: ['a', 'b', 'c', 'd', 'e']
+            },
+            rowKeysId: 'rkey'
+        });
+
+    table
+        .setModifier(undefined)
+        .then((table) => {
+            // Without modifier
+            assert.deepEqual(
+                table.getColumns(),
+                { x: [-2, -1, 0, 1, 2], y: ['a', 'b', 'c', 'd', 'e'] },
+                'The original table should contain 2 columns, 5 rows.'
+            );
+
+            table.setColumns({ z: [1, 2, 3, 4, 5] });
+
+            assert.deepEqual(
+                table.getColumns(),
+                { x: [-2, -1, 0, 1, 2], y: ['a', 'b', 'c', 'd', 'e'], z: [1, 2, 3, 4, 5] },
+                'Modified table should contain 3 columns, 5 rows.'
+            );
+
+            // With modifier
+            assert.ok(
+                table.setModifier(modifier),
+                'Setting the modifier should pass.'
+            );
+
+            assert.deepEqual(
+                table.modified.getColumns(),
+                { x: [-2, 2], y: ['a', 'e'], z: [1, 5] },
+                'Modified table should contain 3 columns, 2 rows.'
+            );
+
+            assert.deepEqual(
+                table.modified.getColumn('x'),
+                [-2, 2],
+                'Table should return correct column for x.'
+            );
+
+            table.modified.aliases.test = 'x';
+
+            assert.deepEqual(
+                table.modified.getColumn('test'),
+                [-2, 2],
+                'Table should return correct column for test.'
+            );
+
+            table.modified.deleteColumnAlias('test');
+
+            assert.equal(
+                table.modified.aliases.test,
+                undefined,
+                'Table should delete column alias.'
             );
         })
         .catch((e) =>

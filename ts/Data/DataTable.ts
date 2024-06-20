@@ -1234,7 +1234,8 @@ class DataTable implements DataEvent.Emitter {
                 columns[newColumnName] = columns[columnName];
                 delete columns[columnName];
                 if (table.rowKeysId) {
-                    // Ensure that the row keys column is always last
+                    // Ensure that row keys column is last
+                    this.moveKeyIdColumnToLast(columns, table.rowKeysId);
                 }
             }
 
@@ -1433,6 +1434,7 @@ class DataTable implements DataEvent.Emitter {
 
         if (table.rowKeysId) {
             // Ensure that the row keys column is always last
+            this.moveKeyIdColumnToLast(tableColumns, table.rowKeysId);
         }
 
         table.emit({
@@ -1693,6 +1695,15 @@ class DataTable implements DataEvent.Emitter {
         });
     }
 
+    // The key ID column must always be the last column
+    private moveKeyIdColumnToLast(columns: Record<string, DataTable.Column>, id: string): void {
+        const rowKeyColumn = columns[id];
+        delete columns[id];
+        columns[id] = rowKeyColumn;
+    }
+
+    // The key ID column must removed in some methods
+    // (API backwards compatibility)
     private removeKeyIdColumn(columnNamesOrAliases: Array<string>): void {
         if (this.rowKeysId) {
             const pos = columnNamesOrAliases.indexOf(this.rowKeysId);
