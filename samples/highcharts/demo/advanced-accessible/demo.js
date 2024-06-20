@@ -92,7 +92,7 @@ const chart = Highcharts.chart('container', {
             description: 'Year'
         },
         crosshair: true,
-        categories: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+        categories: [2017, 2018, 2019, 2020, 2021, 2022, 2023]
     }],
     yAxis: {
         title: {
