@@ -53,6 +53,10 @@ export interface DataGridOptions {
      * Contains options for columns.
      */
     columns?: ColumnsOptions;
+    /**
+     * Contains options for title
+     */
+    title?: TitleOptions;
 }
 
 /**
@@ -130,6 +134,13 @@ export interface ColumnAssignmentOptions {
      * Options for the column.
      */
     options: ColumnOptions;
+}
+
+export interface TitleOptions {
+    /**
+     * The title of the datagrid grid.
+     */
+    text: string;
 }
 
 

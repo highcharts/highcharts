@@ -96,6 +96,10 @@
     overflow: hidden;
 }
 
+.highcharts-dg-title {
+    padding-bottom: 5px;
+}
+
 .highcharts-dg-table thead {
     background-color: var(--highcharts-neutral-color-5);
     display: block;

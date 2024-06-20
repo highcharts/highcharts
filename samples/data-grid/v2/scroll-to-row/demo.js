@@ -11,6 +11,9 @@ const dg = new DataGrid.DataGrid2('container', {
     }),
     rows: {
         bufferSize: 5
+    },
+    title: {
+        text: 'Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores Loreum ipsum et omnia dolores' // eslint-disable-line
     }
 });
 

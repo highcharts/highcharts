@@ -7,6 +7,7 @@
 #container {
     margin-bottom: 15px;
     height: 400px;
+    width: 100%;
 }
 
 .highcharts-dg-row[row-index="1"] {

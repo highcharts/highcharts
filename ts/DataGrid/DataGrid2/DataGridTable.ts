@@ -31,6 +31,7 @@ import DataGridTableHead from './DataGridTableHead.js';
 import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
+import Globals from './Globals.js';
 
 const { makeHTMLElement } = DGUtils;
 
@@ -118,6 +119,11 @@ class DataGridTable {
      */
     public rowsWidth?: number;
 
+    /**
+     * Title of data grid
+     */
+    public titleElement?: HTMLElement;
+
 
     /* *
     *
@@ -138,6 +144,8 @@ class DataGridTable {
             dataGrid.options.columns?.distribution as ColumnDistribution;
 
         const { tableElement } = dataGrid;
+
+        this.renderTitle();
 
         this.theadElement = makeHTMLElement('thead', {}, tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
@@ -219,7 +227,11 @@ class DataGridTable {
     public reflow(): void {
         // Set the width of the visible part of the scrollable area.
         this.tbodyElement.style.height =
-            `calc(100% - ${this.theadElement.offsetHeight}px)`;
+            `calc(100% - ${(this.theadElement?.offsetHeight)}px)`;
+
+        // fix defautl css issue with wrong calculating height in percents, when the caption is
+        this.container.style.height = 
+            `calc(100% - ${(this.titleElement?.offsetHeight)}px)`;
 
         // Get the width of the rows
         if (this.columnDistribution === 'fixed') {
@@ -288,6 +300,21 @@ class DataGridTable {
      */
     public getWithFromRatio(ratio: number): number {
         return this.tbodyElement.clientWidth / this.columns.length * ratio;
+    }
+
+    /**
+     * Render title above the datagrid
+     */
+    public renderTitle(): void {
+
+        if (!this.dataGrid.userOptions.title) {
+            return;
+        }
+
+        this.titleElement = makeHTMLElement('caption', {
+            innerText: this.dataGrid.userOptions.title.text,
+            className: Globals.classNames.titleElement
+        }, this.container);
     }
 }
 
