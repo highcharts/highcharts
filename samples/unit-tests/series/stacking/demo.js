@@ -593,33 +593,34 @@ QUnit.test('Date objects as X values, column', function (assert) {
     );
 
     QUnit.test('Stack Labels position in bar chart (#8187)', function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 type: 'bar',
                 marginLeft: 200
             },
             plotOptions: {
                 series: {
-                    stacking: 'normal'
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true
+                    }
                 }
             },
+            xAxis: [{}, {}],
             yAxis: {
                 stackLabels: {
                     enabled: true,
                     allowOverlap: true
                 }
             },
-            series: [
-                {
-                    data: [1, 1]
-                },
-                {
-                    data: [1, 1]
-                }
-            ]
+            series: [{
+                data: [1, 1]
+            }, {
+                data: [1, 1]
+            }]
         });
 
-        var labelPos =
+        const labelPos =
             chart.yAxis[0].stacking.stacks[chart.series[0].stackKey][0].label;
 
         assert.close(
@@ -627,6 +628,32 @@ QUnit.test('Date objects as X values, column', function (assert) {
             labelPos.alignAttr.y + labelPos.getBBox().height / 2,
             1,
             'Stack labels should be properly positioned'
+        );
+
+        chart.update({
+            xAxis: [{
+                height: '50%'
+            }, {
+                height: '50%',
+                top: '50%'
+            }]
+        }, false);
+        chart.series[1].update({
+            xAxis: 1
+        });
+
+        const series = chart.series[1],
+            datalabelY = series.points[0].dataLabel.y + series.xAxis.top,
+            label = series.yAxis.stacking
+                .stacks[series.stackKey][0].label,
+            stacklabelY = label.y + chart.plotTop;
+
+        assert.close(
+            datalabelY,
+            stacklabelY,
+            1,
+            `Stack labels should be properly positioned for multiple offseted
+            x-axes for inverted charts, #21174.`
         );
     });
 
