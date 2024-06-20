@@ -33,7 +33,8 @@ QUnit.test('Adapt height', function (assert) {
                     },
                     chartOptions: {
                         chart: {
-                            height: '100%'
+                            height: 200,
+                            backgroundColor: 'red'
                         }
                     }
                 }
@@ -55,6 +56,20 @@ QUnit.test('Adapt height', function (assert) {
 
     assert.strictEqual(chart.chartWidth, 200, 'Width updated');
     assert.strictEqual(chart.chartHeight, 200, 'Percentage height updated');
+
+    assert.strictEqual(
+        chart.options.chart.backgroundColor,
+        'red',
+        'Chart should have red background'
+    );
+
+    chart.setSize(400);
+
+    assert.strictEqual(
+        chart.options.chart.backgroundColor,
+        '#ffffff',
+        'Chart should have default background'
+    );
 });
 
 QUnit.test('Callback', function (assert) {
