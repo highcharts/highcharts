@@ -229,11 +229,12 @@ class DataGridTable {
         this.tbodyElement.style.height =
             `calc(100% - ${(this.theadElement?.offsetHeight)}px)`;
 
-        // fix defautl css issue with wrong calculating height in percents, when the caption is
+        // Fix default CSS issue with wrong calculating height in percents,
+        // when the caption is.
         this.container.style.height = 
             `calc(100% - ${(this.titleElement?.offsetHeight)}px)`;
 
-        // Get the width of the rows
+        // Get the width of the rows.
         if (this.columnDistribution === 'fixed') {
             let rowsWidth = 0;
             for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
