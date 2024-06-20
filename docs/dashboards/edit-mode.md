@@ -83,6 +83,57 @@ If you do not intend to use the connector, you can set the data using the compon
 
 Check how the component settings sidebar works in practice using the [edit mode live example](https://www.highcharts.com/docs/dashboards/edit-mode#edit-mode-live-example).
 
+## Customizing the component settings
+
+What is displayed in the settings sidebar can be customized by setting the `editableOptions` property in the component options.
+
+The `editableOptions` property is an array of objects, where each object represents a category in the settings sidebar. Each object can have the following properties:
+- `name` - the name of the category,
+- `propertyPath` - the path to the property in the component options that should be edited,
+- `type` - the type of the input field. It can be one of the following:
+    - `input` - a simple text input,
+    - `textarea` - a textarea,
+    - `toggle` - a toggle switch,
+    - `select` - a select input requiring `selectOptions` property,
+    - `nested` - a nested category, requiring `nestedOptions` property,
+- `isStandalone` - a boolean value that indicates whether the category should be displayed as a standalone category or as a part of the parent category.
+
+
+```js
+    ...
+    renderTo: 'dashboard-cell-0',
+    type: 'Highcharts',
+    editableOptions: [{
+        isStandalone: true,
+        name: 'Component title',
+        propertyPath: ['title'],
+        type: 'input'
+      }, {
+        name: 'chartOptions',
+        type: 'nested',
+        nestedOptions: [{
+          name: 'Marker Radius',
+          options: [{
+            name: 'Marker Radius',
+            propertyPath: [
+              'chartOptions',
+              'plotOptions',
+              'series',
+              'marker',
+              'radius'
+            ],
+            type: 'select',
+            selectOptions: [{
+              name: 3
+            }, {
+              name: 5
+            }]
+          }]
+        }]
+      }
+    ]
+```
+See how it works in the [edit mode live example](https://www.highcharts.com/docs/dashboards/edit-mode/editableoptions).
 
 ## Customizing the context menu
 
@@ -105,3 +156,36 @@ items: [{
 
 Use the context menu on the upper-right corner to enable and explore the edit mode.
 <iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled" allow="fullscreen"></iframe>
+
+
+## Edit mode events
+
+Event listeners can be added to the `board.editMode` object, which will call callback functions when editing the layout or any component.
+
+The available events are:
+ - `componentChanged` - fired after accepting changes in the component editing sidebar.
+ - `componentChangesDiscarded` - fired after discarding changes in the component editing sidebar.
+ - `layoutChanged` - called after changes to the layout are changed. It has 6 types:
+    - `newLayout` - called after a new layout was added to a board,
+    - `newComponent` - called after a new component was added to a board,
+    - `rowDestroyed` - called after a row was deleted,
+    - `cellDestroyed` - called after a cell was deleted,
+    - `cellDragEnd` - called after a cell was moved,
+    - `rowDragEnd` - called after a row was moved.
+
+Example:
+```js
+U.addEvent(editMode, 'componentChanged', e => {
+    console.log('Component Changed', e);
+});
+
+U.addEvent(editMode, 'componentChangesDiscarded', e => {
+    console.log('Component Changes Discarded', e);
+});
+
+U.addEvent(editMode, 'layoutChanged', e => {
+    console.log('Layout Changed', e);
+});
+```
+
+See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/).

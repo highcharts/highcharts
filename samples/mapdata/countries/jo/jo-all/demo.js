@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/jo/jo-all.topo.json">Jordan</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/jo/jo-all.topo.json">Jordan</a>'
         },
 
         mapNavigation: {

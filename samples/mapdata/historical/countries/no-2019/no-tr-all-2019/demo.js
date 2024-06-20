@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-tr-all-2019.topo.json">Troms (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-tr-all-2019.topo.json">Troms (2019)</a>'
         },
 
         mapNavigation: {

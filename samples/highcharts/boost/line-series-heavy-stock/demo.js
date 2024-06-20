@@ -43,7 +43,6 @@ function getSeries(n, s) {
             },
             lineWidth: 2,
             boostThreshold: 1,
-            turboThreshold: 1,
             showInNavigator: true
         });
     }

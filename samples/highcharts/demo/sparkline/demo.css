@@ -2,6 +2,11 @@
     text-align: left;
     color: gray;
     min-height: 2em;
+    margin: 0.2em;
+}
+
+#scrolling-container {
+    overflow-x: auto;
 }
 
 #table-sparkline {

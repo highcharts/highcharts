@@ -71,7 +71,10 @@ Highcharts.setOptions({
         },
         maskFill: 'rgba(181, 145, 143, 0.2)',
         handles: {
-            backgroundColor: '#5f5959'
+            backgroundColor: '#5f5959',
+            borderRadius: '50%',
+            width: 20,
+            height: 20
         }
     },
 
@@ -118,6 +121,7 @@ Highcharts.setOptions({
                     }
                 },
                 hover: {
+                    fill: '#f23644',
                     style: {
                         color: '#000000'
                     }
@@ -154,8 +158,7 @@ Highcharts.stockChart('container', {
 
     title: {
         text: 'BTCETH',
-        align: 'left',
-        y: 30
+        align: 'left'
     },
 
     xAxis: {
@@ -195,9 +198,7 @@ Highcharts.stockChart('container', {
 
     rangeSelector: {
         buttonPosition: {
-            align: 'right',
-            x: -30,
-            y: -40
+            align: 'right'
         },
         buttonSpacing: 10,
         inputEnabled: false,
@@ -205,7 +206,7 @@ Highcharts.stockChart('container', {
     },
 
     data: {
-        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac5bcf/samples/data/btc-eth.csv'
+        csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e5fcf4/samples/data/btc-eth.csv'
     },
 
     tooltip: {
@@ -220,30 +221,5 @@ Highcharts.stockChart('container', {
             valueDecimals: 4,
             pointFormat: '{point.y}'
         }
-    }],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 700
-            },
-            chartOptions: {
-                title: {
-                    align: 'center',
-                    verticalAlign: 'top'
-                },
-                scrollbar: {
-                    enabled: false
-                },
-                rangeSelector: {
-                    buttonSpacing: 20,
-                    buttonPosition: {
-                        align: 'center',
-                        x: 0,
-                        y: 0
-                    }
-                }
-            }
-        }]
-    }
+    }]
 });

@@ -41,22 +41,27 @@ const KPIComponentDefaults: Globals.DeepPartial<Options> = {
     ].join(' '),
     minFontSize: 20,
     thresholdColors: ['#f45b5b', '#90ed7d'],
-    editableOptions:
-        (Component.defaultOptions.editableOptions || []).concat(
-            [{
-                name: 'Value',
-                type: 'input',
-                propertyPath: ['value']
-            }, {
-                name: 'Column name',
-                type: 'input',
-                propertyPath: ['columnName']
-            }, {
-                name: 'Value format',
-                type: 'input',
-                propertyPath: ['valueFormat']
-            }]
-        ),
+    editableOptions: [
+        {
+            name: 'connectorName',
+            propertyPath: ['connector', 'id'],
+            type: 'select'
+        },
+        ...Component.defaultOptions.editableOptions || [],
+        {
+            name: 'Value',
+            type: 'input',
+            propertyPath: ['value']
+        }, {
+            name: 'Column name',
+            type: 'input',
+            propertyPath: ['columnName']
+        }, {
+            name: 'Value format',
+            type: 'input',
+            propertyPath: ['valueFormat']
+        }
+    ],
     linkedValueTo: {
         enabled: true,
         seriesIndex: 0,

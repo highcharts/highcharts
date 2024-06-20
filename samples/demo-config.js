@@ -48,5 +48,10 @@ module.exports = {
         categories: ['Highcharts Gantt'],
         filter: { tags: ['Highcharts Gantt demo'] },
         path: '/gantt/'
+    },
+    'Highcharts Dashboards': {
+        categories: ['General'],
+        filter: { tags: ['Highcharts dashboards demo'] },
+        path: '/dashboards/'
     }
 };
