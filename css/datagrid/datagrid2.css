@@ -102,6 +102,7 @@
 
 .highcharts-dg-title {
     padding-bottom: 5px;
+    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-table thead {
