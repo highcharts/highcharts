@@ -97,6 +97,7 @@
     border-spacing: 0;
     color: var(--highcharts-neutral-color-100);
     overflow: hidden;
+    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-title {
@@ -129,7 +130,6 @@
     min-height: 100%;
     display: block;
     position: relative;
-    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-row {
