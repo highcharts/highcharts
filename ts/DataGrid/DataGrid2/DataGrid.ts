@@ -24,6 +24,7 @@
 
 import type DataGridOptions from './DataGridOptions';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridDefaultOptions from './DataGridDefaultOptions.js';
 import DataGridTable from './DataGridTable.js';
 import DataGridUtils from './Utils.js';
@@ -67,12 +68,7 @@ class DataGrid {
     /**
      * The HTML element of the table.
      */
-    public tableElement: HTMLTableElement;
-
-    /**
-     * The data source of the data grid.
-     */
-    public dataTable: DataTable;
+    public tableElement?: HTMLTableElement;
 
     /**
      * The options of the data grid.
@@ -87,7 +83,7 @@ class DataGrid {
     /**
      * The table (viewport) element of the data grid.
      */
-    public viewport: DataGridTable;
+    public viewport?: DataGridTable;
 
 
     /* *
@@ -108,23 +104,7 @@ class DataGrid {
 
         this.container = DataGrid.initContainer(renderTo);
 
-        this.tableElement = makeHTMLElement('table', {
-            className: Globals.classNames.tableElement
-        }, this.container);
-
-        if (options.table instanceof DataTable) {
-            this.dataTable = options.table;
-        } else {
-            this.dataTable = new DataTable(options.table);
-        }
-
-        this.viewport = new DataGridTable(this);
-
-        // Accessibility
-        this.tableElement.setAttribute(
-            'aria-rowcount',
-            this.dataTable.getRowCount()
-        );
+        this.load();
     }
 
     /* *
@@ -134,12 +114,45 @@ class DataGrid {
     * */
 
     /**
+     * Loads & renders the data grid.
+     */
+    public load(): void {
+        if (this.tableElement) {
+            return;
+        }
+
+        this.container.classList.add(Globals.classNames.container);
+
+        this.tableElement = makeHTMLElement('table', {
+            className: Globals.classNames.tableElement
+        }, this.container);
+
+        let dataTable: DataTable;
+        if (this.options.table instanceof DataTable) {
+            dataTable = this.options.table;
+        } else {
+            dataTable = new DataTable(this.options.table);
+        }
+
+        this.viewport = new DataGridTable(this, dataTable, this.tableElement);
+
+        // Accessibility
+        this.tableElement.setAttribute(
+            'aria-rowcount',
+            dataTable.getRowCount()
+        );
+    }
+
+    /**
      * Destroys the data grid.
      */
     public destroy(): void {
-        this.viewport.destroy();
-        this.tableElement.remove();
+        this.viewport?.destroy();
+        this.container.innerHTML = AST.emptyHTML;
         this.container.classList.remove(Globals.classNames.container);
+
+        delete this.viewport;
+        delete this.tableElement;
     }
 
 
@@ -159,7 +172,6 @@ class DataGrid {
         if (typeof renderTo === 'string') {
             const existingContainer = win.document.getElementById(renderTo);
             if (existingContainer) {
-                existingContainer.classList.add(Globals.classNames.container);
                 return existingContainer;
             }
             return makeDiv(Globals.classNames.container, renderTo);

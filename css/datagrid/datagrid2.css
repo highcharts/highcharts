@@ -87,6 +87,7 @@
 
 .highcharts-dg-container {
     border: 1px solid var(--highcharts-neutral-color-20);
+    min-height: 100px;
     overflow: hidden;
 }
 

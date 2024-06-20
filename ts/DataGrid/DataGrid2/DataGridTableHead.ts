@@ -173,16 +173,6 @@ class DataGridTableHead {
             `translateX(${-scrollLeft}px)`;
     }
 
-    /**
-     * Destroys the table head.
-     */
-    public destroy(): void {
-        for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
-            this.columns[i].headElement?.remove();
-        }
-        this.container.remove();
-    }
-
 
     /* *
     *
