@@ -1,7 +1,7 @@
 const btn = document.getElementById('play-pause-button'),
     input = document.getElementById('play-range'),
     startYear = 1973,
-    endYear = 2021;
+    endYear = 2023;
 
 // General helper functions
 const arrToAssociative = arr => {
@@ -57,7 +57,7 @@ const chart = Highcharts.chart('container', {
     },
     data: {
         csv: document.getElementById('csv').innerHTML,
-        itemDelimiter: '\t',
+        itemDelimiter: ';',
         complete: function (options) {
             for (let i = 0; i < options.series.length; i++) {
                 formatRevenue[i] = arrToAssociative(options.series[i].data);
