@@ -97,8 +97,10 @@ class RowsVirtualizer {
         this.viewport = viewport;
         this.strictRowHeights =
             viewport.dataGrid.options.settings?.strictRowHeights as boolean;
-        this.buffer =
-            viewport.dataGrid.options.settings?.rowBufferSize as number;
+        this.buffer = Math.max(
+            viewport.dataGrid.options.settings?.rowBufferSize as number,
+            0
+        );
         this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {

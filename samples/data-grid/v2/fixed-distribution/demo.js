@@ -16,7 +16,6 @@ DataGrid.dataGrid2('container', {
         }
     },
     settings: {
-        rowBufferSize: 5,
         columnDistribution: 'fixed'
     }
 });

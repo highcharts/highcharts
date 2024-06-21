@@ -90,7 +90,9 @@ export interface DataGridSettings {
      * the bottom while scrolling. The bigger the buffer, the less flicker will
      * be seen while scrolling, but the more rows will have to be rendered.
      *
-     * @default 5
+     * Cannot be lower than 0.
+     *
+     * @default 10
      */
     rowBufferSize?: number;
 

@@ -28,10 +28,7 @@ oldDatagridTimer.innerHTML =
 startTime = new Date().getTime();
 startPerfo = performance.now();
 DataGrid.dataGrid2('container', {
-    table: dataTable,
-    settings: {
-        rowBufferSize: 5
-    }
+    table: dataTable
 });
 endPerfo = performance.now();
 endTime = new Date().getTime();
@@ -45,7 +42,6 @@ startPerfo = performance.now();
 DataGrid.dataGrid2('container-sh', {
     table: dataTable,
     settings: {
-        rowBufferSize: 5,
         strictRowHeights: true
     }
 });
