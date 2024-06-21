@@ -13,6 +13,7 @@ The types of modifiers that are available are:
 * Range
 * Invert
 * Math
+* Sort
 
 ### How to add the modifier?
 To add the modifier, you need to specify it in the options of the connector.
@@ -34,7 +35,7 @@ The modifier modifies the `table.modified` property of the connector, which leav
 ### What does each of the modifiers do?
 
 Here is a brief description of each of the modifiers:
-* Chain - Allows to combine multiple modifiers in the same connector. This is useful, if you need to perform multiple operations on the same dataset. In the `chain` property you can define the order and configuration objects of the modifiers, that should be applied to the modifier. Here is an example usage of this modifier:
+* Chain - Allows to combine multiple modifiers in the same connector. This is useful if you need to perform multiple operations on the same dataset. In the `chain` property you can define the order and configuration objects of the modifiers that should be applied to the modifier. Here is an example usage of this modifier:
 ```js
 dataModifier: {
     type: 'Chain',
@@ -56,13 +57,13 @@ dataModifier: {
     }]
 }
 ```
-* Invert - Allows to flip the data, and replace the columns with rows. This comes in handy, when you data is structured by rows and you want to present it by columns. No other options need to be specified here. Example:
+* Invert - Allows to flip the data, and replace the columns with rows. This comes in handy when your data is structured by rows and you want to present it by columns. No other options need to be specified here. Example:
 ```js
 dataModifier: {
     type: 'Invert'
 }
 ```
-* Math - This is the only modifier, that comes in the separate module. It allows performing complex math calculations and adding columns of values that are calculated based on the existing values. It uses commands similar to those, that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](https://www.highcharts.com/docs/dashboards/mathmodifier-module).
+* Math - This is the only modifier that comes in a separate module. It allows performing complex math calculations and adding columns of values that are calculated based on the existing values. It uses commands similar to those that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](https://www.highcharts.com/docs/dashboards/mathmodifier-module).
 Example:
 ```js
 dataModifier: {
@@ -71,6 +72,17 @@ dataModifier: {
         column: 'USD',
         formula: 'B1*C1' // Multiply EUR (B1) with the rate (C1)
     }]
+}
+```
+
+* Sort - This modifier rearranges the order of the rows based on the content of any selected column. The sorting order is either ascending or descending. Optional: 'orderInColumn'. When used, the rows are unsorted and instead, the sorting index appears in the selected column.
+Example:
+```js
+dataModifier: {
+    type: 'Sort',
+    direction: 'desc', // 'desc' or 'asc', default 'asc'
+    orderByColumn: 'y' // Default: 'y'
+    orderInColumn: ''  // Optional
 }
 ```
 
