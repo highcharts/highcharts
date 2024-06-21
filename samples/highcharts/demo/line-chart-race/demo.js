@@ -1,23 +1,49 @@
-Highcharts.chart('container', {
+const startInt = 1,
+    endInt = 20,
+    animationSpeed = Math.floor(10000 / (endInt - startInt));
+
+// General helper functions
+const arrToAssociative = arr => {
+    const tmp = {};
+    arr.forEach(item => {
+        tmp[item[0]] = item[1];
+    });
+
+    return tmp;
+};
+
+const formatPoints = [];
+
+const chart = Highcharts.chart('container', {
     data: {
         csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@0dbb5d2/samples/data/race_data.csv',
         beforeParse: function (csv) {
             return csv.replace(/\n\n/g, '\n');
+        },
+        complete: function (options) {
+            for (let i = 0; i < options.series.length; i++) {
+                formatPoints[i] = arrToAssociative(options.series[i].data);
+                options.series[i].data = null;
+            }
         }
     },
     chart: {
-        marginRight: 150
+        marginRight: 150,
         // events: {
         //    load: loadfunc()
         // }
+        animation: {
+            duration: animationSpeed,
+            easing: t => t
+        }
     },
     title: {
         text: 'Line chart race'
     },
-    Axis: {
-        allowDecimals: false
-        // min: 100,
-        // max: 101
+    xAxis: {
+        allowDecimals: false,
+        min: startInt,
+        max: endInt
     },
     yAxis: {
         title: {
@@ -31,108 +57,50 @@ Highcharts.chart('container', {
 
             // With the series label pointIndex feature
             label: {
-                enabled: false,
+                enabled: true,
                 pointIndex: -1
             },
 
             // With the data labels keyPoints feature
             dataLabels: {
-                align: 'left',
-                verticalAlign: 'middle',
-                allowOverlap: true,
-                enabled: true,
-                format: '{series.name}: {point.y}',
-                keyPoints: {
-                    last: false
-                },
-                overflow: 'allow',
-                crop: false
+                enabled: false
             },
             marker: {
                 enabled: false
             }
             // step: true
         }
-    },
-    series: [{
-        name: 'Sebastian Vettel'
-    }, {
-        name: 'Fernando Alonso'
-    }, {
-        name: 'Kimi Räikkönen'
-    }, {
-        name: 'Lewis Hamilton'
-    }, {
-        name: 'Jenson Button'
-    }]
+    }
 });
 
-let i = 0;
-let n = 0;
-const timeBetweenPoints = 500;
+let currentXVal = 1;
 
+function update() {
+    const series = chart.series;
 
-function loadfunc() {
-    for (let j = 0; j < 5; j++) {
-        Highcharts.charts[0].series[j].data.forEach(point => {
-            point.update({
-                visible: false
-            });
-        });
+    for (let i = 0; i < series.length; i++) {
+        const newP = formatPoints[i][currentXVal];
+        series[i].addPoint([newP]);
     }
 
-    Highcharts.charts[0].update({
-        plotOptions: {
-            series: {
-                animation: {
-                    duration: timeBetweenPoints * 10
-                }
-            }
-        }
-    });
+    chart.redraw();
+
+    currentXVal++;
+
+    if (currentXVal > endInt) {
+        pause();
+    }
 }
 
+function play() {
+    chart.sequenceTimer = setInterval(function () {
+        update();
+    }, animationSpeed);
+}
 
-const increment = series => {
-    const last = series.points.at(n - 1);
+function pause() {
+    clearTimeout(chart.sequenceTimer);
+    chart.sequenceTimer = undefined;
+}
 
-    series.points.at(n).update({
-        visible: true
-        //marker: {
-        //    enabled: true
-        //}
-    });
-
-    if (last) {
-        last.update({
-            dataLabels: {
-                enabled: false
-            }
-            //marker: {
-            //    enabled: false
-            //}
-        }, true);
-    }
-
-    console.log(n);
-};
-
-
-const timer = setInterval(() => {
-
-    if (i === 0) {
-        loadfunc();
-    }
-
-    const chart = Highcharts.charts[0];
-
-    for (let j = 0; j < 5; j++) {
-        increment(chart.series[j]);
-    }
-    chart.redraw();
-    n++;
-
-    if (i++ > chart.series[0].data.length - 2) {
-        clearInterval(timer);
-    }
-}, timeBetweenPoints);
+play();
