@@ -173,12 +173,27 @@ class DataGridColumn {
     * */
 
     /**
+     * Sets the head element of the column.
+     *
+     * @param headElement The head element of the column.
+     */
+    public setHeadElement(headElement: HTMLElement): void {
+        this.headElement = headElement;
+        if (this.options.className) {
+            headElement.classList.add(this.options.className);
+        }
+    }
+
+    /**
      * Registers a cell in the column.
      *
      * @param cell The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
+        if (this.options.className) {
+            cell.htmlElement.classList.add(this.options.className);
+        }
         this.cells.push(cell);
     }
 

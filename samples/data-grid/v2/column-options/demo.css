@@ -1,0 +1,11 @@
+@import url("https://code.highcharts.com/datagrid/css/datagrid2.css");
+
+#container {
+    height: 250px;
+    margin: 8px;
+}
+
+.custom-column-class-name {
+    text-decoration: underline;
+    text-shadow: 2px 2px #f00;
+}

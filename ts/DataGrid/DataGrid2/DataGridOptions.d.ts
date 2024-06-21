@@ -133,6 +133,11 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
+     * The custom CSS class name for the column.
+     */
+    className?: string;
+
+    /**
      * Whether the column is enabled and should be displayed.
      * @unimplemented
      */

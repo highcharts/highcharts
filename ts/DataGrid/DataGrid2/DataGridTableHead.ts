@@ -107,8 +107,7 @@ class DataGridTableHead {
             element.setAttribute('scope', 'col');
             element.setAttribute('data-column-id', this.columns[i].id);
 
-            // Set the column's head element.
-            column.headElement = element;
+            column.setHeadElement(element);
 
             if (
                 this.viewport.columnDistribution !== 'full' ||
