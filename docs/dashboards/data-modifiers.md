@@ -91,6 +91,3 @@ You can check the modifiers in action with the following demos:
 
 #### DataGrid with MathModifier
 <iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/datagrid-mathmodifier" allow="fullscreen"></iframe>
-
-#### Parsing the data in CSV using different modifiers
-<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/data-tools/csv-modifiers" allow="fullscreen"></iframe>
