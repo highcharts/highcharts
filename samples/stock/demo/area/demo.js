@@ -156,7 +156,7 @@ Highcharts.setOptions({
 });
 
 // Configuring the chart.
-const chart = Highcharts.stockChart('container', {
+Highcharts.stockChart('container', {
 
     title: {
         text: 'BTCETH',
