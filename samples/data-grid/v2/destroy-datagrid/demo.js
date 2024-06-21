@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid2('container', {
+const dg = DataGrid.dataGrid2('container', {
     table: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],

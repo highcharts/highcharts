@@ -43,7 +43,7 @@ export interface DataGridOptions {
     /**
      * Data table to display in the grid structure.
      */
-    table: DataTable | DataTableOptions;
+    table?: DataTable | DataTableOptions;
 
     /**
      * Options to control the way DataGrid is rendered.
@@ -146,7 +146,7 @@ export interface TitleOptions {
     /**
      * The title of the datagrid grid.
      */
-    text: string;
+    text?: string;
 }
 
 

@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid2('container', {
+const dg = DataGrid.dataGrid2('container', {
     dataTable: {},
     rows: {
         bufferSize: 5

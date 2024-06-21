@@ -85,6 +85,7 @@ class DataGrid {
      */
     public viewport?: DataGridTable;
 
+
     /* *
     *
     *  Constructor
@@ -105,6 +106,7 @@ class DataGrid {
 
         this.load();
     }
+
 
     /* *
     *
@@ -160,6 +162,24 @@ class DataGrid {
     *  Static Methods
     *
     * */
+
+    /**
+     * Creates a new data grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     * @param options
+     * The options of the data grid.
+     *
+     * @return The new data grid.
+     */
+    public static dataGrid(
+        renderTo: string|HTMLElement,
+        options: DataGridOptions
+    ): DataGrid {
+        return new DataGrid(renderTo, options);
+    }
 
     /**
      * Initializes the container of the data grid.

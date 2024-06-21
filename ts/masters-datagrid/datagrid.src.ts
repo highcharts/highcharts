@@ -52,6 +52,7 @@ declare global {
         DataGrid: typeof _DataGrid;
         dataGrid: typeof _DataGrid.dataGrid;
         DataGrid2: typeof DataGrid2;
+        dataGrid2: typeof DataGrid2.dataGrid;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
         DataConnector: typeof DataConnector;
@@ -80,6 +81,7 @@ G.DataCursor = DataCursor;
 G.DataGrid = _DataGrid;
 G.dataGrid = _DataGrid.dataGrid;
 G.DataGrid2 = DataGrid2;
+G.dataGrid2 = DataGrid2.dataGrid;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
