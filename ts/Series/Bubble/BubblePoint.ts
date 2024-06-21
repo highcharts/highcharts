@@ -63,10 +63,12 @@ class BubblePoint extends ScatterPoint {
      * @private
      */
     public haloPath(size: number): SVGPath {
-        const computedSize = size === 0 ?
-            0 :
-            (this.marker ? this.marker.radius || 0 : 0) +
-            size;
+        const computedSize = (
+            size && this.marker ?
+                this.marker.radius ||
+                0 :
+                0
+        ) + size;
 
         if (this.series.chart.inverted) {
             const pos = this.pos() || [0, 0],
