@@ -26,6 +26,7 @@ export default async function benchmarkTest(
 ): Promise<BenchmarkResult> {
   const { win, el } = setupDOM();
   const hc = require(join(CODE_PATH, '/highstock.src.js'))(win);
+  require(join(CODE_PATH, '/modules/annotations-advanced.src.js'))(hc);
   require(join(CODE_PATH, '/modules/stock-tools.src.js'))(hc);
 
   const chart = hc.stockChart(el, {
@@ -44,6 +45,18 @@ export default async function benchmarkTest(
             }
         }
     },
+    annotations: [{
+      type: 'fibonacci',
+      typeOptions: {
+        points: [{
+          x: data[0][0],
+          y: data[0][4]
+        }, {
+          x: data[100][0],
+          y: data[100][4]
+        }]
+      }
+    }],
     series: [{
       data: data,
       type: 'candlestick',
