@@ -52,166 +52,171 @@ const HighchartsComponentDefaults: Globals.DeepPartial<Options> = {
         series: []
     },
     chartConstructor: 'chart',
-    editableOptions:
-        (Component.defaultOptions.editableOptions || []).concat([
-            {
-                name: 'chartOptions',
-                type: 'nested',
-                nestedOptions: [{
-                    name: 'chart',
-                    options: [{
-                        name: 'title',
-                        propertyPath: ['chartOptions', 'title', 'text'],
-                        type: 'input'
+    editableOptions: [
+        {
+            name: 'connectorName',
+            propertyPath: ['connector', 'id'],
+            type: 'select'
+        },
+        ...Component.defaultOptions.editableOptions || [],
+        {
+            name: 'chartOptions',
+            type: 'nested',
+            nestedOptions: [{
+                name: 'chart',
+                options: [{
+                    name: 'title',
+                    propertyPath: ['chartOptions', 'title', 'text'],
+                    type: 'input'
+                }, {
+                    name: 'subtitle',
+                    propertyPath: ['chartOptions', 'subtitle', 'text'],
+                    type: 'input'
+                }, {
+                    name: 'type',
+                    propertyPath: ['chartOptions', 'chart', 'type'],
+                    type: 'select',
+                    selectOptions: [{
+                        name: 'column',
+                        iconURL: 'series-types/icon-column.svg'
                     }, {
-                        name: 'subtitle',
-                        propertyPath: ['chartOptions', 'subtitle', 'text'],
-                        type: 'input'
+                        name: 'line',
+                        iconURL: 'series-types/icon-line.svg'
                     }, {
-                        name: 'type',
-                        propertyPath: ['chartOptions', 'chart', 'type'],
-                        type: 'select',
-                        selectOptions: [{
-                            name: 'column',
-                            iconURL: 'series-types/icon-column.svg'
-                        }, {
-                            name: 'line',
-                            iconURL: 'series-types/icon-line.svg'
-                        }, {
-                            name: 'scatter',
-                            iconURL: 'series-types/icon-scatter.svg'
-                        }, {
-                            name: 'pie',
-                            iconURL: 'series-types/icon-pie.svg'
-                        }]
-                    }]
-                }, {
-                    name: 'xAxis',
-                    options: [{
-                        name: 'title',
-                        propertyPath:
-                            ['chartOptions', 'xAxis', 'title', 'text'],
-                        type: 'input'
+                        name: 'scatter',
+                        iconURL: 'series-types/icon-scatter.svg'
                     }, {
-                        name: 'type',
-                        propertyPath: ['chartOptions', 'xAxis', 'type'],
-                        type: 'select',
-                        selectOptions: [{
-                            name: 'linear'
-                        }, {
-                            name: 'datetime'
-                        }, {
-                            name: 'logarithmic'
-                        }]
+                        name: 'pie',
+                        iconURL: 'series-types/icon-pie.svg'
                     }]
+                }]
+            }, {
+                name: 'xAxis',
+                options: [{
+                    name: 'title',
+                    propertyPath:
+                        ['chartOptions', 'xAxis', 'title', 'text'],
+                    type: 'input'
                 }, {
-                    name: 'yAxis',
-                    options: [{
-                        name: 'title',
-                        propertyPath:
-                            ['chartOptions', 'yAxis', 'title', 'text'],
-                        type: 'input'
+                    name: 'type',
+                    propertyPath: ['chartOptions', 'xAxis', 'type'],
+                    type: 'select',
+                    selectOptions: [{
+                        name: 'linear'
                     }, {
-                        name: 'type',
-                        propertyPath: ['chartOptions', 'yAxis', 'type'],
-                        type: 'select',
-                        selectOptions: [{
-                            name: 'linear'
-                        }, {
-                            name: 'datetime'
-                        }, {
-                            name: 'logarithmic'
-                        }]
+                        name: 'datetime'
+                    }, {
+                        name: 'logarithmic'
                     }]
+                }]
+            }, {
+                name: 'yAxis',
+                options: [{
+                    name: 'title',
+                    propertyPath:
+                        ['chartOptions', 'yAxis', 'title', 'text'],
+                    type: 'input'
                 }, {
-                    name: 'legend',
-                    showToggle: true,
-                    propertyPath: ['chartOptions', 'legend', 'enabled'],
-                    options: [{
-                        name: 'align',
-                        propertyPath: ['chartOptions', 'legend', 'align'],
-                        type: 'select',
-                        selectOptions: [{
-                            name: 'left'
-                        }, {
-                            name: 'center'
-                        }, {
-                            name: 'right'
-                        }]
+                    name: 'type',
+                    propertyPath: ['chartOptions', 'yAxis', 'type'],
+                    type: 'select',
+                    selectOptions: [{
+                        name: 'linear'
+                    }, {
+                        name: 'datetime'
+                    }, {
+                        name: 'logarithmic'
                     }]
-                }, {
-                    name: 'tooltip',
-                    showToggle: true,
-                    propertyPath: ['chartOptions', 'tooltip', 'enabled'],
-                    options: [{
-                        name: 'split',
-                        propertyPath: ['chartOptions', 'tooltip', 'split'],
-                        type: 'toggle'
+                }]
+            }, {
+                name: 'legend',
+                showToggle: true,
+                propertyPath: ['chartOptions', 'legend', 'enabled'],
+                options: [{
+                    name: 'align',
+                    propertyPath: ['chartOptions', 'legend', 'align'],
+                    type: 'select',
+                    selectOptions: [{
+                        name: 'left'
+                    }, {
+                        name: 'center'
+                    }, {
+                        name: 'right'
                     }]
-                }, {
-                    name: 'dataLabels',
+                }]
+            }, {
+                name: 'tooltip',
+                showToggle: true,
+                propertyPath: ['chartOptions', 'tooltip', 'enabled'],
+                options: [{
+                    name: 'split',
+                    propertyPath: ['chartOptions', 'tooltip', 'split'],
+                    type: 'toggle'
+                }]
+            }, {
+                name: 'dataLabels',
+                propertyPath: [
+                    'chartOptions',
+                    'plotOptions',
+                    'series',
+                    'dataLabels',
+                    'enabled'
+                ],
+                showToggle: true,
+                options: [{
+                    name: 'align',
                     propertyPath: [
                         'chartOptions',
                         'plotOptions',
                         'series',
                         'dataLabels',
-                        'enabled'
+                        'align'
                     ],
-                    showToggle: true,
-                    options: [{
-                        name: 'align',
-                        propertyPath: [
-                            'chartOptions',
-                            'plotOptions',
-                            'series',
-                            'dataLabels',
-                            'align'
-                        ],
-                        type: 'select',
-                        selectOptions: [{
-                            name: 'left'
-                        }, {
-                            name: 'center'
-                        }, {
-                            name: 'right'
-                        }]
-                    }]
-                }, {
-                    name: 'credits',
-                    showToggle: true,
-                    propertyPath: ['chartOptions', 'credits', 'enabled'],
-                    options: [{
-                        name: 'name',
-                        propertyPath: [
-                            'chartOptions',
-                            'credits',
-                            'text'
-                        ],
-                        type: 'input'
+                    type: 'select',
+                    selectOptions: [{
+                        name: 'left'
                     }, {
-                        name: 'url',
-                        propertyPath: [
-                            'chartOptions',
-                            'credits',
-                            'href'
-                        ],
-                        type: 'input'
+                        name: 'center'
+                    }, {
+                        name: 'right'
                     }]
                 }]
             }, {
-                name: 'chartConfig',
-                propertyPath: ['chartOptions'],
-                type: 'textarea'
-            }, {
-                name: 'chartClassName',
-                propertyPath: ['chartClassName'],
-                type: 'input'
-            }, {
-                name: 'chartID',
-                propertyPath: ['chartID'],
-                type: 'input'
-            }
-        ]),
+                name: 'credits',
+                showToggle: true,
+                propertyPath: ['chartOptions', 'credits', 'enabled'],
+                options: [{
+                    name: 'name',
+                    propertyPath: [
+                        'chartOptions',
+                        'credits',
+                        'text'
+                    ],
+                    type: 'input'
+                }, {
+                    name: 'url',
+                    propertyPath: [
+                        'chartOptions',
+                        'credits',
+                        'href'
+                    ],
+                    type: 'input'
+                }]
+            }]
+        }, {
+            name: 'chartConfig',
+            propertyPath: ['chartOptions'],
+            type: 'textarea'
+        }, {
+            name: 'chartClassName',
+            propertyPath: ['chartClassName'],
+            type: 'input'
+        }, {
+            name: 'chartID',
+            propertyPath: ['chartID'],
+            type: 'input'
+        }
+    ],
     editableOptionsBindings: merge(
         Component.defaultOptions.editableOptionsBindings,
         {
