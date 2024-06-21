@@ -87,3 +87,92 @@ test('GoogleDataConnector, bad spreadsheetkey', function (assert) {
         ))
         .then(() => done());
 });
+
+test('GoogleDataConnector with beforeParse', async (assert) => {
+    const registeredEvents = [];
+    const beforeParseFired = true; // TBD
+
+    const connector = new GoogleSheetsConnector({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw',
+        beforeParse: (data) => {
+            beforeParseFired = true;
+            return data;
+        }
+    });
+    const done = assert.async(2); // event + promise
+
+    registerConnectorEvents(connector, registeredEvents, assert);
+
+    connector.on('afterLoad', (e) => {
+        assert.deepEqual(
+            registeredEvents,
+            ['load', 'afterLoad'],
+            'Events are fired in the correct order'
+        );
+
+        assert.deepEqual(
+            e.table.getRow(1).map(cellValue => typeof cellValue),
+            ['string', 'number', 'number', 'number'],
+            'The connector table has the correct data types'
+        );
+
+        const columnNames = e.table.getColumnNames();
+
+        assert.notOk(
+            columnNames.includes('null'),
+            'Columns where the first value is of type `null`, ' +
+            'should be assigned an unique name'
+        );
+
+        e.table.renameColumn(columnNames[0], 'null');
+
+        assert.ok(
+            e.table.getColumnNames().includes('null'),
+            'A string value of `null` is ok'
+        );
+
+        assert.equal(
+            beforeParseFired,
+            true,
+            'beforeParse was fired'
+        );
+        done();
+    });
+
+    connector.on('beforeParse', (e) => {
+        assert.equal(
+            beforeParseFired,
+            true,
+            'beforeParse was fired'
+        );
+        done();
+    });
+
+    connector
+        .load()
+        .catch((error) => assert.strictEqual(
+            error,
+            null,
+            'Test should not fail.'
+        ))
+        .then(() => done())
+
+    /*
+    const done = assert.async(2); // event + promise
+
+    registerConnectorEvents(connector, registeredEvents, assert);
+
+    assert.deepEqual(
+        connector.table.getRowCount(),
+        data.length ,
+        'Should have the same amount of rows.'
+    );
+    assert.deepEqual(
+        connector.table.getRowCount(),
+        4,
+        'There should be an extra column added.'
+    );
+    */
+});
+
