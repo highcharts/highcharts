@@ -1566,98 +1566,8 @@ class RangeSelector {
         const {
             buttonPosition,
             inputPosition,
-            verticalAlign,
-            inputBoxHeight,
-            inputBoxBorderColor
+            verticalAlign
         } = options;
-
-        this.maxDateBox?.attr({
-            height: inputBoxHeight
-        });
-
-        this.minDateBox?.attr({
-            height: inputBoxHeight
-        });
-
-        if (!chart.styledMode) {
-            this.maxDateBox?.attr({
-                stroke: inputBoxBorderColor
-            });
-
-            this.minDateBox?.attr({
-                stroke: inputBoxBorderColor
-            });
-        }
-
-        if (this.isDirty) {
-
-            this.isDirty = false;
-            // Reset this prop to force redrawing collapse of buttons
-            this.isCollapsed = void 0;
-            const newButtonsOptions = this.options.buttons ?? [];
-            const btnLength = Math.min(
-                newButtonsOptions.length,
-                this.buttonOptions.length
-            );
-            const { dropdown, options } = this;
-            const buttonTheme = merge(options.buttonTheme);
-            const states = buttonTheme && buttonTheme.states;
-
-            // Prevent the button from resetting the width when the button state
-            // changes since we need more control over the width when collapsing
-            // the buttons
-            const width = buttonTheme.width || 28;
-
-
-            // Destroy additional buttons
-            if (newButtonsOptions.length < this.buttonOptions.length) {
-                for (
-                    let i = this.buttonOptions.length - 1;
-                    i >= newButtonsOptions.length;
-                    i--
-                ) {
-                    const btn = this.buttons.pop();
-                    btn?.destroy();
-                    this.dropdown?.options.remove(i + 1);
-                }
-            }
-
-            // Update current buttons
-            for (let i = btnLength - 1; i >= 0; i--) {
-                const diff = diffObjects(
-                    newButtonsOptions[i],
-                    this.buttonOptions[i]
-                );
-
-                if (Object.keys(diff).length !== 0) {
-                    const rangeOptions = newButtonsOptions[i];
-                    this.buttons[i].destroy();
-                    dropdown?.options.remove(i + 1);
-                    this.createButton(rangeOptions, i, width, states);
-                    this.computeButtonRange(rangeOptions);
-
-                }
-            }
-
-            // Create missing buttons
-            if (newButtonsOptions.length > this.buttonOptions.length) {
-                for (
-                    let i = this.buttonOptions.length;
-                    i < newButtonsOptions.length;
-                    i++
-                ) {
-                    this.createButton(newButtonsOptions[i], i, width, states);
-                    this.computeButtonRange(newButtonsOptions[i]);
-                }
-            }
-            this.buttonOptions = this.options.buttons ?? [];
-
-            if (defined(this.options.selected) && this.buttons.length) {
-                this.clickButton(this.options.selected, false);
-            }
-
-        }
-
 
         // Get the X offset required to avoid overlapping with the exporting
         // button. This is used both by the buttonGroup and the inputGroup.
@@ -1845,6 +1755,101 @@ class RangeSelector {
             if (dropdown) {
                 dropdown.style.marginTop = group.translateY + 'px';
             }
+        }
+    }
+
+    /**
+     * @private
+     */
+    public redrawElements(): void {
+        const chart = this.chart,
+            { inputBoxHeight, inputBoxBorderColor } = this.options;
+
+        this.maxDateBox?.attr({
+            height: inputBoxHeight
+        });
+
+        this.minDateBox?.attr({
+            height: inputBoxHeight
+        });
+
+        if (!chart.styledMode) {
+            this.maxDateBox?.attr({
+                stroke: inputBoxBorderColor
+            });
+
+            this.minDateBox?.attr({
+                stroke: inputBoxBorderColor
+            });
+        }
+
+        if (this.isDirty) {
+
+            this.isDirty = false;
+            // Reset this prop to force redrawing collapse of buttons
+            this.isCollapsed = void 0;
+            const newButtonsOptions = this.options.buttons ?? [];
+            const btnLength = Math.min(
+                newButtonsOptions.length,
+                this.buttonOptions.length
+            );
+            const { dropdown, options } = this;
+            const buttonTheme = merge(options.buttonTheme);
+            const states = buttonTheme && buttonTheme.states;
+
+            // Prevent the button from resetting the width when the button state
+            // changes since we need more control over the width when collapsing
+            // the buttons
+            const width = buttonTheme.width || 28;
+
+
+            // Destroy additional buttons
+            if (newButtonsOptions.length < this.buttonOptions.length) {
+                for (
+                    let i = this.buttonOptions.length - 1;
+                    i >= newButtonsOptions.length;
+                    i--
+                ) {
+                    const btn = this.buttons.pop();
+                    btn?.destroy();
+                    this.dropdown?.options.remove(i + 1);
+                }
+            }
+
+            // Update current buttons
+            for (let i = btnLength - 1; i >= 0; i--) {
+                const diff = diffObjects(
+                    newButtonsOptions[i],
+                    this.buttonOptions[i]
+                );
+
+                if (Object.keys(diff).length !== 0) {
+                    const rangeOptions = newButtonsOptions[i];
+                    this.buttons[i].destroy();
+                    dropdown?.options.remove(i + 1);
+                    this.createButton(rangeOptions, i, width, states);
+                    this.computeButtonRange(rangeOptions);
+
+                }
+            }
+
+            // Create missing buttons
+            if (newButtonsOptions.length > this.buttonOptions.length) {
+                for (
+                    let i = this.buttonOptions.length;
+                    i < newButtonsOptions.length;
+                    i++
+                ) {
+                    this.createButton(newButtonsOptions[i], i, width, states);
+                    this.computeButtonRange(newButtonsOptions[i]);
+                }
+            }
+            this.buttonOptions = this.options.buttons ?? [];
+
+            if (defined(this.options.selected) && this.buttons.length) {
+                this.clickButton(this.options.selected, false);
+            }
+
         }
     }
 

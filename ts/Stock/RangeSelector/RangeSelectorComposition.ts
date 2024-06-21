@@ -140,6 +140,13 @@ function axisMinFromRange(
 /**
  * @private
  */
+function updateRangeSelectorButtons(this: Chart): void {
+    this.rangeSelector?.redrawElements();
+}
+
+/**
+ * @private
+ */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -159,6 +166,7 @@ function compose(
         addEvent(ChartClass, 'getMargins', onChartGetMargins);
         addEvent(ChartClass, 'redraw', redrawRangeSelector);
         addEvent(ChartClass, 'update', onChartUpdate);
+        addEvent(ChartClass, 'beforeRedraw', updateRangeSelectorButtons);
 
         chartProto.callbacks.push(redrawRangeSelector);
 
