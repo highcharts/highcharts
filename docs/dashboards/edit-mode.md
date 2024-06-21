@@ -2,7 +2,7 @@ Edit mode
 ===
 
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).  
-When dashboard is declared with custom HTML structure, the edit mode is limited to the component settings only.
+When the dashboard is declared with custom HTML structure, the edit mode is limited to the component settings only.
 
 ## Introduction
 To be able to use Dashboards with layout system and editmode you first have to load the `layout` module.  
@@ -194,3 +194,23 @@ U.addEvent(editMode, 'layoutChanged', e => {
 ```
 
 See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/events/).
+
+## Styling
+
+All default styles for the edit mode are defined in the `dashboards.css` file. It can be imported to your project by adding the following line to your CSS file:
+
+```css
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+```
+
+You can override them by adding your own styles to your project, for example:
+
+```css
+.highcharts-dashboards-edit-sidebar {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+```
+Note that the z-index of most of the elements is set to 100 and higher, make sure the z-index of your elements is lower than that.

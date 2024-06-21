@@ -128,7 +128,7 @@ class ConnectorHandler {
             )
         ) {
             if (component.cell instanceof Cell) {
-                component.cell?.setLoadingState();
+                component.cell.setLoadingState();
             }
 
             const connector = await dataPool.getConnector(connectorId);

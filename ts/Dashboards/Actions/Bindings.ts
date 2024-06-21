@@ -74,7 +74,10 @@ namespace Bindings {
     ): Cell|Row|Layout|undefined {
         let guiElement;
 
-        if (document.querySelectorAll('#' + idOrElement).length > 1) {
+        if (
+            typeof idOrElement === 'string' &&
+            document.querySelectorAll('#' + idOrElement).length > 1
+        ) {
             // eslint-disable-next-line no-console
             console.warn(
                 `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,

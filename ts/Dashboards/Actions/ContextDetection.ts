@@ -99,7 +99,7 @@ class ContextDetection {
         const topSideY = e.clientY - mouseCellContextOffsets.top;
 
         // Get cell side - right, left, top, bottom
-        let side: ContextDetection.ContextSides = 'left';
+        let side: ContextDetection.ContextSides = 'bottom';
 
         if (leftSideX >= -offset && leftSideX <= offset) {
             side = 'left';
