@@ -1,0 +1,10 @@
+---
+name: Donut chart with rounded corners
+authors:
+  - Hubert Kozik
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Pie charts
+...
