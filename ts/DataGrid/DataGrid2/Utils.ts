@@ -48,9 +48,14 @@ namespace DataGridUtils {
     /**
      * Creates a HTML element with the provided options.
      *
-     * @param tagName The tag name of the element.
-     * @param params The parameters of the element.
-     * @param parent The parent element.
+     * @param tagName
+     * The tag name of the element.
+     *
+     * @param params
+     * The parameters of the element.
+     *
+     * @param parent
+     * The parent element.
      */
     export function makeHTMLElement<T extends HTMLElement>(
         tagName: string,
@@ -88,8 +93,11 @@ namespace DataGridUtils {
     /**
      * Creates a div element with the provided class name and id.
      *
-     * @param className The class name of the
-     * @param id The id of the element.
+     * @param className
+     * The class name of the div.
+     *
+     * @param id
+     * The id of the element.
      */
     export function makeDiv(className: string, id?: string): HTMLElement {
         return makeHTMLElement('div', { className, id });
@@ -101,8 +109,7 @@ namespace DataGridUtils {
      * @param element
      * The element to get the translateY value from.
      *
-     * @returns
-     * The translateY value of the element.
+     * @returns The translateY value of the element.
      */
     export function getTranslateY(element: HTMLElement): number {
         const transform = element.style.transform;

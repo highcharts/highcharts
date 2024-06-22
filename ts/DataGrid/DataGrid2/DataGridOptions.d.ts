@@ -61,7 +61,7 @@ export interface DataGridOptions {
     columnsIncluded?: Array<string>;
 
     /**
-     * Columns excluded from the grid structure.
+     * Options for individual columns.
      */
     columns?: Record<string, IndividualColumnOptions>;
 

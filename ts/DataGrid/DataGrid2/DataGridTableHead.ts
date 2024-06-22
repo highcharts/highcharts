@@ -165,7 +165,7 @@ class DataGridTableHead {
      * Scrolls the table head horizontally.
      *
      * @param scrollLeft
-     *        The left scroll position.
+     * The left scroll position.
      */
     public scrollHorizontally(scrollLeft: number): void {
         this.viewport.theadElement.style.transform =

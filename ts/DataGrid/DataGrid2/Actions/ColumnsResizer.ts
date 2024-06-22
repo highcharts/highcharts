@@ -104,7 +104,7 @@ class ColumnsResizer {
      * Resizes the columns in the full distribution mode.
      *
      * @param diff
-     *        The X position difference in pixels.
+     * The X position difference in pixels.
      */
     private fullDistributionResize(diff: number): void {
         const vp = this.viewport;
@@ -144,7 +144,7 @@ class ColumnsResizer {
      * Resizes the columns in the fixed distribution mode.
      *
      * @param diff
-     *        The X position difference in pixels.
+     * The X position difference in pixels.
      */
     private fixedDistributionResize(diff: number): void {
         const column = this.draggedColumn;
@@ -167,7 +167,7 @@ class ColumnsResizer {
      * Handles the mouse move event on the document.
      *
      * @param e
-     *        The mouse event.
+     * The mouse event.
      */
     private onDocumentMouseMove = (e: MouseEvent): void => {
         if (!this.draggedResizeHandle || !this.draggedColumn) {
@@ -201,9 +201,10 @@ class ColumnsResizer {
      * Adds event listeners to the handle.
      *
      * @param handle
-     *        The handle element.
+     * The handle element.
+     *
      * @param column
-     *        The column the handle belongs to.
+     * The column the handle belongs to.
      */
     public addHandleListeners(
         handle: HTMLElement,

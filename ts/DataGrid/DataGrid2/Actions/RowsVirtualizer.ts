@@ -129,6 +129,9 @@ class RowsVirtualizer {
         this.adjustRowHeights();
     }
 
+    /**
+     * Method called on the viewport scroll event.
+     */
     public scroll(): void {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;

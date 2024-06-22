@@ -261,7 +261,8 @@ class DataGridTable {
     /**
      * Scrolls the table to the specified row.
      *
-     * @param index The index of the row to scroll to.
+     * @param index
+     * The index of the row to scroll to.
      */
     public scrollToRow(index: number): void {
         this.tbodyElement.scrollTop =
@@ -273,7 +274,7 @@ class DataGridTable {
      * calculated based on the width of the viewport.
      *
      * @param width
-     *        The width in pixels.
+     * The width in pixels.
      *
      * @return The width ratio.
      */
@@ -286,7 +287,7 @@ class DataGridTable {
      * calculated based on the width of the viewport.
      *
      * @param ratio
-     *       The width ratio.
+     * The width ratio.
      *
      * @returns The width in pixels.
      */

@@ -131,9 +131,14 @@ class DataGridColumn {
     /**
      * Constructs a column in the data grid.
      *
-     * @param viewport The viewport (table) the column belongs to.
-     * @param id The id of the column (`name` in the Data Table).
-     * @param index The index of the column.
+     * @param viewport
+     * The viewport (table) the column belongs to.
+     *
+     * @param id
+     * The id of the column (`name` in the Data Table).
+     *
+     * @param index
+     * The index of the column.
      */
     constructor(
         viewport: DataGridTable,
@@ -178,7 +183,8 @@ class DataGridColumn {
     /**
      * Sets the head element of the column.
      *
-     * @param headElement The head element of the column.
+     * @param headElement
+     * The head element of the column.
      */
     public setHeadElement(headElement: HTMLElement): void {
         this.headElement = headElement;
@@ -190,7 +196,8 @@ class DataGridColumn {
     /**
      * Registers a cell in the column.
      *
-     * @param cell The cell to register.
+     * @param cell
+     * The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
@@ -215,7 +222,8 @@ class DataGridColumn {
     /**
      * Sets the column hover state.
      *
-     * @param hovered Whether the column should be hovered.
+     * @param hovered
+     * Whether the column should be hovered.
      */
     public setHover(hovered: boolean): void {
         this.headElement?.classList[hovered ? 'add' : 'remove'](
@@ -233,7 +241,8 @@ class DataGridColumn {
      * The initial width of the column in the full distribution mode. The last
      * column in the viewport will have to fill the remaining space.
      *
-     * @param mock The mock element to measure the width.
+     * @param mock
+     * The mock element to measure the width.
      */
     private getInitialFullDistWidth(mock: HTMLElement): number {
         const vp = this.viewport;

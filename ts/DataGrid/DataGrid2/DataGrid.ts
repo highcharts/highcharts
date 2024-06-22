@@ -95,8 +95,11 @@ class DataGrid {
     /**
      * Constructs a new data grid.
      *
-     * @param renderTo The render target (container) of the data grid.
-     * @param options The options of the data grid.
+     * @param renderTo
+     * The render target (container) of the data grid.
+     *
+     * @param options
+     * The options of the data grid.
      */
     constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
         this.userOptions = options;
@@ -184,8 +187,11 @@ class DataGrid {
     /**
      * Initializes the container of the data grid.
      *
-     * @param renderTo The render target (html element or id) of the data grid.
-     * @returns The container element of the data grid.
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     * @returns
+     * The container element of the data grid.
      */
     private static initContainer(renderTo: string|HTMLElement): HTMLElement {
         if (typeof renderTo === 'string') {
