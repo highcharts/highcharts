@@ -3865,8 +3865,13 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button
-                if (displayButton && !this.resetZoomButton) {
+                // Show or hide the Reset zoom button, but not while panning
+                if (
+                    displayButton &&
+                    !this.xAxis[0].isPanning && // #21319
+                    !this.yAxis[0].isPanning && // #21319
+                    !this.resetZoomButton
+                ) {
                     this.showResetZoom();
                 } else if (!displayButton && this.resetZoomButton) {
                     this.resetZoomButton = this.resetZoomButton.destroy();
