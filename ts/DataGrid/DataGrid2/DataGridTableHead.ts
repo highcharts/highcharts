@@ -111,7 +111,7 @@ class DataGridTableHead {
 
             if (
                 this.viewport.columnDistribution !== 'full' ||
-                i < this.viewport.allColumnsCount - 1
+                i < this.viewport.enabledColumns.length - 1
             ) {
                 // Render the drag handle for resizing columns.
                 this.renderColumnDragHandles(

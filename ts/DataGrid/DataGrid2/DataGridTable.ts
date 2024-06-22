@@ -115,9 +115,9 @@ class DataGridTable {
     public rowsWidth?: number;
 
     /**
-     * The number of visible columns in the data grid.
+     * The list of IDs of columns displayed enabled in the data grid.
      */
-    public readonly allColumnsCount: number;
+    public readonly enabledColumns: string[];
 
     /**
      * Title of data grid
@@ -156,9 +156,7 @@ class DataGridTable {
         this.columnDistribution =
             dgOptions.settings?.columnDistribution as ColumnDistribution;
 
-        this.allColumnsCount =
-            dgOptions.columnsIncluded?.length ||
-            this.dataTable.getColumnNames().length;
+        this.enabledColumns = this.getEnabledColumnsIDs();
 
         this.renderTitle();
 
@@ -193,7 +191,7 @@ class DataGridTable {
         this.head = new DataGridTableHead(this);
         this.head.render();
 
-        if (this.allColumnsCount > 0) {
+        if (this.enabledColumns.length > 0) {
             this.rowsVirtualizer.initialRender();
         } else {
             this.renderNoResultRow();
@@ -207,13 +205,11 @@ class DataGridTable {
      * Loads the columns of the table.
      */
     private loadColumns(): void {
-        const columnsIncluded =
-            this.dataGrid.options.columnsIncluded ??
-            this.dataTable.getColumnNames();
-
-        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
+        let columnId: string;
+        for (let i = 0, iEnd = this.enabledColumns.length; i < iEnd; ++i) {
+            columnId = this.enabledColumns[i];
             this.columns.push(
-                new DataGridColumn(this, columnsIncluded[i], i)
+                new DataGridColumn(this, columnId, i)
             );
         }
     }
@@ -338,6 +334,24 @@ class DataGridTable {
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }
+    }
+
+    private getEnabledColumnsIDs(): string[] {
+        const columnsOptions = this.dataGrid.options.columns;
+        const columnsIncluded =
+            this.dataGrid.options.columnsIncluded ??
+            this.dataTable.getColumnNames();
+
+        let columnName: string;
+        const result: string[] = [];
+        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
+            columnName = columnsIncluded[i];
+            if (columnsOptions?.[columnName]?.enabled !== false) {
+                result.push(columnName);
+            }
+        }
+
+        return result;
     }
 }
 

@@ -5,7 +5,12 @@
     margin: 8px;
 }
 
+.highcharts-dg-column {
+    width: 20%;
+}
+
 .custom-column-class-name {
     text-decoration: underline;
     text-shadow: 2px 2px #f00;
+    width: 40%;
 }

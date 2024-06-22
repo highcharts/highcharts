@@ -63,7 +63,7 @@ export interface DataGridOptions {
     /**
      * Columns excluded from the grid structure.
      */
-    columns?: Record<string, ColumnOptions>;
+    columns?: Record<string, IndividualColumnOptions>;
 
     /**
      * Contains options for title
@@ -133,20 +133,26 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
+     * The format of the column header.
+     */
+    headFormat?: string;
+}
+
+/**
+ * Column options that can be set for each column individually.
+ */
+export interface IndividualColumnOptions extends ColumnOptions {
+    /**
      * The custom CSS class name for the column.
      */
     className?: string;
 
     /**
      * Whether the column is enabled and should be displayed.
-     * @unimplemented
+     *
+     * @default true
      */
     enabled?: boolean;
-
-    /**
-     * The format of the column header.
-     */
-    headFormat?: string;
 }
 
 export interface TitleOptions {
