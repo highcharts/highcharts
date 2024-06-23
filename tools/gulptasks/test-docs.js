@@ -43,8 +43,12 @@ async function checkDocsConsistency() {
             const requires = match[1];
             try {
                 FS.statSync(`ts/masters/${requires}.src.ts`);
-            } catch (error) {
-                error404s.push({ file, requires });
+            } catch (e1) {
+                try {
+                    FS.statSync(`ts/masters-dashboards/${requires}.src.ts`);
+                } catch (e2) {
+                    error404s.push({ file, requires });
+                }
             }
         }
 

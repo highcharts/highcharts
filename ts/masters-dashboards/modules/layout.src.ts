@@ -1,6 +1,7 @@
 /**
  * @license Highcharts Dashboards Layout @product.version@ (@product.date@)
  * @module dashboards/modules/layout
+ * @requires dashboards
  *
  * (c) 2009-2024 Highsoft AS
  *
