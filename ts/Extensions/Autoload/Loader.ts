@@ -61,6 +61,11 @@ const getModules = (options: Partial<Options>): Array<string> => {
         }
     });
 
+    // Styled mode
+    if (options.chart?.styledMode) {
+        modules.add('css/highcharts.css');
+    }
+
     return Array.from(modules);
 };
 
@@ -76,11 +81,20 @@ const setRoot = (): void => {
 
 const loadScript = async (module: string): Promise<undefined> =>
     new Promise((resolve, reject): void => {
-        const script = document.createElement('script');
-        script.src = `${root}/${module}.js`;
-        script.onload = (): void => resolve(void 0);
-        script.onerror = reject;
-        document.head.appendChild(script);
+        if (module.endsWith('.css')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = `${root}/${module}`;
+            link.onload = (): void => resolve(void 0);
+            link.onerror = reject;
+            document.head.appendChild(link);
+        } else {
+            const script = document.createElement('script');
+            script.src = `${root}/${module}.js`;
+            script.onload = (): void => resolve(void 0);
+            script.onerror = reject;
+            document.head.appendChild(script);
+        }
     });
 
 // Override the constructors to load modules on demand
