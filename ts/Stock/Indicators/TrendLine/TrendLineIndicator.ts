@@ -65,8 +65,8 @@ class TrendLineIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        7.1.3
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/trendline
+     * @requires     indicators/indicators
+     * @requires     indicators/trendline
      * @optionparent plotOptions.trendline
      */
     public static defaultOptions: TrendLineOptions = merge(SMAIndicator.defaultOptions, {
@@ -219,8 +219,8 @@ export default TrendLineIndicator;
  * @since     7.1.3
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/trendline
+ * @requires  indicators/indicators
+ * @requires  indicators/trendline
  * @apioption series.trendline
  */
 

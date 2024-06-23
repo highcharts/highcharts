@@ -69,8 +69,8 @@ class APOIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/apo
+     * @requires     indicators/indicators
+     * @requires     indicators/apo
      * @optionparent plotOptions.apo
      */
     public static defaultOptions: APOOptions = merge(EMAIndicator.defaultOptions, {
@@ -226,8 +226,8 @@ export default APOIndicator;
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/apo
+ * @requires  indicators/indicators
+ * @requires  indicators/apo
  * @apioption series.apo
  */
 

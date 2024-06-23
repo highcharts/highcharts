@@ -105,8 +105,8 @@ class SupertrendIndicator extends SMAIndicator {
      *               keys, navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking, threshold
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/supertrend
+     * @requires     indicators/indicators
+     * @requires     indicators/supertrend
      * @optionparent plotOptions.supertrend
      */
     public static defaultOptions: SupertrendOptions = merge(SMAIndicator.defaultOptions, {
@@ -705,8 +705,8 @@ export default SupertrendIndicator;
  *            joinBy, keys, navigatorOptions, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking, threshold
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/supertrend
+ * @requires  indicators/indicators
+ * @requires  indicators/supertrend
  * @apioption series.supertrend
  */
 

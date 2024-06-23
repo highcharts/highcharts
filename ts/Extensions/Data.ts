@@ -194,7 +194,7 @@ function hasURLOption(options: DataOptions): boolean {
 /**
  * The Data class
  *
- * @requires module:modules/data
+ * module:modules/data
  *
  * @class
  * @name Highcharts.Data

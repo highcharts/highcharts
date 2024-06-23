@@ -205,8 +205,8 @@ class PSARIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/psar
+     * @requires     indicators/indicators
+     * @requires     indicators/psar
      * @optionparent plotOptions.psar
      */
     public static defaultOptions: PSAROptions = merge(SMAIndicator.defaultOptions, {
@@ -462,8 +462,8 @@ export default PSARIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/psar
+ * @requires  indicators/indicators
+ * @requires  indicators/psar
  * @apioption series.psar
  */
 

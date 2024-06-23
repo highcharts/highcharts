@@ -109,8 +109,8 @@ class MFIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/mfi
+     * @requires     indicators/indicators
+     * @requires     indicators/mfi
      * @optionparent plotOptions.mfi
      */
     public static defaultOptions: MFIOptions = merge(SMAIndicator.defaultOptions, {
@@ -314,8 +314,8 @@ export default MFIIndicator;
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/mfi
+ * @requires  indicators/indicators
+ * @requires  indicators/mfi
  * @apioption series.mfi
  */
 

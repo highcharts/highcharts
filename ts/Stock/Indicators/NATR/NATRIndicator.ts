@@ -63,8 +63,8 @@ class NATRIndicator extends ATRIndicator {
      * @extends      plotOptions.atr
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/natr
+     * @requires     indicators/indicators
+     * @requires     indicators/natr
      * @optionparent plotOptions.natr
      */
     public static defaultOptions: NATROptions = merge(ATRIndicator.defaultOptions, {
@@ -170,9 +170,9 @@ export default NATRIndicator;
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/atr
- * @requires  stock/indicators/natr
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
+ * @requires  indicators/natr
  * @apioption series.natr
  */
 

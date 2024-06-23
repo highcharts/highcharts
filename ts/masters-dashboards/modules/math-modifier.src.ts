@@ -1,7 +1,6 @@
 /**
  * @license Highcharts Dashboards Math @product.version@ (@product.date@)
  * @module dashboards/modules/math-modifier
- * @requires dashboards
  *
  * (c) 2009-2024 Highsoft AS
  *

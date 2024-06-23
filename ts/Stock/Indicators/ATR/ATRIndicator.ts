@@ -123,8 +123,8 @@ class ATRIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/atr
+     * @requires     indicators/indicators
+     * @requires     indicators/atr
      * @optionparent plotOptions.atr
      */
     public static defaultOptions: ATROptions = merge(SMAIndicator.defaultOptions, {
@@ -264,8 +264,8 @@ export default ATRIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/atr
+ * @requires  indicators/indicators
+ * @requires  indicators/atr
  * @apioption series.atr
  */
 

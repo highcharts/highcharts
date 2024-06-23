@@ -129,8 +129,8 @@ class WMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/wma
+     * @requires     indicators/indicators
+     * @requires     indicators/wma
      * @optionparent plotOptions.wma
      */
     public static defaultOptions: WMAOptions = merge(SMAIndicator.defaultOptions, {
@@ -265,8 +265,8 @@ export default WMAIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/wma
+ * @requires  indicators/indicators
+ * @requires  indicators/wma
  * @apioption series.wma
  */
 

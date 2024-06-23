@@ -73,8 +73,8 @@ class AOIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               params, pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/ao
+     * @requires     indicators/indicators
+     * @requires     indicators/ao
      * @optionparent plotOptions.ao
      */
     public static defaultOptions: AOOptions = merge(SMAIndicator.defaultOptions, {
@@ -312,8 +312,8 @@ export default AOIndicator;
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/ao
+ * @requires  indicators/indicators
+ * @requires  indicators/ao
  * @apioption series.ao
  */
 

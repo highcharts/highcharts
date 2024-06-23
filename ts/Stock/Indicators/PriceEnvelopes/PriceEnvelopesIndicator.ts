@@ -66,8 +66,8 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/price-envelopes
+     * @requires     indicators/indicators
+     * @requires     indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
      */
     public static defaultOptions: PriceEnvelopesOptions = merge(SMAIndicator.defaultOptions, {
@@ -312,8 +312,8 @@ export default PriceEnvelopesIndicator;
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/price-envelopes
+ * @requires  indicators/indicators
+ * @requires  indicators/price-envelopes
  * @apioption series.priceenvelopes
  */
 

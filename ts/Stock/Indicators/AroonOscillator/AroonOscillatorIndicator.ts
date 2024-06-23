@@ -71,9 +71,9 @@ class AroonOscillatorIndicator extends AroonIndicator {
      *               joinBy, keys, navigatorOptions, pointInterval,
      *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
      *               showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/aroon
-     * @requires     stock/indicators/aroon-oscillator
+     * @requires     indicators/indicators
+     * @requires     indicators/aroon
+     * @requires     indicators/aroon-oscillator
      * @optionparent plotOptions.aroonoscillator
      */
     public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
@@ -192,9 +192,9 @@ export default AroonOscillatorIndicator;
  *            dataURL, joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/aroon
- * @requires  stock/indicators/aroon-oscillator
+ * @requires  indicators/indicators
+ * @requires  indicators/aroon
+ * @requires  indicators/aroon-oscillator
  * @apioption series.aroonoscillator
  */
 

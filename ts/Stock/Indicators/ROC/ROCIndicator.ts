@@ -119,8 +119,8 @@ class ROCIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/roc
+     * @requires     indicators/indicators
+     * @requires     indicators/roc
      * @optionparent plotOptions.roc
      */
     public static defaultOptions: ROCOptions = merge(SMAIndicator.defaultOptions, {
@@ -253,8 +253,8 @@ export default ROCIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/roc
+ * @requires  indicators/indicators
+ * @requires  indicators/roc
  * @apioption series.roc
  */
 

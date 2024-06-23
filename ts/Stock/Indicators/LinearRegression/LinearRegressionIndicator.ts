@@ -69,8 +69,8 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregression
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -415,8 +415,8 @@ export default LinearRegressionIndicator;
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregression
  */
 

@@ -137,8 +137,8 @@ class VBPIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/volume-by-price
+     * @requires     indicators/indicators
+     * @requires     indicators/volume-by-price
      * @optionparent plotOptions.vbp
      */
     public static defaultOptions: VBPOptions = merge(SMAIndicator.defaultOptions, {
@@ -967,8 +967,8 @@ export default VBPIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL, compare, compareBase, compareStart
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/volume-by-price
+ * @requires  indicators/indicators
+ * @requires  indicators/volume-by-price
  * @apioption series.vbp
  */
 

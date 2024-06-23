@@ -60,8 +60,8 @@ class CMOIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since 9.1.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmo
+     * @requires     indicators/indicators
+     * @requires     indicators/cmo
      * @optionparent plotOptions.cmo
      */
     public static defaultOptions: CMOOptions = merge(
@@ -230,8 +230,8 @@ export default CMOIndicator;
  * @since 9.1.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cmo
+ * @requires  indicators/indicators
+ * @requires  indicators/cmo
  * @apioption series.cmo
  */
 

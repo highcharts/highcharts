@@ -101,8 +101,8 @@ class AroonIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/aroon
+     * @requires     indicators/indicators
+     * @requires     indicators/aroon
      * @optionparent plotOptions.aroon
      */
     public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
@@ -280,8 +280,8 @@ export default AroonIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/aroon
+ * @requires  indicators/indicators
+ * @requires  indicators/aroon
  * @apioption series.aroon
  */
 

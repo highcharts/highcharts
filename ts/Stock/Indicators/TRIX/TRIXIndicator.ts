@@ -63,9 +63,9 @@ class TRIXIndicator extends TEMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/tema
-     * @requires     stock/indicators/trix
+     * @requires     indicators/indicators
+     * @requires     indicators/tema
+     * @requires     indicators/trix
      * @optionparent plotOptions.trix
      */
     public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions);
@@ -153,8 +153,8 @@ export default TRIXIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/tema
+ * @requires  indicators/indicators
+ * @requires  indicators/tema
  * @apioption series.trix
  */
 

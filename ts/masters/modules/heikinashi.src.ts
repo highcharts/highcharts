@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/modules/heikinashi
  * @requires highcharts
- * @requires highcharts/modules/stock
+ * @requires modules/stock
  *
  * HeikinAshi series type for Highcharts Stock
  *
