@@ -8,7 +8,7 @@
  */
 'use strict';
 import Highcharts from './highcharts.src.js';
-import Loader from '../Core/Loader.js';
+import Loader from '../Extensions/Autoload/Loader.js';
 
 Highcharts.Loader = Loader;
 export default Highcharts;
