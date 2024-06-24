@@ -3868,7 +3868,10 @@ class Chart {
                 // Show or hide the Reset zoom button
                 if (displayButton && !this.resetZoomButton) {
                     this.showResetZoom();
-                } else if (!displayButton && this.resetZoomButton) {
+                } else if (
+                    !displayButton && this.resetZoomButton &&
+                        trigger !== 'mousewheel'
+                ) {
                     this.resetZoomButton = this.resetZoomButton.destroy();
                 }
 
