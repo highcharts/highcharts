@@ -86,8 +86,8 @@ class MACDIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/macd
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/macd
      * @optionparent plotOptions.macd
      */
     public static defaultOptions: MACDOptions = merge(SMAIndicator.defaultOptions, {
@@ -560,8 +560,8 @@ export default MACDIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  indicators/indicators
- * @requires  indicators/macd
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/macd
  * @apioption series.macd
  */
 

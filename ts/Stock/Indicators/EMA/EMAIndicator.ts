@@ -66,7 +66,7 @@ class EMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
+     * @requires     stock/indicators/indicators
      * @optionparent plotOptions.ema
      */
     public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {
@@ -254,7 +254,7 @@ export default EMAIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  indicators/indicators
+ * @requires  stock/indicators/indicators
  * @apioption series.ema
  */
 

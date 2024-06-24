@@ -95,8 +95,8 @@ class CCIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/cci
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
      */
     public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
@@ -233,8 +233,8 @@ export default CCIIndicator;
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  indicators/indicators
- * @requires  indicators/cci
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/cci
  * @apioption series.cci
  */
 

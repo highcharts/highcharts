@@ -71,8 +71,8 @@ class PPOIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     indicators/indicators
-     * @requires     indicators/ppo
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
     public static defaultOptions: PPOOptions = merge(EMAIndicator.defaultOptions, {
@@ -233,8 +233,8 @@ export default PPOIndicator;
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  indicators/indicators
- * @requires  indicators/ppo
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ppo
  * @apioption series.ppo
  */
 

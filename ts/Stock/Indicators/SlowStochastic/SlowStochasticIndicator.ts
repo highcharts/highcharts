@@ -67,9 +67,9 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @extends      plotOptions.stochastic
      * @since        8.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/stochastic
-     * @requires     indicators/slow-stochastic
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/stochastic
+     * @requires     stock/indicators/slow-stochastic
      * @optionparent plotOptions.slowstochastic
      */
     public static defaultOptions: SlowStochasticOptions = merge(StochasticIndicator.defaultOptions, {
@@ -211,9 +211,9 @@ export default SlowStochasticIndicator;
  * @extends   series,plotOptions.slowstochastic
  * @since     8.0.0
  * @product   highstock
- * @requires  indicators/indicators
- * @requires  indicators/stochastic
- * @requires  indicators/slow-stochastic
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/stochastic
+ * @requires  stock/indicators/slow-stochastic
  * @apioption series.slowstochastic
  */
 

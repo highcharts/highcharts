@@ -76,8 +76,8 @@ class DMIIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     indicators/indicators
-     * @requires     indicators/dmi
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/dmi
      * @optionparent plotOptions.dmi
      */
     public static defaultOptions: DMIOptions = merge(SMAIndicator.defaultOptions, {
@@ -408,8 +408,8 @@ export default DMIIndicator;
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  indicators/indicators
- * @requires  indicators/dmi
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/dmi
  * @apioption series.dmi
  */
 

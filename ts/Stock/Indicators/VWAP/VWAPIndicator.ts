@@ -70,8 +70,8 @@ class VWAPIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/vwap
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/vwap
      * @optionparent plotOptions.vwap
      */
     public static defaultOptions: VWAPOptions = merge(SMAIndicator.defaultOptions, {
@@ -289,8 +289,8 @@ export default VWAPIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  indicators/indicators
- * @requires  indicators/vwap
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/vwap
  * @apioption series.vwap
  */
 

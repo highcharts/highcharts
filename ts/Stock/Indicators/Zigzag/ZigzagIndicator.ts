@@ -67,8 +67,8 @@ class ZigzagIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/zigzag
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
      */
     public static defaultOptions: ZigzagOptions = merge(SMAIndicator.defaultOptions, {
@@ -316,8 +316,8 @@ export default ZigzagIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  indicators/indicators
- * @requires  indicators/zigzag
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/zigzag
  * @apioption series.zigzag
  */
 

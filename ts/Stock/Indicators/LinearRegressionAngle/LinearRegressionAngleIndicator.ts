@@ -65,8 +65,8 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires  indicators/regressions
+     * @requires     stock/indicators/indicators
+     * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -165,8 +165,8 @@ export default LinearRegressionAngleIndicator;
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
- * @requires  indicators/indicators
- * @requires  indicators/regressions
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
  * @apioption series.linearregressionangle
  */
 

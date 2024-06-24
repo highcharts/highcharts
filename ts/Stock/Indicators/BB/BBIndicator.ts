@@ -99,8 +99,8 @@ class BBIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/bollinger-bands
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
@@ -345,8 +345,8 @@ export default BBIndicator;
  * @since     6.0.0
  * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  indicators/indicators
- * @requires  indicators/bollinger-bands
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/bollinger-bands
  * @apioption series.bb
  */
 

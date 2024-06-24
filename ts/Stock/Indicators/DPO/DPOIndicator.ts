@@ -100,8 +100,8 @@ class DPOIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     indicators/indicators
-     * @requires     indicators/dpo
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
      */
     public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
@@ -251,8 +251,8 @@ export default DPOIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  indicators/indicators
- * @requires  indicators/dpo
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/dpo
  * @apioption series.dpo
  */
 

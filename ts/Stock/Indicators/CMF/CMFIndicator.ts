@@ -70,8 +70,8 @@ class CMFIndicator extends SMAIndicator {
      * @since        6.0.0
      * @excluding    animationLimit
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/cmf
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/cmf
      * @optionparent plotOptions.cmf
      */
     public static defaultOptions: CMFOptions = merge(SMAIndicator.defaultOptions, {
@@ -367,8 +367,8 @@ export default CMFIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  indicators/indicators
- * @requires  indicators/cmf
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/cmf
  * @apioption series.cmf
  */
 

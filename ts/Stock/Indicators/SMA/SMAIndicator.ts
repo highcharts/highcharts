@@ -102,7 +102,7 @@ class SMAIndicator extends LineSeries {
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking, useOhlcData
      * @product      highstock
-     * @requires     indicators/indicators
+     * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
@@ -585,7 +585,7 @@ export default SMAIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL, useOhlcData
- * @requires  indicators/indicators
+ * @requires  stock/indicators/indicators
  * @apioption series.sma
  */
 

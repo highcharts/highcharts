@@ -80,8 +80,8 @@ class RSIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     indicators/indicators
-     * @requires     indicators/rsi
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/rsi
      * @optionparent plotOptions.rsi
      */
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
@@ -261,8 +261,8 @@ export default RSIIndicator;
  * @since     6.0.0
  * @product   highstock
  * @excluding dataParser, dataURL
- * @requires  indicators/indicators
- * @requires  indicators/rsi
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/rsi
  * @apioption series.rsi
  */
 

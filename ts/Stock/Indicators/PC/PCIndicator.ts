@@ -70,8 +70,8 @@ class PCIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     indicators/indicators
-     * @requires     indicators/price-channel
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/price-channel
      * @optionparent plotOptions.pc
      */
     public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
@@ -254,8 +254,8 @@ export default PCIndicator;
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking
- * @requires     indicators/indicators
- * @requires     indicators/price-channel
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/price-channel
  * @apioption    series.pc
  */
 
