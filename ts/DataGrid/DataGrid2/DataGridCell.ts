@@ -77,8 +77,11 @@ class DataGridCell {
     /**
      * Constructs a cell in the data grid.
      *
-     * @param column The column of the cell.
-     * @param row The row of the cell.
+     * @param column
+     * The column of the cell.
+     *
+     * @param row
+     * The row of the cell.
      */
     constructor(column: DataGridColumn, row: DataGridRow) {
         this.htmlElement = document.createElement('td');

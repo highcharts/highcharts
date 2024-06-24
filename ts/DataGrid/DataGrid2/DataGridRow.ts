@@ -169,7 +169,8 @@ class DataGridRow {
     /**
      * Sets the row hover state.
      *
-     * @param hovered Whether the row should be hovered.
+     * @param hovered
+     * Whether the row should be hovered.
      */
     public setHover(hovered: boolean): void {
         this.htmlElement.classList[hovered ? 'add' : 'remove'](

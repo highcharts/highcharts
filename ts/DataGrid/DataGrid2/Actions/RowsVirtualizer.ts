@@ -96,9 +96,11 @@ class RowsVirtualizer {
     constructor(viewport: DataGridTable) {
         this.viewport = viewport;
         this.strictRowHeights =
-            viewport.dataGrid.options.settings?.strictRowHeights as boolean;
-        this.buffer =
-            viewport.dataGrid.options.settings?.rowBufferSize as number;
+            viewport.dataGrid.options?.settings?.strictRowHeights as boolean;
+        this.buffer = Math.max(
+            viewport.dataGrid.options?.settings?.rowBufferSize as number,
+            0
+        );
         this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {
@@ -127,6 +129,9 @@ class RowsVirtualizer {
         this.adjustRowHeights();
     }
 
+    /**
+     * Method called on the viewport scroll event.
+     */
     public scroll(): void {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;

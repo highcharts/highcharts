@@ -15,8 +15,7 @@ const dataTable = new DataGrid.DataTable({
 
 let startTime = new Date().getTime();
 let startPerfo = performance.now();
-// eslint-disable-next-line
-const grid = new DataGrid.DataGrid('datagrid-old', {
+DataGrid.dataGrid('datagrid-old', {
     dataTable: dataTable
 });
 let endPerfo = performance.now();
@@ -28,12 +27,8 @@ oldDatagridTimer.innerHTML =
 // NEW (autoheight)
 startTime = new Date().getTime();
 startPerfo = performance.now();
-// eslint-disable-next-line no-unused-vars
-const newGridAH = new DataGrid.DataGrid2('container-ah', {
-    table: dataTable,
-    settings: {
-        rowBufferSize: 5
-    }
+DataGrid.dataGrid2('container', {
+    table: dataTable
 });
 endPerfo = performance.now();
 endTime = new Date().getTime();
@@ -44,11 +39,9 @@ newDatagridTimerAH.innerHTML =
 // NEW (strictheight)
 startTime = new Date().getTime();
 startPerfo = performance.now();
-// eslint-disable-next-line no-unused-vars
-const newGridSH = new DataGrid.DataGrid2('container-sh', {
+DataGrid.dataGrid2('container-sh', {
     table: dataTable,
     settings: {
-        rowBufferSize: 5,
         strictRowHeights: true
     }
 });

@@ -26,6 +26,7 @@ import DGUtils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
 import F from '../../Core/Templating.js';
+import Globals from './Globals.js';
 
 const { makeHTMLElement } = DGUtils;
 const { format } = F;
@@ -94,26 +95,31 @@ class DataGridTableHead {
      * Renders the table head content.
      */
     public render(): void {
+        const vp = this.viewport;
+
         let column: DataGridColumn;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             column = this.columns[i];
-            const element = makeHTMLElement('th', {
-                innerText: column.userOptions.headFormat ? (
-                    format(column.userOptions.headFormat, column)
-                ) : column.id
-            }, this.container);
+            const innerText = column.userOptions.headFormat ? (
+                format(column.userOptions.headFormat, column)
+            ) : column.id;
+
+            const element = makeHTMLElement('th', {}, this.container);
+            makeHTMLElement('span', {
+                innerText,
+                className: Globals.classNames.headCellContent
+            }, element);
 
             // Set the accessibility attributes.
             element.setAttribute('scope', 'col');
             element.setAttribute('data-column-id', this.columns[i].id);
 
-            // Set the column's head element.
-            column.headElement = element;
+            column.setHeadElement(element);
 
-            if (
-                this.viewport.columnDistribution !== 'full' ||
-                i < this.viewport.allColumnsCount - 1
-            ) {
+            if (vp.columnsResizer && (
+                vp.columnDistribution !== 'full' ||
+                i < vp.enabledColumns.length - 1
+            )) {
                 // Render the drag handle for resizing columns.
                 this.renderColumnDragHandles(
                     column,
@@ -136,6 +142,7 @@ class DataGridTableHead {
             if (!td) {
                 continue;
             }
+
             // Set the width of the column. Max width is needed for the
             // overflow: hidden to work.
             td.style.width = td.style.maxWidth = column.getWidth() + 'px';
@@ -157,7 +164,7 @@ class DataGridTableHead {
             className: 'highcharts-dg-col-resizer'
         }, headElement);
 
-        this.viewport.columnsResizer.addHandleListeners(handle, column);
+        this.viewport.columnsResizer?.addHandleListeners(handle, column);
 
         return handle;
     }
@@ -166,7 +173,7 @@ class DataGridTableHead {
      * Scrolls the table head horizontally.
      *
      * @param scrollLeft
-     *        The left scroll position.
+     * The left scroll position.
      */
     public scrollHorizontally(scrollLeft: number): void {
         this.viewport.theadElement.style.transform =

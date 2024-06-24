@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid2('container', {
+DataGrid.dataGrid2('container', {
     table: {
         columns: {
             a: Array.from({ length: 100 }, (_, i) => `A${i} quite a long text`),
@@ -10,9 +10,6 @@ const dg = new DataGrid.DataGrid2('container', {
         }
     },
     settings: {
-        rowBufferSize: 5,
         strictRowHeights: true
     }
 });
-
-console.log(dg);

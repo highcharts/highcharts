@@ -33,7 +33,8 @@ const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
     settings: {
         columnDistribution: 'full',
         rowBufferSize: 10,
-        strictRowHeights: false
+        strictRowHeights: false,
+        enableColumnResizing: true
     }
 };
 

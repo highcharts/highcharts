@@ -43,7 +43,7 @@ export interface DataGridOptions {
     /**
      * Data table to display in the grid structure.
      */
-    table: DataTable | DataTableOptions;
+    table?: DataTable | DataTableOptions;
 
     /**
      * Options to control the way DataGrid is rendered.
@@ -61,9 +61,9 @@ export interface DataGridOptions {
     columnsIncluded?: Array<string>;
 
     /**
-     * Columns excluded from the grid structure.
+     * Options for individual columns.
      */
-    columns?: Record<string, ColumnOptions>;
+    columns?: Record<string, IndividualColumnOptions>;
 
     /**
      * Contains options for title
@@ -86,11 +86,20 @@ export interface DataGridSettings {
     columnDistribution?: ColumnDistribution;
 
     /**
+     * Whether the columns should be resizable.
+     *
+     * @default true
+     */
+    enableColumnResizing?: boolean;
+
+    /**
      * Buffer of rows to render outside the visible area from the top and from
      * the bottom while scrolling. The bigger the buffer, the less flicker will
      * be seen while scrolling, but the more rows will have to be rendered.
      *
-     * @default 5
+     * Cannot be lower than 0.
+     *
+     * @default 10
      */
     rowBufferSize?: number;
 
@@ -131,22 +140,33 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
-     * Whether the column is enabled and should be displayed.
-     * @unimplemented
-     */
-    enabled?: boolean;
-
-    /**
      * The format of the column header.
      */
     headFormat?: string;
+}
+
+/**
+ * Column options that can be set for each column individually.
+ */
+export interface IndividualColumnOptions extends ColumnOptions {
+    /**
+     * The custom CSS class name for the column.
+     */
+    className?: string;
+
+    /**
+     * Whether the column is enabled and should be displayed.
+     *
+     * @default true
+     */
+    enabled?: boolean;
 }
 
 export interface TitleOptions {
     /**
      * The title of the datagrid grid.
      */
-    text: string;
+    text?: string;
 }
 
 

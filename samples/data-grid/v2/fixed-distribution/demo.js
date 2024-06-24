@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid2('container', {
+DataGrid.dataGrid2('container', {
     table: {
         columns: {
             product: [
@@ -16,9 +16,6 @@ const dg = new DataGrid.DataGrid2('container', {
         }
     },
     settings: {
-        rowBufferSize: 5,
         columnDistribution: 'fixed'
     }
 });
-
-console.log(dg);

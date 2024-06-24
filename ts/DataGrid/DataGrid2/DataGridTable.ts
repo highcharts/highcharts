@@ -106,7 +106,7 @@ class DataGridTable {
     /**
      * The columns resizer instance that handles the columns resizing logic.
      */
-    public columnsResizer: ColumnsResizer;
+    public columnsResizer?: ColumnsResizer;
 
     /**
      * The width of each row in the table. Each of the rows has the same width.
@@ -115,9 +115,9 @@ class DataGridTable {
     public rowsWidth?: number;
 
     /**
-     * The number of visible columns in the data grid.
+     * The list of IDs of columns displayed enabled in the data grid.
      */
-    public readonly allColumnsCount: number;
+    public readonly enabledColumns: string[];
 
     /**
      * Title of data grid
@@ -154,11 +154,9 @@ class DataGridTable {
         const dgOptions = dataGrid.options;
 
         this.columnDistribution =
-            dgOptions.settings?.columnDistribution as ColumnDistribution;
+            dgOptions?.settings?.columnDistribution as ColumnDistribution;
 
-        this.allColumnsCount =
-            dgOptions.columnsIncluded?.length ||
-            this.dataTable.getColumnNames().length;
+        this.enabledColumns = this.getEnabledColumnsIDs();
 
         this.renderTitle();
 
@@ -166,7 +164,9 @@ class DataGridTable {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        this.columnsResizer = new ColumnsResizer(this);
+        if (dgOptions?.settings?.enableColumnResizing) {
+            this.columnsResizer = new ColumnsResizer(this);
+        }
 
         this.init();
 
@@ -193,7 +193,7 @@ class DataGridTable {
         this.head = new DataGridTableHead(this);
         this.head.render();
 
-        if (this.allColumnsCount > 0) {
+        if (this.enabledColumns.length > 0) {
             this.rowsVirtualizer.initialRender();
         } else {
             this.renderNoResultRow();
@@ -207,13 +207,11 @@ class DataGridTable {
      * Loads the columns of the table.
      */
     private loadColumns(): void {
-        const columnsIncluded =
-            this.dataGrid.options.columnsIncluded ??
-            this.dataTable.getColumnNames();
-
-        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
+        let columnId: string;
+        for (let i = 0, iEnd = this.enabledColumns.length; i < iEnd; ++i) {
+            columnId = this.enabledColumns[i];
             this.columns.push(
-                new DataGridColumn(this, columnsIncluded[i], i)
+                new DataGridColumn(this, columnId, i)
             );
         }
     }
@@ -222,9 +220,8 @@ class DataGridTable {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-            this.dataGrid.container.clientHeight -
+            (this.dataGrid.container?.clientHeight || 0) -
             this.theadElement.offsetHeight -
             (this.titleElement?.offsetHeight || 0)
         }px`;
@@ -265,7 +262,8 @@ class DataGridTable {
     /**
      * Scrolls the table to the specified row.
      *
-     * @param index The index of the row to scroll to.
+     * @param index
+     * The index of the row to scroll to.
      */
     public scrollToRow(index: number): void {
         this.tbodyElement.scrollTop =
@@ -277,7 +275,7 @@ class DataGridTable {
      * calculated based on the width of the viewport.
      *
      * @param width
-     *        The width in pixels.
+     * The width in pixels.
      *
      * @return The width ratio.
      */
@@ -290,7 +288,7 @@ class DataGridTable {
      * calculated based on the width of the viewport.
      *
      * @param ratio
-     *       The width ratio.
+     * The width ratio.
      *
      * @returns The width in pixels.
      */
@@ -317,7 +315,7 @@ class DataGridTable {
      * Render title above the datagrid
      */
     public renderTitle(): void {
-        if (!this.dataGrid.options.title) {
+        if (!this.dataGrid.options?.title) {
             return;
         }
 
@@ -333,11 +331,29 @@ class DataGridTable {
     public destroy(): void {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
-        this.columnsResizer.removeEventListeners();
+        this.columnsResizer?.removeEventListeners();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }
+    }
+
+    private getEnabledColumnsIDs(): string[] {
+        const columnsOptions = this.dataGrid.options?.columns;
+        const columnsIncluded =
+            this.dataGrid.options?.columnsIncluded ??
+            this.dataTable.getColumnNames();
+
+        let columnName: string;
+        const result: string[] = [];
+        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
+            columnName = columnsIncluded[i];
+            if (columnsOptions?.[columnName]?.enabled !== false) {
+                result.push(columnName);
+            }
+        }
+
+        return result;
     }
 }
 

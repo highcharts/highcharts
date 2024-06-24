@@ -1,11 +1,13 @@
 const dg = new DataGrid.DataGrid2('container', {
     table: {
         columns: {
-            a: Array.from({ length: 1000 }, (_, i) => `A${i} loreum ipsum et`),
-            b: Array.from({ length: 1000 }, (_, i) => `B${i} long text test loreum ipsum et omnia dolores test width and height`), // eslint-disable-line
+            a: Array.from({ length: 1000 }, (_, i) => `A${i} lorem ipsum`),
+            b: Array.from({ length: 1000 }, (_, i) =>
+                `B${i} long text test lorem ipsum dolor sit amet, consectetur`
+            ),
             c: Array.from({ length: 1000 }, (_, i) => `C${i}`),
             d: Array.from({ length: 1000 }, (_, i) => `D${i}`),
-            'loreum ipsum': Array.from({ length: 1000 }, (_, i) => `E${i}`), // eslint-disable-line
+            'lorem ipsum': Array.from({ length: 1000 }, (_, i) => `E${i}`),
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
     },
@@ -13,7 +15,7 @@ const dg = new DataGrid.DataGrid2('container', {
         bufferSize: 5
     },
     title: {
-        text: 'Title of the new Datagrid. Loreum ipsum et omnia dolores, loreum ipsum et omnia dolores, loreum ipsum et omnia dolores, loreum ipsum et omnia dolores' // eslint-disable-line
+        text: 'Title of the new Datagrid.'
     },
     settings: {
         rowBufferSize: 5

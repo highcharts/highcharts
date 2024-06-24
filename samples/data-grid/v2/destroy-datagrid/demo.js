@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid2('container', {
+const options = {
     table: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -8,14 +8,16 @@ const dg = new DataGrid.DataGrid2('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     }
-});
+};
+let dg = DataGrid.dataGrid2('container', options);
 
 document.getElementById('destroy-btn').addEventListener('click', () => {
     dg.destroy();
-    console.log(dg);
+    console.log('destroyed:', dg);
 });
 
 document.getElementById('load-btn').addEventListener('click', () => {
-    dg.load();
-    console.log(dg);
+    dg.destroy();
+    dg = new DataGrid.DataGrid2('container', options);
+    console.log('created:', dg);
 });

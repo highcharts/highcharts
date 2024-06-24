@@ -21,7 +21,7 @@
  *
  * */
 
-import type { ColumnOptions } from './DataGridOptions';
+import type { IndividualColumnOptions } from './DataGridOptions';
 
 import DataGridCell from './DataGridCell.js';
 import DataGridTable from './DataGridTable.js';
@@ -59,7 +59,7 @@ class DataGridColumn {
     /**
      * The default options of the column.
      */
-    public static readonly defaultOptions = {};
+    public static readonly defaultOptions: IndividualColumnOptions = {};
 
 
     /* *
@@ -109,12 +109,12 @@ class DataGridColumn {
     /**
      * The user options of the column.
      */
-    public readonly userOptions: ColumnOptions;
+    public readonly userOptions: IndividualColumnOptions;
 
     /**
      * The options of the column.
      */
-    public readonly options: ColumnOptions;
+    public readonly options: IndividualColumnOptions;
 
     /**
      * The index of the column in the viewport.
@@ -131,9 +131,14 @@ class DataGridColumn {
     /**
      * Constructs a column in the data grid.
      *
-     * @param viewport The viewport (table) the column belongs to.
-     * @param id The id of the column (`name` in the Data Table).
-     * @param index The index of the column.
+     * @param viewport
+     * The viewport (table) the column belongs to.
+     *
+     * @param id
+     * The id of the column (`name` in the Data Table).
+     *
+     * @param index
+     * The index of the column.
      */
     constructor(
         viewport: DataGridTable,
@@ -141,21 +146,24 @@ class DataGridColumn {
         index: number
     ) {
         this.userOptions = merge(
-            viewport.dataGrid.options.defaults?.columns ?? {},
-            viewport.dataGrid.options.columns?.[id] ?? {}
+            viewport.dataGrid.options?.defaults?.columns ?? {},
+            viewport.dataGrid.options?.columns?.[id] ?? {}
         );
         this.options = merge(DataGridColumn.defaultOptions, this.userOptions);
 
         this.id = id;
         this.index = index;
         this.viewport = viewport;
-        this.data = viewport.dataTable.getColumn(id);
+        this.data = viewport.dataTable.getColumn(id, true);
 
         // Set the initial width of the column.
         const mock = makeHTMLElement('div', {
             className: Globals.classNames.columnElement
         }, viewport.dataGrid.container);
         mock.setAttribute('data-column-id', id);
+        if (this.options.className) {
+            mock.classList.add(this.options.className);
+        }
 
         if (viewport.columnDistribution === 'full') {
             this.width = this.getInitialFullDistWidth(mock);
@@ -173,12 +181,29 @@ class DataGridColumn {
     * */
 
     /**
+     * Sets the head element of the column.
+     *
+     * @param headElement
+     * The head element of the column.
+     */
+    public setHeadElement(headElement: HTMLElement): void {
+        this.headElement = headElement;
+        if (this.options.className) {
+            headElement.classList.add(this.options.className);
+        }
+    }
+
+    /**
      * Registers a cell in the column.
      *
-     * @param cell The cell to register.
+     * @param cell
+     * The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
+        if (this.options.className) {
+            cell.htmlElement.classList.add(this.options.className);
+        }
         this.cells.push(cell);
     }
 
@@ -197,7 +222,8 @@ class DataGridColumn {
     /**
      * Sets the column hover state.
      *
-     * @param hovered Whether the column should be hovered.
+     * @param hovered
+     * Whether the column should be hovered.
      */
     public setHover(hovered: boolean): void {
         this.headElement?.classList[hovered ? 'add' : 'remove'](
@@ -215,20 +241,19 @@ class DataGridColumn {
      * The initial width of the column in the full distribution mode. The last
      * column in the viewport will have to fill the remaining space.
      *
-     * @param mock The mock element to measure the width.
+     * @param mock
+     * The mock element to measure the width.
      */
     private getInitialFullDistWidth(mock: HTMLElement): number {
         const vp = this.viewport;
+        const columnsCount = vp.enabledColumns.length;
 
-        if (this.index < vp.allColumnsCount - 1) {
-            return (
-                vp.getRatioFromWidth(mock.offsetWidth) ||
-                1 / vp.allColumnsCount
-            );
+        if (this.index < columnsCount - 1) {
+            return vp.getRatioFromWidth(mock.offsetWidth) || 1 / columnsCount;
         }
 
         let allPreviousWidths = 0;
-        for (let i = 0, iEnd = vp.allColumnsCount - 1; i < iEnd; i++) {
+        for (let i = 0, iEnd = columnsCount - 1; i < iEnd; i++) {
             allPreviousWidths += vp.columns[i].width;
         }
 
