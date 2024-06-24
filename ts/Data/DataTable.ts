@@ -827,7 +827,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this,
             columnNames = Object.keys(table.columns);
 
-        this.removeKeyIdColumn(columnNames);
+        this.removeRowKeysColumn(columnNames);
 
         return columnNames;
     }
@@ -867,7 +867,7 @@ class DataTable implements DataEvent.Emitter {
         columnNamesOrAliases = (
             columnNamesOrAliases || Object.keys(tableColumns)
         );
-        this.removeKeyIdColumn(columnNamesOrAliases);
+        this.removeRowKeysColumn(columnNamesOrAliases);
 
         for (
             let i = 0,
@@ -1024,7 +1024,7 @@ class DataTable implements DataEvent.Emitter {
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
         columnNamesOrAliases = (columnNamesOrAliases || Object.keys(columns));
-        this.removeKeyIdColumn(columnNamesOrAliases);
+        this.removeRowKeysColumn(columnNamesOrAliases);
 
         for (
             let i = rowIndex,
@@ -1235,7 +1235,7 @@ class DataTable implements DataEvent.Emitter {
                 delete columns[columnName];
                 if (table.rowKeysId) {
                     // Ensure that row keys column is last
-                    this.moveKeyIdColumnToLast(columns, table.rowKeysId);
+                    this.moveRowKeysColumnToLast(columns, table.rowKeysId);
                 }
             }
 
@@ -1434,7 +1434,7 @@ class DataTable implements DataEvent.Emitter {
 
         if (table.rowKeysId) {
             // Ensure that the row keys column is always last
-            this.moveKeyIdColumnToLast(tableColumns, table.rowKeysId);
+            this.moveRowKeysColumnToLast(tableColumns, table.rowKeysId);
         }
 
         table.emit({
@@ -1455,7 +1455,7 @@ class DataTable implements DataEvent.Emitter {
      * @function Highcharts.DataTable#setRowKeysColumn
      *     *
      * @param {number} nRows
-     * Number of rows to add the column to.
+     * Number of rows to add to the column.
      *
      */
     public setRowKeysColumn(nRows: number): void {
@@ -1695,16 +1695,16 @@ class DataTable implements DataEvent.Emitter {
         });
     }
 
-    // The key ID column must always be the last column
-    private moveKeyIdColumnToLast(columns: Record<string, DataTable.Column>, id: string): void {
+    // The row keys column must always be the last column
+    private moveRowKeysColumnToLast(columns: Record<string, DataTable.Column>, id: string): void {
         const rowKeyColumn = columns[id];
         delete columns[id];
         columns[id] = rowKeyColumn;
     }
 
-    // The key ID column must removed in some methods
+    // The row keys column must be removed in some methods
     // (API backwards compatibility)
-    private removeKeyIdColumn(columnNamesOrAliases: Array<string>): void {
+    private removeRowKeysColumn(columnNamesOrAliases: Array<string>): void {
         if (this.rowKeysId) {
             const pos = columnNamesOrAliases.indexOf(this.rowKeysId);
             if (pos !== -1) {
