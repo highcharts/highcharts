@@ -94,6 +94,8 @@ class DataGridTableHead {
      * Renders the table head content.
      */
     public render(): void {
+        const vp = this.viewport;
+
         let column: DataGridColumn;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {
             column = this.columns[i];
@@ -109,10 +111,10 @@ class DataGridTableHead {
 
             column.setHeadElement(element);
 
-            if (
-                this.viewport.columnDistribution !== 'full' ||
-                i < this.viewport.enabledColumns.length - 1
-            ) {
+            if (vp.columnsResizer && (
+                vp.columnDistribution !== 'full' ||
+                i < vp.enabledColumns.length - 1
+            )) {
                 // Render the drag handle for resizing columns.
                 this.renderColumnDragHandles(
                     column,
@@ -135,6 +137,7 @@ class DataGridTableHead {
             if (!td) {
                 continue;
             }
+
             // Set the width of the column. Max width is needed for the
             // overflow: hidden to work.
             td.style.width = td.style.maxWidth = column.getWidth() + 'px';
@@ -156,7 +159,7 @@ class DataGridTableHead {
             className: 'highcharts-dg-col-resizer'
         }, headElement);
 
-        this.viewport.columnsResizer.addHandleListeners(handle, column);
+        this.viewport.columnsResizer?.addHandleListeners(handle, column);
 
         return handle;
     }

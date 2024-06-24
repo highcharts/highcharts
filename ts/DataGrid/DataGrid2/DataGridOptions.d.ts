@@ -86,6 +86,13 @@ export interface DataGridSettings {
     columnDistribution?: ColumnDistribution;
 
     /**
+     * Whether the columns should be resizable.
+     *
+     * @default true
+     */
+    enableColumnResizing?: boolean;
+
+    /**
      * Buffer of rows to render outside the visible area from the top and from
      * the bottom while scrolling. The bigger the buffer, the less flicker will
      * be seen while scrolling, but the more rows will have to be rendered.

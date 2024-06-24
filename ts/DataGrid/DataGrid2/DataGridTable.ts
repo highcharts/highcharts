@@ -106,7 +106,7 @@ class DataGridTable {
     /**
      * The columns resizer instance that handles the columns resizing logic.
      */
-    public columnsResizer: ColumnsResizer;
+    public columnsResizer?: ColumnsResizer;
 
     /**
      * The width of each row in the table. Each of the rows has the same width.
@@ -164,7 +164,9 @@ class DataGridTable {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        this.columnsResizer = new ColumnsResizer(this);
+        if (dgOptions?.settings?.enableColumnResizing) {
+            this.columnsResizer = new ColumnsResizer(this);
+        }
 
         this.init();
 
@@ -329,7 +331,7 @@ class DataGridTable {
     public destroy(): void {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
-        this.columnsResizer.removeEventListeners();
+        this.columnsResizer?.removeEventListeners();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();

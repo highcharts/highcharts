@@ -17,6 +17,7 @@ document.getElementById('destroy-btn').addEventListener('click', () => {
 });
 
 document.getElementById('load-btn').addEventListener('click', () => {
+    dg.destroy();
     dg = new DataGrid.DataGrid2('container', options);
     console.log('created:', dg);
 });
