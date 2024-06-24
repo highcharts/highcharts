@@ -8,25 +8,13 @@ const DependencyMapping: Record<string, Array<string>> = {
     'accessibility': [
         'modules/accessibility'
     ],
-    'annotations.controlPointOptions': [
-        'modules/annotations'
-    ],
-    'annotations.events': [
-        'modules/annotations'
-    ],
     'annotations.labelOptions.accessibility': [
         'modules/accessibility'
     ],
     'annotations.labelOptions.includeInDataExport': [
         'modules/export-data'
     ],
-    'annotations.labelOptions': [
-        'modules/annotations'
-    ],
     'annotations.labels.point': [
-        'modules/annotations'
-    ],
-    'annotations.shapeOptions': [
         'modules/annotations'
     ],
     'annotations.shapes.point': [
@@ -65,12 +53,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'chart.events.fullscreenOpen': [
         'modules/full-screen'
     ],
-    'chart.options3d.frame.side': [
-        'highcharts-3d'
-    ],
-    'chart.options3d.frame': [
-        'highcharts-3d'
-    ],
     'chart.options3d': [
         'highcharts-3d'
     ],
@@ -89,15 +71,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'chart.zooming.key': [
         'modules/draggable-points'
     ],
-    'chart.zooming.mouseWheel.enabled': [
-        'modules/mouse-wheel-zoom'
-    ],
-    'chart.zooming.mouseWheel.sensitivity': [
-        'modules/mouse-wheel-zoom'
-    ],
-    'chart.zooming.mouseWheel.type': [
-        'modules/mouse-wheel-zoom'
-    ],
     'chart.zooming.mouseWheel': [
         'modules/mouse-wheel-zoom'
     ],
@@ -109,12 +82,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'exporting.accessibility': [
         'modules/accessibility'
-    ],
-    'exporting.buttons.contextButton': [
-        'modules/exporting'
-    ],
-    'exporting.buttons': [
-        'modules/exporting'
     ],
     'exporting.csv.annotations.itemDelimiter': [
         'modules/annotations'
@@ -206,9 +173,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'lang.viewData': [
         'modules/export-data'
     ],
-    'legend.accessibility.keyboardNavigation': [
-        'modules/accessibility'
-    ],
     'legend.accessibility': [
         'modules/accessibility'
     ],
@@ -220,12 +184,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'navigation.bindings': [
         'modules/annotations'
-    ],
-    'navigation.buttonOptions.theme': [
-        'modules/exporting'
-    ],
-    'navigation.buttonOptions': [
-        'modules/exporting'
     ],
     'navigation': [
         'modules/exporting'
@@ -544,9 +502,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     'plotOptions.scatter3d': [
         'highcharts-3d'
     ],
-    'plotOptions.series.accessibility.point': [
-        'modules/accessibility'
-    ],
     'plotOptions.series.accessibility': [
         'modules/accessibility'
     ],
@@ -582,36 +537,6 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'plotOptions.series.lastVisiblePrice': [
         'modules/price-indicator'
-    ],
-    'plotOptions.series.onPoint.connectorOptions.dashstyle': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.connectorOptions.stroke': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.connectorOptions.width': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.connectorOptions': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.id': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.position.offsetX': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.position.offsetY': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.position.x': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.position.y': [
-        'modules/series-on-point'
-    ],
-    'plotOptions.series.onPoint.position': [
-        'modules/series-on-point'
     ],
     'plotOptions.series.onPoint': [
         'modules/series-on-point'
@@ -1105,50 +1030,8 @@ const DependencyMapping: Record<string, Array<string>> = {
     'yAxis.minLength': [
         'modules/drag-panes'
     ],
-    'yAxis.resize.controlledAxis.next': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.controlledAxis.prev': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.controlledAxis': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.cursor': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.enabled': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.lineColor': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.lineDashStyle': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.lineWidth': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.x': [
-        'modules/drag-panes'
-    ],
-    'yAxis.resize.y': [
-        'modules/drag-panes'
-    ],
     'yAxis.resize': [
         'modules/drag-panes'
-    ],
-    'yAxis.stackShadow.borderColor': [
-        'modules/pictorial'
-    ],
-    'yAxis.stackShadow.borderWidth': [
-        'modules/pictorial'
-    ],
-    'yAxis.stackShadow.color': [
-        'modules/pictorial'
-    ],
-    'yAxis.stackShadow.enabled': [
-        'modules/pictorial'
     ],
     'yAxis.stackShadow': [
         'modules/pictorial'

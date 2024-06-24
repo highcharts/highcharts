@@ -39,8 +39,20 @@ async function task() {
         return mapping;
     }
 
-    const mapping = recurse(void 0, { children: tree }, []),
-        mappingString = JSON.stringify(mapping, null, 4).replace(/"/g, '\'');
+    const mapping = recurse(void 0, { children: tree }, []);
+
+    // Remove unnecessary definitions at lower levels
+    Object.entries(mapping).forEach(([key, value]) => {
+        const parentKey = key.split('.').slice(0, -1).join('.');
+        if (
+            mapping[parentKey] &&
+            mapping[parentKey].toString() === value.toString()
+        ) {
+            delete mapping[key];
+        }
+    });
+
+    const mappingString = JSON.stringify(mapping, null, 4).replace(/"/g, '\'');
 
     await fs.writeFile(
         path.join(
