@@ -63,7 +63,7 @@ class DataGrid {
     /**
      * The container of the data grid.
      */
-    public container: HTMLElement;
+    public container?: HTMLElement;
 
     /**
      * The HTML element of the table.
@@ -73,12 +73,12 @@ class DataGrid {
     /**
      * The options of the data grid.
      */
-    public options: DataGridOptions;
+    public options?: DataGridOptions;
 
     /**
      * The user options of the data grid.
      */
-    public userOptions: DataGridOptions;
+    public userOptions?: DataGridOptions;
 
     /**
      * The table (viewport) element of the data grid.
@@ -102,29 +102,12 @@ class DataGrid {
      * The options of the data grid.
      */
     constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
+        this.destroy();
+
         this.userOptions = options;
         this.options = merge(DataGrid.defaultOptions, options);
 
         this.container = DataGrid.initContainer(renderTo);
-
-        this.load();
-    }
-
-
-    /* *
-    *
-    *  Methods
-    *
-    * */
-
-    /**
-     * Loads & renders the data grid.
-     */
-    public load(): void {
-        if (this.tableElement) {
-            return;
-        }
-
         this.container.classList.add(Globals.classNames.container);
 
         this.tableElement = makeHTMLElement('table', {
@@ -147,14 +130,27 @@ class DataGrid {
         );
     }
 
+
+    /* *
+    *
+    *  Methods
+    *
+    * */
+
     /**
      * Destroys the data grid.
      */
     public destroy(): void {
         this.viewport?.destroy();
-        this.container.innerHTML = AST.emptyHTML;
-        this.container.classList.remove(Globals.classNames.container);
 
+        if (this.container) {
+            this.container.innerHTML = AST.emptyHTML;
+            this.container.classList.remove(Globals.classNames.container);
+        }
+
+        delete this.userOptions;
+        delete this.options;
+        delete this.container;
         delete this.viewport;
         delete this.tableElement;
     }

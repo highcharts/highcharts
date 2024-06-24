@@ -154,7 +154,7 @@ class DataGridTable {
         const dgOptions = dataGrid.options;
 
         this.columnDistribution =
-            dgOptions.settings?.columnDistribution as ColumnDistribution;
+            dgOptions?.settings?.columnDistribution as ColumnDistribution;
 
         this.enabledColumns = this.getEnabledColumnsIDs();
 
@@ -218,9 +218,8 @@ class DataGridTable {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-            this.dataGrid.container.clientHeight -
+            this.dataGrid.container?.clientHeight || 0 -
             this.theadElement.offsetHeight -
             (this.titleElement?.offsetHeight || 0)
         }px`;
@@ -314,7 +313,7 @@ class DataGridTable {
      * Render title above the datagrid
      */
     public renderTitle(): void {
-        if (!this.dataGrid.options.title) {
+        if (!this.dataGrid.options?.title) {
             return;
         }
 
@@ -338,9 +337,9 @@ class DataGridTable {
     }
 
     private getEnabledColumnsIDs(): string[] {
-        const columnsOptions = this.dataGrid.options.columns;
+        const columnsOptions = this.dataGrid.options?.columns;
         const columnsIncluded =
-            this.dataGrid.options.columnsIncluded ??
+            this.dataGrid.options?.columnsIncluded ??
             this.dataTable.getColumnNames();
 
         let columnName: string;
