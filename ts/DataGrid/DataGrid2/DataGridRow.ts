@@ -61,11 +61,6 @@ class DataGridRow {
     public index: number;
 
     /**
-     * Whether the row is destroyed.
-     */
-    public destroyed: boolean = false;
-
-    /**
      * The viewport the row belongs to.
      */
     public viewport: DataGridTable;
@@ -156,7 +151,6 @@ class DataGridRow {
         }
 
         this.htmlElement.remove();
-        this.destroyed = true;
     }
 
     /**
