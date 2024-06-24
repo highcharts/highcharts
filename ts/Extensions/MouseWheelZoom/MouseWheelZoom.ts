@@ -266,7 +266,9 @@ export default MouseWheelZoomComposition;
  * @since {next}
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/sensitivity
+ *            Enable reset zoom button
  * @sample    {highstock} stock/mouse-wheel-zoom/sensitivity
+ *            Enable reset zoom button
  * @apioption chart.zooming.mouseWheel.showResetZoomButton
  */
 
