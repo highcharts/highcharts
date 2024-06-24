@@ -190,6 +190,10 @@ class ColumnsResizer {
      * Handles the mouse up event on the document.
      */
     private onDocumentMouseUp = (): void => {
+        this.draggedColumn?.headElement?.classList.remove(
+            'highcharts-dg-head-cell-resized'
+        );
+
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
         this.draggedResizeHandle = void 0;
@@ -217,6 +221,10 @@ class ColumnsResizer {
             this.columnStartWidth = column.getWidth();
             this.nextColumnStartWidth =
                 this.viewport.columns[column.index + 1]?.getWidth();
+
+            column.headElement?.classList.add(
+                'highcharts-dg-head-cell-resized'
+            );
         };
 
         this.handles.push([handle, onHandleMouseDown]);

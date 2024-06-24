@@ -76,7 +76,9 @@ namespace Globals {
         hoveredRow: classNamePrefix + 'hovered-row',
         odd: classNamePrefix + 'odd',
         noResultColumn: classNamePrefix + 'no-result-column',
-        rowsContentNowrap: classNamePrefix + 'rows-content-nowrap'
+        rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
+        headCellContent: classNamePrefix + 'head-cell-content',
+        headCellResized: classNamePrefix + 'head-cell-resized'
     };
 
     export const win = window;
