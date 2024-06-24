@@ -18,6 +18,7 @@ import G from '../../Core/Globals.js';
 import mapping from './DependencyMapping.js';
 
 const H: AnyRecord = G;
+const loaded = new Set<string>();
 
 let root = 'https://code.highcharts.com';
 
@@ -79,23 +80,32 @@ const setRoot = (): void => {
     }
 };
 
-const loadScript = async (module: string): Promise<undefined> =>
-    new Promise((resolve, reject): void => {
+const loadScript = async (module: string): Promise<undefined> => {
+    if (loaded.has(module)) {
+        return;
+    }
+    return new Promise((resolve, reject): void => {
+        const onload = (): void => {
+            loaded.add(module);
+            resolve(void 0);
+        };
+
         if (module.endsWith('.css')) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = `${root}/${module}`;
-            link.onload = (): void => resolve(void 0);
+            link.onload = onload;
             link.onerror = reject;
             document.head.appendChild(link);
         } else {
             const script = document.createElement('script');
             script.src = `${root}/${module}.js`;
-            script.onload = (): void => resolve(void 0);
+            script.onload = onload;
             script.onerror = reject;
             document.head.appendChild(script);
         }
     });
+};
 
 // Override the constructors to load modules on demand
 H.chart = async function (
