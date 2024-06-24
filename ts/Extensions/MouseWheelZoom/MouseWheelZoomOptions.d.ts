@@ -39,7 +39,7 @@ export interface MouseWheelZoomOptions {
     enabled?: boolean;
     sensitivity?: number;
     type?: ChartZoomingOptions['type'],
-    showResetZoomButton?: Boolean
+    showResetZoomButton?: boolean
 }
 
 export default MouseWheelZoomOptions;
