@@ -102,8 +102,6 @@ class DataGrid {
      * The options of the data grid.
      */
     constructor(renderTo: string|HTMLElement, options: DataGridOptions) {
-        this.destroy();
-
         this.userOptions = options;
         this.options = merge(DataGrid.defaultOptions, options);
 

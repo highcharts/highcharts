@@ -219,7 +219,7 @@ class DataGridTable {
      */
     public reflow(): void {
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
-            this.dataGrid.container?.clientHeight || 0 -
+            (this.dataGrid.container?.clientHeight || 0) -
             this.theadElement.offsetHeight -
             (this.titleElement?.offsetHeight || 0)
         }px`;
