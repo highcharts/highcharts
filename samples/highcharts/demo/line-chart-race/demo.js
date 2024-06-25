@@ -1,6 +1,6 @@
-const startInt = 1,
+const startInt = 0,
     endInt = 20,
-    animationSpeed = Math.floor(10000 / (endInt - startInt));
+    animationSpeed = Math.floor(2000 / (endInt - startInt));
 
 // General helper functions
 const arrToAssociative = arr => {
@@ -35,6 +35,18 @@ const chart = Highcharts.chart('container', {
         animation: {
             duration: animationSpeed,
             easing: t => t
+        },
+
+        events: {
+            redraw: function () {
+                const labels = this.annotations[0].labels;
+                labels
+                    .find(a => a.options.id === 'sebastian_vettel')
+                    .graphic.attr({
+                        rotation: this.series[0].yData[0]
+                    });
+                console.log(this.series[0].yData[this.series[0].length - 1]);
+            }
         }
     },
     title: {
@@ -47,9 +59,9 @@ const chart = Highcharts.chart('container', {
     },
     yAxis: {
         title: {
-            text: 'Goals'
-        }
-        // max: 200
+            text: 'Points'
+        },
+        max: 300
     },
     plotOptions: {
         series: {
@@ -57,8 +69,7 @@ const chart = Highcharts.chart('container', {
 
             // With the series label pointIndex feature
             label: {
-                enabled: true,
-                pointIndex: -1
+                enabled: false
             },
 
             // With the data labels keyPoints feature
@@ -70,7 +81,30 @@ const chart = Highcharts.chart('container', {
             }
             // step: true
         }
-    }
+    },
+    annotations: [
+        {
+            labels: [
+                {
+                    text: 'Vettel',
+                    verticalAlign: 'top',
+                    point: {
+                        x: 12,
+                        xAxis: 0,
+                        y: 120,
+                        yAxis: 0
+                    },
+                    id: 'sebastian_vettel'
+                }
+            ],
+            labelOptions: {
+                allowOverlap: true,
+                backgroundColor: undefined,
+                borderColor: undefined
+            },
+            draggable: ''
+        }
+    ]
 });
 
 let currentXVal = 1;
@@ -85,11 +119,11 @@ function update() {
 
     chart.redraw();
 
-    currentXVal++;
-
     if (currentXVal > endInt) {
         pause();
     }
+
+    currentXVal++;
 }
 
 function play() {
