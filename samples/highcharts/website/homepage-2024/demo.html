@@ -21,10 +21,11 @@
    <div id="container3"></div>
    <div class="button-container">
        <button id="change-chart" class="chart-button">
-           <div class="button-text">Change Chart!</div> 
+           <div class="button-text">Change Chart</div> 
        </button>
    </div>
 
+   <!-- for the bar chart race-->
    <div id="play-controls">
        <button id="play-pause-button" aria-hidden="true" title="play">
            <div id="play-arrow" aria-hidden="true"></div>
@@ -34,69 +35,27 @@
    </div>
 </div>
 
-
+<!-- these are for the geoheatmap-->
 <div id="projection-buttons" class="buttons row">
-    <div class="col-12">
-        <h4 class="mt-4">Projections</h4>
-        <div class="btn-group">
-            <button id="equalearth" class="btn btn-outline-secondary" data-panels="rotation-panel">Equal Earth</button>
-            <button id="miller" class="btn btn-outline-secondary" data-panels="rotation-panel">Miller</button>
-            <button id="webmerc" class="btn btn-outline-secondary" data-panels="rotation-panel">Web Mercator</button>
-            <button id="ortho" class="btn btn-outline-secondary active" data-panels="rotation-panel,rotation-preset-panel">Ortographic</button>
-            <button id="lcc" class="btn btn-outline-secondary" data-panels="rotation-panel,parallels-panel,small-world-panel">LCC</button>
-            <button id="eqc" class="btn btn-outline-secondary" data-panels="rotation-panel">None</button>
-        </div>
-    </div>
-
     <div class="col-md-6 mt-4 toggle-panel" id="rotation-panel">
-        <h4>Rotation</h4>
-
         <label>
             <input class="rotation" id="rotation-lambda" type="range" min="-180" max="180" value="0">
             Lambda → <span class="text-muted" id="rotation-lambda-output"></span>
         </label>
-        <br>
         <label>
             <input class="rotation" id="rotation-phi" type="range" min="-180" max="180" value="0">
             Phi ↑ <span class="text-muted" id="rotation-phi-output"></span>
         </label>
-        <br>
         <label>
             <input class="rotation" id="rotation-gamma" type="range" min="-180" max="180" value="0">
             Gamma ⟲ <span class="text-muted" id="rotation-gamma-output"></span>
         </label>
-
         <div class="mt-4 toggle-panel" id="rotation-preset-panel">
-            <h6>Preset rotations</h6>
             <div class="preset-rotations">
-                <!-- <a data-rotation="-15,0" href="javascript:;">Africa</a>, -->
-                <!-- <a data-rotation="0,85" href="javascript:;">Antarctica</a>,
-                <a data-rotation="-90,-40" href="javascript:;">Asia</a>,
-                <a data-rotation="-140,30" href="javascript:;">Australia</a>, -->
                 <a data-rotation="-15,-40" href="javascript:;">Europe</a>,
-                <!-- <a data-rotation="60,10" href="javascript:;">South America</a>, -->
                 <a data-rotation="100,-30" href="javascript:;">North America</a>
             </div>
         </div>
-    </div>
-
-
-    <div class="col-md-4 mt-4 toggle-panel" id="parallels-panel" >
-        <h4>Parallels</h4>
-        <label>
-            <input class="parallels" id="parallels-0" type="range" min="-90" max="90" value="30">
-            <span class="text-muted" id="parallels-0-output">30</span> °N
-        </label>
-        <br>
-        <label>
-            <input class="parallels" id="parallels-1" type="range" min="-90" max="90" value="40">
-            <span class="text-muted" id="parallels-1-output">40</span> °N
-        </label>
-    </div>
-
-    <div class="col-md-2 md-col-12 toggle-panel" id="small-world-panel" >
-        <div id="small-world-container"></div>
-
     </div>
 </div>
 

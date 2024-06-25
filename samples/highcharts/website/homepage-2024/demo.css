@@ -6,12 +6,9 @@
     display: block;
 }
 
-#container2 {
-    display: none;
-}
-
+#container2,
 #container3 {
-    display: block;
+    display: none;
 }
 
 .outer-container {
@@ -36,15 +33,10 @@
     background: maroon;
 }
 
-/* styles for testing */
 body {
-    background-color: #18171c;
+    /* dark color for testing - background-color: #18171c; */
 
-    /* background-color: transparent; */
-
-    color: white;
-
-    /* margin-top: -100px; */
+    background-color: transparent;
 }
 
 #chart-description {
@@ -67,19 +59,6 @@ body {
     white-space: nowrap;
 }
 
-/* .top-bar {
-    visibility: hidden;
-} */
-
-/* #message {
-    height: unset;
-} */
-
-.fake {
-    position: relative;
-    background: linear-gradient(180deg, #201836 0%, #46465c 100%);
-}
-
 .highcharts-background {
     fill: transparent;
 }
@@ -87,17 +66,19 @@ body {
 .highcharts-title {
     color: #c8c7d1 !important;
     fill: #c8c7d1 !important;
+    font-size: 14px !important;
 }
 
 .highcharts-title a,
 .highcharts-subtitle a {
     color: #c8c7d1 !important;
-    font-weight: 300;
 }
 
 .highcharts-subtitle {
     color: #c8c7d1 !important;
     fill: #c8c7d1 !important;
+    font-size: 14px;
+    font-weight: 300;
 }
 
 .highcharts-data-labels text {
@@ -144,8 +125,6 @@ body {
 
 .jellypus {
     transform-origin: center;
-
-    /* transform: translateX(-1000px); */
     transition: all 2s;
 }
 
@@ -158,14 +137,11 @@ body {
 
 .jellypus.highcharts-markers .highcharts-point {
     stroke: transparent;
-
-    /* fill: #6975FF; */
     fill-opacity: 0.8;
     stroke-dasharray: 0;
 }
 
 .jellypus.highcharts-markers .highcharts-point.head {
-    /* fill: #6975FF; */
     fill-opacity: 0.8;
     stroke: transparent;
 }
@@ -291,8 +267,4 @@ body {
 .chart-button:disabled .button-text {
     border: 1px solid #5e5c70;
     color: #75738c;
-}
-
-.confetti {
-    z-index: 10;
 }

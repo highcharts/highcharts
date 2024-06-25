@@ -1,3 +1,4 @@
+// brand colors
 const colors = [
     '#8087E8',
     '#A3EDBA',
@@ -12,7 +13,6 @@ const colors = [
 Math.easeOutQuint = function (pos) {
     return Math.pow(pos - 1, 5) + 1;
 };
-
 
 // data for Sankey (SK)
 const dataSK = [
@@ -74,14 +74,11 @@ function changeOpacity(elements, opacity, transition) {
 
 let chartNum = 0;
 let chartToMake;
-let chart;
 
 // arc
 const arc = {
     chart: {
         backgroundColor: 'transparent',
-        // height: 400,
-        // width: '100%',
         animation: {
             duration: 1000,
             easing: ' easeOutQuint'
@@ -106,10 +103,7 @@ const arc = {
         align: 'left',
         y: -30,
         verticalAlign: 'bottom',
-        text: 'Arc Diagram',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Arc Diagram'
     },
     subtitle: {
         floating: true,
@@ -117,10 +111,7 @@ const arc = {
         verticalAlign: 'bottom',
         align: 'left',
         y: -15,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/arc-diagram">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/arc-diagram">See full demo</a>'
     },
 
     accessibility: {
@@ -359,10 +350,7 @@ const cr = {
         align: 'left',
         y: -32,
         verticalAlign: 'bottom',
-        text: 'Column Range Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Column Range Chart'
     },
     subtitle: {
         floating: true,
@@ -370,10 +358,7 @@ const cr = {
         verticalAlign: 'bottom',
         align: 'left',
         y: -15,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/columnrange">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/columnrange">See full demo</a>'
     },
     colors: colors,
     xAxis: {
@@ -396,13 +381,6 @@ const cr = {
 
     yAxis: {
         visible: false,
-        labels: {
-            enabled: false
-        },
-        title: {
-            text: ''
-        },
-        gridLineColor: 'transparent',
         min: -20,
         max: 30
     },
@@ -499,10 +477,7 @@ const sk = {
         align: 'left',
         y: -32,
         verticalAlign: 'bottom',
-        text: 'Sankey Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Sankey Chart'
     },
     subtitle: {
         floating: true,
@@ -510,10 +485,7 @@ const sk = {
         verticalAlign: 'bottom',
         align: 'left',
         y: -15,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/sankey-diagram">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/sankey-diagram">See full demo</a>'
     },
     credits: {
         enabled: false
@@ -544,7 +516,6 @@ const sk = {
                 easing: 'easeOutQuint',
                 defer: 1000
             },
-            // animation: false,
             nodePadding: 8,
             nodeWidth: '45%',
             colorByPoint: true,
@@ -571,6 +542,7 @@ const sk = {
     ]
 };
 
+// special colors for the streamgraph
 const strColors = [
     '#6975FF', // purple
     '#6EE7B7', // green
@@ -645,10 +617,7 @@ const str = {
         y: -48,
         x: 10,
         verticalAlign: 'bottom',
-        text: 'Streamgraph Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Streamgraph Chart'
     },
     subtitle: {
         floating: true,
@@ -657,21 +626,19 @@ const str = {
         align: 'left',
         y: -28,
         x: 10,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
     },
 
     xAxis: {
         maxPadding: 0,
+        margin: 20,
+        tickWidth: 0,
         accessibility: {
             description: 'Countries'
         },
         height: '75%',
         visible: false,
         type: 'category',
-        crosshair: true,
         categories: [
             '',
             '1924 Chamonix',
@@ -698,19 +665,7 @@ const str = {
             '2006 Turin',
             '2010 Vancouver',
             '2014 Sochi'
-        ],
-        labels: {
-            align: 'left',
-            reserveSpace: false,
-            rotation: 270,
-            style: {
-                color: '#ACABBA',
-                fontWeight: 'normal'
-            }
-        },
-        lineWidth: 0,
-        margin: 20,
-        tickWidth: 0
+        ]
     },
 
     yAxis: {
@@ -1044,7 +999,6 @@ const rb = {
                             endAngle: 270
                         }
 
-
                     }, false);
                     chart.series[0].update({
                         groupPadding: 0.15
@@ -1074,13 +1028,10 @@ const rb = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -52,
+        y: -48,
         x: 12,
         verticalAlign: 'bottom',
-        text: 'Radial Bar Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Radial Bar Chart'
     },
     subtitle: {
         floating: true,
@@ -1089,10 +1040,7 @@ const rb = {
         align: 'left',
         y: -32,
         x: 12,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/polar-radial-bar">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/polar-radial-bar">See full demo</a>'
     },
     pane: {
         size: '1000%',
@@ -1198,17 +1146,7 @@ const strOld = {
             }
         ]
     },
-    colors: [
-        '#8087E8',
-        '#A3EDBA',
-        '#F19E53',
-        '#30426B',
-        '#6699A1',
-        '#BBBAC5',
-        '#87B4E7',
-        '#DA6D85',
-        '#BBBAC5'
-    ],
+    colors: colors,
 
     credits: {
         enabled: false
@@ -1224,10 +1162,7 @@ const strOld = {
         align: 'left',
         y: -32,
         verticalAlign: 'bottom',
-        text: 'Streamgraph Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Streamgraph Chart'
     },
     subtitle: {
         floating: true,
@@ -1235,10 +1170,7 @@ const strOld = {
         verticalAlign: 'bottom',
         align: 'left',
         y: -15,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/streamgraph">See full demo</a>'
     },
 
     xAxis: {
@@ -1248,34 +1180,16 @@ const strOld = {
         reversed: false,
         maxPadding: 0,
         type: 'datetime',
-        labels: {
-            align: 'left',
-            reserveSpace: false,
-            rotation: 0,
-            style: {
-                color: '#BBBAC5'
-            }
-        },
-        lineWidth: 1,
         margin: 20,
         tickWidth: 1
     },
 
     yAxis: {
         visible: false,
-        title: {
-            text: ''
-        },
         min: -40,
         max: 40,
         startOnTick: false,
-        endOnTick: false,
-        gridLineColor: 'transparent',
-        labels: {
-            style: {
-                color: '#BBBAC5'
-            }
-        }
+        endOnTick: false
     },
 
     legend: {
@@ -2426,8 +2340,23 @@ const strOld = {
     }
 };
 
-
 // jellypus
+
+function colorizeJP(chart) {
+    const jpSeries = chart.series[0];
+
+    const colors = [
+        '#6975FF', '#A5ACFF', '#8791FF',
+        '#F59E0B', '#10B981'
+    ];
+
+    jpSeries.nodes.forEach(function (node, i) {
+        node.update({
+            color: colors[i % 5]
+        }, false);
+    });
+}
+
 function jellypus() {
     Highcharts.chart('container', {
         accessibility: {
@@ -2445,20 +2374,12 @@ function jellypus() {
             },
             events: {
                 load: function () {
-
                     const chart = this;
-                    const jpSeries = chart.series[0];
-
-                    const colors = [
-                        '#6975FF', '#A5ACFF', '#8791FF',
-                        '#F59E0B', '#10B981'
-                    ];
-
-                    jpSeries.nodes.forEach(function (node, i) {
-                        node.update({
-                            color: colors[i % 5]
-                        }, false);
-                    });
+                    colorizeJP(chart);
+                },
+                redraw: function () {
+                    const chart = this;
+                    colorizeJP(chart);
                 }
             }
         },
@@ -2473,21 +2394,15 @@ function jellypus() {
             align: 'left',
             y: -32,
             verticalAlign: 'bottom',
-            text: 'Network Graph',
-            style: {
-                fontSize: '14px'
-            }
+            text: 'Network Graph'
         },
         subtitle: {
             floating: true,
             useHTML: true,
             verticalAlign: 'bottom',
             align: 'left',
-            style: {
-                fontSize: '14px'
-            },
             y: -12,
-            text: '<a href="https://www.highcharts.com/demo/highcharts/network-graph">See full demo</a>'
+            text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/network-graph">See full demo</a>'
         },
         plotOptions: {
             series: {
@@ -3285,10 +3200,7 @@ function cs() {
             y: -30,
             verticalAlign: 'bottom',
             text: `<div>Dynamic Candlestick Chart&nbsp;
-            <span id="stop">(Stop animation)</span></div>`,
-            style: {
-                fontSize: '14px'
-            }
+            <span id="stop">(Stop animation)</span></div>`
         },
         subtitle: {
             floating: true,
@@ -3296,10 +3208,7 @@ function cs() {
             verticalAlign: 'bottom',
             align: 'left',
             y: -12,
-            style: {
-                fontSize: '14px'
-            },
-            text: `<a href="https://www.highcharts.com/demo/stock/live-candlestick">
+            text: `<a target="_top" href="https://www.highcharts.com/demo/stock/live-candlestick">
             See full demo</a>`
         },
         xAxis: {
@@ -3413,7 +3322,6 @@ function cs() {
             }
         }]
     };
-
 
     // On load, start the interval that adds points
     options.chart = {
@@ -4359,17 +4267,12 @@ function cs() {
 }
 
 // bar chart race
-// let barInterval;
-
 function barchartRace() {
     const startYear = 2000,
         endYear = 2018,
-        // controls = document.getElementById('play-controls'),
         btn = document.getElementById('play-pause-button'),
         input = document.getElementById('play-range'),
         nbr = 20;
-
-    // controls.style.visibility = 'visible';
 
     let dataset, chart;
     /*
@@ -4498,21 +4401,15 @@ function barchartRace() {
                 align: 'left',
                 y: -30,
                 verticalAlign: 'bottom',
-                text: 'Bar Chart Race',
-                style: {
-                    fontSize: '14px'
-                }
+                text: 'Bar Chart Race'
             },
             subtitle: {
                 floating: true,
                 useHTML: true,
                 verticalAlign: 'bottom',
                 align: 'left',
-                style: {
-                    fontSize: '14px'
-                },
                 y: -12,
-                text: '<a href="https://www.highcharts.com/demo/highcharts/bar-race">See full demo</a>'
+                text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/bar-race">See full demo</a>'
             },
 
             legend: {
@@ -4684,23 +4581,17 @@ const spb = {
         floating: true,
         useHTML: true,
         align: 'left',
-        y: -35,
+        y: -32,
         verticalAlign: 'bottom',
-        text: 'Split Packed<br>Bubble Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Split Packed<br>Bubble Chart'
     },
     subtitle: {
         floating: true,
         useHTML: true,
         verticalAlign: 'bottom',
         align: 'left',
-        style: {
-            fontSize: '14px'
-        },
         y: -15,
-        text: '<a style="color:#C8C7D1;" href="https://www.highcharts.com/demo/highcharts/packed-bubble-split">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/packed-bubble-split">See full demo</a>'
     },
     tooltip: {
         backgroundColor: '#474554',
@@ -4719,7 +4610,7 @@ const spb = {
                 enabled: false
             },
             minSize: '20%',
-            maxSize: '100%',
+            maxSize: '80%',
             zMin: 0,
             zMax: 1000,
             layoutAlgorithm: {
@@ -5267,21 +5158,15 @@ const dw = {
         align: 'left',
         y: -32,
         verticalAlign: 'bottom',
-        text: 'Dependency Wheel',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Dependency Wheel'
     },
     subtitle: {
         floating: true,
         useHTML: true,
         verticalAlign: 'bottom',
         align: 'left',
-        style: {
-            fontSize: '14px'
-        },
         y: -15,
-        text: '<a href="https://www.highcharts.com/demo/highcharts/dependency-wheel">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/dependency-wheel">See full demo</a>'
     },
     accessibility: {
         screenReaderSection: {
@@ -5418,10 +5303,7 @@ const fc = {
         align: 'left',
         y: -30,
         verticalAlign: 'bottom',
-        text: 'Funnel Chart',
-        style: {
-            fontSize: '14px'
-        }
+        text: 'Funnel Chart'
     },
     subtitle: {
         floating: true,
@@ -5429,10 +5311,7 @@ const fc = {
         verticalAlign: 'bottom',
         align: 'left',
         y: -15,
-        style: {
-            fontSize: '14px'
-        },
-        text: '<a href="https://www.highcharts.com/demo/highcharts/funnel">See full demo</a>'
+        text: '<a target="_top" href="https://www.highcharts.com/demo/highcharts/funnel">See full demo</a>'
     },
     plotOptions: {
         series: {
@@ -5580,10 +5459,7 @@ function geoHeatMap() {
                 align: 'left',
                 y: -32,
                 verticalAlign: 'bottom',
-                text: 'GeoHeatMap',
-                style: {
-                    fontSize: '14px'
-                }
+                text: 'GeoHeatMap'
             },
             subtitle: {
                 floating: true,
@@ -5591,10 +5467,7 @@ function geoHeatMap() {
                 verticalAlign: 'bottom',
                 align: 'left',
                 y: -15,
-                style: {
-                    fontSize: '14px'
-                },
-                text: '<a href="https://www.highcharts.com/demo/maps/geoheatmap-orthographic">See full demo</a>'
+                text: '<a target="_top" href="https://www.highcharts.com/demo/maps/geoheatmap-orthographic">See full demo</a>'
             },
 
             legend: {
@@ -5733,9 +5606,6 @@ function gantt() {
 
     const options = {
         chart: {
-            // plotBackgroundColor: 'rgba(128,128,128,0.02)',
-            // plotBorderColor: 'rgba(128,128,128,0.1)',
-            // plotBorderWidth: 1
             animation: {
                 duration: 2000,
                 easing: 'easeOutQuint'
@@ -5866,10 +5736,7 @@ function gantt() {
             align: 'left',
             y: -7,
             verticalAlign: 'bottom',
-            text: 'Gantt Chart',
-            style: {
-                fontSize: '14px'
-            }
+            text: 'Gantt Chart'
         },
         subtitle: {
             floating: true,
@@ -5877,10 +5744,7 @@ function gantt() {
             verticalAlign: 'bottom',
             align: 'left',
             y: 10,
-            style: {
-                fontSize: '14px'
-            },
-            text: '<a href="https://www.highcharts.com/demo/gantt/project-management">See full demo</a>'
+            text: '<a target="_top" href="https://www.highcharts.com/demo/gantt/project-management">See full demo</a>'
         },
         xAxis: [{
             labels: {
@@ -5982,12 +5846,14 @@ function gantt() {
 
 }
 
+// chart load order
 const charts = [
     jellypus,  str, cs, barchartRace,
     spb, dw, fc, geoHeatMap, gantt, strOld, arc, rb,
     sk, cr
 ];
 
+// for a11y
 const chartDescriptions = [
     // jellypus
     `<p>Network Graph</p><div>A purely decorative network graph with 
@@ -6077,7 +5943,6 @@ const chartDescriptions = [
     between a lower and higher value for each point.</div>`
 ];
 
-
 function getChartDescription(num) {
 
     const container = document.getElementById('container');
@@ -6112,6 +5977,7 @@ function makeChart() {
     clearInterval(csInterval);
     clearInterval(strInterval);
 
+    // hide the containers
     document.getElementById('container').style.display = 'none';
     document.getElementById('container2').style.display = 'none';
     document.getElementById('container3').style.display = 'none';
@@ -6177,18 +6043,24 @@ function makeChart() {
     chartNum = chartNum + 1;
 }
 
-makeChart();
-barchartRace();
-geoHeatMap();
+/* barchartRace and geoHeatMap caused problems when trying
+to create them on the fly, so they have their own containers
+and load when the page loads
+*/
+makeChart(); // goes into container
+barchartRace(); // goes into container2
+geoHeatMap(); // goes into container3
 
-// button
+// change chart button
 document.addEventListener('DOMContentLoaded', function () {
     const button = document.getElementById('change-chart');
     button.addEventListener('click', function () {
         makeChart();
-
-
+        // disable the button to prevent changing
+        // chart during animation
         button.disabled = true;
+
+        // re-enable the button after 2 seconds
         setTimeout(function () {
             button.disabled = false;
         }, 2000);
