@@ -122,6 +122,9 @@ interface BoxObject extends R.BoxObject {
  *
  * @param {Highcharts.TooltipOptions} options
  * Tooltip options.
+ *
+ * @param {Highcharts.Pointer} pointer
+ * The pointer instance.
  */
 class Tooltip {
 
