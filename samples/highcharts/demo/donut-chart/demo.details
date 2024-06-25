@@ -1,5 +1,5 @@
 ---
-name: Donut chart with rounded corners
+name: Donut chart
 authors:
   - Hubert Kozik
 js_wrap: b

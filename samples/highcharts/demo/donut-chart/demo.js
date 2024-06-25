@@ -29,6 +29,10 @@ Highcharts.chart('container', {
                     x,
                     y
                 });
+                // Set font size based on chart diameter
+                customLabel.css({
+                    fontSize: `${series.center[2] / 15}px`
+                });
             }
         }
     },
@@ -45,6 +49,9 @@ Highcharts.chart('container', {
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
+    },
+    legend: {
+        enabled: false
     },
     plotOptions: {
         series: {
