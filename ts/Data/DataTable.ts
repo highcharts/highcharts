@@ -1448,12 +1448,12 @@ class DataTable implements DataEvent.Emitter {
 
     /**
      * Sets the row key column. This column is invisible and the cells
-     * serves as identifiers to the rows they are contained in. Accessing
+     * serve as identifiers to the rows they are contained in. Accessing
      * rows by keys instead of indexes is necessary in cases where rows
      * are rearranged by a DataModifier (e.g. SortModifier or RangeModifier).
      *
      * @function Highcharts.DataTable#setRowKeysColumn
-     *     *
+     *
      * @param {number} nRows
      * Number of rows to add to the column.
      *
