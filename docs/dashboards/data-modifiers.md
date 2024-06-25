@@ -46,6 +46,8 @@ dataModifier: {
     }]
 }
 ```
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_ChainModifierOptions.ChainModifierOptions-1.html)
+
 * Range - Can be used to filter the data by minimal and maximal value. It works both for numbers as well as alphanumerical values. The `column` option specifies, from which column the values should be used to perform a filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
 ```js
 dataModifier: {
@@ -57,12 +59,15 @@ dataModifier: {
     }]
 }
 ```
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_RangeModifierOptions.RangeModifierOptions-1.html)
+
 * Invert - Allows to flip the data, and replace the columns with rows. This comes in handy when your data is structured by rows and you want to present it by columns. No other options need to be specified here. Example:
 ```js
 dataModifier: {
     type: 'Invert'
 }
 ```
+
 * Math - This is the only modifier that comes in a separate module. It allows performing complex math calculations and adding columns of values that are calculated based on the existing values. It uses commands similar to those that you can find in spreadsheets like Excel. You can read more in the [MathModifier Article](https://www.highcharts.com/docs/dashboards/mathmodifier-module).
 Example:
 ```js
@@ -74,8 +79,9 @@ dataModifier: {
     }]
 }
 ```
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_MathModifierOptions.MathModifierOptions-1.html)
 
-* Sort - This modifier rearranges the order of the rows based on the content of any selected column. The sorting order is either ascending or descending. Optional: 'orderInColumn'. Column to update with order index instead of changing order of rows.
+* Sort - This modifier rearranges the order of the rows based on the content of any selected column. The sorting order is either ascending or descending.
 Example:
 ```js
 dataModifier: {
@@ -85,6 +91,7 @@ dataModifier: {
     orderInColumn: ''  // Optional
 }
 ```
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_SortModifierOptions.SortModifierOptions-1.html)
 
 ### Example demos
 You can check the modifiers in action with the following demos:
