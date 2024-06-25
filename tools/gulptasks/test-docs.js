@@ -25,6 +25,7 @@ async function checkDocsConsistency() {
     tsFiles.forEach(file => {
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
+            requiresPattern = /@requires[ ]*([a-z0-9\-\/\.:]+)/gu,
             samplePattern = /@sample[ ]*(\{(highcharts|highstock|highmaps|gantt)\})? ([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             error404s = [];
 
@@ -35,6 +36,19 @@ async function checkDocsConsistency() {
                 FS.statSync(`samples/${sample}/demo.js`);
             } catch (error) {
                 error404s.push({ file, sample });
+            }
+        }
+
+        while ((match = requiresPattern.exec(md))) {
+            const requires = match[1].replace(/^(stock|maps|gantt)\//u, '');
+            try {
+                FS.statSync(`ts/masters/${requires}.src.ts`);
+            } catch (e1) {
+                try {
+                    FS.statSync(`ts/masters-dashboards/${requires}.src.ts`);
+                } catch (e2) {
+                    error404s.push({ file, requires });
+                }
             }
         }
 
