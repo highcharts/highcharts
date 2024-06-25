@@ -64,6 +64,11 @@ const lightTheme = {
                 color: '#333333'
             }
         }
+    },
+    plotOptions: {
+        series: {
+            borderColor: 'transparent'
+        }
     }
 };
 
@@ -150,7 +155,8 @@ const darkTheme = {
             },
             marker: {
                 lineColor: '#333'
-            }
+            },
+            borderColor: '#fff'
         },
         boxplot: {
             fillColor: '#505053'
