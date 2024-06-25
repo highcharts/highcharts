@@ -162,10 +162,6 @@ abstract class Component {
         caption: false,
         sync: Sync.defaultHandlers,
         editableOptions: [{
-            name: 'connectorName',
-            propertyPath: ['connector', 'id'],
-            type: 'select'
-        }, {
             name: 'title',
             propertyPath: ['title'],
             type: 'input'

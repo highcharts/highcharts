@@ -24,7 +24,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-bfc-all.topo.json">Bourgogne-Franche-Comté</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-bfc-all.topo.json">Bourgogne-Franche-Comté</a>'
         },
 
         mapNavigation: {

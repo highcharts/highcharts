@@ -97,9 +97,10 @@ class NavigatorComponent extends AccessibilityComponent {
      */
     public onChartUpdate(): void {
         const chart = this.chart,
-            options = chart.options;
+            options = chart.options,
+            navigator = options.navigator;
 
-        if (options.navigator.accessibility?.enabled) {
+        if (navigator.enabled && navigator.accessibility?.enabled) {
             const verbosity = options.accessibility.landmarkVerbosity,
                 groupFormatStr = options.lang
                     .accessibility?.navigator.groupLabel;

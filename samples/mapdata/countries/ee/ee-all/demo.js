@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ee/ee-all.topo.json">Estonia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ee/ee-all.topo.json">Estonia</a>'
         },
 
         mapNavigation: {

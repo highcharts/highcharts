@@ -26,7 +26,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/bi-2014/bi-all-2014.topo.json">Burundi (2014)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/bi-2014/bi-all-2014.topo.json">Burundi (2014)</a>'
         },
 
         mapNavigation: {

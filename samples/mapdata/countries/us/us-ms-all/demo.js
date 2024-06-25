@@ -49,7 +49,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ms-all.topo.json">Mississippi</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ms-all.topo.json">Mississippi</a>'
         },
 
         mapNavigation: {

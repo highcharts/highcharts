@@ -1366,8 +1366,11 @@ class Navigator {
                 keepOrdinalPadding: true, // #2436
                 startOnTick: false,
                 endOnTick: false,
-                minPadding: 0,
-                maxPadding: 0,
+                // Inherit base xAxis' padding when ordinal is false (#16915).
+                minPadding: baseXaxis.options.ordinal ? 0 :
+                    baseXaxis.options.minPadding,
+                maxPadding: baseXaxis.options.ordinal ? 0 :
+                    baseXaxis.options.maxPadding,
                 zoomEnabled: false
             }, chart.inverted ? {
                 offsets,
@@ -1376,7 +1379,6 @@ class Navigator {
                 offsets,
                 height
             }), 'xAxis') as NavigatorAxisComposition;
-
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
                 {

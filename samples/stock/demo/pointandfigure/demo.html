@@ -1,0 +1,33 @@
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        Point and figure series are used in technical analysis to represent
+        changes in stock prices over time, focusing solely on price movements
+        without time and volume. The columns of X's represent a rising price,
+        while O's - falling prices. Each symbol corresponds to a specific price
+        movement, and the new marker is created only when the price changes by a
+        predetermined amount, known as the box size. A new column is created
+        only if the price goes in the opposite direction, and the threshold
+        required to create one is called the reversal amount.
+
+        <p>This series requires an OHLC format data and all of the calculations
+        are done under the hood. As this is a PoC, only close values are used
+        for calculation - there is no support for High/Low values yet.</p>
+
+        <p>Users can specify the following options:</p>
+
+        <p><code>boxSize: number | string | undefined</code> - by default, this
+        option is set to <code>'1%'</code>, user can choose between any positive
+        number or a percentage value in string.</p>
+
+        <p><code>reversalAmount: number | undefined</code> - by default, this
+            option is set to <code>1</code>, user can only set it to other
+            positive number.</p>
+
+        <p><code>maxPointWidth: number | undefined</code> - by default, this
+        option is set to undefined, which defaults to two times the marker
+        height.</p>
+    </p>
+</figure>
