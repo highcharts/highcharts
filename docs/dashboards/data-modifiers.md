@@ -75,7 +75,7 @@ dataModifier: {
 }
 ```
 
-* Sort - This modifier rearranges the order of the rows based on the content of any selected column. The sorting order is either ascending or descending. Optional: 'orderInColumn'. When used, the rows are unsorted and instead, the sorting index appears in the selected column.
+* Sort - This modifier rearranges the order of the rows based on the content of any selected column. The sorting order is either ascending or descending. Optional: 'orderInColumn'. Column to update with order index instead of changing order of rows.
 Example:
 ```js
 dataModifier: {
