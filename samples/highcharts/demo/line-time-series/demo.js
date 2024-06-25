@@ -21,11 +21,7 @@
             align: 'left'
         },
         xAxis: {
-            type: 'datetime',
-            scrollbar: {
-                enabled: true,
-                showFull: false
-            }
+            type: 'datetime'
         },
         yAxis: {
             title: {
