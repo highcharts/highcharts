@@ -681,6 +681,7 @@ const str = {
     chart: {
         type: 'streamgraph',
         marginBottom: 10,
+        marginRight: 0,
         // height: 430,
         zooming: {
             type: 'x'
