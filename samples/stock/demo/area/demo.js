@@ -221,6 +221,7 @@ Highcharts.stockChart('container', {
     },
 
     series: [{
+        name: 'BTC-ETH Price',
         type: 'area',
         tooltip: {
             valueDecimals: 2,
