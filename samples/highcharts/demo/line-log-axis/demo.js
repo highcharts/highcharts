@@ -3,6 +3,12 @@ Highcharts.chart('container', {
         text: 'Growth of Internet Users Worldwide (logarithmic scale)'
     },
 
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{xDescription}{separator}{value} milions.'
+        }
+    },
+
     xAxis: {
         title: {
             text: 'Year'
