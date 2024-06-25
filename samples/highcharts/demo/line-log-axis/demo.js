@@ -5,7 +5,8 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            valueDescriptionFormat: '{xDescription}{separator}{value} milions'
+            valueDescriptionFormat:
+                '{xDescription}{separator}{value} million(s)'
         }
     },
 
@@ -25,7 +26,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '<b>{series.name}</b><br />',
-        pointFormat: '{point.y} milions'
+        pointFormat: '{point.y} million(s)'
     },
 
     series: [{
