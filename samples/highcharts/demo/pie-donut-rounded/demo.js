@@ -12,23 +12,16 @@ Highcharts.chart('container', {
                     customLabel = chart.options.chart.custom.label =
                         chart.renderer.label(
                             'Total auto registrations <br/>' +
-                            '<strong>5 685 785</strong>',
-                            0, 0, void 0, void 0, void 0, true
+                            '<strong>5 685 785</strong>'
                         )
                             .css({
                                 color: '#000',
-                                textAlign: 'center'
-                            })
-                            .attr({
-                                padding: 8,
-                                r: 5,
-                                zIndex: 6
+                                textAnchor: 'middle'
                             })
                             .add();
                 }
 
-                const x = series.center[0] + chart.plotLeft -
-                    (customLabel.attr('width') / 2),
+                const x = series.center[0] + chart.plotLeft,
                     y = series.center[1] + chart.plotTop -
                     (customLabel.attr('height') / 2);
 
@@ -71,7 +64,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Registra tions',
+        name: 'Registrations',
         colorByPoint: true,
         innerSize: '75%',
         data: [{
