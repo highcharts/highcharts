@@ -5,7 +5,7 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            valueDescriptionFormat: '{xDescription}{separator}{value} milions.'
+            valueDescriptionFormat: '{xDescription}{separator}{value} milions'
         }
     },
 
