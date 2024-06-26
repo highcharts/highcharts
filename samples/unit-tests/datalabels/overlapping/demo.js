@@ -189,18 +189,12 @@ QUnit.test(
             'Overlapping dataLabel is hidden (#9119).'
         );
 
-        chart.series[0].remove(false);
-        chart.series[1].remove(false);
+        chart.destroy();
 
         const markerWidth = 60;
-        chart.update({
+        chart = Highcharts.chart('container', {
             chart: {
                 styledMode: true
-            },
-            yAxis: {
-                stackLabels: {
-                    enabled: false
-                }
             },
             series: [{
                 type: 'treegraph',
@@ -212,13 +206,13 @@ QUnit.test(
                 ],
                 marker: {
                     symbol: 'rect',
-                    width: markerWidth,
-                    height: '40px'
+                    height: '40px',
+                    width: markerWidth
                 },
                 dataLabels: {
                     pointFormat: '{point.id}'
                 }
-            }, {}, {}]
+            }]
         });
 
         assert.equal(
