@@ -118,7 +118,7 @@ Highcharts.chart('container', {
                 '{#if (eq 1 point.sets.length)}' +
                     'Product: Highcharts {point.sets.0}' +
                 '{else}' +
-                    'Products:' +
+                    'Products: ' +
                     '{#each point.sets}' +
                         'Highcharts {this}{#unless @last} and {/unless}' +
                     '{/each}' +
