@@ -55,7 +55,7 @@ class RowsVirtualizer {
     /**
      * The index of the first visible row.
      */
-    public rowCursor: number = 0;
+    public rowCursor = 0;
 
     /**
      * The viewport (table) of the data grid.
@@ -78,7 +78,7 @@ class RowsVirtualizer {
      * Flag indicating if the scrolling handler should be prevented to avoid
      * flickering loops when scrolling to the last row.
      */
-    private preventScroll: boolean = false;
+    private preventScroll = false;
 
 
     /* *
@@ -151,7 +151,6 @@ class RowsVirtualizer {
             this.renderRows(rowCursor);
         }
         this.rowCursor = rowCursor;
-        // -----------------------------
 
         this.adjustRowHeights();
         if (
@@ -220,10 +219,10 @@ class RowsVirtualizer {
             vp.tbodyElement.appendChild(last.htmlElement);
         }
 
-        const from = Math.min(
-            Math.max(rowCursor - buffer, 0),
+        const from = Math.max(0, Math.min(
+            rowCursor - buffer,
             vp.dataTable.getRowCount() - rowsPerPage
-        );
+        ));
         const to = Math.min(
             rowCursor + rowsPerPage + buffer,
             rows[rows.length - 1].index - 1

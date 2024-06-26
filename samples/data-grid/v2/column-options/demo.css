@@ -10,7 +10,6 @@
 }
 
 .custom-column-class-name {
-    text-decoration: underline;
-    text-shadow: 2px 2px #f00;
+    color: #f00;
     width: 40%;
 }

@@ -66,9 +66,9 @@ export interface DataGridOptions {
     columns?: Record<string, IndividualColumnOptions>;
 
     /**
-     * Contains options for title
+     * Contains options for caption.
      */
-    title?: TitleOptions;
+    caption?: CaptionOptions;
 }
 
 /**
@@ -162,9 +162,9 @@ export interface IndividualColumnOptions extends ColumnOptions {
     enabled?: boolean;
 }
 
-export interface TitleOptions {
+export interface CaptionOptions {
     /**
-     * The title of the datagrid grid.
+     * The caption of the datagrid grid.
      */
     text?: string;
 }

@@ -14,12 +14,14 @@
     height: 150px;
 }
 
+.highcharts-dg-column {
+    width: 15%;
+}
+
 .highcharts-dg-column[data-column-id="b"] {
-    width: 300px;
-    max-width: 300px;
+    width: 30%;
 }
 
 .highcharts-dg-column[data-column-id="c"] {
-    width: 5%;
-    max-width: 5%;
+    width: 10%;
 }

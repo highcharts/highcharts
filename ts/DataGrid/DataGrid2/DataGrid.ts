@@ -50,6 +50,52 @@ class DataGrid {
 
     /* *
     *
+    *  Static Methods
+    *
+    * */
+
+    /**
+     * Creates a new data grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     * @param options
+     * The options of the data grid.
+     *
+     * @return The new data grid.
+     */
+    public static dataGrid(
+        renderTo: string|HTMLElement,
+        options: DataGridOptions
+    ): DataGrid {
+        return new DataGrid(renderTo, options);
+    }
+
+    /**
+     * Initializes the container of the data grid.
+     *
+     * @param renderTo
+     * The render target (html element or id) of the data grid.
+     *
+     * @returns
+     * The container element of the data grid.
+     */
+    private static initContainer(renderTo: string|HTMLElement): HTMLElement {
+        if (typeof renderTo === 'string') {
+            const existingContainer = win.document.getElementById(renderTo);
+            if (existingContainer) {
+                return existingContainer;
+            }
+            return makeDiv(Globals.classNames.container, renderTo);
+        }
+        renderTo.classList.add(Globals.classNames.container);
+        return renderTo;
+    }
+
+
+    /* *
+    *
     *  Properties
     *
     * */
@@ -146,57 +192,10 @@ class DataGrid {
             this.container.classList.remove(Globals.classNames.container);
         }
 
-        delete this.userOptions;
-        delete this.options;
-        delete this.container;
-        delete this.viewport;
-        delete this.tableElement;
-    }
-
-
-    /* *
-    *
-    *  Static Methods
-    *
-    * */
-
-    /**
-     * Creates a new data grid.
-     *
-     * @param renderTo
-     * The render target (html element or id) of the data grid.
-     *
-     * @param options
-     * The options of the data grid.
-     *
-     * @return The new data grid.
-     */
-    public static dataGrid(
-        renderTo: string|HTMLElement,
-        options: DataGridOptions
-    ): DataGrid {
-        return new DataGrid(renderTo, options);
-    }
-
-    /**
-     * Initializes the container of the data grid.
-     *
-     * @param renderTo
-     * The render target (html element or id) of the data grid.
-     *
-     * @returns
-     * The container element of the data grid.
-     */
-    private static initContainer(renderTo: string|HTMLElement): HTMLElement {
-        if (typeof renderTo === 'string') {
-            const existingContainer = win.document.getElementById(renderTo);
-            if (existingContainer) {
-                return existingContainer;
-            }
-            return makeDiv(Globals.classNames.container, renderTo);
-        }
-        renderTo.classList.add(Globals.classNames.container);
-        return renderTo;
+        // Clear all properties
+        Object.keys(this).forEach((key): void => {
+            delete this[key as keyof this];
+        });
     }
 }
 

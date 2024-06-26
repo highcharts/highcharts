@@ -91,15 +91,7 @@ class DataGridRow {
                 transform: `translateY(${this.getDefaultTopOffset()}px)`
             }
         });
-
-        this.htmlElement.setAttribute('data-row-index', index);
-
-        // 1 - index of the head, 1 to avoid indexing from 0
-        this.htmlElement.setAttribute('aria-rowindex', index + 2);
-
-        if (index % 2 === 1) {
-            this.htmlElement.classList.add(Globals.classNames.odd);
-        }
+        this.setRowAttributes();
     }
 
 
@@ -179,13 +171,21 @@ class DataGridRow {
         return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
 
+    /**
+     * Sets the row HTML element attributes and additional classes.
+     */
+    private setRowAttributes(): void {
+        const idx = this.index;
 
-    /* *
-    *
-    *  Static Methods
-    *
-    * */
+        this.htmlElement.setAttribute('data-row-index', idx);
 
+        // 1 - index of the head, 1 to avoid indexing from 0
+        this.htmlElement.setAttribute('aria-rowindex', idx + 2);
+
+        if (idx % 2 === 1) {
+            this.htmlElement.classList.add(Globals.classNames.odd);
+        }
+    }
 }
 
 

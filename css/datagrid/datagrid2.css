@@ -88,7 +88,6 @@
 .highcharts-dg-container {
     display: block;
     min-height: 100px;
-    border: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
 }
 
@@ -100,10 +99,11 @@
     color: var(--highcharts-neutral-color-100);
     overflow: hidden;
     background-color: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-20);
 }
 
-.highcharts-dg-title {
-    padding-bottom: 5px;
+.highcharts-dg-caption {
+    padding: 5px;
     background-color: var(--highcharts-background-color);
 }
 
@@ -118,7 +118,6 @@
 }
 
 .highcharts-dg-table thead th {
-    color: var(--highcharts-neutral-color-100);
     position: relative;
     border-left: 1px solid var(--highcharts-neutral-color-20);
 }

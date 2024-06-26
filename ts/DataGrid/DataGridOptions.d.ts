@@ -77,13 +77,6 @@ export interface DataGridOptions {
     editable?: boolean;
 
     /**
-     * Switch to enable or disable the column resizing.
-     *
-     * @default true
-     */
-    enableColumnResize?: boolean;
-
-    /**
      * Events attached to the row : `click`.
      */
     events?: DataGridEvents

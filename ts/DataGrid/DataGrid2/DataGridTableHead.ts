@@ -179,14 +179,6 @@ class DataGridTableHead {
         this.viewport.theadElement.style.transform =
             `translateX(${-scrollLeft}px)`;
     }
-
-
-    /* *
-    *
-    *  Static Methods
-    *
-    * */
-
 }
 
 

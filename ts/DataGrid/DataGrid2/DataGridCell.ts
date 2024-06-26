@@ -156,13 +156,6 @@ class DataGridCell {
         this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
         this.htmlElement.remove();
     }
-
-    /* *
-    *
-    *  Static Methods
-    *
-    * */
-
 }
 
 

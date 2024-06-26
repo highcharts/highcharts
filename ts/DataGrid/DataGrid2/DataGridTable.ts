@@ -32,8 +32,10 @@ import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
+import Utils from '../../Core/Utilities.js';
 
 const { makeHTMLElement } = DGUtils;
+const { getStyle } = Utils;
 
 /* *
  *
@@ -120,9 +122,9 @@ class DataGridTable {
     public readonly enabledColumns: string[];
 
     /**
-     * Title of data grid
+     * The caption of the data grid.
      */
-    public titleElement?: HTMLElement;
+    public captionElement?: HTMLElement;
 
 
     /* *
@@ -158,7 +160,7 @@ class DataGridTable {
 
         this.enabledColumns = this.getEnabledColumnsIDs();
 
-        this.renderTitle();
+        this.renderCaption();
 
         this.theadElement = makeHTMLElement('thead', {}, tableElement);
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
@@ -220,10 +222,17 @@ class DataGridTable {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
+        const tableEl = this.dataGrid.tableElement;
+        const borderWidth = tableEl ? (
+            (getStyle(tableEl, 'border-top-width', true) || 0) +
+            (getStyle(tableEl, 'border-bottom-width', true) || 0)
+        ) : 0;
+
         this.tbodyElement.style.height = this.tbodyElement.style.minHeight = `${
             (this.dataGrid.container?.clientHeight || 0) -
             this.theadElement.offsetHeight -
-            (this.titleElement?.offsetHeight || 0)
+            (this.captionElement?.offsetHeight || 0) -
+            borderWidth
         }px`;
 
         // Get the width of the rows.
@@ -312,16 +321,16 @@ class DataGridTable {
     }
 
     /**
-     * Render title above the datagrid
+     * Render caption above the datagrid
      */
-    public renderTitle(): void {
-        if (!this.dataGrid.options?.title) {
+    public renderCaption(): void {
+        if (!this.dataGrid.options?.caption?.text) {
             return;
         }
 
-        this.titleElement = makeHTMLElement('caption', {
-            innerText: this.dataGrid.options.title.text,
-            className: Globals.classNames.titleElement
+        this.captionElement = makeHTMLElement('caption', {
+            innerText: this.dataGrid.options.caption.text,
+            className: Globals.classNames.captionElement
         }, this.dataGrid.tableElement);
     }
 
@@ -338,6 +347,10 @@ class DataGridTable {
         }
     }
 
+    /**
+     * Returns the array of IDs of columns that should be displayed in the data
+     * grid, in the correct order.
+     */
     private getEnabledColumnsIDs(): string[] {
         const columnsOptions = this.dataGrid.options?.columns;
         const columnsIncluded =

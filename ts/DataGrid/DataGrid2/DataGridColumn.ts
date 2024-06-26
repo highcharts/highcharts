@@ -155,22 +155,7 @@ class DataGridColumn {
         this.index = index;
         this.viewport = viewport;
         this.data = viewport.dataTable.getColumn(id, true);
-
-        // Set the initial width of the column.
-        const mock = makeHTMLElement('div', {
-            className: Globals.classNames.columnElement
-        }, viewport.dataGrid.container);
-        mock.setAttribute('data-column-id', id);
-        if (this.options.className) {
-            mock.classList.add(this.options.className);
-        }
-
-        if (viewport.columnDistribution === 'full') {
-            this.width = this.getInitialFullDistWidth(mock);
-        } else {
-            this.width = mock.offsetWidth || 100;
-        }
-        mock.remove();
+        this.width = this.getInitialWidth();
     }
 
 
@@ -238,6 +223,36 @@ class DataGridColumn {
     }
 
     /**
+     * Creates a mock element to measure the width of the column from the CSS.
+     * The element is appended to the viewport container and then removed.
+     * It should be called only once for each column.
+     *
+     * @returns The initial width of the column.
+     */
+    private getInitialWidth(): number {
+        let result: number;
+        const { viewport } = this;
+        // Set the initial width of the column.
+        const mock = makeHTMLElement('div', {
+            className: Globals.classNames.columnElement
+        }, viewport.dataGrid.container);
+
+        mock.setAttribute('data-column-id', this.id);
+        if (this.options.className) {
+            mock.classList.add(this.options.className);
+        }
+
+        if (viewport.columnDistribution === 'full') {
+            result = this.getInitialFullDistWidth(mock);
+        } else {
+            result = mock.offsetWidth || 100;
+        }
+        mock.remove();
+
+        return result;
+    }
+
+    /**
      * The initial width of the column in the full distribution mode. The last
      * column in the viewport will have to fill the remaining space.
      *
@@ -260,20 +275,17 @@ class DataGridColumn {
         const result = 1 - allPreviousWidths;
 
         if (result < 0) {
-            throw new Error('The sum of the columns\' widths ' +
-                'exceeds the viewport width. It is not allowed in the ' +
-                'full distribution mode.');
+            // eslint-disable-next-line no-console
+            console.warn(
+                'The sum of the columns\' widths exceeds the ' +
+                'viewport width. It may cause unexpected behavior in the ' +
+                'full distribution mode. Check the CSS styles of the ' +
+                'columns. Corrections may be needed.'
+            );
         }
 
         return result;
     }
-
-    /* *
-    *
-    *  Static Methods
-    *
-    * */
-
 }
 
 
