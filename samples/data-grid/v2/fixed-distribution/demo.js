@@ -16,6 +16,8 @@ DataGrid.dataGrid2('container', {
         }
     },
     settings: {
-        columnDistribution: 'fixed'
+        columns: {
+            distribution: 'fixed'
+        }
     }
 });

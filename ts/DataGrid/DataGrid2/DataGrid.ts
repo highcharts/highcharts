@@ -131,6 +131,11 @@ class DataGrid {
      */
     public viewport?: DataGridTable;
 
+    /**
+     * The list of columns that should be displayed in the data grid.
+     */
+    public enabledColumns: string[];
+
 
     /* *
     *
@@ -154,16 +159,35 @@ class DataGrid {
         this.container = DataGrid.initContainer(renderTo);
         this.container.classList.add(Globals.classNames.container);
 
-        this.tableElement = makeHTMLElement('table', {
-            className: Globals.classNames.tableElement
-        }, this.container);
-
         let dataTable: DataTable;
         if (this.options.table instanceof DataTable) {
             dataTable = this.options.table;
         } else {
             dataTable = new DataTable(this.options.table);
         }
+
+        this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
+        if (this.enabledColumns.length > 0) {
+            this.renderTable(dataTable);
+        } else {
+            this.renderNoData();
+        }
+    }
+
+    /**
+     * Renders the table (viewport) of the data grid.
+     *
+     * @param dataTable
+     * The data source of the data grid.
+     */
+    private renderTable(dataTable: DataTable): void {
+        if (!this.container) {
+            return;
+        }
+
+        this.tableElement = makeHTMLElement('table', {
+            className: Globals.classNames.tableElement
+        }, this.container);
 
         this.viewport = new DataGridTable(this, dataTable, this.tableElement);
 
@@ -174,12 +198,51 @@ class DataGrid {
         );
     }
 
+    /**
+     * Renders a message that there is no data to display.
+     */
+    private renderNoData(): void {
+        if (!this.container) {
+            return;
+        }
+
+        makeHTMLElement('div', {
+            className: Globals.classNames.noData,
+            innerText: 'No data to display'
+        }, this.container);
+    }
+
 
     /* *
     *
     *  Methods
     *
     * */
+
+    /**
+     * Returns the array of IDs of columns that should be displayed in the data
+     * grid, in the correct order.
+     *
+     * @param dataTable
+     * The data source of the data grid.
+     */
+    private getEnabledColumnsIDs(dataTable: DataTable): string[] {
+        const columnsOptions = this.options?.columns;
+        const columnsIncluded =
+            this.options?.columnsIncluded ??
+            dataTable.getColumnNames();
+
+        let columnName: string;
+        const result: string[] = [];
+        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
+            columnName = columnsIncluded[i];
+            if (columnsOptions?.[columnName]?.enabled !== false) {
+                result.push(columnName);
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Destroys the data grid.

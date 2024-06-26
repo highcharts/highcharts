@@ -75,10 +75,10 @@ namespace Globals {
         hoveredColumn: classNamePrefix + 'hovered-column',
         hoveredRow: classNamePrefix + 'hovered-row',
         odd: classNamePrefix + 'odd',
-        noResultColumn: classNamePrefix + 'no-result-column',
         rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
         headCellContent: classNamePrefix + 'head-cell-content',
-        headCellResized: classNamePrefix + 'head-cell-resized'
+        headCellResized: classNamePrefix + 'head-cell-resized',
+        noData: classNamePrefix + 'no-data'
     };
 
     export const win = window;

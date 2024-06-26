@@ -89,6 +89,8 @@
     display: block;
     min-height: 100px;
     overflow: hidden;
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dg-table {
@@ -104,7 +106,6 @@
 
 .highcharts-dg-caption {
     padding: 5px;
-    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dg-table thead {
@@ -155,7 +156,7 @@
 .highcharts-dg-table td {
     height: inherit;
     border-left: 1px solid var(--highcharts-neutral-color-20);
-    padding-left: 4px;
+    padding: 0 4px;
     overflow: hidden;
 }
 
@@ -217,7 +218,7 @@
     width: 0;
 }
 
-.highcharts-dg-no-result-column {
+.highcharts-dg-no-result-column { /* --------- */
     text-align: center;
     padding: 10px;
     width: 100%;
@@ -227,4 +228,10 @@
 .highcharts-dg-rows-content-nowrap td {
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.highcharts-dg-container:has(.highcharts-dg-no-data) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

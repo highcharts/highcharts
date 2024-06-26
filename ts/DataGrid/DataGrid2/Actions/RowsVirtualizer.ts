@@ -94,13 +94,11 @@ class RowsVirtualizer {
      * The viewport of the data grid to render rows in.
      */
     constructor(viewport: DataGridTable) {
+        const rowSettings = viewport.dataGrid.options?.settings?.rows;
+
         this.viewport = viewport;
-        this.strictRowHeights =
-            viewport.dataGrid.options?.settings?.strictRowHeights as boolean;
-        this.buffer = Math.max(
-            viewport.dataGrid.options?.settings?.rowBufferSize as number,
-            0
-        );
+        this.strictRowHeights = rowSettings?.strictHeights as boolean;
+        this.buffer = Math.max(rowSettings?.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {

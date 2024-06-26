@@ -75,7 +75,18 @@ export interface DataGridOptions {
  * Options to control the way DataGrid is rendered.
  */
 export interface DataGridSettings {
+    /**
+    * Options to control the columns behavior and rendering.
+    */
+    columns?: ColumnsSettings;
 
+    /**
+    * Options to control the rows behavior and rendering.
+    */
+    rows?: RowsSettings;
+}
+
+export interface ColumnsSettings {
     /**
      * The distribution of the columns. If `full`, the columns will be
      * distributed so that the first and the last column are at the edges of
@@ -83,15 +94,17 @@ export interface DataGridSettings {
      *
      * @default 'full'
      */
-    columnDistribution?: ColumnDistribution;
+    distribution?: ColumnDistribution;
 
     /**
      * Whether the columns should be resizable.
      *
      * @default true
      */
-    enableColumnResizing?: boolean;
+    resizing?: boolean;
+}
 
+export interface RowsSettings {
     /**
      * Buffer of rows to render outside the visible area from the top and from
      * the bottom while scrolling. The bigger the buffer, the less flicker will
@@ -101,7 +114,7 @@ export interface DataGridSettings {
      *
      * @default 10
      */
-    rowBufferSize?: number;
+    bufferSize?: number;
 
     /**
      * Whether the height of the rows should be calculated automatically based
@@ -114,7 +127,7 @@ export interface DataGridSettings {
      *
      * @default false
      */
-    strictRowHeights?: boolean;
+    strictHeights?: boolean;
 }
 
 /**

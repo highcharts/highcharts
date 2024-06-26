@@ -117,11 +117,6 @@ class DataGridTable {
     public rowsWidth?: number;
 
     /**
-     * The list of IDs of columns displayed enabled in the data grid.
-     */
-    public readonly enabledColumns: string[];
-
-    /**
      * The caption of the data grid.
      */
     public captionElement?: HTMLElement;
@@ -156,9 +151,7 @@ class DataGridTable {
         const dgOptions = dataGrid.options;
 
         this.columnDistribution =
-            dgOptions?.settings?.columnDistribution as ColumnDistribution;
-
-        this.enabledColumns = this.getEnabledColumnsIDs();
+            dgOptions?.settings?.columns?.distribution as ColumnDistribution;
 
         this.renderCaption();
 
@@ -166,7 +159,7 @@ class DataGridTable {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
-        if (dgOptions?.settings?.enableColumnResizing) {
+        if (dgOptions?.settings?.columns?.resizing) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
@@ -195,11 +188,7 @@ class DataGridTable {
         this.head = new DataGridTableHead(this);
         this.head.render();
 
-        if (this.enabledColumns.length > 0) {
-            this.rowsVirtualizer.initialRender();
-        } else {
-            this.renderNoResultRow();
-        }
+        this.rowsVirtualizer.initialRender();
 
         // Refresh element dimensions after initial rendering
         this.reflow();
@@ -209,9 +198,11 @@ class DataGridTable {
      * Loads the columns of the table.
      */
     private loadColumns(): void {
+        const { enabledColumns } = this.dataGrid;
+
         let columnId: string;
-        for (let i = 0, iEnd = this.enabledColumns.length; i < iEnd; ++i) {
-            columnId = this.enabledColumns[i];
+        for (let i = 0, iEnd = enabledColumns.length; i < iEnd; ++i) {
+            columnId = enabledColumns[i];
             this.columns.push(
                 new DataGridColumn(this, columnId, i)
             );
@@ -306,21 +297,6 @@ class DataGridTable {
     }
 
     /**
-     * Renders the no result row.
-     */
-    private renderNoResultRow(): void {
-        const row = makeHTMLElement('tr', {
-            className: Globals.classNames.rowElement
-        }, this.tbodyElement);
-
-        const cell = makeHTMLElement('td', {
-            className: Globals.classNames.noResultColumn
-        }, row);
-
-        cell.innerHTML = 'No data';
-    }
-
-    /**
      * Render caption above the datagrid
      */
     public renderCaption(): void {
@@ -345,28 +321,6 @@ class DataGridTable {
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
         }
-    }
-
-    /**
-     * Returns the array of IDs of columns that should be displayed in the data
-     * grid, in the correct order.
-     */
-    private getEnabledColumnsIDs(): string[] {
-        const columnsOptions = this.dataGrid.options?.columns;
-        const columnsIncluded =
-            this.dataGrid.options?.columnsIncluded ??
-            this.dataTable.getColumnNames();
-
-        let columnName: string;
-        const result: string[] = [];
-        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
-            columnName = columnsIncluded[i];
-            if (columnsOptions?.[columnName]?.enabled !== false) {
-                result.push(columnName);
-            }
-        }
-
-        return result;
     }
 }
 

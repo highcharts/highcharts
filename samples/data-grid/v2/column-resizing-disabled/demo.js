@@ -9,6 +9,8 @@ DataGrid.dataGrid2('container', {
         }
     },
     settings: {
-        enableColumnResizing: false
+        columns: {
+            resizing: false
+        }
     }
 });

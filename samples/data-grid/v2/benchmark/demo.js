@@ -42,7 +42,9 @@ startPerfo = performance.now();
 DataGrid.dataGrid2('container-sh', {
     table: dataTable,
     settings: {
-        strictRowHeights: true
+        rows: {
+            strictHeights: true
+        }
     }
 });
 endPerfo = performance.now();

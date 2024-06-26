@@ -11,14 +11,13 @@ const dg = new DataGrid.DataGrid2('container', {
             f: Array.from({ length: 1000 }, (_, i) => `F${i}`)
         }
     },
-    rows: {
-        bufferSize: 5
-    },
     caption: {
         text: 'Title of the new Datagrid.'
     },
     settings: {
-        rowBufferSize: 5
+        rows: {
+            bufferSize: 5
+        }
     },
     defaults: {
         columns: {

@@ -31,10 +31,14 @@ import type DataGridOptions from './DataGridOptions';
 
 const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
     settings: {
-        columnDistribution: 'full',
-        rowBufferSize: 10,
-        strictRowHeights: false,
-        enableColumnResizing: true
+        columns: {
+            distribution: 'full',
+            resizing: true
+        },
+        rows: {
+            bufferSize: 10,
+            strictHeights: false
+        }
     }
 };
 

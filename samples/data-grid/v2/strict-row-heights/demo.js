@@ -10,6 +10,8 @@ DataGrid.dataGrid2('container', {
         }
     },
     settings: {
-        strictRowHeights: true
+        rows: {
+            strictHeights: true
+        }
     }
 });
