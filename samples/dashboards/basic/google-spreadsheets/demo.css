@@ -31,7 +31,7 @@ body {
 #dashboard-col-0 {
     flex: 1;
     min-width: 0;
-    max-height: 330px;
+    max-height: 380px;
 }
 
 .highcharts-dashboards-component-title {

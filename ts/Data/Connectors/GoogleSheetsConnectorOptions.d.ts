@@ -19,7 +19,6 @@
 
 import type DataConnectorOptions from './DataConnectorOptions';
 
-
 /* *
  *
  *  Declarations
@@ -84,6 +83,16 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * The number of the worksheet to load.
      */
     worksheet?: number;
+}
+
+/**
+ * Callback function allowing modification of the data before parsing it.
+ * Must return a valid JSON structure.
+ *
+ */
+export interface BeforeParseCallbackFunction {
+    (data: Array<Array<(boolean|null|number|string|undefined)>>):
+    Array<Array<(boolean|null|number|string|undefined)>>;
 }
 
 /* *
