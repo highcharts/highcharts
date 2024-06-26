@@ -75,21 +75,6 @@ class RowEditToolbar extends EditToolbar {
             });
         }
 
-        if (options.settings?.enabled) {
-            items.push({
-                id: 'settings',
-                type: 'icon' as const,
-                icon: iconURLPrefix + 'settings.svg',
-                events: {
-                    click: function (this: MenuItem): void {
-                        this.menu.parent.editMode.setEditOverlay();
-
-                        (this.menu.parent as RowEditToolbar).onRowOptions();
-                    }
-                }
-            });
-        }
-
         items.push({
             id: 'destroy',
             type: 'icon' as const,
