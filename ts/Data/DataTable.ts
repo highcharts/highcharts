@@ -1460,13 +1460,14 @@ class DataTable implements DataEvent.Emitter {
      */
     public setRowKeysColumn(nRows: number): void {
         const id = this.rowKeysId;
-        if (id) {
-            this.columns[id] = [];
-            const keysArray = this.columns[id];
+        if (!id) {
+            return;
+        }
+        this.columns[id] = [];
+        const keysArray = this.columns[id];
 
-            for (let i = 0; i < nRows; i++) {
-                keysArray.push(id + '_' + String(i));
-            }
+        for (let i = 0; i < nRows; i++) {
+            keysArray.push(id + '_' + i);
         }
     }
 
