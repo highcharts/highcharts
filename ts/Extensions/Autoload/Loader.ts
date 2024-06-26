@@ -22,6 +22,27 @@ const loaded = new Set<string>();
 
 let root = 'https://code.highcharts.com';
 
+const addStyleSheets = (
+    options: Partial<Options>,
+    modules: Set<string>
+): void => {
+    // Styled mode
+    if (options.chart?.styledMode) {
+        modules.add('css/highcharts.css');
+    }
+
+    // Stock Tools
+    if (options.stockTools) {
+        modules.add('css/stocktools/gui.css');
+        modules.add('css/annotations/popup.css');
+    }
+
+    if (options.annotations) {
+        modules.add('css/annotations.css');
+    }
+
+};
+
 // Given a Highcharts configuration object, this function will return an array
 // of the required modules.
 const getModules = (options: Partial<Options>): Array<string> => {
@@ -62,10 +83,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
         }
     });
 
-    // Styled mode
-    if (options.chart?.styledMode) {
-        modules.add('css/highcharts.css');
-    }
+    addStyleSheets(options, modules);
 
     return Array.from(modules);
 };

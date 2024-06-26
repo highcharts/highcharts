@@ -5,41 +5,54 @@
 const gulp = require('gulp');
 const log = require('../libs/log');
 
+function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
+    if (branch.children) {
+        keyPath.push(key);
+        Object.entries(branch.children).forEach(([subkey, child]) => {
+            treeToMappingRecursive(subkey, child, keyPath, mapping);
+        });
+        keyPath.pop();
+    }
+    if (branch.doclet && branch.doclet.requires) {
+        const fullKey = (keyPath.filter(Boolean).join('.') + '.' + key)
+            .replace(/^\./, '');
+        mapping[
+            fullKey
+        ] = branch.doclet.requires.map(r => r.replace(/module:/, ''));
+    }
+    return mapping;
+}
+
 /**
  * Create the DependencyMapping module file
  *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function task() {
+async function dependencyMapping() {
     const fs = require('fs').promises,
         path = require('path');
 
-    const treeJson = await fs.readFile(
-            path.join(__dirname, '../../build/api/highcharts/tree.json'),
-            'utf8'
-        ),
-        tree = JSON.parse(treeJson);
+    const mapping = {};
 
-    function recurse(key, branch, keyPath, mapping = {}) {
-        if (branch.children) {
-            keyPath.push(key);
-            Object.entries(branch.children).forEach(([subkey, child]) => {
-                recurse(subkey, child, keyPath, mapping);
-            });
-            keyPath.pop();
-        }
-        if (branch.doclet && branch.doclet.requires) {
-            const fullKey = (keyPath.filter(Boolean).join('.') + '.' + key)
-                .replace(/^\./, '');
-            mapping[
-                fullKey
-            ] = branch.doclet.requires.map(r => r.replace(/module:/, ''));
-        }
-        return mapping;
+    for (const product of ['highcharts', 'highstock', 'highmaps', 'gantt']) {
+        const treeJsonPath = path.join(
+                __dirname,
+                `../../build/api/${product}/tree.json`
+            ),
+            treeJson = await fs.readFile(treeJsonPath, 'utf8'),
+            tree = JSON.parse(treeJson);
+
+        log.message(`Reading ${treeJsonPath} ...`);
+
+        const productSpecificMapping = treeToMappingRecursive(
+            void 0,
+            { children: tree },
+            []
+        );
+
+        Object.assign(mapping, productSpecificMapping);
     }
-
-    const mapping = recurse(void 0, { children: tree }, []);
 
     // Remove unnecessary definitions at lower levels
     Object.entries(mapping).forEach(([key, value]) => {
@@ -76,4 +89,6 @@ export default DependencyMapping;
 
 }
 
-gulp.task('dependency-mapping', task);
+require('./jsdoc');
+
+gulp.task('dependency-mapping', gulp.series('jsdoc', dependencyMapping));
