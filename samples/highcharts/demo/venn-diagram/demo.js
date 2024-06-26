@@ -116,15 +116,14 @@ Highcharts.chart('container', {
         point: {
             valueDescriptionFormat: '' +
                 '{#if (eq 1 point.sets.length)}' +
-                    'Product:<br><b>Highcharts {point.sets.0}</b>' +
+                    'Product:Highcharts {point.sets.0}' +
                 '{else}' +
-                    'Products: <br>' +
+                    'Products:' +
                     '{#each point.sets}' +
-                        'Highcharts <b>{this}</b> ' +
-                        '{#unless @last} and {/unless}' +
-                    '{/each}<br><br>' +
-                    ', Shared components: <br>' +
-                    '<b>{point.name}</b><br>' +
+                        'Highcharts {this}{#unless @last} and {/unless}' +
+                    '{/each}' +
+                    ', Shared components:' +
+                    '{point.name}' +
                 '{/if}'
         },
         series: {
