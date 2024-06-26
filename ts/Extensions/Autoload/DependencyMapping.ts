@@ -246,7 +246,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/bollinger-bands'
     ],
     'plotOptions.bellcurve': [
-        'modules/bellcurve'
+        'modules/histogram-bellcurve'
     ],
     'plotOptions.boxplot.dragDrop.draggableHigh': [
         'modules/draggable-points'
@@ -462,7 +462,7 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'plotOptions.pivotpoints': [
         'stock/indicators/indicators',
-        'stock/indicators/pivotpoints'
+        'stock/indicators/pivot-points'
     ],
     'plotOptions.polygon': [
         'highcharts-more'
@@ -512,8 +512,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/boost'
     ],
     'plotOptions.series.dataGrouping': [
-        'product:highstock',
-        'modules/datagrouping'
+        'modules/stock'
     ],
     'plotOptions.series.description': [
         'modules/accessibility'
@@ -557,7 +556,7 @@ const DependencyMapping: Record<string, Array<string>> = {
     'plotOptions.slowstochastic': [
         'stock/indicators/indicators',
         'stock/indicators/stochastic',
-        'stock/indicators/slowstochastic'
+        'stock/indicators/slow-stochastic'
     ],
     'plotOptions.sma': [
         'stock/indicators/indicators'
@@ -573,7 +572,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/streamgraph'
     ],
     'plotOptions.sunburst': [
-        'modules/sunburst.js'
+        'modules/sunburst'
     ],
     'plotOptions.supertrend': [
         'stock/indicators/indicators',
@@ -584,14 +583,14 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/tema'
     ],
     'plotOptions.tilemap': [
-        'modules/tilemap.js'
+        'modules/tilemap'
     ],
     'plotOptions.timeline': [
         'modules/timeline'
     ],
     'plotOptions.treegraph': [
-        'modules/treemap.js',
-        'modules/treegraph.js'
+        'modules/treemap',
+        'modules/treegraph'
     ],
     'plotOptions.treemap': [
         'modules/treemap'
@@ -606,7 +605,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/trix'
     ],
     'plotOptions.variablepie': [
-        'modules/variable-pie.js'
+        'modules/variable-pie'
     ],
     'plotOptions.variwide': [
         'modules/variwide'
@@ -699,7 +698,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/bollinger-bands'
     ],
     'series.bellcurve': [
-        'modules/bellcurve'
+        'modules/histogram-bellcurve'
     ],
     'series.boxplot': [
         'highcharts-more'
@@ -873,7 +872,7 @@ const DependencyMapping: Record<string, Array<string>> = {
     ],
     'series.pivotpoints': [
         'stock/indicators/indicators',
-        'stock/indicators/pivotpoints'
+        'stock/indicators/pivot-points'
     ],
     'series.polygon': [
         'highcharts-more'
@@ -913,7 +912,7 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.slowstochastic': [
         'stock/indicators/indicators',
         'stock/indicators/stochastic',
-        'stock/indicators/slowstochastic'
+        'stock/indicators/slow-stochastic'
     ],
     'series.sma': [
         'stock/indicators/indicators'
@@ -929,7 +928,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/streamgraph'
     ],
     'series.sunburst': [
-        'modules/sunburst.js'
+        'modules/sunburst'
     ],
     'series.supertrend': [
         'stock/indicators/indicators',
@@ -940,14 +939,14 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/tema'
     ],
     'series.tilemap': [
-        'modules/tilemap.js'
+        'modules/tilemap'
     ],
     'series.timeline': [
         'modules/timeline'
     ],
     'series.treegraph': [
-        'modules/treemap.js',
-        'modules/treegraph.js'
+        'modules/treemap',
+        'modules/treegraph'
     ],
     'series.treemap': [
         'modules/treemap'
@@ -961,7 +960,7 @@ const DependencyMapping: Record<string, Array<string>> = {
         'stock/indicators/tema'
     ],
     'series.variablepie': [
-        'modules/variable-pie.js'
+        'modules/variable-pie'
     ],
     'series.variwide': [
         'modules/variwide'
