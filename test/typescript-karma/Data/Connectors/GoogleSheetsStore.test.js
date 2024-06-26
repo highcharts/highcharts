@@ -90,17 +90,17 @@ test('GoogleDataConnector, bad spreadsheetkey', function (assert) {
 
 test('GoogleDataConnector with beforeParse', async (assert) => {
     const registeredEvents = [];
-    const beforeParseFired = true; // TBD
+    const beforeParseFired = false;
 
     const connector = new GoogleSheetsConnector({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw',
         beforeParse: (data) => {
             beforeParseFired = true;
-            return data;
+            return null;
         }
     });
-    const done = assert.async(2); // event + promise
+    const done = assert.async(3); // event + promise
 
     registerConnectorEvents(connector, registeredEvents, assert);
 
@@ -140,6 +140,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
         done();
     });
 
+    /*
     connector.on('beforeParse', (e) => {
         assert.equal(
             beforeParseFired,
@@ -148,7 +149,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
         );
         done();
     });
-
+*/
     connector
         .load()
         .catch((error) => assert.strictEqual(

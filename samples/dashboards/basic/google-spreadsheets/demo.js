@@ -7,14 +7,23 @@ Dashboards.board('container', {
                 googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
                 // eslint-disable-next-line max-len
                 googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw',
-                firstRowAsNames: true
-            },
-            beforeParse: data => {
-                data.forEach(row => {
-                    // row.age = row.age + 10;
-                    console.log(row);
-                });
-                return data;
+                beforeParse: data => {
+                    // Postfix header items with '*'
+                    data.forEach(row => {
+                        row[0] += '*';
+                    });
+
+                    // Special label from first header item
+                    data[0][0] = '-';
+
+                    // Supply Jane with additional pears
+                    data[2][3] += 20;
+
+                    // Deprive Joe of his bananas
+                    data[3][4] = 0;
+
+                    return data;
+                }
             }
         }]
     },
