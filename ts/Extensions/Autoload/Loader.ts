@@ -11,7 +11,6 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type StockChart from '../../Core/Chart/StockChart';
 import type Options from '../../Core/Options';
 
 import G from '../../Core/Globals.js';
@@ -125,35 +124,42 @@ const loadScript = async (module: string): Promise<undefined> => {
     });
 };
 
-// Override the constructors to load modules on demand
-H.chart = async function (
-    container: string|globalThis.HTMLElement,
-    options: Partial<Options>
-): Promise<Chart> {
+// Override the factories to load modules on demand
+(
+    ['chart', 'ganttChart', 'mapChart', 'stockChart'] as
+    ['chart', 'ganttChart', 'mapChart', 'stockChart']
+).forEach((factory): void => {
+    H[factory] = async function (
+        container: string|globalThis.HTMLElement,
+        options: Partial<Options>
+    ): Promise<Chart> {
 
-    setRoot();
+        setRoot();
 
-    // Load the required modules
-    for (const module of getModules(options)) {
-        await loadScript(module);
-    }
+        // Load the required modules
+        const modules = getModules(options);
 
-    return new H.Chart(container, options);
-};
+        if (factory === 'stockChart') {
+            modules.unshift('modules/stock');
+        } else if (factory === 'ganttChart') {
+            modules.unshift('modules/gantt');
+        } else if (factory === 'mapChart') {
+            modules.unshift('modules/map');
+        }
 
-H.stockChart = async function (
-    container: string|globalThis.HTMLElement,
-    options: Partial<Options>
-): Promise<StockChart> {
+        for (const module of modules) {
+            await loadScript(module);
+        }
 
-    setRoot();
-    // Load the other required modules
-    for (const module of ['modules/stock', ...getModules(options)]) {
-        await loadScript(module);
-    }
-
-    return new H.StockChart(container, options);
-};
+        const constructorName = {
+            chart: 'Chart',
+            ganttChart: 'GanttChart',
+            mapChart: 'MapChart',
+            stockChart: 'StockChart'
+        }[factory];
+        return new H[constructorName](container, options);
+    };
+});
 
 const Loader = {
 
