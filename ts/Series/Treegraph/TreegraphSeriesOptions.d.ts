@@ -149,9 +149,9 @@ export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *
  * @since 10.3.0
  *
- * @requires modules/treemap.js
+ * @requires modules/treemap
  *
- * @requires modules/treegraph.js
+ * @requires modules/treegraph
  */
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
 

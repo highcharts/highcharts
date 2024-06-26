@@ -1,0 +1,24 @@
+---
+name: Force chart (Stacked bar)
+authors:
+  - Kent Wincent Holt
+js_wrap: b
+alt_text: >-
+  This demo shows a horizontally stacked bar chart to show how various forces
+  contribute to a specific outcome. Each force is depicted by a separate bar,
+  stacked together to visually represent their combined effect. This
+  visualization aids in understanding the interaction between the forces
+  involved, like identifying imbalances and/or each force's significance within
+  that specific outcome.
+
+  The data shown illustrates a very rough and non-scientifically based
+  example of how different forces might contribute to the outcome of a
+  Mars entry, descent, and landing (EDL) sequence. The force distribution
+  is not to scale and is only meant to illustrate the concept of a stacked
+  bar 'force' chart.
+new_until: 2024-10-01
+tags:
+  - Highcharts demo
+categories:
+  - Column and bar charts
+...
