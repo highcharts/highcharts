@@ -362,10 +362,6 @@ abstract class Component {
         if (cell) {
             this.attachCellListeners();
 
-            this.on('tableChanged', (): void => {
-                this.onTableChanged();
-            });
-
             this.on('update', (): void => {
                 this.cell.setLoadingState();
             });
@@ -374,6 +370,10 @@ abstract class Component {
                 this.cell.setLoadingState(false);
             });
         }
+
+        this.on('tableChanged', (): void => {
+            this.onTableChanged();
+        });
     }
 
 
