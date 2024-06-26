@@ -1,6 +1,7 @@
 
 import GoogleSheetsConnector from '/base/code/es-modules/Data/Connectors/GoogleSheetsConnector.js'
 import { registerConnectorEvents } from './utils.js'
+import GoogleSheetsConverter from '/base/code/es-modules/Data/Converters/GoogleSheetsConverter.js';
 const { test, only } = QUnit;
 
 test('GoogleDataConnector', (assert) => {
@@ -90,18 +91,35 @@ test('GoogleDataConnector, bad spreadsheetkey', function (assert) {
 
 test('GoogleDataConnector with beforeParse', async (assert) => {
     const registeredEvents = [];
-    const beforeParseFired = false;
+    let beforeParseFired = false;
 
     const connector = new GoogleSheetsConnector({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw',
-        beforeParse: (data) => {
+        firstRowAsNames: true,
+        beforeParse: data => {
             beforeParseFired = true;
-            return null;
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                row[0] = 'Test' + i;
+            }
+            return data;
         }
     });
-    const done = assert.async(3); // event + promise
 
+    const done = assert.async(2); // event + promise
+
+    // Test data converter event
+    const converter = connector.converter;
+    converter.on('afterParse', (e) => {
+        assert.equal(
+            beforeParseFired,
+            true,
+            'beforeParse was fired'
+        );
+    });
+
+    // Test after load event
     registerConnectorEvents(connector, registeredEvents, assert);
 
     connector.on('afterLoad', (e) => {
@@ -111,45 +129,22 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'Events are fired in the correct order'
         );
 
-        assert.deepEqual(
-            e.table.getRow(1).map(cellValue => typeof cellValue),
-            ['string', 'number', 'number', 'number'],
-            'The connector table has the correct data types'
+        assert.equal(
+            beforeParseFired,
+            true,
+            'beforeParse was fired'
         );
 
         const columnNames = e.table.getColumnNames();
-
-        assert.notOk(
-            columnNames.includes('null'),
-            'Columns where the first value is of type `null`, ' +
-            'should be assigned an unique name'
+        assert.deepEqual(
+            columnNames,
+            ['Test0', 'Test1', 'Test2', 'Test3'],
+            'The column names have been changed by the beforeParse function'
         );
 
-        e.table.renameColumn(columnNames[0], 'null');
-
-        assert.ok(
-            e.table.getColumnNames().includes('null'),
-            'A string value of `null` is ok'
-        );
-
-        assert.equal(
-            beforeParseFired,
-            true,
-            'beforeParse was fired'
-        );
         done();
     });
 
-    /*
-    connector.on('beforeParse', (e) => {
-        assert.equal(
-            beforeParseFired,
-            true,
-            'beforeParse was fired'
-        );
-        done();
-    });
-*/
     connector
         .load()
         .catch((error) => assert.strictEqual(
@@ -158,22 +153,5 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'Test should not fail.'
         ))
         .then(() => done())
-
-    /*
-    const done = assert.async(2); // event + promise
-
-    registerConnectorEvents(connector, registeredEvents, assert);
-
-    assert.deepEqual(
-        connector.table.getRowCount(),
-        data.length ,
-        'Should have the same amount of rows.'
-    );
-    assert.deepEqual(
-        connector.table.getRowCount(),
-        4,
-        'There should be an extra column added.'
-    );
-    */
 });
 
