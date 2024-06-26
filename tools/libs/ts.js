@@ -1510,6 +1510,12 @@ function getInfoValue(
     );
 
     if (_value) {
+        const _doclets = getDocletInfosBetween(node, node, includeNodes);
+
+        if (_doclets.length) {
+            _value.doclet = _doclets.pop();
+        }
+
         return _value;
     }
 
