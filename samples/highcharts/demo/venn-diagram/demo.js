@@ -113,15 +113,23 @@ Highcharts.chart('container', {
         text: 'Highcharts Core, Stock, Maps, Gantt, and Dashboards'
     },
     accessibility: {
-        description: 'This Venn diagram shows the relationships between ' +
-            'different Highsoft products, including ' +
-            'Highcharts Core, Stock, Maps, Gantt and Dashboards',
         point: {
-            valueDescriptionFormat: '{point.name}'
+            valueDescriptionFormat: '' +
+                '{#if (eq 1 point.sets.length)}' +
+                    'Product:<br><b>Highcharts {point.sets.0}</b>' +
+                '{else}' +
+                    'Products: <br>' +
+                    '{#each point.sets}' +
+                        'Highcharts <b>{this}</b> ' +
+                        '{#unless @last} and {/unless}' +
+                    '{/each}<br><br>' +
+                    ', Shared components: <br>' +
+                    '<b>{point.name}</b><br>' +
+                '{/if}'
         },
         series: {
             describeSingleSeries: true,
-            descriptionFormat: '{series.name} with ' +
+            descriptionFormat: 'Venn diagram with ' +
                 '{series.points.length} relations.'
         }
     }
