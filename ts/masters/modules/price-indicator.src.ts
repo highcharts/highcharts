@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/modules/price-indicator
  * @requires highcharts
- * @requires highcharts/modules/stock
+ * @requires modules/stock
  *
  * Advanced Highcharts Stock tools
  *

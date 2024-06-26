@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/accumulation-distribution
  * @requires highcharts
- * @requires highcharts/modules/stock
+ * @requires modules/stock
  *
  * Indicator series type for Highcharts Stock
  *
