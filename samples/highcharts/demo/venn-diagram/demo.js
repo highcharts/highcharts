@@ -15,6 +15,18 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'venn',
+        colors: [
+            'rgb(180, 210, 255)',
+            'rgb(180, 255, 210)',
+            'rgb(180, 235, 235)',
+            'rgb(200, 200, 200)',
+            'rgb(170, 230, 250)',
+            'rgb(170, 250, 230)',
+            'rgb(170, 240, 240)',
+            'rgb(190, 190, 190)',
+            'rgb(160, 220, 245)',
+            'rgb(160, 245, 220)'
+        ],
         data: [{
             sets: ['Core'],
             value: 10,
@@ -104,7 +116,12 @@ Highcharts.chart('container', {
             sets: ['Custom', 'Dashboards'],
             value: 0.3,
             name: 'Sync API'
-        }]
+        }],
+        dataLabels: {
+            style: {
+                textOutline: 'none'
+            }
+        }
     }],
     title: {
         text: 'Highsoft products relationships'
