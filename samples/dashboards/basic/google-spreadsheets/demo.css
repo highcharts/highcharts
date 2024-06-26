@@ -28,12 +28,6 @@ body {
     background-color: var(--highcharts-background-color);
 }
 
-#dashboard-col-0 {
-    flex: 1;
-    min-width: 0;
-    max-height: 380px;
-}
-
 .highcharts-dashboards-component-title {
     padding: 10px;
     margin: 0;
@@ -42,10 +36,16 @@ body {
     color: #fff;
 }
 
+#dashboard-col-1 .highcharts-dashboards-component-title {
+    background-color: #336;
+}
+
 .highcharts-dashboards-component {
     padding: 10px;
 }
 
-.highcharts-description {
-    padding: 0 20px;
+div#description {
+    margin: 10px 30px;
+    font-size: 1.2em;
+    text-align: justify;
 }
