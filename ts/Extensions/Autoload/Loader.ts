@@ -59,7 +59,7 @@ const getModules = (options: Partial<Options>): Array<string> => {
                     (module): Set<string> => modules.add(module)
                 );
             }
-            if (typeof value === 'object') {
+            if (value && typeof value === 'object') {
                 path.push(key);
                 recurse(value, path);
                 path.pop();
