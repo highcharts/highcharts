@@ -18,6 +18,7 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
+import type DataTable from '../DataTable';
 
 /* *
  *
@@ -86,13 +87,12 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
 }
 
 /**
- * Callback function allowing modification of the data before parsing it.
- * Must return a valid JSON structure.
+ * Callback function allowing modification of the GoogleSheets data
+ * before parsing it. Must return an array of DataTable columns.
  *
  */
 export interface BeforeParseCallbackFunction {
-    (data: Array<Array<(boolean|null|number|string|undefined)>>):
-    Array<Array<(boolean|null|number|string|undefined)>>;
+    (data: DataTable.Column[]): DataTable.Column[];
 }
 
 /* *

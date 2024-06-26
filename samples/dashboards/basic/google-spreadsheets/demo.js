@@ -1,13 +1,23 @@
+const googleApiKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk';
+const googleSpreadsheetKey = '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw';
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            id: 'gs-conn',
+            id: 'conn-raw',
             type: 'GoogleSheets',
             options: {
-                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                // eslint-disable-next-line max-len
-                googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw',
+                googleAPIKey: googleApiKey,
+                googleSpreadsheetKey: googleSpreadsheetKey
+            }
+        }, {
+            id: 'conn-mod',
+            type: 'GoogleSheets',
+            options: {
+                googleAPIKey: googleApiKey,
+                googleSpreadsheetKey: googleSpreadsheetKey,
                 beforeParse: data => {
+                    console.log('beforeParse2 called');
                     // Postfix header items with '*'
                     data.forEach(row => {
                         row[0] += '*';
@@ -31,10 +41,21 @@ Dashboards.board('container', {
         {
             renderTo: 'dashboard-col-0',
             connector: {
-                id: 'gs-conn'
+                id: 'conn-raw'
             },
             type: 'DataGrid',
-            title: 'Google Sheets Data',
+            title: 'Google Sheet Raw',
+            dataGridOptions: {
+                editable: false
+            }
+        },
+        {
+            renderTo: 'dashboard-col-1',
+            connector: {
+                id: 'conn-mod'
+            },
+            type: 'DataGrid',
+            title: 'Google Sheet Modified',
             dataGridOptions: {
                 editable: false
             }
