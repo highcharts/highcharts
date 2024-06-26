@@ -67,6 +67,8 @@ class CellEditToolbar extends EditToolbar {
                             .parent as CellEditToolbar;
                         const dragDrop = cellEditToolbar.editMode.dragDrop;
 
+                        e.preventDefault();
+
                         if (dragDrop && cellEditToolbar.cell) {
                             dragDrop.onDragStart(e, cellEditToolbar.cell);
                         }

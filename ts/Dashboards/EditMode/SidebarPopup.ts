@@ -362,7 +362,7 @@ class SidebarPopup extends BaseForm {
                     sidebar.editMode.dragDrop.onDragStart(
                         e as PointerEvent,
                         void 0,
-                        (dropContext: Cell | Row): void => {
+                        (dropContext: Cell|Row): void => {
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
                                 const board = this.editMode.board,
