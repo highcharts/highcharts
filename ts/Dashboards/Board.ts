@@ -104,7 +104,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * undefined, the function returns the dashboard instance.
      */
     public static board(
-        renderTo: (string|globalThis.HTMLElement),
+        renderTo: (string | globalThis.HTMLElement),
         options: Board.Options,
         async?: boolean
     ): Board;
@@ -123,17 +123,17 @@ class Board implements Serializable<Board, Board.JSON> {
      * function returns a promise that resolves with the dashboard instance.
      */
     public static board(
-        renderTo: (string|globalThis.HTMLElement),
+        renderTo: (string | globalThis.HTMLElement),
         options: Board.Options,
         async: true
     ): Promise<Board>;
 
     // Implementation:
     public static board(
-        renderTo: (string|globalThis.HTMLElement),
+        renderTo: (string | globalThis.HTMLElement),
         options: Board.Options,
         async?: boolean
-    ): (Board|Promise<Board>) {
+    ): (Board | Promise<Board>) {
         return new Board(renderTo, options).init(async);
     }
 
@@ -155,7 +155,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * The options for the dashboard.
      */
     protected constructor(
-        renderTo: (string|HTMLElement),
+        renderTo: (string | HTMLElement),
         options: Board.Options
     ) {
         this.options = merge(Board.defaultOptions, options);
@@ -324,7 +324,7 @@ class Board implements Serializable<Board, Board.JSON> {
     protected init(async: true): Promise<Board>;
 
     // Implementation:
-    protected init(async?: boolean): (Board|Promise<Board>) {
+    protected init(async?: boolean): (Board | Promise<Board>) {
         const options = this.options;
 
         const componentPromises = (options.components) ?
@@ -365,7 +365,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * @param renderTo
      * The DOM element to render to, or its id.
      */
-    private initContainer(renderTo: (string|HTMLElement)): void {
+    private initContainer(renderTo: (string | HTMLElement)): void {
         const board = this;
 
         if (typeof renderTo === 'string') {
@@ -385,7 +385,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      *
      */
-    private initEditMode():void {
+    private initEditMode(): void {
         if (!Dashboards.EditMode) {
             throw new Error('Missing layout.js module');
         } else {
@@ -406,7 +406,7 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public setComponents(
         components: Array<Partial<ComponentType['options']>>
-    ): Array<Promise<Component|void>> {
+    ): Array<Promise<Component | void>> {
         const promises = [];
         const board = this;
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
@@ -463,7 +463,7 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * @returns Returns the imported layout.
      */
-    public importLayoutLocal(id: string): Layout|undefined {
+    public importLayoutLocal(id: string): Layout | undefined {
         return Layout.importLocal(id, this);
     }
 
@@ -534,7 +534,7 @@ class Board implements Serializable<Board, Board.JSON> {
             dataCursor: DataCursorHelper.toJSON(board.dataCursor),
             options: {
                 containerId: board.container.id,
-                dataPool: board.options.dataPool as DataPoolOptions&JSON.Object,
+                dataPool: board.options.dataPool as DataPoolOptions & JSON.Object,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions as
@@ -582,6 +582,26 @@ class Board implements Serializable<Board, Board.JSON> {
         }
 
         return options;
+    }
+
+    /**
+     * Get a Dashboards component by its id.
+     *
+     * @returns
+     * The component with the given id.
+     */
+    public getComponentById(id: string): ComponentType | undefined {
+        return this.mountedComponents.find(c => c.component.id === id)?.component;
+    }
+
+    /**
+     * Get a Dashboards component by its cell id.
+     *
+     * @returns
+     * The component with the given cell id.
+     */
+    public getComponentByCellId(id: string): ComponentType | undefined {
+        return this.mountedComponents.find(c => c.cell.id === id)?.component;
     }
 }
 
@@ -673,7 +693,7 @@ namespace Board {
         /**
          * Data pool with all of the connectors.
          **/
-        dataPool?: DataPoolOptions&JSON.Object;
+        dataPool?: DataPoolOptions & JSON.Object;
         /**
          * An array of serialized layouts options and their elements to add to
          * the board.
@@ -785,7 +805,7 @@ namespace Board {
      *
      * @returns Returns the Dashboard instance or undefined.
      */
-    export function importLocal(): (Board|undefined) {
+    export function importLocal(): (Board | undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
             Globals.classNamePrefix + '1' // Temporary for demo test
