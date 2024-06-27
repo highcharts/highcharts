@@ -7,7 +7,9 @@ Highcharts.chart('container', {
         text: 'UEFA CL top scorers by season'
     },
     xAxis: {
-        categories: ['2020/21', '2019/20', '2018/19', '2017/18', '2016/17']
+        categories: [
+            '2023/24', '2022/23', '2021/22', '2020/21', '2019/20', '2018/19'
+        ]
     },
     yAxis: {
         min: 0,
@@ -28,12 +30,12 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Cristiano Ronaldo',
-        data: [4, 4, 6, 15, 12]
+        data: [null, null, 6, 4, 4, 6]
     }, {
         name: 'Lionel Messi',
-        data: [5, 3, 12, 6, 11]
+        data: [null, 4, 5, 5, 3, 12]
     }, {
         name: 'Robert Lewandowski',
-        data: [5, 15, 8, 5, 8]
+        data: [3, 5, 13, 5, 15, 8]
     }]
 });
