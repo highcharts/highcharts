@@ -58,9 +58,10 @@
     }
 
     QUnit.test(
-        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons',
+        'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons' +
+        ' + panning.',
         function (assert) {
-            var options = getOptions(),
+            let options = getOptions(),
                 xAxis;
 
             xAxis = Highcharts.stockChart('container', options).xAxis[0];
@@ -74,7 +75,10 @@
             options = getOptions();
             options.rangeSelector.selected = null;
 
-            xAxis = Highcharts.stockChart('container', options).xAxis[0];
+            const chart = Highcharts.stockChart('container', options),
+                controller = new TestController(chart);
+
+            xAxis = chart.xAxis[0];
 
             assert.strictEqual(
                 xAxis.max - xAxis.min,
@@ -82,6 +86,15 @@
                     1 +
                     xAxis.options.overscroll,
                 'Correct range with ALL'
+            );
+
+            xAxis.setExtremes(10, null);
+            controller.pan([100, 200], [300, 200]);
+            assert.close(
+                xAxis.min,
+                9.5,
+                0.5,
+                'Panning should work with overscroll option, #21316'
             );
         }
     );
