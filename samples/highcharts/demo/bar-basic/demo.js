@@ -38,8 +38,7 @@ Highcharts.chart('container', {
         bar: {
             borderRadius: '50%',
             dataLabels: {
-                enabled: true,
-                allowOverlap: true
+                enabled: true
             },
             groupPadding: 0.1
         }
@@ -65,12 +64,7 @@ Highcharts.chart('container', {
     }, {
         name: 'Year 2000',
         data: [814, 841, 3714, 726]
-    },
-    {
-        name: 'Year 2010',
-        data: [1044, 944, 4170, 735]
-    },
-    {
+    }, {
         name: 'Year 2021',
         data: [1393, 1031, 4695, 745]
     }]
