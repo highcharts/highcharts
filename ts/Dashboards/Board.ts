@@ -534,7 +534,8 @@ class Board implements Serializable<Board, Board.JSON> {
             dataCursor: DataCursorHelper.toJSON(board.dataCursor),
             options: {
                 containerId: board.container.id,
-                dataPool: board.options.dataPool as DataPoolOptions & JSON.Object,
+                dataPool: board.options.dataPool as
+                    DataPoolOptions & JSON.Object,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions as
@@ -591,7 +592,9 @@ class Board implements Serializable<Board, Board.JSON> {
      * The component with the given id.
      */
     public getComponentById(id: string): ComponentType | undefined {
-        return this.mountedComponents.find(c => c.component.id === id)?.component;
+        return this.mountedComponents.find(
+            (c) :boolean => c.component.id === id
+        )?.component;
     }
 
     /**
@@ -601,7 +604,9 @@ class Board implements Serializable<Board, Board.JSON> {
      * The component with the given cell id.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
-        return this.mountedComponents.find(c => c.cell.id === id)?.component;
+        return this.mountedComponents.find(
+            (c) :boolean => c.cell.id === id
+        )?.component;
     }
 }
 
