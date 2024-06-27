@@ -12,8 +12,8 @@ Highcharts.setOptions({
         min: -1
     },
     xAxis: {
-
-        type: 'category'
+        min: 1960,
+        max: 2030
     },
     tooltip: {
         pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
@@ -31,6 +31,157 @@ Highcharts.setOptions({
     }
 });
 
+const asiaChart = {
+    renderTo: 'asia-chart',
+    sync: {
+        visibility: true,
+        extremes: true
+    },
+
+    connector: {
+        id: 'population-growth'
+    },
+    type: 'Highcharts',
+    columnAssignment: {
+        columnNames: 'x',
+        China: 'y',
+        Japan: 'y',
+        India: 'y',
+        Indonesia: 'y'
+    },
+    chartOptions: {
+        colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
+        title: {
+            text: 'Asia'
+        },
+        chart: {
+            animation: false
+        }
+    }
+};
+
+const northAmericaChart = {
+    renderTo: 'north-america-chart',
+    sync: {
+        visibility: true,
+        extremes: true
+    },
+    connector: {
+        id: 'population-growth'
+    },
+    type: 'Highcharts',
+    columnAssignment: {
+        columnNames: 'x',
+        'United States': 'y',
+        Canada: 'y',
+        Mexico: 'y',
+        Guatemala: 'y'
+    },
+    chartOptions: {
+        title: {
+            text: 'North America'
+        },
+        chart: {
+            animation: false
+        }
+    }
+};
+
+const southAmericaChart = {
+    renderTo: 'south-america-chart',
+    sync: {
+        visibility: true,
+        extremes: true
+    },
+    connector: {
+        id: 'population-growth'
+    },
+    type: 'Highcharts',
+    columnAssignment: {
+        columnNames: 'x',
+        Brazil: 'y',
+        Argentina: 'y',
+        Uruguay: 'y',
+        Paraguay: 'y'
+    },
+    chartOptions: {
+        colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
+        title: {
+            text: 'South America'
+        },
+        chart: {
+            animation: false
+        }
+    }
+};
+
+const legendChart = {
+    renderTo: 'legend',
+    connector: {
+        id: 'population-growth'
+    },
+    type: 'Highcharts',
+    columnAssignment: {
+        columnNames: 'x',
+        Brazil: 'y',
+        Argentina: 'y',
+        Uruguay: 'y',
+        Paraguay: 'y',
+        'United States': 'y',
+        Canada: 'y',
+        Mexico: 'y',
+        Guatemala: 'y',
+        China: 'y',
+        Japan: 'y',
+        India: 'y',
+        Indonesia: 'y'
+    },
+    sync: {
+        visibility: true
+    },
+    chartOptions: {
+        chart: {
+            height: 200
+        },
+        title: {
+            text: 'Countries population growth by year'
+        },
+        tooltip: {
+
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                lineWidth: 0,
+                states: {
+                    hover: {
+                        enabled: false
+                    }
+                },
+                marker: {
+                    enabled: false
+                }
+            }
+        },
+        legend: {
+            enabled: true,
+            verticalAlign: 'middle',
+            width: 1000,
+            align: 'center',
+            visible: false
+        },
+        xAxis: {
+            width: 0,
+            visible: false
+        },
+        yAxis: {
+            height: 0,
+            visible: false
+        }
+    }
+};
+
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -38,7 +189,8 @@ Dashboards.board('container', {
             type: 'CSV',
             options: {
                 csv: csvData,
-                firstColumnsAsNames: true,
+                firstRowAsNames: true,
+                firstColumnAsNames: false,
                 dataTable: {
                     aliases: {
                         0: 'Brazil',
@@ -52,7 +204,8 @@ Dashboards.board('container', {
                         8: 'China',
                         9: 'Japan',
                         10: 'India',
-                        11: 'Indonesia'
+                        11: 'Indonesia',
+                        12: 'Test'
                     }
                 },
                 dataModifier: {
@@ -63,8 +216,8 @@ Dashboards.board('container', {
                         type: 'Range',
                         ranges: [{
                             column: 'columnNames',
-                            minValue: '1961',
-                            maxValue: '2021'
+                            minValue: 2010,
+                            maxValue: 2012
                         }]
                     }]
                 }
@@ -85,156 +238,25 @@ Dashboards.board('container', {
                 cells: [{
                     id: 'legend'
                 }]
+            }, {
+                cells: [{
+                    id: 'data-grid'
+                }]
             }]
         }]
     },
-    components: [{
-        renderTo: 'asia-chart',
-        sync: {
-            visibility: true,
-            extremes: true
-        },
-
-        connector: {
-            id: 'population-growth'
-        },
-        type: 'Highcharts',
-        columnAssignment: {
-            columnNames: 'x',
-            China: 'y',
-            Japan: 'y',
-            India: 'y',
-            Indonesia: 'y'
-        },
-        chartOptions: {
-            colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
-            title: {
-                text: 'Asia'
+    components: [
+        // For debugging purposes
+        {
+            renderTo: 'data-grid',
+            connector: {
+                id: 'population-growth'
             },
-            chart: {
-                animation: false
-            }
-        }
-    }, {
-        renderTo: 'north-america-chart',
-
-        sync: {
-            visibility: true,
-            extremes: true
+            type: 'DataGrid'
         },
-        connector: {
-            id: 'population-growth'
-        },
-        type: 'Highcharts',
-        columnAssignment: {
-            columnNames: 'x',
-            'United States': 'y',
-            Canada: 'y',
-            Mexico: 'y',
-            Guatemala: 'y'
-        },
-        chartOptions: {
-            title: {
-                text: 'North America'
-            },
-            chart: {
-                animation: false
-            }
-        }
-    }, {
-        renderTo: 'south-america-chart',
-
-        sync: {
-            visibility: true,
-            extremes: true
-        },
-        connector: {
-            id: 'population-growth'
-        },
-        type: 'Highcharts',
-        columnAssignment: {
-            columnNames: 'x',
-            Brazil: 'y',
-            Argentina: 'y',
-            Uruguay: 'y',
-            Paraguay: 'y'
-        },
-        chartOptions: {
-            colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
-            title: {
-                text: 'South America'
-            },
-            chart: {
-                animation: false
-            }
-        }
-    }, {
-        renderTo: 'legend',
-
-        connector: {
-            id: 'population-growth'
-        },
-        type: 'Highcharts',
-        columnAssignment: {
-            columnNames: 'x',
-            Brazil: 'y',
-            Argentina: 'y',
-            Uruguay: 'y',
-            Paraguay: 'y',
-            'United States': 'y',
-            Canada: 'y',
-            Mexico: 'y',
-            Guatemala: 'y',
-            China: 'y',
-            Japan: 'y',
-            India: 'y',
-            Indonesia: 'y'
-        },
-        sync: {
-            visibility: true
-        },
-        chartOptions: {
-            chart: {
-                height: 200
-            },
-            title: {
-                text: 'Countries population growth by year'
-            },
-            tooltip: {
-
-                enabled: false
-            },
-            plotOptions: {
-
-                series: {
-                    lineWidth: 0,
-                    states: {
-                        hover: {
-                            enabled: false
-                        }
-                    },
-                    marker: {
-                        enabled: false
-                    }
-                }
-            },
-            legend: {
-                enabled: true,
-                verticalAlign: 'middle',
-                width: 1000,
-                align: 'center',
-                visible: false
-            },
-            xAxis: {
-                width: 0,
-                visible: false
-            },
-            yAxis: {
-                height: 0,
-                visible: false
-            }
-        }
-    }]
-},
-true
-);
+        asiaChart,
+        northAmericaChart,
+        southAmericaChart
+        // legendChart
+    ]
+}, true);
