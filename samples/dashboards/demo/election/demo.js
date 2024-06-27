@@ -65,7 +65,6 @@ async function setupDashboard() {
             title: 'Electoral College Results'
         }, {
             renderTo: 'election-map',
-            id: 'election-map',
             type: 'Highcharts',
             chartConstructor: 'mapChart',
             title: 'Popular Vote Results', // Populated by election year
