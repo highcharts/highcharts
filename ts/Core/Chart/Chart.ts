@@ -3641,7 +3641,8 @@ class Chart {
             { inverted } = this;
 
         let hasZoomed = false,
-            displayButton: boolean|undefined;
+            displayButton: boolean|undefined,
+            isAnyAxisPanning = false;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -3822,6 +3823,10 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
+                        if (axis.isPanning && !isAnyAxisPanning) {
+                            isAnyAxisPanning = true;
+                        }
+
                         axis.setExtremes(
                             reset ? void 0 : newMin,
                             reset ? void 0 : newMax,
@@ -3868,8 +3873,7 @@ class Chart {
                 // Show or hide the Reset zoom button, but not while panning
                 if (
                     displayButton &&
-                    !this.xAxis[0].isPanning && // #21319
-                    !this.yAxis[0].isPanning && // #21319
+                    !isAnyAxisPanning &&
                     !this.resetZoomButton
                 ) {
                     this.showResetZoom();
