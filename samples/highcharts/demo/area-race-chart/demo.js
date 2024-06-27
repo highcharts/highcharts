@@ -260,7 +260,7 @@ function update() {
     // If slider moved back in time
     if (yearIndex < dataLength - 1) {
         for (let i = 0; i < series.length; i++) {
-            const seriesData = series[i].data.slice(0, yearIndex);
+            const seriesData = series[i].yData.slice(0, yearIndex);
             series[i].setData(seriesData, false);
         }
     }
