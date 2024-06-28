@@ -27,7 +27,6 @@ DataGrid.dataGrid2('container', {
         }
     },
     columns: {
-        useHTML: true,
         Header: {
             // useHTML: true
             cellFormat: '<h3>{value}</h3>'
