@@ -587,7 +587,7 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /**
      * Get a Dashboards component by its identifier.
-     * 
+     *
      * @param id
      * The identifier of the requsted component.
      *
@@ -827,6 +827,7 @@ namespace Board {
                 return Serializable
                     .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 throw new Error(`${e}`);
             }
         }
