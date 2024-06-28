@@ -1,20 +1,41 @@
 DataGrid.dataGrid2('container', {
     table: {
         columns: {
-            'Select all': ['<input type="checkbox" checked />'],
-            Header: ['<h2>Loreum ipsum</h2>'],
-            Description: ['Loreum ipsum'],
-            'Nested content': [`
-                <div>
-                    <h3>Description</h3>
-                    <p>Loreum ipsum et omnia dolores</p>
-                </div>
-            `],
-            List: [`<ul>
-                <li>Item 1</li>
-                <li>Item 2</li>
-            `],
-            Image: ['<img src="https://www.highcharts.com/samples/graphics/sun.png" />']
+            Id: [1, 2, 3],
+            Header: ['Loreum ipsum', 'Loreum ipsum', 'Loreum ipsum'],
+            Description: ['Loreum ipsum', 'Loreum ipsum', 'Loreum ipsum'],
+            List: ['item1, item2', 'item1, item2'],
+            Image: [
+                'https://www.highcharts.com/samples/graphics/sun.png',
+                'https://www.highcharts.com/samples/graphics/sun.png',
+                'https://www.highcharts.com/samples/graphics/sun.png'
+            ],
+            Link: [
+                'https://domain.com',
+                'https://domain2.com',
+                'https://localhost:8080'
+            ]
         }
+    },
+    columns: {
+        // Id: {},
+        Header: {
+            cellFormatter: function () {
+                console.log('aaa');
+                return '<input type="checkbox" />';
+            }
+        }
+        // Description: {
+            
+        // },
+        // List: {
+
+        // },
+        // Image: {
+
+        // },
+        // Link: {
+
+        // }
     }
 });
