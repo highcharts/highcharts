@@ -689,7 +689,25 @@ function enterBoost(
 function exitBoost(
     series: Series
 ): void {
-    const boost = series.boost;
+    const boost = series.boost,
+        chart = series.chart,
+        chartBoost = chart.boost;
+
+    if (chartBoost?.markerGroup) {
+        chartBoost.markerGroup.destroy();
+        chartBoost.markerGroup = void 0;
+
+        for (const s of chart.series) {
+            s.markerGroup = void 0;
+            s.markerGroup = s.plotGroup(
+                'markerGroup',
+                'markers',
+                'visible',
+                1,
+                chart.seriesGroup
+            ).addClass('highcharts-tracker');
+        }
+    }
 
     // Reset instance properties and/or delete instance properties and go back
     // to prototype

@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/modules/hollowcandlestick
  * @requires highcharts
- * @requires highcharts/modules/stock
+ * @requires modules/stock
  *
  * Hollow Candlestick series type for Highcharts Stock
  *

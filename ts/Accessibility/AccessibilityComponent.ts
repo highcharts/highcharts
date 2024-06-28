@@ -53,7 +53,7 @@ const { extend } = U;
  * @sample highcharts/accessibility/custom-component
  *         Custom accessibility component
  *
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  * @class
  * @name Highcharts.AccessibilityComponent
  */
