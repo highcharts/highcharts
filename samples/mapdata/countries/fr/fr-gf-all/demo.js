@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-gf-all.topo.json">Guyane française</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-gf-all.topo.json">Guyane française</a>'
         },
 
         mapNavigation: {

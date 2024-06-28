@@ -35,8 +35,7 @@ function getSeries(n, s) {
         r.push({
             data: getData(n),
             lineWidth: 2,
-            boostThreshold: 1,
-            turboThreshold: 1
+            boostThreshold: 1
         });
     }
 

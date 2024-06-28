@@ -194,7 +194,7 @@ function hasURLOption(options: DataOptions): boolean {
 /**
  * The Data class
  *
- * @requires module:modules/data
+ * @requires modules/data
  *
  * @class
  * @name Highcharts.Data
@@ -1445,7 +1445,7 @@ class Data {
             str = str.replace(/^\s+|\s+$/g, '');
 
             // Clear white space inside the string, like thousands separators
-            if (inside && /^-?[0-9\s]+$/.test(str)) {
+            if (inside && /[\d\s]+/.test(str)) {
                 str = str.replace(/\s/g, '');
             }
 
@@ -1635,7 +1635,7 @@ class Data {
      */
     public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
+            regex: /^(\d{4})[\-\/\.](\d{1,2})[\-\/\.](\d{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -1645,7 +1645,7 @@ class Data {
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -1656,7 +1656,7 @@ class Data {
             alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -1666,7 +1666,7 @@ class Data {
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 if (!match) {
                     return NaN;
@@ -1687,7 +1687,7 @@ class Data {
             alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+            regex: /^(\d{1,2})[\-\/\.](\d{1,2})[\-\/\.](\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -1751,13 +1751,13 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
-                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                if (val.match(/:.+(GMT|UTC|[Z+\-])/)) {
                     val = val
                         .replace(
-                            /\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/,
+                            /\s*(?:GMT|UTC)?([+\-])(\d\d)(\d\d)$/,
                             '$1$2:$3'
                         )
-                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(?:\s+|GMT|UTC)([+\-])/, '$1')
                         .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }
                 match = Date.parse(val);

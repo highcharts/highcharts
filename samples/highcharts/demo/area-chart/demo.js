@@ -6,23 +6,23 @@ Highcharts.chart('container', {
     accessibility: {
         description: 'Image description: An area chart compares the nuclear ' +
             'stockpiles of the USA and the USSR/Russia between 1945 and ' +
-            '2017. The number of nuclear weapons is plotted on the Y-axis ' +
+            '2024. The number of nuclear weapons is plotted on the Y-axis ' +
             'and the years on the X-axis. The chart is interactive, and the ' +
             'year-on-year stockpile levels can be traced for each country. ' +
-            'The US has a stockpile of 6 nuclear weapons at the dawn of the ' +
-            'nuclear age in 1945. This number has gradually increased to 369 ' +
-            'by 1950 when the USSR enters the arms race with 6 weapons. At ' +
+            'The US has a stockpile of 2 nuclear weapons at the dawn of the ' +
+            'nuclear age in 1945. This number has gradually increased to 170 ' +
+            'by 1949 when the USSR enters the arms race with one weapon. At ' +
             'this point, the US starts to rapidly build its stockpile ' +
-            'culminating in 32,040 warheads by 1966 compared to the USSR’s 7,' +
-            '089. From this peak in 1966, the US stockpile gradually ' +
+            'culminating in 31,255 warheads by 1966 compared to the USSR’s 8,' +
+            '400. From this peak in 1967, the US stockpile gradually ' +
             'decreases as the USSR’s stockpile expands. By 1978 the USSR has ' +
             'closed the nuclear gap at 25,393. The USSR stockpile continues ' +
-            'to grow until it reaches a peak of 45,000 in 1986 compared to ' +
+            'to grow until it reaches a peak of 40,159 in 1986 compared to ' +
             'the US arsenal of 24,401. From 1986, the nuclear stockpiles of ' +
             'both countries start to fall. By 2000, the numbers have fallen ' +
-            'to 10,577 and 21,000 for the US and Russia, respectively. The ' +
-            'decreases continue until 2017 at which point the US holds 4,018 ' +
-            'weapons compared to Russia’s 4,500.'
+            'to 10,577 and 12,188 for the US and Russia, respectively. The ' +
+            'decreases continue slowly after plateauing in the 2010s, and in ' +
+            '2024 the US has 3,708 weapons compared to Russia’s 4,380.'
     },
     title: {
         text: 'US and USSR nuclear stockpiles'
@@ -34,7 +34,7 @@ Highcharts.chart('container', {
     xAxis: {
         allowDecimals: false,
         accessibility: {
-            rangeDescription: 'Range: 1940 to 2017.'
+            rangeDescription: 'Range: 1940 to 2024.'
         }
     },
     yAxis: {
@@ -72,7 +72,7 @@ Highcharts.chart('container', {
             21392, 19008, 13708, 11511, 10979, 10904, 11011, 10903, 10732,
             10685, 10577, 10526, 10457, 10027, 8570, 8360, 7853, 5709, 5273,
             5113, 5066, 4897, 4881, 4804, 4717, 4571, 4018, 3822, 3785, 3805,
-            3750, 3708, 3708
+            3750, 3708, 3708, 3708, 3708
         ]
     }, {
         name: 'USSR/Russia',
@@ -85,7 +85,7 @@ Highcharts.chart('container', {
             32980, 29154, 26734, 24403, 21339, 18179, 15942, 15442, 14368,
             13188, 12188, 11152, 10114, 9076, 8038, 7000, 6643, 6286, 5929,
             5527, 5215, 4858, 4750, 4650, 4600, 4500, 4490, 4300, 4350, 4330,
-            4310, 4495, 4477
+            4310, 4495, 4477, 4489, 4380
         ]
     }]
 });

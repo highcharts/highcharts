@@ -411,7 +411,7 @@ class StackItem {
         return inverted ?
             {
                 x: (neg ? y : y - height) - chart.plotLeft,
-                y: xAxis.height - x - width,
+                y: xAxis.height - x - width + xAxis.top - chart.plotTop,
                 width: height,
                 height: width
             } : {

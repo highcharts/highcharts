@@ -122,6 +122,9 @@ interface BoxObject extends R.BoxObject {
  *
  * @param {Highcharts.TooltipOptions} options
  * Tooltip options.
+ *
+ * @param {Highcharts.Pointer} pointer
+ * The pointer instance.
  */
 class Tooltip {
 
@@ -1069,13 +1072,12 @@ class Tooltip {
                     }
 
                     label.attr({
+                        // Add class before the label BBox calculation (#21035)
+                        'class': tooltip.getClassName(point),
                         text: text && (text as any).join ?
                             (text as any).join('') :
                             text
                     });
-
-                    // Set the stroke color of the box to reflect the point
-                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({

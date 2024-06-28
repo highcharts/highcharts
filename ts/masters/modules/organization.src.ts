@@ -3,7 +3,7 @@
  * Organization chart series type
  * @module highcharts/modules/organization
  * @requires highcharts
- * @requires highcharts/modules/sankey
+ * @requires modules/sankey
  *
  * (c) 2019-2024 Torstein Honsi
  *

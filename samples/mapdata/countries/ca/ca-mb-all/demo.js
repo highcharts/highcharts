@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-mb-all.topo.json">Manitoba</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-mb-all.topo.json">Manitoba</a>'
         },
 
         mapNavigation: {

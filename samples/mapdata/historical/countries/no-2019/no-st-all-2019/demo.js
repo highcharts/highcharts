@@ -30,7 +30,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/no-2019/no-st-all-2019.topo.json">Sør-Trøndelag (2019)</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/historical/countries/no-2019/no-st-all-2019.topo.json">Sør-Trøndelag (2019)</a>'
         },
 
         mapNavigation: {
