@@ -29,13 +29,10 @@ DataGrid.dataGrid2('container', {
     columns: {
         useHTML: true,
         Header: {
-            // useHTML: true,
-            cellFormatter: function () {
-                return '<h3>' + this.value + '</h3>';
-            }
+            // useHTML: true
+            cellFormat: '<h1>{value}</h1>'
         },
         List: {
-            // useHTML: true,
             cellFormatter: function () {
                 const items = this.value.split(',');
                 let list = '';
@@ -48,13 +45,11 @@ DataGrid.dataGrid2('container', {
             }
         },
         Image: {
-            // useHTML: true,
             cellFormatter: function () {
                 return '<img src="' + this.value + '" />';
             }
         },
         Link: {
-            // useHTML: true,
             cellFormatter: function () {
                 return '<a href="' + this.value + '">URL</a>';
             }
