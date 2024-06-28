@@ -17,7 +17,6 @@ Dashboards.board('container', {
                 googleAPIKey: googleApiKey,
                 googleSpreadsheetKey: googleSpreadsheetKey,
                 beforeParse: data => {
-                    console.log('beforeParse2 called');
                     // Postfix header items with '*'
                     data.forEach(row => {
                         row[0] += '*';
