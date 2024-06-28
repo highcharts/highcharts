@@ -281,8 +281,7 @@ export default DataGroupingComposition;
  *
  * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
- * @requires  product:highstock
- * @requires  module:modules/datagrouping
+ * @requires  modules/stock
  * @apioption plotOptions.series.dataGrouping
  */
 
