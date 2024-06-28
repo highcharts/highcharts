@@ -583,7 +583,7 @@ class SVGRenderer implements SVGRendererLike {
                     .map((key: string): string =>
                         `${key}-${(shadowOptions as any)[key]}`
                     )
-            ].join('-').toLowerCase().replace(/[^a-z0-9\-]/g, ''),
+            ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
