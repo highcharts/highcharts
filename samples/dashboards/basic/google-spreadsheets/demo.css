@@ -1,4 +1,3 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 
 body {
@@ -7,7 +6,6 @@ body {
 
 #container {
     padding: 10px;
-    background-color: var(--highcharts-neutral-color-5);
 }
 
 .row {
@@ -25,7 +23,6 @@ body {
     position: relative;
     margin: 10px;
     background-clip: border-box;
-    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dashboards-component-title {
