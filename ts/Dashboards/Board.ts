@@ -596,7 +596,7 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public getComponentById(id: string): ComponentType | undefined {
         return this.mountedComponents.find(
-            (c) :boolean => c.component.id === id
+            (c): boolean => c.component.id === id
         )?.component;
     }
 
@@ -611,7 +611,7 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
         return this.mountedComponents.find(
-            (c) :boolean => c.cell.id === id
+            (c): boolean => c.cell.id === id
         )?.component;
     }
 }
@@ -827,8 +827,7 @@ namespace Board {
                 return Serializable
                     .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                throw new Error(`${e}`);
+                throw new Error('' + e);
             }
         }
     }
