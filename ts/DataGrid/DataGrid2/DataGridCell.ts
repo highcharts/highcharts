@@ -23,6 +23,7 @@
 
 import type DataTable from '../../Data/DataTable';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
@@ -111,13 +112,27 @@ class DataGridCell {
             return;
         }
 
-        const formatString = this.column.userOptions.cellFormat;
+        const { cellFormat, cellFormatter, useHTML } = this.column.userOptions;
+        let cellContent = '';
         this.value = this.column.data[this.row.index];
 
-        this.htmlElement.innerText =
-            (
-                formatString ? format(formatString, this) : this.value
-            ) as string;
+        if (cellFormatter) {
+            cellContent = cellFormatter.call({
+                value: this.value
+            });
+        } else {
+            cellContent = (
+                    cellFormat ?
+                        format(cellFormat, this) :
+                        this.value + ''
+                );
+        }
+console.log('useHTML', useHTML);
+        if (useHTML) {
+            this.renderHTMLCellContent(cellContent, this.htmlElement);
+        } else {
+            this.htmlElement.innerText = cellContent;
+        }
 
         this.row.htmlElement.appendChild(this.htmlElement);
     }
@@ -130,6 +145,24 @@ class DataGridCell {
         const elementStyle = this.htmlElement.style;
 
         elementStyle.width = elementStyle.maxWidth = column.getWidth() + 'px';
+    }
+
+    /**
+     * When useHTML enabled, parse the syntax and render HTML.
+     *
+     * @param cellContent
+     * Content to render.
+     *
+     * @param parentElement
+     * Parent element where the content should be.
+     *
+     */
+    private renderHTMLCellContent(
+        cellContent: string,
+        parentElement: HTMLElement
+    ): void {
+        const formattedNodes = new AST(cellContent);
+        formattedNodes.addToDOM(parentElement);
     }
 
     /**

@@ -156,6 +156,22 @@ export interface ColumnOptions {
      * The format of the column header.
      */
     headFormat?: string;
+
+    /**
+     * Extendable method for formatting each cell's in DataGrid.
+     *
+     * @return {string}
+     * A string to be concatenated in to the common cell's text.
+     */
+    cellFormatter?: CellFormatterCallback;
+
+    /**
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     *
+     * @default false
+     */
+    useHTML?: boolean;
 }
 
 /**
@@ -180,6 +196,20 @@ export interface CaptionOptions {
      * The caption of the datagrid grid.
      */
     text?: string;
+}
+
+/**
+ * Value to convert
+ */
+export interface CellValue {
+    value: DataTable.CellType
+}
+
+/**
+ * Returns a formatted call's string.
+ */
+export interface CellFormatterCallback {
+    (this: CellValue): string;
 }
 
 
