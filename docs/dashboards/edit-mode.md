@@ -213,4 +213,6 @@ You can override them by adding your own styles to your project, for example:
     padding: 10px;
 }
 ```
-Note that the z-index of most of the elements is set to 100 and higher, make sure the z-index of your elements is lower than that.
+
+Note that most elements used for editing the dashboard (popups, toolbars, handles, etc.) have a high (~9999) z-index value, so they are always on top of the other elements.
+If you want to change this behavior, you can override the z-index value in your CSS file.
