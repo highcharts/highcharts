@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/disparity-index
  * @requires highcharts
- * @requires highcharts/modules/stock
+ * @requires modules/stock
  *
  * Indicator series type for Highstock
  *

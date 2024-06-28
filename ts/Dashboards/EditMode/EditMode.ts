@@ -285,7 +285,7 @@ class EditMode {
     /**
      * Activate or deactivate edit mode.
      */
-    public onEditModeToggle(): void {
+    public toggleEditMode(): void {
         const editMode = this;
 
         if (editMode.active) {
