@@ -172,6 +172,13 @@ export interface ColumnOptions {
      * @default false
      */
     useHTML?: boolean;
+
+    /**
+     * Switch to make the column cells editable ('true') or read-only ('false').
+     *
+     * @default true
+     */
+    editable?: boolean;
 }
 
 /**
