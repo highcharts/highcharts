@@ -8,6 +8,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'accessibility': [
         'modules/accessibility'
     ],
+    'annotations.fibonacci': [
+        'modules/annotations-advanced'
+    ],
     'annotations.labelOptions.accessibility': [
         'modules/accessibility'
     ],

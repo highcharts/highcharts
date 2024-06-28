@@ -15,6 +15,10 @@ import type Options from '../../Core/Options';
 
 import G from '../../Core/Globals.js';
 import mapping from './DependencyMapping.js';
+import U from '../../Core/Utilities.js';
+const {
+    splat
+} = U;
 
 const H: AnyRecord = G;
 const loaded = new Set<string>();
@@ -34,10 +38,6 @@ const addStyleSheets = (
     if (options.stockTools) {
         modules.add('css/stocktools/gui.css');
         modules.add('css/annotations/popup.css');
-    }
-
-    if (options.annotations) {
-        modules.add('css/annotations.css');
     }
 
 };
@@ -81,6 +81,17 @@ const getModules = (options: Partial<Options>): Array<string> => {
             );
         }
     });
+
+    // Advanced annotations
+    if (options.annotations) {
+        splat(options.annotations).forEach((annotation): void => {
+            if (annotation.type && mapping[`annotations.${annotation.type}`]) {
+                mapping[`annotations.${annotation.type}`].forEach(
+                    (module): Set<string> => modules.add(module)
+                );
+            }
+        });
+    }
 
     addStyleSheets(options, modules);
 
