@@ -586,10 +586,13 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Get a Dashboards component by its id.
+     * Get a Dashboards component by its identifier.
+     * 
+     * @param id
+     * The identifier of the requsted component.
      *
      * @returns
-     * The component with the given id.
+     * The component with the given identifier.
      */
     public getComponentById(id: string): ComponentType | undefined {
         return this.mountedComponents.find(
@@ -598,10 +601,13 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Get a Dashboards component by its cell id.
+     * Get a Dashboards component by its cell identifier.
+     *
+     * @param id
+     * The identifier of the cell that contains the requested component.
      *
      * @returns
-     * The component with the given cell id.
+     * The component with the given cell identifier.
      */
     public getComponentByCellId(id: string): ComponentType | undefined {
         return this.mountedComponents.find(
