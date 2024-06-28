@@ -8,7 +8,19 @@ const DependencyMapping: Record<string, Array<string>> = {
     'accessibility': [
         'modules/accessibility'
     ],
+    'annotations.crookedLine': [
+        'modules/annotations-advanced'
+    ],
+    'annotations.elliottWave': [
+        'modules/annotations-advanced'
+    ],
     'annotations.fibonacci': [
+        'modules/annotations-advanced'
+    ],
+    'annotations.fibonacciTimeZones': [
+        'modules/annotations-advanced'
+    ],
+    'annotations.infinityLine': [
         'modules/annotations-advanced'
     ],
     'annotations.labelOptions.accessibility': [
@@ -20,8 +32,23 @@ const DependencyMapping: Record<string, Array<string>> = {
     'annotations.labels.point': [
         'modules/annotations'
     ],
+    'annotations.measure': [
+        'modules/annotations-advanced'
+    ],
+    'annotations.pitchfork': [
+        'modules/annotations-advanced'
+    ],
     'annotations.shapes.point': [
         'modules/annotations'
+    ],
+    'annotations.timeCycles': [
+        'modules/annotations-advanced'
+    ],
+    'annotations.tunnel': [
+        'modules/annotations-advanced'
+    ],
+    'annotations.verticalLine': [
+        'modules/annotations-advanced'
     ],
     'annotations': [
         'modules/annotations'
