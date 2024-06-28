@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/dependency-wheel
  * @requires highcharts
- * @requires highcharts/modules/sankey
+ * @requires modules/sankey
  *
  * Dependency wheel module
  *

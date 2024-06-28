@@ -73,7 +73,7 @@ import type TilemapSeries from './TilemapSeries';
  *
  * @product highcharts highmaps
  *
- * @requires modules/tilemap.js
+ * @requires modules/tilemap
  */
 export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
 

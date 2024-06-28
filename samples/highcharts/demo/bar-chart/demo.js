@@ -60,12 +60,12 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Year 1990',
-        data: [631, 727, 3202, 721]
+        data: [632, 727, 3202, 721]
     }, {
         name: 'Year 2000',
         data: [814, 841, 3714, 726]
     }, {
-        name: 'Year 2018',
-        data: [1276, 1007, 4561, 746]
+        name: 'Year 2021',
+        data: [1393, 1031, 4695, 745]
     }]
 });
