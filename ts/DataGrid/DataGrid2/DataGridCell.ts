@@ -27,6 +27,7 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
+import Globals from './Globals.js';
 
 const { format } = F;
 
@@ -108,12 +109,21 @@ class DataGridCell {
      * Renders the cell.
      */
     public render(): void {
+
         if (!this.column.data) {
             return;
         }
+        const {
+            cellFormat,
+            cellFormatter,
+            useHTML,
+            editable
+        } = this.column.userOptions;
+        const cell = this;
+        const element = cell.htmlElement;
 
-        const { cellFormat, cellFormatter, useHTML } = this.column.userOptions;
         let cellContent = '';
+
         this.value = this.column.data[this.row.index];
 
         if (cellFormatter) {
@@ -128,13 +138,19 @@ class DataGridCell {
                 );
         }
 
-        if (useHTML) {
-            this.renderHTMLCellContent(cellContent, this.htmlElement);
-        } else {
-            this.htmlElement.innerText = cellContent;
+        if (editable) {
+            element.addEventListener('click', (): void => {
+                this.onCellClick(element, this.value + '');
+            });
         }
 
-        this.row.htmlElement.appendChild(this.htmlElement);
+        if (useHTML) {
+            this.renderHTMLCellContent(cellContent, element);
+        } else {
+            element.innerText = cellContent;
+        }
+
+        this.row.htmlElement.appendChild(element);
     }
 
     /**
@@ -163,6 +179,42 @@ class DataGridCell {
     ): void {
         const formattedNodes = new AST(cellContent);
         formattedNodes.addToDOM(parentElement);
+    }
+
+    /**
+     * Handle the user starting interaction with a cell.
+     *
+     * @internal
+     *
+     * @param cellEl
+     * The clicked cell.
+     *
+     */
+    private onCellClick(cellElement: HTMLElement, value: string): void {
+        console.log('cell: ', cellElement);
+        // if (this.isColumnEditable(columnName)) {
+            let input = cellElement.querySelector('input');
+            // const cellValue = cellElement.getAttribute('data-original-data');
+
+            if (!input) {
+                // this.removeCellInputElement();
+
+                // Replace cell contents with an input element
+                const inputHeight = cellElement.clientHeight - 1 // 1px of border input;
+                cellElement.innerHTML = '';
+                input = // this.cellInputEl =
+                    document.createElement('input');
+                input.style.height = inputHeight + 'px';
+                cellElement.classList.add(Globals.classNames.focusedCell);
+                cellElement.appendChild(input);
+                input.focus();
+                input.value = value || '';
+
+            }
+
+        //     // Emit for use in extensions
+        //     this.emit({ type: 'cellClick', input });
+        // }
     }
 
     /**
