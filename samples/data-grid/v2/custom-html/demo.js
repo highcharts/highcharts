@@ -24,13 +24,9 @@ DataGrid.dataGrid2('container', {
     defaults: {
         columns: {
             // useHTML: true
-            editable: true
         }
     },
     columns: {
-        Description: {
-            editable: true
-        },
         Header: {
             // useHTML: true
             cellFormat: '<h3>{value}</h3>'
