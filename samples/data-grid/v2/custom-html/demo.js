@@ -30,7 +30,7 @@ DataGrid.dataGrid2('container', {
         useHTML: true,
         Header: {
             // useHTML: true
-            cellFormat: '<h1>{value}</h1>'
+            cellFormat: '<h3>{value}</h3>'
         },
         List: {
             cellFormatter: function () {

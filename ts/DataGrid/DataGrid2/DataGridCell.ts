@@ -127,7 +127,7 @@ class DataGridCell {
                         this.value + ''
                 );
         }
-console.log('useHTML', useHTML);
+
         if (useHTML) {
             this.renderHTMLCellContent(cellContent, this.htmlElement);
         } else {
