@@ -23,9 +23,9 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import DataConverter from './DataConverter.js';
 import type { BeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
 
+import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
