@@ -37,28 +37,25 @@ Dashboards.board('container', {
             }
         }]
     },
-    components: [
-        {
-            renderTo: 'dashboard-col-0',
-            connector: {
-                id: 'conn-raw'
-            },
-            type: 'DataGrid',
-            title: 'Google Sheet Raw',
-            dataGridOptions: {
-                editable: false
-            }
+    components: [{
+        renderTo: 'dashboard-col-0',
+        connector: {
+            id: 'conn-raw'
         },
-        {
-            renderTo: 'dashboard-col-1',
-            connector: {
-                id: 'conn-mod'
-            },
-            type: 'DataGrid',
-            title: 'Google Sheet Modified',
-            dataGridOptions: {
-                editable: false
-            }
+        type: 'DataGrid',
+        title: 'Google Sheet Raw',
+        dataGridOptions: {
+            editable: false
         }
-    ]
+    }, {
+        renderTo: 'dashboard-col-1',
+        connector: {
+            id: 'conn-mod'
+        },
+        type: 'DataGrid',
+        title: 'Google Sheet Modified',
+        dataGridOptions: {
+            editable: false
+        }
+    }]
 });
