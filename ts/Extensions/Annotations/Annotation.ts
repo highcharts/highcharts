@@ -54,6 +54,7 @@ import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
+import { LabelsItemsOptions } from '../../Core/Options';
 const {
     destroyObjectProperties,
     erase,
@@ -387,10 +388,17 @@ class Annotation extends EventEmitter implements ControlTarget {
         const labelsOptions = (this.options.labels || []);
 
         labelsOptions.forEach((labelOptions, i): void => {
-            const label = this.initLabel(labelOptions, i);
-
-            merge(true, labelsOptions[i], label.options);
+            this.addLabel(labelOptions, i);
         });
+    }
+
+    /**
+     * @private
+     */
+    public addLabel(options: ControllableLabelOptions, index: number): ControllableLabel {
+        const label = this.initLabel(options, index);
+        merge(true, options, label.options);
+        return label;
     }
 
     /**
@@ -546,7 +554,8 @@ class Annotation extends EventEmitter implements ControlTarget {
      */
     public initShape(
         shapeOptions: Partial<ControllableShapeOptions>,
-        index: number
+        index: number,
+        push: boolean = true
     ): ControllableShapeType {
         const options = merge(
                 this.options.shapeOptions,
@@ -563,7 +572,10 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         shape.itemType = 'shape';
 
-        this.shapes.push(shape);
+        // TODO: find a better way. maybe seperate method?
+        if (push) {
+            this.shapes.push(shape);
+        }
 
         return shape;
     }
@@ -574,10 +586,77 @@ class Annotation extends EventEmitter implements ControlTarget {
     public redraw(
         animation?: boolean
     ): void {
+
+/*
+        1. Something exists and it should exist -> update
+        2. Something doesnt exist and it should exist -> create
+        3. Something  exists and it shouldn't exist -> destroy
+        4. Something  doesnt exist and it shouldn't exist -> do nothing
+        */
+
         this.linkPoints();
 
         if (!this.graphic) {
-            this.render();
+            this.createElements();
+        }
+
+        let shapesOptionsLength = this.options?.shapes?.length || 0;
+        let shapesLength = this.shapes.length;
+        let labelsOptionsLength = this.options?.labels?.length || 0;
+        let labelsLength = this.labels.length;
+
+        // TODO: Would it be wise to refactor the very duplicate code?
+        // Shapes
+        for (let i = 0; i < Math.min(shapesOptionsLength, shapesLength); i++) {
+
+            // TODO: Check if it is the same type. If it is not, change the class as well
+            // this.shapes[i].update(this.options!.shapes![i]);
+            if (this.options.shapes && this.options.shapes[i].type !== this.shapes[i].type) {
+
+                this.shapes[i].destroy();
+                const shape = this.initShape(this.options!.shapes![i], i, false);
+                this.shapes[i] = shape;
+                merge(true, this.options!.shapes![i], shape.options);
+            } else {
+                this.shapes[i].redraw();
+            }
+
+            // TODO: When do we create a new objects?
+        }
+        if (shapesLength > shapesOptionsLength) {
+            for (let i = shapesOptionsLength; i < shapesLength; i++) {
+                this.shapes[i].destroy();
+            }
+            this.shapes.splice(shapesOptionsLength);
+
+        } else if (shapesLength < shapesOptionsLength) {
+
+            for (let i = shapesLength; i < shapesOptionsLength; i++) {
+                const shape = this.initShape(this.options!.shapes![i], i);
+                merge(true, this.options!.shapes![i], shape.options);
+            }
+        }
+
+        // Labels
+        for (let i = 0; i < Math.min(labelsOptionsLength, labelsLength); i++) {
+
+            // TODO: Check if it is the same type. If it is not, change the class as well
+            // this.shapes[i].update(this.options!.shapes![i]);
+            this.labels[i].redraw();
+            // TODO: When do we create a new objects?
+        }
+        if (labelsLength > labelsOptionsLength) {
+            for (let i = labelsOptionsLength; i < labelsLength; i++) {
+                this.labels[i].destroy();
+            }
+            this.labels.splice(labelsOptionsLength);
+
+        } else if (labelsLength < labelsOptionsLength) {
+
+            for (let i = labelsLength; i < labelsOptionsLength; i++) {
+                const label = this.initLabel(this.options!.labels![i], i);
+                merge(true, this.options!.labels![i], label.options);
+            }
         }
 
         if (this.clipRect) {
@@ -645,7 +724,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     /**
      * @private
      */
-    public render(): void {
+    public createElements(): void {
         const renderer = this.chart.renderer;
 
         this.graphic = renderer
@@ -683,12 +762,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         }
 
         // Render shapes and labels before adding events (#13070).
-        this.renderItems(this.shapes);
-        this.renderItems(this.labels);
-
         this.addEvents();
-
-        this.renderControlPoints();
     }
 
     /**
@@ -852,7 +926,8 @@ class Annotation extends EventEmitter implements ControlTarget {
      */
     public update(
         userOptions: DeepPartial<AnnotationOptions>,
-        redraw? : boolean
+        redraw? : boolean,
+        oneToOne?: boolean
     ): void {
         const chart = this.chart,
             labelsAndShapes = getLabelsAndShapesOptions(
@@ -864,18 +939,93 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
+        merge(true, this.options, options);
 
-        this.destroy();
-        this.initProperties(chart, options);
-        this.init(chart, options);
+        
+       // this.destroy();
+       // this.initProperties(chart, options);
+      //  this.init(chart, options);
+        
         // Update options in chart options, used in exporting (#9767):
         chart.options.annotations[userOptionsIndex] = options;
 
-        this.isUpdating = true;
-        if (pick(redraw, true)) {
-            chart.drawAnnotations();
-        }
+/*
+        1. Something exists and it should exist -> update
+        2. Something doesnt exist and it should exist -> create
+        3. Something  exists and it shouldn't exist -> destroy
+        4. Something  doesnt exist and it shouldn't exist -> do nothing
+        */
 
+        this.isUpdating = true;
+        this.shapes.forEach((shape, i) => {
+            if (this.options.shapes) {
+                shape.update(this.options.shapes[i], false)
+            }
+        });
+
+        this.labels.forEach((label, i) => {
+            if (this.options.labels) {
+                label.update(this.options.labels[i], false)
+            }
+        });
+
+        /*
+        this.labels.forEach(label => label.update(label.options, false))
+        // options.labels?.forEach((l, i) => {
+        //     if (this.labels[i]) {
+        //         this.labels[i].update(l, false);
+
+        //     } else {
+        //         // TODO: create addLabel() ?
+        //         console.log("Must add a label");
+        //         const label = this.addLabel(l, i);
+        //         this.renderItem(label);
+        //         label.redraw(); // TODO only redraw if it is new?
+        //     }
+        // })
+
+        //     this.shapes.forEach((s, i) => {
+        //         if (options.shapes) {
+        //             s.update(options.shapes[i], false)
+        //         }
+        //     })
+        // this.labels.update()
+        // this.shapes.update()
+        if (pick(redraw, true)) { // TODO: Fix chart.update(annotations) because redraw is false
+        //     //chart.drawAnnotations();
+            
+        //     // TODO: Reuse what we already have.
+        //     // Implement oneToOne
+        //     // Handle removing of items
+        //     // Separate update and redraw
+
+        //     options.labels?.forEach((l, i) => {
+        //         if (this.labels[i]) {
+        //             this.labels[i].update(l, false);
+                    
+        //         } else {
+        //             // TODO: create addLabel() ?
+        //             console.log("Must add a label");
+        //             const label = this.addLabel(l, i);
+        //             this.renderItem(label);
+        //             label.redraw(); // TODO only redraw if it is new?
+        //         }
+        //     })
+
+        //     if (oneToOne || true) {
+        //         for (let i = options.labels?.length || 0; i < this.labels.length; i++) {
+        //             this.labels[i].destroy();
+        //         }
+        //         this.labels.splice(options.labels?.length || 0);
+        //     }
+        //     // TODO: Shapes as well. Can we refactor these two together?
+        //     this.shapes.forEach((s, i) => {
+        //         if (options.shapes) {
+        //             s.update(options.shapes[i], false)
+        //         }
+        //     })
+    }*/
+        this.redraw();
         fireEvent(this, 'afterUpdate');
         this.isUpdating = false;
     }

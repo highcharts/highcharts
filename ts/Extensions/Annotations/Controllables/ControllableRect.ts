@@ -114,7 +114,10 @@ class ControllableRect extends Controllable {
                     x: position.x,
                     y: position.y,
                     width: this.options.width,
-                    height: this.options.height
+                    height: this.options.height,
+                    stroke: this.options.stroke,
+                    strokeWidth: this.options.strokeWidth
+                    // TODO: add all of the options (maybe in the super call? )
                 });
             } else {
                 this.attr({

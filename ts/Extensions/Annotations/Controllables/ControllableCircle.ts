@@ -99,7 +99,11 @@ class ControllableCircle extends Controllable {
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
                     y: position.y,
-                    r: this.options.r
+                    r: this.options.r,
+                    stroke: this.options.stroke,
+                    'stroke-width': this.options.strokeWidth
+                    // TODO: add all of the options (maybe in the super call? )
+
                 });
             } else {
                 this.graphic.attr({

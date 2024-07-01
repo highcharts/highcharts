@@ -818,7 +818,7 @@ class Measure extends Annotation {
         this.linkPoints();
 
         if (!this.graphic) {
-            this.render();
+            this.createElements();
         }
 
         if (setStartPoints) {
