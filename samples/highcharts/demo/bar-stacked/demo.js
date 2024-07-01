@@ -1,14 +1,14 @@
-// Data retrieved from: https://maxf1.net/en/results/teams/
+// Data retrieved from: https://ferjedatabanken.no/statistikk
 Highcharts.chart('container', {
     chart: {
         type: 'bar'
     },
     title: {
-        text: 'F1 top constructors by season'
+        text: 'Ferry passengers by vehicle-type 2024'
     },
     xAxis: {
         categories: [
-            '2023', '2022', '2021', '2020', '2019', '2018'
+            'Mai', 'April', 'Mars', 'Februar', 'Januar'
         ]
     },
     yAxis: {
@@ -29,13 +29,13 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Red Bull',
-        data: [860, 759, 585.5, 319, 417, 419]
+        name: 'Motorcycles',
+        data: [1272, 93, 52, 27, 74]
     }, {
-        name: 'Mercedes',
-        data: [409, 554, 613.5, 573, 739, 655]
+        name: 'Null-emission vehicles',
+        data: [4916, 3195, 3046, 2398, 2106]
     }, {
-        name: 'Ferrari',
-        data: [406, 515, 323.5, 131, 504, 571]
+        name: 'Conventional vehicles',
+        data: [25037, 16518, 15242, 12721, 12213]
     }]
 });
