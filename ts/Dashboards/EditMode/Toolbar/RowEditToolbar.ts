@@ -67,6 +67,8 @@ class RowEditToolbar extends EditToolbar {
                                 .parent as RowEditToolbar,
                             dragDrop = rowEditToolbar.editMode.dragDrop;
 
+                        e.preventDefault();
+
                         if (dragDrop && rowEditToolbar.row) {
                             dragDrop.onDragStart(e, rowEditToolbar.row);
                         }

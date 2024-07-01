@@ -331,14 +331,33 @@ class SidebarPopup extends BaseForm {
             gridElement.addEventListener('mousedown', (e: Event): void => {
                 if (sidebar.editMode.dragDrop) {
 
-                    const onMouseLeave = (): void => {
-                        sidebar.hide();
+                    // Workaround for Firefox, where mouseleave is not triggered
+                    // correctly when dragging.
+                    const onMouseMove = (event: MouseEvent): void => {
+                        const rect = sidebar.container.getBoundingClientRect();
+                        if (
+                            event.clientX < rect.left ||
+                            event.clientX > rect.right ||
+                            event.clientY < rect.top ||
+                            event.clientY > rect.bottom
+                        ) {
+                            sidebar.hide();
+                            document.removeEventListener(
+                                'mousemove',
+                                onMouseMove
+                            );
+                        }
                     };
 
-                    sidebar.container.addEventListener(
-                        'mouseleave',
-                        onMouseLeave
-                    );
+                    // Clean up event listeners
+                    const onMouseUp = (): void => {
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.removeEventListener('mouseup', onMouseUp);
+                    };
+
+                    // Add event listeners
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
 
                     sidebar.editMode.dragDrop.onDragStart(
                         e as PointerEvent,
@@ -371,9 +390,10 @@ class SidebarPopup extends BaseForm {
                                 sidebar.show(newCell);
                                 newCell.setHighlight();
                             }
-                            sidebar.container.removeEventListener(
-                                'mouseleave',
-                                onMouseLeave
+                            // Clean up event listener after drop is complete
+                            document.removeEventListener(
+                                'mousemove',
+                                onMouseMove
                             );
                         }
                     );
