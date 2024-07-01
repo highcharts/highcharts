@@ -14,6 +14,12 @@ QUnit.test('series.centerInCategory', function (assert) {
             }
         ],
 
+        plotOptions: {
+            series: {
+                borderColor: 'black'
+            }
+        },
+
         series: [
             {
                 name: 'Tokyo',

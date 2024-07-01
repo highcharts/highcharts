@@ -28,6 +28,7 @@ import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
+import type { TypedArray } from './Series/SeriesOptions';
 
 import H from './Globals.js';
 const {
@@ -1245,7 +1246,7 @@ function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>): number {
+function arrayMin(data: Array<any>|TypedArray): number {
     let i = data.length,
         min = data[0];
 
@@ -1270,7 +1271,7 @@ function arrayMin(data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>): number {
+function arrayMax(data: Array<any>|TypedArray): number {
     let i = data.length,
         max = data[0];
 
@@ -1397,7 +1398,7 @@ Math.easeInOutSine = function (pos: number): number {
  *          The closest distance between values
  */
 function getClosestDistance(
-    arrays: number[][],
+    arrays: (number[]|TypedArray)[],
     onError?: Function
 ): (number|undefined) {
     const allowNegative = !onError;

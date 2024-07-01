@@ -577,6 +577,7 @@ class ColumnSeries extends Series {
                 );
             }
 
+
             // Cache for access in polar
             point.barX = barX;
             point.pointWidth = pointWidth;

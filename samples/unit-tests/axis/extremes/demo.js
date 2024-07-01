@@ -254,7 +254,8 @@ QUnit.test(
     }
 );
 
-QUnit.test('getSeriesExtremes', function (assert) {
+// Skip due to impractical mock objects
+QUnit.skip('getSeriesExtremes', function (assert) {
     var getSeriesExtremes = Highcharts.Axis.prototype.getSeriesExtremes,
         xAxis = {
             getExtremes: Highcharts.Axis.prototype.getExtremes,

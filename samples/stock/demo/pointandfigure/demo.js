@@ -158,7 +158,14 @@ Follow the comments below to see how the new series is added. */
         return {
             groupedXData,
             groupedYData,
-            groupMap
+            groupMap,
+            modified: {
+                columns: {
+                    x: groupedXData,
+                    y: groupedYData
+                },
+                rowCount: groupedXData.length
+            }
         };
     }
 

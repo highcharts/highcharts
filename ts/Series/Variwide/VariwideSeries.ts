@@ -95,9 +95,11 @@ class VariwideSeries extends ColumnSeries {
             force
         );
 
+        const zData = this.getColumn('z');
+
         (this.xAxis.reversed ?
-            (this.zData as any).slice().reverse() :
-            (this.zData as any)
+            zData.slice().reverse() :
+            zData
         ).forEach(
             function (
                 this: VariwideSeries,
@@ -307,6 +309,7 @@ interface VariwideSeries {
 
 extend(VariwideSeries.prototype, {
     irregularWidths: true,
+    keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
     pointClass: VariwidePoint

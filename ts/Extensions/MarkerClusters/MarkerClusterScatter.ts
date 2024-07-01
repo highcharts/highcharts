@@ -48,6 +48,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import DataTableCore from '../../Data/DataTableCore.js';
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
 import U from '../../Core/Utilities.js';
@@ -893,8 +894,8 @@ function seriesGeneratePoints(
     const series = this,
         chart = series.chart,
         mapView = chart.mapView,
-        xData = series.xData,
-        yData = series.yData,
+        xData = series.getColumn('x'),
+        yData = series.getColumn('y'),
         clusterOptions = series.options.cluster,
         realExtremes = series.getRealExtremes(),
         visibleXData = [],
@@ -1074,8 +1075,13 @@ function seriesGeneratePoints(
         oldMarkerClusterInfo = series.markerClusterInfo;
 
         if (clusteredData) {
-            series.processedXData = clusteredData.groupedXData;
-            series.processedYData = clusteredData.groupedYData;
+
+            series.table.modified = new DataTableCore({
+                columns: {
+                    x: clusteredData.groupedXData,
+                    y: clusteredData.groupedYData
+                }
+            });
 
             series.hasGroupedData = true;
             series.markerClusterInfo = clusteredData;
@@ -1170,6 +1176,7 @@ function seriesGetClusteredData(
     options: MarkerClusterOptions
 ): (MarkerClusterInfoObject | boolean) {
     const series = this,
+        data = series.options.data,
         groupedXData = [],
         groupedYData = [],
         clusters = [], // Container for clusters.
@@ -1289,11 +1296,10 @@ function seriesGetClusteredData(
             });
 
             // Save cluster data points options.
-            if (series.options.data && series.options.data.length) {
+            if (data?.length) {
                 for (i = 0; i < pointsLen; i++) {
-                    if (isObject(series.options.data[points[i].dataIndex])) {
-                        points[i].options =
-                            series.options.data[points[i].dataIndex];
+                    if (isObject(data[points[i].dataIndex])) {
+                        points[i].options = data[points[i].dataIndex];
                     }
                 }
             }
@@ -1306,8 +1312,7 @@ function seriesGetClusteredData(
                 point = groupedData[k][i];
                 stateId = getStateId();
                 pointOptions = null;
-                pointUserOptions =
-                    ((series.options || {}).data || [])[point.dataIndex];
+                pointUserOptions = data?.[point.dataIndex];
                 groupedXData.push(point.x);
                 groupedYData.push(point.y);
 

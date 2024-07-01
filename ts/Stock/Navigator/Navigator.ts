@@ -1758,9 +1758,10 @@ class Navigator {
 
                 navigator.hasNavigatorData =
                     navigator.hasNavigatorData || !!navigatorSeriesData;
-                mergedNavSeriesOptions.data =
+                mergedNavSeriesOptions.data = (
                     navigatorSeriesData ||
-                    baseOptions.data && baseOptions.data.slice(0);
+                    baseOptions.data?.slice(0)
+                );
 
                 // Update or add the series
                 if (linkedNavSeries && linkedNavSeries.options) {
@@ -1904,11 +1905,10 @@ class Navigator {
     ): number {
         return this.baseSeries.reduce(
             function (min: number, series: Series): number {
-                // (#10193)
+                // #10193
                 return Math.min(
                     min,
-                    series.xData && series.xData.length ?
-                        series.xData[0] : min
+                    series.getColumn('x')[0] ?? min
                 );
             },
             currentSeriesMin
@@ -2046,7 +2046,7 @@ class Navigator {
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
-            navigatorSeries.options.pointStart = (baseSeries.xData as any)[0];
+            navigatorSeries.options.pointStart = baseSeries.getColumn('x')[0];
             navigatorSeries.setData(
                 baseSeries.options.data as any,
                 false,
@@ -2067,7 +2067,7 @@ class Navigator {
         navigator: Navigator
     ): boolean|undefined {
         const xDataMin = navigator.getBaseSeriesMin(
-                (baseSeries.xData as any)[0]
+                baseSeries.getColumn('x')[0]
             ),
             xAxis = baseSeries.xAxis,
             max = xAxis.max,

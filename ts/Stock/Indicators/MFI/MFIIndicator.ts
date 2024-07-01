@@ -18,6 +18,7 @@
  *
  * */
 
+import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -150,7 +151,7 @@ class MFIIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
+        series: TLinkedSeries&IndicatorLinkedSeriesLike,
         params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         const period: number = (params.period as any),
@@ -161,9 +162,7 @@ class MFIIndicator extends SMAIndicator {
             volumeSeries: (LineSeries | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
-            yValVolume: Array<number> = (
-                volumeSeries && (volumeSeries.yData as any)
-            ),
+            yValVolume = volumeSeries?.getColumn('y') || [],
             MFI: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
