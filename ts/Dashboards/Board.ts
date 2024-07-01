@@ -169,11 +169,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.mountedComponents = [];
 
         this.initContainer(renderTo);
-
-        // Init edit mode.
-        if (this.guiEnabled) {
-            this.initEditMode();
-        }
+        this.initEditMode();
 
         // Add table cursors support.
         this.dataCursor = new DataCursor();
@@ -385,14 +381,14 @@ class Board implements Serializable<Board, Board.JSON> {
      * @internal
      *
      */
-    private initEditMode(): void {
-        if (!Dashboards.EditMode) {
-            throw new Error('Missing layout.js module');
-        } else {
+    private initEditMode():void {
+        if (Dashboards.EditMode) {
             this.editMode = new Dashboards.EditMode(
                 this,
                 this.options.editMode
             );
+        } else if (this.editModeEnabled) {
+            throw new Error('Missing layout.js module');
         }
     }
 
@@ -589,7 +585,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * Get a Dashboards component by its identifier.
      *
      * @param id
-     * The identifier of the requsted component.
+     * The identifier of the requested component.
      *
      * @returns
      * The component with the given identifier.

@@ -30,7 +30,7 @@ describe('Crossfilter with affectNavigator option', () => {
         }];
     
         for (const { handle, pageX } of moves) {
-            cy.get('.highcharts-navigator-handle')
+            cy.get('.highcharts-navigator-handle-')
                 .eq(handle).trigger('mouseenter').trigger('mousedown')
                 .trigger('mousemove', { pageX }).trigger('mouseup');
         }

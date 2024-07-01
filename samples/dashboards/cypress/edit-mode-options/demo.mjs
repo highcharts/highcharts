@@ -18,8 +18,7 @@ Dashboards.board('container', {
             enabled: false
         },
         contextMenu: {
-            enabled: true,
-            items: ['editMode']
+            enabled: true
         }
     },
     gui: {
