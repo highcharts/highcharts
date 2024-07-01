@@ -124,8 +124,7 @@ class GoogleSheetsConverter extends DataConverter {
             parseOptions = merge(converter.options, options);
 
         let columns = ((
-            parseOptions.json &&
-            parseOptions.json.values
+            parseOptions.json?.values
         ) || []).map(
             (column): DataTable.Column => column.slice()
         );
@@ -145,9 +144,9 @@ class GoogleSheetsConverter extends DataConverter {
         });
 
         // If beforeParse is defined, use it to modify the data
-        const beforeParse = parseOptions.beforeParse;
-        if (beforeParse && parseOptions.json) {
-            columns = beforeParse(parseOptions.json.values);
+        const { beforeParse, json } = parseOptions;
+        if (beforeParse && json) {
+            columns = beforeParse(json.values);
         }
 
         let column;
