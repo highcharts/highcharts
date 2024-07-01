@@ -148,7 +148,8 @@ export interface DataGridDefaults {
 export interface ColumnOptions {
 
     /**
-     * The format of the cell content.
+     * The format of the cell content within the given column of
+     * DataGrid.
      */
     cellFormat?: string;
 
@@ -158,7 +159,8 @@ export interface ColumnOptions {
     headFormat?: string;
 
     /**
-     * Extendable method for formatting each cell's in DataGrid.
+     * Extendable method for formatting cell's within the given column of
+     * DataGrid.
      *
      * @return {string}
      * A string to be concatenated in to the common cell's text.

@@ -28,7 +28,6 @@ DataGrid.dataGrid2('container', {
     },
     columns: {
         Header: {
-            // useHTML: true
             cellFormat: '<h3>{value}</h3>'
         },
         List: {
