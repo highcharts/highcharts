@@ -101,6 +101,57 @@ let sourceRoot = 'ts';
 
 
 /**
+ * Adds info flags from the given node.
+ *
+ * @param {CodeInfo} info
+ * Information to add to.
+ *
+ * @param {TS.Node} node
+ * Node to retrieve from.
+ */
+function addInfoFlags(
+    info,
+    node
+) {
+    /** @type {Array<InfoFlag>} */
+    const _flags = [];
+
+    for (const _modifier of (TS.getModifiers(node) || [])) {
+        if (!TS.isDecorator(_modifier)) {
+            _flags.push(_modifier.getText());
+        }
+    }
+
+    if (node.dotDotDotToken) {
+        _flags.push('rest');
+    }
+
+    if (node.exclamationToken) {
+        _flags.push('assured');
+    }
+
+    if (
+        node.importClause &&
+        node.importClause.isTypeOnly
+    ) {
+        _flags.push('type');
+    }
+
+    if (
+        node.questionDotToken ||
+        node.questionToken
+    ) {
+        _flags.push('optional');
+    }
+
+    if (_flags.length) {
+        info.flags = _flags;
+    }
+
+}
+
+
+/**
  * Adds a tag to a DocletInfo object.
  *
  * @param {DocletInfo} doclet
@@ -712,6 +763,51 @@ function extractTypes(
 
 
 /**
+ * Retrieves array info from the given node.
+ *
+ * @param {TS.Node} node
+ * Node that might be an array.
+ *
+ * @param {boolean} [includeNodes]
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {ArrayInfo|undefined}
+ * Array information or `undefined`.
+ */
+function getArrayInfo(
+    node,
+    includeNodes
+) {
+
+    if (!TS.isArrayLiteralExpression(node)) {
+        return void 0;
+    }
+
+    /** @type {ArrayInfo} */
+    const _info = {
+        kind: 'Array'
+    };
+
+    /** @type {Array<MemberInfo>} */
+    const _values = _info.values = [];
+
+    for (const _child of node.elements) {
+        _values.push(getInfoValue(_child));
+    }
+
+    addInfoFlags(_info, node);
+
+    _info.meta = getInfoMeta(node);
+
+    if (includeNodes) {
+        _info.node = node;
+    }
+
+    return _info;
+}
+
+
+/**
  * [TS] Retrieve child informations and doclets.
  *
  * @param {Array<TS.Node>} nodes
@@ -769,7 +865,8 @@ function getChildInfos(
                 getFunctionCallInfo(node, includeNodes) ||
                 getExportInfo(node, includeNodes) ||
                 getDeconstructInfos(node, includeNodes) ||
-                getClassInfo(node, includeNodes)
+                getClassInfo(node, includeNodes) ||
+                getArrayInfo(node, includeNodes)
             );
         }
 
@@ -818,7 +915,7 @@ function getChildInfos(
  * @param {TS.Node} node
  * Node that might be a class.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ClassInfo|undefined}
@@ -859,25 +956,20 @@ function getClassInfo(
         }
     }
 
-    if (node.members) {
-        /** @type {Array<MemberInfo>} */
-        const _members = _info.members = [];
+    /** @type {Array<MemberInfo>} */
+    const _members = _info.members = [];
 
-        for (const _childInfo of getChildInfos(node.members, includeNodes)) {
-            if (
-                _childInfo.kind === 'Doclet' ||
-                _childInfo.kind === 'Function' ||
-                _childInfo.kind === 'Property'
-            ) {
-                _members.push(_childInfo);
-            }
+    for (const _childInfo of getChildInfos(node.members, includeNodes)) {
+        if (
+            _childInfo.kind === 'Doclet' ||
+            _childInfo.kind === 'Function' ||
+            _childInfo.kind === 'Property'
+        ) {
+            _members.push(_childInfo);
         }
-
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -895,7 +987,7 @@ function getClassInfo(
  * @param {TS.Node} node
  * Node that might be a deconstruct.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript node in the information.
  *
  * @return {DeconstructInfo|undefined}
@@ -927,7 +1019,7 @@ function getDeconstructInfos(
     };
 
     if (node.initializer) {
-        _info.from = node.initializer.getText();
+        _info.from = getInfoValue(node.initializer);
     }
 
     for (const element of node.name.elements) {
@@ -935,9 +1027,7 @@ function getDeconstructInfos(
             element.name.text;
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -958,7 +1048,7 @@ function getDeconstructInfos(
  * @param {TS.Node} endNode
  * Node that comes after doclets.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {Array<DocletInfo>}
@@ -1107,7 +1197,7 @@ function getDocletsBetween(
  * @param {TS.Node} node
  * Node that might be an export.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ExportInfo|undefined}
@@ -1143,9 +1233,7 @@ function getExportInfo(
 
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -1163,7 +1251,7 @@ function getExportInfo(
  * @param {TS.Node} node
  * Node that might be a function call.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {FunctionCallInfo|undefined}
@@ -1226,7 +1314,7 @@ function getFunctionCallInfo(
  * @param {TS.Node} node
  * Node that might be an import.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ImportInfo|undefined}
@@ -1278,9 +1366,7 @@ function getFunctionInfo(
         getInfoType(TS.getJSDocReturnType(node))
     );
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -1361,9 +1447,7 @@ function getImportInfo(
 
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(node, _info);
 
     _info.meta = getInfoMeta(node);
 
@@ -1372,54 +1456,6 @@ function getImportInfo(
     }
 
     return _info;
-}
-
-
-/**
- * Retrieves info flags from the given node.
- *
- * @param {TS.Node} node
- * Node to retrieve from.
- *
- * @return {Array<InfoFlag>|undefined}
- * Retrieved info flags or `undefined`.
- */
-function getInfoFlags(
-    node
-) {
-    /** @type {Array<InfoFlag>} */
-    const _flags = [];
-
-    if (!node.flags) {
-        return void 0;
-    }
-
-    for (const _modifier of (TS.getModifiers(node) || [])) {
-        if (!TS.isDecorator(_modifier)) {
-            _flags.push(_modifier.getText());
-        }
-    }
-
-    if (node.dotDotDotToken) {
-        _flags.push('rest');
-    }
-
-    if (node.exclamationToken) {
-        _flags.push('assured');
-    }
-
-    if (
-        node.questionDotToken ||
-        node.questionToken
-    ) {
-        _flags.push('optional');
-    }
-
-    if (!_flags.length) {
-        return void 0;
-    }
-
-    return _flags;
 }
 
 
@@ -1501,6 +1537,7 @@ function getInfoValue(
 ) {
     /** @type {Value} */
     let _value = (
+        getArrayInfo(node, includeNodes) ||
         getDeconstructInfos(node, includeNodes) ||
         getFunctionCallInfo(node, includeNodes) ||
         getFunctionInfo(node, includeNodes) ||
@@ -1543,7 +1580,7 @@ function getInfoValue(
  * @param {TS.Node} node
  * Node that might be an interface.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {InterfaceInfo|undefined}
@@ -1568,8 +1605,19 @@ function getInterfaceInfo(
     if (node.typeParameters) {
         /** @type {Array<TypeAliasInfo>} */
         const _generics = [];
+
+        /** @type {TypeAliasInfo|undefined} */
+        let _typeAliasInfo;
+
         for (const parameter of node.typeParameters) {
-            _generics.push(getTypeAliasInfo(parameter));
+            _typeAliasInfo = getTypeAliasInfo(parameter);
+            if (_typeAliasInfo) {
+                _generics.push(_typeAliasInfo);
+            }
+        }
+
+        if (_generics.length) {
+            _info.generics = _generics;
         }
     }
 
@@ -1583,24 +1631,20 @@ function getInterfaceInfo(
         }
     }
 
-    if (node.members) {
-        /** @type {Array<MemberInfo>} */
-        const _members = _info.members = [];
-        for (const _childInfo of getChildInfos(node.members, includeNodes)) {
-            if (
-                _childInfo.kind === 'Doclet' ||
-                _childInfo.kind === 'Function' ||
-                _childInfo.kind === 'Property'
-            ) {
-                _members.push(_childInfo);
-            }
+    /** @type {Array<MemberInfo>} */
+    const _members = _info.members = [];
+
+    for (const _childInfo of getChildInfos(node.members, includeNodes)) {
+        if (
+            _childInfo.kind === 'Doclet' ||
+            _childInfo.kind === 'Function' ||
+            _childInfo.kind === 'Property'
+        ) {
+            _members.push(_childInfo);
         }
-
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -1671,7 +1715,7 @@ function getName(
  * @param {TS.Node} node
  * Node that might be a namespace or module.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {NamespaceInfo|undefined}
@@ -1711,9 +1755,7 @@ function getNamespaceInfo(
 
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -1782,7 +1824,7 @@ function getNodesLastChild(
  * @param {TS.Node} node
  * Node that might be an object literal.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript nodes in the information.
  *
  * @return {ObjectInfo}
@@ -1834,9 +1876,7 @@ function getObjectInfo(
 
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -1903,9 +1943,7 @@ function getPropertyInfo(
         }
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -1923,7 +1961,7 @@ function getPropertyInfo(
  * @param {TS.Node} node
  * Node that might be a reference like an intendifier.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript node in the information.
  *
  * @return {ReferenceInfo|undefined}
@@ -1952,9 +1990,7 @@ function getReferenceInfo(
         )
     };
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -2022,7 +2058,7 @@ function getSourceInfo(
  * @param {TS.Node} node
  * Node that might be a type alias.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript node in the information.
  *
  * @return {TypeAliasInfo|undefined}
@@ -2051,7 +2087,8 @@ function getTypeAliasInfo(
             _info.value = (
                 getInfoType(node.constraint) ||
                 getInfoType(
-                    TS.getJSDocParameterTags(node)
+                    TS
+                        .getJSDocParameterTags(node)
                         .filter(_parameter => _parameter.name === _info.name)[0]
                 )
             );
@@ -2067,17 +2104,26 @@ function getTypeAliasInfo(
         );
         if (node.typeParameters) {
             /** @type {Array<TypeAliasInfo>} */
-            const _generics = _info.generics = [];
+            const _generics = [];
+
+            /** @type {TypeAliasInfo|undefined} */
+            let _typeAliasInfo;
+
             for (const parameter of node.typeParameters) {
-                _generics.push(getTypeAliasInfo(parameter));
+                _typeAliasInfo = getTypeAliasInfo(parameter);
+                if (_typeAliasInfo) {
+                    _generics.push(_typeAliasInfo);
+                }
+            }
+
+            if (_generics.length) {
+                _info.generics = _generics;
             }
         }
 
     }
 
-    if (node.flags) {
-        _info.flags = getInfoFlags(node);
-    }
+    addInfoFlags(_info, node);
 
     _info.meta = getInfoMeta(node);
 
@@ -2095,7 +2141,7 @@ function getTypeAliasInfo(
  * @param {TS.Node} node
  * Node that might be a variable or assignment.
  *
- * @param {boolean} includeNodes
+ * @param {boolean} [includeNodes]
  * Whether to include the TypeScript node in the information.
  *
  * @return {VariableInfo|undefined}
@@ -2133,11 +2179,9 @@ function getVariableInfo(
     }
 
     if (TS.isVariableDeclarationList(node.parent)) {
-        if (node.parent.parent.flags) {
-            _info.flags = getInfoFlags(node.parent.parent);
-        }
-    } else if (node.flags) {
-        _info.flags = getInfoFlags(node);
+        addInfoFlags(_info, node.parent.parent);
+    } else {
+        addInfoFlags(_info, node);
     }
 
     _info.meta = getInfoMeta(node);
@@ -2505,7 +2549,7 @@ function removeTag(
 
 
 /**
- * Resolves a reference name relative to the given source information.
+ * Resolves a reference relative to the given source information.
  *
  * @param {SourceInfo} sourceInfo
  * Source information to use.
@@ -2548,9 +2592,7 @@ function resolveReference(
                 ) {
                     return _info.value;
                 }
-            } else if (
-                _info.kind === 'Import'
-            ) {
+            } else if (_info.kind === 'Import') {
                 if (_info.imports) {
                     /** @type {string|undefined} */
                     let found;
@@ -2818,6 +2860,17 @@ module.exports = {
 
 
 /**
+ * @typedef ArrayInfo
+ * @property {DocletInfo} [doclet]
+ * @property {Array<InfoFlag>} [flags]
+ * @property {'Array'} kind
+ * @property {Meta} meta
+ * @property {TS.ArrayLiteralExpression} [node]
+ * @property {Array<Value>} values
+ */
+
+
+/**
  * @typedef ClassInfo
  * @property {DocletInfo} [doclet]
  * @property {string} [extends]
@@ -2833,9 +2886,9 @@ module.exports = {
 
 
 /**
- * @typedef {ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|FunctionCallInfo|
- *           FunctionInfo|ImportInfo|InterfaceInfo|NamespaceInfo|ObjectInfo|
- *           PropertyInfo|TypeAliasInfo|VariableInfo
+ * @typedef {ArrayInfo|ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|
+ *           FunctionCallInfo|FunctionInfo|ImportInfo|InterfaceInfo|
+ *           NamespaceInfo|ObjectInfo|PropertyInfo|TypeAliasInfo|VariableInfo
  *          } CodeInfo
  */
 
@@ -2845,8 +2898,8 @@ module.exports = {
  * @property {Record<string,string>} deconstructs
  * @property {DocletInfo} [doclet]
  * @property {Array<InfoFlag>} [flags]
+ * @property {string|FunctionCallInfo|ReferenceInfo} [from]
  * @property {'Deconstruct'} kind
- * @property {string} [from]
  * @property {Meta} meta
  * @property {TS.ParameterDeclaration|TS.VariableDeclaration} [node]
  * @property {Array<string>} [type]
@@ -2927,7 +2980,7 @@ module.exports = {
 
 /**
  * @typedef {'async'|'abstract'|'assured'|'await'|'declare'|'default'|'export'|
- *           'optional'|'private'|'protected'|'rest'|'static'
+ *           'optional'|'private'|'protected'|'rest'|'static'|'type'
  *          } InfoFlag
  */
 
@@ -3032,7 +3085,7 @@ module.exports = {
 
 
 /**
- * @typedef {boolean|null|number|string|FunctionCallInfo|FunctionInfo|
+ * @typedef {boolean|null|number|string|ArrayInfo|FunctionCallInfo|FunctionInfo|
  *           ObjectInfo|ReferenceInfo
  *          } Value
  */
