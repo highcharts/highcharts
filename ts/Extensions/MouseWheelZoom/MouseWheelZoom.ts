@@ -111,6 +111,7 @@ const zoomBy = function (
             width: 10,
             height: 10
         },
+        showResetZoomButton: options.showResetZoomButton,
         from: {
             x: mouseX - 5 * howMuch,
             y: mouseY - 5 * howMuch,
@@ -180,14 +181,8 @@ function onAfterGetContainer(this: Chart): void {
                     wheelZoomOptions
                 );
 
+                // Prevent page scroll
                 if (hasZoomed) {
-                    if (
-                        wheelZoomOptions.showResetZoomButton &&
-                        !defined(this.resetZoomButton)
-                    ) {
-                        this.showResetZoom();
-                    }
-                    // Prevent page scroll
                     e.preventDefault?.();
                 }
             }
@@ -259,7 +254,7 @@ export default MouseWheelZoomComposition;
  */
 
 /**
- * Whether the reset zoom button should appear after zooming.
+ * Whether the reset zoom button should appear after zooming with mouse wheel.
  *
  * @type      {boolean}
  * @default   false
