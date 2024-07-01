@@ -415,7 +415,7 @@ class StockToolsComponent extends AccessibilityComponent {
                     );
                 }
 
-                return component.keyboardNavigationHandler.response.success;
+                return component.keyboardNavigationHandler.response.noHandler;
             }
         }
 
