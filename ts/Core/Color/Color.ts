@@ -70,7 +70,7 @@ class Color implements ColorLike {
     public static parsers = [{
         // RGBA color
         // eslint-disable-next-line max-len
-        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+        regex: /rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d?(?:\.\d+)?)\s*\)/,
         parse: function (result: RegExpExecArray): Color.RGBA {
             return [
                 pInt(result[1]),
@@ -82,7 +82,7 @@ class Color implements ColorLike {
     }, {
         // RGB color
         regex:
-            /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+            /rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)/,
         parse: function (result: RegExpExecArray): Color.RGBA {
             return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
         }

@@ -21,7 +21,6 @@ import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
-import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -464,10 +463,9 @@ class BubbleSeries extends ScatterSeries {
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        LegendClass: typeof Legend,
-        SeriesClass: typeof SeriesType
+        LegendClass: typeof Legend
     ): void {
-        BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
+        BubbleLegendComposition.compose(ChartClass, LegendClass);
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);

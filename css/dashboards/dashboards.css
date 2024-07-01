@@ -693,7 +693,7 @@
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-60);
     position: absolute;
-    z-index: 1000;
+    z-index: 102;
     min-height: 300px;
     height: 100%;
     padding: 20px;
@@ -924,14 +924,18 @@
     top: 5%;
     overflow: hidden;
     position: absolute;
-    z-index: 100;
+    z-index: 103;
     border-radius: 10px;
     padding: 20px;
+    pointer-events: all;
+    border: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dashboards-edit-popup-close {
     background-repeat: no-repeat;
-    background-position: 0% 100%;
+    background-color: transparent;
+    background-position: 50% 100%;
+    border: none;
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -1216,6 +1220,11 @@
 
 .highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
     display: none;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-content.highcharts-dashboards-edit-standalone-element > .highcharts-dashboards-edit-label-text {
+    display: block;
 }
 
 .highcharts-dashboards-edit-accordion-content textarea {

@@ -37,7 +37,7 @@ import type {
  * A `area` series. If the [type](#series.area.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @sample {highcharts} highcharts/demo/area-basic/
+ * @sample {highcharts} highcharts/demo/area-chart/
  *         Area chart
  *
  * @sample {highstock} stock/demo/area/

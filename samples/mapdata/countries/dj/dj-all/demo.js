@@ -23,7 +23,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/dj/dj-all.topo.json">Djibouti</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/dj/dj-all.topo.json">Djibouti</a>'
         },
 
         mapNavigation: {

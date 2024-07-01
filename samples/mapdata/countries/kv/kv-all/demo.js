@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kv/kv-all.topo.json">Kosovo</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kv/kv-all.topo.json">Kosovo</a>'
         },
 
         mapNavigation: {

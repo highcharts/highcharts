@@ -1,0 +1,6 @@
+---
+ name: Edit mode layout events
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

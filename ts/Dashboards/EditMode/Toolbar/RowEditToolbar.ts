@@ -23,6 +23,7 @@ import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
 
 const {
+    fireEvent,
     merge,
     objectEach
 } = U;
@@ -69,21 +70,6 @@ class RowEditToolbar extends EditToolbar {
                         if (dragDrop && rowEditToolbar.row) {
                             dragDrop.onDragStart(e, rowEditToolbar.row);
                         }
-                    }
-                }
-            });
-        }
-
-        if (options.settings?.enabled) {
-            items.push({
-                id: 'settings',
-                type: 'icon' as const,
-                icon: iconURLPrefix + 'settings.svg',
-                events: {
-                    click: function (this: MenuItem): void {
-                        this.menu.parent.editMode.setEditOverlay();
-
-                        (this.menu.parent as RowEditToolbar).onRowOptions();
                     }
                 }
             });
@@ -223,6 +209,8 @@ class RowEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.row) {
+            const rowId = toolbar.row.options.id || -1;
+
             this.resetEditedRow();
 
             toolbar.row.destroy();
@@ -230,6 +218,12 @@ class RowEditToolbar extends EditToolbar {
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+
+            fireEvent(toolbar.editMode, 'layoutChanged', {
+                type: 'rowDestroyed',
+                target: rowId,
+                board: toolbar.editMode.board
+            });
         }
     }
 

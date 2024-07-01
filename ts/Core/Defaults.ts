@@ -390,7 +390,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @sample highcharts/global/buttontheme
          *         General button theme
-         * @since next
+         * @since 11.4.2
          */
         buttonTheme: {
             /**
@@ -539,7 +539,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type      {Highcharts.TimezoneOffsetCallbackFunction}
          * @since     4.1.0
-         * @deprecated next
+         * @deprecated 11.4.2
          * @product   highcharts highstock gantt
          */
         getTimezoneOffset: void 0,
@@ -578,7 +578,7 @@ const defaultOptions: DefaultOptions = {
          *         Timezone offset
          *
          * @since     3.0.8
-         * @deprecated next
+         * @deprecated 11.4.2
          * @product   highcharts highstock gantt
          */
         timezoneOffset: 0,
@@ -1141,6 +1141,34 @@ const defaultOptions: DefaultOptions = {
          * A CSS class name to apply to the legend group.
          */
         className: 'highcharts-no-tooltip',
+
+        /**
+         * General event handlers for the legend. These event hooks can
+         * also be attached to the legend at run time using the
+         * `Highcharts.addEvent` function.
+         *
+         * @declare Highcharts.LegendEventsOptionsObject
+         *
+         * @private
+         */
+        events: {},
+
+        /**
+         * Fires when the legend item belonging to the series is clicked. One
+         * parameter, `event`, is passed to the function. The default action
+         * is to toggle the visibility of the series, point or data class. This
+         * can be prevented by returning `false` or calling
+         * `event.preventDefault()`.
+         *
+         * @sample {highcharts} highcharts/legend/series-legend-itemclick/
+         *         Confirm hiding and showing
+         * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
+         *         Confirm toggle visibility of pie slices
+         *
+         * @type      {Highcharts.LegendItemClickCallbackFunction}
+         * @context   Highcharts.Legend
+         * @apioption legend.events.itemClick
+         */
 
         /**
          * When the legend is floating, the plot area ignores it and is allowed

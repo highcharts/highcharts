@@ -32,7 +32,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ro/ro-all.topo.json">Romania</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ro/ro-all.topo.json">Romania</a>'
         },
 
         mapNavigation: {

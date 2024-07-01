@@ -22,7 +22,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-dc-all.topo.json">District of Columbia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-dc-all.topo.json">District of Columbia</a>'
         },
 
         mapNavigation: {

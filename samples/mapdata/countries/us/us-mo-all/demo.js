@@ -60,7 +60,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-mo-all.topo.json">Missouri</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-mo-all.topo.json">Missouri</a>'
         },
 
         mapNavigation: {

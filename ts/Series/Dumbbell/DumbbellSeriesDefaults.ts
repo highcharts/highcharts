@@ -199,14 +199,14 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  */
 
 /**
- * Color of the start markers in a twojastara dumbbell graph. This option takes
+ * Color of the start markers in a dumbbell graph. This option takes
  * priority over the series color. To avoid this, set `lowColor` to
  * `undefined`.
  *
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @since     8.0.0
  * @product   highcharts highstock
- * @apioption  series.dumbell.lowColor
+ * @apioption  series.dumbbell.lowColor
  */
 
 /**

@@ -53,7 +53,7 @@ const { getElement, simulatedEventTarget } = HTMLUtilities;
  * The KeyboardNavigation class, containing the overall keyboard navigation
  * logic for the chart.
  *
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  *
  * @private
  * @class

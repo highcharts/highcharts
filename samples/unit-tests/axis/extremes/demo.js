@@ -192,7 +192,9 @@ QUnit.test(
             chart = new Highcharts.StockChart({
                 chart: {
                     renderTo: 'container',
-                    zoomType: 'x'
+                    zooming: {
+                        type: 'x'
+                    }
                 },
 
                 series: [
@@ -331,7 +333,9 @@ QUnit.test('getSeriesExtremes', function (assert) {
 QUnit.test('Zooming', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 minRange: 0.5
@@ -525,7 +529,9 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
         'highcharts/area',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
 
             xAxis: {
@@ -609,11 +615,13 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 // Highcharts v4.0.1, Issue #3104
 // Touch panning falls back to data range, ignores axis min and max
 QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
-    var chart = Highcharts.chart(
+    const chart = Highcharts.chart(
         'container',
         {
             chart: {
-                zoomType: 'x'
+                zooming: {
+                    type: 'x'
+                }
             },
             xAxis: {
                 min: 0,
@@ -632,16 +640,36 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
             chart.xAxis[0].setExtremes(2, 15, true, false);
         }
     );
-    var controller = new TestController(chart),
+    const controller = new TestController(chart),
         tickPositions = chart.axes[0].tickPositions,
         touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
-        touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
+        touchPointY = (chart.plotSizeY + chart.plotTop) / 2,
+        xAxis = chart.xAxis[0];
+
+    function slide(testedAxis, x, y) {
+        const extremes = testedAxis.getExtremes();
+
+        controller.slide(
+            [x + 200, y],
+            [x - 100, y]
+        );
+
+        assert.notStrictEqual(
+            extremes.min,
+            testedAxis.min,
+            'Ordinal xAxis min should change after touch sliding (#20877).'
+        );
+
+        assert.notStrictEqual(
+            extremes.max,
+            testedAxis.max,
+            'Ordinal xAxis max should change after touch sliding (#20877).'
+        );
+    }
 
     controller.slide(
         [touchPointX, touchPointY],
-        [touchPointX + 100, touchPointY],
-        undefined,
-        true
+        [touchPointX + 100, touchPointY]
     );
 
     var tickPositionsAfterSlide = chart.axes[0].tickPositions;
@@ -650,6 +678,74 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         tickPositions,
         tickPositionsAfterSlide,
         'Tick positions has changed after touch sliding'
+    );
+
+    // Reset user-extremes
+    xAxis.setExtremes();
+
+    chart.update({
+        chart: {
+            zooming: {
+                type: ''
+            },
+            panning: {
+                enabled: true,
+                type: 'x'
+            }
+        },
+        xAxis: {
+            type: 'datetime',
+            ordinal: true,
+            min: 0,
+            max: 5
+        },
+        tooltip: {
+            followTouchMove: false
+        },
+        series: [{
+            data: [
+                [0, 1],
+                [1, 4],
+                [4, 1],
+                [5, 4],
+                [6, 5],
+                [7, 5],
+                [10, 4],
+                [11, 5],
+                [12, 5],
+                [13, 4]
+            ]
+        }]
+    });
+
+    // First slide: test if panning + ordinal works
+    slide(xAxis, touchPointX, touchPointY);
+    // Second slide: test if we zoom into different range
+    slide(xAxis, touchPointX, touchPointY);
+    // Now test if pinching still works
+    xAxis.setExtremes(1, 10);
+    chart.update({
+        chart: {
+            zooming: {
+                type: 'x'
+            }
+        }
+    });
+    chart.pinching = true;
+    controller.pinch(touchPointX, touchPointY, -400);
+
+    const extremes = xAxis.getExtremes();
+
+    assert.strictEqual(
+        extremes.min,
+        0,
+        'Axis should should zoom out to min extreme on pinch out (#20877).'
+    );
+
+    assert.strictEqual(
+        extremes.max,
+        13,
+        'Axis should should zoom out to max extreme on pinch out (#20877).'
     );
 });
 

@@ -660,7 +660,11 @@ function getVersionPaths(version) {
  */
 async function uploadFiles(params) {
     const log = require('../../libs/log');
-    const { files, name, bucket, s3Params } = params;
+    const { files, name, bucket, s3Params, region } = params;
+
+    const stagingBuckets = [
+        'staging-code.highcharts.com'
+    ];
 
     params = Object.assign(
         {
@@ -672,7 +676,9 @@ async function uploadFiles(params) {
             callback: (from, to) => {
                 log.message(`Uploaded ${from} --> ${to}`);
             },
-            region: 'eu-west-1'
+            region: region || stagingBuckets.includes(bucket) ?
+                'eu-central-1' :
+                'eu-west-1'
         },
         params
     );

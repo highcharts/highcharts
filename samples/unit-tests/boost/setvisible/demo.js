@@ -71,3 +71,69 @@ QUnit.test('Boosted and not boosted series - visibility', function (assert) {
         'series (#10013).'
     );
 });
+
+QUnit.test('Marker group zooming and visibility', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'xy'
+        },
+        boost: {
+            enabled: true
+        },
+        plotOptions: {
+            series: {
+                boostThreshold: 25,
+                cropThreshold: 1
+            }
+        },
+        series: [{
+            data: [
+                62, 10, 50, 41, 31, 80, 49, 90,
+                84, 85, 61, 25, 67, 96, 25, 46,
+                10, 11, 10, 67, 89, 16, 82, 23,
+                99, 70, 34, 49, 90, 73, 56, 76,
+                35, 58
+            ]
+        }, {
+            data: [
+                33, 78, 67, 46, 81, 88, 47, 74,
+                78, 74, 47, 64, 79, 69, 64, 96,
+                47, 76, 79, 70, 71, 32, 24, 84,
+                26, 61, 76, 88, 35, 84, 72, 79,
+                86, 95
+            ]
+        }]
+    });
+
+    const series1 = chart.series[0],
+        series2 = chart.series[1],
+        controller = new TestController(chart);
+
+    controller.pan([150, 150], [300, 300]);
+
+    assert.notStrictEqual(
+        series1.markerGroup,
+        undefined,
+        'First series should have markerGroups'
+    );
+
+    assert.notStrictEqual(
+        series2.markerGroup,
+        undefined,
+        'Second series should have markerGroups'
+    );
+
+    assert.notStrictEqual(
+        series1.markerGroup,
+        series2.markerGroup,
+        'Both series should have unique markerGroups'
+    );
+
+    series2.setVisible(false);
+
+    assert.strictEqual(
+        series2.markerGroup.visibility,
+        'hidden',
+        'Second series markerGroup should be hidden'
+    );
+});
