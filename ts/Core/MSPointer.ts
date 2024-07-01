@@ -30,9 +30,12 @@ const {
 } = H;
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
+import DOMElementType from './Renderer/DOMElementType';
 const {
     addEvent,
+    attr,
     css,
+    defined,
     objectEach,
     pick,
     pushUnique,
@@ -189,6 +192,56 @@ class MSPointer extends Pointer {
                 '-ms-touch-action': 'none',
                 'touch-action': 'none'
             });
+        }
+    }
+
+    /**
+     * Utility to detect whether an element has, or has a parent with, a
+     * specific class name. Used on detection of tracker objects and on deciding
+     * whether hovering the tooltip should cause the active series to mouse out.
+     *
+     * @function Highcharts.Pointer#inClass
+     *
+     * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
+     * The element to investigate.
+     *
+     * @param {string} className
+     * The class name to look for.
+     *
+     * @return {boolean|undefined}
+     * True if either the element or one of its parents has the given class
+     * name.
+     */
+    public inClass(
+        element: DOMElementType,
+        className: string
+    ): (boolean|undefined) {
+        let elem: DOMElementType|null = element,
+            elemClassName;
+
+        while (elem) {
+            elemClassName = attr(elem, 'class');
+            if (elemClassName) {
+                if (elemClassName.indexOf(className) !== -1) {
+                    return true;
+                }
+                if (elemClassName.indexOf('highcharts-container') !== -1) {
+                    return false;
+                }
+            }
+            // #21098 IE11 compatibility
+            elem = elem.parentNode;
+            if (
+                elem && (
+                    // HTMLElement
+                    elem === document.documentElement ||
+                    // Document
+                    defined(elem.nodeType) &&
+                    elem.nodeType === document.nodeType
+                )
+            ) {
+                elem = null;
+            }
         }
     }
 

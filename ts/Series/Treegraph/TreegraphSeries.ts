@@ -56,7 +56,9 @@ import TreegraphLayout from './TreegraphLayout.js';
 import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
-
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 /* *
  *
  *  Declatarions
@@ -133,6 +135,30 @@ class TreegraphSeries extends TreemapSeries {
     public init(): void {
         super.init.apply(this, arguments);
         this.layoutAlgorythm = new TreegraphLayout();
+
+        // Register the link data labels in the label collector for overlap
+        // detection.
+        const series = this,
+            collectors = this.chart.labelCollectors,
+            collectorFunc = function (): Array<SVGElement> {
+                const linkLabels = [];
+
+                // Check links for overlap
+                if (!splat(series.options.dataLabels)[0].allowOverlap) {
+
+                    for (const link of series.links) {
+                        if (link.dataLabel) {
+                            linkLabels.push(link.dataLabel);
+                        }
+                    }
+                }
+                return linkLabels;
+            };
+
+        // Only add the collector function if it is not present
+        if (!collectors.some((f): boolean => f.name === 'collectorFunc')) {
+            collectors.push(collectorFunc);
+        }
     }
 
     /**
@@ -759,8 +785,8 @@ export default TreegraphSeries;
  * relativeXValue, softThreshold, stack, stacking, step,
  * traverseUpButton, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
- * @requires  modules/treemap.js
- * @requires  modules/treegraph.js
+ * @requires  modules/treemap
+ * @requires  modules/treegraph
  * @apioption series.treegraph
  */
 

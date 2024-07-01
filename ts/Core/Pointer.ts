@@ -1107,7 +1107,6 @@ class Pointer {
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             pointer &&
-            e.relatedTarget &&
             !this.inClass(e.relatedTarget as any, 'highcharts-tooltip')
         ) {
             pointer.reset();
@@ -1954,8 +1953,14 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
+            const relatedTargetObj = { relatedTarget: chart.container };
+
+            if (e && !e?.relatedTarget) {
+                e = { ...relatedTargetObj, ...e };
+            }
+
             hoverChart.pointer?.onContainerMouseLeave(
-                e || { relatedTarget: chart.container } as any
+                e || relatedTargetObj as any
             );
         }
 
@@ -1980,9 +1985,9 @@ class Pointer {
 
         this.setHoverChartIndex();
 
-        if ((e as any).touches.length === 1) {
+        e = this.normalize(e);
 
-            e = this.normalize(e);
+        if ((e as any).touches.length === 1) {
 
             isInside = chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
