@@ -439,7 +439,7 @@ class CSVConverter extends DataConverter {
             if (c === '#') {
                 // If there are hexvalues remaining (#13283)
                 if (
-                    !/^#[0-9a-f]{3,3}|[0-9a-f]{6,6}/i.test(
+                    !/^#[A-F\d]{3,3}|[A-F\d]{6,6}/i.test(
                         columnStr.substring(i)
                     )
                 ) {

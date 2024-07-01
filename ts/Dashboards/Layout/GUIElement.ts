@@ -119,7 +119,7 @@ abstract class GUIElement {
      * The width in percentages.
      */
     public static getPercentageWidth(width: string): string | undefined {
-        const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/;
+        const fractionRegEx = /^(\d{1})[\-\/\.](\d{1,2})$/;
         let result;
 
         if (fractionRegEx.test(width)) {

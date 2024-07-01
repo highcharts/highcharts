@@ -229,3 +229,68 @@ QUnit.test(
         button.remove();
         toolsContainer.remove();
     });
+
+QUnit.test('Stocktools GUI update', function (assert) {
+    let redrawsAmount = 0;
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            events: {
+                redraw: function () {
+                    redrawsAmount++;
+                }
+            }
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+    chart.update({
+        stockTools: {
+            gui: {
+                enabled: true,
+                buttons: ['indicators', 'measure'],
+                className: 'updatedClassName',
+                toolbarClassName: 'updatedToolbarClassName'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        redrawsAmount,
+        1,
+        'Updating Stock Tools should trigger redraw only once.'
+    );
+
+    assert.ok(
+        chart.stockTools.wrapper.classList.contains('updatedClassName'),
+        'Stock Tools should have updated class name.'
+    );
+
+    assert.ok(
+        chart.stockTools.toolbar.classList.contains('updatedToolbarClassName'),
+        'Toolbar should have updated class name.'
+    );
+
+    assert.strictEqual(
+        chart.stockTools.toolbar.children.length,
+        2,
+        'Stock Tools should have correct number of buttons after update.'
+    );
+
+    chart.update({
+        stockTools: {
+            gui: {
+                enabled: false
+            }
+        }
+    });
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-stocktools-wrapper'),
+        null,
+        'Stock Tools should be destroyed after disabling.'
+    );
+});
