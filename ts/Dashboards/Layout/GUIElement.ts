@@ -54,7 +54,7 @@ abstract class GUIElement {
         referenceElement?: HTMLDOMElement
     ): GUIElement.Offset {
         const offset =
-            { left: 0, top: 0, right: 0, bottom: 0 }as GUIElement.Offset;
+            { left: 0, top: 0, right: 0, bottom: 0 } as GUIElement.Offset;
 
         if (!guiElement.container) {
             return offset;
