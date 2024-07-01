@@ -159,7 +159,7 @@ export interface ColumnOptions {
     headFormat?: string;
 
     /**
-     * Extendable method for formatting cell's within the given column of
+     * Callback function for formatting cells within the given column of the
      * DataGrid.
      *
      * @return {string}
