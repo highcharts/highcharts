@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'World\'s largest cities per 2021'
+        text: 'World\'s largest cities per 2024'
     },
     subtitle: {
         text: 'Source: <a href="https://worldpopulationreview.com/world-cities" target="_blank">World Population Review</a>'
@@ -28,7 +28,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     tooltip: {
-        pointFormat: 'Population in 2021: <b>{point.y:.1f} millions</b>'
+        pointFormat: 'Population in 2024: <b>{point.y:.1f} millions</b>'
     },
     series: [{
         name: 'Population',
@@ -41,26 +41,26 @@ Highcharts.chart('container', {
         colorByPoint: true,
         groupPadding: 0,
         data: [
-            ['Tokyo', 37.33],
-            ['Delhi', 31.18],
-            ['Shanghai', 27.79],
-            ['Sao Paulo', 22.23],
-            ['Mexico City', 21.91],
-            ['Dhaka', 21.74],
-            ['Cairo', 21.32],
-            ['Beijing', 20.89],
-            ['Mumbai', 20.67],
-            ['Osaka', 19.11],
-            ['Karachi', 16.45],
-            ['Chongqing', 16.38],
-            ['Istanbul', 15.41],
-            ['Buenos Aires', 15.25],
-            ['Kolkata', 14.974],
-            ['Kinshasa', 14.970],
-            ['Lagos', 14.86],
-            ['Manila', 14.16],
-            ['Tianjin', 13.79],
-            ['Guangzhou', 13.64]
+            ['Tokyo', 37.11],
+            ['Delhi', 33.81],
+            ['Shanghai', 29.87],
+            ['Dhaka', 23.94],
+            ['Sao Paulo', 22.80],
+            ['Cairo', 22.62],
+            ['Mexico City', 22.51],
+            ['Beijing', 22.19],
+            ['Mumbai', 21.67],
+            ['Osaka', 18.97],
+            ['Chongqing', 17.77],
+            ['Karachi', 17.65],
+            ['Kinshasa', 17.03],
+            ['Lagos', 16.54],
+            ['Istanbul', 16.05],
+            ['Buenos Aires', 15.62],
+            ['Kolkata', 15.57],
+            ['Manila', 14.94],
+            ['Guangzhou', 14.59],
+            ['Tianjin', 14.47]
         ],
         dataLabels: {
             enabled: true,
