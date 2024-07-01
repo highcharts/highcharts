@@ -3642,7 +3642,7 @@ class Chart {
 
         let hasZoomed = false,
             displayButton: boolean|undefined,
-            isAnyAxisPanning = false;
+            isAnyAxisPanning: true|undefined;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -3823,8 +3823,8 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
-                        if (axis.isPanning && !isAnyAxisPanning) {
-                            isAnyAxisPanning = true;
+                        if (axis.isPanning) {
+                            isAnyAxisPanning = true; // #21319
                         }
 
                         axis.setExtremes(
