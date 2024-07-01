@@ -1218,9 +1218,13 @@
     flex-direction: column;
 }
 
-/* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-edit-accordion-content:not(.highcharts-dashboards-edit-standalone-element) > .highcharts-dashboards-edit-label-text {
+.highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
     display: none;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-content.highcharts-dashboards-edit-standalone-element > .highcharts-dashboards-edit-label-text {
+    display: block;
 }
 
 .highcharts-dashboards-edit-accordion-content textarea {

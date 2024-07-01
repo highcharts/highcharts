@@ -2,7 +2,7 @@
  * @license Highcharts Stock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/klinger
  * @requires highcharts
- * @requires highcharts/modules/stock
+ * @requires modules/stock
  *
  * Indicator series type for Highcharts Stock
  *
