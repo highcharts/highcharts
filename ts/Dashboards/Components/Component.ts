@@ -23,7 +23,6 @@
  * */
 
 import type Board from '../Board';
-import type Cell from '../Layout/Cell';
 import type {
     ComponentType,
     ComponentTypeRegistry
@@ -35,6 +34,8 @@ import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 
+import Cell from '../Layout/Cell.js';
+import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
 import ConnectorHandler from './ConnectorHandler.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -183,7 +184,7 @@ abstract class Component {
      *
      * @internal
      */
-    public cell: Cell;
+    public cell: Cell|CellHTML;
     /**
      * The connector handlers for the component.
      */
@@ -367,11 +368,15 @@ abstract class Component {
             });
 
             this.on('update', (): void => {
-                this.cell.setLoadingState();
+                if (this.cell instanceof Cell) {
+                    this.cell.setLoadingState();
+                }
             });
 
             this.on('afterRender', (): void => {
-                this.cell.setLoadingState(false);
+                if (this.cell instanceof Cell) {
+                    this.cell.setLoadingState(false);
+                }
             });
         }
     }
@@ -425,7 +430,11 @@ abstract class Component {
             }
         }
 
-        if (this.cell && Object.keys(this.cell).length) {
+        if (
+            this.cell &&
+            this.cell instanceof Cell &&
+            Object.keys(this.cell).length
+        ) {
             const board = this.cell.row.layout.board;
             this.cellListeners.push(
                 // Listen for resize on dashboard
@@ -440,10 +449,10 @@ abstract class Component {
                         const { row } = e;
                         if (row && this.cell) {
                             const hasLeftTheRow =
-                                row.getCellIndex(this.cell) === void 0;
+                                row.getCellIndex(this.cell as Cell) === void 0;
                             if (hasLeftTheRow) {
                                 if (this.cell) {
-                                    this.setCell(this.cell);
+                                    this.setCell(this.cell as Cell);
                                 }
                             }
                         }
