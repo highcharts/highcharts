@@ -21,7 +21,7 @@ jobs:
   add_milestone:
     runs-on: ubuntu-latest
     steps:
-    - uses: andrefcdias/add-to-milestone
+    - uses: andrefcdias/add-to-milestone@v1.3.0
       with:
         repo-token: "${{ secrets.PR_COMMENT_TOKEN }}"
         milestone: "Dashboards-Next"
