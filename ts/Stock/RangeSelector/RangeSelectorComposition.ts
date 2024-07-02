@@ -140,6 +140,13 @@ function axisMinFromRange(
 /**
  * @private
  */
+function updateRangeSelectorButtons(this: Chart): void {
+    this.rangeSelector?.redrawElements();
+}
+
+/**
+ * @private
+ */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -159,6 +166,7 @@ function compose(
         addEvent(ChartClass, 'getMargins', onChartGetMargins);
         addEvent(ChartClass, 'redraw', redrawRangeSelector);
         addEvent(ChartClass, 'update', onChartUpdate);
+        addEvent(ChartClass, 'beforeRedraw', updateRangeSelectorButtons);
 
         chartProto.callbacks.push(redrawRangeSelector);
 
@@ -209,7 +217,7 @@ function onChartBeforeRender(
         if (!rangeSelector.options.floating) {
             if (verticalAlign === 'bottom') {
                 this.extraBottomMargin = true;
-            } else if (verticalAlign !== 'middle') {
+            } else if (verticalAlign === 'top') {
                 this.extraTopMargin = true;
             }
         }
@@ -278,15 +286,17 @@ function onChartGetMargins(
 ): void {
     const rangeSelector = this.rangeSelector;
 
-    if (rangeSelector) {
+    if (rangeSelector?.options?.enabled) {
         const rangeSelectorHeight = rangeSelector.getHeight();
 
-        if (this.extraTopMargin) {
-            this.plotTop += rangeSelectorHeight;
-        }
+        const verticalAlign = rangeSelector.options.verticalAlign;
 
-        if (this.extraBottomMargin) {
-            (this.marginBottom as any) += rangeSelectorHeight;
+        if (!rangeSelector.options.floating) {
+            if (verticalAlign === 'bottom') {
+                (this.marginBottom as any) += rangeSelectorHeight;
+            } else if (verticalAlign !== 'middle') {
+                this.plotTop += rangeSelectorHeight;
+            }
         }
     }
 }
