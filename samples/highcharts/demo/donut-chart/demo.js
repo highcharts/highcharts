@@ -11,7 +11,7 @@ Highcharts.chart('container', {
                 if (!customLabel) {
                     customLabel = chart.options.chart.custom.label =
                         chart.renderer.label(
-                            'Total auto registrations <br/>' +
+                            'Total<br/>' +
                             '<strong>5 685 785</strong>'
                         )
                             .css({
@@ -31,7 +31,7 @@ Highcharts.chart('container', {
                 });
                 // Set font size based on chart diameter
                 customLabel.css({
-                    fontSize: `${series.center[2] / 15}px`
+                    fontSize: `${series.center[2] / 12}px`
                 });
             }
         }
@@ -65,7 +65,10 @@ Highcharts.chart('container', {
             }, {
                 enabled: true,
                 distance: -15,
-                format: '{point.percentage:.0f}%'
+                format: '{point.percentage:.0f}%',
+                style: {
+                    fontSize: '0.9em'
+                }
             }],
             showInLegend: true
         }
