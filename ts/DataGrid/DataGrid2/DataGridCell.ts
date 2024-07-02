@@ -225,23 +225,21 @@ class DataGridCell {
 
         // Replace cell contents with an input element
         cellElement.innerHTML = '';
+        cellElement.classList.add(Globals.classNames.focusedCell);
+        
+        this.column.viewport.editedCell = cell;
 
         // create an input
         const input = this.cellInputEl =
             makeHTMLElement('input', {}, cellElement);
         input.style.height = (cellElement.clientHeight - 1) + 'px';
-        cellElement.classList.add(Globals.classNames.focusedCell);
-        input.focus();
         input.value = value || '';
-
-        this.column.viewport.editedCell = this;
-        const _self = this;
-
+        input.focus();
         input.addEventListener('keydown', (e: any) => {
-            if (_self.column.id && _self.row.index > -1 && editedCell) {
+            if (cell.column.id && cell.row.index > -1 && editedCell) {
                 cell.column.viewport.dataTable.setCell(
-                    _self.column.id,
-                    _self.row.index,
+                    cell.column.id,
+                    cell.row.index,
                     e.target?.value || value
                 );
 
