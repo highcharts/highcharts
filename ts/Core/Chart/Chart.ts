@@ -3784,7 +3784,7 @@ class Chart {
             // them.
             if (
                 !axis.isOrdinal ||
-                !axis.ordinal?.getExtendedPositions() || // #21316
+                axis.options.overscroll || // #21316
                 scale !== 1 ||
                 reset
             ) {

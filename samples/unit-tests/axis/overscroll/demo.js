@@ -61,8 +61,8 @@
         'Ordinal: ' + ordinal + ' - Extremes from rangeSelector buttons' +
         ' + panning.',
         function (assert) {
-            let options = getOptions(),
-                xAxis;
+            const options = getOptions();
+            let xAxis;
 
             xAxis = Highcharts.stockChart('container', options).xAxis[0];
 
@@ -71,8 +71,6 @@
                 options.rangeSelector.buttons[0].count,
                 'Correct range with preselected button (1s)'
             );
-
-            options = getOptions();
             options.rangeSelector.selected = null;
 
             const chart = Highcharts.stockChart('container', options),
