@@ -14,9 +14,12 @@ on:
       - 'css/dashboards*'
       - 'css/datagrid*'
       - 'samples/dashboards/**'
+      - 'samples/data-grid/**'
       - 'test/cypress/dashboards/visual/**'
+      - 'test/cypress/data-grid/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'ts/DataGrid/**'
 
 permissions:
    contents: read # to fetch code (actions/checkout)
@@ -34,7 +37,7 @@ jobs:
         node-version: [lts/*]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
