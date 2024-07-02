@@ -14,9 +14,12 @@ on:
       - 'css/dashboards*'
       - 'css/datagrid*'
       - 'samples/dashboards/**'
+      - 'samples/data-grid/**'
       - 'test/cypress/dashboards/visual/**'
+      - 'test/cypress/data-grid/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'ts/DataGrid/**'
 
 permissions:
    contents: read # to fetch code (actions/checkout)
