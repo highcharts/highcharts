@@ -189,100 +189,108 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
         tp = this.element?.querySelector('textPath');
 
     if (tp) {
-        const polygon: [number, number][] = [],
-            { b, h } = this.renderer.fontMetrics(this.element),
-            descender = h - b,
-            lineCleanerRegex = new RegExp(
-                '(<tspan>|' +
-                '<tspan(?!\\sclass="highcharts-br")[^>]*>|' +
-                '<\\/tspan>)',
-                'g'
-            ),
-            lines = tp
-                .innerHTML
-                .replace(lineCleanerRegex, '')
-                .split(
-                    /<tspan class="highcharts-br"[^>]*>/
+        // Try-catch for getStartPositionOfChar/getEndPositionOfChar
+        // failing in Safari
+        try {
+            const polygon: [number, number][] = [],
+                { b, h } = this.renderer.fontMetrics(this.element),
+                descender = h - b,
+                lineCleanerRegex = new RegExp(
+                    '(<tspan>|' +
+                    '<tspan(?!\\sclass="highcharts-br")[^>]*>|' +
+                    '<\\/tspan>)',
+                    'g'
                 ),
-            numOfLines = lines.length;
+                lines = tp
+                    .innerHTML
+                    .replace(lineCleanerRegex, '')
+                    .split(
+                        /<tspan class="highcharts-br"[^>]*>/
+                    ),
+                numOfLines = lines.length;
 
-        // Calculate top and bottom coordinates for
-        // either the start or the end of a single
-        // character, and append it to the polygon.
-        const appendTopAndBottom = (
-            charIndex: number,
-            positionOfChar: PositionObject
-        ): [[number, number], [number, number]] => {
-            const { x, y } = positionOfChar,
-                rotation = (
-                    tp.getRotationOfChar(charIndex) - 90
-                ) * deg2rad,
-                cosRot = Math.cos(rotation),
-                sinRot = Math.sin(rotation);
-            return [
-                [
-                    x - descender * cosRot,
-                    y - descender * sinRot
-                ],
-                [
-                    x + b * cosRot,
-                    y + b * sinRot
-                ]
-            ];
-        };
-
-        for (
-            let i = 0, lineIndex = 0;
-            lineIndex < numOfLines;
-            lineIndex++
-        ) {
-            const line = lines[lineIndex],
-                lineLen = line.length;
+            // Calculate top and bottom coordinates for
+            // either the start or the end of a single
+            // character, and append it to the polygon.
+            const appendTopAndBottom = (
+                charIndex: number,
+                positionOfChar: PositionObject
+            ): [[number, number], [number, number]] => {
+                const { x, y } = positionOfChar,
+                    rotation = (
+                        tp.getRotationOfChar(charIndex) - 90
+                    ) * deg2rad,
+                    cosRot = Math.cos(rotation),
+                    sinRot = Math.sin(rotation);
+                return [
+                    [
+                        x - descender * cosRot,
+                        y - descender * sinRot
+                    ],
+                    [
+                        x + b * cosRot,
+                        y + b * sinRot
+                    ]
+                ];
+            };
 
             for (
-                let lineCharIndex = 0;
-                lineCharIndex < lineLen;
-                lineCharIndex += 5
+                let i = 0, lineIndex = 0;
+                lineIndex < numOfLines;
+                lineIndex++
             ) {
-                const srcCharIndex = (
-                        i +
+                const line = lines[lineIndex],
+                    lineLen = line.length;
+
+                for (
+                    let lineCharIndex = 0;
+                    lineCharIndex < lineLen;
+                    lineCharIndex += 5
+                ) {
+                    const srcCharIndex = (
+                            i +
                         lineCharIndex +
                         lineIndex
-                    ),
-                    [lower, upper] = appendTopAndBottom(
-                        srcCharIndex,
-                        tp.getStartPositionOfChar(srcCharIndex)
-                    );
+                        ),
+                        [lower, upper] = appendTopAndBottom(
+                            srcCharIndex,
+                            tp.getStartPositionOfChar(srcCharIndex)
+                        );
 
-                if (lineCharIndex === 0) {
-                    polygon.push(upper);
-                    polygon.push(lower);
-                } else {
-                    if (lineIndex === 0) {
-                        polygon.unshift(upper);
-                    }
-                    if (lineIndex === numOfLines - 1) {
+                    if (lineCharIndex === 0) {
+                        polygon.push(upper);
                         polygon.push(lower);
+                    } else {
+                        if (lineIndex === 0) {
+                            polygon.unshift(upper);
+                        }
+                        if (lineIndex === numOfLines - 1) {
+                            polygon.push(lower);
+                        }
                     }
                 }
+
+                i += lineLen - 1;
+
+                const srcCharIndex = i + lineIndex,
+                    charPos = tp.getEndPositionOfChar(srcCharIndex),
+                    [lower, upper] = appendTopAndBottom(
+                        srcCharIndex,
+                        charPos
+                    );
+                polygon.unshift(upper);
+                polygon.unshift(lower);
             }
 
-            i += lineLen - 1;
+            if (polygon.length) {
+                // Close it
+                polygon.push(polygon[0].slice() as [number, number]);
+            }
 
-            const srcCharIndex = i + lineIndex,
-                charPos = tp.getEndPositionOfChar(srcCharIndex),
-                [lower, upper] = appendTopAndBottom(
-                    srcCharIndex,
-                    charPos
-                );
-            polygon.unshift(upper);
-            polygon.unshift(lower);
-        }
+            bBox.polygon = polygon;
 
-        // Close it
-        polygon.push(polygon[0].slice() as [number, number]);
-
-        bBox.polygon = polygon;
+            // eslint-disable-next-line no-empty
+        } catch {}
     }
     return bBox;
 }
@@ -326,6 +334,9 @@ function drawTextPath(
     }
 }
 
+/**
+ *
+ */
 function compose(SVGElementClass: typeof SVGElement): void {
     addEvent(SVGElementClass, 'afterGetBBox', setPolygon);
     addEvent(SVGElementClass, 'beforeAddingDataLabel', drawTextPath);
