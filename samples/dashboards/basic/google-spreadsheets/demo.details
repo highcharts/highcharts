@@ -1,0 +1,6 @@
+---
+ name: Google Spreadsheets with beforeParse
+ authors:
+   - Jomar Hønsi
+ js_wrap: b
+...

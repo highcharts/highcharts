@@ -310,7 +310,7 @@ test('HTMLTableConverter', function (assert) {
     tableElement.setAttribute('id', 'myDivider');
     tableElement.innerHTML = tableHTML;
 
-    const dataconverter = new HTMLTableConverter({ tableElement })
+    const dataconverter = new HTMLTableConverter({ tableElement });
     const done = assert.async();
 
     dataconverter.on('afterParse', e => {
