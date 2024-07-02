@@ -153,6 +153,7 @@ class SVGLabel extends SVGElement {
     public paddingRightSetter = this.paddingSetter;
     public text: SVGElement;
     public textStr: string;
+    public doUpdate = false;
     public x: number;
 
     /* *
@@ -311,6 +312,26 @@ class SVGLabel extends SVGElement {
 
     public heightSetter(value: number): void {
         this.heightSetting = value;
+        this.doUpdate = true;
+    }
+
+
+    /**
+     * This method is executed in the end of `attr()`, after setting all
+     * attributes in the hash. In can be used to efficiently consolidate
+     * multiple attributes in one SVG property -- e.g., translate, rotate and
+     * scale are merged in one "transform" attribute in the SVG node.
+     * Also updating height or width should trigger update of the box size.
+     *
+     * @private
+     * @function Highcharts.SVGLabel#afterSetters
+     */
+    public afterSetters(): void {
+        super.afterSetters();
+        if (this.doUpdate) {
+            this.updateBoxSize();
+            this.doUpdate = false;
+        }
     }
 
     /*
@@ -518,6 +539,7 @@ class SVGLabel extends SVGElement {
     public widthSetter(value: (number|string)): void {
         // `width:auto` => null
         this.widthSetting = isNumber(value) ? value : void 0;
+        this.doUpdate = true;
     }
 
     public getPaddedWidth(): number {

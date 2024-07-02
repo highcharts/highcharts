@@ -15,9 +15,6 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Points above 10 trigger alert by screen reader'
     },
-    caption: {
-        text: 'A test case for dynamic data in charts.'
-    },
     accessibility: {
         announceNewData: {
             enabled: true,
@@ -27,20 +24,7 @@ Highcharts.chart('container', {
         }
     },
     chart: {
-        type: 'spline',
-        events: {
-            load: function () {
-                // Set up the updating of the chart each second
-                const series = this.series[0];
-                updateIntervalId = setInterval(function () {
-                    series.addPoint(
-                        Math.round(Math.random() * 110) / 10,
-                        true,
-                        series.points.length > 20
-                    );
-                }, 2000);
-            }
-        }
+        type: 'spline'
     },
     yAxis: {
         min: 0,
@@ -60,7 +44,30 @@ Highcharts.chart('container', {
     }]
 });
 
-const stopButton = document.getElementById('stop');
-stopButton.addEventListener('click', function () {
-    clearInterval(updateIntervalId);
+function startUpdatingData() {
+    // Set up the updating of the chart each second
+    const chart = Highcharts.charts[0],
+        series = chart.series[0];
+    updateIntervalId = setInterval(function () {
+        series.addPoint(
+            Math.round(Math.random() * 110) / 10,
+            true,
+            series.points.length > 20
+        );
+    }, 2000);
+}
+
+let isUpdating = false;
+
+const toggleButton = document.getElementById('toggle-announce');
+toggleButton.addEventListener('click', function () {
+    if (isUpdating) {
+        clearInterval(updateIntervalId);
+        toggleButton.textContent = 'Start updating live data';
+        isUpdating = false;
+    } else {
+        startUpdatingData();
+        toggleButton.textContent = 'Stop updating live data';
+        isUpdating = true;
+    }
 });
