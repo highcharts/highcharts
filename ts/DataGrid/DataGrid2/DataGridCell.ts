@@ -23,6 +23,7 @@
 
 import type DataTable from '../../Data/DataTable';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
@@ -92,7 +93,7 @@ class DataGridCell {
         this.row = row;
         this.row.registerCell(this);
 
-        this.htmlElement.addEventListener('mouseenter', this.onMouseEnter);
+        this.htmlElement.addEventListener('mouseover', this.onMouseOver);
         this.htmlElement.addEventListener('mouseout', this.onMouseOut);
     }
 
@@ -111,13 +112,27 @@ class DataGridCell {
             return;
         }
 
-        const formatString = this.column.userOptions.cellFormat;
+        const { cellFormat, cellFormatter, useHTML } = this.column.userOptions;
+        let cellContent = '';
         this.value = this.column.data[this.row.index];
 
-        this.htmlElement.innerText =
-            (
-                formatString ? format(formatString, this) : this.value
-            ) as string;
+        if (cellFormatter) {
+            cellContent = cellFormatter.call({
+                value: this.value
+            });
+        } else {
+            cellContent = (
+                    cellFormat ?
+                        format(cellFormat, this) :
+                        this.value + ''
+                );
+        }
+
+        if (useHTML) {
+            this.renderHTMLCellContent(cellContent, this.htmlElement);
+        } else {
+            this.htmlElement.innerText = cellContent;
+        }
 
         this.row.htmlElement.appendChild(this.htmlElement);
     }
@@ -133,9 +148,27 @@ class DataGridCell {
     }
 
     /**
+     * When useHTML enabled, parse the syntax and render HTML.
+     *
+     * @param cellContent
+     * Content to render.
+     *
+     * @param parentElement
+     * Parent element where the content should be.
+     *
+     */
+    private renderHTMLCellContent(
+        cellContent: string,
+        parentElement: HTMLElement
+    ): void {
+        const formattedNodes = new AST(cellContent);
+        formattedNodes.addToDOM(parentElement);
+    }
+
+    /**
      * Sets the hover state of the cell and its row and column.
      */
-    private readonly onMouseEnter = (): void => {
+    private readonly onMouseOver = (): void => {
         this.row.setHover(true);
         this.column.setHover(true);
     };
@@ -152,7 +185,7 @@ class DataGridCell {
      * Destroys the cell.
      */
     public destroy(): void {
-        this.htmlElement.removeEventListener('mouseenter', this.onMouseEnter);
+        this.htmlElement.removeEventListener('mouseover', this.onMouseOver);
         this.htmlElement.removeEventListener('mouseout', this.onMouseOut);
         this.htmlElement.remove();
     }
