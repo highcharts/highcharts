@@ -670,6 +670,16 @@ QUnit.test('Label padding', assert => {
             'Padding should increase width by 20'
         );
     });
+
+    label.attr({
+        height: 100
+    });
+
+    assert.strictEqual(
+        label.getBBox().height,
+        100,
+        'Height should be updated'
+    );
 });
 
 QUnit.test('Label callout tests', assert => {

@@ -1,0 +1,37 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#container {
+    padding: 10px;
+    background-color: var(--highcharts-neutral-color-5);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cell {
+    flex: 1;
+    min-width: 20px;
+}
+
+.cell > .highcharts-dashboards-component {
+    position: relative;
+    margin: 10px;
+    background-clip: border-box;
+    background-color: var(--highcharts-background-color);
+}
+
+@media (max-width: 576px) {
+    .row {
+        flex-direction: column;
+    }
+
+    #dashboard-col-0,
+    #dashboard-col-1 {
+        flex: unset;
+        width: 100%;
+    }
+}

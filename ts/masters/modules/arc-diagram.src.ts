@@ -1,8 +1,7 @@
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
- * @module highcharts/modules/arc-diagram
- * @requires highcharts
- * @requires highcharts/modules/sankey
+ * @module modules/arc-diagram
+ * @requires modules/sankey
  *
  * Arc diagram module
  *

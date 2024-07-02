@@ -598,10 +598,10 @@ class DataGrid {
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
-            rowElement.dataset.rowIndex = String(i);
+            rowElement.dataset.rowIndex =
+                this.dataTable.getRowIndexOriginal(i);
 
             const cellElements = rowElement.childNodes;
-
 
             for (
                 let k = 0, kEnd = columnsInPresentationOrder.length;

@@ -14,16 +14,12 @@
  *
  * */
 
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type { CSSObject } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
-import U from '../../Core/Utilities.js';
-import Globals from '../Globals.js';
 
+import Globals from '../Globals.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -40,57 +36,90 @@ abstract class GUIElement {
     *
     * */
 
-    // Get offsets of the guiElement relative to
-    // the referenceElement or the Viewport.
+    /**
+     * Get offsets of the guiElement relative to the referenceElement or the
+     * Viewport.
+     *
+     * @param guiElement
+     * The element to get the offsets from.
+     *
+     * @param referenceElement
+     * The element to get the offsets relative to.
+     *
+     * @returns
+     * The offsets of the guiElement.
+     */
     public static getOffsets(
         guiElement: GUIElement,
         referenceElement?: HTMLDOMElement
-    ): Record<string, number> {
-        const offset = { left: 0, top: 0, right: 0, bottom: 0 };
+    ): GUIElement.Offset {
+        const offset =
+            { left: 0, top: 0, right: 0, bottom: 0 } as GUIElement.Offset;
 
-        if (guiElement.container) {
-            const guiElementClientRect =
-                guiElement.container.getBoundingClientRect();
-            const referenceClientRect = referenceElement ?
-                referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
-
-            offset.left = guiElementClientRect.left - referenceClientRect.left;
-            offset.top = guiElementClientRect.top - referenceClientRect.top;
-            offset.right =
-                guiElementClientRect.right - referenceClientRect.left;
-            offset.bottom =
-                guiElementClientRect.bottom - referenceClientRect.top;
+        if (!guiElement.container) {
+            return offset;
         }
+
+        const guiElementClientRect =
+            guiElement.container.getBoundingClientRect();
+        const referenceClientRect = referenceElement ?
+            referenceElement.getBoundingClientRect() : { left: 0, top: 0 };
+
+        offset.left = guiElementClientRect.left - referenceClientRect.left;
+        offset.top = guiElementClientRect.top - referenceClientRect.top;
+        offset.right =
+            guiElementClientRect.right - referenceClientRect.left;
+        offset.bottom =
+            guiElementClientRect.bottom - referenceClientRect.top;
 
         return offset;
     }
 
-    // Get dimensions of the guiElement container from offsets.
+    /**
+     * Get dimensions of the guiElement container from offsets.
+     *
+     * @param offsets
+     * The offsets of the guiElement container.
+     *
+     * @returns
+     * The dimensions of the guiElement container.
+     */
     public static getDimFromOffsets(
-        offsets: Record<string, number>
-    ): Record<string, number> {
+        offsets: GUIElement.Offset
+    ): GUIElement.Dimensions {
         return {
             width: offsets.right - offsets.left,
             height: offsets.bottom - offsets.top
         };
     }
 
-    // Method for element id generation.
-    public static createElementId(
-        elementType: string // 'col', 'row', 'layout'
-    ): string {
+    /**
+     * Based on the element provided, generate an unique id.
+     *
+     * @param elementType
+     * Type of the element.
+     *
+     * @returns
+     * The unique id.
+     */
+    public static getElementId(elementType: GUIElement.GUIElementType): string {
         return (
             Globals.classNamePrefix + elementType + '-' +
             uniqueKey().slice(11)
         );
     }
 
-    // Get width in percentages (0% - 100%).
-    public static getPercentageWidth(
-        width: string // Supported formats '50%' or '1/2'
-    ): string | undefined {
-        const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/;
-
+    /**
+     * Get width in percentages (0% - 100%).
+     *
+     * @param width
+     * The width of the element. Supported formats '50%' or '1/2'.
+     *
+     * @returns
+     * The width in percentages.
+     */
+    public static getPercentageWidth(width: string): string | undefined {
+        const fractionRegEx = /^(\d{1})[\-\/\.](\d{1,2})$/;
         let result;
 
         if (fractionRegEx.test(width)) {
@@ -148,6 +177,9 @@ abstract class GUIElement {
      *
      * @param {GUIElement.ContainerOptions} options
      * Options.
+     *
+     * @returns
+     * The HTML element for the element container.
      */
     protected getElementContainer(
         options: GUIElement.GetElementContainerOptions
@@ -194,8 +226,7 @@ abstract class GUIElement {
     }
 
     /**
-     * Destroy the element, its container, event hooks
-     * and all properties.
+     * Destroy the element, its container, event hooks and all properties.
      */
     protected destroy(): void {
         const guiElement = this;
@@ -218,7 +249,8 @@ abstract class GUIElement {
 
     /**
      * Return the GUIElement instance type.
-     * @return {GUIElement.GUIElementType|undefined}
+     *
+     * @returns
      * The GUIElement instance type
      */
     public getType(): GUIElement.GUIElementType|undefined {
@@ -267,7 +299,20 @@ namespace GUIElement {
         guiElement: GUIElement;
     }
 
-    export type GUIElementType = 'row'|'cell'|'layout';
+    export type GUIElementType =
+        'row'|'cell'|'layout'|'cell-html'|'col-nested'|'col';
+
+    export interface Offset {
+        left: number;
+        top: number;
+        right: number;
+        bottom: number;
+    }
+
+    export interface Dimensions {
+        width: number;
+        height: number;
+    }
 }
 
 export default GUIElement;

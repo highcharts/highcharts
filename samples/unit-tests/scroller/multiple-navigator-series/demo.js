@@ -47,6 +47,16 @@ QUnit.test('Setting base series on chart', function (assert) {
         2,
         'Navigator has two series'
     );
+
+    // #21043
+    while (chart.series.length > 0) {
+        chart.series[0].remove(false);
+    }
+    assert.strictEqual(
+        chart.navigator.baseSeries.length,
+        0,
+        'After series removal, baseSeries should be cleared too. (#21043)'
+    );
 });
 
 QUnit.test('Overriding base series option on chart', function (assert) {
