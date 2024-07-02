@@ -42,7 +42,6 @@ const {
 /**
  * Abstract class to provide an interface for modifying a table.
  *
- * @private
  */
 abstract class DataModifier implements DataEvent.Emitter {
 
@@ -318,7 +317,6 @@ abstract class DataModifier implements DataEvent.Emitter {
 
 /**
  * Additionally provided types for modifier events and options.
- * @private
  */
 namespace DataModifier {
 

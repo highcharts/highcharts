@@ -44,7 +44,6 @@ const {
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  *
- * @private
  */
 class ChainModifier extends DataModifier {
 
@@ -496,7 +495,6 @@ class ChainModifier extends DataModifier {
 
 /**
  * Additionally provided types for modifier events and options.
- * @private
  */
 namespace ChainModifier {
 

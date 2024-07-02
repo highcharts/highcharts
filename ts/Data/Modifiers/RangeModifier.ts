@@ -46,7 +46,6 @@ const {
 /**
  * Filters out table rows with a specific value range.
  *
- * @private
  */
 class RangeModifier extends DataModifier {
 
@@ -218,8 +217,6 @@ class RangeModifier extends DataModifier {
 
         return table;
     }
-
-
 }
 
 
