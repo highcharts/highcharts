@@ -208,8 +208,7 @@ test('Nested layouts serialization.', function (assert) {
         editMode: {
             enabled: true,
             contextMenu: {
-                enabled: true,
-                items: ['editMode']
+                enabled: true
             }
         },
         gui: {
@@ -281,8 +280,7 @@ test('Reserialized cell width', function (assert) {
         editMode: {
             enabled: true,
             contextMenu: {
-                enabled: true,
-                items: ['editMode']
+                enabled: true
             }
         },
         gui: {

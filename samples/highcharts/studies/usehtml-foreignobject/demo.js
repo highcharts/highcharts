@@ -1,7 +1,7 @@
 // Experimental support `foreignObject`. This will resolve all z-index issues,
 // and we can remove the `foreignObject` regex in Exporting.
 (H => {
-    const { addEvent, css, HTMLElement, SVGElement } = H;
+    const { addEvent, css, HTMLElement, isNumber, SVGElement } = H;
 
     addEvent(HTMLElement, 'afterInit', function () {
 
@@ -32,13 +32,15 @@
     HTMLElement.prototype.updateTransform = function () {
         updateTransform.call(this);
         const { width, height } = this.getBBox();
-        this.fo?.attr({
-            x: this.x + (this.xCorr || 0),
-            y: this.y + (this.yCorr || 0),
-            width,
-            height
-        });
-        css(this.element, { left: 0, top: 0 });
+        if (isNumber(this.x) && isNumber(this.y)) {
+            this.fo?.attr({
+                x: this.x + (this.xCorr || 0),
+                y: this.y + (this.yCorr || 0),
+                width,
+                height
+            });
+            css(this.element, { left: 0, top: 0 });
+        }
     };
 })(Highcharts);
 
