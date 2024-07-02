@@ -1,0 +1,8 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 2021
+    },
+    "env": {
+        "node": true
+    }
+}
