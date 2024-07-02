@@ -265,8 +265,8 @@ QUnit.test(
         );
 
         chart.renderTo.style.transform = '';
-    });
-
+    }
+);
 
 QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
     if (window.requestAnimationFrame) {
@@ -302,7 +302,7 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
                 'After updating container width, the chart should adjust its.'
             );
             done();
-        }, 100);
+        }, 150);
     } else {
         assert.ok(
             true,
@@ -311,3 +311,41 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
         );
     }
 });
+
+QUnit.test(
+    'Chart reflow using ResizeObserver with hidden accessibility divs, #21188.',
+    assert => {
+        if (window.requestAnimationFrame) {
+            const chart = Highcharts.chart('container2', {
+                    series: [{
+                        data: [3, 5, 1, 3]
+                    }]
+                }),
+                initChartWidth = chart.chartWidth,
+                initChartHeight = chart.chartHeight;
+
+            const done = assert.async();
+            setTimeout(() => {
+                assert.strictEqual(
+                    chart.chartWidth,
+                    initChartWidth,
+                    `Accessibility hidden components with padding of height CSS
+                    styles shouldn't increase the chart size, #21188.`
+                );
+                assert.strictEqual(
+                    chart.chartHeight,
+                    initChartHeight,
+                    `Accessibility hidden components with padding of height CSS
+                    styles shouldn't increase the chart size, #21188.`
+                );
+                done();
+            }, 150);
+        } else {
+            assert.ok(
+                true,
+                `The requestAnimationFrame does not work in karma environment
+                thus ResizeObserver will not work.`
+            );
+        }
+    }
+);
