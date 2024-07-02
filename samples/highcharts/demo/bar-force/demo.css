@@ -1,3 +1,7 @@
+.highcharts-figure {
+    margin: 10px;
+}
+
 #container {
     height: 170px;
 }
