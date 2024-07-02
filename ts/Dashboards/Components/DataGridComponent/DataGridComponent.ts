@@ -22,7 +22,6 @@
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type { DataGrid, DataGridNamespace } from '../../Plugins/DataGridTypes';
-import type BaseDataGridOptions from '../../../DataGrid/DataGridOptions';
 import type Options from './DataGridComponentOptions';
 
 import Component from '../Component.js';
@@ -57,10 +56,14 @@ class DataGridComponent extends Component {
      */
     public static predefinedSyncConfig = DataGridSyncs;
 
-    /** @private */
+    /**
+     * The namespace of the DataGrid component.
+     */
     public static DataGridNamespace?: DataGridNamespace;
 
-    /** @private */
+    /**
+     * The default options for the DataGrid component.
+     */
     public static defaultOptions = merge(
         Component.defaultOptions,
         DataGridComponentDefaults
@@ -72,7 +75,18 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @private */
+    /**
+     * Function to create a DataGrid component from JSON.
+     *
+     * @param json
+     * The JSON to create the DataGrid component from.
+     *
+     * @param cell
+     * The cell to create the DataGrid component in.
+     *
+     * @returns
+     * The DataGrid component created from the JSON.
+     */
     public static fromJSON(
         json: DataGridComponent.ClassJSON,
         cell: Cell
@@ -99,17 +113,16 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @private */
+    /**
+     * The DataGrid that is rendered in the DataGrid component.
+     */
     public dataGrid?: DataGrid;
 
-    /** @private */
-    public dataGridOptions: Partial<BaseDataGridOptions>;
-
-    /** @private */
+    /**
+     * The options of the DataGrid component.
+     */
     public options: Options;
 
-    /** @private */
-    private connectorListeners: Array<Function>;
 
     /* *
      *
@@ -123,27 +136,18 @@ class DataGridComponent extends Component {
         board?: Board
     ) {
         options = merge(DataGridComponent.defaultOptions, options);
-
         super(cell, options, board);
 
-        this.connectorListeners = [];
         this.options = options as Options;
         this.type = 'DataGrid';
 
         if (this.options.dataGridClassName) {
             this.contentElement.classList.add(this.options.dataGridClassName);
         }
+
         if (this.options.dataGridID) {
             this.contentElement.id = this.options.dataGridID;
         }
-
-        this.dataGridOptions = (
-            this.options.dataGridOptions ||
-            ({} as BaseDataGridOptions)
-        );
-
-        this.innerResizeTimeouts = [];
-
     }
 
     /* *
@@ -151,6 +155,33 @@ class DataGridComponent extends Component {
      *  Functions
      *
      * */
+
+    public async load(): Promise<this> {
+        this.emit({ type: 'load' });
+        await super.load();
+
+        const connector = this.getFirstConnector();
+        if (connector) {
+            // TODO(DD): Add support for connector events.
+        }
+
+        this.emit({ type: 'afterLoad' });
+        return this;
+    }
+
+    public render(): this {
+        super.render();
+        if (!this.dataGrid) {
+            this.dataGrid = this.constructDataGrid();
+        }
+
+        // TODO(DD): Add support for render (update?).
+
+        this.sync.start();
+        this.emit({ type: 'afterRender' });
+
+        return this;
+    }
 
     public onTableChanged(e?: Component.EventTypes | undefined): void {
         // eslint-disable-next-line no-console
@@ -178,6 +209,26 @@ class DataGridComponent extends Component {
     public override destroy(): void {
         this.dataGrid?.destroy();
         super.destroy();
+    }
+
+    /**
+     * Function to create the DataGrid.
+     *
+     * @returns The DataGrid.
+     */
+    private constructDataGrid(): DataGrid {
+        const DGN = DataGridComponent.DataGridNamespace;
+        if (!DGN) {
+            throw new Error('DataGrid not connected.');
+        }
+
+        const dataTable = this.getFirstConnector()?.table;
+        const dataGridOptions = this.options.dataGridOptions ?? {};
+        if (dataTable) {
+            dataGridOptions.table = dataTable;
+        }
+
+        return new DGN.DataGrid(this.contentElement, dataGridOptions);
     }
 }
 
