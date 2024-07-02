@@ -247,17 +247,16 @@ class DataGridCell {
      * Remove the <input> overlay and update the cell value
      * @internal
      */
-    private removeCellInputElement(): void {
+    public removeCellInputElement(): void {
         const editedCell = this.column.viewport.editedCell;
+        const parentNode = editedCell?.cellInputEl?.parentNode;
 
-        if (!editedCell) {
+        if (!editedCell || !parentNode) {
             return;
         }
+        let cellValue = editedCell.value as string;
 
-        const parentNode = editedCell.cellInputEl.parentNode;
-        let cellValue = editedCell.value;
-
-        editedCell.cellInputEl.remove();
+        editedCell.cellInputEl?.remove();
         delete this.column.viewport.editedCell;
 
         parentNode.classList.remove(Globals.classNames.focusedCell);

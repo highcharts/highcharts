@@ -33,6 +33,7 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
 import Utils from '../../Core/Utilities.js';
+import DataGridCell from './DataGridCell';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -125,7 +126,7 @@ class DataGridTable {
      * The input element of a cell after mouse focus.
      * @internal
      */
-    public editedCell?: any;
+    public editedCell?: DataGridCell;
 
 
     /* *
@@ -342,13 +343,14 @@ class DataGridTable {
      * Related mouse event.
      */
     private onDocumentClick(e: MouseEvent): void {
-        const cellInputEl = this.editedCell.cellInputEl;
+        const editedCell = this.editedCell;
+        const cellInputEl = editedCell?.cellInputEl;
 
-        if (cellInputEl && e.target) {
+        if (editedCell && cellInputEl && e.target) {
             const cellEl = cellInputEl.parentNode;
             const isClickInInput = cellEl && cellEl.contains(e.target as Node);
             if (!isClickInInput) {
-                this.editedCell.removeCellInputElement();
+                editedCell.removeCellInputElement();
             }
         }
     }
