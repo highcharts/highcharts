@@ -154,7 +154,8 @@ function getLabelsAndShapesOptions(
  * shapes. Created items are positioned on the chart either by linking them to
  * existing points or created mock points
  *
- * @requires module:modules/annotations
+ * @requires modules/annotations
+ *
  * @class
  * @name Highcharts.Annotation
  *
