@@ -335,6 +335,16 @@ QUnit.test('General Navigator tests', function (assert) {
             'disabled and navigator.baseSeries not set (#13114).'
     );
 
+    chart.xAxis[0].setExtremes(0, 5);
+
+    const outlinePathArray = chart.navigator.outline.pathArray;
+
+    assert.equal(
+        outlinePathArray[0][2], // Upper left of navigator outline
+        outlinePathArray[5][2], // Upper right of navigator outline
+        'Upper part of navigator outline should be a straight line.'
+    );
+
     chart = Highcharts.stockChart('container', {
         xAxis: {
             ordinal: false,
