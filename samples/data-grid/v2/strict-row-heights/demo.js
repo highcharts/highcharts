@@ -1,4 +1,4 @@
-DataGrid.dataGrid2('container', {
+DataGrid.dataGrid('container', {
     table: {
         columns: {
             a: Array.from({ length: 100 }, (_, i) => `A${i} quite a long text`),

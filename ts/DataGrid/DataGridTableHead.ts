@@ -25,11 +25,11 @@
 import DGUtils from './Utils.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
-import F from '../../Core/Templating.js';
+import Templating from '../Core/Templating.js';
 import Globals from './Globals.js';
 
 const { makeHTMLElement } = DGUtils;
-const { format } = F;
+const { format } = Templating;
 
 
 /* *

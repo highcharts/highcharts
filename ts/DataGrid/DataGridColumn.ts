@@ -25,9 +25,9 @@ import type { IndividualColumnOptions } from './DataGridOptions';
 
 import DataGridCell from './DataGridCell.js';
 import DataGridTable from './DataGridTable.js';
-import DataTable from '../../Data/DataTable.js';
+import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
-import Utils from '../../Core/Utilities.js';
+import Utils from '../Core/Utilities.js';
 import DGUtils from './Utils.js';
 
 const { merge } = Utils;

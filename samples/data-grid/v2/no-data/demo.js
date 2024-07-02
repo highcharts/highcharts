@@ -1,3 +1,3 @@
-DataGrid.dataGrid2('container', {
+DataGrid.dataGrid('container', {
     dataTable: {}
 });

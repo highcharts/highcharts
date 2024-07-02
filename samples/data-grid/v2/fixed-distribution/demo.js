@@ -1,4 +1,4 @@
-DataGrid.dataGrid2('container', {
+DataGrid.dataGrid('container', {
     table: {
         columns: {
             product: [

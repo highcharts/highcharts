@@ -21,11 +21,11 @@
  *
  * */
 
-import type DataTable from '../../Data/DataTable';
+import type DataTable from '../Data/DataTable';
 
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
-import F from '../../Core/Templating.js';
+import F from '../Core/Templating.js';
 
 const { format } = F;
 

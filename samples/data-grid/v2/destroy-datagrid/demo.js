@@ -9,7 +9,7 @@ const options = {
         }
     }
 };
-let dg = DataGrid.dataGrid2('container', options);
+let dg = DataGrid.dataGrid('container', options);
 
 document.getElementById('destroy-btn').addEventListener('click', () => {
     dg.destroy();
@@ -18,6 +18,6 @@ document.getElementById('destroy-btn').addEventListener('click', () => {
 
 document.getElementById('load-btn').addEventListener('click', () => {
     dg.destroy();
-    dg = new DataGrid.DataGrid2('container', options);
+    dg = new DataGrid.DataGrid('container', options);
     console.log('created:', dg);
 });

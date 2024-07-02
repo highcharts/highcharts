@@ -24,7 +24,7 @@
 import type { ColumnDistribution } from './DataGridOptions';
 
 import DGUtils from './Utils.js';
-import DataTable from '../../Data/DataTable.js';
+import DataTable from '../Data/DataTable.js';
 import DataGridRow from './DataGridRow.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTableHead from './DataGridTableHead.js';
@@ -32,7 +32,7 @@ import DataGrid from './DataGrid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
-import Utils from '../../Core/Utilities.js';
+import Utils from '../Core/Utilities.js';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;

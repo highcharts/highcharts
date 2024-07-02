@@ -1,4 +1,4 @@
-const dg = new DataGrid.DataGrid2('container', {
+const dg = new DataGrid.DataGrid('container', {
     table: {
         columns: {
             a: Array.from({ length: 1000 }, (_, i) => `A${i} lorem ipsum`),
