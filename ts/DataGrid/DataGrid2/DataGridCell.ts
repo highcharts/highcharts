@@ -27,8 +27,13 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
+import Globals from './Globals.js';
+import DataGridUtils from './Utils.js';
+import Utils from '../../Core/Utilities.js';
 
+const { makeHTMLElement } = DataGridUtils;
 const { format } = F;
+const { fireEvent } = Utils;
 
 
 /* *
@@ -67,6 +72,12 @@ class DataGridCell {
      * The raw value of the cell.
      */
     public value: DataTable.CellType;
+
+    /**
+     * The input element of a cell after mouse focus.
+     * @internal
+     */
+    public cellInputEl?: HTMLInputElement;
 
 
     /* *
@@ -108,12 +119,21 @@ class DataGridCell {
      * Renders the cell.
      */
     public render(): void {
+
         if (!this.column.data) {
             return;
         }
+        const {
+            cellFormat,
+            cellFormatter,
+            useHTML,
+            editable
+        } = this.column.userOptions;
+        const cell = this;
+        const element = cell.htmlElement;
 
-        const { cellFormat, cellFormatter, useHTML } = this.column.userOptions;
         let cellContent = '';
+
         this.value = this.column.data[this.row.index];
 
         if (cellFormatter) {
@@ -128,13 +148,20 @@ class DataGridCell {
                 );
         }
 
-        if (useHTML) {
-            this.renderHTMLCellContent(cellContent, this.htmlElement);
-        } else {
-            this.htmlElement.innerText = cellContent;
+        if (editable) {
+            element.addEventListener('click', (): void => {
+                const element = this.htmlElement;
+                this.onCellClick(element, this.value + '');
+            });
         }
 
-        this.row.htmlElement.appendChild(this.htmlElement);
+        if (useHTML) {
+            this.renderHTMLCellContent(cellContent, element);
+        } else {
+            element.innerText = cellContent;
+        }
+
+        this.row.htmlElement.appendChild(element);
     }
 
     /**
@@ -180,6 +207,74 @@ class DataGridCell {
         this.row.setHover(false);
         this.column.setHover(false);
     };
+
+    /**
+     * Handle the user starting interaction with a cell.
+     *
+     * @internal
+     *
+     * @param cellEl
+     * The clicked cell.
+     *
+     */
+    private onCellClick(cellElement: HTMLElement, value: string): void {
+        const cell = this;
+        const editedCell = this.column.viewport.editedCell;
+
+        this.removeCellInputElement();
+
+        // Replace cell contents with an input element
+        cellElement.innerHTML = '';
+        cellElement.classList.add(Globals.classNames.focusedCell);
+        
+        this.column.viewport.editedCell = cell;
+
+        // create an input
+        const input = this.cellInputEl =
+            makeHTMLElement('input', {}, cellElement);
+        input.style.height = (cellElement.clientHeight - 1) + 'px';
+        input.value = value || '';
+        input.focus();
+        input.addEventListener('keydown', (e: any) => {
+            if (cell.column.id && cell.row.index > -1 && editedCell) {
+                cell.column.viewport.dataTable.setCell(
+                    cell.column.id,
+                    cell.row.index,
+                    e.target?.value || value
+                );
+
+                editedCell.value = cell.value = e.target?.value || value;
+            }
+        });
+
+        // Emit for use in extensions
+        fireEvent(input, 'cellClick');
+    }
+
+    /**
+     * Remove the <input> overlay and update the cell value
+     * @internal
+     */
+    public removeCellInputElement(): void {
+        const editedCell = this.column.viewport.editedCell;
+        const parentNode = editedCell?.cellInputEl?.parentNode;
+
+        if (!editedCell || !parentNode) {
+            return;
+        }
+        let cellValue = (
+            editedCell.cellInputEl?.value || editedCell.value
+        ) as string;
+
+        this.value = cellValue;
+        editedCell.cellInputEl?.remove();
+        delete this.column.viewport.editedCell;
+
+        parentNode.classList.remove(Globals.classNames.focusedCell);
+        parentNode.innerHTML = cellValue;
+
+        fireEvent(parentNode, 'cellUpdated');
+    }
 
     /**
      * Destroys the cell.

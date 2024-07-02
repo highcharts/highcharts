@@ -23,7 +23,7 @@ DataGrid.dataGrid2('container', {
     },
     defaults: {
         columns: {
-            useHTML: true
+            // useHTML: true
         }
     },
     columns: {

@@ -33,6 +33,7 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from './Globals.js';
 import Utils from '../../Core/Utilities.js';
+import DataGridCell from './DataGridCell';
 
 const { makeHTMLElement } = DGUtils;
 const { getStyle } = Utils;
@@ -121,6 +122,12 @@ class DataGridTable {
      */
     public captionElement?: HTMLElement;
 
+    /**
+     * The input element of a cell after mouse focus.
+     * @internal
+     */
+    public editedCell?: DataGridCell;
+
 
     /* *
     *
@@ -169,6 +176,10 @@ class DataGridTable {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
         this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        document.addEventListener('click', (e): void => {
+            this.onDocumentClick(e);
+        });
     }
 
     /* *
@@ -320,6 +331,27 @@ class DataGridTable {
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
+        }
+    }
+
+    /**
+     * Handle the user clicking somewhere outside the grid.
+     *
+     * @internal
+     *
+     * @param e
+     * Related mouse event.
+     */
+    private onDocumentClick(e: MouseEvent): void {
+        const editedCell = this.editedCell;
+        const cellInputEl = editedCell?.cellInputEl;
+
+        if (editedCell && cellInputEl && e.target) {
+            const cellEl = cellInputEl.parentNode;
+            const isClickInInput = cellEl && cellEl.contains(e.target as Node);
+            if (!isClickInInput) {
+                editedCell.removeCellInputElement();
+            }
         }
     }
 }

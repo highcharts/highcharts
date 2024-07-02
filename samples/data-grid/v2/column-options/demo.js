@@ -8,6 +8,11 @@ DataGrid.dataGrid2('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
+    defaults: {
+        columns: {
+            editable: true
+        }
+    },
     columns: {
         weight: {
             className: 'custom-column-class-name'
