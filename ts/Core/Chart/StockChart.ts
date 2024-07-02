@@ -299,8 +299,8 @@ class StockChart extends Chart {
 
         // Apply X axis options to both single and multi y axes
         options.xAxis = splat(userOptions.xAxis || {}).map((
-            xAxisOptions: AxisOptions
-        ): AxisOptions => merge(
+            xAxisOptions
+        ): DeepPartial<AxisOptions> => merge(
             getDefaultAxisOptions(
                 'xAxis',
                 xAxisOptions,
@@ -313,8 +313,8 @@ class StockChart extends Chart {
 
         // Apply Y axis options to both single and multi y axes
         options.yAxis = splat(userOptions.yAxis || {}).map((
-            yAxisOptions: YAxisOptions
-        ): YAxisOptions => merge(
+            yAxisOptions
+        ): DeepPartial<YAxisOptions> => merge(
             getDefaultAxisOptions(
                 'yAxis',
                 yAxisOptions,

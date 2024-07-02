@@ -653,10 +653,10 @@ class Chart {
 
             // Item options should be reflected in chart.options.series,
             // chart.options.yAxis etc
-            optionsArray = this.options[coll] = splat(this.options[coll])
+            optionsArray = this.options[coll] = splat(this.options[coll] as any)
                 .slice(),
             userOptionsArray = this.userOptions[coll] = this.userOptions[coll] ?
-                splat(this.userOptions[coll]).slice() :
+                splat(this.userOptions[coll] as any).slice() :
                 [];
 
         if (this.hasRendered) {
@@ -1054,7 +1054,7 @@ class Chart {
         fireEvent(this, 'getAxes');
 
         for (const coll of ['xAxis', 'yAxis'] as Array<'xAxis'|'yAxis'>) {
-            const arr: Array<AxisOptions> = options[coll] = splat(
+            const arr = options[coll] = splat(
                 options[coll] || {}
             );
             for (const axisOptions of arr) {

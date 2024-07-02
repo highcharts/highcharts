@@ -46,7 +46,7 @@ declare module './AxisType' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         zAxis?: Array<ZAxis>;
-        addZAxis(options: AxisOptions): Axis;
+        addZAxis(options: DeepPartial<AxisOptions>): Axis;
     }
 }
 
@@ -70,7 +70,7 @@ declare module '../Options' {
  */
 function chartAddZAxis(
     this: Chart,
-    options: AxisOptions
+    options: DeepPartial<AxisOptions>
 ): Axis {
     return new ZAxis(this, options);
 }

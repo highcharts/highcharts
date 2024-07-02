@@ -169,8 +169,8 @@ class GanttChart extends Chart {
 
         // Apply Y axis options to both single and multi y axes
         options.yAxis = (splat(userOptions.yAxis || {})).map((
-            yAxisOptions: YAxisOptions
-        ): YAxisOptions => merge(
+            yAxisOptions
+        ): DeepPartial<YAxisOptions> => merge(
             // Defaults
             {
                 grid: {
@@ -186,7 +186,7 @@ class GanttChart extends Chart {
                 // undefined
                 type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
 
-            } as YAxisOptions,
+            },
             // User options
             yAxisOptions
         ));
