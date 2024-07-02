@@ -29,9 +29,11 @@ import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
 import Globals from './Globals.js';
 import DataGridUtils from './Utils.js';
+import Utils from '../../Core/Utilities.js';
 
 const { makeHTMLElement } = DataGridUtils;
 const { format } = F;
+const { fireEvent } = Utils;
 
 
 /* *
@@ -71,10 +73,10 @@ class DataGridCell {
      */
     public value: DataTable.CellType;
 
-    // /**
-    //  * The input element of a cell after mouse focus.
-    //  * @internal
-    //  */
+    /**
+     * The input element of a cell after mouse focus.
+     * @internal
+     */
     public cellInputEl?: HTMLInputElement;
 
 
@@ -148,6 +150,7 @@ class DataGridCell {
 
         if (editable) {
             element.addEventListener('click', (): void => {
+                const element = this.htmlElement;
                 this.onCellClick(element, this.value + '');
             });
         }
@@ -215,32 +218,39 @@ class DataGridCell {
      *
      */
     private onCellClick(cellElement: HTMLElement, value: string): void {
-        console.log('cell: ', cellElement);
-        // if (this.isColumnEditable(columnName)) {
-            let input = cellElement.querySelector('input');
-            // const cellValue = cellElement.getAttribute('data-original-data');
+        const cell = this;
+        const editedCell = this.column.viewport.editedCell;
 
-            if (!input) {
-                this.removeCellInputElement();
+        this.removeCellInputElement();
 
-                // Replace cell contents with an input element
-                cellElement.innerHTML = '';
+        // Replace cell contents with an input element
+        cellElement.innerHTML = '';
 
-                // create an input
-                input = this.cellInputEl =
-                    makeHTMLElement('input', {}, cellElement);
-                input.style.height = (cellElement.clientHeight - 1) + 'px';
-                cellElement.classList.add(Globals.classNames.focusedCell);
-                input.focus();
-                input.value = value || '';
+        // create an input
+        const input = this.cellInputEl =
+            makeHTMLElement('input', {}, cellElement);
+        input.style.height = (cellElement.clientHeight - 1) + 'px';
+        cellElement.classList.add(Globals.classNames.focusedCell);
+        input.focus();
+        input.value = value || '';
 
-                this.column.viewport.editedCell = this;
+        this.column.viewport.editedCell = this;
+        const _self = this;
 
+        input.addEventListener('keydown', (e: any) => {
+            if (_self.column.id && _self.row.index > -1 && editedCell) {
+                cell.column.viewport.dataTable.setCell(
+                    _self.column.id,
+                    _self.row.index,
+                    e.target?.value || value
+                );
+
+                editedCell.value = cell.value = e.target?.value || value;
             }
-        //     // Emit for use in extensions
-        //     this.emit({ type: 'cellClick', input });
-        // }
+        });
 
+        // Emit for use in extensions
+        fireEvent(input, 'cellClick');
     }
 
     /**
@@ -254,13 +264,18 @@ class DataGridCell {
         if (!editedCell || !parentNode) {
             return;
         }
-        let cellValue = editedCell.value as string;
+        let cellValue = (
+            editedCell.cellInputEl?.value || editedCell.value
+        ) as string;
 
+        this.value = cellValue;
         editedCell.cellInputEl?.remove();
         delete this.column.viewport.editedCell;
 
         parentNode.classList.remove(Globals.classNames.focusedCell);
         parentNode.innerHTML = cellValue;
+
+        fireEvent(parentNode, 'cellUpdated');
     }
 
     /**
