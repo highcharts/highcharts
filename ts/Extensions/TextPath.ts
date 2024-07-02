@@ -244,39 +244,51 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
                 lineCharIndex < lineLen;
                 lineCharIndex += 5
             ) {
-                const srcCharIndex = (
-                        i +
-                        lineCharIndex +
-                        lineIndex
-                    ),
-                    [lower, upper] = appendTopAndBottom(
-                        srcCharIndex,
-                        tp.getStartPositionOfChar(srcCharIndex)
-                    );
+                try {
+                    const srcCharIndex = (
+                            i +
+                            lineCharIndex +
+                            lineIndex
+                        ),
+                        [lower, upper] = appendTopAndBottom(
+                            srcCharIndex,
+                            tp.getStartPositionOfChar(srcCharIndex)
+                        );
 
-                if (lineCharIndex === 0) {
-                    polygon.push(upper);
-                    polygon.push(lower);
-                } else {
-                    if (lineIndex === 0) {
-                        polygon.unshift(upper);
-                    }
-                    if (lineIndex === numOfLines - 1) {
+                    if (lineCharIndex === 0) {
+                        polygon.push(upper);
                         polygon.push(lower);
+                    } else {
+                        if (lineIndex === 0) {
+                            polygon.unshift(upper);
+                        }
+                        if (lineIndex === numOfLines - 1) {
+                            polygon.push(lower);
+                        }
                     }
+                } catch (e) {
+                    // Safari fails on getStartPositionOfChar even if the
+                    // character is within the `textContent.length`
+                    break;
                 }
             }
 
             i += lineLen - 1;
 
-            const srcCharIndex = i + lineIndex,
-                charPos = tp.getEndPositionOfChar(srcCharIndex),
-                [lower, upper] = appendTopAndBottom(
-                    srcCharIndex,
-                    charPos
-                );
-            polygon.unshift(upper);
-            polygon.unshift(lower);
+            try {
+                const srcCharIndex = i + lineIndex,
+                    charPos = tp.getEndPositionOfChar(srcCharIndex),
+                    [lower, upper] = appendTopAndBottom(
+                        srcCharIndex,
+                        charPos
+                    );
+                polygon.unshift(upper);
+                polygon.unshift(lower);
+            } catch (e) {
+                // Safari fails on getStartPositionOfChar even if the character
+                // is within the `textContent.length`
+                break;
+            }
         }
 
         // Close it

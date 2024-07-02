@@ -90,7 +90,7 @@ describe('Editable component options', () => {
         cy.get('.highcharts-dashboards-component').first().click({ force: true });
 
         // Delete row
-        cy.get('.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-content > .highcharts-dashboards-edit-label-text')
             .should('have.text', norwegianEditMode.confirmDestroyRow);
         cy.get('.highcharts-dashboards-edit-popup-close').eq(0).click();

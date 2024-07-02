@@ -785,8 +785,8 @@ export default TreegraphSeries;
  * relativeXValue, softThreshold, stack, stacking, step,
  * traverseUpButton, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
- * @requires  modules/treemap.js
- * @requires  modules/treegraph.js
+ * @requires  modules/treemap
+ * @requires  modules/treegraph
  * @apioption series.treegraph
  */
 
