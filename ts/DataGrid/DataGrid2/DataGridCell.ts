@@ -28,7 +28,9 @@ import DataGridColumn from './DataGridColumn';
 import DataGridRow from './DataGridRow';
 import F from '../../Core/Templating.js';
 import Globals from './Globals.js';
+import DataGridUtils from './Utils.js';
 
+const { makeHTMLElement } = DataGridUtils;
 const { format } = F;
 
 
@@ -68,6 +70,12 @@ class DataGridCell {
      * The raw value of the cell.
      */
     public value: DataTable.CellType;
+
+    // /**
+    //  * The input element of a cell after mouse focus.
+    //  * @internal
+    //  */
+    public cellInputEl?: HTMLInputElement;
 
 
     /* *
@@ -182,6 +190,22 @@ class DataGridCell {
     }
 
     /**
+     * Sets the hover state of the cell and its row and column.
+     */
+    private readonly onMouseEnter = (): void => {
+        this.row.setHover(true);
+        this.column.setHover(true);
+    };
+
+    /**
+     * Unsets the hover state of the cell and its row and column.
+     */
+    private readonly onMouseOut = (): void => {
+        this.row.setHover(false);
+        this.column.setHover(false);
+    };
+
+    /**
      * Handle the user starting interaction with a cell.
      *
      * @internal
@@ -197,41 +221,48 @@ class DataGridCell {
             // const cellValue = cellElement.getAttribute('data-original-data');
 
             if (!input) {
-                // this.removeCellInputElement();
+                this.removeCellInputElement();
 
                 // Replace cell contents with an input element
-                const inputHeight = cellElement.clientHeight - 1 // 1px of border input;
                 cellElement.innerHTML = '';
-                input = // this.cellInputEl =
-                    document.createElement('input');
-                input.style.height = inputHeight + 'px';
+
+                // create an input
+                input = this.cellInputEl =
+                    makeHTMLElement('input', {}, cellElement);
+                input.style.height = (cellElement.clientHeight - 1) + 'px';
                 cellElement.classList.add(Globals.classNames.focusedCell);
-                cellElement.appendChild(input);
                 input.focus();
                 input.value = value || '';
 
-            }
+                this.column.viewport.editedCell = this;
 
+            }
         //     // Emit for use in extensions
         //     this.emit({ type: 'cellClick', input });
         // }
+
     }
 
     /**
-     * Sets the hover state of the cell and its row and column.
+     * Remove the <input> overlay and update the cell value
+     * @internal
      */
-    private readonly onMouseEnter = (): void => {
-        this.row.setHover(true);
-        this.column.setHover(true);
-    };
+    private removeCellInputElement(): void {
+        const editedCell = this.column.viewport.editedCell;
 
-    /**
-     * Unsets the hover state of the cell and its row and column.
-     */
-    private readonly onMouseOut = (): void => {
-        this.row.setHover(false);
-        this.column.setHover(false);
-    };
+        if (!editedCell) {
+            return;
+        }
+
+        const parentNode = editedCell.cellInputEl.parentNode;
+        let cellValue = editedCell.value;
+
+        editedCell.cellInputEl.remove();
+        delete this.column.viewport.editedCell;
+
+        parentNode.classList.remove(Globals.classNames.focusedCell);
+        parentNode.innerHTML = cellValue;
+    }
 
     /**
      * Destroys the cell.

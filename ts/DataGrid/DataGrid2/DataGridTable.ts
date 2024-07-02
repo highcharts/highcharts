@@ -121,6 +121,12 @@ class DataGridTable {
      */
     public captionElement?: HTMLElement;
 
+    /**
+     * The input element of a cell after mouse focus.
+     * @internal
+     */
+    public editedCell?: any;
+
 
     /* *
     *
@@ -169,6 +175,10 @@ class DataGridTable {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(tableElement);
         this.tbodyElement.addEventListener('scroll', this.onScroll);
+
+        document.addEventListener('click', (e): void => {
+            this.onDocumentClick(e);
+        });
     }
 
     /* *
@@ -320,6 +330,26 @@ class DataGridTable {
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
+        }
+    }
+
+    /**
+     * Handle the user clicking somewhere outside the grid.
+     *
+     * @internal
+     *
+     * @param e
+     * Related mouse event.
+     */
+    private onDocumentClick(e: MouseEvent): void {
+        const cellInputEl = this.editedCell.cellInputEl;
+
+        if (cellInputEl && e.target) {
+            const cellEl = cellInputEl.parentNode;
+            const isClickInInput = cellEl && cellEl.contains(e.target as Node);
+            if (!isClickInInput) {
+                this.editedCell.removeCellInputElement();
+            }
         }
     }
 }
