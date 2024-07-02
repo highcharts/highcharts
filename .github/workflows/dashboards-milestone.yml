@@ -1,0 +1,27 @@
+name: Dashboards Milestone
+on:
+  pull_request:
+    branches: [ 'main', 'master' ]
+    paths:
+      - '.github/workflows/dashboards*'
+      - 'css/dashboards*'
+      - 'css/datagrid*'
+      - 'samples/dashboards/**'
+      - 'samples/data-grid/**'
+      - 'test/cypress/dashboards/visual/**'
+      - 'test/cypress/data-grid/visual/**'
+      - 'ts/Dashboards/**'
+      - 'ts/Data/**'
+      - 'ts/DataGrid/**'
+
+permissions:
+  contents: read
+
+jobs:
+  add_milestone:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: andrefcdias/add-to-milestone
+      with:
+        repo-token: "${{ secrets.PR_COMMENT_TOKEN }}"
+        milestone: "Dashboards-Next"
