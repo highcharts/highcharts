@@ -14,10 +14,6 @@ Highcharts.chart('container', {
         margin: [60, 10, 80, 50]
     },
 
-    boost: {
-        useGPUTranslations: true
-    },
-
     title: {
         text: 'Highcharts boosted heat map',
         align: 'left',
@@ -78,6 +74,10 @@ Highcharts.chart('container', {
         }
     },
 
+    boost: {
+        useGPUTranslations: true
+    },
+
     series: [{
         boostThreshold: 100,
         borderWidth: 0,
@@ -87,9 +87,9 @@ Highcharts.chart('container', {
             headerFormat: 'Temperature<br/>',
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
                 '℃</b>'
-        }
+        },
+        turboThreshold: Number.MAX_VALUE
     }]
-
 });
 
-console.log('Rendered in ' + (new Date() - start) + ' ms');
+console.log(new Date(1995, 2, 5).getTime());
