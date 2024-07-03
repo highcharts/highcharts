@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
 <head>
-<base href="https://code.highcharts.com/" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="robots" content="index, follow" />
@@ -34,10 +33,16 @@
                 padding: 5px 15px;
             }
         </style>
-<script src="https://code.jquery.com/jquery.min.js"></script>
-<script src="https://code.highcharts.com/webstyling/bootstrap.js"></script>
 <script>
-    jQuery.getScript("https://code.highcharts.com/products.js", function() {
+    function loadScript(url, callback) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = url;
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+
+    loadScript("https://code.highcharts.com/products.js", function() {
         // Products is added as a global.
         var patch = window.products.Highcharts.nr,
             minor = patch.slice(0, -2),
@@ -54,29 +59,25 @@
                 '.next-major': nextMajor
             };
 
-        // Wait for document ready before continuing.
-        jQuery(function() {
+        // Add hyperlinks to all list elements.
+        document.querySelectorAll('li a').forEach(function(link) {
+            var url = link.textContent;
 
-            // Add hyperlinks to all list elements.
-            jQuery('li').each(function() {
-                var $li = jQuery(this),
-                    url = $li.text();
+            // Replace string tags for patch, minor, and major.
+            url = url
+                .replace('@patch', patch)
+                .replace('@minor', minor)
+                .replace('@major', major);
 
-                // Replace string tags for patch, minor, and major.
-                url = url
-                    .replace('@patch', patch)
-                    .replace('@minor', minor)
-                    .replace('@major', major);
+            // Add hyperlink to the list element.
+            link.textContent = url;
+            link.href = url.replace('https://code.highcharts.com/', '');
+        });
 
-                // Add hyperlink to the list element.
-                $li.html("<a href='"+ url + "'>" + url + "</a>");
-            });
-
-            // Replace all tags with version numbers.
-            jQuery.each(mapOfClassNameToVersion, function (key, value) {
-                jQuery(key).each(function (i, el) {
-                    jQuery(el).html(value);
-                });
+        // Replace all tags with version numbers.
+        Object.keys(mapOfClassNameToVersion).forEach(function(key) {
+            document.querySelectorAll(key).forEach(function(el) {
+                el.innerHTML = mapOfClassNameToVersion[key];
             });
         });
 
@@ -87,14 +88,14 @@
             const links = document.querySelectorAll('#dashboards a');
             const [major, minor] = dashboardsRelease.nr.split('.');
 
-            links.forEach(link =>{
+            links.forEach(link => {
                 link.href = link.href.replace(
                     '@dashboards-minor',
                     [major, minor].join('.')
                 ).replace(
                     '@dashboards-patch',
                     dashboardsRelease.nr
-                )
+                );
 
                 link.text = link.text.replace(
                     '@dashboards-minor',
