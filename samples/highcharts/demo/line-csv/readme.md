@@ -1,4 +1,4 @@
-# Ajax loaded data, clickable points
+# Data from CSV file, clickable points
 The most efficient way to add data to a chart is by using the [Highcharts data module](https://www.highcharts.com/docs/working-with-data/data-module),
 
 #### Tip

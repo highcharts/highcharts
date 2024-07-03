@@ -113,7 +113,7 @@ function onAxisAfterRender(
 ): void {
     const axis = this;
 
-    if (!this.horiz && this.variwide) {
+    if (this.variwide) {
         this.chart.labelCollectors.push(
             function (): Array<SVGElement> {
                 return axis.tickPositions

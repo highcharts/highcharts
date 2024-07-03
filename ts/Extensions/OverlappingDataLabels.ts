@@ -123,7 +123,7 @@ function chartHideOverlappingLabels(
                 ) + padding,
                 width: (label.width || 0) - 2 * padding,
                 height: (label.height || 0) - 2 * padding,
-                polygon: label?.bBox?.polygon
+                polygon: bBox?.polygon
             };
         }
     }
@@ -161,6 +161,8 @@ function chartHideOverlappingLabels(
             label2 = labels[j];
             box2 = label2 && label2.absoluteBox;
 
+            let toHide = false;
+
             if (
                 box1 &&
                 box2 &&
@@ -173,14 +175,22 @@ function chartHideOverlappingLabels(
             ) {
                 const box2Poly = box2.polygon;
 
+                // If labels have polygons, only evaluate
+                // based on polygons
                 if (
-                    isIntersectRect(box1, box2) || (
-                        box1Poly &&
-                        box2Poly &&
-                        box1Poly !== box2Poly &&
-                        isPolygonOverlap(box1Poly, box2Poly)
-                    )
+                    box1Poly &&
+                    box2Poly &&
+                    box1Poly !== box2Poly
                 ) {
+                    if (isPolygonOverlap(box1Poly, box2Poly)) {
+                        toHide = true;
+                    }
+                // If there are no polygons, evaluate rectangles coliding
+                } else if (isIntersectRect(box1, box2)) {
+                    toHide = true;
+                }
+
+                if (toHide) {
                     const overlappingLabel = (
                             label1.labelrank < label2.labelrank ?
                                 label1 :

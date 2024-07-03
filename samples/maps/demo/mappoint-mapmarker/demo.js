@@ -13,7 +13,6 @@
 
         title: {
             text: 'Categories of European capitals',
-            floating: true,
             style: {
                 textOutline: '5px contrast'
             }
@@ -21,8 +20,6 @@
 
         subtitle: {
             text: 'Map markers in Highcharts',
-            floating: true,
-            y: 36,
             style: {
                 textOutline: '5px contrast'
             }
