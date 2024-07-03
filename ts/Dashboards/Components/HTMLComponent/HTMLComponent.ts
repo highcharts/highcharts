@@ -261,11 +261,19 @@ class HTMLComponent extends Component {
 
     /**
      * Handles updating via options.
+     *
      * @param options
      * The options to apply.
      */
-    public async update(options: Partial<Options>): Promise<void> {
-        await super.update(options);
+    public async update(options: Partial<Options>, shouldRerender: boolean = true): Promise<void> {
+        if (options.html) {
+            this.elements = this.getElementsFromString(options.html);
+
+            this.constructTree();
+        }
+
+        await super.update(options, shouldRerender);
+
         this.emit({ type: 'afterUpdate' });
     }
 
