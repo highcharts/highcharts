@@ -168,6 +168,19 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
 
+      - name: Set git config
+        working-directory: ./highcharts-dist
+        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
+        run: |
+          git config --global user.name "CircleCI"
+          git config --global user.email "technical+circleci_mu@highsoft.com"
+          git config --global core.editor vi
+
+      - name: Reset nightly branch to master
+        working-directory: ./highcharts-dist
+        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
+        run: git reset --hard origin/master
+
       - name: Install and build
         working-directory: ./highcharts
         run: |
@@ -180,12 +193,9 @@ jobs:
         working-directory: ./highcharts-dist
         if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
         run: |
-          git config --global user.name "CircleCI"
-          git config --global user.email "technical+circleci_mu@highsoft.com"
-          git config --global core.editor vi
           git add .
           git commit -m "Nightly build - ${{github.run_id}}"
-          git push -u origin nightly
+          git push --force-with-lease -u origin nightly
 
   nightly_changelog:
     runs-on: ubuntu-latest
