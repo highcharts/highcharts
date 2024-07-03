@@ -303,17 +303,19 @@ abstract class Controllable implements ControlTarget {
         newOptions: DeepPartial<ControllableOptions>,
         redraw: boolean = true
     ): void {
-        const annotation = this.annotation,
-            options = merge(true, this.options, newOptions),
-            Constructor: any = this.constructor;
 
-        const newControllable = new Constructor(
-            annotation,
-            options,
-            this.index,
-            this.itemType
-        );
-        merge(true, this as Controllable, newControllable);
+        const options = merge(true, this.options, newOptions);
+        if (this.itemType === 'label') {
+            const annotation = this.annotation,
+                Constructor: any = this.constructor;
+            const newControllable = new Constructor(
+                annotation,
+                options,
+                this.index,
+                this.itemType
+            );
+            merge(true, this as Controllable, newControllable);
+        }
 
         if (redraw) {
             this.redraw();

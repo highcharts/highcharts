@@ -27,9 +27,11 @@ import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import CrookedLine from '../Types/CrookedLine.js';
 const {
     merge,
-    pick
+    pick,
+    extend
 } = U;
 
 /* *
@@ -247,6 +249,8 @@ declare module './AnnotationType'{
         verticalLine: typeof VerticalLine;
     }
 }
+
+extend(VerticalLine.prototype, { redraw: CrookedLine.prototype.redraw });
 
 Annotation.types.verticalLine = VerticalLine;
 
