@@ -348,6 +348,96 @@ class HTMLComponent extends Component {
     }
 
     /**
+     * Retrieves editable options for the HTML component.
+     */
+    public getEditableOptions(): Options {
+        const component = this;
+        return merge(
+            component.options,
+            {
+                elements: this.elements
+            }
+        );
+    }
+
+    /**
+     * Get the value of the editable option by property path. Parse the elements
+     * if the HTML options is not set.
+     *
+     * @param propertyPath
+     * The property path of the option.
+     */
+    public getEditableOptionValue(
+        propertyPath?: string[]
+    ): number | boolean | undefined | string {
+        if (!propertyPath) {
+            return;
+        }
+
+        if (propertyPath[0] === 'html') {
+            const result = this.getEditableOptions();
+
+            if (!result.html && result.elements) {
+                return this.getStringFromElements(result.elements);
+            }
+
+            return result[propertyPath[0]];
+        }
+
+        super.getEditableOptionValue(propertyPath);
+    }
+
+    /**
+     * Returns the HTML string from the given elements.
+     *
+     * @param elements
+     * The array of elements to serialize.
+     */
+    private getStringFromElements(elements: AST.Node[]): string {
+        let html = '';
+
+        for (const element of elements) {
+            html += this.serializeNode(element);
+        }
+
+        return html;
+    }
+
+    /**
+     * Serializes the HTML node to string.
+     *
+     * @param node
+     * The HTML node to serialize.
+     */
+    private serializeNode(node: AST.Node): string {
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
+
+        const attributes = node.attributes;
+        let html = `<${node.tagName}`;
+
+        if (attributes) {
+            (Object.keys(attributes) as Array<keyof typeof attributes>)
+                .forEach((key): void => {
+                    const value = attributes[key];
+                    html += ` ${key}="${value}"`;
+                });
+        }
+        html += '>';
+
+        html += node.textContent || '';
+
+        (node.children || []).forEach((child): void => {
+            html += this.serializeNode(child);
+        });
+
+        html += `</${node.tagName}>`;
+        return html;
+    }
+
+    /**
      * @internal
      */
     public onTableChanged(e: Component.EventTypes): void {
