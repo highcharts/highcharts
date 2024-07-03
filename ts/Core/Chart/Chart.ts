@@ -3646,6 +3646,7 @@ class Chart {
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
 
+
         for (const axis of axes) {
             const {
                     horiz,
