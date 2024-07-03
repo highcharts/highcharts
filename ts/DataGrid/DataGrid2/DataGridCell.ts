@@ -226,7 +226,7 @@ class DataGridCell {
         // Replace cell contents with an input element
         cellElement.innerHTML = '';
         cellElement.classList.add(Globals.classNames.focusedCell);
-        
+
         this.column.viewport.editedCell = cell;
 
         // create an input
@@ -236,14 +236,22 @@ class DataGridCell {
         input.value = value || '';
         input.focus();
         input.addEventListener('keydown', (e: any) => {
+
             if (cell.column.id && cell.row.index > -1 && editedCell) {
+                let newValue = e.target?.value || value;
+
                 cell.column.viewport.dataTable.setCell(
                     cell.column.id,
                     cell.row.index,
-                    e.target?.value || value
+                    newValue
                 );
 
-                editedCell.value = cell.value = e.target?.value || value;
+                editedCell.value = cell.value = newValue;
+            }
+
+            // Enter / Escape
+            if (e.keyCode === 13 || e.keyCode === 27) {
+                cell.removeCellInputElement();
             }
         });
 
