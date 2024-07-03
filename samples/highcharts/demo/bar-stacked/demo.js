@@ -8,7 +8,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         categories: [
-            'Mai', 'April', 'Mars', 'Februar', 'Januar'
+            'January', 'February', 'March', 'April', 'May'
         ]
     },
     yAxis: {
@@ -30,12 +30,12 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Motorcycles',
-        data: [1272, 93, 52, 27, 74]
+        data: [74, 27, 52, 93, 1272]
     }, {
         name: 'Null-emission vehicles',
-        data: [4916, 3195, 3046, 2398, 2106]
+        data: [2106, 2398, 3046, 3195, 4916]
     }, {
         name: 'Conventional vehicles',
-        data: [25037, 16518, 15242, 12721, 12213]
+        data: [12213, 12721, 15242, 16518, 25037]
     }]
 });
