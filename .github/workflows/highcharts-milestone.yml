@@ -19,8 +19,7 @@ permissions:
 jobs:
   add_milestone:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
     steps:
-    - uses: andrefcdias/add-to-milestone@v1.3.0
-      with:
-        repo-token: "${{ secrets.PR_COMMENT_TOKEN }}"
-        milestone: "Next"
+    - run: gh pr edit ${{github.event.number}} --milestone "Next" --repo "${{github.repository}}"
