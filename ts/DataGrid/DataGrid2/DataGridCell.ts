@@ -149,7 +149,7 @@ class DataGridCell {
         }
 
         if (editable) {
-            element.addEventListener('click', (): void => {
+            element.addEventListener('click', (e: any): void => {
                 const element = this.htmlElement;
                 this.onCellClick(element, this.value + '');
             });
@@ -219,7 +219,12 @@ class DataGridCell {
      */
     private onCellClick(cellElement: HTMLElement, value: string): void {
         const cell = this;
-        const editedCell = this.column.viewport.editedCell;
+
+        // Check input to avoid creating,
+        // when setting the coursor.
+        if (cell.cellInputEl) {
+            return;
+        }
 
         this.removeCellInputElement();
 
@@ -228,27 +233,12 @@ class DataGridCell {
         cellElement.classList.add(Globals.classNames.focusedCell);
 
         this.column.viewport.editedCell = cell;
-
-        // create an input
         const input = this.cellInputEl =
             makeHTMLElement('input', {}, cellElement);
         input.style.height = (cellElement.clientHeight - 1) + 'px';
         input.value = value || '';
         input.focus();
         input.addEventListener('keydown', (e: any) => {
-
-            if (cell.column.id && cell.row.index > -1 && editedCell) {
-                let newValue = e.target?.value || value;
-
-                cell.column.viewport.dataTable.setCell(
-                    cell.column.id,
-                    cell.row.index,
-                    newValue
-                );
-
-                editedCell.value = cell.value = newValue;
-            }
-
             // Enter / Escape
             if (e.keyCode === 13 || e.keyCode === 27) {
                 cell.removeCellInputElement();
@@ -274,8 +264,19 @@ class DataGridCell {
             editedCell.cellInputEl?.value || editedCell.value
         ) as string;
 
-        this.value = cellValue;
+        // this.value = cellValue;
+        if (editedCell.column.id && editedCell.row.index > -1 && editedCell) {
+            editedCell.column.viewport.dataTable.setCell(
+                editedCell.column.id,
+                editedCell.row.index,
+                cellValue
+            );
+
+            editedCell.value = cellValue;
+        }
+
         editedCell.cellInputEl?.remove();
+        delete editedCell.cellInputEl;
         delete this.column.viewport.editedCell;
 
         parentNode.classList.remove(Globals.classNames.focusedCell);
