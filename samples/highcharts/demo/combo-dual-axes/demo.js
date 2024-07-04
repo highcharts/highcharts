@@ -8,11 +8,10 @@ Highcharts.chart('container', {
         text: 'Karasjok weather, 2023',
         align: 'left'
     },
-    subtitle: {
+    credits: {
         text: 'Source: ' +
             '<a href="https://www.yr.no/nb/historikk/graf/5-97251/Norge/Finnmark/Karasjok/Karasjok?q=2023"' +
-            'target="_blank">YR</a>',
-        align: 'left'
+            'target="_blank">YR</a>'
     },
     xAxis: [{
         categories: [
@@ -54,10 +53,7 @@ Highcharts.chart('container', {
     },
     legend: {
         align: 'left',
-        x: 80,
         verticalAlign: 'top',
-        y: 60,
-        floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme
             'rgba(255,255,255,0.25)'
