@@ -23,12 +23,11 @@ DataGrid.dataGrid2('container', {
     },
     defaults: {
         columns: {
-            // useHTML: true
+            useHTML: true
         }
     },
     columns: {
         Header: {
-            // useHTML: true
             cellFormat: '<h3>{value}</h3>'
         },
         List: {

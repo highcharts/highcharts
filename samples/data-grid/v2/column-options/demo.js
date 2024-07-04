@@ -15,7 +15,10 @@ DataGrid.dataGrid2('container', {
     },
     columns: {
         weight: {
-            className: 'custom-column-class-name'
+            className: 'custom-column-class-name',
+            cellFormatter: function () {
+                return 'V: ' + this.value;
+            }
         },
         metaData: {
             enabled: false

@@ -123,9 +123,8 @@ class DataGridCell {
         if (!this.column.data) {
             return;
         }
+
         const {
-            cellFormat,
-            cellFormatter,
             useHTML,
             editable
         } = this.column.userOptions;
@@ -136,16 +135,8 @@ class DataGridCell {
 
         this.value = this.column.data[this.row.index];
 
-        if (cellFormatter) {
-            cellContent = cellFormatter.call({
-                value: this.value
-            });
-        } else {
-            cellContent = (
-                    cellFormat ?
-                        format(cellFormat, this) :
-                        this.value + ''
-                );
+        if (this.value) {
+            cellContent = this.formatCell(this.value);
         }
 
         if (editable) {
@@ -213,8 +204,11 @@ class DataGridCell {
      *
      * @internal
      *
-     * @param cellEl
-     * The clicked cell.
+     * @param cellElement
+     * The clicked cell's HTML element.
+     * 
+     * @param value
+     * The value of cell
      *
      */
     private onCellClick(cellElement: HTMLElement, value: string): void {
@@ -256,7 +250,7 @@ class DataGridCell {
     public removeCellInputElement(): void {
         const editedCell = this.column.viewport.editedCell;
         const parentNode = editedCell?.cellInputEl?.parentNode;
-
+        
         if (!editedCell || !parentNode) {
             return;
         }
@@ -280,9 +274,33 @@ class DataGridCell {
         delete this.column.viewport.editedCell;
 
         parentNode.classList.remove(Globals.classNames.focusedCell);
-        parentNode.innerHTML = cellValue;
+        parentNode.innerHTML = this.formatCell(cellValue);
 
         fireEvent(parentNode, 'cellUpdated');
+    }
+
+    /**
+     * 
+     */
+    public formatCell(value: string | number | boolean): string {
+        const {
+            cellFormat,
+            cellFormatter
+        } = this.column.userOptions;
+
+        let cellContent = '';
+
+        if (cellFormatter) {
+            cellContent = cellFormatter.call({
+                value: value
+            });
+        } else {
+            cellContent = (
+                cellFormat ? format(cellFormat, this) :  value + ''
+            );
+        }
+
+        return cellContent;
     }
 
     /**
