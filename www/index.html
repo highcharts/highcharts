@@ -42,16 +42,6 @@
     }
 
     function stripURL(url) {
-        const parser = document.createElement('a');
-        parser.href = url;
-
-        // Only allow URLs from specific domains
-        const allowedHost = 'code.highcharts.com';
-        if (parser.host !== allowedHost) {
-            throw new Error('Invalid URL');
-        }
-
-        // Perform the replacement
         return url.replace('https://code.highcharts.com/', '')
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
