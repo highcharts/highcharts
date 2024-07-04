@@ -70,7 +70,7 @@
 
             // Add hyperlink to the list element.
             link.textContent = url;
-            link.href = url.replace('https://code.highcharts.com/', '');
+            link.setAttribute('href', url.replace('https://code.highcharts.com/', ''));
         });
 
         // Replace all tags with version numbers.
