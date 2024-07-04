@@ -1,10 +1,11 @@
+<!DOCTYPE html>
 <html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
 <head>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="robots" content="index, follow">
-<link rel="stylesheet" href="https://code.highcharts.com/webstyling/bootstrap.min.css" type="text/css">
-<link rel="stylesheet" href="https://code.highcharts.com/webstyling/template.css" type="text/css">
+<link rel="stylesheet" href="//code.highcharts.com/webstyling/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="//code.highcharts.com/webstyling/template.css" type="text/css">
 <title>code.highcharts.com</title>
 <style>
     h2 {
@@ -42,7 +43,8 @@
     }
 
     function stripURL(url) {
-        return url.replace('https://code.highcharts.com/', '')
+        return url
+            .replace('https://code.highcharts.com/', '')
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
@@ -75,10 +77,11 @@
             url = url
                 .replace('@patch', patch)
                 .replace('@minor', minor)
-                .replace('@major', major);
+                .replace('@major', major)
 
             // Add hyperlink to the list element.
             link.textContent = url;
+            // Set href to root-relative URL
             link.setAttribute('href', stripURL(url));
         });
 
@@ -121,7 +124,7 @@
 <div id="menu" class="nav-down">
 <nav class="navbar navbar-default">
 <div class="container-fluid">
-<a class="navbar-brand" href="https://www.highcharts.com/" title="Highcharts">
+<a class="navbar-brand" href="//www.highcharts.com/" title="Highcharts">
 <img src="https://wp-assets.highcharts.com/svg/highcharts-logo-padded.svg" alt="Highcharts"></a>
 </div>
 </nav>
@@ -157,7 +160,7 @@ If you're uncertain about the specific Highcharts version covered by your licens
 <p>We recommend loading a <a href="#specific-version">specific version</a> of the library. This ensures that the version you are loading remains compatible with both your configurations and your license.</p>
 
 <h2 id="highcharts-core">Highcharts Core</h2>
-<p>There are many ways to use Highcharts, and you can choose the one that works best with your project. For the details please check the <a href="https://www.highcharts.com/docs/getting-started/installation">installation documentation</a>.</p>
+<p>There are many ways to use Highcharts, and you can choose the one that works best with your project. For the details please check the <a href="//www.highcharts.com/docs/getting-started/installation">installation documentation</a>.</p>
 
 <h4 id="specific-version">Specific version</h4>
 <p>You'll find a specific Highcharts version by appending the version number to the root level:</p>
@@ -239,7 +242,7 @@ structure as above.</p>
 
 <h2 id="highcharts-maps">Highcharts Maps</h2>
 <p>Highcharts Maps files are available under the <strong>/maps</strong> subfolder, with the same folder
-structure as above. The <a href="https://code.highcharts.com/mapdata/">Highcharts Maps map collection</a>
+structure as above. The <a href="//code.highcharts.com/mapdata/">Highcharts Maps map collection</a>
 is available under the <strong>/mapdata</strong> subfolder.</p>
 
 <h4>Specific version</h4>
