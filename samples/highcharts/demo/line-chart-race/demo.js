@@ -1,4 +1,4 @@
-const startInt = 0,
+const startInt = 1,
     endInt = 20,
     animationSpeed = Math.floor(2000 / (endInt - startInt));
 
@@ -35,18 +35,6 @@ const chart = Highcharts.chart('container', {
         animation: {
             duration: animationSpeed,
             easing: t => t
-        },
-
-        events: {
-            redraw: function () {
-                const labels = this.annotations[0].labels;
-                labels
-                    .find(a => a.options.id === 'sebastian_vettel')
-                    .graphic.attr({
-                        rotation: this.series[0].yData[0]
-                    });
-                console.log(this.series[0].yData[this.series[0].length - 1]);
-            }
         }
     },
     title: {
@@ -87,14 +75,58 @@ const chart = Highcharts.chart('container', {
             labels: [
                 {
                     text: 'Vettel',
-                    verticalAlign: 'top',
+                    verticalAlign: 'right',
                     point: {
-                        x: 12,
+                        x: 1,
                         xAxis: 0,
-                        y: 120,
+                        y: 0,
                         yAxis: 0
                     },
                     id: 'sebastian_vettel'
+                },
+                {
+                    text: 'Alonso',
+                    verticalAlign: 'right',
+                    point: {
+                        x: 1,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    },
+                    id: 'fernando_alonso'
+                },
+                {
+                    text: 'Räikkönen',
+                    verticalAlign: 'right',
+                    point: {
+                        x: 1,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    },
+                    id: 'kimi_räikkönen'
+                },
+                {
+                    text: 'Hamilton',
+                    verticalAlign: 'right',
+                    point: {
+                        x: 1,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    },
+                    id: 'lewis_hamilton'
+                },
+                {
+                    text: 'Button',
+                    verticalAlign: 'right',
+                    point: {
+                        x: 1,
+                        xAxis: 0,
+                        y: 0,
+                        yAxis: 0
+                    },
+                    id: 'jenson_button'
                 }
             ],
             labelOptions: {
@@ -110,14 +142,30 @@ const chart = Highcharts.chart('container', {
 let currentXVal = 1;
 
 function update() {
+    if (currentXVal > endInt) {
+        pause();
+        return;
+    }
     const series = chart.series;
+    const annotations = chart.annotations;
 
     for (let i = 0; i < series.length; i++) {
         const newP = formatPoints[i][currentXVal];
-        series[i].addPoint([newP]);
+        series[i].addPoint([currentXVal, newP]);
+        console.log('x = ' + currentXVal);
+        console.log('y = ' + newP);
+        chart.annotations[0].labels[i].update({
+            point: {
+                x: currentXVal,
+                y: newP,
+                xAxis: 0,
+                yAxis: 0
+            }
+        }, true);
+        console.log('------------------');
     }
 
-    chart.redraw();
+    chart.redraw(true);
 
     if (currentXVal > endInt) {
         pause();
@@ -129,7 +177,7 @@ function update() {
 function play() {
     chart.sequenceTimer = setInterval(function () {
         update();
-    }, animationSpeed);
+    }, animationSpeed - 10);
 }
 
 function pause() {
