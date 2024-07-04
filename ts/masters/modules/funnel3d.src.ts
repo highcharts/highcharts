@@ -3,7 +3,7 @@
  * @module highcharts/modules/funnel3d
  * @requires highcharts
  * @requires highcharts-3d
- * @requires modules/cylinder
+ * @requires highcharts/modules/cylinder
  *
  * Highcharts funnel module
  *
