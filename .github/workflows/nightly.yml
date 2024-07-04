@@ -199,6 +199,7 @@ jobs:
 
   nightly_changelog:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' }}
     env:
       HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
       AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
