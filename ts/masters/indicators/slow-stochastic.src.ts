@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/indicators
  * @requires highcharts
- * @requires modules/stock
+ * @requires highcharts/modules/stock
  *
  * Slow Stochastic series type for Highcharts Stock
  *

@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/indicators-all
  * @requires highcharts
- * @requires modules/stock
+ * @requires highcharts/modules/stock
  *
  * All technical indicators for Highcharts Stock
  *

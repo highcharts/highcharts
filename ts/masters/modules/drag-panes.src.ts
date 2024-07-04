@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/modules/drag-panes
  * @requires highcharts
- * @requires modules/stock
+ * @requires highcharts/modules/stock
  *
  * Drag-panes module
  *
