@@ -34,4 +34,27 @@ describe('Updating HTML component.', () => {
             );
         })
     });
+
+    it('Should edit the HTML component with sidebar.', () => {
+        // Arrange- open sidebar
+        cy.toggleEditMode();
+        cy.openCellEditSidebar('#dashboard-2');
+
+        // Act- edit the HTML component
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn')
+            .contains('span', 'HTML')
+            .closest('.highcharts-dashboards-edit-collapsable-content-header')
+            .click();
+        cy.get('textarea').clear().type('<h1>New title</h1>');
+
+        // Assert- confirm the changes in dashboard and sidebar
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        cy.get('#dashboard-2').should('contain', 'New title');
+        cy.openCellEditSidebar('#dashboard-2');
+        cy.get('.highcharts-dashboards-edit-accordion-header-btn')
+            .contains('span', 'HTML')
+            .closest('.highcharts-dashboards-edit-collapsable-content-header')
+            .click();
+        cy.get('textarea').should('have.value', '<h1>New title</h1>');
+    });
 });
