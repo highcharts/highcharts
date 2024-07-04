@@ -280,7 +280,13 @@ class DataGridCell {
     }
 
     /**
-     * 
+     * Handle the formatting content of the cell.
+     *
+     * @internal
+     *
+     * @param value
+     * The value of cell
+     *
      */
     public formatCell(value: string | number | boolean): string {
         const {
