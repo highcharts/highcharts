@@ -5166,7 +5166,7 @@ export default Series;
  * **Note:** This option is deprecated in favor of
  * Highcharts.LegendItemClickEventObject.
  *
- * @deprecated
+ * @deprecated 11.4.4
  * @interface Highcharts.SeriesLegendItemClickEventObject
  *//**
  * Related browser event.
