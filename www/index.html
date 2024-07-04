@@ -52,7 +52,12 @@
         }
 
         // Perform the replacement
-        return url.replace('https://code.highcharts.com/', '');
+        return url.replace('https://code.highcharts.com/', '')
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     loadScript("https://code.highcharts.com/products.js", function() {
@@ -81,8 +86,6 @@
                 .replace('@patch', patch)
                 .replace('@minor', minor)
                 .replace('@major', major);
-
-
 
             // Add hyperlink to the list element.
             link.textContent = url;
