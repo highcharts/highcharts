@@ -40,7 +40,8 @@ async function checkDocsConsistency() {
         }
 
         while ((match = requiresPattern.exec(md))) {
-            const requires = match[1].replace(/^(stock|maps|gantt)\//u, '');
+            const requires = match[1]
+                .replace(/^(highcharts|stock|maps|gantt)\//u, '');
             try {
                 FS.statSync(`ts/masters/${requires}.src.ts`);
             } catch (e1) {
