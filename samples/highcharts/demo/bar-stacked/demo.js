@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Ferry passengers by vehicle-type 2024'
+        text: 'Ferry passengers by vehicle type 2024'
     },
     xAxis: {
         categories: [
@@ -14,7 +14,7 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Points'
+            text: ''
         }
     },
     legend: {
