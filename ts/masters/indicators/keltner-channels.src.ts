@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/keltner-channels
  * @requires highcharts
- * @requires modules/stock
+ * @requires highcharts/modules/stock
  *
  * Indicator series type for Highcharts Stock
  *

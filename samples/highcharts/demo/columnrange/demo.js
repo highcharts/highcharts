@@ -7,18 +7,16 @@ Highcharts.chart('container', {
 
     accessibility: {
         description: 'Image description: A column range chart compares the ' +
-            'monthly temperature variations throughout 2021 in Vik i Sogn, ' +
+            'monthly temperature variations throughout 2023 in Vik i Sogn, ' +
             'Norway. The chart is interactive and displays the temperature ' +
             'range for each month when hovering over the data. The ' +
             'temperature is measured in degrees Celsius on the X-axis and ' +
             'the months are plotted on the Y-axis. The lowest temperature is ' +
-            'recorded in February at minus 16.7 Celsius. The lowest range of ' +
-            'temperatures is found in March ranging from a low of minus 4.7 ' +
-            'to a high of 11.6 Celsius. The highest temperature is found in ' +
-            'June at 29.4 Celsius. May has the highest range of temperatures ' +
-            'from minus 2.5 to 27.2 Celsius. The broadest range of ' +
-            'temperatures is also found in May ranging from a low of minus ' +
-            '2.1 to a high of 27.2 Celsius.'
+            'recorded in March at minus 13.1 Celsius. The lowest range of ' +
+            'temperatures is found in September ranging from a low of 9.6 ' +
+            'to a high of 23.0 Celsius. The highest temperature is found in ' +
+            'June at 28.4 Celsius, and has the highest range of temperatures ' +
+            'from 3.1 up to 28.4'
     },
 
     title: {
@@ -26,7 +24,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Observed in Vik i Sogn, Norway, 2021 | ' +
+        text: 'Observed in Vik i Sogn, Norway, 2023 | ' +
             'Source: <a href="https://www.vikjavev.no/ver/" target="_blank">Vikjavev</a>'
     },
 
@@ -64,18 +62,18 @@ Highcharts.chart('container', {
     series: [{
         name: 'Temperatures',
         data: [
-            [-13.9, 5.2],
-            [-16.7, 10.6],
-            [-4.7, 11.6],
-            [-4.4, 16.8],
-            [-2.1, 27.2],
-            [5.9, 29.4],
-            [6.5, 29.1],
-            [4.7, 25.4],
-            [4.3, 21.6],
-            [-3.5, 15.1],
-            [-9.8, 12.5],
-            [-11.5, 8.4]
+            [-9.5, 8.0],
+            [-7.8, 8.3],
+            [-13.1, 9.2],
+            [-4.4, 15.7],
+            [-1.0, 20.8],
+            [3.1, 28.4],
+            [8.9, 27.0],
+            [9.6, 23.0],
+            [4.9, 19.3],
+            [-5.2, 11.6],
+            [-10.5, 12.0],
+            [-12.1, 8.5]
         ]
     }]
 

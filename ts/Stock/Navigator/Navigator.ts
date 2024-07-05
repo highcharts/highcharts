@@ -330,7 +330,7 @@ class Navigator {
                 [
                     'L',
                     left + navigatorSize + scrollButtonSize * 2,
-                    navigatorTop + halfOutline
+                    lineTop
                 ]
             ];
 

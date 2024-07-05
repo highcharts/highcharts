@@ -292,7 +292,9 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
         }
 
         // Close it
-        polygon.push(polygon[0].slice() as [number, number]);
+        if (polygon.length) {
+            polygon.push(polygon[0].slice() as [number, number]);
+        }
 
         bBox.polygon = polygon;
     }
