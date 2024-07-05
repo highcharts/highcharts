@@ -44,12 +44,11 @@ import H from '../Core/Globals.js';
 const { composed } = H;
 import MapViewDefaults from './MapViewDefaults.js';
 import GeoJSONComposition from './GeoJSONComposition.js';
+import GeometryUtilities from '../Core/Geometry/GeometryUtilities.js';
+const { pointInPolygon } = GeometryUtilities;
 const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
-const {
-    boundsFromPath,
-    pointInPolygon
-} = MU;
+const { boundsFromPath } = MU;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {

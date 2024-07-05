@@ -19,35 +19,34 @@ To be able to use Dashboards with layout system and edit mode you first have to 
 The order of the imports is important, so make sure that the `layout` module is imported after the Dashboards module.
 
 ```html
-    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
-    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
 ```
 
 Each cell must have an `id` field. The same id must be passed in the component config to the `renderTo` field. Example configuration of component and cell:
 
 ```js
-    gui: {
-        enabled: true,
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    id: 'dashboard-col-0'
-                }]
+gui: {
+    enabled: true,
+    layouts: [{
+        id: 'layout-1',
+        rows: [{
+            cells: [{
+                id: 'dashboard-col-0'
             }]
         }]
+    }]
+},
+components: [{
+    renderTo: 'dashboard-col-0',
+    type: 'Highcharts',
+    chartOptions: {
+        chart: {
+            type: 'pie'
+        },
+        series: [{data: [1,2,3]}]
     },
-    components: [
-        {
-            renderTo: 'dashboard-col-0',
-            type: 'Highcharts',
-            chartOptions: {
-                chart: {
-                    type: 'pie'
-                },
-                series: [{data: [1,2,3]}]
-            },
-        }]
+}]
 ```
 
 [Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
@@ -58,27 +57,27 @@ You can create your own HTML structure of a layout, styled by CSS or other CSS f
 Please remember that each container should have an unique `id` for rendered component.
 
 ```html
-    <div id="container">
-    <div>
-        <div id="dashboard-col-0"></div>
-    </div>
-    </div>
+<div id="container">
+<div>
+    <div id="dashboard-col-0"></div>
+</div>
+</div>
 ```
 
 ```js
-    gui: {
-        enabled: false
-    }
-    components: [{
-        renderTo: 'dashboard-col-0',
-        type: 'Highcharts',
-        chartOptions: {
-            chart: {
-                type: 'pie'
-            },
-            series: [{data: [1,2,3]}]
+gui: {
+    enabled: false
+}
+components: [{
+    renderTo: 'dashboard-col-0',
+    type: 'Highcharts',
+    chartOptions: {
+        chart: {
+            type: 'pie'
         },
-    }]
+        series: [{data: [1,2,3]}]
+    },
+}]
 ```
 
 [Here is the standalone demo](https://www.highcharts.com/samples/embed/dashboards/gui/custom-layout).
@@ -95,43 +94,43 @@ To synchronize components you have to specify which event you want to synchroniz
 Example of synchronized components
 
 ```js
-    components: [{
-        connector: {
-            id: 'Vitamin'
-        },
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
-        },
-        renderTo: 'dashboard-col-0',
-        type: 'Highcharts',
-        chartOptions: {
-            chart: {
-                type: 'pie'
-            }
-        },
-    }, {
-        renderTo: 'dashboard-col-1',
-        connector: {
-            id: 'Vitamin'
-        },
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
-        },
-        type: 'Highcharts',
-        chartOptions: {
-            xAxis: {
-                type: 'category'
-            },
-            chart: {
-                animation: false,
-                type: 'column'
-            }
+components: [{
+    connector: {
+        id: 'Vitamin'
+    },
+    sync: {
+        visibility: true,
+        highlight: true,
+        extremes: true
+    },
+    renderTo: 'dashboard-col-0',
+    type: 'Highcharts',
+    chartOptions: {
+        chart: {
+            type: 'pie'
         }
-    }]
+    },
+}, {
+    renderTo: 'dashboard-col-1',
+    connector: {
+        id: 'Vitamin'
+    },
+    sync: {
+        visibility: true,
+        highlight: true,
+        extremes: true
+    },
+    type: 'Highcharts',
+    chartOptions: {
+        xAxis: {
+            type: 'category'
+        },
+        chart: {
+            animation: false,
+            type: 'column'
+        }
+    }
+}]
 ```
 
 
@@ -184,7 +183,7 @@ afterRender(e) {
 If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the corresponding column in the dataTable:
 
 ```js
-  dataPool: {
+dataPool: {
     connectors: [{
       id: 'Vitamin',
       type: 'CSV',
@@ -201,7 +200,7 @@ If you have to change the displayed name in the chart options (and wish to sync 
         }
       }
     }]
-  }
+}
 ```
 See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
@@ -231,14 +230,14 @@ Example:
         flex: 1 1 33.333%;
     }
 }
-  
+
 /* MEDIUM */
 @media (max-width: 992px) {
     #dashboard-cell-1 {
         flex: 1 1 50%;
     }
 }
-  
+
 /* SMALL */
 @media (max-width: 576px) {
     #dashboard-cell-1 {

@@ -90,7 +90,7 @@ declare module '../Core/Chart/ChartLike' {
  * The Accessibility class
  *
  * @private
- * @requires module:modules/accessibility
+ * @requires modules/accessibility
  *
  * @class
  * @name Highcharts.Accessibility

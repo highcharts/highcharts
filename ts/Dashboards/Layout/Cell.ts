@@ -394,7 +394,7 @@ class Cell extends GUIElement {
 
     // Method to get array of overlapping levels.
     public getOverlappingLevels(
-        align: string, // 'left', 'right', 'top', 'bottom'
+        align: 'left' | 'right' |'top' |'bottom',
         levelMaxGap: number, // Max distance between levels
         offset?: number // Analyzed cell offset
     ): Array<number> {
@@ -485,9 +485,7 @@ class Cell extends GUIElement {
         }
     }
 
-    public setHighlight(
-        remove?: boolean
-    ): void {
+    public setHighlight(remove?: boolean): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
 
@@ -662,13 +660,6 @@ namespace Cell {
         style?: CSSJSONObject;
         layoutJSON?: LayoutType.JSON;
     }
-
-    export interface DOMCell {
-        id: string;
-        container: HTMLElement;
-        mountedComponent: Component
-    }
-
 }
 
 /* *

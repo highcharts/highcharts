@@ -60,7 +60,7 @@ import type ColorType from '../../Core/Color/ColorType';
  *
  * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
  *
- * @requires modules/bellcurve
+ * @requires modules/histogram-bellcurve
  */
 export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, DerivedComposition.SeriesOptions {
 
