@@ -427,12 +427,16 @@ class HTMLComponent extends Component {
         let html = `<${node.tagName}`;
 
         if (attributes) {
-            (Object.keys(attributes) as Array<keyof typeof attributes>)
-                .forEach((key): void => {
-                    const value = attributes[key];
-                    html += ` ${key}="${value}"`;
-                });
+            for (const key in attributes) {
+                if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+                    const value = attributes[key as keyof typeof attributes];
+                    if (value !== void 0) {
+                        html += ` ${key}="${value}"`;
+                    }
+                }
+            }
         }
+
         html += '>';
 
         html += node.textContent || '';
