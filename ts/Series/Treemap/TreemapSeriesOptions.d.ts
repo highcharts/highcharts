@@ -600,6 +600,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
+    traverseToLeaf?: boolean;
 }
 
 /**

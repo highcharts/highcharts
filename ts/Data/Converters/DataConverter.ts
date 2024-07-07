@@ -110,7 +110,7 @@ class DataConverter implements DataEvent.Emitter {
      */
     public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})([\-\.\/])([0-9]{1,2})\2([0-9]{1,2})$/,
+            regex: /^(\d{4})([\-\.\/])(\d{1,2})\2(\d{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -120,7 +120,7 @@ class DataConverter implements DataEvent.Emitter {
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -131,7 +131,7 @@ class DataConverter implements DataEvent.Emitter {
             alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -141,7 +141,7 @@ class DataConverter implements DataEvent.Emitter {
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 const d = new Date();
 
@@ -162,7 +162,7 @@ class DataConverter implements DataEvent.Emitter {
             alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
+            regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -361,7 +361,7 @@ class DataConverter implements DataEvent.Emitter {
             ) {
                 thing = data[i]
                     .trim()
-                    .replace(/[-\.\/]/g, ' ')
+                    .replace(/[\-\.\/]/g, ' ')
                     .split(' ');
 
                 guessedFormat = [
@@ -688,7 +688,7 @@ class DataConverter implements DataEvent.Emitter {
             str = str.replace(/^\s+|\s+$/g, '');
 
             // Clear white space insdie the string, like thousands separators
-            if (inside && /^[0-9\s]+$/.test(str)) {
+            if (inside && /^[\d\s]+$/.test(str)) {
                 str = str.replace(/\s/g, '');
             }
         }

@@ -698,8 +698,7 @@ class NavigationBindings {
                 chart.renderer.boxWrapper.addClass('highcharts-draw-mode');
             }
         } else {
-            chart.stockTools &&
-                chart.stockTools.toggleButtonActiveClass(button);
+            chart.stockTools && button.classList.remove('highcharts-active');
             svgContainer.removeClass('highcharts-draw-mode');
             navigation.nextEvent = false;
             navigation.mouseMoveEvent = false;

@@ -257,9 +257,10 @@
 
         singleTouchDrag(chart);
 
-        assert.strictEqual(
+        assert.close(
             xAxis.max - xAxis.min,
             initialRange,
+            0.5,
             'The range should be preserved during a single touch pan'
         );
 

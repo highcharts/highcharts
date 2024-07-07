@@ -331,7 +331,7 @@
 .highcharts-dashboards-edit-enabled .highcharts-dashboards-edit-cell-highlight {
     box-shadow: 0 0 0 99998px rgba(var(--highcharts-neutral-color-80), 0.5);
     position: relative;
-    z-index: 100;
+    z-index: 9997;
     pointer-events: auto;
     transition: all 0.5s ease;
     box-sizing: border-box;
@@ -384,7 +384,7 @@
 
 .highcharts-dashboards-edit-resize-pointer {
     position: absolute;
-    z-index: 100;
+    z-index: 9997;
     display: none;
     pointer-events: none;
     border: 4px solid var(--highcharts-highlight-color-60);
@@ -393,7 +393,7 @@
 
 .highcharts-dashboards-edit-ctx-detection-pointer {
     position: absolute;
-    z-index: 101;
+    z-index: 9998;
     display: none;
     pointer-events: none;
     border: 2px solid var(--highcharts-highlight-color-20);
@@ -402,7 +402,7 @@
 .highcharts-dashboards-edit-resize-snap {
     position: absolute;
     background-color: var(--highcharts-background-color);
-    z-index: 10;
+    z-index: 9997;
 }
 
 .highcharts-dashboards-edit-resize-snap-x {
@@ -426,7 +426,7 @@
 
 .highcharts-dashboards-toolbar {
     position: absolute;
-    z-index: 10;
+    z-index: 9997;
     top: 0;
     left: 15px;
     display: none;
@@ -608,7 +608,7 @@
 .highcharts-dashboards-edit-toolbar {
     color: var(--highcharts-neutral-color-60);
     position: absolute;
-    z-index: 90;
+    z-index: 9997;
     border-radius: 3px;
     box-shadow:
         0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.1),
@@ -693,7 +693,7 @@
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-60);
     position: absolute;
-    z-index: 1000;
+    z-index: 9999;
     min-height: 300px;
     height: 100%;
     padding: 20px;
@@ -924,14 +924,18 @@
     top: 5%;
     overflow: hidden;
     position: absolute;
-    z-index: 100;
+    z-index: 9999;
     border-radius: 10px;
     padding: 20px;
+    pointer-events: all;
+    border: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dashboards-edit-popup-close {
     background-repeat: no-repeat;
-    background-position: 0% 100%;
+    background-color: transparent;
+    background-position: 50% 100%;
+    border: none;
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -974,14 +978,14 @@
     width: 100%;
     height: 100%;
     position: absolute;
-    z-index: 20;
+    z-index: 9998;
     left: 0;
     top: 0;
     transition: 0.3s;
 }
 
 .highcharts-dashboards-edit-overlay-active {
-    z-index: 99;
+    z-index: 9998;
     display: block;
     background-color: var(--highcharts-dashboards-overlay-color);
 }
@@ -1216,6 +1220,11 @@
 
 .highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
     display: none;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordion-content.highcharts-dashboards-edit-standalone-element > .highcharts-dashboards-edit-label-text {
+    display: block;
 }
 
 .highcharts-dashboards-edit-accordion-content textarea {

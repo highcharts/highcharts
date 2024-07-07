@@ -25,7 +25,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sn/sn-all.topo.json">Senegal</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sn/sn-all.topo.json">Senegal</a>'
         },
 
         mapNavigation: {

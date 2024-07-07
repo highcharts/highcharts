@@ -255,7 +255,7 @@ namespace Exporting {
         /TapHighlightColor/,
         /^transition/,
         /^length$/, // #7700
-        /^[0-9]+$/ // #17538
+        /^\d+$/ // #17538
     ];
 
     // These ones are translated to attributes rather than styles
@@ -410,8 +410,12 @@ namespace Exporting {
             symbol = renderer
                 .symbol(
                     btnOptions.symbol,
-                    (btnOptions.symbolX as any) - (symbolSize / 2),
-                    (btnOptions.symbolY as any) - (symbolSize / 2),
+                    Math.round(
+                        (btnOptions.symbolX || 0) - (symbolSize / 2)
+                    ),
+                    Math.round(
+                        (btnOptions.symbolY || 0) - (symbolSize / 2)
+                    ),
                     symbolSize,
                     symbolSize
                     // If symbol is an image, scale it (#7957)
@@ -1078,7 +1082,7 @@ namespace Exporting {
                 .toLowerCase()
                 .replace(/<\/?[^>]+(>|$)/g, '') // Strip HTML tags
                 .replace(/[\s_]+/g, '-')
-                .replace(/[^a-z0-9\-]/g, '') // Preserve only latin
+                .replace(/[^a-z\d\-]/g, '') // Preserve only latin
                 .replace(/^[\-]+/g, '') // Dashes in the start
                 .replace(/[\-]+/g, '-') // Dashes in a row
                 .substr(0, 24)
@@ -1305,9 +1309,9 @@ namespace Exporting {
      */
     function hyphenate(prop: string): string {
         return prop.replace(
-            /([A-Z])/g,
-            function (a: string, b: string): string {
-                return '-' + b.toLowerCase();
+            /[A-Z]/g,
+            function (match: string): string {
+                return '-' + match.toLowerCase();
             }
         );
     }
@@ -1471,7 +1475,7 @@ namespace Exporting {
                         if (
                             key.length < RegexLimits.shortLimit &&
                             typeof s[key] === 'string' &&
-                            !/^[0-9]+$/.test(key)
+                            !/^\d+$/.test(key)
                         ) {
                             defaults[key] = s[key];
                         }
@@ -1743,18 +1747,18 @@ namespace Exporting {
         svg = svg
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
-            .replace(/jQuery[0-9]+="[^"]+"/g, '')
+            .replace(/jQuery\d+="[^"]+"/g, '')
             .replace(/url\(("|&quot;)(.*?)("|&quot;)\;?\)/g, 'url($2)')
             .replace(/url\([^#]+#/g, 'url(#')
             .replace(
                 /<svg /,
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
-            .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
+            .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
             .replace(/\n+/g, ' ')
             // Batik doesn't support rgba fills and strokes (#3095)
             .replace(
-                /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
+                /(fill|stroke)="rgba\(([ \d]+,[ \d]+,[ \d]+),([ \d\.]+)\)"/g, // eslint-disable-line max-len
                 '$1="rgb($2)" $1-opacity="$3"'
             )
 

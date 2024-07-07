@@ -122,6 +122,9 @@ interface BoxObject extends R.BoxObject {
  *
  * @param {Highcharts.TooltipOptions} options
  * Tooltip options.
+ *
+ * @param {Highcharts.Pointer} pointer
+ * The pointer instance.
  */
 class Tooltip {
 
@@ -520,23 +523,20 @@ class Tooltip {
             // container.
             if (tooltip.outside) {
                 const label = this.label;
-                const { xSetter, ySetter } = label;
-                label.xSetter = function (
-                    value: string
-                ): void {
-                    xSetter.call(label, tooltip.distance);
-                    if (container) {
-                        container.style.left = value + 'px';
-                    }
-                };
-                label.ySetter = function (
-                    value: string
-                ): void {
-                    ySetter.call(label, tooltip.distance);
-                    if (container) {
-                        container.style.top = value + 'px';
-                    }
-                };
+                [label.xSetter, label.ySetter].forEach((
+                    setter: (value: number) => void,
+                    i: number
+                ): void => {
+                    label[i ? 'ySetter' : 'xSetter'] = (
+                        value: number
+                    ): void => {
+                        setter.call(label, tooltip.distance);
+                        label[i ? 'y' : 'x'] = value;
+                        if (container) {
+                            container.style[i ? 'top' : 'left'] = `${value}px`;
+                        }
+                    };
+                });
             }
 
             this.label
@@ -1072,13 +1072,12 @@ class Tooltip {
                     }
 
                     label.attr({
+                        // Add class before the label BBox calculation (#21035)
+                        'class': tooltip.getClassName(point),
                         text: text && (text as any).join ?
                             (text as any).join('') :
                             text
                     });
-
-                    // Set the stroke color of the box to reflect the point
-                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({

@@ -153,6 +153,7 @@ class SVGLabel extends SVGElement {
     public paddingRightSetter = this.paddingSetter;
     public text: SVGElement;
     public textStr: string;
+    public doUpdate = false;
     public x: number;
 
     /* *
@@ -283,7 +284,7 @@ class SVGLabel extends SVGElement {
             paddingLeft = pick(this.paddingLeft, padding),
             rotation = rot ?? (this.rotation || 0);
 
-        let bBox = {
+        let bBox: BBoxObject = {
             width,
             height,
             x: translateX + this.bBox.x - paddingLeft,
@@ -298,15 +299,39 @@ class SVGLabel extends SVGElement {
     }
 
     private getCrispAdjust(): number {
-        return this.renderer.styledMode && this.box ?
-            this.box.strokeWidth() % 2 / 2 :
-            (
-                this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0
-            ) % 2 / 2;
+        return (
+            this.renderer.styledMode && this.box ?
+                this.box.strokeWidth() :
+                (
+                    this['stroke-width'] ?
+                        parseInt(this['stroke-width'], 10) :
+                        0
+                )
+        ) % 2 / 2;
     }
 
     public heightSetter(value: number): void {
         this.heightSetting = value;
+        this.doUpdate = true;
+    }
+
+
+    /**
+     * This method is executed in the end of `attr()`, after setting all
+     * attributes in the hash. In can be used to efficiently consolidate
+     * multiple attributes in one SVG property -- e.g., translate, rotate and
+     * scale are merged in one "transform" attribute in the SVG node.
+     * Also updating height or width should trigger update of the box size.
+     *
+     * @private
+     * @function Highcharts.SVGLabel#afterSetters
+     */
+    public afterSetters(): void {
+        super.afterSetters();
+        if (this.doUpdate) {
+            this.updateBoxSize();
+            this.doUpdate = false;
+        }
     }
 
     /*
@@ -514,6 +539,7 @@ class SVGLabel extends SVGElement {
     public widthSetter(value: (number|string)): void {
         // `width:auto` => null
         this.widthSetting = isNumber(value) ? value : void 0;
+        this.doUpdate = true;
     }
 
     public getPaddedWidth(): number {

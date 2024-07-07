@@ -26,7 +26,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-ze-all.topo.json">Zeeland</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-ze-all.topo.json">Zeeland</a>'
         },
 
         mapNavigation: {

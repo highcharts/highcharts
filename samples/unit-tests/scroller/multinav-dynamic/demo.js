@@ -167,7 +167,16 @@ QUnit.test('Adding and removing points', function (assert) {
 });
 
 QUnit.test('Update options', function (assert) {
-    var chart = Highcharts.stockChart('container', {
+    let redrawsAmount = 0;
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            type: 'line',
+            events: {
+                redraw() {
+                    redrawsAmount++;
+                }
+            }
+        },
         series: [
             {
                 data: [1, 2, 3, 4]
@@ -188,10 +197,52 @@ QUnit.test('Update options', function (assert) {
         'Navigator series is first series'
     );
     chart.update({
+        xAxis: {
+            labels: {
+                enabled: false
+            }
+        },
         navigator: {
-            baseSeries: 1
+            margin: 50,
+            baseSeries: 1,
+            handles: {
+                backgroundColor: '#ff0000',
+                height: 30,
+                width: 30,
+                symbols: ['circle', 'circle']
+            }
         }
     });
+    assert.strictEqual(
+        redrawsAmount,
+        1,
+        'Updating multiple navigator options should trigger only one redraw.'
+    );
+
+    const handle = chart.navigator.handles[0];
+    assert.strictEqual(
+        handle.attr('d'),
+        'M -0.9999999999999991 30 A 15 15 0 1 1 -0.9998 29.999999998666667 Z',
+        'Navigator handles should be updated to new symbol path (circle).'
+    );
+    assert.strictEqual(
+        handle.attr('fill'),
+        '#ff0000',
+        'Navigator handle should have a red color.'
+
+    );
+    assert.close(
+        handle.getBBox().height,
+        30,
+        0.5,
+        'Navigator handles should be updated to new height.'
+    );
+    assert.close(
+        handle.getBBox().width,
+        30,
+        0.5,
+        'Navigator handles should be updated to new width.'
+    );
     assert.strictEqual(
         chart.navigator.series.length,
         1,
@@ -224,6 +275,25 @@ QUnit.test('Update options', function (assert) {
         chart.navigator.series[0].color,
         '#f00',
         'Navigator has one series with changed color'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        navigator: {
+            height: 100
+        }
+    });
+    assert.strictEqual(
+        chart.navigator.navigatorGroup.getBBox().width,
+        100,
+        'Height of navigator should be correct in inverted charts.'
+    );
+    assert.strictEqual(
+        chart.navigator.shades[1].getBBox().height,
+        chart.plotSizeX,
+        'Width of navigator should be correct in inverted charts.'
     );
 });
 

@@ -39,7 +39,6 @@
                 type: 'treemap',
                 layoutAlgorithm: 'squarified',
                 allowDrillToNode: true,
-                turboThreshold: Infinity,
                 dataLabels: {
                     enabled: false,
                     crop: true

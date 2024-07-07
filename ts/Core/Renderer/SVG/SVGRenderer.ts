@@ -63,6 +63,7 @@ const {
     addEvent,
     attr,
     createElement,
+    crisp,
     css,
     defined,
     destroyObjectProperties,
@@ -582,7 +583,7 @@ class SVGRenderer implements SVGRendererLike {
                     .map((key: string): string =>
                         `${key}-${(shadowOptions as any)[key]}`
                     )
-            ].join('-').toLowerCase().replace(/[^a-z0-9\-]/g, ''),
+            ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
@@ -598,22 +599,38 @@ class SVGRenderer implements SVGRendererLike {
                     id,
                     filterUnits: options.filterUnits
                 },
-                children: [{
-                    tagName: 'feDropShadow',
-                    attributes: {
-                        dx: options.offsetX,
-                        dy: options.offsetY,
-                        'flood-color': options.color,
-                        // Tuned and modified to keep a preserve compatibility
-                        // with the old settings
-                        'flood-opacity': Math.min(options.opacity * 5, 1),
-                        stdDeviation: options.width / 2
-                    }
-                }]
+                children: this.getShadowFilterContent(options)
             });
         }
 
         return id;
+    }
+
+    /**
+     * Get shadow filter content.
+     * NOTE! Overridden in es5 module for IE11 compatibility.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#getShadowFilterContent
+     *
+     * @param {ShadowOptionsObject} options
+     * The shadow options.
+     * @return {Array<AST.Node>}
+     * The shadow filter content.
+     */
+    private getShadowFilterContent(options: ShadowOptionsObject): AST.Node[] {
+        return [{
+            tagName: 'feDropShadow',
+            attributes: {
+                dx: options.offsetX,
+                dy: options.offsetY,
+                'flood-color': options.color,
+                // Tuned and modified to keep a preserve compatibility
+                // with the old settings
+                'flood-opacity': Math.min(options.opacity * 5, 1),
+                stdDeviation: options.width / 2
+            }
+        }];
     }
 
     /**
@@ -848,31 +865,21 @@ class SVGRenderer implements SVGRendererLike {
      * @param {number} width
      *        The width of the line.
      *
-     * @param {string} [roundingFunction=round]
-     *        The rounding function name on the `Math` object, can be one of
-     *        `round`, `floor` or `ceil`.
-     *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      */
     public crispLine(
         points: SVGPath,
-        width: number,
-        roundingFunction: ('round'|'floor'|'ceil') = 'round'
+        width: number
     ): SVGPath {
-        const start = points[0];
-        const end = points[1];
+        const [start, end] = points;
 
         // Normalize to a crisp line
         if (defined(start[1]) && start[1] === end[1]) {
-            // Subtract due to #1129. Now bottom and left axis gridlines behave
-            // the same.
-            start[1] = end[1] =
-                Math[roundingFunction](start[1]) - (width % 2 / 2);
+            start[1] = end[1] = crisp(start[1], width);
         }
         if (defined(start[2]) && start[2] === end[2]) {
-            start[2] = end[2] =
-                Math[roundingFunction](start[2]) + (width % 2 / 2);
+            start[2] = end[2] = crisp(start[2], width);
         }
         return points;
     }
@@ -1374,8 +1381,8 @@ class SVGRenderer implements SVGRendererLike {
             if (typeof x === 'number') {
                 path = (symbolFn as any).call(
                     this.symbols,
-                    Math.round(x || 0),
-                    Math.round(y || 0),
+                    x || 0,
+                    y || 0,
                     width || 0,
                     height || 0,
                     options

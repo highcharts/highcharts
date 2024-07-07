@@ -29,7 +29,6 @@ import type {
     SunburstSeriesOptions
 } from './SunburstSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import CU from '../CenteredUtilities.js';
@@ -67,6 +66,9 @@ const {
     merge,
     splat
 } = U;
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+TextPath.compose(SVGElement);
 
 /* *
  *

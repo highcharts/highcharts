@@ -365,7 +365,7 @@ async function setupDashboard() {
         'change',
         function () {
             const selectedOption = this.options[this.selectedIndex];
-            const mapChart = getComponent(board, 'election-map').chart;
+            const mapChart = board.getComponentByCellId('election-map').chart;
 
             // Choose a different election year
             onYearClicked(board, selectedOption.value);
@@ -677,11 +677,6 @@ async function getElectionTable(board, year) {
 }
 
 
-function getComponent(board, id) {
-    return board.mountedComponents.find(c => c.cell.id === id).component;
-}
-
-
 async function updateResultComponent(electionTable, year) {
     // Candidate names
     const candDem = electionData[year].candDem;
@@ -832,8 +827,8 @@ async function onStateClicked(board, state) {
     const yearSelector = document.getElementById('election-year');
 
     // Update chart title
-    const comp = getComponent(board, 'election-chart');
-    const barComponent = getComponent(board, 'election-chart-national');
+    const comp = board.getComponentByCellId('election-chart');
+    const barComponent = board.getComponentByCellId('election-chart-national');
 
     // Election data for current state
     const stateSeries = getHistoricalElectionSeries(state);
@@ -866,9 +861,9 @@ async function onStateClicked(board, state) {
 // Update board after changing data set (state or election year)
 async function onYearClicked(board, year) {
     // Dashboards components
-    const mapComponent = getComponent(board, 'election-map');
-    const gridComponent = getComponent(board, 'election-grid');
-    const barComponent = getComponent(board, 'election-chart-national');
+    const mapComponent = board.getComponentByCellId('election-map');
+    const gridComponent = board.getComponentByCellId('election-grid');
+    const barComponent = board.getComponentByCellId('election-chart-national');
 
     // Get election data
     const electionTable = await getElectionTable(board, year);

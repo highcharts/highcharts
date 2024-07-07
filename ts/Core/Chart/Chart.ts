@@ -49,7 +49,6 @@ import type {
 } from '../Series/SeriesType';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -80,6 +79,7 @@ import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import SVGElement from '../Renderer/SVG/SVGElement';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
@@ -314,7 +314,7 @@ class Chart {
     public chartHeight!: number;
     public chartWidth!: number;
     public clipBox!: BBoxObject;
-    public clipOffset?: Array<number>;
+    public clipOffset?: [number, number, number, number];
     public clipRect?: SVGElement;
     public colorCounter!: number;
     public container!: globalThis.HTMLElement;
@@ -1555,7 +1555,11 @@ class Chart {
 
         // Allow table cells and flex-boxes to shrink without the chart blocking
         // them out (#6427)
-        css(renderTo, { overflow: 'hidden' });
+        css(renderTo, {
+            overflow: 'hidden',
+            // #21144, retest and remove in future version of Chrome
+            pointerEvents: H.isChrome ? 'fill' : 'auto'
+        });
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -1948,13 +1952,15 @@ class Chart {
      */
     public setChartSize(skipAxes?: boolean): void {
         const chart = this,
-            inverted = chart.inverted,
-            renderer = chart.renderer,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
-            optionsChart = chart.options.chart,
-            spacing = chart.spacing,
-            clipOffset = chart.clipOffset;
+            {
+                chartHeight,
+                chartWidth,
+                inverted,
+                spacing,
+                renderer
+            } = chart,
+            clipOffset = chart.clipOffset,
+            clipRoundFunc = Math[inverted ? 'floor' : 'round'];
 
         let plotLeft,
             plotTop,
@@ -2006,8 +2012,6 @@ class Chart {
         chart.plotSizeX = inverted ? plotHeight : plotWidth;
         chart.plotSizeY = inverted ? plotWidth : plotHeight;
 
-        chart.plotBorderWidth = optionsChart.plotBorderWidth || 0;
-
         // Set boxes used for alignment
         chart.spacingBox = renderer.spacingBox = {
             x: spacing[3],
@@ -2022,31 +2026,19 @@ class Chart {
             height: plotHeight
         };
 
-        const plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2),
-            clipX = Math.ceil(
-                Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2
-            ),
-            clipY = Math.ceil(
-                Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2
-            );
-
-        chart.clipBox = {
-            x: clipX,
-            y: clipY,
-            width: Math.floor(
-                chart.plotSizeX -
-                Math.max(plotBorderWidth, (clipOffset as any)[1]) / 2 -
-                clipX
-            ),
-            height: Math.max(
-                0,
-                Math.floor(
-                    chart.plotSizeY -
-                    Math.max(plotBorderWidth, (clipOffset as any)[2]) / 2 -
-                    clipY
+        // Compute the clipping box
+        if (clipOffset) {
+            chart.clipBox = {
+                x: clipRoundFunc(clipOffset[3]),
+                y: clipRoundFunc(clipOffset[0]),
+                width: clipRoundFunc(
+                    chart.plotSizeX - clipOffset[1] - clipOffset[3]
+                ),
+                height: clipRoundFunc(
+                    chart.plotSizeY - clipOffset[0] - clipOffset[2]
                 )
-            )
-        };
+            };
+        }
 
         if (!skipAxes) {
             chart.axes.forEach(function (axis): void {
@@ -2071,7 +2063,9 @@ class Chart {
         fireEvent(this, 'resetMargins');
 
         const chart = this,
-            chartOptions = chart.options.chart;
+            chartOptions = chart.options.chart,
+            plotBorderWidth = chartOptions.plotBorderWidth || 0,
+            halfWidth = plotBorderWidth / 2;
 
         // Create margin and spacing array
         ['margin', 'spacing'].forEach(function splashArrays(
@@ -2099,7 +2093,14 @@ class Chart {
             (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
         });
         chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
-        chart.clipOffset = [0, 0, 0, 0];
+        chart.clipOffset = [
+            halfWidth,
+            halfWidth,
+            halfWidth,
+            halfWidth
+        ];
+        chart.plotBorderWidth = plotBorderWidth;
+
     }
 
     /**
@@ -3640,7 +3641,8 @@ class Chart {
             { inverted } = this;
 
         let hasZoomed = false,
-            displayButton: boolean|undefined;
+            displayButton: boolean|undefined,
+            isAnyAxisPanning: true|undefined;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -3821,6 +3823,10 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
+                        if (axis.isPanning) {
+                            isAnyAxisPanning = true; // #21319
+                        }
+
                         axis.setExtremes(
                             reset ? void 0 : newMin,
                             reset ? void 0 : newMax,
@@ -3864,8 +3870,12 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button
-                if (displayButton && !this.resetZoomButton) {
+                // Show or hide the Reset zoom button, but not while panning
+                if (
+                    displayButton &&
+                    !isAnyAxisPanning &&
+                    !this.resetZoomButton
+                ) {
                     this.showResetZoom();
                 } else if (!displayButton && this.resetZoomButton) {
                     this.resetZoomButton = this.resetZoomButton.destroy();

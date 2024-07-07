@@ -14,14 +14,15 @@
  *
  * */
 
+import type CellHTML from '../../Layout/CellHTML';
+
 import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
 import Cell from '../../Layout/Cell.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
-
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     fireEvent,
@@ -67,7 +68,11 @@ class CellEditToolbar extends EditToolbar {
                             .parent as CellEditToolbar;
                         const dragDrop = cellEditToolbar.editMode.dragDrop;
 
-                        if (dragDrop && cellEditToolbar.cell) {
+                        if (
+                            dragDrop &&
+                            cellEditToolbar.cell &&
+                            cellEditToolbar.cell instanceof Cell
+                        ) {
                             dragDrop.onDragStart(e, cellEditToolbar.cell);
                         }
                     }
@@ -145,6 +150,10 @@ class CellEditToolbar extends EditToolbar {
             )
         );
 
+        if (editMode.customHTMLMode) {
+            this.filterOptionsAvailableInCustomHTMLMode();
+        }
+
         this.menu.initItems({});
     }
 
@@ -153,8 +162,8 @@ class CellEditToolbar extends EditToolbar {
      *  Properties
      *
      * */
-    public cell?: Cell;
-    public editedCell?: Cell;
+    public cell?: Cell|CellHTML;
+    public editedCell?: Cell|CellHTML;
 
     /* *
      *
@@ -162,26 +171,33 @@ class CellEditToolbar extends EditToolbar {
      *
      * */
 
-    public showToolbar(cell: Cell): void {
-        const toolbar = this,
-            cellCnt = cell.container,
-            toolbarWidth = 30,
-            toolbarMargin = 10;
+    /**
+     * Show toolbar for given cell.
+     *
+     * @param cell
+     * Cell to show toolbar for.
+     */
+    public showToolbar(cell: Cell|CellHTML): void {
+        const toolbar = this;
+        const cellCnt = cell.container;
+        const toolbarWidth = 30;
+        const toolbarMargin = 10;
+        const cellToolbar = toolbar.editMode.cellToolbar;
 
-        let x, y;
+        if (!cellToolbar) {
+            return;
+        }
 
         if (
-            cellCnt &&
-            toolbar.editMode.isActive() &&
+            cellCnt && toolbar.editMode.isActive() &&
             !(toolbar.editMode.dragDrop || {}).isActive
         ) {
             const cellOffsets = GUIElement.getOffsets(
                 cell,
                 toolbar.editMode.board.container
             );
-
-            x = cellOffsets.right - toolbarWidth - toolbarMargin;
-            y = cellOffsets.top + toolbarMargin;
+            const x = cellOffsets.right - toolbarWidth - toolbarMargin;
+            const y = cellOffsets.top + toolbarMargin;
 
             // Temp - activate all items.
             objectEach(toolbar.menu.items, (item): void => {
@@ -191,8 +207,10 @@ class CellEditToolbar extends EditToolbar {
             toolbar.setPosition(x, y);
             toolbar.cell = cell;
             toolbar.refreshOutline();
+            cellToolbar.isVisible = true;
         } else if (toolbar.isVisible) {
             toolbar.hide();
+            cellToolbar.isVisible = false;
         }
     }
 
@@ -210,23 +228,27 @@ class CellEditToolbar extends EditToolbar {
         }
     }
 
+    /**
+     * When options icon is clicked, show sidebar with options.
+     */
     public onCellOptions(): void {
         const toolbar = this;
+        const editMode = toolbar.editMode;
 
-        if (toolbar.editMode.sidebar) {
-            toolbar.editMode.sidebar.show(toolbar.cell);
-
-            if (this.cell) {
-                this.cell.setHighlight();
-            }
+        if (!editMode.sidebar) {
+            return;
         }
+
+        editMode.sidebar.show(toolbar.cell);
+        toolbar.highlightCell();
     }
 
     public onCellDestroy(): void {
         const toolbar = this;
 
-        if (toolbar.cell) {
+        if (toolbar.cell && toolbar.cell instanceof Cell) {
             const row = toolbar.cell.row;
+            const cellId = toolbar.cell.id;
 
             toolbar.resetEditedCell();
             toolbar.cell.destroy();
@@ -241,12 +263,54 @@ class CellEditToolbar extends EditToolbar {
                     cell: row.cells[0]
                 });
                 fireEvent(row, 'cellChange', { cell: row.cells[0], row });
+                fireEvent(toolbar.editMode, 'layoutChanged', {
+                    type: 'cellDestroyed',
+                    target: cellId,
+                    board: toolbar.editMode.board
+                });
             }
         }
     }
 
     public resetEditedCell(): void {
         this.editedCell = void 0;
+    }
+
+    /**
+     * Filter options available in custom HTML mode, only settings available.
+     */
+    private filterOptionsAvailableInCustomHTMLMode(): void {
+        this.options.menu.items = this.options.menu.items?.filter(
+            (item): boolean => {
+                if (typeof item === 'string') {
+                    return false;
+                }
+
+                return item.id === 'settings';
+            }
+        );
+    }
+
+    /**
+     * Highlight cell and gray out the rest of the dashboard.
+     */
+    private highlightCell(): void {
+        const toolbar = this;
+
+        if (!toolbar.cell) {
+            return;
+        }
+
+        if (toolbar.cell.setHighlight) {
+            toolbar.cell.setHighlight();
+        } else {
+            toolbar.cell.container.classList.add(
+                EditGlobals.classNames.cellEditHighlight
+            );
+            toolbar.editMode.board.container.classList.add(
+                EditGlobals.classNames.dashboardCellEditHighlightActive
+            );
+        }
     }
 }
 
