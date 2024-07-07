@@ -21,13 +21,13 @@
             <h1>Sognekraft</h1>
             <!-- Switch for connecting/disconnecting the MQTT server -->
             <div id="connect-switch">
-                <input id="connect-toggle" type="checkbox" accesskey="k" onclick="onConnectClicked()"></input>
+                <input id="connect-toggle" type="checkbox"></input>
                 <label for="connect-toggle"></label>
             </div>
             <!-- Dropdown for selecting power station -->
             <div id="dropdown-container">
-                <button onclick="onStationSelectClicked()" id="dropdown-button"></button>
-                <div id="dropdownContent" class="dropdown-content">
+                <button id="dropdown-button"></button>
+                <div id="dropdown-content" class="dropdown-content">
                     <!-- Populated dynamically, e.g 
 						<a class="dropdown-select" href="#">Kråkeelvi</a>
 					-->

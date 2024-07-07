@@ -54,8 +54,11 @@ const intakeConfig = {
 
 const defaultZoom = 9;
 
-// The Dashboard is created on MQTT connection
+// The Dashboard and DataHandler instances are created when the first
+// MQTT packet is received. The instances are then used to update the
+// Dashboard components and the data pool.
 let dashboard = null;
+let dataHandler = null;
 
 // Max generators per power station
 let maxPowerGenerators;
@@ -364,71 +367,60 @@ async function dashboardCreate() {
     }
 }
 
-// Updates the data pool when a new MQTT message arrives. The old data
-// is removed before the new data is added. When complete, the Dasboards
-// components are updated.
-async function dashboardUpdate(powerStationData) {
-    const dataPool = dashboard.dataPool;
+// Power stations: Name indexes topic and traffic stats.
+// Dynamically updated by incoming messages.
+const powerStationLookup = {};
 
-    // Clear content of data table
-    await dataPoolReset();
+// Number of generators
+let nGenerators;
 
-    // Update all generators of the power station
-    for (let i = 0; i < powerStationData.aggs.length; i++) {
-        const pgIdx = i + 1;
-        const connId = 'mqtt-data-' + pgIdx;
 
-        const dataTable = await dataPool.getConnectorTable(connId);
-
-        // Get measurement history (24 hours, 10 minute intervals)
-        const hist = powerStationData.aggs[i].P_hist;
-        let time = new Date(hist.start).valueOf();
-
-        const interval = hist.res * 1000; // Resolution: seconds
-        const rowData = [];
-        const histLen = hist.values.length;
-
-        for (let j = 0; j < histLen; j++) {
-            const power = hist.values[j];
-
-            // Add row with historical data
-            rowData.push([time, power]);
-
-            // Next measurement
-            time += interval;
-        }
-
-        // Add the latest measurement
-        const latest = new Date(powerStationData.tst_iso).valueOf();
-        const power = powerStationData.aggs[i].P_gen;
-        rowData.push([latest, power]);
-
-        // Add all rows to the data table
-        await dataTable.setRows(rowData);
+// Maintain power station list and selection menu
+function updatePowerStationList(data, topic) {
+    const stationName = data.name;
+    if (stationName in powerStationLookup) {
+        return;
     }
 
-    // Refresh all Dashboards components
-    await dashboardsComponentUpdate(powerStationData);
+    // Add station if these conditions are satisfied:
+    // - valid location data
+    // - valid generator data
+    if (data.location && data.location.lon && data.aggs.length > 0) {
+        powerStationLookup[stationName] = {
+            topic: topic
+        };
+    }
+    // Update dropdown list
+    // eslint-disable-next-line no-use-before-define
+    if (connectBarInst) {
+        // eslint-disable-next-line no-use-before-define
+        connectBarInst.updateDropwdownList(Object.keys(powerStationLookup));
+    }
 }
 
-// The dashboard is created when the first MQTT message arrives.
-// (at this stage we know how many generators each power station has).
-async function dashboardConnect(powerStationData) {
-    // Launch  Dashboard
-    const dataPool = dashboard.dataPool;
-    for (let i = 0; i < powerStationData.aggs.length; i++) {
-        const puId = i + 1;
-        const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
 
-        // Clear the data
-        await dataTable.deleteRows();
+// Update component visibility according to the number
+// of used power generator (or entirely hidden).
+function uiSetComponentVisibility(visible, nGenerators = 0) {
+    const powGenCells = document.getElementsByClassName('el-aggr');
+
+    for (let i = 0; i < powGenCells.length; i++) {
+        const el = powGenCells[i];
+        const unitVisible = visible && i < nGenerators;
+
+        el.style.display = unitVisible ? 'flex' : 'none';
     }
 
-    await dashboardsComponentUpdate(powerStationData);
+    let el = document.getElementById('el-info');
+    el.style.display = visible ? 'flex' : 'none';
+
+    el = document.getElementById('el-map');
+    el.style.display = visible ? 'flex' : 'none';
 }
+
 
 // Update all Dashboards components
-async function dashboardsComponentUpdate(powerStationData) {
+async function dashboardsComponentUpdate(mqttData) {
     function getComponent(dashboard, id) {
         return dashboard.mountedComponents.map(c => c.component)
             .find(c => c.options.renderTo === id);
@@ -629,15 +621,15 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 
     // Update map component
-    await updateMap(powerStationData);
+    await updateMap(mqttData);
 
     // Update info component (Custom HTML)
-    await updateInfoHtml(powerStationData);
+    await updateInfoHtml(mqttData);
 
     // Update KPI, chart and datagrid (one per power generator)
-    const numGenerators = powerStationData.aggs.length;
+    const numGenerators = mqttData.aggs.length;
     for (let i = 0; i < numGenerators; i++) {
-        const aggInfo = powerStationData.aggs[i];
+        const aggInfo = mqttData.aggs[i];
         const pgIdx = i + 1;
         const connId = 'mqtt-data-' + pgIdx;
 
@@ -652,7 +644,7 @@ async function dashboardsComponentUpdate(powerStationData) {
         };
 
         // Add generator name only if the station has multiple generators
-        let aggName = powerStationData.name;
+        let aggName = mqttData.name;
         if (numGenerators > 1) {
             aggName += ` "${aggInfo.name}"`;
         }
@@ -687,112 +679,410 @@ async function dashboardsComponentUpdate(powerStationData) {
     }
 }
 
-// Remove all data from the data pool
-async function dataPoolReset() {
-    const dataPool = dashboard.dataPool;
-    for (let i = 0; i < maxPowerGenerators; i++) {
-        const puId = i + 1;
-        const dataTable = await dataPool.getConnectorTable('mqtt-data-' + puId);
+/*
+ *  Data handler for Sognekraft, maintains the data pool
+ */
+class SkDataHandler {
+    constructor(dashboard) {
+        this.dataPool = dashboard.dataPool;
+    }
 
-        // Clear the data
-        await dataTable.deleteRows();
-        await dataTable.modified.deleteRows();
+    async dataTableUpdate(mqttData) {
+        const nGenerators = mqttData.aggs.length;
+
+        // Clear content of data table
+        await this.dataTableReset(nGenerators);
+
+        // Update all generators of the power plant
+        for (let i = 0; i < nGenerators; i++) {
+            const pgIdx = i + 1;
+            const connId = 'mqtt-data-' + pgIdx;
+
+            const dataTable = await this.dataPool.getConnectorTable(connId);
+
+            // Get measurement history (24 hours, 10 minute intervals)
+            const hist = mqttData.aggs[i].P_hist;
+            let time = new Date(hist.start).valueOf();
+
+            const interval = hist.res * 1000; // Resolution: seconds
+            const rowData = [];
+            const histLen = hist.values.length;
+
+            for (let j = 0; j < histLen; j++) {
+                const power = hist.values[j];
+
+                // Add row with historical data
+                rowData.push([time, power]);
+
+                // Next measurement
+                time += interval;
+            }
+
+            // Add the latest measurement
+            const latest = new Date(mqttData.tst_iso).valueOf();
+            const power = mqttData.aggs[i].P_gen;
+            rowData.push([latest, power]);
+
+            // Add all rows to the data table
+            dataTable.setRows(rowData);
+        }
+    }
+
+    // Remove all data from the data table
+    async dataTableReset(nGenerators) {
+        for (let i = 0; i < nGenerators; i++) {
+            const puId = i + 1;
+            const dataTable = await this.dataPool.getConnectorTable(
+                'mqtt-data-' + puId
+            );
+
+            // Clear the data
+            dataTable.deleteRows();
+            dataTable.modified.deleteRows();
+        }
     }
 }
 
-// Update component visibility according to the number
-// of used power generator (or entirely hidden).
-function uiSetComponentVisibility(visible, nGenerators = 0) {
-    const powGenCells = document.getElementsByClassName('el-aggr');
+/*
+ *  Message handler for Sognekraft, maintains the data pool
+ *  and updates the dashboard, based on incoming MQTT data.
+ */
 
-    for (let i = 0; i < powGenCells.length; i++) {
-        const el = powGenCells[i];
-        const unitVisible = visible && i < nGenerators;
+let selectedTopic = null;
 
-        el.style.display = unitVisible ? 'flex' : 'none';
+async function skMessageHandler(mqttData, topic) {
+    updatePowerStationList(mqttData, topic);
+
+    if (selectedTopic === null || selectedTopic !== topic) {
+        // Ignore packets for stations that are not selected
+        return;
     }
 
-    let el = document.getElementById('el-info');
-    el.style.display = visible ? 'flex' : 'none';
+    // Create the Dashboard if it doesn't exist
+    if (dashboard === null) {
+        dashboard = await dashboardCreate();
+        // eslint-disable-next-line no-use-before-define
+        dataHandler = new SkDataHandler(dashboard);
+    }
 
-    el = document.getElementById('el-map');
-    el.style.display = visible ? 'flex' : 'none';
+    // Has a power generator been added or removed?
+    const nGenLatest = mqttData.aggs.length;
+    if (nGenerators !== nGenLatest) {
+        nGenerators = nGenLatest;
+        uiSetComponentVisibility(true, nGenerators);
+    }
+
+    // Update data pool
+    await dataHandler.dataTableUpdate(mqttData);
+
+    // Update Dashboard
+    await dashboardsComponentUpdate(mqttData);
+
+    // Update information in the connection bar
+    // eslint-disable-next-line no-use-before-define
+    connectBarInst.showStatus(`<b>${mqttData.name}</b>`);
 }
 
 
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-len */
+/*
+ *  MQTT client for Sognekraft production data
+ */
+
+// MQTT configuration
+const mqttConfig = {
+    host: 'mqtt.sognekraft.no',
+    port: 8083,
+    user: 'highsoft',
+    password: 'Qs0URPjxnWlcuYBmFWNK',
+    timeout: 10,
+    qOs: 0,  // Quality of Service
+    topic: 'prod/+/+/overview'
+};
+
+let skMqttInst = null;
 
 // Documentation for PAHO MQTT client:
 //     https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js/
 //     https://eclipse.dev/paho/files/jsdoc/Paho.MQTT.Client.html
 
-// MQTT handle
-let mqtt = null;
+/* global Paho */
 
-// MQTT connection parameters
-const host = 'mqtt.sognekraft.no';
-const port = 8083;
-const mqttQos = 0;
+class SkMqtt {
+    constructor() {
+        if (skMqttInst) {
+            throw new Error('SkMqtt instance already exists!!');
+        }
+        skMqttInst = this;
 
-// Authentication
-const user = 'highsoft';
-const password = 'Qs0URPjxnWlcuYBmFWNK';
+        // Message handler
+        this.messageHandler = skMessageHandler;
 
-// Connection status
-let mqttActiveTopic = 'prod/+/+/overview';
-let mqttConnected;
-let nMqttPackets;
+        // Default connect handler, console messages only
+        this.connectStatus = {
+            showError: msg => console.error(msg),
+            setStatus: state => console.log('Connect status: ' + state),
+            showStatus: (msg, arg = '') => console.log(msg, arg),
+            setLogoVisibility: visible =>
+                console.log('Logo visibility: ' + visible)
+        };
 
-// Connection status UI
-const connectBar = {
-    offColor: '', // Populated from CSS
-    onColor: 'hsla(202.19deg, 100%, 37.65%, 1)',
-    errColor: '#c33'
-};
+        // Connection status
+        this.connected = false;
+        this.nMqttPackets = 0;
+        this.topic = mqttConfig.topic;
 
-// Power stations: Name indexes topic and traffic stats.
-// Dynamically updated by incoming messages.
-const powerStationLookup = {};
+        // Start MQTT client
+        const cname = 'orderform-' + Math.floor(Math.random() * 10000);
 
-// Number of generators
-let nGenerators;
+        this.mqtt = new Paho.MQTT.Client(
+            mqttConfig.host,
+            mqttConfig.port,
+            cname
+        );
+        this.mqtt.onConnectionLost = this.onConnectionLost;
+        this.mqtt.onMessageArrived = this.onMessageArrived;
+    }
 
+    connect() {
+        if (this.connected) {
+            this.connectStatus.showError('Already connected');
+            return;
+        }
+
+        // Connect to broker
+        this.mqtt.connect({
+            useSSL: true,
+            timeout: mqttConfig.timeout,
+            cleanSession: true,
+            onSuccess: () => this.onConnect(),
+            onFailure: resp => this.onFailure(resp),
+            userName: mqttConfig.user,
+            password: mqttConfig.password
+        });
+    }
+
+    isConnected() {
+        return this.connected;
+    }
+
+    subscribe(topic) {
+        if (this.connected) {
+            // Subscribe to new topic
+            this.mqtt.subscribe(topic, {
+                qos: mqttConfig.qOs
+            });
+            console.log('Subscribed: ' + topic);
+        } else {
+            this.status.showError('Not connected, operation not possible');
+        }
+    }
+
+    async resubscribe(newTopic) {
+        if (this.connected) {
+            // Unsubscribe any existing topics
+            const unsubscribeOptions = {
+                onSuccess: async () => {
+                    this.subscribe(newTopic);
+                    this.topic = newTopic;
+                },
+                onFailure: () => {
+                    this.showError('Unsubscribe failed');
+                },
+                timeout: 10
+            };
+            this.mqtt.unsubscribe('/#', unsubscribeOptions);
+        } else {
+            this.showError('Not connected, operation not possible');
+        }
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    unsubscribe() {
+        if (this.connected) {
+            // Unsubscribe any existing topics
+            this.mqtt.unsubscribe(mqttConfig.topic);
+        } else {
+            this.connectStatus.showError(
+                'Not connected, operation not possible'
+            );
+        }
+    }
+
+    disconnect() {
+        if (!this.connected) {
+            this.connectStatus.showError('Already disconnected');
+            return;
+        }
+        // Unsubscribe any existing topics
+        this.mqtt.unsubscribe('/#');
+
+        // Disconnect
+        this.mqtt.disconnect();
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    onConnectionLost(resp) {
+        skMqttInst.connected = false;
+        skMqttInst.connectStatus.setStatus(false);
+
+        if (resp.errorCode !== 0) {
+            skMqttInst.connectStatus.showError(resp.errorMessage);
+        }
+    }
+
+    onFailure(resp) {
+        this.connected = false;
+        this.connectStatus.setStatus(false);
+        this.connectStatus.showError(resp.errorMessage);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    async onMessageArrived(mqttPacket) {
+        console.log('Message received: ' + mqttPacket.destinationName);
+
+        // Decode incoming data
+        const mqttData = JSON.parse(mqttPacket.payloadString);
+        const topic = mqttPacket.destinationName;
+
+        // Process data
+        skMqttInst.messageHandler(mqttData, topic);
+        skMqttInst.nMqttPackets++;
+    }
+
+    onConnect() {
+        // Connection successful
+        this.connected = true;
+        this.nMqttPackets = 0;
+
+        // Update status information
+        const st = this.connectStatus;
+        st.setStatus(true);
+        st.showStatus(
+            '<b>Tilkobla</b> ' + mqttConfig.host +
+            ':' + mqttConfig.port + ' (' + mqttConfig.user + ')'
+        );
+
+        // Subscribe if a topic exists
+        if (mqttConfig.topic !== null) {
+            this.subscribe(mqttConfig.topic);
+        }
+    }
+}
 
 /*
- *  Application interface
+ *  Connection and status bar for Sognekraft
  */
-window.onload = () => {
-    // Initialize the data transport layer
-    mqttInit();
+let connectBarInst = null;
 
-    // Determine the maximum number of supported power generators ("aggregat")
-    // per power station. The number is determined by the definition in the HTML file.
-    maxPowerGenerators = document.getElementsByClassName('el-aggr').length;
+class SkConnectBar {
 
-    // UI objects
-    const el = document.getElementById('connect-bar');
-    connectBar.offColor = el.style.backgroundColor; // From CSS
+    constructor() {
+        if (connectBarInst) {
+            throw new Error('SkConnectBar instance already exists!!');
+        }
 
-    const dropDownButton = document.getElementById('dropdown-button');
+        connectBarInst = this;
 
-    // Language dependencies
-    dropDownButton.title = lang.tr('powerStationHelp');
-    dropDownButton.innerHTML = lang.tr('Power station') + '&nbsp;&#9662;';
+        // Connect bar colors
+        this.color = {
+            offColor: '', // Populated from CSS
+            onColor: 'hsla(202.19deg, 100%, 37.65%, 1)',
+            errColor: '#c33'
+        };
 
-    // Custom click handler
-    window.onclick = event => {
-        if (event.target !== dropDownButton) {
-            // Power station menu items
+        this.elConnectBar = document.getElementById('connect-bar');
+        this.elConnectStatus = document.getElementById('connect-status');
+        this.color.offColor =
+            this.elConnectBar.style.backgroundColor; // From CSS
+
+        this.elLogo = document.getElementById('logo-img-1');
+        this.elLogoText = document.getElementById('logo-text');
+
+        // Connect/Disconnect button
+        this.elToggle = document.getElementById('connect-toggle');
+
+        // Dropdown menu button for selecting power station
+        this.elDropdown = document.getElementById('dropdown-container');
+        this.elDropdownButton = document.getElementById('dropdown-button');
+        this.elDropdownContent = document.getElementById('dropdown-content');
+
+        this.elDropdownButton.title = lang.tr('powerStationHelp');
+        this.elDropdownButton.innerHTML =
+            lang.tr('Power station') + '&nbsp;&#9662;';
+    }
+
+    setStatus(connected) {
+        const st = this.elConnectBar.style;
+        st.backgroundColor = connected ?
+            this.color.onColor : this.color.offColor;
+
+        // Use logo image only when connected, otherwise text
+        this.setLogoVisibility(connected);
+
+        this.elDropdown.style.visibility = connected ? 'visible' : 'hidden';
+        this.elToggle.checked = connected;
+    }
+
+    setLogoVisibility(connected) {
+        // Use logo image only when connected and on a wider screen,
+        // otherwise text only.
+        const el = this.elLogo;
+        if (el) {
+            const showLogo = (window.innerWidth > 576) && connected;
+            el.style.display = showLogo ? 'inline' : 'none';
+            this.elLogoText.style.display = showLogo ? 'none' : 'block';
+        }
+    }
+
+    showStatus(msg, arg = '') {
+        this.elConnectStatus.innerHTML = msg + ' ' + arg;
+    }
+
+    showError(msg) {
+        const el = this.elConnectBar;
+
+        el.style.backgroundColor = this.color.errColor;
+        this.showStatus('Error: ' + msg);
+    }
+
+    updateDropwdownList(names) {
+        const el = this.elDropdownContent;
+        el.innerHTML = '';
+
+        for (const key of names) {
+            el.innerHTML +=
+                `<a class="dropdown-select" href="#">${key}</a>`;
+        }
+
+        this.showStatus('numStation', names.length.toString());
+    }
+
+    clickHandler(event) {
+        if (event.target === this.elDropdownButton) {
+            // Reveals the dropdown list of power stations
+            this.elDropdownContent.classList.toggle('show');
+        } else if (event.target === this.elToggle) {
+            // Connect/Disconnect button
+            if (!skMqttInst.isConnected()) {
+                skMqttInst.connect();
+            } else {
+                skMqttInst.disconnect();
+            }
+        } else {
+            // Power plant menu items
             if (event.target.matches('.dropdown-select')) {
                 const name = event.target.innerText;
                 if (name in powerStationLookup) {
-                    onStationClicked(name);
+                    // This forces a redraw on the next MQTT packet
+                    nGenerators = 0;
+                    selectedTopic = powerStationLookup[name].topic;
+                    skMqttInst.resubscribe(selectedTopic);
                 }
             }
 
             // Hide the power station menu if the user clicks outside of it
-            const dropdowns = document.getElementsByClassName('dropdown-content');
+            const dropdowns =
+                document.getElementsByClassName('dropdown-content');
             for (let i = 0; i < dropdowns.length; i++) {
                 const item = dropdowns[i];
                 if (item.classList.contains('show')) {
@@ -800,297 +1090,39 @@ window.onload = () => {
                 }
             }
         }
-    };
+    }
+}
+
+/*
+ *  Application initialization
+ */
+
+window.onload = () => {
+    connectBarInst = new SkConnectBar();
 
     // Hide the logo on small devices
     window.onresize = () => {
-        uiSetLogoVisibility(mqttConnected);
+        connectBarInst.setLogoVisibility(
+            skMqttInst.isConnected()
+        );
+    };
+
+    // Initialize the data transport layer (MQTT)
+    skMqttInst = new SkMqtt();
+
+    // Register the connect bar
+    skMqttInst.connectStatus = connectBarInst;
+
+    // Determine the maximum number of supported power generators ("aggregat")
+    // per power station. The number is determined by the definition
+    // in the HTML file.
+    maxPowerGenerators = document.getElementsByClassName('el-aggr').length;
+
+    // Custom click handler
+    window.onclick = event => {
+        connectBarInst.clickHandler(event);
     };
 };
-
-
-// Maintain power station list and selection menu
-function updatePowerStationList(data, topic) {
-    const stationName = data.name;
-    if (stationName in powerStationLookup) {
-        return;
-    }
-
-    // Add station if these conditions are satisfied:
-    // - valid location data
-    // - valid generator data
-    if (data.location && data.location.lon && data.aggs.length > 0) {
-        powerStationLookup[stationName] = {
-            topic: topic
-        };
-    }
-
-    // Update dropdown
-    const dropdownDiv = document.getElementById('dropdownContent');
-    dropdownDiv.innerHTML = '';
-    for (const key of Object.keys(powerStationLookup)) {
-        dropdownDiv.innerHTML += `<a class="dropdown-select" href="#">${key}</a>`;
-    }
-
-    uiShowStatus('numStation', Object.keys(powerStationLookup).length.toString());
-}
-
-
-/*
- *  Application user interface
- */
-function onConnectClicked() {
-    // Connect to (or disconnect from) the MQTT server
-    if (mqttConnected) {
-        mqttDisconnect();
-    } else {
-        mqttConnect();
-    }
-}
-
-
-function onConnectCancel() {
-    document.getElementById('connect-toggle').checked = false;
-}
-
-
-function onStationSelectClicked() {
-    // Reveals the dropdown list of power stations
-    document.getElementById('dropdownContent').classList.toggle('show');
-}
-
-
-async function onStationClicked(station) {
-    // This forces a redraw on the next MQTT packet
-    nGenerators = 0;
-
-    // Change topic to currently selected power station
-    await mqttResubscribe(powerStationLookup[station].topic);
-}
-
-
-/*
- *  MQTT API
- */
-function mqttInit() {
-    const cname = 'orderform-' + Math.floor(Math.random() * 10000);
-
-    // eslint-disable-next-line no-undef
-    mqtt = new Paho.MQTT.Client(host, port, cname);
-
-    // Register callbacks
-    mqtt.onConnectionLost = onConnectionLost;
-    mqtt.onMessageArrived = onMessageArrived;
-
-    // Connection status
-    nMqttPackets = 0;
-    mqttConnected = false;
-}
-
-
-function mqttConnect() {
-    if (mqttConnected) {
-        uiShowError('Already connected');
-        return;
-    }
-
-    // Connect to broker
-    mqtt.connect({
-        useSSL: true,
-        timeout: 5,
-        cleanSession: true,
-        onSuccess: onConnect,
-        onFailure: onFailure,
-        userName: user,
-        password: password
-    });
-}
-
-
-function mqttSubscribe(topic) {
-    if (mqttConnected) {
-        // Subscribe to new topic
-        mqtt.subscribe(topic, {
-            qos: mqttQos
-        });
-        console.log('Subscribed: ' + topic);
-    } else {
-        uiShowError('Not connected, operation not possible');
-    }
-}
-
-
-async function mqttResubscribe(newTopic) {
-    if (mqttConnected) {
-        // Unsubscribe any existing topics
-        const unsubscribeOptions = {
-            onSuccess: async () => {
-                console.log('Unsubscribed: ' + mqttActiveTopic);
-                mqttSubscribe(newTopic);
-                mqttActiveTopic = newTopic;
-            },
-            onFailure: () => {
-                uiShowError('Unsubscribe failed');
-            },
-            timeout: 10
-        };
-        mqtt.unsubscribe('/#', unsubscribeOptions);
-    } else {
-        uiShowError('Not connected, operation not possible');
-    }
-}
-
-
-function mqttUnubscribe() {
-    if (mqttConnected) {
-        // Unsubscribe any existing topics
-        console.log('Unsubscribe: ' + mqttActiveTopic);
-        mqtt.unsubscribe(mqttActiveTopic);
-    } else {
-        uiShowError('Not connected, operation not possible');
-    }
-}
-
-
-function mqttDisconnect() {
-    if (!mqttConnected) {
-        uiShowError('Already disconnected');
-        return;
-    }
-    // Unsubscribe any existing topics
-    mqtt.unsubscribe('/#');
-
-    // Disconnect
-    uiShowStatus('');
-    mqtt.disconnect();
-
-    // Hide Dashboard components
-    uiSetComponentVisibility(false);
-}
-
-
-/*
- *  MQTT callbacks
- */
-async function onConnectionLost(resp) {
-    nGenerators = 0;
-    mqttConnected = false;
-    uiSetConnectStatus(false);
-
-    if (resp.errorCode !== 0) {
-        uiShowError(resp.errorMessage);
-    }
-    onConnectCancel();
-}
-
-
-function onFailure(resp) {
-    nGenerators = 0;
-    mqttConnected = false;
-
-    uiSetConnectStatus(false);
-    uiShowError(resp.errorMessage);
-
-    onConnectCancel();
-}
-
-
-async function onMessageArrived(mqttPacket) {
-    // Maintain the list of power stations
-    const powerStationData = JSON.parse(mqttPacket.payloadString);
-    const topic = mqttPacket.destinationName;
-    updatePowerStationList(powerStationData, topic);
-
-    if (mqttActiveTopic !== topic) {
-        // Ignore packets for stations that are not selected
-        return;
-    }
-
-    if (nMqttPackets === 0) {
-        // Create the Dashboard when the first packet arrives
-        if (dashboard === null) {
-            dashboard = await dashboardCreate();
-        }
-
-        // Connect power generation data to dashboard
-        await dashboardConnect(powerStationData);
-    }
-
-    // Has a power generator been added or removed?
-    const nGenLatest = powerStationData.aggs.length;
-    if (nGenerators !== nGenLatest) {
-        nGenerators = nGenLatest;
-        uiSetComponentVisibility(true, nGenerators);
-    }
-
-    // Update Dashboard
-    dashboardUpdate(powerStationData);
-
-    // Update header
-    uiShowStatus(`<b>${powerStationData.name}</b>`);
-
-    nMqttPackets++;
-}
-
-
-async function onConnect() {
-    // Connection successful
-    mqttConnected = true;
-    nGenerators = 0;
-
-    // Update status information
-    uiSetConnectStatus(true);
-    uiShowStatus('numStation', '0');
-
-    // Subscribe if a topic exists
-    if (mqttActiveTopic !== null) {
-        mqttSubscribe(mqttActiveTopic);
-    }
-}
-
-/*
- *  Custom UI (not Dashboard)
- */
-function uiSetConnectStatus(connected) {
-    let el = document.getElementById('connect-bar');
-    el.style.backgroundColor = connected ? connectBar.onColor : connectBar.offColor;
-
-    el = document.getElementById('dropdown-container');
-    el.style.visibility = connected ? 'visible' : 'hidden';
-
-    el = document.getElementById('connect-toggle');
-    el.checked = connected;
-
-    // Use logo image only when connected, otherwise text
-    uiSetLogoVisibility(connected);
-}
-
-
-function uiSetLogoVisibility(connected) {
-    // Use logo image only when connected and on a wider screen,
-    // otherwise text only.
-    let el = document.getElementById('logo-img-1');
-    if (el) {
-        const showLogo = (window.innerWidth > 576) && connected;
-        el.style.display = showLogo ? 'inline' : 'none';
-
-        el = document.getElementById('logo-text');
-        el.style.display = showLogo ? 'none' : 'block';
-    }
-}
-
-
-function uiShowStatus(msg, arg = '') {
-    document.getElementById('connect-status').innerHTML = lang.tr(msg) + arg;
-}
-
-
-function uiShowError(msg) {
-    const el = document.getElementById('connect-bar');
-
-    el.style.backgroundColor = connectBar.errColor;
-    document.getElementById('connect-status').innerHTML = 'Error: ' + msg;
-}
 
 
 //
