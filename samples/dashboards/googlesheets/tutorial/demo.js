@@ -11,7 +11,7 @@ function sheetTitle(n = 1) {
 }
 
 /* Various 'beforeParse' functions */
-function bfpVoid(data) {
+function bfpNone(data) {
     return data;
 }
 
@@ -34,9 +34,13 @@ function bfpModifyData(data) {
     return data;
 }
 
-// Function to perform in 'beforeParse' of the modified sheet connector
+// Function to perform in 'beforeParse' of the modified sheet connector.
+// The function is selected by the user in the dropdown in demo.html
 let beforeParseSelector = 0;
-const beforeParseFunction = [bfpVoid, bfpModifyHeader, bfpModifyData];
+
+// 'beforeParse' lookup. The order must be the same as in the
+// dropdown in demo.html.
+const beforeParseFunction = [bfpNone, bfpModifyHeader, bfpModifyData];
 
 
 /* Create the Dashboard */
@@ -61,6 +65,7 @@ const board = Dashboards.board('container', {
         }]
     },
     components: [{
+        // Original sheet
         type: 'DataGrid',
         renderTo: 'orig-sheet-cell',
         connector: {
@@ -71,6 +76,7 @@ const board = Dashboards.board('container', {
             editable: false
         }
     }, {
+        // Modified sheet
         type: 'DataGrid',
         renderTo: 'mod-sheet-cell',
         connector: {
@@ -87,13 +93,13 @@ const board = Dashboards.board('container', {
 // Event handlers for configuration choices (dropdowns)
 const worksheetSelect = document.getElementById('worksheet-select');
 const beforeParseSelect = document.getElementById('before-parse-select');
-const datamodifierSelect = document.getElementById('datamodifier-select');
+const dataModifierSelect = document.getElementById('data-modifier-select');
 
 //
 // Worksheet selection processing
 //
 worksheetSelect.addEventListener('input', async e => {
-    // The sheet selection has changed
+    // The worksheet selection has changed
     const worksheet = Number(e.target.value) + 1;
 
     // Update the original sheet component
@@ -139,7 +145,7 @@ beforeParseSelect.addEventListener('input', async e => {
     await board.dataPool.connectors['conn-mod'].load();
 
     // Re-apply data modifier
-    await applyDataModifier(datamodifierSelect.value);
+    await applyDataModifier(dataModifierSelect.value);
 });
 
 
@@ -173,18 +179,18 @@ const rangeModifier = new RangeModifier({
     }]
 });
 
+// Modifier lookup, the order must be the same as in the dropdown in demo.html
 const dataModifiers = [null, mathModifier, sortModifier, rangeModifier];
 
-datamodifierSelect.addEventListener('input', async e => {
+async function applyDataModifier(idx) {
+    const connector = board.dataPool.connectors['conn-mod'];
+    await connector.table.setModifier(dataModifiers[idx]);
+}
+
+dataModifierSelect.addEventListener('input', async e => {
     const idx = e.target.value;
     if (idx >= dataModifiers.length) {
         return;
     }
     await applyDataModifier(idx);
 });
-
-
-async function applyDataModifier(idx) {
-    const connector = board.dataPool.connectors['conn-mod'];
-    await connector.table.setModifier(dataModifiers[idx]);
-}
