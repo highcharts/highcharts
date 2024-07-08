@@ -167,6 +167,45 @@ class DataGrid {
         }
 
         this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
+        this.renderViewport(dataTable);
+    }
+
+    /**
+     * Updates the data grid with new options.
+     *
+     * @param options
+     * The options of the data grid that should be updated.
+     */
+    public update(options: DataGridOptions): void {
+        this.userOptions = merge(this.userOptions, options);
+        this.options = merge(DataGrid.defaultOptions, this.userOptions);
+
+        let dataTable = this.viewport?.dataTable;
+        if (!dataTable || options.table) {
+            if (this.options.table instanceof DataTable) {
+                dataTable = this.options.table;
+            } else {
+                dataTable = new DataTable(this.options.table);
+            }
+        }
+
+        this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
+        this.renderViewport(dataTable);
+    }
+
+    /**
+     * Renders the viewport of the data grid. If the data grid is already
+     * rendered, it will be destroyed and re-rendered with the new data.
+     *
+     * @param dataTable
+     * The data source of the data grid.
+     */
+    public renderViewport(dataTable: DataTable): void {
+        this.viewport?.destroy();
+        if (this.container) {
+            this.container.innerHTML = AST.emptyHTML;
+        }
+
         if (this.enabledColumns.length > 0) {
             this.renderTable(dataTable);
         } else {
