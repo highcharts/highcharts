@@ -11,6 +11,7 @@ const gulp = require('gulp');
  */
 async function checkDocsConsistency() {
     const FS = require('fs');
+    const FSLib = require('../libs/fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
 
@@ -23,6 +24,7 @@ async function checkDocsConsistency() {
         );
     }
     tsFiles.forEach(file => {
+        file = FSLib.path(file, true);
         const md = FS.readFileSync(file),
             demoPattern = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
             requiresPattern = /@requires[ ]*([a-z0-9\-\/\.:]+)/gu,
