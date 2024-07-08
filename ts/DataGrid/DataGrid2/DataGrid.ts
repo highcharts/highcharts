@@ -23,6 +23,7 @@
  * */
 
 import type DataGridOptions from './DataGridOptions';
+import type DataTableOptions from '../../Data/DataTableOptions';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridDefaultOptions from './DataGridDefaultOptions.js';
@@ -259,6 +260,28 @@ class DataGrid {
         Object.keys(this).forEach((key): void => {
             delete this[key as keyof this];
         });
+    }
+
+    /**
+     * Returns the current dataGrid data as a JSON string.
+     *
+     * @return {string}
+     *         JSON representation of the data
+     */
+    public getJSON(): string {
+        let json = (this.options?.table as DataTableOptions).columns;
+
+        if (!json) {
+            return '{}';
+        }
+
+        for (const key of Object.keys(json)) {
+            if (this.enabledColumns.indexOf(key) === -1) {
+                delete json[key];
+            }
+        }
+
+        return JSON.stringify(json);
     }
 }
 
