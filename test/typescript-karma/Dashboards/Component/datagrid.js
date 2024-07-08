@@ -8,7 +8,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
 
 const { skip } = QUnit;
 
-// Test of the old version of the DataGrid component
+// DataGrid1 Tests to update
 skip('DataGrid component with dataTable', async function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
