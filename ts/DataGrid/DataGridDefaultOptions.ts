@@ -23,13 +23,15 @@
 
 import type DataGridOptions from './DataGridOptions';
 
+import Globals from './Globals.js';
+
 /* *
  *
  *  API Options
  *
  * */
 
-const DataGridDefaultOptions: DeepPartial<DataGridOptions> = {
+const DataGridDefaultOptions: Globals.DeepPartial<DataGridOptions> = {
     settings: {
         columns: {
             distribution: 'full',

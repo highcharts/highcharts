@@ -21,6 +21,7 @@
 
 import type DataTable from '../Data/DataTable';
 import type DataTableOptions from '../Data/DataTableOptions';
+import type DataGridCell from './DataGridCell';
 
 
 /* *
@@ -148,7 +149,8 @@ export interface DataGridDefaults {
 export interface ColumnOptions {
 
     /**
-     * The format of the cell content.
+     * The format of the cell content within the given column of
+     * DataGrid.
      */
     cellFormat?: string;
 
@@ -173,6 +175,30 @@ export interface IndividualColumnOptions extends ColumnOptions {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * Callback function for formatting cells within the given column of the
+     * DataGrid.
+     *
+     * @return {string}
+     * A string to be concatenated in to the common cell's text.
+     */
+    cellFormatter?: CellFormatterCallback;
+
+    /**
+     * Weather to use HTML to render the cell content. When enabled, other
+     * elements than text can be added to the cell ie. images.
+     *
+     * @default false
+     */
+    useHTML?: boolean;
+
+    /**
+     * Switch to make the column cells editable ('true') or read-only ('false').
+     *
+     * @default true
+     */
+    editable?: boolean;
 }
 
 export interface CaptionOptions {
@@ -182,6 +208,12 @@ export interface CaptionOptions {
     text?: string;
 }
 
+/**
+ * Returns a formatted call's string.
+ */
+export interface CellFormatterCallback {
+    (this: DataGridCell): string;
+}
 
 /* *
  *

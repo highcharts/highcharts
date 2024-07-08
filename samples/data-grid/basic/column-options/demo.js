@@ -8,9 +8,17 @@ DataGrid.dataGrid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
+    defaults: {
+        columns: {
+            editable: true
+        }
+    },
     columns: {
         weight: {
-            className: 'custom-column-class-name'
+            className: 'custom-column-class-name',
+            cellFormatter: function () {
+                return 'V: ' + this.value;
+            }
         },
         metaData: {
             enabled: false
