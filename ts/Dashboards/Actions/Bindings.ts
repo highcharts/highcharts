@@ -26,6 +26,7 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from '../Components/ComponentType';
+import type Board from '../Board';
 import type GUIElement from '../Layout/GUIElement';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
@@ -33,9 +34,9 @@ import type Row from '../Layout/Row';
 import type Component from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
+import CellHTML from '../Layout/CellHTML.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
-import Board from '../Board';
 const {
     addEvent,
     fireEvent
@@ -56,7 +57,7 @@ namespace Bindings {
      * */
 
     export interface MountedComponent {
-        cell: Cell|Cell.DOMCell;
+        cell: Cell|CellHTML;
         component: ComponentType;
         options: Partial<Component.Options>;
     }
@@ -70,26 +71,24 @@ namespace Bindings {
     function getGUIElement(
         idOrElement: string,
         parentElement?: HTMLElement
-    ): (GUIElement|undefined) {
-        let container;
+    ): Cell|Row|Layout|undefined {
         let guiElement;
 
-        if (typeof idOrElement === 'string') {
-            if (document.querySelectorAll('#' + idOrElement).length > 1) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
-                    'font-weight: bold',
-                    ''
-                );
-            }
-
-            container = parentElement ?
-                parentElement.querySelector('#' + idOrElement) :
-                document.getElementById(idOrElement);
-        } else {
-            container = idOrElement;
+        if (
+            typeof idOrElement === 'string' &&
+            document.querySelectorAll('#' + idOrElement).length > 1
+        ) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
+                'font-weight: bold',
+                ''
+            );
         }
+
+        const container = parentElement ?
+            parentElement.querySelector('#' + idOrElement) :
+            document.getElementById(idOrElement);
 
         if (container !== null) {
             fireEvent(container, 'bindedGUIElement', {}, function (
@@ -202,11 +201,11 @@ namespace Bindings {
         board.mountedComponents.push({
             options: options,
             component: component,
-            cell: cell || {
+            cell: cell || new CellHTML({
                 id: renderTo,
                 container: componentContainer as HTMLElement,
                 mountedComponent: component
-            }
+            })
         });
 
         fireEvent(component, 'mount');

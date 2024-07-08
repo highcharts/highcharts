@@ -368,7 +368,7 @@ addEvent(Chart, 'update', function (
     // case (#6615)
     if ('scrollbar' in options && chart.navigator) {
         merge(true, chart.options.scrollbar, options.scrollbar);
-        chart.navigator.update({});
+        chart.navigator.update({ enabled: !!chart.navigator.navigatorEnabled });
         delete options.scrollbar;
     }
 });

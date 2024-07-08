@@ -1,5 +1,5 @@
 ---
-name: 'Ajax loaded data, clickable points'
+name: Data from CSV, clickable points
 authors:
   - Torstein Hønsi
 js_wrap: b

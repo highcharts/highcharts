@@ -3,7 +3,7 @@
  * Treegraph chart series type
  * @module highcharts/modules/treegraph
  * @requires highcharts
- * @requires modules/treemap
+ * @requires highcharts/modules/treemap
  *
  *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
  *

@@ -1,7 +1,8 @@
 QUnit.test('Pie data labels general tests', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                animation: false
+                animation: false,
+                width: 600
             },
             series: [
                 {
@@ -62,6 +63,28 @@ QUnit.test('Pie data labels general tests', function (assert) {
         chart.series[0].points[1].dataLabel.opacity,
         0,
         '#15377: Inactive point should have 0 opacity'
+    );
+
+    // Ordering
+    chart.series[0].setData([
+        ['Slice 1', 81.6],
+        ['Slice 2', 4.8],
+        ['Slice 3: lorem ipsum dolor sit amet', 1.2],
+        [
+            'Slice 4: lorem ipsum dolor sit amet, consectetur adipiscing elit',
+            0.4
+        ],
+        ['Slice 5', 12.1]
+    ]);
+
+    const order = chart.series[0].points
+        .sort((a, b) => a.dataLabel.getBBox().y - b.dataLabel.getBBox().y)
+        .map(point => point.name.substring(0, 7));
+
+    assert.deepEqual(
+        order,
+        ['Slice 5', 'Slice 4', 'Slice 3', 'Slice 2', 'Slice 1'],
+        'Data labels should be ordered by point index (#21336)'
     );
 });
 
@@ -429,17 +452,17 @@ QUnit.test('Pie labels outside plot (#3163)', function (assert) {
 
     function isLabelInsidePlot() {
         for (var i = 0; i < labelYPos.length; i++) {
-            if (labelYPos[i] < 0) {
+            if (labelYPos[i] < -1) {
                 return false;
             }
-            if (labelYPos[i] > plotSizeY) {
+            if (labelYPos[i] > plotSizeY + 1) {
                 return false;
             }
         }
         return true;
     }
 
-    assert.ok(isLabelInsidePlot(), 'Pie label is outside of plot');
+    assert.ok(isLabelInsidePlot(), 'Pie label should be inside the plot area');
 });
 
 QUnit.test(

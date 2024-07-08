@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/export-data
  * @requires highcharts
- * @requires modules/exporting
+ * @requires highcharts/modules/exporting
  *
  * Exporting module
  *
