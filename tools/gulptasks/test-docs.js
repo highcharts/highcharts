@@ -40,8 +40,22 @@ async function checkDocsConsistency() {
         }
 
         while ((match = requiresPattern.exec(md))) {
-            const requires = match[1]
-                .replace(/^(highcharts|stock|maps|gantt)\//u, '');
+            let requires = match[1]
+                .replace(/^(stock|maps|gantt)\//u, '');
+
+            // The @require tags in the master files are relative to the npm
+            // package root (#21470)
+            if (
+                file.startsWith('ts/masters/') &&
+                requires !== 'highcharts'
+            ) {
+                if (requires.startsWith('highcharts/')) {
+                    requires = requires.replace('highcharts/', '');
+                } else {
+                    error404s.push({ file, requires });
+                }
+            }
+
             try {
                 FS.statSync(`ts/masters/${requires}.src.ts`);
             } catch (e1) {
