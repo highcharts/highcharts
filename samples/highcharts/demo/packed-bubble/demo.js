@@ -9,7 +9,7 @@ Highcharts.chart('container', {
     },
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://www.bundeswahlleiter.de/en/bundeswahlleiter.html"' +
+            '<a href="https://en.wikipedia.org/wiki/List_of_countries_by_carbon_dioxide_emissions"' +
             'target="_blank">Wikipedia</a> ',
         align: 'left'
     },
