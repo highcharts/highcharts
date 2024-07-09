@@ -1262,7 +1262,7 @@ const stockTools: StockToolsOptions = {
         /**
          * Whether the stock tools toolbar is visible.
          *
-         * @since next
+         * @since 11.4.4
          */
         visible: true
     }

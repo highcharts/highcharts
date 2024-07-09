@@ -237,14 +237,14 @@
 }
 
 td.highcharts-dg-focused-cell {
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .highcharts-dg-focused-cell input,
 .highcharts-dg-focused-cell input:focus {
     border: 1px solid #0000ed;
-    border-radius: 0px;
+    border-radius: 0;
     background-color: #b7d4ff;
     width: 100%;
     outline: none;

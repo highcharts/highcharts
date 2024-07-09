@@ -140,7 +140,7 @@ class DataGridCell {
         }
 
         if (editable) {
-            element.addEventListener('click', (e: any): void => {
+            element.addEventListener('click', (): void => {
                 const element = this.htmlElement;
                 this.onCellClick(element, this.value + '');
             });
@@ -206,7 +206,7 @@ class DataGridCell {
      *
      * @param cellElement
      * The clicked cell's HTML element.
-     * 
+     *
      * @param value
      * The value of cell
      *
@@ -232,7 +232,7 @@ class DataGridCell {
         input.style.height = (cellElement.clientHeight - 1) + 'px';
         input.value = value || '';
         input.focus();
-        input.addEventListener('keydown', (e: any) => {
+        input.addEventListener('keydown', (e: any): void => {
             // Enter / Escape
             if (e.keyCode === 13 || e.keyCode === 27) {
                 cell.removeCellInputElement();
@@ -250,15 +250,14 @@ class DataGridCell {
     public removeCellInputElement(): void {
         const editedCell = this.column.viewport.editedCell;
         const parentNode = editedCell?.cellInputEl?.parentNode;
-        
+
         if (!editedCell || !parentNode) {
             return;
         }
-        let cellValue = (
+        const cellValue = (
             editedCell.cellInputEl?.value || editedCell.value
         ) as string;
 
-        // this.value = cellValue;
         if (editedCell.column.id && editedCell.row.index > -1 && editedCell) {
             editedCell.column.viewport.dataTable.setCell(
                 editedCell.column.id,

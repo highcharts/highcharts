@@ -2436,7 +2436,7 @@ export default Data;
  * A callback function to modify the CSV before parsing it. Return the modified
  * string.
  *
- * @sample {highcharts} highcharts/demo/line-ajax/
+ * @sample {highcharts} highcharts/demo/line-csv/
  *         Modify CSV before parse
  *
  * @type      {Highcharts.DataBeforeParseCallbackFunction}
