@@ -179,6 +179,21 @@ class DataGridColumn {
     }
 
     /**
+     * Updates the column with new options.
+     *
+     * @param options
+     * The column options to update.
+     */
+    public update(options: IndividualColumnOptions): void {
+        const dg = this.viewport.dataGrid;
+        dg.update({
+            columns: {
+                [this.id]: options
+            }
+        });
+    }
+
+    /**
      * Registers a cell in the column.
      *
      * @param cell

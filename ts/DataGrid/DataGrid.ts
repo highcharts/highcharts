@@ -25,6 +25,7 @@
 import type DataGridOptions from './DataGridOptions';
 
 import AST from '../Core/Renderer/HTML/AST.js';
+import DataGridColumn from './DataGridColumn.js';
 import DataGridDefaultOptions from './DataGridDefaultOptions.js';
 import DataGridTable from './DataGridTable.js';
 import DataGridUtils from './Utils.js';
@@ -226,6 +227,26 @@ class DataGrid {
         } else {
             this.renderNoData();
         }
+    }
+
+    /**
+     * Returns the column with the provided ID.
+     *
+     * @param id
+     * The ID of the column.
+     */
+    public getColumn(id: string): DataGridColumn | undefined {
+        const columns = this.enabledColumns;
+        if (!columns) {
+            return;
+        }
+
+        const columnIndex = columns.indexOf(id);
+        if (columnIndex < 0) {
+            return;
+        }
+
+        return this.viewport?.columns[columnIndex];
     }
 
     /**

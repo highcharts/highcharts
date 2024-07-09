@@ -190,11 +190,11 @@ class DataGridComponent extends Component {
 
     /**
      * Get the DataGrid component's options.
+     *
      * @returns
      * The JSON of DataGrid component's options.
      *
      * @internal
-     *
      */
     public getOptions(): Partial<Options> {
         return {
