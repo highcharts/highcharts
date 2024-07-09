@@ -57,6 +57,18 @@ QUnit.test('Accessibility disabled', function (assert) {
         'SVG root has img role'
     );
 
+    assert.strictEqual(
+        chart.renderTo.getAttribute('aria-label'),
+        'No a11y',
+        'Chart container has aria label'
+    );
+
+    assert.strictEqual(
+        chart.renderTo.getAttribute('role'),
+        'img',
+        'Chart container has img role'
+    );
+
     chart.update({
         accessibility: {
             enabled: true
@@ -69,15 +81,21 @@ QUnit.test('Accessibility disabled', function (assert) {
         'SVG root has no role after enabling a11y'
     );
 
+    assert.strictEqual(
+        chart.renderTo.getAttribute('role'),
+        'region',
+        'Chart container has region role after enabling a11y'
+    );
+
     chart.update({
         accessibility: {
             enabled: false
         }
     });
     assert.strictEqual(
-        chart.renderer.box.getAttribute('role'),
+        chart.renderTo.getAttribute('role'),
         'img',
-        'SVG root has no img role after disabling a11y'
+        'Chart container has img role again after disabling a11y'
     );
 });
 
