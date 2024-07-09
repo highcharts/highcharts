@@ -269,7 +269,7 @@ class DataGrid {
      *         JSON representation of the data
      */
     public getJSON(): string {
-        let json = (this.options?.table as DataTableOptions).columns;
+        let json = this.viewport?.dataTable.modified.columns;
 
         if (!json) {
             return '{}';

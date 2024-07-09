@@ -14,12 +14,21 @@ const dataGrid = DataGrid.dataGrid2('container', {
         }
     },
     columns: {
+        product: {
+            editable: true
+        },
+        weight: {
+            editable: true
+        },
         metaData: {
             enabled: false
         }
     }
 });
 
+/**
+ * DataGrid init
+ */
 jsonBtn.addEventListener('click', () => {
     result.innerHTML = dataGrid.getJSON();
 });
