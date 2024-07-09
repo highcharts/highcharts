@@ -175,8 +175,11 @@ class DataGrid {
      *
      * @param options
      * The options of the data grid that should be updated.
+     *
+     * @param render
+     * Whether to re-render the data grid after updating the options.
      */
-    public update(options: DataGridOptions): void {
+    public update(options: DataGridOptions, render: boolean = true): void {
         this.userOptions = merge(this.userOptions, options);
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
@@ -189,7 +192,9 @@ class DataGrid {
             }
         }
 
-        this.renderViewport(dataTable);
+        if (render) {
+            this.renderViewport(dataTable);
+        }
     }
 
     /**
