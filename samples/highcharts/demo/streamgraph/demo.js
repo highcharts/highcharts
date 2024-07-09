@@ -31,7 +31,8 @@ Highcharts.chart('container', {
         // Soviet Union, Russia
         Highcharts.color(colors[2]).brighten(-0.1).get(),
         Highcharts.color(colors[2]).brighten(-0.2).get(),
-        Highcharts.color(colors[2]).brighten(-0.3).get()
+        Highcharts.color(colors[2]).brighten(-0.3).get(),
+        Highcharts.color(colors[2]).brighten(-0.4).get()
     ],
 
     title: {
@@ -92,7 +93,9 @@ Highcharts.chart('container', {
     yAxis: {
         visible: false,
         startOnTick: false,
-        endOnTick: false
+        endOnTick: false,
+        min: -230,
+        max: 230
     },
 
     legend: {
@@ -116,6 +119,14 @@ Highcharts.chart('container', {
                 yAxis: 0
             },
             text: 'Soviet Union fell,<br>Germany united'
+        }, {
+            point: {
+                x: 24.25,
+                xAxis: 0,
+                y: 150,
+                yAxis: 0
+            },
+            text: 'Russia banned from<br>the Olympic Games<br> in 2015'
         }],
         labelOptions: {
             backgroundColor: 'rgba(255,255,255,0.5)',
@@ -230,22 +241,28 @@ Highcharts.chart('container', {
             0, 0, 0, 0, 0, 0, 1, 3
         ]
     }, {
-        name: 'Unified Team',
-        data: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23,
-            0, 0, 0, 0, 0, 0, 0, 0
-        ]
-    }, {
         name: 'Soviet Union',
         data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 21, 25, 13, 16, 27, 22, 25,
             29, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
+        name: 'Unified Team',
+        data: [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23,
+            0, 0, 0, 0, 0, 0, 0, 0
+        ]
+    }, {
         name: 'Russia',
         data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             23, 18, 13, 22, 15, 33, 0, 0
+        ]
+    }, {
+        name: 'ROC',
+        data: [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 17, 32
         ]
     }, {
         name: 'Japan',
@@ -402,12 +419,6 @@ Highcharts.chart('container', {
         data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             1, 0, 0, 0, 0, 0, 0, 0
-        ]
-    }, {
-        name: 'ROC',
-        data: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 17, 32
         ]
     }],
 
