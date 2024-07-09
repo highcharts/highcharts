@@ -771,13 +771,9 @@ function datacursor() {
         };
     }
 
-    // Build table with Highcharts.Series aliases
+    // Build table with vegetables data
     function buildVegeTable() {
         const table = new DataTable({
-            aliases: {
-                name: 'vegetable',
-                y: 'amount'
-            },
             columns: {
                 vegetable: [
                     'Broccoli',

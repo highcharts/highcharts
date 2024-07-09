@@ -75,22 +75,10 @@ function jsonSupportFor(
 function toJSON(
     obj: DataTable
 ): DataTableHelper.JSON {
-    const aliases = obj.aliases,
-        aliasKeys = Object.keys(aliases),
-        json: DataTableHelper.JSON = {
-            $class: 'Data.DataTable',
-            columns: obj.getColumns()
-        };
-
-    // Aliases
-
-    if (aliasKeys.length) {
-        const jsonAliases: JSON.Object = json.aliases = {};
-
-        for (let i = 0, iEnd = aliasKeys.length; i < iEnd; ++i) {
-            jsonAliases[aliasKeys[i]] = aliases[aliasKeys[i]];
-        }
-    }
+    const json: DataTableHelper.JSON = {
+        $class: 'Data.DataTable',
+        columns: obj.getColumns()
+    };
 
     // Custom ID
 
@@ -119,7 +107,7 @@ namespace DataTableHelper {
 
     export type ColumnJSON = JSON.Array<JSON.Primitive>;
 
-    export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTableOptions);
+    export type JSON = (Serializable.JSON<'Data.DataTable'> & DataTableOptions);
 
 }
 

@@ -39,22 +39,6 @@ Dashboards.board('container', {
             options: {
                 csv: csvData,
                 firstColumnsAsNames: true,
-                dataTable: {
-                    aliases: {
-                        0: 'Brazil',
-                        1: 'Argentina',
-                        2: 'Uruguay',
-                        3: 'Paraguay',
-                        4: 'United States',
-                        5: 'Canada',
-                        6: 'Mexico',
-                        7: 'Guatemala',
-                        8: 'China',
-                        9: 'Japan',
-                        10: 'India',
-                        11: 'Indonesia'
-                    }
-                },
                 dataModifier: {
                     type: 'Chain',
                     chain: [{
@@ -201,11 +185,9 @@ Dashboards.board('container', {
                 text: 'Countries population growth by year'
             },
             tooltip: {
-
                 enabled: false
             },
             plotOptions: {
-
                 series: {
                     lineWidth: 0,
                     states: {
