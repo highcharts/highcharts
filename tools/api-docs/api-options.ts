@@ -116,7 +116,8 @@ function addTreeNode(
         _fullname = Utilities.getOptionName(_fullname);
 
         let _moreInfos: Array<TSLib.CodeInfo> = [];
-        let _referenceInfo: TSLib.ResolvedInfo;
+        let _resolvedInfo: TSLib.CodeInfo;
+        let _resolvedValue: TSLib.Value;
 
         switch (_info.kind) {
 
@@ -173,9 +174,11 @@ function addTreeNode(
                     _info.value.name === 'merge' &&
                     _info.value.arguments
                 ) {
-                    _moreInfos.push(
-                        _info.value.arguments[_info.value.arguments.length - 1]
-                    );
+                    _resolvedValue =
+                        _info.value.arguments[_info.value.arguments.length - 1];
+                    if (typeof _resolvedValue === 'object') {
+                        _moreInfos.push(_resolvedInfo);
+                    }
                     break;
                 }
                 if (
@@ -187,12 +190,13 @@ function addTreeNode(
                         if (!type.endsWith('Options')) {
                             continue;
                         }
-                        _referenceInfo = TSLib.resolveType(_sourceInfo, type);
+                        _resolvedInfo =
+                            TSLib.resolveReference(_sourceInfo, type);
                         if (
-                            _referenceInfo &&
-                            _referenceInfo.resolvedInfo.kind !== 'Doclet'
+                            _resolvedInfo &&
+                            _resolvedInfo.kind !== 'Doclet'
                         ) {
-                            _moreInfos.push(_referenceInfo.resolvedInfo);
+                            _moreInfos.push(_resolvedInfo);
                         }
                     }
                 }

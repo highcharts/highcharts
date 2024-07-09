@@ -266,22 +266,17 @@ function autoExtendInfo(
 
     /** @type {CodeInfo} */
     let _resolvedInfo;
-    /** @type {string|undefined} */
-    let _resolvedPath;
-    /** @type {ResolvedInfo} */
-    let _resolvedType;
 
     for (const _extendType of _extendsToDo) {
-        _resolvedType = resolveReference(sourceInfo, _extendType, includeNodes);
+        _resolvedInfo = resolveReference(sourceInfo, _extendType, includeNodes);
 
-        if (!_resolvedType) {
+        if (!_resolvedInfo) {
             continue;
         }
 
-        _resolvedPath = _resolvedType.resolvedPath;
         _resolvedInfo = autoExtendInfo(
-            getSourceInfo(_resolvedPath, void 0, includeNodes),
-            _resolvedType.resolvedInfo,
+            getSourceInfo(_resolvedInfo.meta.file, void 0, includeNodes),
+            _resolvedInfo,
             includeNodes
         );
 
