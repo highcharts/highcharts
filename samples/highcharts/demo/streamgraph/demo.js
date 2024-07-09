@@ -126,7 +126,7 @@ Highcharts.chart('container', {
                 y: 150,
                 yAxis: 0
             },
-            text: 'Russia banned from<br>the Olympic Games<br> in 2015'
+            text: 'Russia banned from<br>the Olympic Games<br> in 2017'
         }],
         labelOptions: {
             backgroundColor: 'rgba(255,255,255,0.5)',
