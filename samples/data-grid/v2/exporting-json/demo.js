@@ -15,10 +15,18 @@ const dataGrid = DataGrid.dataGrid2('container', {
     },
     columns: {
         product: {
-            editable: true
+            editable: true,
+            // cellFormatter: function () {
+            //     return 'Name: ' + this.value;
+            // }
+            cellFormat: 'Name: {value}'
         },
         weight: {
-            editable: true
+            editable: true,
+            cellFormat: '{value} kg'
+            // cellFormatter: function () {
+            //     return 'KG: ' + this.value;
+            // }
         },
         metaData: {
             enabled: false

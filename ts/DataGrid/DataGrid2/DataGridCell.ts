@@ -302,7 +302,7 @@ class DataGridCell {
             });
         } else {
             cellContent = (
-                cellFormat ? format(cellFormat, this) :  value + ''
+                cellFormat ? format(cellFormat, { value: value }) : value + ''
             );
         }
 
