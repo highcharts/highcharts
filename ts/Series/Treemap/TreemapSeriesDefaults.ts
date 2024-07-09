@@ -200,7 +200,12 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             const point: TreemapPoint = this && this.point ?
                     this.point :
                     ({} as any),
+                { isGroup } = point.node,
                 name = isString(point.name) ? point.name : '';
+
+            if (isGroup && point.node.groupChildren?.length) {
+                return `+${point.node.groupChildren?.length} more`;
+            }
 
             return name;
         },
@@ -210,7 +215,21 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
 
     tooltip: {
         headerFormat: '',
-        pointFormat: '<b>{point.name}</b>: {point.value}<br/>'
+        pointFormatter: function (): string {
+            const point = this as TreemapPoint,
+                { value } = point,
+                { isGroup } = point.node;
+
+            if (isGroup && point.node.groupChildren?.length) {
+                return `+${point.node.groupChildren?.length} more`;
+            }
+
+            if (value) {
+                return `<b>${point.name}</b>: ${value}<br/>`;
+            }
+
+            return `<b>${point.name}</b>`;
+        }
     },
 
     /**

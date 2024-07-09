@@ -446,6 +446,7 @@ class TreemapSeries extends ScatterSeries {
     ): void {
         const series = this,
             options = series.options,
+            { groupAreaThreshold } = options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
             algorithm = pick<
@@ -460,9 +461,13 @@ class TreemapSeries extends ScatterSeries {
                 ),
                 options.layoutAlgorithm as any
             ),
-            alternate = options.alternateStartingDirection,
-            // Collect all children which should be included
-            children = parent.children.filter((n): boolean => !n.ignore);
+            alternate = options.alternateStartingDirection;
+        // Collect all children which should be included
+        let children = parent.children.filter((n): boolean => !n.ignore);
+
+        if (!children.length && parent.groupChildren) {
+            children = parent.groupChildren.filter((n): boolean => !n.ignore);
+        }
 
         let childrenValues: Array<TreemapNode.NodeValuesObject> = [];
 
@@ -472,6 +477,50 @@ class TreemapSeries extends ScatterSeries {
                 1;
         }
         childrenValues = series[algorithm](area as any, children) as any;
+
+        if (groupAreaThreshold) {
+            const groupChildren: TreemapNode[] = [];
+            childrenValues.forEach((child, i): void => {
+                const x = series.xAxis.toPixels(child.x / series.axisRatio),
+                    y = series.yAxis.toPixels(axisMax - child.y - child.height),
+                    x2 = series.xAxis.toPixels(
+                        (child.x + child.width) / series.axisRatio
+                    ),
+                    y2 = series.yAxis.toPixels(axisMax - child.y),
+                    a = x2 - x,
+                    b = y - y2,
+                    area = a * b;
+
+                if (area < groupAreaThreshold) {
+                    groupChildren.push(children[i]);
+                }
+            });
+
+            if (
+                groupChildren.length > 1 &&
+                series.rootNode !== groupChildren[0].id
+            ) {
+                const groupNode = groupChildren[0],
+                    val = groupChildren.reduce(
+                        (acc, child): number => acc + child.val,
+                        0
+                    );
+                groupNode.val = val;
+                groupNode.isGroup = true;
+                groupNode.name = 'Grouped nodes';
+                groupNode.groupChildren = groupChildren;
+
+                groupChildren.forEach((child): void => {
+                    child.parentNode = groupNode;
+                });
+                children = children.filter(
+                    (x): boolean => !groupChildren.includes(x)
+                );
+                children.push(groupNode);
+                childrenValues =
+                    series[algorithm](area as any, children) as any;
+            }
+        }
 
         let i = -1;
         for (const child of children) {
@@ -698,7 +747,10 @@ class TreemapSeries extends ScatterSeries {
         let drillId: (boolean|string) = false;
 
         if (
-            !point.node.isLeaf &&
+            (
+                !point.node.isLeaf ||
+                point.node.isGroup
+            ) &&
             (point.node.level - this.nodeMap[this.rootNode].level) === 1
         ) {
             drillId = point.id;
@@ -1116,7 +1168,7 @@ class TreemapSeries extends ScatterSeries {
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors;
 
-        if (node) {
+        if (node && !node.isGroup) {
             const colorInfo = getColor(node, {
                     colors: colors,
                     index: index,
@@ -1330,7 +1382,7 @@ class TreemapSeries extends ScatterSeries {
             (a.sortIndex || 0) - (b.sortIndex || 0)
         ));
         // Set the values
-        const val = pick(point && point.options.value, childrenTotal);
+        const val = pick(point?.options.value, childrenTotal);
         if (point) {
             point.value = val;
         }

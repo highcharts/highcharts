@@ -443,6 +443,15 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     drillUpButton?: TreemapSeriesUpButtonOptions;
 
     /**
+     * TO DO
+     *
+     * @since next
+     *
+     * @product highcharts
+     */
+    groupAreaThreshold?: number;
+
+    /**
      * Whether to ignore hidden points when the layout algorithm runs.
      * If `false`, hidden points will leave open spaces.
      *
