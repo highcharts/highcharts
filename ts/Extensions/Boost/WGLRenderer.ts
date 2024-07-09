@@ -823,6 +823,10 @@ class WGLRenderer {
                 }
             }
 
+            if (x > xMax || x < xMin || y > yMax || y < yMin) {
+                continue;
+            }
+
             if (!connectNulls && (x === null || y === null)) {
                 beginSegment();
                 continue;
