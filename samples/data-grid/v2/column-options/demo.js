@@ -14,8 +14,10 @@ DataGrid.dataGrid2('container', {
         }
     },
     columns: {
+        product: {
+            cellFormat: 'val: {value}'
+        },
         weight: {
-            className: 'custom-column-class-name',
             cellFormatter: function () {
                 return 'V: ' + this.value;
             }
