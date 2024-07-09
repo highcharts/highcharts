@@ -136,7 +136,7 @@ class DataGridCell {
         this.value = this.column.data[this.row.index];
 
         if (this.value) {
-            cellContent = this.formatCell(this.value);
+            cellContent = this.formatCell(this.value, this);
         }
 
         if (editable) {
@@ -250,13 +250,19 @@ class DataGridCell {
     public removeCellInputElement(): void {
         const editedCell = this.column.viewport.editedCell;
         const parentNode = editedCell?.cellInputEl?.parentNode;
-
         if (!editedCell || !parentNode) {
             return;
         }
-        const cellValue = (
-            editedCell.cellInputEl?.value || editedCell.value
-        ) as string;
+
+        let cellValue = editedCell.value || '';
+
+        if (editedCell.cellInputEl) {
+            if (typeof editedCell.value === 'number') {
+                cellValue = parseFloat(editedCell.cellInputEl.value);
+            } else {
+                cellValue = editedCell.cellInputEl.value;
+            }
+        }
 
         if (editedCell.column.id && editedCell.row.index > -1 && editedCell) {
             editedCell.column.viewport.dataTable.setCell(
@@ -269,11 +275,11 @@ class DataGridCell {
         }
 
         editedCell.cellInputEl?.remove();
+        parentNode.classList.remove(Globals.classNames.focusedCell);
+        parentNode.innerHTML = this.formatCell(cellValue, editedCell);
+
         delete editedCell.cellInputEl;
         delete this.column.viewport.editedCell;
-
-        parentNode.classList.remove(Globals.classNames.focusedCell);
-        parentNode.innerHTML = this.formatCell(cellValue);
 
         fireEvent(parentNode, 'cellUpdated');
     }
@@ -287,11 +293,14 @@ class DataGridCell {
      * The value of cell
      *
      */
-    public formatCell(value: string | number | boolean): string {
+    public formatCell(
+        value: string | number | boolean,
+        ctx: DataGridCell
+    ): string {
         const {
             cellFormat,
             cellFormatter
-        } = this.column.userOptions;
+        } = ctx.column.userOptions;
 
         let cellContent = '';
 
@@ -301,7 +310,7 @@ class DataGridCell {
             });
         } else {
             cellContent = (
-                cellFormat ? format(cellFormat, this) : value + ''
+                cellFormat ? format(cellFormat, ctx) : value + ''
             );
         }
 
