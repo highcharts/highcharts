@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         styledMode: true
     },
     title: {
-        text: 'Mobile vendor market share, 2021',
+        text: 'Mobile vendor market share, June 2024',
         align: 'left'
     },
     xAxis: {
@@ -18,17 +18,17 @@ Highcharts.chart('container', {
         allowPointSelect: true,
         keys: ['name', 'y', 'selected', 'sliced'],
         data: [
-            ['Samsung', 27.79, true, true],
-            ['Apple', 27.34, false],
-            ['Xiaomi', 10.87, false],
-            ['Huawei', 8.48, false],
-            ['Oppo', 5.38, false],
-            ['Vivo', 4.17, false],
-            ['Realme', 2.57, false],
-            ['Unknown', 2.45, false],
-            ['Motorola', 2.22, false],
-            ['LG', 1.53, false],
-            ['Other', 7.2, false]
+            ['Apple', 27.16, true, true],
+            ['Samsung', 23.72, false],
+            ['Xiaomi', 11.92, false],
+            ['Unknown', 6.86, false],
+            ['Oppo', 6.12, false],
+            ['Vivo', 5.48, false],
+            ['Realme', 3.89, false],
+            ['Huawei', 3.49, false],
+            ['Motorola', 2.38, false],
+            ['Infinix', 1.59, false],
+            ['Other', 7.39, false]
         ],
         showInLegend: true
     }]
