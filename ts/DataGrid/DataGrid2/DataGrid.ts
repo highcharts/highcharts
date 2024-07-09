@@ -265,7 +265,7 @@ class DataGrid {
     /**
      * Returns the current dataGrid data as a JSON string.
      *
-     * @return {string}
+     * @returns
      *         JSON representation of the data
      */
     public getJSON(): string {
