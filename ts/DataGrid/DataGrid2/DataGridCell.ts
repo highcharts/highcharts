@@ -303,7 +303,6 @@ class DataGridCell {
                 value: value
             });
         } else {
-            console.log('this', this);
             cellContent = (
                 cellFormat ? format(cellFormat, { value: value }) : value + ''
             );
