@@ -136,7 +136,7 @@ class DataGridCell {
         this.value = this.column.data[this.row.index];
 
         if (this.value) {
-            cellContent = this.formatCell(this.value);
+            cellContent = this.formatCell(this.value, this);
         }
 
         if (editable) {
@@ -269,11 +269,11 @@ class DataGridCell {
         }
 
         editedCell.cellInputEl?.remove();
+        parentNode.classList.remove(Globals.classNames.focusedCell);
+        parentNode.innerHTML = this.formatCell(cellValue, editedCell);
+
         delete editedCell.cellInputEl;
         delete this.column.viewport.editedCell;
-
-        parentNode.classList.remove(Globals.classNames.focusedCell);
-        parentNode.innerHTML = this.formatCell(cellValue);
 
         fireEvent(parentNode, 'cellUpdated');
     }
@@ -287,11 +287,14 @@ class DataGridCell {
      * The value of cell
      *
      */
-    public formatCell(value: string | number | boolean): string {
+    public formatCell(
+        value: string | number | boolean,
+        ctx: DataGridCell
+    ): string {
         const {
             cellFormat,
             cellFormatter
-        } = this.column.userOptions;
+        } = ctx.column.userOptions;
 
         let cellContent = '';
 
@@ -300,6 +303,7 @@ class DataGridCell {
                 value: value
             });
         } else {
+            console.log('this', this);
             cellContent = (
                 cellFormat ? format(cellFormat, { value: value }) : value + ''
             );
