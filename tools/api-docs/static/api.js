@@ -7,7 +7,7 @@ var isLocal = window.location.hostname === 'localhost';
 
 // Support legacy links
 if (location.pathname.indexOf('class-reference') === -1 && location.hash) {
-  var hash = location.hash.replace(/^#/, '').replace('%23', '.');
+  var hash = location.hash.replace(/^#/, '').replace(/%23/g, '.');
 
   // Options: https://api.highcharts.com/highcharts#title.text
   if (/^[a-z]/.test(hash)) {
@@ -733,7 +733,7 @@ hapi.ajax = function(p) {
     options = document.querySelector(options);
 
     function explodeState(state) {
-      state = state.replace('<', '.').replace('>.', '.');
+      state = state.replace(/</g, '.').replace(/>\./g, '.');
       return state.split('.');
     }
 
