@@ -134,7 +134,7 @@ class DataGrid {
     /**
      * The list of columns that should be displayed in the data grid.
      */
-    public enabledColumns: string[];
+    public enabledColumns?: string[];
 
 
     /* *
@@ -166,7 +166,6 @@ class DataGrid {
             dataTable = new DataTable(this.options.table);
         }
 
-        this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
         this.renderViewport(dataTable);
     }
 
@@ -189,7 +188,6 @@ class DataGrid {
             }
         }
 
-        this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
         this.renderViewport(dataTable);
     }
 
@@ -198,16 +196,33 @@ class DataGrid {
      * rendered, it will be destroyed and re-rendered with the new data.
      *
      * @param dataTable
-     * The data source of the data grid.
+     * The data source of the data grid. If not provided, the data source of
+     * the current viewport will be used (only for rerendering).
      */
-    public renderViewport(dataTable: DataTable): void {
-        this.viewport?.destroy();
+    public renderViewport(dataTable?: DataTable): void {
+        let vp = this.viewport;
+
+        if (!dataTable) {
+            if (!vp) {
+                return;
+            }
+            dataTable = vp.dataTable;
+        }
+
+        const viewportMeta = vp?.getStateMeta();
+
+        this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
+        vp?.destroy();
         if (this.container) {
             this.container.innerHTML = AST.emptyHTML;
         }
 
         if (this.enabledColumns.length > 0) {
             this.renderTable(dataTable);
+            vp = this.viewport;
+            if (viewportMeta && vp) {
+                vp.applyStateMeta(viewportMeta);
+            }
         } else {
             this.renderNoData();
         }

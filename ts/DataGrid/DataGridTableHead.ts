@@ -96,6 +96,9 @@ class DataGridTableHead {
      */
     public render(): void {
         const vp = this.viewport;
+        if (!vp.dataGrid.enabledColumns) {
+            return;
+        }
 
         let column: DataGridColumn;
         for (let i = 0, iEnd = this.columns.length; i < iEnd; ++i) {

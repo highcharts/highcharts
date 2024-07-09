@@ -210,6 +210,9 @@ class DataGridTable {
      */
     private loadColumns(): void {
         const { enabledColumns } = this.dataGrid;
+        if (!enabledColumns) {
+            return;
+        }
 
         let columnId: string;
         for (let i = 0, iEnd = enabledColumns.length; i < iEnd; ++i) {
@@ -353,6 +356,61 @@ class DataGridTable {
                 editedCell.removeCellInputElement();
             }
         }
+    }
+
+    /**
+     * Get the viewport state metadata. It is used to save the state of the
+     * viewport and restore it when the data grid is re-rendered.
+     *
+     * @returns
+     * The viewport state metadata.
+     */
+    public getStateMeta(): DataGridTable.ViewportStateMetadata {
+        return {
+            scrollTop: this.tbodyElement.scrollTop,
+            scrollLeft: this.tbodyElement.scrollLeft,
+            columnDistribution: this.columnDistribution,
+            columnWidths: this.columns.map((column): number => column.width)
+        };
+    }
+
+    /**
+     * Apply the metadata to the viewport state. It is used to restore the state
+     * of the viewport when the data grid is re-rendered.
+     *
+     * @param meta
+     * The viewport state metadata.
+     */
+    public applyStateMeta(
+        meta: DataGridTable.ViewportStateMetadata
+    ): void {
+        this.tbodyElement.scrollTop = meta.scrollTop;
+        this.tbodyElement.scrollLeft = meta.scrollLeft;
+
+        if (
+            this.columnDistribution === meta.columnDistribution &&
+            this.columns.length === meta.columnWidths.length
+        ) {
+            const widths = meta.columnWidths;
+            for (let i = 0, iEnd = widths.length; i < iEnd; ++i) {
+                this.columns[i].width = widths[i];
+            }
+            this.reflow();
+        }
+    }
+}
+
+namespace DataGridTable {
+
+    /**
+     * Represents the metadata of the viewport state. It is used to save the
+     * state of the viewport and restore it when the data grid is re-rendered.
+     */
+    export interface ViewportStateMetadata {
+        scrollTop: number;
+        scrollLeft: number;
+        columnDistribution: ColumnDistribution;
+        columnWidths: number[];
     }
 }
 

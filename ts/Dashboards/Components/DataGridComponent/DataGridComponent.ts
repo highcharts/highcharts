@@ -173,9 +173,9 @@ class DataGridComponent extends Component {
         super.render();
         if (!this.dataGrid) {
             this.dataGrid = this.constructDataGrid();
+        } else {
+            this.dataGrid.renderViewport();
         }
-
-        // TODO(DD): Add support for render (update?).
 
         this.sync.start();
         this.emit({ type: 'afterRender' });

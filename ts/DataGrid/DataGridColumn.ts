@@ -261,7 +261,7 @@ class DataGridColumn {
      */
     private getInitialFullDistWidth(mock: HTMLElement): number {
         const vp = this.viewport;
-        const columnsCount = vp.dataGrid.enabledColumns.length;
+        const columnsCount = vp.dataGrid.enabledColumns?.length ?? 0;
 
         if (this.index < columnsCount - 1) {
             return vp.getRatioFromWidth(mock.offsetWidth) || 1 / columnsCount;
