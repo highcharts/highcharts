@@ -142,6 +142,7 @@ const EditGlobals: EditGlobals = {
         editMode: 'Edit mode',
         errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
+        htmlInput: 'HTML',
         id: 'Id',
         off: 'off',
         on: 'on',

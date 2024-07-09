@@ -350,7 +350,7 @@ namespace ColorAxisComposition {
      */
     function seriesTranslateColors(this: SeriesComposition): void {
         const series = this,
-            points = this.data.length ? this.data : this.points,
+            points = this.getPointsCollection() as PointComposition[], // #17945
             nullColor = this.options.nullColor,
             colorAxis = this.colorAxis,
             colorKey = this.colorKey;
