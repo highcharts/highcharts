@@ -6,7 +6,7 @@ const chart = Highcharts.chart('container', {
         text: 'Click button to animate or explore chart'
     },
     accessibility: {
-        enabled: true
+        enabled: false
     },
     tooltip: {
         dateTimeLabelFormats: {
@@ -38,6 +38,10 @@ let isAnimating = false;
 
 const toggleButton = document.getElementById('toggle');
 toggleButton.onclick = function () {
+    toggleAnimation();
+};
+
+function toggleAnimation() {
     if (isAnimating) {
         clearInterval(intervalId);
         chart.update({
@@ -58,4 +62,7 @@ toggleButton.onclick = function () {
         toggleButton.textContent = 'Stop animating';
     }
     isAnimating = !isAnimating;
-};
+}
+
+// Start animating by default
+toggleAnimation();

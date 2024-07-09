@@ -461,7 +461,8 @@ namespace Accessibility {
     ): void {
         let a11y = this.accessibility;
         const accessibilityOptions = this.options.accessibility,
-            svg = this.renderer.boxWrapper.element;
+            svg = this.renderer.boxWrapper.element,
+            title = this.title;
 
         if (accessibilityOptions && accessibilityOptions.enabled) {
             if (a11y && !a11y.zombie) {
@@ -471,9 +472,10 @@ namespace Accessibility {
                 if (a11y && !a11y.zombie) {
                     a11y.update();
                 }
-                // If a11y has been enabled = false, and is now enabled = true
-                svg.removeAttribute('role');
-                this.wasAccessibilityEnabled = true;
+                // If a11y has been disabled, and is now enabled
+                if (svg.getAttribute('role') === 'img') {
+                    svg.removeAttribute('role');
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -482,15 +484,21 @@ namespace Accessibility {
             }
             delete this.accessibility;
         } else {
-            // Just hide container
-            this.renderTo.setAttribute('aria-hidden', true);
+            // If a11y has been disabled dynamically or is disabled
+            this.renderTo.setAttribute('role', 'img');
+            this.renderTo.setAttribute('aria-hidden', false);
+            this.renderTo.setAttribute('aria-label', (
+                (title && title.element.textContent) || ''
+            ).replace(/</g, '&lt;'));
+            svg.setAttribute('aria-hidden', true);
+            const description =
+                document.getElementsByClassName('highcharts-description')[0];
 
-            // If a11y has been enabled = true, and is now enabled = false
-            if (this.wasAccessibilityEnabled === false) {
-                svg.setAttribute('role', 'img');
+            if (description) {
+                description.setAttribute('aria-hidden', false);
+                description.classList.remove('highcharts-linked-description');
             }
         }
-        this.wasAccessibilityEnabled = false;
     }
 
     /**
