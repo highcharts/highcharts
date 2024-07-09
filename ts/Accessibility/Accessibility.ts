@@ -354,7 +354,6 @@ namespace Accessibility {
     export declare class ChartComposition extends Chart {
         options: Required<Options>;
         series: Array<SeriesComposition>;
-        wasAccessibilityEnabled?: boolean;
     }
 
     export declare class PointComposition extends Point {
