@@ -17,11 +17,15 @@ DataGrid.dataGrid2('container', {
     },
     columns: {
         date: {
+            headFormat: 'Date of purchase',
             cellFormatter: function () {
                 return new Date(this.value)
                     .toISOString()
                     .substring(0, 10);
             }
+        },
+        product: {
+            headFormat: '{id} name'
         },
         weight: {
             className: 'custom-column-class-name',
@@ -34,7 +38,6 @@ DataGrid.dataGrid2('container', {
         },
         icon: {
             cellFormatter: function () {
-                console.log(this.value);
                 return `<a href="#">${this.value}</a>`;
             }
         },

@@ -154,11 +154,6 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
-     * The format of the column header.
-     */
-    headFormat?: string;
-
-    /**
      * Callback function for formatting cells within the given column of the
      * DataGrid.
      *
@@ -168,19 +163,24 @@ export interface ColumnOptions {
     cellFormatter?: CellFormatterCallback;
 
     /**
+     * Switch to make the column cells editable ('true') or read-only ('false').
+     *
+     * @default true
+     */
+    editable?: boolean;
+
+    /**
+     * The format of the column header. Use `{id}` to display the column id.
+     */
+    headFormat?: string;
+
+    /**
      * Weather to use HTML to render the cell content. When enabled, other
      * elements than text can be added to the cell ie. images.
      *
      * @default false
      */
     useHTML?: boolean;
-
-    /**
-     * Switch to make the column cells editable ('true') or read-only ('false').
-     *
-     * @default true
-     */
-    editable?: boolean;
 }
 
 /**
