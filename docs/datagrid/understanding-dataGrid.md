@@ -2,36 +2,95 @@ Understanding DataGrid
 
 ===
 
-DataGrid 
+The DataGrid is a tool that can help you to vizualize your data in a table.
 
 ![datagrid.png](datagrid.png)
 
+Defaults
+---------
+Default options for the all rows or all columns.
 
-Title
+```
+    defaults: {
+        columns: {
+            editable: true
+        }
+    }
+```
+
+For more information on defaults options see the [API reference]().
+
+Caption
 ---------
 
-Allows you to fine tune the range of the chart which is displayed.
+The caption of the datagrid grid.
 
-See [Navigator](https://highcharts.com/docs/stock/navigator) for more information.
+```
+    caption: {
+        text: 'Your title of datagrid'
+    }
+```
+
+For more information on caption options see the [API reference]().
 
 Resizer
 ---------
 
-Allows you to fine tune the range of the chart which is displayed.
+Allows you to resize the entire column. The functionality is enabled by default,
+but you can disable it in the settings option.
 
-See [Navigator](https://highcharts.com/docs/stock/navigator) for more information.
+```
+    settings: {
+        columns: {
+            resizing: false
+        }
+    }
+```
 
+For more information on resizer options see the [API reference]().
 
 Cell
 ---------
 
-Allows you to fine tune the range of the chart which is displayed.
+The basic element on the DataGrid, can be formatted by `cellFormat` or `cellFormatter`.
+You can also set the `useHTML` option and apply the custom HTML in formatters.
 
-See [Navigator](https://highcharts.com/docs/stock/navigator) for more information.
+```
+    defaults: {
+        columns: {
+            useHTML: true
+        }
+    },
+    columns: {
+        column1: {
+            cellFormat: '<h3>{value}</h3>'
+        },
+        column2: {
+            cellFormatter: function () {
+                return '<a href="' + this.value + '">URL</a>';
+            }
+        }
+    }
+```
+
+For more information on cell options see the [API reference]().
 
 Editor
 ---------
 
-Allows you to fine tune the range of the chart which is displayed.
+Allows you to edit the main value of the cell.
 
-See [Navigator](https://highcharts.com/docs/stock/navigator) for more information.
+```
+    defaults: {
+        columns: {
+            editable: true
+        }
+    }
+```
+
+Click on a cell and change the value.
+
+If you declared `cellFormatter` or `cellFormat` props, it will be applied to the
+new value.
+
+For more information on cell options see the [API reference]().
