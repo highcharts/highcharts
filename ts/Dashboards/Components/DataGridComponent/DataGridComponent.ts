@@ -201,7 +201,18 @@ class DataGridComponent extends Component {
 
         await super.update(options);
         if (this.dataGrid) {
-            this.dataGrid.update(this.options.dataGridOptions ?? {});
+            this.dataGrid.update(this.options.dataGridOptions ?? {}, false);
+
+            if (
+                this.dataGrid?.viewport?.dataTable?.id !==
+                this.getFirstConnector()?.table?.id
+            ) {
+                this.dataGrid.update({
+                    table: this.getFirstConnector()?.table?.modified
+                }, false);
+            }
+
+            this.dataGrid.renderViewport();
         }
 
         this.emit({ type: 'afterUpdate' });

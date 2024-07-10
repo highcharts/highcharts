@@ -45,13 +45,12 @@ Dashboards.board('container', {
         type: 'DataGrid',
         renderTo: 'cell-id-2',
         dataGridOptions: {
-            editable: false,
             columns: {
                 Revenue: {
-                    headerFormat: '{text} (€)'
+                    headFormat: '{id} (€)'
                 },
                 Category: {
-                    show: false
+                    enabled: false
                 }
             }
         }
