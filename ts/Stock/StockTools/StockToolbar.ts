@@ -448,9 +448,13 @@ class Toolbar {
 
         // Main button wrapper
         const buttonWrapper = createElement('li', {
-            className: pick(classMapping[btnName], '') + ' ' + userClassName,
+            className: pick(classMapping[btnName], ''),
             title: lang.gui[btnName] ?? btnName
         }, void 0, target);
+
+        if (userClassName) {
+            buttonWrapper.classList.add(userClassName as string);
+        }
 
         // Single button
         const elementType = (btnOptions.elementType || 'button') as string;
