@@ -1,9 +1,5 @@
 const csvData = document.getElementById('csv').innerHTML;
 
-const minYear = 1961;
-const maxYear = 2022;
-
-
 function getColumnAssignment(columnNames) {
     return columnNames.map(function (column) {
         return {
@@ -15,16 +11,15 @@ function getColumnAssignment(columnNames) {
 
 Highcharts.setOptions({
     chart: {
-        type: 'line',
-        animation: false
+        type: 'line'
     },
     yAxis: {
         max: 5,
         min: -1
     },
     xAxis: {
-        min: minYear,
-        max: maxYear
+        min: 1960,
+        max: 2022
     },
     tooltip: {
         pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
@@ -54,9 +49,6 @@ const asiaChart = {
     chartOptions: {
         title: {
             text: 'Asia'
-        },
-        chart: {
-            animation: false
         }
     }
 };
@@ -73,9 +65,6 @@ const northAmericaChart = {
     chartOptions: {
         title: {
             text: 'North America'
-        },
-        chart: {
-            animation: false
         }
     }
 };
@@ -157,21 +146,6 @@ const legendChart = {
     }
 };
 
-// For debugging purposes
-// eslint-disable-next-line no-unused-vars
-const dataGrid =
-{
-    renderTo: 'data-grid',
-    connector: {
-        id: 'population-growth'
-    },
-    type: 'DataGrid',
-    sync: {
-        visibility: true
-    }
-};
-
-
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -181,8 +155,7 @@ Dashboards.board('container', {
                 csv: csvData,
                 firstRowAsNames: true,
                 beforeParse: function (csv) {
-                    // Convert rows to columns.
-                    // TBD: retry with InvertedTableModifier
+                    // Convert rows to columns and thow away empty rows
                     const rows = csv.split('\n');
                     const columns = [];
 
@@ -192,6 +165,7 @@ Dashboards.board('container', {
                         }
                         console.log('row', i);
                         const values = row.split(',');
+                        // Replace name of first column: "Country Name" -> x
                         if (i === 0) {
                             values[0] = 'x';
                         }
@@ -202,16 +176,14 @@ Dashboards.board('container', {
                             columns[j][i] = value;
                         });
                     });
-                    return columns.map(function (column) {
-                        return column.join(',');
-                    }).join('\n');
+                    return columns.map(column => column.join(',')).join('\n');
                 },
                 dataModifier: {
                     type: 'Range',
                     ranges: [{
                         column: 'x',
-                        minValue: minYear,
-                        maxValue: maxYear
+                        minValue: 1961,
+                        maxValue: 2021
                     }]
                 }
             }
@@ -231,15 +203,10 @@ Dashboards.board('container', {
                 cells: [{
                     id: 'legend'
                 }]
-            }, {
-                cells: [{
-                    id: 'data-grid'
-                }]
             }]
         }]
     },
     components: [
-        // dataGrid,
         asiaChart,
         northAmericaChart,
         southAmericaChart,
