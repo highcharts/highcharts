@@ -23,6 +23,7 @@
  * */
 
 import type DataGridOptions from './DataGridOptions';
+import type DataTableOptions from '../Data/DataTableOptions';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataGridColumn from './DataGridColumn.js';
@@ -32,7 +33,6 @@ import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
 import U from '../Core/Utilities.js';
-import DataTableOptions from '../Data/DataTableOptions';
 
 const { makeDiv, makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
@@ -344,6 +344,28 @@ class DataGrid {
         Object.keys(this).forEach((key): void => {
             delete this[key as keyof this];
         });
+    }
+
+    /**
+     * Returns the current dataGrid data as a JSON string.
+     *
+     * @returns
+     * JSON representation of the data
+     */
+    public getJSON(): string {
+        const json = this.viewport?.dataTable.modified.columns;
+
+        if (!this.enabledColumns || !json) {
+            return '{}';
+        }
+
+        for (const key of Object.keys(json)) {
+            if (this.enabledColumns.indexOf(key) === -1) {
+                delete json[key];
+            }
+        }
+
+        return JSON.stringify(json);
     }
 }
 
