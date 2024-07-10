@@ -41,7 +41,7 @@ describe('Remove the dashboard.', () => {
         cy.get('@inputField').should('have.value', '1640995200000');
         cy.get('@inputField').clear().type('1641081600000');
         cy.get('body').click();
-        // cy.get('.highcharts-dg-row').eq(0).find('td').eq(0).should('have.text', '2022-01-02'); @todo
+        cy.get('.highcharts-dg-row').eq(0).find('td').eq(0).should('have.text', '2022-01-02');
     });
 
     it('The grid should adjust its width dynamically to the container width.', () => {
