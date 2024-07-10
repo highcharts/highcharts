@@ -1,23 +1,34 @@
 const csvData = document.getElementById('csv').innerHTML;
 
+const minYear = 1961;
+const maxYear = 2022;
+
+
+function getColumnAssignment(columnNames) {
+    return columnNames.map(function (column) {
+        return {
+            seriesId: column,
+            data: ['x', column]
+        };
+    });
+}
+
 Highcharts.setOptions({
     chart: {
-        zooming: {
-            enabled: true,
-            type: 'x'
-        }
+        type: 'line',
+        animation: false
     },
     yAxis: {
         max: 5,
         min: -1
     },
     xAxis: {
-        min: 1960,
-        max: 2030
+        min: minYear,
+        max: maxYear
     },
     tooltip: {
         pointFormat: '{series.name} had <b>{point.y:,.2f}%</b><br/> ' +
-            'population growth in {point.name}'
+            'population growth in {point.x}'
     },
     legend: {
         enabled: false
@@ -33,20 +44,14 @@ Highcharts.setOptions({
 
 const asiaChart = {
     renderTo: 'asia-chart',
-    sync: {
-        visibility: true,
-        extremes: true
-    },
-
     connector: {
-        id: 'population-growth'
+        id: 'population-growth',
+        columnAssignment: getColumnAssignment(
+            ['China', 'Japan', 'India', 'Indonesia']
+        )
     },
     type: 'Highcharts',
-    columnAssignment: {
-        columnAssignment: ['China', 'Japan', 'India', 'Indonesia']
-    },
     chartOptions: {
-        colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
         title: {
             text: 'Asia'
         },
@@ -58,21 +63,13 @@ const asiaChart = {
 
 const northAmericaChart = {
     renderTo: 'north-america-chart',
-    sync: {
-        visibility: true,
-        extremes: true
-    },
     connector: {
-        id: 'population-growth'
+        id: 'population-growth',
+        columnAssignment: getColumnAssignment(
+            ['Mexico', 'Guatemala', 'Canada', 'United States']
+        )
     },
     type: 'Highcharts',
-    columnAssignment: {
-        columnNames: 'x',
-        'United States': 'y',
-        Canada: 'y',
-        Mexico: 'y',
-        Guatemala: 'y'
-    },
     chartOptions: {
         title: {
             text: 'North America'
@@ -85,28 +82,16 @@ const northAmericaChart = {
 
 const southAmericaChart = {
     renderTo: 'south-america-chart',
-    sync: {
-        visibility: true,
-        extremes: true
-    },
     connector: {
-        id: 'population-growth'
+        id: 'population-growth',
+        columnAssignment: getColumnAssignment(
+            ['Brazil', 'Argentina', 'Uruguay', 'Paraguay']
+        )
     },
     type: 'Highcharts',
-    columnAssignment: {
-        columnNames: 'x',
-        Brazil: 'y',
-        Argentina: 'y',
-        Uruguay: 'y',
-        Paraguay: 'y'
-    },
     chartOptions: {
-        colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
         title: {
             text: 'South America'
-        },
-        chart: {
-            animation: false
         }
     }
 };
@@ -118,7 +103,6 @@ const legendChart = {
     },
     type: 'Highcharts',
     columnAssignment: {
-        columnNames: 'x',
         Brazil: 'y',
         Argentina: 'y',
         Uruguay: 'y',
@@ -132,9 +116,6 @@ const legendChart = {
         India: 'y',
         Indonesia: 'y'
     },
-    sync: {
-        visibility: true
-    },
     chartOptions: {
         chart: {
             height: 200
@@ -143,7 +124,6 @@ const legendChart = {
             text: 'Countries population growth by year'
         },
         tooltip: {
-
             enabled: false
         },
         plotOptions: {
@@ -177,6 +157,20 @@ const legendChart = {
     }
 };
 
+// For debugging purposes
+// eslint-disable-next-line no-unused-vars
+const dataGrid =
+{
+    renderTo: 'data-grid',
+    connector: {
+        id: 'population-growth'
+    },
+    type: 'DataGrid',
+    sync: {
+        visibility: true
+    }
+};
+
 
 Dashboards.board('container', {
     dataPool: {
@@ -188,8 +182,7 @@ Dashboards.board('container', {
                 firstRowAsNames: true,
                 beforeParse: function (csv) {
                     // Convert rows to columns.
-                    // This is needed because Highcharts expects series
-                    // data to be in columns (instead of rows)
+                    // TBD: retry with InvertedTableModifier
                     const rows = csv.split('\n');
                     const columns = [];
 
@@ -217,8 +210,8 @@ Dashboards.board('container', {
                     type: 'Range',
                     ranges: [{
                         column: 'x',
-                        minValue: 1960,
-                        maxValue: 2012
+                        minValue: minYear,
+                        maxValue: maxYear
                     }]
                 }
             }
@@ -246,41 +239,10 @@ Dashboards.board('container', {
         }]
     },
     components: [
-        // For debugging purposes
-        {
-            renderTo: 'data-grid',
-            connector: {
-                id: 'population-growth'
-                /*
-                columnAssignment: [{
-                    seriesId: 'Brazil',
-                    data: ['x', 'Brazil']
-                }]
-                    */
-                /*
-                columnNames: 'x',
-                Brazil: 'y',
-                Argentina: 'y',
-                Uruguay: 'y',
-                Paraguay: 'y',
-                'United States': 'y',
-                Canada: 'y',
-                Mexico: 'y',
-                Guatemala: 'y',
-                China: 'y',
-                Japan: 'y',
-                India: 'y',
-                Indonesia: 'y'
-                */
-            },
-            type: 'DataGrid',
-            sync: {
-                visibility: true
-            }
-        },
-        asiaChart
-        // northAmericaChart,
-        // southAmericaChart
-        // legendChart
+        // dataGrid,
+        asiaChart,
+        northAmericaChart,
+        southAmericaChart,
+        legendChart
     ]
 }, true);
