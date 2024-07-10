@@ -1,5 +1,4 @@
 Understanding DataGrid
-
 ===
 
 The DataGrid is a tool that can help you to vizualize your data in a table.
@@ -33,7 +32,28 @@ The caption of the datagrid grid.
 
 For more information on caption options see the [API reference]().
 
-Resizer
+Head
+---------
+
+The table's header row containing the column names.
+
+
+Row
+---------
+
+Represents a row in the data grid.
+
+```
+    defaults: {
+        rows: {
+            bufferSize: 5
+        }
+    }
+```
+
+For more information on caption options see the [API reference]().
+
+Column resizer
 ---------
 
 Allows you to resize the entire column. The functionality is enabled by default,
@@ -75,7 +95,7 @@ You can also set the `useHTML` option and apply the custom HTML in formatters.
 
 For more information on cell options see the [API reference]().
 
-Editor
+Value editor
 ---------
 
 Allows you to edit the main value of the cell.
