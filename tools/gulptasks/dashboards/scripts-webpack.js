@@ -5,6 +5,7 @@
 const gulp = require('gulp');
 const webpack = require('webpack');
 const webpackConfig = require('../../webpacks/dashboards.webpack');
+const layoutWebpack = require('../../webpacks/layout.webpack');
 
 /* *
  *
@@ -29,6 +30,19 @@ async function scriptsWebpack() {
         webpack(webpackConfig, (err, stats) => {
             if (err || stats.hasErrors()) {
                 console.error('Webpack compilation failed:', err || stats.toJson().errors);
+                reject(err || new Error('Webpack compilation errors'));
+            } else {
+                console.log('Webpack compilation completed successfully.');
+                console.log(stats.toString({
+                    chunks: false,
+                    colors: true
+                }));
+                resolve();
+            }
+        });
+
+        webpack(layoutWebpack).run((err, stats) => {
+            if (err || stats.hasErrors()) {
                 reject(err || new Error('Webpack compilation errors'));
             } else {
                 console.log('Webpack compilation completed successfully.');
