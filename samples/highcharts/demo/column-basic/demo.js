@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Corn vs wheat estimated production for 2020',
+        text: 'Corn vs wheat estimated production for 2023',
         align: 'left'
     },
     subtitle: {
@@ -13,7 +13,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        categories: ['USA', 'China', 'Brazil', 'EU', 'India', 'Russia'],
+        categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
         crosshair: true,
         accessibility: {
             description: 'Countries'
@@ -37,11 +37,11 @@ Highcharts.chart('container', {
     series: [
         {
             name: 'Corn',
-            data: [406292, 260000, 107000, 68300, 27500, 14500]
+            data: [387749, 280000, 129000, 64300, 54000, 34300]
         },
         {
             name: 'Wheat',
-            data: [51086, 136000, 5500, 141000, 107180, 77000]
+            data: [45321, 140000, 10000, 140500, 19500, 113500]
         }
     ]
 });

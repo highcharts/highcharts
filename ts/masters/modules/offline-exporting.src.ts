@@ -2,7 +2,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/offline-exporting
  * @requires highcharts
- * @requires modules/exporting
+ * @requires highcharts/modules/exporting
  *
  * Client side exporting module
  *

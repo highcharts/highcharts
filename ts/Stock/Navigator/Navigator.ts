@@ -330,7 +330,7 @@ class Navigator {
                 [
                     'L',
                     left + navigatorSize + scrollButtonSize * 2,
-                    navigatorTop + halfOutline
+                    lineTop
                 ]
             ];
 
@@ -512,7 +512,7 @@ class Navigator {
                     // because of the tooltip in inverted chart (#2908).
                     navigator.handles[index].attr({ zIndex: 7 - index })
                         .addClass(
-                            'highcharts-navigator-handle- ' +
+                            'highcharts-navigator-handle ' +
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
@@ -1879,6 +1879,9 @@ class Navigator {
                 base,
                 'remove',
                 function (): void {
+                    if (baseSeries) {
+                        erase(baseSeries, base); // #21043
+                    }
                     if (this.navigatorSeries) {
                         erase(navigator.series as any, this.navigatorSeries);
                         if (defined(this.navigatorSeries.options)) {

@@ -2,7 +2,7 @@
  * @license Highmaps JS v@product.version@ (@product.date@)
  * @module highcharts/modules/tilemap
  * @requires highcharts
- * @requires modules/map
+ * @requires highcharts/modules/map
  *
  * Tilemap module
  *

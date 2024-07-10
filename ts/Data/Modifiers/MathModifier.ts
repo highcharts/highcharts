@@ -45,7 +45,6 @@ import FormulaProcessor from '../Formula/FormulaProcessor.js';
 /**
  * Replaces formula strings in a table with calculated values.
  *
- * @private
  * @class
  * @name Highcharts.DataModifier.types.MathModifier
  * @augments Highcharts.DataModifier
