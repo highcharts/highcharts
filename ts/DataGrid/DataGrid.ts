@@ -32,6 +32,7 @@ import DataGridUtils from './Utils.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
 import U from '../Core/Utilities.js';
+import DataTableOptions from '../Data/DataTableOptions';
 
 const { makeDiv, makeHTMLElement } = DataGridUtils;
 const { win } = Globals;
@@ -161,10 +162,11 @@ class DataGrid {
         this.container.classList.add(Globals.classNames.container);
 
         let dataTable: DataTable;
-        if (this.options.table instanceof DataTable) {
-            dataTable = this.options.table;
+        if (this.options.table?.id) {
+            // If the table is passed as a reference, it should be used
+            dataTable = this.options.table as DataTable;
         } else {
-            dataTable = new DataTable(this.options.table);
+            dataTable = new DataTable(this.options.table as DataTableOptions);
         }
 
         this.renderViewport(dataTable);
@@ -185,10 +187,13 @@ class DataGrid {
 
         let dataTable = this.viewport?.dataTable;
         if (!dataTable || options.table) {
-            if (this.options.table instanceof DataTable) {
-                dataTable = this.options.table;
+            if (this.options.table?.id) {
+                // If the table is passed as a reference, it should be used
+                dataTable = this.options.table as DataTable;
             } else {
-                dataTable = new DataTable(this.options.table);
+                dataTable = new DataTable(
+                    this.options.table as DataTableOptions
+                );
             }
         }
 

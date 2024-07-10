@@ -200,12 +200,9 @@ class DataGridComponent extends Component {
         }
 
         await super.update(options);
-
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions ?? {}, false);
         }
-
-        this.disableEditingModifiedColumns();
 
         this.emit({ type: 'afterUpdate' });
     }
@@ -271,15 +268,6 @@ class DataGridComponent extends Component {
         }
 
         return new DGN.DataGrid(this.contentElement, dataGridOptions);
-    }
-
-    /**
-     * Disables editing of modified columns.
-     */
-    private disableEditingModifiedColumns(): void {
-        // TODO(DD): Implement this method.
-
-        this.dataGrid?.update({});
     }
 }
 
