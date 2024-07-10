@@ -43,11 +43,7 @@ const asiaChart = {
     },
     type: 'Highcharts',
     columnAssignment: {
-        columnNames: 'x',
-        China: 'y',
-        Japan: 'y',
-        India: 'y',
-        Indonesia: 'y'
+        columnAssignment: ['China', 'Japan', 'India', 'Indonesia']
     },
     chartOptions: {
         colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00'],
@@ -190,35 +186,39 @@ Dashboards.board('container', {
             options: {
                 csv: csvData,
                 firstRowAsNames: true,
-                firstColumnAsNames: false,
-                dataTable: {
-                    aliases: {
-                        0: 'Brazil',
-                        1: 'Argentina',
-                        2: 'Uruguay',
-                        3: 'Paraguay',
-                        4: 'United States',
-                        5: 'Canada',
-                        6: 'Mexico',
-                        7: 'Guatemala',
-                        8: 'China',
-                        9: 'Japan',
-                        10: 'India',
-                        11: 'Indonesia',
-                        12: 'Test'
-                    }
+                beforeParse: function (csv) {
+                    // Convert rows to columns.
+                    // This is needed because Highcharts expects series
+                    // data to be in columns (instead of rows)
+                    const rows = csv.split('\n');
+                    const columns = [];
+
+                    rows.forEach((row, i) => {
+                        if (!row) {
+                            return;
+                        }
+                        console.log('row', i);
+                        const values = row.split(',');
+                        if (i === 0) {
+                            values[0] = 'x';
+                        }
+                        values.forEach((value, j) => {
+                            if (!columns[j]) {
+                                columns[j] = [];
+                            }
+                            columns[j][i] = value;
+                        });
+                    });
+                    return columns.map(function (column) {
+                        return column.join(',');
+                    }).join('\n');
                 },
                 dataModifier: {
-                    type: 'Chain',
-                    chain: [{
-                        type: 'Invert'
-                    }, {
-                        type: 'Range',
-                        ranges: [{
-                            column: 'columnNames',
-                            minValue: 2010,
-                            maxValue: 2012
-                        }]
+                    type: 'Range',
+                    ranges: [{
+                        column: 'x',
+                        minValue: 1960,
+                        maxValue: 2012
                     }]
                 }
             }
@@ -251,12 +251,36 @@ Dashboards.board('container', {
             renderTo: 'data-grid',
             connector: {
                 id: 'population-growth'
+                /*
+                columnAssignment: [{
+                    seriesId: 'Brazil',
+                    data: ['x', 'Brazil']
+                }]
+                    */
+                /*
+                columnNames: 'x',
+                Brazil: 'y',
+                Argentina: 'y',
+                Uruguay: 'y',
+                Paraguay: 'y',
+                'United States': 'y',
+                Canada: 'y',
+                Mexico: 'y',
+                Guatemala: 'y',
+                China: 'y',
+                Japan: 'y',
+                India: 'y',
+                Indonesia: 'y'
+                */
             },
-            type: 'DataGrid'
+            type: 'DataGrid',
+            sync: {
+                visibility: true
+            }
         },
-        asiaChart,
-        northAmericaChart,
-        southAmericaChart
+        asiaChart
+        // northAmericaChart,
+        // southAmericaChart
         // legendChart
     ]
 }, true);
