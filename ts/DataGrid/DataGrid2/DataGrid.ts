@@ -23,7 +23,6 @@
  * */
 
 import type DataGridOptions from './DataGridOptions';
-import type DataTableOptions from '../../Data/DataTableOptions';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DataGridDefaultOptions from './DataGridDefaultOptions.js';
@@ -269,7 +268,7 @@ class DataGrid {
      *         JSON representation of the data
      */
     public getJSON(): string {
-        let json = this.viewport?.dataTable.modified.columns;
+        const json = this.viewport?.dataTable.modified.columns;
 
         if (!json) {
             return '{}';
