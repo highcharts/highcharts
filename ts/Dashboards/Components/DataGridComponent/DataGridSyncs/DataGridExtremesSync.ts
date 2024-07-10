@@ -21,6 +21,10 @@
  * */
 
 import type Sync from '../../Sync/Sync';
+import type DataGridComponent from '../DataGridComponent.js';
+
+import Component from '../../Component';
+import DataCursor from '../../../../Data/DataCursor';
 
 /* *
  *
@@ -30,7 +34,73 @@ import type Sync from '../../Sync/Sync';
 
 const defaultOptions: Sync.OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {};
+const syncPair: Sync.SyncPair = {
+    emitter: void 0,
+    handler: function (this: Component): (() => void) | void {
+        if (this.type !== 'DataGrid') {
+            return;
+        }
+        const component = this as DataGridComponent;
+        const syncOptions = this.sync.syncConfig.extremes;
+        const groupKey = syncOptions.group ?
+            ':' + syncOptions.group : '';
+
+        const { board } = component;
+
+        const handleChangeExtremes = (e: DataCursor.Event): void => {
+            const cursor = e.cursor;
+            if (
+                cursor.type === 'position' &&
+                component.dataGrid &&
+                typeof cursor?.row === 'number'
+            ) {
+                const { row } = cursor;
+                component.dataGrid.viewport?.scrollToRow(row);
+            }
+
+        };
+
+        const registerCursorListeners = (): void => {
+            const { dataCursor: cursor } = board;
+
+            if (!cursor) {
+                return;
+            }
+            const table = component.connectorHandlers?.[0]?.connector?.table;
+
+            if (!table) {
+                return;
+            }
+
+            cursor.addListener(
+                table.id,
+                'xAxis.extremes.min' + groupKey,
+                handleChangeExtremes
+            );
+        };
+
+        const unregisterCursorListeners = (): void => {
+            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const { dataCursor: cursor } = board;
+
+            if (!table) {
+                return;
+            }
+
+            cursor.removeListener(
+                table.id,
+                'xAxis.extremes.min' + groupKey,
+                handleChangeExtremes
+            );
+        };
+
+
+        if (board) {
+            registerCursorListeners();
+            return unregisterCursorListeners;
+        }
+    }
+};
 
 
 /* *
