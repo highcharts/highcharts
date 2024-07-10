@@ -189,6 +189,9 @@ class DataGridCell {
     private readonly onMouseOver = (): void => {
         this.row.setHover(true);
         this.column.setHover(true);
+        fireEvent(this.row.viewport.dataGrid, 'cellMouseOver', {
+            target: this
+        });
     };
 
     /**
@@ -197,6 +200,9 @@ class DataGridCell {
     private readonly onMouseOut = (): void => {
         this.row.setHover(false);
         this.column.setHover(false);
+        fireEvent(this.row.viewport.dataGrid, 'cellMouseOut', {
+            target: this
+        });
     };
 
     /**
