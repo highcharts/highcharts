@@ -52,7 +52,7 @@ const {
 /**
  * The item series type.
  *
- * @requires module:modules/item-series
+ * @requires modules/item-series
  *
  * @private
  * @class

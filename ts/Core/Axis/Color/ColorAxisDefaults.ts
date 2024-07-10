@@ -466,7 +466,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * **Note:** This option is deprecated in favor of
      * [legend.events.itemClick](#legend.events.itemClick).
      *
-     * @deprecated
+     * @deprecated 11.4.4
      * @type       {Function}
      * @product    highcharts highstock highmaps
      * @apioption  colorAxis.events.legendItemClick

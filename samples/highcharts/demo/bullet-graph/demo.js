@@ -36,7 +36,7 @@ Highcharts.chart('container1', {
         marginTop: 40
     },
     title: {
-        text: '2017 YTD'
+        text: '2024 YTD'
     },
     xAxis: {
         categories: [
