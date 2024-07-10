@@ -11,8 +11,8 @@ Highcharts.chart('container', {
                 if (!customLabel) {
                     customLabel = chart.options.chart.custom.label =
                         chart.renderer.label(
-                            'Total auto registrations <br/>' +
-                            '<strong>5 685 785</strong>'
+                            'Total<br/>' +
+                            '<strong>2 877 820</strong>'
                         )
                             .css({
                                 color: '#000',
@@ -31,7 +31,7 @@ Highcharts.chart('container', {
                 });
                 // Set font size based on chart diameter
                 customLabel.css({
-                    fontSize: `${series.center[2] / 15}px`
+                    fontSize: `${series.center[2] / 12}px`
                 });
             }
         }
@@ -42,10 +42,10 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'February 2020 Norway passenger auto registrations'
+        text: '2023 Norway car registrations'
     },
     subtitle: {
-        text: 'Source: <a href="https://cleantechnica.com/2020/03/07/pioneering-norway-rises-above-68-plug-in-vehicle-market-share-in-february/">cleantechnica</a>'
+        text: 'Source: <a href="https://www.ssb.no/transport-og-reiseliv/faktaside/bil-og-transport">SSB</a>'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
@@ -65,7 +65,10 @@ Highcharts.chart('container', {
             }, {
                 enabled: true,
                 distance: -15,
-                format: '{point.percentage:.0f}%'
+                format: '{point.percentage:.0f}%',
+                style: {
+                    fontSize: '0.9em'
+                }
             }],
             showInLegend: true
         }
@@ -76,16 +79,16 @@ Highcharts.chart('container', {
         innerSize: '75%',
         data: [{
             name: 'EV',
-            y: 68.1
+            y: 23.9
         }, {
             name: 'Hybrids',
-            y: 11.0
+            y: 12.6
         }, {
             name: 'Diesel',
-            y: 11.2
+            y: 37.0
         }, {
             name: 'Petrol',
-            y: 9.7
+            y: 26.4
         }]
     }]
 });
