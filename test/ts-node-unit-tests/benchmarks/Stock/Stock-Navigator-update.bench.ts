@@ -6,7 +6,7 @@ import { setupDOM } from '../../test-utils';
 
 
 export const config = {
-    sizes: [1_000, 10_000]
+    sizes: [1000, 10_000]
 };
 
 export function before(size: number) {
