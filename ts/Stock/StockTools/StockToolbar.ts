@@ -484,8 +484,10 @@ class Toolbar {
 
         // Save these for use when updating the aria-label on submenu selection
         if (!('label' in mainButton.dataset)) {
-            mainButton.dataset.label = lang.gui[btnName]?.toLowerCase();
-            mainButton.dataset.btnName = btnName;
+            if (btnName !== 'separator') {
+                mainButton.dataset.label = lang.gui[btnName]?.toLowerCase();
+                mainButton.dataset.btnName = btnName;
+            }
         }
 
         // Submenu
