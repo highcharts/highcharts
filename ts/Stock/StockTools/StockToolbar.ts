@@ -460,6 +460,10 @@ class Toolbar {
 
         const descriptions = lang.descriptions[btnName];
 
+        if (btnName === 'separator') {
+            buttonWrapper.setAttribute('aria-hidden', 'true');
+        }
+
         // Set the default aria label
         if (
             descriptions?.mainButton &&
