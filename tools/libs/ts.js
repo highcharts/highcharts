@@ -27,6 +27,8 @@ const FS = require('node:fs');
 
 const FSLib = require('./fs');
 
+const Path = require('node:path');
+
 const TS = require('typescript');
 
 
@@ -130,6 +132,10 @@ function addInfoFlags(
         _flags.push('assured');
     }
 
+    if (TS.isExportAssignment(node)) {
+        _flags.push('default');
+    }
+
     if (
         node.importClause &&
         node.importClause.isTypeOnly
@@ -191,9 +197,9 @@ function autoCompleteInfos() {
     /** @type {SourceInfo} */
     let _sourceInfo;
 
-    for (const _sourcePath of Object.keys(SOURCE_CACHE)) {
+    for (const _key of Object.keys(SOURCE_CACHE)) {
 
-        _sourceInfo = SOURCE_CACHE[_sourcePath];
+        _sourceInfo = SOURCE_CACHE[_key];
 
         if (!_sourceInfo) {
             continue;
@@ -205,16 +211,16 @@ function autoCompleteInfos() {
                 _info.flags.includes('declare')
             ) {
                 _modulePath = sanitizeSourcePath(FSLib.normalizePath(
-                    _sourcePath,
+                    _sourceInfo.path,
                     _info.name,
                     true
                 ));
 
-                if (SOURCE_CACHE[`${_modulePath}.d.ts`]) {
-                    mergeCodeInfos(
-                        SOURCE_CACHE[`${_modulePath}.d.ts`],
-                        _info
-                    );
+                const _sourceInfoToMerge =
+                    getSourceInfo(`${_modulePath}.d.ts`, !!_info.node);
+
+                if (_sourceInfoToMerge) {
+                    mergeCodeInfos(_sourceInfoToMerge, _info);
                 }
             }
         }
@@ -244,6 +250,8 @@ function autoExtendInfo(
     infoToExtend,
     includeNodes
 ) {
+    console.log('AXI', infoToExtend.name, infoToExtend.extends);
+
     /** @type {Array<string>} */
     const _extendsToDo = [];
 
@@ -271,8 +279,10 @@ function autoExtendInfo(
         _resolvedInfo = resolveReference(sourceInfo, _extendType, includeNodes);
 
         if (!_resolvedInfo) {
+            console.log('FAIL', _extendType);
             continue;
         }
+        console.log('FOUND', _resolvedInfo.kind, _resolvedInfo.name);
 
         _resolvedInfo = autoExtendInfo(
             getSourceInfo(_resolvedInfo.meta.file, void 0, includeNodes),
@@ -488,14 +498,14 @@ function extractInfoName(
         case 'Variable':
             return codeInfo.name;
         case 'Doclet':
-            _name = extractTagText(codeInfo, 'optionparent');
+            _name = extractTagText(codeInfo, 'optionparent', true);
             if (typeof _name === 'string') {
                 return _name;
             }
             return (
-                extractTagText(codeInfo, 'apioption') ||
-                extractTagText(codeInfo, 'name') ||
-                extractTagText(codeInfo, 'function')
+                extractTagText(codeInfo, 'apioption', true) ||
+                extractTagText(codeInfo, 'function', true) ||
+                extractTagText(codeInfo, 'name', true)
             );
         case 'Source':
             return codeInfo.path;
@@ -1212,20 +1222,13 @@ function getExportInfo(
         kind: 'Export'
     };
 
-    if (TS.isIdentifier(node.expression)) {
+    const _value = getInfoValue(node.expression, includeNodes);
 
-        _info.name = node.expression.text;
-
-    } else {
-        const _value = getChildInfos([node.expression], includeNodes)[0];
-
-        if (_value) {
-            if (_value.name) {
-                _info.name = _value.name;
-            }
-            _info.value = _value;
+    if (_value) {
+        if (_value.name) {
+            _info.name = _value.name;
         }
-
+        _info.value = _value;
     }
 
     addInfoFlags(_info, node);
@@ -2017,11 +2020,13 @@ function getSourceInfo(
     sourceText,
     includeNodes
 ) {
-    const _cacheKey = `${filePath}:${includeNodes}`;
+    const _cacheKey = `${filePath}:${!!includeNodes}`;
+
+    let _info = getSourceInfoFromCache(filePath, includeNodes);
 
     if (!sourceText) {
-        if (SOURCE_CACHE[_cacheKey]) {
-            return SOURCE_CACHE[_cacheKey];
+        if (_info) {
+            return _info;
         }
         sourceText = FS.readFileSync(filePath, 'utf8');
     }
@@ -2034,7 +2039,7 @@ function getSourceInfo(
     );
 
     /** @type {SourceInfo} */
-    const _info = {
+    _info = {
         kind: 'Source',
         path: filePath
     };
@@ -2044,6 +2049,26 @@ function getSourceInfo(
     SOURCE_CACHE[_cacheKey] = _info;
 
     return _info;
+}
+
+
+/**
+ * Retrieves source information from the source cache.
+ *
+ * @param {string} filePath
+ * Path to source file.
+ *
+ * @param {boolean} [includeNodes]
+ * Whether to include the TypeScript nodes in the information.
+ *
+ * @return {SourceInfo|undefined}
+ * Source information.
+ */
+function getSourceInfoFromCache(
+    filePath,
+    includeNodes
+) {
+    return SOURCE_CACHE[`${filePath}:${!!includeNodes}`];
 }
 
 
@@ -2559,80 +2584,436 @@ function resolveReference(
     sourceInfo,
     reference
 ) {
-    const _referenceParts = (
+    return resolveReferenceInChildInfos(
+        sourceInfo,
+        sourceInfo.code,
         typeof reference === 'string' ?
             reference :
             reference.name
-    ).split(/[!?]?\./gsu);
+    );
+}
 
-    for (const _name of _referenceParts) {
-        for (const _info of sourceInfo.code) {
-            if (_info.kind === 'Deconstruct') {
-                for (const _original of Object.keys(_info.deconstructs)) {
-                    if (_info.deconstructs[_original] === _name) {
-                        return _info;
+
+/**
+ * Resolves a reference relative to the given informations.
+ *
+ * @param {NamespaceInfo|SourceInfo} scopeInfo
+ * Scope information to use.
+ *
+ * @param {Array<CodeInfo>} childInfos
+ * Child informations to use.
+ *
+ * @param {string} referenceName
+ * Reference name to resolve.
+ *
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
+ */
+function resolveReferenceInChildInfos(
+    scopeInfo,
+    childInfos,
+    referenceName
+) {
+    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceCurrent = _referenceSplit.shift();
+    const _referenceNext = _referenceSplit.join('.');
+
+    /** @type {CodeInfo|undefined} */
+    let _resolvedInfo;
+    /** @type {SourceInfo|undefined} */
+    let _sourceInfo;
+
+    for (const _childInfo of childInfos) {
+        switch (_childInfo.kind) {
+
+            case 'Class':
+            case 'Interface':
+            case 'Namespace':
+                if (extractInfoName(_childInfo) === _referenceCurrent) {
+                    if (_referenceNext) {
+                        _resolvedInfo = resolveReferenceInChildInfos(
+                            _childInfo.kind === 'Namespace' ?
+                                _childInfo :
+                                scopeInfo,
+                            _childInfo.members,
+                            _referenceNext
+                        );
+                        if (_resolvedInfo) {
+                            return _resolvedInfo;
+                        }
+                    } else {
+                        return _childInfo;
                     }
                 }
-            } else if (_info.kind === 'Export') {
-                if (_info.name === _name) {
-                    return _info;
-                }
-                if (
-                    typeof _info.value === 'object' &&
-                    _info.value.kind !== 'Deconstruct' &&
-                    _info.value.kind !== 'Doclet' &&
-                    _info.value.kind !== 'Import' &&
-                    _info.value.kind !== 'Object' &&
-                    _info.value.name === _name
-                ) {
-                    return _info.value;
-                }
-            } else if (_info.kind === 'Import') {
-                if (_info.imports) {
-                    /** @type {string|undefined} */
-                    let found;
+                continue;
 
-                    for (const _original of Object.keys(_info.imports)) {
-                        if (_info.imports[_original] === _name) {
-                            found = _original;
-                            break;
+            case 'Deconstruct':
+                _resolvedInfo = resolveReferenceInDeconstructInfo(
+                    scopeInfo,
+                    _childInfo,
+                    referenceName
+                );
+                if (_resolvedInfo) {
+                    return _resolvedInfo;
+                }
+                continue;
+
+            case 'Export':
+                _resolvedInfo = resolveReferenceInExportInfo(
+                    scopeInfo,
+                    _childInfo,
+                    referenceName
+                );
+                if (_resolvedInfo) {
+                    return _resolvedInfo;
+                }
+                continue;
+
+            case 'Property':
+            case 'Variable':
+                if (extractInfoName(_childInfo) === _referenceCurrent) {
+                    if (!_referenceNext) {
+                        return _childInfo;
+                    }
+                    if (typeof _childInfo.value === 'object') {
+                        return resolveReferenceInChildInfos(
+                            scopeInfo,
+                            [_childInfo.value],
+                            _referenceNext
+                        );
+                    }
+                }
+                continue;
+
+            case 'Import':
+                _resolvedInfo =
+                    resolveReferenceInImportInfo(_childInfo, referenceName);
+                if (_resolvedInfo) {
+                    return _resolvedInfo;
+                }
+                continue;
+
+            case 'Reference':
+                if (scopeInfo.kind === 'Namespace') {
+                    // Search in original file
+                    if (_childInfo.meta.file !== scopeInfo.meta.file) {
+                        _resolvedInfo = resolveReference(
+                            getSourceInfoFromCache(
+                                _childInfo.meta.file,
+                                !!_childInfo.node
+                            ),
+                            _childInfo.name
+                        );
+                        if (_resolvedInfo) {
+                            return _resolvedInfo;
                         }
                     }
-
-                    if (found) {
-                        if (SOURCE_EXTENSION.test(_info.from)) {
-                            sourceInfo = SOURCE_CACHE[
-                                _info.from.replace(/\.j(sx)?$/su, '\.t$1')
-                            ];
-                            if (sourceInfo) {
-                                break; // continue with parts in new sourceInfo
-                            }
-                        } else if (
-                            FSLib.isFile(FSLib.path(`${_info.from}.ts`))
-                        ) {
-                            sourceInfo = SOURCE_CACHE[`${_info.from}.ts`];
-                            if (sourceInfo) {
-                                break; // continue with parts in new sourceInfo
-                            }
-                        } else if (
-                            FSLib.isFile(FSLib.path(`${_info.from}.d.ts`))
-                        ) {
-                            sourceInfo = SOURCE_CACHE[`${_info.from}.d.ts`];
-                            if (sourceInfo) {
-                                break; // continue with parts in new sourceInfo
+                    // Search in namespace
+                    _resolvedInfo = resolveReferenceInChildInfos(
+                        scopeInfo,
+                        scopeInfo.members,
+                        _childInfo.name
+                    );
+                    if (_resolvedInfo) {
+                        return _resolvedInfo;
+                    }
+                    // Search in outer scope of namespace
+                    _sourceInfo = getSourceInfoFromCache(
+                        scopeInfo.meta.file,
+                        !!scopeInfo.node
+                    );
+                    if (_sourceInfo) {
+                        _resolvedInfo = resolveReferenceInChildInfos(
+                            _sourceInfo,
+                            _sourceInfo.code,
+                            _childInfo.name
+                        );
+                        if (_resolvedInfo) {
+                            return _resolvedInfo;
+                        }
+                    }
+                } else {
+                    if (_childInfo.meta.file !== scopeInfo.path) {
+                        // Search in original file
+                        _sourceInfo = getSourceInfoFromCache(
+                            _childInfo.meta.file,
+                            !!_childInfo.node
+                        );
+                        if (_sourceInfo) {
+                            _resolvedInfo =
+                                resolveReference(_sourceInfo, _childInfo.name);
+                            if (_resolvedInfo) {
+                                return _resolvedInfo;
                             }
                         }
-                        return _info;
+                    }
+                    // Search in source scope
+                    _resolvedInfo =
+                        resolveReference(scopeInfo, scopeInfo.code, _childInfo);
+                    if (_resolvedInfo) {
+                        return _resolvedInfo;
                     }
                 }
-            } else if (
-                _info.kind !== 'Decostruct' &&
-                _info.kind !== 'Doclet' &&
-                _info.kind !== 'Object'
-            ) {
-                if (_info.name === _name) {
-                    return _info;
+                continue;
+
+            case 'Object':
+                _resolvedInfo = resolveReferenceInObjectInfo(
+                    scopeInfo,
+                    _childInfo,
+                    referenceName
+                );
+                if (_resolvedInfo) {
+                    return _resolvedInfo;
                 }
+                continue;
+
+            default:
+                if (extractInfoName(_childInfo) === referenceName) {
+                    return _childInfo;
+                }
+                continue;
+
+        }
+    }
+
+    return void 0;
+}
+
+
+/**
+ * Resolves a reference relative to the given informations.
+ *
+ * @param {NamespaceInfo|SourceInfo} scopeInfo
+ * Scope information to use.
+ *
+ * @param {DeconstructInfo} deconstructInfo
+ * Deconstruct information to use.
+ *
+ * @param {string} referenceName
+ * Reference name to resolve.
+ *
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
+ */
+function resolveReferenceInDeconstructInfo(
+    scopeInfo,
+    deconstructInfo,
+    referenceName
+) {
+    const _deconstructs = deconstructInfo.deconstructs;
+    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceCurrent = _referenceSplit.shift();
+    const _referenceNext = _referenceSplit.join('.');
+
+    /** @type {string|undefined} */
+    let _found;
+
+    for (const _original of Object.keys(_deconstructs || [])) {
+        if (_deconstructs[_original] === _referenceCurrent) {
+            _found = _original;
+            break;
+        }
+    }
+
+    if (_found) {
+
+        if (_referenceNext) {
+            return resolveReferenceInChildInfos(
+                scopeInfo,
+                (
+                    scopeInfo.kind === 'Source' ?
+                        scopeInfo.code :
+                        scopeInfo.members
+                ),
+                deconstructInfo.from ?
+                    `${_found}.${_referenceNext}` :
+                    _found
+            );
+        }
+
+        return _found;
+    }
+
+    return void 0;
+}
+
+
+/**
+ * Resolves a reference relative to the given informations.
+ *
+ * @param {NamespaceInfo|SourceInfo} scopeInfo
+ * Scope information to use.
+ *
+ * @param {ExportInfo} exportInfo
+ * Export information to use.
+ *
+ * @param {string} referenceName
+ * Reference name to resolve.
+ *
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
+ */
+function resolveReferenceInExportInfo(
+    scopeInfo,
+    exportInfo,
+    referenceName
+) {
+    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceCurrent = _referenceSplit.shift();
+    const _referenceNext = _referenceSplit.join('.');
+
+    if (
+        _referenceCurrent !== 'default' ||
+        !exportInfo.flags ||
+        !exportInfo.flags.includes('default')
+    ) {
+        return void 0;
+    }
+
+    const _exportValue = exportInfo.value;
+
+    if (
+        !_exportValue ||
+        typeof _exportValue !== 'object'
+    ) {
+        return exportInfo;
+    }
+
+    if (_exportValue.kind === 'Reference') {
+        return resolveReferenceInChildInfos(
+            scopeInfo,
+            (
+                scopeInfo.kind === 'Source' ?
+                    scopeInfo.code :
+                    scopeInfo.members
+            ),
+            (
+                _referenceNext ?
+                    `${_exportValue.name}.${_referenceNext}` :
+                    _exportValue.name
+            )
+        );
+    }
+
+    if (_referenceNext) {
+        return resolveReferenceInChildInfos(
+            scopeInfo,
+            [_exportValue],
+            _referenceNext
+        );
+    }
+
+    return _exportValue;
+}
+
+
+/**
+ * Resolves a reference relative to the given informations.
+ *
+ * @param {ImportInfo} importInfo
+ * Import information to use.
+ *
+ * @param {string} referenceName
+ * Reference name to resolve.
+ *
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
+ */
+function resolveReferenceInImportInfo(
+    importInfo,
+    referenceName
+) {
+    const _referenceSplit = referenceName.split(/[!?]?\./gsu);
+    const _referenceCurrent = _referenceSplit.shift();
+    const _referenceNext = _referenceSplit.join('.');
+
+    /** @type {string|undefined} */
+    let _found;
+
+    for (const _original of Object.keys(importInfo.imports || [])) {
+        if (importInfo.imports[_original] === _referenceCurrent) {
+            _found = _original;
+            break;
+        }
+    }
+
+    if (_found) {
+        const _from = Path.join(
+            Path.dirname(importInfo.meta.file),
+            importInfo.from
+        );
+        console.log('???', _from);
+
+        /** @type {SourceInfo|undefined} */
+        let _sourceInfo;
+
+        if (SOURCE_EXTENSION.test(_from)) {
+            _sourceInfo = getSourceInfo(
+                _from.replace(/\.j(sx)?$/su, '\.t$1'),
+                void 0,
+                !!importInfo.node
+            );
+        } else if (FSLib.isFile(FSLib.path(`${_from}.ts`))) {
+            _sourceInfo =
+                getSourceInfo(`${_from}.ts`, void 0, !!importInfo.node);
+        } else if (FSLib.isFile(FSLib.path(`${_from}.d.ts`))) {
+            _sourceInfo =
+                getSourceInfo(`${_from}.d.ts`, void 0, !!importInfo.node);
+        } else {
+            return importInfo;
+        }
+
+        if (_sourceInfo) {
+            console.log('!!!');
+            return resolveReferenceInChildInfos(
+                _sourceInfo,
+                _sourceInfo.code,
+                (_referenceNext ? `${_found}.${_referenceNext}` : _found)
+            );
+        }
+
+        return importInfo;
+    }
+
+    return void 0;
+}
+
+
+/**
+ * Resolves a reference relative to the given informations.
+ *
+ * @param {NamespaceInfo|SourceInfo} scopeInfo
+ * Scope information to use.
+ *
+ * @param {ObjectInfo} objectInfo
+ * Object information to use.
+ *
+ * @param {string} referenceName
+ * Reference name to resolve.
+ *
+ * @return {CodeInfo|undefined}
+ * Resolved information or `undefined`.
+ */
+function resolveReferenceInObjectInfo(
+    scopeInfo,
+    objectInfo,
+    referenceName
+) {
+    const _referenceSplit = referenceName.split('.');
+    const _nextReferenceName = _referenceSplit.shift();
+    const _restReferenceName = _referenceSplit.join('.');
+
+    for (const _member of objectInfo.members) {
+        if (extractInfoName(_member) === _nextReferenceName) {
+            if (!_restReferenceName) {
+                return _member;
+            }
+            if (_member.kind === 'Property') {
+                return resolveReferenceInChildInfos(
+                    scopeInfo,
+                    _member,
+                    _restReferenceName
+                );
             }
         }
     }
@@ -2831,6 +3212,7 @@ module.exports = {
     getNodesFirstChild,
     getNodesLastChild,
     getSourceInfo,
+    getSourceInfoFromCache,
     isCapitalCase,
     isNativeType,
     mergeCodeInfos,
@@ -2883,7 +3265,8 @@ module.exports = {
 /**
  * @typedef {ArrayInfo|ClassInfo|DeconstructInfo|DocletInfo|ExportInfo|
  *           FunctionCallInfo|FunctionInfo|ImportInfo|InterfaceInfo|
- *           NamespaceInfo|ObjectInfo|PropertyInfo|TypeAliasInfo|VariableInfo
+ *           NamespaceInfo|ObjectInfo|PropertyInfo|ReferenceInfo|TypeAliasInfo|
+ *           VariableInfo
  *          } CodeInfo
  */
 
@@ -2928,9 +3311,8 @@ module.exports = {
  * @property {Array<InfoFlag>} [flags]
  * @property {'Export'} kind
  * @property {Meta} meta
- * @property {string} [name]
  * @property {TS.ExportDeclaration} [node]
- * @property {CodeInfo} [value]
+ * @property {Value} [value]
  */
 
 
