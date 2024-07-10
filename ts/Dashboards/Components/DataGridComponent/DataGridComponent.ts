@@ -24,7 +24,6 @@ import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type { DataGrid, DataGridNamespace } from '../../Plugins/DataGridTypes';
 import type Options from './DataGridComponentOptions';
-import type { ConnectorOptions } from '../HighchartsComponent/HighchartsComponentOptions';
 
 import Component from '../Component.js';
 import DataGridSyncs from './DataGridSyncs/DataGridSyncs.js';
@@ -125,18 +124,6 @@ class DataGridComponent extends Component {
      */
     public options: Options;
 
-    /**
-     * The stored listeners of the connector events, to be destroyed on the
-     * update.
-     */
-    private connectorListeners: Array<Function> = [];
-
-    /**
-     * The stored listeners of the component events, to be destroyed when the
-     * component is destroyed.
-     */
-    private listenersToDestroy: Array<Function> = [];
-
 
     /* *
      *
@@ -170,36 +157,9 @@ class DataGridComponent extends Component {
      *
      * */
 
-    public async load(): Promise<this> {
-        this.emit({ type: 'load' });
-        await super.load();
-
-        const connector = this.getFirstConnector();
-        if (connector) {
-            // TODO(DD): Add support for connector events.
-        }
-
-        this.emit({ type: 'afterLoad' });
-        return this;
-    }
-
     public override async update(options: Partial<Options>): Promise<void> {
-        const connectorOptions: ConnectorOptions = Array.isArray(
-            options.connector
-        ) ? options.connector[0] : options.connector;
-
-        if (
-            this.connectorHandlers[0] &&
-            connectorOptions?.id !== this.connectorHandlers[0]?.connectorId
-        ) {
-            const connectorListeners = this.connectorListeners;
-            for (let i = 0, iEnd = connectorListeners.length; i < iEnd; ++i) {
-                connectorListeners[i]();
-            }
-            connectorListeners.length = 0;
-        }
-
         await super.update(options);
+
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions ?? {}, false);
 
