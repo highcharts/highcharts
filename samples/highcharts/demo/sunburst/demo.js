@@ -1397,7 +1397,7 @@ Highcharts.chart('container', {
         type: 'sunburst',
         data: data,
         name: 'Root',
-        allowDrillToNode: true,
+        allowTraversingTree: true,
         borderRadius: 3,
         cursor: 'pointer',
         dataLabels: {
