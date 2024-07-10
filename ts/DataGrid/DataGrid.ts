@@ -191,7 +191,7 @@ class DataGrid {
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
         if (!this.dataTable || options.table) {
-            this.loadDataTable(options.table);
+            this.loadDataTable(this.options.table);
         }
 
         if (render) {
