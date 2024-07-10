@@ -1,5 +1,36 @@
 const csvData = document.getElementById('csv').innerHTML;
 
+// Set to true to use the Invert modifier,
+// otherwise flip table using beforeParse
+const useInvertMod = true;
+
+const chainModifier = {
+    type: 'Chain',
+    chain: [{
+        type: 'Invert'
+    }, {
+        type: 'Range',
+        ranges: [{
+            column: 'x',
+            minValue: 1961,
+            maxValue: 2021
+        }]
+    }]
+};
+
+
+const rangeModifier = {
+    type: 'Range',
+    ranges: [{
+        column: 'x',
+        minValue: 1961,
+        maxValue: 2021
+    }]
+};
+
+const dataModifier = useInvertMod ? chainModifier : rangeModifier;
+
+
 function getColumnAssignment(columnNames) {
     return columnNames.map(function (column) {
         return {
@@ -155,7 +186,12 @@ Dashboards.board('container', {
                 csv: csvData,
                 firstRowAsNames: true,
                 beforeParse: function (csv) {
-                    // Convert rows to columns and thow away empty rows
+                    if (useInvertMod) {
+                        // Flip table using InvertModifier
+                        return csv.replace(/Country Name/g, 'x');
+                    }
+
+                    // Convert rows to columns and throw away empty rows
                     const rows = csv.split('\n');
                     const columns = [];
 
@@ -178,14 +214,7 @@ Dashboards.board('container', {
                     });
                     return columns.map(column => column.join(',')).join('\n');
                 },
-                dataModifier: {
-                    type: 'Range',
-                    ranges: [{
-                        column: 'x',
-                        minValue: 1961,
-                        maxValue: 2021
-                    }]
-                }
+                dataModifier: dataModifier
             }
         }]
     },
