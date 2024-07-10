@@ -201,7 +201,7 @@ class DataGridComponent extends Component {
 
         await super.update(options);
         if (this.dataGrid) {
-            this.dataGrid.update(this.options.dataGridOptions ?? {}, false);
+            this.dataGrid.update(this.options.dataGridOptions ?? {});
         }
 
         this.emit({ type: 'afterUpdate' });
