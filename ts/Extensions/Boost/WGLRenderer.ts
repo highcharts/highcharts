@@ -823,7 +823,7 @@ class WGLRenderer {
                 }
             }
 
-            if (x > xMax || x < xMin || y > yMax || y < yMin) {
+            if (x >= xMax || x < xMin || y >= yMax || y < yMin) {
                 continue;
             }
 
