@@ -114,6 +114,11 @@ class DataGrid {
     public container?: HTMLElement;
 
     /**
+     * The data source of the data grid.
+     */
+    public dataTable?: DataTable;
+
+    /**
      * The HTML element of the table.
      */
     public tableElement?: HTMLTableElement;
@@ -161,16 +166,16 @@ class DataGrid {
         this.container = DataGrid.initContainer(renderTo);
         this.container.classList.add(Globals.classNames.container);
 
-        let dataTable: DataTable;
-        if (this.options.table?.id) {
-            // If the table is passed as a reference, it should be used
-            dataTable = this.options.table as DataTable;
-        } else {
-            dataTable = new DataTable(this.options.table as DataTableOptions);
-        }
-
-        this.renderViewport(dataTable);
+        this.loadDataTable(this.options.table);
+        this.renderViewport();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     /**
      * Updates the data grid with new options.
@@ -185,51 +190,31 @@ class DataGrid {
         this.userOptions = merge(this.userOptions, options);
         this.options = merge(DataGrid.defaultOptions, this.userOptions);
 
-        let dataTable = this.viewport?.dataTable;
-        if (!dataTable || options.table) {
-            if (this.options.table?.id) {
-                // If the table is passed as a reference, it should be used
-                dataTable = this.options.table as DataTable;
-            } else {
-                dataTable = new DataTable(
-                    this.options.table as DataTableOptions
-                );
-            }
+        if (!this.dataTable || options.table) {
+            this.loadDataTable(options.table);
         }
 
         if (render) {
-            this.renderViewport(dataTable);
+            this.renderViewport();
         }
     }
 
     /**
      * Renders the viewport of the data grid. If the data grid is already
      * rendered, it will be destroyed and re-rendered with the new data.
-     *
-     * @param dataTable
-     * The data source of the data grid. If not provided, the data source of
-     * the current viewport will be used (only for rerendering).
      */
-    public renderViewport(dataTable?: DataTable): void {
+    public renderViewport(): void {
         let vp = this.viewport;
-
-        if (!dataTable) {
-            if (!vp) {
-                return;
-            }
-            dataTable = vp.dataTable;
-        }
-
         const viewportMeta = vp?.getStateMeta();
 
-        this.enabledColumns = this.getEnabledColumnsIDs(dataTable);
+        this.enabledColumns = this.getEnabledColumnsIDs();
         vp?.destroy();
         if (this.container) {
             this.container.innerHTML = AST.emptyHTML;
         }
 
         if (this.enabledColumns.length > 0) {
-            this.renderTable(dataTable);
+            this.renderTable();
             vp = this.viewport;
             if (viewportMeta && vp) {
                 vp.applyStateMeta(viewportMeta);
@@ -261,11 +246,8 @@ class DataGrid {
 
     /**
      * Renders the table (viewport) of the data grid.
-     *
-     * @param dataTable
-     * The data source of the data grid.
      */
-    private renderTable(dataTable: DataTable): void {
+    private renderTable(): void {
         if (!this.container) {
             return;
         }
@@ -274,12 +256,12 @@ class DataGrid {
             className: Globals.classNames.tableElement
         }, this.container);
 
-        this.viewport = new DataGridTable(this, dataTable, this.tableElement);
+        this.viewport = new DataGridTable(this, this.tableElement);
 
         // Accessibility
         this.tableElement.setAttribute(
             'aria-rowcount',
-            dataTable.getRowCount()
+            this.dataTable?.getRowCount() ?? 0
         );
     }
 
@@ -297,25 +279,19 @@ class DataGrid {
         }, this.container);
     }
 
-
-    /* *
-    *
-    *  Methods
-    *
-    * */
-
     /**
      * Returns the array of IDs of columns that should be displayed in the data
      * grid, in the correct order.
-     *
-     * @param dataTable
-     * The data source of the data grid.
      */
-    private getEnabledColumnsIDs(dataTable: DataTable): string[] {
+    private getEnabledColumnsIDs(): string[] {
         const columnsOptions = this.options?.columns;
         const columnsIncluded =
             this.options?.columnsIncluded ??
-            dataTable.getColumnNames();
+            this.dataTable?.getColumnNames();
+
+        if (!columnsIncluded?.length) {
+            return [];
+        }
 
         let columnName: string;
         const result: string[] = [];
@@ -327,6 +303,19 @@ class DataGrid {
         }
 
         return result;
+    }
+
+    private loadDataTable(
+        tableOptions?: DataTable | DataTableOptions
+    ): void {
+        // If the table is passed as a reference, it should be used istead of
+        // creating a new one.
+        if (tableOptions?.id) {
+            this.dataTable = tableOptions as DataTable;
+            return;
+        }
+
+        this.dataTable = new DataTable(tableOptions as DataTableOptions);
     }
 
     /**

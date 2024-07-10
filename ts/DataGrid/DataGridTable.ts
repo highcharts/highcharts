@@ -141,19 +141,15 @@ class DataGridTable {
      * @param dataGrid
      * The data grid instance which the table (viewport) belongs to.
      *
-     * @param dataTable
-     * The data source of the data grid.
-     *
      * @param tableElement
      * The HTML table element of the data grid.
      */
     constructor(
         dataGrid: DataGrid,
-        dataTable: DataTable,
         tableElement: HTMLTableElement
     ) {
         this.dataGrid = dataGrid;
-        this.dataTable = dataTable;
+        this.dataTable = this.dataGrid.dataTable as DataTable;
 
         const dgOptions = dataGrid.options;
 
