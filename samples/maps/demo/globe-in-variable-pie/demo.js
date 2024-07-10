@@ -12,7 +12,7 @@ const data = [
     { name: 'Austria', z: 26.2, y: 9.0 }
 ];
 
-function getGraticule() {
+const getGraticule = () => {
     const data = [];
 
     // Meridians
@@ -50,7 +50,7 @@ function getGraticule() {
     }
 
     return data;
-}
+};
 
 Highcharts.getJSON(
     'https://code.highcharts.com/mapdata/custom/world-highres.topo.json',
@@ -64,7 +64,7 @@ Highcharts.getJSON(
             data.map(c => c.name).includes(el.properties.name)
         );
 
-        function rotation(countryName) {
+        const rotation = countryName => {
             const countryProperties = countries.find(
                 g => g.properties.name === countryName
             ).properties;
@@ -72,7 +72,7 @@ Highcharts.getJSON(
                 -countryProperties['hc-middle-lon'],
                 -countryProperties['hc-middle-lat']
             ];
-        }
+        };
 
         const chart = Highcharts.mapChart('container', {
             chart: {
@@ -80,7 +80,7 @@ Highcharts.getJSON(
                 events: {
                     load() {
                         const chart = this;
-                        chart.rotateToCountry = function (countryName) {
+                        chart.rotateToCountry = countryName => {
                             const point1 =
                                     chart.mapView.projection.options.rotation,
                                 point2 = rotation(countryName),
@@ -92,7 +92,6 @@ Highcharts.getJSON(
                             if (!distance) {
                                 return;
                             }
-
                             const stepDistance = distance / 1000,
                                 geodesic = Highcharts.Projection.geodesic(
                                     chart.mapView.projection.options.rotation,
@@ -102,94 +101,131 @@ Highcharts.getJSON(
                                 );
 
                             chart.renderer.boxWrapper.animator = 0;
-                            Highcharts.animate(
-                                chart.renderer.boxWrapper,
-                                { animator: 999 },
-                                {
-                                    duration: 1000,
-                                    step: now => {
-                                        const rotation =
-                                            geodesic[Math.round(now)];
-                                        chart.mapView.update(
-                                            {
-                                                projection: {
-                                                    rotation
+
+                            const animateGlobe = () => new Promise(resolve => {
+                                Highcharts.animate(
+                                    chart.renderer.boxWrapper,
+                                    { animator: 999 },
+                                    {
+                                        duration: 1000,
+                                        step: (now, fx) => {
+                                            const rotation =
+                                                geodesic[Math.round(now)];
+                                            chart.mapView.update(
+                                                {
+                                                    projection: {
+                                                        rotation
+                                                    }
                                                 },
-                                                center: [0, 0]
-                                            },
-                                            true,
-                                            false
-                                        );
+                                                true,
+                                                false
+                                            );
+
+                                            // Resolve after animation
+                                            if (fx.pos === 1) {
+                                                resolve();
+                                            }
+                                        }
                                     }
-                                }
-                            );
+                                );
+                            });
+
+                            // Set rotation state as chart property
+                            (async () => {
+                                chart.isRotating = true;
+                                await animateGlobe();
+                                chart.isRotating = false;
+                            })();
                         };
 
-                        chart.findCountry = function (countryName) {
-                            return this.series[1].data.find(
+                        chart.findCountry = countryName =>
+                            this.series[1].data.find(
                                 p => p.name === countryName
                             );
-                        };
+
                     },
                     render() {
-                        // Adding "axes" to indicate what type
-                        // of data is in the variable pie series
-                        const chart = this,
-                            renderer = chart.renderer,
-                            pieSeries = chart.series[2],
-                            point = pieSeries.points[0],
-                            shapeArgs = point.shapeArgs,
-                            { innerR, r } = shapeArgs,
-                            [centerX, centerY] = pieSeries.center,
-                            cx = centerX + chart.plotLeft,
-                            cy = centerY + chart.plotTop;
+                        const chart = this;
 
-                        if (chart.customAxes) {
-                            chart.customAxes.destroy();
-                        }
+                        // Avoid rerendering while chart is rotating
+                        if (!chart.isRotating) {
+                            const renderer = chart.renderer,
+                                pieSeries = chart.series[2],
+                                [
+                                    centerX, centerY, d, innerD
+                                ] = pieSeries.center,
+                                innerR = innerD / 2,
+                                r = d / 2,
+                                cx = centerX + chart.plotLeft,
+                                cy = centerY + chart.plotTop,
+                                fontSize = innerR > 85 ? '1em' : '0.8em';
 
-                        chart.customAxes = renderer.g().addClass('custom-axes')
-                            .add().toFront();
+                            // Adding "axes" to indicate what type
+                            // of data is in the variable pie series
+                            chart.customAxes?.destroy();
+                            chart.customAxes = renderer.g().attr({
+                                fill: '#071436'
+                            }).add();
 
-                        // Radial axis
-                        const radialAxis = renderer.path([
-                            'M', cx - 1, cy - innerR, 'L', cx - 1, cy - r
-                        ]).attr({
-                            stroke: '#071436',
-                            'stroke-width': 2
-                        }).add(chart.customAxes);
+                            // Radial axis
+                            const radialAxis = renderer.path([
+                                'M', cx - 1, cy - innerR, 'L', cx - 1, cy - r
+                            ]).attr({
+                                stroke: '#071436',
+                                'stroke-width': 2
+                            }).add(chart.customAxes);
 
-                        // Radial axis title
-                        renderer.text(
-                            'Arrivals'
-                        ).setTextPath(radialAxis, {
-                            attributes: {
-                                dy: -7
+                            // Radial axis title
+                            renderer.text(
+                                'Arrivals'
+                            ).setTextPath(radialAxis, {
+                                attributes: {
+                                    dy: -8
+                                }
+                            }).attr({
+                                'font-size': fontSize,
+                                'font-weight': 'bold'
+                            }).add(chart.customAxes);
+
+                            // Angular axis
+                            const AngularAxisR = innerR + 1;
+                            renderer.path([
+                                'M', cx - AngularAxisR, cy, 'A', AngularAxisR,
+                                AngularAxisR, 0, 0, 1, cx, cy - AngularAxisR
+                            ]).attr({
+                                stroke: '#071436',
+                                'stroke-width': 2
+                            }).add(chart.customAxes);
+
+                            // Angular axis title
+                            const AngularAxisTitleR = AngularAxisR + 3;
+                            const AngularAxisTitlePath = renderer.path([
+                                'M', cx - AngularAxisTitleR, cy, 'A',
+                                AngularAxisTitleR, AngularAxisTitleR,
+                                0, 0, 1, cx, cy - AngularAxisTitleR
+                            ]).add(chart.customAxes);
+
+                            renderer.text('Per capita')
+                                .setTextPath(AngularAxisTitlePath, {
+                                }).attr({
+                                    'font-size': fontSize,
+                                    'font-weight': 'bold'
+                                })
+                                .add(chart.customAxes);
+
+                            // Align sticky label
+                            if (chart.sticky) {
+                                chart.sticky.css({
+                                    fontSize
+                                });
+                                const labelWidth = chart.sticky.bBox.width,
+                                    x = cx - labelWidth - 40;
+                                chart.sticky.attr({
+                                    x: x > 0 ? x : 0,
+                                    y: cy - r
+                                });
                             }
-                        }).add(chart.customAxes);
-
-                        // Angular axis
-                        const AngularAxisR = innerR + 1;
-                        renderer.path([
-                            'M', cx - AngularAxisR, cy, 'A', AngularAxisR,
-                            AngularAxisR, 0, 0, 1, cx, cy - AngularAxisR
-                        ]).attr({
-                            'stroke-width': 2,
-                            stroke: '#071436'
-                        }).add(chart.customAxes);
-
-                        // Angular axis title
-                        const AngularAxisTitleR = AngularAxisR + 2;
-                        const AngularAxisTitlePath = renderer.path([
-                            'M', cx - AngularAxisTitleR, cy, 'A',
-                            AngularAxisTitleR, AngularAxisTitleR,
-                            0, 0, 1, cx, cy - AngularAxisTitleR
-                        ]).add(chart.customAxes);
-
-                        renderer.text('Arrivals per Capita')
-                            .setTextPath(AngularAxisTitlePath, {
-                            })
-                            .add(chart.customAxes);
+                        }
                     }
                 }
             },
@@ -207,20 +243,7 @@ Highcharts.getJSON(
             },
 
             subtitle: {
-                text: `By arrivals. Sources: <a href="https://www.unwto.org/
-                tourism-data/global-and-regional-tourism-performance" target=
-                "_blank">UNWTO</a> and <a href="https://databank.worldbank.org/
-                reports.aspx?source=2&series=SP.POP.TOTL&year=2022" target=
-                "_blank">World Bank</a>.`
-            },
-
-            caption: {
-                text: `Interactive variable pie chart indicating the top ten
-                countries in terms of tourist arrivals in 2022. <strong>Click
-                a slice to rotate the globe to the corresponding
-                country</strong>. Slice heights indicate tourist arrivals in
-                millions, while widths indicate arrivals per capita.`,
-                align: 'center'
+                text: 'By arrivals. Sources: <a href="https://www.unwto.org/tourism-data/global-and-regional-tourism-performance" target="_blank">UNWTO</a> and <a href="https://databank.worldbank.org/reports.aspx?source=2&series=SP.POP.TOTL&year=2022" target="_blank">World Bank</a>.'
             },
 
             legend: {
@@ -228,7 +251,7 @@ Highcharts.getJSON(
             },
 
             mapView: {
-                maxZoom: 1.5,
+                padding: ['39%', '30%', '19%', '30%'],
                 projection: {
                     name: 'Orthographic',
                     rotation: rotation('France')
@@ -236,12 +259,15 @@ Highcharts.getJSON(
             },
 
             plotOptions: {
-                series: {
+                variablepie: {
                     dataLabels: {
                         style: {
-                            color: '#071436'
+                            color: '#071436',
+                            fontSize: '1em'
                         }
-                    },
+                    }
+                },
+                series: {
                     animation: {
                         duration: 1000
                     }
@@ -249,13 +275,16 @@ Highcharts.getJSON(
             },
 
             tooltip: {
+                style: {
+                    color: '#071436',
+                    fontSize: '1em'
+                },
                 headerFormat:
-                    `<span style="font-weight: bold; 
-                    color: #071436">{point.key}</span><br/>`,
+                    `<span style="font-weight: bold">
+                    {point.key}</span><br/>`,
                 pointFormat:
-                    `<span style="font-weight: normal;
-                    color: #071436">Arrivals: <b>{point.z}M</b>
-                    <br/>Arrivals per capita: <b>{point.y}</b></span>`
+                    `<span>Arrivals: <b>{point.z}M
+                    </b><br/>Arrivals per capita: <b>{point.y}</b></span>`
             },
 
             series: [
@@ -271,26 +300,21 @@ Highcharts.getJSON(
                     enableMouseTracking: false,
                     states: {
                         inactive: {
-                            opacity: 1
+                            opacity: 0.6
                         }
-                    },
-                    shadow: {
-                        color: 'white',
-                        width: 4
                     }
                 },
                 {
                     name: 'Map',
                     data: mapData,
                     keys: ['hc-key', 'id'],
-                    nullInteraction: true,
+                    accessibility: {
+                        enabled: false
+                    },
                     enableMouseTracking: false,
                     borderColor: '#215DFC',
                     borderWidth: 0.5,
                     color: '#071436',
-                    dataLabels: {
-                        enabled: false
-                    },
                     states: {
                         inactive: {
                             opacity: 1
@@ -308,25 +332,21 @@ Highcharts.getJSON(
                         }
                     },
                     cursor: 'pointer',
-                    innerSize: '50%',
-                    center: ['50%', '50%'],
+                    innerSize: '45%',
+                    size: '100%',
+                    center: ['50%', '60%'],
                     borderColor: '#071436',
                     endAngle: 270,
                     zMin: 25,
                     borderRadius: 5,
-                    data: data.map(c => ({
-                        ...c,
-                        y: Math.round((100 * c.z) / c.y) / 100
+                    data: data.map(pointData => ({
+                        ...pointData,
+                        y: Math.round((100 * pointData.z) / pointData.y) / 100,
+                        countryID: countries.find(
+                            country => country.properties.name ===
+                            pointData.name
+                        ).id
                     })),
-
-                    dataLabels: {
-                        style: {
-                            fontSize: 18
-                        }
-                    },
-                    label: {
-                        onArea: true
-                    },
                     colors: [
                         '#1a4aca',
                         '#1e54e3',
@@ -341,56 +361,90 @@ Highcharts.getJSON(
                     ],
                     point: {
                         events: {
-                            click() {
-                                const point = this,
-                                    countryName = point.name,
-                                    renderer = chart.renderer,
-                                    x = chart.plotLeft,
-                                    y = 120;
-
-                                // Add sticky label to show data for
-                                // currently selected data
-                                if (!chart.sticky) {
-                                    chart.sticky = renderer
-                                        .label(countryName, x, y).add();
-                                } else {
-                                    chart.sticky.attr({
-                                        text: countryName
-                                    });
-                                }
-
-                                // Rotate to selected country
-                                if (countryName !== chart.selectedCountry) {
-                                    const mapPoint =
-                                        chart.findCountry(countryName);
-                                    mapPoint.update({
-                                        color: '#FCED33'
-                                    });
-                                    if (chart.selectedCountry) {
-                                        chart
-                                            .findCountry(chart.selectedCountry)
-                                            .update({ color: null });
-                                    }
-                                    chart.selectedCountry = countryName;
-                                    chart.rotateToCountry(countryName);
-                                }
-                            },
-
                             unselect() {
                                 const point = this,
-                                    countryName = point.name;
+                                    countryName = point.name,
+                                    mapPoint =
+                                        chart.findCountry(countryName);
+                                mapPoint.update({
+                                    color: null
+                                });
 
                                 if (countryName === chart.selectedCountry) {
                                     chart.sticky = chart.sticky.destroy();
                                 }
+                            },
+                            select() {
+                                const point = this,
+                                    renderer = chart.renderer,
+                                    countryName = point.name,
+                                    text = `<b>${countryName}</b>
+                                    <br/>Arrivals: <b>${point.z}M</b>
+                                    <br/>Arrivals per capita:
+                                    <b>${point.y}</b>`,
+                                    mapPoint =
+                                            chart.findCountry(countryName);
+                                mapPoint.update({
+                                    color: '#FCED33'
+                                }, false);
+                                chart.selectedCountry = countryName;
+
+                                // Add sticky label to show data for
+                                // currently selected point
+                                if (!chart.sticky) {
+                                    chart.sticky = renderer
+                                        .label(text)
+                                        .css({
+                                            color: '#071436',
+                                            fontSize: '1em'
+                                        })
+                                        .add();
+                                } else {
+                                    chart.sticky.attr({
+                                        text
+                                    });
+                                }
+
+                                // "Reset" view to account for
+                                // manual globe rotation
+                                // (also initiates chart redraw)
+                                chart.mapView.fitToBounds();
+
+                                // Rotate to selected country
+                                chart.rotateToCountry(countryName);
                             }
                         }
                     }
                 }
-            ]
+            ],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 650
+                    },
+                    chartOptions: {
+                        plotOptions: {
+                            variablepie: {
+                                dataLabels: {
+                                    distance: 5,
+                                    connectorColor: 'transparent',
+                                    padding: 0,
+                                    style: {
+                                        fontSize: '1em'
+                                    },
+                                    format: '{point.countryID}'
+                                }
+                            }
+                        }
+                    }
+                }]
+            }
         });
 
-        function renderSea() {
+        // Render a circle filled with a radial gradient behind the globe to
+        // make it appear as the sea around the continents
+        const renderSea = () => {
             let verb = 'animate';
             if (!chart.sea) {
                 chart.sea = chart.renderer
@@ -427,7 +481,7 @@ Highcharts.getJSON(
                 cy: (p1.y + p2.y) / 2,
                 r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
             });
-        }
+        };
 
         renderSea();
         Highcharts.addEvent(chart, 'redraw', renderSea);

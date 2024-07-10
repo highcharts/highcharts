@@ -1,34 +1,22 @@
 * {
-    font-family:
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Oxygen,
-        Ubuntu,
-        Cantarell,
-        "Open Sans",
-        "Helvetica Neue",
-        sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.highcharts-figure {
+    min-width: 360px;
+    margin: 0 auto;
+}
+
+.highcharts-description {
+    padding: 2em;
 }
 
 #container {
-    min-height: 700px;
-    max-height: 850px;
-    min-width: 900px;
-    max-width: 950px;
-    margin: 0 auto;
-    padding: 0;
+    height: 600px;
 }
 
 a {
     font-weight: bold;
-}
-
-.custom-axes {
-    font-weight: 600;
-    color: #071436;
 }
 
 a:hover,
