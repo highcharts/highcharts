@@ -163,6 +163,9 @@ class StockToolsComponent extends AccessibilityComponent {
             return true;
         }
 
+        // Warp around
+        this.focusedButtonIndex = 0;
+
         return false;
     }
 
@@ -173,6 +176,9 @@ class StockToolsComponent extends AccessibilityComponent {
 
             return true;
         }
+
+        // Wrap around
+        this.focusedButtonIndex = this.buttons.length - 1;
 
         return false;
     }
