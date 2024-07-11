@@ -143,6 +143,16 @@ class DataGrid {
      */
     public enabledColumns?: string[];
 
+    /**
+     * The hovered row index.
+     */
+    public hoveredRowIndex?: number;
+
+    /**
+     * The hovered column ID.
+     */
+    public hoveredColumnId?: string;
+
 
     /* *
     *
@@ -197,6 +207,51 @@ class DataGrid {
         if (render) {
             this.renderViewport();
         }
+    }
+
+    /**
+     * Hovers the row with the provided index. It removes the hover effect from
+     * the previously hovered row.
+     *
+     * @param rowIndex
+     * The index of the row.
+     */
+    public hoverRow(rowIndex?: number): void {
+        const rows = this.viewport?.rows;
+        if (!rows) {
+            return;
+        }
+
+        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
+
+        if (this.hoveredRowIndex !== void 0) {
+            rows[this.hoveredRowIndex - firstRowIndex]?.setHoveredState(false);
+        }
+
+        if (rowIndex !== void 0) {
+            rows[rowIndex - firstRowIndex]?.setHoveredState(true);
+        }
+
+        this.hoveredRowIndex = rowIndex;
+    }
+
+    /**
+     * Hovers the column with the provided ID. It removes the hover effect from
+     * the previously hovered column.
+     *
+     * @param columnId
+     * The ID of the column.
+     */
+    public hoverColumn(columnId?: string): void {
+        if (this.hoveredColumnId) {
+            this.getColumn(this.hoveredColumnId)?.setHoveredState(false);
+        }
+
+        if (columnId) {
+            this.getColumn(columnId)?.setHoveredState(true);
+        }
+
+        this.hoveredColumnId = columnId;
     }
 
     /**

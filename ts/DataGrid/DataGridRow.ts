@@ -153,15 +153,19 @@ class DataGridRow {
     }
 
     /**
-     * Sets the row hover state.
+     * Adds or removes the hovered CSS class to the row element.
      *
      * @param hovered
      * Whether the row should be hovered.
      */
-    public setHover(hovered: boolean): void {
+    public setHoveredState(hovered: boolean): void {
         this.htmlElement.classList[hovered ? 'add' : 'remove'](
             Globals.classNames.hoveredRow
         );
+
+        if (hovered) {
+            this.viewport.dataGrid.hoveredRowIndex = this.index;
+        }
     }
 
     /**
@@ -176,6 +180,7 @@ class DataGridRow {
      */
     private setRowAttributes(): void {
         const idx = this.index;
+        const dg = this.viewport.dataGrid;
 
         this.htmlElement.setAttribute('data-row-index', idx);
 
@@ -184,6 +189,10 @@ class DataGridRow {
 
         if (idx % 2 === 1) {
             this.htmlElement.classList.add(Globals.classNames.odd);
+        }
+
+        if (dg.hoveredRowIndex === idx) {
+            this.htmlElement.classList.add(Globals.classNames.hoveredRow);
         }
     }
 }

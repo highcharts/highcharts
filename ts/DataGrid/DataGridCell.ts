@@ -187,8 +187,9 @@ class DataGridCell {
      * Sets the hover state of the cell and its row and column.
      */
     private readonly onMouseOver = (): void => {
-        this.row.setHover(true);
-        this.column.setHover(true);
+        const dg = this.row.viewport.dataGrid;
+        dg.hoverRow(this.row.index);
+        dg.hoverColumn(this.column.id);
         fireEvent(this.row.viewport.dataGrid, 'cellMouseOver', {
             target: this
         });
@@ -198,8 +199,9 @@ class DataGridCell {
      * Unsets the hover state of the cell and its row and column.
      */
     private readonly onMouseOut = (): void => {
-        this.row.setHover(false);
-        this.column.setHover(false);
+        const dg = this.row.viewport.dataGrid;
+        dg.hoverRow();
+        dg.hoverColumn();
         fireEvent(this.row.viewport.dataGrid, 'cellMouseOut', {
             target: this
         });
