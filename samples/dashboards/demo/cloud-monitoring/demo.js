@@ -642,20 +642,23 @@ const setupDashboard = instanceId => {
             ],
             dataGridOptions: {
                 editable: false,
+                columnsIncluded: [
+                    'InstanceId', 'InstanceType',
+                    'PublicIpAddress', 'HealthIndicator'
+                ],
                 columns: {
                     InstanceId: {
-                        headerFormat: 'ID'
+                        headFormat: 'ID'
                     },
                     InstanceType: {
-                        headerFormat: 'Type'
+                        headFormat: 'Type'
                     },
                     PublicIpAddress: {
-                        headerFormat: 'Public IP'
+                        headFormat: 'Public IP'
                     },
                     HealthIndicator: {
-                        headerFormat: 'Health'
+                        headFormat: 'Health'
                     }
-
                 },
                 events: {
                     row: {

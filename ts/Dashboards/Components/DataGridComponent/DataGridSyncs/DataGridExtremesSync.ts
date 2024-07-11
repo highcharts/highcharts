@@ -55,7 +55,7 @@ const syncPair: Sync.SyncPair = {
                 typeof cursor?.row === 'number'
             ) {
                 const { row } = cursor;
-                component.dataGrid.scrollToRow(row);
+                component.dataGrid.viewport?.scrollToRow(row);
             }
 
         };
