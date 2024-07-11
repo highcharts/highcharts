@@ -48,6 +48,9 @@ const DOCLET_TAG_INSET = /\{([^}]+)\}/gsu;
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
 
 
+const JSX = /\.j(sx?)$/su;
+
+
 const GENERIC = /^[\w\.]*<[\s\w\.\[\],|()]+>$/su;
 
 
@@ -250,8 +253,6 @@ function autoExtendInfo(
     infoToExtend,
     includeNodes
 ) {
-    console.log('AXI', infoToExtend.name, infoToExtend.extends);
-
     /** @type {Array<string>} */
     const _extendsToDo = [];
 
@@ -279,10 +280,8 @@ function autoExtendInfo(
         _resolvedInfo = resolveReference(sourceInfo, _extendType, includeNodes);
 
         if (!_resolvedInfo) {
-            console.log('FAIL', _extendType);
             continue;
         }
-        console.log('FOUND', _resolvedInfo.kind, _resolvedInfo.name);
 
         _resolvedInfo = autoExtendInfo(
             getSourceInfo(_resolvedInfo.meta.file, void 0, includeNodes),
@@ -2669,6 +2668,17 @@ function resolveReferenceInChildInfos(
                 }
                 continue;
 
+            case 'Import':
+                _resolvedInfo =
+                    resolveReferenceInImportInfo(_childInfo, referenceName);
+                if (_resolvedInfo) {
+                    return _resolvedInfo;
+                }
+                continue;
+
+            case 'Module':
+                continue;
+
             case 'Property':
             case 'Variable':
                 if (extractInfoName(_childInfo) === _referenceCurrent) {
@@ -2685,14 +2695,6 @@ function resolveReferenceInChildInfos(
                 }
                 continue;
 
-            case 'Import':
-                _resolvedInfo =
-                    resolveReferenceInImportInfo(_childInfo, referenceName);
-                if (_resolvedInfo) {
-                    return _resolvedInfo;
-                }
-                continue;
-
             case 'Reference':
                 if (scopeInfo.kind === 'Namespace') {
                     // Search in original file
@@ -2702,7 +2704,8 @@ function resolveReferenceInChildInfos(
                                 _childInfo.meta.file,
                                 !!_childInfo.node
                             ),
-                            _childInfo.name
+                            _childInfo.name,
+                            !!_childInfo.node
                         );
                         if (_resolvedInfo) {
                             return _resolvedInfo;
@@ -2748,10 +2751,11 @@ function resolveReferenceInChildInfos(
                         }
                     }
                     // Search in source scope
-                    _resolvedInfo =
-                        resolveReference(scopeInfo, scopeInfo.code, _childInfo);
-                    if (_resolvedInfo) {
-                        return _resolvedInfo;
+                    if (scopeInfo.kind === 'Source') {
+                        _resolvedInfo = resolveReference(scopeInfo, _childInfo);
+                        if (_resolvedInfo) {
+                            return _resolvedInfo;
+                        }
                     }
                 }
                 continue;
@@ -2942,14 +2946,16 @@ function resolveReferenceInImportInfo(
             Path.dirname(importInfo.meta.file),
             importInfo.from
         );
-        console.log('???', _from);
 
         /** @type {SourceInfo|undefined} */
         let _sourceInfo;
 
-        if (SOURCE_EXTENSION.test(_from)) {
+        if (
+            SOURCE_EXTENSION.test(_from) &&
+            FSLib.isFile(FSLib.path(_from.replace(JSX, '\.t$1')))
+        ) {
             _sourceInfo = getSourceInfo(
-                _from.replace(/\.j(sx)?$/su, '\.t$1'),
+                _from.replace(JSX, '\.t$1'),
                 void 0,
                 !!importInfo.node
             );
@@ -2964,7 +2970,6 @@ function resolveReferenceInImportInfo(
         }
 
         if (_sourceInfo) {
-            console.log('!!!');
             return resolveReferenceInChildInfos(
                 _sourceInfo,
                 _sourceInfo.code,

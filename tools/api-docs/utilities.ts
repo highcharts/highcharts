@@ -13,7 +13,16 @@
 
 
 const CamelCaseMap: Record<string, string> = {
+    'PointOptions': 'series.line.data',
+    'SeriesOptions': 'plotOptions.series'
 };
+
+
+const CamelPointPattern = /^([A-Z][a-z]*)PointOptions$/su;
+
+
+const CamelSeriesPattern = /^([A-Z][a-z]*)SeriesOptions$/su;
+
 
 const SeriesCaseMap: Record<string, string> = {
     'abands': 'ABands',
@@ -110,28 +119,42 @@ function getOptionName(
     camelCaseName: string
 ): string {
 
-    if (camelCaseName.endsWith('IndicatorOptions')) {
-        return 'plotOptions.' + camelCaseName
-            .substring(0, camelCaseName.length - 16)
-            .toLowerCase();
+    if (CamelCaseMap[camelCaseName]) {
+        return CamelCaseMap[camelCaseName];
+    }
+
+    if (
+        camelCaseName.endsWith('IndicatorOptions') ||
+        camelCaseName.endsWith('SeriesOptions')
+    ) {
+        if (CamelSeriesPattern.test(camelCaseName)) {
+            return 'plotOptions.' + camelCaseName
+                .replace(CamelSeriesPattern, '$1')
+                .toLowerCase();
+        }
+        const seriesCamel = camelCaseName
+            .replace('IndicatorOptions', '')
+            .replace('SeriesOptions', '');
+        for (const seriesCase of Object.entries(SeriesCaseMap)) {
+            if (seriesCase[1] === seriesCamel) {
+                return seriesCase[0];
+            }
+        }
     }
 
     if (camelCaseName.endsWith('PointOptions')) {
-        if (camelCaseName === 'PointOptions') {
-            return 'series.line.data';
+        if (CamelSeriesPattern.test(camelCaseName)) {
+            return 'series.' + camelCaseName
+                .replace(CamelPointPattern, '$1')
+                .toLowerCase() +
+                '.data';
         }
-        return 'series.' + camelCaseName
-            .substring(0, camelCaseName.length - 12)
-            .toLowerCase() + '.data';
-    }
-
-    if (camelCaseName.endsWith('SeriesOptions')) {
-        if (camelCaseName === 'SeriesOptions') {
-            return 'plotOptions.series';
+        const pointCamel = camelCaseName.replace('PointOptions', '');
+        for (const seriesCase of Object.entries(SeriesCaseMap)) {
+            if (seriesCase[1] === pointCamel) {
+                return seriesCase[0];
+            }
         }
-        return 'plotOptions.' + camelCaseName
-            .substring(0, camelCaseName.length - 13)
-            .toLowerCase();
     }
 
     if (
@@ -143,7 +166,7 @@ function getOptionName(
 
     return (
         CamelCaseMap[camelCaseName] ||
-        (camelCaseName[0].toLowerCase() + camelCaseName.substring(1))
+        camelCaseName[0].toLowerCase() + camelCaseName.substring(1)
     );
 }
 
