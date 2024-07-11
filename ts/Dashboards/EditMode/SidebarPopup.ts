@@ -101,10 +101,8 @@ class SidebarPopup extends BaseForm {
                 type: 'HTML',
                 cell: cellId,
                 className: 'highcharts-dashboards-component-placeholder',
-                html: `
-                    <h2> Placeholder </h2>
-                    <p> This placeholder can be deleted when you add extra components to this row. </p>
-                    `
+                // eslint-disable-next-line max-len
+                html: '<h2> Placeholder </h2><p> This placeholder can be deleted when you add extra components to this row. </p>'
             }, board);
 
         }
