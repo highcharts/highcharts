@@ -119,6 +119,10 @@ function getOptionName(
     camelCaseName: string
 ): string {
 
+    if (!camelCaseName) {
+        return '';
+    }
+
     if (CamelCaseMap[camelCaseName]) {
         return CamelCaseMap[camelCaseName];
     }

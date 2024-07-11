@@ -100,8 +100,11 @@ function addDefaultOptions(
                 break;
 
             case 'Export':
-                if (sourceInfo.path.endsWith('Defaults.ts')) {
-                    addTreeNode(sourceInfo, rootNode, _info, debug);
+                if (
+                    sourceInfo.path.endsWith('Defaults.ts') &&
+                    typeof _info.value === 'object'
+                ) {
+                    addTreeNode(sourceInfo, rootNode, _info.value, debug);
                 }
                 break;
 
@@ -156,10 +159,13 @@ function addTreeNode(
 
     let _fullname: (string|undefined) = TSLib.getName(info);
 
-    if (
-        typeof _fullname !== 'string' ||
-        _fullname.startsWith('_')
-    ) {
+    if (typeof _fullname === 'undefined') {
+        return;
+    }
+
+    _fullname = Utilities.getOptionName(_fullname);
+
+    if (_fullname.startsWith('_')) {
         return;
     }
 
@@ -312,6 +318,13 @@ function addTreeNode(
             }
             break;
 
+        case 'Reference':
+            _resolved = TSLib.resolveReference(sourceInfo, info);
+            if (_resolved) {
+                addTreeNode(sourceInfo, parentNode, _resolved, debug);
+            }
+            break;
+
     }
 
     const _treeNode = getTreeNode(_fullname);
@@ -444,127 +457,6 @@ function addTreeNode(
 }
 
 
-function buildTree(
-    rootPath: string,
-    debug?: boolean
-): void {
-    const _rootInfo = TSLib.getSourceInfo(rootPath, void 0, debug);
-    const _rootNode = {
-        doclet: {},
-        meta: {
-            fullname: '',
-            name: ''
-        },
-        children: TREE
-    };
-
-    for (const _codeInfo of _rootInfo.code) {
-        addTreeNode(_rootInfo, _rootNode, _codeInfo, debug);
-    }
-
-}
-
-
-function buildTreeIndicators(
-    sourceRootPath: string,
-    debug?: boolean
-): void {
-    const _rootNode = getTreeNode('plotOptions');
-
-    let _filePath: string;
-    let _sourceInfo: (TSLib.SourceInfo|undefined);
-
-    for (const _path of FSLib.getDirectoryPaths(sourceRootPath, true)) {
-        if (_path.split(Path.sep).includes('Indicators')) {
-            _sourceInfo = void 0;
-            _filePath =
-                FSLib.path(`${_path}/${Path.basename(_path)}Indicator.ts`);
-
-            if (FSLib.isFile(_filePath)) {
-                _sourceInfo = TSLib.getSourceInfo(_filePath, void 0, debug);
-            }
-
-            if (_sourceInfo) {
-                for (const _codeInfo of _sourceInfo.code) {
-                    addTreeNode(_sourceInfo, _rootNode, _codeInfo);
-                }
-            }
-        }
-    }
-
-}
-
-
-function buildTreeSeries(
-    sourceRootPath: string,
-    debug?: boolean
-): void {
-    const _rootNode = getTreeNode('plotOptions');
-
-    let _filePath: string;
-    let _sourceInfos: Array<TSLib.SourceInfo> = [];
-
-    for (const _path of FSLib.getDirectoryPaths(sourceRootPath, true)) {
-        if (!_path.endsWith('/Line')) {
-            continue;
-        }
-        if (_path.split(Path.sep).includes('Series')) {
-            _sourceInfos.length = 0;
-
-            _filePath = FSLib
-                .path(`${_path}/${Path.basename(_path)}PointOptions.d.ts`);
-            if (FSLib.isFile(_filePath)) {
-
-                _sourceInfos
-                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
-            }
-
-            _filePath = FSLib
-                .path(`${_path}/${Path.basename(_path)}SeriesDefaults.ts`);
-            if (FSLib.isFile(_filePath)) {
-                _sourceInfos
-                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
-            }
-
-            _filePath = FSLib
-                .path(`${_path}/${Path.basename(_path)}SeriesOptions.d.ts`);
-            if (FSLib.isFile(_filePath)) {
-                _sourceInfos
-                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
-            }
-
-            _filePath = FSLib
-                .path(`${_path}/${Path.basename(_path)}Series.ts`);
-            if (FSLib.isFile(_filePath)) {
-                _sourceInfos
-                    .push(TSLib.getSourceInfo(_filePath, void 0, debug));
-            }
-
-            for (const _sourceInfo of _sourceInfos) {
-                for (const _codeInfo of _sourceInfo.code) {
-                    addTreeNode(_sourceInfo, _rootNode, _codeInfo);
-                }
-            }
-        }
-    }
-
-    if (_rootNode.children?.plotOptions?.children) {
-        const _plotOptions = _rootNode.children.plotOptions.children;
-
-        let _seriesOptions: TreeLib.Option;
-
-        for (const _seriesType of Object.keys(_plotOptions.children)) {
-            _seriesOptions = TreeLib.getTreeNode(_plotOptions, _seriesType);
-            TreeLib.extendTreeNode(
-                _plotOptions.children[_seriesType],
-                _seriesOptions
-            );
-        }
-    }
-
-}
-
-
 function getTreeNode(
     fullname: string
 ): TreeLib.Option {
@@ -668,22 +560,21 @@ async function saveJSON() {
         version: JSON.parse(FS.readFileSync('package.json', 'utf8')).version
     } as any;
 
-    // await save('tree-defaults.json', DEFAULTS);
     save('tree-cache.json', TSLib.SOURCE_CACHE);
-    save('tree-v2.json', TREE);
-    // save('tree-v2.json', {
-    //     _meta: TREE._meta,
-    //     plotOptions: TREE.plotOptions || {
-    //         doclet: {},
-    //         meta: {},
-    //         children: {}
-    //     },
-    //     series: TREE.series || {
-    //         doclet: {},
-    //         meta: {},
-    //         children: {}
-    //     }
-    // });
+    // save('tree-v2.json', TREE);
+    save('tree-v2.json', {
+        _meta: TREE._meta,
+        plotOptions: TREE.plotOptions || {
+            doclet: {},
+            meta: {},
+            children: {}
+        },
+        series: TREE.series || {
+            doclet: {},
+            meta: {},
+            children: {}
+        }
+    });
 }
 
 
