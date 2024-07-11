@@ -52,8 +52,8 @@ const {
  */
 class SidebarPopup extends BaseForm {
 
-    public static readonly addLayout = {
-        text: 'layout',
+    public static readonly addRow = {
+        text: EditGlobals.lang.sidebar.row,
         onDrop: function (
             sidebar: SidebarPopup,
             dropContext: Cell|Row
@@ -100,12 +100,11 @@ class SidebarPopup extends BaseForm {
             void Bindings.addComponent({
                 type: 'HTML',
                 cell: cellId,
-                elements: [
-                    {
-                        tagName: 'div',
-                        textContent: 'Placeholder text'
-                    }
-                ]
+                className: 'highcharts-dashboards-component-placeholder',
+                html: `
+                    <h2> Placeholder </h2>
+                    <p> This placeholder can be deleted when you add extra components to this row. </p>
+                    `
             }, board);
 
         }
@@ -173,7 +172,7 @@ class SidebarPopup extends BaseForm {
      * Options used in the sidebar.
      */
     public options: SidebarPopup.Options = {
-        components: ['HTML', 'layout', 'Highcharts', 'DataGrid', 'KPI']
+        components: ['HTML', 'row', 'Highcharts', 'DataGrid', 'KPI']
     };
 
     /**
@@ -549,8 +548,8 @@ class SidebarPopup extends BaseForm {
                         }
                     }
                 });
-            } else if (componentName === 'layout') {
-                componentList.push(SidebarPopup.addLayout);
+            } else if (componentName === 'row') {
+                componentList.push(SidebarPopup.addRow);
             }
         });
 
