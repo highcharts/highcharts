@@ -28,6 +28,8 @@ import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
 import Templating from '../Core/Templating.js';
 import Globals from './Globals.js';
+import DataModifier from '../Data/Modifiers/DataModifier.js';
+import DataTable from '../Data/DataTable.js';
 
 const { makeHTMLElement } = DGUtils;
 
@@ -207,6 +209,20 @@ class DataGridTableHead {
         headElement: HTMLElement
     ): void {
 
+        if (!this.viewport.dataGrid.dataTable) {
+            return;
+        }
+
+        const sortAsc = new DataModifier.types.Sort({
+            direction: 'asc',
+            orderByColumn: column.id
+        });
+
+        const sortDesc = new DataModifier.types.Sort({
+            direction: 'desc',
+            orderByColumn: column.id
+        });
+
         this.sortingBtnContainer = makeHTMLElement('div', {
             className: 'highcharts-dg-col-sorting'
         }, headElement);
@@ -216,7 +232,11 @@ class DataGridTableHead {
         },  this.sortingBtnContainer);
 
         addEvent(sortingBtnAsc, 'click', () => {
-            console.log('sorting ascending');
+            this.viewport.dataGrid.update({
+                table: sortAsc.modifyTable(
+                    (this.viewport.dataGrid.dataTable as DataTable).clone()
+                )
+            });
         });
 
         const sortingBtnDesc = makeHTMLElement('button', {
@@ -224,7 +244,13 @@ class DataGridTableHead {
         },  this.sortingBtnContainer);
 
         addEvent(sortingBtnDesc, 'click', () => {
-            console.log('sorting descending');
+            this.viewport.dataGrid.update({
+                table: sortDesc.modifyTable(
+                    (this.viewport.dataGrid.dataTable as DataTable).clone()
+                )
+            });
+
+            console.log('this.viewport.dataGrid', this.viewport.dataGrid);
         });
     }
 
