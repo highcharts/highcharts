@@ -70,7 +70,13 @@ Cypress.Commands.add('hideSidebar', () =>
 
 Cypress.Commands.add('openCellEditSidebar', (cellId) => {
     cy.get(cellId).click();
-    cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
+    cy.get('.highcharts-dashboards-edit-menu-item > div')
+        .each(($el) => {
+            const backgroundImage = $el.css('background-image');
+            if (backgroundImage.includes('/code/dashboards/gfx/dashboards-icons/settings.svg')) {
+                cy.wrap($el).click();
+            }
+        });
 });
 
 Cypress.Commands.add('chart', () =>
