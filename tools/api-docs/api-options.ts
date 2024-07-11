@@ -57,16 +57,10 @@ interface Args {
  * */
 
 
-const DEFAULT_ROOT = FSLib.path('ts/Core/Defaults.ts');
-
-
 const DEFAULT_SOURCE = FSLib.path('ts/');
 
 
-const INDICATORS_ROOT = FSLib.path('ts/Stock/Indicators/');
-
-
-const SERIES_ROOT = FSLib.path('ts/Series/');
+const STACK: Array<TSLib.CodeInfo> = [];
 
 
 const TREE: TreeLib.Options = {};
@@ -79,208 +73,330 @@ const TREE: TreeLib.Options = {};
  * */
 
 
+function addDefaultOptions(
+    sourceInfo: TSLib.SourceInfo,
+    debug?: boolean
+): void {
+    const rootNode = getTreeNode('');
+
+    for (const _info of sourceInfo.code) {
+        switch (_info.kind) {
+
+            case 'Class':
+                for (const _member of _info.members) {
+                    if (
+                        _member.kind === 'Property' &&
+                        _member.name === 'defaultOptions'
+                    ) {
+                        addTreeNode(sourceInfo, rootNode, _member, debug);
+                    }
+                }
+                break;
+
+            case 'Doclet':
+                if (_info.tags.apioption) {
+                    addTreeNode(sourceInfo, rootNode, _info, debug);
+                }
+                break;
+
+            case 'Export':
+                if (sourceInfo.path.endsWith('Defaults.ts')) {
+                    addTreeNode(sourceInfo, rootNode, _info, debug);
+                }
+                break;
+
+            case 'Namespace':
+                for (const _member of _info.members) {
+                    if (_member.kind === 'Class') {
+                        for (const _mm of _member.members) {
+                            if (
+                                _mm.kind === 'Property' &&
+                                _mm.name === 'defaultOptions'
+                            ) {
+                                addTreeNode(sourceInfo, rootNode, _mm, debug);
+                            }
+                        }
+                    } else if (
+                        _member.kind === 'Variable' &&
+                        _member.name === 'defaultOptions'
+                    ) {
+                        addTreeNode(sourceInfo, rootNode, _member, debug);
+                    }
+                }
+                break;
+
+            case 'Variable':
+                if (_info.name === 'defaultOptions') {
+                    addTreeNode(sourceInfo, rootNode, _info, debug);
+                }
+                break;
+
+        }
+    }
+
+}
+
+
 function addTreeNode(
     sourceInfo: TSLib.SourceInfo,
     parentNode: TreeLib.Option,
     info: TSLib.CodeInfo,
     debug?: boolean
 ): void {
-    const _stack: Array<TSLib.CodeInfo> = [];
+    const _infoDoclet = (
+        info.kind === 'Doclet' ?
+            info :
+            info.doclet || TSLib.newDocletInfo()
+    );
+    const _parentName = parentNode.meta.fullname; /* (
+        _parentNode.meta.fullname === 'plotOptions' ?
+            'plotOptions.series' :
+            _parentNode.meta.fullname
+    ); */
 
-    const add = (
-        _sourceInfo: TSLib.SourceInfo,
-        _parentNode: TreeLib.Option,
-        _info: TSLib.CodeInfo
-    ) => {
-        const _infoDoclet = (
-            _info.kind === 'Doclet' ?
-                _info :
-                _info.doclet || TSLib.newDocletInfo()
-        );
-        const _parentName = (
-            parentNode.meta.fullname === 'plotOptions' ?
-                'plotOptions.series' :
-                parentNode.meta.fullname
-        );
+    let _fullname: (string|undefined) = TSLib.getName(info);
 
-        let _fullname: (string|undefined) = TSLib.getName(_info);
+    if (
+        typeof _fullname !== 'string' ||
+        _fullname.startsWith('_')
+    ) {
+        return;
+    }
 
-        if (
-            typeof _fullname !== 'string' ||
-            _fullname.startsWith('_') ||
-            _infoDoclet.tags.private
-        ) {
-            return;
-        }
+    let _moreInfos: Array<TSLib.CodeInfo> = [];
+    let _resolved: TSLib.CodeInfo;
+    let _value: TSLib.Value;
 
-        _fullname = Utilities.getOptionName(_fullname);
+    switch (info.kind) {
 
-        let _moreInfos: Array<TSLib.CodeInfo> = [];
-        let _resolvedInfo: TSLib.CodeInfo;
-        let _resolvedValue: TSLib.Value;
+        default:
+            break;
 
-        switch (_info.kind) {
+        case 'Interface':
+            if (
+                !info.doclet ||
+                !info.name.endsWith('Options')
+            ) {
+                return;
+            }
+            for (const _member of info.members) {
+                addTreeNode(sourceInfo, parentNode, _member, debug);
+            }
+            break;
 
-            default:
-                break;
+        case 'Object':
+            if (
+                !info.doclet ||
+                !info.doclet.tags.optionparent
+            ) {
+                return;
+            }
+            for (const _member of info.members) {
+                addTreeNode(sourceInfo, parentNode, _member, debug);
+            }
+            break;
 
-            case 'Class':
-            case 'Namespace':
-                for (const _memberInfo of _info.members) {
+        case 'Property':
+        case 'Variable':
+            if (
+                info.kind === 'Property' &&
+                _parentName
+            ) {
+                _fullname = `${_parentName}.${_fullname}`;
+            }
+            if (info.type) {
+                for (const _type of info.type) {
+                    if (!_type.endsWith('Options')) {
+                        continue;
+                    }
+                    _resolved = TSLib.resolveReference(sourceInfo, _type);
                     if (
-                        _memberInfo.kind === 'Property' &&
-                        _memberInfo.name === 'defaultOptions'
+                        _resolved &&
+                        _resolved.kind === 'Interface'
                     ) {
-                        addTreeNode(sourceInfo, parentNode, _memberInfo, debug);
-                        break;
+                        _moreInfos.push(_resolved);
                     }
                 }
-                return;
+            }
+            if (
+                !_infoDoclet.tags.type &&
+                info.type
+            ) {
+                _infoDoclet.tags.type = info.type.slice();
+            }
+            _value = info.value;
+            if (
+                !_infoDoclet.tags.default &&
+                !_infoDoclet.tags.defaultvalue &&
+                _value
+            ) {
+                _infoDoclet.tags.default = [];
+                if (typeof _value === 'object') {
+                    switch (_value.kind) {
 
-            case 'Interface':
-                if (!_info.name.endsWith('Options')) {
+                        default:
+                            break;
+
+                        case 'Array':
+                            _infoDoclet.tags.default
+                                .push(`[${_value.values.join(',')}]`);
+                            break;
+
+                        case 'Object':
+                            _infoDoclet.tags.default.push(
+                                '{' + Object
+                                    .entries(_value.members)
+                                    .map(_entry => `${_entry[0]}:${_entry[1]}`)
+                                    .join(',') + '}'
+                            );
+                            break;
+
+                    }
+                } else {
+                   _infoDoclet.tags.default.push(`${_value}`);
+                }
+            }
+            if (typeof _value !== 'object') {
+                break;
+            }
+            if (_value.kind === 'FunctionCall') {
+                if (
+                    _value.name !== 'merge' ||
+                    !_value.arguments
+                ) {
                     return;
                 }
-                TSLib.autoExtendInfo(_sourceInfo, _info, debug);
-                _moreInfos.push(..._info.members);
-                break;
-
-            case 'Property':
-            case 'Variable':
-                if (
-                    _info.kind === 'Property' &&
-                    _parentName
-                ) {
-                    _fullname = `${_parentName}.${_fullname}`;
-                }
-                if (!_infoDoclet.tags.type) {
-                    if (_info.type) {
-                        _infoDoclet.tags.type = _info.type.slice();
-                    } else if (_info.value) {
-                        _infoDoclet.tags.type = [
-                            typeof _info.value === 'object' ?
-                                (
-                                    _info.value.kind === 'Object' ?
-                                        '{*}' :
-                                        '{Function}'
-                                ) :
-                            `{${_info.value}}`
-                        ];
+                for (const _argument of _value.arguments) {
+                    if (typeof _argument !== 'object') {
+                        continue;
                     }
-                }
-                if (
-                    typeof _info.value === 'object' &&
-                    _info.value.kind === 'FunctionCall' &&
-                    _info.value.name === 'merge' &&
-                    _info.value.arguments
-                ) {
-                    _resolvedValue =
-                        _info.value.arguments[_info.value.arguments.length - 1];
-                    if (typeof _resolvedValue === 'object') {
-                        _moreInfos.push(_resolvedInfo);
-                    }
-                    break;
-                }
-                if (
-                    typeof _info.value === 'object' &&
-                    _info.value.kind === 'Object'
-                ) {
-                    _moreInfos.push(..._info.value.members);
-                    for (const type of (_info.value.type || [])) {
-                        if (!type.endsWith('Options')) {
-                            continue;
-                        }
-                        _resolvedInfo =
-                            TSLib.resolveReference(_sourceInfo, type);
+                    if (_argument.kind === 'Object') {
                         if (
-                            _resolvedInfo &&
-                            _resolvedInfo.kind !== 'Doclet'
+                            _argument.doclet &&
+                            _argument.doclet.tags.optionparent
                         ) {
-                            _moreInfos.push(_resolvedInfo);
+                            addTreeNode(
+                                sourceInfo,
+                                parentNode,
+                                _argument,
+                                debug
+                            );
+                        }
+                        continue;
+                    }
+                    if (_argument.kind === 'Reference') {
+                        _resolved =
+                            TSLib.resolveReference(sourceInfo, _argument);
+                        if (_resolved) {
+                            _moreInfos.push(_resolved);
                         }
                     }
                 }
                 break;
-
-        }
-
-        const _treeNode = getTreeNode(_fullname);
-        const _nodeDoclet = _treeNode.doclet;
-
-        let _array: Array<Record<string, (string|Array<string>)>>;
-        let _split: Array<string>;
-
-        // TODO: Use TSLib.extractTagObjects
-        for (const _tag of Object.keys(_infoDoclet.tags)) {
-            switch (_tag) {
-
-                default:
-                    if (_infoDoclet.tags[_tag].length > 1) {
-                        _nodeDoclet[_tag] =
-                            _infoDoclet.tags[_tag].slice();
-                    } else {
-                        _nodeDoclet[_tag] = _infoDoclet.tags[_tag][0];
+            }
+            if (_value.kind === 'Object') {
+                _moreInfos.push(..._value.members);
+                for (const _type of (_value.type || [])) {
+                    if (!_type.endsWith('Options')) {
+                        continue;
                     }
-                    break;
-
-                case 'default':
-                    _nodeDoclet.defaultvalue =
-                        TSLib.extractTagText(_infoDoclet, _tag, true);
-                    break;
-
-                case 'description':
-                    _nodeDoclet[_tag] =
-                        TSLib.extractTagText(_infoDoclet, _tag, true);
-                    break;
-
-                case 'extends':
-                    _nodeDoclet[_tag] =
-                        TSLib.extractTagText(_infoDoclet, _tag);
-                    break;
-
-                case 'productdesc':
-                    _array = _nodeDoclet.productdescs = [];
-                    for (
-                        const _object
-                        of TSLib.extractTagObjects(_infoDoclet, 'productdesc')
+                    _resolved = TSLib.resolveReference(sourceInfo, _type);
+                    if (
+                        _resolved &&
+                        _resolved.kind !== 'Doclet'
                     ) {
-                        if (_object.type) {
-                            _array.push({
-                                products: _object.type,
-                                value: _object.text
-                            });
-                        }
+                        _moreInfos.push(_resolved);
                     }
-                    break;
+                }
+                break;
+            }
+            break;
 
-                case 'requires':
-                case 'see':
-                    _nodeDoclet[_tag] = _infoDoclet.tags[_tag].slice();
-                    break;
+    }
 
-                case 'sample':
-                    _array = _nodeDoclet[`${_tag}s`] = [];
-                    for (
-                        const _object
-                        of TSLib.extractTagObjects(_infoDoclet, 'sample')
-                    ) {
-                        const _sample: TreeLib.OptionDocletSample = {
-                            name: _object.name || _object.text,
-                            value: _object.value || ''
-                        };
-                        if (_object.products) {
-                            _sample.products = _object.products;
-                        }
-                        _array.push(_sample);
+    const _treeNode = getTreeNode(_fullname);
+    const _nodeDoclet = _treeNode.doclet;
+
+    let _array: Array<Record<string, (string|Array<string>)>>;
+    let _split: Array<string>;
+
+    // TODO: Use TSLib.extractTagObjects
+    for (const _tag of Object.keys(_infoDoclet.tags)) {
+        switch (_tag) {
+
+            default:
+                if (_infoDoclet.tags[_tag].length > 1) {
+                    _nodeDoclet[_tag] =
+                        _infoDoclet.tags[_tag].slice();
+                } else {
+                    _nodeDoclet[_tag] = _infoDoclet.tags[_tag][0];
+                }
+                break;
+
+            case 'default':
+            case 'defaultvalue':
+                _nodeDoclet.defaultvalue =
+                    TSLib.extractTagText(_infoDoclet, _tag, true);
+                break;
+
+            case 'description':
+                _nodeDoclet[_tag] =
+                    TSLib.extractTagText(_infoDoclet, _tag, true);
+                break;
+
+            case 'extends':
+                _nodeDoclet[_tag] =
+                    TSLib.extractTagText(_infoDoclet, _tag);
+                break;
+
+            case 'productdesc':
+                _array = _nodeDoclet.productdescs = [];
+                for (
+                    const _object
+                    of TSLib.extractTagObjects(_infoDoclet, 'productdesc')
+                ) {
+                    if (_object.type) {
+                        _array.push({
+                            products: _object.type,
+                            value: _object.text
+                        });
                     }
-                    break;
+                }
+                break;
 
-                case 'type':
-                    _split = TSLib
-                        .extractTypes(_infoDoclet.tags.type.join('|'), true);
-                    if (_split) {
-                        _nodeDoclet.type = {
-                            names: _split.map(_type => _type.replace(
+            case 'requires':
+            case 'see':
+                _nodeDoclet[_tag] = _infoDoclet.tags[_tag].slice();
+                break;
+
+            case 'sample':
+                _array = _nodeDoclet[`${_tag}s`] = [];
+                for (
+                    const _object
+                    of TSLib.extractTagObjects(_infoDoclet, 'sample')
+                ) {
+                    const _sample: TreeLib.OptionDocletSample = {
+                        name: _object.name || _object.text,
+                        value: _object.value || ''
+                    };
+                    if (_object.products) {
+                        _sample.products = _object.products;
+                    }
+                    _array.push(_sample);
+                }
+                break;
+
+            case 'type':
+                _split = TSLib.extractTypes(
+                    TSLib
+                        .extractTagInsets(_infoDoclet.tags.type.join('\n'))
+                        .join('|'),
+                    true
+                );
+                if (_split) {
+                    _nodeDoclet.type = {
+                        names: _split.map(_type => _type
+                            .replace(
                                 /[\w\.]+/gsu,
                                 substring => (
                                     TSLib.isNativeType(substring) ?
@@ -289,41 +405,41 @@ function addTreeNode(
                                             substring :
                                             `Highcharts.${substring}`
                                 )
-                            ).replace(
+                            )
+                            .replace(
                                 /^(?:Highcharts.DeepPartial|Partial)<(.*)>$/gsu,
                                 '$1'
-                            ).replace(
+                            )
+                            .replace(
                                 /\bHighcharts.AnyRecord\b/gsu,
                                 'Highcharts.Dictionary<*>'
-                            ).replace(/\bany\b/gsu, '*'))
-                        };
-                    }
-                    break;
-
-            }
-        }
-
-        for (const _moreInfo of _moreInfos) {
-
-            if (_stack.includes(_moreInfo)) { // Break recursive option trees
-                continue;
-            }
-
-            _stack.push(_moreInfo);
-
-            add(
-                TSLib.getSourceInfo(_moreInfo.meta.file, void 0, debug),
-                _treeNode,
-                _moreInfo
-            );
-
-            _stack.pop();
+                            )
+                            .replace(/\bany\b/gsu, '*')
+                        )
+                    };
+                }
+                break;
 
         }
+    }
 
-    };
+    for (const _moreInfo of _moreInfos) {
 
-    add(sourceInfo, parentNode, info);
+        if (STACK.includes(_moreInfo)) { // Break recursive option trees
+            continue;
+        }
+
+        STACK.push(_moreInfo);
+
+        addTreeNode(
+            TSLib.getSourceInfo(_moreInfo.meta.file, void 0, debug),
+            _treeNode,
+            _moreInfo
+        );
+
+        STACK.pop();
+
+    }
 
 }
 
@@ -501,34 +617,30 @@ function getTreeNode(
 async function main() {
     const args = Yargs.parseSync(process.argv) as Args;
     const debug = !!args.debug;
-    const root = args.root as (string|undefined) || DEFAULT_ROOT;
     const source = args.source as (string|undefined) || DEFAULT_SOURCE;
 
     TSLib.sourceRoot = source;
 
     let timer: number;
 
-    // timer = LogLib.starting(`Building tree from ${root}`);
-    // buildTree(root, debug);
-    // LogLib.finished(`Building tree from ${root}`, timer);
+    const _paths = (
+        FSLib.isFile(source) ?
+            [source] :
+            FSLib.getFilePaths(source, true)
+    );
 
-    if (root === DEFAULT_ROOT) {
-        // if (INDICATORS_ROOT.startsWith(source)) {
-        //     timer = LogLib.starting(
-        //         `Building indicator tree from ${INDICATORS_ROOT}`
-        //     );
-        //     buildTreeIndicators(INDICATORS_ROOT, debug);
-        //     LogLib.finished(
-        //         `Building indicator tree from ${INDICATORS_ROOT}`,
-        //         timer
-        //     );
-        // }
-        if (SERIES_ROOT.startsWith(source)) {
-            timer = LogLib.starting(`Building series tree from ${SERIES_ROOT}`);
-            buildTreeSeries(SERIES_ROOT, debug);
-            LogLib.finished(`Building series tree from ${SERIES_ROOT}`, timer);
-        }
+    timer = LogLib.starting(`Loading ${source}`);
+    for (const _path of _paths) {
+        TSLib.getSourceInfo(_path, void 0, debug);
     }
+    TSLib.autoCompleteInfos();
+    LogLib.finished(`Loading ${source}`, timer);
+
+    timer = LogLib.starting(`Building tree from ${source}`);
+    for (const _path of Object.keys(TSLib.SOURCE_CACHE)) {
+        addDefaultOptions(TSLib.SOURCE_CACHE[_path], debug);
+    }
+    LogLib.finished(`Building tree from ${source}`, timer);
 
     LogLib.message(`Found ${Object.keys(TREE).length} root options:`);
     LogLib.message(Object.keys(TREE).sort().join(', '));
@@ -558,11 +670,20 @@ async function saveJSON() {
 
     // await save('tree-defaults.json', DEFAULTS);
     save('tree-cache.json', TSLib.SOURCE_CACHE);
-    save('tree-v2.json', {
-        _meta: TREE._meta,
-        plotOptions: TREE.plotOptions,
-        series: TREE.series
-    });
+    save('tree-v2.json', TREE);
+    // save('tree-v2.json', {
+    //     _meta: TREE._meta,
+    //     plotOptions: TREE.plotOptions || {
+    //         doclet: {},
+    //         meta: {},
+    //         children: {}
+    //     },
+    //     series: TREE.series || {
+    //         doclet: {},
+    //         meta: {},
+    //         children: {}
+    //     }
+    // });
 }
 
 
