@@ -181,6 +181,13 @@ export interface ColumnOptions {
      * @default true
      */
     editable?: boolean;
+
+    /**
+     * Allows user to sorting values in column (asceding or descending).
+     *
+     * @default true
+     */
+    sorting?: boolean;
 }
 
 /**

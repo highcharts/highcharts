@@ -249,3 +249,35 @@ td.highcharts-dg-focused-cell {
     width: 100%;
     outline: none;
 }
+
+/* Sorting */
+.highcharts-dg-col-sorting {
+    position: absolute;
+    top: 0px;
+    right: 5px; /* avoid overlapping with resizer handle*/
+    display: flex;
+    flex-direction: column;
+}
+
+.highcharts-dg-col-sorting button {
+    width: 16px;
+    height: 16px;
+    border: 0px;
+    background-color: transparent;
+    background-size: 16px 16px;
+    cursor: pointer;
+    opacity: 0.3;
+}
+
+.highcharts-dg-col-sorting button:hover {
+    opacity: 1;
+}
+
+.highcharts-dg-col-sorting-asc {
+    transform: rotate(180deg);
+    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/dropdown-pointer.svg") no-repeat 50% -3px;
+}
+
+.highcharts-dg-col-sorting-desc {
+    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/dropdown-pointer.svg") no-repeat 50% -3px;
+}

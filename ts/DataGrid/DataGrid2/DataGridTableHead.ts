@@ -23,6 +23,7 @@
  * */
 
 import DGUtils from './Utils.js';
+import Utilities from '../../Core/Utilities.js';
 import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
 import F from '../../Core/Templating.js';
@@ -30,6 +31,7 @@ import Globals from './Globals.js';
 
 const { makeHTMLElement } = DGUtils;
 const { format } = F;
+const { addEvent } = Utilities;
 
 
 /* *
@@ -64,6 +66,20 @@ class DataGridTableHead {
      */
     public viewport: DataGridTable;
 
+    /**
+     * Reference to sorting (descending) button.
+     */
+    public sortingBtnContainer?: HTMLElement;
+
+    // /**
+    //  * Reference to sorting (ascending) button.
+    //  */
+    // public sortingBtnAsc?: HTMLElement;
+
+    // /**
+    //  * Reference to sorting (descending) button.
+    //  */
+    // public sortingBtnDesc?: HTMLElement;
 
     /* *
     *
@@ -116,12 +132,21 @@ class DataGridTableHead {
 
             column.setHeadElement(element);
 
+            // resizing
             if (vp.columnsResizer && (
                 vp.columnDistribution !== 'full' ||
                 i < vp.dataGrid.enabledColumns.length - 1
             )) {
                 // Render the drag handle for resizing columns.
                 this.renderColumnDragHandles(
+                    column,
+                    element
+                );
+            }
+
+            // sorting buttons
+            if (column.userOptions.sorting) {
+                this.renderColumnSortingButtons(
                     column,
                     element
                 );
@@ -158,7 +183,8 @@ class DataGridTableHead {
      * Render the drag handle for resizing columns.
      */
     private renderColumnDragHandles(
-        column: DataGridColumn, headElement: HTMLElement
+        column: DataGridColumn,
+        headElement: HTMLElement
     ): HTMLElement {
         const handle = makeHTMLElement('div', {
             className: 'highcharts-dg-col-resizer'
@@ -167,6 +193,35 @@ class DataGridTableHead {
         this.viewport.columnsResizer?.addHandleListeners(handle, column);
 
         return handle;
+    }
+
+    /**
+     * Render the drag handle for resizing columns.
+     */
+    private renderColumnSortingButtons(
+        column: DataGridColumn,
+        headElement: HTMLElement
+    ): void {
+
+        this.sortingBtnContainer = makeHTMLElement('div', {
+            className: 'highcharts-dg-col-sorting'
+        }, headElement);
+
+        const sortingBtnAsc = makeHTMLElement('button', {
+            className: 'highcharts-dg-col-sorting-asc'
+        },  this.sortingBtnContainer);
+
+        addEvent(sortingBtnAsc, 'click', () => {
+            console.log('sorting ascending');
+        });
+
+        const sortingBtnDesc = makeHTMLElement('button', {
+            className: 'highcharts-dg-col-sorting-desc'
+        },  this.sortingBtnContainer);
+
+        addEvent(sortingBtnDesc, 'click', () => {
+            console.log('sorting descending');
+        });
     }
 
     /**
