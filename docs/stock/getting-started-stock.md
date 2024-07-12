@@ -24,15 +24,15 @@ For alternative loading and bundling patterns, for UMD, AMD, CommonJS or ES6 mod
 Constructor
 -----------
 
-Run the `stockChart` constructor for initializing a Stock chart visualization. The constructor takes two required parameters (container ID and a config object) and a third optional parameter, which is the callback function ran after the chart has loaded.
+Run the `stockChart` constructor for initializing a Stock chart visualization. The constructor takes two required parameters (container ID and a config object) and a third optional parameter, which is the callback function run after the chart has loaded.
 
 ```js
-Highcharts.stockChart('container ID', {
+Highcharts.stockChart('containerID', {
     // configuration options object
 }, callback);
 ```
 
-1.  `container ID:` The `id` of the HTML element used for rendering the chart.
+1.  `containerID:` The `id` of the HTML element used for rendering the chart.
 2.  `config`: An object with configuration options for defining the Stock chart.
 3.  `callback`: (Optional) A callback for getting a handle on the chart once it's loaded.
 
@@ -41,7 +41,7 @@ Highcharts.stockChart('container ID', {
 Basic example
 --------------
 
-To create your first simple stock chart, all you need to do is to define the dataset appropriate for the [series type](https://api.highcharts.com/highstock/series) that you choose. The default series type is a [line series](https://api.highcharts.com/highstock/series.line).
+To create your first basic stock chart, all you need to do is to define the dataset appropriate for the [series type](https://api.highcharts.com/highstock/series) that you choose. The default series type is a [line series](https://api.highcharts.com/highstock/series.line).
 
 That's all you need to get started with Highcharts Stock:
 
