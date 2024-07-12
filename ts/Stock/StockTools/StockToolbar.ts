@@ -195,6 +195,93 @@ class Toolbar {
     }
 
     /**
+    * Show a given submenu
+    * @private
+    */
+    public showSubmenu(
+        submenuWrapper: HTMLElement,
+        buttonWrapper: HTMLElement
+    ): void {
+        const buttonWidth: number = getStyle(buttonWrapper, 'width') as any;
+        const menuWrapper = this.listWrapper;
+        // Show menu
+        // to calculate height of element
+        submenuWrapper.style.display = 'block';
+        submenuWrapper.dataset.open = 'true';
+
+
+        let topMargin = submenuWrapper.offsetHeight -
+                            buttonWrapper.offsetHeight - 3;
+
+        // Calculate position of submenu in the box
+        // if submenu is inside, reset top margin
+        if (
+            // Cut on the bottom
+            !(submenuWrapper.offsetHeight +
+                            buttonWrapper.offsetTop >
+                        this.wrapper.offsetHeight &&
+                        // Cut on the top
+                        buttonWrapper.offsetTop > topMargin)
+        ) {
+            topMargin = 0;
+        }
+
+        // Apply calculated styles
+        css((submenuWrapper as any), {
+            top: -topMargin + 'px',
+            left: buttonWidth + 3 + 'px'
+        });
+
+        buttonWrapper.className += ' highcharts-current';
+        (menuWrapper as any).startWidth = this.wrapper.offsetWidth;
+        menuWrapper.style.width = (menuWrapper as any).startWidth +
+                        getStyle(menuWrapper, 'padding-left') +
+                        (submenuWrapper as any).offsetWidth + 3 + 'px';
+    }
+
+    /**
+     * Hide the submenu
+     * @private
+     */
+    public hideSubmenu(
+        submenuWrapper: HTMLElement,
+        buttonWrapper: HTMLElement
+    ): void {
+        const menuWrapper = this.listWrapper;
+
+        menuWrapper.style.width =
+            (menuWrapper as any).startWidth + 'px';
+        buttonWrapper.classList.remove('highcharts-current');
+        submenuWrapper.style.display = 'none';
+        submenuWrapper.dataset.open = 'false';
+    }
+
+    /**
+     * Toggle a given submenu
+     * @private
+     */
+    public toggleSubmenu(
+        buttonWrapper: HTMLElement,
+        submenuWrapper: HTMLElement
+    ): void {
+        // Hide menu
+        if (
+            buttonWrapper.className
+                .indexOf('highcharts-current') >= 0
+        ) {
+            this.hideSubmenu(
+                submenuWrapper,
+                buttonWrapper
+            );
+        } else {
+            this.showSubmenu(
+                submenuWrapper,
+                buttonWrapper
+            );
+        }
+    }
+
+    /**
      * Create submenu (list of buttons) for the option. In example main button
      * is Line, in submenu will be buttons with types of lines.
      *
@@ -212,9 +299,6 @@ class Toolbar {
     ): void {
         const submenuArrow = parentBtn.submenuArrow,
             buttonWrapper = parentBtn.buttonWrapper,
-            buttonWidth: number = getStyle(buttonWrapper, 'width') as any,
-            wrapper = this.wrapper,
-            menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
             // Create submenu container
             submenuWrapper = this.submenu = createElement('ul', {
@@ -232,48 +316,11 @@ class Toolbar {
                 // Erase active class on all other buttons
                 this.eraseActiveButtons(allButtons, buttonWrapper);
 
-                // Hide menu
-                if (
-                    buttonWrapper.className
-                        .indexOf('highcharts-current') >= 0
-                ) {
-                    menuWrapper.style.width =
-                        (menuWrapper as any).startWidth + 'px';
-                    buttonWrapper.classList.remove('highcharts-current');
-                    (submenuWrapper as any).style.display = 'none';
-                } else {
-                    // Show menu
-                    // to calculate height of element
-                    (submenuWrapper as any).style.display = 'block';
+                this.toggleSubmenu(
+                    buttonWrapper,
+                    submenuWrapper
+                );
 
-                    let topMargin = (submenuWrapper as any).offsetHeight -
-                            buttonWrapper.offsetHeight - 3;
-
-                    // Calculate position of submenu in the box
-                    // if submenu is inside, reset top margin
-                    if (
-                        // Cut on the bottom
-                        !((submenuWrapper as any).offsetHeight +
-                            buttonWrapper.offsetTop >
-                        wrapper.offsetHeight &&
-                        // Cut on the top
-                        buttonWrapper.offsetTop > topMargin)
-                    ) {
-                        topMargin = 0;
-                    }
-
-                    // Apply calculated styles
-                    css((submenuWrapper as any), {
-                        top: -topMargin + 'px',
-                        left: buttonWidth + 3 + 'px'
-                    });
-
-                    buttonWrapper.className += ' highcharts-current';
-                    (menuWrapper as any).startWidth = wrapper.offsetWidth;
-                    menuWrapper.style.width = (menuWrapper as any).startWidth +
-                        getStyle(menuWrapper, 'padding-left') +
-                        (submenuWrapper as any).offsetWidth + 3 + 'px';
-                }
             })
         );
     }

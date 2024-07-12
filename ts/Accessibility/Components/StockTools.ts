@@ -28,6 +28,7 @@ class StockToolsComponent extends AccessibilityComponent {
 
     public buttons: HTMLElement[] = [];
     public focusedButtonIndex: number = 0;
+    public submenuParentIndex: number | null = null;
     public focusInPopup: boolean = false;
     public eventCallbacks: Function[] = [];
 
@@ -218,10 +219,18 @@ class StockToolsComponent extends AccessibilityComponent {
             const component = this;
             const keys = this.keyCodes;
 
-            if (keyCode === keys.left || keyCode === keys.up) {
+            if (keyCode === keys.home) {
+                this.focusedButtonIndex = 0;
+            }
+
+            if (keyCode === keys.end) {
+                this.focusedButtonIndex = this.buttons.length - 1;
+            }
+
+            if ([keys.left, keys.up].includes(keyCode)) {
                 component.decrementFocusedButtonIndex();
             }
-            if (keyCode === keys.right || keyCode === keys.down) {
+            if ([keys.right, keys.down].includes(keyCode)) {
                 component.incrementFocusedButtonIndex();
             }
 
@@ -238,8 +247,15 @@ class StockToolsComponent extends AccessibilityComponent {
         announce = false
     ): void {
         if (submenu && submenu.dataset.open !== 'false') {
-            submenu.dataset.open = 'false';
-            submenu.style.display = 'none';
+            const wrapperElement =
+                submenu.closest('li');
+
+            if (wrapperElement) {
+                this.chart.stockTools?.hideSubmenu(
+                    submenu,
+                    wrapperElement
+                );
+            }
 
             if (announce) {
                 this.announcer.announce(
@@ -248,6 +264,20 @@ class StockToolsComponent extends AccessibilityComponent {
                         { open: false }
                     )
                 );
+            }
+
+            // Remove the temporary close buttons
+            submenu
+                .querySelectorAll('li.temp-close-button')
+                .forEach((buttonWrapper): void => {
+                    buttonWrapper.remove();
+                });
+
+            if (this.submenuParentIndex) {
+                this.focusedButtonIndex =
+                        this.submenuParentIndex;
+
+                this.submenuParentIndex = null;
             }
 
             this.setButtons();
@@ -260,9 +290,12 @@ class StockToolsComponent extends AccessibilityComponent {
             '.highcharts-submenu-wrapper[data-open="true"]'
         );
 
-
         if (submenus?.length) {
             submenus?.forEach((sub): void => this.closeSubmenu(sub));
+
+            if (this.submenuParentIndex) {
+                this.focusedButtonIndex = this.submenuParentIndex;
+            }
 
             return true;
         }
@@ -309,6 +342,20 @@ class StockToolsComponent extends AccessibilityComponent {
         }
     }
 
+    private onEscKeyPress(
+        this: StockToolsComponent
+    ): number {
+        if (!this.focusInPopup) {
+            const didClose = this.closeOpenSubmenus();
+
+            if (didClose) {
+                this.focusButton();
+            }
+        }
+
+        return 0;
+    }
+
     private onEnterKeyPress(
         this: StockToolsComponent
     ): number {
@@ -322,58 +369,87 @@ class StockToolsComponent extends AccessibilityComponent {
             );
 
             if (button.classList.contains('highcharts-submenu-item-arrow')) {
-                if (submenu) {
-                    if (submenu.dataset.open === 'true') {
-                        this.closeSubmenu(submenu, true);
-                        // Add the class to the list item to trigger
-                        // event listener
-                        // logic in StockToolbar.ts
-                        submenu.parentElement
-                            ?.classList.add('highcharts-current');
+                if (submenu && submenu.dataset.open === 'false') {
+                    this.submenuParentIndex = this.focusedButtonIndex;
+
+                    // Insert a close button
+                    const buttonClone = component.createElement('button');
+                    buttonClone.setAttribute('aria-label', 'Close submenu');
+                    buttonClone.textContent = 'Close';
+                    buttonClone.style.fontSize = '0.6rem';
+                    buttonClone.style.height = '1.2rem';
+                    buttonClone.classList.add('highcharts-menu-item-btn');
+
+                    const listItem = component.createElement('li');
+                    listItem.style.height = '1.2rem';
+                    listItem.classList.add('temp-close-button');
+
+                    buttonClone.addEventListener('click', (e):void => {
+                        e.preventDefault();
+
+                        component.closeSubmenu(
+                            submenu,
+                            true
+                        );
+
+                        component.focusButton();
+                    }, { once: true });
+
+                    listItem.appendChild(buttonClone);
+                    submenu.prepend(listItem);
+
+                    // Make submenu traversable by keyboard
+                    const childButtons = submenu
+                        .querySelectorAll<HTMLElement>(
+                        'button'
+                    );
+
+                    if (childButtons?.length) {
+                        const mainButton = button
+                            .parentElement
+                            ?.querySelector<HTMLElement>('.highcharts-menu-item-btn');
+
+                        component.buttons = Array.from(childButtons);
+
+                        const indexToFocus =
+                                Array.from(childButtons)
+                                    .findIndex(
+                                        (child): boolean =>
+                                            mainButton?.dataset.label ===
+                                                child.dataset.label
+                                    );
+
+
+                        component.focusedButtonIndex = (
+                            indexToFocus !== -1 ?
+                                indexToFocus :
+                                0
+                        );
+
+                        childButtons.forEach((childButton): void => {
+                            attr(childButton, {
+                                tabindex: -1
+                            });
+                        });
+
+                        component.announcer.announce(
+                            component.chart.langFormat(
+                                'stockTools.submenuToggle',
+                                {
+                                    open: true
+                                }
+                            )
+                        );
+
+                        // Trigger focus after navigationHandler
+                        // has finished, otherwise selectButton is triggered
+                        setTimeout((): void => {
+                            component.focusButton();
+                        });
+
 
                         return component.keyboardNavigationHandler
                             .response.noHandler;
-                    }
-
-                    if (submenu.dataset.open === 'false') {
-                        const childButtons = submenu
-                            .querySelectorAll<HTMLElement>(
-                            'button'
-                        );
-
-                        if (childButtons?.length) {
-                            const buttonsBefore = this.buttons.slice(
-                                0,
-                                this.focusedButtonIndex + 1
-                            );
-
-                            // TODO: maybe just have childbuttons
-                            // + toggle submenu
-                            this.buttons = [
-                                ...buttonsBefore,
-                                ...Array.from(childButtons)
-                            ];
-
-                            childButtons.forEach((childButton): void => {
-                                attr(childButton, {
-                                    tabindex: -1
-                                });
-                            });
-
-                            submenu.dataset.open = 'true';
-
-                            component.announcer.announce(
-                                component.chart.langFormat(
-                                    'stockTools.submenuToggle',
-                                    {
-                                        open: true
-                                    }
-                                )
-                            );
-
-                            return component.keyboardNavigationHandler
-                                .response.sucess;
-                        }
                     }
                 }
 
@@ -381,7 +457,8 @@ class StockToolsComponent extends AccessibilityComponent {
             }
 
             if (
-                button.classList.contains('highcharts-menu-item-btn')
+                button.classList.contains('highcharts-menu-item-btn') &&
+                button.dataset.label
             ) {
                 const submenu = button
                     .closest('.highcharts-submenu-wrapper');
@@ -406,7 +483,7 @@ class StockToolsComponent extends AccessibilityComponent {
 
                     // Announce here as 'selectButton' event is not fired and
                     // ctrl-option-space works otherwise
-                    this.announceTool(button);
+                    component.announceTool(button);
 
                     return component.keyboardNavigationHandler.response.success;
                 }
@@ -446,7 +523,14 @@ class StockToolsComponent extends AccessibilityComponent {
         const kbdConfig: KeyboardNavigationHandler.Options = {
             keyCodeMap: [
                 [
-                    [keys.left, keys.right, keys.up, keys.down],
+                    [
+                        keys.left,
+                        keys.right,
+                        keys.up,
+                        keys.down,
+                        keys.home,
+                        keys.end
+                    ],
                     this.onDirectionKeyPress.bind(this)
                 ],
                 [
@@ -456,6 +540,10 @@ class StockToolsComponent extends AccessibilityComponent {
                 [
                     [keys.enter, keys.space],
                     this.onEnterKeyPress.bind(this)
+                ],
+                [
+                    [keys.esc],
+                    this.onEscKeyPress.bind(this)
                 ]
             ],
             validate: (): boolean => !!(
