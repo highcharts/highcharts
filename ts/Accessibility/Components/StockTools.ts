@@ -242,8 +242,7 @@ class StockToolsComponent extends AccessibilityComponent {
     }
 
     private closeSubmenu(
-        submenu: HTMLElement | null | undefined,
-        announce = false
+        submenu: HTMLElement | null | undefined
     ): void {
         if (submenu && submenu.dataset.open !== 'false') {
             const wrapperElement =
@@ -253,15 +252,6 @@ class StockToolsComponent extends AccessibilityComponent {
                 this.chart.stockTools?.hideSubmenu(
                     submenu,
                     wrapperElement
-                );
-            }
-
-            if (announce) {
-                this.announcer.announce(
-                    this.chart.langFormat(
-                        'stockTools.submenuToggle',
-                        { open: false }
-                    )
                 );
             }
 
@@ -386,10 +376,7 @@ class StockToolsComponent extends AccessibilityComponent {
                     buttonClone.addEventListener('click', (e):void => {
                         e.preventDefault();
 
-                        component.closeSubmenu(
-                            submenu,
-                            true
-                        );
+                        component.closeSubmenu(submenu);
 
                         component.focusButton();
                     }, { once: true });
@@ -431,15 +418,6 @@ class StockToolsComponent extends AccessibilityComponent {
                             });
                         });
 
-                        component.announcer.announce(
-                            component.chart.langFormat(
-                                'stockTools.submenuToggle',
-                                {
-                                    open: true
-                                }
-                            )
-                        );
-
                         // Trigger focus after navigationHandler
                         // has finished, otherwise selectButton is triggered
                         setTimeout((): void => {
@@ -480,7 +458,7 @@ class StockToolsComponent extends AccessibilityComponent {
                     // ctrl-option-space works otherwise
                     component.announceTool(button);
 
-                    component.closeSubmenu(submenu, false);
+                    component.closeSubmenu(submenu);
                     component.focusedButtonIndex--; // Target main button
                     component.focusButton();
 

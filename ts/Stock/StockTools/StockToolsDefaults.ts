@@ -41,7 +41,6 @@ const lang: LangOptions = {
      * @since   7.0.0
      */
     stockTools: {
-        submenuToggle: 'Submenu {#if open}opened{else}closed{/if}',
         toolChanged:
             'Changed {toolType} tool to {toolLabel}',
         toolSelected:

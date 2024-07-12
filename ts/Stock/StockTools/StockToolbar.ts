@@ -204,11 +204,15 @@ class Toolbar {
     ): void {
         const buttonWidth: number = getStyle(buttonWrapper, 'width') as any;
         const menuWrapper = this.listWrapper;
+
         // Show menu
         // to calculate height of element
         submenuWrapper.style.display = 'block';
         submenuWrapper.dataset.open = 'true';
 
+        const toggleButton = buttonWrapper
+            .querySelector('.highcharts-submenu-item-arrow');
+        toggleButton?.setAttribute('aria-expanded', 'true');
 
         let topMargin = submenuWrapper.offsetHeight -
                             buttonWrapper.offsetHeight - 3;
@@ -252,6 +256,11 @@ class Toolbar {
         menuWrapper.style.width =
             (menuWrapper as any).startWidth + 'px';
         buttonWrapper.classList.remove('highcharts-current');
+
+        const toggleButton = buttonWrapper
+            .querySelector('.highcharts-submenu-item-arrow');
+        toggleButton?.setAttribute('aria-expanded', 'false');
+
         submenuWrapper.style.display = 'none';
         submenuWrapper.dataset.open = 'false';
     }
@@ -304,6 +313,14 @@ class Toolbar {
             submenuWrapper = this.submenu = createElement('ul', {
                 className: 'highcharts-submenu-wrapper'
             }, void 0, buttonWrapper);
+
+        submenuWrapper.setAttribute('role', 'menu');
+        submenuWrapper.id = 'highcharts-submenu-wrapper-' +
+            parentBtn.mainButton.dataset.btnName;
+
+        parentBtn.submenuArrow.setAttribute('aria-controls', submenuWrapper.id);
+        parentBtn.submenuArrow.setAttribute('aria-haspopup', 'true');
+        parentBtn.submenuArrow.setAttribute('aria-expanded', 'false');
 
         // Create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
