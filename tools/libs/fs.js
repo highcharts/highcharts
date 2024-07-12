@@ -595,7 +595,7 @@ function path(
 ) {
 
     if (typeof path !== 'string') {
-        path = Path.join(path);
+        path = Path.join(...path);
     }
 
     if (Path.sep !== Path.posix.sep) {
