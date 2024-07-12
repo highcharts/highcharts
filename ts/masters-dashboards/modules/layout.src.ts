@@ -19,7 +19,7 @@
  * */
 
 
-import Globals from '../../Dashboards/Globals';
+import Globals from '../../Dashboards/Globals.js';
 
 // Fill registries
 import '../../Dashboards/EditMode/EditMode.js';
