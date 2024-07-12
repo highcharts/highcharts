@@ -7,12 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Sebastian Bochan
- *  - Wojciech Chmiel
- *  - Gøran Slettemark
- *  - Sophie Bremer
- *  - Pawel Lysy
- *  - Karol Kolodziej
+ *  - Dawid Dragula
  *
  * */
 
@@ -52,28 +47,44 @@ namespace Globals {
         [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
     };
 
+    /**
+     * Utility type to mark recursively all properties and sub-properties
+     * required.
+     */
+    export type DeepRequired<T> = {
+        [K in keyof T]-?: DeepRequired<T[K]>;
+    };
+
     /* *
      *
      *  Constants
      *
      * */
 
-    export const classNamePrefix = 'highcharts-datagrid-';
+    export const classNamePrefix = 'highcharts-dg-';
 
     export const classNames = {
-        gridContainer: classNamePrefix + 'container',
-        outerContainer: classNamePrefix + 'outer-container',
-        scrollContainer: classNamePrefix + 'scroll-container',
-        innerContainer: classNamePrefix + 'inner-container',
-        cell: classNamePrefix + 'cell',
-        cellInput: classNamePrefix + 'cell-input',
-        row: classNamePrefix + 'row',
-        columnHeader: classNamePrefix + 'column-header'
+        container: classNamePrefix + 'container',
+        tableElement: classNamePrefix + 'table',
+        captionElement: classNamePrefix + 'caption',
+        theadElement: classNamePrefix + 'thead',
+        tbodyElement: classNamePrefix + 'tbody',
+        rowElement: classNamePrefix + 'row',
+        columnElement: classNamePrefix + 'column',
+        hoveredCell: classNamePrefix + 'hovered-cell',
+        hoveredColumn: classNamePrefix + 'hovered-column',
+        hoveredRow: classNamePrefix + 'hovered-row',
+        focusedCell: classNamePrefix + 'focused-cell',
+        odd: classNamePrefix + 'odd',
+        rowsContentNowrap: classNamePrefix + 'rows-content-nowrap',
+        headCellContent: classNamePrefix + 'head-cell-content',
+        headCellResized: classNamePrefix + 'head-cell-resized',
+        noData: classNamePrefix + 'no-data'
     };
 
     export const win = window;
     export const userAgent = (win.navigator && win.navigator.userAgent) || '';
-    export const isChrome = win.chrome;
+    export const isChrome = userAgent.indexOf('Chrome') !== -1;
     export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
 
 }

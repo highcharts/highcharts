@@ -9,7 +9,7 @@ const columns = {
 };
 
 
-DataGrid.dataGrid2('container', {
+DataGrid.dataGrid('container', {
     table: new DataTable({ columns })
 });
 

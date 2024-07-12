@@ -44,6 +44,18 @@ Dashboards.board('container', {
         type: 'DataGrid',
         connector: {
             id: 'data'
+        },
+        dataGridOptions: {
+            defaults: {
+                columns: {
+                    editable: true
+                }
+            },
+            columns: {
+                time: {
+                    editable: false
+                }
+            }
         }
     }]
 });

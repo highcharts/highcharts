@@ -1,4 +1,4 @@
-DataGrid.dataGrid2('container', {
+DataGrid.dataGrid('container', {
     table: {
         columns: {
             date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],

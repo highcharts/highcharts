@@ -9,7 +9,6 @@
     width: 15%;
 }
 
-.custom-column-class-name {
-    color: #f00;
+.highcharts-dg-column[data-column-id="weight"] {
     width: 40%;
 }
