@@ -214,7 +214,6 @@ class StockToolsComponent extends AccessibilityComponent {
         keyCode: number,
         e: KeyboardEvent
     ): number {
-        // TODO: shift or ctrl? or both?
         if (!this.focusInPopup || (this.focusInPopup && e.shiftKey)) {
             const component = this;
             const keys = this.keyCodes;
@@ -446,10 +445,6 @@ class StockToolsComponent extends AccessibilityComponent {
                         setTimeout((): void => {
                             component.focusButton();
                         });
-
-
-                        return component.keyboardNavigationHandler
-                            .response.noHandler;
                     }
                 }
 
@@ -461,7 +456,7 @@ class StockToolsComponent extends AccessibilityComponent {
                 button.dataset.label
             ) {
                 const submenu = button
-                    .closest('.highcharts-submenu-wrapper');
+                    .closest<HTMLElement>('.highcharts-submenu-wrapper');
 
                 // Handle submenu buttons ourselves to make
                 // states less confusing for screen readers
@@ -484,6 +479,10 @@ class StockToolsComponent extends AccessibilityComponent {
                     // Announce here as 'selectButton' event is not fired and
                     // ctrl-option-space works otherwise
                     component.announceTool(button);
+
+                    component.closeSubmenu(submenu, false);
+                    component.focusedButtonIndex--; // Target main button
+                    component.focusButton();
 
                     return component.keyboardNavigationHandler.response.success;
                 }
