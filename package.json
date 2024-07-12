@@ -42,7 +42,9 @@
     "postinstall": "npx gulp update-vendor",
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "cd test/ts-node-unit-tests && node -r ts-node/register bench.ts",
-    "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts"
+    "benchmark-compare": "cd test/ts-node-unit-tests && node -r ts-node/register benchmark-compare.ts",
+    "dwebpack": "webpack --config ./webpack/dashboards.webpack.js",
+    "dwebpack-sample": "npm run dwebpack && node ./webpack/sample.js"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.282.0",
@@ -99,6 +101,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sharding": "^4.4.0",
     "lint-staged": "^13.1.0",
+    "live-server": "^1.2.2",
     "lolex": "^6.0.0",
     "marked": "^4.2.12",
     "moment": "2.30",

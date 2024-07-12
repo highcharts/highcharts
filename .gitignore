@@ -9,6 +9,7 @@
 /js
 /build
 /code
+/dist
 /vendor
 /cypress
 /errors/errors.json
@@ -74,3 +75,5 @@ tmp/
 /env.file
 
 *.bak
+
+/webpack/**/dist

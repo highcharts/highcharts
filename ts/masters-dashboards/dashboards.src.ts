@@ -93,7 +93,7 @@ declare global {
  * */
 
 
-const G = Globals as unknown as Dashboards;
+const G = window.Dashboards ?? Globals as unknown as Dashboards;
 
 G.board = Board.board;
 G.error = Utilities.error;

@@ -19,7 +19,7 @@
  * */
 
 
-import Globals from '../../Dashboards/Globals.js';
+import Globals from '../../Dashboards/Globals';
 
 // Fill registries
 import '../../Dashboards/EditMode/EditMode.js';
@@ -50,7 +50,7 @@ declare global {
  * */
 
 
-const G = Globals as unknown as Dashboards;
+const G = window.Dashboards ?? Globals as unknown as Dashboards;
 
 G.EditMode = EditMode;
 G.FullScreen = Fullscreen;
