@@ -28,13 +28,11 @@ import DataGridColumn from './DataGridColumn.js';
 import DataGridTable from './DataGridTable.js';
 import Templating from '../Core/Templating.js';
 import Globals from './Globals.js';
-import DataModifier from '../Data/Modifiers/DataModifier.js';
-import DataTable from '../Data/DataTable.js';
+import ColumnSorting from './Actions/ColumnSorting.js';
 
 const { makeHTMLElement } = DGUtils;
 
 const { format } = Templating;
-const { addEvent } = Utilities;
 
 
 /* *
@@ -68,21 +66,6 @@ class DataGridTableHead {
      * The viewport (table) the table head belongs to.
      */
     public viewport: DataGridTable;
-
-    /**
-     * Reference to sorting (descending) button.
-     */
-    public sortingBtnContainer?: HTMLElement;
-
-    // /**
-    //  * Reference to sorting (ascending) button.
-    //  */
-    // public sortingBtnAsc?: HTMLElement;
-
-    // /**
-    //  * Reference to sorting (descending) button.
-    //  */
-    // public sortingBtnDesc?: HTMLElement;
 
     /* *
     *
@@ -127,7 +110,7 @@ class DataGridTableHead {
             ) : column.id;
 
             const element = makeHTMLElement('th', {}, this.container);
-            makeHTMLElement('span', {
+            column.headerWrapper = makeHTMLElement('div', {
                 innerText,
                 className: Globals.classNames.headCellContent
             }, element);
@@ -152,10 +135,7 @@ class DataGridTableHead {
 
             // sorting buttons
             if (column.userOptions.sorting) {
-                this.renderColumnSortingButtons(
-                    column,
-                    element
-                );
+                column.columnSorting = new ColumnSorting(column, element);
             }
         }
     }
@@ -199,59 +179,6 @@ class DataGridTableHead {
         this.viewport.columnsResizer?.addHandleListeners(handle, column);
 
         return handle;
-    }
-
-    /**
-     * Render the drag handle for resizing columns.
-     */
-    private renderColumnSortingButtons(
-        column: DataGridColumn,
-        headElement: HTMLElement
-    ): void {
-
-        if (!this.viewport.dataGrid.dataTable) {
-            return;
-        }
-
-        const sortAsc = new DataModifier.types.Sort({
-            direction: 'asc',
-            orderByColumn: column.id
-        });
-
-        const sortDesc = new DataModifier.types.Sort({
-            direction: 'desc',
-            orderByColumn: column.id
-        });
-
-        this.sortingBtnContainer = makeHTMLElement('div', {
-            className: 'highcharts-dg-col-sorting'
-        }, headElement);
-
-        const sortingBtnAsc = makeHTMLElement('button', {
-            className: 'highcharts-dg-col-sorting-asc'
-        },  this.sortingBtnContainer);
-
-        addEvent(sortingBtnAsc, 'click', () => {
-            this.viewport.dataGrid.update({
-                table: sortAsc.modifyTable(
-                    (this.viewport.dataGrid.dataTable as DataTable).clone()
-                )
-            });
-        });
-
-        const sortingBtnDesc = makeHTMLElement('button', {
-            className: 'highcharts-dg-col-sorting-desc'
-        },  this.sortingBtnContainer);
-
-        addEvent(sortingBtnDesc, 'click', () => {
-            this.viewport.dataGrid.update({
-                table: sortDesc.modifyTable(
-                    (this.viewport.dataGrid.dataTable as DataTable).clone()
-                )
-            });
-
-            console.log('this.viewport.dataGrid', this.viewport.dataGrid);
-        });
     }
 
     /**

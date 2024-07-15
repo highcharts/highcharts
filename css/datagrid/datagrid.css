@@ -127,9 +127,12 @@
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 10px;
+    /* padding-right: 10px; */
     padding-left: 3px;
-    width: 100%;
+    width: calc(100% - 20px);
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 .highcharts-dg-table tbody {
@@ -252,32 +255,13 @@ td.highcharts-dg-focused-cell {
 
 /* Sorting */
 .highcharts-dg-col-sorting {
-    position: absolute;
-    top: 0;
-    right: 5px; /* avoid overlapping with resizer handle */
-    display: flex;
-    flex-direction: column;
-}
-
-.highcharts-dg-col-sorting button {
-    width: 16px;
-    height: 16px;
-    border: 0;
-    background-color: transparent;
-    background-size: 16px 16px;
     cursor: pointer;
-    opacity: 0.3;
-}
-
-.highcharts-dg-col-sorting button:hover {
-    opacity: 1;
 }
 
 .highcharts-dg-col-sorting-asc {
-    transform: rotate(180deg);
-    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/dropdown-pointer.svg") no-repeat 50% -3px;
+    background: url("data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idy02IGgtNiB0ZXh0LWdyYXktODAwIGRhcms6dGV4dC13aGl0ZSIgYXJpYS1oaWRkZW49InRydWUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTEyIDE5VjVtMCAxNC00LTRtNCA0IDQtNCIvPgo8L3N2Zz4K") no-repeat 100% 50%;
 }
 
 .highcharts-dg-col-sorting-desc {
-    background: url("https://code.highcharts.com/dashboards/gfx/dashboards-icons/dropdown-pointer.svg") no-repeat 50% -3px;
+    background: url("data:image/svg+xml;base64,PHN2ZyBjbGFzcz0idy02IGgtNiB0ZXh0LWdyYXktODAwIGRhcms6dGV4dC13aGl0ZSIgYXJpYS1oaWRkZW49InRydWUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogIDxwYXRoIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTEyIDZ2MTNtMC0xMyA0IDRtLTQtNC00IDQiLz4KPC9zdmc+Cg==") no-repeat 100% 50%;
 }

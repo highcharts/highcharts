@@ -29,6 +29,7 @@ import DataTable from '../Data/DataTable.js';
 import Globals from './Globals.js';
 import Utils from '../Core/Utilities.js';
 import DGUtils from './Utils.js';
+import ColumnSorting from './Actions/ColumnSorting';
 
 const { merge } = Utils;
 const { makeHTMLElement } = DGUtils;
@@ -89,7 +90,7 @@ class DataGridColumn {
     /**
      * The id of the column (`name` in the Data Table).
      */
-    public readonly id: string;
+    public id: string;
 
     /**
      * The data of the column.
@@ -121,6 +122,15 @@ class DataGridColumn {
      */
     public readonly index: number;
 
+    /**
+     * The wrapper for content of head.
+     */
+    public headerWrapper?: HTMLElement;
+
+    /**
+     * Sorting option
+     */
+    public columnSorting?: ColumnSorting;
 
     /* *
     *
