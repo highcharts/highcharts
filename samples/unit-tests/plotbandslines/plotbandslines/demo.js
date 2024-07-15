@@ -259,3 +259,34 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Plotbands in stock', assert => {
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: Array.from({ length: 50 }, () => 1),
+            showInNavigator: false
+        }],
+        xAxis: {
+            min: 10,
+            max: 30
+        },
+        navigator: {
+            xAxis: {
+                min: 0,
+                max: 50,
+                plotBands: [{
+                    from: 10,
+                    to: 14,
+                    color: 'red'
+                }]
+            }
+        }
+    });
+    const xAxis = chart.xAxis[1];
+    assert.strictEqual(
+        xAxis.plotLinesAndBands[0].svgElem.pathArray[0][2],
+        xAxis.top,
+        'The plotBand on navigator should be positioned on corresponding yAxis'
+    );
+});
