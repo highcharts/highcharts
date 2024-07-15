@@ -42,7 +42,7 @@ const TS = require('typescript');
 const DOCLET = /\/\*\*.*?\*\//gsu;
 
 
-const DOCLET_TAG_INSET = /\{([^}]+)\}/gsu;
+const DOCLET_TAG_INSET = /^\s*\{([^}]+)\}/su;
 
 
 const DOCLET_TAG_NAME = /^(?:\[([a-z][\w.='"]+)\]|([a-z][\w.='"]*))/su;
@@ -565,20 +565,18 @@ function extractInfos(
 
 
 /**
- * Retrieves curly bracket insets from the given tag text.
+ * Retrieves the leading curly bracket inset from the given tag text.
  *
  * @param {string} text
  * Tag text to get insets from.
  *
- * @return {Array<string>}
- * Insets from curly bracket.
+ * @return {string}
+ * Inset from curly bracket or `undefined`.
  */
-function extractTagInsets(
+function extractTagInset(
     text
 ) {
-    return Array
-        .from(text.matchAll(DOCLET_TAG_INSET))
-        .map(inset => inset[1]);
+    return (text.match(DOCLET_TAG_INSET) || [])[1];
 }
 
 
@@ -601,8 +599,8 @@ function extractTagObjects(
     /** @type {Array<DocletTag>} */
     const _objects = [];
 
-    /** @type {Array<string>} */
-    let _array;
+    /** @type {string|undefined} */
+    let _inset;
     /** @type {RegExpMatchArray} */
     let _match;
     /** @type {DocletTag} */
@@ -610,13 +608,13 @@ function extractTagObjects(
 
     for (let _text of (doclet.tags[tag] || [])) {
         _object = { tag };
+        _inset = extractTagInset(_text);
 
-        if (_text.startsWith('{')) {
-            _array = extractTagInsets(_text);
-            if (_array.length) {
-                _object.type = extractTypes(_array[0]); // only first is a type
-                _text = _text.replace(`{${_array[0]}}`, '').trimStart();
-            }
+        if (_inset) {
+            _object.type = _inset;
+            _text = _text
+                .substring(_text.indexOf(`{${_inset}}` + _inset.length + 2))
+                .trimStart();
         }
 
         switch (tag) {
@@ -627,7 +625,6 @@ function extractTagObjects(
             case 'param':
             case 'return':
             case 'returns':
-            case 'type':
                 _match = _text.match(DOCLET_TAG_NAME);
                 if (_match) {
                     if (_match[1]) {
@@ -646,11 +643,6 @@ function extractTagObjects(
 
             case 'sample':
             case 'samples':
-                _array = extractTagInsets(_text);
-                if (_array.length) {
-                    _text = _text.replace(`{${_array[0]}}`, '').trimStart();
-                    _object.products = _array[0].split('|');
-                }
                 _match = _text.match(/^\S+/gsu);
                 if (_match) {
                     _object.name = _text.substring(_match[0].length).trim();
@@ -678,8 +670,7 @@ function extractTagObjects(
 
 
 /**
- * Retrieves the text of the last occurance for the specified tag from a
- * DocletInfo object.
+ * Retrieves the text of the specified tag from a DocletInfo object.
  *
  * @param {DocletInfo} doclet
  * Doclet information to retrieve from.
@@ -687,9 +678,10 @@ function extractTagObjects(
  * @param {string} tag
  * Tag to retrieve.
  *
- * @param {boolean} [allText]
- * True, to to extract all text if tag has been found multiple times, otherwise
- * extract just the text from the last occurance.
+ * @param {boolean|string} [allOrInset]
+ * * `false`: Extracts only text from the last tag occurance. (default)
+ * * `true`: Extracts text from all tag occurances, separated by `\n\n`.
+ * * `string`: Extracts only text with matching leading inset (e.g. product).
  *
  * @return {string|undefined}
  * Retrieved text or `undefined`.
@@ -697,20 +689,45 @@ function extractTagObjects(
 function extractTagText(
     doclet,
     tag,
-    allText
+    allOrInset = false
 ) {
-    const tagText = doclet.tags[tag];
+    const _tagText = doclet.tags[tag];
 
-    if (tagText) {
-        if (allText) {
-            return tagText.join('\n\n');
-        }
-        if (tagText.length) {
-            return tagText[tagText.length - 1];
+    if (
+        !_tagText ||
+        !_tagText.length
+    ) {
+        return void 0;
+    }
+
+    if (allOrInset === false) {
+        return _tagText[_tagText.length - 1];
+    }
+
+    if (allOrInset === true) {
+        return _tagText.join('\n\n');
+    }
+
+    /** @type {Array<string>} */
+    const _insetText = [];
+
+    /** @type {string|undefined} */
+    let _inset;
+
+    for (const _text of _tagText) {
+        _inset = extractTagInset(_text);
+        if (!_inset) {
+            _insetText.push(_text);
+        } else if (_inset === allOrInset) {
+            _insetText.push(
+                _text
+                    .substring(_text.indexOf(`{${_inset}}` + _inset.length + 1))
+                    .trimStart()
+            );
         }
     }
 
-    return void 0;
+    return _insetText.join('\n\n');
 }
 
 
@@ -3206,7 +3223,7 @@ module.exports = {
     extractGenericArguments,
     extractInfoName,
     extractInfos,
-    extractTagInsets,
+    extractTagInset,
     extractTagObjects,
     extractTagText,
     extractTypes,
@@ -3302,7 +3319,6 @@ module.exports = {
  * @typedef DocletTag
  * @property {boolean} [isOptional]
  * @property {string} [name]
- * @property {Array<string>} [products]
  * @property {string} tag
  * @property {string} [text]
  * @property {Array<string>} [type]
