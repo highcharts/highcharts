@@ -1,3 +1,5 @@
+// Data from nasdaq.com
+
 (async () => {
 
     const names = ['MSFT', 'AAPL', 'GOOG'];
