@@ -181,7 +181,7 @@ class Toolbar {
                     (button as any).buttonWrapper,
                     'click',
                     (): void => this.eraseActiveButtons(
-                        allButtons as any,
+                        allButtons,
                         button.buttonWrapper
                     )
                 )
@@ -240,7 +240,23 @@ class Toolbar {
         (menuWrapper as any).startWidth = this.wrapper.offsetWidth;
         menuWrapper.style.width = (menuWrapper as any).startWidth +
                         getStyle(menuWrapper, 'padding-left') +
-                        (submenuWrapper as any).offsetWidth + 3 + 'px';
+                        submenuWrapper.offsetWidth + 3 + 'px';
+
+        if (buttonWrapper.classList.contains('highcharts-active')) {
+            const mainButton = buttonWrapper.querySelector('button');
+
+            if (mainButton && mainButton.dataset.selectedTool) {
+                const selectedSubmenuButton =
+                    submenuWrapper
+                        .querySelector(
+                            `button[data-btn-name*=${mainButton.dataset.selectedTool}]`
+                        );
+
+                selectedSubmenuButton?.parentElement?.classList
+                    .add('highcharts-active');
+            }
+
+        }
     }
 
     /**
@@ -263,6 +279,10 @@ class Toolbar {
 
         submenuWrapper.style.display = 'none';
         submenuWrapper.dataset.open = 'false';
+
+        submenuWrapper.querySelector(
+            '.highcharts-active'
+        )?.classList.remove('highcharts-active');
     }
 
     /**
@@ -377,6 +397,10 @@ class Toolbar {
             if (selectedLabel) {
                 const isActive = mainButton.parentElement
                     ?.classList.contains('highcharts-active');
+
+                if (button.dataset.btnName !== mainButton.dataset.btnName) {
+                    mainButton.dataset.selectedTool = button.dataset.btnName;
+                }
 
                 this.setAriaLabel(
                     mainButton,
