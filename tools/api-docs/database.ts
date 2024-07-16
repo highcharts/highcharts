@@ -93,7 +93,7 @@ function sanitizeValue(
  * */
 
 
-export class APIDatabase {
+export class Database {
 
 
     /* *
@@ -149,7 +149,7 @@ export class APIDatabase {
 
     public async getNode(
         nodeName: string
-    ): Promise<(APIDatabase.Node|undefined)> {
+    ): Promise<(Database.Node|undefined)> {
         const data = await this.getTreeData();
         const nodePath = this.namePrefix + nodeName;
 
@@ -162,16 +162,16 @@ export class APIDatabase {
         return {
             name: nodeName,
             description: data.description[index],
-            doclet: JSON.parse(data.doclet[index]) as APIDatabase.Doclet,
-            meta: JSON.parse(data.meta[index]) as APIDatabase.Meta
+            doclet: JSON.parse(data.doclet[index]),
+            meta: JSON.parse(data.meta[index])
         };
     }
 
 
     public async getNodeChildren(
         nodeName: string
-    ): Promise<Array<APIDatabase.Node>> {
-        const children: Array<APIDatabase.Node> = [];
+    ): Promise<Array<Database.Node>> {
+        const children: Array<Database.Node> = [];
         const data = await this.getTreeData();
         const nodePath = this.namePrefix + nodeName;
 
@@ -185,7 +185,8 @@ export class APIDatabase {
 
             if (
                 !name.startsWith(nodePath) ||
-                name.indexOf('.', indexOffset) !== -1 // No direct child
+                // Skip children's children
+                name.indexOf('.', indexOffset) !== -1
             ) {
                 continue;
             }
@@ -193,8 +194,8 @@ export class APIDatabase {
             children.push({
                 name: nodeName,
                 description: data.description[index],
-                doclet: JSON.parse(data.doclet[index]) as APIDatabase.Doclet,
-                meta: JSON.parse(data.meta[index]) as APIDatabase.Meta
+                doclet: JSON.parse(data.doclet[index]),
+                meta: JSON.parse(data.meta[index])
             });
 
         }
@@ -247,8 +248,8 @@ export class APIDatabase {
 
 
     public async setNode(
-        node: APIDatabase.Node
-    ): Promise<APIDatabase.Node> {
+        node: Database.Node
+    ): Promise<Database.Node> {
         const data = await this.getTreeData();
         const nodePath = this.namePrefix + node.name;
 
@@ -279,7 +280,7 @@ export class APIDatabase {
  * */
 
 
-export namespace APIDatabase {
+export namespace Database {
 
 
     /* *
@@ -290,7 +291,14 @@ export namespace APIDatabase {
 
 
     export interface Doclet {
-        type: Array<string>;
+        default?: Array<(boolean|number|string)>;
+        example?: Array<string>;
+        exclude?: Array<string>;
+        extends?: Array<string>;
+        product?: Array<string>;
+        sample?: Array<string>;
+        see?: Array<string>;
+        type?: Array<string>;
     }
 
 
@@ -317,4 +325,4 @@ export namespace APIDatabase {
  * */
 
 
-export default APIDatabase;
+export default Database;
