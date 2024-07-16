@@ -50,7 +50,7 @@ class ColumnSorting {
     public column: DataGridColumn;
 
     /**
-     * The sorted column of the table.
+     * The head element of the column.
      */
     public headElement: HTMLElement;
 
@@ -66,10 +66,13 @@ class ColumnSorting {
     * */
 
     /**
-     * Constructs a new table head.
+     * Constructs sorting for a dedicated column.
      *
-     * @param viewport
-     * The viewport (table) the table head belongs to.
+     * @param column
+     * The column that be sorted.
+     * 
+     * @param headElement
+     * The head element of the column.
      */
     constructor(column: DataGridColumn, headElement: HTMLElement) {
         this.column = column;
@@ -85,7 +88,7 @@ class ColumnSorting {
     * */
 
     /**
-     * Render the drag handle for resizing columns.
+     * Adds CSS classes and click event to the header of column.
      */
     private addSortingEvents(): void {
         const vp = this.column.viewport;
@@ -115,7 +118,10 @@ class ColumnSorting {
             );
         }
     }
-
+    /**
+     * Apply the dedicated sorting for a column
+     * (ascending, descending or default).
+     */
     private setSortingState = (): void => {
         const vp = this.column.viewport;
         let state = this.sortingState;
