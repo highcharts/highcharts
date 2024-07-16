@@ -128,7 +128,7 @@ class DataGridColumn {
     public headerWrapper?: HTMLElement;
 
     /**
-     * Sorting option
+     * Sorting option.
      */
     public columnSorting?: ColumnSorting;
 
