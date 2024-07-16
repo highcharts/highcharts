@@ -733,8 +733,15 @@ hapi.ajax = function(p) {
     options = document.querySelector(options);
 
     function explodeState(state) {
-      state = state.replace(/</g, '.').replace(/>\./g, '.');
-      return state.split('.');
+      const states = state.replace(/</g, '.').replace(/>\./g, '.').split('.');
+
+      // Namespace Highcharts
+      if (states[0] === 'Highcharts') {
+        states.shift();
+        states[0] = 'Highcharts.' + states[0];
+      }
+
+      return states;
     }
 
     function build(data) {
