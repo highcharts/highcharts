@@ -164,7 +164,7 @@ class DataGridTableHead {
         column: DataGridColumn, headElement: HTMLElement
     ): HTMLElement {
         const handle = makeHTMLElement('div', {
-            className: 'highcharts-dg-col-resizer'
+            className: 'highcharts-datagrid-col-resizer'
         }, headElement);
 
         this.viewport.columnsResizer?.addHandleListeners(handle, column);

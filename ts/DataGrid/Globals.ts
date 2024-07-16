@@ -61,7 +61,7 @@ namespace Globals {
      *
      * */
 
-    export const classNamePrefix = 'highcharts-dg-';
+    export const classNamePrefix = 'highcharts-datagrid-';
 
     export const classNames = {
         container: classNamePrefix + 'container',
