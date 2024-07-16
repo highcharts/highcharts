@@ -835,6 +835,9 @@ class Toolbar {
         if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
             return;
         }
+
+        const isActive = mainNavItem.classList.contains('highcharts-active');
+
         // Set class
         mainNavItem.className = '';
         if (buttonWrapperClass) {
@@ -848,7 +851,7 @@ class Toolbar {
             button.style.backgroundImage;
 
         // Set active class
-        if (redraw) {
+        if (redraw || isActive) {
             this.toggleButtonActiveClass(mainNavItem);
         }
     }
