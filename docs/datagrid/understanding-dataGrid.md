@@ -51,7 +51,7 @@ Represents a row in the data grid.
     }
 ```
 
-For more information on caption options see the [API reference]().
+For more information on caption options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.CaptionOptions.html).
 
 Column resizer
 ---------
@@ -67,7 +67,7 @@ but you can disable it in the settings option.
     }
 ```
 
-For more information on resizer options see the [API reference]().
+For more information on resizer options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.ColumnsSettings.html#resizing).
 
 Cell
 ---------
@@ -93,7 +93,7 @@ You can also set the `useHTML` option and apply the custom HTML in formatters.
     }
 ```
 
-For more information on cell options see the [API reference]().
+For more information on column options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html).
 
 Value editor
 ---------
@@ -113,4 +113,4 @@ Click on a cell and change the value.
 If you declared `cellFormatter` or `cellFormat` props, it will be applied to the
 new value.
 
-For more information on cell options see the [API reference]().
+For more information on cell options see the [API reference](https://api.highcharts.com/dashboards/typedoc/interfaces/DataGrid_DataGridOptions.IndividualColumnOptions.html#editable).
