@@ -210,9 +210,14 @@ class DataGridColumn {
      * The cell to register.
      */
     public registerCell(cell: DataGridCell): void {
+        const dg = this.viewport.dataGrid;
+
         cell.htmlElement.setAttribute('data-column-id', this.id);
         if (this.options.className) {
             cell.htmlElement.classList.add(this.options.className);
+        }
+        if (dg.hoveredColumnId === this.id) {
+            cell.htmlElement.classList.add(Globals.classNames.hoveredColumn);
         }
         this.cells.push(cell);
     }
@@ -230,12 +235,13 @@ class DataGridColumn {
 
 
     /**
-     * Sets the column hover state.
+     * Adds or removes the hovered CSS class to the column element
+     * and its cells.
      *
      * @param hovered
      * Whether the column should be hovered.
      */
-    public setHover(hovered: boolean): void {
+    public setHoveredState(hovered: boolean): void {
         this.headElement?.classList[hovered ? 'add' : 'remove'](
             Globals.classNames.hoveredColumn
         );

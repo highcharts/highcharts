@@ -178,7 +178,7 @@ class DataGridComponent extends Component {
         this.emit({ type: 'afterUpdate' });
     }
 
-    public render(): this {
+    public override render(): this {
         super.render();
         if (!this.dataGrid) {
             this.dataGrid = this.constructDataGrid();
@@ -190,6 +190,20 @@ class DataGridComponent extends Component {
         this.emit({ type: 'afterRender' });
 
         return this;
+    }
+
+    public override resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
+        if (height) {
+            this.contentElement.style.minHeight = '0';
+        } else if (height === null) {
+            this.contentElement.style.removeProperty('min-height');
+        }
+
+        super.resize(width, height);
+        this.dataGrid?.viewport?.reflow();
     }
 
     public onTableChanged(): void {

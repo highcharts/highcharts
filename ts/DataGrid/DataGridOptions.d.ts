@@ -155,7 +155,7 @@ export interface ColumnOptions {
     cellFormat?: string;
 
     /**
-     * The format of the column header.
+     * The format of the column header. Use `{id}` to display the column id.
      */
     headFormat?: string;
 }
