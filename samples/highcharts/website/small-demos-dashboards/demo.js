@@ -69,7 +69,7 @@ function climate() {
                     options: {
                         csvURL: (
                             'https://www.highcharts.com/samples/data/' +
-                        'climate-cities.csv'
+                            'climate-cities.csv'
                         )
                     }
                 }]
@@ -151,9 +151,6 @@ function climate() {
                                 y: 22
                             },
                             opposite: true,
-                            // showFirstLabel: true,
-                            // showLastLabel: true,
-                            // startOnTick: true,
                             tickPosition: 'inside'
                         },
                         yAxis: {
@@ -775,7 +772,8 @@ function datacursor() {
     function buildVegeTable() {
         const table = new DataTable({
             columns: {
-                vegetable: [
+                // Vegetable name
+                name: [
                     'Broccoli',
                     'Carrots',
                     'Corn',
@@ -784,9 +782,9 @@ function datacursor() {
                     'Potatos',
                     'Spinach',
                     'Tomatos'
-
                 ],
-                amount: [
+                // Amount
+                y: [
                     44,
                     51,
                     38,
@@ -805,9 +803,6 @@ function datacursor() {
 }
 
 function extremes() {
-    let chart1;
-    let chart2;
-
     const csv = document.getElementById('csv2').innerText;
 
     Dashboards.board('container', {
@@ -830,6 +825,7 @@ function extremes() {
                     ]
                 }, {
                     cells: [
+                        { id: 'dashboard-col-2', height: 130 },
                         { id: 'dashboard-col-3', height: 130 }
                     ]
                 }]
@@ -870,7 +866,10 @@ function extremes() {
                     height: 130,
                     events: {
                         load: function () {
-                            chart1 = this;
+                            const el = document.getElementById('zoom1');
+                            el.addEventListener('click', () => {
+                                this.xAxis[0].setExtremes(10, 20);
+                            });
                         }
                     },
                     zooming: {
@@ -946,7 +945,10 @@ function extremes() {
                     height: 130,
                     events: {
                         load: function () {
-                            chart2 = this;
+                            const el = document.getElementById('zoom2');
+                            el.addEventListener('click', () => {
+                                this.xAxis[0].setExtremes(10, 20);
+                            });
                         }
                     },
                     zooming: {
@@ -1020,17 +1022,6 @@ function extremes() {
             }
         }]
     }, true);
-
-
-    document.getElementById('zoom1').addEventListener('click', () => {
-        chart1.xAxis[0].setExtremes(10, 20);
-    });
-
-    document.getElementById('zoom2').addEventListener('click', () => {
-        chart2.xAxis[0].setExtremes(10, 20);
-    });
-
-
 }
 
 const charts = {
