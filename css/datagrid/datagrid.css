@@ -127,9 +127,9 @@
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* padding-right: 10px; */
+    padding-right: 10px;
     padding-left: 3px;
-    width: calc(100% - 20px);
+    width: 100%;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
