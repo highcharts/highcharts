@@ -106,6 +106,104 @@ let sourceRoot = 'ts';
 
 
 /**
+ * Add child informations and doclets.
+ *
+ * @param {CodeInfo} infos
+ * Array of code information to add to.
+ *
+ * @param {TS.Node} nodes
+ * Child nodes to extract from.
+ *
+ * @param {boolean} [includeNodes]
+ * Whether to include the TypeScript nodes in the information.
+ */
+function addChildInfos(
+    infos,
+    nodes,
+    includeNodes
+) {
+    /** @type {CodeInfo|undefined} */
+    let _child;
+    /** @type {Array<CodeInfo>|undefined} */
+    let _children;
+    /** @type {DocletInfo} */
+    let _doclet;
+    /** @type {Array<DocletInfo>} */
+    let _doclets;
+    /** @type {TS.Node} */
+    let _previousNode = nodes[0];
+
+    for (const node of nodes) {
+
+        if (node.kind === TS.SyntaxKind.EndOfFileToken) {
+            break;
+        }
+
+        if (TS.isVariableStatement(node)) {
+            _children = getChildInfos(
+                getNodesChildren(node.declarationList),
+                includeNodes
+            );
+            if (_children.length) {
+                // Take the first one out to attach leading doclet
+                _child = _children.shift();
+            }
+        } else {
+            _child = (
+                getVariableInfo(node, includeNodes) ||
+                getTypeAliasInfo(node, includeNodes) ||
+                getPropertyInfo(node, includeNodes) ||
+                getObjectInfo(node, includeNodes) ||
+                getNamespaceInfo(node, includeNodes) ||
+                getInterfaceInfo(node, includeNodes) ||
+                getImportInfo(node, includeNodes) ||
+                getFunctionInfo(node, includeNodes) ||
+                getFunctionCallInfo(node, includeNodes) ||
+                getExportInfo(node, includeNodes) ||
+                getDeconstructInfos(node, includeNodes) ||
+                getClassInfo(node, includeNodes) ||
+                getArrayInfo(node, includeNodes)
+            );
+        }
+
+        // Retrieve leading doclets
+
+        _doclets = getDocletInfosBetween(_previousNode, node, includeNodes);
+
+        // Deal with floating doclets before leading child doclet
+
+        if (_doclets.length) {
+            _doclet = _doclets[_doclets.length - 1];
+            if (
+                _child &&
+                _child.kind !== 'Export' &&
+                _child.kind !== 'Import' &&
+                !_doclet.tags.apioption
+            ) {
+                _child.doclet = _doclets.pop();
+            }
+            infos.push(..._doclets);
+        }
+
+        // Finally add child(ren)
+
+        if (_child) {
+            infos.push(_child);
+            _child = void 0;
+        }
+
+        if (_children) {
+            infos.push(..._children);
+            _children = void 0;
+        }
+
+        _previousNode = node;
+    }
+
+}
+
+
+/**
  * Adds info flags from the given node.
  *
  * @param {CodeInfo} info
@@ -157,6 +255,29 @@ function addInfoFlags(
         info.flags = _flags;
     }
 
+}
+
+
+/**
+ * Retrieves meta information for a given node.
+ *
+ * @param {CodeInfo} info
+ * Information to add to.
+ *
+ * @param {TS.Node} node
+ * Node to return meta information for.
+ */
+function addInfoMeta(
+    info,
+    node
+) {
+    info.meta = {
+        begin: node.getStart(),
+        end: node.getEnd(),
+        file: node.getSourceFile().fileName,
+        overhead: node.getLeadingTriviaWidth(),
+        syntax: node.kind
+    };
 }
 
 
@@ -236,9 +357,6 @@ function autoCompleteInfos() {
 /**
  * Extends ClassInfo and InterfaceInfo with additional inherited members.
  *
- * @param {SourceInfo} sourceInfo
- * Source information of the class or interface.
- *
  * @param {ClassInfo|InterfaceInfo} infoToExtend
  * Class or interface information to extend.
  *
@@ -249,7 +367,6 @@ function autoCompleteInfos() {
  * Extended class or interface information.
  */
 function autoExtendInfo(
-    sourceInfo,
     infoToExtend,
     includeNodes
 ) {
@@ -277,17 +394,18 @@ function autoExtendInfo(
     let _resolvedInfo;
 
     for (const _extendType of _extendsToDo) {
-        _resolvedInfo = resolveReference(sourceInfo, _extendType, includeNodes);
+        _resolvedInfo = resolveReference(
+            getSourceInfo(infoToExtend.meta.file, includeNodes),
+            _extendType,
+            includeNodes
+        );
 
         if (!_resolvedInfo) {
             continue;
         }
 
-        _resolvedInfo = autoExtendInfo(
-            getSourceInfo(_resolvedInfo.meta.file, void 0, includeNodes),
-            _resolvedInfo,
-            includeNodes
-        );
+        // First complete the parent
+        _resolvedInfo = autoExtendInfo(_resolvedInfo, includeNodes);
 
         if (
             _resolvedInfo.kind !== 'Class' &&
@@ -817,8 +935,7 @@ function getArrayInfo(
     }
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -829,7 +946,7 @@ function getArrayInfo(
 
 
 /**
- * [TS] Retrieve child informations and doclets.
+ * Retrieve child informations and doclets.
  *
  * @param {Array<TS.Node>} nodes
  * Child nodes to extract from.
@@ -847,84 +964,7 @@ function getChildInfos(
     /** @type {Array<CodeInfo>} */
     const _infos = [];
 
-    /** @type {CodeInfo|undefined} */
-    let _child;
-    /** @type {Array<CodeInfo>|undefined} */
-    let _children;
-    /** @type {DocletInfo} */
-    let _doclet;
-    /** @type {Array<DocletInfo>} */
-    let _doclets;
-    /** @type {TS.Node} */
-    let _previousNode = nodes[0];
-
-    for (const node of nodes) {
-
-        if (node.kind === TS.SyntaxKind.EndOfFileToken) {
-            break;
-        }
-
-        if (TS.isVariableStatement(node)) {
-            _children = getChildInfos(
-                getNodesChildren(node.declarationList),
-                includeNodes
-            );
-            if (_children.length) {
-                // Take the first one out to attach leading doclet
-                _child = _children.shift();
-            }
-        } else {
-            _child = (
-                getVariableInfo(node, includeNodes) ||
-                getTypeAliasInfo(node, includeNodes) ||
-                getPropertyInfo(node, includeNodes) ||
-                getObjectInfo(node, includeNodes) ||
-                getNamespaceInfo(node, includeNodes) ||
-                getInterfaceInfo(node, includeNodes) ||
-                getImportInfo(node, includeNodes) ||
-                getFunctionInfo(node, includeNodes) ||
-                getFunctionCallInfo(node, includeNodes) ||
-                getExportInfo(node, includeNodes) ||
-                getDeconstructInfos(node, includeNodes) ||
-                getClassInfo(node, includeNodes) ||
-                getArrayInfo(node, includeNodes)
-            );
-        }
-
-        // Retrieve leading doclets
-
-        _doclets = getDocletInfosBetween(_previousNode, node, includeNodes);
-
-        // Deal with floating doclets before leading child doclet
-
-        if (_doclets.length) {
-            _doclet = _doclets[_doclets.length - 1];
-            if (
-                _child &&
-                _child.kind !== 'Export' &&
-                _child.kind !== 'Import' &&
-                !_doclet.tags.apioption
-            ) {
-                _child.doclet = _doclets.pop();
-            }
-            _infos.push(..._doclets);
-        }
-
-        // Finally add child(ren)
-
-        if (_child) {
-            _infos.push(_child);
-            _child = void 0;
-        }
-
-        if (_children) {
-            _infos.push(..._children);
-            _children = void 0;
-        }
-
-        _previousNode = node;
-
-    }
+    addChildInfos(_infos, nodes, includeNodes);
 
     return _infos;
 }
@@ -959,12 +999,7 @@ function getClassInfo(
     _info.name = ((node.name && node.name.getText()) || 'default');
 
     if (node.typeParameters) {
-        const _generics = _info.generics = [];
-        for (const parameter of getChildInfos(node.typeParameters)) {
-            if (parameter.kind === 'Variable') {
-                _generics.push(parameter);
-            }
-        }
+        addChildInfos(_info.generics = [], node.typeParameters, includeNodes);
     }
 
     if (node.heritageClauses) {
@@ -977,22 +1012,9 @@ function getClassInfo(
         }
     }
 
-    /** @type {Array<MemberInfo>} */
-    const _members = _info.members = [];
-
-    for (const _childInfo of getChildInfos(node.members, includeNodes)) {
-        if (
-            _childInfo.kind === 'Doclet' ||
-            _childInfo.kind === 'Function' ||
-            _childInfo.kind === 'Property'
-        ) {
-            _members.push(_childInfo);
-        }
-    }
-
+    addChildInfos(_info.members = [], node.members, includeNodes);
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1049,8 +1071,7 @@ function getDeconstructInfos(
     }
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1125,7 +1146,7 @@ function getDocletInfosBetween(
                     }
                 }
 
-                _doclet.meta = getInfoMeta(node);
+                addInfoMeta(_doclet, node);
 
                 if (includeNodes) {
                     _doclet.node = node;
@@ -1248,8 +1269,7 @@ function getExportInfo(
     }
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1312,7 +1332,7 @@ function getFunctionCallInfo(
         }
     }
 
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1381,8 +1401,7 @@ function getFunctionInfo(
     );
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (
         node.body &&
@@ -1461,37 +1480,14 @@ function getImportInfo(
 
     }
 
-    addInfoFlags(node, _info);
-
-    _info.meta = getInfoMeta(node);
+    addInfoFlags(_info, node);
+    addInfoMeta(_info, node);
 
     if (includeNode) {
         _info.node = node;
     }
 
     return _info;
-}
-
-
-/**
- * Retrieves meta information for a given node.
- *
- * @param {TS.Node} node
- * Node to return meta information for.
- *
- * @return {Meta}
- * Meta information for the given node.
- */
-function getInfoMeta(
-    node
-) {
-    return {
-        begin: node.getStart(),
-        end: node.getEnd(),
-        file: node.getSourceFile().fileName,
-        overhead: node.getLeadingTriviaWidth(),
-        syntax: node.kind
-    };
 }
 
 
@@ -1617,22 +1613,7 @@ function getInterfaceInfo(
     _info.name = node.name.text;
 
     if (node.typeParameters) {
-        /** @type {Array<TypeAliasInfo>} */
-        const _generics = [];
-
-        /** @type {TypeAliasInfo|undefined} */
-        let _typeAliasInfo;
-
-        for (const parameter of node.typeParameters) {
-            _typeAliasInfo = getTypeAliasInfo(parameter);
-            if (_typeAliasInfo) {
-                _generics.push(_typeAliasInfo);
-            }
-        }
-
-        if (_generics.length) {
-            _info.generics = _generics;
-        }
+        addChildInfos(_info.generics = [], node.typeParameters, includeNodes);
     }
 
     if (node.heritageClauses) {
@@ -1645,22 +1626,9 @@ function getInterfaceInfo(
         }
     }
 
-    /** @type {Array<MemberInfo>} */
-    const _members = _info.members = [];
-
-    for (const _childInfo of getChildInfos(node.members, includeNodes)) {
-        if (
-            _childInfo.kind === 'Doclet' ||
-            _childInfo.kind === 'Function' ||
-            _childInfo.kind === 'Property'
-        ) {
-            _members.push(_childInfo);
-        }
-    }
-
+    addChildInfos(_info.members = [], node.members, includeNodes);
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1756,22 +1724,19 @@ function getNamespaceInfo(
         name: node.name.text
     };
 
-    if (node.body && node.body.statements) {
-        /** @type {Array<CodeInfo>} */
-        const _members = _info.members = [];
-
-        for (
-            const _childInfo
-            of getChildInfos(node.body.statements, includeNodes)
-        ) {
-            _members.push(_childInfo);
-        }
-
+    if (
+        node.body &&
+        node.body.statements
+    ) {
+        addChildInfos(_info.members = [], node.body.statements, includeNodes);
     }
 
     addInfoFlags(_info, node);
+    addInfoMeta(_info, node);
 
-    _info.meta = getInfoMeta(node);
+    if (includeNodes) {
+        _info.node = node;
+    }
 
     return _info;
 }
@@ -1891,8 +1856,7 @@ function getObjectInfo(
     }
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -1958,8 +1922,7 @@ function getPropertyInfo(
     }
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNode) {
         _info.node = node;
@@ -2005,8 +1968,7 @@ function getReferenceInfo(
     };
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -2036,8 +1998,6 @@ function getSourceInfo(
     sourceText,
     includeNodes
 ) {
-    const _cacheKey = `${filePath}:${!!includeNodes}`;
-
     let _info = getSourceInfoFromCache(filePath, includeNodes);
 
     if (!sourceText) {
@@ -2047,6 +2007,7 @@ function getSourceInfo(
         sourceText = FS.readFileSync(filePath, 'utf8');
     }
 
+    const _cacheKey = `${filePath}:${!!includeNodes}`;
     const _sourceFile = TS.createSourceFile(
         filePath,
         sourceText,
@@ -2057,10 +2018,11 @@ function getSourceInfo(
     /** @type {SourceInfo} */
     _info = {
         kind: 'Source',
-        path: filePath
+        path: filePath,
+        code: []
     };
 
-    _info.code = getChildInfos(getNodesChildren(_sourceFile), includeNodes);
+    addChildInfos(_info.code, getNodesChildren(_sourceFile), includeNodes);
 
     SOURCE_CACHE[_cacheKey] = _info;
 
@@ -2160,8 +2122,7 @@ function getTypeAliasInfo(
     }
 
     addInfoFlags(_info, node);
-
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -2220,7 +2181,7 @@ function getVariableInfo(
         addInfoFlags(_info, node);
     }
 
-    _info.meta = getInfoMeta(node);
+    addInfoMeta(_info, node);
 
     if (includeNodes) {
         _info.node = node;
@@ -2717,8 +2678,9 @@ function resolveReferenceInChildInfos(
                     // Search in original file
                     if (_childInfo.meta.file !== scopeInfo.meta.file) {
                         _resolvedInfo = resolveReference(
-                            getSourceInfoFromCache(
+                            getSourceInfo(
                                 _childInfo.meta.file,
+                                void 0,
                                 !!_childInfo.node
                             ),
                             _childInfo.name,
@@ -2738,8 +2700,9 @@ function resolveReferenceInChildInfos(
                         return _resolvedInfo;
                     }
                     // Search in outer scope of namespace
-                    _sourceInfo = getSourceInfoFromCache(
+                    _sourceInfo = getSourceInfo(
                         scopeInfo.meta.file,
+                        void 0,
                         !!scopeInfo.node
                     );
                     if (_sourceInfo) {
@@ -2755,8 +2718,9 @@ function resolveReferenceInChildInfos(
                 } else {
                     if (_childInfo.meta.file !== scopeInfo.path) {
                         // Search in original file
-                        _sourceInfo = getSourceInfoFromCache(
+                        _sourceInfo = getSourceInfo(
                             _childInfo.meta.file,
+                            void 0,
                             !!_childInfo.node
                         );
                         if (_sourceInfo) {

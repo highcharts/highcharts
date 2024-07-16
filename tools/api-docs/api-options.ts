@@ -25,8 +25,6 @@ import GitLib from '../libs/git.js';
 
 import LogLib from '../libs/log.js';
 
-import Path from 'node:path';
-
 import TreeLib from '../libs/tree.js';
 
 import TSLib from '../libs/ts.js';
@@ -392,8 +390,8 @@ function addTreeNode(
                         name: _object.name || _object.text,
                         value: _object.value || ''
                     };
-                    if (_object.products) {
-                        _sample.products = _object.products;
+                    if (_object.type) {
+                        _sample.products = _object.type.slice();
                     }
                     _array.push(_sample);
                 }
@@ -401,8 +399,8 @@ function addTreeNode(
 
             case 'type':
                 _split = TSLib.extractTypes(
-                    TSLib
-                        .extractTagInsets(_infoDoclet.tags.type.join('\n'))
+                    _infoDoclet.tags.type
+                        .map(_type => TSLib.extractTagInset(_type))
                         .join('|'),
                     true
                 );
