@@ -253,9 +253,6 @@ Dashboards.board('container', {
         type: 'DataGrid',
         sync: {
             extremes: true
-        },
-        dataGridOptions: {
-            editable: false
         }
     }]
 }, true);

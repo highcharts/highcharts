@@ -10,7 +10,7 @@ const columns = {
 
 
 DataGrid.dataGrid('container', {
-    dataTable: new DataTable({ columns })
+    table: new DataTable({ columns })
 });
 
 const btn = document.querySelector('#show');

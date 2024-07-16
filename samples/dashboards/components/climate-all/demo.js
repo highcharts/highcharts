@@ -669,40 +669,40 @@ async function setupBoard() {
                 editable: false,
                 columns: {
                     time: {
-                        show: false
+                        enabled: false
                     },
                     FD: {
-                        headerFormat: 'Days with Frost'
+                        headFormat: 'Days with Frost'
                     },
                     ID: {
-                        headerFormat: 'Days with Ice'
+                        headFormat: 'Days with Ice'
                     },
                     RR1: {
-                        headerFormat: 'Days with Rain'
+                        headFormat: 'Days with Rain'
                     },
                     TN: {
-                        show: false
+                        enabled: false
                     },
                     TX: {
-                        show: false
+                        enabled: false
                     },
                     TNC: {
-                        headerFormat: 'Average Temperature °C',
+                        headFormat: 'Average Temperature °C',
                         cellFormat: '{value:.1f}'
                     },
                     TNF: {
-                        headerFormat: 'Average Temperature °F',
+                        headFormat: 'Average Temperature °F',
                         cellFormat: '{value:.1f}',
-                        show: false
+                        enabled: false
                     },
                     TXC: {
-                        headerFormat: 'Maximal Temperature °C',
+                        headFormat: 'Maximal Temperature °C',
                         cellFormat: '{value:.1f}'
                     },
                     TXF: {
-                        headerFormat: 'Maximal Temperature °F',
+                        headFormat: 'Maximal Temperature °F',
                         cellFormat: '{value:.1f}',
-                        show: false
+                        enabled: false
                     }
                 }
             }
@@ -989,16 +989,16 @@ async function updateBoard(board, city, column, scale, newData) {
             dataGridOptions: {
                 columns: {
                     TNC: {
-                        show: showCelsius
+                        enabled: showCelsius
                     },
                     TNF: {
-                        show: !showCelsius
+                        enabled: !showCelsius
                     },
                     TXC: {
-                        show: showCelsius
+                        enabled: showCelsius
                     },
                     TXF: {
-                        show: !showCelsius
+                        enabled: !showCelsius
                     }
                 }
             }
