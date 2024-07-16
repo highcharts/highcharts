@@ -840,9 +840,12 @@ class Toolbar {
 
         // Set class
         mainNavItem.className = '';
-        if (buttonWrapperClass) {
-            mainNavItem.classList.add(buttonWrapperClass.trim());
-        }
+
+        buttonWrapper.classList.forEach((className): void => {
+            if (className !== 'highcharts-active') {
+                mainNavItem.classList.add(className);
+            }
+        });
 
         // Set icon
         mainNavItem
