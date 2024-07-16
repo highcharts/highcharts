@@ -636,15 +636,11 @@ const setupDashboard = instanceId => {
             cell: 'instances-table',
             type: 'DataGrid',
             title: 'Instances',
-            visibleColumns: [
-                'InstanceId', 'InstanceType', 'PublicIpAddress', 'State',
-                'HealthIndicator'
-            ],
             dataGridOptions: {
                 editable: false,
                 columnsIncluded: [
-                    'InstanceId', 'InstanceType',
-                    'PublicIpAddress', 'HealthIndicator'
+                    'InstanceId', 'InstanceType', 'PublicIpAddress', 'State',
+                    'HealthIndicator'
                 ],
                 columns: {
                     InstanceId: {
